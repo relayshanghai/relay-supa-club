@@ -3,7 +3,7 @@ export const Input = ({ label, ...rest }: any) => {
         <label className="flex flex-col text-xs text-gray-500 font-bold w-full">
             {label}
             <input
-                className="bg-white border outline-none text-sm text-gray-600 border-gray-200 h-10 rounded px-2 duration-300 focus-within:border-primary-500 placeholder-gray-300 my-2"
+                className="text-gray-900 ring-gray-900 ring-opacity-5 placeholder-gray-400 appearance-none bg-white rounded-md block w-full px-3 py-2 border border-transparent shadow ring-1 sm:text-sm focus:border-primary-500 focus:ring-primary-500 focus:outline-none my-2"
                 {...rest}
             />
         </label>

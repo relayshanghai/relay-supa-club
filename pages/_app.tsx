@@ -4,6 +4,7 @@ import 'styles/globals.css';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
 import { Toaster } from 'react-hot-toast';
+import { UserProvider } from 'src/hooks/use-user';
 
 function MyApp({ Component, pageProps }: AppProps) {
     return (
@@ -14,7 +15,9 @@ function MyApp({ Component, pageProps }: AppProps) {
                     content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=0"
                 />
             </Head>
-            <Component {...pageProps} />
+            <UserProvider>
+                <Component {...pageProps} />
+            </UserProvider>
             <Toaster />
         </>
     );
