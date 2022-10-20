@@ -14,6 +14,7 @@ export const useFields = (initialValues: any) => {
 
     return {
         setFieldValue,
+        reset: setValues,
         values
     };
 };

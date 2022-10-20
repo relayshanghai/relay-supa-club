@@ -46,7 +46,7 @@ export const UserProvider: React.FC<{ children: any }> = ({ children }) => {
 
             const { data, error } = await supabase
                 .from('profiles')
-                .select(`*`)
+                .select(`*, company:companies(id, name, website)`)
                 .eq('id', user!.id)
                 .single();
 

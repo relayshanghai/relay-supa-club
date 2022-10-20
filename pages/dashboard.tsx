@@ -4,7 +4,7 @@ import { Search } from 'src/modules/search';
 const Page = () => {
     return (
         <Layout>
-            <div className="flex flex-col p-4">
+            <div className="flex flex-col p-6">
                 <Search />
             </div>
         </Layout>
