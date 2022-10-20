@@ -6,7 +6,8 @@ export const createSubscription = async ({ company_id, plan_id }: any) => {
         .update({
             active: false
         })
-        .eq('company_id', company_id);
+        .eq('company_id', company_id)
+        .maybeSingle();
 
     if (errorExisting) {
         throw errorExisting;

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { Button } from 'src/components/button';
 import { Input } from 'src/components/input';
@@ -8,9 +8,11 @@ import { useFields } from 'src/hooks/use-fields';
 import { useSubscription } from 'src/hooks/use-subscription';
 import { useUser } from 'src/hooks/use-user';
 import { format } from 'date-fns';
+import { Modal } from 'src/components/modal';
 
 const Page = () => {
     const { profile, user, loading, updateProfile } = useUser();
+    const [confirmModal, setShowConfirmModal] = useState<any>();
     const {
         values: { firstName, lastName, email },
         setFieldValue,
@@ -226,35 +228,54 @@ const Page = () => {
                             <div className="w-full pt-8">
                                 <div className="pb-4">Available plans</div>
                                 {Array.isArray(plans)
-                                    ? plans.map((item: any) => {
+                                    ? plans.map((item: any, i: any) => {
                                           return (
                                               <div
                                                   key={item.id}
-                                                  className="flex flex-row space-x-8 items-center justify-between border-t border-grey-200 w-full py-2"
+                                                  className="flex flex-row space-x-2 items-center justify-between border-t border-grey-200 w-full py-2"
                                               >
-                                                  <div className="">{item.name}</div>
-                                                  <div className="text-sm font-bold">
-                                                      {item.value}
+                                                  <div className="text-sm font-bold w-1/6">
+                                                      {i === 0 ? (
+                                                          <div className="text-xs text-gray-500 font-normal">
+                                                              Name
+                                                          </div>
+                                                      ) : null}
+                                                      {item.name}
                                                   </div>
-                                                  <div className="text-sm font-bold">
+                                                  <div className="text-sm font-bold w-1/6">
+                                                      {i === 0 ? (
+                                                          <div className="text-xs text-gray-500 font-normal">
+                                                              Price
+                                                          </div>
+                                                      ) : null}
+                                                      ${item.value}
+                                                  </div>
+                                                  <div className="text-sm font-bold w-1/4">
+                                                      {i === 0 ? (
+                                                          <div className="text-xs text-gray-500 font-normal">
+                                                              KOLs / search
+                                                          </div>
+                                                      ) : null}
                                                       {item.amount}
                                                   </div>
-                                                  <div className="text-sm font-bold">
+                                                  <div className="text-sm font-bold w-2/6 flex flex-row justify-end">
                                                       <Button
                                                           disabled={
                                                               item.id === subscription?.plan_id
                                                           }
                                                           onClick={async () => {
-                                                              try {
-                                                                  createSubscriptions(item.id);
-                                                                  toast.success(
-                                                                      'Subscription purchased'
-                                                                  );
-                                                              } catch (e) {
-                                                                  toast.error(
-                                                                      'Ops, something went wrong'
-                                                                  );
-                                                              }
+                                                              setShowConfirmModal(item);
+
+                                                              //   try {
+                                                              //       createSubscriptions(item.id);
+                                                              //       toast.success(
+                                                              //           'Subscription purchased'
+                                                              //       );
+                                                              //   } catch (e) {
+                                                              //       toast.error(
+                                                              //           'Ops, something went wrong'
+                                                              //       );
+                                                              //   }
                                                           }}
                                                       >
                                                           Purchase for ${item.value}
@@ -269,6 +290,52 @@ const Page = () => {
                     </>
                 ) : null}
             </div>
+            <Modal
+                title={'Confirm purchase'}
+                visible={!!confirmModal}
+                onClose={() => {
+                    setShowConfirmModal(undefined);
+                }}
+            >
+                <div className="py-4">You are about to purchase the plan below:</div>
+                <div className="flex flex-row space-x-2 items-center justify-between border-t border-grey-200 w-full py-2">
+                    <div className="text-sm font-bold w-1/6">
+                        <div className="text-xs text-gray-500 font-normal">Name</div>
+                        {confirmModal?.name}
+                    </div>
+                    <div className="text-sm font-bold w-1/6">
+                        <div className="text-xs text-gray-500 font-normal">Price</div>$
+                        {confirmModal?.value}
+                    </div>
+                    <div className="text-sm font-bold w-1/4">
+                        <div className="text-xs text-gray-500 font-normal">KOLs / search</div>
+                        {confirmModal?.amount}
+                    </div>
+                </div>
+                <div className="pt-8 space-x-16 justify-center flex flex-row w-full">
+                    <Button
+                        onClick={async () => {
+                            try {
+                                createSubscriptions(confirmModal.id);
+                                setShowConfirmModal(undefined);
+                                toast.success('Subscription purchased');
+                            } catch (e) {
+                                toast.error('Ops, something went wrong');
+                            }
+                        }}
+                    >
+                        Confirm
+                    </Button>
+                    <Button
+                        type="secondary"
+                        onClick={async () => {
+                            setShowConfirmModal(undefined);
+                        }}
+                    >
+                        Cancel
+                    </Button>
+                </div>
+            </Modal>
         </Layout>
     );
 };

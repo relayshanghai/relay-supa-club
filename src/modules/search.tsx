@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Input } from 'src/components/input';
 import { Spinner } from 'src/components/spinner';
+import { useSubscription } from 'src/hooks/use-subscription';
+import { formatter } from 'src/utils/formatter';
 
 export const Search = () => {
     const [search, setSearch] = useState('');
@@ -12,16 +14,17 @@ export const Search = () => {
     ];
     const [loading, setLoading] = useState(false);
     const [results, setResults] = useState<any>();
+    const { subscription } = useSubscription();
 
     useEffect(() => {
-        console.log('search');
-        if (search && search.length > 2) {
-            setLoading(true);
+        setLoading(true);
+        if (subscription) {
             fetch('/api/kol', {
                 method: 'post',
                 body: JSON.stringify({
                     platform: channel,
-                    term: search
+                    term: search,
+                    subscription
                 })
             })
                 .then((res) => {
@@ -35,10 +38,8 @@ export const Search = () => {
                     setLoading(false);
                     console.log(e);
                 });
-        } else {
-            setResults(undefined);
         }
-    }, [search, channel]);
+    }, [search, channel, subscription]);
 
     return (
         <div className="space-y-4">
@@ -67,41 +68,65 @@ export const Search = () => {
             />
             <div>
                 {results ? (
-                    <div className="font-bold text-sm">Total Results: {results.total}</div>
+                    <div className="font-bold text-sm">
+                        Total Results: {formatter(results.total)}
+                    </div>
                 ) : null}
             </div>
-            <div className="gap-2 grid grid-cols-3">
-                {Array.isArray(results?.accounts) ? (
-                    results.accounts.map((item: any, i: any) => {
-                        return (
-                            <div
-                                key={item.account?.user_profile?.user_id ?? i}
-                                className="flex flex-row items-center space-x-2 shadow-xl rounded-xl p-2 bg-white transition"
-                            >
-                                <div className="rounded-full overflow-hidden shadow-lg">
-                                    <img
-                                        src={item.account.user_profile.picture}
-                                        className="w-12 h-12"
-                                    />
-                                </div>
-                                <div className="flex flex-col">
-                                    <div className="font-bold">
-                                        {item.account.user_profile.custom_name}
-                                    </div>
-                                    <div className="text-sm">
-                                        {item.account.user_profile.fullname}
-                                    </div>
-                                    <div className="font-bold text-sm">
-                                        Avg. views: {item.account.user_profile.avg_views}
-                                    </div>
-                                </div>
-                            </div>
-                        );
-                    })
-                ) : loading ? (
-                    <Spinner />
-                ) : null}
-            </div>
+            <table className="min-w-full divide-y divide-gray-200 rounded-lg overflow-hidden shadow">
+                <thead className="bg-white sticky top-0">
+                    <tr>
+                        <th className="px-4 py-4 text-xs text-gray-500 font-normal text-left">
+                            Account
+                        </th>
+                        <th className="text-xs text-gray-500 font-normal text-left">Followers</th>
+                        <th className="text-xs text-gray-500 font-normal text-left">Engagements</th>
+                        <th className="text-xs text-gray-500 font-normal text-left">
+                            Engagement Rate
+                        </th>
+                        <th className="text-xs text-gray-500 font-normal text-left">Avg. views</th>
+                    </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                    {Array.isArray(results?.accounts)
+                        ? results.accounts.map((item: any, i: any) => {
+                              const handle =
+                                  item.account.user_profile.username ||
+                                  item.account.user_profile.custom_name;
+                              return (
+                                  <tr key={i}>
+                                      <td className="py-2 px-4 flex flex-row items-center space-x-2">
+                                          <img
+                                              src={`https://image-cache.brainchild-tech.cn/?link=${item.account.user_profile.picture}`}
+                                              className="w-12 h-12"
+                                          />
+                                          <div>
+                                              <div className="font-bold">
+                                                  {item.account.user_profile.fullname}
+                                              </div>
+                                              <div className="text-primary-500 text-sm">
+                                                  {handle ? `@${handle}` : null}
+                                              </div>
+                                          </div>
+                                      </td>
+                                      <td className="text-sm">
+                                          {formatter(item.account.user_profile.followers)}
+                                      </td>
+                                      <td className="text-sm">
+                                          {formatter(item.account.user_profile.engagements)}
+                                      </td>
+                                      <td className="text-sm">
+                                          {formatter(item.account.user_profile.engagement_rate)}
+                                      </td>
+                                      <td className="text-sm">
+                                          {formatter(item.account.user_profile.avg_views)}
+                                      </td>
+                                  </tr>
+                              );
+                          })
+                        : null}
+                </tbody>
+            </table>
         </div>
     );
 };

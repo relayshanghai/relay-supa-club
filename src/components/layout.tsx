@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import { useCallback, useEffect } from 'react';
 import { Spinner } from 'src/components/spinner';
 import { Title } from 'src/components/title';
+import { useSubscription } from 'src/hooks/use-subscription';
 import { useUser } from 'src/hooks/use-user';
 import { supabase } from 'src/utils/supabase-client';
 

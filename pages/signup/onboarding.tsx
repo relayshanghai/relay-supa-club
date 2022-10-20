@@ -57,6 +57,10 @@ export default function Register() {
                                 setFieldValue('website', e.target.value);
                             }}
                         />
+                        <div className="text-sm text-gray-500">
+                            Your new company will have a trial subscription just to get you started.
+                            Once you are ready you can purchase new plans in your Account settings.
+                        </div>
                         <Button
                             disabled={!values.name}
                             onClick={async (e: any) => {
