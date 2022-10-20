@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import { createSubscription } from 'src/utils/api/create-subscription';
 import { supabase } from 'src/utils/supabase-client';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -27,6 +28,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         if (profileError) {
             return res.status(500).json(profileError);
+        }
+
+        const { data: plan, error: plansError } = await supabase
+            .from('plans')
+            .select('id')
+            .eq('has_trial', true)
+            .single();
+
+        if (plansError) {
+            return res.status(500).json(profileError);
+        }
+
+        try {
+            await createSubscription({
+                company_id: company.id,
+                plan_id: plan.id
+            });
+        } catch (e) {
+            return res.status(500).json(e);
         }
 
         return res.status(200).json({ profile, company });
