@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { Title } from 'src/components/title';
 import { useUser } from 'src/hooks/use-user';
 
 const Home = () => {
@@ -6,9 +7,7 @@ const Home = () => {
     return (
         <div className="w-full h-full px-10 py-8">
             <div className="flex flex-row justify-between">
-                <div className="font-poppins text-2xl font-bold text-tertiary-600 tracking-wide">
-                    relay.club
-                </div>
+                <Title />
                 <div>
                     {loading ? null : session && !loading ? (
                         <Link href="/dashboard" passHref>
@@ -25,6 +24,7 @@ const Home = () => {
                     )}
                 </div>
             </div>
+            <div className="py-16 text-center">Imagine the landing page content goes here</div>
         </div>
     );
 };

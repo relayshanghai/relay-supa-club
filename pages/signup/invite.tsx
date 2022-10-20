@@ -2,6 +2,7 @@ import { useRouter } from 'next/router';
 import toast from 'react-hot-toast';
 import { Button } from 'src/components/button';
 import { Input } from 'src/components/input';
+import { Title } from 'src/components/title';
 import { useFields } from 'src/hooks/use-fields';
 
 export default function Register() {
@@ -16,9 +17,7 @@ export default function Register() {
 
     return (
         <div className="w-full h-full px-10 py-8">
-            <div className="font-poppins text-2xl font-bold text-tertiary-600 tracking-wide">
-                relay.club
-            </div>
+            <Title />
             <form className="max-w-sm mx-auto h-full flex flex-col justify-center items-center space-y-6">
                 <div>
                     Someone invited you on <b>relay.club</b>. All you have to do is to accept the

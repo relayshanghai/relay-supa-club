@@ -1,8 +1,8 @@
 import { Button } from 'src/components/button';
 import { Input } from 'src/components/input';
+import { Title } from 'src/components/title';
 import { useFields } from 'src/hooks/use-fields';
 import { useUser } from 'src/hooks/use-user';
-import { supabase } from 'src/utils/supabase-client';
 
 export default function Register() {
     const {
@@ -19,9 +19,7 @@ export default function Register() {
 
     return (
         <div className="w-full h-full px-10 py-8">
-            <div className="font-poppins text-2xl font-bold text-tertiary-600 tracking-wide">
-                relay.club
-            </div>
+            <Title />
             <form className="max-w-sm mx-auto h-full flex flex-col justify-center items-center space-y-6">
                 <Input
                     label={'First Name'}

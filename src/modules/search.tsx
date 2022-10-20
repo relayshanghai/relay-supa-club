@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Input } from 'src/components/input';
+import { Spinner } from 'src/components/spinner';
 
 export const Search = () => {
     const [search, setSearch] = useState('');
@@ -9,11 +10,13 @@ export const Search = () => {
         { icon: '/assets/svg/instagram.svg', label: 'Instagram', id: 'instagram' },
         { icon: '/assets/svg/tiktok.svg', label: 'TikTok', id: 'tiktok' }
     ];
+    const [loading, setLoading] = useState(false);
     const [results, setResults] = useState<any>();
 
     useEffect(() => {
         console.log('search');
         if (search && search.length > 2) {
+            setLoading(true);
             fetch('/api/kol', {
                 method: 'post',
                 body: JSON.stringify({
@@ -25,7 +28,12 @@ export const Search = () => {
                     return res.json();
                 })
                 .then((res) => {
+                    setLoading(false);
                     setResults(res);
+                })
+                .catch((e) => {
+                    setLoading(false);
+                    console.log(e);
                 });
         } else {
             setResults(undefined);
@@ -63,34 +71,36 @@ export const Search = () => {
                 ) : null}
             </div>
             <div className="gap-2 grid grid-cols-3">
-                {Array.isArray(results?.accounts)
-                    ? results.accounts.map((item: any, i: any) => {
-                          return (
-                              <div
-                                  key={item.account?.user_profile?.user_id ?? i}
-                                  className="flex flex-row items-center space-x-2 shadow-xl rounded-xl p-2 bg-white"
-                              >
-                                  <div className="rounded-full overflow-hidden shadow-lg">
-                                      <img
-                                          src={item.account.user_profile.picture}
-                                          className="w-12 h-12"
-                                      />
-                                  </div>
-                                  <div className="flex flex-col">
-                                      <div className="font-bold">
-                                          {item.account.user_profile.custom_name}
-                                      </div>
-                                      <div className="text-sm">
-                                          {item.account.user_profile.fullname}
-                                      </div>
-                                      <div className="font-bold text-sm">
-                                          Avg. views: {item.account.user_profile.avg_views}
-                                      </div>
-                                  </div>
-                              </div>
-                          );
-                      })
-                    : null}
+                {Array.isArray(results?.accounts) ? (
+                    results.accounts.map((item: any, i: any) => {
+                        return (
+                            <div
+                                key={item.account?.user_profile?.user_id ?? i}
+                                className="flex flex-row items-center space-x-2 shadow-xl rounded-xl p-2 bg-white transition"
+                            >
+                                <div className="rounded-full overflow-hidden shadow-lg">
+                                    <img
+                                        src={item.account.user_profile.picture}
+                                        className="w-12 h-12"
+                                    />
+                                </div>
+                                <div className="flex flex-col">
+                                    <div className="font-bold">
+                                        {item.account.user_profile.custom_name}
+                                    </div>
+                                    <div className="text-sm">
+                                        {item.account.user_profile.fullname}
+                                    </div>
+                                    <div className="font-bold text-sm">
+                                        Avg. views: {item.account.user_profile.avg_views}
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                    })
+                ) : loading ? (
+                    <Spinner />
+                ) : null}
             </div>
         </div>
     );
