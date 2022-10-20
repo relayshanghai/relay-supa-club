@@ -1,4 +1,5 @@
 import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { Button } from 'src/components/button';
 import { Input } from 'src/components/input';
@@ -8,7 +9,7 @@ import { useUser } from 'src/hooks/use-user';
 
 export default function Login() {
     const router = useRouter();
-    const { login, loading } = useUser();
+    const { login, loading, profile, session } = useUser();
     const {
         values: { email, password },
         setFieldValue
@@ -16,6 +17,16 @@ export default function Login() {
         email: '',
         password: ''
     });
+
+    useEffect(() => {
+        if (!loading && session && profile) {
+            if (!profile.onboarding) {
+                router.push('/signup/onboarding');
+            } else {
+                router.push('/dashboard');
+            }
+        }
+    }, [session, loading, profile, router]);
 
     return (
         <div className="w-full h-full px-10 py-8">
@@ -46,10 +57,9 @@ export default function Login() {
 
                         try {
                             await login(email, password);
-                            router.push('/dashboard');
-                            toast.success('Succesfully logged in');
+                            toast.success('Successfully logged in');
                         } catch (e: any) {
-                            toast.error(e.message || 'Ooops! Something went wrong.');
+                            toast.error(e.message || 'Ops, something went wrong.');
                         }
                     }}
                 >

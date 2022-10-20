@@ -3,7 +3,7 @@ import { fetcher } from 'src/utils/fetcher';
 import useSWR from 'swr';
 import { useUser } from './use-user';
 
-export const useCompany = () => {
+export const usePlans = () => {
     const { profile, user } = useUser();
     const { data } = useSWR(
         profile?.company_id ? `/api/company?id=${profile.company_id}` : null,

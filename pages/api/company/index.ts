@@ -6,7 +6,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const companyId = req.query.id;
         const { data, error } = await supabase
             .from('companies')
-            .select('*')
+            .select('*, profiles(id, first_name, last_name, admin)')
             .eq('id', companyId)
             .single();
 

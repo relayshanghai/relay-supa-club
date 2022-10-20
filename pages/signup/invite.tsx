@@ -11,8 +11,8 @@ export default function Register() {
         values: { password, confirmPassword },
         setFieldValue
     } = useFields({
-        password: undefined,
-        confirmPassword: undefined
+        password: '',
+        confirmPassword: ''
     });
 
     return (

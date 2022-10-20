@@ -15,17 +15,17 @@ const Page = () => {
         setFieldValue,
         reset
     } = useFields({
-        firstName: undefined,
-        lastName: undefined,
-        email: undefined
+        firstName: '',
+        lastName: '',
+        email: ''
     });
     const {
         values: companyValues,
         setFieldValue: setCompanyFieldValue,
         reset: resetCompanyValues
     } = useFields({
-        name: undefined,
-        website: undefined
+        name: '',
+        website: ''
     });
     const { company, updateCompany } = useCompany();
 
@@ -49,9 +49,9 @@ const Page = () => {
         <Layout>
             <div className="flex flex-col p-6 space-y-6">
                 <div className="text-lg font-bold">Account</div>
-                <div className="flex flex-col items-start space-y-4 p-4 bg-white rounded-lg">
+                <div className="flex flex-col items-start space-y-4 p-4 bg-white rounded-lg max-w-lg">
                     <div className="">Here you can change your personal account details.</div>
-                    <div className={`w-1/3 ${loading ? 'opacity-50' : ''}`}>
+                    <div className={`w-full ${loading ? 'opacity-50' : ''}`}>
                         <Input
                             label={'First Name'}
                             type="first_name"
@@ -83,26 +83,28 @@ const Page = () => {
                             }}
                         />
                     </div>
-                    <Button
-                        disabled={loading}
-                        onClick={async () => {
-                            try {
-                                await updateProfile({
-                                    first_name: firstName,
-                                    last_name: lastName,
-                                    email: email
-                                });
-                                toast.success('Profile updated');
-                            } catch (e) {
-                                toast.error('Ops, something went wrong.');
-                            }
-                        }}
-                    >
-                        Update
-                    </Button>
+                    <div className="flex flex-row justify-end w-full">
+                        <Button
+                            disabled={loading}
+                            onClick={async () => {
+                                try {
+                                    await updateProfile({
+                                        first_name: firstName,
+                                        last_name: lastName,
+                                        email: email
+                                    });
+                                    toast.success('Profile updated');
+                                } catch (e) {
+                                    toast.error('Ops, something went wrong.');
+                                }
+                            }}
+                        >
+                            Update
+                        </Button>
+                    </div>
                 </div>
                 {profile?.admin ? (
-                    <div className="flex flex-col items-start space-y-4 p-4 bg-white rounded-lg">
+                    <div className="flex flex-col items-start space-y-4 p-4 bg-white rounded-lg max-w-lg">
                         <div className="">Here you can change your Company account details.</div>
                         <div className={`flex flex-row space-x-4 ${loading ? 'opacity-50' : ''}`}>
                             <Input
@@ -125,19 +127,51 @@ const Page = () => {
                                 }}
                             />
                         </div>
-                        <Button
-                            disabled={loading}
-                            onClick={async () => {
-                                try {
-                                    await updateCompany(companyValues);
-                                    toast.success('Company profile updated');
-                                } catch (e) {
-                                    toast.error('Ops, something went wrong.');
-                                }
-                            }}
-                        >
-                            Update
-                        </Button>
+                        <div className="w-full">
+                            <div className="pb-4">Members</div>
+                            {Array.isArray(company.profiles)
+                                ? company.profiles.map((item: any) => {
+                                      return (
+                                          <div
+                                              key={item.id}
+                                              className="flex flex-row space-x-8 items-center border-t border-b border-grey-200 w-full py-2"
+                                          >
+                                              <div className="">
+                                                  <div className="text-xs text-gray-500">
+                                                      Full name
+                                                  </div>
+                                                  {item.first_name}
+                                                  {` `}
+                                                  {item.last_name}
+                                              </div>
+                                              <div className="text-sm font-bold">
+                                                  <div className="text-xs font-normal text-gray-500">
+                                                      Role
+                                                  </div>
+                                                  {item.admin ? 'Admin' : 'Member'}
+                                              </div>
+                                          </div>
+                                      );
+                                  })
+                                : null}
+                        </div>
+                        <div className="flex flex-row justify-end w-full">
+                            <Button
+                                onClick={async () => {
+                                    try {
+                                        await updateCompany({
+                                            name: companyValues.name,
+                                            website: companyValues.website
+                                        });
+                                        toast.success('Company profile updated');
+                                    } catch (e) {
+                                        toast.error('Ops, something went wrong.');
+                                    }
+                                }}
+                            >
+                                Update Company
+                            </Button>
+                        </div>
                     </div>
                 ) : null}
             </div>
