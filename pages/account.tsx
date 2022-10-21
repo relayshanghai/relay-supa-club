@@ -13,7 +13,7 @@ import { Modal } from 'src/components/modal';
 const Page = () => {
     const { profile, user, loading, updateProfile } = useUser();
     const [confirmModal, setShowConfirmModal] = useState<any>();
-    const [inviteEmail, setInviteEmail] = useState<any>();
+    const [inviteEmail, setInviteEmail] = useState<any>('');
     const [showAddMoreMembers, setShowAddMoreMembers] = useState<any>(false);
     const {
         values: { firstName, lastName, email },
