@@ -47,7 +47,7 @@ export const Layout = ({ children }: any) => {
                         <ActiveLink href="/campaigns">Campaigns</ActiveLink>
                     </div>
                 </div>
-                <div className="flex flex-col w-full">
+                <div className="flex flex-col w-full overflow-hidden">
                     <div className="flex flex-row justify-between bg-white border-b border-gray-100">
                         <div></div>
                         <div className="px-8 py-4">
@@ -90,7 +90,7 @@ export const Layout = ({ children }: any) => {
                             ) : null}
                         </div>
                     </div>
-                    <div className="overflow-hidden">{children}</div>
+                    <div className="overflow-auto h-full">{children}</div>
                 </div>
             </div>
         </div>

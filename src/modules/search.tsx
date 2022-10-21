@@ -50,8 +50,6 @@ export const Search = () => {
     const feed =
         accounts.length < 10 ? [...accounts, ...Array.from(Array(10 - accounts.length))] : accounts;
 
-    console.log(Array(Math.ceil(subscription.plans.amount / 10)));
-
     return (
         <div className="space-y-4">
             <div className="flex flex-row space-x-2">
@@ -187,7 +185,7 @@ export const Search = () => {
                 </tbody>
             </table>
             <div className="space-x-2">
-                {subscription.plans.amount > 10
+                {subscription?.plans.amount > 10
                     ? Array.from(Array(Math.ceil(subscription.plans.amount / 10))).map(
                           (_, i: any) => {
                               return (

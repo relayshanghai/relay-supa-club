@@ -14,7 +14,7 @@ const Page = () => {
     const { profile, user, loading, updateProfile } = useUser();
     const [confirmModal, setShowConfirmModal] = useState<any>();
     const [inviteEmail, setInviteEmail] = useState<any>();
-    const [showAddMoreMembers, setShowAddMoreMembers] = useState<any>(true);
+    const [showAddMoreMembers, setShowAddMoreMembers] = useState<any>(false);
     const {
         values: { firstName, lastName, email },
         setFieldValue,
@@ -109,40 +109,40 @@ const Page = () => {
                         </Button>
                     </div>
                 </div>
-                <>
-                    <div className="flex flex-col items-start space-y-4 p-4 bg-white rounded-lg max-w-lg">
-                        <div className="">Here you can change your Company account details.</div>
-                        <div className={`flex flex-row space-x-4 ${loading ? 'opacity-50' : ''}`}>
-                            <Input
-                                label={'Company name'}
-                                type="text"
-                                value={companyValues.name}
-                                required
-                                onChange={(e: any) => {
-                                    setCompanyFieldValue('name', e.target.value);
-                                }}
-                            />
-                            <Input
-                                label={'Website'}
-                                type="text"
-                                value={companyValues.website}
-                                placeholder="website address"
-                                required
-                                onChange={(e: any) => {
-                                    setCompanyFieldValue('website', e.target.value);
-                                }}
-                            />
-                        </div>
-                        <div className="w-full">
-                            <div className="pb-4">Members</div>
+                <div className="flex flex-col items-start space-y-4 p-4 bg-white rounded-lg max-w-lg">
+                    <div className="">Here you can change your Company account details.</div>
+                    <div className={`flex flex-row space-x-4 ${loading ? 'opacity-50' : ''}`}>
+                        <Input
+                            label={'Company name'}
+                            type="text"
+                            value={companyValues.name}
+                            required
+                            onChange={(e: any) => {
+                                setCompanyFieldValue('name', e.target.value);
+                            }}
+                        />
+                        <Input
+                            label={'Website'}
+                            type="text"
+                            value={companyValues.website}
+                            placeholder="website address"
+                            required
+                            onChange={(e: any) => {
+                                setCompanyFieldValue('website', e.target.value);
+                            }}
+                        />
+                    </div>
+                    <div className="w-full">
+                        <div className="pb-4">Members</div>
+                        <div className="divide-y divide-grey-200">
                             {Array.isArray(company?.profiles)
                                 ? company.profiles.map((item: any) => {
                                       return (
                                           <div
                                               key={item.id}
-                                              className="flex flex-row space-x-8 items-center border-t border-b border-grey-200 w-full py-2"
+                                              className="flex flex-row space-x-8 items-center w-full py-2"
                                           >
-                                              <div className="">
+                                              <div className="w-1/3">
                                                   <div className="text-xs text-gray-500">
                                                       Full name
                                                   </div>
@@ -160,131 +160,147 @@ const Page = () => {
                                       );
                                   })
                                 : null}
-                            <div className="pt-4">
-                                {profile?.admin ? (
-                                    <Button
-                                        type="secondary"
-                                        onClick={() => {
-                                            setShowAddMoreMembers(true);
-                                        }}
-                                    >
-                                        Add more members
-                                    </Button>
-                                ) : null}
-                            </div>
                         </div>
-                        {profile?.admin ? (
-                            <div className="flex flex-row justify-end w-full">
+                        {Array.isArray(company?.invites) && company.invites.length ? (
+                            <>
+                                <div className="text-sm pt-8 pb-2">Pending invitations</div>
+                                {company?.invites.map((item: any) => {
+                                    return (
+                                        <div
+                                            key={item.id}
+                                            className="flex flex-row space-x-8 items-center border-t border-b border-grey-200 w-full py-2"
+                                        >
+                                            <div className="">
+                                                <div className="text-xs text-gray-500">Email</div>
+                                                {item.email}
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </>
+                        ) : null}
+                        <div className="pt-4">
+                            {profile?.admin ? (
                                 <Button
-                                    onClick={async () => {
-                                        try {
-                                            await updateCompany({
-                                                name: companyValues.name,
-                                                website: companyValues.website
-                                            });
-                                            toast.success('Company profile updated');
-                                        } catch (e) {
-                                            toast.error('Ops, something went wrong.');
-                                        }
+                                    type="secondary"
+                                    onClick={() => {
+                                        setShowAddMoreMembers(true);
                                     }}
                                 >
-                                    Update Company
+                                    Add more members
                                 </Button>
-                            </div>
-                        ) : null}
+                            ) : null}
+                        </div>
                     </div>
-                    <div className="flex flex-col items-start space-y-4 p-4 bg-white rounded-lg max-w-lg">
-                        <div className="">Subscription</div>
-                        <div className={`flex flex-row space-x-4 ${loading ? 'opacity-50' : ''}`}>
-                            {subscription ? (
-                                <div className="flex flex-col space-y-2">
-                                    <div className="flex flex-row space-x-8">
-                                        <div className="text-sm font-bold">
-                                            <div className="text-xs text-gray-500 font-normal">
-                                                Name
-                                            </div>
-                                            {subscription.plans.name}
+                    {profile?.admin ? (
+                        <div className="flex flex-row justify-end w-full">
+                            <Button
+                                onClick={async () => {
+                                    try {
+                                        await updateCompany({
+                                            name: companyValues.name,
+                                            website: companyValues.website
+                                        });
+                                        toast.success('Company profile updated');
+                                    } catch (e) {
+                                        toast.error('Ops, something went wrong.');
+                                    }
+                                }}
+                            >
+                                Update Company
+                            </Button>
+                        </div>
+                    ) : null}
+                </div>
+                <div className="flex flex-col items-start space-y-4 p-4 bg-white rounded-lg max-w-lg">
+                    <div className="">Subscription</div>
+                    <div className={`flex flex-row space-x-4 ${loading ? 'opacity-50' : ''}`}>
+                        {subscription ? (
+                            <div className="flex flex-col space-y-2">
+                                <div className="flex flex-row space-x-8">
+                                    <div className="text-sm font-bold">
+                                        <div className="text-xs text-gray-500 font-normal">
+                                            Name
                                         </div>
-                                        <div className="text-sm font-bold">
-                                            <div className="text-xs text-gray-500 font-normal">
-                                                Price
-                                            </div>
-                                            ${subscription.plans.value} monthly
+                                        {subscription.plans.name}
+                                    </div>
+                                    <div className="text-sm font-bold">
+                                        <div className="text-xs text-gray-500 font-normal">
+                                            Price
                                         </div>
-                                        <div className="text-sm font-bold">
-                                            <div className="text-xs text-gray-500 font-normal">
-                                                Amount
-                                            </div>
-                                            {subscription.plans.amount} KOLs / search
+                                        ${subscription.plans.value} monthly
+                                    </div>
+                                    <div className="text-sm font-bold">
+                                        <div className="text-xs text-gray-500 font-normal">
+                                            Amount
                                         </div>
-                                        <div className="text-sm font-bold">
-                                            <div className="text-xs text-gray-500 font-normal">
-                                                Until
-                                            </div>
-                                            {format(new Date(subscription.expire_at), 'MMMM e, Y')}
+                                        {subscription.plans.amount} KOLs / search
+                                    </div>
+                                    <div className="text-sm font-bold">
+                                        <div className="text-xs text-gray-500 font-normal">
+                                            Until
                                         </div>
+                                        {format(new Date(subscription.expire_at), 'MMMM e, Y')}
                                     </div>
                                 </div>
-                            ) : (
-                                <div className="text-sm py-2 text-gray-500">
-                                    You have no active subscription. Please purchase one below.
-                                </div>
-                            )}
-                        </div>
-                        <div className="w-full pt-8">
-                            <div className="pb-4">Available plans</div>
-                            {Array.isArray(plans)
-                                ? plans.map((item: any, i: any) => {
-                                      return (
-                                          <div
-                                              key={item.id}
-                                              className="flex flex-row space-x-2 items-center justify-between border-t border-grey-200 w-full py-2"
-                                          >
-                                              <div className="text-sm font-bold w-1/6">
-                                                  {i === 0 ? (
-                                                      <div className="text-xs text-gray-500 font-normal">
-                                                          Name
-                                                      </div>
-                                                  ) : null}
-                                                  {item.name}
-                                              </div>
-                                              <div className="text-sm font-bold w-1/6">
-                                                  {i === 0 ? (
-                                                      <div className="text-xs text-gray-500 font-normal">
-                                                          Price
-                                                      </div>
-                                                  ) : null}
-                                                  ${item.value}
-                                              </div>
-                                              <div className="text-sm font-bold w-1/4">
-                                                  {i === 0 ? (
-                                                      <div className="text-xs text-gray-500 font-normal">
-                                                          KOLs / search
-                                                      </div>
-                                                  ) : null}
-                                                  {item.amount}
-                                              </div>
-                                              {profile?.admin ? (
-                                                  <div className="text-sm font-bold w-2/6 flex flex-row justify-end">
-                                                      <Button
-                                                          disabled={
-                                                              item.id === subscription?.plan_id
-                                                          }
-                                                          onClick={async () => {
-                                                              setShowConfirmModal(item);
-                                                          }}
-                                                      >
-                                                          Purchase for ${item.value}
-                                                      </Button>
+                            </div>
+                        ) : (
+                            <div className="text-sm py-2 text-gray-500">
+                                You have no active subscription. Please purchase one below.
+                            </div>
+                        )}
+                    </div>
+                    <div className="w-full pt-8 divide-y divide-gray-200">
+                        <div className="pb-4">Available plans</div>
+                        {Array.isArray(plans)
+                            ? plans.map((item: any, i: any) => {
+                                  return (
+                                      <div
+                                          key={item.id}
+                                          className="flex flex-row space-x-2 items-center justify-between w-full py-2"
+                                      >
+                                          <div className="text-sm font-bold w-1/6">
+                                              {i === 0 ? (
+                                                  <div className="text-xs text-gray-500 font-normal">
+                                                      Name
                                                   </div>
                                               ) : null}
+                                              {item.name}
                                           </div>
-                                      );
-                                  })
-                                : null}
-                        </div>
+                                          <div className="text-sm font-bold w-1/6">
+                                              {i === 0 ? (
+                                                  <div className="text-xs text-gray-500 font-normal">
+                                                      Price
+                                                  </div>
+                                              ) : null}
+                                              ${item.value}
+                                          </div>
+                                          <div className="text-sm font-bold w-1/4">
+                                              {i === 0 ? (
+                                                  <div className="text-xs text-gray-500 font-normal">
+                                                      KOLs / search
+                                                  </div>
+                                              ) : null}
+                                              {item.amount}
+                                          </div>
+                                          {profile?.admin ? (
+                                              <div className="text-sm font-bold w-2/6 flex flex-row justify-end">
+                                                  <Button
+                                                      disabled={item.id === subscription?.plan_id}
+                                                      onClick={async () => {
+                                                          setShowConfirmModal(item);
+                                                      }}
+                                                  >
+                                                      Purchase for ${item.value}
+                                                  </Button>
+                                              </div>
+                                          ) : null}
+                                      </div>
+                                  );
+                              })
+                            : null}
                     </div>
-                </>
+                </div>
             </div>
             <Modal
                 title={'Confirm purchase'}
