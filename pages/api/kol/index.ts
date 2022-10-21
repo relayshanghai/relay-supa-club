@@ -16,19 +16,25 @@ const search = {
             })
         ).json();
     },
-    term: async (platform: string = 'youtube', term: string, limit = 10) => {
-        console.log(headers);
+    term: async (platform: string = 'youtube', term: string, limit = 10, page = 0) => {
+        console.log(headers, Math.min(limit, 10));
 
         return await (
             await fetch(`https://socapi.icu/v2.0/api/search/newv1?platform=${platform}`, {
                 method: 'post',
                 headers,
                 body: JSON.stringify({
-                    paging: { limit: Math.min(limit, 10), skip: null },
+                    paging: {
+                        limit:
+                            page === 0
+                                ? Math.min(limit, 10)
+                                : Math.min(Math.max(limit - page * 10, 0), 10),
+                        skip: page ? page * 10 : null
+                    },
                     filter: {
                         audience_geo: [],
                         geo: [],
-                        relevance: { value: term, weight: 0.5 },
+                        relevance: { value: term.replace(/\s+/g, '_'), weight: 0.5 },
                         gender: '',
                         lang: '',
                         last_posted: '',
@@ -45,12 +51,13 @@ const search = {
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
-        const { term, platform, subscription } = JSON.parse(req.body);
+        const { term, platform, subscription, page } = JSON.parse(req.body);
 
         const results = await search.term(
             platform,
             term.length > 2 ? term : '',
-            subscription.plans.amount
+            subscription.plans.amount,
+            page
         );
 
         return res.status(200).json(results);

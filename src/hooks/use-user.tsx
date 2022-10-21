@@ -10,6 +10,7 @@ const ctx = createContext<{
     signup: (options: any) => void;
     logout: () => void;
     updateProfile: (updates: any) => void;
+    refreshProfile: () => void;
 }>({
     user: undefined,
     session: undefined,
@@ -18,7 +19,8 @@ const ctx = createContext<{
     login: () => null,
     logout: () => null,
     signup: () => null,
-    updateProfile: () => null
+    updateProfile: () => null,
+    refreshProfile: () => null
 });
 
 export const useUser = () => useContext(ctx);
@@ -154,9 +156,10 @@ export const UserProvider: React.FC<{ children: any }> = ({ children }) => {
             signup,
             loading,
             profile,
-            updateProfile
+            updateProfile,
+            refreshProfile: getProfile
         }),
-        [user, session, loading, profile, login, signup, logout, updateProfile]
+        [user, session, loading, profile, login, signup, logout, updateProfile, getProfile]
     );
 
     return <ctx.Provider value={value}>{children}</ctx.Provider>;

@@ -1,4 +1,7 @@
+/* eslint-disable @next/next/no-img-element */
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { Button } from 'src/components/button';
 import { Input } from 'src/components/input';
 import { Spinner } from 'src/components/spinner';
 import { useSubscription } from 'src/hooks/use-subscription';
@@ -13,6 +16,7 @@ export const Search = () => {
         { icon: '/assets/svg/tiktok.svg', label: 'TikTok', id: 'tiktok' }
     ];
     const [loading, setLoading] = useState(false);
+    const [page, setPage] = useState<any>(0);
     const [results, setResults] = useState<any>();
     const { subscription } = useSubscription();
 
@@ -24,6 +28,7 @@ export const Search = () => {
                 body: JSON.stringify({
                     platform: channel,
                     term: search,
+                    page: page,
                     subscription
                 })
             })
@@ -39,7 +44,13 @@ export const Search = () => {
                     console.log(e);
                 });
         }
-    }, [search, channel, subscription]);
+    }, [search, channel, subscription, page]);
+
+    const accounts = results?.accounts ?? [];
+    const feed =
+        accounts.length < 10 ? [...accounts, ...Array.from(Array(10 - accounts.length))] : accounts;
+
+    console.log(Array(Math.ceil(subscription.plans.amount / 10)));
 
     return (
         <div className="space-y-4">
@@ -76,7 +87,7 @@ export const Search = () => {
             <table className="min-w-full divide-y divide-gray-200 rounded-lg overflow-hidden shadow">
                 <thead className="bg-white sticky top-0">
                     <tr>
-                        <th className="px-4 py-4 text-xs text-gray-500 font-normal text-left">
+                        <th className="w-2/4 px-4 py-4 text-xs text-gray-500 font-normal text-left">
                             Account
                         </th>
                         <th className="text-xs text-gray-500 font-normal text-left">Followers</th>
@@ -88,45 +99,112 @@ export const Search = () => {
                     </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                    {Array.isArray(results?.accounts)
-                        ? results.accounts.map((item: any, i: any) => {
-                              const handle =
-                                  item.account.user_profile.username ||
-                                  item.account.user_profile.custom_name;
-                              return (
-                                  <tr key={i}>
-                                      <td className="py-2 px-4 flex flex-row items-center space-x-2">
-                                          <img
-                                              src={`https://image-cache.brainchild-tech.cn/?link=${item.account.user_profile.picture}`}
-                                              className="w-12 h-12"
-                                          />
-                                          <div>
-                                              <div className="font-bold">
-                                                  {item.account.user_profile.fullname}
-                                              </div>
-                                              <div className="text-primary-500 text-sm">
-                                                  {handle ? `@${handle}` : null}
-                                              </div>
-                                          </div>
-                                      </td>
-                                      <td className="text-sm">
-                                          {formatter(item.account.user_profile.followers)}
-                                      </td>
-                                      <td className="text-sm">
-                                          {formatter(item.account.user_profile.engagements)}
-                                      </td>
-                                      <td className="text-sm">
-                                          {formatter(item.account.user_profile.engagement_rate)}
-                                      </td>
-                                      <td className="text-sm">
-                                          {formatter(item.account.user_profile.avg_views)}
-                                      </td>
-                                  </tr>
-                              );
-                          })
-                        : null}
+                    {loading ? (
+                        <tr>
+                            <td colSpan={5} className="p-4 text-center">
+                                <Spinner />
+                            </td>
+                        </tr>
+                    ) : Array.isArray(feed) ? (
+                        feed.map((item: any, i: any) => {
+                            const placeholder = !item;
+                            const handle = !placeholder
+                                ? item.account.user_profile.username ||
+                                  item.account.user_profile.custom_name ||
+                                  item.account.user_profile.fullname
+                                : null;
+                            return (
+                                <tr
+                                    key={i}
+                                    className={`${placeholder ? 'bg-gray-100' : ''} relative`}
+                                >
+                                    <td className="py-2 px-4 flex flex-row items-center space-x-2">
+                                        {!placeholder ? (
+                                            <>
+                                                <img
+                                                    src={`https://image-cache.brainchild-tech.cn/?link=${item.account.user_profile.picture}`}
+                                                    className="w-12 h-12"
+                                                />
+                                                <div>
+                                                    <div className="font-bold whhitespace-nowrap">
+                                                        {item.account.user_profile.fullname}
+                                                    </div>
+                                                    <div className="text-primary-500 text-sm">
+                                                        {handle ? `@${handle}` : null}
+                                                    </div>
+                                                </div>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <div className="w-12 h-12 rounded-full bg-gray-200" />
+                                                <div className="space-y-2">
+                                                    <div className="font-bold text-gray-200 bg-gray-200 w-40 h-4" />
+                                                    <div className="text-primary-500 text-sm text-gray-200 bg-gray-200 w-20 h-4" />
+                                                </div>
+                                                <div className="absolute top-0 left-0 translate-x-1/2 translate-y-1/2 p-2 text-sm">
+                                                    <Link href="/account" passHref>
+                                                        <a className="text-primary-500">
+                                                            Upgrade your subscription plan, to view
+                                                            more results.
+                                                        </a>
+                                                    </Link>
+                                                </div>
+                                            </>
+                                        )}
+                                    </td>
+                                    <td className="text-sm">
+                                        {!placeholder ? (
+                                            formatter(item.account.user_profile.followers)
+                                        ) : (
+                                            <div className="text-primary-500 text-sm text-gray-200 bg-gray-200 w-10 h-4" />
+                                        )}
+                                    </td>
+                                    <td className="text-sm">
+                                        {!placeholder ? (
+                                            formatter(item.account.user_profile.engagements)
+                                        ) : (
+                                            <div className="text-primary-500 text-sm text-gray-200 bg-gray-200 w-10 h-4" />
+                                        )}
+                                    </td>
+                                    <td className="text-sm">
+                                        {!placeholder ? (
+                                            formatter(item.account.user_profile.engagement_rate)
+                                        ) : (
+                                            <div className="text-primary-500 text-sm text-gray-200 bg-gray-200 w-10 h-4" />
+                                        )}
+                                    </td>
+                                    <td className="text-sm">
+                                        {!placeholder ? (
+                                            formatter(item.account.user_profile.avg_views)
+                                        ) : (
+                                            <div className="text-primary-500 text-sm text-gray-200 bg-gray-200 w-10 h-4" />
+                                        )}
+                                    </td>
+                                </tr>
+                            );
+                        })
+                    ) : null}
                 </tbody>
             </table>
+            <div className="space-x-2">
+                {subscription.plans.amount > 10
+                    ? Array.from(Array(Math.ceil(subscription.plans.amount / 10))).map(
+                          (_, i: any) => {
+                              return (
+                                  <Button
+                                      type={page === i ? '' : 'secondary'}
+                                      key={i}
+                                      onClick={() => {
+                                          setPage(i);
+                                      }}
+                                  >
+                                      {i + 1}
+                                  </Button>
+                              );
+                          }
+                      )
+                    : null}
+            </div>
         </div>
     );
 };

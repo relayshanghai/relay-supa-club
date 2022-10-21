@@ -6,11 +6,12 @@ export const createSubscription = async ({ company_id, plan_id }: any) => {
         .update({
             active: false
         })
-        .eq('company_id', company_id)
-        .maybeSingle();
+        .eq('company_id', company_id);
+
+    console.log({ errorExisting });
 
     if (errorExisting) {
-        throw errorExisting;
+        // throw errorExisting;
     }
 
     const { data, error } = await supabase
@@ -21,8 +22,10 @@ export const createSubscription = async ({ company_id, plan_id }: any) => {
         })
         .single();
 
+    console.log({ error });
+
     if (error) {
-        throw error;
+        // throw error;
     }
 
     return data;

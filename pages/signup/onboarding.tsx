@@ -11,7 +11,7 @@ import { useUser } from 'src/hooks/use-user';
 
 export default function Register() {
     const router = useRouter();
-    const { user, loading, profile, session } = useUser();
+    const { loading, profile, refreshProfile } = useUser();
     const { createCompany } = useCompany();
     const { values, setFieldValue } = useFields({
         name: '',
@@ -19,7 +19,7 @@ export default function Register() {
     });
 
     useEffect(() => {
-        if (!loading && profile.onboarding) {
+        if (!loading && profile.company_id) {
             router.push('/dashboard');
         }
     }, [loading, profile, router]);
@@ -34,7 +34,7 @@ export default function Register() {
                     <>
                         <div className="py-8">
                             <div className="font-bold">
-                                Then, let&rsquo;s create your company profile
+                                Now, let&rsquo;s create your company profile
                             </div>
                         </div>
                         <Input
@@ -52,7 +52,6 @@ export default function Register() {
                             type="company_website"
                             placeholder="Enter your website url"
                             value={values.website}
-                            required
                             onChange={(e: any) => {
                                 setFieldValue('website', e.target.value);
                             }}
@@ -69,7 +68,7 @@ export default function Register() {
                                 try {
                                     await createCompany(values);
                                     toast.success('Company created');
-                                    router.push('/dashboard');
+                                    await refreshProfile();
                                 } catch (e) {
                                     console.log(e);
                                     toast.error('Ops, something went wrong');

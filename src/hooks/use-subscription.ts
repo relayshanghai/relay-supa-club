@@ -4,15 +4,12 @@ import useSWR from 'swr';
 import { useUser } from './use-user';
 
 export const useSubscription = () => {
-    const { profile, user } = useUser();
+    const { profile } = useUser();
     const { data, mutate } = useSWR(
-        profile?.company_id ? `/api/subscriptions?id=${profile.company_id}` : null,
+        profile?.company ? `/api/subscriptions?id=${profile?.company.id}` : null,
         fetcher
     );
-    const { data: plans } = useSWR(
-        profile?.company_id ? `/api/subscriptions/plans` : null,
-        fetcher
-    );
+    const { data: plans } = useSWR(`/api/subscriptions/plans`, fetcher);
 
     const updateCompany = useCallback(
         async (input: any) => {
