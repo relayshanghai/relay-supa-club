@@ -3,7 +3,7 @@ import { supabase } from 'src/utils/supabase-client';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
-        const { token, password } = JSON.parse(req.body);
+        const { token, password, firstName, lastName } = JSON.parse(req.body);
         const { data, error } = await supabase
             .from('invites')
             .select('*')
@@ -30,8 +30,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             },
             {
                 data: {
-                    first_name: data.first_name,
-                    last_name: data.last_name,
+                    first_name: firstName,
+                    last_name: lastName,
                     company_id: data.company_id
                 }
             }

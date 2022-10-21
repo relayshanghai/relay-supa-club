@@ -13,6 +13,8 @@ import { Modal } from 'src/components/modal';
 const Page = () => {
     const { profile, user, loading, updateProfile } = useUser();
     const [confirmModal, setShowConfirmModal] = useState<any>();
+    const [inviteEmail, setInviteEmail] = useState<any>();
+    const [showAddMoreMembers, setShowAddMoreMembers] = useState<any>(true);
     const {
         values: { firstName, lastName, email },
         setFieldValue,
@@ -30,7 +32,7 @@ const Page = () => {
         name: '',
         website: ''
     });
-    const { company, updateCompany } = useCompany();
+    const { company, updateCompany, createInvite } = useCompany();
     const { subscription, plans, createSubscriptions } = useSubscription();
 
     useEffect(() => {
@@ -158,6 +160,18 @@ const Page = () => {
                                       );
                                   })
                                 : null}
+                            <div className="pt-4">
+                                {profile?.admin ? (
+                                    <Button
+                                        type="secondary"
+                                        onClick={() => {
+                                            setShowAddMoreMembers(true);
+                                        }}
+                                    >
+                                        Add more members
+                                    </Button>
+                                ) : null}
+                            </div>
                         </div>
                         {profile?.admin ? (
                             <div className="flex flex-row justify-end w-full">
@@ -312,6 +326,48 @@ const Page = () => {
                         type="secondary"
                         onClick={async () => {
                             setShowConfirmModal(undefined);
+                        }}
+                    >
+                        Cancel
+                    </Button>
+                </div>
+            </Modal>
+            <Modal
+                title={'Invite members'}
+                visible={!!showAddMoreMembers}
+                onClose={() => {
+                    setShowAddMoreMembers(false);
+                }}
+            >
+                <div className="py-4">Invite more members to your company</div>
+                <div>
+                    <Input
+                        type="email"
+                        placeholder="Type here the email address"
+                        label="Email address"
+                        value={inviteEmail}
+                        required
+                        onChange={(e: any) => {
+                            setInviteEmail(e.target.value);
+                        }}
+                    />
+                </div>
+                <div className="pt-8 space-x-16 justify-center flex flex-row w-full">
+                    <Button
+                        disabled={!inviteEmail}
+                        onClick={async () => {
+                            await createInvite(inviteEmail);
+                            setInviteEmail('');
+                            setShowAddMoreMembers(false);
+                            toast.success('Invite sent');
+                        }}
+                    >
+                        Send invitation
+                    </Button>
+                    <Button
+                        type="secondary"
+                        onClick={async () => {
+                            setShowAddMoreMembers(false);
                         }}
                     >
                         Cancel

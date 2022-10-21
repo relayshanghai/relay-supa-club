@@ -8,9 +8,11 @@ import { useFields } from 'src/hooks/use-fields';
 export default function Register() {
     const router = useRouter();
     const {
-        values: { password, confirmPassword },
+        values: { password, confirmPassword, firstName, lastName },
         setFieldValue
     } = useFields({
+        firstName: '',
+        lastName: '',
         password: '',
         confirmPassword: ''
     });
@@ -23,6 +25,26 @@ export default function Register() {
                     Someone invited you on <b>relay.club</b>. All you have to do is to accept the
                     invitation by setting an account password below.
                 </div>
+                <Input
+                    label={'First Name'}
+                    type="text"
+                    placeholder="Enter your first name"
+                    value={firstName}
+                    required
+                    onChange={(e: any) => {
+                        setFieldValue('firstName', e.target.value);
+                    }}
+                />
+                <Input
+                    label={'Last Name'}
+                    type="text"
+                    placeholder="Enter your last name"
+                    value={lastName}
+                    required
+                    onChange={(e: any) => {
+                        setFieldValue('lastName', e.target.value);
+                    }}
+                />
                 <Input
                     label={'Password'}
                     type="password"
@@ -43,6 +65,8 @@ export default function Register() {
                 />
                 <Button
                     disabled={
+                        !firstName ||
+                        !lastName ||
                         !password ||
                         !confirmPassword ||
                         password !== confirmPassword ||
@@ -57,7 +81,9 @@ export default function Register() {
                                 method: 'post',
                                 body: JSON.stringify({
                                     token: router.query.token,
-                                    password
+                                    password,
+                                    firstName,
+                                    lastName
                                 })
                             })
                         ).json();
