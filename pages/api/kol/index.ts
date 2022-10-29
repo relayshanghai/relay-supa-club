@@ -1,9 +1,11 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { supabase } from 'src/utils/supabase-client';
 
 const headers = {
-    'X-Api-Key': process.env.NEXT_PUBLIC_DATA_KEY!,
-    'Content-Type': 'application/json'
+    'X-Api-Key': process.env.DATA_KEY!,
+    'Content-Type': 'application/json',
+    Authorization: `Basic ${Buffer.from(
+        process.env.DATA_USER + ':' + process.env.DATA_PASS
+    ).toString('base64')}`
 };
 
 const search = {
@@ -17,8 +19,6 @@ const search = {
         ).json();
     },
     term: async (platform: string = 'youtube', term: string, limit = 10, page = 0) => {
-        console.log(headers, Math.min(limit, 10));
-
         return await (
             await fetch(`https://socapi.icu/v2.0/api/search/newv1?platform=${platform}`, {
                 method: 'post',
