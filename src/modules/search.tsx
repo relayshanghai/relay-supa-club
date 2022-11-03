@@ -2,49 +2,34 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { Button } from 'src/components/button';
-import { Input } from 'src/components/input';
+import { InputWithTags } from 'src/components/input-with-tags';
 import { Spinner } from 'src/components/spinner';
+import { useSearch } from 'src/hooks/use-search';
 import { useSubscription } from 'src/hooks/use-subscription';
 import { formatter } from 'src/utils/formatter';
 
 export const Search = () => {
-    const [search, setSearch] = useState('');
-    const [channel, setChannel] = useState<any>('youtube');
-    const channels = [
-        { icon: '/assets/svg/yt.svg', label: 'YouTube', id: 'youtube' },
-        { icon: '/assets/svg/instagram.svg', label: 'Instagram', id: 'instagram' },
-        { icon: '/assets/svg/tiktok.svg', label: 'TikTok', id: 'tiktok' }
-    ];
-    const [loading, setLoading] = useState(false);
-    const [page, setPage] = useState<any>(0);
-    const [results, setResults] = useState<any>();
+    const [tagInputValue, setTagInputValue] = useState('');
     const { subscription } = useSubscription();
+    const {
+        channels,
+        channel,
+        setChannel,
+        page,
+        setPage,
+        tags,
+        addTag,
+        removeTag,
+        suggestions,
+        setTopicSearch,
+        loading,
+        results,
+        search
+    } = useSearch();
 
     useEffect(() => {
-        setLoading(true);
-        if (subscription) {
-            fetch('/api/kol', {
-                method: 'post',
-                body: JSON.stringify({
-                    platform: channel,
-                    term: search,
-                    page: page,
-                    subscription
-                })
-            })
-                .then((res) => {
-                    return res.json();
-                })
-                .then((res) => {
-                    setLoading(false);
-                    setResults(res);
-                })
-                .catch((e) => {
-                    setLoading(false);
-                    console.log(e);
-                });
-        }
-    }, [search, channel, subscription, page]);
+        search();
+    }, [search]);
 
     const accounts = results?.accounts ?? [];
     const feed =
@@ -67,14 +52,46 @@ export const Search = () => {
                     </button>
                 ))}
             </div>
-            <Input
-                type="text"
-                placeholder="Search for KOLs"
-                value={search}
-                onChange={(e: any) => {
-                    setSearch(e.target.value);
-                }}
-            />
+            <div>
+                <InputWithTags
+                    tags={tags}
+                    onTagRemove={(item: any) => {
+                        removeTag(item);
+                    }}
+                    value={tagInputValue}
+                    type="text"
+                    placeholder="Search for topics"
+                    onChange={(e: any) => {
+                        setTagInputValue(e.target.value);
+                        setTopicSearch(e.target.value);
+                    }}
+                />
+                <div className="relative z-10">
+                    {suggestions.length ? (
+                        <div className="absolute top-1 ring-1 ring-gray-200 left-0 w-full shadow-lg bg-white rounded-lg overflow-hidden">
+                            {suggestions.map((item) => {
+                                return (
+                                    <div
+                                        className="p-2 hover:bg-gray-100"
+                                        key={item.value}
+                                        onClick={() => {
+                                            addTag(item);
+                                            setTagInputValue('');
+                                        }}
+                                    >
+                                        {item.value}
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    ) : null}
+                    {tags.length ? (
+                        <div className="text-xs text-gray-500 my-2">
+                            Tip: To remove a tag click on it
+                        </div>
+                    ) : null}
+                </div>
+            </div>
             <div>
                 {results ? (
                     <div className="font-bold text-sm">
@@ -97,91 +114,85 @@ export const Search = () => {
                     </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                    {loading ? (
-                        <tr>
-                            <td colSpan={5} className="p-4 text-center">
-                                <Spinner />
-                            </td>
-                        </tr>
-                    ) : Array.isArray(feed) ? (
-                        feed.map((item: any, i: any) => {
-                            const placeholder = !item;
-                            const handle = !placeholder
-                                ? item.account.user_profile.username ||
-                                  item.account.user_profile.custom_name ||
-                                  item.account.user_profile.fullname
-                                : null;
-                            return (
-                                <tr
-                                    key={i}
-                                    className={`${placeholder ? 'bg-gray-50' : ''} relative`}
-                                >
-                                    <td className="py-2 px-4 flex flex-row items-center space-x-2">
-                                        {!placeholder ? (
-                                            <>
-                                                <img
-                                                    src={`https://image-cache.brainchild-tech.cn/?link=${item.account.user_profile.picture}`}
-                                                    className="w-12 h-12"
-                                                />
-                                                <div>
-                                                    <div className="font-bold whhitespace-nowrap">
-                                                        {item.account.user_profile.fullname}
-                                                    </div>
-                                                    <div className="text-primary-500 text-sm">
-                                                        {handle ? `@${handle}` : null}
-                                                    </div>
-                                                </div>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <div className="w-12 h-12 rounded-full bg-gray-100" />
-                                                <div className="space-y-2">
-                                                    <div className="font-bold bg-gray-100 w-40 h-4" />
-                                                    <div className="text-primary-500 text-sm bg-gray-100 w-20 h-4" />
-                                                </div>
-                                                <div className="absolute top-0 left-0 translate-x-1/2 translate-y-1/2 p-2 text-sm">
-                                                    <Link href="/account" passHref>
-                                                        <a className="text-primary-500">
-                                                            Upgrade your subscription plan, to view
-                                                            more results.
-                                                        </a>
-                                                    </Link>
-                                                </div>
-                                            </>
-                                        )}
-                                    </td>
-                                    <td className="text-sm">
-                                        {!placeholder ? (
-                                            formatter(item.account.user_profile.followers)
-                                        ) : (
-                                            <div className="text-primary-500 text-sm bg-gray-100 w-10 h-4" />
-                                        )}
-                                    </td>
-                                    <td className="text-sm">
-                                        {!placeholder ? (
-                                            formatter(item.account.user_profile.engagements)
-                                        ) : (
-                                            <div className="text-primary-500 text-sm bg-gray-100 w-10 h-4" />
-                                        )}
-                                    </td>
-                                    <td className="text-sm">
-                                        {!placeholder ? (
-                                            formatter(item.account.user_profile.engagement_rate)
-                                        ) : (
-                                            <div className="text-primary-500 text-sm bg-gray-100 w-10 h-4" />
-                                        )}
-                                    </td>
-                                    <td className="text-sm">
-                                        {!placeholder ? (
-                                            formatter(item.account.user_profile.avg_views)
-                                        ) : (
-                                            <div className="text-primary-500 text-sm bg-gray-100 w-10 h-4" />
-                                        )}
-                                    </td>
-                                </tr>
-                            );
-                        })
-                    ) : null}
+                    {Array.isArray(feed)
+                        ? feed.map((item: any, i: any) => {
+                              const placeholder = !item;
+                              const handle = !placeholder
+                                  ? item.account.user_profile.username ||
+                                    item.account.user_profile.custom_name ||
+                                    item.account.user_profile.fullname
+                                  : null;
+                              return (
+                                  <tr
+                                      key={i}
+                                      className={`${placeholder ? 'bg-gray-50' : ''} relative`}
+                                  >
+                                      <td className="py-2 px-4 flex flex-row items-center space-x-2">
+                                          {!placeholder ? (
+                                              <>
+                                                  <img
+                                                      src={`https://image-cache.brainchild-tech.cn/?link=${item.account.user_profile.picture}`}
+                                                      className="w-12 h-12"
+                                                  />
+                                                  <div>
+                                                      <div className="font-bold whhitespace-nowrap">
+                                                          {item.account.user_profile.fullname}
+                                                      </div>
+                                                      <div className="text-primary-500 text-sm">
+                                                          {handle ? `@${handle}` : null}
+                                                      </div>
+                                                  </div>
+                                              </>
+                                          ) : (
+                                              <>
+                                                  <div className="w-12 h-12 rounded-full bg-gray-100" />
+                                                  <div className="space-y-2">
+                                                      <div className="font-bold bg-gray-100 w-40 h-4" />
+                                                      <div className="text-primary-500 text-sm bg-gray-100 w-20 h-4" />
+                                                  </div>
+                                                  <div className="absolute top-0 left-0 translate-x-1/2 translate-y-1/2 p-2 text-sm">
+                                                      <Link href="/account" passHref>
+                                                          <a className="text-primary-500">
+                                                              Upgrade your subscription plan, to
+                                                              view more results.
+                                                          </a>
+                                                      </Link>
+                                                  </div>
+                                              </>
+                                          )}
+                                      </td>
+                                      <td className="text-sm">
+                                          {!placeholder ? (
+                                              formatter(item.account.user_profile.followers)
+                                          ) : (
+                                              <div className="text-primary-500 text-sm bg-gray-100 w-10 h-4" />
+                                          )}
+                                      </td>
+                                      <td className="text-sm">
+                                          {!placeholder ? (
+                                              formatter(item.account.user_profile.engagements)
+                                          ) : (
+                                              <div className="text-primary-500 text-sm bg-gray-100 w-10 h-4" />
+                                          )}
+                                      </td>
+                                      <td className="text-sm">
+                                          {!placeholder ? (
+                                              formatter(item.account.user_profile.engagement_rate)
+                                          ) : (
+                                              <div className="text-primary-500 text-sm bg-gray-100 w-10 h-4" />
+                                          )}
+                                      </td>
+                                      <td className="text-sm">
+                                          {!placeholder ? (
+                                              formatter(item.account.user_profile.avg_views)
+                                          ) : (
+                                              <div className="text-primary-500 text-sm bg-gray-100 w-10 h-4" />
+                                          )}
+                                      </td>
+                                  </tr>
+                              );
+                          })
+                        : null}
                 </tbody>
             </table>
             <div className="space-x-2">

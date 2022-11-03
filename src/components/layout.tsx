@@ -40,7 +40,7 @@ export const Layout = ({ children }: any) => {
     return (
         <div className="w-full h-full">
             <div className="flex flex-row h-full">
-                <div className="px-4 py-4 flex flex-col bg-white border-r border-gray-100 w-64">
+                <div className="px-4 py-4 flex-col bg-white border-r border-gray-100 w-64 hidden md:flex">
                     <Title />
                     <div className="flex flex-col space-y-4 mt-8">
                         <ActiveLink href="/dashboard">KOLs</ActiveLink>
@@ -49,7 +49,10 @@ export const Layout = ({ children }: any) => {
                 </div>
                 <div className="flex flex-col w-full overflow-hidden">
                     <div className="flex flex-row justify-between bg-white border-b border-gray-100">
-                        <div></div>
+                        <div className="flex md:hidden px-4 py-4">
+                            <Title />
+                        </div>
+                        <div />
                         <div className="px-8 py-4">
                             {!loading && session ? (
                                 <Menu>

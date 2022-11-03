@@ -1,16 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-
-const headers = {
-    'X-Api-Key': process.env.DATA_KEY!,
-    'Content-Type': 'application/json',
-    Authorization: `Basic ${Buffer.from(
-        process.env.DATA_USER + ':' + process.env.DATA_PASS
-    ).toString('base64')}`
-};
+import { headers } from 'src/utils/api/constants';
 
 const search = {
     unlocked: async (platform = 'youtube') => {
-        console.log(headers);
         return await (
             await fetch(`https://socapi.icu/v2.0/api/lists/search_shown/?platform=${platform}`, {
                 method: 'get',
@@ -46,19 +38,52 @@ const search = {
                 })
             })
         ).json();
+    },
+    tags: async ({ platform = 'youtube', tags = [], limit = 10, page = 0 }) => {
+        return await (
+            await fetch(`https://socapi.icu/v2.0/api/search/newv1?platform=${platform}`, {
+                method: 'post',
+                headers,
+                body: JSON.stringify({
+                    paging: {
+                        limit:
+                            page === 0
+                                ? Math.min(limit, 10)
+                                : Math.min(Math.max(limit - page * 10, 0), 10),
+                        skip: page ? page * 10 : null
+                    },
+                    filter: {
+                        audience_geo: [],
+                        geo: [],
+                        gender: '',
+                        lang: '',
+                        last_posted: '',
+                        views: { left_number: '', right_number: '' },
+                        followers: { left_number: '', right_number: '' },
+                        relevance: {
+                            value: tags.map((tag: any) => `#${tag.tag}`).join(' '),
+                            weight: 0.5
+                        },
+                        actions: [{ filter: 'relevance', action: 'must' }]
+                    },
+                    sort: { field: 'followers', direction: 'desc' },
+                    audience_source: 'any'
+                })
+            })
+        ).json();
     }
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
-        const { term, platform, subscription, page } = JSON.parse(req.body);
+        const { tags, platform, subscription, page } = JSON.parse(req.body);
 
-        const results = await search.term(
+        const results = await search.tags({
             platform,
-            term.length > 2 ? term : '',
-            subscription.plans.amount,
+            tags,
+            limit: subscription.plans.amount,
             page
-        );
+        });
 
         return res.status(200).json(results);
     }
