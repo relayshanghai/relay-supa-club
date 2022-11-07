@@ -2,14 +2,18 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { Button } from 'src/components/button';
-import { InputWithTags } from 'src/components/input-with-tags';
-import { Spinner } from 'src/components/spinner';
 import { useSearch } from 'src/hooks/use-search';
 import { useSubscription } from 'src/hooks/use-subscription';
 import { formatter } from 'src/utils/formatter';
+import { SearchTopics } from 'src/modules/search-topics';
+
+const filterCountry = (items: any[]) => {
+    return items.filter((item: any) => {
+        return item.type?.[0] === 'country';
+    });
+};
 
 export const Search = () => {
-    const [tagInputValue, setTagInputValue] = useState('');
     const { subscription } = useSubscription();
     const {
         channels,
@@ -18,10 +22,13 @@ export const Search = () => {
         page,
         setPage,
         tags,
-        addTag,
-        removeTag,
-        suggestions,
-        setTopicSearch,
+        setTopicTags,
+        lookalike,
+        setLookalike,
+        KOLLocation,
+        setKOLLocation,
+        audienceLocation,
+        setAudienceLocation,
         loading,
         results,
         search
@@ -53,44 +60,46 @@ export const Search = () => {
                 ))}
             </div>
             <div>
-                <InputWithTags
-                    tags={tags}
-                    onTagRemove={(item: any) => {
-                        removeTag(item);
-                    }}
-                    value={tagInputValue}
-                    type="text"
-                    placeholder="Search for topics"
-                    onChange={(e: any) => {
-                        setTagInputValue(e.target.value);
-                        setTopicSearch(e.target.value);
+                <SearchTopics
+                    path="/api/kol/topics"
+                    placeholder="Search for a topic"
+                    topics={tags}
+                    channel={channel}
+                    onSetTopics={(topics: any) => {
+                        setTopicTags(topics);
                     }}
                 />
-                <div className="relative z-10">
-                    {suggestions.length ? (
-                        <div className="absolute top-1 ring-1 ring-gray-200 left-0 w-full shadow-lg bg-white rounded-lg overflow-hidden">
-                            {suggestions.map((item) => {
-                                return (
-                                    <div
-                                        className="p-2 hover:bg-gray-100"
-                                        key={item.value}
-                                        onClick={() => {
-                                            addTag(item);
-                                            setTagInputValue('');
-                                        }}
-                                    >
-                                        {item.value}
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    ) : null}
-                    {tags.length ? (
-                        <div className="text-xs text-gray-500 my-2">
-                            Tip: To remove a tag click on it
-                        </div>
-                    ) : null}
-                </div>
+            </div>
+            <div className="flex lg:flex-row lg:space-x-4 lg:space-y-0 flex-col items-start space-y-2">
+                <SearchTopics
+                    path="/api/kol/lookalike"
+                    placeholder="Lookalike"
+                    topics={lookalike}
+                    channel={channel}
+                    onSetTopics={(topics: any) => {
+                        setLookalike(topics);
+                    }}
+                />
+                <SearchTopics
+                    path="/api/kol/locations"
+                    placeholder="KOL locations"
+                    topics={KOLLocation}
+                    channel={channel}
+                    filter={filterCountry}
+                    onSetTopics={(topics: any) => {
+                        setKOLLocation(topics);
+                    }}
+                />
+                <SearchTopics
+                    path="/api/kol/locations"
+                    placeholder="Audience locations"
+                    topics={audienceLocation}
+                    channel={channel}
+                    filter={filterCountry}
+                    onSetTopics={(topics: any) => {
+                        setAudienceLocation(topics);
+                    }}
+                />
             </div>
             <div>
                 {results ? (

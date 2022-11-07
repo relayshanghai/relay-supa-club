@@ -5,8 +5,10 @@ export const useSearch = () => {
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState<any>(0);
     const [results, setResults] = useState<any>();
-    const [suggestions, setSuggestions] = useState<any[]>([]);
-    const [tags, setTags] = useState<any[]>([]);
+    const [tags, setTopicTags] = useState<any[]>([]);
+    const [lookalike, setLookalike] = useState<any[]>([]);
+    const [KOLLocation, setKOLLocation] = useState<any[]>([]);
+    const [audienceLocation, setAudienceLocation] = useState<any[]>([]);
     const [channel, setChannel] = useState<any>('youtube');
     const channels = useMemo(
         () => [
@@ -40,7 +42,10 @@ export const useSearch = () => {
                         term: search,
                         page: page,
                         tags,
-                        subscription
+                        subscription,
+                        lookalike,
+                        KOLLocation,
+                        audienceLocation
                     })
                 })
             ).json();
@@ -48,58 +53,7 @@ export const useSearch = () => {
             setResults(res);
             setLoading(false);
         }
-    }, [tags, channel, page, subscription]);
-
-    const setTopicSearch = useCallback(
-        async (term: any) => {
-            setLoading(true);
-
-            if (ref.current) {
-                ref.current.abort();
-            }
-
-            const controller = new AbortController();
-            const signal = controller.signal;
-            ref.current = controller;
-
-            const res = await (
-                await fetch('/api/kol/topics', {
-                    method: 'post',
-                    signal: signal,
-                    body: JSON.stringify({
-                        term,
-                        platform: channel
-                    })
-                })
-            ).json();
-
-            if (res && res.success) {
-                setSuggestions(res.data);
-            }
-
-            setLoading(false);
-        },
-        [channel]
-    );
-
-    const addTag = useCallback((item: any) => {
-        setTags((val) => [...val, item]);
-        setSuggestions([]);
-    }, []);
-
-    const removeTag = useCallback((item: any) => {
-        setTags((val) => {
-            const entry = val.find((tag: any) => tag.value === item.value);
-
-            if (entry) {
-                const clone = val.slice();
-                clone.splice(clone.indexOf(entry), 1);
-                return clone;
-            }
-
-            return val;
-        });
-    }, []);
+    }, [tags, channel, page, subscription, lookalike, KOLLocation, audienceLocation]);
 
     return {
         loading,
@@ -107,13 +61,16 @@ export const useSearch = () => {
         setPage,
         results,
         channel,
-        setChannel,
-        setTopicSearch,
         channels,
-        suggestions,
+        setChannel,
+        search,
         tags,
-        addTag,
-        removeTag,
-        search
+        setTopicTags,
+        lookalike,
+        setLookalike,
+        KOLLocation,
+        setKOLLocation,
+        audienceLocation,
+        setAudienceLocation
     };
 };

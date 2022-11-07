@@ -1,6 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { headers } from 'src/utils/api/constants';
 
+const location = ({ id }: any) => ({ id, weight: 0.5 });
+
 const search = {
     unlocked: async (platform = 'youtube') => {
         return await (
@@ -39,50 +41,58 @@ const search = {
             })
         ).json();
     },
-    tags: async ({ platform = 'youtube', tags = [], limit = 10, page = 0 }) => {
+    tags: async ({
+        platform = 'youtube',
+        tags = [],
+        KOLLocation,
+        audienceLocation,
+        limit = 10,
+        page = 0
+    }: any) => {
         return await (
-            await fetch(`https://socapi.icu/v2.0/api/search/newv1?platform=${platform}`, {
-                method: 'post',
-                headers,
-                body: JSON.stringify({
-                    paging: {
-                        limit:
-                            page === 0
-                                ? Math.min(limit, 10)
-                                : Math.min(Math.max(limit - page * 10, 0), 10),
-                        skip: page ? page * 10 : null
-                    },
-                    filter: {
-                        audience_geo: [],
-                        geo: [],
-                        gender: '',
-                        lang: '',
-                        last_posted: '',
-                        views: { left_number: '', right_number: '' },
-                        followers: { left_number: '', right_number: '' },
-                        relevance: {
-                            value: tags.map((tag: any) => `#${tag.tag}`).join(' '),
-                            weight: 0.5
+            await fetch(
+                `https://socapi.icu/v2.0/api/search/newv1?platform=${platform}&auto_unhide=true`,
+                {
+                    method: 'post',
+                    headers,
+                    body: JSON.stringify({
+                        paging: {
+                            limit:
+                                page === 0
+                                    ? Math.min(limit, 10)
+                                    : Math.min(Math.max(limit - page * 10, 0), 10),
+                            skip: page ? page * 10 : null
                         },
-                        actions: [{ filter: 'relevance', action: 'must' }]
-                    },
-                    sort: { field: 'followers', direction: 'desc' },
-                    audience_source: 'any'
-                })
-            })
+                        filter: {
+                            audience_geo: audienceLocation.map(location) || [],
+                            geo: KOLLocation.map(location) || [],
+                            gender: '',
+                            lang: '',
+                            last_posted: '',
+                            views: { left_number: '', right_number: '' },
+                            followers: { left_number: '', right_number: '' },
+                            relevance: {
+                                value: tags.map((tag: any) => `#${tag.tag}`).join(' '),
+                                weight: 0.5
+                            },
+                            actions: [{ filter: 'relevance', action: 'must' }]
+                        },
+                        sort: { field: 'followers', direction: 'desc' },
+                        audience_source: 'any'
+                    })
+                }
+            )
         ).json();
     }
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
-        const { tags, platform, subscription, page } = JSON.parse(req.body);
+        const { subscription, ...rest } = JSON.parse(req.body);
 
         const results = await search.tags({
-            platform,
-            tags,
             limit: subscription.plans.amount,
-            page
+            ...rest
         });
 
         return res.status(200).json(results);
