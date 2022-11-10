@@ -24,9 +24,9 @@ export const InputWithAutocomplete = ({
                     onChange(e.target.value);
                 }}
             />
-            <div className="relative z-10">
+            <div className="relative">
                 {suggestions.length ? (
-                    <div className="absolute top-1 ring-1 ring-gray-200 left-0 w-full shadow-lg bg-white rounded-lg overflow-hidden">
+                    <div className="absolute z-10 top-1 ring-1 ring-gray-200 left-0 w-full shadow-lg bg-white rounded-lg overflow-hidden">
                         {suggestions.map((item: any, i: any) => {
                             if (SuggestionComponent) {
                                 return (

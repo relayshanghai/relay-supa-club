@@ -1,11 +1,13 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from 'next/link';
-import { useEffect } from 'react';
+import { Fragment, useEffect } from 'react';
 import { Button } from 'src/components/button';
 import { useSearch } from 'src/hooks/use-search';
 import { useSubscription } from 'src/hooks/use-subscription';
 import { formatter } from 'src/utils/formatter';
 import { SearchTopics } from 'src/modules/search-topics';
+import { Popover, Transition } from '@headlessui/react';
+import { AdjustmentsVerticalIcon } from '@heroicons/react/24/solid';
 
 const filterCountry = (items: any[]) => {
     return items.filter((item: any) => {
@@ -40,7 +42,7 @@ export const Search = () => {
 
     const accounts = results?.accounts ?? [];
     const feed =
-        accounts.length < 10 && page > 1
+        accounts.length < 10 && (page > 1 || loading)
             ? [...accounts, ...Array.from(Array(10 - accounts.length))]
             : accounts;
 
@@ -98,15 +100,17 @@ export const Search = () => {
                                     onClick({ title: handle });
                                 }}
                             >
-                                <div className="">
+                                <div className="w-8 h-8">
                                     <img
-                                        src={picture}
+                                        src={`https://image-cache.brainchild-tech.cn/?link=${picture}`}
                                         className="w-8 h-8 rounded-full"
                                         alt={handle}
                                     />
                                 </div>
-                                <div className="flex flex-col">
-                                    <div className="font-bold">{handle}</div>
+                                <div className="flex flex-col overflow-hidden">
+                                    <div className="font-bold whitespace-nowrap text-ellipsis overflow-hidden">
+                                        {handle}
+                                    </div>
                                     <div className="text-sm">{formatter(followers)}</div>
                                 </div>
                             </div>
@@ -135,6 +139,47 @@ export const Search = () => {
                 />
             </div>
             <div>
+                <Popover className="relative">
+                    {({ open }) => (
+                        <>
+                            <Popover.Button
+                                className={`group text-gray-900 ring-gray-900 ring-opacity-5 bg-white rounded-md block border border-transparent shadow ring-1 sm:text-sm focus:border-primary-500 focus:ring-primary-500 focus:outline-none flex flex-row items-center px-2 py-1`}
+                            >
+                                <AdjustmentsVerticalIcon
+                                    className={`h-6 w-6 text-gray-400 transition duration-150 ease-in-out group-hover:text-opacity-80`}
+                                    aria-hidden="true"
+                                />
+                            </Popover.Button>
+                            <Transition
+                                as={Fragment}
+                                enter="transition ease-out duration-200"
+                                enterFrom="opacity-0 translate-y-1"
+                                enterTo="opacity-100 translate-y-0"
+                                leave="transition ease-in duration-150"
+                                leaveFrom="opacity-100 translate-y-0"
+                                leaveTo="opacity-0 translate-y-1"
+                            >
+                                <Popover.Panel className="absolute left-1/2 z-10 mt-3 w-screen max-w-md -translate-x-1/2 transform px-4 sm:px-0 lg:max-w-3xl">
+                                    <div className="overflow-hidden rounded-md shadow-2xl ring-1 ring-black ring-opacity-5">
+                                        <div className="relative bg-white p-4 lg:grid-cols-2">
+                                            Filter Creator
+                                            <div>
+                                                <label className="text-sm">
+                                                    <div>Subscribers</div>
+                                                    <div>
+                                                        <select></select>
+                                                    </div>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </Popover.Panel>
+                            </Transition>
+                        </>
+                    )}
+                </Popover>
+            </div>
+            <div>
                 {results ? (
                     <div className="font-bold text-sm">
                         Total Results: {formatter(results.total)}
@@ -142,7 +187,11 @@ export const Search = () => {
                 ) : null}
             </div>
             <div className="w-full overflow-auto">
-                <table className="min-w-full divide-y divide-gray-200 rounded-lg shadow">
+                <table
+                    className={`min-w-full divide-y divide-gray-200 rounded-lg shadow ${
+                        loading ? 'opacity-60' : ''
+                    }`}
+                >
                     <thead className="bg-white sticky top-0">
                         <tr>
                             <th className="w-2/4 px-4 py-4 text-xs text-gray-500 font-normal text-left">
