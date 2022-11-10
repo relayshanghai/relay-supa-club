@@ -7,7 +7,8 @@ export const InputWithAutocomplete = ({
     onAddTag,
     tags,
     suggestions,
-    placeholder
+    placeholder,
+    SuggestionComponent
 }: any) => {
     const [value, setValue] = useState('');
     return (
@@ -27,6 +28,18 @@ export const InputWithAutocomplete = ({
                 {suggestions.length ? (
                     <div className="absolute top-1 ring-1 ring-gray-200 left-0 w-full shadow-lg bg-white rounded-lg overflow-hidden">
                         {suggestions.map((item: any, i: any) => {
+                            if (SuggestionComponent) {
+                                return (
+                                    <SuggestionComponent
+                                        key={i}
+                                        onClick={(data: any) => {
+                                            onAddTag({ ...item, ...data });
+                                            setValue('');
+                                        }}
+                                        {...item}
+                                    />
+                                );
+                            }
                             return (
                                 <div
                                     className="p-2 hover:bg-gray-100"

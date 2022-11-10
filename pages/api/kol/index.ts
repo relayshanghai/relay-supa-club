@@ -44,11 +44,15 @@ const search = {
     tags: async ({
         platform = 'youtube',
         tags = [],
+        lookalike = [],
         KOLLocation,
         audienceLocation,
         limit = 10,
         page = 0
     }: any) => {
+        const tagsValue = tags.map((tag: any) => `#${tag.tag}`);
+        const lookalikeValue = lookalike.map((item: any) => `@${item.user_id}`);
+
         return await (
             await fetch(
                 `https://socapi.icu/v2.0/api/search/newv1?platform=${platform}&auto_unhide=true`,
@@ -72,7 +76,7 @@ const search = {
                             views: { left_number: '', right_number: '' },
                             followers: { left_number: '', right_number: '' },
                             relevance: {
-                                value: tags.map((tag: any) => `#${tag.tag}`).join(' '),
+                                value: [...tagsValue, ...lookalikeValue].join(' '),
                                 weight: 0.5
                             },
                             actions: [{ filter: 'relevance', action: 'must' }]

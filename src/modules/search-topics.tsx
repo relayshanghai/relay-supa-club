@@ -2,7 +2,15 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { InputWithAutocomplete } from 'src/components/input-with-autocomplete';
 import { useSearch } from 'src/hooks/use-search';
 
-export const SearchTopics = ({ onSetTopics, topics, channel, path, placeholder, filter }: any) => {
+export const SearchTopics = ({
+    onSetTopics,
+    topics,
+    channel,
+    path,
+    placeholder,
+    filter,
+    SuggestionComponent
+}: any) => {
     const [loading, setLoading] = useState(false);
     const [suggestions, setSuggestions] = useState<any[]>([]);
     const ref = useRef<any>();
@@ -50,7 +58,7 @@ export const SearchTopics = ({ onSetTopics, topics, channel, path, placeholder, 
 
     const removeTag = useCallback(
         (item: any) => {
-            const entry = topics.find((tag: any) => tag.value === item.value);
+            const entry = topics.find((tag: any) => tag === item);
 
             if (entry) {
                 const clone = topics.slice();
@@ -63,6 +71,7 @@ export const SearchTopics = ({ onSetTopics, topics, channel, path, placeholder, 
 
     return (
         <InputWithAutocomplete
+            SuggestionComponent={SuggestionComponent}
             placeholder={placeholder}
             tags={topics}
             suggestions={suggestions}

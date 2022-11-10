@@ -5,11 +5,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (req.method === 'POST') {
         const { term, platform } = JSON.parse(req.body);
 
-        console.log('lookalike', { term, platform, headers });
-
         const results = await (
             await fetch(
-                `https://iqdata.social/v2.0/api/dict/users/?q=${term}&type=lookalike&platform=${platform}&limit=5`,
+                `https://socapi.icu/v2.0/api/dict/users/?q=${term}&type=lookalike&platform=${platform}&limit=5`,
                 {
                     headers
                 }
