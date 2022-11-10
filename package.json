@@ -6,7 +6,7 @@
         "dev": "next dev",
         "build": "next build",
         "start": "next start",
-        "lint": "next lint"
+        "lint": "eslint"
     },
     "dependencies": {
         "@headlessui/react": "^1.7.3",
@@ -37,7 +37,7 @@
     "lint-staged": {
         "*.{js,ts,tsx,md}": [
             "prettier --write",
-            "yarn run lint"
+            "yarn lint"
         ]
     },
     "husky": {
