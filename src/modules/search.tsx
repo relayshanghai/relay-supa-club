@@ -42,7 +42,7 @@ export const Search = () => {
 
     const accounts = results?.accounts ?? [];
     const feed =
-        accounts.length < 10 && (page > 1 || loading)
+        accounts.length < 10 && (page > 0 || loading)
             ? [...accounts, ...Array.from(Array(10 - accounts.length))]
             : accounts;
 
