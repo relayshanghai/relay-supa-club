@@ -8,6 +8,12 @@ export const useSearch = () => {
     const [tags, setTopicTags] = useState<any[]>([]);
     const [lookalike, setLookalike] = useState<any[]>([]);
     const [KOLLocation, setKOLLocation] = useState<any[]>([]);
+    const [views, setViews] = useState<any[]>([]);
+    const [audience, setAudience] = useState<any[]>([]);
+    const [gender, setGender] = useState<any>();
+    const [engagement, setEngagement] = useState<any>();
+    const [lastPost, setLastPost] = useState<any>();
+    const [contactInfo, setContactInfo] = useState<any>();
     const [audienceLocation, setAudienceLocation] = useState<any[]>([]);
     const [channel, setChannel] = useState<any>('youtube');
     const channels = useMemo(
@@ -45,7 +51,13 @@ export const useSearch = () => {
                         subscription,
                         lookalike,
                         KOLLocation,
-                        audienceLocation
+                        audienceLocation,
+                        audience,
+                        views,
+                        gender,
+                        engagement,
+                        lastPost,
+                        contactInfo
                     })
                 })
             ).json();
@@ -53,7 +65,21 @@ export const useSearch = () => {
             setResults(res);
             setLoading(false);
         }
-    }, [tags, channel, page, subscription, lookalike, KOLLocation, audienceLocation]);
+    }, [
+        tags,
+        channel,
+        page,
+        subscription,
+        lookalike,
+        KOLLocation,
+        audienceLocation,
+        audience,
+        views,
+        gender,
+        engagement,
+        lastPost,
+        contactInfo
+    ]);
 
     return {
         loading,
@@ -71,6 +97,18 @@ export const useSearch = () => {
         KOLLocation,
         setKOLLocation,
         audienceLocation,
-        setAudienceLocation
+        setAudienceLocation,
+        audience,
+        setAudience,
+        views,
+        setViews,
+        gender,
+        setGender,
+        engagement,
+        setEngagement,
+        lastPost,
+        setLastPost,
+        contactInfo,
+        setContactInfo
     };
 };

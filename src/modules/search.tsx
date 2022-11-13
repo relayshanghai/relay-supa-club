@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from 'next/link';
-import { Fragment, useEffect } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { Button } from 'src/components/button';
 import { useSearch } from 'src/hooks/use-search';
 import { useSubscription } from 'src/hooks/use-subscription';
@@ -8,6 +8,7 @@ import { formatter } from 'src/utils/formatter';
 import { SearchTopics } from 'src/modules/search-topics';
 import { Popover, Transition } from '@headlessui/react';
 import { AdjustmentsVerticalIcon } from '@heroicons/react/24/solid';
+import { getTrackBackground, Range } from 'react-range';
 
 const filterCountry = (items: any[]) => {
     return items.filter((item: any) => {
@@ -33,8 +34,22 @@ export const Search = () => {
         setAudienceLocation,
         loading,
         results,
-        search
+        search,
+        audience,
+        setAudience,
+        views,
+        setViews,
+        gender,
+        setGender,
+        engagement,
+        setEngagement,
+        lastPost,
+        setLastPost,
+        contactInfo,
+        setContactInfo
     } = useSearch();
+
+    const options = [1e3, 5e3, 1e4, 15e3, 25e3, 50e3, 1e5, 25e4, 50e4, 1e6];
 
     useEffect(() => {
         search();
@@ -142,14 +157,55 @@ export const Search = () => {
                 <Popover className="relative">
                     {({ open }) => (
                         <>
-                            <Popover.Button
-                                className={`group text-gray-900 ring-gray-900 ring-opacity-5 bg-white rounded-md block border border-transparent shadow ring-1 sm:text-sm focus:border-primary-500 focus:ring-primary-500 focus:outline-none flex flex-row items-center px-2 py-1`}
-                            >
-                                <AdjustmentsVerticalIcon
-                                    className={`h-6 w-6 text-gray-400 transition duration-150 ease-in-out group-hover:text-opacity-80`}
-                                    aria-hidden="true"
-                                />
-                            </Popover.Button>
+                            <div className="flex flex-row space-x-4">
+                                <Popover.Button
+                                    className={`group text-gray-900 ring-gray-900 ring-opacity-5 bg-white rounded-md block border border-transparent shadow ring-1 sm:text-sm focus:border-primary-500 focus:ring-primary-500 focus:outline-none flex flex-row items-center px-2 py-1`}
+                                >
+                                    <AdjustmentsVerticalIcon
+                                        className={`h-6 w-6 text-gray-400 transition duration-150 ease-in-out group-hover:text-opacity-80`}
+                                        aria-hidden="true"
+                                    />
+                                    <div className="flex flex-row space-x-2 text-xs">
+                                        {audience.length ? (
+                                            <div>
+                                                Subs: {formatter(audience[0])}
+                                                {` `}
+                                                To: {formatter(audience[1])}
+                                            </div>
+                                        ) : null}
+                                        {views.length ? (
+                                            <div>
+                                                Avg. Views: {formatter(views[0])}
+                                                {` `}
+                                                To: {formatter(views[1])}
+                                            </div>
+                                        ) : null}
+                                        {gender ? <div>{gender}</div> : null}
+                                        {engagement ? <div>{'>' + engagement}%</div> : null}
+                                        {lastPost ? <div>{lastPost} days</div> : null}
+                                    </div>
+                                </Popover.Button>
+                                {audience.length ||
+                                views.length ||
+                                gender ||
+                                engagement ||
+                                lastPost ? (
+                                    <Button
+                                        onClick={(e: any) => {
+                                            e.preventDefault();
+                                            setAudience([]);
+                                            setViews([]);
+                                            setGender(undefined);
+                                            setEngagement(undefined);
+                                            setLastPost(undefined);
+                                            setContactInfo(undefined);
+                                        }}
+                                        type="secondary"
+                                    >
+                                        Clear
+                                    </Button>
+                                ) : null}
+                            </div>
                             <Transition
                                 as={Fragment}
                                 enter="transition ease-out duration-200"
@@ -159,16 +215,192 @@ export const Search = () => {
                                 leaveFrom="opacity-100 translate-y-0"
                                 leaveTo="opacity-0 translate-y-1"
                             >
-                                <Popover.Panel className="absolute left-1/2 z-10 mt-3 w-screen max-w-md -translate-x-1/2 transform px-4 sm:px-0 lg:max-w-3xl">
+                                <Popover.Panel className="absolute left-1/2 z-10 mt-3 w-screen max-w-md -translate-x-1/2 transform px-4 sm:px-0">
                                     <div className="overflow-hidden rounded-md shadow-2xl ring-1 ring-black ring-opacity-5">
-                                        <div className="relative bg-white p-4 lg:grid-cols-2">
-                                            Filter Creator
+                                        <div className="relative bg-white p-8 space-y-8">
+                                            <div>
+                                                <div className="text-xl font-bold">
+                                                    Filter Creator
+                                                </div>
+                                                <div>
+                                                    Narrow down to the ideal KOLs for your brand!
+                                                </div>
+                                            </div>
                                             <div>
                                                 <label className="text-sm">
-                                                    <div>Subscribers</div>
-                                                    <div>
-                                                        <select></select>
+                                                    <div className="font-bold text-lg">
+                                                        Subscribers
                                                     </div>
+                                                    <div className="flex flex-row space-x-4">
+                                                        <div>
+                                                            <select
+                                                                value={audience[0]}
+                                                                onChange={(e) => {
+                                                                    setAudience((val) => [
+                                                                        e.target.value,
+                                                                        val[1]
+                                                                    ]);
+                                                                }}
+                                                            >
+                                                                <option value={'any'}>From</option>
+                                                                {options.map((val) => (
+                                                                    <option value={val} key={val}>
+                                                                        {formatter(val)}
+                                                                    </option>
+                                                                ))}
+                                                            </select>
+                                                        </div>
+                                                        <div>
+                                                            <select
+                                                                value={audience[1]}
+                                                                onChange={(e) => {
+                                                                    setAudience((val) => [
+                                                                        val[0],
+                                                                        e.target.value
+                                                                    ]);
+                                                                }}
+                                                            >
+                                                                <option value={'any'}>To</option>
+                                                                {options.map((val) => (
+                                                                    <option value={val} key={val}>
+                                                                        {formatter(val)}
+                                                                    </option>
+                                                                ))}
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </label>
+                                            </div>
+                                            <div>
+                                                <label className="text-sm">
+                                                    <div className="font-bold text-lg">
+                                                        Average Views
+                                                    </div>
+                                                    <div className="flex flex-row space-x-4">
+                                                        <div>
+                                                            <select
+                                                                value={views[0]}
+                                                                onChange={(e) => {
+                                                                    setViews((val) => [
+                                                                        e.target.value,
+                                                                        val[1]
+                                                                    ]);
+                                                                }}
+                                                            >
+                                                                <option value={'any'}>From</option>
+                                                                {options.map((val) => (
+                                                                    <option value={val} key={val}>
+                                                                        {formatter(val)}
+                                                                    </option>
+                                                                ))}
+                                                            </select>
+                                                        </div>
+                                                        <div>
+                                                            <select
+                                                                value={views[1]}
+                                                                onChange={(e) => {
+                                                                    setViews((val) => [
+                                                                        val[0],
+                                                                        e.target.value
+                                                                    ]);
+                                                                }}
+                                                            >
+                                                                <option value={'any'}>To</option>
+                                                                {options.map((val) => (
+                                                                    <option value={val} key={val}>
+                                                                        {formatter(val)}
+                                                                    </option>
+                                                                ))}
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </label>
+                                            </div>
+                                            <div>
+                                                <label className="text-sm">
+                                                    <div className="font-bold text-lg">Gender</div>
+                                                    <select
+                                                        value={gender}
+                                                        onChange={(e) => {
+                                                            if (e.target.value === 'any') {
+                                                                setGender(undefined);
+                                                            } else {
+                                                                setGender(e.target.value);
+                                                            }
+                                                        }}
+                                                    >
+                                                        <option value={'any'}>Any</option>
+                                                        <option value={'male'}>Male</option>
+                                                        <option value={'female'}>Female</option>
+                                                    </select>
+                                                </label>
+                                            </div>
+                                            <div>
+                                                <label className="text-sm">
+                                                    <div className="font-bold text-lg">
+                                                        Engagement Rate
+                                                    </div>
+                                                    <select
+                                                        value={engagement}
+                                                        onChange={(e) => {
+                                                            if (e.target.value === 'any') {
+                                                                setEngagement(undefined);
+                                                            } else {
+                                                                setEngagement(e.target.value);
+                                                            }
+                                                        }}
+                                                    >
+                                                        <option value={'any'}>Any</option>
+                                                        {Array.from(Array(10)).map((_, i) => {
+                                                            return (
+                                                                <option key={i} value={i + 1}>
+                                                                    {`>` + (i + 1) + `%`}
+                                                                </option>
+                                                            );
+                                                        })}
+                                                    </select>
+                                                </label>
+                                            </div>
+                                            <div>
+                                                <label className="text-sm">
+                                                    <div className="font-bold text-lg">
+                                                        Last Post
+                                                    </div>
+                                                    <select
+                                                        value={lastPost}
+                                                        onChange={(e) => {
+                                                            if (e.target.value === 'any') {
+                                                                setLastPost(undefined);
+                                                            } else {
+                                                                setLastPost(e.target.value);
+                                                            }
+                                                        }}
+                                                    >
+                                                        <option value={'any'}>Any</option>
+                                                        <option value={30}>30 days</option>
+                                                        <option value={90}>3 months</option>
+                                                        <option value={120}>6 months</option>
+                                                    </select>
+                                                </label>
+                                            </div>
+                                            <div>
+                                                <label className="text-sm">
+                                                    <div className="font-bold text-lg">
+                                                        Contact Information
+                                                    </div>
+                                                    <select
+                                                        value={contactInfo}
+                                                        onChange={(e) => {
+                                                            if (e.target.value === 'any') {
+                                                                setContactInfo(undefined);
+                                                            } else {
+                                                                setContactInfo(e.target.value);
+                                                            }
+                                                        }}
+                                                    >
+                                                        <option value={'any'}>Any</option>
+                                                        <option value={'email'}>Has Email</option>
+                                                    </select>
                                                 </label>
                                             </div>
                                         </div>
@@ -231,6 +463,7 @@ export const Search = () => {
                                                       <img
                                                           src={`https://image-cache.brainchild-tech.cn/?link=${item.account.user_profile.picture}`}
                                                           className="w-12 h-12"
+                                                          alt={handle}
                                                       />
                                                       <div>
                                                           <div className="font-bold whhitespace-nowrap">

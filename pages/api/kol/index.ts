@@ -48,7 +48,13 @@ const search = {
         KOLLocation,
         audienceLocation,
         limit = 10,
-        page = 0
+        page = 0,
+        audience,
+        views,
+        gender,
+        engagement,
+        lastPost,
+        contactInfo
     }: any) => {
         const tagsValue = tags.map((tag: any) => `#${tag.tag}`);
         const lookalikeValue = lookalike.map((item: any) => `@${item.user_id}`);
@@ -70,16 +76,35 @@ const search = {
                         filter: {
                             audience_geo: audienceLocation.map(location) || [],
                             geo: KOLLocation.map(location) || [],
-                            gender: '',
+                            gender: gender ? { code: gender.toUpperCase() } : '',
                             lang: '',
-                            last_posted: '',
-                            views: { left_number: '', right_number: '' },
-                            followers: { left_number: '', right_number: '' },
+                            last_posted: lastPost || '',
+                            views: {
+                                left_number: views ? views[0] : '',
+                                right_number: views ? views[1] : ''
+                            },
+                            followers: {
+                                left_number: audience ? audience[0] : '',
+                                right_number: audience ? audience[1] : ''
+                            },
                             relevance: {
                                 value: [...tagsValue, ...lookalikeValue].join(' '),
                                 weight: 0.5
                             },
-                            actions: [{ filter: 'relevance', action: 'must' }]
+                            actions: [{ filter: 'relevance', action: 'must' }],
+                            ...(contactInfo
+                                ? {
+                                      with_contact: [{ type: 'email', action: 'should' }]
+                                  }
+                                : {}),
+                            ...(engagement
+                                ? {
+                                      engagement_rate: {
+                                          value: (engagement / 100).toFixed(2),
+                                          operator: 'gte'
+                                      }
+                                  }
+                                : {})
                         },
                         sort: { field: 'followers', direction: 'desc' },
                         audience_source: 'any'
