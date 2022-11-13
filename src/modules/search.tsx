@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from 'next/link';
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useEffect } from 'react';
 import { Button } from 'src/components/button';
 import { useSearch } from 'src/hooks/use-search';
 import { useSubscription } from 'src/hooks/use-subscription';
@@ -8,7 +8,6 @@ import { formatter } from 'src/utils/formatter';
 import { SearchTopics } from 'src/modules/search-topics';
 import { Popover, Transition } from '@headlessui/react';
 import { AdjustmentsVerticalIcon } from '@heroicons/react/24/solid';
-import { getTrackBackground, Range } from 'react-range';
 
 const filterCountry = (items: any[]) => {
     return items.filter((item: any) => {
