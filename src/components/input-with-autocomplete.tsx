@@ -8,7 +8,8 @@ export const InputWithAutocomplete = ({
     tags,
     suggestions,
     placeholder,
-    SuggestionComponent
+    SuggestionComponent,
+    TagComponent
 }: any) => {
     const [value, setValue] = useState('');
     return (
@@ -23,6 +24,7 @@ export const InputWithAutocomplete = ({
                     setValue(e.target.value);
                     onChange(e.target.value);
                 }}
+                TagComponent={TagComponent}
             />
             <div className="relative">
                 {suggestions.length ? (

@@ -1,6 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { InputWithAutocomplete } from 'src/components/input-with-autocomplete';
-import { useSearch } from 'src/hooks/use-search';
 
 export const SearchTopics = ({
     onSetTopics,
@@ -9,7 +8,8 @@ export const SearchTopics = ({
     path,
     placeholder,
     filter,
-    SuggestionComponent
+    SuggestionComponent,
+    TagComponent
 }: any) => {
     const [loading, setLoading] = useState(false);
     const [suggestions, setSuggestions] = useState<any[]>([]);
@@ -72,6 +72,7 @@ export const SearchTopics = ({
     return (
         <InputWithAutocomplete
             SuggestionComponent={SuggestionComponent}
+            TagComponent={TagComponent}
             placeholder={placeholder}
             tags={topics}
             suggestions={suggestions}

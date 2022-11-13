@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { headers } from 'src/utils/api/constants';
 
-const location = ({ id }: any) => ({ id, weight: 0.5 });
+const location = ({ id, weight }: any) => ({ id, weight: weight ? parseFloat(weight) / 100 : 0.5 });
 
 const search = {
     unlocked: async (platform = 'youtube') => {

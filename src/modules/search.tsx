@@ -148,7 +148,44 @@ export const Search = () => {
                     channel={channel}
                     filter={filterCountry}
                     onSetTopics={(topics: any) => {
-                        setAudienceLocation(topics);
+                        setAudienceLocation(topics.map((item: any) => ({ ...item, weight: 5 })));
+                    }}
+                    TagComponent={({ onClick, ...item }: any) => {
+                        const selected = audienceLocation.find(
+                            (country: any) => country.id === item.id
+                        );
+                        return (
+                            <div
+                                className="pl-2 pr-1 bg-white text-gray-900 rounded bg-gray-100 whitespace-nowrap hover:bg-gray-200 cursor-pointer flex items-center flex-row"
+                                key={item.id}
+                                onClick={onClick}
+                            >
+                                {item.value || item.title}
+                                <select
+                                    value={selected.weight}
+                                    className="ml-2 bg-primary-200 rounded-md"
+                                    onClick={(e: any) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                    }}
+                                    onChange={(e: any) => {
+                                        // console.log(e.target.value);
+                                        const clone = audienceLocation.slice();
+                                        const index = audienceLocation.indexOf(selected);
+
+                                        if (index !== -1) {
+                                            clone[index] = { ...selected, weight: e.target.value };
+                                            setAudienceLocation(clone);
+                                        }
+                                    }}
+                                >
+                                    {Array.from(Array(11)).map((_, i) => {
+                                        const val = i === 0 ? 1 : i * 5;
+                                        return <option value={val} key={val}>{`>${val}%`}</option>;
+                                    })}
+                                </select>
+                            </div>
+                        );
                     }}
                 />
             </div>
@@ -233,6 +270,7 @@ export const Search = () => {
                                                     <div className="flex flex-row space-x-4">
                                                         <div>
                                                             <select
+                                                                className="bg-primary-200 rounded-md"
                                                                 value={audience[0]}
                                                                 onChange={(e) => {
                                                                     setAudience((val) => [
@@ -251,6 +289,7 @@ export const Search = () => {
                                                         </div>
                                                         <div>
                                                             <select
+                                                                className="bg-primary-200 rounded-md"
                                                                 value={audience[1]}
                                                                 onChange={(e) => {
                                                                     setAudience((val) => [
@@ -278,6 +317,7 @@ export const Search = () => {
                                                     <div className="flex flex-row space-x-4">
                                                         <div>
                                                             <select
+                                                                className="bg-primary-200 rounded-md"
                                                                 value={views[0]}
                                                                 onChange={(e) => {
                                                                     setViews((val) => [
@@ -296,6 +336,7 @@ export const Search = () => {
                                                         </div>
                                                         <div>
                                                             <select
+                                                                className="bg-primary-200 rounded-md"
                                                                 value={views[1]}
                                                                 onChange={(e) => {
                                                                     setViews((val) => [
@@ -319,6 +360,7 @@ export const Search = () => {
                                                 <label className="text-sm">
                                                     <div className="font-bold text-lg">Gender</div>
                                                     <select
+                                                        className="bg-primary-200 rounded-md"
                                                         value={gender}
                                                         onChange={(e) => {
                                                             if (e.target.value === 'any') {
@@ -340,6 +382,7 @@ export const Search = () => {
                                                         Engagement Rate
                                                     </div>
                                                     <select
+                                                        className="bg-primary-200 rounded-md"
                                                         value={engagement}
                                                         onChange={(e) => {
                                                             if (e.target.value === 'any') {
@@ -366,6 +409,7 @@ export const Search = () => {
                                                         Last Post
                                                     </div>
                                                     <select
+                                                        className="bg-primary-200 rounded-md"
                                                         value={lastPost}
                                                         onChange={(e) => {
                                                             if (e.target.value === 'any') {
@@ -388,6 +432,7 @@ export const Search = () => {
                                                         Contact Information
                                                     </div>
                                                     <select
+                                                        className="bg-primary-200 rounded-md"
                                                         value={contactInfo}
                                                         onChange={(e) => {
                                                             if (e.target.value === 'any') {
