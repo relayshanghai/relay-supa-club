@@ -20,7 +20,7 @@ export default function Login() {
 
     useEffect(() => {
         if (!loading && session && profile) {
-            if (!profile.onboarding) {
+            if (!profile.company_id) {
                 router.push('/signup/onboarding');
             } else {
                 router.push('/dashboard');

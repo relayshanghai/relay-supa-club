@@ -40,34 +40,37 @@ export const UserProvider: React.FC<{ children: any }> = ({ children }) => {
         setLoading(false);
     }, []);
 
-    async function getProfile() {
-        try {
-            setLoading(true);
-            const user = supabase.auth.user();
-            setUser(user);
+    const getProfile = useCallback(
+        async function () {
+            try {
+                setLoading(true);
+                const user = supabase.auth.user();
+                setUser(user);
 
-            const { data, error } = await supabase
-                .from('profiles')
-                .select(`*, company:companies(id, name, website)`)
-                .eq('id', user!.id)
-                .single();
+                const { data, error } = await supabase
+                    .from('profiles')
+                    .select(`*, company:companies(id, name, website)`)
+                    .eq('id', user!.id)
+                    .single();
 
-            if (error) {
-                throw error;
+                if (error) {
+                    throw error;
+                }
+                setProfile(data);
+            } catch (error: any) {
+                console.log(error.message);
+            } finally {
+                setLoading(false);
             }
-            setProfile(data);
-        } catch (error: any) {
-            console.log(error.message);
-        } finally {
-            setLoading(false);
-        }
-    }
+        },
+        [setLoading, setUser, setProfile]
+    );
 
     useEffect(() => {
         if (session) {
             getProfile();
         }
-    }, [session]);
+    }, [session, getProfile]);
 
     const login = useCallback(async (email: string, password: string) => {
         setLoading(true);
@@ -83,6 +86,8 @@ export const UserProvider: React.FC<{ children: any }> = ({ children }) => {
 
             // Fetch the profile for the app to fill it
             setUser(user);
+
+            await getProfile();
         } catch (e: any) {
             throw new Error(e.message || 'Unknown error');
         } finally {
