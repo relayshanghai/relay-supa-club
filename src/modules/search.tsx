@@ -148,7 +148,7 @@ export const Search = () => {
                     channel={channel}
                     filter={filterCountry}
                     onSetTopics={(topics: any) => {
-                        setAudienceLocation(topics.map((item: any) => ({ ...item, weight: 5 })));
+                        setAudienceLocation(topics.map((item: any) => ({ weight: 5, ...item })));
                     }}
                     TagComponent={({ onClick, ...item }: any) => {
                         const selected = audienceLocation.find(
