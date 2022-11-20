@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { headers } from 'src/utils/api/constants';
+import { searchSubscription } from 'src/utils/api/subscription/search';
 
 const location = ({ id, weight }: any) => ({ id, weight: weight ? parseFloat(weight) / 100 : 0.5 });
 
@@ -117,10 +118,13 @@ const search = {
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
-        const { subscription, ...rest } = JSON.parse(req.body);
+        const { company_id, ...rest } = JSON.parse(req.body);
+
+        const subscriptions = await searchSubscription({ company_id });
+        const limit = subscriptions.data.length > 0 ? 100 : 10;
 
         const results = await search.tags({
-            limit: subscription.plans.amount,
+            limit,
             ...rest
         });
 

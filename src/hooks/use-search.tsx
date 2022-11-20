@@ -1,7 +1,9 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { useSubscription } from 'src/hooks/use-subscription';
+import { useUser } from './use-user';
 
 export const useSearch = () => {
+    const { profile } = useUser();
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState<any>(0);
     const [results, setResults] = useState<any>();
@@ -25,10 +27,9 @@ export const useSearch = () => {
         []
     );
     const ref = useRef<any>();
-    const { subscription } = useSubscription();
 
     const search = useCallback(async () => {
-        if (subscription) {
+        if (profile?.company_id) {
             setLoading(true);
 
             if (ref.current) {
@@ -48,7 +49,7 @@ export const useSearch = () => {
                         term: search,
                         page: page,
                         tags,
-                        subscription,
+                        company_id: profile?.company_id,
                         lookalike,
                         KOLLocation,
                         audienceLocation,
@@ -69,7 +70,7 @@ export const useSearch = () => {
         tags,
         channel,
         page,
-        subscription,
+        profile,
         lookalike,
         KOLLocation,
         audienceLocation,

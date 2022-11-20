@@ -1,21 +1,27 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import { searchSubscription } from 'src/utils/api/subscription/search';
+import { stripeClient } from 'src/utils/stripe-client';
 import { supabase } from 'src/utils/supabase-client';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'GET') {
         const companyId = req.query.id;
-        const { data, error } = await supabase
-            .from('subscriptions')
-            .select('*, plans(id, name, value, amount)')
-            .eq('company_id', companyId)
-            .eq('active', true)
-            .maybeSingle();
 
-        if (error) {
-            return res.status(500).json(error);
-        }
+        const { data } = await supabase
+            .from('companies')
+            .select('cus_id')
+            .eq('id', companyId)
+            .single();
 
-        return res.status(200).json(data);
+        const subscriptions = await stripeClient.subscriptions.list({
+            customer: data.cus_id,
+            status: 'active'
+        });
+        const subscription = subscriptions.data[0];
+        const product = await stripeClient.products.retrieve((subscription as any).plan.product);
+        (subscription as any).product = product;
+
+        return res.status(200).json(subscription);
     }
 
     return res.status(400).json(null);

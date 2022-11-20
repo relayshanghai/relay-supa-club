@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import { stripeClient } from 'src/utils/stripe-client';
 import { supabase } from 'src/utils/supabase-client';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -6,7 +7,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const companyId = req.query.id;
         const { data, error } = await supabase
             .from('companies')
-            .select('*, profiles(id, first_name, last_name, admin), invites(id, email, used)')
+            .select(
+                '*, profiles(id, first_name, last_name, admin), invites(id, email, used), usages(id)'
+            )
             .eq('id', companyId)
             .eq('invites.used', false)
             .single();
@@ -27,6 +30,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             })
             .eq('id', id)
             .single();
+
+        await stripeClient.customers.update(data.cus_id, {
+            name: data.name,
+            description: data.website,
+            metadata: {
+                company_id: id
+            }
+        });
 
         if (error) {
             return res.status(500).json(error);

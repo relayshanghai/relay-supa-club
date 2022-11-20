@@ -1,4 +1,4 @@
-import { Layout } from 'src/components/layout';
+import { Layout } from 'src/modules/layout';
 import { Search } from 'src/modules/search';
 
 const Page = () => {

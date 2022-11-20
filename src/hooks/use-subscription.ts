@@ -10,6 +10,10 @@ export const useSubscription = () => {
         fetcher
     );
     const { data: plans } = useSWR(`/api/subscriptions/plans`, fetcher);
+    const { data: paymentMethods } = useSWR(
+        profile.company_id ? `/api/subscriptions/payment-method?id=${profile.company_id}` : null,
+        fetcher
+    );
 
     const updateCompany = useCallback(
         async (input: any) => {
@@ -25,11 +29,11 @@ export const useSubscription = () => {
     );
 
     const createSubscriptions = useCallback(
-        async (planId: any) => {
+        async (priceId: any) => {
             await fetch(`/api/subscriptions/create`, {
                 method: 'post',
                 body: JSON.stringify({
-                    plan_id: planId,
+                    price_id: priceId,
                     company_id: profile.company_id
                 })
             });
@@ -40,6 +44,7 @@ export const useSubscription = () => {
 
     return {
         subscription: data,
+        paymentMethods,
         plans,
         updateCompany,
         createSubscriptions

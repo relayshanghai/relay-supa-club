@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { createSubscription } from 'src/utils/api/create-subscription';
+import { ensureCustomer } from 'src/utils/api/ensure-customer';
 import { supabase } from 'src/utils/supabase-client';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -30,24 +31,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             return res.status(500).json(profileError);
         }
 
-        const { data: plan, error: plansError } = await supabase
-            .from('plans')
-            .select('id')
-            .eq('has_trial', true)
-            .single();
-
-        if (plansError) {
-            return res.status(500).json(profileError);
-        }
-
-        try {
-            await createSubscription({
-                company_id: company.id,
-                plan_id: plan.id
-            });
-        } catch (e) {
-            return res.status(500).json(e);
-        }
+        // Create the customer in stripe as well
+        await ensureCustomer({ company_id: company.id, name });
 
         return res.status(200).json({ profile, company });
     }

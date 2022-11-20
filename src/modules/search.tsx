@@ -16,7 +16,6 @@ const filterCountry = (items: any[]) => {
 };
 
 export const Search = () => {
-    const { subscription } = useSubscription();
     const {
         channels,
         channel,
@@ -169,7 +168,6 @@ export const Search = () => {
                                         e.stopPropagation();
                                     }}
                                     onChange={(e: any) => {
-                                        // console.log(e.target.value);
                                         const clone = audienceLocation.slice();
                                         const index = audienceLocation.indexOf(selected);
 
@@ -573,7 +571,7 @@ export const Search = () => {
                     </tbody>
                 </table>
             </div>
-            <div className="space-x-2">
+            {/* <div className="space-x-2">
                 {subscription?.plans.amount > 10
                     ? Array.from(Array(Math.ceil(subscription.plans.amount / 10))).map(
                           (_, i: any) => {
@@ -591,7 +589,7 @@ export const Search = () => {
                           }
                       )
                     : null}
-            </div>
+            </div> */}
         </div>
     );
 };

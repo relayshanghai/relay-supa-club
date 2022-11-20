@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { Button } from 'src/components/button';
 import { Input } from 'src/components/input';
-import { Layout } from 'src/components/layout';
+import { Layout } from 'src/modules/layout';
 import { useCompany } from 'src/hooks/use-company';
 import { useFields } from 'src/hooks/use-fields';
 import { useSubscription } from 'src/hooks/use-subscription';
@@ -33,7 +33,7 @@ const Page = () => {
         website: ''
     });
     const { company, updateCompany, createInvite } = useCompany();
-    const { subscription, plans, createSubscriptions } = useSubscription();
+    const { subscription, plans, paymentMethods, createSubscriptions } = useSubscription();
 
     useEffect(() => {
         if (!loading && profile) {
@@ -213,34 +213,51 @@ const Page = () => {
                     ) : null}
                 </div>
                 <div className="flex flex-col items-start space-y-4 p-4 bg-white rounded-lg max-w-lg">
-                    <div className="">Subscription</div>
+                    <div className="flex flex-row justify-between w-full items-center">
+                        <div>Subscription</div>
+                        <div className="flex flex-row justify-end">
+                            <Button
+                                type="secondary"
+                                onClick={() => {
+                                    window.open(`/api/subscriptions/portal?id=${company.id}`);
+                                }}
+                            >
+                                View billing portal
+                            </Button>
+                        </div>
+                    </div>
                     <div className={`flex flex-row space-x-4 ${loading ? 'opacity-50' : ''}`}>
                         {subscription ? (
                             <div className="flex flex-col space-y-2">
                                 <div className="flex flex-row space-x-8">
                                     <div className="text-sm font-bold">
                                         <div className="text-xs text-gray-500 font-normal">
-                                            Name
+                                            Cycle
                                         </div>
-                                        {subscription.plans.name}
+                                        {subscription.plan.interval}
                                     </div>
                                     <div className="text-sm font-bold">
                                         <div className="text-xs text-gray-500 font-normal">
                                             Price
                                         </div>
-                                        ${subscription.plans.value} monthly
+                                        {Number(subscription.plan.amount / 100).toLocaleString()}{' '}
+                                        {` `}
+                                        {subscription.plan.currency.toUpperCase()}
                                     </div>
                                     <div className="text-sm font-bold">
                                         <div className="text-xs text-gray-500 font-normal">
-                                            Amount
+                                            Monthly profiles
                                         </div>
-                                        {subscription.plans.amount} KOLs / search
+                                        {subscription.product.metadata.usage_limit}
                                     </div>
                                     <div className="text-sm font-bold">
                                         <div className="text-xs text-gray-500 font-normal">
                                             Until
                                         </div>
-                                        {format(new Date(subscription.expire_at), 'MMMM e, Y')}
+                                        {format(
+                                            new Date(subscription.current_period_end * 1e3),
+                                            'MMM dd, Y'
+                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -250,94 +267,119 @@ const Page = () => {
                             </div>
                         )}
                     </div>
-                    <div className="w-full pt-8 divide-y divide-gray-200">
-                        <div className="pb-4">Available plans</div>
-                        {Array.isArray(plans)
-                            ? plans.map((item: any, i: any) => {
-                                  return (
-                                      <div
-                                          key={item.id}
-                                          className="flex flex-row space-x-2 items-center justify-between w-full py-2"
-                                      >
-                                          <div className="text-sm font-bold w-1/6">
-                                              {i === 0 ? (
-                                                  <div className="text-xs text-gray-500 font-normal">
-                                                      Name
-                                                  </div>
-                                              ) : null}
-                                              {item.name}
-                                          </div>
-                                          <div className="text-sm font-bold w-1/6">
-                                              {i === 0 ? (
-                                                  <div className="text-xs text-gray-500 font-normal">
-                                                      Price
-                                                  </div>
-                                              ) : null}
-                                              ${item.value}
-                                          </div>
-                                          <div className="text-sm font-bold w-1/4">
-                                              {i === 0 ? (
-                                                  <div className="text-xs text-gray-500 font-normal">
-                                                      KOLs / search
-                                                  </div>
-                                              ) : null}
-                                              {item.amount}
-                                          </div>
-                                          {profile?.admin ? (
-                                              <div className="text-sm font-bold w-2/6 flex flex-row justify-end">
-                                                  <Button
-                                                      disabled={item.id === subscription?.plan_id}
-                                                      onClick={async () => {
-                                                          setShowConfirmModal(item);
-                                                      }}
-                                                  >
-                                                      Purchase for ${item.value}
-                                                  </Button>
-                                              </div>
-                                          ) : null}
-                                      </div>
-                                  );
-                              })
-                            : null}
-                    </div>
+                    {paymentMethods?.data.length === 0 ? (
+                        <div className="w-full">
+                            <div>
+                                Before purchasing a subscription, you need to add a payment method.{' '}
+                            </div>
+                            <div className="flex flex-row justify-end">
+                                <Button
+                                    onClick={() => {
+                                        window.open(`/api/subscriptions/portal?id=${company.id}`);
+                                    }}
+                                >
+                                    Add payment method
+                                </Button>
+                            </div>
+                        </div>
+                    ) : null}
+                    {paymentMethods?.data.length !== 0 && Array.isArray(plans) ? (
+                        <div className="w-full pt-8 divide-y divide-gray-200">
+                            <div className="pb-4">Available plans</div>
+                            {plans.map((item: any, i: any) => {
+                                return (
+                                    <div
+                                        key={item.id}
+                                        className="flex flex-row space-x-2 items-center justify-between w-full py-2"
+                                    >
+                                        <div className="text-sm font-bold w-1/4">
+                                            {i === 0 ? (
+                                                <div className="text-xs text-gray-500 font-normal">
+                                                    Name
+                                                </div>
+                                            ) : null}
+                                            {item.name}
+                                        </div>
+                                        <div className="text-sm font-bold w-1/4">
+                                            {i === 0 ? (
+                                                <div className="text-xs text-gray-500 font-normal">
+                                                    Monthly profiles
+                                                </div>
+                                            ) : null}
+                                            {item.metadata.usage_limit}
+                                        </div>
+                                        {profile?.admin ? (
+                                            <div className="text-sm font-bold w-2/6 flex flex-row justify-end">
+                                                <Button
+                                                    disabled={item.id === subscription?.plan_id}
+                                                    onClick={async () => {
+                                                        setShowConfirmModal(item);
+                                                    }}
+                                                >
+                                                    Starting from{' '}
+                                                    {Number(
+                                                        item.prices[1].amount / 100
+                                                    ).toLocaleString()}{' '}
+                                                    / {item.prices[1].interval}
+                                                </Button>
+                                            </div>
+                                        ) : null}
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    ) : null}
                 </div>
             </div>
             <Modal
-                title={'Confirm purchase'}
+                title={`${confirmModal?.name} plan for ${confirmModal?.metadata.usage_limit} monthly profiles`}
                 visible={!!confirmModal}
                 onClose={() => {
                     setShowConfirmModal(undefined);
                 }}
             >
-                <div className="py-4">You are about to purchase the plan below:</div>
-                <div className="flex flex-row space-x-2 items-center justify-between border-t border-grey-200 w-full py-2">
-                    <div className="text-sm font-bold w-1/6">
-                        <div className="text-xs text-gray-500 font-normal">Name</div>
-                        {confirmModal?.name}
-                    </div>
-                    <div className="text-sm font-bold w-1/6">
-                        <div className="text-xs text-gray-500 font-normal">Price</div>$
-                        {confirmModal?.value}
-                    </div>
-                    <div className="text-sm font-bold w-1/4">
-                        <div className="text-xs text-gray-500 font-normal">KOLs / search</div>
-                        {confirmModal?.amount}
-                    </div>
+                <div className="py-4">These are available subscriptions</div>
+                <div className="flex flex-col space-y-8">
+                    {confirmModal?.prices.map((price: any, i: any) => {
+                        return (
+                            <div key={i} className="flex flex-row justify-between">
+                                <div className="text-sm font-bold">
+                                    {Number(price.amount / 100).toLocaleString()}
+                                    {` `}
+                                    {price.currency.toUpperCase()} / {price.interval}{' '}
+                                    {price.interval === 'year' ? (
+                                        <div className="text-xs rounded p-1 bg-green-200">
+                                            {'Best value: ' +
+                                                Number(price.amount / 100 / 12).toLocaleString() +
+                                                ' ' +
+                                                price.currency.toUpperCase() +
+                                                ' / month'}
+                                        </div>
+                                    ) : null}
+                                </div>
+                                <div className="text-sm font-bold">
+                                    <Button
+                                        disabled={price.id === subscription.plan.id}
+                                        type={price.interval === 'year' ? 'primary' : 'secondary'}
+                                        onClick={async () => {
+                                            const id = toast.loading('Subscribing...');
+                                            try {
+                                                await createSubscriptions(price.id);
+                                                setShowConfirmModal(undefined);
+                                                toast.success('Subscription purchased', { id });
+                                            } catch (e) {
+                                                toast.error('Ops, something went wrong', { id });
+                                            }
+                                        }}
+                                    >
+                                        Subscribe
+                                    </Button>
+                                </div>
+                            </div>
+                        );
+                    })}
                 </div>
                 <div className="pt-8 space-x-16 justify-center flex flex-row w-full">
-                    <Button
-                        onClick={async () => {
-                            try {
-                                createSubscriptions(confirmModal.id);
-                                setShowConfirmModal(undefined);
-                                toast.success('Subscription purchased');
-                            } catch (e) {
-                                toast.error('Ops, something went wrong');
-                            }
-                        }}
-                    >
-                        Confirm
-                    </Button>
                     <Button
                         type="secondary"
                         onClick={async () => {
