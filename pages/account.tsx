@@ -55,7 +55,7 @@ const Page = () => {
         <Layout>
             <div className="flex flex-col p-6 space-y-6">
                 <div className="text-lg font-bold">Account</div>
-                <div className="flex flex-col items-start space-y-4 p-4 bg-white rounded-lg max-w-lg">
+                <div className="flex flex-col items-start space-y-4 p-4 bg-white rounded-lg w-full lg:max-w-2xl">
                     <div className="">Here you can change your personal account details.</div>
                     <div className={`w-full ${loading ? 'opacity-50' : ''}`}>
                         <Input
@@ -109,7 +109,7 @@ const Page = () => {
                         </Button>
                     </div>
                 </div>
-                <div className="flex flex-col items-start space-y-4 p-4 bg-white rounded-lg max-w-lg">
+                <div className="flex flex-col items-start space-y-4 p-4 bg-white rounded-lg w-full lg:max-w-2xl">
                     <div className="">Here you can change your Company account details.</div>
                     <div className={`flex flex-row space-x-4 ${loading ? 'opacity-50' : ''}`}>
                         <Input
@@ -212,7 +212,7 @@ const Page = () => {
                         </div>
                     ) : null}
                 </div>
-                <div className="flex flex-col items-start space-y-4 p-4 bg-white rounded-lg max-w-lg">
+                <div className="flex flex-col items-start space-y-4 p-4 bg-white rounded-lg w-full lg:max-w-2xl">
                     <div className="flex flex-row justify-between w-full items-center">
                         <div>Subscription</div>
                         <div className="flex flex-row justify-end">
@@ -229,37 +229,27 @@ const Page = () => {
                     <div className={`flex flex-row space-x-4 ${loading ? 'opacity-50' : ''}`}>
                         {subscription ? (
                             <div className="flex flex-col space-y-2">
-                                <div className="flex flex-row space-x-8">
-                                    <div className="text-sm font-bold">
-                                        <div className="text-xs text-gray-500 font-normal">
-                                            Cycle
-                                        </div>
-                                        {subscription.plan.interval}
-                                    </div>
-                                    <div className="text-sm font-bold">
-                                        <div className="text-xs text-gray-500 font-normal">
-                                            Price
-                                        </div>
+                                <div>
+                                    You currently are on <b>{subscription.product.name}</b> plan,
+                                    which gives you a total of{' '}
+                                    <b>{subscription.product.metadata.usage_limit}</b> monthly
+                                    profiles at{' '}
+                                    <b>
                                         {Number(subscription.plan.amount / 100).toLocaleString()}{' '}
                                         {` `}
                                         {subscription.plan.currency.toUpperCase()}
-                                    </div>
-                                    <div className="text-sm font-bold">
-                                        <div className="text-xs text-gray-500 font-normal">
-                                            Monthly profiles
-                                        </div>
-                                        {subscription.product.metadata.usage_limit}
-                                    </div>
-                                    <div className="text-sm font-bold">
-                                        <div className="text-xs text-gray-500 font-normal">
-                                            Until
-                                        </div>
+                                    </b>{' '}
+                                    / <b>{subscription.plan.interval}</b>. You are on a{' '}
+                                    <b>{subscription.plan.interval}</b> cycle which will end on{' '}
+                                    <b>
                                         {format(
                                             new Date(subscription.current_period_end * 1e3),
                                             'MMM dd, Y'
                                         )}
-                                    </div>
+                                    </b>
+                                    .
                                 </div>
+                                <div>Not enough? checkout the available plans below.</div>
                             </div>
                         ) : (
                             <div className="text-sm py-2 text-gray-500">
@@ -298,7 +288,12 @@ const Page = () => {
                                                     Name
                                                 </div>
                                             ) : null}
-                                            {item.name}
+                                            {item.name}{' '}
+                                            {item.name === subscription?.product.name ? (
+                                                <span className="text-xs bg-gray-200 p-1 rounded">
+                                                    Active
+                                                </span>
+                                            ) : null}
                                         </div>
                                         <div className="text-sm font-bold w-1/4">
                                             {i === 0 ? (
@@ -343,10 +338,12 @@ const Page = () => {
                     {confirmModal?.prices.map((price: any, i: any) => {
                         return (
                             <div key={i} className="flex flex-row justify-between">
-                                <div className="text-sm font-bold">
-                                    {Number(price.amount / 100).toLocaleString()}
-                                    {` `}
-                                    {price.currency.toUpperCase()} / {price.interval}{' '}
+                                <div className="text-sm font-bold space-y-1 flex-col flex items-start">
+                                    <div>
+                                        {Number(price.amount / 100).toLocaleString()}
+                                        {` `}
+                                        {price.currency.toUpperCase()} / {price.interval}{' '}
+                                    </div>
                                     {price.interval === 'year' ? (
                                         <div className="text-xs rounded p-1 bg-green-200">
                                             {'Best value: ' +
@@ -355,6 +352,11 @@ const Page = () => {
                                                 price.currency.toUpperCase() +
                                                 ' / month'}
                                         </div>
+                                    ) : null}
+                                    {price.id === subscription.plan.id ? (
+                                        <span className="text-xs bg-gray-200 p-1 rounded">
+                                            Active
+                                        </span>
                                     ) : null}
                                 </div>
                                 <div className="text-sm font-bold">
@@ -378,6 +380,9 @@ const Page = () => {
                             </div>
                         );
                     })}
+                </div>
+                <div className="text-xs text-gray-600 mt-4">
+                    Note that clicking `Subscribe` will charge the default payment method.
                 </div>
                 <div className="pt-8 space-x-16 justify-center flex flex-row w-full">
                     <Button

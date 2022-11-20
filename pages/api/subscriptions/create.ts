@@ -32,7 +32,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             const subscription = await stripeClient.subscriptions.create({
                 customer: data.cus_id,
-                items: [{ price: price_id }]
+                items: [{ price: price_id }],
+                proration_behavior: 'create_prorations'
             });
 
             const price = await stripeClient.prices.retrieve(price_id);
