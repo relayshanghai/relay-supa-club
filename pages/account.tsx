@@ -353,7 +353,7 @@ const Page = () => {
                                                 ' / month'}
                                         </div>
                                     ) : null}
-                                    {price.id === subscription.plan.id ? (
+                                    {price.id === subscription?.plan?.id ? (
                                         <span className="text-xs bg-gray-200 p-1 rounded">
                                             Active
                                         </span>
@@ -361,7 +361,7 @@ const Page = () => {
                                 </div>
                                 <div className="text-sm font-bold">
                                     <Button
-                                        disabled={price.id === subscription.plan.id}
+                                        disabled={price.id === subscription?.plan?.id}
                                         type={price.interval === 'year' ? 'primary' : 'secondary'}
                                         onClick={async () => {
                                             const id = toast.loading('Subscribing...');
