@@ -6,7 +6,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const companyId = req.query.id;
         const { data, error } = await supabase
             .from('campaigns')
-            .select('*')
+            .select('*, companies(id, name, cus_id)')
             .eq('company_id', companyId);
         if (error) {
             return res.status(500).json(error);
