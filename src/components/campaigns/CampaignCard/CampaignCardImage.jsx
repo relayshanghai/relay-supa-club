@@ -6,8 +6,11 @@ export default function CampaignCardImage({ campaign }) {
             <Image
                 src={'/image404.png'}
                 alt="card-image"
-                width={300}
-                height={200}
+                layout="fill"
+                objectFit="cover"
+                sizes="(min-width: 60em) 24vw,
+                    (min-width: 28em) 45vw,
+                    100vw"
                 className="w-full h-full object-cover rounded-lg"
             />
             <div className="flex flex-wrap mb-1 absolute bottom-0 left-2">

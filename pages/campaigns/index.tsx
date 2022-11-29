@@ -20,7 +20,7 @@ const CampaignsPage = () => {
                 <div className="text-sm text-gray-600 h-full w-full">
                     Oops! No campaigns available.
                     <span className="text-primary-500 hover:text-primary-700 duration-300 cursor-pointer">
-                        Click here to create a campaign
+                        <Link href="/campaigns/form">Click here to create a campaign</Link>
                     </span>
                 </div>
             );
@@ -33,7 +33,7 @@ const CampaignsPage = () => {
             <div className="flex flex-col p-6">
                 <div className="flex items-center justify-between mb-4 sm:mb-6">
                     <Tabs currentTab={currentTab} changeTab={setCurrentTab} />
-                    <Link href="">
+                    <Link href="/campaigns/form">
                         <Button>New Campaign</Button>
                     </Link>
                 </div>

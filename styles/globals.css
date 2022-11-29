@@ -1,11 +1,98 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import '../res/fonts/fonts.css';
 
 html,
 body,
 #__next {
     @apply bg-gray-50;
     @apply text-gray-900;
-    font-family: "SF Pro", sans-serif;
+    font-family: 'SF Pro', sans-serif;
+}
+
+@layer components {
+    .border-unset-all {
+        @apply border-transparent focus:border-transparent focus:ring-0;
+    }
+
+    .btn {
+        @apply flex items-center justify-center text-sm px-4 py-2 rounded-md cursor-pointer flex-shrink-0;
+    }
+
+    .btn-primary {
+        @apply text-white bg-primary-500 hover:bg-primary-700 duration-300;
+    }
+
+    .btn-secondary {
+        @apply text-gray-600 bg-gray-200 hover:bg-gray-300 duration-300;
+    }
+
+    .btn-transparent {
+        @apply text-primary-500 bg-primary-100 bg-opacity-50 hover:bg-opacity-100 duration-300;
+    }
+
+    .btn-sm-transparent {
+        @apply bg-primary-100 text-primary-500 text-xs bg-opacity-60 hover:bg-opacity-100 duration-300 cursor-pointer px-2 py-1 rounded-md;
+    }
+
+    .btn-with-icon-gray {
+        @apply row-between bg-white rounded-lg cursor-pointer hover:bg-primary-100 duration-300 py-2 px-4;
+    }
+
+    .btn-fileupload {
+        @apply bg-gray-100 text-xs rounded-md border border-gray-200 cursor-pointer hover:bg-gray-200 duration-300;
+    }
+
+    .column-center {
+        @apply flex flex-col items-center justify-center;
+    }
+
+    .column-between {
+        @apply flex flex-col items-center justify-between;
+    }
+
+    .column-start {
+        @apply flex flex-col items-center justify-start;
+    }
+
+    .column-end {
+        @apply flex flex-col items-center justify-end;
+    }
+
+    .row-center {
+        @apply flex flex-row items-center justify-center;
+    }
+
+    .row-between {
+        @apply flex flex-row items-center justify-between;
+    }
+
+    .row-around {
+        @apply flex flex-row items-center justify-evenly;
+    }
+
+    .input-field {
+        @apply bg-white border outline-none text-sm text-gray-600 border-gray-200 w-full h-9 rounded-md px-2 duration-300 focus-within:border-primary-500 placeholder-gray-300;
+    }
+
+    .select-field {
+        @apply block w-full h-9 rounded-md text-gray-600 outline-none bg-white focus-within:border-primary-500 text-sm placeholder-gray-300;
+    }
+
+    .textarea-field {
+        @apply bg-white border outline-none text-sm text-gray-600 border-gray-200 w-full rounded-md py-1 px-2 resize-none focus-within:border-primary-500 duration-300 placeholder-gray-300;
+    }
+
+    .checkbox {
+        @apply cursor-pointer duration-300 appearance-none h-4 w-4 border border-gray-300 rounded-md checked:bg-primary-500 checked:border-transparent focus:outline-none mr-6;
+    }
+
+    .file-uploader {
+        @apply block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-primary-100 file:text-primary-700 hover:file:bg-primary-100 cursor-pointer duration-300;
+    }
+
+    .radio-button {
+        @apply cursor-pointer duration-300 appearance-none h-4 w-4 border border-primary-400 rounded-md checked:bg-primary-500 checked:border-transparent focus:outline-none;
+    }
 }

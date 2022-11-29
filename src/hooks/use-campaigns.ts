@@ -10,21 +10,21 @@ export const useCampaigns = () => {
         fetcher
     );
 
-    // const createCampaign = useCallback(
-    //     async (input: any) => {
-    //         await fetch(`/api/campaigns/create`, {
-    //             method: 'post',
-    //             body: JSON.stringify({
-    //                 ...input,
-    //                 company_id: profile?.company_id
-    //             })
-    //         });
-    //     },
-    //     [profile]
-    // );
+    const createCampaign = useCallback(
+        async (input: any) => {
+            await fetch(`/api/campaigns/create`, {
+                method: 'post',
+                body: JSON.stringify({
+                    ...input,
+                    company_id: profile?.company_id
+                })
+            });
+        },
+        [profile]
+    );
 
     return {
-        campaigns: data
-        // createCampaign
+        campaigns: data,
+        createCampaign
     };
 };

@@ -21,9 +21,7 @@ export default function CampaignCardText({ t, campaign }) {
                                 onClick={(e) => goToCampaign(e, status)}
                                 className="flex items-center text-xs px-1 py-0.5 bg-primary-100 text-gray-600 hover:text-primary-500 duration-300 bg-opacity-60 border border-gray-100 rounded-md mr-2 mb-2"
                             >
-                                <div className="mr-1">
-                                    {t(`campaigns.show.activities.outreach.status.${status[0]}`)}
-                                </div>
+                                <div className="mr-1">Change Status</div>
                                 <div>{status[1]}</div>
                             </div>
                         </Link>

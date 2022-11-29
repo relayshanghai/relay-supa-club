@@ -36,7 +36,7 @@ export default function CampaignCardSquare({ campaign }) {
     };
 
     return (
-        <Link href={`/dashboard/campaigns/${campaign.slug}`}>
+        <Link href={`/dashboard/campaigns/${campaign.slug}`} className="max-w-96">
             <a onClick={() => handleNavigateToCampaign()}>
                 <div className="bg-white rounded-lg h-80 relative cursor-pointer sm:hover:shadow-lg duration-300">
                     <CampaignCardImage campaign={campaign} />

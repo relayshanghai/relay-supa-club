@@ -5,6 +5,7 @@ import type { AppProps } from 'next/app';
 import Head from 'next/head';
 import { Toaster } from 'react-hot-toast';
 import { UserProvider } from 'src/hooks/use-user';
+import '../i18n';
 
 function MyApp({ Component, pageProps }: AppProps) {
     return (
