@@ -23,8 +23,22 @@ export const useCampaigns = () => {
         [profile]
     );
 
+    const updateCampaign = useCallback(
+        async (input: any) => {
+            await fetch(`/api/campaigns/update`, {
+                method: 'post',
+                body: JSON.stringify({
+                    ...input,
+                    company_id: profile?.company_id
+                })
+            });
+        },
+        [profile]
+    );
+
     return {
         campaigns: data,
-        createCampaign
+        createCampaign,
+        updateCampaign
     };
 };

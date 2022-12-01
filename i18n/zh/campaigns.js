@@ -219,6 +219,7 @@ export default {
         fileSizeError: '上传文件太大，每个文件请勿超过 5 Mb。',
         fileSizeErrorAlert: '上传文件太大，每个文件请勿超过 5 Mb。',
         successCreateMsg: '您已成功创建一个新项目!',
+        successCreateMsg: '您已成功更新项目信息!',
         dedicatedVideo: '专属广告',
         integratedVideo: '植入广告'
     }

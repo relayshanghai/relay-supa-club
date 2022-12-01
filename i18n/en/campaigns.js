@@ -232,6 +232,7 @@ export default {
         fileSizeError: 'File size is too big. Please keep each file within 5Mb.',
         fileSizeErrorAlert: 'The file uploaded is too big, please keep each under 5Mb.',
         successCreateMsg: 'You have created a campaign successfully!',
+        successCreateMsg: 'You have updated a campaign successfully!',
         dedicatedVideo: 'Dedicated Video',
         integratedVideo: 'Integrated Video'
     }

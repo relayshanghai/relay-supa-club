@@ -9,6 +9,7 @@ import Link from 'next/link';
 import CreatorsOutreach from '../../src/components/campaigns/CreatorOutreach';
 import CampaignDetails from '../../src/components/campaigns/CampaignDetails';
 import { useCampaigns } from 'src/hooks/use-campaigns';
+import Image from 'next/image';
 
 export default function CampaignShow() {
     const router = useRouter();
@@ -36,14 +37,17 @@ export default function CampaignShow() {
     return (
         <Layout>
             {/* -- Campaign banner starts here -- */}
-            <div className="flex items-center justify-center sm:justify-start w-full bg-white rounded-2xl sm:h-40 py-4 sm:py-0 px-4 relative">
+            <div className="flex items-center justify-center md:justify-between w-full bg-white rounded-2xl sm:h-40 py-4 sm:py-0 px-4 relative">
                 <div>
                     <div className="flex flex-col sm:flex-row items-center sm:items-left">
                         <div className="h-32 w-32 sm:mr-4 flex-shrink-0 mb-4 sm:mb-0">
-                            <img
+                            <Image
                                 src={currentCampaign?.media?.url || '/image404.png'}
                                 alt="campaign photo"
-                                className="w-full h-full object-cover rounded-2xl"
+                                width={128}
+                                height={128}
+                                layout=""
+                                className="object-cover rounded-2xl"
                             />
                         </div>
                         <div className="flex flex-col justify-evenly items-center text-center sm:items-start sm:text-left">
@@ -87,15 +91,14 @@ export default function CampaignShow() {
                         </div>
                     </div>
                 </div>
-                <Link
-                    href={`/campaigns/form?campaign=${currentCampaign?.slug}`}
-                    className="group absolute top-3 right-3 flex items-center justify-center w-8 h-8 bg-gray-50 hover:bg-gray-100 duration-300 text-sm text-gray-500 font-semibold rounded-lg mr-2 cursor-pointer z-10"
-                >
-                    <PencilSquareIcon
-                        name="edit"
-                        className="w-4 h-4 fill-current text-gray-300 group-hover:text-primary-500 duration-300"
-                    />
-                </Link>
+                <div className=" absolute top-3 right-6 group w-8 h-8 bg-gray-50 hover:bg-gray-100 duration-300 font-semibold rounded-lg mr-2 cursor-pointer z-10 text-sm text-gray-500 flex items-center justify-center">
+                    <Link href={`/campaigns/form?campaign=${currentCampaign?.slug}`} className="">
+                        <PencilSquareIcon
+                            name="edit"
+                            className="w-4 h-4 fill-current text-gray-300 group-hover:text-primary-500 duration-300"
+                        />
+                    </Link>
+                </div>
             </div>
             {/* -- Campaign outreach details starts --*/}
             <div className="sm:h-40 py-0 md:py-6 px-4">

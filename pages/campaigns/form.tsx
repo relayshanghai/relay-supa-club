@@ -5,6 +5,8 @@ import { useForm, FormProvider } from 'react-hook-form';
 import FormWrapper from 'src/components/common/Form/FormWrapper/FormWrapper';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
+import { supabase } from 'src/utils/supabase-client';
+
 // import dateFormat from 'src/utils//dateFormat';
 import MediaUploader from 'src/components/campaigns/MediaUploader';
 import CurrencyInput from 'src/components/campaigns/CurrencyInput';
@@ -12,7 +14,6 @@ import toast from 'react-hot-toast';
 import { handleError } from 'src/utils/utils.js';
 import {
     MultiSelect,
-    SingleSelect,
     DatePicker,
     Checkbox,
     TextInput,
@@ -36,70 +37,58 @@ export default function CampaignForm() {
         watch,
         formState: { errors }
     } = useForm();
-    const { createCampaign } = useCampaigns();
+    const { createCampaign, updateCampaign } = useCampaigns();
 
     const { t } = useTranslation();
     const router = useRouter();
     const { campaign } = router.query;
     const isAddMode = !campaign;
-
+    console.log({ campaign });
     const goBack = () => router.back();
 
-    // const getCampaign = async () => {
-    //     try {
-    //         const res = await http.get(`/campaigns/${campaign}?hide_creator_details=true`);
-    //         if (res.data.campaign.date_end_campaign)
-    //             res.data.campaign.date_end_campaign = dateFormat(
-    //                 res.data.campaign.date_end_campaign,
-    //                 'isoDate'
-    //             );
-    //         if (res.data.campaign.date_start_campaign)
-    //             res.data.campaign.date_start_campaign = dateFormat(
-    //                 res.data.campaign.date_start_campaign,
-    //                 'isoDate'
-    //             );
-    //         if (res.data.campaign.company_id) setValue('clients', res.data.campaign.company.id);
-    //         setPrevMedia(res.data.campaign.media);
-    //         delete res.data.campaign.media;
-    //         reset(res.data.campaign);
-    //     } catch (error) {
-    //         console.log(error);
-    //     }
-    // };
+    const getCampaign = async () => {
+        const { data, error } = await supabase
+            .from('campaigns')
+            .select('*')
+            .eq('slug', campaign)
+            .single();
+        console.log({ data, error });
+    };
 
     const onSubmit = async (formData) => {
-        // formData = { ...formData, media, purge_media: [...purgedMedia] };
         console.log(formData);
+        // formData = { ...formData, media, purge_media: [...purgedMedia] };
         // const data = new FormData();
         // delete formData.image_main;
         // data.append('[campaign]', JSON.stringify(formData));
         // if (formData.media) formData.media.forEach((k) => data.append('media[]', k));
-        return isAddMode ? createHandler(formData) : updateCampaign(formData);
+        return isAddMode ? createHandler(formData) : updateHandler(formData);
     };
 
-    const createHandler = async (data) => {
+    const createHandler = async (data: any) => {
         setSubmitting(true);
         try {
             await createCampaign(data);
             toast(t('campaigns.form.successCreateMsg'));
             setSubmitting(false);
-
-            // router.push(`/dashboard/campaigns/${res.data.campaign.slug}`);
+            router.push(`/campaigns/${data.campaign.slug}`);
         } catch (error) {
             toast(handleError(error));
             setSubmitting(false);
         }
     };
 
-    const updateCampaign = async (data) => {
-        // setSubmitting(true);
-        // try {
-        //     const res = await http.patch(`campaigns/${campaign}`, data);
-        //     router.push(`/dashboard/campaigns/${res.data.campaign.slug}`);
-        // } catch (error) {
-        //     toast(handleError(error));
-        //     setSubmitting(false);
-        // }
+    const updateHandler = async (data: any) => {
+        setSubmitting(true);
+        try {
+            await updateCampaign(data);
+            toast(t('campaigns.form.successCreateMsg'));
+            setSubmitting(false);
+            router.push(`/campaigns/${data.campaign.slug}`);
+        } catch (error) {
+            toast(handleError(error));
+            setSubmitting(false);
+        }
     };
 
     const renderButton = !submitting ? (
@@ -112,9 +101,9 @@ export default function CampaignForm() {
         </div>
     );
 
-    // useEffect(() => {
-    //     if (!isAddMode) getCampaign();
-    // }, [isAddMode]);
+    useEffect(() => {
+        if (!isAddMode) getCampaign();
+    }, [isAddMode]);
 
     return (
         <Layout>
