@@ -17,7 +17,7 @@ const CampaignsPage = () => {
     const renderCampaigns = () => {
         if (!campaigns?.length) {
             return (
-                <div className="text-sm text-gray-600 h-full w-full">
+                <div className="text-sm text-gray-600 h-full w-max-5xl">
                     Oops! No campaigns available.
                     <span className="text-primary-500 hover:text-primary-700 duration-300 cursor-pointer">
                         <Link href="/campaigns/form">Click here to create a campaign</Link>
@@ -37,7 +37,6 @@ const CampaignsPage = () => {
                         <Button>New Campaign</Button>
                     </Link>
                 </div>
-                {/* <CampaignTable campaigns={campaigns} /> */}
                 {loading ? <Spinner /> : renderCampaigns()}
             </div>
         </Layout>

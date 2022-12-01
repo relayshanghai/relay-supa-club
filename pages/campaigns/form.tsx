@@ -1,16 +1,13 @@
 /* eslint-disable no-unused-vars */
 import { Layout } from 'src/modules/layout';
-// import Dashboard from '@/components/hocs/Dashboard';
 import { useTranslation } from 'react-i18next';
 import { useForm, FormProvider } from 'react-hook-form';
 import FormWrapper from 'src/components/common/Form/FormWrapper/FormWrapper';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
-import dateFormat from 'src/utils//dateFormat';
+// import dateFormat from 'src/utils//dateFormat';
 import MediaUploader from 'src/components/campaigns/MediaUploader';
 import CurrencyInput from 'src/components/campaigns/CurrencyInput';
-// import can from '@/libs/cancan/react-cancan';
-// import { toast } from 'react-toastify';
 import toast from 'react-hot-toast';
 import { handleError } from 'src/utils/utils.js';
 import {
@@ -85,6 +82,8 @@ export default function CampaignForm() {
         try {
             await createCampaign(data);
             toast(t('campaigns.form.successCreateMsg'));
+            setSubmitting(false);
+
             // router.push(`/dashboard/campaigns/${res.data.campaign.slug}`);
         } catch (error) {
             toast(handleError(error));
