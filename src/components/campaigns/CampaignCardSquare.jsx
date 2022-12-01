@@ -4,13 +4,13 @@ import { ChartBarIcon, PencilSquareIcon } from '@heroicons/react/20/solid';
 
 export default function CampaignCardSquare({ campaign }) {
     return (
-        <Link href={`/campaigns/${campaign.id}`} passHref className="max-w-96">
+        <Link href={`/campaigns/${campaign.id}`} passHref>
             <a>
                 <div className="bg-white rounded-lg h-80 relative cursor-pointer sm:hover:shadow-lg duration-300">
                     {/* -- Campaign Card Image -- */}
                     <div className="rounded-lg h-48 w-full mb-2 relative">
                         <Image
-                            src={'/image404.png'}
+                            src={campaign?.media?.url || '/image404.png'}
                             alt="card-image"
                             layout="fill"
                             objectFit="cover"

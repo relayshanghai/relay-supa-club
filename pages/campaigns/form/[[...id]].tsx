@@ -36,7 +36,6 @@ export default function CampaignForm() {
         control,
         reset,
         setValue,
-        watch,
         formState: { errors }
     } = useForm();
     const { createCampaign, updateCampaign, campaign } = useCampaigns({
