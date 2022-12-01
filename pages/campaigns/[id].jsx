@@ -13,9 +13,8 @@ import Image from 'next/image';
 
 export default function CampaignShow() {
     const router = useRouter();
-    const { slug } = router.query;
-    const { campaigns } = useCampaigns();
-    const [currentCampaign, setCurrentCampaign] = useState(null);
+    const { campaign: currentCampaign } = useCampaigns({ campaignId: router.query.id });
+
     const [currentTab, setCurrentTab] = useState(0);
     // const [campaignStatus, setCampaignStatus] = useState(false);
     const { t } = useTranslation();
@@ -23,16 +22,6 @@ export default function CampaignShow() {
         t('campaigns.show.activities.creatorOutreach'),
         t('campaigns.show.activities.campaignInfo')
     ];
-    const getCampaign = () => {
-        const campaign = campaigns?.find((c) => c.slug === slug);
-        setCurrentCampaign(campaign);
-    };
-
-    useEffect(() => {
-        if (slug) {
-            getCampaign();
-        }
-    }, [slug]);
 
     return (
         <Layout>
@@ -92,7 +81,7 @@ export default function CampaignShow() {
                     </div>
                 </div>
                 <div className=" absolute top-3 right-6 group w-8 h-8 bg-gray-50 hover:bg-gray-100 duration-300 font-semibold rounded-lg mr-2 cursor-pointer z-10 text-sm text-gray-500 flex items-center justify-center">
-                    <Link href={`/campaigns/form?campaign=${currentCampaign?.slug}`} className="">
+                    <Link href={`/campaigns/form/${currentCampaign?.id}`} className="">
                         <PencilSquareIcon
                             name="edit"
                             className="w-4 h-4 fill-current text-gray-300 group-hover:text-primary-500 duration-300"

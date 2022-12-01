@@ -5,7 +5,6 @@ import { useForm, FormProvider } from 'react-hook-form';
 import FormWrapper from 'src/components/common/Form/FormWrapper/FormWrapper';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
-import { supabase } from 'src/utils/supabase-client';
 
 // import dateFormat from 'src/utils//dateFormat';
 import MediaUploader from 'src/components/campaigns/MediaUploader';
@@ -22,8 +21,11 @@ import {
 import { questions } from 'src/components/campaigns/helper';
 import LoaderWhite from 'src/components/icons/LoaderWhite';
 import { useCampaigns } from 'src/hooks/use-campaigns';
+import { useCallback } from 'react';
 
 export default function CampaignForm() {
+    const router = useRouter();
+
     const [submitting, setSubmitting] = useState(false);
     const [media, setMedia] = useState([]);
     const [prevMedia, setPrevMedia] = useState([]);
@@ -37,59 +39,58 @@ export default function CampaignForm() {
         watch,
         formState: { errors }
     } = useForm();
-    const { createCampaign, updateCampaign } = useCampaigns();
-
+    const { createCampaign, updateCampaign, campaign } = useCampaigns({
+        campaignId: router.query.id?.[0]
+    });
     const { t } = useTranslation();
-    const router = useRouter();
-    const { campaign } = router.query;
-    const isAddMode = !campaign;
-    console.log({ campaign });
+    const isAddMode = !router.query.id;
     const goBack = () => router.back();
 
-    const getCampaign = async () => {
-        const { data, error } = await supabase
-            .from('campaigns')
-            .select('*')
-            .eq('slug', campaign)
-            .single();
-        console.log({ data, error });
-    };
+    const createHandler = useCallback(
+        async (data: any) => {
+            setSubmitting(true);
+            try {
+                await createCampaign(data);
+                toast(t('campaigns.form.successCreateMsg'));
+                setSubmitting(false);
+                router.push(`/campaigns/${data.id}`);
+            } catch (error) {
+                toast(handleError(error));
+                setSubmitting(false);
+            }
+        },
+        [createCampaign, router, t]
+    );
 
-    const onSubmit = async (formData) => {
-        console.log(formData);
-        // formData = { ...formData, media, purge_media: [...purgedMedia] };
-        // const data = new FormData();
-        // delete formData.image_main;
-        // data.append('[campaign]', JSON.stringify(formData));
-        // if (formData.media) formData.media.forEach((k) => data.append('media[]', k));
-        return isAddMode ? createHandler(formData) : updateHandler(formData);
-    };
+    const updateHandler = useCallback(
+        async (data: any) => {
+            setSubmitting(true);
+            try {
+                await updateCampaign(data);
+                toast(t('campaigns.form.successCreateMsg'));
+                setSubmitting(false);
+                router.push(`/campaigns/${data.id}`);
+            } catch (error) {
+                toast(handleError(error));
+                setSubmitting(false);
+            }
+        },
+        [updateCampaign, router, t]
+    );
 
-    const createHandler = async (data: any) => {
-        setSubmitting(true);
-        try {
-            await createCampaign(data);
-            toast(t('campaigns.form.successCreateMsg'));
-            setSubmitting(false);
-            router.push(`/campaigns/${data.campaign.slug}`);
-        } catch (error) {
-            toast(handleError(error));
-            setSubmitting(false);
+    const onSubmit = useCallback(
+        async (formData: any) => {
+            console.log(formData);
+            return isAddMode ? createHandler(formData) : updateHandler(formData);
+        },
+        [isAddMode, createHandler, updateHandler]
+    );
+
+    useEffect(() => {
+        if (campaign) {
+            reset(campaign);
         }
-    };
-
-    const updateHandler = async (data: any) => {
-        setSubmitting(true);
-        try {
-            await updateCampaign(data);
-            toast(t('campaigns.form.successCreateMsg'));
-            setSubmitting(false);
-            router.push(`/campaigns/${data.campaign.slug}`);
-        } catch (error) {
-            toast(handleError(error));
-            setSubmitting(false);
-        }
-    };
+    }, [campaign, reset]);
 
     const renderButton = !submitting ? (
         <button type="submit" className="btn btn-primary ml-2">
@@ -100,10 +101,6 @@ export default function CampaignForm() {
             <LoaderWhite className="w-5 h-5" />
         </div>
     );
-
-    useEffect(() => {
-        if (!isAddMode) getCampaign();
-    }, [isAddMode]);
 
     return (
         <Layout>
