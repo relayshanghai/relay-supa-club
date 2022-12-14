@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
     date: 'Date',
     planName: 'Plan Name',
@@ -8,7 +9,7 @@ export default {
     validUntil: 'Valid Until',
     amount: 'Amount',
     billingHistory: 'Billing History',
-    viewReceipt: 'View receipt',
+    viewReceipt: 'View Receipt',
     activePlans: 'Active Plans',
     noPlans: 'You have no active plans'
 };

@@ -79,7 +79,6 @@ export default function CampaignForm() {
 
     const onSubmit = useCallback(
         async (formData: any) => {
-            console.log(formData);
             return isAddMode ? createHandler(formData) : updateHandler(formData);
         },
         [isAddMode, createHandler, updateHandler]

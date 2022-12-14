@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
     index: {
         title: 'Campaigns',
@@ -66,8 +67,8 @@ export default {
         noResponse: 'has not seen or responded to your email yet.',
         followUp: 'Click here to send an follow up email!',
         notInterested: 'KOL is not interested in this campaign.',
-        dayLimit: 'You can only send a KOL an email every 24 hours to avoid spam',
-        emailSent: 'Email sent successfully',
+        dayLimit: 'You can only send a KOL an email every 24 hours to avoid spam.',
+        emailSent: 'Email sent successfully.',
         sendNewMail: 'Send New Mail',
         to: 'to: ',
         from: 'FROM ',
@@ -80,12 +81,12 @@ export default {
         delivered: 'Delivered'
     },
     email: {
-        dayLimit: 'You can only send a KOL an email every 24 hours to avoid spam',
+        dayLimit: 'You can only send a KOL an email every 24 hours to avoid spam.',
         emailSent: 'Email sent successfully',
         sendEmail: 'Send Mail',
         pickTemplate: 'Pick a template',
         pickTemplateDescr:
-            'Pick one of our powerful pre-written templates to connect to your favorite KOL. Increase your chances of getting a reply',
+            'Pick one of our powerful pre-written templates to connect to your favorite KOL. Increase your chances of getting a reply.',
         initialEmail: 'Initial Email',
         followUpEmail: 'Follow Up Email',
         writeOwnMessage: 'Or write your own message',
@@ -232,7 +233,7 @@ export default {
         fileSizeError: 'File size is too big. Please keep each file within 5Mb.',
         fileSizeErrorAlert: 'The file uploaded is too big, please keep each under 5Mb.',
         successCreateMsg: 'You have created a campaign successfully!',
-        successCreateMsg: 'You have updated a campaign successfully!',
+        successUpdateMsg: 'You have updated a campaign successfully!',
         dedicatedVideo: 'Dedicated Video',
         integratedVideo: 'Integrated Video'
     }

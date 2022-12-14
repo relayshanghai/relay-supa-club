@@ -1,5 +1,5 @@
-import { countryList } from 'src/components/clients/form/resources/countryList';
-import options from 'src/components/clients/form/resources/options';
+import { countryList } from './countryList';
+import options from './options';
 
 export const typePromotions = [
     { label: 'campaigns.form.dedicatedVideo', value: 'Dedicated Video' },

@@ -2,7 +2,6 @@ import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import Plus from 'src/components/icons/Plus';
 import Trashcan from 'src/components/icons/Trashcan';
-// import { toast } from 'react-toastify';
 import toast from 'react-hot-toast';
 
 export default function MediaUploader({
@@ -58,7 +57,6 @@ export default function MediaUploader({
                         />
                     </div>
                     <div className="text-sm">{file.name}</div>
-                    {/* {!fileSuccess && <p className="text-xs font-semibold text-primary-400 mt-1 ml-2">{ (file.size /1024 /1024).toFixed(2) } Mb</p> } */}
                 </div>
                 <Trashcan
                     onClick={() => removeFile(index)}
@@ -114,7 +112,6 @@ export default function MediaUploader({
                     style={{ display: 'none' }}
                 />
             </div>
-            {/* {!fileSuccess && <p className="text-xs text-primary-400 mt-1">{t('campaigns.form.fileSizeError')}</p> } */}
         </div>
     );
 }
