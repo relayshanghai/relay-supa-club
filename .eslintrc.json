@@ -10,7 +10,7 @@
         "prefer-const": "warn",
         "@typescript-eslint/ban-ts-comment": "off",
         "@typescript-eslint/no-explicit-any": "off",
-        "no-unused-vars": "warn",
+        "no-unused-vars": "off", // typescript-eslint/no-unused-vars will cover this, and wont throw errors for unused variables in function parameters for ts types
         "@typescript-eslint/no-unused-vars": "warn",
         "no-shadow": "warn"
     }
