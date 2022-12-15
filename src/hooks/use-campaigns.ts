@@ -21,7 +21,7 @@ export const useCampaigns = ({ campaignId }: any = {}) => {
 
     const createCampaign = useCallback(
         async (input: any) => {
-            await fetch(`/api/campaigns/create`, {
+            await fetch('/api/campaigns/create', {
                 method: 'post',
                 body: JSON.stringify({
                     ...input,
