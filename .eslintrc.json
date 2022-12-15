@@ -1,3 +1,16 @@
 {
-  "extends": "next/core-web-vitals"
+    "plugins": ["@typescript-eslint"],
+    "extends": ["next", "plugin:@typescript-eslint/recommended", "prettier"],
+    "rules": {
+        "react/jsx-uses-react": "error",
+        "react/jsx-uses-vars": "error",
+        "camelcase": "warn",
+        "no-console": "warn",
+        "linebreak-style": "off",
+        "prefer-const": "warn",
+        "@typescript-eslint/ban-ts-comment": "off",
+        "@typescript-eslint/no-explicit-any": "off",
+        "no-unused-vars": "off",
+        "@typescript-eslint/no-unused-vars": "warn"
+    }
 }
