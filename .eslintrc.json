@@ -4,13 +4,13 @@
     "rules": {
         "react/jsx-uses-react": "error",
         "react/jsx-uses-vars": "error",
-        "camelcase": "warn",
+        "camelcase": "off",
         "no-console": "warn",
         "linebreak-style": "off",
         "prefer-const": "warn",
         "@typescript-eslint/ban-ts-comment": "off",
         "@typescript-eslint/no-explicit-any": "off",
-        "no-unused-vars": "off",
+        "no-unused-vars": "warn",
         "@typescript-eslint/no-unused-vars": "warn"
     }
 }

@@ -13,7 +13,7 @@ const search = {
             })
         ).json();
     },
-    term: async (platform: string = 'youtube', term: string, limit = 10, page = 0) => {
+    term: async (platform = 'youtube', term: string, limit = 10, page = 0) => {
         return await (
             await fetch(`https://socapi.icu/v2.0/api/search/newv1?platform=${platform}`, {
                 method: 'post',
