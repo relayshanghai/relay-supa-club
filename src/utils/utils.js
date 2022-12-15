@@ -30,7 +30,6 @@ function dateFormatter(date, withTime, options = {}) {
     if (!params.year) params.year = 'numeric';
     if (!params.month) params.month = 'short';
     if (!params.day) params.day = 'numeric';
-    // console.log('date:', d);
     const dateFormatted = d.toLocaleDateString(undefined, params);
     const dateAndTimeFormatted = `${dateFormatted} at ${d.toLocaleTimeString('en-US')}`;
     if (withTime) {

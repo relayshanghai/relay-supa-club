@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { Layout } from 'src/modules/layout';
 import { useTranslation } from 'react-i18next';
 import { useForm, FormProvider } from 'react-hook-form';
@@ -52,7 +51,7 @@ export default function CampaignForm() {
                 await createCampaign(data);
                 toast(t('campaigns.form.successCreateMsg'));
                 setSubmitting(false);
-                router.push(`/campaigns/${data.id}`);
+                router.push(`/campaigns/${encodeURIComponent(data.id)}`);
             } catch (error) {
                 toast(handleError(error));
                 setSubmitting(false);
@@ -68,7 +67,7 @@ export default function CampaignForm() {
                 await updateCampaign(data);
                 toast(t('campaigns.form.successCreateMsg'));
                 setSubmitting(false);
-                router.push(`/campaigns/${data.id}`);
+                router.push(`/campaigns/${encodeURIComponent(data.id)}`);
             } catch (error) {
                 toast(handleError(error));
                 setSubmitting(false);
@@ -79,7 +78,6 @@ export default function CampaignForm() {
 
     const onSubmit = useCallback(
         async (formData: any) => {
-            console.log(formData);
             return isAddMode ? createHandler(formData) : updateHandler(formData);
         },
         [isAddMode, createHandler, updateHandler]

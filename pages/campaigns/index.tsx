@@ -12,7 +12,6 @@ const CampaignsPage = () => {
     const loading = false;
 
     const { campaigns } = useCampaigns();
-    // console.log({ campaigns });
 
     const renderCampaigns = () => {
         if (!campaigns?.length) {
