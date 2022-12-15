@@ -5,6 +5,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (req.method === 'POST') {
         const { company_id, name, ...data } = JSON.parse(req.body);
         console.log({ company_id, name, ...data });
+        // TODO: move all supabase calls like these to a separate file/folder
         const { data: campaign, error } = await supabase
             .from('campaigns')
             .insert({
