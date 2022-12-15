@@ -1,5 +1,5 @@
-import { countryList } from 'src/components/clients/form/resources/countryList';
-import options from 'src/components/clients/form/resources/options';
+import { countryList } from './countryList';
+import options from './options';
 
 export const typePromotions = [
     { label: 'campaigns.form.dedicatedVideo', value: 'Dedicated Video' },
@@ -11,7 +11,7 @@ export const currencyOptions = [
     { label: 'CNY', value: 'CNY' }
 ];
 
-export const countrylist = countryList.map((c) => {
+export const countryListMap = countryList.map((c) => {
     return {
         label: c.name,
         value: c.name
@@ -65,7 +65,7 @@ export const questions = [
         type: 'multiSelect',
         fieldName: 'target_locations',
         isRequired: true,
-        options: countrylist,
+        options: countryListMap,
         placeholder: 'campaigns.form.targetPlaceholder',
         title: 'campaigns.form.targetQuestion',
         desc: 'campaigns.form.targetDescription'
