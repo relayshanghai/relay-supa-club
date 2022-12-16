@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { fetcher } from 'src/utils/fetcher';
 import useSWR from 'swr';
+import { CampaignDB } from 'types';
 import { useUser } from './use-user';
 
 export const useCampaigns = ({ campaignId }: any = {}) => {
@@ -10,7 +11,7 @@ export const useCampaigns = ({ campaignId }: any = {}) => {
         fetcher
     );
 
-    const [campaign, setCampaign] = useState(null);
+    const [campaign, setCampaign] = useState<CampaignDB | null>(null);
 
     useEffect(() => {
         if (data && campaignId) {
@@ -46,7 +47,7 @@ export const useCampaigns = ({ campaignId }: any = {}) => {
     );
 
     return {
-        campaigns: data,
+        campaigns: data as CampaignDB[],
         createCampaign,
         updateCampaign,
         campaign

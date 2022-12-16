@@ -30,11 +30,12 @@ export default function CampaignShow() {
                     <div className="flex flex-col sm:flex-row items-center sm:items-left">
                         <div className="h-32 w-32 sm:mr-4 flex-shrink-0 mb-4 sm:mb-0">
                             <Image
+                                //@ts-ignore
                                 src={currentCampaign?.media?.url || '/image404.png'}
                                 alt="campaign photo"
                                 width={128}
                                 height={128}
-                                layout=""
+                                // layout=""
                                 className="object-cover rounded-2xl"
                             />
                         </div>
@@ -53,7 +54,8 @@ export default function CampaignShow() {
                                 </div>
                                 <div className="text-sm text-tertiary-600">
                                     {currentCampaign?.date_start_campaign
-                                        ? dateFormat(
+                                        ? //@ts-ignore // TODO: is this working?
+                                          dateFormat(
                                               currentCampaign?.date_start_campaign,
                                               'mediumDate'
                                           )
@@ -65,8 +67,9 @@ export default function CampaignShow() {
                                     {t('campaigns.show.tags')}
                                 </div>
                                 <div className="flex h-7">
-                                    {currentCampaign?.tag_list.length > 0 &&
-                                        currentCampaign?.tag_list.map((tag, index) => (
+                                    {currentCampaign?.tag_list?.length &&
+                                        currentCampaign?.tag_list?.length > 0 &&
+                                        currentCampaign?.tag_list.map((tag: any, index: number) => (
                                             <div
                                                 key={index}
                                                 className="bg-tertiary-50 rounded-md px-2 py-1 text-xs text-tertiary-600 mr-1 mb-1"
@@ -79,14 +82,16 @@ export default function CampaignShow() {
                         </div>
                     </div>
                 </div>
-                <div className=" absolute top-3 right-6 group w-8 h-8 bg-gray-50 hover:bg-gray-100 duration-300 font-semibold rounded-lg mr-2 cursor-pointer z-10 text-sm text-gray-500 flex items-center justify-center">
-                    <Link href={`/campaigns/form/${encodeURIComponent(currentCampaign?.id)}`}>
-                        <PencilSquareIcon
-                            name="edit"
-                            className="w-4 h-4 fill-current text-gray-300 group-hover:text-primary-500 duration-300"
-                        />
-                    </Link>
-                </div>
+                {currentCampaign?.id && (
+                    <div className=" absolute top-3 right-6 group w-8 h-8 bg-gray-50 hover:bg-gray-100 duration-300 font-semibold rounded-lg mr-2 cursor-pointer z-10 text-sm text-gray-500 flex items-center justify-center">
+                        <Link href={`/campaigns/form/${encodeURIComponent(currentCampaign?.id)}`}>
+                            <PencilSquareIcon
+                                name="edit"
+                                className="w-4 h-4 fill-current text-gray-300 group-hover:text-primary-500 duration-300"
+                            />
+                        </Link>
+                    </div>
+                )}
             </div>
             {/* -- Campaign outreach details starts --*/}
             <div className="sm:h-40 py-0 md:py-6 px-4">
