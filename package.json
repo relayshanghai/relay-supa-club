@@ -6,6 +6,7 @@
         "dev": "next dev",
         "build": "next build",
         "start": "next start",
+        "lint:staged": "eslint --ext .js,.jsx,.ts,.tsx",
         "lint": "eslint . --ext .js,.jsx,.ts,.tsx --max-warnings=0"
     },
     "dependencies": {
@@ -42,7 +43,7 @@
     "lint-staged": {
         "*.{js,ts,tsx,md}": [
             "prettier --write",
-            "yarn lint"
+            "yarn lint:staged"
         ]
     },
     "husky": {
