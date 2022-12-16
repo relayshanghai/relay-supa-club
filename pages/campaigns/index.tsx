@@ -4,8 +4,8 @@ import Link from 'next/link';
 import Tabs from 'src/components/campaigns/tabs';
 import { Spinner } from 'src/components/spinner';
 import { Button } from 'src/components/button';
-import CampaignCardView from 'src/components/campaigns/campaignCardView';
 import { useCampaigns } from 'src/hooks/use-campaigns';
+import CampaignCardView from 'src/components/campaigns/CampaignCardView';
 
 const CampaignsPage = () => {
     const [currentTab, setCurrentTab] = useState('');
