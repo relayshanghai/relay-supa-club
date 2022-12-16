@@ -5,6 +5,7 @@
         "fullname",
         "headlessui",
         "heroicons",
+        "languagedetector",
         "linebreak",
         "supa",
         "supabase",
@@ -12,4 +13,5 @@
         "tiktok",
         "upsert"
     ]
+
 }
