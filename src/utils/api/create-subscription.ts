@@ -21,6 +21,7 @@ export const createSubscription = async ({ company_id, plan_id }: any) => {
         .single();
 
     if (error) {
+        // test
         console.log({ error });
     }
 
