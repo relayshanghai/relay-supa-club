@@ -43,18 +43,22 @@ function TextInput({
                 type={type}
                 {...register(fieldName, {
                     required: { value: isRequired, message: t('website.requiredField') },
-                    maxLength: {
-                        value: maximLength,
-                        message: `${t('website.maxLength')} ${maximLength} ${t(
-                            'website.characters'
-                        )}`
-                    },
-                    minLength: {
-                        value: minimLength,
-                        message: `${t('website.minLength')} ${minimLength} ${t(
-                            'website.characters'
-                        )}`
-                    }
+                    maxLength: maximLength
+                        ? {
+                              value: maximLength,
+                              message: `${t('website.maxLength')} ${maximLength} ${t(
+                                  'website.characters'
+                              )}`
+                          }
+                        : undefined,
+                    minLength: minimLength
+                        ? {
+                              value: minimLength,
+                              message: `${t('website.minLength')} ${minimLength} ${t(
+                                  'website.characters'
+                              )}`
+                          }
+                        : undefined
                 })}
             />
             <p className="text-xs text-primary-400">{errors[fieldName]?.message?.toString()}</p>
