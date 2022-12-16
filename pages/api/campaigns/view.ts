@@ -2,12 +2,14 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { supabase } from 'src/utils/supabase-client';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    if (req.method === 'GET') {
-        const companyId = req.query.id;
+    if (req.method === 'POST') {
+        const { company_id, campaign_id } = JSON.parse(req.body);
+
         const { data, error } = await supabase
             .from('campaigns')
-            .select('*, companies(id, name, cus_id)')
-            .eq('company_id', companyId);
+            .select('*')
+            .eq('company_id', company_id)
+            .eq('id', campaign_id);
         if (error) {
             return res.status(500).json(error);
         }

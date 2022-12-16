@@ -15,7 +15,7 @@ const ActiveLink = ({ href, children }: any) => {
     const isRouteActive = router.pathname === href;
 
     return (
-        <Link href="/dashboard">
+        <Link href={href}>
             <a
                 className={`text-sm transition hover:text-primary-500 ${
                     isRouteActive ? 'text-primary-600' : ''
