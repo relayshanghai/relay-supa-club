@@ -1,22 +1,6 @@
 import { Layout } from 'src/modules/layout';
 import { useTranslation } from 'react-i18next';
-import {
-    useForm,
-    FormProvider,
-    FieldErrorsImpl,
-    Control,
-    FieldValues,
-    ArrayPath,
-    DeepPartial,
-    FieldArray,
-    FieldError,
-    FormState,
-    Path,
-    PathValue,
-    UseFormRegisterReturn,
-    Validate,
-    ValidationRule
-} from 'react-hook-form';
+import { useForm, FormProvider, FieldErrorsImpl, Control, FieldValues } from 'react-hook-form';
 import FormWrapper from 'src/components/common/Form/FormWrapper/FormWrapper';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
@@ -167,7 +151,6 @@ export default function CampaignForm() {
                                 >
                                     {q.type === 'textInput' && (
                                         <TextInput
-                                            key={q.fieldName}
                                             fieldName={q.fieldName}
                                             register={register}
                                             errors={errors}
@@ -176,7 +159,6 @@ export default function CampaignForm() {
                                     )}
                                     {q.type === 'textArea' && (
                                         <TextArea
-                                            key={q.fieldName}
                                             fieldName={q.fieldName}
                                             register={register}
                                             errors={errors}
@@ -187,7 +169,6 @@ export default function CampaignForm() {
                                     )}
                                     {q.type === 'media' && (
                                         <MediaUploader
-                                            key={q.fieldName}
                                             media={media}
                                             setMedia={setMedia}
                                             prevMedia={prevMedia}
@@ -197,7 +178,6 @@ export default function CampaignForm() {
                                     )}
                                     {q.type === 'multiSelect' && (
                                         <MultiSelect
-                                            key={q.fieldName}
                                             fieldName={q.fieldName}
                                             errors={errors}
                                             isRequired
@@ -210,26 +190,19 @@ export default function CampaignForm() {
                                     )}
                                     {q.type === 'currencyInput' && (
                                         <CurrencyInput
-                                            key={q.fieldName}
                                             register={register}
                                             errors={errors}
-                                            isRequired
+                                            // isRequired
                                             control={control}
                                             setValue={setValue}
                                             defaultValue="USD"
                                         />
                                     )}
                                     {q.type === 'timeline' && (
-                                        <TimelineInput
-                                            key={q.fieldName}
-                                            q={q}
-                                            errors={errors}
-                                            control={control}
-                                        />
+                                        <TimelineInput q={q} errors={errors} control={control} />
                                     )}
                                     {q.type === 'checkbox' && (
                                         <Checkbox
-                                            key={q.fieldName}
                                             fieldName={q.fieldName}
                                             register={register}
                                             errors={errors}

@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
-import Select from 'react-select';
+import Select, { OnChangeValue } from 'react-select';
 import { Control, Controller, FieldErrorsImpl, FieldValues } from 'react-hook-form';
 import { LabelValueObject } from 'types';
 import CustomStyles from 'src/components/common/Form/CustomStyle';
@@ -36,7 +36,7 @@ function MultiSelect({
     maxLimit = 100
 }: MultiSelectProps) {
     const { t } = useTranslation();
-    const [optionsSelected, setOptionsSelected] = useState<string[]>([]);
+    const [optionsSelected, setOptionsSelected] = useState<LabelValueObject[]>([]);
 
     return (
         <div>
@@ -50,9 +50,9 @@ function MultiSelect({
                         styles={CustomStyles}
                         defaultValue={defaultValue}
                         value={value && options.filter((current) => value.includes(current.value))}
-                        onChange={(val) => {
-                            onChange(val.map((current) => current.value)),
-                                setOptionsSelected(val as string[]);
+                        onChange={(v) => {
+                            const val = v as unknown as LabelValueObject[];
+                            onChange(val.map((current) => current.value)), setOptionsSelected(val);
                         }}
                         options={options}
                         placeholder={placeholder}
@@ -94,8 +94,10 @@ const SingleSelect = ({
                         ref={ref}
                         styles={CustomStyles}
                         value={options.find((c) => c.value === value)}
-                        onChange={(val) => {
-                            onChange(val?.values), setValue(valueName ?? '', val?.values);
+                        onChange={(v) => {
+                            console.log({ v });
+                            const val = v as unknown as OnChangeValue<LabelValueObject, false>;
+                            onChange(val?.value), setValue(valueName ?? '', val?.value);
                         }}
                         options={options}
                         placeholder={placeholder}
