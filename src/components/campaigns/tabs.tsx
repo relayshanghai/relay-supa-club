@@ -1,4 +1,16 @@
-export default function Tabs({ currentTab, changeTab }) {
+import { CSSProperties } from 'react';
+
+export interface Props {
+    currentTab: string;
+    changeTab: (tab: string) => void;
+}
+
+type TabLabel = {
+    label: string;
+    value: string;
+};
+
+export default function Tabs({ currentTab, changeTab }: Props) {
     const tabs = [
         { label: 'All', value: '' },
         { label: 'In progress', value: 'in progress' },
@@ -6,15 +18,13 @@ export default function Tabs({ currentTab, changeTab }) {
         { label: 'Completed', value: 'completed' }
     ];
 
-    const selectStyle = {
-        OAppearance: 'none',
-        msAppearance: 'none',
+    const selectStyle: CSSProperties = {
         WebkitAppearance: 'none',
         MozAppearance: 'none',
         appearance: 'none'
     };
 
-    const selectedTabStyles = (tab) => {
+    const selectedTabStyles = (tab: TabLabel) => {
         return currentTab === tab.value ? 'bg-primary-500 text-white' : 'bg-gray-100 text-gray-400';
     };
 
