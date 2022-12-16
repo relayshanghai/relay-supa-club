@@ -1,9 +1,9 @@
 import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
 import Select from 'react-select';
-import CustomStyles from 'src/components/common/form/CustomStyle.jsx';
 import { Control, Controller, FieldErrorsImpl, FieldValues } from 'react-hook-form';
 import { LabelValueObject } from 'types';
+import CustomStyles from 'src/components/common/Form/CustomStyle';
 
 interface SelectProps {
     className?: string;
@@ -95,7 +95,7 @@ const SingleSelect = ({
                         styles={CustomStyles}
                         value={options.find((c) => c.value === value)}
                         onChange={(val) => {
-                            onChange(val?.value), setValue(valueName ?? '', val?.value);
+                            onChange(val?.values), setValue(valueName ?? '', val?.values);
                         }}
                         options={options}
                         placeholder={placeholder}
