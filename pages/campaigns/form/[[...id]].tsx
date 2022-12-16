@@ -167,6 +167,7 @@ export default function CampaignForm() {
                                 >
                                     {q.type === 'textInput' && (
                                         <TextInput
+                                            key={q.fieldName}
                                             fieldName={q.fieldName}
                                             register={register}
                                             errors={errors}
@@ -175,6 +176,7 @@ export default function CampaignForm() {
                                     )}
                                     {q.type === 'textArea' && (
                                         <TextArea
+                                            key={q.fieldName}
                                             fieldName={q.fieldName}
                                             register={register}
                                             errors={errors}
@@ -185,6 +187,7 @@ export default function CampaignForm() {
                                     )}
                                     {q.type === 'media' && (
                                         <MediaUploader
+                                            key={q.fieldName}
                                             media={media}
                                             setMedia={setMedia}
                                             prevMedia={prevMedia}
@@ -194,6 +197,7 @@ export default function CampaignForm() {
                                     )}
                                     {q.type === 'multiSelect' && (
                                         <MultiSelect
+                                            key={q.fieldName}
                                             fieldName={q.fieldName}
                                             errors={errors}
                                             isRequired
@@ -206,6 +210,7 @@ export default function CampaignForm() {
                                     )}
                                     {q.type === 'currencyInput' && (
                                         <CurrencyInput
+                                            key={q.fieldName}
                                             register={register}
                                             errors={errors}
                                             isRequired
@@ -215,15 +220,21 @@ export default function CampaignForm() {
                                         />
                                     )}
                                     {q.type === 'timeline' && (
-                                        <TimelineInput q={q} errors={errors} control={control} />
+                                        <TimelineInput
+                                            key={q.fieldName}
+                                            q={q}
+                                            errors={errors}
+                                            control={control}
+                                        />
                                     )}
                                     {q.type === 'checkbox' && (
                                         <Checkbox
+                                            key={q.fieldName}
                                             fieldName={q.fieldName}
                                             register={register}
                                             errors={errors}
                                             isRequired
-                                            options={q.options}
+                                            options={q.options || []}
                                         />
                                     )}
                                 </FormWrapper>

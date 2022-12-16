@@ -1,6 +1,20 @@
+import { UseFormRegister, FieldValues, FieldErrorsImpl } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
+import { LabelValueObject } from 'types';
 
-function Checkbox({ fieldName, register, errors, options, isRequired }) {
+export interface Props {
+    fieldName: string;
+    register: UseFormRegister<FieldValues>;
+    errors: Partial<
+        FieldErrorsImpl<{
+            [x: string]: any;
+        }>
+    >;
+    options: LabelValueObject[];
+    isRequired?: boolean;
+}
+
+function Checkbox({ fieldName, register, errors, options, isRequired = false }: Props) {
     const { t } = useTranslation();
 
     return (
@@ -23,7 +37,7 @@ function Checkbox({ fieldName, register, errors, options, isRequired }) {
                     </div>
                 );
             })}
-            <p className="text-xs text-primary-400">{errors[fieldName]?.message}</p>
+            <p className="text-xs text-primary-400">{errors[fieldName]?.message?.toString()}</p>
         </div>
     );
 }
