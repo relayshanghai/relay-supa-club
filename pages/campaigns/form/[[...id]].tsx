@@ -37,6 +37,7 @@ export default function CampaignForm() {
         setValue,
         formState: { errors }
     } = useForm();
+    const methods = useForm();
     const { createCampaign, updateCampaign, campaign } = useCampaigns({
         campaignId: router.query.id?.[0]
     });
@@ -102,7 +103,7 @@ export default function CampaignForm() {
     return (
         <Layout>
             <div className="max-w-5xl container mx-auto p-6">
-                <FormProvider>
+                <FormProvider {...methods}>
                     <form onSubmit={handleSubmit(onSubmit)} className="mt-4">
                         {questions.map((q) => {
                             return (
