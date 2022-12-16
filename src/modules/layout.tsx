@@ -1,7 +1,7 @@
 import { Menu } from '@headlessui/react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Button } from 'src/components/button';
 import { Spinner } from 'src/components/spinner';
 import { Title } from 'src/components/title';

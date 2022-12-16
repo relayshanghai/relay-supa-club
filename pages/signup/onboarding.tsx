@@ -70,6 +70,7 @@ export default function Register() {
                                     toast.success('Company created');
                                     await refreshProfile();
                                 } catch (e) {
+                                    // eslint-disable-next-line no-console
                                     console.log(e);
                                     toast.error('Ops, something went wrong');
                                 }

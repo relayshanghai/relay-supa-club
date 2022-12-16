@@ -45,19 +45,21 @@ export const UserProvider: React.FC<{ children: any }> = ({ children }) => {
             try {
                 setLoading(true);
                 const user = supabase.auth.user();
+                if (!user) throw new Error('User not found');
+
                 setUser(user);
 
                 const { data, error } = await supabase
                     .from('profiles')
                     .select(`*, company:companies(id, name, website)`)
-                    .eq('id', user!.id)
+                    .eq('id', user.id)
                     .single();
 
-                if (error) {
-                    throw error;
-                }
+                if (error) throw error;
+
                 setProfile(data);
             } catch (error: any) {
+                // eslint-disable-next-line no-console
                 console.log(error.message);
             } finally {
                 setLoading(false);
@@ -127,8 +129,9 @@ export const UserProvider: React.FC<{ children: any }> = ({ children }) => {
         setLoading(true);
         try {
             const user = supabase.auth.user();
+            if (!user) throw new Error('User not found');
             const updates = {
-                id: user!.id,
+                id: user.id,
                 updated_at: new Date(),
                 ...input
             };

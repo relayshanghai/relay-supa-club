@@ -9,6 +9,7 @@ export const createSubscription = async ({ company_id, plan_id }: any) => {
         .eq('company_id', company_id);
 
     if (errorExisting) {
+        // eslint-disable-next-line no-console
         console.log({ errorExisting });
     }
 
@@ -21,7 +22,7 @@ export const createSubscription = async ({ company_id, plan_id }: any) => {
         .single();
 
     if (error) {
-        // test
+        // eslint-disable-next-line no-console
         console.log({ error });
     }
 

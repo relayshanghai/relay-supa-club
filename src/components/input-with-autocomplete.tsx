@@ -1,7 +1,18 @@
 import { useState } from 'react';
 import { InputWithTags } from 'src/components/input-with-tags';
-
+export interface Props {
+    disabled?: boolean;
+    onChange: (value: string) => void;
+    onRemoveTag: (tag: any) => void;
+    onAddTag: (tag: any) => void;
+    tags: string[];
+    suggestions: string[];
+    placeholder: string;
+    SuggestionComponent?: React.FC<any>;
+    TagComponent?: React.FC<any>;
+}
 export const InputWithAutocomplete = ({
+    disabled,
     onChange,
     onRemoveTag,
     onAddTag,
@@ -10,11 +21,12 @@ export const InputWithAutocomplete = ({
     placeholder,
     SuggestionComponent,
     TagComponent
-}: any) => {
+}: Props) => {
     const [value, setValue] = useState('');
     return (
         <div className="flex flex-col w-full">
             <InputWithTags
+                disabled={disabled}
                 tags={tags}
                 onTagRemove={onRemoveTag}
                 value={value}

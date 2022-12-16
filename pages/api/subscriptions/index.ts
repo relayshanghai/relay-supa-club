@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { searchSubscription } from 'src/utils/api/subscription/search';
+
 import { stripeClient } from 'src/utils/stripe-client';
 import { supabase } from 'src/utils/supabase-client';
 
