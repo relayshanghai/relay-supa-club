@@ -2,20 +2,41 @@ import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
 import Select from 'react-select';
 import CustomStyles from 'src/components/common/form/CustomStyle.jsx';
-import { Controller } from 'react-hook-form';
+import { Control, Controller, FieldErrorsImpl, FieldValues } from 'react-hook-form';
+import { LabelValueObject } from 'types';
+
+interface SelectProps {
+    className?: string;
+    fieldName: string;
+    options: LabelValueObject[];
+    control: Control<FieldValues, any>;
+    errors: Partial<
+        FieldErrorsImpl<{
+            [x: string]: any;
+        }>
+    >;
+    isRequired?: boolean;
+    placeholder?: string;
+    valueName?: string;
+    setValue: (name: string, value: any) => void;
+    defaultValue?: any;
+}
+interface MultiSelectProps extends SelectProps {
+    maxLimit?: number;
+}
 
 function MultiSelect({
     fieldName,
     options,
     control,
     errors,
-    isRequired,
+    isRequired = false,
     placeholder,
     defaultValue,
     maxLimit = 100
-}) {
+}: MultiSelectProps) {
     const { t } = useTranslation();
-    const [optionsSelected, setOptionsSelected] = useState([]);
+    const [optionsSelected, setOptionsSelected] = useState<string[]>([]);
 
     return (
         <div>
@@ -25,12 +46,13 @@ function MultiSelect({
                 rules={{ required: { value: isRequired, message: t('website.requiredField') } }}
                 render={({ field: { value, onChange, ref } }) => (
                     <Select
-                        inputRef={ref}
+                        ref={ref}
                         styles={CustomStyles}
                         defaultValue={defaultValue}
                         value={value && options.filter((current) => value.includes(current.value))}
                         onChange={(val) => {
-                            onChange(val.map((current) => current.value)), setOptionsSelected(val);
+                            onChange(val.map((current) => current.value)),
+                                setOptionsSelected(val as string[]);
                         }}
                         options={options}
                         placeholder={placeholder}
@@ -40,7 +62,7 @@ function MultiSelect({
                 )}
             />
             <p className="text-xs text-primary-400">
-                {errors[fieldName] && errors[fieldName].message}
+                {errors && errors[fieldName]?.message?.toString()}
             </p>
         </div>
     );
@@ -52,12 +74,12 @@ const SingleSelect = ({
     options,
     control,
     errors,
-    isRequired,
+    isRequired = false,
     placeholder,
     valueName,
     setValue,
     defaultValue
-}) => {
+}: SelectProps) => {
     const { t } = useTranslation();
 
     return (
@@ -69,11 +91,11 @@ const SingleSelect = ({
                 rules={{ required: { value: isRequired, message: t('website.requiredField') } }}
                 render={({ field: { value, onChange, ref } }) => (
                     <Select
-                        inputRef={ref}
+                        ref={ref}
                         styles={CustomStyles}
                         value={options.find((c) => c.value === value)}
                         onChange={(val) => {
-                            onChange(val.value), setValue(valueName, val.value);
+                            onChange(val?.value), setValue(valueName ?? '', val?.value);
                         }}
                         options={options}
                         placeholder={placeholder}
@@ -81,7 +103,7 @@ const SingleSelect = ({
                 )}
             />
             <p className="text-xs text-primary-400">
-                {errors[fieldName] && errors[fieldName].message}
+                {errors && errors[fieldName]?.message?.toString()}
             </p>
         </div>
     );

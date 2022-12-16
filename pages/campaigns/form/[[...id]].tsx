@@ -201,9 +201,10 @@ export default function CampaignForm() {
                                             errors={errors}
                                             isRequired
                                             control={control}
-                                            options={q.options}
-                                            placeholder={t(q.placeholder ?? '')}
+                                            options={q.options || []}
+                                            placeholder={t(q.placeholder ?? '') || ''}
                                             defaultValue={undefined}
+                                            setValue={setValue}
                                         />
                                     )}
                                     {q.type === 'currencyInput' && (

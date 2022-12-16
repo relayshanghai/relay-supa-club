@@ -1,3 +1,4 @@
+import { LabelValueObject } from 'types';
 import { countryList } from './countryList';
 import options from './options';
 
@@ -17,7 +18,7 @@ export type Question = {
     isRequired: boolean;
     title: string;
     desc: string;
-    options?: { label: string; value: string }[];
+    options?: LabelValueObject[];
     placeholder?: string;
 };
 
