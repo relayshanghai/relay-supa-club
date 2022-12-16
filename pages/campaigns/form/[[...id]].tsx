@@ -179,11 +179,8 @@ export default function CampaignForm() {
                                             register={register}
                                             errors={errors}
                                             isRequired={q.isRequired}
-                                            label={undefined}
-                                            type={undefined}
-                                            placeHolder={undefined}
-                                            maxLength={undefined}
-                                            minLength={undefined}
+                                            label={q.title}
+                                            placeHolder={q.placeholder}
                                         />
                                     )}
                                     {q.type === 'media' && (
