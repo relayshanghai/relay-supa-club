@@ -1,7 +1,17 @@
 import { useTranslation } from 'react-i18next';
-import { Controller } from 'react-hook-form';
-
-function DatePicker({ fieldName, label, control, errors, isRequired }) {
+import { Control, Controller, FieldErrorsImpl, FieldValues } from 'react-hook-form';
+export interface Props {
+    fieldName: string;
+    label: string;
+    control: Control<FieldValues, any>;
+    errors: Partial<
+        FieldErrorsImpl<{
+            [x: string]: any;
+        }>
+    >;
+    isRequired: boolean;
+}
+function DatePicker({ fieldName, label, control, errors, isRequired }: Props) {
     const { t } = useTranslation();
 
     return (
@@ -26,7 +36,7 @@ function DatePicker({ fieldName, label, control, errors, isRequired }) {
                 )}
             />
             <p className="text-xs text-primary-400">
-                {errors[fieldName] && errors[fieldName].message}
+                {errors[fieldName] && errors[fieldName]?.message?.toString()}
             </p>
         </div>
     );

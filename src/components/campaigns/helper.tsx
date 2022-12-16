@@ -11,14 +11,28 @@ export const currencyOptions = [
     { label: 'CNY', value: 'CNY' }
 ];
 
-export const countrylist = countryList.map((c) => {
-    return {
-        label: c.name,
-        value: c.name
-    };
-});
+export type Question = {
+    type: string;
+    fieldName: string;
+    isRequired: boolean;
+    title: string;
+    desc: string;
+    options?: { label: string; value: string }[];
+    placeholder?: string;
+};
 
-export const questions = [
+export type TimelineQuestion = {
+    type: 'timeline';
+    fieldName_start: string;
+    fieldName_end: string;
+    label_start: string;
+    label_end: string;
+    isRequired: false;
+    title: string;
+    desc: string;
+};
+
+export const questions: Question[] = [
     {
         type: 'textInput',
         fieldName: 'name',
@@ -48,9 +62,11 @@ export const questions = [
         desc: 'campaigns.form.productLinkDescription'
     },
     {
+        fieldName: 'media_gallery',
         type: 'media',
         title: 'campaigns.form.mediaGalleryQuestion',
-        desc: 'campaigns.form.mediaGalleryDescription'
+        desc: 'campaigns.form.mediaGalleryDescription',
+        isRequired: false
     },
     {
         type: 'multiSelect',
@@ -65,7 +81,12 @@ export const questions = [
         type: 'multiSelect',
         fieldName: 'target_locations',
         isRequired: true,
-        options: countrylist,
+        options: countryList.map((c) => {
+            return {
+                label: c.name,
+                value: c.name
+            };
+        }),
         placeholder: 'campaigns.form.targetPlaceholder',
         title: 'campaigns.form.targetQuestion',
         desc: 'campaigns.form.targetDescription'
@@ -86,7 +107,7 @@ export const questions = [
         isRequired: false,
         title: 'campaigns.form.timelineQuestion',
         desc: 'campaigns.form.timelineDescription'
-    },
+    } as any,
     {
         type: 'checkbox',
         fieldName: 'promo_types',

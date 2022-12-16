@@ -1,6 +1,22 @@
 import { Layout } from 'src/modules/layout';
 import { useTranslation } from 'react-i18next';
-import { useForm, FormProvider } from 'react-hook-form';
+import {
+    useForm,
+    FormProvider,
+    FieldErrorsImpl,
+    Control,
+    FieldValues,
+    ArrayPath,
+    DeepPartial,
+    FieldArray,
+    FieldError,
+    FormState,
+    Path,
+    PathValue,
+    UseFormRegisterReturn,
+    Validate,
+    ValidationRule
+} from 'react-hook-form';
 import FormWrapper from 'src/components/common/Form/FormWrapper/FormWrapper';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
@@ -17,10 +33,46 @@ import {
     TextInput,
     TextareaInput as TextArea
 } from 'src/components/ui';
-import { questions } from 'src/components/campaigns/helper';
+import { Question, questions, TimelineQuestion } from 'src/components/campaigns/helper';
 import LoaderWhite from 'src/components/icons/LoaderWhite';
 import { useCampaigns } from 'src/hooks/use-campaigns';
 import { useCallback } from 'react';
+
+const TimelineInput = ({
+    q,
+    errors,
+    control
+}: {
+    q: Question;
+    errors: Partial<
+        FieldErrorsImpl<{
+            [x: string]: any;
+        }>
+    >;
+    control: Control<FieldValues>;
+}) => {
+    const { t } = useTranslation();
+
+    const timeline = q as unknown as TimelineQuestion;
+    return (
+        <div className="flex flex-col">
+            <DatePicker
+                fieldName={timeline.fieldName_start}
+                errors={errors}
+                control={control}
+                label={t(timeline.label_start)}
+                isRequired={q.isRequired}
+            />
+            <DatePicker
+                fieldName={timeline.fieldName_end}
+                errors={errors}
+                control={control}
+                label={t(timeline.label_end)}
+                isRequired={q.isRequired}
+            />
+        </div>
+    );
+};
 
 export default function CampaignForm() {
     const router = useRouter();
@@ -127,6 +179,11 @@ export default function CampaignForm() {
                                             register={register}
                                             errors={errors}
                                             isRequired={q.isRequired}
+                                            label={undefined}
+                                            type={undefined}
+                                            placeHolder={undefined}
+                                            maxLength={undefined}
+                                            minLength={undefined}
                                         />
                                     )}
                                     {q.type === 'media' && (
@@ -145,7 +202,8 @@ export default function CampaignForm() {
                                             isRequired
                                             control={control}
                                             options={q.options}
-                                            placeholder={t(q.placeholder)}
+                                            placeholder={t(q.placeholder ?? '')}
+                                            defaultValue={undefined}
                                         />
                                     )}
                                     {q.type === 'currencyInput' && (
@@ -159,20 +217,7 @@ export default function CampaignForm() {
                                         />
                                     )}
                                     {q.type === 'timeline' && (
-                                        <div className="flex flex-col">
-                                            <DatePicker
-                                                fieldName={q.fieldName_start}
-                                                errors={errors}
-                                                control={control}
-                                                label={t(q.label_start)}
-                                            />
-                                            <DatePicker
-                                                fieldName={q.fieldName_end}
-                                                errors={errors}
-                                                control={control}
-                                                label={t(q.label_end)}
-                                            />
-                                        </div>
+                                        <TimelineInput q={q} errors={errors} control={control} />
                                     )}
                                     {q.type === 'checkbox' && (
                                         <Checkbox

@@ -1,16 +1,34 @@
+import { FieldErrorsImpl, FieldValues, UseFormRegister } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
+
+export interface Props {
+    fieldName: string;
+    label?: string;
+    /** defaults to "text" */
+    type?: string;
+    register: UseFormRegister<FieldValues>;
+    errors: Partial<
+        FieldErrorsImpl<{
+            [x: string]: any;
+        }>
+    >;
+    placeHolder?: string;
+    isRequired?: boolean;
+    maximLength?: number;
+    minimLength?: number;
+}
 
 function TextInput({
     fieldName,
     label,
-    type,
+    type = 'text',
     register,
     errors,
     placeHolder,
-    isRequired,
+    isRequired = false,
     maximLength,
     minimLength
-}) {
+}: Props) {
     const { t } = useTranslation();
 
     return (
@@ -20,7 +38,6 @@ function TextInput({
             </label>
             <input
                 className="input-field"
-                name={fieldName}
                 id={fieldName}
                 placeholder={placeHolder}
                 type={type}
@@ -40,9 +57,7 @@ function TextInput({
                     }
                 })}
             />
-            <p className="text-xs text-primary-400">
-                {errors[fieldName] && errors[fieldName].message}
-            </p>
+            <p className="text-xs text-primary-400">{errors[fieldName]?.message?.toString()}</p>
         </div>
     );
 }
