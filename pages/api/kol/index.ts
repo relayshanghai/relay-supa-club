@@ -62,7 +62,7 @@ const search = {
 
         return await (
             await fetch(
-                `https://socapi.icu/v2.0/api/search/newv1?platform=${platform}&auto_unhide=true`,
+                `https://socapi.icu/v2.0/api/search/newv1?platform=${platform}&auto_unhide=1`,
                 {
                     method: 'post',
                     headers,
