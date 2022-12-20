@@ -6,7 +6,7 @@ import { formatter } from 'src/utils/formatter';
 import { SearchTopics } from 'src/modules/search-topics';
 import { Popover, Transition } from '@headlessui/react';
 import { AdjustmentsVerticalIcon } from '@heroicons/react/24/solid';
-import { SearchResultRow } from './serch-result-row';
+import { SearchResultRow } from './search-result-row';
 
 const filterCountry = (items: any[]) => {
     return items.filter((item: any) => {
