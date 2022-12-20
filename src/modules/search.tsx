@@ -1,13 +1,12 @@
 /* eslint-disable @next/next/no-img-element */
-import Link from 'next/link';
 import { Fragment, useEffect } from 'react';
 import { Button } from 'src/components/button';
 import { useSearch } from 'src/hooks/use-search';
-import { useSubscription } from 'src/hooks/use-subscription';
 import { formatter } from 'src/utils/formatter';
 import { SearchTopics } from 'src/modules/search-topics';
 import { Popover, Transition } from '@headlessui/react';
 import { AdjustmentsVerticalIcon } from '@heroicons/react/24/solid';
+import { SearchResultRow } from './serch-result-row';
 
 const filterCountry = (items: any[]) => {
     return items.filter((item: any) => {
@@ -155,7 +154,7 @@ export const Search = () => {
                         );
                         return (
                             <div
-                                className="pl-2 pr-1 bg-white text-gray-900 rounded bg-gray-100 whitespace-nowrap hover:bg-gray-200 cursor-pointer flex items-center flex-row"
+                                className="pl-2 pr-1 text-gray-900 rounded bg-gray-100 whitespace-nowrap hover:bg-gray-200 cursor-pointer flex items-center flex-row"
                                 key={item.id}
                                 onClick={onClick}
                             >
@@ -193,7 +192,7 @@ export const Search = () => {
                         <>
                             <div className="flex flex-row space-x-4">
                                 <Popover.Button
-                                    className={`group text-gray-900 ring-gray-900 ring-opacity-5 bg-white rounded-md block border border-transparent shadow ring-1 sm:text-sm focus:border-primary-500 focus:ring-primary-500 focus:outline-none flex flex-row items-center px-2 py-1`}
+                                    className={`group text-gray-900 ring-gray-900 ring-opacity-5 bg-white rounded-md border border-transparent shadow ring-1 sm:text-sm focus:border-primary-500 focus:ring-primary-500 focus:outline-none flex flex-row items-center px-2 py-1`}
                                 >
                                     <AdjustmentsVerticalIcon
                                         className={`h-6 w-6 text-gray-400 transition duration-150 ease-in-out group-hover:text-opacity-80`}
@@ -234,7 +233,7 @@ export const Search = () => {
                                             setLastPost(undefined);
                                             setContactInfo(undefined);
                                         }}
-                                        type="secondary"
+                                        variant="secondary"
                                     >
                                         Clear
                                     </Button>
@@ -487,86 +486,9 @@ export const Search = () => {
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
                         {Array.isArray(feed)
-                            ? feed.map((item: any, i: any) => {
-                                  const placeholder = !item;
-                                  const handle = !placeholder
-                                      ? item.account.user_profile.username ||
-                                        item.account.user_profile.custom_name ||
-                                        item.account.user_profile.fullname
-                                      : null;
-                                  return (
-                                      <tr
-                                          key={i}
-                                          className={`${placeholder ? 'bg-gray-50' : ''} relative`}
-                                      >
-                                          <td className="py-2 px-4 flex flex-row items-center space-x-2">
-                                              {!placeholder ? (
-                                                  <>
-                                                      <img
-                                                          src={`https://image-cache.brainchild-tech.cn/?link=${item.account.user_profile.picture}`}
-                                                          className="w-12 h-12"
-                                                          alt={handle}
-                                                      />
-                                                      <div>
-                                                          <div className="font-bold whhitespace-nowrap">
-                                                              {item.account.user_profile.fullname}
-                                                          </div>
-                                                          <div className="text-primary-500 text-sm">
-                                                              {handle ? `@${handle}` : null}
-                                                          </div>
-                                                      </div>
-                                                  </>
-                                              ) : (
-                                                  <>
-                                                      <div className="w-12 h-12 rounded-full bg-gray-100" />
-                                                      <div className="space-y-2">
-                                                          <div className="font-bold bg-gray-100 w-40 h-4" />
-                                                          <div className="text-primary-500 text-sm bg-gray-100 w-20 h-4" />
-                                                      </div>
-                                                      <div className="absolute top-0 left-0 translate-x-1/2 translate-y-1/2 p-2 text-sm">
-                                                          <Link href="/account" passHref>
-                                                              <a className="text-primary-500">
-                                                                  Upgrade your subscription plan, to
-                                                                  view more results.
-                                                              </a>
-                                                          </Link>
-                                                      </div>
-                                                  </>
-                                              )}
-                                          </td>
-                                          <td className="text-sm">
-                                              {!placeholder ? (
-                                                  formatter(item.account.user_profile.followers)
-                                              ) : (
-                                                  <div className="text-primary-500 text-sm bg-gray-100 w-10 h-4" />
-                                              )}
-                                          </td>
-                                          <td className="text-sm">
-                                              {!placeholder ? (
-                                                  formatter(item.account.user_profile.engagements)
-                                              ) : (
-                                                  <div className="text-primary-500 text-sm bg-gray-100 w-10 h-4" />
-                                              )}
-                                          </td>
-                                          <td className="text-sm">
-                                              {!placeholder ? (
-                                                  formatter(
-                                                      item.account.user_profile.engagement_rate
-                                                  )
-                                              ) : (
-                                                  <div className="text-primary-500 text-sm bg-gray-100 w-10 h-4" />
-                                              )}
-                                          </td>
-                                          <td className="text-sm">
-                                              {!placeholder ? (
-                                                  formatter(item.account.user_profile.avg_views)
-                                              ) : (
-                                                  <div className="text-primary-500 text-sm bg-gray-100 w-10 h-4" />
-                                              )}
-                                          </td>
-                                      </tr>
-                                  );
-                              })
+                            ? feed.map((item: any, i: any) => (
+                                  <SearchResultRow key={i} item={item} />
+                              ))
                             : null}
                     </tbody>
                 </table>
