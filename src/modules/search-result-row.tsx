@@ -35,7 +35,7 @@ export const SearchResultRow = ({
     return (
         <tr className={`${placeholder ? 'bg-gray-50' : ''} relative group duration-1`}>
             {!placeholder && (
-                <div className="invisible absolute flex right-28 -top-3 group-hover:visible">
+                <td className="invisible absolute flex right-28 -top-3 group-hover:visible">
                     <div className="flex space-x-4">
                         <Button onClick={addToCampaign} variant="secondary">
                             {t('creators.index.addToCampaign')}
@@ -71,7 +71,7 @@ export const SearchResultRow = ({
                             </Button>
                         )}
                     </div>
-                </div>
+                </td>
             )}
             <td className="py-2 px-4 flex flex-row items-center space-x-2">
                 {!placeholder ? (
