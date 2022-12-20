@@ -8,8 +8,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 const defaultClasses =
     'text-sm px-4 py-2 rounded-md cursor-pointer flex-shrink-0 font-bold disabled:bg-gray-300 disabled:cursor-default ';
 const primaryClasses = 'text-white bg-primary-500 hover:bg-primary-700';
-const secondaryClasses =
-    'text-primary-500 bg-white border-primary-500 border hover:bg-primary-700/10';
+const secondaryClasses = 'text-primary-500 bg-white border-primary-500 border hover:bg-primary-100';
 
 export const Button = ({ children, variant, className, ...rest }: ButtonProps) => {
     return (
