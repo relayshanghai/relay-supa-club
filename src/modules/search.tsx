@@ -17,9 +17,9 @@ const filterCountry = (items: any[]) => {
 
 export const Search = () => {
     const {
-        channels,
-        channel,
-        setChannel,
+        platforms,
+        platform,
+        setPlatform,
         page,
         setPage,
         tags,
@@ -62,14 +62,14 @@ export const Search = () => {
     return (
         <div className="space-y-4">
             <div className="flex flex-row space-x-2">
-                {channels.map((item, i) => (
+                {platforms.map((item, i) => (
                     <button
                         className={`transition px-2 rounded-lg hover:shadow-xl ${
-                            channel === item.id ? 'bg-white shadow-xl' : ''
+                            platform === item.id ? 'bg-white shadow-xl' : ''
                         }`}
                         key={item.label}
                         onClick={() => {
-                            setChannel(item.id);
+                            setPlatform(item.id);
                         }}
                     >
                         <img src={item.icon} height={32} width={32} alt={item.label} />
@@ -81,7 +81,7 @@ export const Search = () => {
                     path="/api/kol/topics"
                     placeholder="Search for a topic"
                     topics={tags}
-                    channel={channel}
+                    platform={platform}
                     onSetTopics={(topics: any) => {
                         setTopicTags(topics);
                     }}
@@ -92,7 +92,7 @@ export const Search = () => {
                     path="/api/kol/lookalike"
                     placeholder="Lookalike"
                     topics={lookalike}
-                    channel={channel}
+                    platform={platform}
                     onSetTopics={(topics: any) => {
                         setLookalike(topics);
                     }}
@@ -134,7 +134,7 @@ export const Search = () => {
                     path="/api/kol/locations"
                     placeholder="KOL locations"
                     topics={KOLLocation}
-                    channel={channel}
+                    platform={platform}
                     filter={filterCountry}
                     onSetTopics={(topics: any) => {
                         setKOLLocation(topics);
@@ -144,7 +144,7 @@ export const Search = () => {
                     path="/api/kol/locations"
                     placeholder="Audience locations"
                     topics={audienceLocation}
-                    channel={channel}
+                    platform={platform}
                     filter={filterCountry}
                     onSetTopics={(topics: any) => {
                         setAudienceLocation(topics.map((item: any) => ({ weight: 5, ...item })));
@@ -491,7 +491,7 @@ export const Search = () => {
                                   <SearchResultRow
                                       key={i}
                                       creator={creator}
-                                      channel={channel}
+                                      platform={platform}
                                       setLookalike={setLookalike}
                                   />
                               ))

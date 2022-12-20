@@ -6,15 +6,15 @@ import { Button } from 'src/components/button';
 import { ShareLink } from 'src/components/icons';
 import Heart from 'src/components/icons/Heart';
 import { formatter } from 'src/utils/formatter';
-import { CreatorChannel, SearchResultItem } from 'types';
+import { CreatorPlatform, SearchResultItem } from 'types';
 
 export const SearchResultRow = ({
     creator,
-    channel,
+    platform,
     setLookalike
 }: {
     creator?: SearchResultItem;
-    channel: CreatorChannel;
+    platform: CreatorPlatform;
     setLookalike: (creator: SearchResultItem) => void;
 }) => {
     const { t } = useTranslation();
@@ -45,7 +45,7 @@ export const SearchResultRow = ({
                         </Button>
                         <Button>
                             <Link
-                                href={`/dashboard/creators/creator?id=${creator.account.user_profile.user_id}&platform=${channel}`}
+                                href={`/dashboard/creators/creator?id=${creator.account.user_profile.user_id}&platform=${platform}`}
                             >
                                 <a>{t('creators.index.analyzeProfile')}</a>
                             </Link>
