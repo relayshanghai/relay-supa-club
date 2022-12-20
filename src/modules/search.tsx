@@ -7,7 +7,7 @@ import { SearchTopics } from 'src/modules/search-topics';
 import { Popover, Transition } from '@headlessui/react';
 import { AdjustmentsVerticalIcon } from '@heroicons/react/24/solid';
 import { SearchResultRow } from './search-result-row';
-import { SearchResultItem } from 'types';
+import { CreatorSearchResultItem } from 'types';
 
 const filterCountry = (items: any[]) => {
     return items.filter((item: any) => {
@@ -53,8 +53,8 @@ export const Search = () => {
         search();
     }, [search]);
 
-    const accounts: SearchResultItem[] = results?.accounts ?? [];
-    const feed: SearchResultItem[] =
+    const accounts: CreatorSearchResultItem[] = results?.accounts ?? [];
+    const feed: CreatorSearchResultItem[] =
         accounts.length < 10 && (page > 0 || loading)
             ? [...accounts, ...Array.from(Array(10 - accounts.length))]
             : accounts;

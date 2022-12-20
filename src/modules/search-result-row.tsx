@@ -6,13 +6,13 @@ import { Button } from 'src/components/button';
 import { ShareLink } from 'src/components/icons';
 import Heart from 'src/components/icons/Heart';
 import { formatter } from 'src/utils/formatter';
-import { CreatorChannel, SearchResultItem } from 'types';
+import { CreatorChannel, CreatorSearchResultItem } from 'types';
 
 export const SearchResultRow = ({
     creator,
     channel
 }: {
-    creator?: SearchResultItem;
+    creator?: CreatorSearchResultItem;
     channel: CreatorChannel;
 }) => {
     const { t } = useTranslation();
