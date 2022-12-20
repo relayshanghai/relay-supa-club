@@ -115,6 +115,11 @@ export default function CampaignForm() {
 
     const onSubmit = useCallback(
         async (formData: any) => {
+            formData = { ...formData, media, purge_media: [...purgedMedia] };
+            // const data = new FormData();
+            // data.append('[campaign]', JSON.stringify(formData));
+            // if (formData.media) formData.media.forEach((k: File) => data.append('media[]', k));
+
             return isAddMode ? createHandler(formData) : updateHandler(formData);
         },
         [isAddMode, createHandler, updateHandler]

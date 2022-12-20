@@ -4,13 +4,7 @@ import Plus from 'src/components/icons/Plus';
 import Trashcan from 'src/components/icons/Trashcan';
 import toast from 'react-hot-toast';
 
-export default function MediaUploader({
-    media,
-    setMedia,
-    prevMedia,
-    setPrevMedia,
-    setPurgedMedia
-}) {
+function MediaUploader({ media, setMedia, prevMedia, setPrevMedia, setPurgedMedia }) {
     const { t } = useTranslation();
     const inputFiles = useRef(null);
 
@@ -31,7 +25,6 @@ export default function MediaUploader({
 
     const onFileChange = (e) => {
         validateSelectedFile(e.target.files);
-        // setMedia([...media, ...e.target.files]);
     };
 
     const removeFile = (idx) => {
@@ -115,3 +108,5 @@ export default function MediaUploader({
         </div>
     );
 }
+
+export default MediaUploader;
