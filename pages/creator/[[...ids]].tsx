@@ -1,7 +1,7 @@
 import { InferGetServerSidePropsType, GetServerSideProps } from 'next';
 import { Layout } from 'src/modules/layout';
 import { headers } from 'src/utils/api/constants';
-import { CreatorSearchResult, CreatorSearchResultItem } from 'types';
+import { CreatorSearchResult, CreatorSearchAccount } from 'types';
 
 const Page = ({
     platform,
@@ -24,7 +24,7 @@ const Page = ({
 export const getServerSideProps: GetServerSideProps<{
     platform: string;
     user_id: string;
-    creator: CreatorSearchResultItem['account'] | null;
+    creator: CreatorSearchAccount | null;
     error: string;
 }> = async (context) => {
     const { ids } = context.query;
@@ -37,7 +37,7 @@ export const getServerSideProps: GetServerSideProps<{
         sort: { field: 'followers', direction: 'desc' },
         audience_source: 'any'
     };
-    let creator: CreatorSearchResultItem['account'] | null = null;
+    let creator: CreatorSearchAccount | null = null;
     let error = '';
     try {
         const searchRes = await fetch(
