@@ -6,7 +6,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const { term } = JSON.parse(req.body);
 
         const results = await (
-            await fetch(`https://iqdata.social/v2.0/api/geos/?q=${term}&count_type=search`, {
+            await fetch(`https://socapi.icu/v2.0/api/geos/?q=${term}&types=country&limit=5`, {
                 headers
             })
         ).json();
