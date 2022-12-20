@@ -10,10 +10,12 @@ import { CreatorChannel, SearchResultItem } from 'types';
 
 export const SearchResultRow = ({
     creator,
-    channel
+    channel,
+    setLookalike
 }: {
     creator?: SearchResultItem;
     channel: CreatorChannel;
+    setLookalike: (creator: SearchResultItem) => void;
 }) => {
     const { t } = useTranslation();
 
@@ -23,7 +25,6 @@ export const SearchResultRow = ({
           creator.account.user_profile.custom_name ||
           creator.account.user_profile.fullname
         : '';
-    const [rowHovered, setRowHovered] = useState(false);
 
     // TODO: get real added to pool data
     const [addedToPool, setAddedToPool] = useState(false);
@@ -31,25 +32,15 @@ export const SearchResultRow = ({
     // TODO: Add to campaign
     const addToCampaign = () => {};
 
-    //TODO: set lookalike
-    const setLookAlike = () => {};
-
     return (
-        <tr
-            className={`${placeholder ? 'bg-gray-50' : ''} relative`}
-            onMouseEnter={() => setRowHovered(true)}
-            onMouseLeave={() => setRowHovered(false)}
-        >
-            {rowHovered && !placeholder && (
-                <div
-                    className="absolute flex right-28 -top-3"
-                    onMouseEnter={() => setRowHovered(true)}
-                >
+        <tr className={`${placeholder ? 'bg-gray-50' : ''} relative group duration-1`}>
+            {!placeholder && (
+                <div className="invisible absolute flex right-28 -top-3 group-hover:visible">
                     <div className="flex space-x-4">
                         <Button onClick={addToCampaign} variant="secondary">
                             {t('creators.index.addToCampaign')}
                         </Button>
-                        <Button onClick={setLookAlike} variant="secondary">
+                        <Button onClick={() => setLookalike(creator)} variant="secondary">
                             {t('creators.index.similarKol')}
                         </Button>
                         <Button>

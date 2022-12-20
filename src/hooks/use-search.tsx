@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { useSubscription } from 'src/hooks/use-subscription';
-import { CreatorChannel } from 'types';
+import { CreatorChannel, SearchResultItem } from 'types';
 import { useUser } from './use-user';
 
 export const useSearch = () => {
@@ -9,7 +9,7 @@ export const useSearch = () => {
     const [page, setPage] = useState<any>(0);
     const [results, setResults] = useState<any>();
     const [tags, setTopicTags] = useState<any[]>([]);
-    const [lookalike, setLookalike] = useState<any[]>([]);
+    const [lookalike, setLookalike] = useState<SearchResultItem>();
     const [KOLLocation, setKOLLocation] = useState<any[]>([]);
     const [views, setViews] = useState<any[]>([]);
     const [audience, setAudience] = useState<any[]>([]);

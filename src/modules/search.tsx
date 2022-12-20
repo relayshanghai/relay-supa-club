@@ -488,7 +488,12 @@ export const Search = () => {
                     <tbody className="bg-white divide-y divide-gray-200">
                         {Array.isArray(feed)
                             ? feed.map((creator, i) => (
-                                  <SearchResultRow key={i} creator={creator} channel={channel} />
+                                  <SearchResultRow
+                                      key={i}
+                                      creator={creator}
+                                      channel={channel}
+                                      setLookalike={setLookalike}
+                                  />
                               ))
                             : null}
                     </tbody>

@@ -1,7 +1,7 @@
 export const InputWithTags = ({ label, tags = [], onTagRemove, TagComponent, ...rest }: any) => {
     return (
         <label className="flex flex-col text-xs text-gray-500 font-bold w-full">
-            <div className="text-gray-900 ring-gray-900 ring-opacity-5 bg-white rounded-md block w-full border border-transparent shadow ring-1 sm:text-sm focus:border-primary-500 focus:ring-primary-500 focus:outline-none flex flex-row items-center px-2">
+            <div className="text-gray-900 ring-gray-900 ring-opacity-5 bg-white rounded-md w-full border border-transparent shadow ring-1 sm:text-sm focus:border-primary-500 focus:ring-primary-500 focus:outline-none flex flex-row items-center px-2">
                 <div className="flex space-x-2 my-2 h-6">
                     {tags
                         ? tags.map((item: any, i: any) => {
@@ -16,7 +16,7 @@ export const InputWithTags = ({ label, tags = [], onTagRemove, TagComponent, ...
                               }
                               return (
                                   <div
-                                      className="px-2 bg-white text-gray-900 rounded bg-gray-100 whitespace-nowrap hover:bg-gray-200 cursor-pointer flex flex-col justify-center"
+                                      className="px-2 text-gray-900 rounded bg-gray-100 whitespace-nowrap hover:bg-gray-200 cursor-pointer flex flex-col justify-center"
                                       key={i}
                                       onClick={() => onTagRemove(item)}
                                   >
