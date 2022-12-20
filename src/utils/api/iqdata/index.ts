@@ -1,4 +1,5 @@
 import { headers } from 'src/utils/api/constants';
+import { FetchCreatorsFilteredParams, prepareFetchCreatorsFiltered } from './transforms';
 
 /**
  *
@@ -19,4 +20,16 @@ export const iqDataFetch = async (
         }
     });
     return await res.json();
+};
+
+export const fetchIqDataGeos = async (term: string) =>
+    await iqDataFetch(`geos/?q=${term}&types=country&limit=5`);
+
+export const fetchCreatorsFiltered = async (params: FetchCreatorsFilteredParams) => {
+    const { platform, body } = prepareFetchCreatorsFiltered(params);
+
+    return await iqDataFetch(`search/newv1?platform=${platform}&auto_unhide=1`, {
+        method: 'post',
+        body: JSON.stringify(body)
+    });
 };

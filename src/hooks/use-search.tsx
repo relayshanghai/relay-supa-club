@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { useSubscription } from 'src/hooks/use-subscription';
-import { CreatorSearchResult, CreatorPlatform } from 'types';
+import { CreatorSearchResult, CreatorPlatform, LocationWeighted } from 'types';
 import { useUser } from './use-user';
 
 export const useSearch = () => {
@@ -10,7 +10,7 @@ export const useSearch = () => {
     const [results, setResults] = useState<CreatorSearchResult>();
     const [tags, setTopicTags] = useState<any[]>([]);
     const [lookalike, setLookalike] = useState<any>();
-    const [KOLLocation, setKOLLocation] = useState<any[]>([]);
+    const [KOLLocation, setKOLLocation] = useState<LocationWeighted[]>([]);
     const [views, setViews] = useState<any[]>([]);
     const [audience, setAudience] = useState<any[]>([]);
     const [gender, setGender] = useState<any>();
