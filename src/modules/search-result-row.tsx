@@ -1,37 +1,38 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from 'next/link';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
+import { ShareLink } from 'src/components/icons';
+import Heart from 'src/components/icons/Heart';
 import { formatter } from 'src/utils/formatter';
+import { CreatorChannel, SearchResultItem } from 'types';
 
-export type SearchResultItem = {
-    account: {
-        user_profile: {
-            user_id: string;
-            username?: string;
-            fullname?: string;
-            custom_name?: string;
-            url: string;
-            picture: string;
-            is_verified: true;
-            followers: number;
-            engagements: number;
-            engagement_rate: number;
-            avg_views: number;
-        };
-        audience_source: string;
-    };
-    match: {};
-};
+export const SearchResultRow = ({
+    creator,
+    channel
+}: {
+    creator?: SearchResultItem;
+    channel: CreatorChannel;
+}) => {
+    const { t } = useTranslation();
 
-export const SearchResultRow = ({ item }: { item?: SearchResultItem }) => {
-    const placeholder = !item;
+    const placeholder = !creator;
     const handle = !placeholder
-        ? item.account.user_profile.username ||
-          item.account.user_profile.custom_name ||
-          item.account.user_profile.fullname
+        ? creator.account.user_profile.username ||
+          creator.account.user_profile.custom_name ||
+          creator.account.user_profile.fullname
         : '';
     const [rowHovered, setRowHovered] = useState(false);
+
+    // TODO: get real added to pool data
+    const [addedToPool, setAddedToPool] = useState(false);
+
+    // TODO: Add to campaign
+    const addToCampaign = () => {};
+
+    //TODO: set lookalike
+    const setLookAlike = () => {};
 
     return (
         <tr
@@ -45,11 +46,37 @@ export const SearchResultRow = ({ item }: { item?: SearchResultItem }) => {
                     onMouseEnter={() => setRowHovered(true)}
                 >
                     <div className="flex space-x-4">
-                        <Button variant="secondary">Add To Campaign</Button>
-                        <Button variant="secondary">Lookalike</Button>
-                        <Button>Analyze</Button>
-                        <Button>Favorite</Button>
-                        <Button>Share</Button>
+                        <Button onClick={addToCampaign} variant="secondary">
+                            {t('creators.index.addToCampaign')}
+                        </Button>
+                        <Button onClick={setLookAlike} variant="secondary">
+                            {t('creators.index.similarKol')}
+                        </Button>
+                        <Button>
+                            <Link
+                                href={`/dashboard/creators/creator?id=${creator.account.user_profile.user_id}&platform=${channel}`}
+                            >
+                                <a>{t('creators.index.analyzeProfile')}</a>
+                            </Link>
+                        </Button>
+                        <Button
+                            onClick={() => setAddedToPool(!addedToPool)}
+                            variant="secondary"
+                            className={`border-none ${
+                                addedToPool
+                                    ? ' bg-primary-100 hover:bg-primary-200 text-primary-500'
+                                    : ' bg-gray-50 hover:bg-primary-100 text-gray-300'
+                            }`}
+                        >
+                            <Heart className="w-4 h-4 fill-current" />
+                        </Button>
+                        <Button>
+                            <Link href={creator.account.user_profile.url}>
+                                <a target="_blank" rel="noreferrer">
+                                    <ShareLink className="w-3.5 h-3.5 fill-current text-white" />
+                                </a>
+                            </Link>
+                        </Button>
                     </div>
                 </div>
             )}
@@ -57,13 +84,13 @@ export const SearchResultRow = ({ item }: { item?: SearchResultItem }) => {
                 {!placeholder ? (
                     <>
                         <img
-                            src={`https://image-cache.brainchild-tech.cn/?link=${item.account.user_profile.picture}`}
+                            src={`https://image-cache.brainchild-tech.cn/?link=${creator.account.user_profile.picture}`}
                             className="w-12 h-12"
                             alt={handle}
                         />
                         <div>
                             <div className="font-bold whhitespace-nowrap">
-                                {item.account.user_profile.fullname}
+                                {creator.account.user_profile.fullname}
                             </div>
                             <div className="text-primary-500 text-sm">
                                 {handle ? `@${handle}` : null}
@@ -89,28 +116,28 @@ export const SearchResultRow = ({ item }: { item?: SearchResultItem }) => {
             </td>
             <td className="text-sm">
                 {!placeholder ? (
-                    formatter(item.account.user_profile.followers)
+                    formatter(creator.account.user_profile.followers)
                 ) : (
                     <div className="text-primary-500 text-sm bg-gray-100 w-10 h-4" />
                 )}
             </td>
             <td className="text-sm">
                 {!placeholder ? (
-                    formatter(item.account.user_profile.engagements)
+                    formatter(creator.account.user_profile.engagements)
                 ) : (
                     <div className="text-primary-500 text-sm bg-gray-100 w-10 h-4" />
                 )}
             </td>
             <td className="text-sm">
                 {!placeholder ? (
-                    formatter(item.account.user_profile.engagement_rate)
+                    formatter(creator.account.user_profile.engagement_rate)
                 ) : (
                     <div className="text-primary-500 text-sm bg-gray-100 w-10 h-4" />
                 )}
             </td>
             <td className="text-sm">
                 {!placeholder ? (
-                    formatter(item.account.user_profile.avg_views)
+                    formatter(creator.account.user_profile.avg_views)
                 ) : (
                     <div className="text-primary-500 text-sm bg-gray-100 w-10 h-4" />
                 )}

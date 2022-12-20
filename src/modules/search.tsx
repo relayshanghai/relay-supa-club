@@ -7,6 +7,7 @@ import { SearchTopics } from 'src/modules/search-topics';
 import { Popover, Transition } from '@headlessui/react';
 import { AdjustmentsVerticalIcon } from '@heroicons/react/24/solid';
 import { SearchResultRow } from './search-result-row';
+import { SearchResultItem } from 'types';
 
 const filterCountry = (items: any[]) => {
     return items.filter((item: any) => {
@@ -52,8 +53,8 @@ export const Search = () => {
         search();
     }, [search]);
 
-    const accounts = results?.accounts ?? [];
-    const feed =
+    const accounts: SearchResultItem[] = results?.accounts ?? [];
+    const feed: SearchResultItem[] =
         accounts.length < 10 && (page > 0 || loading)
             ? [...accounts, ...Array.from(Array(10 - accounts.length))]
             : accounts;
@@ -486,8 +487,8 @@ export const Search = () => {
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
                         {Array.isArray(feed)
-                            ? feed.map((item: any, i: any) => (
-                                  <SearchResultRow key={i} item={item} />
+                            ? feed.map((creator, i) => (
+                                  <SearchResultRow key={i} creator={creator} channel={channel} />
                               ))
                             : null}
                     </tbody>

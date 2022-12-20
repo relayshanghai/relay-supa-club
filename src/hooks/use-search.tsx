@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { useSubscription } from 'src/hooks/use-subscription';
+import { CreatorChannel } from 'types';
 import { useUser } from './use-user';
 
 export const useSearch = () => {
@@ -17,8 +18,12 @@ export const useSearch = () => {
     const [lastPost, setLastPost] = useState<any>();
     const [contactInfo, setContactInfo] = useState<any>();
     const [audienceLocation, setAudienceLocation] = useState<any[]>([]);
-    const [channel, setChannel] = useState<any>('youtube');
-    const channels = useMemo(
+    const [channel, setChannel] = useState<CreatorChannel>('youtube');
+    const channels: {
+        icon: string;
+        label: string;
+        id: CreatorChannel;
+    }[] = useMemo(
         () => [
             { icon: '/assets/svg/yt.svg', label: 'YouTube', id: 'youtube' },
             { icon: '/assets/svg/instagram.svg', label: 'Instagram', id: 'instagram' },
