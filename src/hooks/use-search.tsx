@@ -1,15 +1,15 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { useSubscription } from 'src/hooks/use-subscription';
-import { CreatorPlatform, CreatorSearchResultItem } from 'types';
+import { CreatorSearchResult, CreatorPlatform } from 'types';
 import { useUser } from './use-user';
 
 export const useSearch = () => {
     const { profile } = useUser();
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState<any>(0);
-    const [results, setResults] = useState<any>();
+    const [results, setResults] = useState<CreatorSearchResult>();
     const [tags, setTopicTags] = useState<any[]>([]);
-    const [lookalike, setLookalike] = useState<CreatorSearchResultItem>();
+    const [lookalike, setLookalike] = useState<any>();
     const [KOLLocation, setKOLLocation] = useState<any[]>([]);
     const [views, setViews] = useState<any[]>([]);
     const [audience, setAudience] = useState<any[]>([]);

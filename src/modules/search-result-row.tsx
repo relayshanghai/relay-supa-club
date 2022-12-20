@@ -6,16 +6,16 @@ import { Button } from 'src/components/button';
 import { ShareLink } from 'src/components/icons';
 import Heart from 'src/components/icons/Heart';
 import { formatter } from 'src/utils/formatter';
-import { CreatorPlatform, CreatorSearchResultItem } from 'types';
+import { CreatorPlatform, CreatorSearchAccountObject } from 'types';
 
 export const SearchResultRow = ({
     creator,
     platform,
     setLookalike
 }: {
-    creator?: CreatorSearchResultItem;
+    creator?: CreatorSearchAccountObject;
     platform: CreatorPlatform;
-    setLookalike: (creator: CreatorSearchResultItem) => void;
+    setLookalike: (creator: CreatorSearchAccountObject) => void;
 }) => {
     const { t } = useTranslation();
 
