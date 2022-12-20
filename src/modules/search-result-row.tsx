@@ -6,14 +6,16 @@ import { Button } from 'src/components/button';
 import { ShareLink } from 'src/components/icons';
 import Heart from 'src/components/icons/Heart';
 import { formatter } from 'src/utils/formatter';
-import { CreatorChannel, CreatorSearchResultItem } from 'types';
+import { CreatorPlatform, CreatorSearchResultItem } from 'types';
 
 export const SearchResultRow = ({
     creator,
-    channel
+    platform,
+    setLookalike
 }: {
     creator?: CreatorSearchResultItem;
-    channel: CreatorChannel;
+    platform: CreatorPlatform;
+    setLookalike: (creator: CreatorSearchResultItem) => void;
 }) => {
     const { t } = useTranslation();
 
@@ -23,7 +25,6 @@ export const SearchResultRow = ({
           creator.account.user_profile.custom_name ||
           creator.account.user_profile.fullname
         : '';
-    const [rowHovered, setRowHovered] = useState(false);
 
     // TODO: get real added to pool data
     const [addedToPool, setAddedToPool] = useState(false);
@@ -31,30 +32,20 @@ export const SearchResultRow = ({
     // TODO: Add to campaign
     const addToCampaign = () => {};
 
-    //TODO: set lookalike
-    const setLookAlike = () => {};
-
     return (
-        <tr
-            className={`${placeholder ? 'bg-gray-50' : ''} relative`}
-            onMouseEnter={() => setRowHovered(true)}
-            onMouseLeave={() => setRowHovered(false)}
-        >
-            {rowHovered && !placeholder && (
-                <div
-                    className="absolute flex right-28 -top-3"
-                    onMouseEnter={() => setRowHovered(true)}
-                >
+        <tr className={`${placeholder ? 'bg-gray-50' : ''} relative group duration-1`}>
+            {!placeholder && (
+                <td className="invisible absolute flex right-28 -top-3 group-hover:visible">
                     <div className="flex space-x-4">
                         <Button onClick={addToCampaign} variant="secondary">
                             {t('creators.index.addToCampaign')}
                         </Button>
-                        <Button onClick={setLookAlike} variant="secondary">
+                        <Button onClick={() => setLookalike(creator)} variant="secondary">
                             {t('creators.index.similarKol')}
                         </Button>
                         <Button>
                             <Link
-                                href={`/creator/${channel}/${creator.account.user_profile.user_id}`}
+                                href={`/creator/${platform}/${creator.account.user_profile.user_id}`}
                             >
                                 <a>{t('creators.index.analyzeProfile')}</a>
                             </Link>
@@ -70,15 +61,17 @@ export const SearchResultRow = ({
                         >
                             <Heart className="w-4 h-4 fill-current" />
                         </Button>
-                        <Button>
-                            <Link href={creator.account.user_profile.url}>
-                                <a target="_blank" rel="noreferrer">
-                                    <ShareLink className="w-3.5 h-3.5 fill-current text-white" />
-                                </a>
-                            </Link>
-                        </Button>
+                        {creator.account.user_profile.url && (
+                            <Button>
+                                <Link href={creator.account.user_profile.url}>
+                                    <a target="_blank" rel="noreferrer">
+                                        <ShareLink className="w-3.5 h-3.5 fill-current text-white" />
+                                    </a>
+                                </Link>
+                            </Button>
+                        )}
                     </div>
-                </div>
+                </td>
             )}
             <td className="py-2 px-4 flex flex-row items-center space-x-2">
                 {!placeholder ? (

@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { useSubscription } from 'src/hooks/use-subscription';
-import { CreatorChannel } from 'types';
+import { CreatorPlatform, SearchResultItem } from 'types';
 import { useUser } from './use-user';
 
 export const useSearch = () => {
@@ -9,7 +9,7 @@ export const useSearch = () => {
     const [page, setPage] = useState<any>(0);
     const [results, setResults] = useState<any>();
     const [tags, setTopicTags] = useState<any[]>([]);
-    const [lookalike, setLookalike] = useState<any[]>([]);
+    const [lookalike, setLookalike] = useState<SearchResultItem>();
     const [KOLLocation, setKOLLocation] = useState<any[]>([]);
     const [views, setViews] = useState<any[]>([]);
     const [audience, setAudience] = useState<any[]>([]);
@@ -18,11 +18,11 @@ export const useSearch = () => {
     const [lastPost, setLastPost] = useState<any>();
     const [contactInfo, setContactInfo] = useState<any>();
     const [audienceLocation, setAudienceLocation] = useState<any[]>([]);
-    const [channel, setChannel] = useState<CreatorChannel>('youtube');
-    const channels: {
+    const [platform, setPlatform] = useState<CreatorPlatform>('youtube');
+    const platforms: {
         icon: string;
         label: string;
-        id: CreatorChannel;
+        id: CreatorPlatform;
     }[] = useMemo(
         () => [
             { icon: '/assets/svg/yt.svg', label: 'YouTube', id: 'youtube' },
@@ -50,7 +50,7 @@ export const useSearch = () => {
                     method: 'post',
                     signal,
                     body: JSON.stringify({
-                        platform: channel,
+                        platform: platform,
                         term: search,
                         page: page,
                         tags,
@@ -73,7 +73,7 @@ export const useSearch = () => {
         }
     }, [
         tags,
-        channel,
+        platform,
         page,
         profile,
         lookalike,
@@ -92,9 +92,9 @@ export const useSearch = () => {
         page,
         setPage,
         results,
-        channel,
-        channels,
-        setChannel,
+        platform,
+        platforms,
+        setPlatform,
         search,
         tags,
         setTopicTags,

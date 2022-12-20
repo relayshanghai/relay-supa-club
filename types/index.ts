@@ -1,6 +1,6 @@
 import { Database } from './supabase';
 
-export type CreatorChannel = 'instagram' | 'youtube' | 'tiktok';
+export type CreatorPlatform = 'instagram' | 'youtube' | 'tiktok';
 
 export type CreatorSearchResult = {
     /** number of results */
