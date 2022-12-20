@@ -163,7 +163,6 @@ export default function CampaignForm() {
                                             register={register}
                                             errors={errors}
                                             isRequired={q.isRequired}
-                                            label={q.title}
                                             placeHolder={q.placeholder}
                                         />
                                     )}

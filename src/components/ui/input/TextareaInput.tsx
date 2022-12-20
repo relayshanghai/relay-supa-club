@@ -2,7 +2,7 @@ import { FieldErrorsImpl } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 export interface Props {
     fieldName: string;
-    label: string;
+    label?: string;
     type?: string;
     register: any;
     errors: Partial<
