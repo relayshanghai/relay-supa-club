@@ -54,7 +54,7 @@ export const SearchResultRow = ({
                         </Button>
                         <Button>
                             <Link
-                                href={`/dashboard/creators/creator?id=${creator.account.user_profile.user_id}&platform=${channel}`}
+                                href={`/creator/${channel}/${creator.account.user_profile.user_id}`}
                             >
                                 <a>{t('creators.index.analyzeProfile')}</a>
                             </Link>
