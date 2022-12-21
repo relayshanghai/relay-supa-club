@@ -50,9 +50,9 @@ export const useSearch = () => {
                     method: 'post',
                     signal,
                     body: JSON.stringify({
-                        platform: platform,
+                        platform,
                         term: search,
-                        page: page,
+                        page,
                         tags,
                         company_id: profile?.company_id,
                         lookalike,
