@@ -1,15 +1,15 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
-import { CreatorPlatform, SearchResultItem } from 'types';
+import { CreatorSearchResult, CreatorPlatform, LocationWeighted } from 'types';
 import { useUser } from './use-user';
 
 export const useSearch = () => {
     const { profile } = useUser();
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState<any>(0);
-    const [results, setResults] = useState<any>();
+    const [results, setResults] = useState<CreatorSearchResult>();
     const [tags, setTopicTags] = useState<any[]>([]);
-    const [lookalike, setLookalike] = useState<SearchResultItem>();
-    const [KOLLocation, setKOLLocation] = useState<any[]>([]);
+    const [lookalike, setLookalike] = useState<any>();
+    const [KOLLocation, setKOLLocation] = useState<LocationWeighted[]>([]);
     const [views, setViews] = useState<any[]>([]);
     const [audience, setAudience] = useState<any[]>([]);
     const [gender, setGender] = useState<any>();
