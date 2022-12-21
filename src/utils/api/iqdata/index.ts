@@ -1,4 +1,5 @@
 import { headers } from 'src/utils/api/constants';
+import { CreatorPlatform } from 'types';
 import { FetchCreatorsFilteredParams, prepareFetchCreatorsFiltered } from './transforms';
 
 /**
@@ -34,5 +35,17 @@ export const fetchCreatorsFiltered = async (params: FetchCreatorsFilteredParams)
     });
 };
 
-export const requestNewReport = async (id: string, subscribe = false, dry_run = false) =>
-    await iqDataFetch(`reports/new?url=${id}&subscribe=${subscribe ? 1 : 0}&dry_run=${dry_run}`);
+export const requestNewReport = async (
+    platform: CreatorPlatform,
+    id: string,
+    subscribe = false,
+    dry_run = false
+) =>
+    await iqDataFetch(
+        `reports/new?platform=${platform}&url=${id}&subscribe=${
+            subscribe ? 1 : 0
+        }&dry_run=${dry_run}`
+    );
+
+export const fetchReport = async (platform: CreatorPlatform, id: string) =>
+    await iqDataFetch(`reports?platform=${platform}&url=${id}`);
