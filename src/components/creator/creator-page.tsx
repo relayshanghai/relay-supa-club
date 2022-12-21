@@ -18,7 +18,7 @@ export const CreatorPage = ({
     useEffect(() => {
         const getOrCreateReport = async () => {
             try {
-                const existingReportIdRes = await nextFetchReportMetadata(platform as any, user_id);
+                const existingReportIdRes = await nextFetchReportMetadata(platform, user_id);
                 if (!existingReportIdRes?.results) throw new Error('No reports found');
                 const existingReportId = existingReportIdRes.results[0]?.id;
                 if (!existingReportId) throw new Error('No report ID found');
