@@ -5,11 +5,8 @@ import { fetchReport, fetchReportsMetadata } from 'src/utils/api/iqdata';
 import { CreatorReport } from 'types';
 
 const Page = () => {
-    const { ids } = useRouter().query;
-    const [platform, user_id] = ids as string[];
     const [report, setReport] = useState<CreatorReport | null>(null);
     const [reportCreatedAt, setReportCreatedAt] = useState<string | null>(null);
-
     useEffect(() => {
         const getExistingReport = async () => {
             const existingReportIdRes = await fetchReportsMetadata(platform as any, user_id);
@@ -25,6 +22,10 @@ const Page = () => {
         };
         getExistingReport();
     });
+
+    const { ids } = useRouter().query;
+    if (!ids || typeof ids !== 'object') return null;
+    const [platform, user_id] = ids as string[];
 
     if (!report) return null;
 
