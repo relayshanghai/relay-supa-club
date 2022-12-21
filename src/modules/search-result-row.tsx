@@ -34,7 +34,11 @@ export const SearchResultRow = ({
     };
 
     return (
-        <tr className={`${placeholder ? 'bg-gray-50' : ''} relative group duration-1`}>
+        <tr
+            className={`${
+                placeholder ? 'bg-gray-50' : ''
+            } relative group duration-1 hover:bg-primary-100`}
+        >
             {!placeholder && (
                 <td className="invisible absolute flex right-28 -top-3 group-hover:visible">
                     <div className="flex space-x-4">
