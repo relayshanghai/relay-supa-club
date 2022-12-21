@@ -1,6 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { stripeClient } from 'src/utils/stripe-client';
-import { supabase } from 'src/utils/supabase-client';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'GET') {

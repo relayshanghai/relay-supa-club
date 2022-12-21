@@ -3,7 +3,6 @@ import Link from 'next/link';
 import { Fragment, useEffect } from 'react';
 import { Button } from 'src/components/button';
 import { useSearch } from 'src/hooks/use-search';
-import { useSubscription } from 'src/hooks/use-subscription';
 import { formatter } from 'src/utils/formatter';
 import { SearchTopics } from 'src/modules/search-topics';
 import { Popover, Transition } from '@headlessui/react';
@@ -21,7 +20,7 @@ export const Search = () => {
         channel,
         setChannel,
         page,
-        setPage,
+        // setPage,
         tags,
         setTopicTags,
         lookalike,
@@ -62,7 +61,7 @@ export const Search = () => {
     return (
         <div className="space-y-4">
             <div className="flex flex-row space-x-2">
-                {channels.map((item, i) => (
+                {channels.map((item) => (
                     <button
                         className={`transition px-2 rounded-lg hover:shadow-xl ${
                             channel === item.id ? 'bg-white shadow-xl' : ''
@@ -155,7 +154,7 @@ export const Search = () => {
                         );
                         return (
                             <div
-                                className="pl-2 pr-1 bg-white text-gray-900 rounded bg-gray-100 whitespace-nowrap hover:bg-gray-200 cursor-pointer flex items-center flex-row"
+                                className="pl-2 pr-1 text-gray-900 rounded bg-gray-100 whitespace-nowrap hover:bg-gray-200 cursor-pointer flex items-center flex-row"
                                 key={item.id}
                                 onClick={onClick}
                             >
@@ -189,11 +188,11 @@ export const Search = () => {
             </div>
             <div>
                 <Popover className="relative">
-                    {({ open }) => (
+                    {() => (
                         <>
                             <div className="flex flex-row space-x-4">
                                 <Popover.Button
-                                    className={`group text-gray-900 ring-gray-900 ring-opacity-5 bg-white rounded-md block border border-transparent shadow ring-1 sm:text-sm focus:border-primary-500 focus:ring-primary-500 focus:outline-none flex flex-row items-center px-2 py-1`}
+                                    className={`group text-gray-900 ring-gray-900 ring-opacity-5 bg-white rounded-md border border-transparent shadow ring-1 sm:text-sm focus:border-primary-500 focus:ring-primary-500 focus:outline-none flex flex-row items-center px-2 py-1`}
                                 >
                                     <AdjustmentsVerticalIcon
                                         className={`h-6 w-6 text-gray-400 transition duration-150 ease-in-out group-hover:text-opacity-80`}
@@ -508,7 +507,7 @@ export const Search = () => {
                                                           alt={handle}
                                                       />
                                                       <div>
-                                                          <div className="font-bold whhitespace-nowrap">
+                                                          <div className="font-bold whitespace-nowrap">
                                                               {item.account.user_profile.fullname}
                                                           </div>
                                                           <div className="text-primary-500 text-sm">
