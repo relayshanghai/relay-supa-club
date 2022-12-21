@@ -69,7 +69,7 @@ export const InputWithAutocomplete = ({
                         })}
                     </div>
                 ) : null}
-                {tags.length ? (
+                {tags?.length ? (
                     <div className="text-xs text-gray-500 my-2">
                         Tip: To remove a tag click on it
                     </div>

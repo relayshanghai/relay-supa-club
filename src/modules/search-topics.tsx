@@ -4,7 +4,7 @@ import { InputWithAutocomplete } from 'src/components/input-with-autocomplete';
 export const SearchTopics = ({
     onSetTopics,
     topics,
-    channel,
+    platform,
     path,
     placeholder,
     filter,
@@ -31,7 +31,7 @@ export const SearchTopics = ({
                     signal: signal,
                     body: JSON.stringify({
                         term,
-                        platform: channel
+                        platform
                     })
                 })
             ).json();
@@ -43,7 +43,7 @@ export const SearchTopics = ({
 
             setLoading(false);
         },
-        [channel, path, filter]
+        [platform, path, filter]
     );
 
     const addTag = useCallback(
