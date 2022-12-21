@@ -1,10 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from 'next/link';
-import { useState } from 'react';
+// import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
 import { ShareLink } from 'src/components/icons';
-import Heart from 'src/components/icons/Heart';
+// import Heart from 'src/components/icons/Heart';
 import { formatter } from 'src/utils/formatter';
 import { CreatorPlatform, CreatorSearchAccountObject } from 'types';
 
@@ -27,13 +27,18 @@ export const SearchResultRow = ({
         : '';
 
     // TODO: get real added to pool data
-    const [addedToPool, setAddedToPool] = useState(false);
+    // const [addedToPool, setAddedToPool] = useState(false);
 
-    // TODO: Add to campaign
-    const addToCampaign = () => {};
+    const addToCampaign = () => {
+        // TODO: Add to campaign
+    };
 
     return (
-        <tr className={`${placeholder ? 'bg-gray-50' : ''} relative group duration-1`}>
+        <tr
+            className={`${
+                placeholder ? 'bg-gray-50' : ''
+            } relative group duration-1 hover:bg-primary-100`}
+        >
             {!placeholder && (
                 <td className="invisible absolute flex right-28 -top-3 group-hover:visible">
                     <div className="flex space-x-4">
@@ -50,7 +55,7 @@ export const SearchResultRow = ({
                                 <a>{t('creators.index.analyzeProfile')}</a>
                             </Link>
                         </Button>
-                        <Button
+                        {/* <Button
                             onClick={() => setAddedToPool(!addedToPool)}
                             variant="secondary"
                             className={`border-none ${
@@ -60,7 +65,7 @@ export const SearchResultRow = ({
                             }`}
                         >
                             <Heart className="w-4 h-4 fill-current" />
-                        </Button>
+                        </Button> */}
                         {creator.account.user_profile.url && (
                             <Button>
                                 <Link href={creator.account.user_profile.url}>

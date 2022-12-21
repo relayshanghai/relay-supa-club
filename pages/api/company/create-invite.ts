@@ -16,7 +16,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             return res.status(500).json(error);
         }
 
-        console.log(`/signup/invite?token=${data.id}`);
+        // console.log(`/signup/invite?token=${data.id}`);
 
         return res.status(200).json(data);
     }
