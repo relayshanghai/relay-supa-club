@@ -8,17 +8,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const companyId = req.query.id;
 
         try {
-            const { data } = await supabase
+            const { data, error } = await supabase
                 .from('companies')
                 .select('cus_id')
                 .eq('id', companyId)
                 .single();
+
+            if (error || !data) throw error;
 
             const subscriptions = await stripeClient.subscriptions.list({
                 customer: data.cus_id,
                 status: 'active'
             });
             const subscription = subscriptions.data[0];
+            //TODO: handle errors better
+            if (!subscription) return res.status(200).json(null);
             const product = await stripeClient.products.retrieve(
                 (subscription as any).plan.product
             );
