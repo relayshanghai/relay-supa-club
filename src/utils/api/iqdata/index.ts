@@ -33,3 +33,6 @@ export const fetchCreatorsFiltered = async (params: FetchCreatorsFilteredParams)
         body: JSON.stringify(body)
     });
 };
+
+export const requestNewReport = async (id: string, subscribe = false, dry_run = false) =>
+    await iqDataFetch(`reports/new?url=${id}&subscribe=${subscribe ? 1 : 0}&dry_run=${dry_run}`);
