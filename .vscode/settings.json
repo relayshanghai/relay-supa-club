@@ -5,13 +5,15 @@
         "fullname",
         "headlessui",
         "heroicons",
+        "imgs",
+        "influencers",
         "languagedetector",
         "linebreak",
+        "relayclub",
         "supa",
         "supabase",
         "tailwindcss",
         "tiktok",
         "upsert"
     ]
-
 }
