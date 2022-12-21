@@ -142,12 +142,14 @@ interface FollowersRange {
 
 interface ReportInfo {
     report_id: string;
-    filter: Filter;
+    // filter: Filter;
+    // TODO: get filter type
+    filter: any;
     created: string;
     profile_updated: string;
 }
 
-interface Filter {}
+// interface Filter {}
 
 interface UserProfile {
     type: string;

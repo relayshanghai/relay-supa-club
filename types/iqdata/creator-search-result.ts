@@ -7,7 +7,8 @@ export interface CreatorSearchResult {
 
 export interface CreatorSearchAccountObject {
     account: CreatorSearchAccount;
-    match: Match;
+    // TODO: get match type
+    match: any;
 }
 
 export interface CreatorSearchAccount {
@@ -34,5 +35,3 @@ export interface CreatorAccount {
     avg_views?: number;
     custom_name?: string;
 }
-
-interface Match {}

@@ -1,5 +1,6 @@
 import { headers } from 'src/utils/api/iqdata/constants';
-import { CreatorPlatform } from 'types';
+import { CreatorPlatform, CreatorReport } from 'types';
+import { CreatorReportsMetadata } from 'types/iqdata/creator-reports-metadata';
 import { FetchCreatorsFilteredParams, prepareFetchCreatorsFiltered } from './transforms';
 
 /**
@@ -51,5 +52,11 @@ export const requestNewReport = async (
         }&dry_run=${dry_run}`
     );
 
-export const fetchReport = async (platform: CreatorPlatform, id: string) =>
-    await iqDataFetch(`reports?platform=${platform}&url=${id}`);
+export const fetchReport = async (reportId: string) =>
+    await iqDataFetch<CreatorReport>(`reports/${reportId}`);
+
+//** omit id to get all previously generated reports of that platform */
+export const fetchReportsMetadata = async (platform: CreatorPlatform, user_id?: string) =>
+    await iqDataFetch<CreatorReportsMetadata>(
+        `reports?platform=${platform}${user_id ? `&url=${user_id}` : ''}`
+    );
