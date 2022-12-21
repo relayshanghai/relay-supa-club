@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { createSubscription } from 'src/utils/api/create-subscription';
 import { ensureCustomer } from 'src/utils/api/ensure-customer';
 import { supabase } from 'src/utils/supabase-client';
 

@@ -1,5 +1,4 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
-import { useSubscription } from 'src/hooks/use-subscription';
 import { CreatorPlatform, SearchResultItem } from 'types';
 import { useUser } from './use-user';
 
