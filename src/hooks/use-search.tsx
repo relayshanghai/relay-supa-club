@@ -1,5 +1,4 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
-import { useSubscription } from 'src/hooks/use-subscription';
 import { CreatorSearchResult, CreatorPlatform, LocationWeighted } from 'types';
 import { useUser } from './use-user';
 
@@ -50,9 +49,9 @@ export const useSearch = () => {
                     method: 'post',
                     signal,
                     body: JSON.stringify({
-                        platform: platform,
+                        platform,
                         term: search,
-                        page: page,
+                        page,
                         tags,
                         company_id: profile?.company_id,
                         lookalike,

@@ -21,7 +21,7 @@ export const Search = () => {
         platform,
         setPlatform,
         page,
-        setPage,
+        // setPage,
         tags,
         setTopicTags,
         lookalike,
@@ -63,7 +63,7 @@ export const Search = () => {
     return (
         <div className="space-y-4">
             <div className="flex flex-row space-x-2">
-                {platforms.map((item, i) => (
+                {platforms.map((item) => (
                     <button
                         className={`transition px-2 rounded-lg hover:shadow-xl ${
                             platform === item.id ? 'bg-white shadow-xl' : ''
@@ -190,7 +190,7 @@ export const Search = () => {
             </div>
             <div>
                 <Popover className="relative">
-                    {({ open }) => (
+                    {() => (
                         <>
                             <div className="flex flex-row space-x-4">
                                 <Popover.Button

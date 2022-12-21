@@ -99,6 +99,7 @@ export default function Register() {
                             });
                             router.push('/signup/onboarding');
                         } catch (e) {
+                            // eslint-disable-next-line no-console
                             console.log(e);
                             toast.error('Ops, something went wrong');
                         }

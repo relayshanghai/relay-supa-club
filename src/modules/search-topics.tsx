@@ -19,9 +19,7 @@ export const SearchTopics = ({
         async (term: any) => {
             setLoading(true);
 
-            if (ref.current) {
-                ref.current.abort();
-            }
+            if (ref.current) ref.current.abort();
 
             const controller = new AbortController();
             const signal = controller.signal;
@@ -71,6 +69,7 @@ export const SearchTopics = ({
 
     return (
         <InputWithAutocomplete
+            disabled={loading}
             SuggestionComponent={SuggestionComponent}
             TagComponent={TagComponent}
             placeholder={placeholder}

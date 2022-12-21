@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { fetcher } from 'src/utils/fetcher';
 import useSWR from 'swr';
 import { useUser } from './use-user';
