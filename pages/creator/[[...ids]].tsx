@@ -1,9 +1,6 @@
-import { InferGetServerSidePropsType, GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { Layout } from 'src/modules/layout';
-import { headers } from 'src/utils/api/constants';
-import { CreatorSearchResult, CreatorSearchAccount } from 'types';
 
 const Page = () => {
     const { ids } = useRouter().query;
