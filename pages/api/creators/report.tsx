@@ -1,25 +1,20 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { fetchReport, fetchReportsMetadata, requestNewReport } from 'src/utils/api/iqdata';
+import { nextFetch } from 'src/utils/fetcher';
 import { CreatorReport, CreatorReportsMetadata } from 'types';
 
-export const nextFetchReportMetadata = async (platform: string, user_id: string) => {
-    const res = await fetch(
-        `/api/creators/report?platform=${platform}&user_id=${user_id}&get_metadata=true`
+export const nextFetchReportMetadata = async (platform: string, user_id: string) =>
+    await nextFetch<CreatorReportsMetadata>(
+        `creators/report?platform=${platform}&user_id=${user_id}&get_metadata=true`
     );
-    return res.json() as unknown as CreatorReportsMetadata;
-};
 
-export const nextFetchReport = async (report_id: string) => {
-    const res = await fetch(`/api/creators/report?report_id=${report_id}`);
-    return res.json() as unknown as CreatorReport;
-};
+export const nextFetchReport = async (report_id: string) =>
+    await nextFetch<CreatorReport>(`creators/report?report_id=${report_id}`);
 
-export const nextFetchReportNew = async (platform: string, user_id: string) => {
-    const res = await fetch(
-        `/api/creators/report?platform=${platform}&user_id=${user_id}&request_new=true`
+export const nextFetchReportNew = async (platform: string, user_id: string) =>
+    await nextFetch<CreatorReport>(
+        `creators/report?platform=${platform}&user_id=${user_id}&request_new=true`
     );
-    return res.json() as unknown as CreatorReport;
-};
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'GET') {
