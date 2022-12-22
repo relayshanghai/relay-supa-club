@@ -8,6 +8,7 @@ import {
 } from 'pages/api/creators/report';
 import { CreatorPlatform, CreatorReport } from 'types';
 import { TitleSection } from './creator-title-section';
+import { CreatorOverview } from './creator-page-overview';
 
 export const CreatorPage = ({
     user_id,
@@ -50,12 +51,15 @@ export const CreatorPage = ({
                 {!report ? (
                     <p>Generating Report</p>
                 ) : (
-                    <TitleSection
-                        user_profile={report.user_profile}
-                        platform={platform}
-                        onAddToCampaign={onAddToCampaign}
-                        reportCreatedAt={reportCreatedAt}
-                    />
+                    <>
+                        <TitleSection
+                            user_profile={report.user_profile}
+                            platform={platform}
+                            onAddToCampaign={onAddToCampaign}
+                            reportCreatedAt={reportCreatedAt}
+                        />
+                        <CreatorOverview report={report} />
+                    </>
                 )}
             </div>
         </div>

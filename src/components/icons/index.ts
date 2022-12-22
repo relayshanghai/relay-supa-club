@@ -24,3 +24,6 @@ export { default as Wechat } from './Wechat';
 export { default as Youtube } from './Youtube';
 export { default as Instagram } from './Instagram';
 export { default as Tiktok } from './Tiktok';
+export { default as Twitter } from './Twitter';
+export { default as Email } from './Email';
+export { default as Facebook } from './Facebook';

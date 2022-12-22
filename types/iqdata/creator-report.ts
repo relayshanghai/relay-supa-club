@@ -173,7 +173,7 @@ interface UserProfile {
     avg_views: number;
     stat_history: StatHistory[];
     geo: Geo;
-    contacts: Contact[];
+    contacts: CreatorReportContact[];
     top_hashtags: Top[];
     top_mentions: Top[];
     brand_affinity: BrandAffinity[];
@@ -219,7 +219,7 @@ interface Stat {
     views?: number;
 }
 
-interface Contact {
+export interface CreatorReportContact {
     type: string;
     value: string;
     formatted_value: string;
