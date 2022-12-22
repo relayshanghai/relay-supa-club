@@ -176,6 +176,7 @@ interface UserProfile {
     contacts: CreatorReportContact[];
     top_hashtags: Top[];
     top_mentions: Top[];
+    total_views?: number;
     brand_affinity: BrandAffinity[];
     interests: Interest[];
     relevant_tags: RelevantTag[];
