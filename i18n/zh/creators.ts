@@ -1,4 +1,4 @@
-export default {
+const creators = {
     index: {
         title: '海外KOL ',
         searchBar: '搜索类似KOL',
@@ -65,6 +65,7 @@ export default {
         audienceLocationDescr: '点击选择KOL的粉丝所在国家'
     },
     show: {
+        lastUpdate: '最近更新',
         editProfile: '编辑信息',
         description: '描述',
         campaigns: '所有项目',
@@ -168,3 +169,4 @@ export default {
         submitting: '提交中'
     }
 };
+export default creators;

@@ -1,3 +1,4 @@
+import Head from 'next/head';
 import {
     nextFetchReport,
     nextFetchReportMetadata,
@@ -5,6 +6,7 @@ import {
 } from 'pages/api/creators/report';
 import { useState, useEffect } from 'react';
 import { CreatorPlatform, CreatorReport } from 'types';
+import { TitleSection } from './creator-title-section';
 
 export const CreatorPage = ({
     user_id,
@@ -34,20 +36,27 @@ export const CreatorPage = ({
         getOrCreateReport();
     }, [platform, user_id]);
 
+    const onAddToCampaign = () => {
+        //TODO: Add to campaign
+    };
+
     return (
-        <div className="flex flex-col p-6">
-            {!report ? (
-                <p>Generating Report</p>
-            ) : (
-                <>
-                    <p>{platform}</p>
-                    <p>{user_id}</p>
-                    <p> ages:</p>
-                    <p>{report.audience_followers.data.audience_ages[0].code}</p>
-                    <p>Created at</p>
-                    <p>{reportCreatedAt}</p>
-                </>
-            )}
+        <div>
+            <Head>
+                <title>{report?.user_profile.fullname || 'relay.club'}</title>
+            </Head>
+            <div className="flex flex-col p-6">
+                {!report ? (
+                    <p>Generating Report</p>
+                ) : (
+                    <TitleSection
+                        user_profile={report.user_profile}
+                        platform={platform}
+                        onAddToCampaign={onAddToCampaign}
+                        reportCreatedAt={reportCreatedAt}
+                    />
+                )}
+            </div>
         </div>
     );
 };

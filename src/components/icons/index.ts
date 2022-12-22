@@ -21,3 +21,6 @@ export { default as Team } from './Team';
 export { default as Topic } from './Topic';
 export { default as Trashcan } from './Trashcan';
 export { default as Wechat } from './Wechat';
+export { default as Youtube } from './Youtube';
+export { default as Instagram } from './Instagram';
+export { default as Tiktok } from './Tiktok';
