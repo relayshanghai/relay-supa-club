@@ -1,10 +1,11 @@
 import Head from 'next/head';
+import { useState, useEffect } from 'react';
+
 import {
     nextFetchReport,
     nextFetchReportMetadata,
     nextFetchReportNew
 } from 'pages/api/creators/report';
-import { useState, useEffect } from 'react';
 import { CreatorPlatform, CreatorReport } from 'types';
 import { TitleSection } from './creator-title-section';
 

@@ -3,9 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import { CreatorPlatform, CreatorReport } from 'types';
 import { Button } from '../button';
-import { Youtube } from '../icons';
-import Instagram from '../icons/Instagram';
-import Tiktok from '../icons/Tiktok';
+import { Instagram, Tiktok, Youtube } from '../icons';
 
 export const TitleSection = ({
     user_profile,
@@ -29,7 +27,6 @@ export const TitleSection = ({
                         layout="fill"
                         className="rounded-full"
                     ></Image>
-                    {/* Show platform icon, eg youtube or instagram */}
                     <div className="absolute right-0 bottom-0">
                         {platform === 'youtube' && <Youtube width={28} height={28} />}
                         {platform === 'instagram' && <Instagram width={28} height={28} />}
