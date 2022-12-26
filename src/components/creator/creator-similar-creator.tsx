@@ -17,7 +17,7 @@ export const SimilarCreator = ({
     const { t } = useTranslation();
     return (
         <div className="group bg-white flex items-center justify-between p-4 rounded-xl mb-4">
-            <div className="flex items-center justify-between w-72">
+            <div className="flex items-center justify-between flex-1 max-w-72">
                 <div className="mr-4 flex-shrink-0 flex items-center">
                     <Image
                         src={imgProxy(creator.picture) || '/image404.png'}
