@@ -1,4 +1,19 @@
 {
-    "cSpell.ignoreWords": ["heroicons"],
-    "cSpell.words": ["languagedetector", "supabase"]
+    "cSpell.words": [
+        "camelcase",
+        "countup",
+        "fullname",
+        "headlessui",
+        "heroicons",
+        "imgs",
+        "influencers",
+        "languagedetector",
+        "linebreak",
+        "relayclub",
+        "supa",
+        "supabase",
+        "tailwindcss",
+        "tiktok",
+        "upsert"
+    ]
 }

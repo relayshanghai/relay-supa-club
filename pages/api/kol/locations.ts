@@ -1,15 +1,12 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { headers } from 'src/utils/api/constants';
+
+import { fetchIqDataGeos } from 'src/utils/api/iqdata';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
         const { term } = JSON.parse(req.body);
 
-        const results = await (
-            await fetch(`https://socapi.icu/v2.0/api/geos/?q=${term}&types=country&limit=5`, {
-                headers
-            })
-        ).json();
+        const results = await fetchIqDataGeos(term);
 
         return res.status(200).json(results);
     }

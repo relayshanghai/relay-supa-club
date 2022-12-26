@@ -10,7 +10,13 @@ function MediaUploader({ media, setMedia, prevMedia, setPrevMedia, setPurgedMedi
 
     const onButtonClick = () => {
         const { current } = inputFiles;
-        (current || { click: () => {} }).click();
+        (
+            current || {
+                click: () => {
+                    // quiet linter
+                }
+            }
+        ).click();
     };
 
     const validateSelectedFile = (files) => {
