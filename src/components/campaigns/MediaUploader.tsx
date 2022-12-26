@@ -13,8 +13,8 @@ function MediaUploader({
 }: {
     media: File[];
     setMedia: (media: File[]) => void;
-    prevMedia: File[];
-    setPrevMedia: (prevMedia: File[]) => void;
+    prevMedia: string[];
+    setPrevMedia: (prevMedia: string[]) => void;
     setPurgedMedia: (purgedMedia: File[]) => void;
 }) {
     const { t } = useTranslation();
