@@ -1,5 +1,5 @@
 import { Layout } from 'src/modules/layout';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import Tabs from 'src/components/campaigns/tabs';
 import { Spinner } from 'src/components/spinner';

@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { Layout } from 'src/modules/layout';
 import { useTranslation } from 'react-i18next';
 import { useForm, FormProvider, FieldErrorsImpl, Control, FieldValues } from 'react-hook-form';
@@ -21,6 +22,7 @@ import { Question, questions, TimelineQuestion } from 'src/components/campaigns/
 import LoaderWhite from 'src/components/icons/LoaderWhite';
 import { useCampaigns } from 'src/hooks/use-campaigns';
 import { useCallback } from 'react';
+import { supabase } from 'src/utils/supabase-client';
 
 const TimelineInput = ({
     q,
@@ -58,13 +60,20 @@ const TimelineInput = ({
     );
 };
 
+// interface ExistingFile {
+//     name: string; // use to delete
+//     url: string; // use to display
+// }
+
 export default function CampaignForm() {
+    // TODO: if existing campaign, fetch list of files
     const router = useRouter();
 
     const [submitting, setSubmitting] = useState(false);
-    const [media, setMedia] = useState([]);
-    const [prevMedia, setPrevMedia] = useState([]);
-    const [purgedMedia, setPurgedMedia] = useState([]);
+    const [media, setMedia] = useState<File[]>([]);
+    // only used in edit existing campaign mode.
+    const [prevMedia, setPrevMedia] = useState<File[]>([]);
+    const [purgedMedia, setPurgedMedia] = useState<File[]>([]);
     const {
         register,
         handleSubmit,
@@ -74,27 +83,51 @@ export default function CampaignForm() {
         formState: { errors }
     } = useForm();
     const methods = useForm();
-    const { createCampaign, updateCampaign, campaign } = useCampaigns({
-        campaignId: router.query.id?.[0]
-    });
+    const campaignId = router.query.id?.[0];
+    const { createCampaign, updateCampaign, campaign } = useCampaigns({ campaignId });
     const { t } = useTranslation();
     const isAddMode = !router.query.id;
     const goBack = () => router.back();
+
+    useEffect(() => {
+        const getFiles = async () => {
+            // list campaign files
+
+            const { data, error } = await supabase.storage
+                .from('images')
+                .list(`campaigns/${campaignId}`, {
+                    limit: 100,
+                    offset: 0,
+                    sortBy: { column: 'name', order: 'asc' }
+                    //filter by campaignID
+                    // search: campaignId
+                });
+            console.log({ data, error });
+        };
+
+        if (campaignId) {
+            getFiles();
+        }
+    }, [campaignId]);
 
     const createHandler = useCallback(
         async (data: any) => {
             setSubmitting(true);
             try {
-                await createCampaign(data);
+                const result = await createCampaign(data);
+                console.log({ result, media });
+                if (media.length > 0) {
+                    await uploadFiles(media, result.id);
+                }
                 toast(t('campaigns.form.successCreateMsg'));
                 setSubmitting(false);
-                router.push(`/campaigns/${encodeURIComponent(data.id)}`);
+                // router.push(`/campaigns/${encodeURIComponent(result.id)}`);
             } catch (error) {
                 toast(handleError(error));
                 setSubmitting(false);
             }
         },
-        [createCampaign, router, t]
+        [createCampaign, t, media]
     );
 
     const updateHandler = useCallback(
@@ -104,23 +137,70 @@ export default function CampaignForm() {
                 await updateCampaign(data);
                 toast(t('campaigns.form.successCreateMsg'));
                 setSubmitting(false);
-                router.push(`/campaigns/${encodeURIComponent(data.id)}`);
+                if (campaignId && media.length > 0) {
+                    await uploadFiles(media, campaignId);
+                }
+                if (purgedMedia.length > 0) {
+                    await deleteFiles(purgedMedia as any);
+                }
+                // router.push(`/campaigns/${encodeURIComponent(data.id)}`);
             } catch (error) {
                 toast(handleError(error));
                 setSubmitting(false);
             }
         },
-        [updateCampaign, router, t]
+        [updateCampaign, t, campaignId, media, purgedMedia]
     );
+
+    const uploadFiles = async (files: File[], campaignId: string) => {
+        console.log({ files, campaignId });
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            if (!file) continue;
+            const { data, error } = await supabase.storage
+                .from('images')
+                .upload(`campaigns/${campaignId}/${file.name}`, file);
+
+            if (data) {
+                // eslint-disable-next-line no-console
+                console.log({ data });
+            } else if (error) {
+                // eslint-disable-next-line no-console
+                console.log({ error });
+            }
+        }
+    };
+
+    const deleteFiles = async (files: string[]) => {
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            if (!file) continue;
+            // const { data, error } = await supabase.storage
+            //     .from('images')
+            //     .remove('campaigns/' + file.name);
+
+            // if (data) {
+            //     // eslint-disable-next-line no-console
+            //     console.log({ data });
+            // } else if (error) {
+            //     // eslint-disable-next-line no-console
+            //     console.log({ error });
+            // }
+        }
+    };
 
     const onSubmit = useCallback(
         async (formData: any) => {
             formData = { ...formData, media, purge_media: [...purgedMedia] };
             console.log(media, prevMedia, purgedMedia);
 
-            return isAddMode ? createHandler(formData) : updateHandler(formData);
+            if (isAddMode) {
+                createHandler(formData);
+            } else {
+                await updateHandler(formData);
+            }
         },
-        [isAddMode, createHandler, updateHandler, media, purgedMedia]
+        [media, purgedMedia, prevMedia, isAddMode, createHandler, updateHandler]
     );
 
     useEffect(() => {

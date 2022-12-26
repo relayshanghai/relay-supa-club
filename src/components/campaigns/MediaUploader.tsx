@@ -1,11 +1,22 @@
-import { useRef } from 'react';
+import { ChangeEventHandler, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import Plus from 'src/components/icons/Plus';
 import Trashcan from 'src/components/icons/Trashcan';
 import toast from 'react-hot-toast';
-import { supabase } from 'src/utils/supabase-client';
 
-function MediaUploader({ media, setMedia, prevMedia, setPrevMedia, setPurgedMedia }) {
+function MediaUploader({
+    media,
+    setMedia,
+    prevMedia,
+    setPrevMedia,
+    setPurgedMedia
+}: {
+    media: File[];
+    setMedia: (media: File[]) => void;
+    prevMedia: File[];
+    setPrevMedia: (prevMedia: File[]) => void;
+    setPurgedMedia: (purgedMedia: File[]) => void;
+}) {
     const { t } = useTranslation();
     const inputFiles = useRef(null);
 
@@ -20,52 +31,43 @@ function MediaUploader({ media, setMedia, prevMedia, setPrevMedia, setPurgedMedi
         ).click();
     };
 
-    const validateSelectedFile = (files) => {
+    const validateAndSetSelectedFile = (files: FileList) => {
         for (let i = 0; i <= files.length - 1; i++) {
-            const file = files.item(i).size / 1024 / 1024;
-            if (file > 5) {
+            const file = files.item(i);
+            if (!file) continue;
+            const fileSize = file.size / 1024 / 1024;
+            if (fileSize > 5) {
                 toast(t('campaigns.form.fileSizeErrorAlert'));
                 return;
-            } else setMedia([...media, files.item(i)]);
+            } else setMedia([...media, file]);
         }
     };
 
-    const onFileChange = async (e) => {
-        validateSelectedFile(e.target.files);
-        let file;
-        if (e.target.files) {
-            file = e.target.files[0];
-        }
-
-        const { data, error } = await supabase.storage
-            .from('images')
-            .upload('campaigns/' + 'file?.name', file);
-
-        if (data) {
-            console.log(data);
-        } else if (error) {
-            console.log(error);
-        }
+    const onFileChange: ChangeEventHandler<HTMLInputElement> = async (e) => {
+        if (!e.target.files) return;
+        validateAndSetSelectedFile(e.target.files);
     };
 
-    const removeFile = (idx) => {
-        setMedia([...media.filter((file) => media.indexOf(file) !== Number.parseInt(idx, 10))]);
+    const removeFile = (index: number) => {
+        setMedia([...media.filter((file: any) => media.indexOf(file) !== index)]);
     };
 
-    const removePrevMedia = (idx) => {
-        setPurgedMedia((pm) => [...pm, prevMedia[idx]]);
-        setPrevMedia([
-            ...prevMedia.filter((file) => prevMedia.indexOf(file) !== Number.parseInt(idx, 10))
-        ]);
+    const removePrevMedia = (index: number) => {
+        //@ts-ignore
+        setPurgedMedia((pm: any) => [...pm, prevMedia[index]]);
+        setPrevMedia([...prevMedia.filter((file: any) => prevMedia.indexOf(file) !== index)]);
     };
 
     const mediaList = () =>
-        media.map((file, index) => (
+        media.map((file: any, index: number) => (
             <div className="flex items-center justify-between mb-4" key={index}>
                 <div className="flex">
                     <div className="h-6 w-6 box-border mr-4">
-                        src={URL.createObjectURL(media[index])}
-                        alt="media gallery icon"
+                        <img
+                            className="w-full h-full object-cover rounded-md"
+                            src={URL.createObjectURL(media[index])}
+                            alt="media gallery icon"
+                        />
                     </div>
                     <div className="text-sm">{file.name}</div>
                 </div>
@@ -78,7 +80,7 @@ function MediaUploader({ media, setMedia, prevMedia, setPrevMedia, setPurgedMedi
         ));
 
     const prevMediaList = () =>
-        prevMedia.map((file, index) => (
+        prevMedia.map((file: any, index: number) => (
             <div className="flex items-center justify-between mb-4" key={index}>
                 <div className="flex">
                     <div className="h-6 w-6 box-border mr-4">
