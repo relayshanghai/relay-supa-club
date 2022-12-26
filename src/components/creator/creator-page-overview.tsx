@@ -22,7 +22,7 @@ export const CreatorOverview = ({ report }: { report: CreatorReport }) => {
             : [];
 
     return (
-        <div className="flex flex-wrap">
+        <div className="flex flex-wrap py-6">
             <div className="lg:w-1/2">
                 {/* TODO: KOL economics */}
                 {/* description */}
@@ -38,9 +38,9 @@ export const CreatorOverview = ({ report }: { report: CreatorReport }) => {
 
                 {/* contacts */}
                 {report.user_profile.contacts.length > 0 && (
-                    <div className="p-6">
-                        <h2 className={titleClass}>{t('creators.show.socialLinks')} </h2>
-                        <div className="flex gap-2 flex-wrap w-full">
+                    <div className="py-6">
+                        <h2 className={`${titleClass} px-6`}>{t('creators.show.socialLinks')} </h2>
+                        <div className="flex flex-wrap w-full">
                             {report.user_profile.contacts.map((contact, index) => (
                                 <SocialCard contact={contact} key={index} />
                             ))}

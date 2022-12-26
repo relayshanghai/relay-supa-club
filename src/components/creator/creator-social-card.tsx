@@ -15,19 +15,21 @@ export const SocialCard = ({ contact }: { contact: CreatorReportContact }) => {
     });
 
     return (
-        <div className="bg-white rounded-xl p-4 flex w-full lg:w-1/2">
-            <a {...getHref(contact)} className="flex items-center">
-                <div className="w-10 h-10 mr-2">
-                    <SocialMediaIcon platform={contact.type} />
-                </div>
+        <div className="p-6 pb-0 w-full lg:w-1/2">
+            <div className="bg-white rounded-xl p-4 flex w-full">
+                <a {...getHref(contact)} className="flex items-center">
+                    <div className="w-10 h-10 mr-2">
+                        <SocialMediaIcon platform={contact.type} />
+                    </div>
 
-                <div className="ml-2">
-                    <p className="text-gray-600 font-semibold -mb-1 hover:text-primary-500 duration-300 cursor-pointer">
-                        {contact.value}
-                    </p>
-                    <p className="text-gray-600 text-sm">{contact.type}</p>
-                </div>
-            </a>
+                    <div className="ml-2">
+                        <p className="text-gray-600 font-semibold -mb-1 hover:text-primary-500 duration-300 cursor-pointer">
+                            {contact.value}
+                        </p>
+                        <p className="text-gray-600 text-sm">{contact.type}</p>
+                    </div>
+                </a>
+            </div>
         </div>
     );
 };
