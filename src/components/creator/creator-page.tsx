@@ -1,14 +1,9 @@
-import Head from 'next/head';
+import { nextFetchReport } from 'pages/api/creators/report';
 import { useState, useEffect } from 'react';
-
-import {
-    nextFetchReport,
-    nextFetchReportMetadata,
-    nextFetchReportNew
-} from 'pages/api/creators/report';
 import { CreatorPlatform, CreatorReport } from 'types';
 import { TitleSection } from './creator-title-section';
 import { CreatorOverview } from './creator-page-overview';
+import Head from 'next/head';
 
 export const CreatorPage = ({
     user_id,
@@ -20,31 +15,15 @@ export const CreatorPage = ({
     const [report, setReport] = useState<CreatorReport | null>(null);
     const [reportCreatedAt, setReportCreatedAt] = useState<string | null>(null);
     //    TODO: translations and loader compontent
-    const [loadingMessage, setLoadingMessage] = useState<string | null>('Checking for report...');
     useEffect(() => {
         const getOrCreateReport = async () => {
             try {
-                const existingReportIdRes = await nextFetchReportMetadata(platform, user_id);
-                if (!existingReportIdRes?.results) throw new Error('No reports found');
-                const existingReportId = existingReportIdRes.results[0]?.id;
-                if (!existingReportId) throw new Error('No report ID found');
-                setReportCreatedAt(existingReportIdRes.results[0].created_at);
-                setLoadingMessage('Loading report...');
-                const existingReport = await nextFetchReport(existingReportId);
-                setReport(existingReport);
-                setLoadingMessage(null);
+                const { createdAt, ...report } = await nextFetchReport(platform, user_id);
+                setReport(report);
+                setReportCreatedAt(createdAt);
             } catch (error) {
-                setLoadingMessage('Generating report...');
-                try {
-                    const generateReportResponse = await nextFetchReportNew(platform, user_id);
-                    if (!generateReportResponse?.success) {
-                        return setLoadingMessage('Failed to generate report');
-                    }
-                    setReport(generateReportResponse);
-                    setLoadingMessage(null);
-                } catch (error) {
-                    return setLoadingMessage('Failed to generate report');
-                }
+                // eslint-disable-next-line no-console
+                console.log(error);
             }
         };
         getOrCreateReport();
@@ -61,7 +40,7 @@ export const CreatorPage = ({
             </Head>
             <div className="flex flex-col">
                 {!report ? (
-                    <p>{loadingMessage}</p>
+                    <p>Loading report...</p>
                 ) : (
                     <>
                         <TitleSection
