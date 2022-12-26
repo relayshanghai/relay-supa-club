@@ -33,7 +33,7 @@ export const TitleSection = ({
                         {platform === 'tiktok' && <Tiktok width={28} height={28} />}
                     </div>
                 </div>
-                <div className="ml-6">
+                <div className="ml-6 flex-1">
                     <h1 className="poppins font-bold text-4xl text-gray-800 mb-1">
                         {user_profile.fullname || user_profile.username}
                     </h1>
