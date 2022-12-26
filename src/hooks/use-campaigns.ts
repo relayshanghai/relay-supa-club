@@ -1,25 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
 import { fetcher } from 'src/utils/fetcher';
 import useSWR from 'swr';
-import { CampaignDB } from 'types';
+import { CampaignCreate, CampaignDB, CampaignUpdate } from 'types';
 import { useUser } from './use-user';
 
-export interface CampaignDataCreate {
-    name: string;
-    description: string;
-    product_name: string;
-    product_link?: string;
-    tag_list: string[];
-    target_locations: string[];
-    budget_cents: number;
-    budget_currency: string;
-    promo_types: string[];
-    media: File[];
-    purge_media: string[];
-    date_end_campaign?: string;
-    date_start_campaign?: string;
-}
-export interface CampaignDataCreateResponse {
+export interface CampaignDataCreateResponse extends CampaignCreate {
     id: string;
 }
 
@@ -40,7 +25,7 @@ export const useCampaigns = ({ campaignId }: any = {}) => {
     }, [campaignId, data]);
 
     const createCampaign = useCallback(
-        async (input: CampaignDataCreate) => {
+        async (input: CampaignCreate) => {
             return (
                 await fetch('/api/campaigns/create', {
                     method: 'post',
@@ -55,7 +40,7 @@ export const useCampaigns = ({ campaignId }: any = {}) => {
     );
 
     const updateCampaign = useCallback(
-        async (input: CampaignDataCreate) => {
+        async (input: CampaignUpdate) => {
             await fetch(`/api/campaigns/update`, {
                 method: 'post',
                 body: JSON.stringify({
