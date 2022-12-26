@@ -8,6 +8,16 @@ const nextConfig = {
                 protocol: 'https',
                 hostname: 'yt3.*.com',
                 pathname: '**'
+            },
+            {
+                protocol: 'https',
+                hostname: 'imgp.*.icu',
+                pathname: '**'
+            },
+            {
+                protocol: 'https',
+                hostname: '*.tiktokcdn.com',
+                pathname: '**'
             }
         ]
     }
