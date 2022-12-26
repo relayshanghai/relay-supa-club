@@ -1,8 +1,4 @@
-import {
-    nextFetchReport,
-    nextFetchReportMetadata,
-    nextFetchReportNew
-} from 'pages/api/creators/report';
+import { nextFetchReport } from 'pages/api/creators/report';
 import { useState, useEffect } from 'react';
 import { CreatorPlatform, CreatorReport } from 'types';
 
@@ -18,17 +14,12 @@ export const CreatorPage = ({
     useEffect(() => {
         const getOrCreateReport = async () => {
             try {
-                const existingReportIdRes = await nextFetchReportMetadata(platform, user_id);
-                if (!existingReportIdRes?.results) throw new Error('No reports found');
-                const existingReportId = existingReportIdRes.results[0]?.id;
-                if (!existingReportId) throw new Error('No report ID found');
-                setReportCreatedAt(existingReportIdRes.results[0].created_at);
-                const existingReport = await nextFetchReport(existingReportId);
-                setReport(existingReport);
+                const { createdAt, ...report } = await nextFetchReport(platform, user_id);
+                setReport(report);
+                setReportCreatedAt(createdAt);
             } catch (error) {
-                const generateReportResponse = await nextFetchReportNew(platform, user_id);
-                if (!generateReportResponse.success) throw new Error('Failed to generate report');
-                setReport(generateReportResponse);
+                // eslint-disable-next-line no-console
+                console.log(error);
             }
         };
         getOrCreateReport();
