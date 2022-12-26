@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import Plus from 'src/components/icons/Plus';
 import Trashcan from 'src/components/icons/Trashcan';
 import toast from 'react-hot-toast';
+import { supabase } from 'src/utils/supabase-client';
 
 function MediaUploader({ media, setMedia, prevMedia, setPrevMedia, setPurgedMedia }) {
     const { t } = useTranslation();
@@ -29,8 +30,22 @@ function MediaUploader({ media, setMedia, prevMedia, setPrevMedia, setPurgedMedi
         }
     };
 
-    const onFileChange = (e) => {
+    const onFileChange = async (e) => {
         validateSelectedFile(e.target.files);
+        let file;
+        if (e.target.files) {
+            file = e.target.files[0];
+        }
+
+        const { data, error } = await supabase.storage
+            .from('images')
+            .upload('campaigns/' + 'file?.name', file);
+
+        if (data) {
+            console.log(data);
+        } else if (error) {
+            console.log(error);
+        }
     };
 
     const removeFile = (idx) => {
@@ -49,11 +64,8 @@ function MediaUploader({ media, setMedia, prevMedia, setPrevMedia, setPurgedMedi
             <div className="flex items-center justify-between mb-4" key={index}>
                 <div className="flex">
                     <div className="h-6 w-6 box-border mr-4">
-                        <img
-                            className="w-full h-full object-cover rounded-md"
-                            src={URL.createObjectURL(media[index])}
-                            alt="media gallery icon"
-                        />
+                        src={URL.createObjectURL(media[index])}
+                        alt="media gallery icon"
                     </div>
                     <div className="text-sm">{file.name}</div>
                 </div>
