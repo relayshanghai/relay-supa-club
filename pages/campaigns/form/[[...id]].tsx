@@ -72,8 +72,9 @@ export default function CampaignForm() {
     const [submitting, setSubmitting] = useState(false);
     const [media, setMedia] = useState<File[]>([]);
     // only used in edit existing campaign mode.
-    const [prevMedia, setPrevMedia] = useState<File[]>([]);
+    const [prevMedia, setPrevMedia] = useState<string[]>([]);
     const [purgedMedia, setPurgedMedia] = useState<File[]>([]);
+    const [mediaPaths, setMediaPaths] = useState<string[]>([]);
     const {
         register,
         handleSubmit,
@@ -89,26 +90,8 @@ export default function CampaignForm() {
     const isAddMode = !router.query.id;
     const goBack = () => router.back();
 
-    useEffect(() => {
-        const getFiles = async () => {
-            // list campaign files
-
-            const { data, error } = await supabase.storage
-                .from('images')
-                .list(`campaigns/${campaignId}`, {
-                    limit: 100,
-                    offset: 0,
-                    sortBy: { column: 'name', order: 'asc' }
-                    //filter by campaignID
-                    // search: campaignId
-                });
-            console.log({ data, error });
-        };
-
-        if (campaignId) {
-            getFiles();
-        }
-    }, [campaignId]);
+    //get files from supabase
+    //set prevMedia,
 
     const createHandler = useCallback(
         async (data: any) => {
@@ -154,20 +137,23 @@ export default function CampaignForm() {
 
     const uploadFiles = async (files: File[], campaignId: string) => {
         console.log({ files, campaignId });
+
         for (let i = 0; i < files.length; i++) {
             const file = files[i];
+            const filePath = `campaigns/${campaignId}/${file.name}`;
             if (!file) continue;
-            const { data, error } = await supabase.storage
+            await supabase.storage
                 .from('images')
-                .upload(`campaigns/${campaignId}/${file.name}`, file);
-
-            if (data) {
-                // eslint-disable-next-line no-console
-                console.log({ data });
-            } else if (error) {
-                // eslint-disable-next-line no-console
-                console.log({ error });
-            }
+                .upload(filePath, file)
+                .then((res) => {
+                    console.log(res.data?.Key);
+                    setMediaPaths([...mediaPaths, res.data?.Key as string]);
+                    console.log({ mediaPaths });
+                })
+                .catch((error) => {
+                    // eslint-disable-next-line no-console
+                    console.log(error);
+                });
         }
     };
 
@@ -191,8 +177,8 @@ export default function CampaignForm() {
 
     const onSubmit = useCallback(
         async (formData: any) => {
-            formData = { ...formData, media, purge_media: [...purgedMedia] };
-            console.log(media, prevMedia, purgedMedia);
+            formData = { ...formData, media, purge_media: [...purgedMedia], mediaPaths };
+            // console.log(media, prevMedia, purgedMedia);
 
             if (isAddMode) {
                 createHandler(formData);
@@ -202,6 +188,26 @@ export default function CampaignForm() {
         },
         [media, purgedMedia, prevMedia, isAddMode, createHandler, updateHandler]
     );
+
+    useEffect(() => {
+        console.log(mediaPaths);
+        const getFiles = async () => {
+            // list campaign files
+
+            const { data, error } = await supabase.storage
+                .from('images')
+                .list(`campaigns/${campaignId}`, {
+                    limit: 100,
+                    offset: 0,
+                    sortBy: { column: 'name', order: 'asc' }
+                });
+            console.log({ data, error });
+        };
+
+        if (!campaignId) {
+            getFiles();
+        }
+    }, [campaignId]);
 
     useEffect(() => {
         if (campaign) {
