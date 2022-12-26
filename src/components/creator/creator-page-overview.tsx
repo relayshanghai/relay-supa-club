@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CreatorReport } from 'types';
+import { Info } from '../icons';
 import { SimilarCreator } from './creator-similar-creator';
 import { SocialCard } from './creator-social-card';
 import { formatStats } from './helpers';
@@ -53,17 +54,18 @@ export const CreatorOverview = ({ report }: { report: CreatorReport }) => {
 
                     <div className="flex flex-wrap">
                         {creatorOverviewStats.map((stat, index) => (
-                            <div key={index} className="bg-white rounded-md p-2.5 w-36 mr-2 mb-2">
-                                {/* TODO: get logo and tooltip description back */}
-                                {/* <image className="icon-m mb-1" src="/images/icons/stats/{{item.icon}}.svg"></image> */}
-                                {/* <Icon name={stat.icon} className="w-6 h-6" /> */}
+                            <div
+                                key={index}
+                                className="bg-white rounded-md p-2.5 w-36 mr-2 mb-2 relative"
+                            >
+                                <div className="w-6 h-6">{stat.icon}</div>
                                 <p className="text-tertiary-600 font-semibold mb-1">{stat.data}</p>
                                 <p className="text-tertiary-600 text-sm">
                                     {t(`creators.show.${stat.label}`)}
                                 </p>
                                 {stat?.descr && (
                                     <div className="group">
-                                        {/* <Icon name="info" className="w-4 h-4 absolute right-2 top-2 fill-current text-gray-400 group-hover:text-gray-600 duration-300" /> */}
+                                        <Info className="w-4 h-4 absolute right-2 top-2 fill-current text-gray-400 group-hover:text-gray-600 duration-300 cursor-pointer" />
                                         <p className="bg-white shadow-lg hidden group-hover:flex duration-300 absolute z-50 bottom-full right-2 text-xs p-2 rounded-md">
                                             {t(`creators.show.statsDescr.${stat.descr}`)}
                                         </p>

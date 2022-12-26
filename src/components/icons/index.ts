@@ -27,3 +27,8 @@ export { default as Tiktok } from './Tiktok';
 export { default as Twitter } from './Twitter';
 export { default as Email } from './Email';
 export { default as Facebook } from './Facebook';
+export { default as Followers } from './Followers';
+export { default as Views } from './Views';
+export { default as Engagements } from './Engagements';
+export { default as LikesFilled } from './LikesFilled';
+export { default as Info } from './Info';
