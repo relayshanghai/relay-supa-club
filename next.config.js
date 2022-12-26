@@ -18,6 +18,11 @@ const nextConfig = {
                 protocol: 'https',
                 hostname: '*.tiktokcdn.com',
                 pathname: '**'
+            },
+            {
+                protocol: 'https',
+                hostname: 'image-cache.brainchild-tech.cn',
+                pathname: '**'
             }
         ]
     }

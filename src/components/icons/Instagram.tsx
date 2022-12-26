@@ -5,35 +5,33 @@ export default function Instagram(props: SVGProps<SVGSVGElement>) {
         <svg
             xmlns="http://www.w3.org/2000/svg"
             xmlnsXlink="http://www.w3.org/1999/xlink"
-            width="100%"
-            height="auto"
             viewBox="-8.094 -13.49 70.146 80.938"
             {...props}
         >
             <defs>
                 <linearGradient id="prefix__a" y2="1.753" x2="1.754" y1="-5.804" x1="-5.809">
-                    <stop offset="0%" stop-color="#FFD521" />
-                    <stop offset="5%" stop-color="#FFD521" />
-                    <stop offset="50.112%" stop-color="#F50000" />
-                    <stop offset="95%" stop-color="#B900B4" />
-                    <stop offset="95.008%" stop-color="#B900B4" />
-                    <stop offset="100%" stop-color="#B900B4" />
+                    <stop offset="0%" stopColor="#FFD521" />
+                    <stop offset="5%" stopColor="#FFD521" />
+                    <stop offset="50.112%" stopColor="#F50000" />
+                    <stop offset="95%" stopColor="#B900B4" />
+                    <stop offset="95.008%" stopColor="#B900B4" />
+                    <stop offset="100%" stopColor="#B900B4" />
                 </linearGradient>
                 <linearGradient id="prefix__b" y2=".917" x2=".917" y1=".009" x1=".009">
-                    <stop offset="0%" stop-color="#FFD521" />
-                    <stop offset="5%" stop-color="#FFD521" />
-                    <stop offset="50.112%" stop-color="#F50000" />
-                    <stop offset="95%" stop-color="#B900B4" />
-                    <stop offset="95.008%" stop-color="#B900B4" />
-                    <stop offset="100%" stop-color="#B900B4" />
+                    <stop offset="0%" stopColor="#FFD521" />
+                    <stop offset="5%" stopColor="#FFD521" />
+                    <stop offset="50.112%" stopColor="#F50000" />
+                    <stop offset="95%" stopColor="#B900B4" />
+                    <stop offset="95.008%" stopColor="#B900B4" />
+                    <stop offset="100%" stopColor="#B900B4" />
                 </linearGradient>
                 <linearGradient id="prefix__c" y2="1.313" x2="1.313" y1="-.456" x1="-.456">
-                    <stop offset="0%" stop-color="#FFD521" />
-                    <stop offset="5%" stop-color="#FFD521" />
-                    <stop offset="50.112%" stop-color="#F50000" />
-                    <stop offset="95%" stop-color="#B900B4" />
-                    <stop offset="95.008%" stop-color="#B900B4" />
-                    <stop offset="100%" stop-color="#B900B4" />
+                    <stop offset="0%" stopColor="#FFD521" />
+                    <stop offset="5%" stopColor="#FFD521" />
+                    <stop offset="50.112%" stopColor="#F50000" />
+                    <stop offset="95%" stopColor="#B900B4" />
+                    <stop offset="95.008%" stopColor="#B900B4" />
+                    <stop offset="100%" stopColor="#B900B4" />
                 </linearGradient>
                 <linearGradient
                     gradientUnits="userSpaceOnUse"

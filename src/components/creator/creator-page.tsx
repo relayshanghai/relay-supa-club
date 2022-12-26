@@ -35,10 +35,16 @@ export const CreatorPage = ({
                 setLoadingMessage(null);
             } catch (error) {
                 setLoadingMessage('Generating report...');
-                const generateReportResponse = await nextFetchReportNew(platform, user_id);
-                if (!generateReportResponse.success) throw new Error('Failed to generate report');
-                setReport(generateReportResponse);
-                setLoadingMessage(null);
+                try {
+                    const generateReportResponse = await nextFetchReportNew(platform, user_id);
+                    if (!generateReportResponse?.success) {
+                        return setLoadingMessage('Failed to generate report');
+                    }
+                    setReport(generateReportResponse);
+                    setLoadingMessage(null);
+                } catch (error) {
+                    return setLoadingMessage('Failed to generate report');
+                }
             }
         };
         getOrCreateReport();
@@ -53,7 +59,7 @@ export const CreatorPage = ({
             <Head>
                 <title>{report?.user_profile.fullname || 'relay.club'}</title>
             </Head>
-            <div className="flex flex-col p-6">
+            <div className="flex flex-col">
                 {!report ? (
                     <p>{loadingMessage}</p>
                 ) : (

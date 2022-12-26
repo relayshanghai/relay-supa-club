@@ -116,6 +116,7 @@ const creators = {
         cities: 'Cities',
         similarAudienceKol: 'KOLs with similar audience',
         seeMore: 'See More',
+        seeLess: 'See Less',
         similarKols: 'Similar KOLs',
         popularPosts: 'Popular Posts',
         copyLink: 'Copy Link',

@@ -18,7 +18,7 @@ export const TitleSection = ({
 }) => {
     const { t } = useTranslation();
     return (
-        <div>
+        <div className="p-6">
             <div className="flex items-center">
                 <div className="relative w-28 h-28">
                     <Image
