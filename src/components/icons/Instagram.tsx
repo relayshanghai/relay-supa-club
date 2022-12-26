@@ -5,8 +5,8 @@ export default function Instagram(props: SVGProps<SVGSVGElement>) {
         <svg
             xmlns="http://www.w3.org/2000/svg"
             xmlnsXlink="http://www.w3.org/1999/xlink"
-            height="800"
-            width="1200"
+            width="100%"
+            height="auto"
             viewBox="-8.094 -13.49 70.146 80.938"
             {...props}
         >

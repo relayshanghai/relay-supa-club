@@ -2,13 +2,7 @@ import { SVGProps } from 'react';
 
 export default function Tiktok(props: SVGProps<SVGSVGElement>) {
     return (
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            height="800"
-            width="1200"
-            viewBox="-37.5 -62.5 325 375"
-            {...props}
-        >
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="-37.5 -62.5 325 375" {...props}>
             <path
                 clipRule="evenodd"
                 d="M25 0h200c13.808 0 25 11.192 25 25v200c0 13.808-11.192 25-25 25H25c-13.808 0-25-11.192-25-25V25C0 11.192 11.192 0 25 0z"

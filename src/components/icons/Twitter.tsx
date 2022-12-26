@@ -6,7 +6,7 @@ export default function Twitter({
 }: { variant?: 'blue' | 'grey' } & SVGProps<SVGSVGElement>) {
     const color = variant === 'blue' ? '#60a5fa' : '#94A3B8';
     return (
-        <svg width="22" height="22" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+        <svg viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
             <path
                 fill-rule="evenodd"
                 clip-rule="evenodd"

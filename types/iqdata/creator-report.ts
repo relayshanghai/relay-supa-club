@@ -1,3 +1,5 @@
+import { SocialMediaPlatform } from 'types';
+
 export interface CreatorReport {
     success: boolean;
     version: string;
@@ -221,7 +223,7 @@ interface Stat {
 }
 
 export interface CreatorReportContact {
-    type: string;
+    type: SocialMediaPlatform;
     value: string;
     formatted_value: string;
 }
