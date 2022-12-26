@@ -19,6 +19,8 @@ export const CreatorPage = ({
 }) => {
     const [report, setReport] = useState<CreatorReport | null>(null);
     const [reportCreatedAt, setReportCreatedAt] = useState<string | null>(null);
+    //    TODO: translations and loader compontent
+    const [loadingMessage, setLoadingMessage] = useState<string | null>('Checking for report...');
     useEffect(() => {
         const getOrCreateReport = async () => {
             try {
@@ -27,12 +29,16 @@ export const CreatorPage = ({
                 const existingReportId = existingReportIdRes.results[0]?.id;
                 if (!existingReportId) throw new Error('No report ID found');
                 setReportCreatedAt(existingReportIdRes.results[0].created_at);
+                setLoadingMessage('Loading report...');
                 const existingReport = await nextFetchReport(existingReportId);
                 setReport(existingReport);
+                setLoadingMessage(null);
             } catch (error) {
+                setLoadingMessage('Generating report...');
                 const generateReportResponse = await nextFetchReportNew(platform, user_id);
                 if (!generateReportResponse.success) throw new Error('Failed to generate report');
                 setReport(generateReportResponse);
+                setLoadingMessage(null);
             }
         };
         getOrCreateReport();
@@ -49,7 +55,7 @@ export const CreatorPage = ({
             </Head>
             <div className="flex flex-col p-6">
                 {!report ? (
-                    <p>Generating Report</p>
+                    <p>{loadingMessage}</p>
                 ) : (
                     <>
                         <TitleSection

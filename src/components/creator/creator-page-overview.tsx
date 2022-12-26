@@ -11,7 +11,7 @@ export const CreatorOverview = ({ report }: { report: CreatorReport }) => {
     return (
         <div className="flex flex-wrap">
             {/* TODO: KOL economics */}
-            <div className="mb-4">
+            <div className="mb-4 lg:w-1/2">
                 <h2 className="font-semibold text-gray-600 mb-2">
                     {t('creators.show.description')}
                 </h2>
@@ -24,15 +24,15 @@ export const CreatorOverview = ({ report }: { report: CreatorReport }) => {
             </div>
 
             {report.user_profile.contacts && (
-                <div className="mb-4">
+                <div className="mb-4 lg:w-1/2">
                     <h2 className="font-semibold text-gray-600 mb-2">
                         {t('creators.show.socialLinks')}{' '}
                     </h2>
-                    <p className="flex gap-2 flex-wrap">
+                    <div className="flex gap-2 flex-wrap w-full">
                         {report.user_profile.contacts.map((contact, index) => (
                             <SocialCard contact={contact} key={index} />
                         ))}
-                    </p>
+                    </div>
                 </div>
             )}
             {/* overview */}

@@ -15,7 +15,7 @@ export const SocialCard = ({ contact }: { contact: CreatorReportContact }) => {
     });
 
     return (
-        <div className="bg-white rounded-xl p-4 flex w-full">
+        <div className="bg-white rounded-xl p-4 flex w-full lg:w-1/2">
             <a {...getHref(contact)} className="flex items-center">
                 <div className="w-10 h-10 mr-2">
                     <SocialMediaIcon platform={contact.type} />
@@ -23,7 +23,7 @@ export const SocialCard = ({ contact }: { contact: CreatorReportContact }) => {
 
                 <div className="ml-2">
                     <p className="text-gray-600 font-semibold -mb-1 hover:text-primary-500 duration-300 cursor-pointer">
-                        {contact.value}{' '}
+                        {contact.value}
                     </p>
                     <p className="text-gray-600 text-sm">{contact.type}</p>
                 </div>
