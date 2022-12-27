@@ -45,30 +45,28 @@ export const CreatorEconomics = ({
 }: {
     userProfile: CreatorReport['user_profile'];
 }) => {
-    const basicData = formatCreatorEconomics(userProfile);
-    //
+    const economicsData = formatCreatorEconomics(userProfile);
     const { t } = useTranslation();
-    if (!basicData.length) return null;
+
+    if (!economicsData.length) return null;
     return (
         <div className="p-6">
             <h2 className="font-semibold text-gray-600 mb-2">
                 {t('creators.show.creatorEconomics')}
             </h2>
             <div className="flex flex-wrap">
-                {!!basicData.length &&
-                    basicData.map((stat, index) => (
-                        <div key={index}>
-                            <div className="flex flex-col bg-white rounded-md p-2.5 w-36 mr-2 mb-2 flex-shrink-0 box-border self-stretch relative">
-                                <div className="w-6 h-6">{stat.icon}</div>
-                                <p className="text-tertiary-600 f36 font-semibold mb-1">
-                                    {stat.data}
-                                </p>
-                                <p className="text-tertiary-600 text-sm">
-                                    {t(`creators.show.${stat.label}`)}
-                                </p>
-                            </div>
-                        </div>
-                    ))}
+                {economicsData.map((stat, index) => (
+                    <div
+                        key={index}
+                        className="flex flex-col bg-white rounded-md p-2.5 w-36 mr-2 mb-2 flex-1 box-border self-stretch"
+                    >
+                        <div className="w-6 h-6">{stat.icon}</div>
+                        <p className="text-tertiary-600 f36 font-semibold my-2">{stat.data}</p>
+                        <p className="text-tertiary-600 text-sm">
+                            {t(`creators.show.${stat.label}`)}
+                        </p>
+                    </div>
+                ))}
             </div>
         </div>
     );
