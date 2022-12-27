@@ -9,7 +9,7 @@ import { useState, useEffect } from 'react';
 import MediaUploader from 'src/components/campaigns/MediaUploader';
 import CurrencyInput from 'src/components/campaigns/CurrencyInput';
 import toast from 'react-hot-toast';
-import { handleError } from 'src/utils/utils.js';
+import { handleError } from 'src/utils/utils';
 import {
     MultiSelect,
     DatePicker,
