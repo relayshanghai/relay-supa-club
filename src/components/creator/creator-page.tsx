@@ -33,7 +33,6 @@ export const CreatorPage = ({
     const onAddToCampaign = () => {
         //TODO: Add to campaign
     };
-
     return (
         <div>
             <Head>
@@ -51,7 +50,7 @@ export const CreatorPage = ({
                             reportCreatedAt={reportCreatedAt}
                         />
                         <CreatorOverview report={report} />
-                        <MetricsSection userProfile={report.user_profile} />
+                        <MetricsSection report={report} />
                     </>
                 )}
             </div>

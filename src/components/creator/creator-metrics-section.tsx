@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { CreatorReport } from 'types';
 import LineChart from '../common/line-chart';
+import { AudienceStats } from './creator-audience-stats';
 const prepareStats = (stats: CreatorReport['user_profile']['stat_history']) => {
     const data: string[] = [];
     if (!stats || stats.length === 0) return data;
@@ -11,21 +12,24 @@ const prepareStats = (stats: CreatorReport['user_profile']['stat_history']) => {
     return data;
 };
 
-export const MetricsSection = ({ userProfile }: { userProfile: CreatorReport['user_profile'] }) => {
+export const MetricsSection = ({ report }: { report: CreatorReport }) => {
     const { t } = useTranslation();
-    const stats = prepareStats(userProfile.stat_history);
+    const stats = prepareStats(report.user_profile.stat_history);
     return (
         <div>
+            {/* Channel stats charts */}
             <h2 className="p-6 font-semibold text-gray-600 mb-2">
                 {t('creators.show.channelStats')}
             </h2>
             <div className="flex flex-wrap">
                 {stats.map((stat, index) => (
                     <div key={index} className="w-full lg:w-1/2 p-6">
-                        <LineChart data={userProfile.stat_history} dataKey={stat} />
+                        <LineChart data={report.user_profile.stat_history} dataKey={stat} />
                     </div>
                 ))}
             </div>
+            {/* Audience stats */}
+            <AudienceStats report={report} />{' '}
         </div>
     );
 };
