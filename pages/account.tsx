@@ -182,7 +182,7 @@ const Page = () => {
                         <div className="pt-4">
                             {profile?.admin ? (
                                 <Button
-                                    type="secondary"
+                                    variant="secondary"
                                     onClick={() => {
                                         setShowAddMoreMembers(true);
                                     }}
@@ -217,7 +217,7 @@ const Page = () => {
                         <div>Subscription</div>
                         <div className="flex flex-row justify-end">
                             <Button
-                                type="secondary"
+                                variant="secondary"
                                 onClick={() => {
                                     window.open(`/api/subscriptions/portal?id=${company.id}`);
                                 }}
@@ -362,7 +362,9 @@ const Page = () => {
                                 <div className="text-sm font-bold">
                                     <Button
                                         disabled={price.id === subscription?.plan?.id}
-                                        type={price.interval === 'year' ? 'primary' : 'secondary'}
+                                        variant={
+                                            price.interval === 'year' ? 'primary' : 'secondary'
+                                        }
                                         onClick={async () => {
                                             const id = toast.loading('Subscribing...');
                                             try {
@@ -386,7 +388,7 @@ const Page = () => {
                 </div>
                 <div className="pt-8 space-x-16 justify-center flex flex-row w-full">
                     <Button
-                        type="secondary"
+                        variant="secondary"
                         onClick={async () => {
                             setShowConfirmModal(undefined);
                         }}
@@ -428,7 +430,7 @@ const Page = () => {
                         Send invitation
                     </Button>
                     <Button
-                        type="secondary"
+                        variant="secondary"
                         onClick={async () => {
                             setShowAddMoreMembers(false);
                         }}

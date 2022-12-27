@@ -4,7 +4,7 @@ import { InputWithAutocomplete } from 'src/components/input-with-autocomplete';
 export const SearchTopics = ({
     onSetTopics,
     topics,
-    channel,
+    platform,
     path,
     placeholder,
     filter,
@@ -19,9 +19,7 @@ export const SearchTopics = ({
         async (term: any) => {
             setLoading(true);
 
-            if (ref.current) {
-                ref.current.abort();
-            }
+            if (ref.current) ref.current.abort();
 
             const controller = new AbortController();
             const signal = controller.signal;
@@ -33,7 +31,7 @@ export const SearchTopics = ({
                     signal: signal,
                     body: JSON.stringify({
                         term,
-                        platform: channel
+                        platform
                     })
                 })
             ).json();
@@ -45,7 +43,7 @@ export const SearchTopics = ({
 
             setLoading(false);
         },
-        [channel, path, filter]
+        [platform, path, filter]
     );
 
     const addTag = useCallback(
@@ -71,6 +69,7 @@ export const SearchTopics = ({
 
     return (
         <InputWithAutocomplete
+            disabled={loading}
             SuggestionComponent={SuggestionComponent}
             TagComponent={TagComponent}
             placeholder={placeholder}

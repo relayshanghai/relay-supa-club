@@ -1,19 +1,11 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { headers } from 'src/utils/api/constants';
+import { fetchIqDataTopics } from 'src/utils/api/iqdata';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
         const { term, platform } = JSON.parse(req.body);
 
-        const results = await (
-            await fetch(
-                `https://socapi.icu/v2.0/api/dict/topic-tags/?q=${term}&platform=${platform}&limit=10`,
-                {
-                    headers
-                }
-            )
-        ).json();
-
+        const results = await fetchIqDataTopics(term, platform);
         return res.status(200).json(results);
     }
 

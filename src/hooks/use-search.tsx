@@ -1,15 +1,15 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
-import { useSubscription } from 'src/hooks/use-subscription';
+import { CreatorSearchResult, CreatorPlatform, LocationWeighted } from 'types';
 import { useUser } from './use-user';
 
 export const useSearch = () => {
     const { profile } = useUser();
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState<any>(0);
-    const [results, setResults] = useState<any>();
+    const [results, setResults] = useState<CreatorSearchResult>();
     const [tags, setTopicTags] = useState<any[]>([]);
-    const [lookalike, setLookalike] = useState<any[]>([]);
-    const [KOLLocation, setKOLLocation] = useState<any[]>([]);
+    const [lookalike, setLookalike] = useState<any>();
+    const [KOLLocation, setKOLLocation] = useState<LocationWeighted[]>([]);
     const [views, setViews] = useState<any[]>([]);
     const [audience, setAudience] = useState<any[]>([]);
     const [gender, setGender] = useState<any>();
@@ -17,8 +17,12 @@ export const useSearch = () => {
     const [lastPost, setLastPost] = useState<any>();
     const [contactInfo, setContactInfo] = useState<any>();
     const [audienceLocation, setAudienceLocation] = useState<any[]>([]);
-    const [channel, setChannel] = useState<any>('youtube');
-    const channels = useMemo(
+    const [platform, setPlatform] = useState<CreatorPlatform>('youtube');
+    const platforms: {
+        icon: string;
+        label: string;
+        id: CreatorPlatform;
+    }[] = useMemo(
         () => [
             { icon: '/assets/svg/yt.svg', label: 'YouTube', id: 'youtube' },
             { icon: '/assets/svg/instagram.svg', label: 'Instagram', id: 'instagram' },
@@ -45,9 +49,9 @@ export const useSearch = () => {
                     method: 'post',
                     signal,
                     body: JSON.stringify({
-                        platform: channel,
+                        platform,
                         term: search,
-                        page: page,
+                        page,
                         tags,
                         company_id: profile?.company_id,
                         lookalike,
@@ -68,7 +72,7 @@ export const useSearch = () => {
         }
     }, [
         tags,
-        channel,
+        platform,
         page,
         profile,
         lookalike,
@@ -87,9 +91,9 @@ export const useSearch = () => {
         page,
         setPage,
         results,
-        channel,
-        channels,
-        setChannel,
+        platform,
+        platforms,
+        setPlatform,
         search,
         tags,
         setTopicTags,
