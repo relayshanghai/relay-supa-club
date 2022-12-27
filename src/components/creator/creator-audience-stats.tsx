@@ -51,6 +51,7 @@ const prepareStats = (audience: AudienceStats) => {
         });
     if (audience.audience_genders_per_age)
         data.push({
+            // TODO: seems this is unused
             type: 'barchart',
             label: 'audienceGenderAge',
             stats: audience.audience_genders_per_age
