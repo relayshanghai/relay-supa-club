@@ -51,21 +51,21 @@ export const CreatorEconomics = ({
     if (!basicData.length) return null;
     return (
         <div className="p-6">
-            <div className="font-semibold text-gray-600 mb-2">
+            <h2 className="font-semibold text-gray-600 mb-2">
                 {t('creators.show.creatorEconomics')}
-            </div>
+            </h2>
             <div className="flex flex-wrap">
                 {!!basicData.length &&
                     basicData.map((stat, index) => (
                         <div key={index}>
                             <div className="flex flex-col bg-white rounded-md p-2.5 w-36 mr-2 mb-2 flex-shrink-0 box-border self-stretch relative">
                                 <div className="w-6 h-6">{stat.icon}</div>
-                                <div className="text-tertiary-600 f36 font-semibold mb-1">
+                                <p className="text-tertiary-600 f36 font-semibold mb-1">
                                     {stat.data}
-                                </div>
-                                <div className="text-tertiary-600 text-sm">
+                                </p>
+                                <p className="text-tertiary-600 text-sm">
                                     {t(`creators.show.${stat.label}`)}
-                                </div>
+                                </p>
                             </div>
                         </div>
                     ))}
