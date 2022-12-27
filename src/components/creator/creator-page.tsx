@@ -5,6 +5,7 @@ import { TitleSection } from './creator-title-section';
 import { CreatorOverview } from './creator-page-overview';
 import Head from 'next/head';
 import { MetricsSection } from './creator-metrics-section';
+import { PopularPostsSection } from './creator-popular-posts';
 
 export const CreatorPage = ({
     user_id,
@@ -51,6 +52,7 @@ export const CreatorPage = ({
                         />
                         <CreatorOverview report={report} />
                         <MetricsSection report={report} />
+                        <PopularPostsSection report={report} />
                     </>
                 )}
             </div>
