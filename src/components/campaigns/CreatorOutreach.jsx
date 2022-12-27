@@ -5,6 +5,7 @@ import { useState } from 'react';
 export default function CreatorsOutreach() {
     const { t } = useTranslation();
     const router = useRouter();
+    const { pathname, query } = router;
     const [status, setStatus] = useState('to contact');
 
     const tabs = [
@@ -31,7 +32,11 @@ export default function CreatorsOutreach() {
                         <div
                             key={index}
                             onClick={() => handleTabChange(tab.value)}
-                            className="font-semibold text-sm mr-4 hover:text-primary-500 hover:bg-primary-500 hover:bg-opacity-20 px-4 py-2 rounded-lg cursor-pointer duration-300 flex-shrink-0 text-gray-400 bg-gray-100 focus:bg-primary-500 focus:text-primary-500 focus:bg-opacity-20"
+                            className={`font-semibold text-sm mr-4 hover:text-primary-500 hover:bg-primary-500 hover:bg-opacity-20 px-4 py-2 rounded-lg cursor-pointer duration-300 flex-shrink-0 focus:bg-primary-500 focus:text-primary-500 focus:bg-opacity-20 ${
+                                status === tab.value
+                                    ? 'text-primary-500 bg-primary-500 bg-opacity-20'
+                                    : 'text-gray-400 bg-gray-100 '
+                            }`}
                         >
                             {t(`campaigns.show.activities.outreach.${tab.label}`)} {tabs[tab.value]}
                         </div>
