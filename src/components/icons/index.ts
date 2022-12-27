@@ -32,3 +32,4 @@ export { default as Views } from './Views';
 export { default as Engagements } from './Engagements';
 export { default as LikesFilled } from './LikesFilled';
 export { default as Info } from './Info';
+export { default as Money } from './Money';

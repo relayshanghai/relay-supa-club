@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CreatorReport } from 'types';
 import { Info } from '../icons';
+import { CreatorEconomics } from './creator-economics';
 import { SimilarCreator } from './creator-similar-creator';
 import { SocialCard } from './creator-social-card';
 import { formatStats } from './helpers';
@@ -25,7 +26,10 @@ export const CreatorOverview = ({ report }: { report: CreatorReport }) => {
     return (
         <div className="flex flex-wrap py-6">
             <div className="lg:w-1/2">
-                {/* TODO: KOL economics */}
+                {/* economics */}
+                {report.user_profile.type === 'youtube' && (
+                    <CreatorEconomics userProfile={report.user_profile} />
+                )}
                 {/* description */}
                 <div className="p-6">
                     <h2 className={titleClass}>{t('creators.show.description')}</h2>
