@@ -115,6 +115,7 @@ const creators = {
         cities: '所在城市',
         similarAudienceKol: '同受众KOL推荐',
         seeMore: '更多',
+        seeLess: '收起',
         similarKols: '同类型KOL推荐',
         popularPosts: '热门发布',
         copyLink: '复制链接',
