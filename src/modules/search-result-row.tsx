@@ -11,14 +11,14 @@ import { CreatorPlatform, CreatorSearchAccountObject } from 'types';
 export const SearchResultRow = ({
     creator,
     platform,
-    setLookalike
+    setLookalike,
+    setShowCampaignListModal
 }: {
     creator?: CreatorSearchAccountObject;
     platform: CreatorPlatform;
     setLookalike: (creator: CreatorSearchAccountObject) => void;
 }) => {
     const { t } = useTranslation();
-
     const placeholder = !creator;
     const handle = !placeholder
         ? creator.account.user_profile.username ||
@@ -31,6 +31,7 @@ export const SearchResultRow = ({
 
     const addToCampaign = () => {
         // TODO: Add to campaign
+        setShowCampaignListModal(true);
     };
 
     return (

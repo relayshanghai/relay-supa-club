@@ -313,9 +313,9 @@ const Page = () => {
                                                 >
                                                     Starting from{' '}
                                                     {Number(
-                                                        item.prices[1].amount / 100
+                                                        item.prices[1]?.amount / 100
                                                     ).toLocaleString()}{' '}
-                                                    / {item.prices[1].interval}
+                                                    / {item.prices[1]?.interval}
                                                 </Button>
                                             </div>
                                         ) : null}
