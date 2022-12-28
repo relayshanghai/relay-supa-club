@@ -7,7 +7,7 @@ const Page = () => {
 
     return (
         <Layout>
-            {!ids || typeof ids !== 'object' ? (
+            {!Array.isArray(ids) ? (
                 <p>Invalid URL</p>
             ) : (
                 <CreatorPage platform={ids[0] as any} user_id={ids[1]} />
