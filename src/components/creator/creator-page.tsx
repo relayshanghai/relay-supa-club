@@ -1,5 +1,5 @@
-import { nextFetchReport } from 'pages/api/creators/report';
 import { useState, useEffect } from 'react';
+import { nextFetch } from 'src/utils/fetcher';
 import { CreatorPlatform, CreatorReport } from 'types';
 import { TitleSection } from './creator-title-section';
 import { CreatorOverview } from './creator-page-overview';
@@ -18,7 +18,9 @@ export const CreatorPage = ({
     useEffect(() => {
         const getOrCreateReport = async () => {
             try {
-                const { createdAt, ...report } = await nextFetchReport(platform, user_id);
+                const { createdAt, ...report } = await nextFetch<
+                    CreatorReport & { createdAt: string }
+                >(`creators/report?platform=${platform}&user_id=${user_id}`);
                 setReport(report);
                 setReportCreatedAt(createdAt);
             } catch (error) {
