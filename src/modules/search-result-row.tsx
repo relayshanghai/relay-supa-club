@@ -12,7 +12,8 @@ export const SearchResultRow = ({
     creator,
     platform,
     setLookalike,
-    setShowCampaignListModal
+    setShowCampaignListModal,
+    setSelectedCreator
 }: {
     creator?: CreatorSearchAccountObject;
     platform: CreatorPlatform;
@@ -32,6 +33,7 @@ export const SearchResultRow = ({
     const addToCampaign = () => {
         // TODO: Add to campaign
         setShowCampaignListModal(true);
+        setSelectedCreator(creator);
     };
 
     return (

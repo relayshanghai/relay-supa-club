@@ -54,6 +54,7 @@ export const Search = () => {
 
     const options = [1e3, 5e3, 1e4, 15e3, 25e3, 50e3, 1e5, 25e4, 50e4, 1e6];
     const [showCampaignListModal, setShowCampaignListModal] = useState(false);
+    const [selectedCreator, setSelectedCreator] = useState(null);
     const { t } = useTranslation();
     const { campaigns } = useCampaigns();
 
@@ -503,6 +504,7 @@ export const Search = () => {
                                       platform={platform}
                                       setLookalike={setLookalike}
                                       setShowCampaignListModal={setShowCampaignListModal}
+                                      setSelectedCreator={setSelectedCreator}
                                   />
                               ))
                             : null}
@@ -527,9 +529,7 @@ export const Search = () => {
                             <CampaignModalCard
                                 campaign={campaign}
                                 // setCampaigns={setCampaigns}
-                                // index={index}
-                                // creator={creator}
-                                campaigns={campaigns}
+                                creator={selectedCreator}
                                 key={index}
                             />
                         ))}

@@ -1,15 +1,17 @@
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import { useCampaignCreators } from 'src/hooks/use-campaign-creators';
+import { useEffect } from 'react';
 
-export default function CreatorsOutreach() {
+export default function CreatorsOutreach({ currentCampaign }) {
     const { t } = useTranslation();
     const router = useRouter();
     const { pathname, query } = router;
     const [status, setStatus] = useState('to contact');
-    const creators = [{}];
-    const { campaignCreators } = useCampaignCreators();
+
+    useEffect(() => {
+        console.log(currentCampaign);
+    }, [currentCampaign]);
 
     const tabs = [
         { label: 'toContact', value: 'to contact' },
@@ -107,7 +109,7 @@ export default function CreatorsOutreach() {
                             ></th>
                         </tr>
                         <tbody className="bg-white divide-y divide-gray-200">
-                            {creators.map((creator, index) => (
+                            {currentCampaign?.campaign_creators.map((creator, index) => (
                                 <tr
                                     key={index}
                                     className="group hover:bg-primary-50 hover:relative"
@@ -122,8 +124,8 @@ export default function CreatorsOutreach() {
                                                 />
                                             </div>
                                             <div className="ml-4">
-                                                <div className="text-sm font-medium text-gray-900">
-                                                    Justin Kan
+                                                <div className="text-sm font-medium text-gray-900 truncate">
+                                                    {creator.id}
                                                 </div>
                                                 <div className="text-xs text-primary-500 inline-block truncate">
                                                     @Justin Kan

@@ -107,7 +107,7 @@ export default function CampaignShow() {
                         </div>
                     ))}
                 </div>
-                {currentTab === 0 && <CreatorsOutreach />}
+                {currentTab === 0 && <CreatorsOutreach currentCampaign={currentCampaign} />}
                 {currentTab === 1 && <CampaignDetails />}
             </div>
         </Layout>

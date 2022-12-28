@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { fetcher } from 'src/utils/fetcher';
 import useSWR from 'swr';
-import { CampaignDB } from 'types';
+import { CampaignCreatorDB, CampaignDB } from 'types';
 import { useUser } from './use-user';
 
 export const useCampaigns = ({ campaignId }: any = {}) => {
@@ -10,13 +10,15 @@ export const useCampaigns = ({ campaignId }: any = {}) => {
         profile?.company_id ? `/api/campaigns?id=${profile.company_id}` : null,
         fetcher
     );
-
+    const [loading, setLoading] = useState(false);
     const [campaign, setCampaign] = useState<CampaignDB | null>(null);
+    const [campaignCreators, setCampaignCreators] = useState<CampaignCreatorDB[] | null>([]);
 
     useEffect(() => {
         if (data && campaignId) {
             const campaign = data?.find((c: any) => c.id === campaignId);
             setCampaign(campaign);
+            setCampaignCreators(campaign.campaign_creators);
         }
     }, [campaignId, data]);
 
@@ -46,10 +48,28 @@ export const useCampaigns = ({ campaignId }: any = {}) => {
         [profile]
     );
 
+    const addCreatorToCampaign = useCallback(
+        async (input: CampaignCreatorDBInsert) => {
+            setLoading(true);
+            console.log(input);
+            await fetch('/api/campaigns/add-creator', {
+                method: 'post',
+                body: JSON.stringify({
+                    ...input,
+                    company_id: profile?.company_id
+                })
+            });
+            setLoading(false);
+        },
+        [profile]
+    );
     return {
         campaigns: data as CampaignDB[],
         createCampaign,
         updateCampaign,
-        campaign
+        campaign,
+        loading,
+        campaignCreators,
+        addCreatorToCampaign
     };
 };

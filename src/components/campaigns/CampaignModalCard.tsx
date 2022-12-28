@@ -1,32 +1,23 @@
 import { PlusCircleIcon, ArrowPathIcon, CheckCircleIcon } from '@heroicons/react/24/solid';
-
-import { useCampaignCreators } from 'src/hooks/use-campaign-creators';
 import { useCampaigns } from 'src/hooks/use-campaigns';
 
-export default function CampaignModalCard({ campaign, campaigns, key }) {
-    const { addCreatorToCampaign, loading } = useCampaignCreators();
-    const { updateCampaign } = useCampaigns({ campaignId: campaign.id });
-
-    // const updateCampaigns = (response) => {
-    //     const { campaign_id } = response.data.campaign_creator;
-    //     const campaignCopy = JSON.parse(JSON.stringify(campaigns));
-    //     campaignCopy.map((cv) => {
-    //         if (cv.id == campaign_id) cv.has_campaign_creator = true;
-    //     });
-    //     setCampaigns(campaignCopy);
-    // };
+export default function CampaignModalCard({ campaign, creator, key }) {
+    const { addCreatorToCampaign, loading } = useCampaigns({
+        campaignId: campaign?.id
+    });
 
     return (
         <div
             key={key}
-            onClick={() =>
-                addCreatorToCampaign(
-                    campaign.id
-                    // creator?.platform_user_id || creator?.user_id,
-                    // creator?.type,
-                    // updateCampaign()
-                )
-            }
+            onClick={() => {
+                console.log(campaign, creator.account.user_profile);
+                addCreatorToCampaign({
+                    campaign_id: campaign.id,
+                    id:
+                        creator.account.user_profile?.user_id ||
+                        creator.account.user_profile?.platform_user_id
+                });
+            }}
             className="bg-tertiary-50 text-sm px-2 py-3.5 rounded-lg mb-2 cursor-pointer duration-300"
         >
             <div className="flex items-center justify-between">
