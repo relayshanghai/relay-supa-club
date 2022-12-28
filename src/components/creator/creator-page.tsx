@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import { nextFetch } from 'src/utils/fetcher';
 import { CreatorPlatform, CreatorReport } from 'types';
+import { TitleSection } from './creator-title-section';
+import { CreatorOverview } from './creator-page-overview';
+import Head from 'next/head';
 
 export const CreatorPage = ({
     user_id,
@@ -11,6 +14,7 @@ export const CreatorPage = ({
 }) => {
     const [report, setReport] = useState<CreatorReport | null>(null);
     const [reportCreatedAt, setReportCreatedAt] = useState<string | null>(null);
+    //    TODO: translations and loader compontent
     useEffect(() => {
         const getOrCreateReport = async () => {
             try {
@@ -27,20 +31,30 @@ export const CreatorPage = ({
         getOrCreateReport();
     }, [platform, user_id]);
 
+    const onAddToCampaign = () => {
+        //TODO: Add to campaign
+    };
+
     return (
-        <div className="flex flex-col p-6">
-            {!report ? (
-                <p>Generating Report</p>
-            ) : (
-                <>
-                    <p>{platform}</p>
-                    <p>{user_id}</p>
-                    <p> ages:</p>
-                    <p>{report.audience_followers.data.audience_ages[0].code}</p>
-                    <p>Created at</p>
-                    <p>{reportCreatedAt}</p>
-                </>
-            )}
+        <div>
+            <Head>
+                <title>{report?.user_profile.fullname || 'relay.club'}</title>
+            </Head>
+            <div className="flex flex-col">
+                {!report ? (
+                    <p>Loading report...</p>
+                ) : (
+                    <>
+                        <TitleSection
+                            user_profile={report.user_profile}
+                            platform={platform}
+                            onAddToCampaign={onAddToCampaign}
+                            reportCreatedAt={reportCreatedAt}
+                        />
+                        <CreatorOverview report={report} />
+                    </>
+                )}
+            </div>
         </div>
     );
 };

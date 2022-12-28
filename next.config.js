@@ -1,7 +1,31 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
-  swcMinify: true,
-}
+    reactStrictMode: true,
+    swcMinify: true,
+    images: {
+        remotePatterns: [
+            {
+                protocol: 'https',
+                hostname: 'yt3.*.com',
+                pathname: '**'
+            },
+            {
+                protocol: 'https',
+                hostname: 'imgp.*.icu',
+                pathname: '**'
+            },
+            {
+                protocol: 'https',
+                hostname: '*.tiktokcdn.com',
+                pathname: '**'
+            },
+            {
+                protocol: 'https',
+                hostname: 'image-cache.brainchild-tech.cn',
+                pathname: '**'
+            }
+        ]
+    }
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;

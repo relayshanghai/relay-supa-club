@@ -13,3 +13,11 @@ export const nextFetch = async <T = any>(path: string, options: RequestInit = {}
     const res = await fetch('/api/' + path, options);
     return (await res.json()) as T;
 };
+
+export function imgProxy(url: string) {
+    const proxyUrl = 'https://image-cache.brainchild-tech.cn/?link=';
+    if (!url) return;
+    if (/sptds.icu/.test(url)) return url;
+
+    return proxyUrl + url;
+}
