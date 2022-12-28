@@ -49,6 +49,7 @@ export const Layout = ({ children }: any) => {
                     <div className="flex flex-col space-y-4 mt-8">
                         <ActiveLink href="/dashboard">KOLs</ActiveLink>
                         <ActiveLink href="/campaigns">Campaigns</ActiveLink>
+                        <ActiveLink href="/billing">Plans & Billing</ActiveLink>
                     </div>
                 </div>
                 <div className="flex flex-col w-full overflow-hidden">

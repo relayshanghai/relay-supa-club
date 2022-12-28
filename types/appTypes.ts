@@ -4,6 +4,12 @@ import type { Database } from './supabase';
 export type StripePlansWithPrice = Stripe.Product & { prices?: Stripe.Plan[] };
 export type StripePaymentMethods = Stripe.Response<Stripe.ApiList<Stripe.PaymentMethod>>;
 
+export type PaymentPlan = {
+    label: string;
+    max: string;
+    used: string;
+};
+
 export type CreatorPlatform = 'instagram' | 'youtube' | 'tiktok';
 export type SocialMediaPlatform = CreatorPlatform | 'email' | 'twitter' | 'facebook' | 'wechat';
 
