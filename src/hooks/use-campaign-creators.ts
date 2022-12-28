@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { fetcher } from 'src/utils/fetcher';
 import useSWR from 'swr';
+import { CampaignCreatorDB, CampaignCreatorDBInsert } from 'types';
 import { useUser } from './use-user';
 
 export const useCampaignCreators = ({ campaignId }: any = {}) => {
@@ -10,7 +11,7 @@ export const useCampaignCreators = ({ campaignId }: any = {}) => {
         fetcher
     );
     console.log({ data });
-    const [campaignCreators, setCampaignCreators] = useState([]);
+    const [campaignCreators, setCampaignCreators] = useState<CampaignCreatorDB[]>([]);
     useEffect(() => {
         if (data && campaignId) {
             const campaignCreators = data?.find((c: any) => c.campaign_id === campaignId);
@@ -19,7 +20,7 @@ export const useCampaignCreators = ({ campaignId }: any = {}) => {
     }, [campaignId, data]);
 
     const addCreatorToCampaign = useCallback(
-        async (input: any) => {
+        async (input: CampaignCreatorDBInsert) => {
             await fetch('/api/campaigns/add-creator', {
                 method: 'post',
                 body: JSON.stringify({

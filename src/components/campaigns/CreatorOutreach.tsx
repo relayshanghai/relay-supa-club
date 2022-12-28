@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
+import { useCampaignCreators } from 'src/hooks/use-campaign-creators';
 
 export default function CreatorsOutreach() {
     const { t } = useTranslation();
@@ -8,6 +9,7 @@ export default function CreatorsOutreach() {
     const { pathname, query } = router;
     const [status, setStatus] = useState('to contact');
     const creators = [{}];
+    const { campaignCreators } = useCampaignCreators();
 
     const tabs = [
         { label: 'toContact', value: 'to contact' },
