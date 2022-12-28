@@ -1,22 +1,22 @@
 import { useCallback, useEffect, useState } from 'react';
 import { fetcher } from 'src/utils/fetcher';
 import useSWR from 'swr';
-import { CampaignDB } from 'types';
+import { CampaignDB, CampaignWithCompany } from 'types';
 import { useUser } from './use-user';
 
 export const useCampaigns = ({ campaignId }: any = {}) => {
-    const { profile, user } = useUser();
-    const { data } = useSWR(
+    const { profile } = useUser();
+    const { data } = useSWR<CampaignWithCompany[]>(
         profile?.company_id ? `/api/campaigns?id=${profile.company_id}` : null,
         fetcher
     );
 
-    const [campaign, setCampaign] = useState<CampaignDB | null>(null);
+    const [campaign, setCampaign] = useState<CampaignWithCompany | null>(null);
 
     useEffect(() => {
         if (data && campaignId) {
             const campaign = data?.find((c: any) => c.id === campaignId);
-            setCampaign(campaign);
+            if (campaign) setCampaign(campaign);
         }
     }, [campaignId, data]);
 
@@ -34,7 +34,7 @@ export const useCampaigns = ({ campaignId }: any = {}) => {
     );
 
     const updateCampaign = useCallback(
-        async ({ companies, ...input }: any) => {
+        async ({ _companies, ...input }: any) => {
             await fetch(`/api/campaigns/update`, {
                 method: 'post',
                 body: JSON.stringify({

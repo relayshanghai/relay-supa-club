@@ -59,7 +59,7 @@ export const Layout = ({ children }: any) => {
                         <div />
                         <div className="px-8 py-4 flex flex-row items-center space-x-4">
                             <div className="text-sm flex flex-row items-center space-x-4">
-                                {subscription?.data?.length === 0 ? (
+                                {!!subscription ? (
                                     <Button
                                         onClick={() => {
                                             // window.open(
@@ -80,8 +80,8 @@ export const Layout = ({ children }: any) => {
                                     <Menu>
                                         <Menu.Button>
                                             <div className="p-2 rounded-full bg-primary-50 text-primary-600 text-sm font-bold">
-                                                {profile.first_name ? profile.first_name[0] : ''}
-                                                {profile.last_name ? profile.last_name[0] : ''}
+                                                {profile?.first_name ? profile.first_name[0] : ''}
+                                                {profile?.last_name ? profile.last_name[0] : ''}
                                             </div>
                                         </Menu.Button>
                                         <Menu.Items className="flex flex-col overflow-hidden w-48 absolute right-8 mt-2 origin-top-right bg-white border border-gray border-opacity-40 rounded-md shadow-lg z-10">
