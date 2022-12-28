@@ -7,7 +7,7 @@ import { SearchTopics } from 'src/modules/search-topics';
 import { Popover, Transition } from '@headlessui/react';
 import { AdjustmentsVerticalIcon } from '@heroicons/react/24/solid';
 import { SearchResultRow } from './search-result-row';
-import { CreatorSearchResult } from 'types';
+import { CreatorSearchAccountObject, CreatorSearchResult } from 'types';
 import { useState } from 'react';
 import { Modal } from 'src/components/modal';
 import { useTranslation } from 'react-i18next';
@@ -54,7 +54,7 @@ export const Search = () => {
 
     const options = [1e3, 5e3, 1e4, 15e3, 25e3, 50e3, 1e5, 25e4, 50e4, 1e6];
     const [showCampaignListModal, setShowCampaignListModal] = useState(false);
-    const [selectedCreator, setSelectedCreator] = useState(null);
+    const [selectedCreator, setSelectedCreator] = useState<CreatorSearchAccountObject | null>(null);
     const { t } = useTranslation();
     const { campaigns } = useCampaigns();
 
@@ -521,21 +521,18 @@ export const Search = () => {
                 <div className="py-4 text-sm text-tertiary-500">
                     {t('campaigns.modal.addThisInfluencer')}
                 </div>
-                {/* TODO: add campaign lists with add button  */}
-
                 {campaigns?.length ? (
                     <div>
                         {campaigns.map((campaign, index) => (
                             <CampaignModalCard
                                 campaign={campaign}
-                                // setCampaigns={setCampaigns}
                                 creator={selectedCreator}
                                 key={index}
                             />
                         ))}
                     </div>
                 ) : (
-                    <div className="text-sm text-gray-600">You dont have any campaigns yet</div>
+                    <div className="text-sm text-gray-600">You have no campaign yet</div>
                 )}
             </Modal>
             {/* <div className="space-x-2">

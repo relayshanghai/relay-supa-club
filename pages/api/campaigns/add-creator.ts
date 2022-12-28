@@ -4,7 +4,6 @@ import { supabase } from 'src/utils/supabase-client';
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
         const { company_id, ...data } = JSON.parse(req.body);
-        console.log({ company_id, ...data });
         const { data: campaignCreators, error } = await supabase
             .from('campaign_creators')
             .insert({

@@ -119,19 +119,18 @@ export default function CreatorsOutreach({
                                     <td className="px-6 py-4 whitespace-nowrap sticky left-0 group-hover:bg-primary-50 min-w-[200px] max-w-[200px] z-10">
                                         <div className="flex items-center">
                                             <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300">
-                                                {/* TODO: where to get image? */}
-                                                {/* <img
+                                                <img
                                                     className="h-10 w-10 rounded-full"
-                                                    src={creator.image}
+                                                    src={`https://image-cache.brainchild-tech.cn/?link=${creator.avatar_url}`}
                                                     alt=""
-                                                /> */}
+                                                />
                                             </div>
                                             <div className="ml-4">
                                                 <div className="text-sm font-medium text-gray-900 truncate">
-                                                    {creator.id}
+                                                    {creator.fullname}
                                                 </div>
                                                 <div className="text-xs text-primary-500 inline-block truncate">
-                                                    @Justin Kan
+                                                    @{creator.username}
                                                 </div>
                                             </div>
                                         </div>

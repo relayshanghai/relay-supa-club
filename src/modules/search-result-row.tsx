@@ -18,6 +18,8 @@ export const SearchResultRow = ({
     creator?: CreatorSearchAccountObject;
     platform: CreatorPlatform;
     setLookalike: (creator: CreatorSearchAccountObject) => void;
+    setSelectedCreator: (creator: CreatorSearchAccountObject) => void;
+    setShowCampaignListModal: (show: boolean) => void;
 }) => {
     const { t } = useTranslation();
     const placeholder = !creator;
@@ -31,9 +33,8 @@ export const SearchResultRow = ({
     // const [addedToPool, setAddedToPool] = useState(false);
 
     const addToCampaign = () => {
-        // TODO: Add to campaign
         setShowCampaignListModal(true);
-        setSelectedCreator(creator);
+        if (creator) setSelectedCreator(creator);
     };
 
     return (

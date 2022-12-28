@@ -26,5 +26,8 @@ export type CompanyWithProfilesInvitesAndUsage = CompanyDB & {
 };
 export type CampaignWithCompanyCreators = CampaignDB & {
     companies: Pick<CompanyDB, 'id' | 'name' | 'cus_id'>;
-    campaign_creators: Pick<CampaignCreatorDB, 'id'>[];
+    campaign_creators: Pick<
+        CampaignCreatorDB,
+        'id' | 'username' | 'fullname' | 'avatar_url' | 'link_url'
+    >[];
 };

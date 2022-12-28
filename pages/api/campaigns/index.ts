@@ -8,7 +8,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const { data, error } = await supabase
             .from('campaigns')
             // If this query changes, make sure to update the CampaignWithCompany type
-            .select('*, companies(id, name, cus_id), campaign_creators(id)')
+            .select(
+                '*, companies(id, name, cus_id), campaign_creators(id, username, fullname, avatar_url, link_url)'
+            )
             .eq('company_id', companyId);
         if (error) {
             return res.status(500).json(error);
