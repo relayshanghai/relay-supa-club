@@ -4,6 +4,8 @@ import { CreatorPlatform, CreatorReport } from 'types';
 import { TitleSection } from './creator-title-section';
 import { CreatorOverview } from './creator-page-overview';
 import Head from 'next/head';
+import { MetricsSection } from './creator-metrics-section';
+import { PopularPostsSection } from './creator-popular-posts';
 
 export const CreatorPage = ({
     user_id,
@@ -14,7 +16,7 @@ export const CreatorPage = ({
 }) => {
     const [report, setReport] = useState<CreatorReport | null>(null);
     const [reportCreatedAt, setReportCreatedAt] = useState<string | null>(null);
-    //    TODO: translations and loader compontent
+    // TODO: translations and loader component
     useEffect(() => {
         const getOrCreateReport = async () => {
             try {
@@ -34,7 +36,6 @@ export const CreatorPage = ({
     const onAddToCampaign = () => {
         //TODO: Add to campaign
     };
-
     return (
         <div>
             <Head>
@@ -52,6 +53,8 @@ export const CreatorPage = ({
                             reportCreatedAt={reportCreatedAt}
                         />
                         <CreatorOverview report={report} />
+                        <MetricsSection report={report} />
+                        <PopularPostsSection report={report} />
                     </>
                 )}
             </div>
