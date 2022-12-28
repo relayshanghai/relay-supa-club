@@ -33,7 +33,13 @@ const Page = () => {
         website: ''
     });
     const { company, updateCompany, createInvite } = useCompany();
-    const { subscription, plans, paymentMethods, createSubscriptions } = useSubscription();
+    const {
+        subscription: subscriptionWrongType,
+        plans,
+        paymentMethods,
+        createSubscriptions
+    } = useSubscription();
+    const subscription = subscriptionWrongType as any;
 
     useEffect(() => {
         if (!loading && profile) {
@@ -136,7 +142,7 @@ const Page = () => {
                         <div className="pb-4">Members</div>
                         <div className="divide-y divide-grey-200">
                             {Array.isArray(company?.profiles)
-                                ? company.profiles.map((item: any) => {
+                                ? company?.profiles.map((item: any) => {
                                       return (
                                           <div
                                               key={item.id}
@@ -161,7 +167,7 @@ const Page = () => {
                                   })
                                 : null}
                         </div>
-                        {Array.isArray(company?.invites) && company.invites.length ? (
+                        {Array.isArray(company?.invites) && company?.invites.length ? (
                             <>
                                 <div className="text-sm pt-8 pb-2">Pending invitations</div>
                                 {company?.invites.map((item: any) => {
@@ -219,7 +225,7 @@ const Page = () => {
                             <Button
                                 variant="secondary"
                                 onClick={() => {
-                                    window.open(`/api/subscriptions/portal?id=${company.id}`);
+                                    window.open(`/api/subscriptions/portal?id=${company?.id}`);
                                 }}
                             >
                                 View billing portal
@@ -265,7 +271,7 @@ const Page = () => {
                             <div className="flex flex-row justify-end">
                                 <Button
                                     onClick={() => {
-                                        window.open(`/api/subscriptions/portal?id=${company.id}`);
+                                        window.open(`/api/subscriptions/portal?id=${company?.id}`);
                                     }}
                                 >
                                     Add payment method

@@ -19,7 +19,7 @@ export default function Register() {
     });
 
     useEffect(() => {
-        if (!loading && profile.company_id) {
+        if (!loading && profile?.company_id) {
             router.push('/dashboard');
         }
     }, [loading, profile, router]);

@@ -1,10 +1,20 @@
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { Session, User } from '@supabase/supabase-js';
+import React, {
+    createContext,
+    PropsWithChildren,
+    useCallback,
+    useContext,
+    useEffect,
+    useMemo,
+    useState
+} from 'react';
 import { supabase } from 'src/utils/supabase-client';
+import { ProfileDB } from 'types';
 
 const ctx = createContext<{
-    user: undefined | { email: string; [key: string]: any };
-    session: any;
-    profile: any;
+    user: User | null;
+    session: Session | null;
+    profile: ProfileDB | null;
     loading: boolean;
     login: (email: string, password: string) => void;
     signup: (options: any) => void;
@@ -12,9 +22,9 @@ const ctx = createContext<{
     updateProfile: (updates: any) => void;
     refreshProfile: () => void;
 }>({
-    user: undefined,
-    session: undefined,
-    profile: undefined,
+    user: null,
+    session: null,
+    profile: null,
     loading: true,
     login: () => null,
     logout: () => null,
@@ -25,10 +35,10 @@ const ctx = createContext<{
 
 export const useUser = () => useContext(ctx);
 
-export const UserProvider: React.FC<{ children: any }> = ({ children }) => {
-    const [user, setUser] = useState<any>();
-    const [profile, setProfile] = useState<any>({});
-    const [session, setSession] = useState<any>(null);
+export const UserProvider = ({ children }: PropsWithChildren) => {
+    const [user, setUser] = useState<User | null>(null);
+    const [profile, setProfile] = useState<ProfileDB | null>(null);
+    const [session, setSession] = useState<Session | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {

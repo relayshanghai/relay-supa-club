@@ -3,6 +3,89 @@ export type Json = string | number | boolean | null | { [key: string]: Json } | 
 export interface Database {
     public: {
         Tables: {
+            campaign_creators: {
+                Row: {
+                    id: string;
+                    created_at: string | null;
+                    status: string | null;
+                    campaign_id: string | null;
+                    updated_at: string | null;
+                    relay_creator_id: number | null;
+                    creator_model: string | null;
+                    creator_token: string | null;
+                    interested: boolean | null;
+                    email_sent: boolean | null;
+                    publication_date: string | null;
+                    rate_cents: number | null;
+                    rate_currency: string | null;
+                    payment_details: string | null;
+                    payment_status: string | null;
+                    paid_amount_cents: number | null;
+                    paid_amount_currency: string | null;
+                    address: string | null;
+                    sample_status: string | null;
+                    tracking_details: string | null;
+                    reject_message: string | null;
+                    brief_opened_by_creator: boolean | null;
+                    need_support: boolean | null;
+                    added_by_id: number | null;
+                    'next-step': string | null;
+                };
+                Insert: {
+                    id: string;
+                    created_at?: string | null;
+                    status?: string | null;
+                    campaign_id?: string | null;
+                    updated_at?: string | null;
+                    relay_creator_id?: number | null;
+                    creator_model?: string | null;
+                    creator_token?: string | null;
+                    interested?: boolean | null;
+                    email_sent?: boolean | null;
+                    publication_date?: string | null;
+                    rate_cents?: number | null;
+                    rate_currency?: string | null;
+                    payment_details?: string | null;
+                    payment_status?: string | null;
+                    paid_amount_cents?: number | null;
+                    paid_amount_currency?: string | null;
+                    address?: string | null;
+                    sample_status?: string | null;
+                    tracking_details?: string | null;
+                    reject_message?: string | null;
+                    brief_opened_by_creator?: boolean | null;
+                    need_support?: boolean | null;
+                    added_by_id?: number | null;
+                    'next-step'?: string | null;
+                };
+                Update: {
+                    id?: string;
+                    created_at?: string | null;
+                    status?: string | null;
+                    campaign_id?: string | null;
+                    updated_at?: string | null;
+                    relay_creator_id?: number | null;
+                    creator_model?: string | null;
+                    creator_token?: string | null;
+                    interested?: boolean | null;
+                    email_sent?: boolean | null;
+                    publication_date?: string | null;
+                    rate_cents?: number | null;
+                    rate_currency?: string | null;
+                    payment_details?: string | null;
+                    payment_status?: string | null;
+                    paid_amount_cents?: number | null;
+                    paid_amount_currency?: string | null;
+                    address?: string | null;
+                    sample_status?: string | null;
+                    tracking_details?: string | null;
+                    reject_message?: string | null;
+                    brief_opened_by_creator?: boolean | null;
+                    need_support?: boolean | null;
+                    added_by_id?: number | null;
+                    'next-step'?: string | null;
+                };
+            };
             campaigns: {
                 Row: {
                     id: string;
@@ -26,6 +109,7 @@ export interface Database {
                     target_locations: string[] | null;
                     media: Json[] | null;
                     purge_media: Json[] | null;
+                    media_path: string[] | null;
                 };
                 Insert: {
                     id?: string;
@@ -49,6 +133,7 @@ export interface Database {
                     target_locations?: string[] | null;
                     media?: Json[] | null;
                     purge_media?: Json[] | null;
+                    media_path?: string[] | null;
                 };
                 Update: {
                     id?: string;
@@ -72,6 +157,7 @@ export interface Database {
                     target_locations?: string[] | null;
                     media?: Json[] | null;
                     purge_media?: Json[] | null;
+                    media_path?: string[] | null;
                 };
             };
             companies: {
