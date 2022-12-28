@@ -24,6 +24,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             //TODO: handle errors better
             if (!subscription) return res.status(200).json(null);
             const product = await stripeClient.products.retrieve(
+                // TODO: fix this, investigate what we are really getting/sending, and make custom type for frontend to receive.
                 (subscription as any).plan.product
             );
             (subscription as any).product = product;
