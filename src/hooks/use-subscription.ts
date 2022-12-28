@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { fetcher } from 'src/utils/fetcher';
 import Stripe from 'stripe';
 import useSWR from 'swr';
-import { StripePaymentMethods, StripePlansWithPrice } from 'types';
+import { StripePaymentMethods, StripePlanWithPrice } from 'types';
 import { useUser } from './use-user';
 
 export const useSubscription = () => {
@@ -11,7 +11,7 @@ export const useSubscription = () => {
         profile?.company_id ? `/api/subscriptions?id=${profile?.company_id}` : null,
         fetcher
     );
-    const { data: plans } = useSWR<StripePlansWithPrice>(`/api/subscriptions/plans`, fetcher);
+    const { data: plans } = useSWR<StripePlanWithPrice>(`/api/subscriptions/plans`, fetcher);
     const { data: paymentMethods } = useSWR<StripePaymentMethods>(
         profile?.company_id ? `/api/subscriptions/payment-method?id=${profile.company_id}` : null,
         fetcher

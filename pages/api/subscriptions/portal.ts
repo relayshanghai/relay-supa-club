@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import { APP_URL } from 'src/constants';
 import { stripeClient } from 'src/utils/stripe-client';
 import { supabase } from 'src/utils/supabase-client';
 
@@ -18,7 +19,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         const portal = await stripeClient.billingPortal.sessions.create({
             customer: data.cus_id,
-            return_url: 'http://localhost:3000/account'
+            return_url: `${APP_URL}/account`
         });
 
         return res.redirect(307, portal.url);

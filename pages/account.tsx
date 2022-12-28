@@ -9,11 +9,12 @@ import { useSubscription } from 'src/hooks/use-subscription';
 import { useUser } from 'src/hooks/use-user';
 import { format } from 'date-fns';
 import { Modal } from 'src/components/modal';
+import { StripePlanWithPrice } from 'types';
 
 const Page = () => {
     const { profile, user, loading, updateProfile } = useUser();
-    const [confirmModal, setShowConfirmModal] = useState<any>();
-    const [inviteEmail, setInviteEmail] = useState<any>('');
+    const [confirmModal, setShowConfirmModal] = useState<StripePlanWithPrice>();
+    const [inviteEmail, setInviteEmail] = useState('');
     const [showAddMoreMembers, setShowAddMoreMembers] = useState<any>(false);
     const {
         values: { firstName, lastName, email },
@@ -39,7 +40,8 @@ const Page = () => {
         paymentMethods,
         createSubscriptions
     } = useSubscription();
-    const subscription = subscriptionWrongType as any;
+    //@ts-ignore
+    const subscription = subscriptionWrongType?.error ? null : (subscriptionWrongType as any);
 
     useEffect(() => {
         if (!loading && profile) {
@@ -70,7 +72,7 @@ const Page = () => {
                             placeholder="Enter your first name"
                             value={firstName}
                             required
-                            onChange={(e: any) => {
+                            onChange={(e) => {
                                 setFieldValue('firstName', e.target.value);
                             }}
                         />
@@ -80,7 +82,7 @@ const Page = () => {
                             placeholder="Enter your last name"
                             value={lastName}
                             required
-                            onChange={(e: any) => {
+                            onChange={(e) => {
                                 setFieldValue('lastName', e.target.value);
                             }}
                         />
@@ -90,7 +92,7 @@ const Page = () => {
                             placeholder="hello@relay.club"
                             value={email}
                             required
-                            onChange={(e: any) => {
+                            onChange={(e) => {
                                 setFieldValue('email', e.target.value);
                             }}
                         />
@@ -123,7 +125,7 @@ const Page = () => {
                             type="text"
                             value={companyValues.name}
                             required
-                            onChange={(e: any) => {
+                            onChange={(e) => {
                                 setCompanyFieldValue('name', e.target.value);
                             }}
                         />
@@ -133,7 +135,7 @@ const Page = () => {
                             value={companyValues.website}
                             placeholder="website address"
                             required
-                            onChange={(e: any) => {
+                            onChange={(e) => {
                                 setCompanyFieldValue('website', e.target.value);
                             }}
                         />
@@ -142,7 +144,7 @@ const Page = () => {
                         <div className="pb-4">Members</div>
                         <div className="divide-y divide-grey-200">
                             {Array.isArray(company?.profiles)
-                                ? company?.profiles.map((item: any) => {
+                                ? company?.profiles.map((item) => {
                                       return (
                                           <div
                                               key={item.id}
@@ -170,7 +172,7 @@ const Page = () => {
                         {Array.isArray(company?.invites) && company?.invites.length ? (
                             <>
                                 <div className="text-sm pt-8 pb-2">Pending invitations</div>
-                                {company?.invites.map((item: any) => {
+                                {company?.invites.map((item) => {
                                     return (
                                         <div
                                             key={item.id}
@@ -259,11 +261,11 @@ const Page = () => {
                             </div>
                         ) : (
                             <div className="text-sm py-2 text-gray-500">
-                                You have no active subscription. Please purchase one below.
+                                You have no active subscription?. Please purchase one below.
                             </div>
                         )}
                     </div>
-                    {paymentMethods?.data.length === 0 ? (
+                    {paymentMethods?.data?.length === 0 ? (
                         <div className="w-full">
                             <div>
                                 Before purchasing a subscription, you need to add a payment method.{' '}
@@ -279,13 +281,13 @@ const Page = () => {
                             </div>
                         </div>
                     ) : null}
-                    {paymentMethods?.data.length !== 0 && Array.isArray(plans) ? (
+                    {paymentMethods?.data?.length !== 0 && Array.isArray(plans) ? (
                         <div className="w-full pt-8 divide-y divide-gray-200">
                             <div className="pb-4">Available plans</div>
-                            {plans.map((item: any, i: any) => {
+                            {plans.map((plan, i) => {
                                 return (
                                     <div
-                                        key={item.id}
+                                        key={plan.id}
                                         className="flex flex-row space-x-2 items-center justify-between w-full py-2"
                                     >
                                         <div className="text-sm font-bold w-1/4">
@@ -294,8 +296,8 @@ const Page = () => {
                                                     Name
                                                 </div>
                                             ) : null}
-                                            {item.name}{' '}
-                                            {item.name === subscription?.product.name ? (
+                                            {plan.name}{' '}
+                                            {plan.name === subscription?.product.name ? (
                                                 <span className="text-xs bg-gray-200 p-1 rounded">
                                                     Active
                                                 </span>
@@ -307,21 +309,24 @@ const Page = () => {
                                                     Monthly profiles
                                                 </div>
                                             ) : null}
-                                            {item.metadata.usage_limit}
+                                            {plan.metadata.usage_limit}
                                         </div>
                                         {profile?.admin ? (
                                             <div className="text-sm font-bold w-2/6 flex flex-row justify-end">
                                                 <Button
-                                                    disabled={item.id === subscription?.plan_id}
+                                                    disabled={plan.id === subscription?.plan_id}
                                                     onClick={async () => {
-                                                        setShowConfirmModal(item);
+                                                        setShowConfirmModal(plan);
                                                     }}
                                                 >
                                                     Starting from{' '}
-                                                    {Number(
-                                                        item.prices[1].amount / 100
-                                                    ).toLocaleString()}{' '}
-                                                    / {item.prices[1].interval}
+                                                    {plan.prices[1]?.amount
+                                                        ? `${Number(
+                                                              plan.prices[1].amount / 100
+                                                          ).toLocaleString()} / ${
+                                                              plan.prices[1]?.interval
+                                                          }`
+                                                        : 'Custom'}
                                                 </Button>
                                             </div>
                                         ) : null}
@@ -341,29 +346,37 @@ const Page = () => {
             >
                 <div className="py-4">These are available subscriptions</div>
                 <div className="flex flex-col space-y-8">
-                    {confirmModal?.prices.map((price: any, i: any) => {
+                    {confirmModal?.prices?.map((price, i) => {
                         return (
                             <div key={i} className="flex flex-row justify-between">
                                 <div className="text-sm font-bold space-y-1 flex-col flex items-start">
-                                    <div>
-                                        {Number(price.amount / 100).toLocaleString()}
-                                        {` `}
-                                        {price.currency.toUpperCase()} / {price.interval}{' '}
-                                    </div>
-                                    {price.interval === 'year' ? (
-                                        <div className="text-xs rounded p-1 bg-green-200">
-                                            {'Best value: ' +
-                                                Number(price.amount / 100 / 12).toLocaleString() +
-                                                ' ' +
-                                                price.currency.toUpperCase() +
-                                                ' / month'}
-                                        </div>
-                                    ) : null}
-                                    {price.id === subscription?.plan?.id ? (
-                                        <span className="text-xs bg-gray-200 p-1 rounded">
-                                            Active
-                                        </span>
-                                    ) : null}
+                                    {price.amount ? (
+                                        <>
+                                            {' '}
+                                            <div>
+                                                {Number(price.amount / 100).toLocaleString()}
+                                                {` `}
+                                                {price.currency.toUpperCase()} / {price.interval}{' '}
+                                            </div>
+                                            {price.interval === 'year' ? (
+                                                <div className="text-xs rounded p-1 bg-green-200">
+                                                    {'Best value: ' +
+                                                        Number(
+                                                            price.amount / 100 / 12
+                                                        ).toLocaleString() +
+                                                        ' ' +
+                                                        price.currency.toUpperCase() +
+                                                        ' / month'}
+                                                </div>
+                                            ) : null}
+                                            {price.id === subscription?.plan?.id ? (
+                                                <span className="text-xs bg-gray-200 p-1 rounded">
+                                                    Active
+                                                </span>
+                                            ) : null}
+                                        </>
+                                    ) : // TODO: handle no price better?
+                                    null}
                                 </div>
                                 <div className="text-sm font-bold">
                                     <Button
