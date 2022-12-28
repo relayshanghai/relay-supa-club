@@ -40,11 +40,7 @@ const formatCreatorEconomics = (userProfile: CreatorReport['user_profile']) => {
     return stats;
 };
 
-export const CreatorEconomics = ({
-    userProfile
-}: {
-    userProfile: CreatorReport['user_profile'];
-}) => {
+const CreatorEconomics = ({ userProfile }: { userProfile: CreatorReport['user_profile'] }) => {
     const economicsData = formatCreatorEconomics(userProfile);
     const { t } = useTranslation();
 
@@ -71,3 +67,5 @@ export const CreatorEconomics = ({
         </div>
     );
 };
+
+export default CreatorEconomics;

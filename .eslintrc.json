@@ -11,6 +11,13 @@
         "no-unused-vars": "off", // typescript-eslint/no-unused-vars will cover this, and wont throw errors for unused variables in function parameters for ts types
         "@typescript-eslint/no-unused-vars": "warn", // Warn about unused variables to avoid leaving them in the code accidentally and creating clutter.
         // "no-shadow": "warn" // can consider turning this on later. this has helped me catch bugs in the past, but is a bit annoying to comply with
-        "@next/next/no-img-element": "off" // Allow <img> tags to be used for now. We should consider turning off later and using <Image> tags from next/image instead for better performance
+        "@next/next/no-img-element": "off", // Allow <img> tags to be used for now. We should consider turning off later and using <Image> tags from next/image instead for better performance,
+        "react/self-closing-comp": [
+            "warn",
+            {
+                "component": true,
+                "html": true
+            }
+        ]
     }
 }

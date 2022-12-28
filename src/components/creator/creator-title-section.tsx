@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import { CreatorPlatform, CreatorReport } from 'types';
 import { Button } from '../button';
-import { Instagram, Tiktok, Youtube } from '../icons';
+import { SocialMediaIcon } from '../common/social-media-icon';
 
 export const TitleSection = ({
     user_profile,
@@ -26,11 +26,9 @@ export const TitleSection = ({
                         alt={`${user_profile.user_id}-profile-pic`}
                         layout="fill"
                         className="rounded-full"
-                    ></Image>
+                    />
                     <div className="absolute right-0 bottom-0">
-                        {platform === 'youtube' && <Youtube width={28} height={28} />}
-                        {platform === 'instagram' && <Instagram width={28} height={28} />}
-                        {platform === 'tiktok' && <Tiktok width={28} height={28} />}
+                        <SocialMediaIcon platform={platform} width={28} height={28} />
                     </div>
                 </div>
                 <div className="ml-6 flex-1">

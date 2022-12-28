@@ -1,13 +1,16 @@
+import dynamic from 'next/dynamic';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CreatorReport } from 'types';
 import { Info } from '../icons';
-import { CreatorEconomics } from './creator-economics';
 import { SimilarCreator } from './creator-similar-creator';
 import { SocialCard } from './creator-social-card';
 import { formatStats } from './helpers';
 
 const titleClass = `font-semibold text-gray-600 mb-2`;
+
+/** Lazy load this because it contains a big static file (cpms) */
+const Economics = dynamic(() => import('./creator-economics'), { ssr: false });
 
 export const CreatorOverview = ({ report }: { report: CreatorReport }) => {
     const { t } = useTranslation();
@@ -28,7 +31,7 @@ export const CreatorOverview = ({ report }: { report: CreatorReport }) => {
             <div className="lg:w-1/2">
                 {/* economics */}
                 {report.user_profile.type === 'youtube' && (
-                    <CreatorEconomics userProfile={report.user_profile} />
+                    <Economics userProfile={report.user_profile} />
                 )}
                 {/* description */}
                 <div className="p-6">
