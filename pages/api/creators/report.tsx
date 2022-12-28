@@ -1,12 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { fetchReport, fetchReportsMetadata, requestNewReport } from 'src/utils/api/iqdata';
-import { nextFetch } from 'src/utils/fetcher';
-import { CreatorReport } from 'types';
-
-export const nextFetchReport = async (platform: string, user_id: string) =>
-    await nextFetch<CreatorReport & { createdAt: string }>(
-        `creators/report?platform=${platform}&user_id=${user_id}`
-    );
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'GET') {
@@ -35,6 +28,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         return res.status(400).json(null);
     }
-    
-    return res.status(400).json(null)
+
+    return res.status(400).json(null);
 }
