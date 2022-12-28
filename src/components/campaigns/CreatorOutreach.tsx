@@ -1,17 +1,19 @@
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import { useEffect } from 'react';
+import { CampaignWithCompanyCreators } from 'types';
 
-export default function CreatorsOutreach({ currentCampaign }) {
+export default function CreatorsOutreach({
+    currentCampaign
+}: {
+    currentCampaign: CampaignWithCompanyCreators;
+}) {
     const { t } = useTranslation();
     const router = useRouter();
     const { pathname, query } = router;
     const [status, setStatus] = useState('to contact');
 
-    useEffect(() => {
-        console.log(currentCampaign);
-    }, [currentCampaign]);
+    // console.log(currentCampaign);
 
     const tabs = [
         { label: 'toContact', value: 'to contact' },
@@ -22,7 +24,7 @@ export default function CreatorsOutreach({ currentCampaign }) {
         { label: 'ignored', value: 'ignored' }
     ];
 
-    const handleTabChange = (value) => {
+    const handleTabChange = (value: string) => {
         router.push({ pathname, query: { ...query, curTab: value } });
         setStatus(value);
     };
@@ -45,7 +47,7 @@ export default function CreatorsOutreach({ currentCampaign }) {
                                     : 'text-gray-400 bg-gray-100 '
                             }`}
                         >
-                            {t(`campaigns.show.activities.outreach.${tab.label}`)} {tabs[tab.value]}
+                            {t(`campaigns.show.activities.outreach.${tab.label}`)}
                         </div>
                     ))}
                 </div>
@@ -106,7 +108,7 @@ export default function CreatorsOutreach({ currentCampaign }) {
                             <th
                                 scope="col"
                                 className="px-3 py-3 text-left text-xs font-normal text-gray-500 bg-white tracking-wider sm:sticky right-0"
-                            ></th>
+                            />
                         </tr>
                         <tbody className="bg-white divide-y divide-gray-200">
                             {currentCampaign?.campaign_creators.map((creator, index) => (
@@ -117,11 +119,12 @@ export default function CreatorsOutreach({ currentCampaign }) {
                                     <td className="px-6 py-4 whitespace-nowrap sticky left-0 group-hover:bg-primary-50 min-w-[200px] max-w-[200px] z-10">
                                         <div className="flex items-center">
                                             <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300">
-                                                <img
+                                                {/* TODO: where to get image? */}
+                                                {/* <img
                                                     className="h-10 w-10 rounded-full"
                                                     src={creator.image}
                                                     alt=""
-                                                />
+                                                /> */}
                                             </div>
                                             <div className="ml-4">
                                                 <div className="text-sm font-medium text-gray-900 truncate">

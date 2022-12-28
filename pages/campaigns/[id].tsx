@@ -1,6 +1,6 @@
 import { Layout } from 'src/modules/layout';
 import { useRouter } from 'next/router';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import dateFormat from 'src/utils//dateFormat';
 import { PencilSquareIcon } from '@heroicons/react/20/solid';
@@ -107,7 +107,9 @@ export default function CampaignShow() {
                         </div>
                     ))}
                 </div>
-                {currentTab === 0 && <CreatorsOutreach currentCampaign={currentCampaign} />}
+                {currentTab === 0 && currentCampaign && (
+                    <CreatorsOutreach currentCampaign={currentCampaign} />
+                )}
                 {currentTab === 1 && <CampaignDetails />}
             </div>
         </Layout>
