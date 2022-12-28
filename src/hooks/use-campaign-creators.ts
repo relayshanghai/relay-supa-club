@@ -6,6 +6,7 @@ import { useUser } from './use-user';
 
 export const useCampaignCreators = ({ campaignId }: any = {}) => {
     const { profile } = useUser();
+    const [loading, setLoading] = useState(false);
     const { data } = useSWR(
         profile?.company_id ? `/api/campaigns?id=${profile.company_id}` : null,
         fetcher
@@ -21,6 +22,7 @@ export const useCampaignCreators = ({ campaignId }: any = {}) => {
 
     const addCreatorToCampaign = useCallback(
         async (input: CampaignCreatorDBInsert) => {
+            setLoading(true);
             await fetch('/api/campaigns/add-creator', {
                 method: 'post',
                 body: JSON.stringify({
@@ -28,11 +30,13 @@ export const useCampaignCreators = ({ campaignId }: any = {}) => {
                     company_id: profile?.company_id
                 })
             });
+            setLoading(false);
         },
         [profile]
     );
 
     return {
+        loading,
         campaignCreators,
         addCreatorToCampaign
     };

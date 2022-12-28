@@ -11,6 +11,8 @@ import { CreatorSearchResult } from 'types';
 import { useState } from 'react';
 import { Modal } from 'src/components/modal';
 import { useTranslation } from 'react-i18next';
+import { useCampaigns } from 'src/hooks/use-campaigns';
+import CampaignModalCard from 'src/components/campaigns/CampaignModalCard';
 
 const filterCountry = (items: any[]) => {
     return items.filter((item: any) => {
@@ -53,6 +55,7 @@ export const Search = () => {
     const options = [1e3, 5e3, 1e4, 15e3, 25e3, 50e3, 1e5, 25e4, 50e4, 1e6];
     const [showCampaignListModal, setShowCampaignListModal] = useState(false);
     const { t } = useTranslation();
+    const { campaigns } = useCampaigns();
 
     useEffect(() => {
         search();
@@ -517,6 +520,23 @@ export const Search = () => {
                     {t('campaigns.modal.addThisInfluencer')}
                 </div>
                 {/* TODO: add campaign lists with add button  */}
+
+                {campaigns?.length ? (
+                    <div>
+                        {campaigns.map((campaign, index) => (
+                            <CampaignModalCard
+                                campaign={campaign}
+                                // setCampaigns={setCampaigns}
+                                // index={index}
+                                // creator={creator}
+                                campaigns={campaigns}
+                                key={index}
+                            />
+                        ))}
+                    </div>
+                ) : (
+                    <div className="text-sm text-gray-600">You dont have any campaigns yet</div>
+                )}
             </Modal>
             {/* <div className="space-x-2">
                 {subscription?.plans.amount > 10
