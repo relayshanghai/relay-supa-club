@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { stripeClient } from 'src/utils/stripe-client';
+import { StripePlansWithPrice } from 'types';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'GET') {
@@ -8,11 +9,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             await stripeClient.plans.list()
         ]);
 
-        const withPlans = products.data.map((product: any) => {
-            const prices = plans.data.filter((plan: any) => plan.product === product.id);
-            product.prices = prices;
-            return product;
-        });
+        const withPlans: StripePlansWithPrice[] = products.data.map(
+            (product: StripePlansWithPrice) => {
+                const prices = plans.data.filter((plan) => plan.product === product.id);
+                product.prices = prices;
+                return product;
+            }
+        );
 
         return res.status(200).json(withPlans);
     }
