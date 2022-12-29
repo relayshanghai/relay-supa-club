@@ -25,7 +25,7 @@ export const ProgressBlock = ({ stats: statsFull, title }: { stats: any; title: 
                                 <div
                                     style={{ width: `${stat.weight * 100}%` }}
                                     className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-primary-500 rounded"
-                                ></div>
+                                />
                             </div>
                         </div>
                     </div>

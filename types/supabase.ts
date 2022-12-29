@@ -30,6 +30,10 @@ export interface Database {
                     need_support: boolean | null;
                     added_by_id: number | null;
                     'next-step': string | null;
+                    avatar_url: string | null;
+                    username: string | null;
+                    fullname: string | null;
+                    link_url: string | null;
                 };
                 Insert: {
                     id: string;
@@ -57,6 +61,10 @@ export interface Database {
                     need_support?: boolean | null;
                     added_by_id?: number | null;
                     'next-step'?: string | null;
+                    avatar_url?: string | null;
+                    username?: string | null;
+                    fullname?: string | null;
+                    link_url?: string | null;
                 };
                 Update: {
                     id?: string;
@@ -84,6 +92,10 @@ export interface Database {
                     need_support?: boolean | null;
                     added_by_id?: number | null;
                     'next-step'?: string | null;
+                    avatar_url?: string | null;
+                    username?: string | null;
+                    fullname?: string | null;
+                    link_url?: string | null;
                 };
             };
             campaigns: {

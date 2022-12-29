@@ -1,22 +1,26 @@
 import { useCallback, useEffect, useState } from 'react';
 import { fetcher } from 'src/utils/fetcher';
 import useSWR from 'swr';
-import { CampaignDB, CampaignWithCompany } from 'types';
+import { CampaignCreatorDBInsert, CampaignDB, CampaignWithCompanyCreators } from 'types';
 import { useUser } from './use-user';
 
 export const useCampaigns = ({ campaignId }: any = {}) => {
     const { profile } = useUser();
-    const { data } = useSWR<CampaignWithCompany[]>(
+    const { data } = useSWR<CampaignWithCompanyCreators[]>(
         profile?.company_id ? `/api/campaigns?id=${profile.company_id}` : null,
         fetcher
     );
-
-    const [campaign, setCampaign] = useState<CampaignWithCompany | null>(null);
+    const [loading, setLoading] = useState(false);
+    const [campaign, setCampaign] = useState<CampaignWithCompanyCreators | null>(null);
+    const [campaignCreators, setCampaignCreators] = useState<
+        CampaignWithCompanyCreators['campaign_creators'] | null
+    >([]);
 
     useEffect(() => {
         if (data && campaignId) {
-            const campaign = data?.find((c: any) => c.id === campaignId);
+            const campaign = data?.find((c) => c.id === campaignId);
             if (campaign) setCampaign(campaign);
+            if (campaign?.campaign_creators) setCampaignCreators(campaign.campaign_creators);
         }
     }, [campaignId, data]);
 
@@ -46,10 +50,27 @@ export const useCampaigns = ({ campaignId }: any = {}) => {
         [profile]
     );
 
+    const addCreatorToCampaign = useCallback(
+        async (input: CampaignCreatorDBInsert) => {
+            setLoading(true);
+            await fetch('/api/campaigns/add-creator', {
+                method: 'post',
+                body: JSON.stringify({
+                    ...input,
+                    company_id: profile?.company_id
+                })
+            });
+            setLoading(false);
+        },
+        [profile]
+    );
     return {
         campaigns: data as CampaignDB[],
         createCampaign,
         updateCampaign,
-        campaign
+        campaign,
+        loading,
+        campaignCreators,
+        addCreatorToCampaign
     };
 };

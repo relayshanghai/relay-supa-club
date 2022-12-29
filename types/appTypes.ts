@@ -13,6 +13,8 @@ export type LocationWeighted = { id: string; weight: number };
 export type ProfileDB = Database['public']['Tables']['profiles']['Row'];
 export type CompanyDB = Database['public']['Tables']['companies']['Row'];
 export type CampaignDB = Database['public']['Tables']['campaigns']['Row'];
+export type CampaignCreatorDB = Database['public']['Tables']['campaign_creators']['Row'];
+export type CampaignCreatorDBInsert = Database['public']['Tables']['campaign_creators']['Insert'];
 export type UsagesDB = Database['public']['Tables']['usages']['Row'];
 export type InvitesDB = Database['public']['Tables']['invites']['Row'];
 
@@ -22,6 +24,10 @@ export type CompanyWithProfilesInvitesAndUsage = CompanyDB & {
     invites: Pick<InvitesDB, 'id' | 'email' | 'used'>[];
     usages: Pick<UsagesDB, 'id'>[];
 };
-export type CampaignWithCompany = CampaignDB & {
+export type CampaignWithCompanyCreators = CampaignDB & {
     companies: Pick<CompanyDB, 'id' | 'name' | 'cus_id'>;
+    campaign_creators: Pick<
+        CampaignCreatorDB,
+        'id' | 'username' | 'fullname' | 'avatar_url' | 'link_url'
+    >[];
 };
