@@ -12,7 +12,7 @@ import { useState } from 'react';
 import { Modal } from 'src/components/modal';
 import { useTranslation } from 'react-i18next';
 import { useCampaigns } from 'src/hooks/use-campaigns';
-import CampaignModalCard from 'src/components/campaigns/CampaignModalCard';
+import CampaignModalCard from 'src/components/campaigns/campaign-modal-card';
 
 const filterCountry = (items: any[]) => {
     return items.filter((item: any) => {
@@ -52,7 +52,7 @@ export const Search = () => {
         setContactInfo
     } = useSearch();
 
-    const options = [1e3, 5e3, 1e4, 15e3, 25e3, 50e3, 1e5, 25e4, 50e4, 1e6];
+    const options = [1e3, 5e3, 1e4, 15e3, 25e3, 50e3, 1e5, 25e4, 50e4, 1e6]; // Search Filter - Subscribers and Avg view filter options: 1k, 5k, 10k, 15k, 25k, 50k, 100k, 250k, 500k, 1m
     const [showCampaignListModal, setShowCampaignListModal] = useState(false);
     const [selectedCreator, setSelectedCreator] = useState<CreatorSearchAccountObject | null>(null);
     const { t } = useTranslation();

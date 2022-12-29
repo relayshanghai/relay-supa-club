@@ -13,8 +13,6 @@ export default function CreatorsOutreach({
     const { pathname, query } = router;
     const [status, setStatus] = useState('to contact');
 
-    // console.log(currentCampaign);
-
     const tabs = [
         { label: 'toContact', value: 'to contact' },
         { label: 'contacted', value: 'contacted' },
@@ -22,6 +20,17 @@ export default function CreatorsOutreach({
         { label: 'confirmed', value: 'confirmed' },
         { label: 'rejected', value: 'rejected' },
         { label: 'ignored', value: 'ignored' }
+    ];
+
+    const columnLabels = [
+        'account',
+        'creatorStatus',
+        'addedBy',
+        'nextPoint',
+        'paymentAmount',
+        'paidAmount',
+        'paymentStatus',
+        'sampleStatus'
     ];
 
     const handleTabChange = (value: string) => {
@@ -36,6 +45,7 @@ export default function CreatorsOutreach({
                 <div className="bg-gray-100 rounded-md px-4 py-2 text-sm text-gray-600 mr-4 cursor-pointer hover:bg-primary-500 hover:text-white duration-300 flex-shrink-0">
                     {t('campaigns.show.activities.outreach.addNewCreator')}
                 </div>
+                {/* TODO: make Tabs component reusable */}
                 <div className="hidden sm:flex items-center">
                     {tabs.map((tab, index) => (
                         <div
@@ -56,59 +66,18 @@ export default function CreatorsOutreach({
             <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200 overflow-y-visible">
                     <thead className="bg-white sticky top-0">
-                        <tr>
-                            <th
-                                scope="col"
-                                className="px-6 py-3 text-left text-xs font-normal text-gray-500 sticky left-0 tracking-wider min-w-[200px] max-w-[200px] bg-white"
-                            >
-                                {t('campaigns.show.account')}
-                            </th>
-                            <th
-                                scope="col"
-                                className="px-6 py-3 text-left text-xs font-normal text-gray-500 tracking-wider min-w-[180px]"
-                            >
-                                {t('campaigns.show.creatorStatus')}
-                            </th>
-                            <th
-                                scope="col"
-                                className="px-6 py-3 text-left text-xs font-normal text-gray-500 tracking-wider min-w-[180px]"
-                            >
-                                {t('campaigns.show.addedBy')}
-                            </th>
-                            <th
-                                scope="col"
-                                className="px-6 py-3 text-left text-xs font-normal text-gray-500 tracking-wider min-w-[180px]"
-                            >
-                                {t('campaigns.show.nextPoint')}
-                            </th>
-                            <th
-                                scope="col"
-                                className="px-6 py-3 text-left text-xs font-normal text-gray-500 tracking-wider min-w-[180px]"
-                            >
-                                {t('campaigns.show.paymentAmount')}
-                            </th>
-                            <th
-                                scope="col"
-                                className="px-6 py-3 text-left text-xs font-normal text-gray-500 tracking-wider min-w-[180px]"
-                            >
-                                {t('campaigns.show.paidAmount')}
-                            </th>
-                            <th
-                                scope="col"
-                                className="px-6 py-3 text-left text-xs font-normal text-gray-500 tracking-wider min-w-[180px]"
-                            >
-                                {t('campaigns.show.paymentStatus')}
-                            </th>
-                            <th
-                                scope="col"
-                                className="px-6 py-3 text-left text-xs font-normal text-gray-500 tracking-wider min-w-[180px]"
-                            >
-                                {t('campaigns.show.sampleStatus')}
-                            </th>
-                            <th
-                                scope="col"
-                                className="px-3 py-3 text-left text-xs font-normal text-gray-500 bg-white tracking-wider sm:sticky right-0"
-                            />
+                        <tr className="border-b border-gray-200">
+                            {columnLabels.map((label, index) => (
+                                <th
+                                    key={index}
+                                    scope="col"
+                                    className={`px-6 py-3 text-left text-xs font-normal text-gray-500 sticky left-0 tracking-wider min-w-[200px] max-w-[200px] bg-white ${
+                                        index === 0 ? 'sticky left-0 z-10' : ''
+                                    }`}
+                                >
+                                    {t(`campaigns.show.${label}`)}
+                                </th>
+                            ))}
                         </tr>
                         <tbody className="bg-white divide-y divide-gray-200">
                             {currentCampaign?.campaign_creators.map((creator, index) => (

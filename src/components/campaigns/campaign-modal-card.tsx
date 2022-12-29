@@ -1,4 +1,4 @@
-import { PlusCircleIcon, ArrowPathIcon, CheckCircleIcon } from '@heroicons/react/24/solid';
+import { PlusCircleIcon, ArrowPathIcon } from '@heroicons/react/24/solid';
 import { useCampaigns } from 'src/hooks/use-campaigns';
 import { CampaignDB, CreatorSearchAccountObject } from 'types';
 
@@ -27,14 +27,12 @@ export default function CampaignModalCard({
 
     return (
         <div
-            onClick={() => {
-                handleAddCreatorToCampaign();
-            }}
+            onClick={handleAddCreatorToCampaign}
             className="bg-tertiary-50 text-sm px-2 py-3.5 rounded-lg mb-2 cursor-pointer duration-300"
         >
             <div className="flex items-center justify-between">
                 <div className="flex items-center w-full min-w-0">
-                    {/* TODO: add the right image url after */}
+                    {/* TODO: add the right image url after media upload finished*/}
                     <img
                         src={'/image404.png'}
                         alt=""
