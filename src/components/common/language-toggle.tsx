@@ -38,19 +38,19 @@ export const LanguageToggle = () => {
                 {displayOptions && (
                     <div
                         ref={optionsRef}
-                        className="absolute top-6 z-50 flex-shrink-0 whitespace-nowrap space-y-1 w-20"
+                        className="flex flex-col overflow-hidden w-28 absolute mt-9 origin-top-right bg-white border border-gray border-opacity-40 rounded-md shadow-lg z-10"
                     >
                         <button
                             onClick={() => setValue('zh')}
                             id="zh"
-                            className="btn-with-icon-gray py-1 text-tertiary-500 border-primary-300/50 border opacity-90 text-xs w-full"
+                            className="px-4 py-2 text-sm hover:bg-gray-100 active:bg-gray-200 text-left"
                         >
                             中文
                         </button>
                         <button
                             onClick={() => setValue('en-US')}
                             id="en-US"
-                            className="btn-with-icon-gray py-1 text-tertiary-500 border-primary-300/50 border opacity-90 mb-0.5 text-xs w-full"
+                            className="px-4 py-2 text-sm hover:bg-gray-100 active:bg-gray-200 text-left"
                         >
                             English
                         </button>
