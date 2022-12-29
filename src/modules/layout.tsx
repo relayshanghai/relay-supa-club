@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { Button } from 'src/components/button';
+import { LanguageToggle } from 'src/components/common/language-toggle';
 import { Spinner } from 'src/components/spinner';
 import { Title } from 'src/components/title';
 import { useCompany } from 'src/hooks/use-company';
@@ -59,15 +60,9 @@ export const Layout = ({ children }: any) => {
                         <div />
                         <div className="px-8 py-4 flex flex-row items-center space-x-4">
                             <div className="text-sm flex flex-row items-center space-x-4">
+                                <LanguageToggle />
                                 {!!subscription ? (
-                                    <Button
-                                        onClick={() => {
-                                            // window.open(
-                                            //     `/api/subscriptions/portal?id=${company.id}`
-                                            // );
-                                            router.push('/account');
-                                        }}
-                                    >
+                                    <Button onClick={() => router.push('/account')}>
                                         Subscribe now
                                     </Button>
                                 ) : null}
