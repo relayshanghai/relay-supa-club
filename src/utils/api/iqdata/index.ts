@@ -46,7 +46,7 @@ export const requestNewReport = async (
     subscribe = false,
     dry_run = false
 ) =>
-    await iqDataFetch(
+    await iqDataFetch<CreatorReport>(
         `reports/new?platform=${platform}&url=${id}&subscribe=${
             subscribe ? 1 : 0
         }&dry_run=${dry_run}`

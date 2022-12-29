@@ -1,6 +1,7 @@
 {
     "cSpell.words": [
         "camelcase",
+        "commenters",
         "countup",
         "fileupload",
         "fullname",
@@ -8,6 +9,7 @@
         "heroicons",
         "imgs",
         "influencers",
+        "iqdata",
         "languagedetector",
         "linebreak",
         "relayclub",
@@ -15,6 +17,7 @@
         "supabase",
         "tailwindcss",
         "tiktok",
-        "upsert"
+        "upsert",
+        "wechat"
     ]
 }

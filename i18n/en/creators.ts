@@ -1,4 +1,4 @@
-export default {
+const creators = {
     index: {
         title: 'KOLs',
         searchBar: 'Search by similar KOLs',
@@ -66,6 +66,7 @@ export default {
         audienceLocationDescr: 'Filter based on where your primary audience is located'
     },
     show: {
+        lastUpdate: 'Last Updated',
         editProfile: 'Edit Profile',
         description: 'Description',
         campaigns: 'Campaigns',
@@ -115,6 +116,7 @@ export default {
         cities: 'Cities',
         similarAudienceKol: 'KOLs with similar audience',
         seeMore: 'See More',
+        seeLess: 'See Less',
         similarKols: 'Similar KOLs',
         popularPosts: 'Popular Posts',
         copyLink: 'Copy Link',
@@ -172,3 +174,5 @@ export default {
         submitting: 'Submitting'
     }
 };
+
+export default creators;

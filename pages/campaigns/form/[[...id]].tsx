@@ -10,7 +10,7 @@ import { useState, useEffect } from 'react';
 import MediaUploader from 'src/components/campaigns/MediaUploader';
 import CurrencyInput from 'src/components/campaigns/CurrencyInput';
 import toast from 'react-hot-toast';
-import { handleError } from 'src/utils/utils.js';
+import { handleError } from 'src/utils/utils';
 import {
     MultiSelect,
     DatePicker,
@@ -97,7 +97,7 @@ export default function CampaignForm() {
                 const result = await createCampaign(data);
                 console.log({ result, media });
                 if (media.length > 0) {
-                    await uploadFiles(media, result.id);
+                    // await uploadFiles(media, result.id);
                 }
 
                 toast(t('campaigns.form.successCreateMsg'));

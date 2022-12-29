@@ -1,11 +1,12 @@
 import { useCallback } from 'react';
 import { fetcher } from 'src/utils/fetcher';
 import useSWR from 'swr';
+import { CompanyWithProfilesInvitesAndUsage } from 'types';
 import { useUser } from './use-user';
 
 export const useCompany = () => {
     const { profile, user } = useUser();
-    const { data } = useSWR(
+    const { data: company } = useSWR<CompanyWithProfilesInvitesAndUsage>(
         profile?.company_id ? `/api/company?id=${profile.company_id}` : null,
         fetcher
     );
@@ -50,7 +51,7 @@ export const useCompany = () => {
     );
 
     return {
-        company: data,
+        company,
         updateCompany,
         createInvite,
         createCompany
