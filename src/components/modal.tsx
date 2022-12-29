@@ -5,7 +5,7 @@ export interface ModalProps {
     visible: boolean;
     title?: string | JSX.Element;
     onClose: (value: boolean) => void;
-    children: JSX.Element;
+    children: JSX.Element | JSX.Element[];
 }
 
 export const Modal: React.FC<ModalProps> = ({ children, visible, onClose, title }) => {
@@ -43,7 +43,7 @@ export const Modal: React.FC<ModalProps> = ({ children, visible, onClose, title 
                                     {title}
                                 </Dialog.Title>
 
-                                {children}
+                                <>{children}</>
                             </Dialog.Panel>
                         </Transition.Child>
                     </div>
