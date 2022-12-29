@@ -64,7 +64,10 @@ export default function CampaignForm() {
     const [submitting, setSubmitting] = useState(false);
     const [media, setMedia] = useState([]);
     const [prevMedia, setPrevMedia] = useState([]);
-    const [purgedMedia, setPurgedMedia] = useState([]);
+    const [
+        // purgedMedia,
+        setPurgedMedia
+    ] = useState([]);
     const {
         register,
         handleSubmit,
