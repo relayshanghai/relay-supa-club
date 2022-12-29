@@ -86,7 +86,7 @@ function MediaUploader({
                     <div className="h-6 w-6 box-border mr-4">
                         <img
                             className="w-full h-full object-cover rounded-md"
-                            src={file.url}
+                            src={file}
                             alt="media gallery icon"
                         />
                     </div>

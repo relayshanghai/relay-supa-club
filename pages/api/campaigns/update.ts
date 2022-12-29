@@ -3,10 +3,12 @@ import { supabase } from 'src/utils/supabase-client';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
-        const { company_id, id, ...data } = JSON.parse(req.body);
+        const { company_id, id, mediaPaths, ...data } = JSON.parse(req.body);
+        console.log(mediaPaths);
         const { data: campaign, error } = await supabase
             .from('campaigns')
             .update({
+                media_path: mediaPaths,
                 ...data
             })
             .eq('id', id)

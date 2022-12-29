@@ -90,9 +90,6 @@ export default function CampaignForm() {
     const isAddMode = !router.query.id;
     const goBack = () => router.back();
 
-    //get files from supabase
-    //set prevMedia,
-
     const createHandler = useCallback(
         async (data: any) => {
             setSubmitting(true);
@@ -102,6 +99,7 @@ export default function CampaignForm() {
                 if (media.length > 0) {
                     await uploadFiles(media, result.id);
                 }
+
                 toast(t('campaigns.form.successCreateMsg'));
                 setSubmitting(false);
                 // router.push(`/campaigns/${encodeURIComponent(result.id)}`);
@@ -136,8 +134,6 @@ export default function CampaignForm() {
     );
 
     const uploadFiles = async (files: File[], campaignId: string) => {
-        console.log({ files, campaignId });
-
         for (let i = 0; i < files.length; i++) {
             const file = files[i];
             const filePath = `campaigns/${campaignId}/${file.name}`;
@@ -146,9 +142,8 @@ export default function CampaignForm() {
                 .from('images')
                 .upload(filePath, file)
                 .then((res) => {
-                    console.log(res.data?.Key);
-                    setMediaPaths([...mediaPaths, res.data?.Key as string]);
-                    console.log({ mediaPaths });
+                    mediaPaths.push(res.data?.Key as string);
+                    console.log(mediaPaths);
                 })
                 .catch((error) => {
                     // eslint-disable-next-line no-console
@@ -178,7 +173,7 @@ export default function CampaignForm() {
     const onSubmit = useCallback(
         async (formData: any) => {
             formData = { ...formData, media, purge_media: [...purgedMedia], mediaPaths };
-            // console.log(media, prevMedia, purgedMedia);
+            console.log(formData);
 
             if (isAddMode) {
                 createHandler(formData);
@@ -190,10 +185,8 @@ export default function CampaignForm() {
     );
 
     useEffect(() => {
-        console.log(mediaPaths);
         const getFiles = async () => {
-            // list campaign files
-
+            // list files
             const { data, error } = await supabase.storage
                 .from('images')
                 .list(`campaigns/${campaignId}`, {
@@ -201,13 +194,13 @@ export default function CampaignForm() {
                     offset: 0,
                     sortBy: { column: 'name', order: 'asc' }
                 });
-            console.log({ data, error });
+            console.log({ data, error }, prevMedia);
         };
 
-        if (!campaignId) {
+        if (campaignId) {
             getFiles();
         }
-    }, [campaignId]);
+    }, [campaignId, mediaPaths]);
 
     useEffect(() => {
         if (campaign) {
