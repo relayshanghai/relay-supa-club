@@ -30,13 +30,16 @@ export const InputWithTags = ({
                                   );
                               }
                               return (
-                                  <div
-                                      className="px-2 text-gray-900 rounded bg-gray-100 whitespace-nowrap hover:bg-gray-200 cursor-pointer flex flex-col justify-center"
+                                  <p
+                                      className="px-2 text-gray-900 rounded bg-gray-100 whitespace-nowrap hover:bg-gray-200 cursor-pointer flex justify-center"
                                       key={i}
                                       onClick={() => onTagRemove(item)}
                                   >
                                       {item.value || item.title}
-                                  </div>
+                                      <p className="ml-2 text-gray-400  whitespace-nowrap cursor-pointer">
+                                          x
+                                      </p>
+                                  </p>
                               );
                           })
                         : null}
