@@ -74,8 +74,8 @@ export const Layout = ({ children }: any) => {
                                     </Button>
                                 ) : null}
                                 <p>
-                                    {`${t('navbar.usage')}: ${company?.usages?.length}/${
-                                        company?.usage_limit
+                                    {`${t('navbar.usage')}: ${company?.usages?.length || '0'}/${
+                                        company?.usage_limit || '0'
                                     }`}
                                 </p>
                             </div>
@@ -86,7 +86,7 @@ export const Layout = ({ children }: any) => {
                                             onClick={() => setAccountMenuOpen(!accountMenuOpen)}
                                             ref={accountMenuButtonRef}
                                         >
-                                            <p className="p-2 rounded-full bg-primary-50 text-primary-600 text-sm font-bold">
+                                            <p className="w-9 l-9 p-2 rounded-full bg-primary-50 text-primary-600 text-sm font-bold">
                                                 {profile?.first_name ? profile.first_name[0] : ''}
                                                 {profile?.last_name ? profile.last_name[0] : ''}
                                             </p>
@@ -114,8 +114,8 @@ export const Layout = ({ children }: any) => {
                                         )}
                                     </div>
                                 ) : loading ? (
-                                    <div className="p-2 rounded-full bg-primary-50 text-primary-600 text-sm font-bold">
-                                        <Spinner />
+                                    <div className="w-9 l-9 p-2">
+                                        <Spinner className="fill-primary-600 text-white" />
                                     </div>
                                 ) : null}
                             </div>
