@@ -251,7 +251,7 @@ export const Search = () => {
                     onClose={() => setFilterModalOpen(false)}
                     title={t('creators.filter.title') || ''}
                 >
-                    <div className="p-8 space-y-8">
+                    <div className="p-8 space-y-5">
                         <h3>{t('creators.filter.intro')}</h3>
 
                         <div>
@@ -262,7 +262,7 @@ export const Search = () => {
                                 <div className="flex flex-row space-x-4">
                                     <div>
                                         <select
-                                            className="bg-primary-200 rounded-md"
+                                            className="bg-primary-200 rounded-md p-1 mt-1"
                                             value={audience[0]}
                                             onChange={(e) => {
                                                 setAudience((val) => [e.target.value, val[1]]);
@@ -280,7 +280,7 @@ export const Search = () => {
                                     </div>
                                     <div>
                                         <select
-                                            className="bg-primary-200 rounded-md"
+                                            className="bg-primary-200 rounded-md p-1 mt-1"
                                             value={audience[1]}
                                             onChange={(e) => {
                                                 setAudience((val) => [val[0], e.target.value]);
@@ -305,7 +305,7 @@ export const Search = () => {
                                 <div className="flex flex-row space-x-4">
                                     <div>
                                         <select
-                                            className="bg-primary-200 rounded-md"
+                                            className="bg-primary-200 rounded-md p-1 mt-1"
                                             value={views[0]}
                                             onChange={(e) => {
                                                 setViews((val) => [e.target.value, val[1]]);
@@ -323,7 +323,7 @@ export const Search = () => {
                                     </div>
                                     <div>
                                         <select
-                                            className="bg-primary-200 rounded-md"
+                                            className="bg-primary-200 rounded-md p-1 mt-1"
                                             value={views[1]}
                                             onChange={(e) => {
                                                 setViews((val) => [val[0], e.target.value]);
@@ -346,7 +346,7 @@ export const Search = () => {
                                     {t('creators.filter.gender')}
                                 </div>
                                 <select
-                                    className="bg-primary-200 rounded-md"
+                                    className="bg-primary-200 rounded-md p-1 mt-1"
                                     value={gender}
                                     onChange={(e) => {
                                         if (e.target.value === 'any') {
@@ -366,7 +366,7 @@ export const Search = () => {
                             <label className="text-sm">
                                 <div className="font-bold text-lg">Engagement Rate</div>
                                 <select
-                                    className="bg-primary-200 rounded-md"
+                                    className="bg-primary-200 rounded-md p-1 mt-1"
                                     value={engagement}
                                     onChange={(e) => {
                                         if (e.target.value === 'any') {
@@ -391,7 +391,7 @@ export const Search = () => {
                             <label className="text-sm">
                                 <div className="font-bold text-lg">Last Post</div>
                                 <select
-                                    className="bg-primary-200 rounded-md"
+                                    className="bg-primary-200 rounded-md p-1 mt-1"
                                     value={lastPost}
                                     onChange={(e) => {
                                         if (e.target.value === 'any') {
@@ -414,7 +414,7 @@ export const Search = () => {
                                     {t('creators.filter.contactInformation')}
                                 </div>
                                 <select
-                                    className="bg-primary-200 rounded-md"
+                                    className="bg-primary-200 rounded-md p-1 mt-1"
                                     value={contactInfo}
                                     onChange={(e) => {
                                         if (e.target.value === 'any') {
