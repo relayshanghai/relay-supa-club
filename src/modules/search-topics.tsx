@@ -1,5 +1,6 @@
 import { useCallback, useRef, useState } from 'react';
-import { InputWithAutocomplete } from 'src/components/input-with-autocomplete';
+import InputWithAutocomplete from 'src/components/input-with-autocomplete';
+import useOnOutsideClick from 'src/hooks/useOnOutsideClick';
 
 export const SearchTopics = ({
     onSetTopics,
@@ -13,6 +14,11 @@ export const SearchTopics = ({
 }: any) => {
     const [suggestions, setSuggestions] = useState<any[]>([]);
     const ref = useRef<any>();
+    const inputRef = useRef<any>();
+    useOnOutsideClick(inputRef, () => {
+        setSuggestions([]);
+        setTopicSearch('');
+    });
 
     const setTopicSearch = useCallback(
         async (term: any) => {
@@ -69,6 +75,7 @@ export const SearchTopics = ({
             placeholder={placeholder}
             tags={topics}
             suggestions={suggestions}
+            ref={inputRef}
             onChange={(item: any) => {
                 setTopicSearch(item);
             }}
