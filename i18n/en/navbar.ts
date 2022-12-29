@@ -1,4 +1,4 @@
-export default {
+const navbar = {
     title: 'Relay Club',
     slogan: 'KOL Marketing Platform',
     button: {
@@ -13,7 +13,9 @@ export default {
         finance: 'Finance',
         plans: 'Plan Management',
         transactions: 'Transactions',
-        billing: 'Plans & Billing'
+        billing: 'Plans & Billing',
+        subscribeNow: 'Subscribe Now',
+        account: 'Account'
     },
     mobile: {
         campaigns: 'Campaigns',
@@ -23,6 +25,9 @@ export default {
         resourcePools: 'Resources',
         profile: 'Me'
     },
+    usage: 'Usage',
     light: 'Light',
     dark: 'Dark'
 };
+
+export default navbar;
