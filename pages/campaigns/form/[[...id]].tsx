@@ -166,7 +166,7 @@ export default function CampaignForm() {
                                             register={register}
                                             errors={errors}
                                             isRequired={q.isRequired}
-                                            label={q.title}
+                                            label={t(q.title)}
                                             placeHolder={q.placeholder}
                                         />
                                     )}

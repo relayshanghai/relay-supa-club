@@ -1,5 +1,5 @@
 import { LabelValueObject } from 'types';
-import { countryList } from './countryList';
+import { countryList } from '../../constants/countryList';
 import options from './options';
 
 export const typePromotions = [

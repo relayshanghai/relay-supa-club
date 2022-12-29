@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { ChartBarIcon, PencilSquareIcon } from '@heroicons/react/20/solid';
+import { t } from 'i18next';
 
 export default function CampaignCardSquare({ campaign }) {
     return (
@@ -31,7 +32,7 @@ export default function CampaignCardSquare({ campaign }) {
                                 ))}
                         </div>
                         <div className="bg-primary-50/60 text-primary-500 rounded-md px-2 py-1 text-xs inline-block absolute top-2 right-2">
-                            {campaign?.status}
+                            {t(`campaigns.show.status.${campaign?.status}`)}
                         </div>
                     </div>
                     <div className="px-2">
@@ -48,7 +49,9 @@ export default function CampaignCardSquare({ campaign }) {
                                     Object.entries(campaign?.status_counts).map((status, index) => (
                                         <Link key={index} href={`/campaigns/${campaign.id}`}>
                                             <div className="flex items-center text-xs px-1 py-0.5 bg-primary-100 text-gray-600 hover:text-primary-500 duration-300 bg-opacity-60 border border-gray-100 rounded-md mr-2 mb-2">
-                                                <div className="mr-1">Change Status</div>
+                                                <div className="mr-1">
+                                                    {t('campaigns.show.changeStatus')}
+                                                </div>
                                                 <div>{status[1]}</div>
                                             </div>
                                         </Link>
