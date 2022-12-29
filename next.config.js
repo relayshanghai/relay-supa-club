@@ -23,6 +23,11 @@ const nextConfig = {
                 protocol: 'https',
                 hostname: 'image-cache.brainchild-tech.cn',
                 pathname: '**'
+            },
+            {
+                protocol: 'https',
+                hostname: 'quwgcjfxxojrvkenqgmi.supabase.co',
+                pathname: '**'
             }
         ]
     }

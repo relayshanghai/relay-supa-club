@@ -7,14 +7,14 @@ import toast from 'react-hot-toast';
 function MediaUploader({
     media,
     setMedia,
-    prevMedia,
-    setPrevMedia,
+    previousMedia,
+    setPreviousMedia,
     setPurgedMedia
 }: {
     media: File[];
     setMedia: (media: File[]) => void;
-    prevMedia: string[];
-    setPrevMedia: (prevMedia: string[]) => void;
+    previousMedia: object[];
+    setPreviousMedia: (previousMedia: object[]) => void;
     setPurgedMedia: (purgedMedia: File[]) => void;
 }) {
     const { t } = useTranslation();
@@ -52,10 +52,12 @@ function MediaUploader({
         setMedia([...media.filter((file: any) => media.indexOf(file) !== index)]);
     };
 
-    const removePrevMedia = (index: number) => {
+    const removePreviousMedia = (index: number) => {
         //@ts-ignore
-        setPurgedMedia((pm: any) => [...pm, prevMedia[index]]);
-        setPrevMedia([...prevMedia.filter((file: any) => prevMedia.indexOf(file) !== index)]);
+        setPurgedMedia((pm: any) => [...pm, previousMedia[index]]);
+        setPreviousMedia([
+            ...previousMedia.filter((file: any) => previousMedia.indexOf(file) !== index)
+        ]);
     };
 
     const mediaList = () =>
@@ -79,21 +81,21 @@ function MediaUploader({
             </div>
         ));
 
-    const prevMediaList = () =>
-        prevMedia.map((file: any, index: number) => (
+    const previousMediaList = () =>
+        previousMedia?.map((file: any, index: number) => (
             <div className="flex items-center justify-between mb-4" key={index}>
                 <div className="flex">
                     <div className="h-6 w-6 box-border mr-4">
                         <img
                             className="w-full h-full object-cover rounded-md"
-                            src={file}
+                            src={file.url}
                             alt="media gallery icon"
                         />
                     </div>
-                    <div className="text-sm">{file.filename}</div>
+                    <div className="text-sm">{file.name}</div>
                 </div>
                 <Trashcan
-                    onClick={() => removePrevMedia(index)}
+                    onClick={() => removePreviousMedia(index)}
                     data-idx={index}
                     className="cursor-pointer w-4 h-4 fill-tertiary-400 hover:fill-primary-500 duration-300"
                 />
@@ -102,10 +104,10 @@ function MediaUploader({
 
     return (
         <div>
-            {media?.length || prevMedia?.length ? (
+            {media?.length || previousMedia?.length ? (
                 <div>
                     {mediaList()}
-                    {prevMediaList()}
+                    {previousMediaList()}
                 </div>
             ) : (
                 <div className="text-xs text-center text-tertiary-600 mb-4">

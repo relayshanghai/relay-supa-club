@@ -9,10 +9,12 @@ import CreatorsOutreach from '../../src/components/campaigns/CreatorOutreach';
 import CampaignDetails from '../../src/components/campaigns/CampaignDetails';
 import { useCampaigns } from 'src/hooks/use-campaigns';
 import Image from 'next/image';
+import { supabase } from 'src/utils/supabase-client';
 
 export default function CampaignShow() {
     const router = useRouter();
     const { campaign: currentCampaign } = useCampaigns({ campaignId: router.query.id });
+    const [coverImageUrl, setCoverImageUrl] = useState('');
 
     const [currentTab, setCurrentTab] = useState(0);
     // const [campaignStatus, setCampaignStatus] = useState(false);
@@ -21,6 +23,33 @@ export default function CampaignShow() {
         t('campaigns.show.activities.creatorOutreach'),
         t('campaigns.show.activities.campaignInfo')
     ];
+
+    useEffect(() => {
+        const getFiles = async () => {
+            const getFilePath = (filename: string) => {
+                const { publicURL } = supabase.storage
+                    .from('images')
+                    .getPublicUrl(`campaigns/${currentCampaign?.id}/${filename}`);
+                return publicURL;
+            };
+
+            const { data } = await supabase.storage
+                .from('images')
+                .list(`campaigns/${currentCampaign?.id}`, {
+                    limit: 100,
+                    offset: 0,
+                    sortBy: { column: 'name', order: 'asc' }
+                });
+
+            if (data?.[0]?.name) {
+                const imageUrl = `${getFilePath(data?.[0]?.name)}`;
+                setCoverImageUrl(imageUrl);
+            }
+        };
+        if (currentCampaign) {
+            getFiles();
+        }
+    }, [currentCampaign]);
 
     return (
         <Layout>
@@ -31,7 +60,7 @@ export default function CampaignShow() {
                         <div className="h-32 w-32 sm:mr-4 flex-shrink-0 mb-4 sm:mb-0">
                             <Image
                                 //@ts-ignore
-                                src={currentCampaign?.media?.url || '/image404.png'}
+                                src={coverImageUrl || '/image404.png'}
                                 alt="campaign photo"
                                 width={128}
                                 height={128}

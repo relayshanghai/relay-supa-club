@@ -72,9 +72,8 @@ export default function CampaignForm() {
     const [submitting, setSubmitting] = useState(false);
     const [media, setMedia] = useState<File[]>([]);
     // only used in edit existing campaign mode.
-    const [prevMedia, setPrevMedia] = useState<string[]>([]);
+    const [previousMedia, setPreviousMedia] = useState<object[]>([]);
     const [purgedMedia, setPurgedMedia] = useState<File[]>([]);
-    const [mediaPaths, setMediaPaths] = useState<string[]>([]);
     const {
         register,
         handleSubmit,
@@ -90,6 +89,21 @@ export default function CampaignForm() {
     const isAddMode = !router.query.id;
     const goBack = () => router.back();
 
+    const uploadFiles = useCallback(async (files: File[], campaignId: string) => {
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const filePath = `campaigns/${campaignId}/${file.name}`;
+            if (!file) continue;
+            await supabase.storage
+                .from('images')
+                .upload(filePath, file)
+                .catch((error) => {
+                    // eslint-disable-next-line no-console
+                    console.log(error);
+                });
+        }
+    }, []);
+
     const createHandler = useCallback(
         async (data: any) => {
             setSubmitting(true);
@@ -97,7 +111,7 @@ export default function CampaignForm() {
                 const result = await createCampaign(data);
                 console.log({ result, media });
                 if (media.length > 0) {
-                    // await uploadFiles(media, result.id);
+                    await uploadFiles(media, result.id);
                 }
 
                 toast(t('campaigns.form.successCreateMsg'));
@@ -108,7 +122,7 @@ export default function CampaignForm() {
                 setSubmitting(false);
             }
         },
-        [createCampaign, t, media]
+        [createCampaign, media, t, uploadFiles]
     );
 
     const updateHandler = useCallback(
@@ -130,27 +144,8 @@ export default function CampaignForm() {
                 setSubmitting(false);
             }
         },
-        [updateCampaign, t, campaignId, media, purgedMedia]
+        [updateCampaign, t, campaignId, media, purgedMedia, uploadFiles]
     );
-
-    const uploadFiles = async (files: File[], campaignId: string) => {
-        for (let i = 0; i < files.length; i++) {
-            const file = files[i];
-            const filePath = `campaigns/${campaignId}/${file.name}`;
-            if (!file) continue;
-            await supabase.storage
-                .from('images')
-                .upload(filePath, file)
-                .then((res) => {
-                    mediaPaths.push(res.data?.Key as string);
-                    console.log(mediaPaths);
-                })
-                .catch((error) => {
-                    // eslint-disable-next-line no-console
-                    console.log(error);
-                });
-        }
-    };
 
     const deleteFiles = async (files: string[]) => {
         for (let i = 0; i < files.length; i++) {
@@ -172,7 +167,7 @@ export default function CampaignForm() {
 
     const onSubmit = useCallback(
         async (formData: any) => {
-            formData = { ...formData, media, purge_media: [...purgedMedia], mediaPaths };
+            formData = { ...formData, media, purge_media: [...purgedMedia] };
             console.log(formData);
 
             if (isAddMode) {
@@ -181,12 +176,18 @@ export default function CampaignForm() {
                 await updateHandler(formData);
             }
         },
-        [media, purgedMedia, prevMedia, isAddMode, createHandler, updateHandler]
+        [media, purgedMedia, isAddMode, createHandler, updateHandler]
     );
 
     useEffect(() => {
+        const getFilePath = (filename: string) => {
+            const { publicURL } = supabase.storage
+                .from('images')
+                .getPublicUrl(`campaigns/${campaignId}/${filename}`);
+            return publicURL;
+        };
+
         const getFiles = async () => {
-            // list files
             const { data, error } = await supabase.storage
                 .from('images')
                 .list(`campaigns/${campaignId}`, {
@@ -194,13 +195,23 @@ export default function CampaignForm() {
                     offset: 0,
                     sortBy: { column: 'name', order: 'asc' }
                 });
-            console.log({ data, error }, prevMedia);
+
+            console.log({ data, error });
+
+            const previousMediaFormatter = data?.map((file) => ({
+                url: `${getFilePath(file.name)}`,
+                name: file.name
+            }));
+
+            if (previousMediaFormatter) {
+                setPreviousMedia(previousMediaFormatter);
+            }
         };
 
         if (campaignId) {
             getFiles();
         }
-    }, [campaignId, mediaPaths]);
+    }, [campaignId]);
 
     useEffect(() => {
         if (campaign) {
@@ -252,8 +263,8 @@ export default function CampaignForm() {
                                         <MediaUploader
                                             media={media}
                                             setMedia={setMedia}
-                                            prevMedia={prevMedia}
-                                            setPrevMedia={setPrevMedia}
+                                            previousMedia={previousMedia}
+                                            setPreviousMedia={setPreviousMedia}
                                             setPurgedMedia={setPurgedMedia}
                                         />
                                     )}

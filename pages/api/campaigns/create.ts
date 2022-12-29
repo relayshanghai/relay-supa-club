@@ -3,13 +3,12 @@ import { supabase } from 'src/utils/supabase-client';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
-        const { company_id, name, mediaPaths, ...data } = JSON.parse(req.body);
+        const { company_id, name, ...data } = JSON.parse(req.body);
         const { data: campaign, error } = await supabase
             .from('campaigns')
             .insert({
                 company_id: company_id,
-                name: name,
-                media_path: mediaPaths,
+                name,
                 ...data,
                 status: 'not started',
                 slug: name.toLowerCase().replace(/ /g, '-')
