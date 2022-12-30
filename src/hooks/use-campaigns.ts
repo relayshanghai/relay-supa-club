@@ -35,15 +35,15 @@ export const useCampaigns = ({ campaignId }: any = {}) => {
     );
 
     const updateCampaign = useCallback(
-        async ({ _companies, ...input }: any) => {
-            await fetch(`/api/campaigns/update`, {
+        async ({ _companies, ...input }: any) =>
+            await nextFetch('campaigns/update', {
                 method: 'post',
                 body: JSON.stringify({
                     ...input,
                     company_id: profile?.company_id
                 })
-            });
-        },
+            }),
+
         [profile]
     );
 

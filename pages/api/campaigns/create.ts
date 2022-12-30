@@ -17,6 +17,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             .single();
 
         if (error) {
+            // eslint-disable-next-line no-console
             console.log(error);
             return res.status(500).json(error);
         }

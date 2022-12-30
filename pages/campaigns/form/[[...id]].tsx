@@ -66,7 +66,6 @@ const TimelineInput = ({
 // }
 
 export default function CampaignForm() {
-    // TODO: if existing campaign, fetch list of files
     const router = useRouter();
 
     const [submitting, setSubmitting] = useState(false);
@@ -104,6 +103,22 @@ export default function CampaignForm() {
         }
     }, []);
 
+    const deleteFiles = useCallback(async (files: File[], campaignId: string) => {
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const filePath = `campaigns/${campaignId}/${file.name}`;
+            console.log({ file, filePath, campaignId });
+            if (!file) continue;
+            await supabase.storage
+                .from('images')
+                .remove([filePath])
+                .catch((error) => {
+                    // eslint-disable-next-line no-console
+                    console.log(error);
+                });
+        }
+    }, []);
+
     const createHandler = useCallback(
         async (data: any) => {
             setSubmitting(true);
@@ -116,13 +131,13 @@ export default function CampaignForm() {
 
                 toast(t('campaigns.form.successCreateMsg'));
                 setSubmitting(false);
-                // router.push(`/campaigns/${encodeURIComponent(result.id)}`);
+                router.push(`/campaigns/${encodeURIComponent(result.id)}`);
             } catch (error) {
                 toast(handleError(error));
                 setSubmitting(false);
             }
         },
-        [createCampaign, media, t, uploadFiles]
+        [createCampaign, media, router, t, uploadFiles]
     );
 
     const updateHandler = useCallback(
@@ -130,40 +145,22 @@ export default function CampaignForm() {
             setSubmitting(true);
             try {
                 await updateCampaign(data);
-                toast(t('campaigns.form.successCreateMsg'));
-                setSubmitting(false);
                 if (campaignId && media.length > 0) {
                     await uploadFiles(media, campaignId);
                 }
-                if (purgedMedia.length > 0) {
-                    await deleteFiles(purgedMedia as any);
+                if (campaignId && purgedMedia.length > 0) {
+                    await deleteFiles(purgedMedia, campaignId);
                 }
-                // router.push(`/campaigns/${encodeURIComponent(data.id)}`);
+                toast(t('campaigns.form.successUpdateMsg'));
+                setSubmitting(false);
+                router.push(`/campaigns/${encodeURIComponent(data.id)}`);
             } catch (error) {
                 toast(handleError(error));
                 setSubmitting(false);
             }
         },
-        [updateCampaign, t, campaignId, media, purgedMedia, uploadFiles]
+        [updateCampaign, campaignId, media, purgedMedia, t, router, uploadFiles, deleteFiles]
     );
-
-    const deleteFiles = async (files: string[]) => {
-        for (let i = 0; i < files.length; i++) {
-            const file = files[i];
-            if (!file) continue;
-            // const { data, error } = await supabase.storage
-            //     .from('images')
-            //     .remove('campaigns/' + file.name);
-
-            // if (data) {
-            //     // eslint-disable-next-line no-console
-            //     console.log({ data });
-            // } else if (error) {
-            //     // eslint-disable-next-line no-console
-            //     console.log({ error });
-            // }
-        }
-    };
 
     const onSubmit = useCallback(
         async (formData: any) => {

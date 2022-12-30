@@ -106,8 +106,8 @@ function MediaUploader({
         <div>
             {media?.length || previousMedia?.length ? (
                 <div>
-                    {mediaList()}
                     {previousMediaList()}
+                    {mediaList()}
                 </div>
             ) : (
                 <div className="text-xs text-center text-tertiary-600 mb-4">
