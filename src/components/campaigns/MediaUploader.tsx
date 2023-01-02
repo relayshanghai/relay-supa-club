@@ -1,15 +1,21 @@
-import { useRef } from 'react';
+import { ChangeEventHandler, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import Plus from 'src/components/icons/Plus';
 import Trashcan from 'src/components/icons/Trashcan';
 import toast from 'react-hot-toast';
 
-export default function MediaUploader({
+function MediaUploader({
     media,
     setMedia,
-    prevMedia,
-    setPrevMedia,
+    previousMedia,
+    setPreviousMedia,
     setPurgedMedia
+}: {
+    media: File[];
+    setMedia: (media: File[]) => void;
+    previousMedia: object[];
+    setPreviousMedia: (previousMedia: object[]) => void;
+    setPurgedMedia: (purgedMedia: File[]) => void;
 }) {
     const { t } = useTranslation();
     const inputFiles = useRef(null);
@@ -25,34 +31,37 @@ export default function MediaUploader({
         ).click();
     };
 
-    const validateSelectedFile = (files) => {
+    const validateAndSetSelectedFile = (files: FileList) => {
         for (let i = 0; i <= files.length - 1; i++) {
-            const file = files.item(i).size / 1024 / 1024;
-            if (file > 5) {
+            const file = files.item(i);
+            if (!file) continue;
+            const fileSize = file.size / 1024 / 1024;
+            if (fileSize > 5) {
                 toast(t('campaigns.form.fileSizeErrorAlert'));
                 return;
-            } else setMedia([...media, files.item(i)]);
+            } else setMedia([...media, file]);
         }
     };
 
-    const onFileChange = (e) => {
-        validateSelectedFile(e.target.files);
-        // setMedia([...media, ...e.target.files]);
+    const onFileChange: ChangeEventHandler<HTMLInputElement> = async (e) => {
+        if (!e.target.files) return;
+        validateAndSetSelectedFile(e.target.files);
     };
 
-    const removeFile = (idx) => {
-        setMedia([...media.filter((file) => media.indexOf(file) !== Number.parseInt(idx, 10))]);
+    const removeFile = (index: number) => {
+        setMedia([...media.filter((file: any) => media.indexOf(file) !== index)]);
     };
 
-    const removePrevMedia = (idx) => {
-        setPurgedMedia((pm) => [...pm, prevMedia[idx]]);
-        setPrevMedia([
-            ...prevMedia.filter((file) => prevMedia.indexOf(file) !== Number.parseInt(idx, 10))
+    const removePreviousMedia = (index: number) => {
+        //@ts-ignore
+        setPurgedMedia((pm: any) => [...pm, previousMedia[index]]);
+        setPreviousMedia([
+            ...previousMedia.filter((file: any) => previousMedia.indexOf(file) !== index)
         ]);
     };
 
     const mediaList = () =>
-        media.map((file, index) => (
+        media.map((file: any, index: number) => (
             <div className="flex items-center justify-between mb-4" key={index}>
                 <div className="flex">
                     <div className="h-6 w-6 box-border mr-4">
@@ -72,8 +81,8 @@ export default function MediaUploader({
             </div>
         ));
 
-    const prevMediaList = () =>
-        prevMedia.map((file, index) => (
+    const previousMediaList = () =>
+        previousMedia?.map((file: any, index: number) => (
             <div className="flex items-center justify-between mb-4" key={index}>
                 <div className="flex">
                     <div className="h-6 w-6 box-border mr-4">
@@ -83,10 +92,10 @@ export default function MediaUploader({
                             alt="media gallery icon"
                         />
                     </div>
-                    <div className="text-sm">{file.filename}</div>
+                    <div className="text-sm">{file.name}</div>
                 </div>
                 <Trashcan
-                    onClick={() => removePrevMedia(index)}
+                    onClick={() => removePreviousMedia(index)}
                     data-idx={index}
                     className="cursor-pointer w-4 h-4 fill-tertiary-400 hover:fill-primary-500 duration-300"
                 />
@@ -95,10 +104,10 @@ export default function MediaUploader({
 
     return (
         <div>
-            {media?.length || prevMedia?.length ? (
+            {media?.length || previousMedia?.length ? (
                 <div>
+                    {previousMediaList()}
                     {mediaList()}
-                    {prevMediaList()}
                 </div>
             ) : (
                 <div className="text-xs text-center text-tertiary-600 mb-4">
@@ -121,3 +130,5 @@ export default function MediaUploader({
         </div>
     );
 }
+
+export default MediaUploader;

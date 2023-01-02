@@ -1,7 +1,6 @@
 import { Control, FieldValues, FieldErrorsImpl, UseFormRegister } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { SingleSelect } from 'src/components/ui/select/Select';
-import { LabelValueObject } from 'types';
 import { currencyOptions } from './helper';
 interface Props {
     isRequired?: boolean;
@@ -24,7 +23,6 @@ export default function CurrencyInput({
     defaultValue
 }: Props) {
     const { t } = useTranslation();
-
     return (
         <div>
             <div className="flex justify-between">
@@ -44,7 +42,11 @@ export default function CurrencyInput({
                     type="number"
                     {...register('budget_cents', {
                         required: { value: isRequired, message: t('website.requiredField') },
-                        valueAsNumber: true
+                        valueAsNumber: true,
+                        max: {
+                            value: 999999999999999,
+                            message: `${t('website.maxLength')} 999999999999999`
+                        }
                     })}
                     autoComplete="off"
                 />

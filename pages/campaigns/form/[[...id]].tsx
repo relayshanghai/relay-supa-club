@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { Layout } from 'src/modules/layout';
 import { useTranslation } from 'react-i18next';
 import { useForm, FormProvider, FieldErrorsImpl, Control, FieldValues } from 'react-hook-form';
@@ -21,6 +22,7 @@ import { Question, questions, TimelineQuestion } from 'src/components/campaigns/
 import LoaderWhite from 'src/components/icons/LoaderWhite';
 import { useCampaigns } from 'src/hooks/use-campaigns';
 import { useCallback } from 'react';
+import { supabase } from 'src/utils/supabase-client';
 
 const TimelineInput = ({
     q,
@@ -58,16 +60,20 @@ const TimelineInput = ({
     );
 };
 
+// interface ExistingFile {
+//     name: string; // use to delete
+//     url: string; // use to display
+// }
+
 export default function CampaignForm() {
     const router = useRouter();
 
     const [submitting, setSubmitting] = useState(false);
-    const [media, setMedia] = useState([]);
-    const [prevMedia, setPrevMedia] = useState([]);
-    const [
-        // purgedMedia,
-        setPurgedMedia
-    ] = useState([]);
+    const [media, setMedia] = useState<File[]>([]);
+    // only used in edit existing campaign mode.
+    const [previousMedia, setPreviousMedia] = useState<object[]>([]);
+    const [purgedMedia, setPurgedMedia] = useState<File[]>([]);
+
     const {
         register,
         handleSubmit,
@@ -77,27 +83,60 @@ export default function CampaignForm() {
         formState: { errors }
     } = useForm();
     const methods = useForm();
-    const { createCampaign, updateCampaign, campaign } = useCampaigns({
-        campaignId: router.query.id?.[0]
-    });
+    const campaignId = router.query.id?.[0];
+    const { createCampaign, updateCampaign, campaign } = useCampaigns({ campaignId });
     const { t } = useTranslation();
     const isAddMode = !router.query.id;
     const goBack = () => router.back();
+
+    const uploadFiles = useCallback(async (files: File[], campaignId: string) => {
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const filePath = `campaigns/${campaignId}/${file.name}`;
+            if (!file) continue;
+            await supabase.storage
+                .from('images')
+                .upload(filePath, file)
+                .catch((error) => {
+                    // eslint-disable-next-line no-console
+                    console.log(error);
+                });
+        }
+    }, []);
+
+    const deleteFiles = useCallback(async (files: File[], campaignId: string) => {
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const filePath = `campaigns/${campaignId}/${file.name}`;
+            if (!file) continue;
+            await supabase.storage
+                .from('images')
+                .remove([filePath])
+                .catch((error) => {
+                    // eslint-disable-next-line no-console
+                    console.log(error);
+                });
+        }
+    }, []);
 
     const createHandler = useCallback(
         async (data: any) => {
             setSubmitting(true);
             try {
-                await createCampaign(data);
+                const result = await createCampaign(data);
+                if (media.length > 0) {
+                    await uploadFiles(media, result.id);
+                }
+
                 toast(t('campaigns.form.successCreateMsg'));
                 setSubmitting(false);
-                router.push(`/campaigns/${encodeURIComponent(data.id)}`);
+                router.push(`/campaigns/${encodeURIComponent(result.id)}`);
             } catch (error) {
                 toast(handleError(error));
                 setSubmitting(false);
             }
         },
-        [createCampaign, router, t]
+        [createCampaign, media, router, t, uploadFiles]
     );
 
     const updateHandler = useCallback(
@@ -105,7 +144,13 @@ export default function CampaignForm() {
             setSubmitting(true);
             try {
                 await updateCampaign(data);
-                toast(t('campaigns.form.successCreateMsg'));
+                if (campaignId && media.length > 0) {
+                    await uploadFiles(media, campaignId);
+                }
+                if (campaignId && purgedMedia.length > 0) {
+                    await deleteFiles(purgedMedia, campaignId);
+                }
+                toast(t('campaigns.form.successUpdateMsg'));
                 setSubmitting(false);
                 router.push(`/campaigns/${encodeURIComponent(data.id)}`);
             } catch (error) {
@@ -113,15 +158,51 @@ export default function CampaignForm() {
                 setSubmitting(false);
             }
         },
-        [updateCampaign, router, t]
+        [updateCampaign, campaignId, media, purgedMedia, t, router, uploadFiles, deleteFiles]
     );
 
     const onSubmit = useCallback(
         async (formData: any) => {
-            return isAddMode ? createHandler(formData) : updateHandler(formData);
+            formData = { ...formData, media, purge_media: [...purgedMedia] };
+
+            if (isAddMode) {
+                createHandler(formData);
+            } else {
+                await updateHandler(formData);
+            }
         },
-        [isAddMode, createHandler, updateHandler]
+        [media, purgedMedia, isAddMode, createHandler, updateHandler]
     );
+
+    useEffect(() => {
+        const getFilePath = (filename: string) => {
+            const { publicURL } = supabase.storage
+                .from('images')
+                .getPublicUrl(`campaigns/${campaignId}/${filename}`);
+            return publicURL;
+        };
+
+        const getFiles = async () => {
+            const { data } = await supabase.storage.from('images').list(`campaigns/${campaignId}`, {
+                limit: 100,
+                offset: 0,
+                sortBy: { column: 'name', order: 'asc' }
+            });
+
+            const previousMediaFormatted = data?.map((file) => ({
+                url: `${getFilePath(file.name)}`,
+                name: file.name
+            }));
+
+            if (previousMediaFormatted) {
+                setPreviousMedia(previousMediaFormatted);
+            }
+        };
+
+        if (campaignId) {
+            getFiles();
+        }
+    }, [campaignId]);
 
     useEffect(() => {
         if (campaign) {
@@ -166,7 +247,6 @@ export default function CampaignForm() {
                                             register={register}
                                             errors={errors}
                                             isRequired={q.isRequired}
-                                            label={t(q.title)}
                                             placeHolder={q.placeholder}
                                         />
                                     )}
@@ -174,11 +254,12 @@ export default function CampaignForm() {
                                         <MediaUploader
                                             media={media}
                                             setMedia={setMedia}
-                                            prevMedia={prevMedia}
-                                            setPrevMedia={setPrevMedia}
+                                            previousMedia={previousMedia}
+                                            setPreviousMedia={setPreviousMedia}
                                             setPurgedMedia={setPurgedMedia}
                                         />
                                     )}
+
                                     {q.type === 'multiSelect' && (
                                         <MultiSelect
                                             fieldName={q.fieldName}

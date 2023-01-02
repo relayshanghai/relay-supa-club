@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { fetcher } from 'src/utils/fetcher';
+import { fetcher, nextFetch } from 'src/utils/fetcher';
 import useSWR from 'swr';
 import { CampaignCreatorDBInsert, CampaignDB, CampaignWithCompanyCreators } from 'types';
 import { useUser } from './use-user';
@@ -25,28 +25,28 @@ export const useCampaigns = ({ campaignId }: any = {}) => {
     }, [campaignId, data]);
 
     const createCampaign = useCallback(
-        async (input: any) => {
-            await fetch('/api/campaigns/create', {
+        async (input: any) =>
+            await nextFetch('campaigns/create', {
                 method: 'post',
                 body: JSON.stringify({
                     ...input,
                     company_id: profile?.company_id
                 })
-            });
-        },
+            }),
+
         [profile]
     );
 
     const updateCampaign = useCallback(
-        async ({ _companies, ...input }: any) => {
-            await fetch(`/api/campaigns/update`, {
+        async ({ _companies, ...input }: any) =>
+            await nextFetch('campaigns/update', {
                 method: 'post',
                 body: JSON.stringify({
                     ...input,
                     company_id: profile?.company_id
                 })
-            });
-        },
+            }),
+
         [profile]
     );
 
