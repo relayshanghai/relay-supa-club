@@ -1,6 +1,6 @@
 import { SVGProps } from 'react';
 
-export default function SVG({ ...props }: SVGProps<SVGSVGElement>) {
+export default function Account({ ...props }: SVGProps<SVGSVGElement>) {
     return (
         <svg
             width="800"
@@ -10,7 +10,7 @@ export default function SVG({ ...props }: SVGProps<SVGSVGElement>) {
             fill="none"
             {...props}
         >
-            <g fill="#000" fill-rule="evenodd" clip-rule="evenodd">
+            <g fill="#000" fillRule="evenodd" clipRule="evenodd">
                 <path
                     d="M8 3a3 3 0 100 6 3 3 0 000-6zM6.5 6a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0z"
                     fill="currentColor"
