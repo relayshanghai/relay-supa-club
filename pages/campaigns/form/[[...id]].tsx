@@ -107,7 +107,6 @@ export default function CampaignForm() {
         for (let i = 0; i < files.length; i++) {
             const file = files[i];
             const filePath = `campaigns/${campaignId}/${file.name}`;
-            console.log({ file, filePath, campaignId });
             if (!file) continue;
             await supabase.storage
                 .from('images')
@@ -124,7 +123,6 @@ export default function CampaignForm() {
             setSubmitting(true);
             try {
                 const result = await createCampaign(data);
-                console.log({ result, media });
                 if (media.length > 0) {
                     await uploadFiles(media, result.id);
                 }
@@ -165,7 +163,6 @@ export default function CampaignForm() {
     const onSubmit = useCallback(
         async (formData: any) => {
             formData = { ...formData, media, purge_media: [...purgedMedia] };
-            console.log(formData);
 
             if (isAddMode) {
                 createHandler(formData);
@@ -185,23 +182,19 @@ export default function CampaignForm() {
         };
 
         const getFiles = async () => {
-            const { data, error } = await supabase.storage
-                .from('images')
-                .list(`campaigns/${campaignId}`, {
-                    limit: 100,
-                    offset: 0,
-                    sortBy: { column: 'name', order: 'asc' }
-                });
+            const { data } = await supabase.storage.from('images').list(`campaigns/${campaignId}`, {
+                limit: 100,
+                offset: 0,
+                sortBy: { column: 'name', order: 'asc' }
+            });
 
-            console.log({ data, error });
-
-            const previousMediaFormatter = data?.map((file) => ({
+            const previousMediaFormatted = data?.map((file) => ({
                 url: `${getFilePath(file.name)}`,
                 name: file.name
             }));
 
-            if (previousMediaFormatter) {
-                setPreviousMedia(previousMediaFormatter);
+            if (previousMediaFormatted) {
+                setPreviousMedia(previousMediaFormatted);
             }
         };
 
