@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import { Button } from 'src/components/button';
 import CounterUp from 'src/components/counter-up';
+import { Title } from 'src/components/title';
 import { useUser } from 'src/hooks/use-user';
 
 const Home = () => {
@@ -9,11 +10,7 @@ const Home = () => {
     return (
         <div className="w-full h-full">
             <div className="flex flex-row justify-between px-10 py-8">
-                <Link href="/">
-                    <a className="font-poppins text-2xl font-bold text-tertiary-600 tracking-wide">
-                        relay.club
-                    </a>
-                </Link>
+                <Title />
                 <div>
                     {loading ? null : session && !loading ? (
                         <Link href="/dashboard" passHref>
