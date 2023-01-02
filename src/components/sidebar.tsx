@@ -42,7 +42,9 @@ const ActiveLink = ({ href, children }: { href: string; children: string }) => {
 
 const NavBarInner = ({ loggedIn }: { loggedIn: boolean | null }) => (
     <>
-        <Title />
+        <div className="px-1 pt-5">
+            <Title />
+        </div>
         <div className="flex flex-col space-y-4 mt-8">
             <ActiveLink href="/dashboard">{t('navbar.button.creators')}</ActiveLink>
             <ActiveLink href="/campaigns">{t('navbar.button.campaigns')}</ActiveLink>
