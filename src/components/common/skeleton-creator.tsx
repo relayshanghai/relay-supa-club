@@ -1,6 +1,7 @@
 /**
- * @description A column wiht a number of skeletons with a round avatar and a title.
+ * @description A column with a number of skeletons with a round avatar and a title.
  * @param {number} rowLimit The number of rows to render.
+ *
  */
 export default function SkeletonCreator({ rowLimit = 5 }) {
     return (

@@ -6,7 +6,7 @@ import SkeletonWithTitle from '../common/skeleton-with-title';
 import Skeleton from '../common/skeleton';
 import { LoadingPopover } from '../common/loading-popover';
 
-export default function SkeletonLoader({
+export default function CreatorSkeleton({
     error,
     errorMessage
 }: {
@@ -28,23 +28,23 @@ export default function SkeletonLoader({
                 )}
             </div>
             <div className="flex flex-col lg:flex-row items-center mb-2">
-                <Skeleton
-                    blockHeight={36}
-                    blockWidth={36}
-                    className="rounded-full sm:mr-6 mb-6 sm:mb-0"
-                />
+                <Skeleton className="h-32 w-32 !rounded-full sm:mr-6 mb-6 sm:mb-0" />
                 <div className="text-center sm:text-left">
-                    <Skeleton blockHeight={8} blockWidth={64} />
-                    <Skeleton blockHeight={5} blockWidth={24} />
+                    <Skeleton className="h-8 w-64" />
+                    <Skeleton className="h-5 w-24" />
                 </div>
             </div>
-            <Skeleton blockHeight={8} blockWidth={24} />
-            <Skeleton blockHeight={10} blockWidth={24} className="mb-12" />
+            <Skeleton className="h-8 w-24" />
+            <Skeleton className="h-10 w-32 mb-12" />
             <div className="flex flex-col mt-4 space-x-6 lg:flex-row">
                 <div className="w-full lg:w-1/2">
-                    <SkeletonWithTitle blocks={2} blockWidth={32} containerClassName="mb-12" />
+                    <SkeletonWithTitle
+                        blocks={2}
+                        containerClassName="mb-12"
+                        className="h-24 w-32"
+                    />
 
-                    <SkeletonWithTitle blockHeight={36} />
+                    <SkeletonWithTitle className="h-32 w-full" />
                 </div>
                 <div className="w-full lg:w-1/2">
                     <SkeletonCreatorBlock rowLimit={4} />

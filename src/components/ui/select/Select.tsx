@@ -95,7 +95,6 @@ const SingleSelect = ({
                         styles={CustomStyles}
                         value={options.find((c) => c.value === value)}
                         onChange={(v) => {
-                            console.log({ v });
                             const val = v as unknown as OnChangeValue<LabelValueObject, false>;
                             onChange(val?.value), setValue(valueName ?? '', val?.value);
                         }}
