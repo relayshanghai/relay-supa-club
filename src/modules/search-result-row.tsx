@@ -11,14 +11,17 @@ import { CreatorPlatform, CreatorSearchAccountObject } from 'types';
 export const SearchResultRow = ({
     creator,
     platform,
-    setLookalike
+    setLookalike,
+    setShowCampaignListModal,
+    setSelectedCreator
 }: {
     creator?: CreatorSearchAccountObject;
     platform: CreatorPlatform;
     setLookalike: (creator: CreatorSearchAccountObject) => void;
+    setSelectedCreator: (creator: CreatorSearchAccountObject) => void;
+    setShowCampaignListModal: (show: boolean) => void;
 }) => {
     const { t } = useTranslation();
-
     const placeholder = !creator;
     const handle = !placeholder
         ? creator.account.user_profile.username ||
@@ -30,7 +33,8 @@ export const SearchResultRow = ({
     // const [addedToPool, setAddedToPool] = useState(false);
 
     const addToCampaign = () => {
-        // TODO: Add to campaign
+        setShowCampaignListModal(true);
+        if (creator) setSelectedCreator(creator);
     };
 
     return (
@@ -105,7 +109,7 @@ export const SearchResultRow = ({
                         <div className="absolute top-0 left-0 translate-x-1/2 translate-y-1/2 p-2 text-sm">
                             <Link href="/account" passHref>
                                 <a className="text-primary-500">
-                                    Upgrade your subscription plan, to view more results.
+                                    {t('creators.filter.upgradeSubscriptionToSeeMore')}
                                 </a>
                             </Link>
                         </div>

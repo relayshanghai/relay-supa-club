@@ -1,13 +1,16 @@
 /* eslint-disable @next/next/no-img-element */
-import { Fragment, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from 'src/components/button';
 import { useSearch } from 'src/hooks/use-search';
 import { formatter } from 'src/utils/formatter';
 import { SearchTopics } from 'src/modules/search-topics';
-import { Popover, Transition } from '@headlessui/react';
 import { AdjustmentsVerticalIcon } from '@heroicons/react/24/solid';
 import { SearchResultRow } from './search-result-row';
-import { CreatorSearchResult } from 'types';
+import { CreatorSearchAccountObject, CreatorSearchResult } from 'types';
+import { Modal } from 'src/components/modal';
+import { useTranslation } from 'react-i18next';
+import { useCampaigns } from 'src/hooks/use-campaigns';
+import CampaignModalCard from 'src/components/campaigns/campaign-modal-card';
 
 const filterCountry = (items: any[]) => {
     return items.filter((item: any) => {
@@ -16,6 +19,7 @@ const filterCountry = (items: any[]) => {
 };
 
 export const Search = () => {
+    const { t } = useTranslation();
     const {
         platforms,
         platform,
@@ -47,7 +51,12 @@ export const Search = () => {
         setContactInfo
     } = useSearch();
 
-    const options = [1e3, 5e3, 1e4, 15e3, 25e3, 50e3, 1e5, 25e4, 50e4, 1e6];
+    const [filterModalOpen, setFilterModalOpen] = useState(false);
+
+    const options = [1e3, 5e3, 1e4, 15e3, 25e3, 50e3, 1e5, 25e4, 50e4, 1e6]; // Search Filter - Subscribers and Avg view filter options: 1k, 5k, 10k, 15k, 25k, 50k, 100k, 250k, 500k, 1m
+    const [showCampaignListModal, setShowCampaignListModal] = useState(false);
+    const [selectedCreator, setSelectedCreator] = useState<CreatorSearchAccountObject | null>(null);
+    const { campaigns } = useCampaigns();
 
     useEffect(() => {
         search();
@@ -80,7 +89,7 @@ export const Search = () => {
             <div>
                 <SearchTopics
                     path="/api/kol/topics"
-                    placeholder="Search for a topic"
+                    placeholder={t('creators.index.searchTopic')}
                     topics={tags}
                     platform={platform}
                     onSetTopics={(topics: any) => {
@@ -91,7 +100,7 @@ export const Search = () => {
             <div className="flex flex-col md:flex-row md:space-x-4 md:space-y-0 items-start space-y-2">
                 <SearchTopics
                     path="/api/kol/lookalike"
-                    placeholder="Lookalike"
+                    placeholder={t('creators.index.similarKol')}
                     topics={lookalike}
                     platform={platform}
                     onSetTopics={(topics: any) => {
@@ -133,7 +142,7 @@ export const Search = () => {
                 />
                 <SearchTopics
                     path="/api/kol/locations"
-                    placeholder="KOL locations"
+                    placeholder={t('creators.filter.locationPlaceholder')}
                     topics={KOLLocation}
                     platform={platform}
                     filter={filterCountry}
@@ -143,7 +152,7 @@ export const Search = () => {
                 />
                 <SearchTopics
                     path="/api/kol/locations"
-                    placeholder="Audience locations"
+                    placeholder={t('creators.filter.audienceLocation')}
                     topics={audienceLocation}
                     platform={platform}
                     filter={filterCountry}
@@ -189,277 +198,253 @@ export const Search = () => {
                 />
             </div>
             <div>
-                <Popover className="relative">
-                    {() => (
-                        <>
-                            <div className="flex flex-row space-x-4">
-                                <Popover.Button
-                                    className={`group text-gray-900 ring-gray-900 ring-opacity-5 bg-white rounded-md border border-transparent shadow ring-1 sm:text-sm focus:border-primary-500 focus:ring-primary-500 focus:outline-none flex flex-row items-center px-2 py-1`}
-                                >
-                                    <AdjustmentsVerticalIcon
-                                        className={`h-6 w-6 text-gray-400 transition duration-150 ease-in-out group-hover:text-opacity-80`}
-                                        aria-hidden="true"
-                                    />
-                                    <div className="flex flex-row space-x-2 text-xs">
-                                        {audience.length ? (
-                                            <div>
-                                                Subs: {formatter(audience[0])}
-                                                {` `}
-                                                To: {formatter(audience[1])}
-                                            </div>
-                                        ) : null}
-                                        {views.length ? (
-                                            <div>
-                                                Avg. Views: {formatter(views[0])}
-                                                {` `}
-                                                To: {formatter(views[1])}
-                                            </div>
-                                        ) : null}
-                                        {gender ? <div>{gender}</div> : null}
-                                        {engagement ? <div>{'>' + engagement}%</div> : null}
-                                        {lastPost ? <div>{lastPost} days</div> : null}
+                <div className="flex flex-row space-x-4">
+                    <button
+                        onClick={() => setFilterModalOpen(true)}
+                        className={`group text-gray-900 ring-gray-900 ring-opacity-5 bg-white rounded-md border border-transparent shadow ring-1 sm:text-sm focus:border-primary-500 focus:ring-primary-500 focus:outline-none flex flex-row items-center px-2 py-1`}
+                    >
+                        <AdjustmentsVerticalIcon
+                            className={`h-6 w-6 text-gray-400 transition duration-150 ease-in-out group-hover:text-opacity-80 mr-2`}
+                            aria-hidden="true"
+                        />
+                        <div className="flex flex-row space-x-5 text-xs">
+                            {!!audience.length && (
+                                <p>
+                                    {`${t('creators.filter.subs')}: ${formatter(
+                                        audience[0]
+                                    )} - ${formatter(audience[1])}`}
+                                </p>
+                            )}
+                            {!!views.length && (
+                                <p>
+                                    {`${t('creators.filter.avgViews')}: ${formatter(
+                                        views[0]
+                                    )} - ${formatter(views[1])}`}
+                                </p>
+                            )}
+                            {gender && <p>{t(`creators.filter.${gender}`)}</p>}
+                            {engagement && (
+                                <p>{`${t('creators.filter.engagement')}: >${engagement}%`}</p>
+                            )}
+                            {lastPost && (
+                                <p>{`${t('creators.filter.lastPost')}: ${lastPost} ${t(
+                                    'creators.filter.days'
+                                )}`}</p>
+                            )}
+                        </div>
+                    </button>
+                    {audience.length || views.length || gender || engagement || lastPost ? (
+                        <Button
+                            onClick={(e: any) => {
+                                e.preventDefault();
+                                setAudience([]);
+                                setViews([]);
+                                setGender(undefined);
+                                setEngagement(undefined);
+                                setLastPost(undefined);
+                                setContactInfo(undefined);
+                            }}
+                            variant="secondary"
+                        >
+                            {t('creators.index.clearFilter')}
+                        </Button>
+                    ) : null}
+                </div>
+
+                <Modal
+                    visible={filterModalOpen}
+                    onClose={() => setFilterModalOpen(false)}
+                    title={t('creators.filter.title') || ''}
+                >
+                    <div className="p-8 space-y-5">
+                        <h3>{t('creators.filter.intro')}</h3>
+
+                        <div>
+                            <label className="text-sm">
+                                <h4 className="font-bold text-lg">
+                                    {t('creators.filter.subscribers')}
+                                </h4>
+                                <div className="flex flex-row space-x-4">
+                                    <div>
+                                        <select
+                                            className="bg-primary-200 rounded-md p-1 mt-1"
+                                            value={audience[0]}
+                                            onChange={(e) => {
+                                                setAudience((val) => [e.target.value, val[1]]);
+                                            }}
+                                        >
+                                            <option value={'any'}>
+                                                {t('creators.filter.from')}
+                                            </option>
+                                            {options.map((val) => (
+                                                <option value={val} key={val}>
+                                                    {formatter(val)}
+                                                </option>
+                                            ))}
+                                        </select>
                                     </div>
-                                </Popover.Button>
-                                {audience.length ||
-                                views.length ||
-                                gender ||
-                                engagement ||
-                                lastPost ? (
-                                    <Button
-                                        onClick={(e: any) => {
-                                            e.preventDefault();
-                                            setAudience([]);
-                                            setViews([]);
+                                    <div>
+                                        <select
+                                            className="bg-primary-200 rounded-md p-1 mt-1"
+                                            value={audience[1]}
+                                            onChange={(e) => {
+                                                setAudience((val) => [val[0], e.target.value]);
+                                            }}
+                                        >
+                                            <option value={'any'}>{t('creators.filter.to')}</option>
+                                            {options.map((val) => (
+                                                <option value={val} key={val}>
+                                                    {formatter(val)}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                        <div>
+                            <label className="text-sm">
+                                <div className="font-bold text-lg">
+                                    {t('creators.filter.averageViews')}
+                                </div>
+                                <div className="flex flex-row space-x-4">
+                                    <div>
+                                        <select
+                                            className="bg-primary-200 rounded-md p-1 mt-1"
+                                            value={views[0]}
+                                            onChange={(e) => {
+                                                setViews((val) => [e.target.value, val[1]]);
+                                            }}
+                                        >
+                                            <option value={'any'}>
+                                                {t('creators.filter.from')}
+                                            </option>
+                                            {options.map((val) => (
+                                                <option value={val} key={val}>
+                                                    {formatter(val)}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <select
+                                            className="bg-primary-200 rounded-md p-1 mt-1"
+                                            value={views[1]}
+                                            onChange={(e) => {
+                                                setViews((val) => [val[0], e.target.value]);
+                                            }}
+                                        >
+                                            <option value={'any'}>{t('creators.filter.to')}</option>
+                                            {options.map((val) => (
+                                                <option value={val} key={val}>
+                                                    {formatter(val)}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                        <div>
+                            <label className="text-sm">
+                                <div className="font-bold text-lg">
+                                    {t('creators.filter.gender')}
+                                </div>
+                                <select
+                                    className="bg-primary-200 rounded-md p-1 mt-1"
+                                    value={gender}
+                                    onChange={(e) => {
+                                        if (e.target.value === 'any') {
                                             setGender(undefined);
+                                        } else {
+                                            setGender(e.target.value);
+                                        }
+                                    }}
+                                >
+                                    <option value={'any'}>{t('creators.filter.any')}</option>
+                                    <option value={'male'}>{t('creators.filter.male')}</option>
+                                    <option value={'female'}>{t('creators.filter.female')}</option>
+                                </select>
+                            </label>
+                        </div>
+                        <div>
+                            <label className="text-sm">
+                                <div className="font-bold text-lg">Engagement Rate</div>
+                                <select
+                                    className="bg-primary-200 rounded-md p-1 mt-1"
+                                    value={engagement}
+                                    onChange={(e) => {
+                                        if (e.target.value === 'any') {
                                             setEngagement(undefined);
+                                        } else {
+                                            setEngagement(e.target.value);
+                                        }
+                                    }}
+                                >
+                                    <option value={'any'}>{t('creators.filter.any')}</option>
+                                    {Array.from(Array(10)).map((_, i) => {
+                                        return (
+                                            <option key={i} value={i + 1}>
+                                                {`>` + (i + 1) + `%`}
+                                            </option>
+                                        );
+                                    })}
+                                </select>
+                            </label>
+                        </div>
+                        <div>
+                            <label className="text-sm">
+                                <div className="font-bold text-lg">Last Post</div>
+                                <select
+                                    className="bg-primary-200 rounded-md p-1 mt-1"
+                                    value={lastPost}
+                                    onChange={(e) => {
+                                        if (e.target.value === 'any') {
                                             setLastPost(undefined);
+                                        } else {
+                                            setLastPost(e.target.value);
+                                        }
+                                    }}
+                                >
+                                    <option value={'any'}>{t('creators.filter.any')}</option>
+                                    <option value={30}>30 {t('creators.filter.days')}</option>
+                                    <option value={90}>3 {t('creators.filter.months')}</option>
+                                    <option value={120}>6 {t('creators.filter.months')}</option>
+                                </select>
+                            </label>
+                        </div>
+                        <div>
+                            <label className="text-sm">
+                                <div className="font-bold text-lg">
+                                    {t('creators.filter.contactInformation')}
+                                </div>
+                                <select
+                                    className="bg-primary-200 rounded-md p-1 mt-1"
+                                    value={contactInfo}
+                                    onChange={(e) => {
+                                        if (e.target.value === 'any') {
                                             setContactInfo(undefined);
-                                        }}
-                                        variant="secondary"
-                                    >
-                                        Clear
-                                    </Button>
-                                ) : null}
-                            </div>
-                            <Transition
-                                as={Fragment}
-                                enter="transition ease-out duration-200"
-                                enterFrom="opacity-0 translate-y-1"
-                                enterTo="opacity-100 translate-y-0"
-                                leave="transition ease-in duration-150"
-                                leaveFrom="opacity-100 translate-y-0"
-                                leaveTo="opacity-0 translate-y-1"
-                            >
-                                <Popover.Panel className="absolute left-1/2 z-10 mt-3 w-screen max-w-md -translate-x-1/2 transform px-4 sm:px-0">
-                                    <div className="overflow-hidden rounded-md shadow-2xl ring-1 ring-black ring-opacity-5">
-                                        <div className="relative bg-white p-8 space-y-8">
-                                            <div>
-                                                <div className="text-xl font-bold">
-                                                    Filter Creator
-                                                </div>
-                                                <div>
-                                                    Narrow down to the ideal KOLs for your brand!
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <label className="text-sm">
-                                                    <div className="font-bold text-lg">
-                                                        Subscribers
-                                                    </div>
-                                                    <div className="flex flex-row space-x-4">
-                                                        <div>
-                                                            <select
-                                                                className="bg-primary-200 rounded-md"
-                                                                value={audience[0]}
-                                                                onChange={(e) => {
-                                                                    setAudience((val) => [
-                                                                        e.target.value,
-                                                                        val[1]
-                                                                    ]);
-                                                                }}
-                                                            >
-                                                                <option value={'any'}>From</option>
-                                                                {options.map((val) => (
-                                                                    <option value={val} key={val}>
-                                                                        {formatter(val)}
-                                                                    </option>
-                                                                ))}
-                                                            </select>
-                                                        </div>
-                                                        <div>
-                                                            <select
-                                                                className="bg-primary-200 rounded-md"
-                                                                value={audience[1]}
-                                                                onChange={(e) => {
-                                                                    setAudience((val) => [
-                                                                        val[0],
-                                                                        e.target.value
-                                                                    ]);
-                                                                }}
-                                                            >
-                                                                <option value={'any'}>To</option>
-                                                                {options.map((val) => (
-                                                                    <option value={val} key={val}>
-                                                                        {formatter(val)}
-                                                                    </option>
-                                                                ))}
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                </label>
-                                            </div>
-                                            <div>
-                                                <label className="text-sm">
-                                                    <div className="font-bold text-lg">
-                                                        Average Views
-                                                    </div>
-                                                    <div className="flex flex-row space-x-4">
-                                                        <div>
-                                                            <select
-                                                                className="bg-primary-200 rounded-md"
-                                                                value={views[0]}
-                                                                onChange={(e) => {
-                                                                    setViews((val) => [
-                                                                        e.target.value,
-                                                                        val[1]
-                                                                    ]);
-                                                                }}
-                                                            >
-                                                                <option value={'any'}>From</option>
-                                                                {options.map((val) => (
-                                                                    <option value={val} key={val}>
-                                                                        {formatter(val)}
-                                                                    </option>
-                                                                ))}
-                                                            </select>
-                                                        </div>
-                                                        <div>
-                                                            <select
-                                                                className="bg-primary-200 rounded-md"
-                                                                value={views[1]}
-                                                                onChange={(e) => {
-                                                                    setViews((val) => [
-                                                                        val[0],
-                                                                        e.target.value
-                                                                    ]);
-                                                                }}
-                                                            >
-                                                                <option value={'any'}>To</option>
-                                                                {options.map((val) => (
-                                                                    <option value={val} key={val}>
-                                                                        {formatter(val)}
-                                                                    </option>
-                                                                ))}
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                </label>
-                                            </div>
-                                            <div>
-                                                <label className="text-sm">
-                                                    <div className="font-bold text-lg">Gender</div>
-                                                    <select
-                                                        className="bg-primary-200 rounded-md"
-                                                        value={gender}
-                                                        onChange={(e) => {
-                                                            if (e.target.value === 'any') {
-                                                                setGender(undefined);
-                                                            } else {
-                                                                setGender(e.target.value);
-                                                            }
-                                                        }}
-                                                    >
-                                                        <option value={'any'}>Any</option>
-                                                        <option value={'male'}>Male</option>
-                                                        <option value={'female'}>Female</option>
-                                                    </select>
-                                                </label>
-                                            </div>
-                                            <div>
-                                                <label className="text-sm">
-                                                    <div className="font-bold text-lg">
-                                                        Engagement Rate
-                                                    </div>
-                                                    <select
-                                                        className="bg-primary-200 rounded-md"
-                                                        value={engagement}
-                                                        onChange={(e) => {
-                                                            if (e.target.value === 'any') {
-                                                                setEngagement(undefined);
-                                                            } else {
-                                                                setEngagement(e.target.value);
-                                                            }
-                                                        }}
-                                                    >
-                                                        <option value={'any'}>Any</option>
-                                                        {Array.from(Array(10)).map((_, i) => {
-                                                            return (
-                                                                <option key={i} value={i + 1}>
-                                                                    {`>` + (i + 1) + `%`}
-                                                                </option>
-                                                            );
-                                                        })}
-                                                    </select>
-                                                </label>
-                                            </div>
-                                            <div>
-                                                <label className="text-sm">
-                                                    <div className="font-bold text-lg">
-                                                        Last Post
-                                                    </div>
-                                                    <select
-                                                        className="bg-primary-200 rounded-md"
-                                                        value={lastPost}
-                                                        onChange={(e) => {
-                                                            if (e.target.value === 'any') {
-                                                                setLastPost(undefined);
-                                                            } else {
-                                                                setLastPost(e.target.value);
-                                                            }
-                                                        }}
-                                                    >
-                                                        <option value={'any'}>Any</option>
-                                                        <option value={30}>30 days</option>
-                                                        <option value={90}>3 months</option>
-                                                        <option value={120}>6 months</option>
-                                                    </select>
-                                                </label>
-                                            </div>
-                                            <div>
-                                                <label className="text-sm">
-                                                    <div className="font-bold text-lg">
-                                                        Contact Information
-                                                    </div>
-                                                    <select
-                                                        className="bg-primary-200 rounded-md"
-                                                        value={contactInfo}
-                                                        onChange={(e) => {
-                                                            if (e.target.value === 'any') {
-                                                                setContactInfo(undefined);
-                                                            } else {
-                                                                setContactInfo(e.target.value);
-                                                            }
-                                                        }}
-                                                    >
-                                                        <option value={'any'}>Any</option>
-                                                        <option value={'email'}>Has Email</option>
-                                                    </select>
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </Popover.Panel>
-                            </Transition>
-                        </>
-                    )}
-                </Popover>
+                                        } else {
+                                            setContactInfo(e.target.value);
+                                        }
+                                    }}
+                                >
+                                    <option value={'any'}>{t('creators.filter.any')}</option>
+                                    <option value={'email'}>
+                                        {t('creators.filter.emailAvailable')}
+                                    </option>
+                                </select>
+                            </label>
+                        </div>
+                    </div>
+                </Modal>
             </div>
             <div>
-                {results ? (
+                {results && (
                     <div className="font-bold text-sm">
-                        Total Results: {formatter(results.total)}
+                        {`${t('creators.index.results')}: ${formatter(results.total)}`}
                     </div>
-                ) : null}
+                )}
             </div>
             <div className="w-full overflow-auto">
                 <table
@@ -470,19 +455,19 @@ export const Search = () => {
                     <thead className="bg-white sticky top-0">
                         <tr>
                             <th className="w-2/4 px-4 py-4 text-xs text-gray-500 font-normal text-left">
-                                Account
+                                {t('creators.index.account')}
                             </th>
                             <th className="text-xs text-gray-500 font-normal text-left">
-                                Followers
+                                {t('creators.index.subscribers')}
                             </th>
                             <th className="text-xs text-gray-500 font-normal text-left">
-                                Engagements
+                                {t('creators.index.engagements')}
                             </th>
                             <th className="text-xs text-gray-500 font-normal text-left">
-                                Engagement Rate
+                                {t('creators.index.engagementRate')}
                             </th>
                             <th className="text-xs text-gray-500 font-normal text-left">
-                                Avg. views
+                                {t('creators.index.avgViews')}
                             </th>
                         </tr>
                     </thead>
@@ -494,12 +479,41 @@ export const Search = () => {
                                       creator={creator}
                                       platform={platform}
                                       setLookalike={setLookalike}
+                                      setShowCampaignListModal={setShowCampaignListModal}
+                                      setSelectedCreator={setSelectedCreator}
                                   />
                               ))
                             : null}
                     </tbody>
                 </table>
             </div>
+            <Modal
+                title={t('campaigns.modal.addToCampaign') || ''}
+                visible={!!showCampaignListModal}
+                onClose={() => {
+                    setShowCampaignListModal(false);
+                }}
+            >
+                <>
+                    {' '}
+                    <div className="py-4 text-sm text-tertiary-500">
+                        {t('campaigns.modal.addThisInfluencer')}
+                    </div>
+                    {campaigns?.length ? (
+                        <div>
+                            {campaigns.map((campaign, index) => (
+                                <CampaignModalCard
+                                    campaign={campaign}
+                                    creator={selectedCreator}
+                                    key={index}
+                                />
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="text-sm text-gray-600">You have no campaign yet</div>
+                    )}
+                </>
+            </Modal>
             {/* <div className="space-x-2">
                 {subscription?.plans.amount > 10
                     ? Array.from(Array(Math.ceil(subscription.plans.amount / 10))).map(

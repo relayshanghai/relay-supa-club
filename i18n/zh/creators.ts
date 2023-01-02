@@ -36,12 +36,11 @@ const creators = {
         influencerFilters: 'KOL筛选',
         location: '地点',
         subscribers: '粉丝数量',
-        avgViews: '平均观看次数',
+        averageViews: '平均观看次数',
         gender: '性别',
         language: '语言',
         engagementRate: '互动率',
         lastPost: '上次更新时间',
-        withContact: '联系方式',
         contactInformation: '联系方式',
         emailAvailable: '有邮箱',
         audienceFilter: '粉丝筛选',
@@ -62,7 +61,15 @@ const creators = {
         audienceLocation: '粉丝国家',
         categoriesDescr: '点击类型进行筛选',
         influencerLocationDescr: '点击选择KOL所在国家',
-        audienceLocationDescr: '点击选择KOL的粉丝所在国家'
+        audienceLocationDescr: '点击选择KOL的粉丝所在国家',
+        male: '男性',
+        female: '女性',
+        subs: '粉丝数',
+        avgViews: '平均观看量',
+        engagement: '互动率',
+        days: '天',
+        months: '月',
+        upgradeSubscriptionToSeeMore: '升级您的订阅以查看更多结果。'
     },
     show: {
         lastUpdate: '最近更新',
@@ -148,7 +155,8 @@ const creators = {
             ageSplit: '我们通过分析最近视频中的观众头像、姓名、描述和自拍照来确定这一点。',
             audienceLocation: '我们通过分析最近视频中的位置标签、文本、简介和标题来确定这一点',
             language: '我们通过最近发布内容的文字来判断'
-        }
+        },
+        audienceGenderAge: '粉丝性别年龄'
     },
     form: {
         createCreator: '创建KOL',

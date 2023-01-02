@@ -1,4 +1,5 @@
 import { CSSProperties } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export interface Props {
     currentTab: string;
@@ -11,11 +12,12 @@ type TabLabel = {
 };
 
 export default function Tabs({ currentTab, changeTab }: Props) {
+    const { t } = useTranslation();
     const tabs = [
-        { label: 'All', value: '' },
-        { label: 'In progress', value: 'in progress' },
-        { label: 'Not Started', value: 'not started' },
-        { label: 'Completed', value: 'completed' }
+        { label: t('campaigns.index.status.all'), value: '' },
+        { label: t('campaigns.index.status.inProgress'), value: 'in progress' },
+        { label: t('campaigns.index.status.notStarted'), value: 'not started' },
+        { label: t('campaigns.index.status.completed'), value: 'completed' }
     ];
 
     const selectStyle: CSSProperties = {

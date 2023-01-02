@@ -2,7 +2,13 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { chinaFilter } from 'src/utils/utils';
 
-export const ProgressBlock = ({ stats: statsFull, title }: { stats: any; title: string }) => {
+export const ProgressBlock = ({
+    stats: statsFull,
+    title
+}: {
+    stats: { name: string; weight: number }[];
+    title: string;
+}) => {
     const [showMore, setShowMore] = useState(false);
     const { t } = useTranslation();
     const stats = showMore ? statsFull : statsFull.slice(0, 5);
@@ -11,12 +17,12 @@ export const ProgressBlock = ({ stats: statsFull, title }: { stats: any; title: 
     return (
         <div>
             <div className="font-semibold text-gray-600 mb-2">{t(`creators.show.${title}`)}</div>
-            {stats.map((stat: any, index: number) => (
+            {stats.map((stat, index: number) => (
                 <div key={index}>
                     <div className="bg-white rounded-lg p-1.5 mb-2">
                         <div className="flex items-center justify-between">
                             <div className="text-sm font-semibold text-gray-600">
-                                {chinaFilter(stat?.name)}
+                                {stat.name ? chinaFilter(stat.name) : ''}
                             </div>
                             <div className="text-sm text-gray-600">{stat.weight.toFixed(2)}%</div>
                         </div>
@@ -25,7 +31,7 @@ export const ProgressBlock = ({ stats: statsFull, title }: { stats: any; title: 
                                 <div
                                     style={{ width: `${stat.weight * 100}%` }}
                                     className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-primary-500 rounded"
-                                ></div>
+                                />
                             </div>
                         </div>
                     </div>

@@ -1,4 +1,4 @@
-export default {
+const campaigns = {
     index: {
         title: '项目管理',
         status: {
@@ -224,3 +224,4 @@ export default {
         integratedVideo: '植入广告'
     }
 };
+export default campaigns;

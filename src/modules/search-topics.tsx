@@ -1,5 +1,6 @@
 import { useCallback, useRef, useState } from 'react';
-import { InputWithAutocomplete } from 'src/components/input-with-autocomplete';
+import InputWithAutocomplete from 'src/components/input-with-autocomplete';
+import useOnOutsideClick from 'src/hooks/useOnOutsideClick';
 
 export const SearchTopics = ({
     onSetTopics,
@@ -11,14 +12,16 @@ export const SearchTopics = ({
     SuggestionComponent,
     TagComponent
 }: any) => {
-    const [loading, setLoading] = useState(false);
     const [suggestions, setSuggestions] = useState<any[]>([]);
     const ref = useRef<any>();
+    const inputRef = useRef<any>();
+    useOnOutsideClick(inputRef, () => {
+        setSuggestions([]);
+        setTopicSearch('');
+    });
 
     const setTopicSearch = useCallback(
         async (term: any) => {
-            setLoading(true);
-
             if (ref.current) ref.current.abort();
 
             const controller = new AbortController();
@@ -40,8 +43,6 @@ export const SearchTopics = ({
                 const data = res.data || res;
                 setSuggestions(filter ? filter(data) : data);
             }
-
-            setLoading(false);
         },
         [platform, path, filter]
     );
@@ -69,12 +70,12 @@ export const SearchTopics = ({
 
     return (
         <InputWithAutocomplete
-            disabled={loading}
             SuggestionComponent={SuggestionComponent}
             TagComponent={TagComponent}
             placeholder={placeholder}
             tags={topics}
             suggestions={suggestions}
+            ref={inputRef}
             onChange={(item: any) => {
                 setTopicSearch(item);
             }}

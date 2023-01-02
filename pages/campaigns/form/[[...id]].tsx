@@ -73,6 +73,7 @@ export default function CampaignForm() {
     // only used in edit existing campaign mode.
     const [previousMedia, setPreviousMedia] = useState<object[]>([]);
     const [purgedMedia, setPurgedMedia] = useState<File[]>([]);
+
     const {
         register,
         handleSubmit,

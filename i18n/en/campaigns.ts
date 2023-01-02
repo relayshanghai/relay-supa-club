@@ -1,5 +1,4 @@
-/* eslint-disable import/no-anonymous-default-export */
-export default {
+const campaigns = {
     index: {
         title: 'Campaigns',
         status: {
@@ -238,3 +237,4 @@ export default {
         integratedVideo: 'Integrated Video'
     }
 };
+export default campaigns;
