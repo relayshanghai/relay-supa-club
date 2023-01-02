@@ -35,3 +35,4 @@ export { default as Info } from './Info';
 export { default as Money } from './Money';
 export { default as FourSquare } from './FourSquare';
 export { default as Account } from './Account';
+export { default as HamburgerMenu } from './HamburgerMenu';

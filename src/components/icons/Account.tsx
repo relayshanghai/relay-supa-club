@@ -1,6 +1,6 @@
 import { SVGProps } from 'react';
 
-export default function Compass({ ...props }: SVGProps<SVGSVGElement>) {
+export default function SVG({ ...props }: SVGProps<SVGSVGElement>) {
     return (
         <svg
             width="800"
