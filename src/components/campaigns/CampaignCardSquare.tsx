@@ -98,6 +98,7 @@ export default function CampaignCardSquare({ campaign }: { campaign: any }) {
                                 {campaign?.companies?.name}
                             </div>
                             <div className="flex items-center flex-wrap">
+                                TODO: fix the counts and switch tabs on next PR
                                 {campaign?.status_counts &&
                                     Object.entries(campaign?.status_counts).map((status, index) => (
                                         <Link key={index} href={`/campaigns/${campaign.id}`}>
