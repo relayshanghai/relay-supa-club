@@ -68,11 +68,11 @@ export const Layout = ({ children }: any) => {
                         <div className="px-8 py-4 flex flex-row items-center space-x-4">
                             <div className="text-sm flex flex-row items-center space-x-4">
                                 <LanguageToggle />
-                                {!!subscription ? (
+                                {!!subscription && (
                                     <Button onClick={() => router.push('/account')}>
                                         {t('navbar.button.subscribeNow')}
                                     </Button>
-                                ) : null}
+                                )}
                                 <p>
                                     {`${t('navbar.usage')}: ${company?.usages?.length || '0'}/${
                                         company?.usage_limit || '0'
@@ -80,7 +80,7 @@ export const Layout = ({ children }: any) => {
                                 </p>
                             </div>
                             <div>
-                                {!loading && session ? (
+                                {!loading && session && (
                                     <div>
                                         <button
                                             onClick={() => setAccountMenuOpen(!accountMenuOpen)}
@@ -113,11 +113,10 @@ export const Layout = ({ children }: any) => {
                                             </div>
                                         )}
                                     </div>
-                                ) : loading ? (
-                                    <div className="w-9 l-9 p-2">
-                                        <Spinner className="fill-primary-600 text-white" />
-                                    </div>
-                                ) : null}
+                                )}
+                                {loading && (
+                                    <Spinner className="w-9 h-9 p-2 fill-primary-600 text-white" />
+                                )}
                             </div>
                         </div>
                     </div>
