@@ -1,12 +1,14 @@
 import { Dialog, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
 
-export const Modal: React.FC<{
+export interface ModalProps {
     visible: boolean;
-    title: any;
-    onClose?: any;
-    children?: any;
-}> = ({ children, visible, onClose, title }) => {
+    title?: string | JSX.Element;
+    onClose: (value: boolean) => void;
+    children: JSX.Element | JSX.Element[];
+}
+
+export const Modal: React.FC<ModalProps> = ({ children, visible, onClose, title }) => {
     return (
         <Transition appear show={visible} as={Fragment}>
             <Dialog as="div" className="relative z-10" onClose={onClose}>
@@ -41,7 +43,7 @@ export const Modal: React.FC<{
                                     {title}
                                 </Dialog.Title>
 
-                                {children}
+                                <>{children}</>
                             </Dialog.Panel>
                         </Transition.Child>
                     </div>

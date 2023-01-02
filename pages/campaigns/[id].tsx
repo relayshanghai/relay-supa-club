@@ -45,7 +45,7 @@ export default function CampaignShow() {
                                     {currentCampaign?.name}
                                 </div>
                                 <div className="px-2 py-1 bg-primary-100 hover:bg-primary-200 text-primary-500 text-xs rounded-md duration-300 cursor-pointer">
-                                    {currentCampaign?.status}
+                                    {t(`campaigns.show.status.${currentCampaign?.status}`)}
                                 </div>
                             </div>
                             <div className="mb-1">

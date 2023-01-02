@@ -109,7 +109,7 @@ export const SearchResultRow = ({
                         <div className="absolute top-0 left-0 translate-x-1/2 translate-y-1/2 p-2 text-sm">
                             <Link href="/account" passHref>
                                 <a className="text-primary-500">
-                                    Upgrade your subscription plan, to view more results.
+                                    {t('creators.filter.upgradeSubscriptionToSeeMore')}
                                 </a>
                             </Link>
                         </div>
