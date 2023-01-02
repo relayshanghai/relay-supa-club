@@ -33,3 +33,5 @@ export { default as Engagements } from './Engagements';
 export { default as LikesFilled } from './LikesFilled';
 export { default as Info } from './Info';
 export { default as Money } from './Money';
+export { default as FourSquare } from './FourSquare';
+export { default as Account } from './Account';

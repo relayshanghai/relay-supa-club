@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
 import { LanguageToggle } from 'src/components/common/language-toggle';
+import { Account, Compass, FourSquare } from 'src/components/icons';
 import { Spinner } from 'src/components/spinner';
 import { Title } from 'src/components/title';
 import { useCompany } from 'src/hooks/use-company';
@@ -12,17 +13,34 @@ import { useUser } from 'src/hooks/use-user';
 import useOnOutsideClick from 'src/hooks/useOnOutsideClick';
 import { supabase } from 'src/utils/supabase-client';
 
-const ActiveLink = ({ href, children }: any) => {
+const ActiveLink = ({ href, children }: { href: string; children: string }) => {
     const router = useRouter();
-    const isRouteActive = router.pathname === href;
+    const pathRoot = router.pathname.split('/')[1]; // /dashboard/creators => dashboard
+    const hrefRoot = href.split('/')[1]; // /dashboard/creators => dashboard
+
+    let isRouteActive = pathRoot === hrefRoot;
+
+    // creators page special case
+    if (pathRoot === 'creator' && hrefRoot === 'dashboard') {
+        isRouteActive = true;
+    }
 
     return (
         <Link href={href}>
             <a
-                className={`text-sm transition hover:text-primary-500 ${
-                    isRouteActive ? 'text-primary-600' : ''
+                className={`flex items-center py-2 px-4 text-sm transition hover:text-primary-700 border-l-4 ${
+                    isRouteActive ? 'text-primary-500 border-primary-500 border-l-4' : ''
                 }`}
             >
+                {(hrefRoot === 'creator' || hrefRoot === 'dashboard') && (
+                    <Compass height={18} width={18} className="mr-4 text-inherit" />
+                )}
+                {hrefRoot === 'campaigns' && (
+                    <FourSquare height={18} width={18} className="mr-4 text-inherit" />
+                )}
+                {hrefRoot === 'account' && (
+                    <Account height={18} width={18} className="mr-4 text-inherit" />
+                )}
                 {children}
             </a>
         </Link>
@@ -52,11 +70,14 @@ export const Layout = ({ children }: any) => {
     return (
         <div className="w-full h-full">
             <div className="flex flex-row h-full">
-                <div className="px-4 py-4 flex-col bg-white border-r border-gray-100 w-64 hidden md:flex">
+                <div className="flex-col bg-white border-r border-gray-100 w-64 hidden md:flex">
                     <Title />
                     <div className="flex flex-col space-y-4 mt-8">
                         <ActiveLink href="/dashboard">{t('navbar.button.creators')}</ActiveLink>
                         <ActiveLink href="/campaigns">{t('navbar.button.campaigns')}</ActiveLink>
+                        {session && !loading && (
+                            <ActiveLink href="/account">{t('navbar.button.account')}</ActiveLink>
+                        )}
                     </div>
                 </div>
                 <div className="flex flex-col w-full overflow-hidden">
