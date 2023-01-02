@@ -43,7 +43,7 @@ const campaigns = {
         viewProfile: '查看KOL',
         messagePlaceholder: '在这里写下您的信息',
         publicationDate: '发布日期',
-        publicationDesorb: '这是 KOL 发布项目内容的日期。 定期更新，让您的团队和您自己了解发布日期',
+        publicationDescr: '这是 KOL 发布项目内容的日期。 定期更新，让您的团队和您自己了解发布日期',
         payment: '支付信息',
         paymentDescr: '如果您与 KOL 协商好价格，请在此处记录价格和支付详情以便追踪。',
         kolRate: 'KOL 价格 (USD)',
