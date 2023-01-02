@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import useAboveScreenWidth from 'src/hooks/useAboveScreenWidth';
 import { Compass, FourSquare, Account } from './icons';
+import { Title } from './title';
 
 const ActiveLink = ({ href, children }: { href: string; children: string }) => {
     const router = useRouter();
@@ -41,11 +42,7 @@ const ActiveLink = ({ href, children }: { href: string; children: string }) => {
 
 const NavBarInner = ({ loggedIn }: { loggedIn: boolean | null }) => (
     <>
-        <Link href="/">
-            <a className="px-4 font-poppins text-2xl font-bold text-tertiary-600 tracking-wide">
-                relay.club
-            </a>
-        </Link>
+        <Title />
         <div className="flex flex-col space-y-4 mt-8">
             <ActiveLink href="/dashboard">{t('navbar.button.creators')}</ActiveLink>
             <ActiveLink href="/campaigns">{t('navbar.button.campaigns')}</ActiveLink>
@@ -82,7 +79,7 @@ export const Sidebar = ({
             />
 
             <div
-                className={`pt-3 fixed inset-y-0 left-0 w-64 bg-white border-r border-gray-100 transition-all transform z-50 ${
+                className={`fixed inset-y-0 left-0 w-64 bg-white border-r border-gray-100 transition-all transform z-50 ${
                     open ? 'translate-x-0' : '-translate-x-full'
                 } ${open && desktop ? 'md:relative' : ''}`}
             >
