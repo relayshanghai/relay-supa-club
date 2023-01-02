@@ -7,7 +7,12 @@ import { SearchTopics } from 'src/modules/search-topics';
 import { Popover, Transition } from '@headlessui/react';
 import { AdjustmentsVerticalIcon } from '@heroicons/react/24/solid';
 import { SearchResultRow } from './search-result-row';
-import { CreatorSearchResult } from 'types';
+import { CreatorSearchAccountObject, CreatorSearchResult } from 'types';
+import { useState } from 'react';
+import { Modal } from 'src/components/modal';
+import { useTranslation } from 'react-i18next';
+import { useCampaigns } from 'src/hooks/use-campaigns';
+import CampaignModalCard from 'src/components/campaigns/campaign-modal-card';
 
 const filterCountry = (items: any[]) => {
     return items.filter((item: any) => {
@@ -47,7 +52,11 @@ export const Search = () => {
         setContactInfo
     } = useSearch();
 
-    const options = [1e3, 5e3, 1e4, 15e3, 25e3, 50e3, 1e5, 25e4, 50e4, 1e6];
+    const options = [1e3, 5e3, 1e4, 15e3, 25e3, 50e3, 1e5, 25e4, 50e4, 1e6]; // Search Filter - Subscribers and Avg view filter options: 1k, 5k, 10k, 15k, 25k, 50k, 100k, 250k, 500k, 1m
+    const [showCampaignListModal, setShowCampaignListModal] = useState(false);
+    const [selectedCreator, setSelectedCreator] = useState<CreatorSearchAccountObject | null>(null);
+    const { t } = useTranslation();
+    const { campaigns } = useCampaigns();
 
     useEffect(() => {
         search();
@@ -494,12 +503,38 @@ export const Search = () => {
                                       creator={creator}
                                       platform={platform}
                                       setLookalike={setLookalike}
+                                      setShowCampaignListModal={setShowCampaignListModal}
+                                      setSelectedCreator={setSelectedCreator}
                                   />
                               ))
                             : null}
                     </tbody>
                 </table>
             </div>
+            <Modal
+                title={t('campaigns.modal.addToCampaign')}
+                visible={!!showCampaignListModal}
+                onClose={() => {
+                    setShowCampaignListModal(false);
+                }}
+            >
+                <div className="py-4 text-sm text-tertiary-500">
+                    {t('campaigns.modal.addThisInfluencer')}
+                </div>
+                {campaigns?.length ? (
+                    <div>
+                        {campaigns.map((campaign, index) => (
+                            <CampaignModalCard
+                                campaign={campaign}
+                                creator={selectedCreator}
+                                key={index}
+                            />
+                        ))}
+                    </div>
+                ) : (
+                    <div className="text-sm text-gray-600">You have no campaign yet</div>
+                )}
+            </Modal>
             {/* <div className="space-x-2">
                 {subscription?.plans.amount > 10
                     ? Array.from(Array(Math.ceil(subscription.plans.amount / 10))).map(
