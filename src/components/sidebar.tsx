@@ -42,7 +42,7 @@ const ActiveLink = ({ href, children }: { href: string; children: string }) => {
 const NavBarInner = ({ loggedIn }: { loggedIn: boolean | null }) => (
     <>
         <Link href="/">
-            <a className="px-4 font-poppins text-2xl font-bold text-tertiary-600 tracking-wide">
+            <a className="px-5 font-poppins text-2xl font-bold text-tertiary-600 tracking-wide">
                 relay.club
             </a>
         </Link>
