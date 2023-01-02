@@ -159,7 +159,8 @@ const creators = {
             audienceLocation:
                 'We determine this by analyzing location tags, text, bio and caption in recent posts',
             language: 'We determine this by analyzing texts in the recent posts'
-        }
+        },
+        audienceGenderAge: 'Audience gender by age'
     },
     form: {
         createCreator: 'Create KOL',
