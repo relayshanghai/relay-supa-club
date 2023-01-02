@@ -85,7 +85,7 @@ export default function CreatorsOutreach({
                                     key={index}
                                     className="group hover:bg-primary-50 hover:relative"
                                 >
-                                    <td className="px-6 py-4 whitespace-nowrap sticky left-0 group-hover:bg-primary-50 min-w-[200px] max-w-[200px] z-10">
+                                    <td className="px-6 py-4 whitespace-nowrap sticky left-0 group-hover:bg-primary-50 w-[200px] z-10">
                                         <div className="flex items-center">
                                             <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300">
                                                 <img
