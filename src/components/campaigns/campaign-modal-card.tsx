@@ -3,6 +3,7 @@ import { useCampaigns } from 'src/hooks/use-campaigns';
 import { CampaignWithCompanyCreators, CreatorSearchAccountObject } from 'types';
 import { useEffect, useState } from 'react';
 import { Spinner } from '../icons';
+import { supabase } from 'src/utils/supabase-client';
 
 export default function CampaignModalCard({
     campaign,
@@ -15,6 +16,7 @@ export default function CampaignModalCard({
         campaignId: campaign?.id
     });
     const [hasCreator, setHasCreator] = useState<boolean>(false);
+    const [coverImageUrl, setCoverImageUrl] = useState('');
 
     const handleAddCreatorToCampaign = async () => {
         if (creator)
@@ -27,6 +29,33 @@ export default function CampaignModalCard({
                 link_url: creator?.account.user_profile?.url
             });
     };
+
+    useEffect(() => {
+        const getFiles = async () => {
+            const getFilePath = (filename: string) => {
+                const { publicURL } = supabase.storage
+                    .from('images')
+                    .getPublicUrl(`campaigns/${campaign?.id}/${filename}`);
+                return publicURL;
+            };
+
+            const { data } = await supabase.storage
+                .from('images')
+                .list(`campaigns/${campaign?.id}`, {
+                    limit: 100,
+                    offset: 0,
+                    sortBy: { column: 'name', order: 'asc' }
+                });
+
+            if (data?.[0]?.name) {
+                const imageUrl = `${getFilePath(data?.[0]?.name)}`;
+                setCoverImageUrl(imageUrl);
+            }
+        };
+        if (campaign) {
+            getFiles();
+        }
+    }, [campaign]);
 
     useEffect(() => {
         if (campaign && creator) {
@@ -47,9 +76,8 @@ export default function CampaignModalCard({
         >
             <div className="flex items-center justify-between">
                 <div className="flex items-center w-full min-w-0">
-                    {/* TODO: add the right image url after media upload finished*/}
                     <img
-                        src={'/image404.png'}
+                        src={coverImageUrl || '/image404.png'}
                         alt=""
                         className="w-6 h-6 rounded-full object-cover flex-shrink-0 mr-2"
                     />
