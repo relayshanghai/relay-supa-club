@@ -1,4 +1,5 @@
 import { useRouter } from 'next/router';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { Button } from 'src/components/button';
 import { Input } from 'src/components/input';
@@ -18,6 +19,7 @@ export default function Register() {
         confirmPassword: ''
     });
     const token = router.query.token as string;
+    const [registering, setRegistering] = useState(false);
 
     return (
         <div className="w-full h-full px-10 py-8">
@@ -67,6 +69,7 @@ export default function Register() {
                 />
                 <Button
                     disabled={
+                        registering ||
                         !firstName ||
                         !lastName ||
                         !password ||
@@ -77,6 +80,7 @@ export default function Register() {
                     onClick={async (e) => {
                         e.preventDefault();
                         try {
+                            setRegistering(true);
                             await nextFetch('company/accept-invite', {
                                 method: 'post',
                                 body: JSON.stringify({
@@ -91,6 +95,8 @@ export default function Register() {
                         } catch (error: any) {
                             if (error.message) toast.error(error.message);
                             else toast.error('Unknown error');
+                        } finally {
+                            setRegistering(false);
                         }
                     }}
                 >

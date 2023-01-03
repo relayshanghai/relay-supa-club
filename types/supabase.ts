@@ -34,9 +34,10 @@ export interface Database {
                     username: string | null;
                     fullname: string | null;
                     link_url: string | null;
+                    creator_id: string | null;
                 };
                 Insert: {
-                    id: string;
+                    id?: string;
                     created_at?: string | null;
                     status?: string | null;
                     campaign_id?: string | null;
@@ -65,6 +66,7 @@ export interface Database {
                     username?: string | null;
                     fullname?: string | null;
                     link_url?: string | null;
+                    creator_id?: string | null;
                 };
                 Update: {
                     id?: string;
@@ -96,6 +98,7 @@ export interface Database {
                     username?: string | null;
                     fullname?: string | null;
                     link_url?: string | null;
+                    creator_id?: string | null;
                 };
             };
             campaigns: {
@@ -210,33 +213,27 @@ export interface Database {
                     created_at: string | null;
                     company_id: string;
                     email: string;
-                    first_name: string | null;
-                    last_name: string | null;
-                    updated_at: string | null;
                     used: boolean;
                     expire_at: string | null;
+                    updated_at: string | null;
                 };
                 Insert: {
                     id?: string;
                     created_at?: string | null;
                     company_id: string;
                     email: string;
-                    first_name?: string | null;
-                    last_name?: string | null;
-                    updated_at?: string | null;
                     used?: boolean;
                     expire_at?: string | null;
+                    updated_at?: string | null;
                 };
                 Update: {
                     id?: string;
                     created_at?: string | null;
                     company_id?: string;
                     email?: string;
-                    first_name?: string | null;
-                    last_name?: string | null;
-                    updated_at?: string | null;
                     used?: boolean;
                     expire_at?: string | null;
+                    updated_at?: string | null;
                 };
             };
             profiles: {
