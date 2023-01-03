@@ -55,6 +55,31 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         return res.status(200).json({ data, invite });
     }
+    if (req.method === 'GET') {
+        const token = req.query.token as string;
+        const { data, error } = await supabase
+            .from<InvitesDB>('invites')
+            .select('*')
+            .eq('id', token)
+            .limit(1)
+            .single();
+        if (error) {
+            return res.status(500).json({
+                error: 'Invite is invalid or expired'
+            });
+        }
+        if (data?.used) {
+            return res.status(500).json({
+                error: 'Invite already used'
+            });
+        }
+        if (Date.now() >= new Date(data.expire_at ?? '').getTime()) {
+            return res.status(500).json({
+                error: 'Invite is expired'
+            });
+        }
+        return res.status(200).json({ message: 'Invite is valid' });
+    }
 
     return res.status(400).json(null);
 }
