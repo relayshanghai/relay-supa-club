@@ -28,7 +28,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             return res.status(500).json({ error: 'Invite already exists and has not expired' });
 
         const { data, error } = await supabase
-            .from('invites')
+            .from<InvitesDB>('invites')
             .insert({
                 email,
                 company_id
@@ -53,8 +53,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             </div>
             `
             });
-        } catch (error) {
-            return res.status(500).json('Error sending email');
+        } catch (error: any) {
+            // eslint-disable-next-line no-console
+            console.log('Error sending email', error);
+            return res.status(500).json({ error: 'Error sending email' });
         }
 
         return res.status(200).json(data);
