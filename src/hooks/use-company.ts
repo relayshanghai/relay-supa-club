@@ -6,7 +6,7 @@ import { useUser } from './use-user';
 
 export const useCompany = () => {
     const { profile, user } = useUser();
-    const { data: company } = useSWR<CompanyWithProfilesInvitesAndUsage>(
+    const { data: company, mutate: refreshCompany } = useSWR<CompanyWithProfilesInvitesAndUsage>(
         profile?.company_id ? `/api/company?id=${profile.company_id}` : null,
         fetcher
     );
@@ -54,6 +54,7 @@ export const useCompany = () => {
         company,
         updateCompany,
         createInvite,
-        createCompany
+        createCompany,
+        refreshCompany
     };
 };

@@ -32,7 +32,7 @@ const Page = () => {
         name: '',
         website: ''
     });
-    const { company, updateCompany, createInvite } = useCompany();
+    const { company, updateCompany, createInvite, refreshCompany } = useCompany();
     const {
         subscription: subscriptionWrongType,
         plans,
@@ -105,6 +105,8 @@ const Page = () => {
                                         last_name: lastName,
                                         email: email
                                     });
+                                    refreshCompany();
+
                                     toast.success('Profile updated');
                                 } catch (e) {
                                     toast.error('Ops, something went wrong.');
@@ -207,6 +209,7 @@ const Page = () => {
                                             name: companyValues.name,
                                             website: companyValues.website
                                         });
+                                        refreshCompany();
                                         toast.success('Company profile updated');
                                     } catch (e) {
                                         toast.error('Ops, something went wrong.');
@@ -428,6 +431,7 @@ const Page = () => {
                         disabled={!inviteEmail}
                         onClick={async () => {
                             await createInvite(inviteEmail);
+                            refreshCompany();
                             setInviteEmail('');
                             setShowAddMoreMembers(false);
                             toast.success('Invite sent');
