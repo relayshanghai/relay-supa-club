@@ -6,7 +6,7 @@ export default function CampaignDetails({
     media
 }: {
     currentCampaign: CampaignWithCompanyCreators;
-    media: object[];
+    media: { url: string; name: string }[];
 }) {
     const { t } = useTranslation();
     const targetLocations = currentCampaign.target_locations || [];

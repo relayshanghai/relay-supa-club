@@ -14,7 +14,7 @@ import { supabase } from 'src/utils/supabase-client';
 export default function CampaignShow() {
     const router = useRouter();
     const { campaign: currentCampaign } = useCampaigns({ campaignId: router.query.id });
-    const [media, setMedia] = useState<object[]>([]);
+    const [media, setMedia] = useState<{ url: string; name: string }[]>([]);
     const [currentTab, setCurrentTab] = useState(0);
     // const [campaignStatus, setCampaignStatus] = useState(false);
     const { t } = useTranslation();
