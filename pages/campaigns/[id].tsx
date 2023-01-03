@@ -14,8 +14,7 @@ import { supabase } from 'src/utils/supabase-client';
 export default function CampaignShow() {
     const router = useRouter();
     const { campaign: currentCampaign } = useCampaigns({ campaignId: router.query.id });
-    const [coverImageUrl, setCoverImageUrl] = useState('');
-
+    const [media, setMedia] = useState<object[]>([]);
     const [currentTab, setCurrentTab] = useState(0);
     // const [campaignStatus, setCampaignStatus] = useState(false);
     const { t } = useTranslation();
@@ -41,9 +40,13 @@ export default function CampaignShow() {
                     sortBy: { column: 'name', order: 'asc' }
                 });
 
-            if (data?.[0]?.name) {
-                const imageUrl = `${getFilePath(data?.[0]?.name)}`;
-                setCoverImageUrl(imageUrl);
+            const mediaFormatted = data?.map((file) => ({
+                url: `${getFilePath(file.name)}`,
+                name: file.name
+            }));
+
+            if (mediaFormatted) {
+                setMedia(mediaFormatted);
             }
         };
         if (currentCampaign) {
@@ -60,7 +63,7 @@ export default function CampaignShow() {
                         <div className="h-32 w-32 sm:mr-4 flex-shrink-0 mb-4 sm:mb-0">
                             <Image
                                 //@ts-ignore
-                                src={coverImageUrl || '/image404.png'}
+                                src={media?.[0]?.url || '/image404.png'}
                                 alt="campaign photo"
                                 width={128}
                                 height={128}
@@ -83,7 +86,7 @@ export default function CampaignShow() {
                                 </div>
                                 <div className="text-sm text-tertiary-600">
                                     {currentCampaign?.date_start_campaign
-                                        ? //@ts-ignore // TODO: is this working?
+                                        ? //@ts-ignore
                                           dateFormat(
                                               currentCampaign?.date_start_campaign,
                                               'mediumDate'
@@ -139,7 +142,9 @@ export default function CampaignShow() {
                 {currentTab === 0 && currentCampaign && (
                     <CreatorsOutreach currentCampaign={currentCampaign} />
                 )}
-                {currentTab === 1 && <CampaignDetails />}
+                {currentTab === 1 && currentCampaign && (
+                    <CampaignDetails currentCampaign={currentCampaign} media={media} />
+                )}
             </div>
         </Layout>
     );
