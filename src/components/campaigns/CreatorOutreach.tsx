@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { CampaignWithCompanyCreators } from 'types';
+import Link from 'next/link';
 
 export default function CreatorsOutreach({
     currentCampaign
@@ -43,7 +44,9 @@ export default function CreatorsOutreach({
             {/* Outreach Tabs */}
             <div className="flex mb-4">
                 <div className="bg-gray-100 rounded-md px-4 py-2 text-sm text-gray-600 mr-4 cursor-pointer hover:bg-primary-500 hover:text-white duration-300 flex-shrink-0">
-                    {t('campaigns.show.activities.outreach.addNewCreator')}
+                    <Link href="/dashboard">
+                        <a>{t('campaigns.show.activities.outreach.addNewCreator')}</a>
+                    </Link>
                 </div>
                 {/* TODO: make Tabs component reusable */}
                 <div className="hidden sm:flex items-center">
