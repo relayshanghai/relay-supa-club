@@ -129,7 +129,7 @@ export default function Register() {
                     <Button onClick={() => router.back()}>Back</Button>
                 </div>
             )}
-            {!token && (
+            {!token && inviteStatus !== 'pending' && (
                 <div className="mx-auto h-full flex flex-col justify-center items-center space-y-6">
                     <h2>No invite token</h2>
                     <Button onClick={() => router.back()}>Back</Button>
