@@ -34,9 +34,10 @@ export interface Database {
                     username: string | null;
                     fullname: string | null;
                     link_url: string | null;
+                    creator_id: string | null;
                 };
                 Insert: {
-                    id: string;
+                    id?: string;
                     created_at?: string | null;
                     status?: string | null;
                     campaign_id?: string | null;
@@ -65,6 +66,7 @@ export interface Database {
                     username?: string | null;
                     fullname?: string | null;
                     link_url?: string | null;
+                    creator_id?: string | null;
                 };
                 Update: {
                     id?: string;
@@ -96,6 +98,7 @@ export interface Database {
                     username?: string | null;
                     fullname?: string | null;
                     link_url?: string | null;
+                    creator_id?: string | null;
                 };
             };
             campaigns: {

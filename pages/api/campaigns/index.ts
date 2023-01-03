@@ -9,7 +9,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             .from('campaigns')
             // If this query changes, make sure to update the CampaignWithCompany type
             .select(
-                '*, companies(id, name, cus_id), campaign_creators(id, username, fullname, avatar_url, link_url)'
+                '*, companies(id, name, cus_id), campaign_creators(id, creator_id, username, fullname, avatar_url, link_url)'
             )
             .eq('company_id', companyId);
         if (error) {

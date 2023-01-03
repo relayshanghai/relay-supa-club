@@ -19,10 +19,10 @@ import {
     TextareaInput as TextArea
 } from 'src/components/ui';
 import { Question, questions, TimelineQuestion } from 'src/components/campaigns/helper';
-import LoaderWhite from 'src/components/icons/LoaderWhite';
 import { useCampaigns } from 'src/hooks/use-campaigns';
 import { useCallback } from 'react';
 import { supabase } from 'src/utils/supabase-client';
+import { Spinner } from 'src/components/icons';
 
 const TimelineInput = ({
     q,
@@ -216,7 +216,7 @@ export default function CampaignForm() {
         </button>
     ) : (
         <div className="btn btn-primary ml-2">
-            <LoaderWhite className="w-5 h-5" />
+            <Spinner className="w-5 h-5" />
         </div>
     );
 
