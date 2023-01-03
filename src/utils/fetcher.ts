@@ -15,8 +15,14 @@ export const nextFetch = async <T = any>(path: string, options: RequestInit = {}
     const res = await fetch('/api/' + path, options);
     if (!res.status.toString().startsWith('2')) {
         const json = await res.json();
-        if (json.error) throw new Error(json.error);
-        if (json.message) throw new Error(json.message);
+        if (json?.error)
+            throw new Error(
+                typeof json.error === 'string' ? json.error : JSON.stringify(json.error)
+            );
+        if (json?.message)
+            throw new Error(
+                typeof json.message === 'string' ? json.message : JSON.stringify(json.message)
+            );
         if (res.statusText) throw new Error(res.statusText);
         else throw new Error('Something went wrong with the request.');
     }

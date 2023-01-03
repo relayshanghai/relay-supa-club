@@ -4,6 +4,7 @@ import { Button } from 'src/components/button';
 import { Input } from 'src/components/input';
 import { Title } from 'src/components/title';
 import { useFields } from 'src/hooks/use-fields';
+import { nextFetch } from 'src/utils/fetcher';
 
 export default function Register() {
     const router = useRouter();
@@ -16,6 +17,7 @@ export default function Register() {
         password: '',
         confirmPassword: ''
     });
+    const token = router.query.token as string;
 
     return (
         <div className="w-full h-full px-10 py-8">
@@ -70,29 +72,25 @@ export default function Register() {
                         !password ||
                         !confirmPassword ||
                         password !== confirmPassword ||
-                        !router.query.token
+                        !token
                     }
-                    onClick={async (e: any) => {
+                    onClick={async (e) => {
                         e.preventDefault();
-
-                        // Call the invite endpoint
-                        const res = await (
-                            await fetch('/api/company/accept-invite', {
+                        try {
+                            await nextFetch('company/accept-invite', {
                                 method: 'post',
                                 body: JSON.stringify({
-                                    token: router.query.token,
+                                    token,
                                     password,
                                     firstName,
                                     lastName
                                 })
-                            })
-                        ).json();
-
-                        if (res.error) {
-                            toast.error('Something went wrong');
-                        } else {
+                            });
                             toast.success('Invite accepted');
                             router.push('/login');
+                        } catch (error: any) {
+                            if (error.message) toast.error(error.message);
+                            else toast.error('Unknown error');
                         }
                     }}
                 >

@@ -16,8 +16,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
         if (data?.used || Date.now() > new Date(data.expire_at).getTime()) {
             return res.status(500).json({
-                error: true,
-                expired: true
+                error: 'Invite is invalid or expired'
             });
         }
 
@@ -37,11 +36,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         );
 
         if (userError) {
-            return res.status(500).json({ error: userError });
+            return res.status(500).json(userError);
         }
 
         // Mark the invite as used
-        const { data: invite, error: err } = await supabase
+        const { data: invite, error: updateError } = await supabase
             .from('invites')
             .update({
                 used: true
@@ -49,8 +48,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             .eq('id', token)
             .single();
 
-        if (err) {
-            return res.status(500).json({ error: err });
+        if (updateError) {
+            return res.status(500).json(updateError);
         }
 
         return res.status(200).json({ data, invite });
