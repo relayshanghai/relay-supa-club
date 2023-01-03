@@ -14,8 +14,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         if (error) {
             return res.status(500).json(error);
         }
-
-        if (data.used || Date.now() > new Date(data.expire_at).getTime()) {
+        if (data?.used || Date.now() > new Date(data.expire_at).getTime()) {
             return res.status(500).json({
                 error: true,
                 expired: true

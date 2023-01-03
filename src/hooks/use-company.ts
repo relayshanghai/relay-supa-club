@@ -1,19 +1,19 @@
 import { useCallback } from 'react';
-import { fetcher } from 'src/utils/fetcher';
+import { nextFetch } from 'src/utils/fetcher';
 import useSWR from 'swr';
 import { CompanyWithProfilesInvitesAndUsage } from 'types';
 import { useUser } from './use-user';
 
 export const useCompany = () => {
     const { profile, user } = useUser();
-    const { data: company, mutate: refreshCompany } = useSWR<CompanyWithProfilesInvitesAndUsage>(
-        profile?.company_id ? `/api/company?id=${profile.company_id}` : null,
-        fetcher
+    const { data: company, mutate: refreshCompany } = useSWR(
+        profile?.company_id ? `company?id=${profile.company_id}` : null,
+        nextFetch<CompanyWithProfilesInvitesAndUsage>
     );
 
     const updateCompany = useCallback(
         async (input: any) => {
-            await fetch(`/api/company`, {
+            return await nextFetch(`company`, {
                 method: 'post',
                 body: JSON.stringify({
                     ...input,
@@ -26,11 +26,13 @@ export const useCompany = () => {
 
     const createInvite = useCallback(
         async (email: any) => {
-            await fetch(`/api/company/create-invite`, {
+            if (!profile) throw new Error('No profile found');
+            return await nextFetch(`company/create-invite`, {
                 method: 'post',
                 body: JSON.stringify({
                     email: email,
-                    company_id: profile?.company_id
+                    company_id: profile.company_id,
+                    name: `${profile.first_name} ${profile.last_name}`
                 })
             });
         },
@@ -39,7 +41,7 @@ export const useCompany = () => {
 
     const createCompany = useCallback(
         async (input: any) => {
-            await fetch(`/api/company/create`, {
+            return await nextFetch(`company/create`, {
                 method: 'post',
                 body: JSON.stringify({
                     ...input,

@@ -172,19 +172,26 @@ const Page = () => {
                         {Array.isArray(company?.invites) && company?.invites.length ? (
                             <>
                                 <div className="text-sm pt-8 pb-2">Pending invitations</div>
-                                {company?.invites.map((item: any) => {
-                                    return (
-                                        <div
-                                            key={item.id}
-                                            className="flex flex-row space-x-8 items-center border-t border-b border-grey-200 w-full py-2"
-                                        >
-                                            <div className="">
-                                                <div className="text-xs text-gray-500">Email</div>
-                                                {item.email}
-                                            </div>
+                                {company?.invites.map((invite) => (
+                                    <div
+                                        key={invite.id}
+                                        className="flex flex-row space-x-8 items-center border-t border-b border-grey-200 w-full py-2 justify-between"
+                                    >
+                                        <div className="">
+                                            <div className="text-xs text-gray-500">Email</div>
+                                            {invite.email}
                                         </div>
-                                    );
-                                })}
+                                        {invite.expire_at &&
+                                            Date.now() > new Date(invite.expire_at).getTime() && (
+                                                <div className="text-sm font-bold ml-auto">
+                                                    <div className="text-xs font-normal text-gray-500">
+                                                        Status
+                                                    </div>
+                                                    Expired
+                                                </div>
+                                            )}
+                                    </div>
+                                ))}
                             </>
                         ) : null}
                         <div className="pt-4">
@@ -236,7 +243,7 @@ const Page = () => {
                         </div>
                     </div>
                     <div className={`flex flex-row space-x-4 ${loading ? 'opacity-50' : ''}`}>
-                        {subscription ? (
+                        {subscription?.product?.name ? (
                             <div className="flex flex-col space-y-2">
                                 <div>
                                     You currently are on <b>{subscription.product.name}</b> plan,
@@ -298,7 +305,7 @@ const Page = () => {
                                                 </div>
                                             ) : null}
                                             {item.name}{' '}
-                                            {item.name === subscription?.product.name ? (
+                                            {item.name === subscription?.product?.name ? (
                                                 <span className="text-xs bg-gray-200 p-1 rounded">
                                                     Active
                                                 </span>
@@ -430,11 +437,16 @@ const Page = () => {
                     <Button
                         disabled={!inviteEmail}
                         onClick={async () => {
-                            await createInvite(inviteEmail);
-                            refreshCompany();
-                            setInviteEmail('');
-                            setShowAddMoreMembers(false);
-                            toast.success('Invite sent');
+                            try {
+                                const res = await createInvite(inviteEmail);
+                                if (!res || res?.error) throw new Error(res.error);
+                                refreshCompany();
+                                setInviteEmail('');
+                                setShowAddMoreMembers(false);
+                                toast.success('Invite sent');
+                            } catch (error: any) {
+                                toast.error(error.message);
+                            }
                         }}
                     >
                         Send invitation
