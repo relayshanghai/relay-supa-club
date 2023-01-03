@@ -1,4 +1,4 @@
-/** no trailing slash e.g. https://relay.club or http://localhost:3000 */
+/** no trailing slash e.g. https://app.relay.club or http://localhost:3000 */
 export const APP_URL = process.env.NEXT_PUBLIC_APP_URL || '';
 if (!APP_URL) throw new Error('APP_URL not found');
 
