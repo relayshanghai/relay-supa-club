@@ -30,10 +30,9 @@ export default function CampaignModalCard({
                 username: creator?.account.user_profile?.username,
                 fullname: creator?.account.user_profile?.fullname,
                 link_url: creator?.account.user_profile?.url
-            }).then(() => {
-                toast.success(t('campaigns.modal.addedSuccessfully'));
-                setHasCreator(true);
             });
+        toast.success(t('campaigns.modal.addedSuccessfully'));
+        setHasCreator(true);
     };
 
     useEffect(() => {
