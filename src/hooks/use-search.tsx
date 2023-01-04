@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
+import { nextFetch } from 'src/utils/fetcher';
 import { CreatorSearchResult, CreatorPlatform, LocationWeighted } from 'types';
 import { useUser } from './use-user';
 
@@ -44,31 +45,38 @@ export const useSearch = () => {
             const signal = controller.signal;
             ref.current = controller;
 
-            const res = await (
-                await fetch('/api/kol', {
+            try {
+                const bodyData = {
+                    platform,
+                    term: search,
+                    page,
+                    tags,
+                    company_id: profile?.company_id,
+                    lookalike,
+                    KOLLocation,
+                    audienceLocation,
+                    audience,
+                    views,
+                    gender,
+                    engagement,
+                    lastPost,
+                    contactInfo,
+                    user_id: profile?.id
+                };
+
+                const res = await nextFetch<CreatorSearchResult>('kol', {
                     method: 'post',
                     signal,
-                    body: JSON.stringify({
-                        platform,
-                        term: search,
-                        page,
-                        tags,
-                        company_id: profile?.company_id,
-                        lookalike,
-                        KOLLocation,
-                        audienceLocation,
-                        audience,
-                        views,
-                        gender,
-                        engagement,
-                        lastPost,
-                        contactInfo
-                    })
-                })
-            ).json();
+                    body: JSON.stringify(bodyData)
+                });
 
-            setResults(res);
-            setLoading(false);
+                setResults(res);
+            } catch (error) {
+                // eslint-disable-next-line no-console
+                console.log(error);
+            } finally {
+                setLoading(false);
+            }
         }
     }, [
         tags,
