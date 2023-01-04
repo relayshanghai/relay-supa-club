@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { CampaignWithCompanyCreators } from 'types';
 import Link from 'next/link';
+import Trashcan from 'src/components/icons/Trashcan';
 
 export default function CreatorsOutreach({
     currentCampaign
@@ -39,6 +40,14 @@ export default function CreatorsOutreach({
         setStatus(value);
     };
 
+    const handleDropdownSelect = () => {
+        //TODO: add dropdown select functionality
+    };
+
+    const deleteCampaignCreator = () => {
+        //TODO: add delete campaignCreator functionality
+    };
+
     return (
         <div>
             {/* Outreach Tabs */}
@@ -69,7 +78,7 @@ export default function CreatorsOutreach({
             <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200 overflow-y-visible">
                     <thead className="bg-white sticky top-0">
-                        <tr className="border-b border-gray-200">
+                        <tr>
                             {columnLabels.map((label, index) => (
                                 <th
                                     key={index}
@@ -81,36 +90,81 @@ export default function CreatorsOutreach({
                                     {t(`campaigns.show.${label}`)}
                                 </th>
                             ))}
+                            {/* placeholder header space for delete icon */}
+                            <th className=" px-3 py-3 text-left text-xs font-normal text-gray-500 sticky bg-white tracking-wider  min-w-[200px] max-w-[200px]">
+                                {''}
+                            </th>
                         </tr>
-                        <tbody className="bg-white divide-y divide-gray-200">
-                            {currentCampaign?.campaign_creators.map((creator, index) => (
-                                <tr
-                                    key={index}
-                                    className="group hover:bg-primary-50 hover:relative"
-                                >
-                                    <td className="px-6 py-4 whitespace-nowrap sticky left-0 group-hover:bg-primary-50 w-[200px] z-10">
-                                        <div className="flex items-center">
-                                            <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300">
-                                                <img
-                                                    className="h-10 w-10 rounded-full"
-                                                    src={`https://image-cache.brainchild-tech.cn/?link=${creator.avatar_url}`}
-                                                    alt=""
-                                                />
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                        {currentCampaign?.campaign_creators.map((creator, index) => (
+                            <tr key={index} className="group hover:bg-primary-50 hover:relative">
+                                <td className="px-6 py-4 whitespace-nowrap sticky left-0 group-hover:bg-primary-50 w-[200px] bg-white z-10">
+                                    <div className="flex items-center">
+                                        <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300">
+                                            <img
+                                                className="h-10 w-10 rounded-full"
+                                                src={`https://image-cache.brainchild-tech.cn/?link=${creator.avatar_url}`}
+                                                alt=""
+                                            />
+                                        </div>
+                                        <div className="ml-4">
+                                            <div className="text-sm font-medium text-gray-900 truncate">
+                                                {creator.fullname}
                                             </div>
-                                            <div className="ml-4">
-                                                <div className="text-sm font-medium text-gray-900 truncate">
-                                                    {creator.fullname}
-                                                </div>
-                                                <div className="text-xs text-primary-500 inline-block truncate">
-                                                    @{creator.username}
+                                            <div className="text-xs text-primary-500 inline-block truncate">
+                                                @{creator.username}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                    <select
+                                        onClick={(e) => e.stopPropagation()}
+                                        onChange={() => handleDropdownSelect()}
+                                        // value={creator.status}
+                                        className="-ml-1 text-xs px-4 py-2 rounded-md text-primary-500 font-semibold bg-primary-50 hover:bg-primary-100 border border-gray-200 duration-300 cursor-pointer outline-none mr-2.5 appearance-none text-center"
+                                    >
+                                        {tabs.map((tab, index) => (
+                                            <option value={tab.value} key={index}>
+                                                {t(
+                                                    `campaigns.show.activities.outreach.${tab.label}`
+                                                )}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                    {/* TODO: add added by user name  */}
+                                    {creator.added_by_id ? (
+                                        <div className="flex">
+                                            <div className="group flex text-xs items-center">
+                                                <div className="rounded-full text-xs w-6 h-6 bg-tertiary-300 text-white text-center p-1 mr-2">
+                                                    XX
                                                 </div>
                                             </div>
                                         </div>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </thead>
+                                    ) : (
+                                        <div className="text-sm text-gray-600"> - </div>
+                                    )}
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">-</td>
+                                <td className="px-6 py-4 whitespace-nowrap">-</td>
+                                <td className="px-6 py-4 whitespace-nowrap">-</td>
+                                <td className="px-6 py-4 whitespace-nowrap">-</td>
+                                <td className="px-6 py-4 whitespace-nowrap">-</td>
+
+                                <td className="px-6 py-4 sm:sticky right-0 bg-white whitespace-nowrap z-50 group-hover:bg-primary-50 flex justify-end">
+                                    <div
+                                        onClick={() => deleteCampaignCreator()}
+                                        className="p-2 rounded-md text-gray-600  bg-gray-50 hover:bg-gray-100 border border-gray-200 duration-300 outline-none appearance-none text-center"
+                                    >
+                                        <Trashcan className="w-4 h-4 cursor-pointer fill-tertiary-600 hover:fill-primary-600" />
+                                    </div>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
                 </table>
             </div>
         </div>
