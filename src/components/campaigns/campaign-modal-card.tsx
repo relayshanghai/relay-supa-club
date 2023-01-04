@@ -4,6 +4,8 @@ import { CampaignWithCompanyCreators, CreatorSearchAccountObject } from 'types';
 import { useEffect, useState } from 'react';
 import { Spinner } from '../icons';
 import { supabase } from 'src/utils/supabase-client';
+import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 
 export default function CampaignModalCard({
     campaign,
@@ -17,6 +19,7 @@ export default function CampaignModalCard({
     });
     const [hasCreator, setHasCreator] = useState<boolean>(false);
     const [coverImageUrl, setCoverImageUrl] = useState('');
+    const { t } = useTranslation();
 
     const handleAddCreatorToCampaign = async () => {
         if (creator && !hasCreator)
@@ -28,6 +31,7 @@ export default function CampaignModalCard({
                 fullname: creator?.account.user_profile?.fullname,
                 link_url: creator?.account.user_profile?.url
             }).then(() => {
+                toast.success(t('campaigns.modal.addedSuccessfully'));
                 setHasCreator(true);
             });
     };
@@ -74,7 +78,7 @@ export default function CampaignModalCard({
     return (
         <div
             onClick={handleAddCreatorToCampaign}
-            className="bg-white text-sm px-2 py-3.5 rounded-lg mb-2 cursor-pointer duration-300"
+            className="bg-white text-sm px-2 py-3.5 rounded-lg mb-2 duration-300"
         >
             <div className="flex items-center justify-between">
                 <div className="flex items-center w-full min-w-0">
@@ -99,7 +103,7 @@ export default function CampaignModalCard({
                         {!loading && (
                             <PlusCircleIcon className="fill-current text-tertiary-600 w-4 h-4" />
                         )}
-                        {loading && <Spinner className=" fill-current w-4 h-4" />}
+                        {loading && <Spinner className=" fill-primary-600 text-white w-4 h-4" />}
                     </div>
                 )}
             </div>

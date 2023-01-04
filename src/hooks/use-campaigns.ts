@@ -3,8 +3,6 @@ import { fetcher, nextFetch } from 'src/utils/fetcher';
 import useSWR from 'swr';
 import { CampaignCreatorDBInsert, CampaignWithCompanyCreators } from 'types';
 import { useUser } from './use-user';
-import toast from 'react-hot-toast';
-import { useTranslation } from 'react-i18next';
 
 export const useCampaigns = ({ campaignId }: any = {}) => {
     const { profile } = useUser();
@@ -17,7 +15,6 @@ export const useCampaigns = ({ campaignId }: any = {}) => {
     const [campaignCreators, setCampaignCreators] = useState<
         CampaignWithCompanyCreators['campaign_creators'] | null
     >([]);
-    const { t } = useTranslation();
 
     useEffect(() => {
         if (data && campaignId) {
@@ -63,11 +60,10 @@ export const useCampaigns = ({ campaignId }: any = {}) => {
                     company_id: profile?.company_id
                 })
             });
-            toast.success(t('campaigns.modal.addedSuccessfully'));
 
             setLoading(false);
         },
-        [profile?.company_id, t]
+        [profile?.company_id]
     );
     return {
         campaigns: data as CampaignWithCompanyCreators[],
