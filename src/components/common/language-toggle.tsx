@@ -12,15 +12,15 @@ export const LanguageToggle = () => {
     };
 
     const optionsRef: LegacyRef<HTMLDivElement> = useRef(null);
-    const languageButtonRef: LegacyRef<HTMLDivElement> = useRef(null);
+    const languageButtonRef: LegacyRef<HTMLButtonElement> = useRef(null);
     useOnOutsideClick(optionsRef, () => setDisplayOptions(false), languageButtonRef);
 
     return (
         <div>
             <div className="relative flex flex-col items-center">
-                <div ref={languageButtonRef} onClick={() => setDisplayOptions(!displayOptions)}>
+                <button ref={languageButtonRef} onClick={() => setDisplayOptions(!displayOptions)}>
                     <Globe className="w-5 h-5 text-gray-300 hover:text-primary-500 duration-300" />
-                </div>
+                </button>
                 {displayOptions && (
                     <div
                         ref={optionsRef}

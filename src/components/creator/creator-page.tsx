@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { nextFetch } from 'src/utils/fetcher';
 import { CreatorPlatform, CreatorReport } from 'types';
 import { TitleSection } from './creator-title-section';
@@ -6,6 +6,7 @@ import { CreatorOverview } from './creator-page-overview';
 import Head from 'next/head';
 import { MetricsSection } from './creator-metrics-section';
 import { PopularPostsSection } from './creator-popular-posts';
+import CreatorSkeleton from './creator-skeleton';
 
 export const CreatorPage = ({
     user_id,
@@ -16,22 +17,30 @@ export const CreatorPage = ({
 }) => {
     const [report, setReport] = useState<CreatorReport | null>(null);
     const [reportCreatedAt, setReportCreatedAt] = useState<string | null>(null);
-    // TODO: translations and loader component
-    useEffect(() => {
-        const getOrCreateReport = async () => {
-            try {
-                const { createdAt, ...report } = await nextFetch<
-                    CreatorReport & { createdAt: string }
-                >(`creators/report?platform=${platform}&user_id=${user_id}`);
-                setReport(report);
-                setReportCreatedAt(createdAt);
-            } catch (error) {
-                // eslint-disable-next-line no-console
-                console.log(error);
-            }
-        };
-        getOrCreateReport();
+    const [loading, setLoading] = useState(true);
+    const [errorMessage, setErrorMessage] = useState(
+        !user_id || !platform ? 'Invalid creator URL' : ''
+    );
+
+    const getOrCreateReport = useCallback(async () => {
+        try {
+            const { error, createdAt, ...report } = await nextFetch<
+                CreatorReport & { createdAt: string }
+            >(`creators/report?platform=${platform}&user_id=${user_id}`);
+            if (!report.success) throw new Error('Failed to fetch report');
+            if (error) throw new Error(error);
+            setReport(report);
+            setReportCreatedAt(createdAt);
+            setLoading(false);
+        } catch (error: any) {
+            setLoading(false);
+            setErrorMessage(error.message);
+        }
     }, [platform, user_id]);
+
+    useEffect(() => {
+        if (user_id && platform) getOrCreateReport();
+    }, [getOrCreateReport, platform, user_id]);
 
     const onAddToCampaign = () => {
         //TODO: Add to campaign
@@ -42,8 +51,8 @@ export const CreatorPage = ({
                 <title>{report?.user_profile.fullname || 'relay.club'}</title>
             </Head>
             <div className="flex flex-col">
-                {!report ? (
-                    <p>Loading report...</p>
+                {!report || loading || errorMessage.length > 0 ? (
+                    <CreatorSkeleton error={errorMessage.length > 0} errorMessage={errorMessage} />
                 ) : (
                     <>
                         <TitleSection

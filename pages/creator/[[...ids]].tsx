@@ -1,14 +1,23 @@
 import { useRouter } from 'next/router';
+import { useTranslation } from 'react-i18next';
+import { ErrorPopover } from 'src/components/common/error-popover';
 import { CreatorPage } from 'src/components/creator/creator-page';
 import { Layout } from 'src/modules/layout';
 
 const Page = () => {
     const { ids } = useRouter().query;
-
+    const { t } = useTranslation();
+    const router = useRouter();
     return (
         <Layout>
             {!Array.isArray(ids) ? (
-                <p>Invalid URL</p>
+                <div className="relative p-6">
+                    <ErrorPopover
+                        errorMessage={'Invalid creator id or platform'}
+                        buttonText={t('website.back') || ''}
+                        buttonAction={() => router.back()}
+                    />
+                </div>
             ) : (
                 <CreatorPage platform={ids[0] as any} user_id={ids[1]} />
             )}
