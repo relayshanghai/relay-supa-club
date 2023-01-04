@@ -6,7 +6,7 @@ export interface FetchCreatorsFilteredParams {
     lookalike?: CreatorAccount[];
     KOLLocation?: LocationWeighted[];
     audienceLocation?: LocationWeighted[];
-    limit?: number;
+    resultsPerPageLimit?: number;
     page?: number;
     audience?: string;
     views?: string[];
@@ -28,7 +28,7 @@ export const prepareFetchCreatorsFiltered = ({
     lookalike = [],
     KOLLocation = [],
     audienceLocation = [],
-    limit = 10,
+    resultsPerPageLimit = 10,
     page = 0,
     audience,
     views,
@@ -41,8 +41,8 @@ export const prepareFetchCreatorsFiltered = ({
     const lookalikeValue = lookalike.map((item: CreatorAccount) => `@${item.user_id}`);
     const body = {
         paging: {
-            limit: page === 0 ? Math.min(limit, 10) : Math.min(Math.max(limit - page * 10, 0), 10),
-            skip: page ? page * 10 : null
+            limit: resultsPerPageLimit,
+            skip: page ? page * resultsPerPageLimit : null
         },
         filter: {
             audience_geo: audienceLocation.map(locationTransform) || [],

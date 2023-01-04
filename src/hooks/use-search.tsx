@@ -47,6 +47,8 @@ export const useSearch = () => {
 
             try {
                 const bodyData = {
+                    // TODO: add option for user to select how many results per page
+                    // resultsPerPageLimit = 10
                     platform,
                     term: search,
                     page,
