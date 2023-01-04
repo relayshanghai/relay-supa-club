@@ -1,4 +1,4 @@
-export default {
+const website = {
     login: {
         login: '登录',
         email: '邮箱',
@@ -102,5 +102,7 @@ export default {
     deactivated: '已注销',
     maxLength: '至多输入',
     minLength: '至少需要输入',
-    characters: '个字符'
+    characters: '个字符',
+    back: '返回'
 };
+export default website;

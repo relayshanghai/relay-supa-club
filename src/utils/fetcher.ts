@@ -7,11 +7,13 @@ export const fetcher = (url: string) =>
  * @param path will be prefixed by `/api/`
  * @returns fetch .json() data
  * @description fetcher for internal next API routes. Add a type to the generic to get types on your response.
+ *
+ * Includes an error field. Remember to add an `{error: ''}` to api responses.
  * @example `const data = await nextFetch<SomeType>('some/path')`
  */
 export const nextFetch = async <T = any>(path: string, options: RequestInit = {}) => {
     const res = await fetch('/api/' + path, options);
-    return (await res.json()) as T;
+    return (await res.json()) as T & { error?: string };
 };
 
 export function imgProxy(url: string) {
