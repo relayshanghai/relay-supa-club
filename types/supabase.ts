@@ -284,6 +284,7 @@ export interface Database {
                     company_id: string;
                     user_id: string;
                     type: string;
+                    item_id: string | null;
                 };
                 Insert: {
                     id?: string;
@@ -291,6 +292,7 @@ export interface Database {
                     company_id: string;
                     user_id: string;
                     type: string;
+                    item_id?: string | null;
                 };
                 Update: {
                     id?: string;
@@ -298,6 +300,7 @@ export interface Database {
                     company_id?: string;
                     user_id?: string;
                     type?: string;
+                    item_id?: string | null;
                 };
             };
         };

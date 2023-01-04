@@ -7,6 +7,7 @@ import Head from 'next/head';
 import { MetricsSection } from './creator-metrics-section';
 import { PopularPostsSection } from './creator-popular-posts';
 import CreatorSkeleton from './creator-skeleton';
+import { useUser } from 'src/hooks/use-user';
 
 export const CreatorPage = ({
     user_id,
@@ -21,12 +22,15 @@ export const CreatorPage = ({
     const [errorMessage, setErrorMessage] = useState(
         !user_id || !platform ? 'Invalid creator URL' : ''
     );
+    const { profile } = useUser();
 
     const getOrCreateReport = useCallback(async () => {
         try {
             const { error, createdAt, ...report } = await nextFetch<
                 CreatorReport & { createdAt: string }
-            >(`creators/report?platform=${platform}&user_id=${user_id}`);
+            >(
+                `creators/report?platform=${platform}&creator_id=${user_id}&company_id=${profile?.company_id}&user_id=${profile?.id}`
+            );
             if (!report.success) throw new Error('Failed to fetch report');
             if (error) throw new Error(error);
             setReport(report);
@@ -36,7 +40,7 @@ export const CreatorPage = ({
             setLoading(false);
             setErrorMessage(error.message);
         }
-    }, [platform, user_id]);
+    }, [platform, user_id, profile]);
 
     useEffect(() => {
         if (user_id && platform) getOrCreateReport();
