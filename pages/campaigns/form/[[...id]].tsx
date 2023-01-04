@@ -216,7 +216,7 @@ export default function CampaignForm() {
         </button>
     ) : (
         <div className="btn btn-primary ml-2">
-            <Spinner className="w-5 h-5" />
+            <Spinner className="w-5 h-5 fill-primary-600 text-white" />
         </div>
     );
 
