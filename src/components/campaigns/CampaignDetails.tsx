@@ -1,5 +1,6 @@
 import { CampaignWithCompanyCreators } from 'types';
 import { useTranslation } from 'react-i18next';
+import { toCurrency } from 'src/utils/utils';
 
 export default function CampaignDetails({
     currentCampaign,
@@ -12,21 +13,18 @@ export default function CampaignDetails({
     const targetLocations = currentCampaign.target_locations || [];
     const promoTypes = currentCampaign.promo_types || [];
 
-    const currencyFormat = (num: number | null) =>
-        `${num?.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}`;
-
     return (
         <div className="sm:flex">
             <div className="sm:w-3/5 mb-4 sm:mr-4 sm:mb-0">
                 <div className="bg-white rounded-lg text-tertiary-600 text-sm p-4 w-full mb-4">
-                    <div className="font-semibold mb-2">
+                    <h3 className="font-semibold mb-2">
                         {t('campaigns.show.activities.info.projectDescription')}
-                    </div>
-                    {currentCampaign.description}
+                    </h3>
+                    <p>{currentCampaign.description}</p>
                 </div>
                 {/* Campaign Images Gallery */}
                 <div className="bg-white rounded-lg text-tertiary-600 text-sm p-4 w-full mb-4">
-                    <div className="font-semibold mb-4">{t('campaigns.show.campaignMedia')}</div>
+                    <h3 className="font-semibold mb-4">{t('campaigns.show.campaignMedia')}</h3>
                     {currentCampaign && media ? (
                         <div className="flex flex-wrap mb-6">
                             {media.map((photo, index) => (
@@ -51,9 +49,9 @@ export default function CampaignDetails({
                 {/* Campaign Summary*/}
                 <div className="bg-white rounded-lg text-tertiary-600 text-sm p-4 w-full mb-4">
                     <div className="mb-4">
-                        <div className="font-semibold mb-2">
+                        <h3 className="font-semibold mb-2">
                             {t('campaigns.show.targetGeographic')}
-                        </div>
+                        </h3>
                         <div className="flex h-7">
                             {targetLocations.length > 0 &&
                                 targetLocations.map((tag, index) => (
@@ -67,9 +65,9 @@ export default function CampaignDetails({
                         </div>
                     </div>
                     <div className="mb-4">
-                        <div className="font-semibold mb-2">
+                        <h3 className="font-semibold mb-2">
                             {t('campaigns.show.typeOfPromotion')}
-                        </div>
+                        </h3>
                         <div className="flex h-7">
                             {promoTypes.length > 0 &&
                                 promoTypes.map((promoType, index) => (
@@ -83,29 +81,33 @@ export default function CampaignDetails({
                         </div>
                     </div>
                     <div className="mb-4">
-                        <div className="font-semibold mb-2">
+                        <h3 className="font-semibold mb-2">
                             {t('campaigns.show.activities.info.campaignBudget')}
-                        </div>
-                        <div className="text-sm font-semi text-tertiary-600">
-                            {currencyFormat(currentCampaign.budget_cents) || '-'}{' '}
-                            {currentCampaign.budget_currency}
-                        </div>
+                        </h3>
+                        <p className="text-sm font-semi text-tertiary-600">
+                            {currentCampaign.budget_cents &&
+                                currentCampaign.budget_currency &&
+                                toCurrency(
+                                    currentCampaign.budget_cents,
+                                    currentCampaign.budget_currency
+                                )}
+                        </p>
                     </div>
                 </div>
 
                 {/* Campaign Product*/}
                 <div className="bg-white rounded-lg text-tertiary-600 text-sm p-4 w-full mb-4">
                     <div className="mb-2">
-                        <div className="text-sm font-semibold text-gray-600 mb-2">
+                        <h3 className="text-sm font-semibold text-gray-600 mb-2">
                             {t('campaigns.show.productName')}
-                        </div>
-                        <div className="flex flex-wrap text-sm text-gray-600">
+                        </h3>
+                        <p className="flex flex-wrap text-sm text-gray-600">
                             {currentCampaign?.product_name || 'No product name set'}
-                        </div>
+                        </p>
                     </div>
-                    <div className="text-sm font-semibold text-gray-600 mb-2">
+                    <h3 className="text-sm font-semibold text-gray-600 mb-2">
                         {t('campaigns.show.productLink')}
-                    </div>
+                    </h3>
                     <a
                         href={currentCampaign?.product_link || '#'}
                         target="_blank"
