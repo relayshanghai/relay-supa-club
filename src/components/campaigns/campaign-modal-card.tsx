@@ -19,7 +19,7 @@ export default function CampaignModalCard({
     const [coverImageUrl, setCoverImageUrl] = useState('');
 
     const handleAddCreatorToCampaign = async () => {
-        if (creator)
+        if (creator && !hasCreator)
             await addCreatorToCampaign({
                 campaign_id: campaign.id,
                 creator_id: creator?.account.user_profile?.user_id,
@@ -27,6 +27,8 @@ export default function CampaignModalCard({
                 username: creator?.account.user_profile?.username,
                 fullname: creator?.account.user_profile?.fullname,
                 link_url: creator?.account.user_profile?.url
+            }).then(() => {
+                setHasCreator(true);
             });
     };
 
