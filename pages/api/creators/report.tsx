@@ -24,7 +24,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 if (!data.success) throw new Error('Failed to request new report');
                 return res.status(200).json(data);
             }
-        } catch (error) {}
+        } catch (error: any) {
+            return res.status(400).json({ error: "Couldn't fetch report" });
+        }
 
         return res.status(400).json(null);
     }
