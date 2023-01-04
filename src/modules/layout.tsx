@@ -6,28 +6,14 @@ import { Button } from 'src/components/button';
 import { LanguageToggle } from 'src/components/common/language-toggle';
 import { Spinner } from 'src/components/icons';
 import { Title } from 'src/components/title';
+import { HamburgerMenu } from 'src/components/icons';
+import { Sidebar } from 'src/components/sidebar';
+
 import { useCompany } from 'src/hooks/use-company';
 import { useSubscription } from 'src/hooks/use-subscription';
 import { useUser } from 'src/hooks/use-user';
 import useOnOutsideClick from 'src/hooks/useOnOutsideClick';
 import { supabase } from 'src/utils/supabase-client';
-
-const ActiveLink = ({ href, children }: any) => {
-    const router = useRouter();
-    const isRouteActive = router.pathname === href;
-
-    return (
-        <Link href={href}>
-            <a
-                className={`text-sm transition hover:text-primary-500 ${
-                    isRouteActive ? 'text-primary-600' : ''
-                }`}
-            >
-                {children}
-            </a>
-        </Link>
-    );
-};
 
 export const Layout = ({ children }: any) => {
     const router = useRouter();
@@ -48,23 +34,26 @@ export const Layout = ({ children }: any) => {
             router.push('/');
         }
     }, [router, session, loading]);
+    const [sideBarOpen, setSideBarOpen] = useState(true);
 
     return (
         <div className="w-full h-full">
             <div className="flex flex-row h-full">
-                <div className="px-4 py-4 flex-col bg-white border-r border-gray-100 w-64 hidden md:flex">
-                    <Title />
-                    <div className="flex flex-col space-y-4 mt-8">
-                        <ActiveLink href="/dashboard">{t('navbar.button.creators')}</ActiveLink>
-                        <ActiveLink href="/campaigns">{t('navbar.button.campaigns')}</ActiveLink>
-                    </div>
-                </div>
+                <Sidebar
+                    loggedIn={session && !loading}
+                    open={sideBarOpen}
+                    setOpen={setSideBarOpen}
+                />
                 <div className="flex flex-col w-full overflow-hidden">
-                    <div className="flex flex-row justify-between bg-white border-b border-gray-100">
-                        <div className="flex md:hidden px-4 py-4">
-                            <Title />
-                        </div>
-                        <div />
+                    <div className="flex items-center justify-between bg-white border-b border-gray-100">
+                        <Button
+                            onClick={() => setSideBarOpen(!sideBarOpen)}
+                            variant="neutral"
+                            className="flex items-center p-4 hover:text-primary-500"
+                        >
+                            <HamburgerMenu height={24} width={24} />
+                        </Button>
+
                         <div className="px-8 py-4 flex flex-row items-center space-x-4">
                             <div className="text-sm flex flex-row items-center space-x-4">
                                 <LanguageToggle />
