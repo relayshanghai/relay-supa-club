@@ -55,12 +55,12 @@ export default function CampaignDetails({
                         <div className="flex h-7">
                             {targetLocations.length > 0 &&
                                 targetLocations.map((tag, index) => (
-                                    <div
+                                    <p
                                         key={index}
                                         className="bg-tertiary-100 rounded-md px-2 py-1 text-xs text-tertiary-600 mr-1 mb-1"
                                     >
                                         {tag}
-                                    </div>
+                                    </p>
                                 ))}
                         </div>
                     </div>
@@ -71,12 +71,12 @@ export default function CampaignDetails({
                         <div className="flex h-7">
                             {promoTypes.length > 0 &&
                                 promoTypes.map((promoType, index) => (
-                                    <div
+                                    <p
                                         key={index}
                                         className="bg-tertiary-100 rounded-md px-2 py-1 text-xs text-tertiary-600 mr-1 mb-1"
                                     >
                                         {promoType}
-                                    </div>
+                                    </p>
                                 ))}
                         </div>
                     </div>
@@ -102,19 +102,19 @@ export default function CampaignDetails({
                             {t('campaigns.show.productName')}
                         </h3>
                         <p className="flex flex-wrap text-sm text-gray-600">
-                            {currentCampaign?.product_name || 'No product name set'}
+                            {currentCampaign.product_name || 'No product name set'}
                         </p>
                     </div>
                     <h3 className="text-sm font-semibold text-gray-600 mb-2">
                         {t('campaigns.show.productLink')}
                     </h3>
                     <a
-                        href={currentCampaign?.product_link || '#'}
+                        href={currentCampaign.product_link || '#'}
                         target="_blank"
                         className="text-sm text-primary-500 hover:text-primary-700 duration-300 mb-1 cursor-pointer break-words"
                         rel="noreferrer"
                     >
-                        {currentCampaign?.product_link}
+                        {currentCampaign.product_link}
                     </a>
                 </div>
             </div>
