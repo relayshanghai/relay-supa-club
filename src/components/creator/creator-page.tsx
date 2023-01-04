@@ -43,8 +43,8 @@ export const CreatorPage = ({
     }, [platform, user_id, profile]);
 
     useEffect(() => {
-        if (user_id && platform) getOrCreateReport();
-    }, [getOrCreateReport, platform, user_id]);
+        if (user_id && platform && profile?.id) getOrCreateReport();
+    }, [getOrCreateReport, platform, user_id, profile?.id]);
 
     const onAddToCampaign = () => {
         //TODO: Add to campaign

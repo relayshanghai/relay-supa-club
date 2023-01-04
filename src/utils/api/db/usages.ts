@@ -16,7 +16,7 @@ export const recordReportUsage = async (
     const limit = Number(company.usage_limit);
     const { data: usagesData, error: usagesError } = await supabase
         .from<UsagesDB>('usages')
-        .select('id')
+        .select('item_id')
         .eq('company_id', company_id)
         .eq('type', 'report');
 
@@ -31,7 +31,7 @@ export const recordReportUsage = async (
     const usage = {
         company_id,
         user_id,
-        type: 'search',
+        type: 'report',
         item_id: creator_id
     };
     const { error: insertError } = await supabase.from<UsagesDB>('usages').insert([usage]);
