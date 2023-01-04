@@ -1,4 +1,4 @@
-export default {
+const website = {
     login: {
         login: 'Log in',
         email: 'Email',
@@ -107,5 +107,8 @@ export default {
     deactivated: 'Deactivated',
     maxLength: 'Value must be maximum',
     minLength: 'Value must be minimum',
-    characters: 'characters'
+    characters: 'characters',
+    back: 'Back'
 };
+
+export default website;
