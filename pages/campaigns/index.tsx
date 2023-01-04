@@ -2,7 +2,7 @@ import { Layout } from 'src/modules/layout';
 import { useState } from 'react';
 import Link from 'next/link';
 import Tabs from 'src/components/campaigns/tabs';
-import { Spinner } from 'src/components/spinner';
+import { Spinner } from 'src/components/icons';
 import { Button } from 'src/components/button';
 import { useCampaigns } from 'src/hooks/use-campaigns';
 import CampaignCardView from 'src/components/campaigns/CampaignCardView';
