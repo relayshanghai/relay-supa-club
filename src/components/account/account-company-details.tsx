@@ -1,25 +1,42 @@
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
+import { useFields } from 'src/hooks/use-fields';
 import { Button } from '../button';
 import { Input } from '../input';
 import { AccountContext } from './account-context';
 import { InviteMembersModal } from './modal-invite-members';
 
 export const CompanyDetails = () => {
+    const { userDataLoading, profile, company, updateCompany } = useContext(AccountContext);
+
+    const [showAddMoreMembers, setShowAddMoreMembers] = useState(false);
+    const [inviteEmail, setInviteEmail] = useState('');
     const {
-        userDataLoading,
-        companyValues,
-        setCompanyFieldValues,
-        setShowAddMoreMembers,
-        profile,
-        company,
-        updateCompany
-    } = useContext(AccountContext);
+        values: companyValues,
+        setFieldValue: setCompanyFieldValues,
+        reset: resetCompanyValues
+    } = useFields<{ name: string; website: string }>({
+        name: '',
+        website: ''
+    });
+
+    useEffect(() => {
+        if (company) {
+            resetCompanyValues({ name: company.name || '', website: company.website || '' });
+        }
+    }, [company, resetCompanyValues]);
+
     const { t } = useTranslation();
+
     return (
         <div className="flex flex-col items-start space-y-4 p-4 bg-white rounded-lg w-full lg:max-w-2xl">
-            <InviteMembersModal />
+            <InviteMembersModal
+                showAddMoreMembers={showAddMoreMembers}
+                setShowAddMoreMembers={setShowAddMoreMembers}
+                inviteEmail={inviteEmail}
+                setInviteEmail={setInviteEmail}
+            />
 
             <h2 className="">{t('account.company.title')}</h2>
             <div className={`flex flex-row space-x-4 ${userDataLoading ? 'opacity-50' : ''}`}>

@@ -5,10 +5,24 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '../button';
 import { Modal } from '../modal';
 import { AccountContext } from './account-context';
-
-export const SubscriptionConfirmModal = () => {
-    const { subscription, createSubscriptions, confirmModalData, setConfirmModalData } =
-        useContext(AccountContext);
+export interface ConfirmModalData {
+    name?: string;
+    show?: boolean;
+    usage_limit?: number;
+    prices?: any[];
+}
+export const SubscriptionConfirmModal = ({
+    confirmModalData,
+    setConfirmModalData,
+    subscription,
+    createSubscriptions
+}: {
+    confirmModalData: ConfirmModalData;
+    setConfirmModalData: (value: ConfirmModalData) => void;
+    subscription?: any;
+    createSubscriptions: (planId: string) => void;
+}) => {
+    const {} = useContext(AccountContext);
     const { t } = useTranslation();
     return (
         <Modal

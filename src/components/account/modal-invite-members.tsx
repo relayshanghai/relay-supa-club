@@ -6,10 +6,21 @@ import { Input } from '../input';
 import { Modal } from '../modal';
 import { AccountContext } from './account-context';
 
-export const InviteMembersModal = () => {
-    const { inviteEmail, setInviteEmail, showAddMoreMembers, setShowAddMoreMembers, createInvite } =
-        useContext(AccountContext);
+export const InviteMembersModal = ({
+    showAddMoreMembers,
+    setShowAddMoreMembers,
+    inviteEmail,
+    setInviteEmail
+}: {
+    showAddMoreMembers: boolean;
+    setShowAddMoreMembers: (show: boolean) => void;
+    inviteEmail: string;
+    setInviteEmail: (email: string) => void;
+}) => {
+    const { createInvite } = useContext(AccountContext);
+
     const { t } = useTranslation();
+
     return (
         <Modal
             title={t('account.invite.title') || ''}

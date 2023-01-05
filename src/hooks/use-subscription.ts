@@ -7,6 +7,7 @@ import { useUser } from './use-user';
 
 export const useSubscription = () => {
     const { profile } = useUser();
+    // TODO: investigate why this type doesn't seem to match our code's usage
     const { data: subscription, mutate } = useSWR<Stripe.Subscription>(
         profile?.company_id ? `/api/subscriptions?id=${profile?.company_id}` : null,
         fetcher

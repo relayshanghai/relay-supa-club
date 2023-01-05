@@ -1,15 +1,35 @@
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
+import { useFields } from 'src/hooks/use-fields';
 import { Button } from '../button';
 import { Input } from '../input';
 import { AccountContext } from './account-context';
 
 export const PersonalDetails = () => {
-    const { userDataLoading, firstName, lastName, email, setUserFieldValues, updateProfile } =
-        useContext(AccountContext);
+    const {
+        values: { firstName, lastName, email },
+        setFieldValue: setUserFieldValues,
+        reset: resetUserValues
+    } = useFields({
+        firstName: '',
+        lastName: '',
+        email: ''
+    });
+    const { userDataLoading, profile, user, updateProfile } = useContext(AccountContext);
+
+    useEffect(() => {
+        if (!userDataLoading && profile) {
+            resetUserValues({
+                firstName: profile.first_name,
+                lastName: profile.last_name,
+                email: user?.email || ''
+            });
+        }
+    }, [userDataLoading, profile, user, resetUserValues]);
 
     const { t } = useTranslation();
+
     return (
         <div className="flex flex-col items-start space-y-4 p-4 bg-white rounded-lg w-full lg:max-w-2xl">
             <h2 className="">{t('account.personal.title')}</h2>

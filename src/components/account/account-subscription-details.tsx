@@ -1,27 +1,36 @@
 import { format } from 'date-fns';
 import Link from 'next/link';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SECONDS_IN_MILLISECONDS } from 'src/constants/conversions';
+import { useSubscription } from 'src/hooks/use-subscription';
 import { Button } from '../button';
 import { AccountContext } from './account-context';
-import { SubscriptionConfirmModal } from './subscription-confirm-modal';
+import { ConfirmModalData, SubscriptionConfirmModal } from './subscription-confirm-modal';
 
 export const SubscriptionDetails = () => {
     const {
-        userDataLoading,
-        subscription,
+        subscription: subscriptionWrongType,
         plans,
         paymentMethods,
-        setConfirmModalData,
-        profile,
-        company
-    } = useContext(AccountContext);
+        createSubscriptions
+    } = useSubscription();
+
+    // TODO: investigate why this type doesn't seem to match our code's usage
+    const subscription = subscriptionWrongType as any;
+    const [confirmModalData, setConfirmModalData] = useState<ConfirmModalData>({});
+
+    const { userDataLoading, profile, company } = useContext(AccountContext);
 
     const { t } = useTranslation();
     return (
         <div className="flex flex-col items-start space-y-4 p-4 bg-white rounded-lg w-full lg:max-w-2xl">
-            <SubscriptionConfirmModal />
+            <SubscriptionConfirmModal
+                subscription={subscription}
+                createSubscriptions={createSubscriptions}
+                confirmModalData={confirmModalData}
+                setConfirmModalData={setConfirmModalData}
+            />
 
             <div className="flex flex-row justify-between w-full items-center">
                 <h2>{t('account.subscription.title')}</h2>
@@ -34,7 +43,7 @@ export const SubscriptionDetails = () => {
                 </div>
             </div>
             <div className={`flex flex-row space-x-4 ${userDataLoading ? 'opacity-50' : ''}`}>
-                {subscription ? (
+                {subscription?.product ? (
                     <div className="flex flex-col space-y-2">
                         <p>
                             {t('account.subscription.youAreCurrentlyOn')}
@@ -68,7 +77,7 @@ export const SubscriptionDetails = () => {
                     </p>
                 )}
             </div>
-            {paymentMethods?.data.length === 0 ? (
+            {paymentMethods?.data?.length === 0 ? (
                 <div className="w-full">
                     <p>{t('account.subscription.beforePurchasingYouNeedPaymentMethod')}</p>
                     <div className="flex flex-row justify-end">
@@ -80,7 +89,7 @@ export const SubscriptionDetails = () => {
                     </div>
                 </div>
             ) : null}
-            {paymentMethods?.data.length !== 0 && Array.isArray(plans) ? (
+            {paymentMethods?.data?.length !== 0 && Array.isArray(plans) ? (
                 <div className="w-full pt-8 divide-y divide-gray-200">
                     <div className="pb-4">{t('account.subscription.availablePlans')}</div>
                     {plans.map((item, i) => {
@@ -96,7 +105,7 @@ export const SubscriptionDetails = () => {
                                         </p>
                                     )}
                                     {item.name}{' '}
-                                    {item.name === subscription?.product.name && (
+                                    {item.name === subscription?.product?.name && (
                                         <p className="text-xs bg-gray-200 p-1 rounded">
                                             {t('account.subscription.active')}
                                         </p>
