@@ -1,6 +1,7 @@
 import { format } from 'date-fns';
 import { useContext } from 'react';
 import toast from 'react-hot-toast';
+
 import { Button } from '../button';
 import { Input } from '../input';
 import { AccountContext } from './account-context';
@@ -13,13 +14,13 @@ export const AccountPage = () => {
         firstName,
         lastName,
         email,
-        setFieldValue,
+        setUserFieldValues,
         companyValues,
-        setCompanyFieldValue,
+        setCompanyFieldValues,
         subscription,
         plans,
         paymentMethods,
-        setShowConfirmModal,
+        setConfirmModalData,
         setShowAddMoreMembers,
         profile,
         updateProfile,
@@ -44,7 +45,7 @@ export const AccountPage = () => {
                             value={firstName}
                             required
                             onChange={(e: any) => {
-                                setFieldValue('firstName', e.target.value);
+                                setUserFieldValues('firstName', e.target.value);
                             }}
                         />
                         <Input
@@ -54,7 +55,7 @@ export const AccountPage = () => {
                             value={lastName}
                             required
                             onChange={(e: any) => {
-                                setFieldValue('lastName', e.target.value);
+                                setUserFieldValues('lastName', e.target.value);
                             }}
                         />
                         <Input
@@ -64,7 +65,7 @@ export const AccountPage = () => {
                             value={email}
                             required
                             onChange={(e: any) => {
-                                setFieldValue('email', e.target.value);
+                                setUserFieldValues('email', e.target.value);
                             }}
                         />
                     </div>
@@ -97,7 +98,7 @@ export const AccountPage = () => {
                             value={companyValues.name}
                             required
                             onChange={(e: any) => {
-                                setCompanyFieldValue('name', e.target.value);
+                                setCompanyFieldValues('name', e.target.value);
                             }}
                         />
                         <Input
@@ -107,7 +108,7 @@ export const AccountPage = () => {
                             placeholder="website address"
                             required
                             onChange={(e: any) => {
-                                setCompanyFieldValue('website', e.target.value);
+                                setCompanyFieldValues('website', e.target.value);
                             }}
                         />
                     </div>
@@ -287,7 +288,7 @@ export const AccountPage = () => {
                                                 <Button
                                                     disabled={item.id === subscription?.plan_id}
                                                     onClick={async () => {
-                                                        setShowConfirmModal(item);
+                                                        setConfirmModalData(item);
                                                     }}
                                                 >
                                                     Starting from{' '}

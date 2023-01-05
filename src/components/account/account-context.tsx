@@ -1,26 +1,51 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { createContext, Dispatch, FC, PropsWithChildren, useEffect, useState } from 'react';
+import {
+    createContext,
+    Dispatch,
+    FC,
+    PropsWithChildren,
+    SetStateAction,
+    useEffect,
+    useState
+} from 'react';
+
 import { useCompany } from 'src/hooks/use-company';
 import { useFields } from 'src/hooks/use-fields';
 import { useSubscription } from 'src/hooks/use-subscription';
 import { useUser } from 'src/hooks/use-user';
+import { CompanyWithProfilesInvitesAndUsage } from 'types';
 
+interface ConfirmModalData {
+    name?: string;
+    show?: boolean;
+    usage_limit?: number;
+    prices?: any[];
+}
 export interface AccountContextProps {
     loading: boolean;
     firstName: string;
     lastName: string;
     email: string;
-    setFieldValue: (field: string, value: string) => void;
-    reset: Dispatch<any>;
-    companyValues: any;
-    setCompanyFieldValue: (field: string, value: string) => void;
-    resetCompanyValues: Dispatch<any>;
+    setUserFieldValues: (name: 'firstName' | 'lastName' | 'email', value: string) => void;
+    resetUserValues: Dispatch<
+        SetStateAction<{
+            firstName: string;
+            lastName: string;
+            email: string;
+        }>
+    >;
+    companyValues: Partial<CompanyWithProfilesInvitesAndUsage>;
+    setCompanyFieldValues: (
+        field: keyof CompanyWithProfilesInvitesAndUsage,
+        value: CompanyWithProfilesInvitesAndUsage[keyof CompanyWithProfilesInvitesAndUsage]
+    ) => void;
+    resetCompanyValues: Dispatch<SetStateAction<Partial<CompanyWithProfilesInvitesAndUsage>>>;
     subscription: any;
     plans: any;
     paymentMethods: any;
     createSubscriptions: (planId: string) => void;
-    confirmModal: any;
-    setShowConfirmModal: (value: any) => void;
+    confirmModalData: ConfirmModalData;
+    setConfirmModalData: (value: ConfirmModalData) => void;
     inviteEmail: string;
     setInviteEmail: (value: string) => void;
     showAddMoreMembers: boolean;
@@ -38,17 +63,17 @@ export const AccountContext = createContext<AccountContextProps>({
     firstName: '',
     lastName: '',
     email: '',
-    setFieldValue: () => {},
-    reset: () => {},
+    setUserFieldValues: () => {},
+    resetUserValues: () => {},
     companyValues: {},
-    setCompanyFieldValue: () => {},
+    setCompanyFieldValues: () => {},
     resetCompanyValues: () => {},
     subscription: {},
     plans: {},
     paymentMethods: {},
     createSubscriptions: () => {},
-    confirmModal: {},
-    setShowConfirmModal: () => {},
+    confirmModalData: {},
+    setConfirmModalData: () => {},
     inviteEmail: '',
     setInviteEmail: () => {},
     showAddMoreMembers: false,
@@ -71,14 +96,16 @@ export const AccountProvider: FC<PropsWithChildren> = ({ children }: PropsWithCh
         createSubscriptions
     } = useSubscription();
 
-    const [confirmModal, setShowConfirmModal] = useState<any>();
-    const [inviteEmail, setInviteEmail] = useState<any>('');
-    const [showAddMoreMembers, setShowAddMoreMembers] = useState<any>(false);
+    const [confirmModalData, setConfirmModalData] = useState<
+        AccountContextProps['confirmModalData']
+    >({});
+    const [inviteEmail, setInviteEmail] = useState('');
+    const [showAddMoreMembers, setShowAddMoreMembers] = useState(false);
 
     const {
         values: { firstName, lastName, email },
-        setFieldValue,
-        reset
+        setFieldValue: setUserFieldValues,
+        reset: resetUserValues
     } = useFields({
         firstName: '',
         lastName: '',
@@ -86,9 +113,9 @@ export const AccountProvider: FC<PropsWithChildren> = ({ children }: PropsWithCh
     });
     const {
         values: companyValues,
-        setFieldValue: setCompanyFieldValue,
+        setFieldValue: setCompanyFieldValues,
         reset: resetCompanyValues
-    } = useFields({
+    } = useFields<Partial<CompanyWithProfilesInvitesAndUsage>>({
         name: '',
         website: ''
     });
@@ -97,17 +124,17 @@ export const AccountProvider: FC<PropsWithChildren> = ({ children }: PropsWithCh
 
     useEffect(() => {
         if (!loading && profile) {
-            reset({
+            resetUserValues({
                 firstName: profile.first_name,
                 lastName: profile.last_name,
-                email: user?.email
+                email: user?.email || ''
             });
         }
-    }, [loading, profile, user, reset]);
+    }, [loading, profile, user, resetUserValues]);
 
     useEffect(() => {
         if (company) {
-            resetCompanyValues({ ...company });
+            resetCompanyValues(company);
         }
     }, [company, resetCompanyValues]);
 
@@ -118,17 +145,17 @@ export const AccountProvider: FC<PropsWithChildren> = ({ children }: PropsWithCh
                 firstName,
                 lastName,
                 email,
-                setFieldValue,
-                reset,
+                setUserFieldValues,
+                resetUserValues,
                 companyValues,
-                setCompanyFieldValue,
+                setCompanyFieldValues,
                 resetCompanyValues,
                 subscription,
                 plans,
                 paymentMethods,
                 createSubscriptions,
-                confirmModal,
-                setShowConfirmModal,
+                confirmModalData,
+                setConfirmModalData,
                 inviteEmail,
                 setInviteEmail,
                 showAddMoreMembers,

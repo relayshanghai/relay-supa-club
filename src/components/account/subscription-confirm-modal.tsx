@@ -1,24 +1,23 @@
 import { useContext } from 'react';
 import toast from 'react-hot-toast';
+
 import { Button } from '../button';
 import { Modal } from '../modal';
 import { AccountContext } from './account-context';
 
 export const SubscriptionConfirmModal = () => {
-    const { subscription, createSubscriptions, confirmModal, setShowConfirmModal } =
+    const { subscription, createSubscriptions, confirmModalData, setConfirmModalData } =
         useContext(AccountContext);
 
     return (
         <Modal
-            title={`${confirmModal?.name} plan for ${confirmModal?.metadata.usage_limit} monthly profiles`}
-            visible={!!confirmModal}
-            onClose={() => {
-                setShowConfirmModal(undefined);
-            }}
+            title={`${confirmModalData?.name} plan for ${confirmModalData?.usage_limit} monthly profiles`}
+            visible={confirmModalData.show || false}
+            onClose={() => setConfirmModalData({ show: false })}
         >
             <div className="py-4">These are available subscriptions</div>
             <div className="flex flex-col space-y-8">
-                {confirmModal?.prices.map((price: any, i: any) => {
+                {confirmModalData.prices?.map((price: any, i: any) => {
                     return (
                         <div key={i} className="flex flex-row justify-between">
                             <div className="text-sm font-bold space-y-1 flex-col flex items-start">
@@ -48,7 +47,7 @@ export const SubscriptionConfirmModal = () => {
                                         const id = toast.loading('Subscribing...');
                                         try {
                                             await createSubscriptions(price.id);
-                                            setShowConfirmModal(undefined);
+                                            setConfirmModalData({ show: false });
                                             toast.success('Subscription purchased', { id });
                                         } catch (e) {
                                             toast.error('Ops, something went wrong', { id });
@@ -68,9 +67,7 @@ export const SubscriptionConfirmModal = () => {
             <div className="pt-8 space-x-16 justify-center flex flex-row w-full">
                 <Button
                     variant="secondary"
-                    onClick={async () => {
-                        setShowConfirmModal(undefined);
-                    }}
+                    onClick={async () => setConfirmModalData({ show: false })}
                 >
                     Cancel
                 </Button>
