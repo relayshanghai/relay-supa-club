@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 import { fetcher, nextFetch } from 'src/utils/fetcher';
 import useSWR from 'swr';
-import { CampaignCreatorDBInsert, CampaignWithCompanyCreators } from 'types';
+import { CampaignCreatorDB, CampaignCreatorDBInsert, CampaignWithCompanyCreators } from 'types';
 import { useUser } from './use-user';
 
 export const useCampaigns = ({ campaignId }: any = {}) => {
     const { profile } = useUser();
-    const { data } = useSWR<CampaignWithCompanyCreators[]>(
+    const { data, mutate } = useSWR<CampaignWithCompanyCreators[]>(
         profile?.company_id ? `/api/campaigns?id=${profile.company_id}` : null,
         fetcher
     );
@@ -17,7 +17,7 @@ export const useCampaigns = ({ campaignId }: any = {}) => {
     >([]);
 
     useEffect(() => {
-        if (data && campaignId) {
+        if (data && data?.length > 0 && campaignId) {
             const campaign = data?.find((c) => c.id === campaignId);
             if (campaign) setCampaign(campaign);
             if (campaign?.campaign_creators) setCampaignCreators(campaign.campaign_creators);
@@ -65,6 +65,27 @@ export const useCampaigns = ({ campaignId }: any = {}) => {
         },
         [profile?.company_id]
     );
+
+    // const updateCreatorInCampaign = useCallback(
+
+    // );
+
+    const deleteCreatorInCampaign = useCallback(
+        async (input: CampaignCreatorDB) => {
+            setLoading(true);
+            await fetch('/api/campaigns/delete-creator', {
+                method: 'delete',
+                body: JSON.stringify({
+                    ...input,
+                    campaign_id: campaign?.id,
+                    company_id: profile?.company_id
+                })
+            });
+            setLoading(false);
+        },
+        [campaign?.id, profile?.company_id]
+    );
+
     return {
         campaigns: data as CampaignWithCompanyCreators[],
         createCampaign,
@@ -72,6 +93,8 @@ export const useCampaigns = ({ campaignId }: any = {}) => {
         campaign,
         loading,
         campaignCreators,
-        addCreatorToCampaign
+        addCreatorToCampaign,
+        deleteCreatorInCampaign,
+        mutate
     };
 };

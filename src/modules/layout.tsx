@@ -4,9 +4,8 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
 import { LanguageToggle } from 'src/components/common/language-toggle';
-import { Spinner } from 'src/components/icons';
-import { Title } from 'src/components/title';
-import { HamburgerMenu } from 'src/components/icons';
+import { HamburgerMenu, Spinner } from 'src/components/icons';
+
 import { Sidebar } from 'src/components/sidebar';
 
 import { useCompany } from 'src/hooks/use-company';
@@ -75,7 +74,7 @@ export const Layout = ({ children }: any) => {
                                             onClick={() => setAccountMenuOpen(!accountMenuOpen)}
                                             ref={accountMenuButtonRef}
                                         >
-                                            <p className="w-9 l-9 p-2 rounded-full bg-primary-50 text-primary-600 text-sm font-bold">
+                                            <p className="w-9 h-9 p-2 rounded-full bg-primary-50 text-primary-600 text-xs font-bold">
                                                 {profile?.first_name ? profile.first_name[0] : ''}
                                                 {profile?.last_name ? profile.last_name[0] : ''}
                                             </p>

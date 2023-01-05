@@ -1,9 +1,11 @@
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
-import { CampaignWithCompanyCreators } from 'types';
+import { MouseEvent, useState } from 'react';
+import { CampaignCreatorDB, CampaignWithCompanyCreators } from 'types';
 import Link from 'next/link';
 import Trashcan from 'src/components/icons/Trashcan';
+import { useCampaigns } from 'src/hooks/use-campaigns';
+import { toast } from 'react-hot-toast';
 
 export default function CreatorsOutreach({
     currentCampaign
@@ -14,6 +16,9 @@ export default function CreatorsOutreach({
     const router = useRouter();
     const { pathname, query } = router;
     const [status, setStatus] = useState('to contact');
+    const { deleteCreatorInCampaign, mutate } = useCampaigns({
+        campaignId: currentCampaign?.id
+    });
 
     const tabs = [
         { label: 'toContact', value: 'to contact' },
@@ -44,8 +49,16 @@ export default function CreatorsOutreach({
         //TODO: add dropdown select functionality
     };
 
-    const deleteCampaignCreator = () => {
-        //TODO: add delete campaignCreator functionality
+    const deleteCampaignCreator = async (
+        e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>,
+        creator: CampaignCreatorDB
+    ) => {
+        e.stopPropagation();
+        const c = confirm('Are you sure you want to delete?');
+        if (!c) return;
+        await deleteCreatorInCampaign(creator);
+        mutate();
+        toast.success(t('campaigns.modal.deletedSuccessfully'));
     };
 
     return (
@@ -156,7 +169,7 @@ export default function CreatorsOutreach({
 
                                 <td className="px-6 py-4 sm:sticky right-0 bg-white whitespace-nowrap z-50 group-hover:bg-primary-50 flex justify-end">
                                     <div
-                                        onClick={() => deleteCampaignCreator()}
+                                        onClick={(e) => deleteCampaignCreator(e, creator)}
                                         className="p-2 rounded-md text-gray-600  bg-gray-50 hover:bg-gray-100 border border-gray-200 duration-300 outline-none appearance-none text-center"
                                     >
                                         <Trashcan className="w-4 h-4 cursor-pointer fill-tertiary-600 hover:fill-primary-600" />

@@ -30,7 +30,8 @@ const campaigns = {
         content: 'Content',
         comments: 'Internal Comments',
         viewProfile: 'View Profile',
-        addedSuccessfully: 'KOL added successfully.'
+        addedSuccessfully: 'KOL added successfully.',
+        deletedSuccessfully: 'KOL was deleted.'
     },
     creatorModal: {
         outreach: 'Outreach',
