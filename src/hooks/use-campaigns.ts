@@ -6,7 +6,7 @@ import { useUser } from './use-user';
 
 export const useCampaigns = ({ campaignId }: any = {}) => {
     const { profile } = useUser();
-    const { data, mutate } = useSWR<CampaignWithCompanyCreators[]>(
+    const { data, mutate: refreshCampaign } = useSWR<CampaignWithCompanyCreators[]>(
         profile?.company_id ? `/api/campaigns?id=${profile.company_id}` : null,
         fetcher
     );
@@ -66,9 +66,21 @@ export const useCampaigns = ({ campaignId }: any = {}) => {
         [profile?.company_id]
     );
 
-    // const updateCreatorInCampaign = useCallback(
-
-    // );
+    const updateCreatorInCampaign = useCallback(
+        async (input: CampaignCreatorDB) => {
+            setLoading(true);
+            await fetch('/api/campaigns/update-creator', {
+                method: 'put',
+                body: JSON.stringify({
+                    ...input,
+                    campaign_id: campaign?.id,
+                    company_id: profile?.company_id
+                })
+            });
+            setLoading(false);
+        },
+        [campaign?.id, profile?.company_id]
+    );
 
     const deleteCreatorInCampaign = useCallback(
         async (input: CampaignCreatorDB) => {
@@ -95,6 +107,7 @@ export const useCampaigns = ({ campaignId }: any = {}) => {
         campaignCreators,
         addCreatorToCampaign,
         deleteCreatorInCampaign,
-        mutate
+        updateCreatorInCampaign,
+        refreshCampaign
     };
 };
