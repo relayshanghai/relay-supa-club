@@ -1,5 +1,6 @@
 import { useContext } from 'react';
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 import { Button } from '../button';
 import { Input } from '../input';
 import { Modal } from '../modal';
@@ -8,25 +9,22 @@ import { AccountContext } from './account-context';
 export const InviteMembersModal = () => {
     const { inviteEmail, setInviteEmail, showAddMoreMembers, setShowAddMoreMembers, createInvite } =
         useContext(AccountContext);
+    const { t } = useTranslation();
     return (
         <Modal
-            title={'Invite members'}
-            visible={!!showAddMoreMembers}
-            onClose={() => {
-                setShowAddMoreMembers(false);
-            }}
+            title={t('account.invite.title') || ''}
+            visible={showAddMoreMembers}
+            onClose={() => setShowAddMoreMembers(false)}
         >
-            <div className="py-4">Invite more members to your company</div>
+            <h3 className="py-4">{t('account.invite.inviteMoreMembers')}</h3>
             <div>
                 <Input
                     type="email"
-                    placeholder="Type here the email address"
-                    label="Email address"
+                    placeholder={t('account.invite.typeEmailAddressHere') || ''}
+                    label={t('account.invite.emailAddress') || ''}
                     value={inviteEmail}
                     required
-                    onChange={(e: any) => {
-                        setInviteEmail(e.target.value);
-                    }}
+                    onChange={(e) => setInviteEmail(e.target.value)}
                 />
             </div>
             <div className="pt-8 space-x-16 justify-center flex flex-row w-full">
@@ -39,15 +37,10 @@ export const InviteMembersModal = () => {
                         toast.success('Invite sent');
                     }}
                 >
-                    Send invitation
+                    {t('account.invite.sendInvitation')}
                 </Button>
-                <Button
-                    variant="secondary"
-                    onClick={async () => {
-                        setShowAddMoreMembers(false);
-                    }}
-                >
-                    Cancel
+                <Button variant="secondary" onClick={async () => setShowAddMoreMembers(false)}>
+                    {t('account.invite.cancel')}{' '}
                 </Button>
             </div>
         </Modal>

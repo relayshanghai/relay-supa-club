@@ -1,116 +1,126 @@
 import { format } from 'date-fns';
+import Link from 'next/link';
 import { useContext } from 'react';
+import { useTranslation } from 'react-i18next';
+import { SECONDS_IN_MILLISECONDS } from 'src/constants/conversions';
 import { Button } from '../button';
 import { AccountContext } from './account-context';
 import { SubscriptionConfirmModal } from './subscription-confirm-modal';
 
 export const SubscriptionDetails = () => {
-    const { loading, subscription, plans, paymentMethods, setConfirmModalData, profile, company } =
-        useContext(AccountContext);
+    const {
+        userDataLoading,
+        subscription,
+        plans,
+        paymentMethods,
+        setConfirmModalData,
+        profile,
+        company
+    } = useContext(AccountContext);
+
+    const { t } = useTranslation();
     return (
         <div className="flex flex-col items-start space-y-4 p-4 bg-white rounded-lg w-full lg:max-w-2xl">
             <SubscriptionConfirmModal />
 
             <div className="flex flex-row justify-between w-full items-center">
-                <div>Subscription</div>
+                <h2>{t('account.subscription.title')}</h2>
                 <div className="flex flex-row justify-end">
-                    <Button
-                        variant="secondary"
-                        onClick={() => {
-                            window.open(`/api/subscriptions/portal?id=${company?.id}`);
-                        }}
-                    >
-                        View billing portal
+                    <Button variant="secondary">
+                        <Link href={`/api/subscriptions/portal?id=${company?.id}`}>
+                            <a>{t('account.subscription.viewBillingPortal')}</a>
+                        </Link>
                     </Button>
                 </div>
             </div>
-            <div className={`flex flex-row space-x-4 ${loading ? 'opacity-50' : ''}`}>
+            <div className={`flex flex-row space-x-4 ${userDataLoading ? 'opacity-50' : ''}`}>
                 {subscription ? (
                     <div className="flex flex-col space-y-2">
-                        <div>
-                            You currently are on <b>{subscription.product.name}</b> plan, which
-                            gives you a total of <b>{subscription.product.metadata.usage_limit}</b>{' '}
-                            monthly profiles at{' '}
+                        <p>
+                            {t('account.subscription.youAreCurrentlyOn')}
+                            <b>{subscription.product.name}</b>{' '}
+                            {t('account.subscription.planWhichGivesYouATotalOf')}
+                            <b>{subscription.product.metadata.usage_limit}</b>
+                            {t('account.subscription.monthlyProfilesAt')}
                             <b>
                                 {Number(subscription.plan.amount / 100).toLocaleString()} {` `}
                                 {subscription.plan.currency.toUpperCase()}
                             </b>{' '}
-                            / <b>{subscription.plan.interval}</b>. You are on a{' '}
-                            <b>{subscription.plan.interval}</b> cycle which will end on{' '}
+                            / <b>{subscription.plan.interval}</b>
+                            {t('account.subscription.youAreOnA')}
+                            <b>{subscription.plan.interval}</b>
+                            {t('account.subscription.cycleWhichWillEndOn')}
                             <b>
                                 {format(
-                                    new Date(subscription.current_period_end * 1e3),
+                                    new Date(
+                                        subscription.current_period_end * SECONDS_IN_MILLISECONDS
+                                    ),
                                     'MMM dd, Y'
                                 )}
                             </b>
                             .
-                        </div>
-                        <div>Not enough? checkout the available plans below.</div>
+                        </p>
+                        <p>{t('account.subscription.notEnoughCheckOutPlansBelow')}</p>
                     </div>
                 ) : (
-                    <div className="text-sm py-2 text-gray-500">
-                        You have no active subscription. Please purchase one below.
-                    </div>
+                    <p className="text-sm py-2 text-gray-500">
+                        {t('account.subscription.youHaveNoActiveSubscriptionPleasePurchaseBelow')}
+                    </p>
                 )}
             </div>
             {paymentMethods?.data.length === 0 ? (
                 <div className="w-full">
-                    <div>Before purchasing a subscription, you need to add a payment method. </div>
+                    <p>{t('account.subscription.beforePurchasingYouNeedPaymentMethod')}</p>
                     <div className="flex flex-row justify-end">
-                        <Button
-                            onClick={() => {
-                                window.open(`/api/subscriptions/portal?id=${company?.id}`);
-                            }}
-                        >
-                            Add payment method
+                        <Button>
+                            <Link href={`/api/subscriptions/portal?id=${company?.id}`}>
+                                <a> {t('account.subscription.addPaymentMethod')}</a>
+                            </Link>
                         </Button>
                     </div>
                 </div>
             ) : null}
             {paymentMethods?.data.length !== 0 && Array.isArray(plans) ? (
                 <div className="w-full pt-8 divide-y divide-gray-200">
-                    <div className="pb-4">Available plans</div>
-                    {plans.map((item: any, i: any) => {
+                    <div className="pb-4">{t('account.subscription.availablePlans')}</div>
+                    {plans.map((item, i) => {
                         return (
                             <div
                                 key={item.id}
                                 className="flex flex-row space-x-2 items-center justify-between w-full py-2"
                             >
                                 <div className="text-sm font-bold w-1/4">
-                                    {i === 0 ? (
-                                        <div className="text-xs text-gray-500 font-normal">
-                                            Name
-                                        </div>
-                                    ) : null}
+                                    {i === 0 && (
+                                        <p className="text-xs text-gray-500 font-normal">
+                                            {t('account.subscription.planName')}
+                                        </p>
+                                    )}
                                     {item.name}{' '}
-                                    {item.name === subscription?.product.name ? (
-                                        <span className="text-xs bg-gray-200 p-1 rounded">
-                                            Active
-                                        </span>
-                                    ) : null}
+                                    {item.name === subscription?.product.name && (
+                                        <p className="text-xs bg-gray-200 p-1 rounded">
+                                            {t('account.subscription.active')}
+                                        </p>
+                                    )}
                                 </div>
                                 <div className="text-sm font-bold w-1/4">
-                                    {i === 0 ? (
-                                        <div className="text-xs text-gray-500 font-normal">
-                                            Monthly profiles
-                                        </div>
-                                    ) : null}
+                                    {i === 0 && (
+                                        <p className="text-xs text-gray-500 font-normal">
+                                            {t('account.subscription.monthlyProfiles')}
+                                        </p>
+                                    )}
                                     {item.metadata.usage_limit}
                                 </div>
-                                {profile?.admin ? (
+                                {profile?.admin && (
                                     <div className="text-sm font-bold w-2/6 flex flex-row justify-end">
                                         <Button
                                             disabled={item.id === subscription?.plan_id}
-                                            onClick={async () => {
-                                                setConfirmModalData(item);
-                                            }}
+                                            onClick={() => setConfirmModalData(item)}
                                         >
-                                            Starting from{' '}
                                             {Number(item.prices[1]?.amount / 100).toLocaleString()}{' '}
                                             / {item.prices[1]?.interval}
                                         </Button>
                                     </div>
-                                ) : null}
+                                )}
                             </div>
                         );
                     })}

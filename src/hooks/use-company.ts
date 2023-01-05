@@ -25,11 +25,11 @@ export const useCompany = () => {
     );
 
     const createInvite = useCallback(
-        async (email: any) => {
+        async (email: string) => {
             await fetch(`/api/company/create-invite`, {
                 method: 'post',
                 body: JSON.stringify({
-                    email: email,
+                    email,
                     company_id: profile?.company_id
                 })
             });

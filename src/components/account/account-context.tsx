@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
+import { User } from '@supabase/supabase-js';
+
 import {
     createContext,
     Dispatch,
@@ -13,7 +15,12 @@ import { useCompany } from 'src/hooks/use-company';
 import { useFields } from 'src/hooks/use-fields';
 import { useSubscription } from 'src/hooks/use-subscription';
 import { useUser } from 'src/hooks/use-user';
-import { CompanyWithProfilesInvitesAndUsage } from 'types';
+import {
+    CompanyWithProfilesInvitesAndUsage,
+    ProfileDB,
+    StripePaymentMethods,
+    StripePlansWithPrice
+} from 'types';
 
 interface ConfirmModalData {
     name?: string;
@@ -22,7 +29,7 @@ interface ConfirmModalData {
     prices?: any[];
 }
 export interface AccountContextProps {
-    loading: boolean;
+    userDataLoading: boolean;
     firstName: string;
     lastName: string;
     email: string;
@@ -40,9 +47,6 @@ export interface AccountContextProps {
         value: CompanyWithProfilesInvitesAndUsage[keyof CompanyWithProfilesInvitesAndUsage]
     ) => void;
     resetCompanyValues: Dispatch<SetStateAction<Partial<CompanyWithProfilesInvitesAndUsage>>>;
-    subscription: any;
-    plans: any;
-    paymentMethods: any;
     createSubscriptions: (planId: string) => void;
     confirmModalData: ConfirmModalData;
     setConfirmModalData: (value: ConfirmModalData) => void;
@@ -50,16 +54,21 @@ export interface AccountContextProps {
     setInviteEmail: (value: string) => void;
     showAddMoreMembers: boolean;
     setShowAddMoreMembers: (value: boolean) => void;
-    profile: any;
-    user: any;
+    profile: ProfileDB | null;
+    user: User | null;
+    company?: CompanyWithProfilesInvitesAndUsage;
+    plans?: StripePlansWithPrice;
+    createInvite: (email: string) => void;
+    paymentMethods?: StripePaymentMethods;
+
+    // TODO: get types for these
     updateProfile: (data: any) => void;
-    company: any;
     updateCompany: (data: any) => void;
-    createInvite: (data: any) => void;
+    subscription: any;
 }
 
 export const AccountContext = createContext<AccountContextProps>({
-    loading: false,
+    userDataLoading: false,
     firstName: '',
     lastName: '',
     email: '',
@@ -69,8 +78,8 @@ export const AccountContext = createContext<AccountContextProps>({
     setCompanyFieldValues: () => {},
     resetCompanyValues: () => {},
     subscription: {},
-    plans: {},
-    paymentMethods: {},
+    plans: undefined,
+    paymentMethods: undefined,
     createSubscriptions: () => {},
     confirmModalData: {},
     setConfirmModalData: () => {},
@@ -78,16 +87,16 @@ export const AccountContext = createContext<AccountContextProps>({
     setInviteEmail: () => {},
     showAddMoreMembers: false,
     setShowAddMoreMembers: () => {},
-    profile: {},
-    user: {},
+    profile: null,
+    user: null,
     updateProfile: () => {},
-    company: {},
+    company: undefined,
     updateCompany: () => {},
     createInvite: () => {}
 });
 
 export const AccountProvider: FC<PropsWithChildren> = ({ children }: PropsWithChildren) => {
-    const { profile, user, loading, updateProfile } = useUser();
+    const { profile, user, loading: userDataLoading, updateProfile } = useUser();
     const { company, updateCompany, createInvite } = useCompany();
     const {
         subscription: subscriptionWrongType,
@@ -123,14 +132,14 @@ export const AccountProvider: FC<PropsWithChildren> = ({ children }: PropsWithCh
     const subscription = subscriptionWrongType as any;
 
     useEffect(() => {
-        if (!loading && profile) {
+        if (!userDataLoading && profile) {
             resetUserValues({
                 firstName: profile.first_name,
                 lastName: profile.last_name,
                 email: user?.email || ''
             });
         }
-    }, [loading, profile, user, resetUserValues]);
+    }, [userDataLoading, profile, user, resetUserValues]);
 
     useEffect(() => {
         if (company) {
@@ -141,7 +150,7 @@ export const AccountProvider: FC<PropsWithChildren> = ({ children }: PropsWithCh
     return (
         <AccountContext.Provider
             value={{
-                loading,
+                userDataLoading,
                 firstName,
                 lastName,
                 email,
