@@ -19,7 +19,7 @@ const Page = () => {
                     />
                 </div>
             ) : (
-                <CreatorPage platform={ids[0] as any} user_id={ids[1]} />
+                <CreatorPage platform={ids[0] as any} creator_id={ids[1]} />
             )}
         </Layout>
     );

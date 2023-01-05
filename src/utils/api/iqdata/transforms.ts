@@ -38,7 +38,7 @@ export const prepareFetchCreatorsFiltered = ({
     contactInfo
 }: FetchCreatorsFilteredParams) => {
     const tagsValue = tags.map((tag: { tag: string }) => `#${tag.tag}`);
-    const lookalikeValue = lookalike.map((item: CreatorAccount) => `@${item.user_id}`);
+    const lookalikeValue = lookalike.map((account: CreatorAccount) => `@${account.user_id}`);
     const body = {
         paging: {
             limit: resultsPerPageLimit,
