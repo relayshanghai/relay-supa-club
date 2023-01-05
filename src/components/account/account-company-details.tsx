@@ -3,6 +3,7 @@ import toast from 'react-hot-toast';
 import { Button } from '../button';
 import { Input } from '../input';
 import { AccountContext } from './account-context';
+import { InviteMembersModal } from './modal-invite-members';
 
 export const CompanyDetails = () => {
     const {
@@ -16,6 +17,8 @@ export const CompanyDetails = () => {
     } = useContext(AccountContext);
     return (
         <div className="flex flex-col items-start space-y-4 p-4 bg-white rounded-lg w-full lg:max-w-2xl">
+            <InviteMembersModal />
+
             <div className="">Here you can change your Company account details.</div>
             <div className={`flex flex-row space-x-4 ${loading ? 'opacity-50' : ''}`}>
                 <Input

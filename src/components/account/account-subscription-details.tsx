@@ -2,12 +2,15 @@ import { format } from 'date-fns';
 import { useContext } from 'react';
 import { Button } from '../button';
 import { AccountContext } from './account-context';
+import { SubscriptionConfirmModal } from './subscription-confirm-modal';
 
 export const SubscriptionDetails = () => {
     const { loading, subscription, plans, paymentMethods, setConfirmModalData, profile, company } =
         useContext(AccountContext);
     return (
         <div className="flex flex-col items-start space-y-4 p-4 bg-white rounded-lg w-full lg:max-w-2xl">
+            <SubscriptionConfirmModal />
+
             <div className="flex flex-row justify-between w-full items-center">
                 <div>Subscription</div>
                 <div className="flex flex-row justify-end">
