@@ -30,6 +30,7 @@ const account = {
         youAreCurrentlyOn: 'You are currently on the ',
         planWhichGivesYouATotalOf: ' plan which gives you a total of ',
         monthlyProfilesAt: ' monthly profiles at ',
+        planCycleAndEnding_cycle_end: 'You are on a {{cycle}} which will end on {{end}}.',
         youAreOnA: '. You are on a ',
         cycleWhichWillEndOn: ' cycle which will end on ',
         notEnoughCheckOutPlansBelow: 'Not enough? Check out the plans below.',
@@ -45,6 +46,7 @@ const account = {
         modal: {
             planFor: ' plan for ',
             monthlyProfiles: ' monthly profiles',
+            bestValue_price: 'Best value: {{price}} / month',
             availableSubscriptions: 'Available subscriptions',
             subscribing: 'Subscribing...',
             subscriptionPurchased: 'Subscription purchased',

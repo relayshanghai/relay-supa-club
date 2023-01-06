@@ -1,55 +1,59 @@
-import { useContext } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
+import { StripePlanWithPrice } from 'types';
 
 import { Button } from '../button';
 import { Modal } from '../modal';
-import { AccountContext } from './account-context';
-export interface ConfirmModalData {
-    name?: string;
-    show?: boolean;
-    usage_limit?: number;
-    prices?: any[];
-}
+
 export const SubscriptionConfirmModal = ({
     confirmModalData,
     setConfirmModalData,
     subscription,
     createSubscriptions
 }: {
-    confirmModalData: ConfirmModalData;
-    setConfirmModalData: (value: ConfirmModalData) => void;
+    confirmModalData: StripePlanWithPrice | null;
+    setConfirmModalData: (value: StripePlanWithPrice | null) => void;
     subscription?: any;
     createSubscriptions: (planId: string) => void;
 }) => {
-    const {} = useContext(AccountContext);
     const { t } = useTranslation();
+    const handleCreateSubscription = async (priceId: string) => {
+        const id = toast.loading(t('account.subscription.modal.subscribing'));
+        try {
+            await createSubscriptions(priceId);
+            setConfirmModalData(null);
+            toast.success(t('account.subscription.modal.subscriptionPurchased'), { id });
+        } catch (e) {
+            toast.error(t('account.subscription.modal.wentWrong'), {
+                id
+            });
+        }
+    };
     return (
         <Modal
             title={`${confirmModalData?.name}${t('account.subscription.modal.planFor')}${
-                confirmModalData?.usage_limit
+                confirmModalData?.metadata.usage_limit
             }${t('account.subscription.modal.monthlyProfiles')}`}
-            visible={confirmModalData.show || false}
-            onClose={() => setConfirmModalData({ show: false })}
+            visible={!!confirmModalData}
+            onClose={() => setConfirmModalData(null)}
         >
             <h2 className="py-4">{t('account.subscription.modal.availableSubscriptions')}</h2>
             <div className="flex flex-col space-y-8">
-                {confirmModalData.prices?.map((price, i) => {
+                {confirmModalData?.prices?.map((price, i) => {
+                    const priceAmount = (Number(price.amount) / 100).toFixed(0);
                     return (
                         <div key={i} className="flex flex-row justify-between">
                             <div className="text-sm font-bold space-y-1 flex-col flex items-start">
                                 <p>
-                                    {Number(price.amount / 100).toLocaleString()}
+                                    {priceAmount}
                                     {` `}
                                     {price.currency.toUpperCase()} / {price.interval}{' '}
                                 </p>
                                 {price.interval === 'year' && (
                                     <p className="text-xs rounded p-1 bg-green-200">
-                                        {'Best value: ' +
-                                            Number(price.amount / 100 / 12).toLocaleString() +
-                                            ' ' +
-                                            price.currency.toUpperCase() +
-                                            ' / month'}
+                                        {t('account.subscription.modal.bestValue_price', {
+                                            price: priceAmount
+                                        })}
                                     </p>
                                 )}
                                 {price.id === subscription?.plan?.id && (
@@ -62,25 +66,7 @@ export const SubscriptionConfirmModal = ({
                                 <Button
                                     disabled={price.id === subscription?.plan?.id}
                                     variant={price.interval === 'year' ? 'primary' : 'secondary'}
-                                    onClick={async () => {
-                                        const id = toast.loading(
-                                            t('account.subscription.modal.subscribing')
-                                        );
-                                        try {
-                                            await createSubscriptions(price.id);
-                                            setConfirmModalData({ show: false });
-                                            toast.success(
-                                                t(
-                                                    'account.subscription.modal.subscriptionPurchased'
-                                                ),
-                                                { id }
-                                            );
-                                        } catch (e) {
-                                            toast.error(t('account.subscription.modal.wentWrong'), {
-                                                id
-                                            });
-                                        }
-                                    }}
+                                    onClick={() => handleCreateSubscription(price.id)}
                                 >
                                     {t('account.subscription.modal.subscribe')}
                                 </Button>
@@ -93,10 +79,7 @@ export const SubscriptionConfirmModal = ({
                 {t('account.subscription.modal.noteClickingSubscribeWillCharge')}
             </div>
             <div className="pt-8 space-x-16 justify-center flex flex-row w-full">
-                <Button
-                    variant="secondary"
-                    onClick={async () => setConfirmModalData({ show: false })}
-                >
+                <Button variant="secondary" onClick={async () => setConfirmModalData(null)}>
                     {t('account.subscription.modal.cancel')}
                 </Button>
             </div>

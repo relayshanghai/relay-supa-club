@@ -4,9 +4,10 @@ import { useContext, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SECONDS_IN_MILLISECONDS } from 'src/constants/conversions';
 import { useSubscription } from 'src/hooks/use-subscription';
+import { StripePlanWithPrice } from 'types';
 import { Button } from '../button';
 import { AccountContext } from './account-context';
-import { ConfirmModalData, SubscriptionConfirmModal } from './subscription-confirm-modal';
+import { SubscriptionConfirmModal } from './subscription-confirm-modal';
 
 export const SubscriptionDetails = () => {
     const {
@@ -18,7 +19,7 @@ export const SubscriptionDetails = () => {
 
     // TODO: investigate why this type doesn't seem to match our code's usage
     const subscription = subscriptionWrongType as any;
-    const [confirmModalData, setConfirmModalData] = useState<ConfirmModalData>({});
+    const [confirmModalData, setConfirmModalData] = useState<StripePlanWithPrice | null>(null);
 
     const { userDataLoading, profile, company } = useContext(AccountContext);
 
@@ -77,7 +78,7 @@ export const SubscriptionDetails = () => {
                     </p>
                 )}
             </div>
-            {paymentMethods?.data?.length === 0 ? (
+            {paymentMethods?.data?.length === 0 && (
                 <div className="w-full">
                     <p>{t('account.subscription.beforePurchasingYouNeedPaymentMethod')}</p>
                     <div className="flex flex-row justify-end">
@@ -88,14 +89,14 @@ export const SubscriptionDetails = () => {
                         </Button>
                     </div>
                 </div>
-            ) : null}
-            {paymentMethods?.data?.length !== 0 && Array.isArray(plans) ? (
+            )}
+            {paymentMethods?.data?.length !== 0 && Array.isArray(plans) && (
                 <div className="w-full pt-8 divide-y divide-gray-200">
                     <div className="pb-4">{t('account.subscription.availablePlans')}</div>
-                    {plans.map((item, i) => {
+                    {plans?.map((plan, i) => {
                         return (
                             <div
-                                key={item.id}
+                                key={plan.id}
                                 className="flex flex-row space-x-2 items-center justify-between w-full py-2"
                             >
                                 <div className="text-sm font-bold w-1/4">
@@ -104,8 +105,8 @@ export const SubscriptionDetails = () => {
                                             {t('account.subscription.planName')}
                                         </p>
                                     )}
-                                    {item.name}{' '}
-                                    {item.name === subscription?.product?.name && (
+                                    {plan.name}{' '}
+                                    {plan.name === subscription?.product?.name && (
                                         <p className="text-xs bg-gray-200 p-1 rounded">
                                             {t('account.subscription.active')}
                                         </p>
@@ -117,16 +118,16 @@ export const SubscriptionDetails = () => {
                                             {t('account.subscription.monthlyProfiles')}
                                         </p>
                                     )}
-                                    {item.metadata.usage_limit}
+                                    {plan.metadata.usage_limit}
                                 </div>
-                                {profile?.admin && (
+                                {profile?.admin && plan.prices && plan.prices[1]?.amount && (
                                     <div className="text-sm font-bold w-2/6 flex flex-row justify-end">
                                         <Button
-                                            disabled={item.id === subscription?.plan_id}
-                                            onClick={() => setConfirmModalData(item)}
+                                            disabled={plan.id === subscription?.plan_id}
+                                            onClick={() => setConfirmModalData(plan)}
                                         >
-                                            {Number(item.prices[1]?.amount / 100).toLocaleString()}{' '}
-                                            / {item.prices[1]?.interval}
+                                            {Number(plan.prices[1]?.amount / 100).toLocaleString()}{' '}
+                                            / {plan.prices[1]?.interval}
                                         </Button>
                                     </div>
                                 )}
@@ -134,7 +135,7 @@ export const SubscriptionDetails = () => {
                         );
                     })}
                 </div>
-            ) : null}
+            )}
         </div>
     );
 };

@@ -1,24 +1,33 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import httpCodes from 'src/constants/httpCodes';
+import { serverLogger } from 'src/utils/logger';
 import { stripeClient } from 'src/utils/stripe-client';
-import { StripePlansWithPrice } from 'types';
+import { StripePlanWithPrice } from 'types';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'GET') {
-        const [products, plans] = await Promise.all([
-            await stripeClient.products.list(),
-            await stripeClient.plans.list()
-        ]);
+        try {
+            const [products, plans] = await Promise.all([
+                await stripeClient.products.list(),
+                await stripeClient.plans.list()
+            ]);
 
-        const withPlans: StripePlansWithPrice[] = products.data.map(
-            (product: StripePlansWithPrice) => {
-                const prices = plans.data.filter((plan) => plan.product === product.id);
-                product.prices = prices;
-                return product;
-            }
-        );
+            const withPlans: StripePlanWithPrice[] = products.data.map(
+                (product: StripePlanWithPrice) => {
+                    const prices = plans.data.filter((plan) => plan.product === product.id);
+                    product.prices = prices;
+                    return product;
+                }
+            );
 
-        return res.status(200).json(withPlans);
+            return res.status(httpCodes.OK).json(withPlans);
+        } catch (error) {
+            serverLogger(error, 'error');
+            return res
+                .status(httpCodes.INTERNAL_SERVER_ERROR)
+                .json({ error: 'unable to get plans' });
+        }
     }
 
-    return res.status(400).json(null);
+    return res.status(httpCodes.METHOD_NOT_ALLOWED).json({});
 }

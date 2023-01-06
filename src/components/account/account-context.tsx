@@ -10,12 +10,12 @@ import {
     CompanyWithProfilesInvitesAndUsage,
     ProfileDB,
     StripePaymentMethods,
-    StripePlansWithPrice
+    StripePlanWithPrice
 } from 'types';
 
 export interface AccountContextProps {
     userDataLoading: boolean;
-    plans?: StripePlansWithPrice;
+    plans?: StripePlanWithPrice;
     paymentMethods?: StripePaymentMethods;
     profile: ProfileDB | null;
     user: User | null;
