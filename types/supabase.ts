@@ -213,33 +213,27 @@ export interface Database {
                     created_at: string | null;
                     company_id: string;
                     email: string;
-                    first_name: string | null;
-                    last_name: string | null;
-                    updated_at: string | null;
                     used: boolean;
                     expire_at: string | null;
+                    updated_at: string | null;
                 };
                 Insert: {
                     id?: string;
                     created_at?: string | null;
                     company_id: string;
                     email: string;
-                    first_name?: string | null;
-                    last_name?: string | null;
-                    updated_at?: string | null;
                     used?: boolean;
                     expire_at?: string | null;
+                    updated_at?: string | null;
                 };
                 Update: {
                     id?: string;
                     created_at?: string | null;
                     company_id?: string;
                     email?: string;
-                    first_name?: string | null;
-                    last_name?: string | null;
-                    updated_at?: string | null;
                     used?: boolean;
                     expire_at?: string | null;
+                    updated_at?: string | null;
                 };
             };
             profiles: {
