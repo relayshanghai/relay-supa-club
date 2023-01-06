@@ -59,7 +59,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const token = req.query.token as string;
         const { data, error } = await supabase
             .from<InvitesDB>('invites')
-            .select('*')
+            .select('used, expire_at')
             .eq('id', token)
             .limit(1)
             .single();

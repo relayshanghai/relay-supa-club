@@ -57,6 +57,21 @@ const Page = () => {
         }
     }, [company, resetCompanyValues]);
 
+    const handleUpdateProfile = async () => {
+        try {
+            await updateProfile({
+                first_name: firstName,
+                last_name: lastName,
+                email: email
+            });
+            refreshCompany();
+
+            toast.success('Profile updated');
+        } catch (e) {
+            toast.error('Ops, something went wrong.');
+        }
+    };
+
     return (
         <Layout>
             <div className="flex flex-col p-6 space-y-6">
@@ -96,23 +111,7 @@ const Page = () => {
                         />
                     </div>
                     <div className="flex flex-row justify-end w-full">
-                        <Button
-                            disabled={loading}
-                            onClick={async () => {
-                                try {
-                                    await updateProfile({
-                                        first_name: firstName,
-                                        last_name: lastName,
-                                        email: email
-                                    });
-                                    refreshCompany();
-
-                                    toast.success('Profile updated');
-                                } catch (e) {
-                                    toast.error('Ops, something went wrong.');
-                                }
-                            }}
-                        >
+                        <Button disabled={loading} onClick={handleUpdateProfile}>
                             Update
                         </Button>
                     </div>

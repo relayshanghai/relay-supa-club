@@ -12,18 +12,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         if (!emailRegex.test(email)) return res.status(500).json({ error: 'Invalid email' });
 
-        const existingInvite = await supabase
+        const { data: existingInvite } = await supabase
             .from<InvitesDB>('invites')
-            .select('*')
+            .select('expire_at, used')
             .eq('email', email)
             .eq('company_id', company_id)
             .limit(1)
             .single();
 
         if (
-            existingInvite.data?.expire_at &&
-            existingInvite.data.used === false &&
-            Date.now() < new Date(existingInvite.data.expire_at).getTime()
+            existingInvite?.expire_at &&
+            existingInvite.used === false &&
+            Date.now() < new Date(existingInvite.expire_at).getTime()
         )
             return res.status(500).json({ error: 'Invite already exists and has not expired' });
 
