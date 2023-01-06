@@ -73,13 +73,12 @@ export const useCampaigns = ({ campaignId }: any = {}) => {
                 method: 'put',
                 body: JSON.stringify({
                     ...input,
-                    campaign_id: campaign?.id,
-                    company_id: profile?.company_id
+                    campaign_id: campaign?.id
                 })
             });
             setLoading(false);
         },
-        [campaign?.id, profile?.company_id]
+        [campaign?.id]
     );
 
     const deleteCreatorInCampaign = useCallback(
@@ -89,13 +88,12 @@ export const useCampaigns = ({ campaignId }: any = {}) => {
                 method: 'delete',
                 body: JSON.stringify({
                     ...input,
-                    campaign_id: campaign?.id,
-                    company_id: profile?.company_id
+                    campaign_id: campaign?.id
                 })
             });
             setLoading(false);
         },
-        [campaign?.id, profile?.company_id]
+        [campaign?.id]
     );
 
     return {

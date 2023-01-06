@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
-import { MouseEvent, useState } from 'react';
+import { ChangeEvent, MouseEvent, useState } from 'react';
 import { CampaignCreatorDB, CampaignWithCompanyCreators } from 'types';
 import Link from 'next/link';
 import Trashcan from 'src/components/icons/Trashcan';
@@ -15,8 +15,8 @@ export default function CreatorsOutreach({
     const { t } = useTranslation();
     const router = useRouter();
     const { pathname, query } = router;
-    const [status, setStatus] = useState<string | string[]>(query.curTab || 'to contact');
-    const { deleteCreatorInCampaign, refreshCampaign } = useCampaigns({
+    const [tabStatus, setTabStatus] = useState<string | string[]>(query.curTab || 'to contact');
+    const { deleteCreatorInCampaign, updateCreatorInCampaign, refreshCampaign } = useCampaigns({
         campaignId: currentCampaign?.id
     });
 
@@ -42,11 +42,17 @@ export default function CreatorsOutreach({
 
     const handleTabChange = (value: string) => {
         router.push({ pathname, query: { ...query, curTab: value } });
-        setStatus(value);
+        setTabStatus(value);
     };
 
-    const handleDropdownSelect = () => {
-        //TODO: add dropdown select functionality
+    const handleDropdownSelect = async (
+        e: ChangeEvent<HTMLSelectElement>,
+        creator: CampaignCreatorDB
+    ) => {
+        e.stopPropagation();
+        const status = e.target.value;
+        await updateCreatorInCampaign({ ...creator, status });
+        refreshCampaign();
     };
 
     const deleteCampaignCreator = async (
@@ -119,7 +125,7 @@ export default function CreatorsOutreach({
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
                         {currentCampaign?.campaign_creators.map((creator, index) => {
-                            if (creator.status === status)
+                            if (creator.status === tabStatus)
                                 return (
                                     <tr
                                         key={index}
@@ -146,9 +152,9 @@ export default function CreatorsOutreach({
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <select
-                                                onClick={(e) => e.stopPropagation()}
-                                                onChange={() => handleDropdownSelect()}
-                                                // value={creator.status}
+                                                // onClick={(e) => e.stopPropagation()}
+                                                onChange={(e) => handleDropdownSelect(e, creator)}
+                                                value={creator.status}
                                                 className="-ml-1 text-xs px-4 py-2 rounded-md text-primary-500 font-semibold bg-primary-50 hover:bg-primary-100 border border-gray-200 duration-300 cursor-pointer outline-none mr-2.5 appearance-none text-center"
                                             >
                                                 {tabs.map((tab, index) => (
