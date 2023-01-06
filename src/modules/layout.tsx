@@ -4,9 +4,10 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
 import { LanguageToggle } from 'src/components/common/language-toggle';
+import { Spinner } from 'src/components/icons';
 import { HamburgerMenu } from 'src/components/icons';
 import { Sidebar } from 'src/components/sidebar';
-import { Spinner } from 'src/components/spinner';
+
 import { useCompany } from 'src/hooks/use-company';
 import { useSubscription } from 'src/hooks/use-subscription';
 import { useUser } from 'src/hooks/use-user';

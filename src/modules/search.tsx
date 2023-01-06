@@ -496,7 +496,7 @@ export const Search = () => {
             >
                 <>
                     {' '}
-                    <div className="py-4 text-sm text-tertiary-500">
+                    <div className="py-4 text-sm text-tertiary-800">
                         {t('campaigns.modal.addThisInfluencer')}
                     </div>
                     {campaigns?.length ? (

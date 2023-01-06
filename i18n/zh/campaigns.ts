@@ -29,7 +29,8 @@ const campaigns = {
         details: 'KOL信息',
         content: 'KOL信息',
         comments: '公司备注',
-        viewProfile: '查看KOL'
+        viewProfile: '查看KOL',
+        addedSuccessfully: 'KOL已成功添加到项目'
     },
     creatorModal: {
         outreach: 'KOL沟通',

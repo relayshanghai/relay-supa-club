@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { fetcher, nextFetch } from 'src/utils/fetcher';
 import useSWR from 'swr';
-import { CampaignCreatorDBInsert, CampaignDB, CampaignWithCompanyCreators } from 'types';
+import { CampaignCreatorDBInsert, CampaignWithCompanyCreators } from 'types';
 import { useUser } from './use-user';
 
 export const useCampaigns = ({ campaignId }: any = {}) => {
@@ -60,12 +60,13 @@ export const useCampaigns = ({ campaignId }: any = {}) => {
                     company_id: profile?.company_id
                 })
             });
+
             setLoading(false);
         },
-        [profile]
+        [profile?.company_id]
     );
     return {
-        campaigns: data as CampaignDB[],
+        campaigns: data as CampaignWithCompanyCreators[],
         createCampaign,
         updateCampaign,
         campaign,
