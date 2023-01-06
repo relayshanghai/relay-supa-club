@@ -1,7 +1,7 @@
 import { LegacyRef, useRef, useState } from 'react';
 import i18next from 'i18next';
 import { Globe } from '../icons';
-import useOnOutsideClick from 'src/hooks/useOnOutsideClick';
+import useOnOutsideClick from 'src/hooks/use-on-outside-click';
 
 export const LanguageToggle = () => {
     const [displayOptions, setDisplayOptions] = useState(false);

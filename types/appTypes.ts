@@ -1,7 +1,7 @@
 import type Stripe from 'stripe';
 import type { Database } from './supabase';
 
-export type StripePlansWithPrice = Stripe.Product & { prices?: Stripe.Plan[] };
+export type StripePlanWithPrice = Stripe.Product & { prices?: Stripe.Plan[] };
 export type StripePaymentMethods = Stripe.Response<Stripe.ApiList<Stripe.PaymentMethod>>;
 
 export type CreatorPlatform = 'instagram' | 'youtube' | 'tiktok';

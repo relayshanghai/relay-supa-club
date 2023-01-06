@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from 'react';
 import InputWithAutocomplete from 'src/components/input-with-autocomplete';
-import useOnOutsideClick from 'src/hooks/useOnOutsideClick';
+import useOnOutsideClick from 'src/hooks/use-on-outside-click';
 
 export const SearchTopics = ({
     onSetTopics,

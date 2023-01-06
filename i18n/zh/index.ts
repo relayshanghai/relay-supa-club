@@ -7,9 +7,9 @@ import pools from './pools';
 import me from './me';
 import csm from './csm';
 import requestaccount from './requestaccount';
-import billing from './billing';
+import account from './account';
 
-export default {
+const translations = {
     translation: {
         campaigns,
         navbar,
@@ -20,6 +20,7 @@ export default {
         me,
         csm,
         requestaccount,
-        billing
+        account
     }
 };
+export default translations;
