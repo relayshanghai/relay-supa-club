@@ -36,7 +36,7 @@ export default function CampaignShow() {
 
     const handleDropdownSelect = async (
         e: ChangeEvent<HTMLSelectElement>,
-        campaign: CampaignWithCompanyCreators
+        campaign: CampaignWithCompanyCreators | null
     ) => {
         e.stopPropagation();
         const status = e.target.value;
@@ -99,7 +99,7 @@ export default function CampaignShow() {
                                 {/* TODO:Replace status tag to dropdown select button  */}
                                 <select
                                     onChange={(e) => handleDropdownSelect(e, currentCampaign)}
-                                    value={currentCampaign?.status}
+                                    value={currentCampaign?.status as string}
                                     className="px-2 py-1 bg-primary-100 hover:bg-primary-200 text-primary-500 text-xs rounded-md duration-300 cursor-pointer"
                                 >
                                     {campaignStatusTabs.map((tab, index) => (

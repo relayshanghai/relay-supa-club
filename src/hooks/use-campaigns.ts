@@ -11,7 +11,7 @@ export const useCampaigns = ({ campaignId }: any = {}) => {
         fetcher
     );
     const [loading, setLoading] = useState(false);
-    const [campaign, setCampaign] = useState<CampaignWithCompanyCreators>();
+    const [campaign, setCampaign] = useState<CampaignWithCompanyCreators | null>(null);
     const [campaignCreators, setCampaignCreators] = useState<
         CampaignWithCompanyCreators['campaign_creators'] | null
     >([]);
@@ -38,7 +38,7 @@ export const useCampaigns = ({ campaignId }: any = {}) => {
     );
 
     const updateCampaign = useCallback(
-        async (input: CampaignWithCompanyCreators) =>
+        async (input: any) =>
             await nextFetch('campaigns/update', {
                 method: 'post',
                 body: JSON.stringify({
