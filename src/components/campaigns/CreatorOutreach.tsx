@@ -53,6 +53,7 @@ export default function CreatorsOutreach({
         const status = e.target.value;
         await updateCreatorInCampaign({ ...creator, status });
         refreshCampaign();
+        toast.success(t('campaigns.creatorModal.kolUpdated'));
     };
 
     const deleteCampaignCreator = async (
@@ -88,7 +89,7 @@ export default function CreatorsOutreach({
                             key={index}
                             onClick={() => handleTabChange(tab.value)}
                             className={`font-semibold text-sm mr-4 hover:text-primary-500 hover:bg-primary-500 hover:bg-opacity-20 px-4 py-2 rounded-lg cursor-pointer duration-300 flex-shrink-0 focus:bg-primary-500 focus:text-primary-500 focus:bg-opacity-20 ${
-                                status === tab.value
+                                tabStatus === tab.value
                                     ? 'text-primary-500 bg-primary-500 bg-opacity-20'
                                     : 'text-gray-400 bg-gray-100 '
                             }`}
@@ -117,7 +118,7 @@ export default function CreatorsOutreach({
                                     {t(`campaigns.show.${label}`)}
                                 </th>
                             ))}
-                            {/* placeholder header space for delete icon */}
+                            {/*-- placeholder table header space for delete icon --*/}
                             <th className=" px-3 py-3 text-left text-xs font-normal text-gray-500 sticky bg-white tracking-wider  min-w-[200px] max-w-[200px]">
                                 {''}
                             </th>
@@ -152,7 +153,6 @@ export default function CreatorsOutreach({
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <select
-                                                // onClick={(e) => e.stopPropagation()}
                                                 onChange={(e) => handleDropdownSelect(e, creator)}
                                                 value={creator.status}
                                                 className="-ml-1 text-xs px-4 py-2 rounded-md text-primary-500 font-semibold bg-primary-50 hover:bg-primary-100 border border-gray-200 duration-300 cursor-pointer outline-none mr-2.5 appearance-none text-center"

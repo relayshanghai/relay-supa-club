@@ -1,17 +1,18 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { supabase } from 'src/utils/supabase-client';
+import { CampaignCreatorDBInsert } from 'types';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
-        const { company_id, ...data } = JSON.parse(req.body);
+        const { ...data } = JSON.parse(req.body);
         const { data: campaignCreators, error } = await supabase
-            .from('campaign_creators')
+            .from<CampaignCreatorDBInsert>('campaign_creators')
             .insert({
                 campaign_id: data.id,
                 status: 'to contact',
                 ...data
             })
-            .eq('company_id', company_id)
+            .eq('campaign_id', data.id)
             .single();
 
         if (error) {

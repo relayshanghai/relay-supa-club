@@ -1,11 +1,12 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { supabase } from 'src/utils/supabase-client';
+import { CampaignCreatorDB } from 'types';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'PUT') {
         const { campaign_id, ...data } = JSON.parse(req.body);
         const { data: campaignCreators, error } = await supabase
-            .from('campaign_creators')
+            .from<CampaignCreatorDB>('campaign_creators')
             .update({ ...data })
             .eq('id', data.id)
             .eq('campaign_id', campaign_id);

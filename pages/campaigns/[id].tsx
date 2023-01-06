@@ -1,6 +1,6 @@
 import { Layout } from 'src/modules/layout';
 import { useRouter } from 'next/router';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import dateFormat from 'src/utils//dateFormat';
 import { PencilSquareIcon } from '@heroicons/react/20/solid';
@@ -10,19 +10,39 @@ import CampaignDetails from '../../src/components/campaigns/CampaignDetails';
 import { useCampaigns } from 'src/hooks/use-campaigns';
 import Image from 'next/image';
 import { supabase } from 'src/utils/supabase-client';
+import { CampaignWithCompanyCreators } from 'types';
 
 export default function CampaignShow() {
     const router = useRouter();
-    const { campaign: currentCampaign } = useCampaigns({ campaignId: router.query.id });
+    const {
+        campaign: currentCampaign,
+        updateCampaign,
+        refreshCampaign
+    } = useCampaigns({ campaignId: router.query.id });
     const [media, setMedia] = useState<{ url: string; name: string }[]>([]);
     const [currentTab, setCurrentTab] = useState(0);
-    // const [campaignStatus, setCampaignStatus] = useState(false);
     const { t } = useTranslation();
+
     const tabs = [
         t('campaigns.show.activities.creatorOutreach'),
         t('campaigns.show.activities.campaignInfo')
     ];
 
+    const campaignStatusTabs = [
+        { label: t('campaigns.index.status.inProgress'), value: 'in progress' },
+        { label: t('campaigns.index.status.notStarted'), value: 'not started' },
+        { label: t('campaigns.index.status.completed'), value: 'completed' }
+    ];
+
+    const handleDropdownSelect = async (
+        e: ChangeEvent<HTMLSelectElement>,
+        campaign: CampaignWithCompanyCreators
+    ) => {
+        e.stopPropagation();
+        const status = e.target.value;
+        await updateCampaign({ ...campaign, status });
+        refreshCampaign();
+    };
     useEffect(() => {
         const getFiles = async () => {
             const getFilePath = (filename: string) => {
@@ -76,9 +96,18 @@ export default function CampaignShow() {
                                 <div className="font-semibold text-lg text-tertiary-600 sm:mr-2">
                                     {currentCampaign?.name}
                                 </div>
-                                <div className="px-2 py-1 bg-primary-100 hover:bg-primary-200 text-primary-500 text-xs rounded-md duration-300 cursor-pointer">
-                                    {t(`campaigns.show.status.${currentCampaign?.status}`)}
-                                </div>
+                                {/* TODO:Replace status tag to dropdown select button  */}
+                                <select
+                                    onChange={(e) => handleDropdownSelect(e, currentCampaign)}
+                                    value={currentCampaign?.status}
+                                    className="px-2 py-1 bg-primary-100 hover:bg-primary-200 text-primary-500 text-xs rounded-md duration-300 cursor-pointer"
+                                >
+                                    {campaignStatusTabs.map((tab, index) => (
+                                        <option value={tab.value} key={index}>
+                                            {tab.label}
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
                             <div className="mb-1">
                                 <div className="font-semibold text-sm text-tertiary-600">

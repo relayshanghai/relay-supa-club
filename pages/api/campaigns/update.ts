@@ -1,16 +1,18 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { supabase } from 'src/utils/supabase-client';
+import { CampaignWithCompanyCreators } from 'types';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
-        const { company_id, id, ...data } = JSON.parse(req.body);
+        //updateCampaign can only update the campaign table, not the campaign_creators table and company table, so extracted the campaign_creators and companies from the req.body
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { id, campaign_creators, companies, ...data } = JSON.parse(req.body);
         const { data: campaign, error } = await supabase
-            .from('campaigns')
+            .from<CampaignWithCompanyCreators>('campaigns')
             .update({
                 ...data
             })
             .eq('id', id)
-            .eq('company_id', company_id)
             .single();
 
         if (error) {

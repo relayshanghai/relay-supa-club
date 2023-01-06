@@ -11,7 +11,7 @@ export const useCampaigns = ({ campaignId }: any = {}) => {
         fetcher
     );
     const [loading, setLoading] = useState(false);
-    const [campaign, setCampaign] = useState<CampaignWithCompanyCreators | null>(null);
+    const [campaign, setCampaign] = useState<CampaignWithCompanyCreators>();
     const [campaignCreators, setCampaignCreators] = useState<
         CampaignWithCompanyCreators['campaign_creators'] | null
     >([]);
@@ -38,7 +38,7 @@ export const useCampaigns = ({ campaignId }: any = {}) => {
     );
 
     const updateCampaign = useCallback(
-        async ({ _companies, ...input }: any) =>
+        async (input: CampaignWithCompanyCreators) =>
             await nextFetch('campaigns/update', {
                 method: 'post',
                 body: JSON.stringify({
@@ -53,7 +53,7 @@ export const useCampaigns = ({ campaignId }: any = {}) => {
     const addCreatorToCampaign = useCallback(
         async (input: CampaignCreatorDBInsert) => {
             setLoading(true);
-            await fetch('/api/campaigns/add-creator', {
+            await nextFetch('campaigns/add-creator', {
                 method: 'post',
                 body: JSON.stringify({
                     ...input,
@@ -69,7 +69,7 @@ export const useCampaigns = ({ campaignId }: any = {}) => {
     const updateCreatorInCampaign = useCallback(
         async (input: CampaignCreatorDB) => {
             setLoading(true);
-            await fetch('/api/campaigns/update-creator', {
+            await nextFetch('campaigns/update-creator', {
                 method: 'put',
                 body: JSON.stringify({
                     ...input,
@@ -84,7 +84,7 @@ export const useCampaigns = ({ campaignId }: any = {}) => {
     const deleteCreatorInCampaign = useCallback(
         async (input: CampaignCreatorDB) => {
             setLoading(true);
-            await fetch('/api/campaigns/delete-creator', {
+            await nextFetch('campaigns/delete-creator', {
                 method: 'delete',
                 body: JSON.stringify({
                     ...input,
