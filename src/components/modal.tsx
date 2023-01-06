@@ -35,10 +35,10 @@ export const Modal: React.FC<ModalProps> = ({ children, visible, onClose, title 
                             leaveFrom="opacity-100 scale-100"
                             leaveTo="opacity-0 scale-95"
                         >
-                            <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-lg bg-white p-6 text-left align-middle shadow-xl transition-all">
+                            <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-lg bg-tertiary-100 p-6 text-left align-middle shadow-xl transition-all">
                                 <Dialog.Title
                                     as="h3"
-                                    className="text-xl font-medium leading-6 text-primary-500"
+                                    className="text-xl font-semi-bold leading-6 text-primary-500"
                                 >
                                     {title}
                                 </Dialog.Title>

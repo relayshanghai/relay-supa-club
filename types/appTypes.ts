@@ -21,13 +21,13 @@ export type InvitesDB = Database['public']['Tables']['invites']['Row'];
 // Custom type for supabase queries where we select more than one row in a single query
 export type CompanyWithProfilesInvitesAndUsage = CompanyDB & {
     profiles: Pick<ProfileDB, 'id' | 'first_name' | 'last_name' | 'admin'>[];
-    invites: Pick<InvitesDB, 'id' | 'email' | 'used'>[];
+    invites: Pick<InvitesDB, 'id' | 'email' | 'used' | 'expire_at'>[];
     usages: Pick<UsagesDB, 'id'>[];
 };
 export type CampaignWithCompanyCreators = CampaignDB & {
     companies: Pick<CompanyDB, 'id' | 'name' | 'cus_id'>;
     campaign_creators: Pick<
         CampaignCreatorDB,
-        'id' | 'username' | 'fullname' | 'avatar_url' | 'link_url'
+        'id' | 'creator_id' | 'username' | 'fullname' | 'avatar_url' | 'link_url'
     >[];
 };

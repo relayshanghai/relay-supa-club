@@ -26,13 +26,10 @@ export const CreatorPage = ({
 
     const getOrCreateReport = useCallback(async () => {
         try {
-            const { error, createdAt, ...report } = await nextFetch<
-                CreatorReport & { createdAt: string }
-            >(
+            const { createdAt, ...report } = await nextFetch<CreatorReport & { createdAt: string }>(
                 `creators/report?platform=${platform}&creator_id=${creator_id}&company_id=${profile?.company_id}&user_id=${profile?.id}`
             );
             if (!report.success) throw new Error('Failed to fetch report');
-            if (error) throw new Error(error);
             setReport(report);
             setReportCreatedAt(createdAt);
             setLoading(false);

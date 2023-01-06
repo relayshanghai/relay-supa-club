@@ -1,6 +1,6 @@
 import { SVGProps } from 'react';
 
-export const Spinner = (props: SVGProps<SVGSVGElement>) => {
+export default function Spinner(props: SVGProps<SVGSVGElement>) {
     return (
         <svg
             aria-hidden="true"
@@ -20,4 +20,4 @@ export const Spinner = (props: SVGProps<SVGSVGElement>) => {
             />
         </svg>
     );
-};
+}

@@ -29,7 +29,8 @@ const campaigns = {
         details: 'Details',
         content: 'Content',
         comments: 'Internal Comments',
-        viewProfile: 'View Profile'
+        viewProfile: 'View Profile',
+        addedSuccessfully: 'KOL added successfully.'
     },
     creatorModal: {
         outreach: 'Outreach',
