@@ -2,6 +2,7 @@ import { useContext, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { useFields } from 'src/hooks/use-fields';
+import { clientLogger } from 'src/utils/logger';
 import { Button } from '../button';
 import { Input } from '../input';
 import { AccountContext } from './account-context';
@@ -29,6 +30,20 @@ export const PersonalDetails = () => {
     }, [userDataLoading, profile, user, resetUserValues]);
 
     const { t } = useTranslation();
+
+    const handleUpdateProfile = async () => {
+        try {
+            await updateProfile({
+                first_name: firstName,
+                last_name: lastName,
+                email: email
+            });
+            toast.success(t('account.personal.profileUpdated'));
+        } catch (e) {
+            clientLogger(e, 'error');
+            toast.error(t('account.personal.oopsWentWrong'));
+        }
+    };
 
     return (
         <div className="flex flex-col items-start space-y-4 p-4 bg-white rounded-lg w-full lg:max-w-2xl">
@@ -60,21 +75,7 @@ export const PersonalDetails = () => {
                 />
             </div>
             <div className="flex flex-row justify-end w-full">
-                <Button
-                    disabled={userDataLoading}
-                    onClick={async () => {
-                        try {
-                            await updateProfile({
-                                first_name: firstName,
-                                last_name: lastName,
-                                email: email
-                            });
-                            toast.success(t('account.personal.profileUpdated'));
-                        } catch (e) {
-                            toast.error(t('account.personal.oopsWentWrong'));
-                        }
-                    }}
-                >
+                <Button disabled={userDataLoading} onClick={handleUpdateProfile}>
                     {t('account.update')}
                 </Button>
             </div>
