@@ -1,38 +1,40 @@
 import { useCallback } from 'react';
-import { fetcher } from 'src/utils/fetcher';
+import { nextFetch } from 'src/utils/fetcher';
 import Stripe from 'stripe';
 import useSWR from 'swr';
-import { StripePaymentMethods, StripePlansWithPrice } from 'types';
+import { StripePaymentMethods, StripePlanWithPrice } from 'types';
 import { useUser } from './use-user';
 
 export const useSubscription = () => {
     const { profile } = useUser();
-    const { data: subscription, mutate } = useSWR<Stripe.Subscription>(
-        profile?.company_id ? `/api/subscriptions?id=${profile?.company_id}` : null,
-        fetcher
+    // TODO: investigate why this type doesn't seem to match our code's usage
+    const { data: subscription, mutate } = useSWR(
+        profile?.company_id ? `subscriptions?id=${profile?.company_id}` : null,
+        nextFetch<Stripe.Subscription>
     );
-    const { data: plans } = useSWR<StripePlansWithPrice>(`/api/subscriptions/plans`, fetcher);
-    const { data: paymentMethods } = useSWR<StripePaymentMethods>(
-        profile?.company_id ? `/api/subscriptions/payment-method?id=${profile.company_id}` : null,
-        fetcher
+    const { data: plans } = useSWR('subscriptions/plans', nextFetch<StripePlanWithPrice[]>);
+    const { data: paymentMethods } = useSWR(
+        profile?.company_id ? `subscriptions/payment-method?id=${profile.company_id}` : null,
+        nextFetch<StripePaymentMethods>
     );
 
     const updateCompany = useCallback(
         async (input: any) => {
-            await fetch(`/api/company`, {
+            await nextFetch('company', {
                 method: 'post',
                 body: JSON.stringify({
                     ...input,
                     id: profile?.company_id
                 })
             });
+            mutate();
         },
-        [profile]
+        [profile, mutate]
     );
 
     const createSubscriptions = useCallback(
         async (priceId: any) => {
-            await fetch(`/api/subscriptions/create`, {
+            await nextFetch('subscriptions/create', {
                 method: 'post',
                 body: JSON.stringify({
                     price_id: priceId,

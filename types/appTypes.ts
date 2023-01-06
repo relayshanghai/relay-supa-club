@@ -1,7 +1,7 @@
 import type Stripe from 'stripe';
 import type { Database } from './supabase';
 
-export type StripePlansWithPrice = Stripe.Product & { prices?: Stripe.Plan[] };
+export type StripePlanWithPrice = Stripe.Product & { prices?: Stripe.Plan[] };
 export type StripePaymentMethods = Stripe.Response<Stripe.ApiList<Stripe.PaymentMethod>>;
 
 export type CreatorPlatform = 'instagram' | 'youtube' | 'tiktok';
@@ -21,7 +21,7 @@ export type InvitesDB = Database['public']['Tables']['invites']['Row'];
 // Custom type for supabase queries where we select more than one row in a single query
 export type CompanyWithProfilesInvitesAndUsage = CompanyDB & {
     profiles: Pick<ProfileDB, 'id' | 'first_name' | 'last_name' | 'admin'>[];
-    invites: Pick<InvitesDB, 'id' | 'email' | 'used'>[];
+    invites: Pick<InvitesDB, 'id' | 'email' | 'used' | 'expire_at'>[];
     usages: Pick<UsagesDB, 'id'>[];
 };
 export type CampaignWithCompanyCreators = CampaignDB & {

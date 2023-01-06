@@ -5,13 +5,12 @@ import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
 import { LanguageToggle } from 'src/components/common/language-toggle';
 import { HamburgerMenu, Spinner } from 'src/components/icons';
-
 import { Sidebar } from 'src/components/sidebar';
 
 import { useCompany } from 'src/hooks/use-company';
 import { useSubscription } from 'src/hooks/use-subscription';
 import { useUser } from 'src/hooks/use-user';
-import useOnOutsideClick from 'src/hooks/useOnOutsideClick';
+import useOnOutsideClick from 'src/hooks/use-on-outside-click';
 import { supabase } from 'src/utils/supabase-client';
 
 export const Layout = ({ children }: any) => {

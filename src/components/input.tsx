@@ -1,4 +1,9 @@
-export const Input = ({ label, ...rest }: any) => {
+import { InputHTMLAttributes } from 'react';
+
+export const Input = ({
+    label,
+    ...rest
+}: InputHTMLAttributes<HTMLInputElement> & { label: string }) => {
     return (
         <label className="flex flex-col text-xs text-gray-500 font-bold w-full">
             <div>

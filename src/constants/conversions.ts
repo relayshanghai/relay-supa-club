@@ -1,0 +1,1 @@
+export const SECONDS_IN_MILLISECONDS = 1e3;
