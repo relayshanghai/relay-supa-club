@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
 import { LanguageToggle } from 'src/components/common/language-toggle';
 import { Spinner } from 'src/components/icons';
-import { Title } from 'src/components/title';
 import { HamburgerMenu } from 'src/components/icons';
 import { Sidebar } from 'src/components/sidebar';
 

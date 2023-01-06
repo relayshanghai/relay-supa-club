@@ -56,7 +56,7 @@ export const fetchReport = async (reportId: string) =>
     await iqDataFetch<CreatorReport>(`reports/${reportId}`);
 
 //** omit id to get all previously generated reports of that platform */
-export const fetchReportsMetadata = async (platform: CreatorPlatform, user_id?: string) =>
+export const fetchReportsMetadata = async (platform: CreatorPlatform, creator_id?: string) =>
     await iqDataFetch<CreatorReportsMetadata>(
-        `reports?platform=${platform}${user_id ? `&url=${user_id}` : ''}`
+        `reports?platform=${platform}${creator_id ? `&url=${creator_id}` : ''}`
     );
