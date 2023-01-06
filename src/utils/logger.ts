@@ -1,7 +1,10 @@
 /* eslint-disable no-console */
 
 const parseError = (error: any) => {
-    if (error && 'message' in error) return error.message;
+    if (error && 'message' in error) {
+        if ('stack' in error) return error;
+        return error.message;
+    }
     if (typeof error === 'string') return error;
     return JSON.stringify(error);
 };
