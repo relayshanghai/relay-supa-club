@@ -1,7 +1,8 @@
 import { useCallback } from 'react';
+import { CompanyWithProfilesInvitesAndUsage } from 'src/utils/api/db/calls/company';
+import { CompanyDBUpdate } from 'src/utils/api/db/types';
 import { nextFetch } from 'src/utils/fetcher';
 import useSWR from 'swr';
-import { CompanyWithProfilesInvitesAndUsage } from 'types';
 import { useUser } from './use-user';
 
 export const useCompany = () => {
@@ -12,7 +13,7 @@ export const useCompany = () => {
     );
 
     const updateCompany = useCallback(
-        async (input: any) => {
+        async (input: CompanyDBUpdate) => {
             return await nextFetch(`company`, {
                 method: 'post',
                 body: JSON.stringify({

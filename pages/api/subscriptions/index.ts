@@ -8,11 +8,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const companyId = req.query.id;
 
         try {
-            const { data, error } = await supabase
+            const { data, error } = (await supabase
                 .from('companies')
                 .select('cus_id')
                 .eq('id', companyId)
-                .single();
+                .single()) as any;
 
             if (error || !data) throw error;
 

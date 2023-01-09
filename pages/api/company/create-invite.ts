@@ -2,7 +2,6 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { APP_URL, emailRegex } from 'src/constants';
 import { sendEmail } from 'src/utils/send-in-blue-client';
 import { supabase } from 'src/utils/supabase-client';
-import { InvitesDB } from 'types';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
@@ -13,7 +12,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         if (!emailRegex.test(email)) return res.status(500).json({ error: 'Invalid email' });
 
         const { data: existingInvite } = await supabase
-            .from<InvitesDB>('invites')
+            .from('invites')
             .select('expire_at, used')
             .eq('email', email)
             .eq('company_id', company_id)
@@ -27,13 +26,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         )
             return res.status(500).json({ error: 'Invite already exists and has not expired' });
 
-        const { data, error } = await supabase
-            .from<InvitesDB>('invites')
+        const { data, error } = (await supabase
+            .from('invites')
             .insert({
                 email,
                 company_id
             })
-            .single();
+            .single()) as any;
 
         if (error) return res.status(500).json(error);
         try {

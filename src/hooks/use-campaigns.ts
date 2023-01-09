@@ -1,12 +1,21 @@
 import { useCallback, useEffect, useState } from 'react';
 import { fetcher, nextFetch } from 'src/utils/fetcher';
 import useSWR from 'swr';
-import { CampaignCreatorDB, CampaignCreatorDBInsert, CampaignWithCompanyCreators } from 'types';
+
+import type { CampaignUpdatePostBody } from 'pages/api/campaigns/update';
+
 import { useUser } from './use-user';
+import {
+    CampaignCreatorDBInsert,
+    CampaignCreatorDB,
+    CampaignDBInsert,
+    CampaignDBUpdate
+} from 'src/utils/api/db/types';
+import { CampaignWithCompanyCreators } from 'src/utils/api/db';
 
 export const useCampaigns = ({ campaignId }: any = {}) => {
     const { profile } = useUser();
-    const { data, mutate: refreshCampaign } = useSWR<CampaignWithCompanyCreators[]>(
+    const { data: campaigns, mutate: refreshCampaign } = useSWR<CampaignWithCompanyCreators[]>(
         profile?.company_id ? `/api/campaigns?id=${profile.company_id}` : null,
         fetcher
     );
@@ -17,15 +26,15 @@ export const useCampaigns = ({ campaignId }: any = {}) => {
     >([]);
 
     useEffect(() => {
-        if (data && data?.length > 0 && campaignId) {
-            const campaign = data?.find((c) => c.id === campaignId);
+        if (campaigns && campaigns?.length > 0 && campaignId) {
+            const campaign = campaigns?.find((c) => c.id === campaignId);
             if (campaign) setCampaign(campaign);
             if (campaign?.campaign_creators) setCampaignCreators(campaign.campaign_creators);
         }
-    }, [campaignId, data]);
+    }, [campaignId, campaigns]);
 
     const createCampaign = useCallback(
-        async (input: any) =>
+        async (input: CampaignDBInsert) =>
             await nextFetch('campaigns/create', {
                 method: 'post',
                 body: JSON.stringify({
@@ -38,15 +47,16 @@ export const useCampaigns = ({ campaignId }: any = {}) => {
     );
 
     const updateCampaign = useCallback(
-        async (input: any) =>
-            await nextFetch('campaigns/update', {
+        async (input: CampaignDBUpdate) => {
+            const body: CampaignUpdatePostBody = {
+                ...input,
+                company_id: profile?.company_id || undefined
+            };
+            return await nextFetch<CampaignUpdatePostBody>('campaigns/update', {
                 method: 'post',
-                body: JSON.stringify({
-                    ...input,
-                    company_id: profile?.company_id
-                })
-            }),
-
+                body: JSON.stringify(body)
+            });
+        },
         [profile]
     );
 
@@ -97,7 +107,7 @@ export const useCampaigns = ({ campaignId }: any = {}) => {
     );
 
     return {
-        campaigns: data as CampaignWithCompanyCreators[],
+        campaigns,
         createCampaign,
         updateCampaign,
         campaign,

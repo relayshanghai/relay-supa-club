@@ -1,11 +1,12 @@
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 import { ChangeEvent, MouseEvent, useState } from 'react';
-import { CampaignCreatorDB, CampaignWithCompanyCreators } from 'types';
 import Link from 'next/link';
 import Trashcan from 'src/components/icons/Trashcan';
 import { useCampaigns } from 'src/hooks/use-campaigns';
 import { toast } from 'react-hot-toast';
+import { CampaignWithCompanyCreators } from 'src/utils/api/db';
+import { CampaignCreatorDB } from 'src/utils/api/db/types';
 
 export default function CreatorsOutreach({
     currentCampaign
