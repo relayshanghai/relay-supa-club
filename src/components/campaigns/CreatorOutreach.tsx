@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Trashcan from 'src/components/icons/Trashcan';
 import { useCampaigns } from 'src/hooks/use-campaigns';
 import { toast } from 'react-hot-toast';
+import TableInput from './campaign-table-input';
 
 export default function CreatorsOutreach({
     currentCampaign
@@ -16,6 +17,8 @@ export default function CreatorsOutreach({
     const router = useRouter();
     const { pathname, query } = router;
     const [tabStatus, setTabStatus] = useState<string | string[]>(query.curTab || 'to contact');
+    const [isEditingMode, setIsEditingMode] = useState<boolean>(false);
+    const [inputValue, setInputValue] = useState('');
     const { deleteCreatorInCampaign, updateCreatorInCampaign, refreshCampaign } = useCampaigns({
         campaignId: currentCampaign?.id
     });
@@ -68,10 +71,34 @@ export default function CreatorsOutreach({
         toast.success(t('campaigns.modal.deletedSuccessfully'));
     };
 
+    // const updateCampaignCreator = async (
+    //     inputValue: string | number,
+    //     creator: CampaignCreatorDB
+    // ) => {
+    //     // const {next_step, payment_amount, paid_amount} = inputValue;
+    //     await updateCreatorInCampaign(creator);
+    //     refreshCampaign();
+    //     toast.success(t('campaigns.modal.deletedSuccessfully'));
+    // };
+
     // get the number of creators in each status
     const creatorsCount = (status: string) => {
         return currentCampaign?.campaign_creators.filter((c) => c.status === status).length;
     };
+
+    // const handleTableInputClick = (
+    //     e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>
+    //     // creator: CampaignCreatorDB
+    // ) => {
+    //     e.stopPropagation();
+    //     setIsEditingMode(true);
+    // };
+
+    const closeModal = () => {
+        setIsEditingMode(false);
+    };
+
+    // console.log({ inputValue });
 
     return (
         <div>
@@ -130,9 +157,9 @@ export default function CreatorsOutreach({
                                 return (
                                     <tr
                                         key={index}
-                                        className="group hover:bg-primary-50 hover:relative"
+                                        className="group hover:bg-primary-50 hover:relative text-sm"
                                     >
-                                        <td className="px-6 py-4 whitespace-nowrap sticky left-0 group-hover:bg-primary-50 w-[200px] bg-white z-10">
+                                        <td className="px-6 py-4 whitespace-nowrap sticky left-0 group-hover:bg-primary-50 w-[200px] bg-white z-30">
                                             <div className="flex items-center">
                                                 <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300">
                                                     <img
@@ -166,7 +193,10 @@ export default function CreatorsOutreach({
                                                 ))}
                                             </select>
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
+                                        <td
+                                            id="creator-added-by"
+                                            className="px-6 py-4 whitespace-nowrap"
+                                        >
                                             {/* TODO: add added by user name  */}
                                             {creator.added_by_id ? (
                                                 <div className="flex">
@@ -180,7 +210,32 @@ export default function CreatorsOutreach({
                                                 <div className="text-sm text-gray-600"> - </div>
                                             )}
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">-</td>
+                                        <td
+                                            id="creator-added-on"
+                                            className="px-6 py-4 whitespace-nowrap"
+                                            // onClick={(e) => handleTableInputClick(e, creator)}
+                                        >
+                                            <div className="relative">
+                                                {!isEditingMode ? (
+                                                    creator['next-step'] || (
+                                                        <div className="text-primary-500 hover:text-primary-700 cursor-pointer duration-300">
+                                                            {' '}
+                                                            {t(
+                                                                'campaigns.show.addActionPoint'
+                                                            )}{' '}
+                                                        </div>
+                                                    )
+                                                ) : (
+                                                    <TableInput
+                                                        type="text"
+                                                        closeModal={() => closeModal()}
+                                                        value={creator['next-step']}
+                                                        inputValue={inputValue}
+                                                        setInputValue={setInputValue}
+                                                    />
+                                                )}
+                                            </div>
+                                        </td>
                                         <td className="px-6 py-4 whitespace-nowrap">-</td>
                                         <td className="px-6 py-4 whitespace-nowrap">-</td>
                                         <td className="px-6 py-4 whitespace-nowrap">-</td>
