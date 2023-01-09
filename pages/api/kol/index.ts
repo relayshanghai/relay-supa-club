@@ -1,18 +1,15 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { fetchCreatorsFiltered } from 'src/utils/api/iqdata';
-import { searchSubscription } from 'src/utils/api/subscription/search';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
-        const { company_id, ...rest } = JSON.parse(req.body);
+        const {
+            // will need these for usage tracking if we reenable that
+            // company_id, user_id,
+            ...searchParams
+        } = JSON.parse(req.body);
 
-        const subscriptions = await searchSubscription({ company_id });
-        const limit = subscriptions.data.length > 0 ? 100 : 10;
-
-        const results = await fetchCreatorsFiltered({
-            limit,
-            ...rest
-        });
+        const results = await fetchCreatorsFiltered(searchParams);
 
         return res.status(200).json(results);
     }

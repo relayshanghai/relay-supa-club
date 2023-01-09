@@ -10,7 +10,7 @@ import CampaignDetails from '../../src/components/campaigns/CampaignDetails';
 import { useCampaigns } from 'src/hooks/use-campaigns';
 import Image from 'next/image';
 import { supabase } from 'src/utils/supabase-client';
-import { CampaignWithCompanyCreators } from 'types';
+import { CampaignWithCompanyCreators } from 'src/utils/api/db';
 
 export default function CampaignShow() {
     const router = useRouter();
@@ -19,6 +19,7 @@ export default function CampaignShow() {
         updateCampaign,
         refreshCampaign
     } = useCampaigns({ campaignId: router.query.id });
+
     const [media, setMedia] = useState<{ url: string; name: string }[]>([]);
     const [currentTab, setCurrentTab] = useState(0);
     const { t } = useTranslation();
@@ -36,9 +37,15 @@ export default function CampaignShow() {
 
     const handleDropdownSelect = async (
         e: ChangeEvent<HTMLSelectElement>,
-        campaign: CampaignWithCompanyCreators | null
+        campaignWithCompanyCreators: CampaignWithCompanyCreators | null
     ) => {
         e.stopPropagation();
+        if (!campaignWithCompanyCreators) return null;
+        const {
+            campaign_creators: _filterOut,
+            companies: _filterOut2,
+            ...campaign
+        } = campaignWithCompanyCreators;
         const status = e.target.value;
         await updateCampaign({ ...campaign, status });
         refreshCampaign();
@@ -47,10 +54,11 @@ export default function CampaignShow() {
     useEffect(() => {
         const getFiles = async () => {
             const getFilePath = (filename: string) => {
-                const { publicURL } = supabase.storage
+                const { data } = supabase.storage
                     .from('images')
                     .getPublicUrl(`campaigns/${currentCampaign?.id}/${filename}`);
-                return publicURL;
+
+                return data?.publicUrl;
             };
 
             const { data } = await supabase.storage
@@ -136,7 +144,7 @@ export default function CampaignShow() {
                                 <div className="flex h-7">
                                     {currentCampaign?.tag_list?.length &&
                                         currentCampaign?.tag_list?.length > 0 &&
-                                        currentCampaign?.tag_list.map((tag: any, index: number) => (
+                                        currentCampaign?.tag_list.map((tag, index) => (
                                             <div
                                                 key={index}
                                                 className="bg-tertiary-50 rounded-md px-2 py-1 text-xs text-tertiary-600 mr-1 mb-1"

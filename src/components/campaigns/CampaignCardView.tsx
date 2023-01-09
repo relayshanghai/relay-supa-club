@@ -1,10 +1,11 @@
+import { CampaignWithCompanyCreators } from 'src/utils/api/db';
 import CampaignCardSquare from './CampaignCardSquare';
 
 export default function CampaignCardView({
     campaigns,
     currentTab
 }: {
-    campaigns: any[];
+    campaigns: CampaignWithCompanyCreators[];
     currentTab: string;
 }) {
     return (

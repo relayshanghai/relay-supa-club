@@ -2,7 +2,7 @@ import { t } from 'i18next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-import useAboveScreenWidth from 'src/hooks/useAboveScreenWidth';
+import useAboveScreenWidth from 'src/hooks/use-above-screen-width';
 import { Compass, FourSquare, Account } from './icons';
 import { Title } from './title';
 

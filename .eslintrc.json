@@ -1,5 +1,5 @@
 {
-    "plugins": ["@typescript-eslint"],
+    "plugins": ["@typescript-eslint", "prettier"],
     "extends": ["next", "plugin:@typescript-eslint/recommended", "prettier"],
     "rules": {
         "camelcase": "off", // Don't warn about camelcase e.g. for API responses. var_name is fine

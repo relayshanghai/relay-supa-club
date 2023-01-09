@@ -13,17 +13,24 @@ import {
 } from 'react';
 import { supabase } from 'src/utils/supabase-client';
 import { t } from 'i18next';
+import { CampaignWithCompanyCreators } from 'src/utils/api/db';
 
-export default function CampaignCardSquare({ campaign }: { campaign: any }) {
+export default function CampaignCardSquare({
+    campaign
+}: {
+    campaign: CampaignWithCompanyCreators;
+}) {
     const [coverImageUrl, setCoverImageUrl] = useState<string | null>(null);
 
     useEffect(() => {
         const getFiles = async () => {
             const getFilePath = (filename: string) => {
-                const { publicURL } = supabase.storage
+                const {
+                    data: { publicUrl }
+                } = supabase.storage
                     .from('images')
                     .getPublicUrl(`campaigns/${campaign?.id}/${filename}`);
-                return publicURL;
+                return publicUrl;
             };
 
             const { data } = await supabase.storage
@@ -100,17 +107,26 @@ export default function CampaignCardSquare({ campaign }: { campaign: any }) {
                             </div>
                             <div className="flex items-center flex-wrap">
                                 {/* TODO: fix the counts and switch tabs on next PR */}
-                                {campaign?.status_counts &&
-                                    Object.entries(campaign?.status_counts).map((status, index) => (
-                                        <Link key={index} href={`/campaigns/${campaign.id}`}>
-                                            <div className="flex items-center text-xs px-1 py-0.5 bg-primary-100 text-gray-600 hover:text-primary-500 duration-300 bg-opacity-60 border border-gray-100 rounded-md mr-2 mb-2">
-                                                <div className="mr-1">
-                                                    {t('campaigns.show.changeStatus')}
-                                                </div>
-                                                {/* <div>{status[1]}</div> */}
-                                            </div>
-                                        </Link>
-                                    ))}
+                                {
+                                    //@ts-ignore
+                                    campaign?.status_counts &&
+                                        //@ts-ignore
+                                        Object.entries(campaign?.status_counts).map(
+                                            (status, index) => (
+                                                <Link
+                                                    key={index}
+                                                    href={`/campaigns/${campaign.id}`}
+                                                >
+                                                    <div className="flex items-center text-xs px-1 py-0.5 bg-primary-100 text-gray-600 hover:text-primary-500 duration-300 bg-opacity-60 border border-gray-100 rounded-md mr-2 mb-2">
+                                                        <div className="mr-1">
+                                                            {t('campaigns.show.changeStatus')}
+                                                        </div>
+                                                        {/* <div>{status[1]}</div> */}
+                                                    </div>
+                                                </Link>
+                                            )
+                                        )
+                                }
                             </div>
                         </div>
                         {/* -- Campaign Card Icons -- */}

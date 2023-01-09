@@ -1,50 +1,48 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import {
+    CompanyWithProfilesInvitesAndUsage,
+    getCompanyWithProfilesInvitesAndUsage,
+    updateCompany
+} from 'src/utils/api/db/calls/company';
+import { CompanyDBUpdate } from 'src/utils/api/db/types';
 import { stripeClient } from 'src/utils/stripe-client';
-import { supabase } from 'src/utils/supabase-client';
-import { CompanyWithProfilesInvitesAndUsage } from 'types';
+
+export type CompanyIndexGetQuery = CompanyWithProfilesInvitesAndUsage;
+
+export interface CompanyIndexPostBody extends CompanyDBUpdate {
+    id: string;
+}
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'GET') {
-        const companyId = req.query.id;
+        const companyId = req.query.id as string;
 
-        const { data, error } = await supabase
-            .from('companies')
-            .select(
-                // If this query changes, make sure to update the CompanyWithProfilesInvitesAndUsage type
-                '*, profiles(id, first_name, last_name, admin), invites(id, email, used), usages(id)'
-            )
-            .eq('id', companyId)
-            .eq('invites.used', false)
-            .single();
-
+        const { data, error } = await getCompanyWithProfilesInvitesAndUsage(companyId);
         if (error) {
             return res.status(500).json(error);
         }
 
-        return res.status(200).json(data as CompanyWithProfilesInvitesAndUsage);
+        return res.status(200).json(data);
     }
 
     if (req.method === 'POST') {
-        const { id, ...rest } = JSON.parse(req.body);
-        const { data, error } = await supabase
-            .from('companies')
-            .update({
-                ...rest
-            })
-            .eq('id', id)
-            .single();
+        const updateData = JSON.parse(req.body) as CompanyIndexPostBody;
+
+        const { data, error } = updateCompany(updateData) as any;
+        if (error) {
+            return res.status(500).json(error);
+        }
+        if (!data || !data.cus_id || !data.name || !data.website) {
+            return res.status(500).json({ error: 'Missing data' });
+        }
 
         await stripeClient.customers.update(data.cus_id, {
             name: data.name,
             description: data.website,
             metadata: {
-                company_id: id
+                company_id: updateData.id
             }
         });
-
-        if (error) {
-            return res.status(500).json(error);
-        }
 
         return res.status(200).json(data);
     }

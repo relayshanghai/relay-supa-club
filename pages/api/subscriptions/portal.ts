@@ -15,7 +15,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         if (error) {
             return res.status(500).json(error);
         }
-
+        if (!data.cus_id) return res.status(404).send({ message: 'No customer found' });
         const portal = await stripeClient.billingPortal.sessions.create({
             customer: data.cus_id,
             return_url: 'http://localhost:3000/account'

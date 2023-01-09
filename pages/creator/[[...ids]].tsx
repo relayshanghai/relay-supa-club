@@ -10,7 +10,7 @@ const Page = () => {
     const router = useRouter();
     return (
         <Layout>
-            {!Array.isArray(ids) ? (
+            {!Array.isArray(ids) || ids.length < 2 ? (
                 <div className="relative p-6">
                     <ErrorPopover
                         errorMessage={'Invalid creator id or platform'}
@@ -19,7 +19,7 @@ const Page = () => {
                     />
                 </div>
             ) : (
-                <CreatorPage platform={ids[0] as any} user_id={ids[1]} />
+                <CreatorPage platform={ids[0] as any} creator_id={ids[1]} />
             )}
         </Layout>
     );
