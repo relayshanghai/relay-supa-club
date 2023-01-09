@@ -7,11 +7,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const { company_id, price_id } = JSON.parse(req.body);
 
         try {
-            const { data } = await supabase
+            const { data } = (await supabase
                 .from('companies')
                 .select('cus_id')
                 .eq('id', company_id)
-                .single();
+                .single()) as any;
 
             await stripeClient.customers.listPaymentMethods(data.cus_id, {
                 type: 'card'

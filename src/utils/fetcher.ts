@@ -35,3 +35,13 @@ export function imgProxy(url: string) {
 
     return proxyUrl + url;
 }
+
+export function buildUrlEncodedQueries(queries: { [key: string]: any }): string {
+    const queryParams = new URLSearchParams();
+    for (const key in queries) {
+        if (queries.hasOwnProperty(key)) {
+            queryParams.set(key, queries[key]);
+        }
+    }
+    return queryParams.toString();
+}

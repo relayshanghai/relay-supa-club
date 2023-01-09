@@ -6,12 +6,9 @@ import { createContext, FC, PropsWithChildren } from 'react';
 import { useCompany } from 'src/hooks/use-company';
 
 import { useUser } from 'src/hooks/use-user';
-import {
-    CompanyWithProfilesInvitesAndUsage,
-    ProfileDB,
-    StripePaymentMethods,
-    StripePlanWithPrice
-} from 'types';
+import { CompanyWithProfilesInvitesAndUsage } from 'src/utils/api/db/calls/company';
+import { ProfileDB } from 'src/utils/api/db/types';
+import { StripePaymentMethods, StripePlanWithPrice } from 'types';
 
 export interface AccountContextProps {
     userDataLoading: boolean;

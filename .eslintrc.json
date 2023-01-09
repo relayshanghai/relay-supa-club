@@ -1,5 +1,5 @@
 {
-    "plugins": ["@typescript-eslint"],
+    "plugins": ["@typescript-eslint", "prettier"],
     "extends": ["next", "plugin:@typescript-eslint/recommended", "prettier"],
     "rules": {
         "camelcase": "off", // Don't warn about camelcase e.g. for API responses. var_name is fine
@@ -9,7 +9,10 @@
         "@typescript-eslint/ban-ts-comment": "off", // Allow ts-ignore comments to turn off type checking when needed
         "@typescript-eslint/no-explicit-any": "off", // Allow `any` type to be used when needed
         "no-unused-vars": "off", // typescript-eslint/no-unused-vars will cover this, and wont throw errors for unused variables in function parameters for ts types
-        "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }], // Warn about unused variables to avoid leaving them in the code accidentally and creating clutter.
+        "@typescript-eslint/no-unused-vars": [
+            "warn",
+            { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }
+        ], // Warn about unused variables to avoid leaving them in the code accidentally and creating clutter.
         // "no-shadow": "warn" // can consider turning this on later. this has helped me catch bugs in the past, but is a bit annoying to comply with
         "@next/next/no-img-element": "off", // Allow <img> tags to be used for now. We should consider turning off later and using <Image> tags from next/image instead for better performance,
         "react/self-closing-comp": [

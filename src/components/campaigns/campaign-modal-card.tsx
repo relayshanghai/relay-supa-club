@@ -1,11 +1,12 @@
 import { PlusCircleIcon, CheckCircleIcon } from '@heroicons/react/24/solid';
 import { useCampaigns } from 'src/hooks/use-campaigns';
-import { CampaignWithCompanyCreators, CreatorSearchAccountObject } from 'types';
+import { CreatorSearchAccountObject } from 'types';
 import { useEffect, useState } from 'react';
 import { Spinner } from '../icons';
 import { supabase } from 'src/utils/supabase-client';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
+import { CampaignWithCompanyCreators } from 'src/utils/api/db';
 
 export default function CampaignModalCard({
     campaign,
@@ -38,10 +39,12 @@ export default function CampaignModalCard({
     useEffect(() => {
         const getFiles = async () => {
             const getFilePath = (filename: string) => {
-                const { publicURL } = supabase.storage
+                const {
+                    data: { publicUrl }
+                } = supabase.storage
                     .from('images')
                     .getPublicUrl(`campaigns/${campaign?.id}/${filename}`);
-                return publicURL;
+                return publicUrl;
             };
 
             const { data } = await supabase.storage

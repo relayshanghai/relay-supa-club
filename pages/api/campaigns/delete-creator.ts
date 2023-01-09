@@ -1,12 +1,11 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { supabase } from 'src/utils/supabase-client';
-import { CampaignCreatorDB } from 'types';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'DELETE') {
         const { campaign_id, ...data } = JSON.parse(req.body);
         const { data: campaignCreators, error } = await supabase
-            .from<CampaignCreatorDB>('campaign_creators')
+            .from('campaign_creators')
             .delete()
             .eq('id', data.id)
             .eq('campaign_id', campaign_id);

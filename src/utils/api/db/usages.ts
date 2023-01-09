@@ -1,5 +1,5 @@
 import { supabase } from 'src/utils/supabase-client';
-import { CompanyDB, UsagesDB } from 'types';
+import { UsagesDBInsert } from './types';
 
 export const recordReportUsage = async (
     company_id: string,
@@ -7,7 +7,7 @@ export const recordReportUsage = async (
     creator_id: string
 ) => {
     const { data: company, error: companyError } = await supabase
-        .from<CompanyDB>('companies')
+        .from('companies')
         .select('usage_limit')
         .eq('id', company_id)
         .single();
@@ -15,7 +15,7 @@ export const recordReportUsage = async (
 
     const limit = Number(company.usage_limit);
     const { data: usagesData, error: usagesError } = await supabase
-        .from<UsagesDB>('usages')
+        .from('usages')
         .select('item_id')
         .eq('company_id', company_id)
         .eq('type', 'report');
@@ -28,13 +28,13 @@ export const recordReportUsage = async (
     const usageRecordExists = usagesData?.find((usage) => usage.item_id === creator_id);
     if (usageRecordExists) return { error: null };
 
-    const usage: Partial<UsagesDB> = {
+    const usage: UsagesDBInsert = {
         company_id,
         user_id,
         type: 'report',
         item_id: creator_id
     };
-    const { error: insertError } = await supabase.from<UsagesDB>('usages').insert([usage]);
+    const { error: insertError } = await supabase.from('usages').insert([usage]);
     if (insertError) return { error: 'Error recording usage' };
 
     return { error: null };
@@ -44,7 +44,7 @@ export const recordReportUsage = async (
 // Note: we might want to consider not recording usages for the default loading of the search page
 export const recordSearchUsage = async (company_id: string, user_id: string) => {
     const { data: company, error: companyError } = await supabase
-        .from<CompanyDB>('companies')
+        .from('companies')
         .select('usage_limit')
         .eq('id', company_id)
         .single();
@@ -53,7 +53,7 @@ export const recordSearchUsage = async (company_id: string, user_id: string) => 
     }
     const limit = Number(company.usage_limit);
     const { data: usagesData, error: usagesError } = await supabase
-        .from<UsagesDB>('usages')
+        .from('usages')
         .select('id')
         .eq('company_id', company_id)
         .eq('type', 'search');
@@ -61,11 +61,11 @@ export const recordSearchUsage = async (company_id: string, user_id: string) => 
         return { error: 'Usage limit exceeded' };
     }
 
-    const usage: Partial<UsagesDB> = {
+    const usage: UsagesDBInsert = {
         company_id,
         user_id,
         type: 'search'
     };
-    const { error } = await supabase.from<UsagesDB>('usages').insert([usage]);
+    const { error } = await supabase.from('usages').insert([usage]);
     if (error) return error;
 };

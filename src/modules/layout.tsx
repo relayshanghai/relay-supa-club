@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
 import { LanguageToggle } from 'src/components/common/language-toggle';
@@ -16,7 +16,7 @@ import { supabase } from 'src/utils/supabase-client';
 export const Layout = ({ children }: any) => {
     const router = useRouter();
     const { t } = useTranslation();
-    const { session, profile, loading } = useUser();
+    const { profile, loading } = useUser();
     const { company } = useCompany();
     const { subscription } = useSubscription();
 
@@ -25,20 +25,13 @@ export const Layout = ({ children }: any) => {
     const accountMenuButtonRef = useRef(null);
     useOnOutsideClick(accountMenuRef, () => setAccountMenuOpen(false), accountMenuButtonRef);
 
-    useEffect(() => {
-        // If we don't have a user and is not loading
-        // means the user is logged out
-        if (!session && !loading) {
-            router.push('/');
-        }
-    }, [router, session, loading]);
     const [sideBarOpen, setSideBarOpen] = useState(true);
 
     return (
         <div className="w-full h-full">
             <div className="flex flex-row h-full">
                 <Sidebar
-                    loggedIn={session && !loading}
+                    loggedIn={!!profile?.id && !loading}
                     open={sideBarOpen}
                     setOpen={setSideBarOpen}
                 />
@@ -67,7 +60,7 @@ export const Layout = ({ children }: any) => {
                                 </p>
                             </div>
                             <div>
-                                {!loading && session && (
+                                {!loading && !!profile?.id && (
                                     <div>
                                         <button
                                             onClick={() => setAccountMenuOpen(!accountMenuOpen)}

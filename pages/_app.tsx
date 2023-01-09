@@ -6,8 +6,18 @@ import Head from 'next/head';
 import { Toaster } from 'react-hot-toast';
 import { UserProvider } from 'src/hooks/use-user';
 import '../i18n';
+import { createBrowserSupabaseClient } from '@supabase/auth-helpers-nextjs';
+import { SessionContextProvider, Session } from '@supabase/auth-helpers-react';
+import { useState } from 'react';
 
-function MyApp({ Component, pageProps }: AppProps) {
+function MyApp({
+    Component,
+    pageProps
+}: AppProps<{
+    initialSession: Session;
+}>) {
+    const [supabaseClient] = useState(() => createBrowserSupabaseClient());
+
     return (
         <>
             <Head>
@@ -42,9 +52,14 @@ function MyApp({ Component, pageProps }: AppProps) {
                     content="Looking for a complete solution to manage influencer marketing for your brand? Our platform has millions of influencers &amp; assists in payments, analytics &amp; more!"
                 />
             </Head>
-            <UserProvider>
-                <Component {...pageProps} />
-            </UserProvider>
+            <SessionContextProvider
+                supabaseClient={supabaseClient}
+                initialSession={pageProps.initialSession}
+            >
+                <UserProvider>
+                    <Component {...pageProps} />
+                </UserProvider>
+            </SessionContextProvider>
             <Toaster />
         </>
     );

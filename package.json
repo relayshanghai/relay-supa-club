@@ -13,7 +13,9 @@
     "dependencies": {
         "@headlessui/react": "^1.7.3",
         "@heroicons/react": "^2.0.13",
-        "@supabase/supabase-js": "^1.35.7",
+        "@supabase/auth-helpers-nextjs": "^0.5.2",
+        "@supabase/auth-helpers-react": "^0.3.1",
+        "@supabase/supabase-js": "^2.2.3",
         "date-fns": "^2.29.3",
         "i18next": "^22.0.6",
         "i18next-browser-languagedetector": "^7.0.1",
@@ -41,6 +43,7 @@
         "eslint": "8.25.0",
         "eslint-config-next": "12.3.1",
         "eslint-config-prettier": "^8.5.0",
+        "eslint-plugin-prettier": "^4.2.1",
         "husky": "^4.2.4",
         "lint-staged": "^13.0.3",
         "postcss": "^8.4.17",

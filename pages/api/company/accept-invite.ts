@@ -1,12 +1,20 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { supabase } from 'src/utils/supabase-client';
-import { InvitesDB } from 'types';
+
+export type CompanyAcceptInvitePostBody = {
+    token: string;
+    password: string;
+    firstName: string;
+    lastName: string;
+};
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
-        const { token, password, firstName, lastName } = JSON.parse(req.body);
+        const { token, password, firstName, lastName } = JSON.parse(
+            req.body
+        ) as CompanyAcceptInvitePostBody;
         const { data, error } = await supabase
-            .from<InvitesDB>('invites')
+            .from('invites')
             .select('*')
             .eq('id', token)
             .limit(1)
@@ -22,19 +30,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
 
         // Sign-up the user with the given credentials
-        const { error: userError } = await supabase.auth.signUp(
-            {
-                email: data.email,
-                password
-            },
-            {
+        const { error: userError } = await supabase.auth.signUp({
+            email: data.email,
+            password,
+            options: {
                 data: {
                     first_name: firstName,
                     last_name: lastName,
                     company_id: data.company_id
                 }
             }
-        );
+        });
 
         if (userError) {
             return res.status(500).json(userError);
@@ -42,7 +48,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         // Mark the invite as used
         const { data: invite, error: updateError } = await supabase
-            .from<InvitesDB>('invites')
+            .from('invites')
             .update({
                 used: true
             })
@@ -58,7 +64,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (req.method === 'GET') {
         const token = req.query.token as string;
         const { data, error } = await supabase
-            .from<InvitesDB>('invites')
+            .from('invites')
             .select('used, expire_at')
             .eq('id', token)
             .limit(1)
