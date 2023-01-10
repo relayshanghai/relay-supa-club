@@ -82,15 +82,17 @@ export const Layout = ({ children }: any) => {
                                                         {t('navbar.button.account')}
                                                     </a>
                                                 </Link>
-
-                                                <p
+                                                <Button
+                                                    className="px-4 py-2 text-sm hover:bg-gray-100 active:bg-gray-200"
+                                                    variant="neutral"
                                                     onClick={async () => {
                                                         await supabase.auth.signOut();
+                                                        // need to trigger a page reload to get the new auth state, so don't use router.push
+                                                        window.location.href = '/';
                                                     }}
-                                                    className="px-4 py-2 text-sm hover:bg-gray-100 active:bg-gray-200"
                                                 >
                                                     {t('navbar.button.logout')}
-                                                </p>
+                                                </Button>
                                             </div>
                                         )}
                                     </div>
