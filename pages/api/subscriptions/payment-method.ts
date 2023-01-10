@@ -6,11 +6,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (req.method === 'GET') {
         const { id } = req.query;
 
-        const { data, error } = await supabase
+        const { data, error } = (await supabase
             .from('companies')
             .select('cus_id, name')
             .eq('id', id)
-            .single();
+            .single()) as any;
 
         if (error) {
             return res.status(500).json(error);

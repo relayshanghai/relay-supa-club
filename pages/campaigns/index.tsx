@@ -25,7 +25,7 @@ const CampaignsPage = () => {
                 </div>
             );
         }
-        return <CampaignCardView campaigns={campaigns} />;
+        return <CampaignCardView campaigns={campaigns} currentTab={currentTab} />;
     };
 
     return (

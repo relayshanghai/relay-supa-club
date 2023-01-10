@@ -23,6 +23,7 @@ import { useCampaigns } from 'src/hooks/use-campaigns';
 import { useCallback } from 'react';
 import { supabase } from 'src/utils/supabase-client';
 import { Spinner } from 'src/components/icons';
+import { CampaignWithCompanyCreators } from 'src/utils/api/db';
 
 const TimelineInput = ({
     q,
@@ -140,10 +141,16 @@ export default function CampaignForm() {
     );
 
     const updateHandler = useCallback(
-        async (data: any) => {
+        async (campaignWithCompanyCreators: CampaignWithCompanyCreators | null) => {
+            if (!campaignWithCompanyCreators) return null;
+            const {
+                campaign_creators: _unused1,
+                companies: _unused2,
+                ...campaign
+            } = campaignWithCompanyCreators;
             setSubmitting(true);
             try {
-                await updateCampaign(data);
+                await updateCampaign(campaign);
                 if (campaignId && media.length > 0) {
                     await uploadFiles(media, campaignId);
                 }
@@ -152,7 +159,7 @@ export default function CampaignForm() {
                 }
                 toast(t('campaigns.form.successUpdateMsg'));
                 setSubmitting(false);
-                router.push(`/campaigns/${encodeURIComponent(data.id)}`);
+                router.push(`/campaigns/${encodeURIComponent(campaign.id)}`);
             } catch (error) {
                 toast(handleError(error));
                 setSubmitting(false);
@@ -176,10 +183,10 @@ export default function CampaignForm() {
 
     useEffect(() => {
         const getFilePath = (filename: string) => {
-            const { publicURL } = supabase.storage
-                .from('images')
-                .getPublicUrl(`campaigns/${campaignId}/${filename}`);
-            return publicURL;
+            const {
+                data: { publicUrl }
+            } = supabase.storage.from('images').getPublicUrl(`campaigns/${campaignId}/${filename}`);
+            return publicUrl;
         };
 
         const getFiles = async () => {

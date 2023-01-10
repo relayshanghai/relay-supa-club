@@ -45,6 +45,7 @@ export default function Tabs({ currentTab, changeTab }: Props) {
                     </div>
                 ))}
             </div>
+            {/* -- Mobile view -- */}
             <select
                 style={selectStyle}
                 onChange={(e) => changeTab(e.target.value)}

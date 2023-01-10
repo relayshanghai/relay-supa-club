@@ -2,23 +2,20 @@
 import Link from 'next/link';
 import { Button } from 'src/components/button';
 import CounterUp from 'src/components/counter-up';
+import { Spinner } from 'src/components/icons';
 import { Title } from 'src/components/title';
 import { useUser } from 'src/hooks/use-user';
 
 const Home = () => {
-    const { session, loading } = useUser();
+    const { profile, loading } = useUser();
     return (
         <div className="w-full h-full">
             <div className="flex flex-row justify-between px-10 py-8">
                 <Title />
                 <div>
-                    {loading ? null : session && !loading ? (
-                        <Link href="/dashboard" passHref>
-                            <a className="text-sm px-4 py-2 rounded-md cursor-pointer flex-shrink-0 text-white bg-primary-500 hover:bg-primary-700 duration-300 font-bold disabled:bg-gray-300 disabled:cursor-default">
-                                Dashboard
-                            </a>
-                        </Link>
-                    ) : (
+                    {loading ? (
+                        <Spinner className="w-5 h-5 fill-primary-600 text-white" />
+                    ) : !profile?.id ? (
                         <div className="space-x-2">
                             <Link href="/signup">
                                 <Button>Create account</Button>
@@ -27,6 +24,12 @@ const Home = () => {
                                 <Button variant="secondary">Log in</Button>
                             </Link>
                         </div>
+                    ) : (
+                        <Link href="/dashboard" passHref>
+                            <a className="text-sm px-4 py-2 rounded-md cursor-pointer flex-shrink-0 text-white bg-primary-500 hover:bg-primary-700 duration-300 font-bold disabled:bg-gray-300 disabled:cursor-default">
+                                Dashboard
+                            </a>
+                        </Link>
                     )}
                 </div>
             </div>

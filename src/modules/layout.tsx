@@ -1,11 +1,10 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
 import { LanguageToggle } from 'src/components/common/language-toggle';
-import { Spinner } from 'src/components/icons';
-import { HamburgerMenu } from 'src/components/icons';
+import { HamburgerMenu, Spinner } from 'src/components/icons';
 import { Sidebar } from 'src/components/sidebar';
 
 import { useCompany } from 'src/hooks/use-company';
@@ -17,7 +16,7 @@ import { supabase } from 'src/utils/supabase-client';
 export const Layout = ({ children }: any) => {
     const router = useRouter();
     const { t } = useTranslation();
-    const { session, profile, loading } = useUser();
+    const { profile, loading } = useUser();
     const { company } = useCompany();
     const { subscription } = useSubscription();
 
@@ -26,20 +25,13 @@ export const Layout = ({ children }: any) => {
     const accountMenuButtonRef = useRef(null);
     useOnOutsideClick(accountMenuRef, () => setAccountMenuOpen(false), accountMenuButtonRef);
 
-    useEffect(() => {
-        // If we don't have a user and is not loading
-        // means the user is logged out
-        if (!session && !loading) {
-            router.push('/');
-        }
-    }, [router, session, loading]);
     const [sideBarOpen, setSideBarOpen] = useState(true);
 
     return (
         <div className="w-full h-full">
             <div className="flex flex-row h-full">
                 <Sidebar
-                    loggedIn={session && !loading}
+                    loggedIn={!!profile?.id && !loading}
                     open={sideBarOpen}
                     setOpen={setSideBarOpen}
                 />
@@ -68,13 +60,13 @@ export const Layout = ({ children }: any) => {
                                 </p>
                             </div>
                             <div>
-                                {!loading && session && (
+                                {!loading && !!profile?.id && (
                                     <div>
                                         <button
                                             onClick={() => setAccountMenuOpen(!accountMenuOpen)}
                                             ref={accountMenuButtonRef}
                                         >
-                                            <p className="w-9 l-9 p-2 rounded-full bg-primary-50 text-primary-600 text-sm font-bold">
+                                            <p className="w-9 h-9 p-2 rounded-full bg-primary-50 text-primary-600 text-xs font-bold">
                                                 {profile?.first_name ? profile.first_name[0] : ''}
                                                 {profile?.last_name ? profile.last_name[0] : ''}
                                             </p>

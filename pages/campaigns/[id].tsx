@@ -1,6 +1,6 @@
 import { Layout } from 'src/modules/layout';
 import { useRouter } from 'next/router';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import dateFormat from 'src/utils//dateFormat';
 import { PencilSquareIcon } from '@heroicons/react/20/solid';
@@ -10,26 +10,54 @@ import CampaignDetails from '../../src/components/campaigns/CampaignDetails';
 import { useCampaigns } from 'src/hooks/use-campaigns';
 import Image from 'next/image';
 import { supabase } from 'src/utils/supabase-client';
+import { CampaignWithCompanyCreators } from 'src/utils/api/db';
 
 export default function CampaignShow() {
     const router = useRouter();
-    const { campaign: currentCampaign } = useCampaigns({ campaignId: router.query.id });
+    const {
+        campaign: currentCampaign,
+        updateCampaign,
+        refreshCampaign
+    } = useCampaigns({ campaignId: router.query.id });
+
     const [media, setMedia] = useState<{ url: string; name: string }[]>([]);
     const [currentTab, setCurrentTab] = useState(0);
-    // const [campaignStatus, setCampaignStatus] = useState(false);
     const { t } = useTranslation();
+
     const tabs = [
         t('campaigns.show.activities.creatorOutreach'),
         t('campaigns.show.activities.campaignInfo')
     ];
 
+    const campaignStatusTabs = [
+        { label: t('campaigns.index.status.inProgress'), value: 'in progress' },
+        { label: t('campaigns.index.status.notStarted'), value: 'not started' },
+        { label: t('campaigns.index.status.completed'), value: 'completed' }
+    ];
+
+    const handleDropdownSelect = async (
+        e: ChangeEvent<HTMLSelectElement>,
+        campaignWithCompanyCreators: CampaignWithCompanyCreators | null
+    ) => {
+        e.stopPropagation();
+        if (!campaignWithCompanyCreators) return null;
+        const {
+            campaign_creators: _filterOut,
+            companies: _filterOut2,
+            ...campaign
+        } = campaignWithCompanyCreators;
+        const status = e.target.value;
+        await updateCampaign({ ...campaign, status });
+        refreshCampaign();
+    };
     useEffect(() => {
         const getFiles = async () => {
             const getFilePath = (filename: string) => {
-                const { publicURL } = supabase.storage
+                const { data } = supabase.storage
                     .from('images')
                     .getPublicUrl(`campaigns/${currentCampaign?.id}/${filename}`);
-                return publicURL;
+
+                return data?.publicUrl;
             };
 
             const { data } = await supabase.storage
@@ -76,9 +104,18 @@ export default function CampaignShow() {
                                 <div className="font-semibold text-lg text-tertiary-600 sm:mr-2">
                                     {currentCampaign?.name}
                                 </div>
-                                <div className="px-2 py-1 bg-primary-100 hover:bg-primary-200 text-primary-500 text-xs rounded-md duration-300 cursor-pointer">
-                                    {t(`campaigns.show.status.${currentCampaign?.status}`)}
-                                </div>
+                                {/* TODO:Replace status tag to dropdown select button  */}
+                                <select
+                                    onChange={(e) => handleDropdownSelect(e, currentCampaign)}
+                                    value={currentCampaign?.status as string}
+                                    className="px-2 py-1 bg-primary-100 hover:bg-primary-200 text-primary-500 text-xs rounded-md duration-300 cursor-pointer"
+                                >
+                                    {campaignStatusTabs.map((tab, index) => (
+                                        <option value={tab.value} key={index}>
+                                            {tab.label}
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
                             <div className="mb-1">
                                 <div className="font-semibold text-sm text-tertiary-600">
@@ -101,7 +138,7 @@ export default function CampaignShow() {
                                 <div className="flex h-7">
                                     {currentCampaign?.tag_list?.length &&
                                         currentCampaign?.tag_list?.length > 0 &&
-                                        currentCampaign?.tag_list.map((tag: any, index: number) => (
+                                        currentCampaign?.tag_list.map((tag, index) => (
                                             <div
                                                 key={index}
                                                 className="bg-tertiary-50 rounded-md px-2 py-1 text-xs text-tertiary-600 mr-1 mb-1"

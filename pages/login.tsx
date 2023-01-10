@@ -9,7 +9,7 @@ import { useUser } from 'src/hooks/use-user';
 
 export default function Login() {
     const router = useRouter();
-    const { login, loading, profile, session } = useUser();
+    const { login, loading, profile } = useUser();
     const {
         values: { email, password },
         setFieldValue
@@ -19,14 +19,14 @@ export default function Login() {
     });
 
     useEffect(() => {
-        if (!loading && session && profile) {
+        if (!loading && !!profile?.id) {
             if (!profile.company_id) {
                 router.push('/signup/onboarding');
             } else {
                 router.push('/dashboard');
             }
         }
-    }, [session, loading, profile, router]);
+    }, [loading, profile, router]);
 
     return (
         <div className="w-full h-full px-10 py-8">
