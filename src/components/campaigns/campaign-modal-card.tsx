@@ -3,10 +3,10 @@ import { useCampaigns } from 'src/hooks/use-campaigns';
 import { CreatorSearchAccountObject } from 'types';
 import { useEffect, useState } from 'react';
 import { Spinner } from '../icons';
-import { supabase } from 'src/utils/supabase-client';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { CampaignWithCompanyCreators } from 'src/utils/api/db';
+import { useSupabaseClient } from '@supabase/auth-helpers-react';
 
 export default function CampaignModalCard({
     campaign,
@@ -15,6 +15,7 @@ export default function CampaignModalCard({
     campaign: CampaignWithCompanyCreators;
     creator: CreatorSearchAccountObject | null;
 }) {
+    const supabase = useSupabaseClient();
     const { addCreatorToCampaign, loading } = useCampaigns({
         campaignId: campaign?.id
     });
@@ -63,7 +64,7 @@ export default function CampaignModalCard({
         if (campaign) {
             getFiles();
         }
-    }, [campaign]);
+    }, [campaign, supabase]);
 
     useEffect(() => {
         if (campaign && creator) {

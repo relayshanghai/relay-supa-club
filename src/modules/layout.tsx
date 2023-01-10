@@ -11,7 +11,7 @@ import { useCompany } from 'src/hooks/use-company';
 import { useSubscription } from 'src/hooks/use-subscription';
 import { useUser } from 'src/hooks/use-user';
 import useOnOutsideClick from 'src/hooks/use-on-outside-click';
-import { supabase } from 'src/utils/supabase-client';
+import { useSupabaseClient } from '@supabase/auth-helpers-react';
 
 export const Layout = ({ children }: any) => {
     const router = useRouter();
@@ -19,6 +19,7 @@ export const Layout = ({ children }: any) => {
     const { profile, loading } = useUser();
     const { company } = useCompany();
     const { subscription } = useSubscription();
+    const supabase = useSupabaseClient();
 
     const [accountMenuOpen, setAccountMenuOpen] = useState(false);
     const accountMenuRef = useRef(null);

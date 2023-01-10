@@ -21,9 +21,10 @@ import {
 import { Question, questions, TimelineQuestion } from 'src/components/campaigns/helper';
 import { useCampaigns } from 'src/hooks/use-campaigns';
 import { useCallback } from 'react';
-import { supabase } from 'src/utils/supabase-client';
 import { Spinner } from 'src/components/icons';
 import { CampaignWithCompanyCreators } from 'src/utils/api/db';
+import { clientLogger } from 'src/utils/logger';
+import { useSupabaseClient } from '@supabase/auth-helpers-react';
 
 const TimelineInput = ({
     q,
@@ -68,6 +69,7 @@ const TimelineInput = ({
 
 export default function CampaignForm() {
     const router = useRouter();
+    const supabase = useSupabaseClient();
 
     const [submitting, setSubmitting] = useState(false);
     const [media, setMedia] = useState<File[]>([]);
@@ -90,35 +92,35 @@ export default function CampaignForm() {
     const isAddMode = !router.query.id;
     const goBack = () => router.back();
 
-    const uploadFiles = useCallback(async (files: File[], campaignId: string) => {
-        for (let i = 0; i < files.length; i++) {
-            const file = files[i];
-            const filePath = `campaigns/${campaignId}/${file.name}`;
-            if (!file) continue;
-            await supabase.storage
-                .from('images')
-                .upload(filePath, file)
-                .catch((error) => {
-                    // eslint-disable-next-line no-console
-                    console.log(error);
-                });
-        }
-    }, []);
+    const uploadFiles = useCallback(
+        async (files: File[], campaignId: string) => {
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                if (!file?.name) continue;
+                const filePath = `campaigns/${campaignId}/${file.name}`;
+                await supabase.storage
+                    .from('images')
+                    .upload(filePath, file)
+                    .catch((error) => clientLogger(error, 'error'));
+            }
+        },
+        [supabase]
+    );
 
-    const deleteFiles = useCallback(async (files: File[], campaignId: string) => {
-        for (let i = 0; i < files.length; i++) {
-            const file = files[i];
-            const filePath = `campaigns/${campaignId}/${file.name}`;
-            if (!file) continue;
-            await supabase.storage
-                .from('images')
-                .remove([filePath])
-                .catch((error) => {
-                    // eslint-disable-next-line no-console
-                    console.log(error);
-                });
-        }
-    }, []);
+    const deleteFiles = useCallback(
+        async (files: File[], campaignId: string) => {
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                if (!file?.name) continue;
+                const filePath = `campaigns/${campaignId}/${file.name}`;
+                await supabase.storage
+                    .from('images')
+                    .remove([filePath])
+                    .catch((error) => clientLogger(error, 'error'));
+            }
+        },
+        [supabase]
+    );
 
     const createHandler = useCallback(
         async (data: any) => {
@@ -209,7 +211,7 @@ export default function CampaignForm() {
         if (campaignId) {
             getFiles();
         }
-    }, [campaignId]);
+    }, [campaignId, supabase]);
 
     useEffect(() => {
         if (campaign) {
