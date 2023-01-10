@@ -48,7 +48,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
     const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
-        if (isLoading) setLoading(true);
+        setLoading(isLoading);
     }, [isLoading]);
 
     const getProfile = useCallback(
