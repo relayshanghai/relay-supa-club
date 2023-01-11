@@ -34,6 +34,18 @@ export default function CreatorsOutreach({
         { label: 'ignored', value: 'ignored' }
     ];
 
+    const paymentStatus = [
+        { id: 1, label: 'unpaid', value: 'unpaid' },
+        { id: 2, label: 'partiallypaid', value: 'partial_paid' },
+        { id: 3, label: 'fullypaid', value: 'full_paid' }
+    ];
+
+    const sampleStatus = [
+        { id: 1, label: 'unsent', value: 'unsent' },
+        { id: 2, label: 'sent', value: 'sent' },
+        { id: 3, label: 'delivered', value: 'delivered' }
+    ];
+
     const columnLabels = [
         'account',
         'creatorStatus',
@@ -52,11 +64,12 @@ export default function CreatorsOutreach({
 
     const handleDropdownSelect = async (
         e: ChangeEvent<HTMLSelectElement>,
-        creator: CampaignCreatorDB
+        creator: CampaignCreatorDB,
+        objKey: string
     ) => {
         e.stopPropagation();
-        const status = e.target.value;
-        await updateCreatorInCampaign({ ...creator, status });
+        creator = { ...creator, [objKey]: e.target.value };
+        await updateCreatorInCampaign(creator);
         refreshCampaign();
         toast.success(t('campaigns.creatorModal.kolUpdated'));
     };
@@ -143,7 +156,7 @@ export default function CreatorsOutreach({
                                 </th>
                             ))}
                             {/*-- placeholder table header space for delete icon --*/}
-                            <th className=" px-3 py-3 text-left text-xs font-normal text-gray-500 sticky bg-white tracking-wider  min-w-[200px] max-w-[200px]">
+                            <th className=" px-3 py-3 text-left text-xs font-normal text-gray-500 sticky bg-white tracking-wider  min-w-[100px] max-w-[100px]">
                                 {''}
                             </th>
                         </tr>
@@ -177,7 +190,9 @@ export default function CreatorsOutreach({
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <select
-                                                onChange={(e) => handleDropdownSelect(e, creator)}
+                                                onChange={(e) =>
+                                                    handleDropdownSelect(e, creator, 'status')
+                                                }
                                                 value={creator.status}
                                                 className="-ml-1 text-xs px-4 py-2 rounded-md text-primary-500 font-semibold bg-primary-50 hover:bg-primary-100 border border-gray-200 duration-300 cursor-pointer outline-none mr-2.5 appearance-none text-center"
                                             >
@@ -282,8 +297,46 @@ export default function CreatorsOutreach({
                                                 )}
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">-</td>
-                                        <td className="px-6 py-4 whitespace-nowrap">-</td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <select
+                                                onClick={(e) => e.stopPropagation()}
+                                                onChange={(e) =>
+                                                    handleDropdownSelect(
+                                                        e,
+                                                        creator,
+                                                        'payment_status'
+                                                    )
+                                                }
+                                                value={creator.payment_status}
+                                                className="-ml-1 text-xs px-4 py-2 rounded-md text-green-500 font-semibold bg-green-50 hover:bg-green-100 border border-gray-200 duration-300 cursor-pointer outline-none mr-2.5 appearance-none text-center"
+                                            >
+                                                {paymentStatus.map((tab, index) => (
+                                                    <option value={tab.value} key={index}>
+                                                        {t(`campaigns.creatorModal.${tab.label}`)}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <select
+                                                onClick={(e) => e.stopPropagation()}
+                                                onChange={(e) =>
+                                                    handleDropdownSelect(
+                                                        e,
+                                                        creator,
+                                                        'sample_status'
+                                                    )
+                                                }
+                                                value={creator.sample_status}
+                                                className="-ml-1 text-xs px-4 py-2 rounded-md text-orange-500 font-semibold bg-orange-50 hover:bg-orange-100 border border-gray-200 duration-300 cursor-pointer outline-none mr-2.5 appearance-none text-center"
+                                            >
+                                                {sampleStatus.map((tab, index) => (
+                                                    <option value={tab.value} key={index}>
+                                                        {t(`campaigns.creatorModal.${tab.label}`)}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </td>
 
                                         <td className="px-6 py-4 sm:sticky right-0 bg-white whitespace-nowrap z-50 group-hover:bg-primary-50 flex justify-end">
                                             <div

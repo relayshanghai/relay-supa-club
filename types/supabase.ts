@@ -19,11 +19,11 @@ export interface Database {
                     rate_cents: number;
                     rate_currency: string;
                     payment_details: string | null;
-                    payment_status: string | null;
+                    payment_status: string;
                     paid_amount_cents: number;
                     paid_amount_currency: string;
                     address: string | null;
-                    sample_status: string | null;
+                    sample_status: string;
                     tracking_details: string | null;
                     reject_message: string | null;
                     brief_opened_by_creator: boolean | null;
