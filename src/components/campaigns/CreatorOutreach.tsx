@@ -49,7 +49,7 @@ export default function CreatorsOutreach({
     const columnLabels = [
         'account',
         'creatorStatus',
-        'addedBy',
+        // 'addedBy',
         'nextPoint',
         'paymentAmount',
         'paidAmount',
@@ -205,11 +205,11 @@ export default function CreatorsOutreach({
                                                 ))}
                                             </select>
                                         </td>
-                                        <td
+                                        {/* TODO: add added by column, need to update database relation  */}
+                                        {/* <td
                                             id="creator-added-by"
                                             className="px-6 py-4 whitespace-nowrap"
                                         >
-                                            {/* TODO: add added by user name  */}
                                             {creator.added_by_id ? (
                                                 <div className="flex">
                                                     <div className="group flex text-xs items-center">
@@ -221,7 +221,7 @@ export default function CreatorsOutreach({
                                             ) : (
                                                 <div className="text-sm text-gray-600"> - </div>
                                             )}
-                                        </td>
+                                        </td> */}
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div
                                                 className="text-sm text-gray-900 cursor-pointer hover:text-primary-500 duration-300 relative"
