@@ -9,8 +9,8 @@ import CreatorsOutreach from '../../src/components/campaigns/CreatorOutreach';
 import CampaignDetails from '../../src/components/campaigns/CampaignDetails';
 import { useCampaigns } from 'src/hooks/use-campaigns';
 import Image from 'next/image';
-import { supabase } from 'src/utils/supabase-client';
 import { CampaignWithCompanyCreators } from 'src/utils/api/db';
+import { useSupabaseClient } from '@supabase/auth-helpers-react';
 
 export default function CampaignShow() {
     const router = useRouter();
@@ -19,6 +19,7 @@ export default function CampaignShow() {
         updateCampaign,
         refreshCampaign
     } = useCampaigns({ campaignId: router.query.id });
+    const supabase = useSupabaseClient();
 
     const [media, setMedia] = useState<{ url: string; name: string }[]>([]);
     const [currentTab, setCurrentTab] = useState(0);
@@ -53,11 +54,12 @@ export default function CampaignShow() {
     useEffect(() => {
         const getFiles = async () => {
             const getFilePath = (filename: string) => {
-                const { data } = supabase.storage
+                const {
+                    data: { publicUrl }
+                } = supabase.storage
                     .from('images')
                     .getPublicUrl(`campaigns/${currentCampaign?.id}/${filename}`);
-
-                return data?.publicUrl;
+                return publicUrl;
             };
 
             const { data } = await supabase.storage
@@ -80,7 +82,7 @@ export default function CampaignShow() {
         if (currentCampaign) {
             getFiles();
         }
-    }, [currentCampaign]);
+    }, [currentCampaign, supabase]);
 
     return (
         <Layout>

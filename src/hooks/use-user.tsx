@@ -45,10 +45,10 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
     const user = supabaseUseUser();
     const supabaseClient = useSupabaseClient<Database>();
 
-    const [loading, setLoading] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
-        if (isLoading) setLoading(true);
+        setLoading(isLoading);
     }, [isLoading]);
 
     const getProfile = useCallback(

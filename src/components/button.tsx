@@ -8,6 +8,8 @@ const defaultClasses =
     'text-sm px-4 py-2 rounded-md flex-shrink-0 font-bold disabled:bg-gray-300 disabled:cursor-default';
 const primaryClasses = 'text-white bg-primary-500 hover:bg-primary-700';
 const secondaryClasses = 'text-primary-500 bg-white border-primary-500 border hover:bg-primary-100';
+/** override default browser styles */
+const neutralClasses = 'text-left';
 
 /**
  * @param className additional classes to add to the button
@@ -19,7 +21,7 @@ export const Button = ({ children, variant, className, ...rest }: ButtonProps) =
         <button
             className={
                 variant === 'neutral'
-                    ? className
+                    ? `${neutralClasses} ${className}`
                     : `${defaultClasses} ${
                           variant === 'secondary' ? secondaryClasses : primaryClasses
                       } ${className}`
