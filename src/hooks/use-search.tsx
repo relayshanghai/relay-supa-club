@@ -25,9 +25,9 @@ export const useSearch = () => {
         id: CreatorPlatform;
     }[] = useMemo(
         () => [
-            { icon: '/assets/svg/yt.svg', label: 'YouTube', id: 'youtube' },
-            { icon: '/assets/svg/instagram.svg', label: 'Instagram', id: 'instagram' },
-            { icon: '/assets/svg/tiktok.svg', label: 'TikTok', id: 'tiktok' }
+            { icon: '/assets/imgs/icons/yt.svg', label: 'YouTube', id: 'youtube' },
+            { icon: '/assets/imgs/icons/instagram.svg', label: 'Instagram', id: 'instagram' },
+            { icon: '/assets/imgs/icons/tiktok.svg', label: 'TikTok', id: 'tiktok' }
         ],
         []
     );
