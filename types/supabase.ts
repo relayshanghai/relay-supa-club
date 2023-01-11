@@ -29,7 +29,7 @@ export interface Database {
                     brief_opened_by_creator: boolean | null;
                     need_support: boolean | null;
                     added_by_id: number | null;
-                    'next-step': string | null;
+                    next_step: string | null;
                     avatar_url: string | null;
                     username: string | null;
                     fullname: string | null;

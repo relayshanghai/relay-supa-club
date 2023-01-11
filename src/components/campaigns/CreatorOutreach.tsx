@@ -19,7 +19,6 @@ export default function CreatorsOutreach({
     const { pathname, query } = router;
     const [tabStatus, setTabStatus] = useState<string | string[]>(query.curTab || 'to contact');
     const [isEditingMode, setIsEditingMode] = useState<boolean>(false);
-    const [inputValue, setInputValue] = useState('');
     const [currentCreator, setCurrentCreator] = useState<CampaignCreatorDB | null>(null);
     const { deleteCreatorInCampaign, updateCreatorInCampaign, refreshCampaign } = useCampaigns({
         campaignId: currentCampaign?.id
@@ -73,34 +72,21 @@ export default function CreatorsOutreach({
         toast.success(t('campaigns.modal.deletedSuccessfully'));
     };
 
-    // const updateCampaignCreator = async (
-    //     inputValue: string | number,
-    //     creator: CampaignCreatorDB
-    // ) => {
-    //     // const {next_step, payment_amount, paid_amount} = inputValue;
-    //     await updateCreatorInCampaign(creator);
-    //     refreshCampaign();
-    //     toast.success(t('campaigns.modal.deletedSuccessfully'));
-    // };
+    const updateCampaignCreator = async (creator: CampaignCreatorDB) => {
+        await updateCreatorInCampaign(creator);
+        refreshCampaign();
+        toast.success(t('campaigns.creatorModal.kolUpdated'));
+    };
 
     // get the number of creators in each status
     const creatorsCount = (status: string) => {
         return currentCampaign?.campaign_creators.filter((c) => c.status === status).length;
     };
 
-    //onclick the table input field, setIsEditingMode to true, and show the input field
-    //onclick the cancel icon, setIsEditingMode to false, and hide the input field
-    //onclick the save icon,
-    // 1.setInputValue to onchange value
-    // 2.  if the input has name of next_step, payment_amount, paid_amount, update the value in db
-    // when click save, inputValue is submitted.
-
     const handleTableInputClick = (
         e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>,
         creator: CampaignCreatorDB
     ) => {
-        //eslint-disable-next-line
-        console.log({ creator });
         e.stopPropagation();
         setIsEditingMode(true);
         setCurrentCreator(creator);
@@ -226,17 +212,21 @@ export default function CreatorsOutreach({
                                             onClick={(e) => handleTableInputClick(e, creator)}
                                         >
                                             <div className="relative">
-                                                {creator === currentCreator && isEditingMode ? (
+                                                {creator === currentCreator &&
+                                                creator.next_step &&
+                                                isEditingMode ? (
                                                     <TableInput
                                                         type="text"
-                                                        name="next-step"
-                                                        value={creator['next-step']}
-                                                        inputValue={inputValue}
-                                                        setInputValue={setInputValue}
+                                                        name="next_step"
+                                                        value={creator.next_step}
+                                                        creator={creator}
+                                                        updateCampaignCreator={
+                                                            updateCampaignCreator
+                                                        }
                                                         closeModal={() => closeModal()}
                                                     />
                                                 ) : (
-                                                    creator['next-step'] || (
+                                                    creator.next_step || (
                                                         <div className="text-primary-500 hover:text-primary-700 cursor-pointer duration-300">
                                                             {' '}
                                                             {t(

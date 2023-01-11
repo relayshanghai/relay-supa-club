@@ -1,16 +1,35 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { CampaignCreatorDB } from 'src/utils/api/db';
 import { Confirm, Cross } from '../icons';
 
-export default function TableInput(props: any) {
+export default function TableInput({
+    name,
+    value,
+    type,
+    closeModal,
+    creator,
+    updateCampaignCreator
+}: {
+    name: string;
+    value: string;
+    type: string;
+    closeModal: () => void;
+    updateCampaignCreator: (creator: CampaignCreatorDB) => void;
+    creator: CampaignCreatorDB;
+}) {
+    const [inputValue, setInputValue] = useState<string>('');
+
     const handleFormSubmit = (e: any) => {
-        // console.log('handleFormSubmit', props.inputValue);
+        creator = { ...creator, [name]: inputValue };
+        //eslint-disable-next-line
+        console.log(creator); //TODO: delete
         e.preventDefault();
-        // props?.onSubmit(props.inputValue);
+        updateCampaignCreator(creator);
     };
 
     useEffect(() => {
-        if (props.value) props.setInputValue(props.value);
-    }, [props.value, props]);
+        if (value) setInputValue(value);
+    }, [value]);
 
     return (
         <div
@@ -22,10 +41,10 @@ export default function TableInput(props: any) {
                 onSubmit={(e) => handleFormSubmit(e)}
             >
                 <input
-                    type={props.type}
-                    value={props.inputValue}
-                    name={props.name}
-                    onChange={(e) => props.setInputValue(e.target.value)}
+                    type={type}
+                    value={inputValue}
+                    name={name}
+                    onChange={(e) => setInputValue(e.target.value)}
                     className="w-full h-full outline-none border border-gray-200 rounded-md mr-2 p-2 resize-none text-xs text-gray-600"
                 />
                 <div className="flex items-center justify-end">
@@ -36,7 +55,7 @@ export default function TableInput(props: any) {
                         <Confirm className="w-4 h-4 fill-current text-white rounded-md" />
                     </button>
                     <div
-                        onClick={() => props.closeModal()}
+                        onClick={() => closeModal()}
                         className="h-8 w-8 column-center bg-gray-100 border border-gray-200 hover:bg-gray-200 cursor-pointer duration-300 rounded-md"
                     >
                         <Cross className="w-4 h-4 fill-current text-gray-600" />
