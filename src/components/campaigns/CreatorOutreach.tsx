@@ -87,19 +87,26 @@ export default function CreatorsOutreach({
         return currentCampaign?.campaign_creators.filter((c) => c.status === status).length;
     };
 
-    // const handleTableInputClick = (
-    //     e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>
-    //     // creator: CampaignCreatorDB
-    // ) => {
-    //     e.stopPropagation();
-    //     setIsEditingMode(true);
-    // };
+    //onclick the table input field, setIsEditingMode to true, and show the input field
+    //onclick the cancel icon, setIsEditingMode to false, and hide the input field
+    //onclick the save icon,
+    // 1.setInputValue to onchange value
+    // 2. if the input has name of next_step, payment_amount, paid_amount, update the value in db <<<
+    //
+
+    const handleTableInputClick = (
+        e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>,
+        creator: CampaignCreatorDB
+    ) => {
+        //eslint-disable-next-line
+        console.log({ creator });
+        e.stopPropagation();
+        setIsEditingMode(true);
+    };
 
     const closeModal = () => {
         setIsEditingMode(false);
     };
-
-    // console.log({ inputValue });
 
     return (
         <div>
@@ -214,7 +221,7 @@ export default function CreatorsOutreach({
                                         <td
                                             id="creator-added-on"
                                             className="px-6 py-4 whitespace-nowrap"
-                                            // onClick={(e) => handleTableInputClick(e, creator)}
+                                            onClick={(e) => handleTableInputClick(e, creator)}
                                         >
                                             <div className="relative">
                                                 {!isEditingMode ? (
@@ -229,10 +236,11 @@ export default function CreatorsOutreach({
                                                 ) : (
                                                     <TableInput
                                                         type="text"
-                                                        closeModal={() => closeModal()}
+                                                        name="next-step"
                                                         value={creator['next-step']}
                                                         inputValue={inputValue}
                                                         setInputValue={setInputValue}
+                                                        closeModal={() => closeModal()}
                                                     />
                                                 )}
                                             </div>
