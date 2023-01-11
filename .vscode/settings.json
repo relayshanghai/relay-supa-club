@@ -20,5 +20,11 @@
         "tiktok",
         "upsert",
         "wechat"
-    ]
+    ],
+    "files.associations": {
+        "*.css": "tailwindcss"
+    },
+    "editor.quickSuggestions": {
+        "strings": true
+    }
 }
