@@ -9,6 +9,8 @@ import { useCompany } from 'src/hooks/use-company';
 import { useFields } from 'src/hooks/use-fields';
 import { useUser } from 'src/hooks/use-user';
 
+// test
+
 export default function Register() {
     const router = useRouter();
     const { loading, profile, refreshProfile } = useUser();
