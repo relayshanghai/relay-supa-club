@@ -4,14 +4,9 @@ import type { NextRequest } from 'next/server';
 import { Database } from 'types/supabase';
 /** https://supabase.com/docs/guides/auth/auth-helpers/nextjs#auth-with-nextjs-middleware */
 export async function middleware(req: NextRequest) {
-    if (
-        req.nextUrl.pathname === '/' ||
-        req.nextUrl.pathname === '/login' ||
-        req.nextUrl.pathname === '/signup'
-    ) {
-        // Allow access to the landing page, sign-in and sign-up pages.
-        return NextResponse.next();
-    }
+    // ignore the home page
+    if (req.nextUrl.pathname === '/') return NextResponse.next();
+
     // We need to create a response and hand it to the supabase client to be able to modify the response headers.
     const res = NextResponse.next();
     // Create authenticated Supabase Client.
@@ -40,7 +35,10 @@ export const config = {
          * - _next/static (static files)
          * - _next/image (image optimization files)
          * - favicon.ico (favicon file)
+         * - assets/* (assets files) (public/assets/*)
+         * - login/* (login page)
+         * - signup/* (signup page)
          */
-        '/((?!_next/static|_next/image|favicon.ico).*)'
+        '/((?!_next/static|_next/image|favicon.ico|assets/*|login/*|signup/*).*)'
     ]
 };
