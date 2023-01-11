@@ -20,6 +20,7 @@ export default function CreatorsOutreach({
     const [tabStatus, setTabStatus] = useState<string | string[]>(query.curTab || 'to contact');
     const [isEditingMode, setIsEditingMode] = useState<boolean>(false);
     const [inputValue, setInputValue] = useState('');
+    const [currentCreator, setCurrentCreator] = useState<CampaignCreatorDB | null>(null);
     const { deleteCreatorInCampaign, updateCreatorInCampaign, refreshCampaign } = useCampaigns({
         campaignId: currentCampaign?.id
     });
@@ -91,8 +92,8 @@ export default function CreatorsOutreach({
     //onclick the cancel icon, setIsEditingMode to false, and hide the input field
     //onclick the save icon,
     // 1.setInputValue to onchange value
-    // 2. if the input has name of next_step, payment_amount, paid_amount, update the value in db <<<
-    //
+    // 2.  if the input has name of next_step, payment_amount, paid_amount, update the value in db
+    // when click save, inputValue is submitted.
 
     const handleTableInputClick = (
         e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>,
@@ -102,6 +103,7 @@ export default function CreatorsOutreach({
         console.log({ creator });
         e.stopPropagation();
         setIsEditingMode(true);
+        setCurrentCreator(creator);
     };
 
     const closeModal = () => {
@@ -224,16 +226,7 @@ export default function CreatorsOutreach({
                                             onClick={(e) => handleTableInputClick(e, creator)}
                                         >
                                             <div className="relative">
-                                                {!isEditingMode ? (
-                                                    creator['next-step'] || (
-                                                        <div className="text-primary-500 hover:text-primary-700 cursor-pointer duration-300">
-                                                            {' '}
-                                                            {t(
-                                                                'campaigns.show.addActionPoint'
-                                                            )}{' '}
-                                                        </div>
-                                                    )
-                                                ) : (
+                                                {creator === currentCreator && isEditingMode ? (
                                                     <TableInput
                                                         type="text"
                                                         name="next-step"
@@ -242,6 +235,15 @@ export default function CreatorsOutreach({
                                                         setInputValue={setInputValue}
                                                         closeModal={() => closeModal()}
                                                     />
+                                                ) : (
+                                                    creator['next-step'] || (
+                                                        <div className="text-primary-500 hover:text-primary-700 cursor-pointer duration-300">
+                                                            {' '}
+                                                            {t(
+                                                                'campaigns.show.addActionPoint'
+                                                            )}{' '}
+                                                        </div>
+                                                    )
                                                 )}
                                             </div>
                                         </td>
