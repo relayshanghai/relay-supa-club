@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
-import { ChangeEvent, MouseEvent, useState } from 'react';
+import { ChangeEvent, MouseEvent, useRef, useState } from 'react';
 import Link from 'next/link';
 import Trashcan from 'src/components/icons/Trashcan';
 import { useCampaigns } from 'src/hooks/use-campaigns';
@@ -18,12 +18,13 @@ export default function CreatorsOutreach({
     const router = useRouter();
     const { pathname, query } = router;
     const [tabStatus, setTabStatus] = useState<string | string[]>(query.curTab || 'to contact');
-    const [isEditingMode, setIsEditingMode] = useState<boolean>(false);
-    const [currentCreator, setCurrentCreator] = useState<CampaignCreatorDB | null>(null);
+    // const [currentCreator, setCurrentCreator] = useState<CampaignCreatorDB | null>(null);
+    const [toEdit, setToEdit] = useState<{ index: number; key: string } | null>(null);
+    const inputRef = useRef(null);
+
     const { deleteCreatorInCampaign, updateCreatorInCampaign, refreshCampaign } = useCampaigns({
         campaignId: currentCampaign?.id
     });
-
     const tabs = [
         { label: 'toContact', value: 'to contact' },
         { label: 'contacted', value: 'contacted' },
@@ -60,6 +61,15 @@ export default function CreatorsOutreach({
         toast.success(t('campaigns.creatorModal.kolUpdated'));
     };
 
+    const setInlineEdit = (
+        e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>,
+        index: number,
+        key: string
+    ) => {
+        e.stopPropagation();
+        setToEdit({ index, key });
+    };
+
     const deleteCampaignCreator = async (
         e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>,
         creator: CampaignCreatorDB
@@ -74,6 +84,7 @@ export default function CreatorsOutreach({
 
     const updateCampaignCreator = async (creator: CampaignCreatorDB) => {
         await updateCreatorInCampaign(creator);
+        setToEdit(null);
         refreshCampaign();
         toast.success(t('campaigns.creatorModal.kolUpdated'));
     };
@@ -83,18 +94,8 @@ export default function CreatorsOutreach({
         return currentCampaign?.campaign_creators.filter((c) => c.status === status).length;
     };
 
-    const handleTableInputClick = (
-        e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>,
-        creator: CampaignCreatorDB
-    ) => {
-        e.stopPropagation();
-        setIsEditingMode(true);
-        setCurrentCreator(creator);
-    };
-
-    const closeModal = () => {
-        setIsEditingMode(false);
-    };
+    const editingModeTrue = (index: number, key: string) =>
+        index === toEdit?.index && key === toEdit?.key;
 
     return (
         <div>
@@ -206,39 +207,81 @@ export default function CreatorsOutreach({
                                                 <div className="text-sm text-gray-600"> - </div>
                                             )}
                                         </td>
-                                        <td
-                                            id="creator-added-on"
-                                            className="px-6 py-4 whitespace-nowrap"
-                                            onClick={(e) => handleTableInputClick(e, creator)}
-                                        >
-                                            <div className="relative">
-                                                {creator === currentCreator &&
-                                                creator.next_step &&
-                                                isEditingMode ? (
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div
+                                                className="text-sm text-gray-900 cursor-pointer hover:text-primary-500 duration-300 relative"
+                                                onClick={(e) =>
+                                                    setInlineEdit(e, index, 'next_step')
+                                                }
+                                            >
+                                                {creator.next_step || (
+                                                    <div className="text-primary-500 hover:text-primary-700 cursor-pointer duration-300">
+                                                        {t('campaigns.show.addActionPoint')}
+                                                    </div>
+                                                )}
+                                                {editingModeTrue(index, 'next_step') && (
                                                     <TableInput
+                                                        value={creator.next_step || ''}
                                                         type="text"
-                                                        name="next_step"
-                                                        value={creator.next_step}
                                                         creator={creator}
+                                                        objKey="next_step"
+                                                        ref={inputRef}
                                                         updateCampaignCreator={
                                                             updateCampaignCreator
                                                         }
-                                                        closeModal={() => closeModal()}
+                                                        closeModal={() => setToEdit(null)}
                                                     />
-                                                ) : (
-                                                    creator.next_step || (
-                                                        <div className="text-primary-500 hover:text-primary-700 cursor-pointer duration-300">
-                                                            {' '}
-                                                            {t(
-                                                                'campaigns.show.addActionPoint'
-                                                            )}{' '}
-                                                        </div>
-                                                    )
                                                 )}
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">-</td>
-                                        <td className="px-6 py-4 whitespace-nowrap">-</td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div
+                                                className="text-sm text-left pr-2 text-gray-900 cursor-pointer hover:text-primary-500 duration-300 relative"
+                                                onClick={(e) =>
+                                                    setInlineEdit(e, index, 'rate_cents')
+                                                }
+                                            >
+                                                {creator.rate_cents?.toLocaleString() || '-'}{' '}
+                                                {creator.rate_currency}
+                                                {editingModeTrue(index, 'rate_cents') && (
+                                                    <TableInput
+                                                        value={creator.rate_cents?.toLocaleString()}
+                                                        type="number"
+                                                        creator={creator}
+                                                        objKey="rate_cents"
+                                                        ref={inputRef}
+                                                        updateCampaignCreator={
+                                                            updateCampaignCreator
+                                                        }
+                                                        closeModal={() => setToEdit(null)}
+                                                    />
+                                                )}
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div
+                                                className="text-sm text-left pr-2 text-gray-900 cursor-pointer hover:text-primary-500 duration-300 relative"
+                                                onClick={(e) =>
+                                                    setInlineEdit(e, index, 'paid_amount_cents')
+                                                }
+                                            >
+                                                {creator.paid_amount_cents?.toLocaleString() || '-'}{' '}
+                                                {creator.paid_amount_currency}
+                                                {editingModeTrue(index, 'paid_amount_cents') && (
+                                                    <TableInput
+                                                        value={creator.paid_amount_cents?.toLocaleString()}
+                                                        type="number"
+                                                        creator={creator}
+                                                        objKey="paid_amount_cents"
+                                                        ref={inputRef}
+                                                        updateCampaignCreator={
+                                                            updateCampaignCreator
+                                                        }
+                                                        closeModal={() => setToEdit(null)}
+                                                    />
+                                                )}
+                                            </div>
+                                        </td>
                                         <td className="px-6 py-4 whitespace-nowrap">-</td>
                                         <td className="px-6 py-4 whitespace-nowrap">-</td>
 

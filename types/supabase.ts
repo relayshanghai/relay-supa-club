@@ -16,12 +16,12 @@ export interface Database {
                     interested: boolean | null;
                     email_sent: boolean | null;
                     publication_date: string | null;
-                    rate_cents: number | null;
-                    rate_currency: string | null;
+                    rate_cents: number;
+                    rate_currency: string;
                     payment_details: string | null;
                     payment_status: string | null;
-                    paid_amount_cents: number | null;
-                    paid_amount_currency: string | null;
+                    paid_amount_cents: number;
+                    paid_amount_currency: string;
                     address: string | null;
                     sample_status: string | null;
                     tracking_details: string | null;

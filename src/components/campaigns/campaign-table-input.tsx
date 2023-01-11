@@ -1,26 +1,28 @@
-import { useEffect, useState } from 'react';
+import { forwardRef, MutableRefObject, useEffect, useState } from 'react';
 import { CampaignCreatorDB } from 'src/utils/api/db';
 import { Confirm, Cross } from '../icons';
 
-export default function TableInput({
-    name,
+function TableInput({
+    objKey,
     value,
     type,
     closeModal,
     creator,
-    updateCampaignCreator
+    updateCampaignCreator,
+    ref
 }: {
-    name: string;
+    objKey: string;
     value: string;
     type: string;
     closeModal: () => void;
     updateCampaignCreator: (creator: CampaignCreatorDB) => void;
     creator: CampaignCreatorDB;
+    ref: MutableRefObject<null>;
 }) {
     const [inputValue, setInputValue] = useState<string>('');
 
     const handleFormSubmit = (e: any) => {
-        creator = { ...creator, [name]: inputValue };
+        creator = { ...creator, [objKey]: inputValue };
         //eslint-disable-next-line
         console.log(creator); //TODO: delete
         e.preventDefault();
@@ -33,6 +35,7 @@ export default function TableInput({
 
     return (
         <div
+            ref={ref}
             onClick={(e) => e.stopPropagation()}
             className="absolute group top-1/2 -left-4 -translate-y-1/2 w-48 p-2 max-w-[360px] will-change-transform h-14 z-[10]"
         >
@@ -43,7 +46,6 @@ export default function TableInput({
                 <input
                     type={type}
                     value={inputValue}
-                    name={name}
                     onChange={(e) => setInputValue(e.target.value)}
                     className="w-full h-full outline-none border border-gray-200 rounded-md mr-2 p-2 resize-none text-xs text-gray-600"
                 />
@@ -65,3 +67,5 @@ export default function TableInput({
         </div>
     );
 }
+
+export default forwardRef(TableInput);
