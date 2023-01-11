@@ -1,11 +1,14 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-    content: ['./pages/**/*.{js,ts,jsx,tsx}', './src/**/*.{js,ts,jsx,tsx}'],
+    mode: 'jit',
+    content: ['./pages/**/*.{js,ts,jsx,tsx}', './src/**/*.{js,ts,jsx,tsx}', './styles/**/*.css'],
+
     theme: {
-        fontFamily: {
-            poppins: "'Poppins', sans-serif"
-        },
         extend: {
+            fontFamily: {
+                poppins: ['Poppins', 'sans-serif'],
+                sans: ['Poppins', 'sans-serif']
+            },
             colors: {
                 primary: {
                     50: '#F5F3FF',
@@ -37,6 +40,11 @@ module.exports = {
                     900: '#111827'
                 }
             }
+        }
+    },
+    variants: {
+        extend: {
+            fontFamily: ['hover', 'focus']
         }
     },
     plugins: []

@@ -39,6 +39,6 @@ export const config = {
          * - login/* (login page)
          * - signup/* (signup page)
          */
-        '/((?!_next/static|_next/image|favicon.ico|assets/*|login/*|signup/*).*)'
+        '/((?!_next/static|_next/image|favicon.ico|assets/*|fonts/*|login/*|signup/*).*)'
     ]
 };

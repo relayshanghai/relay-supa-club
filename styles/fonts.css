@@ -1,12 +1,11 @@
 /* Not using light or extra bold for now, but files are in the folder if we need them */
-
 @font-face {
     font-family: 'Poppins';
     font-style: normal;
     font-weight: 400;
     font-stretch: 100%;
     font-display: swap;
-    src: local('Poppins'), url(/public/assets/fonts/Poppins/Poppins-Regular.ttf) format('tff');
+    src: local('Poppins'), url(/assets/fonts/Poppins/Poppins-Regular.ttf);
 }
 @font-face {
     font-family: 'Poppins';
@@ -14,7 +13,7 @@
     font-weight: 400;
     font-stretch: 100%;
     font-display: swap;
-    src: local('Poppins'), url(/public/assets/fonts/Poppins/Poppins-Italic.ttf) format('tff');
+    src: local('Poppins'), url(/assets/fonts/Poppins/Poppins-Italic.ttf);
 }
 @font-face {
     font-family: 'Poppins';
@@ -22,7 +21,7 @@
     font-weight: 500;
     font-stretch: 100%;
     font-display: swap;
-    src: local('Poppins'), url(/public/assets/fonts/Poppins/Poppins-Medium.ttf) format('tff');
+    src: local('Poppins'), url(/assets/fonts/Poppins/Poppins-Medium.ttf);
 }
 @font-face {
     font-family: 'Poppins';
@@ -30,7 +29,7 @@
     font-weight: 500;
     font-stretch: 100%;
     font-display: swap;
-    src: local('Poppins'), url(/public/assets/fonts/Poppins/Poppins-MediumItalic.ttf) format('tff');
+    src: local('Poppins'), url(/assets/fonts/Poppins/Poppins-MediumItalic.ttf);
 }
 @font-face {
     font-family: 'Poppins';
@@ -38,7 +37,7 @@
     font-weight: 500;
     font-stretch: 100%;
     font-display: swap;
-    src: local('Poppins'), url(/public/assets/fonts/Poppins/Poppins-Medium.ttf) format('tff');
+    src: local('Poppins'), url(/assets/fonts/Poppins/Poppins-Medium.ttf);
 }
 @font-face {
     font-family: 'Poppins';
@@ -46,7 +45,7 @@
     font-weight: 500;
     font-stretch: 100%;
     font-display: swap;
-    src: local('Poppins'), url(/public/assets/fonts/Poppins/Poppins-MediumItalic.ttf) format('tff');
+    src: local('Poppins'), url(/assets/fonts/Poppins/Poppins-MediumItalic.ttf);
 }
 @font-face {
     font-family: 'Poppins';
@@ -54,7 +53,7 @@
     font-weight: 600;
     font-stretch: 100%;
     font-display: swap;
-    src: local('Poppins'), url(/public/assets/fonts/Poppins/Poppins-SemiBold.ttf) format('tff');
+    src: local('Poppins'), url(/assets/fonts/Poppins/Poppins-SemiBold.ttf);
 }
 @font-face {
     font-family: 'Poppins';
@@ -62,8 +61,7 @@
     font-weight: 600;
     font-stretch: 100%;
     font-display: swap;
-    src: local('Poppins'),
-        url(/public/assets/fonts/Poppins/Poppins-SemiBoldItalic.ttf) format('tff');
+    src: local('Poppins'), url(/assets/fonts/Poppins/Poppins-SemiBoldItalic.ttf);
 }
 @font-face {
     font-family: 'Poppins';
@@ -71,7 +69,7 @@
     font-weight: 700;
     font-stretch: 100%;
     font-display: swap;
-    src: local('Poppins'), url(/public/assets/fonts/Poppins/Poppins-Bold.ttf) format('tff');
+    src: local('Poppins'), url(/assets/fonts/Poppins/Poppins-Bold.ttf);
 }
 @font-face {
     font-family: 'Poppins';
@@ -79,9 +77,5 @@
     font-weight: 700;
     font-stretch: 100%;
     font-display: swap;
-    src: local('Poppins'), url(/public/assets/fonts/Poppins/Poppins-BoldItalic.ttf) format('tff');
-}
-
-body {
-    font-family: 'Poppins', sans-serif;
+    src: local('Poppins'), url(/assets/fonts/Poppins/Poppins-BoldItalic.ttf);
 }
