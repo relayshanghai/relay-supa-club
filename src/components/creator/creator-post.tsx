@@ -20,7 +20,7 @@ function PostImage({ post }: { post: Post }) {
         <div className="h-48 relative">
             <div className="bg-gradient-to-b from-black opacity-20 to-transparent absolute inset-0 rounded-lg" />
             <img
-                src={post?.thumbnail ? imgProxy(post.thumbnail) : '/image404.png'}
+                src={post?.thumbnail ? imgProxy(post.thumbnail) : '/assets/imgs/image404.png'}
                 alt="post"
                 className="rounded-lg w-full h-full object-cover"
             />
@@ -34,7 +34,11 @@ function PostImage({ post }: { post: Post }) {
             </a>
             <div className="flex items-center absolute left-2 top-2">
                 <img
-                    src={post?.user_picture ? imgProxy(post?.user_picture) : '/image404.png'}
+                    src={
+                        post?.user_picture
+                            ? imgProxy(post?.user_picture)
+                            : '/assets/imgs/image404.png'
+                    }
                     alt=""
                     className="w-6 h-6 rounded-full mr-2"
                 />

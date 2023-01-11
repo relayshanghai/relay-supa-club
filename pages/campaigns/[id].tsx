@@ -93,7 +93,7 @@ export default function CampaignShow() {
                         <div className="h-32 w-32 sm:mr-4 flex-shrink-0 mb-4 sm:mb-0">
                             <Image
                                 //@ts-ignore
-                                src={media?.[0]?.url || '/image404.png'}
+                                src={media?.[0]?.url || '/assets/imgs/image404.png'}
                                 alt="campaign photo"
                                 width={128}
                                 height={128}

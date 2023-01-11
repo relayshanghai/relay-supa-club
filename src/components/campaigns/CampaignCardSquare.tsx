@@ -58,7 +58,7 @@ export default function CampaignCardSquare({
                     {/* -- Campaign Card Image -- */}
                     <div className="rounded-lg h-48 w-full mb-2 relative">
                         <Image
-                            src={coverImageUrl || '/image404.png'}
+                            src={coverImageUrl || '/assets/imgs/image404.png'}
                             alt="card-image"
                             layout="fill"
                             objectFit="cover"

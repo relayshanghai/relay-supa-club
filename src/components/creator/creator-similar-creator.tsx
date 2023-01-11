@@ -20,7 +20,7 @@ export const SimilarCreator = ({
             <div className="flex items-center justify-between flex-1 overflow-hidden">
                 <div className="mr-4 flex-shrink-0 flex items-center">
                     <Image
-                        src={imgProxy(creator.picture) || '/image404.png'}
+                        src={imgProxy(creator.picture) || '/assets/imgs/image404.png'}
                         className="rounded-full"
                         width={40}
                         height={40}

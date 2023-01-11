@@ -86,7 +86,7 @@ export default function CampaignModalCard({
             <div className="flex items-center justify-between">
                 <div className="flex items-center w-full min-w-0">
                     <img
-                        src={coverImageUrl || '/image404.png'}
+                        src={coverImageUrl || '/assets/imgs/image404.png'}
                         alt=""
                         className="w-6 h-6 rounded-full object-cover flex-shrink-0 mr-2"
                     />
