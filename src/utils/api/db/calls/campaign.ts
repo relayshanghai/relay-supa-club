@@ -29,16 +29,23 @@ export const updateCampaign = async (data: CampaignDBUpdate) =>
         .eq('id', data.id)
         .single();
 
-export const insertCampaignCreator = async (data: CampaignCreatorDBInsert, campaign_id: string) =>
+export const insertCampaignCreator = async (data: CampaignCreatorDBInsert, company_id: string) =>
     await supabase
         .from('campaign_creators')
         .insert({
-            campaign_id,
+            campaign_id: data.id,
             status: 'to contact',
             ...data
         })
-        .eq('campaign_id', campaign_id)
+        .eq('company_id', company_id)
         .single();
 
 export const updateCampaignCreator = async (data: CampaignCreatorDBUpdate, campaign_id: string) =>
-    await supabase.from('campaign_creators').update(data).eq('campaign_id', campaign_id).single();
+    await supabase
+        .from('campaign_creators')
+        .update({
+            ...data
+        })
+        .eq('id', data.id)
+        .eq('campaign_id', campaign_id)
+        .single();

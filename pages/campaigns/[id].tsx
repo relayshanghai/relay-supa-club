@@ -51,6 +51,7 @@ export default function CampaignShow() {
         await updateCampaign({ ...campaign, status });
         refreshCampaign();
     };
+
     useEffect(() => {
         const getFiles = async () => {
             const getFilePath = (filename: string) => {
@@ -84,6 +85,12 @@ export default function CampaignShow() {
         }
     }, [currentCampaign, supabase]);
 
+    // editable table inputs:
+    //1. when click on edit icon / input, it should be editable
+    //1.1 when click the input, should be able to switch to an editable input field with save and cancel icons
+    //1.2 on click save, save the changed value and call updateCreator API
+    //1.3 on click cancel, cancel the changed value and revert back to the original value
+
     return (
         <Layout>
             {/* -- Campaign banner starts here -- */}
@@ -106,7 +113,6 @@ export default function CampaignShow() {
                                 <div className="font-semibold text-lg text-tertiary-600 sm:mr-2">
                                     {currentCampaign?.name}
                                 </div>
-                                {/* TODO:Replace status tag to dropdown select button  */}
                                 <select
                                     onChange={(e) => handleDropdownSelect(e, currentCampaign)}
                                     value={currentCampaign?.status as string}

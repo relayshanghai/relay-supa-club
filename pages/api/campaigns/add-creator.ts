@@ -2,14 +2,13 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { insertCampaignCreator } from 'src/utils/api/db';
 
 export interface CampaignCreatorAddCreatorPostBody {
-    campaign_id: string;
+    company_id: string;
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
-        const { campaign_id, ...data } = JSON.parse(req.body);
-
-        const { data: campaignCreators, error } = await insertCampaignCreator(data, campaign_id);
+        const { company_id, ...data } = JSON.parse(req.body);
+        const { data: campaignCreators, error } = await insertCampaignCreator(data, company_id);
         if (error) {
             // eslint-disable-next-line no-console
             console.log(error);

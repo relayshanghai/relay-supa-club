@@ -1,10 +1,11 @@
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
-import { ChangeEvent, MouseEvent, useState } from 'react';
+import { ChangeEvent, MouseEvent, useRef, useState } from 'react';
 import Link from 'next/link';
 import Trashcan from 'src/components/icons/Trashcan';
 import { useCampaigns } from 'src/hooks/use-campaigns';
 import { toast } from 'react-hot-toast';
+import TableInput from './campaign-table-input';
 import { CampaignWithCompanyCreators } from 'src/utils/api/db';
 import { CampaignCreatorDB } from 'src/utils/api/db/types';
 
@@ -17,10 +18,13 @@ export default function CreatorsOutreach({
     const router = useRouter();
     const { pathname, query } = router;
     const [tabStatus, setTabStatus] = useState<string | string[]>(query.curTab || 'to contact');
+    // const [currentCreator, setCurrentCreator] = useState<CampaignCreatorDB | null>(null);
+    const [toEdit, setToEdit] = useState<{ index: number; key: string } | null>(null);
+    const inputRef = useRef(null);
+
     const { deleteCreatorInCampaign, updateCreatorInCampaign, refreshCampaign } = useCampaigns({
         campaignId: currentCampaign?.id
     });
-
     const tabs = [
         { label: 'toContact', value: 'to contact' },
         { label: 'contacted', value: 'contacted' },
@@ -30,10 +34,22 @@ export default function CreatorsOutreach({
         { label: 'ignored', value: 'ignored' }
     ];
 
+    const paymentStatus = [
+        { id: 1, label: 'unpaid', value: 'unpaid' },
+        { id: 2, label: 'partiallypaid', value: 'partial_paid' },
+        { id: 3, label: 'fullypaid', value: 'full_paid' }
+    ];
+
+    const sampleStatus = [
+        { id: 1, label: 'unsent', value: 'unsent' },
+        { id: 2, label: 'sent', value: 'sent' },
+        { id: 3, label: 'delivered', value: 'delivered' }
+    ];
+
     const columnLabels = [
         'account',
         'creatorStatus',
-        'addedBy',
+        // 'addedBy',
         'nextPoint',
         'paymentAmount',
         'paidAmount',
@@ -48,13 +64,23 @@ export default function CreatorsOutreach({
 
     const handleDropdownSelect = async (
         e: ChangeEvent<HTMLSelectElement>,
-        creator: CampaignCreatorDB
+        creator: CampaignCreatorDB,
+        objKey: string
     ) => {
         e.stopPropagation();
-        const status = e.target.value;
-        await updateCreatorInCampaign({ ...creator, status });
+        creator = { ...creator, [objKey]: e.target.value };
+        await updateCreatorInCampaign(creator);
         refreshCampaign();
         toast.success(t('campaigns.creatorModal.kolUpdated'));
+    };
+
+    const setInlineEdit = (
+        e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>,
+        index: number,
+        key: string
+    ) => {
+        e.stopPropagation();
+        setToEdit({ index, key });
     };
 
     const deleteCampaignCreator = async (
@@ -69,10 +95,20 @@ export default function CreatorsOutreach({
         toast.success(t('campaigns.modal.deletedSuccessfully'));
     };
 
+    const updateCampaignCreator = async (creator: CampaignCreatorDB) => {
+        await updateCreatorInCampaign(creator);
+        setToEdit(null);
+        refreshCampaign();
+        toast.success(t('campaigns.creatorModal.kolUpdated'));
+    };
+
     // get the number of creators in each status
     const creatorsCount = (status: string) => {
         return currentCampaign?.campaign_creators.filter((c) => c.status === status).length;
     };
+
+    const editingModeTrue = (index: number, key: string) =>
+        index === toEdit?.index && key === toEdit?.key;
 
     return (
         <div>
@@ -120,7 +156,7 @@ export default function CreatorsOutreach({
                                 </th>
                             ))}
                             {/*-- placeholder table header space for delete icon --*/}
-                            <th className=" px-3 py-3 text-left text-xs font-normal text-gray-500 sticky bg-white tracking-wider  min-w-[200px] max-w-[200px]">
+                            <th className=" px-3 py-3 text-left text-xs font-normal text-gray-500 sticky bg-white tracking-wider  min-w-[100px] max-w-[100px]">
                                 {''}
                             </th>
                         </tr>
@@ -131,9 +167,9 @@ export default function CreatorsOutreach({
                                 return (
                                     <tr
                                         key={index}
-                                        className="group hover:bg-primary-50 hover:relative"
+                                        className="group hover:bg-primary-50 hover:relative text-sm"
                                     >
-                                        <td className="px-6 py-4 whitespace-nowrap sticky left-0 group-hover:bg-primary-50 w-[200px] bg-white z-10">
+                                        <td className="px-6 py-4 whitespace-nowrap sticky left-0 group-hover:bg-primary-50 w-[200px] bg-white z-30">
                                             <div className="flex items-center">
                                                 <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300">
                                                     <img
@@ -154,7 +190,9 @@ export default function CreatorsOutreach({
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <select
-                                                onChange={(e) => handleDropdownSelect(e, creator)}
+                                                onChange={(e) =>
+                                                    handleDropdownSelect(e, creator, 'status')
+                                                }
                                                 value={creator.status}
                                                 className="-ml-1 text-xs px-4 py-2 rounded-md text-primary-500 font-semibold bg-primary-50 hover:bg-primary-100 border border-gray-200 duration-300 cursor-pointer outline-none mr-2.5 appearance-none text-center"
                                             >
@@ -167,8 +205,11 @@ export default function CreatorsOutreach({
                                                 ))}
                                             </select>
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            {/* TODO: add added by user name  */}
+                                        {/* TODO: add added by column, need to update database relation  */}
+                                        {/* <td
+                                            id="creator-added-by"
+                                            className="px-6 py-4 whitespace-nowrap"
+                                        >
                                             {creator.added_by_id ? (
                                                 <div className="flex">
                                                     <div className="group flex text-xs items-center">
@@ -180,12 +221,130 @@ export default function CreatorsOutreach({
                                             ) : (
                                                 <div className="text-sm text-gray-600"> - </div>
                                             )}
+                                        </td> */}
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div
+                                                className="text-sm text-gray-900 cursor-pointer hover:text-primary-500 duration-300 relative"
+                                                onClick={(e) =>
+                                                    setInlineEdit(e, index, 'next_step')
+                                                }
+                                            >
+                                                <div
+                                                    className={`${
+                                                        editingModeTrue(index, 'next_step')
+                                                            ? 'hidden'
+                                                            : ' '
+                                                    }`}
+                                                >
+                                                    {creator.next_step || (
+                                                        <div className="text-primary-500 hover:text-primary-700 cursor-pointer duration-300">
+                                                            {t('campaigns.show.addActionPoint')}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                {editingModeTrue(index, 'next_step') && (
+                                                    <TableInput
+                                                        value={creator.next_step || ''}
+                                                        type="text"
+                                                        creator={creator}
+                                                        objKey="next_step"
+                                                        ref={inputRef}
+                                                        updateCampaignCreator={
+                                                            updateCampaignCreator
+                                                        }
+                                                        closeModal={() => setToEdit(null)}
+                                                    />
+                                                )}
+                                            </div>
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">-</td>
-                                        <td className="px-6 py-4 whitespace-nowrap">-</td>
-                                        <td className="px-6 py-4 whitespace-nowrap">-</td>
-                                        <td className="px-6 py-4 whitespace-nowrap">-</td>
-                                        <td className="px-6 py-4 whitespace-nowrap">-</td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div
+                                                className="text-sm text-left pr-2 text-gray-900 cursor-pointer hover:text-primary-500 duration-300 relative"
+                                                onClick={(e) =>
+                                                    setInlineEdit(e, index, 'rate_cents')
+                                                }
+                                            >
+                                                {creator.rate_cents?.toLocaleString() || '-'}{' '}
+                                                {creator.rate_currency}
+                                                {editingModeTrue(index, 'rate_cents') && (
+                                                    <TableInput
+                                                        value={creator.rate_cents?.toLocaleString()}
+                                                        type="number"
+                                                        creator={creator}
+                                                        objKey="rate_cents"
+                                                        ref={inputRef}
+                                                        updateCampaignCreator={
+                                                            updateCampaignCreator
+                                                        }
+                                                        closeModal={() => setToEdit(null)}
+                                                    />
+                                                )}
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div
+                                                className="text-sm text-left pr-2 text-gray-900 cursor-pointer hover:text-primary-500 duration-300 relative"
+                                                onClick={(e) =>
+                                                    setInlineEdit(e, index, 'paid_amount_cents')
+                                                }
+                                            >
+                                                {creator.paid_amount_cents?.toLocaleString() || '-'}{' '}
+                                                {creator.paid_amount_currency}
+                                                {editingModeTrue(index, 'paid_amount_cents') && (
+                                                    <TableInput
+                                                        value={creator.paid_amount_cents?.toLocaleString()}
+                                                        type="number"
+                                                        creator={creator}
+                                                        objKey="paid_amount_cents"
+                                                        ref={inputRef}
+                                                        updateCampaignCreator={
+                                                            updateCampaignCreator
+                                                        }
+                                                        closeModal={() => setToEdit(null)}
+                                                    />
+                                                )}
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <select
+                                                onClick={(e) => e.stopPropagation()}
+                                                onChange={(e) =>
+                                                    handleDropdownSelect(
+                                                        e,
+                                                        creator,
+                                                        'payment_status'
+                                                    )
+                                                }
+                                                value={creator.payment_status}
+                                                className="-ml-1 text-xs px-4 py-2 rounded-md text-green-500 font-semibold bg-green-50 hover:bg-green-100 border border-gray-200 duration-300 cursor-pointer outline-none mr-2.5 appearance-none text-center"
+                                            >
+                                                {paymentStatus.map((tab, index) => (
+                                                    <option value={tab.value} key={index}>
+                                                        {t(`campaigns.creatorModal.${tab.label}`)}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <select
+                                                onClick={(e) => e.stopPropagation()}
+                                                onChange={(e) =>
+                                                    handleDropdownSelect(
+                                                        e,
+                                                        creator,
+                                                        'sample_status'
+                                                    )
+                                                }
+                                                value={creator.sample_status}
+                                                className="-ml-1 text-xs px-4 py-2 rounded-md text-orange-500 font-semibold bg-orange-50 hover:bg-orange-100 border border-gray-200 duration-300 cursor-pointer outline-none mr-2.5 appearance-none text-center"
+                                            >
+                                                {sampleStatus.map((tab, index) => (
+                                                    <option value={tab.value} key={index}>
+                                                        {t(`campaigns.creatorModal.${tab.label}`)}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </td>
 
                                         <td className="px-6 py-4 sm:sticky right-0 bg-white whitespace-nowrap z-50 group-hover:bg-primary-50 flex justify-end">
                                             <div
