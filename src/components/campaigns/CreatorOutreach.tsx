@@ -229,11 +229,19 @@ export default function CreatorsOutreach({
                                                     setInlineEdit(e, index, 'next_step')
                                                 }
                                             >
-                                                {creator.next_step || (
-                                                    <div className="text-primary-500 hover:text-primary-700 cursor-pointer duration-300">
-                                                        {t('campaigns.show.addActionPoint')}
-                                                    </div>
-                                                )}
+                                                <div
+                                                    className={`${
+                                                        editingModeTrue(index, 'next_step')
+                                                            ? 'hidden'
+                                                            : ' '
+                                                    }`}
+                                                >
+                                                    {creator.next_step || (
+                                                        <div className="text-primary-500 hover:text-primary-700 cursor-pointer duration-300">
+                                                            {t('campaigns.show.addActionPoint')}
+                                                        </div>
+                                                    )}
+                                                </div>
                                                 {editingModeTrue(index, 'next_step') && (
                                                     <TableInput
                                                         value={creator.next_step || ''}
