@@ -46,7 +46,8 @@ export const config = {
          * - _next/image (image optimization files)
          * - favicon.ico (favicon file)
          * - assets/* (assets files) (public/assets/*)
+         * - accept invite (accept invite api)s
          */
-        '/((?!_next/static|_next/image|favicon.ico|assets/*).*)'
+        '/((?!_next/static|_next/image|favicon.ico|assets/*|api/company/accept-invite*).*)'
     ]
 };

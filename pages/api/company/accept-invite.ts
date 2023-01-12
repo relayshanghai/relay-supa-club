@@ -1,4 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import httpCodes from 'src/constants/httpCodes';
+import { serverLogger } from 'src/utils/logger';
 import { supabase } from 'src/utils/supabase-client';
 
 export type CompanyAcceptInvitePostBody = {
@@ -6,6 +8,13 @@ export type CompanyAcceptInvitePostBody = {
     password: string;
     firstName: string;
     lastName: string;
+};
+
+export type CompanyAcceptInviteGetQueries = {
+    token: string;
+};
+export type CompanyAcceptInviteGetResponse = {
+    message: 'Invite is valid';
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -21,10 +30,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             .single();
 
         if (error) {
-            return res.status(500).json(error);
+            serverLogger(error, 'error');
+            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json(error);
         }
         if (data?.used || Date.now() >= new Date(data.expire_at ?? '').getTime()) {
-            return res.status(500).json({
+            return res.status(httpCodes.UNAUTHORIZED).json({
                 error: 'Invite is invalid or expired'
             });
         }
@@ -43,7 +53,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         });
 
         if (userError) {
-            return res.status(500).json(userError);
+            serverLogger(userError, 'error');
+            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json(userError);
         }
 
         // Mark the invite as used
@@ -56,36 +67,46 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             .single();
 
         if (updateError) {
-            return res.status(500).json(updateError);
+            serverLogger(updateError, 'error');
+            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json(updateError);
         }
 
-        return res.status(200).json({ data, invite });
+        return res.status(httpCodes.OK).json({ data, invite });
     }
     if (req.method === 'GET') {
-        const token = req.query.token as string;
-        const { data, error } = await supabase
-            .from('invites')
-            .select('used, expire_at')
-            .eq('id', token)
-            .limit(1)
-            .single();
-        if (error) {
-            return res.status(500).json({
-                error: 'Invite is invalid or expired'
-            });
+        try {
+            const { token } = req.query as CompanyAcceptInviteGetQueries;
+            if (!token) return res.status(httpCodes.BAD_REQUEST).json({ error: 'Missing token' });
+            const { data, error } = await supabase
+                .from('invites')
+                .select('used, expire_at')
+                .eq('id', token)
+                .limit(1)
+                .single();
+            if (error) {
+                serverLogger(error, 'error');
+                return res.status(httpCodes.UNAUTHORIZED).json({
+                    error: 'Invite is invalid or expired'
+                });
+            }
+            if (data?.used) {
+                return res.status(httpCodes.UNAUTHORIZED).json({
+                    error: 'Invite already used'
+                });
+            }
+            if (Date.now() >= new Date(data.expire_at ?? '').getTime()) {
+                return res.status(httpCodes.UNAUTHORIZED).json({
+                    error: 'Invite is expired'
+                });
+            }
+            return res.status(httpCodes.OK).json({ message: 'Invite is valid' });
+        } catch (error) {
+            serverLogger(error, 'error');
+            return res
+                .status(httpCodes.INTERNAL_SERVER_ERROR)
+                .json({ message: 'Something went wrong' });
         }
-        if (data?.used) {
-            return res.status(500).json({
-                error: 'Invite already used'
-            });
-        }
-        if (Date.now() >= new Date(data.expire_at ?? '').getTime()) {
-            return res.status(500).json({
-                error: 'Invite is expired'
-            });
-        }
-        return res.status(200).json({ message: 'Invite is valid' });
     }
 
-    return res.status(400).json(null);
+    return res.status(httpCodes.METHOD_NOT_ALLOWED).json({});
 }

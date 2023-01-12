@@ -1,11 +1,16 @@
 import { useRouter } from 'next/router';
+import {
+    CompanyAcceptInviteGetQueries,
+    CompanyAcceptInviteGetResponse
+} from 'pages/api/company/accept-invite';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { Button } from 'src/components/button';
 import { Input } from 'src/components/input';
 import { Title } from 'src/components/title';
 import { useFields } from 'src/hooks/use-fields';
-import { nextFetch } from 'src/utils/fetcher';
+import { nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';
+import { clientLogger } from 'src/utils/logger';
 
 export default function Register() {
     const router = useRouter();
@@ -25,9 +30,13 @@ export default function Register() {
     useEffect(() => {
         const checkInvite = async () => {
             try {
-                const tokenStatus = await nextFetch('company/accept-invite?token=' + token);
+                const tokenStatus = await nextFetchWithQueries<
+                    CompanyAcceptInviteGetQueries,
+                    CompanyAcceptInviteGetResponse
+                >('company/accept-invite', { token });
                 if (tokenStatus?.message) setInviteStatus(tokenStatus?.message);
             } catch (error: any) {
+                clientLogger(error, 'error');
                 if (error.message) setInviteStatus(error.message);
             }
         };
@@ -49,9 +58,7 @@ export default function Register() {
                         placeholder="Enter your first name"
                         value={firstName}
                         required
-                        onChange={(e: any) => {
-                            setFieldValue('firstName', e.target.value);
-                        }}
+                        onChange={(e) => setFieldValue('firstName', e.target.value)}
                     />
                     <Input
                         label={'Last Name'}
@@ -59,27 +66,21 @@ export default function Register() {
                         placeholder="Enter your last name"
                         value={lastName}
                         required
-                        onChange={(e: any) => {
-                            setFieldValue('lastName', e.target.value);
-                        }}
+                        onChange={(e) => setFieldValue('lastName', e.target.value)}
                     />
                     <Input
                         label={'Password'}
                         type="password"
                         placeholder="Enter a password"
                         value={password}
-                        onChange={(e: any) => {
-                            setFieldValue('password', e.target.value);
-                        }}
+                        onChange={(e) => setFieldValue('password', e.target.value)}
                     />
                     <Input
                         label={'Confirm your password'}
                         type="password"
                         placeholder="Confirm password"
                         value={confirmPassword}
-                        onChange={(e: any) => {
-                            setFieldValue('confirmPassword', e.target.value);
-                        }}
+                        onChange={(e) => setFieldValue('confirmPassword', e.target.value)}
                     />
                     <Button
                         disabled={
@@ -107,6 +108,7 @@ export default function Register() {
                                 toast.success('Invite accepted');
                                 router.push('/login');
                             } catch (error: any) {
+                                clientLogger(error, 'error');
                                 if (error.message) toast.error(error.message);
                                 else toast.error('Unknown error');
                             } finally {
@@ -129,9 +131,12 @@ export default function Register() {
                     <Button onClick={() => router.back()}>Back</Button>
                 </div>
             )}
-            {!token && inviteStatus !== 'pending' && (
+            {!token && (
                 <div className="mx-auto h-full flex flex-col justify-center items-center space-y-6">
-                    <h2>No invite token</h2>
+                    <h2>
+                        No invite token found. Please use the link sent to your email to accept
+                        invite
+                    </h2>
                     <Button onClick={() => router.back()}>Back</Button>
                 </div>
             )}
