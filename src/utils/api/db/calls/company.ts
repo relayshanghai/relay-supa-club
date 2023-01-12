@@ -20,4 +20,4 @@ export const getCompanyWithProfilesInvitesAndUsage = async (companyId: string) =
         .single();
 
 export const updateCompany = async (data: CompanyDBUpdate) =>
-    await supabase.from('companies').update(data).eq('id', data.id).single();
+    await supabase.from('companies').update(data).eq('id', data.id).select().single();

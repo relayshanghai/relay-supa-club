@@ -28,7 +28,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (req.method === 'POST') {
         const updateData = JSON.parse(req.body) as CompanyIndexPostBody;
 
-        const { data, error } = updateCompany(updateData) as any;
+        const { data, error } = await updateCompany(updateData);
         if (error) {
             return res.status(500).json(error);
         }

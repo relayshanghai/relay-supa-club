@@ -5,13 +5,14 @@ import { supabase } from 'src/utils/supabase-client';
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
         const { user_id, name, website } = JSON.parse(req.body);
-        const { data: company, error } = (await supabase
+        const { data: company, error } = await supabase
             .from('companies')
             .insert({
                 name,
                 website
             })
-            .single()) as any;
+            .select()
+            .single();
 
         if (error) {
             return res.status(500).json(error);
@@ -24,6 +25,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 admin: true
             })
             .eq('id', user_id)
+            .select()
             .single();
 
         if (profileError) {
