@@ -1,12 +1,7 @@
 import campaigns from './campaigns';
 import navbar from './navbar';
 import creators from './creators';
-import clients from './clients';
 import website from './website';
-import pools from './pools';
-import me from './me';
-import csm from './csm';
-import requestaccount from './requestaccount';
 import account from './account';
 
 const translations = {
@@ -14,12 +9,7 @@ const translations = {
         campaigns,
         navbar,
         creators,
-        clients,
         website,
-        pools,
-        me,
-        csm,
-        requestaccount,
         account
     }
 };

@@ -3,7 +3,6 @@ const navbar = {
     slogan: 'KOL Marketing Platform',
     button: {
         campaigns: 'Campaigns',
-        clients: 'Clients',
         myCompany: 'My Company',
         creators: 'KOLs',
         resourcePools: 'Resource Pools',
@@ -19,7 +18,6 @@ const navbar = {
     },
     mobile: {
         campaigns: 'Campaigns',
-        clients: 'Clients',
         myCompany: 'Company',
         creators: 'KOLs',
         resourcePools: 'Resources',
