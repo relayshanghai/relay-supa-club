@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
 import { LanguageToggle } from 'src/components/common/language-toggle';
 import { Input } from 'src/components/input';
@@ -10,6 +11,8 @@ import { useUser } from 'src/hooks/use-user';
 import { clientLogger } from 'src/utils/logger';
 
 export default function Register() {
+    const { t } = useTranslation();
+
     const router = useRouter();
     const {
         values: { firstName, lastName, email, password, confirmPassword },
@@ -36,7 +39,7 @@ export default function Register() {
             router.push('/signup/onboarding');
         } catch (error) {
             clientLogger(error, 'error');
-            toast.error('Ops, something went wrong');
+            toast.error(t('login.oopsSomethingWentWrong'));
         }
     };
 
@@ -48,29 +51,29 @@ export default function Register() {
             </div>
             <form className="max-w-xs w-full mx-auto flex-grow flex flex-col justify-center items-center space-y-5">
                 <div className="text-left w-full">
-                    <h1 className="font-bold text-4xl mb-2">Sign up</h1>
+                    <h1 className="font-bold text-4xl mb-2">{t('login.signUp')}</h1>
                     <h3 className="text-sm text-gray-600 mb-8">
-                        Start your free 30 day trial now.
+                        {t('login.startYour30DayFreeTrial')}
                     </h3>
                 </div>
                 <Input
-                    label={'First Name'}
+                    label={t('login.firstName')}
                     type="first_name"
-                    placeholder="Enter your first name"
+                    placeholder={t('login.firstNamePlaceholder') || ''}
                     value={firstName}
                     required
                     onChange={(e) => setFieldValue('firstName', e.target.value)}
                 />
                 <Input
-                    label={'Last Name'}
+                    label={t('login.lastName')}
                     type="last_name"
-                    placeholder="Enter your last name"
+                    placeholder={t('login.lastNamePlaceholder') || ''}
                     value={lastName}
                     required
                     onChange={(e) => setFieldValue('lastName', e.target.value)}
                 />
                 <Input
-                    label={'Email'}
+                    label={t('login.email')}
                     type="email"
                     placeholder="hello@relay.club"
                     value={email}
@@ -78,17 +81,17 @@ export default function Register() {
                     onChange={(e) => setFieldValue('email', e.target.value)}
                 />
                 <Input
-                    label={'Password'}
+                    label={t('login.password')}
                     type="password"
-                    placeholder="Enter your password"
+                    placeholder={t('login.passwordPlaceholder') || ''}
                     value={password}
                     required
                     onChange={(e) => setFieldValue('password', e.target.value)}
                 />
                 <Input
-                    label={'Confirm Password'}
+                    label={t('login.confirmPassword')}
                     type="password"
-                    placeholder="Enter your password"
+                    placeholder={t('login.passwordPlaceholder') || ''}
                     value={confirmPassword}
                     required
                     onChange={(e) => setFieldValue('confirmPassword', e.target.value)}
@@ -106,13 +109,13 @@ export default function Register() {
                         handleSubmit();
                     }}
                 >
-                    Sign up
+                    {t('login.signUp')}
                 </Button>
                 <p className="inline text-gray-500 text-sm">
-                    Already have an account?{' '}
+                    {t('login.alreadyHaveAnAccount')}
                     <Link href="/login">
                         <a className="inline text-primary-700 hover:text-primary-600 cursor-pointer">
-                            Log in
+                            {t('login.logIn')}
                         </a>
                     </Link>
                 </p>

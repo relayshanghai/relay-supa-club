@@ -3,6 +3,7 @@ import navbar from './navbar';
 import creators from './creators';
 import website from './website';
 import account from './account';
+import login from './login';
 
 const translations = {
     translation: {
@@ -10,7 +11,8 @@ const translations = {
         navbar,
         creators,
         website,
-        account
+        account,
+        login
     }
 };
 export default translations;

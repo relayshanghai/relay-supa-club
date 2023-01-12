@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
 import { LanguageToggle } from 'src/components/common/language-toggle';
 import { Input } from 'src/components/input';
@@ -10,6 +11,7 @@ import { useFields } from 'src/hooks/use-fields';
 import { useUser } from 'src/hooks/use-user';
 
 export default function Login() {
+    const { t } = useTranslation();
     const router = useRouter();
     const { login, loading, profile } = useUser();
     const {
@@ -33,9 +35,9 @@ export default function Login() {
     const handleSubmit = async () => {
         try {
             await login(email, password);
-            toast.success('Successfully logged in');
+            toast.success(t('login.loginSuccess'));
         } catch (error: any) {
-            toast.error(error.message || 'Ops, something went wrong.');
+            toast.error(error.message || t('login.oopsSomethingWentWrong'));
         }
     };
 
@@ -47,18 +49,18 @@ export default function Login() {
             </div>
             <form className="max-w-xs w-full mx-auto flex-grow flex flex-col justify-center items-center space-y-5">
                 <div className="text-left w-full">
-                    <h1 className="font-bold text-4xl mb-2">Log in</h1>
-                    <h3 className="text-sm text-gray-600 mb-8">Welcome back!</h3>
+                    <h1 className="font-bold text-4xl mb-2">{t('login.logIn')}</h1>
+                    <h3 className="text-sm text-gray-600 mb-8">{t('login.welcomeBack')}</h3>
                 </div>
                 <Input
-                    label={'Email'}
+                    label={t('login.email')}
                     type="email"
                     placeholder="hello@relay.club"
                     value={email}
                     onChange={(e) => setFieldValue('email', e.target.value)}
                 />
                 <Input
-                    label={'Password'}
+                    label={t('login.password')}
                     type="password"
                     placeholder="Enter your password"
                     value={password}
@@ -68,20 +70,18 @@ export default function Login() {
                     disabled={loading}
                     onClick={(e) => {
                         e.preventDefault();
-
                         handleSubmit();
                     }}
                 >
-                    Log in
+                    {t('login.logIn')}
                 </Button>
                 <p className="inline text-gray-500 text-sm">
-                    {`Don't have an account? `}
+                    {t('login.dontHaveAnAccount')}{' '}
                     <Link href="/signup">
                         <a className="inline text-primary-700 hover:text-primary-600 cursor-pointer">
-                            Sign up
+                            {t('login.signUp')}
                         </a>
                     </Link>
-                    {` now.`}
                 </p>
             </form>
         </div>
