@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import toast from 'react-hot-toast';
 import { Button } from 'src/components/button';
@@ -23,9 +24,12 @@ export default function Register() {
     return (
         <div className="w-full h-full px-10 py-8">
             <Title />
-            <form className="max-w-sm mx-auto h-full flex flex-col justify-center items-center space-y-6">
-                <div className="py-8">
-                    <div className="font-bold">First, let&rsquo;s create an account for you</div>
+            <form className="max-w-sm mx-auto h-full flex flex-col justify-center items-center space-y-5">
+                <div className="text-left w-full">
+                    <h1 className="font-bold text-4xl mb-2">Sign up</h1>
+                    <h3 className="text-sm text-gray-600 mb-8">
+                        Start your free 30 day trial now.
+                    </h3>
                 </div>
                 <Input
                     label={'First Name'}
@@ -107,6 +111,14 @@ export default function Register() {
                 >
                     Sign up
                 </Button>
+                <p className="inline text-gray-500 text-sm">
+                    Already have an account?{' '}
+                    <Link href="/login">
+                        <p className="inline text-primary-700 hover:text-primary-600 cursor-pointer">
+                            Log in
+                        </p>
+                    </Link>
+                </p>
             </form>
         </div>
     );
