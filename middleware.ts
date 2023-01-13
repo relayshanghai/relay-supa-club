@@ -1,7 +1,43 @@
-import { createMiddlewareSupabaseClient } from '@supabase/auth-helpers-nextjs';
+import { createMiddlewareSupabaseClient, SupabaseClient } from '@supabase/auth-helpers-nextjs';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { Database } from 'types/supabase';
+
+/**
+ * 
+TODO: performance improvement. These two database calls might add too much loading time to each request. Consider adding a cache, or adding something to the session object that shows the user has a company and the company has a payment method.
+ */
+const checkCompanyIsOnboarded = async (
+    supabase: SupabaseClient<Database>,
+    userId: string,
+    req: NextRequest,
+    res: NextResponse
+) => {
+    const redirectUrl = req.nextUrl.clone();
+
+    const { data: profile } = await supabase
+        .from('profiles')
+        .select('company_id')
+        .eq('id', userId)
+        .single();
+    if (!profile?.company_id) {
+        if (req.nextUrl.pathname.includes('/signup/onboarding')) return res;
+        redirectUrl.pathname = '/signup/onboarding';
+        return NextResponse.redirect(redirectUrl);
+    }
+    // if company hasn't added payment method, redirect to onboarding
+    const { data: company } = await supabase
+        .from('companies')
+        .select('cus_id')
+        .eq('id', profile.company_id)
+        .single();
+    if (!company?.cus_id) {
+        if (req.nextUrl.pathname.includes('/signup/onboarding')) return res;
+        redirectUrl.pathname = '/signup/onboarding';
+        return NextResponse;
+    }
+};
+
 /** https://supabase.com/docs/guides/auth/auth-helpers/nextjs#auth-with-nextjs-middleware */
 export async function middleware(req: NextRequest) {
     // We need to create a response and hand it to the supabase client to be able to modify the response headers.
@@ -16,33 +52,11 @@ export async function middleware(req: NextRequest) {
 
     // Check that user is logged in
     if (session?.user?.email?.includes('@')) {
-        // this is a special case with onboarding. We want to require a user id for this, but not an activated company account like most other requests require.
+        // this is a special case with onboarding. We require a user id, but not an activated company account.
         if (req.nextUrl.pathname.includes('api/company/create')) return res;
 
-        // TODO: performance improvement. These two database calls might add too much loading time to each request. Consider adding a cache, or adding something to the session object that shows the user has a company and the company has a payment method.
-
         // if signed up, but no company, redirect to onboarding
-        const { data: profile } = await supabase
-            .from('profiles')
-            .select('company_id')
-            .eq('id', session.user.id)
-            .single();
-        if (!profile?.company_id) {
-            if (req.nextUrl.pathname.includes('/signup/onboarding')) return res;
-            redirectUrl.pathname = '/signup/onboarding';
-            return NextResponse.redirect(redirectUrl);
-        }
-        // if company hasn't added payment method, redirect to onboarding
-        const { data: company } = await supabase
-            .from('companies')
-            .select('cus_id')
-            .eq('id', profile.company_id)
-            .single();
-        if (!company?.cus_id) {
-            if (req.nextUrl.pathname.includes('/signup/onboarding')) return res;
-            redirectUrl.pathname = '/signup/onboarding';
-            return NextResponse;
-        }
+        await checkCompanyIsOnboarded(supabase, session.user.id, req, res);
 
         // if already signed in and has company, redirect to dashboard
         if (
@@ -56,12 +70,14 @@ export async function middleware(req: NextRequest) {
         // Authentication successful, forward request to protected route.
         return res;
     }
+    // api requests, just return an error
+    if (req.nextUrl.pathname.includes('api')) {
+        return NextResponse.json({ error: 'unauthorized to use endpoint' });
+    }
+
+    // if already on signup or login page, just return the page
     if (req.nextUrl.pathname.includes('signup') || req.nextUrl.pathname.includes('login')) {
         return res;
-    }
-    if (req.nextUrl.pathname.includes('api')) {
-        // api requests, just return an error
-        return NextResponse.json({ error: 'unauthorized to use endpoint' });
     }
 
     // unauthenticated pages requests, send to signup
