@@ -4,14 +4,14 @@ import { CampaignCreatorDB, insertCampaignCreator } from 'src/utils/api/db';
 import { serverLogger } from 'src/utils/logger';
 
 export interface CampaignCreatorAddCreatorPostBody {
-    company_id: string;
+    campaign_id: string;
 }
 export type CampaignCreatorAddCreatorPostResponse = CampaignCreatorDB;
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
-        const { company_id, ...data } = JSON.parse(req.body);
-        const { data: campaignCreators, error } = await insertCampaignCreator(data, company_id);
+        const { campaign_id, ...data } = JSON.parse(req.body);
+        const { data: campaignCreators, error } = await insertCampaignCreator(data, campaign_id);
         if (error) {
             serverLogger(error, 'error');
             return res.status(httpCodes.INTERNAL_SERVER_ERROR).json(error);
