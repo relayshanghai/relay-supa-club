@@ -1,9 +1,12 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { insertCampaignCreator } from 'src/utils/api/db';
+import httpCodes from 'src/constants/httpCodes';
+import { CampaignCreatorDB, insertCampaignCreator } from 'src/utils/api/db';
+import { serverLogger } from 'src/utils/logger';
 
 export interface CampaignCreatorAddCreatorPostBody {
     campaign_id: string;
 }
+export type CampaignCreatorAddCreatorPostResponse = CampaignCreatorDB;
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
@@ -11,12 +14,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         const { data: campaignCreators, error } = await insertCampaignCreator(data, campaign_id);
         if (error) {
-            // eslint-disable-next-line no-console
-            console.log(error);
-            return res.status(500).json(error);
+            serverLogger(error, 'error');
+            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json(error);
         }
-        return res.status(200).json(campaignCreators);
+        return res.status(httpCodes.OK).json(campaignCreators);
     }
 
-    return res.status(400).json(null);
+    return res.status(httpCodes.METHOD_NOT_ALLOWED).json({});
 }

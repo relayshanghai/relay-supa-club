@@ -15,6 +15,10 @@ import {
 } from 'src/utils/api/db/types';
 import { CampaignWithCompanyCreators } from 'src/utils/api/db';
 import { CampaignsCreatePostBody, CampaignsCreatePostResponse } from 'pages/api/campaigns/create';
+import {
+    CampaignCreatorAddCreatorPostBody,
+    CampaignCreatorAddCreatorPostResponse
+} from 'pages/api/campaigns/add-creator';
 
 export const useCampaigns = ({ campaignId }: any = {}) => {
     const { profile } = useUser();
@@ -71,18 +75,19 @@ export const useCampaigns = ({ campaignId }: any = {}) => {
     const addCreatorToCampaign = useCallback(
         async (input: CampaignCreatorDBInsert) => {
             setLoading(true);
-            if (!profile?.company_id) throw new Error('No profile found');
-            await nextFetch('campaigns/add-creator', {
+            if (!campaign?.id) throw new Error('No campaign found');
+            const body: CampaignCreatorAddCreatorPostBody = {
+                ...input,
+                campaign_id: campaign.id
+            };
+            await nextFetch<CampaignCreatorAddCreatorPostResponse>('campaigns/add-creator', {
                 method: 'post',
-                body: {
-                    ...input,
-                    company_id: profile.company_id
-                }
+                body
             });
 
             setLoading(false);
         },
-        [profile?.company_id]
+        [campaign?.id]
     );
 
     const updateCreatorInCampaign = useCallback(
