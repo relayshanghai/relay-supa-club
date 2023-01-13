@@ -1,9 +1,17 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { APP_URL, emailRegex } from 'src/constants';
 import httpCodes from 'src/constants/httpCodes';
+import { InvitesDB } from 'src/utils/api/db';
 import { serverLogger } from 'src/utils/logger';
 import { sendEmail } from 'src/utils/send-in-blue-client';
 import { supabase } from 'src/utils/supabase-client';
+
+export interface CompanyCreateInvitePostBody {
+    email: string;
+    company_id: string;
+    name: string;
+}
+export type CompanyCreateInvitePostResponse = InvitesDB;
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
