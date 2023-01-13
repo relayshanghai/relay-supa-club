@@ -26,6 +26,14 @@ const login = {
     inviteInvalid: 'Invite is invalid or expired',
     inviteUsed: 'Invite already used',
     inviteExpired: 'Invite is expired',
-    createYourCompanyProfile: 'Create your company profile'
+    createYourCompanyProfile: 'Create your company profile',
+    companyCreated: 'Company created',
+    onboardCompany: 'Onboard Company',
+    addCompanyDetailsAndPaymentMethod: 'Add company details and payment method',
+    companyName: 'Company name',
+    companyNamePlaceholder: "Enter your company's name",
+    companyWebsite: 'Company website',
+    companyWebsitePlaceholder: "Enter your company website's url",
+    createCompany: 'Create company'
 };
 export default login;

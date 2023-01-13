@@ -1,7 +1,9 @@
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
+import { LanguageToggle } from 'src/components/common/language-toggle';
 import { Spinner } from 'src/components/icons';
 import { Input } from 'src/components/input';
 import { Title } from 'src/components/title';
@@ -10,6 +12,7 @@ import { useFields } from 'src/hooks/use-fields';
 import { useUser } from 'src/hooks/use-user';
 
 export default function Register() {
+    const { t } = useTranslation();
     const router = useRouter();
     const { loading, profile, refreshProfile } = useUser();
     const { createCompany } = useCompany();
@@ -18,6 +21,8 @@ export default function Register() {
         website: ''
     });
 
+    // const [paymentMethod, setPaymentMethod ] = useState(false);
+    // TODO: during this component's initial loading start, optimistically make a company. Then use the company ID to generate a Stripe customer id. Then create an add payment button that links to the strip account dashboard, detect the payment method and add a customer id when finally submitting this page. middleware.ts checks for cus_id to confirm payment method.
     useEffect(() => {
         if (!loading && profile?.company_id) {
             router.push('/dashboard');
@@ -27,49 +32,45 @@ export default function Register() {
     const handleSubmit = async () => {
         try {
             await createCompany(values);
-            toast.success('Company created');
+            toast.success(t('login.companyCreated'));
             await refreshProfile();
         } catch (e) {
-            toast.error('Ops, something went wrong');
+            toast.error(t('login.oopsSomethingWentWrong'));
         }
     };
 
     return (
-        <div className="w-full h-full px-10 py-8">
-            <Title />
-            <form className="max-w-sm mx-auto h-full flex flex-col justify-center items-center space-y-6">
+        <div className="w-full h-screen px-10 flex flex-col">
+            <div className="sticky top-0 flex items-center w-full justify-between">
+                <Title />
+                <LanguageToggle />
+            </div>
+            <form className="max-w-xs w-full mx-auto flex-grow flex flex-col justify-center items-center space-y-5">
                 {loading ? (
-                    <Spinner />
+                    <Spinner className="fill-primary-600 text-white w-20 h-20" />
                 ) : (
                     <>
-                        <div className="py-8">
-                            <div className="font-bold">
-                                Now, let&rsquo;s create your company profile
-                            </div>
+                        <div className="text-left w-full">
+                            <h1 className="font-bold text-4xl mb-2">{t('login.onboardCompany')}</h1>
+                            <h3 className="text-sm text-gray-600 mb-8">
+                                {t('login.addCompanyDetailsAndPaymentMethod')}
+                            </h3>
                         </div>
                         <Input
-                            label={'Company name'}
+                            label={t('login.companyName')}
                             type="company_name"
-                            placeholder="Enter your Company name"
+                            placeholder={t('login.companyNamePLaceholder') || ''}
                             value={values.name}
                             required
-                            onChange={(e: any) => {
-                                setFieldValue('name', e.target.value);
-                            }}
+                            onChange={(e) => setFieldValue('name', e.target.value)}
                         />
                         <Input
-                            label={'Company website'}
+                            label={t('login.companyWebsite')}
                             type="company_website"
-                            placeholder="Enter your website url"
+                            placeholder={t('login.companyWebsitePLaceholder') || ''}
                             value={values.website}
-                            onChange={(e: any) => {
-                                setFieldValue('website', e.target.value);
-                            }}
+                            onChange={(e) => setFieldValue('website', e.target.value)}
                         />
-                        <div className="text-sm text-gray-500">
-                            Your new company will have a trial subscription just to get you started.
-                            Once you are ready you can purchase new plans in your Account settings.
-                        </div>
                         <Button
                             disabled={!values.name}
                             onClick={(e) => {
@@ -77,7 +78,7 @@ export default function Register() {
                                 handleSubmit();
                             }}
                         >
-                            Create company
+                            {t('login.createCompany')}
                         </Button>
                     </>
                 )}

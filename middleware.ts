@@ -15,6 +15,8 @@ export async function middleware(req: NextRequest) {
 
     // Check auth condition
     if (data?.session?.user?.email?.includes('@')) {
+        // TODO: performance improvement. These two database calls might add too much loading time to each request. Consider adding a cache, or adding something to the session object that shows the user has a company and the company has a payment method.
+
         // if signed up, but no company, redirect to onboarding
         const { data: profile } = await supabase
             .from('profiles')
@@ -25,6 +27,17 @@ export async function middleware(req: NextRequest) {
             if (req.nextUrl.pathname.includes('/signup/onboarding')) return res;
             redirectUrl.pathname = '/signup/onboarding';
             return NextResponse.redirect(redirectUrl);
+        }
+        // if company hasn't added payment method, redirect to onboarding
+        const { data: company } = await supabase
+            .from('companies')
+            .select('cus_id')
+            .eq('id', profile.company_id)
+            .single();
+        if (!company?.cus_id) {
+            if (req.nextUrl.pathname.includes('/signup/onboarding')) return res;
+            redirectUrl.pathname = '/signup/onboarding';
+            return NextResponse;
         }
 
         // if already signed in and has company, redirect to dashboard
