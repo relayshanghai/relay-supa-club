@@ -1,7 +1,8 @@
 import { useRouter } from 'next/router';
 import {
     CompanyAcceptInviteGetQueries,
-    CompanyAcceptInviteGetResponse
+    CompanyAcceptInviteGetResponse,
+    CompanyAcceptInvitePostBody
 } from 'pages/api/company/accept-invite';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -11,21 +12,24 @@ import { LanguageToggle } from 'src/components/common/language-toggle';
 import { Input } from 'src/components/input';
 import { Title } from 'src/components/title';
 import { useFields } from 'src/hooks/use-fields';
+import { useUser } from 'src/hooks/use-user';
 import { nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger';
 
 export default function Register() {
     const { t } = useTranslation();
+    const { login } = useUser();
 
     const router = useRouter();
     const {
-        values: { password, confirmPassword, firstName, lastName },
+        values: { password, confirmPassword, firstName, lastName, email },
         setFieldValue
     } = useFields({
         firstName: '',
         lastName: '',
         password: '',
-        confirmPassword: ''
+        confirmPassword: '',
+        email: ''
     });
     const token = router.query.token as string;
     const [registering, setRegistering] = useState(false);
@@ -38,29 +42,35 @@ export default function Register() {
                     CompanyAcceptInviteGetQueries,
                     CompanyAcceptInviteGetResponse
                 >('company/accept-invite', { token });
-                if (tokenStatus?.message) setInviteStatus(tokenStatus?.message);
+                if (tokenStatus?.message && tokenStatus.email) {
+                    setFieldValue('email', tokenStatus.email);
+                    setInviteStatus(tokenStatus?.message);
+                } else setInviteStatus('inviteValid');
             } catch (error: any) {
                 clientLogger(error, 'error');
                 if (error.message) setInviteStatus(error.message);
             }
         };
         if (token) checkInvite();
-    }, [token]);
+    }, [token, setFieldValue]);
 
     const handleSubmit = async () => {
         try {
             setRegistering(true);
+            const body: CompanyAcceptInvitePostBody = {
+                token,
+                password,
+                firstName,
+                lastName,
+                email
+            };
             await nextFetch('company/accept-invite', {
                 method: 'post',
-                body: JSON.stringify({
-                    token,
-                    password,
-                    firstName,
-                    lastName
-                })
+                body
             });
             toast.success(t('login.inviteAccepted'));
-            router.push('/login');
+            await login(email, password);
+            router.push('/dashboard');
         } catch (error: any) {
             clientLogger(error, 'error');
             if (error.message) toast.error(t(`login.${error.message}`));
@@ -69,6 +79,13 @@ export default function Register() {
             setRegistering(false);
         }
     };
+    if (!token)
+        return (
+            <div className="mx-auto h-full flex flex-col justify-center items-center space-y-6">
+                <h2>{t('login.noInviteTokenFound')}</h2>
+                <Button onClick={() => router.back()}>{t('login.back')}</Button>
+            </div>
+        );
 
     return (
         <div className="w-full h-full px-10 py-8">
@@ -76,7 +93,7 @@ export default function Register() {
                 <Title />
                 <LanguageToggle />
             </div>
-            {token && inviteStatus === 'inviteValid' && (
+            {inviteStatus === 'inviteValid' && (
                 <form className="max-w-sm mx-auto h-full flex flex-col justify-center items-center space-y-6">
                     <div className="text-left w-full">
                         <h1 className="font-bold text-4xl mb-2">{t('login.acceptInvite')}</h1>
@@ -84,6 +101,7 @@ export default function Register() {
                             {t('login.someoneInvitedYouToJoinRelayClub')}
                         </h3>
                     </div>
+                    <Input label={t('login.email')} value={email} disabled />
 
                     <Input
                         label={t('login.firstName')}
@@ -134,20 +152,14 @@ export default function Register() {
                     </Button>
                 </form>
             )}
-            {token && inviteStatus === 'pending' && (
+            {inviteStatus === 'pending' && (
                 <div className="mx-auto h-full flex flex-col justify-center items-center space-y-6">
-                    <div>{t('login.checkingInviteStatus')}</div>
+                    <p>{t('login.checkingInviteStatus')}</p>
                 </div>
             )}
-            {token && inviteStatus !== 'pending' && (
+            {inviteStatus !== 'pending' && inviteStatus !== 'inviteValid' && (
                 <div className="mx-auto h-full flex flex-col justify-center items-center space-y-6">
                     <h2>{inviteStatus}</h2>
-                    <Button onClick={() => router.back()}>{t('login.back')}</Button>
-                </div>
-            )}
-            {!token && (
-                <div className="mx-auto h-full flex flex-col justify-center items-center space-y-6">
-                    <h2>{t('login.noInviteTokenFound')}</h2>
                     <Button onClick={() => router.back()}>{t('login.back')}</Button>
                 </div>
             )}

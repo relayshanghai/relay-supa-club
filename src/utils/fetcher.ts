@@ -19,6 +19,10 @@ const handleResError = async (res: Response) => {
     }
 };
 
+interface RequestInitWithBody extends RequestInit {
+    body?: any;
+}
+
 /**
  *
  * @param path will be prefixed by `/api/`
@@ -27,8 +31,12 @@ const handleResError = async (res: Response) => {
  *  if it encounters an error, it will throw an Error with the error message from the response. Remember to add an `{error: ''}` to api responses.
  * @example `const data = await nextFetch<SomeType>('some/path')`
  */
-export const nextFetch = async <T = any>(path: string, options: RequestInit = {}) => {
-    const res = await fetch('/api/' + path, options);
+export const nextFetch = async <T = any>(path: string, options: RequestInitWithBody = {}) => {
+    const body = options.body;
+    // if it's not a string, stringify it
+    const stringified = body && typeof body !== 'string' ? JSON.stringify(body) : body;
+    const optionsWithBody = { ...options, body: stringified };
+    const res = await fetch('/api/' + path, optionsWithBody);
     await handleResError(res);
     const json = await res.json();
     return json as T;

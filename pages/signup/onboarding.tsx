@@ -24,6 +24,16 @@ export default function Register() {
         }
     }, [loading, profile, router]);
 
+    const handleSubmit = async () => {
+        try {
+            await createCompany(values);
+            toast.success('Company created');
+            await refreshProfile();
+        } catch (e) {
+            toast.error('Ops, something went wrong');
+        }
+    };
+
     return (
         <div className="w-full h-full px-10 py-8">
             <Title />
@@ -62,16 +72,9 @@ export default function Register() {
                         </div>
                         <Button
                             disabled={!values.name}
-                            onClick={async (e: any) => {
+                            onClick={(e) => {
                                 e.preventDefault();
-
-                                try {
-                                    await createCompany(values);
-                                    toast.success('Company created');
-                                    await refreshProfile();
-                                } catch (e) {
-                                    toast.error('Ops, something went wrong');
-                                }
+                                handleSubmit();
                             }}
                         >
                             Create company

@@ -8,6 +8,7 @@ export type CompanyAcceptInvitePostBody = {
     password: string;
     firstName: string;
     lastName: string;
+    email: string;
 };
 
 export type CompanyAcceptInviteGetQueries = {
@@ -15,6 +16,7 @@ export type CompanyAcceptInviteGetQueries = {
 };
 export type CompanyAcceptInviteGetResponse = {
     message: 'inviteValid';
+    email?: string;
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -79,7 +81,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             if (!token) return res.status(httpCodes.BAD_REQUEST).json({ error: 'Missing token' });
             const { data, error } = await supabase
                 .from('invites')
-                .select('used, expire_at')
+                .select('used, expire_at, email')
                 .eq('id', token)
                 .limit(1)
                 .single();
@@ -99,7 +101,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     error: 'inviteExpired'
                 });
             }
-            return res.status(httpCodes.OK).json({ message: 'inviteValid' });
+            return res.status(httpCodes.OK).json({ message: 'inviteValid', email: data.email });
         } catch (error) {
             serverLogger(error, 'error');
             return res

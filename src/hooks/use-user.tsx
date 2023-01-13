@@ -89,8 +89,9 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
                     password
                 });
 
-                if (error) throw error;
+                if (error) throw new Error(error.message || 'Unknown error');
             } catch (e: any) {
+                clientLogger(e, 'error');
                 setLoading(false);
                 throw new Error(e.message || 'Unknown error');
             }
@@ -134,7 +135,6 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
                     ...input
                 };
                 const { error } = await supabaseClient.from('profiles').upsert(updates).single();
-                // TODO: check if upsert returns data
 
                 if (error) throw error;
             } catch (e: any) {
