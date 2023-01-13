@@ -17,7 +17,7 @@ export const PersonalDetails = () => {
         lastName: '',
         email: ''
     });
-    const { userDataLoading, profile, user, updateProfile } = useContext(AccountContext);
+    const { userDataLoading, profile, user, upsertProfile } = useContext(AccountContext);
 
     useEffect(() => {
         if (!userDataLoading && profile) {
@@ -31,9 +31,9 @@ export const PersonalDetails = () => {
 
     const { t } = useTranslation();
 
-    const handleUpdateProfile = async () => {
+    const handleupsertProfile = async () => {
         try {
-            await updateProfile({
+            await upsertProfile({
                 first_name: firstName,
                 last_name: lastName,
                 email: email
@@ -75,7 +75,7 @@ export const PersonalDetails = () => {
                 />
             </div>
             <div className="flex flex-row justify-end w-full">
-                <Button disabled={userDataLoading} onClick={handleUpdateProfile}>
+                <Button disabled={userDataLoading} onClick={handleupsertProfile}>
                     {t('account.update')}
                 </Button>
             </div>

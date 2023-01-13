@@ -88,13 +88,13 @@ export default function Register() {
         );
 
     return (
-        <div className="w-full h-full px-10 py-8">
+        <div className="w-full h-screen px-10 flex flex-col">
             <div className="sticky top-0 flex items-center w-full justify-between">
                 <Title />
                 <LanguageToggle />
             </div>
             {inviteStatus === 'inviteValid' && (
-                <form className="max-w-sm mx-auto h-full flex flex-col justify-center items-center space-y-6">
+                <form className="max-w-xs w-full mx-auto flex-grow flex flex-col justify-center items-center space-y-5">
                     <div className="text-left w-full">
                         <h1 className="font-bold text-4xl mb-2">{t('login.acceptInvite')}</h1>
                         <h3 className="text-sm text-gray-600 mb-8">

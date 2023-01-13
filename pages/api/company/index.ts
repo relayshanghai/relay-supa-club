@@ -29,13 +29,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const updateData = JSON.parse(req.body) as CompanyIndexPostBody;
 
         const { data, error } = await updateCompany(updateData);
-        if (error) {
-            return res.status(500).json(error);
-        }
+
+        if (error) return res.status(500).json(error);
+
         if (!data || !data.cus_id || !data.name || !data.website) {
             return res.status(500).json({ error: 'Missing data' });
         }
 
+        // do we always want to update strip when we update company?
         await stripeClient.customers.update(data.cus_id, {
             name: data.name,
             description: data.website,

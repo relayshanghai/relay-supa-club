@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
+import { upsertProfile } from 'src/utils/api/db';
 import { serverLogger } from 'src/utils/logger';
 import { supabase } from 'src/utils/supabase-client';
 
@@ -42,21 +43,34 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
 
         // Sign-up the user with the given credentials
-        const { error: userError } = await supabase.auth.signUp({
+        const {
+            data: { user, session },
+            error: userError
+        } = await supabase.auth.signUp({
             email: data.email,
-            password,
-            options: {
-                data: {
-                    first_name: firstName,
-                    last_name: lastName,
-                    company_id: data.company_id
-                }
-            }
+            password
         });
 
         if (userError) {
             serverLogger(userError, 'error');
             return res.status(httpCodes.INTERNAL_SERVER_ERROR).json(userError);
+        }
+
+        if (user?.id || session?.user.id) {
+            const { error: profileUpsertError } = await upsertProfile({
+                id: user?.id || session?.user.id || '',
+                first_name: firstName,
+                last_name: lastName,
+                company_id: data.company_id
+            });
+            if (profileUpsertError) {
+                serverLogger(profileUpsertError, 'error');
+                return res.status(httpCodes.INTERNAL_SERVER_ERROR).json(profileUpsertError);
+            }
+        } else {
+            return res
+                .status(httpCodes.INTERNAL_SERVER_ERROR)
+                .json({ error: 'Failed to create user' });
         }
 
         // Mark the invite as used

@@ -20,7 +20,7 @@ export interface AccountContextProps {
     createInvite: (email: string) => void;
 
     // TODO: make types for these
-    updateProfile: (data: any) => void;
+    upsertProfile: (data: any) => void;
     updateCompany: (data: any) => void;
 }
 
@@ -34,11 +34,11 @@ export const AccountContext = createContext<AccountContextProps>({
     createInvite: () => {},
 
     updateCompany: () => {},
-    updateProfile: () => {}
+    upsertProfile: () => {}
 });
 
 export const AccountProvider: FC<PropsWithChildren> = ({ children }: PropsWithChildren) => {
-    const { profile, user, loading: userDataLoading, updateProfile } = useUser();
+    const { profile, user, loading: userDataLoading, upsertProfile } = useUser();
     const { company, updateCompany, createInvite } = useCompany();
 
     return (
@@ -47,7 +47,7 @@ export const AccountProvider: FC<PropsWithChildren> = ({ children }: PropsWithCh
                 userDataLoading,
                 profile,
                 user,
-                updateProfile,
+                upsertProfile,
                 company,
                 updateCompany,
                 createInvite

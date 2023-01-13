@@ -15,7 +15,19 @@ export async function middleware(req: NextRequest) {
 
     // Check auth condition
     if (data?.session?.user?.email?.includes('@')) {
-        // if already signed in, redirect to dashboard
+        // if signed up, but no company, redirect to onboarding
+        const { data: profile } = await supabase
+            .from('profiles')
+            .select('company_id')
+            .eq('id', data.session.user.id)
+            .single();
+        if (!profile?.company_id) {
+            if (req.nextUrl.pathname.includes('/signup/onboarding')) return res;
+            redirectUrl.pathname = '/signup/onboarding';
+            return NextResponse.redirect(redirectUrl);
+        }
+
+        // if already signed in and has company, redirect to dashboard
         if (
             req.nextUrl.pathname === '/' ||
             req.nextUrl.pathname.includes('signup') ||
@@ -30,10 +42,13 @@ export async function middleware(req: NextRequest) {
     if (req.nextUrl.pathname.includes('signup') || req.nextUrl.pathname.includes('login')) {
         return res;
     }
+    if (req.nextUrl.pathname.includes('api')) {
+        // api requests, just return an error
+        return NextResponse.json({ error: 'unauthorized to use endpoint' });
+    }
 
-    // Auth condition not met, redirect to signup page.
+    // unauthenticated pages requests, send to signup
     redirectUrl.pathname = '/signup';
-    // redirectUrl.searchParams.set(`redirectedFrom`, req.nextUrl.pathname);
     return NextResponse.redirect(redirectUrl);
 }
 
@@ -46,7 +61,7 @@ export const config = {
          * - _next/image (image optimization files)
          * - favicon.ico (favicon file)
          * - assets/* (assets files) (public/assets/*)
-         * - accept invite (accept invite api)s
+         * - accept invite (accept invite api)
          */
         '/((?!_next/static|_next/image|favicon.ico|assets/*|api/company/accept-invite*).*)'
     ]

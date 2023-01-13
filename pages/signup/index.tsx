@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
@@ -24,7 +25,11 @@ export default function Register() {
         password: '',
         confirmPassword: ''
     });
-    const { signup } = useUser();
+    const { signup, logout } = useUser();
+    useEffect(() => {
+        // sometimes the cookies and signed in status still persist to this page, so call logout again
+        logout();
+    }, [logout]);
 
     const handleSubmit = async () => {
         try {
