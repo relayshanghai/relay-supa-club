@@ -10,12 +10,13 @@ import { Title } from 'src/components/title';
 import { useCompany } from 'src/hooks/use-company';
 import { useFields } from 'src/hooks/use-fields';
 import { useUser } from 'src/hooks/use-user';
+import { clientLogger } from 'src/utils/logger';
 
 export default function Register() {
     const { t } = useTranslation();
     const router = useRouter();
     const { loading, profile, refreshProfile } = useUser();
-    const { createCompany } = useCompany();
+    const { createCompany, company, refreshCompany } = useCompany();
     const { values, setFieldValue } = useFields({
         name: '',
         website: ''
@@ -24,17 +25,20 @@ export default function Register() {
     // const [paymentMethod, setPaymentMethod ] = useState(false);
     // TODO: during this component's initial loading start, optimistically make a company. Then use the company ID to generate a Stripe customer id. Then create an add payment button that links to the strip account dashboard, detect the payment method and add a customer id when finally submitting this page. middleware.ts checks for cus_id to confirm payment method.
     useEffect(() => {
-        if (!loading && profile?.company_id) {
-            router.push('/dashboard');
-        }
-    }, [loading, profile, router]);
+        const checkForCompletedOnboard = async () => {
+            if (company?.cus_id) router.push('/dashboard');
+            else refreshCompany();
+        };
+        if (!loading) checkForCompletedOnboard();
+    }, [company?.cus_id, loading, profile, refreshCompany, router]);
 
     const handleSubmit = async () => {
         try {
             await createCompany(values);
             toast.success(t('login.companyCreated'));
-            await refreshProfile();
+            refreshProfile();
         } catch (e) {
+            clientLogger(e, 'error');
             toast.error(t('login.oopsSomethingWentWrong'));
         }
     };
@@ -59,7 +63,7 @@ export default function Register() {
                         <Input
                             label={t('login.companyName')}
                             type="company_name"
-                            placeholder={t('login.companyNamePLaceholder') || ''}
+                            placeholder={t('login.companyNamePlaceholder') || ''}
                             value={values.name}
                             required
                             onChange={(e) => setFieldValue('name', e.target.value)}
@@ -67,7 +71,7 @@ export default function Register() {
                         <Input
                             label={t('login.companyWebsite')}
                             type="company_website"
-                            placeholder={t('login.companyWebsitePLaceholder') || ''}
+                            placeholder={t('login.companyWebsitePlaceholder') || ''}
                             value={values.website}
                             onChange={(e) => setFieldValue('website', e.target.value)}
                         />
