@@ -8,13 +8,14 @@ export async function middleware(req: NextRequest) {
     const res = NextResponse.next();
     // Create authenticated Supabase Client.
     const supabase = createMiddlewareSupabaseClient<Database>({ req, res });
-    // Check if we have a session
-    const { data } = await supabase.auth.getSession();
+    const {
+        data: { session }
+    } = await supabase.auth.getSession();
 
     const redirectUrl = req.nextUrl.clone();
 
-    // Check auth condition
-    if (data?.session?.user?.email?.includes('@')) {
+    // Check that user is logged in
+    if (session?.user?.email?.includes('@')) {
         // this is a special case with onboarding. We want to require a user id for this, but not an activated company account like most other requests require.
         if (req.nextUrl.pathname.includes('api/company/create')) return res;
 
@@ -24,7 +25,7 @@ export async function middleware(req: NextRequest) {
         const { data: profile } = await supabase
             .from('profiles')
             .select('company_id')
-            .eq('id', data.session.user.id)
+            .eq('id', session.user.id)
             .single();
         if (!profile?.company_id) {
             if (req.nextUrl.pathname.includes('/signup/onboarding')) return res;
@@ -77,7 +78,7 @@ export const config = {
          * - _next/image (image optimization files)
          * - favicon.ico (favicon file)
          * - assets/* (assets files) (public/assets/*)
-         * - accept invite (accept invite api)
+         * - accept invite (accept invite api). User hasn't logged in yet
          */
         '/((?!_next/static|_next/image|favicon.ico|assets/*|api/company/accept-invite*).*)'
     ]
