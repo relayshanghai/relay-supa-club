@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
+import { LanguageToggle } from 'src/components/common/language-toggle';
 import { Input } from 'src/components/input';
 import { Title } from 'src/components/title';
 import { useFields } from 'src/hooks/use-fields';
@@ -71,10 +72,19 @@ export default function Register() {
 
     return (
         <div className="w-full h-full px-10 py-8">
-            <Title />
+            <div className="sticky top-0 flex items-center w-full justify-between">
+                <Title />
+                <LanguageToggle />
+            </div>
             {token && inviteStatus === 'inviteValid' && (
                 <form className="max-w-sm mx-auto h-full flex flex-col justify-center items-center space-y-6">
-                    <div>{t('login.someoneInvitedYouToJoinRelayClub')}</div>
+                    <div className="text-left w-full">
+                        <h1 className="font-bold text-4xl mb-2">{t('login.acceptInvite')}</h1>
+                        <h3 className="text-sm text-gray-600 mb-8">
+                            {t('login.someoneInvitedYouToJoinRelayClub')}
+                        </h3>
+                    </div>
+
                     <Input
                         label={t('login.firstName')}
                         type="text"

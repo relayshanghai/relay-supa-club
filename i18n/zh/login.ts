@@ -19,9 +19,11 @@ const login = {
     inviteAccepted: '邀请已接受',
     checkingInviteStatus: '正在查看邀请状态',
     back: '返回',
+    acceptInvite: '接受邀请',
     noInviteTokenFound: '找不到邀请令牌。请使用发送到您的电子邮件的链接接受邀请',
     inviteInvalid: '邀请无效或已过期',
     inviteUsed: '邀请已使用',
-    inviteExpired: '邀请已过期'
+    inviteExpired: '邀请已过期',
+    createYourCompanyProfile: '创建您的公司简介'
 };
 export default login;

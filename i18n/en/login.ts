@@ -20,10 +20,12 @@ const login = {
     inviteAccepted: 'Invite accepted',
     checkingInviteStatus: 'Checking invite status',
     back: 'Back',
+    acceptInvite: 'Accept invite',
     noInviteTokenFound:
         'No invite token found. Please use the link sent to your email to accept the invitation',
     inviteInvalid: 'Invite is invalid or expired',
     inviteUsed: 'Invite already used',
-    inviteExpired: 'Invite is expired'
+    inviteExpired: 'Invite is expired',
+    createYourCompanyProfile: 'Create your company profile'
 };
 export default login;
