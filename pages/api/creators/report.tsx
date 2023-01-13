@@ -1,7 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { recordReportUsage } from 'src/utils/api/db/usages';
 import { fetchReport, fetchReportsMetadata, requestNewReport } from 'src/utils/api/iqdata';
-import { CreatorPlatform } from 'types';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'GET') {
@@ -19,10 +18,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             )
                 return res.status(400).json({ error: 'Invalid request' });
             try {
-                const reportMetadata = await fetchReportsMetadata(
-                    platform as CreatorPlatform,
-                    creator_id
-                );
+                const reportMetadata = await fetchReportsMetadata(platform as any, creator_id);
                 if (!reportMetadata.results || reportMetadata.results.length === 0)
                     throw new Error('No reports found');
                 const report_id = reportMetadata.results[0].id;
@@ -40,7 +36,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
                 return res.status(200).json({ ...data, createdAt });
             } catch (error) {
-                const data = await requestNewReport(platform as CreatorPlatform, creator_id);
+                const data = await requestNewReport(platform as any, creator_id);
                 if (!data.success) throw new Error('Failed to request new report');
 
                 const { error: recordError } = await recordReportUsage(
