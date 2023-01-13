@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
@@ -13,7 +13,8 @@ import { useUser } from 'src/hooks/use-user';
 export default function Login() {
     const { t } = useTranslation();
     const router = useRouter();
-    const { login, loading, profile } = useUser();
+    const { login } = useUser();
+    const [loggingIn, setLoggingIn] = useState(false);
     const {
         values: { email, password },
         setFieldValue
@@ -22,22 +23,16 @@ export default function Login() {
         password: ''
     });
 
-    useEffect(() => {
-        if (!loading && !!profile?.id) {
-            if (!profile.company_id) {
-                router.push('/signup/onboarding');
-            } else {
-                router.push('/dashboard');
-            }
-        }
-    }, [loading, profile, router]);
-
     const handleSubmit = async () => {
         try {
+            setLoggingIn(true);
             await login(email, password);
             toast.success(t('login.loginSuccess'));
+            await router.push('/dashboard');
         } catch (error: any) {
             toast.error(error.message || t('login.oopsSomethingWentWrong'));
+        } finally {
+            setLoggingIn(false);
         }
     };
 
@@ -67,7 +62,7 @@ export default function Login() {
                     onChange={(e) => setFieldValue('password', e.target.value)}
                 />
                 <Button
-                    disabled={loading}
+                    disabled={!email || !password || loggingIn}
                     onClick={(e) => {
                         e.preventDefault();
                         handleSubmit();

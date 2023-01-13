@@ -79,7 +79,6 @@ export async function middleware(req: NextRequest) {
     if (req.nextUrl.pathname.includes('signup') || req.nextUrl.pathname.includes('login')) {
         return res;
     }
-
     // unauthenticated pages requests, send to signup
     redirectUrl.pathname = '/signup';
     return NextResponse.redirect(redirectUrl);

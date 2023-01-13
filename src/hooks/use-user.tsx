@@ -135,6 +135,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
     );
     const logout = useCallback(async () => {
         await supabaseClient.auth.signOut();
+        setProfile(null);
     }, [supabaseClient.auth]);
 
     const value = useMemo(
