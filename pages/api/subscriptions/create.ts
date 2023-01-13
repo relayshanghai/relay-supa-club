@@ -11,7 +11,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 .from('companies')
                 .select('cus_id')
                 .eq('id', company_id)
-
                 .single();
 
             if (!companyData || !companyData.cus_id) {
