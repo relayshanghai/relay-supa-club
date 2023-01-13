@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
@@ -13,6 +13,7 @@ import { clientLogger } from 'src/utils/logger';
 
 export default function Register() {
     const { t } = useTranslation();
+    const [submitting, setSubmitting] = useState(false);
 
     const router = useRouter();
     const {
@@ -32,6 +33,7 @@ export default function Register() {
     }, [logout]);
 
     const handleSubmit = async () => {
+        setSubmitting(true);
         try {
             await signup({
                 email,
@@ -41,10 +43,12 @@ export default function Register() {
                     last_name: lastName
                 }
             });
-            router.push('/signup/onboarding');
+            await router.push('/signup/onboarding');
         } catch (error) {
             clientLogger(error, 'error');
             toast.error(t('login.oopsSomethingWentWrong'));
+        } finally {
+            setSubmitting(false);
         }
     };
 
@@ -107,7 +111,8 @@ export default function Register() {
                         !lastName ||
                         !email ||
                         !password ||
-                        password !== confirmPassword
+                        password !== confirmPassword ||
+                        submitting
                     }
                     onClick={(e) => {
                         e.preventDefault();

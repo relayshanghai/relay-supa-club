@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
@@ -21,6 +21,7 @@ export default function Register() {
         name: '',
         website: ''
     });
+    const [submitting, setSubmitting] = useState(false);
 
     // const [paymentMethod, setPaymentMethod ] = useState(false);
     // TODO: during this component's initial loading start, optimistically make a company. Then use the company ID to generate a Stripe customer id. Then create an add payment button that links to the strip account dashboard, detect the payment method and add a customer id when finally submitting this page. middleware.ts checks for cus_id to confirm payment method.
@@ -34,12 +35,15 @@ export default function Register() {
 
     const handleSubmit = async () => {
         try {
+            setSubmitting(true);
             await createCompany(values);
             toast.success(t('login.companyCreated'));
             refreshProfile();
         } catch (e) {
             clientLogger(e, 'error');
             toast.error(t('login.oopsSomethingWentWrong'));
+        } finally {
+            setSubmitting(false);
         }
     };
 
@@ -76,7 +80,7 @@ export default function Register() {
                             onChange={(e) => setFieldValue('website', e.target.value)}
                         />
                         <Button
-                            disabled={!values.name}
+                            disabled={!values.name || submitting}
                             onClick={(e) => {
                                 e.preventDefault();
                                 handleSubmit();
