@@ -77,14 +77,14 @@ export function imgProxy(url: string) {
 }
 
 export const checkSessionIdMatchesID = async (id: string, res: NextApiResponse) => {
-    if (!id) return res.status(httpCodes.UNAUTHORIZED).json({ error: 'unauthorized' });
+    if (!id) return res.status(httpCodes.UNAUTHORIZED).json({ error: 'no user id found' });
     const {
         data: { session }
     } = await supabase.auth.getSession();
 
     if (session?.user.id !== id) {
         return res.status(httpCodes.UNAUTHORIZED).json({
-            error: 'unauthorized'
+            error: 'user is unauthorized for this action'
         });
     }
 };

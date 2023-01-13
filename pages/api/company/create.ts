@@ -15,9 +15,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         checkSessionIdMatchesID(user_id, res);
         const { data: company, error } = await createCompany({ name, website });
 
-        if (error) {
-            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json(error);
-        }
+        if (error) return res.status(httpCodes.INTERNAL_SERVER_ERROR).json(error);
 
         const { data: profile, error: profileError } = await updateProfile({
             id: user_id,
@@ -25,11 +23,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             admin: true
         });
 
-        if (profileError) {
-            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json(profileError);
-        }
+        if (profileError) return res.status(httpCodes.INTERNAL_SERVER_ERROR).json(profileError);
 
         // Create the customer in stripe as well
+        // TODO: change this function to just return the cus_id, not add to company yet, until they confirm payment method?
         await ensureCustomer({ company_id: company.id, name });
 
         return res.status(httpCodes.OK).json({ profile, company });
