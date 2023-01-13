@@ -14,6 +14,14 @@ const login = {
     firstNamePlaceholder: '输入您的名字',
     lastName: '姓氏',
     lastNamePlaceholder: '输入您的姓氏',
-    confirmPassword: '确认密码'
+    confirmPassword: '确认密码',
+    someoneInvitedYouToJoinRelayClub: '有人邀请您加入relay.club。通过以下设置接受邀请。',
+    inviteAccepted: '邀请已接受',
+    checkingInviteStatus: '正在查看邀请状态',
+    back: '返回',
+    noInviteTokenFound: '找不到邀请令牌。请使用发送到您的电子邮件的链接接受邀请',
+    inviteInvalid: '邀请无效或已过期',
+    inviteUsed: '邀请已使用',
+    inviteExpired: '邀请已过期'
 };
 export default login;

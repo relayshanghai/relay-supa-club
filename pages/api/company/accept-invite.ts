@@ -14,7 +14,7 @@ export type CompanyAcceptInviteGetQueries = {
     token: string;
 };
 export type CompanyAcceptInviteGetResponse = {
-    message: 'Invite is valid';
+    message: 'inviteValid';
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -35,7 +35,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
         if (data?.used || Date.now() >= new Date(data.expire_at ?? '').getTime()) {
             return res.status(httpCodes.UNAUTHORIZED).json({
-                error: 'Invite is invalid or expired'
+                error: 'inviteInvalid'
             });
         }
 
@@ -86,20 +86,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             if (error) {
                 serverLogger(error, 'error');
                 return res.status(httpCodes.UNAUTHORIZED).json({
-                    error: 'Invite is invalid or expired'
+                    error: 'inviteInvalid'
                 });
             }
             if (data?.used) {
                 return res.status(httpCodes.UNAUTHORIZED).json({
-                    error: 'Invite already used'
+                    error: 'inviteUsed'
                 });
             }
             if (Date.now() >= new Date(data.expire_at ?? '').getTime()) {
                 return res.status(httpCodes.UNAUTHORIZED).json({
-                    error: 'Invite is expired'
+                    error: 'inviteExpired'
                 });
             }
-            return res.status(httpCodes.OK).json({ message: 'Invite is valid' });
+            return res.status(httpCodes.OK).json({ message: 'inviteValid' });
         } catch (error) {
             serverLogger(error, 'error');
             return res
