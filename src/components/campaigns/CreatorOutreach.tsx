@@ -123,11 +123,11 @@ export default function CreatorsOutreach({
         <div>
             {/* Outreach Tabs */}
             <div className="flex mb-4">
-                <div className="bg-gray-100 rounded-md px-4 py-2 text-xs text-gray-600 mr-4 cursor-pointer hover:bg-primary-500 hover:text-white duration-300 flex-shrink-0">
-                    <Link href="/dashboard">
+                <Link href="/dashboard">
+                    <div className="bg-gray-100 rounded-md px-4 py-2 text-xs text-gray-600 mr-4 cursor-pointer hover:bg-primary-500 hover:text-white duration-300 flex-shrink-0">
                         <a>{t('campaigns.show.activities.outreach.addNewCreator')}</a>
-                    </Link>
-                </div>
+                    </div>
+                </Link>
                 {/* TODO: make Tabs component reusable */}
                 <div className="hidden sm:flex items-center">
                     {tabs.map((tab, index) => (
