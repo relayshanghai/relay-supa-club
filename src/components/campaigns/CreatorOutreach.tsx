@@ -48,6 +48,7 @@ export default function CreatorsOutreach({
 
     const columnLabels = [
         'account',
+        'contact',
         'creatorStatus',
         // 'addedBy',
         'nextPoint',
@@ -83,6 +84,14 @@ export default function CreatorsOutreach({
         setToEdit({ index, key });
     };
 
+    const openNotes = (
+        e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>,
+        creator: CampaignCreatorDB
+    ) => {
+        //eslint-disable-next-line
+        console.log(e, creator);
+    };
+
     const deleteCampaignCreator = async (
         e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>,
         creator: CampaignCreatorDB
@@ -114,7 +123,7 @@ export default function CreatorsOutreach({
         <div>
             {/* Outreach Tabs */}
             <div className="flex mb-4">
-                <div className="bg-gray-100 rounded-md px-4 py-2 text-sm text-gray-600 mr-4 cursor-pointer hover:bg-primary-500 hover:text-white duration-300 flex-shrink-0">
+                <div className="bg-gray-100 rounded-md px-4 py-2 text-xs text-gray-600 mr-4 cursor-pointer hover:bg-primary-500 hover:text-white duration-300 flex-shrink-0">
                     <Link href="/dashboard">
                         <a>{t('campaigns.show.activities.outreach.addNewCreator')}</a>
                     </Link>
@@ -125,7 +134,7 @@ export default function CreatorsOutreach({
                         <div
                             key={index}
                             onClick={() => handleTabChange(tab.value)}
-                            className={`font-semibold text-sm mr-4 hover:text-primary-500 hover:bg-primary-500 hover:bg-opacity-20 px-4 py-2 rounded-lg cursor-pointer duration-300 flex-shrink-0 focus:bg-primary-500 focus:text-primary-500 focus:bg-opacity-20 ${
+                            className={`font-semibold text-xs mr-4 hover:text-primary-500 hover:bg-primary-500 hover:bg-opacity-20 px-4 py-2 rounded-lg cursor-pointer duration-300 flex-shrink-0 focus:bg-primary-500 focus:text-primary-500 focus:bg-opacity-20 ${
                                 tabStatus === tab.value
                                     ? 'text-primary-500 bg-primary-500 bg-opacity-20'
                                     : 'text-gray-400 bg-gray-100 '
@@ -148,7 +157,7 @@ export default function CreatorsOutreach({
                                 <th
                                     key={index}
                                     scope="col"
-                                    className={`px-6 py-3 text-left text-xs font-normal text-gray-500 sticky left-0 tracking-wider min-w-[200px] max-w-[200px] bg-white ${
+                                    className={`px-6 py-3 text-left text-xs font-normal text-gray-500 sticky left-0 tracking-wider min-w-fit bg-white ${
                                         index === 0 ? 'sticky left-0 z-10' : ''
                                     }`}
                                 >
@@ -156,7 +165,7 @@ export default function CreatorsOutreach({
                                 </th>
                             ))}
                             {/*-- placeholder table header space for delete icon --*/}
-                            <th className=" px-3 py-3 text-left text-xs font-normal text-gray-500 sticky bg-white tracking-wider  min-w-[100px] max-w-[100px]">
+                            <th className=" px-3 py-3 text-left text-xs font-normal text-gray-500 sticky right-0 bg-white tracking-wider  min-w-[150px] max-w-[150px] z-30">
                                 {''}
                             </th>
                         </tr>
@@ -167,7 +176,7 @@ export default function CreatorsOutreach({
                                 return (
                                     <tr
                                         key={index}
-                                        className="group hover:bg-primary-50 hover:relative text-sm"
+                                        className="group hover:bg-primary-50 hover:relative text-xs"
                                     >
                                         <td className="px-6 py-4 whitespace-nowrap sticky left-0 group-hover:bg-primary-50 w-[200px] bg-white z-30">
                                             <div className="flex items-center">
@@ -179,7 +188,7 @@ export default function CreatorsOutreach({
                                                     />
                                                 </div>
                                                 <div className="ml-4">
-                                                    <div className="text-sm font-medium text-gray-900 truncate">
+                                                    <div className="text-xs font-medium text-gray-900 truncate">
                                                         {creator.fullname}
                                                     </div>
                                                     <div className="text-xs text-primary-500 inline-block truncate">
@@ -187,6 +196,9 @@ export default function CreatorsOutreach({
                                                     </div>
                                                 </div>
                                             </div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div>contacts</div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <select
@@ -219,12 +231,12 @@ export default function CreatorsOutreach({
                                                     </div>
                                                 </div>
                                             ) : (
-                                                <div className="text-sm text-gray-600"> - </div>
+                                                <div className="text-xs text-gray-600"> - </div>
                                             )}
                                         </td> */}
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div
-                                                className="text-sm text-gray-900 cursor-pointer hover:text-primary-500 duration-300 relative"
+                                                className="text-xs text-gray-900 cursor-pointer hover:text-primary-500 duration-300 relative"
                                                 onClick={(e) =>
                                                     setInlineEdit(e, index, 'next_step')
                                                 }
@@ -259,7 +271,7 @@ export default function CreatorsOutreach({
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div
-                                                className="text-sm text-left pr-2 text-gray-900 cursor-pointer hover:text-primary-500 duration-300 relative"
+                                                className="text-xs text-left pr-2 text-gray-900 cursor-pointer hover:text-primary-500 duration-300 relative"
                                                 onClick={(e) =>
                                                     setInlineEdit(e, index, 'rate_cents')
                                                 }
@@ -283,7 +295,7 @@ export default function CreatorsOutreach({
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div
-                                                className="text-sm text-left pr-2 text-gray-900 cursor-pointer hover:text-primary-500 duration-300 relative"
+                                                className="text-xs text-left pr-2 text-gray-900 cursor-pointer hover:text-primary-500 duration-300 relative"
                                                 onClick={(e) =>
                                                     setInlineEdit(e, index, 'paid_amount_cents')
                                                 }
@@ -348,10 +360,16 @@ export default function CreatorsOutreach({
 
                                         <td className="px-6 py-4 sm:sticky right-0 bg-white whitespace-nowrap z-50 group-hover:bg-primary-50 flex justify-end">
                                             <div
-                                                onClick={(e) => deleteCampaignCreator(e, creator)}
-                                                className="p-2 rounded-md text-gray-600  bg-gray-50 hover:bg-gray-100 border border-gray-200 duration-300 outline-none appearance-none text-center"
+                                                onClick={(e) => openNotes(e, creator)}
+                                                className="p-2 rounded-md text-gray-600  bg-gray-50 hover:bg-gray-100 border border-gray-200 duration-300 outline-none appearance-none text-center font-medium mr-2 cursor-pointer"
                                             >
-                                                <Trashcan className="w-4 h-4 cursor-pointer fill-tertiary-600 hover:fill-primary-600" />
+                                                Notes
+                                            </div>
+                                            <div
+                                                onClick={(e) => deleteCampaignCreator(e, creator)}
+                                                className="p-2 rounded-md text-gray-600  bg-gray-50 hover:bg-gray-100 border border-gray-200 duration-300 outline-none appearance-none text-center cursor-pointer"
+                                            >
+                                                <Trashcan className="w-4 h-4 fill-tertiary-600 hover:fill-primary-600" />
                                             </div>
                                         </td>
                                     </tr>

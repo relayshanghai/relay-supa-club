@@ -127,7 +127,7 @@ const campaigns = {
         noKolYet: 'You do not have any KOLs added to your campaign.',
         addKol: 'Click to add KOL',
         comments: 'Comments',
-        contact: 'Email',
+        contact: 'Contact',
         account: 'Account',
         creatorStatus: 'Status',
         addedBy: 'Added By',

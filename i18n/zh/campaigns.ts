@@ -121,7 +121,7 @@ const campaigns = {
         noKolYet: '您没有将任何 KOL 添加到您的项目中。',
         addKol: '点击添加KOL。',
         comments: '备注',
-        contact: '发邮件',
+        contact: '联系方式',
         account: '账户',
         creatorStatus: '状态',
         addedBy: '添加人',
