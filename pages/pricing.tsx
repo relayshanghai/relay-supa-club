@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Layout } from 'src/modules/layout';
+import { clientLogger } from 'src/utils/logger';
 const details = {
     diy: [
         { title: 'twoHundredNewInfluencerProfilesPerMonth', icon: 'check' },
@@ -39,44 +40,49 @@ const details = {
         { title: 'influencerOutreachExpertWorkingOnYourCampaigns', icon: 'check' }
     ]
 };
+const prices = {
+    monthly: {
+        diy: '$150',
+        diyMax: '$270',
+        VIP: 'Contact us'
+    },
+    quarterly: {
+        diy: '$99',
+        diyMax: '$220',
+        VIP: 'Contact us'
+    },
+    annually: {
+        diy: '$89',
+        diyMax: '$199',
+        VIP: 'Contact us'
+    }
+};
 
+const salesRefEmail = 'amy.hu@relay.club';
+const subject = 'relay.club VIP plan subscription';
+const body = "Hi, I'm interested in purchasing the VIP plan for my company.";
+const VIPEmailLink = `mailto:${salesRefEmail}?${new URLSearchParams({ subject, body })}`;
+
+const unselectedTabClasses = 'py-1 px-4 border-x border-primary-500 cursor-pointer';
+const selectedTabClasses = 'py-1 px-4 border-x border-primary-500 bg-primary-500 text-white';
+
+export type Period = 'monthly' | 'annually' | 'quarterly';
+
+/** Note: This file doesn't share a lot of the conventions we have elsewhere across the app, because this file is migrated from the marketing site, trying to make minimal changes in case we need to update both at the same time. */
 const Pricing = () => {
     const { t } = useTranslation();
-    const signupLink = 'https://app.relay.club/signup';
 
-    const unselectedTabClasses = 'py-1 px-4 border-x border-primary-500 cursor-pointer';
-    const selectedTabClasses = 'py-1 px-4 border-x border-primary-500 bg-primary-500 text-white';
+    const [period, setPeriod] = useState<Period>('annually');
 
-    const [period, setPeriod] = useState<'monthly' | 'annually' | 'quarterly'>('annually');
-    const prices = {
-        monthly: {
-            diy: '$150',
-            diyMax: '$270',
-            VIP: 'Contact us'
-        },
-        quarterly: {
-            diy: '$99',
-            diyMax: '$220',
-            VIP: 'Contact us'
-        },
-        annually: {
-            diy: '$89',
-            diyMax: '$199',
-            VIP: 'Contact us'
-        }
+    const openConfirmModal = (plan: 'diy' | 'diyMax', period: Period) => {
+        clientLogger({ plan, period });
     };
 
     return (
         <Layout>
-            <main className="py-20 flex-grow">
+            <main className="pt-20 flex-grow">
                 <div className="flex flex-col items-center container mx-auto">
                     <div className="text-center max-w-3xl mx-auto mb-16">
-                        <a
-                            href={signupLink}
-                            className="text-primary-400 uppercase tracking-wider text-xs font-medium border rounded-2xl px-3 py-1 w-fit hover:bg-primary-400 hover:text-white transition-all duration-300 ease-in-out"
-                        >
-                            {t('pricing.startNow')}
-                        </a>
                         <h2 className="text-3xl md:text-4xl mt-4 mb-6 font-bold font-heading">
                             {t('pricing.chooseA')}
                             <span className="text-primary-500"> {t('pricing.plan')}</span>
@@ -194,10 +200,10 @@ const Pricing = () => {
                                 })}
 
                                 <a
-                                    href={signupLink}
+                                    onClick={() => openConfirmModal('diy', period)}
                                     className="flex items-center mt-auto text-white bg-gray-400 border-0 py-2 px-4 w-full focus:outline-none hover:bg-gray-500 rounded"
                                 >
-                                    {t('pricing.startFreeTrial')}
+                                    {t('pricing.buyNow')}
                                     <svg
                                         fill="none"
                                         stroke="currentColor"
@@ -295,11 +301,11 @@ const Pricing = () => {
                                     </div>
                                 ))}
 
-                                <a
-                                    href={signupLink}
+                                <button
+                                    onClick={() => openConfirmModal('diyMax', period)}
                                     className="flex items-center mt-auto text-white bg-primary-500 border-0 py-2 px-4 w-full focus:outline-none hover:bg-primary-600 rounded"
                                 >
-                                    {t('pricing.startFreeTrial')}
+                                    {t('pricing.buyNow')}
                                     <svg
                                         fill="none"
                                         stroke="currentColor"
@@ -311,7 +317,7 @@ const Pricing = () => {
                                     >
                                         <path d="M5 12h14M12 5l7 7-7 7" />
                                     </svg>
-                                </a>
+                                </button>
                             </div>
                         </div>
                         <div className="p-4 lg:w-1/3 md:w-1/2 w-full hover:-translate-y-3 transition-all ease-in-out">
@@ -321,7 +327,7 @@ const Pricing = () => {
                                 </h2>
                                 <h1 className="text-4xl text-gray-900 leading-none flex items-center pb-4 mb-4 border-b border-gray-200">
                                     <span data-plan="VIP" className="price">
-                                        {prices[period].VIP}
+                                        {t('pricing.contactUs')}
                                     </span>
                                 </h1>
 
@@ -393,7 +399,9 @@ const Pricing = () => {
                                 ))}
 
                                 <a
-                                    href="mailto:hello@relay.club"
+                                    href={VIPEmailLink}
+                                    target="_blank"
+                                    rel="noreferrer"
                                     className="flex items-center mt-auto text-white bg-gray-400 border-0 py-2 px-4 w-full focus:outline-none hover:bg-gray-500 rounded"
                                 >
                                     {t('pricing.contactNow')}
@@ -418,7 +426,7 @@ const Pricing = () => {
                         <div className="text-center max-w-xl mx-auto">
                             <h2 className="mb-4 text-3xl text-white font-bold font-heading">
                                 <span>{t('pricing.checkOutOur')}</span>
-                                <a className="text-primary-300" href="/blog">
+                                <a className="text-primary-300" href="https://relay.club/blog">
                                     {t('pricing.blog')}
                                 </a>
                                 <br />

@@ -27,7 +27,9 @@ const pricing = {
         'Influencer outreach expert working on your campaigns 5 days a week',
     includesCustomEmailTemplates:
         'Includes custom email templates, subject headings, and search categories based on your brief',
-    moreInfluencerProfiles: 'More influencer profiles'
+    moreInfluencerProfiles: 'More influencer profiles',
+    buyNow: 'Buy Now',
+    contactUs: 'Contact us'
 };
 
 export default pricing;
