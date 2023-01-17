@@ -1,8 +1,10 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { CampaignDBUpdate, updateCampaign } from 'src/utils/api/db';
+import httpCodes from 'src/constants/httpCodes';
+import { CampaignDB, CampaignDBUpdate, updateCampaign } from 'src/utils/api/db';
 import { serverLogger } from 'src/utils/logger';
 
 export type CampaignUpdatePostBody = CampaignDBUpdate;
+export type CampaignUpdatePostResponse = CampaignDB;
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
@@ -12,10 +14,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         if (error) {
             serverLogger(error, 'error');
-            return res.status(500).json(error);
+            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json(error);
         }
-        return res.status(200).json(campaign);
+        return res.status(httpCodes.OK).json(campaign);
     }
 
-    return res.status(400).json(null);
+    return res.status(httpCodes.METHOD_NOT_ALLOWED).json({});
 }

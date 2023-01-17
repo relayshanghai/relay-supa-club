@@ -2,16 +2,23 @@ import { useCallback, useEffect, useState } from 'react';
 import { fetcher, nextFetch } from 'src/utils/fetcher';
 import useSWR from 'swr';
 
-import type { CampaignUpdatePostBody } from 'pages/api/campaigns/update';
+import type {
+    CampaignUpdatePostBody,
+    CampaignUpdatePostResponse
+} from 'pages/api/campaigns/update';
 
 import { useUser } from './use-user';
 import {
     CampaignCreatorDBInsert,
     CampaignCreatorDB,
-    CampaignDBInsert,
     CampaignDBUpdate
 } from 'src/utils/api/db/types';
 import { CampaignWithCompanyCreators } from 'src/utils/api/db';
+import { CampaignsCreatePostBody, CampaignsCreatePostResponse } from 'pages/api/campaigns/create';
+import {
+    CampaignCreatorAddCreatorPostBody,
+    CampaignCreatorAddCreatorPostResponse
+} from 'pages/api/campaigns/add-creator';
 
 export const useCampaigns = ({ campaignId }: any = {}) => {
     const { profile } = useUser();
@@ -34,27 +41,32 @@ export const useCampaigns = ({ campaignId }: any = {}) => {
     }, [campaignId, campaigns]);
 
     const createCampaign = useCallback(
-        async (input: CampaignDBInsert) =>
-            await nextFetch('campaigns/create', {
+        async (input: Omit<CampaignsCreatePostBody, 'company_id'>) => {
+            if (!profile?.company_id) throw new Error('No profile found');
+
+            const body: CampaignsCreatePostBody = {
+                ...input,
+                company_id: profile.company_id
+            };
+            return await nextFetch<CampaignsCreatePostResponse>('campaigns/create', {
                 method: 'post',
-                body: JSON.stringify({
-                    ...input,
-                    company_id: profile?.company_id
-                })
-            }),
+                body
+            });
+        },
 
         [profile]
     );
 
     const updateCampaign = useCallback(
         async (input: CampaignDBUpdate) => {
+            if (!profile?.company_id) throw new Error('No profile found');
             const body: CampaignUpdatePostBody = {
                 ...input,
-                company_id: profile?.company_id || undefined
+                company_id: profile.company_id
             };
-            return await nextFetch<CampaignUpdatePostBody>('campaigns/update', {
+            return await nextFetch<CampaignUpdatePostResponse>('campaigns/update', {
                 method: 'post',
-                body: JSON.stringify(body)
+                body
             });
         },
         [profile]
@@ -63,28 +75,31 @@ export const useCampaigns = ({ campaignId }: any = {}) => {
     const addCreatorToCampaign = useCallback(
         async (input: CampaignCreatorDBInsert) => {
             setLoading(true);
-            await nextFetch('campaigns/add-creator', {
+            if (!campaign?.id) throw new Error('No campaign found');
+            const body: CampaignCreatorAddCreatorPostBody = {
+                ...input,
+                campaign_id: campaign.id
+            };
+            await nextFetch<CampaignCreatorAddCreatorPostResponse>('campaigns/add-creator', {
                 method: 'post',
-                body: JSON.stringify({
-                    ...input,
-                    company_id: profile?.company_id
-                })
+                body
             });
 
             setLoading(false);
         },
-        [profile?.company_id]
+        [campaign?.id]
     );
 
     const updateCreatorInCampaign = useCallback(
         async (input: CampaignCreatorDB) => {
             setLoading(true);
+            if (!campaign?.id) throw new Error('No campaign found');
             await nextFetch('campaigns/update-creator', {
                 method: 'put',
-                body: JSON.stringify({
+                body: {
                     ...input,
-                    campaign_id: campaign?.id
-                })
+                    campaign_id: campaign.id
+                }
             });
             setLoading(false);
         },
@@ -94,12 +109,13 @@ export const useCampaigns = ({ campaignId }: any = {}) => {
     const deleteCreatorInCampaign = useCallback(
         async (input: CampaignCreatorDB) => {
             setLoading(true);
+            if (!campaign?.id) throw new Error('No campaign found');
             await nextFetch('campaigns/delete-creator', {
                 method: 'delete',
-                body: JSON.stringify({
+                body: {
                     ...input,
-                    campaign_id: campaign?.id
-                })
+                    campaign_id: campaign.id
+                }
             });
             setLoading(false);
         },

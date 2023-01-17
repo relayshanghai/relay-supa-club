@@ -223,7 +223,8 @@ const campaigns = {
         successCreateMsg: '您已成功创建一个新项目!',
         successUpdateMsg: '您已成功更新项目信息!',
         dedicatedVideo: '专属广告',
-        integratedVideo: '植入广告'
+        integratedVideo: '植入广告',
+        oopsSomethingWrong: '哎呀，出错了！'
     }
 };
 export default campaigns;

@@ -24,7 +24,7 @@ export const LanguageToggle = () => {
                 {displayOptions && (
                     <div
                         ref={optionsRef}
-                        className="flex flex-col overflow-hidden w-28 absolute mt-9 origin-top-right bg-white border border-gray border-opacity-40 rounded-md shadow-lg z-10"
+                        className="flex flex-col overflow-hidden w-28 absolute mt-9 mr-20 bg-white border border-gray border-opacity-40 rounded-md shadow-lg z-10"
                     >
                         <button
                             onClick={() => toggleLanguage('zh')}

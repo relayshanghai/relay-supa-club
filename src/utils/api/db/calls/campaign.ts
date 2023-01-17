@@ -27,9 +27,10 @@ export const updateCampaign = async (data: CampaignDBUpdate) =>
             ...data
         })
         .eq('id', data.id)
+        .select()
         .single();
 
-export const insertCampaignCreator = async (data: CampaignCreatorDBInsert, company_id: string) =>
+export const insertCampaignCreator = async (data: CampaignCreatorDBInsert, campaign_id: string) =>
     await supabase
         .from('campaign_creators')
         .insert({
@@ -37,15 +38,14 @@ export const insertCampaignCreator = async (data: CampaignCreatorDBInsert, compa
             status: 'to contact',
             ...data
         })
-        .eq('company_id', company_id)
+        .eq('campaign_id', campaign_id)
+        .select()
         .single();
 
 export const updateCampaignCreator = async (data: CampaignCreatorDBUpdate, campaign_id: string) =>
     await supabase
         .from('campaign_creators')
-        .update({
-            ...data
-        })
+        .update(data)
         .eq('id', data.id)
         .eq('campaign_id', campaign_id)
         .single();

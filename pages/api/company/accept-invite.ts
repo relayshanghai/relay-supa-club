@@ -1,4 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import httpCodes from 'src/constants/httpCodes';
+import { upsertProfile } from 'src/utils/api/db';
+import { serverLogger } from 'src/utils/logger';
 import { supabase } from 'src/utils/supabase-client';
 
 export type CompanyAcceptInvitePostBody = {
@@ -6,6 +9,15 @@ export type CompanyAcceptInvitePostBody = {
     password: string;
     firstName: string;
     lastName: string;
+    email: string;
+};
+
+export type CompanyAcceptInviteGetQueries = {
+    token: string;
+};
+export type CompanyAcceptInviteGetResponse = {
+    message: 'inviteValid';
+    email?: string;
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -21,29 +33,44 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             .single();
 
         if (error) {
-            return res.status(500).json(error);
+            serverLogger(error, 'error');
+            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json(error);
         }
         if (data?.used || Date.now() >= new Date(data.expire_at ?? '').getTime()) {
-            return res.status(500).json({
-                error: 'Invite is invalid or expired'
+            return res.status(httpCodes.UNAUTHORIZED).json({
+                error: 'inviteInvalid'
             });
         }
 
         // Sign-up the user with the given credentials
-        const { error: userError } = await supabase.auth.signUp({
+        const {
+            data: { user, session },
+            error: userError
+        } = await supabase.auth.signUp({
             email: data.email,
-            password,
-            options: {
-                data: {
-                    first_name: firstName,
-                    last_name: lastName,
-                    company_id: data.company_id
-                }
-            }
+            password
         });
 
         if (userError) {
-            return res.status(500).json(userError);
+            serverLogger(userError, 'error');
+            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json(userError);
+        }
+
+        if (user?.id || session?.user.id) {
+            const { error: profileUpsertError } = await upsertProfile({
+                id: user?.id || session?.user.id || '',
+                first_name: firstName,
+                last_name: lastName,
+                company_id: data.company_id
+            });
+            if (profileUpsertError) {
+                serverLogger(profileUpsertError, 'error');
+                return res.status(httpCodes.INTERNAL_SERVER_ERROR).json(profileUpsertError);
+            }
+        } else {
+            return res
+                .status(httpCodes.INTERNAL_SERVER_ERROR)
+                .json({ error: 'Failed to create user' });
         }
 
         // Mark the invite as used
@@ -56,36 +83,46 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             .single();
 
         if (updateError) {
-            return res.status(500).json(updateError);
+            serverLogger(updateError, 'error');
+            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json(updateError);
         }
 
-        return res.status(200).json({ data, invite });
+        return res.status(httpCodes.OK).json({ data, invite });
     }
     if (req.method === 'GET') {
-        const token = req.query.token as string;
-        const { data, error } = await supabase
-            .from('invites')
-            .select('used, expire_at')
-            .eq('id', token)
-            .limit(1)
-            .single();
-        if (error) {
-            return res.status(500).json({
-                error: 'Invite is invalid or expired'
-            });
+        try {
+            const { token } = req.query as CompanyAcceptInviteGetQueries;
+            if (!token) return res.status(httpCodes.BAD_REQUEST).json({ error: 'Missing token' });
+            const { data, error } = await supabase
+                .from('invites')
+                .select('used, expire_at, email')
+                .eq('id', token)
+                .limit(1)
+                .single();
+            if (error) {
+                serverLogger(error, 'error');
+                return res.status(httpCodes.UNAUTHORIZED).json({
+                    error: 'inviteInvalid'
+                });
+            }
+            if (data?.used) {
+                return res.status(httpCodes.UNAUTHORIZED).json({
+                    error: 'inviteUsed'
+                });
+            }
+            if (Date.now() >= new Date(data.expire_at ?? '').getTime()) {
+                return res.status(httpCodes.UNAUTHORIZED).json({
+                    error: 'inviteExpired'
+                });
+            }
+            return res.status(httpCodes.OK).json({ message: 'inviteValid', email: data.email });
+        } catch (error) {
+            serverLogger(error, 'error');
+            return res
+                .status(httpCodes.INTERNAL_SERVER_ERROR)
+                .json({ message: 'Something went wrong' });
         }
-        if (data?.used) {
-            return res.status(500).json({
-                error: 'Invite already used'
-            });
-        }
-        if (Date.now() >= new Date(data.expire_at ?? '').getTime()) {
-            return res.status(500).json({
-                error: 'Invite is expired'
-            });
-        }
-        return res.status(200).json({ message: 'Invite is valid' });
     }
 
-    return res.status(400).json(null);
+    return res.status(httpCodes.METHOD_NOT_ALLOWED).json({});
 }

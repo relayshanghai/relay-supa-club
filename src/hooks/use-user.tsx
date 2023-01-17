@@ -1,9 +1,6 @@
-import {
-    useSessionContext,
-    useSupabaseClient,
-    useUser as supabaseUseUser
-} from '@supabase/auth-helpers-react';
+import { useSessionContext, useSupabaseClient } from '@supabase/auth-helpers-react';
 import { User } from '@supabase/supabase-js';
+import { ProfilePutResponse } from 'pages/api/profiles';
 import {
     createContext,
     PropsWithChildren,
@@ -13,7 +10,8 @@ import {
     useMemo,
     useState
 } from 'react';
-import { ProfileDB } from 'src/utils/api/db/types';
+import { ProfileDB, ProfileInsertDB } from 'src/utils/api/db/types';
+import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger';
 import { Database } from 'types/supabase';
 
@@ -24,7 +22,7 @@ const ctx = createContext<{
     login: (email: string, password: string) => void;
     signup: (options: any) => void;
     logout: () => void;
-    updateProfile: (updates: any) => void;
+    upsertProfile: (updates: any) => void;
     refreshProfile: () => void;
 }>({
     user: null,
@@ -33,7 +31,7 @@ const ctx = createContext<{
     login: () => null,
     logout: () => null,
     signup: () => null,
-    updateProfile: () => null,
+    upsertProfile: () => null,
     refreshProfile: () => null
 });
 
@@ -41,12 +39,10 @@ export const useUser = () => useContext(ctx);
 
 export const UserProvider = ({ children }: PropsWithChildren) => {
     const [profile, setProfile] = useState<ProfileDB | null>(null);
-    const { isLoading } = useSessionContext();
-    const user = supabaseUseUser();
+    const { isLoading, session } = useSessionContext();
     const supabaseClient = useSupabaseClient<Database>();
 
     const [loading, setLoading] = useState<boolean>(true);
-
     useEffect(() => {
         setLoading(isLoading);
     }, [isLoading]);
@@ -58,8 +54,8 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
 
                 const { data, error } = await supabaseClient
                     .from('profiles')
-                    .select(`*, company:companies(id, name, website)`)
-                    .eq('id', user?.id)
+                    .select(`*`)
+                    .eq('id', session?.user?.id)
                     .single();
 
                 if (error) throw error;
@@ -71,14 +67,14 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
                 setLoading(false);
             }
         },
-        [supabaseClient, user?.id]
+        [supabaseClient, session?.user?.id]
     );
 
     useEffect(() => {
-        if (user?.id) {
+        if (session?.user?.id) {
             getProfile();
         }
-    }, [user, getProfile]);
+    }, [session, getProfile]);
 
     const login = useCallback(
         async (email: string, password: string) => {
@@ -89,8 +85,9 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
                     password
                 });
 
-                if (error) throw error;
+                if (error) throw new Error(error.message || 'Unknown error');
             } catch (e: any) {
+                clientLogger(e, 'error');
                 setLoading(false);
                 throw new Error(e.message || 'Unknown error');
             }
@@ -119,49 +116,40 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
         [supabaseClient.auth]
     );
 
-    // TODO: this should be moved to the backend
-    const updateProfile = useCallback(
-        async (input: any) => {
+    const upsertProfile = useCallback(
+        async (body: Omit<ProfileInsertDB, 'id'>) => {
             setLoading(true);
             try {
-                const {
-                    data: { user }
-                } = await supabaseClient.auth.getUser();
-                if (!user) throw new Error('User not found');
-                const updates = {
-                    id: user.id,
-                    updated_at: new Date(),
-                    ...input
-                };
-                const { error } = await supabaseClient.from('profiles').upsert(updates).single();
-                // TODO: check if upsert returns data
-
-                if (error) throw error;
+                if (!session?.user?.id) throw new Error('User not found');
+                return await nextFetch<ProfilePutResponse>('profiles', {
+                    method: 'PUT',
+                    body: { id: session.user?.id, ...body }
+                });
             } catch (e: any) {
                 throw new Error(e.message || 'Unknown error');
             } finally {
                 setLoading(false);
             }
         },
-        [supabaseClient]
+        [session?.user]
     );
-
     const logout = useCallback(async () => {
         await supabaseClient.auth.signOut();
+        setProfile(null);
     }, [supabaseClient.auth]);
 
     const value = useMemo(
         () => ({
-            user,
+            user: session?.user || null,
             login,
             logout,
             signup,
             loading,
             profile,
-            updateProfile,
+            upsertProfile,
             refreshProfile: getProfile
         }),
-        [user, loading, profile, login, signup, logout, updateProfile, getProfile]
+        [session?.user, loading, profile, login, signup, logout, upsertProfile, getProfile]
     );
 
     return <ctx.Provider value={value}>{children}</ctx.Provider>;

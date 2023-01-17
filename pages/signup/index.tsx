@@ -1,12 +1,20 @@
+import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
+import { LanguageToggle } from 'src/components/common/language-toggle';
 import { Input } from 'src/components/input';
 import { Title } from 'src/components/title';
 import { useFields } from 'src/hooks/use-fields';
 import { useUser } from 'src/hooks/use-user';
+import { clientLogger } from 'src/utils/logger';
 
 export default function Register() {
+    const { t } = useTranslation();
+    const [submitting, setSubmitting] = useState(false);
+
     const router = useRouter();
     const {
         values: { firstName, lastName, email, password, confirmPassword },
@@ -18,64 +26,84 @@ export default function Register() {
         password: '',
         confirmPassword: ''
     });
-    const { signup } = useUser();
+    const { signup, logout } = useUser();
+    useEffect(() => {
+        // sometimes the cookies and signed in status still persist to this page, so call logout again
+        logout();
+    }, [logout]);
+
+    const handleSubmit = async () => {
+        setSubmitting(true);
+        try {
+            await signup({
+                email,
+                password,
+                data: {
+                    first_name: firstName,
+                    last_name: lastName
+                }
+            });
+            await router.push('/signup/onboarding');
+        } catch (error) {
+            clientLogger(error, 'error');
+            toast.error(t('login.oopsSomethingWentWrong'));
+        } finally {
+            setSubmitting(false);
+        }
+    };
 
     return (
-        <div className="w-full h-full px-10 py-8">
-            <Title />
-            <form className="max-w-sm mx-auto h-full flex flex-col justify-center items-center space-y-6">
-                <div className="py-8">
-                    <div className="font-bold">First, let&rsquo;s create an account for you</div>
+        <div className="w-full h-screen px-10 flex flex-col">
+            <div className="sticky top-0 flex items-center w-full justify-between">
+                <Title />
+                <LanguageToggle />
+            </div>
+            <form className="max-w-xs w-full mx-auto flex-grow flex flex-col justify-center items-center space-y-5">
+                <div className="text-left w-full">
+                    <h1 className="font-bold text-4xl mb-2">{t('login.signUp')}</h1>
+                    <h3 className="text-sm text-gray-600 mb-8">
+                        {t('login.startYour30DayFreeTrial')}
+                    </h3>
                 </div>
                 <Input
-                    label={'First Name'}
+                    label={t('login.firstName')}
                     type="first_name"
-                    placeholder="Enter your first name"
+                    placeholder={t('login.firstNamePlaceholder') || ''}
                     value={firstName}
                     required
-                    onChange={(e: any) => {
-                        setFieldValue('firstName', e.target.value);
-                    }}
+                    onChange={(e) => setFieldValue('firstName', e.target.value)}
                 />
                 <Input
-                    label={'Last Name'}
+                    label={t('login.lastName')}
                     type="last_name"
-                    placeholder="Enter your last name"
+                    placeholder={t('login.lastNamePlaceholder') || ''}
                     value={lastName}
                     required
-                    onChange={(e: any) => {
-                        setFieldValue('lastName', e.target.value);
-                    }}
+                    onChange={(e) => setFieldValue('lastName', e.target.value)}
                 />
                 <Input
-                    label={'Email'}
+                    label={t('login.email')}
                     type="email"
                     placeholder="hello@relay.club"
                     value={email}
                     required
-                    onChange={(e: any) => {
-                        setFieldValue('email', e.target.value);
-                    }}
+                    onChange={(e) => setFieldValue('email', e.target.value)}
                 />
                 <Input
-                    label={'Password'}
+                    label={t('login.password')}
                     type="password"
-                    placeholder="Enter your password"
+                    placeholder={t('login.passwordPlaceholder') || ''}
                     value={password}
                     required
-                    onChange={(e: any) => {
-                        setFieldValue('password', e.target.value);
-                    }}
+                    onChange={(e) => setFieldValue('password', e.target.value)}
                 />
                 <Input
-                    label={'Confirm Password'}
+                    label={t('login.confirmPassword')}
                     type="password"
-                    placeholder="Enter your password"
+                    placeholder={t('login.passwordPlaceholder') || ''}
                     value={confirmPassword}
                     required
-                    onChange={(e: any) => {
-                        setFieldValue('confirmPassword', e.target.value);
-                    }}
+                    onChange={(e) => setFieldValue('confirmPassword', e.target.value)}
                 />
                 <Button
                     disabled={
@@ -83,30 +111,24 @@ export default function Register() {
                         !lastName ||
                         !email ||
                         !password ||
-                        password !== confirmPassword
+                        password !== confirmPassword ||
+                        submitting
                     }
-                    onClick={async (e: any) => {
+                    onClick={(e) => {
                         e.preventDefault();
-
-                        try {
-                            await signup({
-                                email,
-                                password,
-                                data: {
-                                    first_name: firstName,
-                                    last_name: lastName
-                                }
-                            });
-                            router.push('/signup/onboarding');
-                        } catch (e) {
-                            // eslint-disable-next-line no-console
-                            console.log(e);
-                            toast.error('Ops, something went wrong');
-                        }
+                        handleSubmit();
                     }}
                 >
-                    Sign up
+                    {t('login.signUp')}
                 </Button>
+                <p className="inline text-gray-500 text-sm">
+                    {t('login.alreadyHaveAnAccount')}
+                    <Link href="/login">
+                        <a className="inline text-primary-700 hover:text-primary-600 cursor-pointer">
+                            {t('login.logIn')}
+                        </a>
+                    </Link>
+                </p>
             </form>
         </div>
     );
