@@ -14,7 +14,7 @@ import { useUser } from './use-user';
 export const useCompany = () => {
     const { profile, user } = useUser();
     const { data: company, mutate: refreshCompany } = useSWR(
-        profile?.company_id ? `company?id=${profile.company_id}` : null,
+        profile?.company_id ? `company${new URLSearchParams({ id: profile.company_id })}` : null,
         nextFetchWithQueries<CompanyGetQueries, CompanyWithProfilesInvitesAndUsage>
     );
 

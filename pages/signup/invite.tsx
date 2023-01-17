@@ -42,7 +42,7 @@ export default function Register() {
                     CompanyAcceptInviteGetQueries,
                     CompanyAcceptInviteGetResponse
                 >('company/accept-invite', { token });
-                if (tokenStatus?.message && tokenStatus.email) {
+                if (tokenStatus.message && tokenStatus.email) {
                     setFieldValue('email', tokenStatus.email);
                     setInviteStatus(tokenStatus?.message);
                 } else setInviteStatus('inviteValid');

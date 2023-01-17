@@ -123,7 +123,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
                 if (!session?.user?.id) throw new Error('User not found');
                 return await nextFetch<ProfilePutResponse>('profiles', {
                     method: 'PUT',
-                    body: { id: session?.user?.id, ...body }
+                    body: { id: session.user?.id, ...body }
                 });
             } catch (e: any) {
                 throw new Error(e.message || 'Unknown error');

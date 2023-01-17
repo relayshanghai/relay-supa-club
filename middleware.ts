@@ -51,7 +51,7 @@ export async function middleware(req: NextRequest) {
     const redirectUrl = req.nextUrl.clone();
 
     // Check that user is logged in
-    if (session?.user?.email?.includes('@')) {
+    if (session?.user?.email) {
         // this is a special case with onboarding. We require a user id, but not an activated company account.
         if (req.nextUrl.pathname.includes('api/company/create')) return res;
 

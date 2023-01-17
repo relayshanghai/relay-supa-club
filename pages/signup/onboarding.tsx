@@ -24,7 +24,7 @@ export default function Register() {
     const [submitting, setSubmitting] = useState(false);
 
     // const [paymentMethod, setPaymentMethod ] = useState(false);
-    // TODO: during this component's initial loading start, optimistically make a company. Then use the company ID to generate a Stripe customer id. Then create an add payment button that links to the strip account dashboard, detect the payment method and add a customer id when finally submitting this page. middleware.ts checks for cus_id to confirm payment method.
+    // TODO: during this component's initial loading start, optimistically make a company. Then use the company ID to generate a Stripe customer id. Then create an add payment button that links to the stripe account dashboard, detect the payment method and add a customer id when finally submitting this page. middleware.ts checks for cus_id to confirm payment method.
     useEffect(() => {
         const checkForCompletedOnboard = async () => {
             if (company?.cus_id) router.push('/dashboard');
