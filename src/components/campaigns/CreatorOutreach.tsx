@@ -369,18 +369,22 @@ export default function CreatorsOutreach({
                                             </select>
                                         </td>
 
-                                        <td className="px-6 py-4 sm:sticky right-0 bg-white whitespace-nowrap z-50 group-hover:bg-primary-50 flex justify-end">
-                                            <div
-                                                onClick={(e) => openNotes(e, creator)}
-                                                className="p-2 rounded-md text-gray-600  bg-gray-50 hover:bg-gray-100 border border-gray-200 duration-300 outline-none appearance-none text-center font-medium mr-2 cursor-pointer"
-                                            >
-                                                Notes
-                                            </div>
-                                            <div
-                                                onClick={(e) => deleteCampaignCreator(e, creator)}
-                                                className="p-2 rounded-md text-gray-600  bg-gray-50 hover:bg-gray-100 border border-gray-200 duration-300 outline-none appearance-none text-center cursor-pointer"
-                                            >
-                                                <Trashcan className="w-4 h-4 fill-tertiary-600 hover:fill-primary-600" />
+                                        <td className="px-6 py-4 sm:sticky right-0 bg-white whitespace-nowrap z-50 group-hover:bg-primary-50 ">
+                                            <div className="flex justify-end">
+                                                <div
+                                                    onClick={(e) => openNotes(e, creator)}
+                                                    className="p-2 rounded-md text-gray-600  bg-gray-50 hover:bg-gray-100 border border-gray-200 duration-300 outline-none appearance-none text-center font-medium mr-2 cursor-pointer"
+                                                >
+                                                    Notes
+                                                </div>
+                                                <div
+                                                    onClick={(e) =>
+                                                        deleteCampaignCreator(e, creator)
+                                                    }
+                                                    className="p-2 rounded-md text-gray-600  bg-gray-50 hover:bg-gray-100 border border-gray-200 duration-300 outline-none appearance-none text-center cursor-pointer"
+                                                >
+                                                    <Trashcan className="w-4 h-4 fill-tertiary-600 hover:fill-primary-600" />
+                                                </div>
                                             </div>
                                         </td>
                                     </tr>
