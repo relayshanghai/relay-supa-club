@@ -11,6 +11,7 @@ import { Modal } from 'src/components/modal';
 import { useTranslation } from 'react-i18next';
 import { useCampaigns } from 'src/hooks/use-campaigns';
 import CampaignModalCard from 'src/components/campaigns/campaign-modal-card';
+import { useUser } from 'src/hooks/use-user';
 
 const filterCountry = (items: any[]) => {
     return items.filter((item: any) => {
@@ -20,6 +21,8 @@ const filterCountry = (items: any[]) => {
 
 export const Search = () => {
     const { t } = useTranslation();
+    const { profile } = useUser();
+
     const {
         platforms,
         platform,
@@ -59,8 +62,8 @@ export const Search = () => {
     const { campaigns } = useCampaigns();
 
     useEffect(() => {
-        search();
-    }, [search]);
+        if (profile?.id && profile?.company_id) search();
+    }, [search, profile?.id, profile?.company_id]);
 
     const accounts = results?.accounts ?? [];
 
@@ -160,9 +163,8 @@ export const Search = () => {
                         setAudienceLocation(topics.map((item: any) => ({ weight: 5, ...item })));
                     }}
                     TagComponent={({ onClick, ...item }: any) => {
-                        const selected = audienceLocation.find(
-                            (country: any) => country.id === item.id
-                        );
+                        const selected = audienceLocation.find((country) => country.id === item.id);
+                        if (!selected) return null;
                         return (
                             <div
                                 className="pl-2 pr-1 text-gray-900 rounded bg-gray-100 whitespace-nowrap hover:bg-gray-200 cursor-pointer flex items-center flex-row"
@@ -374,10 +376,13 @@ export const Search = () => {
                                     className="bg-primary-200 rounded-md p-1 mt-1"
                                     value={engagement}
                                     onChange={(e) => {
-                                        if (e.target.value === 'any') {
+                                        if (
+                                            e.target.value === 'any' ||
+                                            Number(e.target.value) === 0
+                                        ) {
                                             setEngagement(undefined);
                                         } else {
-                                            setEngagement(e.target.value);
+                                            setEngagement(Number(e.target.value));
                                         }
                                     }}
                                 >

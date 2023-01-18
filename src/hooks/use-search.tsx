@@ -1,24 +1,27 @@
+import { KolPostRequest, KolPostResponse } from 'pages/api/kol';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { nextFetch } from 'src/utils/fetcher';
-import { CreatorSearchResult, CreatorPlatform, LocationWeighted } from 'types';
+import { clientLogger } from 'src/utils/logger';
+import { CreatorSearchResult, CreatorPlatform, LocationWeighted, CreatorSearchTag } from 'types';
 import { useUser } from './use-user';
 
 export const useSearch = () => {
     const { profile } = useUser();
     const [loading, setLoading] = useState(false);
-    const [page, setPage] = useState<any>(0);
+    const [page, setPage] = useState(0);
     const [results, setResults] = useState<CreatorSearchResult>();
-    const [tags, setTopicTags] = useState<any[]>([]);
+    const [tags, setTopicTags] = useState<CreatorSearchTag[]>([]);
     const [lookalike, setLookalike] = useState<any>();
     const [KOLLocation, setKOLLocation] = useState<LocationWeighted[]>([]);
-    const [views, setViews] = useState<any[]>([]);
-    const [audience, setAudience] = useState<any[]>([]);
-    const [gender, setGender] = useState<any>();
-    const [engagement, setEngagement] = useState<any>();
-    const [lastPost, setLastPost] = useState<any>();
-    const [contactInfo, setContactInfo] = useState<any>();
-    const [audienceLocation, setAudienceLocation] = useState<any[]>([]);
+    const [views, setViews] = useState<string[]>([]);
+    const [audience, setAudience] = useState<string[]>([]);
+    const [gender, setGender] = useState<string>();
+    const [engagement, setEngagement] = useState<number>();
+    const [lastPost, setLastPost] = useState<string>();
+    const [contactInfo, setContactInfo] = useState<string>();
+    const [audienceLocation, setAudienceLocation] = useState<LocationWeighted[]>([]);
     const [platform, setPlatform] = useState<CreatorPlatform>('youtube');
+
     const platforms: {
         icon: string;
         label: string;
@@ -34,54 +37,51 @@ export const useSearch = () => {
     const ref = useRef<any>();
 
     const search = useCallback(async () => {
-        if (profile?.company_id) {
-            setLoading(true);
+        setLoading(true);
+        if (!profile?.company_id || !profile?.id) {
+            throw new Error('No company id or user id found');
+        }
+        if (ref.current) {
+            ref.current.abort();
+        }
 
-            if (ref.current) {
-                ref.current.abort();
-            }
+        const controller = new AbortController();
+        const signal = controller.signal;
+        ref.current = controller;
 
-            const controller = new AbortController();
-            const signal = controller.signal;
-            ref.current = controller;
+        try {
+            const bodyData: KolPostRequest = {
+                platform,
+                lookalike,
+                KOLLocation,
+                audienceLocation,
+                // TODO: add UI option for user to select how many results per page
+                // resultsPerPageLimit = 10
+                page,
+                audience,
+                views,
+                gender,
+                engagement,
+                lastPost,
+                contactInfo,
 
-            try {
-                const bodyData = {
-                    // TODO: add option for user to select how many results per page
-                    // resultsPerPageLimit = 10
-                    platform,
-                    term: search,
-                    page,
-                    tags,
-                    company_id: profile?.company_id,
-                    lookalike,
-                    KOLLocation,
-                    audienceLocation,
-                    audience,
-                    views,
-                    gender,
-                    engagement,
-                    lastPost,
-                    contactInfo,
-                    user_id: profile?.id
-                };
+                company_id: profile?.company_id,
+                user_id: profile?.id
+            };
 
-                const res = await nextFetch<CreatorSearchResult>('kol', {
-                    method: 'post',
-                    signal,
-                    body: JSON.stringify(bodyData)
-                });
+            const res = await nextFetch<KolPostResponse>('kol', {
+                method: 'post',
+                signal,
+                body: JSON.stringify(bodyData)
+            });
 
-                setResults(res);
-            } catch (error) {
-                // eslint-disable-next-line no-console
-                console.log(error);
-            } finally {
-                setLoading(false);
-            }
+            setResults(res);
+        } catch (error) {
+            clientLogger(error, 'error');
+        } finally {
+            setLoading(false);
         }
     }, [
-        tags,
         platform,
         page,
         profile,
