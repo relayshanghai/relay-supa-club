@@ -10,10 +10,12 @@ import { useSupabaseClient } from '@supabase/auth-helpers-react';
 
 export default function CampaignModalCard({
     campaign,
-    creator
+    creator,
+    platform
 }: {
     campaign: CampaignWithCompanyCreators;
     creator: CreatorSearchAccountObject | null;
+    platform: string;
 }) {
     const supabase = useSupabaseClient();
     const { addCreatorToCampaign, loading } = useCampaigns({
@@ -31,7 +33,8 @@ export default function CampaignModalCard({
                 avatar_url: creator?.account.user_profile?.picture,
                 username: creator?.account.user_profile?.username,
                 fullname: creator?.account.user_profile?.fullname,
-                link_url: creator?.account.user_profile?.url
+                link_url: creator?.account.user_profile?.url,
+                platform: platform
             });
         toast.success(t('campaigns.modal.addedSuccessfully'));
         setHasCreator(true);

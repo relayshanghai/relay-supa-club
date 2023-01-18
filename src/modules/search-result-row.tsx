@@ -13,13 +13,15 @@ export const SearchResultRow = ({
     platform,
     setLookalike,
     setShowCampaignListModal,
-    setSelectedCreator
+    setSelectedCreator,
+    setSelectedPlatform
 }: {
     creator?: CreatorSearchAccountObject;
     platform: CreatorPlatform;
     setLookalike: (creator: CreatorSearchAccountObject) => void;
     setSelectedCreator: (creator: CreatorSearchAccountObject) => void;
     setShowCampaignListModal: (show: boolean) => void;
+    setSelectedPlatform: (platform: CreatorPlatform) => void;
 }) => {
     const { t } = useTranslation();
     const placeholder = !creator;
@@ -35,6 +37,7 @@ export const SearchResultRow = ({
     const addToCampaign = () => {
         setShowCampaignListModal(true);
         if (creator) setSelectedCreator(creator);
+        setSelectedPlatform(platform);
     };
 
     return (

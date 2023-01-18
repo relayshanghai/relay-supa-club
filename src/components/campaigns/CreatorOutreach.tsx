@@ -8,6 +8,7 @@ import { toast } from 'react-hot-toast';
 import TableInput from './campaign-table-input';
 import { CampaignWithCompanyCreators } from 'src/utils/api/db';
 import { CampaignCreatorDB } from 'src/utils/api/db/types';
+import { SocialMediaIcon } from '../common/social-media-icon';
 
 export default function CreatorsOutreach({
     currentCampaign
@@ -180,12 +181,20 @@ export default function CreatorsOutreach({
                                     >
                                         <td className="px-6 py-4 whitespace-nowrap sticky left-0 group-hover:bg-primary-50 w-[200px] bg-white z-30">
                                             <div className="flex items-center">
-                                                <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300">
+                                                <div className="relative flex-shrink-0 h-10 w-10 rounded-full bg-gray-300">
                                                     <img
                                                         className="h-10 w-10 rounded-full"
                                                         src={`https://image-cache.brainchild-tech.cn/?link=${creator.avatar_url}`}
                                                         alt=""
                                                     />
+                                                    <div className="absolute right-0 bottom-0 ">
+                                                        <SocialMediaIcon
+                                                            platform={creator.platform}
+                                                            width={16}
+                                                            height={16}
+                                                            className="border-gray-500"
+                                                        />
+                                                    </div>
                                                 </div>
                                                 <div className="ml-4">
                                                     <div className="text-xs font-medium text-gray-900 truncate">
