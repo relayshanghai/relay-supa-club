@@ -49,7 +49,7 @@ export const CreatorContacts = (creator: CampaignCreatorDB) => {
                                         <SocialMediaIcon platform={contact.type} />
                                     </div>
                                     <div
-                                        className={`mt-1 group/text invisible group-hover/item:visible group-hover/edit:opacity-100 absolute -bottom-4 text-xs text-primary-500`}
+                                        className={`mt-1 group/text invisible group-hover/item:visible group-hover/edit:opacity-100 absolute inset-x-0 -bottom-6 text-xs text-primary-500`}
                                     >
                                         {contact.value}
                                     </div>
