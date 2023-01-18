@@ -4,6 +4,7 @@ import creators from './creators';
 import website from './website';
 import account from './account';
 import login from './login';
+import pricing from './pricing';
 
 const translations = {
     translation: {
@@ -12,7 +13,8 @@ const translations = {
         creators,
         website,
         account,
-        login
+        login,
+        pricing
     }
 };
 export default translations;

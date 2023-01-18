@@ -12,7 +12,6 @@ import { SubscriptionConfirmModal } from './subscription-confirm-modal';
 export const SubscriptionDetails = () => {
     const {
         subscription: subscriptionWrongType,
-        plans,
         paymentMethods,
         createSubscriptions
     } = useSubscription();
@@ -21,7 +20,7 @@ export const SubscriptionDetails = () => {
     const subscription = subscriptionWrongType as any;
     const [confirmModalData, setConfirmModalData] = useState<StripePlanWithPrice | null>(null);
 
-    const { userDataLoading, profile, company } = useContext(AccountContext);
+    const { userDataLoading, company } = useContext(AccountContext);
 
     const { t } = useTranslation();
     return (
@@ -90,52 +89,9 @@ export const SubscriptionDetails = () => {
                     </div>
                 </div>
             )}
-            {paymentMethods?.data?.length !== 0 && Array.isArray(plans) && (
-                <div className="w-full pt-8 divide-y divide-gray-200">
-                    <div className="pb-4">{t('account.subscription.availablePlans')}</div>
-                    {plans?.map((plan, i) => {
-                        return (
-                            <div
-                                key={plan.id}
-                                className="flex flex-row space-x-2 items-center justify-between w-full py-2"
-                            >
-                                <div className="text-sm font-bold w-1/4">
-                                    {i === 0 && (
-                                        <p className="text-xs text-gray-500 font-normal">
-                                            {t('account.subscription.planName')}
-                                        </p>
-                                    )}
-                                    {plan.name}{' '}
-                                    {plan.name === subscription?.product?.name && (
-                                        <p className="text-xs bg-gray-200 p-1 rounded">
-                                            {t('account.subscription.active')}
-                                        </p>
-                                    )}
-                                </div>
-                                <div className="text-sm font-bold w-1/4">
-                                    {i === 0 && (
-                                        <p className="text-xs text-gray-500 font-normal">
-                                            {t('account.subscription.monthlyProfiles')}
-                                        </p>
-                                    )}
-                                    {plan.metadata.usage_limit}
-                                </div>
-                                {profile?.admin && plan.prices && plan.prices[1]?.amount && (
-                                    <div className="text-sm font-bold w-2/6 flex flex-row justify-end">
-                                        <Button
-                                            disabled={plan.id === subscription?.plan_id}
-                                            onClick={() => setConfirmModalData(plan)}
-                                        >
-                                            {Number(plan.prices[1]?.amount / 100).toLocaleString()}{' '}
-                                            / {plan.prices[1]?.interval}
-                                        </Button>
-                                    </div>
-                                )}
-                            </div>
-                        );
-                    })}
-                </div>
-            )}
+            <Link href="/pricing">
+                <Button>Upgrade subscription</Button>
+            </Link>
         </div>
     );
 };
