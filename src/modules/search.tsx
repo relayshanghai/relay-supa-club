@@ -11,6 +11,8 @@ import { Modal } from 'src/components/modal';
 import { useTranslation } from 'react-i18next';
 import { useCampaigns } from 'src/hooks/use-campaigns';
 import CampaignModalCard from 'src/components/campaigns/campaign-modal-card';
+import { Spinner } from 'src/components/icons';
+import { SkeletonSearchResultRow } from 'src/components/common/skeleton-search-result-row';
 
 const filterCountry = (items: any[]) => {
     return items.filter((item: any) => {
@@ -64,10 +66,11 @@ export const Search = () => {
     const { campaigns } = useCampaigns();
 
     const [page, setPage] = useState(0);
+    const [loadingMore, setLoadingMore] = useState(false);
 
     useEffect(() => {
         // because search is a useCallback that depends on all the state variables, this will trigger a re-search when any of the state variables change.
-        // then the search filters change, we always want to start fresh from page 0
+        // when the search filters change, we always want to start fresh from page 0
         search({});
     }, [search]);
 
@@ -91,7 +94,7 @@ export const Search = () => {
             <div>
                 <SearchTopics
                     path="/api/kol/topics"
-                    placeholder={t('creators.index.searchTopic')}
+                    placeholder={t('creators.searchTopic')}
                     topics={tags}
                     platform={platform}
                     onSetTopics={(topics: any) => {
@@ -102,7 +105,7 @@ export const Search = () => {
             <div className="flex flex-col md:flex-row md:space-x-4 md:space-y-0 items-start space-y-2">
                 <SearchTopics
                     path="/api/kol/lookalike"
-                    placeholder={t('creators.index.similarKol')}
+                    placeholder={t('creators.similarKol')}
                     topics={lookalike}
                     platform={platform}
                     onSetTopics={(topics: any) => {
@@ -262,7 +265,7 @@ export const Search = () => {
                             }}
                             variant="secondary"
                         >
-                            {t('creators.index.clearFilter')}
+                            {t('creators.clearFilter')}
                         </Button>
                     ) : null}
                 </div>
@@ -462,7 +465,7 @@ export const Search = () => {
             {resultPages.length > 0 && (
                 <div className="flex items-center">
                     <div className="font-bold text-sm">
-                        {`${t('creators.index.results')}: ${formatter(resultsTotal)}`}
+                        {`${t('creators.results')}: ${formatter(resultsTotal)}`}
                     </div>
                 </div>
             )}
@@ -476,24 +479,24 @@ export const Search = () => {
                     <thead className="bg-white sticky top-0">
                         <tr>
                             <th className="w-2/4 px-4 py-4 text-xs text-gray-500 font-normal text-left">
-                                {t('creators.index.account')}
+                                {t('creators.account')}
                             </th>
                             <th className="text-xs pr-4 whitespace-nowrap text-gray-500 font-normal text-left">
-                                {t('creators.index.subscribers')}
+                                {t('creators.subscribers')}
                             </th>
                             <th className="text-xs pr-4 whitespace-nowrap text-gray-500 font-normal text-left">
-                                {t('creators.index.engagements')}
+                                {t('creators.engagements')}
                             </th>
                             <th className="text-xs pr-4 whitespace-nowrap text-gray-500 font-normal text-left">
-                                {t('creators.index.engagementRate')}
+                                {t('creators.engagementRate')}
                             </th>
                             <th className="text-xs pr-4 whitespace-nowrap text-gray-500 font-normal text-left">
-                                {t('creators.index.avgViews')}
+                                {t('creators.avgViews')}
                             </th>
                         </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                        {resultPages.length > 0 &&
+                        {resultPages.length > 0 ? (
                             resultPages.map((page) =>
                                 page.map((creator, i) => (
                                     <SearchResultRow
@@ -505,17 +508,36 @@ export const Search = () => {
                                         setSelectedCreator={setSelectedCreator}
                                     />
                                 ))
-                            )}
+                            )
+                        ) : loading ? (
+                            [...Array(10)].map((_, i) => (
+                                <SkeletonSearchResultRow key={i} delay={i % 2 === 0 ? 0 : 300} />
+                            ))
+                        ) : (
+                            <tr>
+                                <td className="text-center py-4" colSpan={5}>
+                                    {t('creators.noResults')}
+                                </td>
+                            </tr>
+                        )}
                     </tbody>
                 </table>
             </div>
+
+            {loadingMore && (
+                <div className="w-full flex justify-center p-10">
+                    <Spinner className="fill-primary-600 text-white w-12 h-12" />
+                </div>
+            )}
             <Button
                 onClick={async () => {
+                    setLoadingMore(true);
                     await search({ page: page + 1 });
+                    setLoadingMore(false);
                     setPage(page + 1);
                 }}
             >
-                View More
+                {t('creators.loadMore')}
             </Button>
             <Modal
                 title={t('campaigns.modal.addToCampaign') || ''}
@@ -539,7 +561,9 @@ export const Search = () => {
                             ))}
                         </div>
                     ) : (
-                        <div className="text-sm text-gray-600">You have no campaign yet</div>
+                        <div className="text-sm text-gray-600">
+                            {t('campaigns.modal.noCampaigns')}
+                        </div>
                     )}
                 </>
             </Modal>

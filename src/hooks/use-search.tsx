@@ -94,7 +94,7 @@ export const useSearch = () => {
             } catch (error) {
                 clientLogger(error, 'error');
             } finally {
-                setLoading(false);
+                // setLoading(false);
             }
         },
         [
