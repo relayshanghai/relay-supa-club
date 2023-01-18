@@ -6,12 +6,11 @@ import { formatter } from 'src/utils/formatter';
 import { SearchTopics } from 'src/modules/search-topics';
 import { AdjustmentsVerticalIcon } from '@heroicons/react/24/solid';
 import { SearchResultRow } from './search-result-row';
-import { CreatorSearchAccountObject, CreatorSearchResult } from 'types';
+import { CreatorSearchAccountObject } from 'types';
 import { Modal } from 'src/components/modal';
 import { useTranslation } from 'react-i18next';
 import { useCampaigns } from 'src/hooks/use-campaigns';
 import CampaignModalCard from 'src/components/campaigns/campaign-modal-card';
-import { useUser } from 'src/hooks/use-user';
 
 const filterCountry = (items: any[]) => {
     return items.filter((item: any) => {
@@ -19,16 +18,16 @@ const filterCountry = (items: any[]) => {
     });
 };
 
+const resultsPerPageOptions = [10, 20, 50, 100];
+/** Search Filter - Subscribers and Avg view filter options: 1k, 5k, 10k, 15k, 25k, 50k, 100k, 250k, 500k, 1m */
+const options = [1e3, 5e3, 1e4, 15e3, 25e3, 50e3, 1e5, 25e4, 50e4, 1e6];
 export const Search = () => {
     const { t } = useTranslation();
-    const { profile } = useUser();
 
     const {
         platforms,
         platform,
         setPlatform,
-        page,
-        // setPage,
         tags,
         setTopicTags,
         lookalike,
@@ -38,7 +37,8 @@ export const Search = () => {
         audienceLocation,
         setAudienceLocation,
         loading,
-        results,
+        resultsTotal,
+        resultPages,
         search,
         audience,
         setAudience,
@@ -51,26 +51,25 @@ export const Search = () => {
         lastPost,
         setLastPost,
         contactInfo,
-        setContactInfo
+        setContactInfo,
+
+        resultsPerPageLimit,
+        setResultsPerPageLimit
     } = useSearch();
 
     const [filterModalOpen, setFilterModalOpen] = useState(false);
 
-    const options = [1e3, 5e3, 1e4, 15e3, 25e3, 50e3, 1e5, 25e4, 50e4, 1e6]; // Search Filter - Subscribers and Avg view filter options: 1k, 5k, 10k, 15k, 25k, 50k, 100k, 250k, 500k, 1m
     const [showCampaignListModal, setShowCampaignListModal] = useState(false);
     const [selectedCreator, setSelectedCreator] = useState<CreatorSearchAccountObject | null>(null);
     const { campaigns } = useCampaigns();
 
+    const [page, setPage] = useState(0);
+
     useEffect(() => {
-        if (profile?.id && profile?.company_id) search();
-    }, [search, profile?.id, profile?.company_id]);
-
-    const accounts = results?.accounts ?? [];
-
-    const feed: CreatorSearchResult['accounts'] =
-        accounts.length < 10 && (page > 0 || loading)
-            ? [...accounts, ...Array.from(Array(10 - accounts.length))]
-            : accounts;
+        // because search is a useCallback that depends on all the state variables, this will trigger a re-search when any of the state variables change.
+        // then the search filters change, we always want to start fresh from page 0
+        search({});
+    }, [search]);
 
     return (
         <div className="space-y-4">
@@ -200,7 +199,7 @@ export const Search = () => {
                 />
             </div>
             <div>
-                <div className="flex flex-row space-x-4">
+                <div className="flex flex-row items-center">
                     <button
                         onClick={() => setFilterModalOpen(true)}
                         className={`group text-gray-900 ring-gray-900 ring-opacity-5 bg-white rounded-md border border-transparent shadow ring-1 sm:text-sm focus:border-primary-500 focus:ring-primary-500 focus:outline-none flex flex-row items-center px-2 py-1`}
@@ -235,6 +234,21 @@ export const Search = () => {
                             )}
                         </div>
                     </button>
+                    <select
+                        className="text-gray-900 ring-gray-900 ring-opacity-5 bg-white rounded-md border border-transparent shadow ring-1 sm:text-sm focus:border-primary-500 focus:ring-primary-500 focus:outline-none flex flex-row items-center cursor-pointer p-1 hover:text-opacity-80 ml-4 mr-2"
+                        value={resultsPerPageLimit}
+                        onChange={(e) => {
+                            setPage(0);
+                            setResultsPerPageLimit(Number(e.target.value));
+                        }}
+                    >
+                        {resultsPerPageOptions.map((val) => (
+                            <option value={val} key={val}>
+                                {formatter(val)}
+                            </option>
+                        ))}
+                    </select>
+                    <p className="text-gray-500 text-sm">results per page</p>
                     {audience.length || views.length || gender || engagement || lastPost ? (
                         <Button
                             onClick={(e: any) => {
@@ -444,13 +458,15 @@ export const Search = () => {
                     </div>
                 </Modal>
             </div>
-            <div>
-                {results && (
+
+            {resultPages.length > 0 && (
+                <div className="flex items-center">
                     <div className="font-bold text-sm">
-                        {`${t('creators.index.results')}: ${formatter(results.total)}`}
+                        {`${t('creators.index.results')}: ${formatter(resultsTotal)}`}
                     </div>
-                )}
-            </div>
+                </div>
+            )}
+
             <div className="w-full overflow-auto">
                 <table
                     className={`min-w-full divide-y divide-gray-200 rounded-lg shadow ${
@@ -462,36 +478,45 @@ export const Search = () => {
                             <th className="w-2/4 px-4 py-4 text-xs text-gray-500 font-normal text-left">
                                 {t('creators.index.account')}
                             </th>
-                            <th className="text-xs text-gray-500 font-normal text-left">
+                            <th className="text-xs pr-4 whitespace-nowrap text-gray-500 font-normal text-left">
                                 {t('creators.index.subscribers')}
                             </th>
-                            <th className="text-xs text-gray-500 font-normal text-left">
+                            <th className="text-xs pr-4 whitespace-nowrap text-gray-500 font-normal text-left">
                                 {t('creators.index.engagements')}
                             </th>
-                            <th className="text-xs text-gray-500 font-normal text-left">
+                            <th className="text-xs pr-4 whitespace-nowrap text-gray-500 font-normal text-left">
                                 {t('creators.index.engagementRate')}
                             </th>
-                            <th className="text-xs text-gray-500 font-normal text-left">
+                            <th className="text-xs pr-4 whitespace-nowrap text-gray-500 font-normal text-left">
                                 {t('creators.index.avgViews')}
                             </th>
                         </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                        {Array.isArray(feed)
-                            ? feed.map((creator, i) => (
-                                  <SearchResultRow
-                                      key={i}
-                                      creator={creator}
-                                      platform={platform}
-                                      setLookalike={setLookalike}
-                                      setShowCampaignListModal={setShowCampaignListModal}
-                                      setSelectedCreator={setSelectedCreator}
-                                  />
-                              ))
-                            : null}
+                        {resultPages.length > 0 &&
+                            resultPages.map((page) =>
+                                page.map((creator, i) => (
+                                    <SearchResultRow
+                                        key={i}
+                                        creator={creator}
+                                        platform={platform}
+                                        setLookalike={setLookalike}
+                                        setShowCampaignListModal={setShowCampaignListModal}
+                                        setSelectedCreator={setSelectedCreator}
+                                    />
+                                ))
+                            )}
                     </tbody>
                 </table>
             </div>
+            <Button
+                onClick={async () => {
+                    await search({ page: page + 1 });
+                    setPage(page + 1);
+                }}
+            >
+                View More
+            </Button>
             <Modal
                 title={t('campaigns.modal.addToCampaign') || ''}
                 visible={!!showCampaignListModal}
@@ -500,7 +525,6 @@ export const Search = () => {
                 }}
             >
                 <>
-                    {' '}
                     <div className="py-4 text-sm text-tertiary-800">
                         {t('campaigns.modal.addThisInfluencer')}
                     </div>
@@ -519,25 +543,6 @@ export const Search = () => {
                     )}
                 </>
             </Modal>
-            {/* <div className="space-x-2">
-                {subscription?.plans.amount > 10
-                    ? Array.from(Array(Math.ceil(subscription.plans.amount / 10))).map(
-                          (_, i: any) => {
-                              return (
-                                  <Button
-                                      type={page === i ? '' : 'secondary'}
-                                      key={i}
-                                      onClick={() => {
-                                          setPage(i);
-                                      }}
-                                  >
-                                      {i + 1}
-                                  </Button>
-                              );
-                          }
-                      )
-                    : null}
-            </div> */}
         </div>
     );
 };
