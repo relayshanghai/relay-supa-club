@@ -7,36 +7,36 @@ export const SkeletonSearchResultRow = ({ delay }: { delay: number }) => (
             />
             <div>
                 <div
-                    className="bg-gray-400 animate-pulse w-32 h-6"
+                    className="bg-gray-400 animate-pulse w-32 h-3"
                     style={{ animationDelay: `${delay}ms` }}
                 />
                 <div
-                    className="bg-gray-400 animate-pulse w-24 h-4 mt-2"
+                    className="bg-gray-400 animate-pulse w-24 h-2 mt-2"
                     style={{ animationDelay: `${delay}ms` }}
                 />
             </div>
         </td>
         <td className="text-sm">
             <div
-                className="bg-gray-400 animate-pulse w-10 h-4"
+                className="bg-gray-400 animate-pulse w-10 h-2"
                 style={{ animationDelay: `${delay}ms` }}
             />
         </td>
         <td className="text-sm">
             <div
-                className="bg-gray-400 animate-pulse w-10 h-4"
+                className="bg-gray-400 animate-pulse w-10 h-2"
                 style={{ animationDelay: `${delay}ms` }}
             />
         </td>
         <td className="text-sm">
             <div
-                className="bg-gray-400 animate-pulse w-10 h-4"
+                className="bg-gray-400 animate-pulse w-10 h-2"
                 style={{ animationDelay: `${delay}ms` }}
             />
         </td>
         <td className="text-sm">
             <div
-                className="bg-gray-400 animate-pulse w-10 h-4"
+                className="bg-gray-400 animate-pulse w-10 h-2"
                 style={{ animationDelay: `${delay}ms` }}
             />
         </td>

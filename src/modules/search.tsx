@@ -462,13 +462,11 @@ export const Search = () => {
                 </Modal>
             </div>
 
-            {resultPages.length > 0 && (
-                <div className="flex items-center">
-                    <div className="font-bold text-sm">
-                        {`${t('creators.results')}: ${formatter(resultsTotal)}`}
-                    </div>
+            <div className="flex items-center">
+                <div className="font-bold text-sm">
+                    {`${t('creators.results')}: ${formatter(resultsTotal)}`}
                 </div>
-            )}
+            </div>
 
             <div className="w-full overflow-auto">
                 <table
@@ -511,7 +509,7 @@ export const Search = () => {
                             )
                         ) : loading ? (
                             [...Array(10)].map((_, i) => (
-                                <SkeletonSearchResultRow key={i} delay={i % 2 === 0 ? 0 : 300} />
+                                <SkeletonSearchResultRow key={i} delay={i * 200} />
                             ))
                         ) : (
                             <tr>
