@@ -11,7 +11,7 @@ export interface Database {
                     brief_opened_by_creator: boolean | null;
                     campaign_id: string | null;
                     created_at: string | null;
-                    creator_id: string | null;
+                    creator_id: string;
                     creator_model: string | null;
                     creator_token: string | null;
                     email_sent: boolean | null;
@@ -44,7 +44,7 @@ export interface Database {
                     brief_opened_by_creator?: boolean | null;
                     campaign_id?: string | null;
                     created_at?: string | null;
-                    creator_id?: string | null;
+                    creator_id: string;
                     creator_model?: string | null;
                     creator_token?: string | null;
                     email_sent?: boolean | null;
@@ -77,7 +77,7 @@ export interface Database {
                     brief_opened_by_creator?: boolean | null;
                     campaign_id?: string | null;
                     created_at?: string | null;
-                    creator_id?: string | null;
+                    creator_id?: string;
                     creator_model?: string | null;
                     creator_token?: string | null;
                     email_sent?: boolean | null;

@@ -7,7 +7,6 @@ export const useReport = () => {
     const [report, setReport] = useState<CreatorReport | null>(null);
     const [reportCreatedAt, setReportCreatedAt] = useState<string | null>(null);
     const [errorMessage, setErrorMessage] = useState('');
-
     const { profile } = useUser();
 
     const getOrCreateReport = useCallback(

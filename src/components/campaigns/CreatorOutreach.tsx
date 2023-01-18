@@ -9,6 +9,7 @@ import TableInput from './campaign-table-input';
 import { CampaignWithCompanyCreators } from 'src/utils/api/db';
 import { CampaignCreatorDB } from 'src/utils/api/db/types';
 import { SocialMediaIcon } from '../common/social-media-icon';
+import { CreatorContacts } from './creator-contacts';
 
 export default function CreatorsOutreach({
     currentCampaign
@@ -26,6 +27,7 @@ export default function CreatorsOutreach({
     const { deleteCreatorInCampaign, updateCreatorInCampaign, refreshCampaign } = useCampaigns({
         campaignId: currentCampaign?.id
     });
+
     const tabs = [
         { label: 'toContact', value: 'to contact' },
         { label: 'contacted', value: 'contacted' },
@@ -192,7 +194,7 @@ export default function CreatorsOutreach({
                                                             platform={creator.platform}
                                                             width={16}
                                                             height={16}
-                                                            className="border-gray-500"
+                                                            className="opacity-80"
                                                         />
                                                     </div>
                                                 </div>
@@ -207,7 +209,7 @@ export default function CreatorsOutreach({
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            <div>contacts</div>
+                                            <CreatorContacts {...creator} />
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <select
