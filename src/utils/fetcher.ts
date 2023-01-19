@@ -1,4 +1,5 @@
-import { supabase } from './supabase-client';
+import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
+import { NextApiRequest, NextApiResponse } from 'next';
 
 /** TODO: seems to be used only for Stripe? Re-org and put all stripe related work together */
 export const fetcher = (url: string) =>
@@ -74,7 +75,13 @@ export function imgProxy(url: string) {
     return proxyUrl + url;
 }
 
-export const checkSessionIdMatchesID = async (id: string) => {
+export const checkSessionIdMatchesID = async (
+    id: string,
+    req: NextApiRequest,
+    res: NextApiResponse
+) => {
+    const supabase = createServerSupabaseClient({ req, res });
+
     if (!id) return false;
     const {
         data: { session }
