@@ -10,6 +10,7 @@ import { CampaignWithCompanyCreators } from 'src/utils/api/db';
 import { CampaignCreatorDB } from 'src/utils/api/db/types';
 import { SocialMediaIcon } from '../common/social-media-icon';
 import { CreatorContacts } from './creator-contacts';
+// import { DatePicker } from 'src/components/ui';
 
 export default function CreatorsOutreach({
     currentCampaign
@@ -55,9 +56,12 @@ export default function CreatorsOutreach({
         'creatorStatus',
         // 'addedBy',
         'nextPoint',
+        'publicationDate',
         'paymentAmount',
         'paidAmount',
+        'paymentInformation',
         'paymentStatus',
+        'kolAddress',
         'sampleStatus'
     ];
 
@@ -151,7 +155,7 @@ export default function CreatorsOutreach({
                     ))}
                 </div>
             </div>
-            {/* Outreach Table  */}
+            {/* -- Outreach Table -- */}
             <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200 overflow-y-visible">
                     <thead className="bg-white sticky top-0">
@@ -167,7 +171,7 @@ export default function CreatorsOutreach({
                                     {t(`campaigns.show.${label}`)}
                                 </th>
                             ))}
-                            {/*-- placeholder table header space for delete icon --*/}
+                            {/*-- placeholder table header space for notes and delete section --*/}
                             <th className=" px-3 py-3 text-left text-xs font-normal text-gray-500 sticky right-0 bg-white tracking-wider  min-w-[150px] max-w-[150px] z-30">
                                 {''}
                             </th>
@@ -181,6 +185,7 @@ export default function CreatorsOutreach({
                                         key={index}
                                         className="group hover:bg-primary-50 hover:relative text-xs"
                                     >
+                                        {/* -- Account Column -- */}
                                         <td className="px-6 py-4 whitespace-nowrap sticky left-0 group-hover:bg-primary-50 w-[200px] bg-white z-30">
                                             <div className="flex items-center">
                                                 <div className="relative flex-shrink-0 h-10 w-10 rounded-full bg-gray-300">
@@ -208,6 +213,7 @@ export default function CreatorsOutreach({
                                                 </div>
                                             </div>
                                         </td>
+                                        {/* -- Status Column -- */}
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <CreatorContacts {...creator} />
                                         </td>
@@ -245,6 +251,7 @@ export default function CreatorsOutreach({
                                                 <div className="text-xs text-gray-600"> - </div>
                                             )}
                                         </td> */}
+                                        {/* -- Action Point Column -- */}
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div
                                                 className="text-xs text-gray-900 cursor-pointer hover:text-primary-500 duration-300 relative"
@@ -280,6 +287,19 @@ export default function CreatorsOutreach({
                                                 )}
                                             </div>
                                         </td>
+                                        {/* -- Publication Date Column -- */}
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            {creator.publication_date ? (
+                                                <div className="text-xs text-gray-900">
+                                                    {creator.publication_date}
+                                                </div>
+                                            ) : (
+                                                <div className="text-xs text-gray-600">
+                                                    DatePicker{' '}
+                                                </div>
+                                            )}
+                                        </td>
+
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div
                                                 className="text-xs text-left pr-2 text-gray-900 cursor-pointer hover:text-primary-500 duration-300 relative"
@@ -328,6 +348,10 @@ export default function CreatorsOutreach({
                                                 )}
                                             </div>
                                         </td>
+                                        {/* -- Payment Info Column -- */}
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div>Add Payment Info</div>
+                                        </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <select
                                                 onClick={(e) => e.stopPropagation()}
@@ -348,6 +372,11 @@ export default function CreatorsOutreach({
                                                 ))}
                                             </select>
                                         </td>
+                                        {/* -- KOL Address Column -- */}
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div>Add address</div>
+                                        </td>
+                                        {/* -- Sample Status Column -- */}
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <select
                                                 onClick={(e) => e.stopPropagation()}
