@@ -21,7 +21,7 @@ export const SubscriptionDetails = () => {
     // TODO: need multiple usage_limits
 
     return (
-        <div className="flex flex-col items-start space-y-4 p-4 bg-white rounded-lg w-full lg:max-w-2xl">
+        <div className="flex flex-col items-start space-y-4 p-4 bg-white rounded-lg w-full lg:max-w-2xl shadow-lg shadow-gray-200">
             <div className="flex flex-row justify-between w-full items-center">
                 <h2 className="text-lg font-bold">{t('account.subscription.title')}</h2>
                 <div className="flex flex-row justify-end">

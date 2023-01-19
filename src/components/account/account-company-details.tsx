@@ -53,7 +53,7 @@ export const CompanyDetails = () => {
         <div
             className={`flex flex-col items-start space-y-4 p-4 bg-white rounded-lg w-full lg:max-w-2xl relative ${
                 userDataLoading || updating ? 'opacity-50' : ''
-            }`}
+            } shadow-lg shadow-gray-200`}
         >
             <InviteMembersModal
                 showAddMoreMembers={showAddMoreMembers}
