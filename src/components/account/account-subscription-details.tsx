@@ -135,15 +135,15 @@ export const SubscriptionDetails = () => {
                     </div>
                 </div>
             )}
-            <div className="flex mt-5 space-x-6">
+            <div className="flex space-x-6 justify-end w-full pt-5">
+                <Button onClick={handleCancelSubscription} variant="secondary">
+                    {t('account.subscription.cancelSubscription')}
+                </Button>
                 <Link href="/pricing">
                     <a>
                         <Button>{t('account.subscription.upgradeSubscription')}</Button>
                     </a>
                 </Link>
-                <Button onClick={handleCancelSubscription} variant="secondary">
-                    {t('account.subscription.cancelSubscription')}
-                </Button>
             </div>
         </div>
     );
