@@ -137,6 +137,8 @@ const campaigns = {
         kolAddress: 'Address',
         sampleStatus: 'Sample Status',
         addActionPoint: 'Add Action Point',
+        addAddress: 'Add Address',
+        addPaymentInfo: 'Add Payment Details',
         notes: 'Notes',
         important: 'Important',
         byKol: 'By KOL',

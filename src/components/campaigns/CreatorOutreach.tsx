@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 import { ChangeEvent, MouseEvent, useRef, useState } from 'react';
 import Link from 'next/link';
-import Trashcan from 'src/components/icons/Trashcan';
+import { Trashcan } from 'src/components/icons';
 import { useCampaigns } from 'src/hooks/use-campaigns';
 import { toast } from 'react-hot-toast';
 import TableInput from './campaign-table-input';
@@ -252,7 +252,7 @@ export default function CreatorsOutreach({
                                             )}
                                         </td> */}
                                         {/* -- Action Point Column -- */}
-                                        <td className="px-6 py-4 whitespace-nowrap">
+                                        <td className="px-6 py-4 whitespace-normal min-w-[150px] max-w-[200px]">
                                             <div
                                                 className="text-xs text-gray-900 cursor-pointer hover:text-primary-500 duration-300 relative"
                                                 onClick={(e) =>
@@ -263,7 +263,7 @@ export default function CreatorsOutreach({
                                                     className={`${
                                                         editingModeTrue(index, 'next_step')
                                                             ? 'hidden'
-                                                            : ' '
+                                                            : ''
                                                     }`}
                                                 >
                                                     {creator.next_step || (
@@ -272,6 +272,7 @@ export default function CreatorsOutreach({
                                                         </div>
                                                     )}
                                                 </div>
+
                                                 {editingModeTrue(index, 'next_step') && (
                                                     <TableInput
                                                         value={creator.next_step || ''}
@@ -349,8 +350,40 @@ export default function CreatorsOutreach({
                                             </div>
                                         </td>
                                         {/* -- Payment Info Column -- */}
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div>Add Payment Info</div>
+                                        <td className="px-6 py-4 whitespace-normal min-w-[150px] max-w-[200px]">
+                                            <div
+                                                className="text-xs text-gray-900 cursor-pointer hover:text-primary-500 duration-300 relative"
+                                                onClick={(e) =>
+                                                    setInlineEdit(e, index, 'payment_details')
+                                                }
+                                            >
+                                                <div
+                                                    className={`${
+                                                        editingModeTrue(index, 'payment_details')
+                                                            ? 'hidden'
+                                                            : ' '
+                                                    }`}
+                                                >
+                                                    {creator.payment_details || (
+                                                        <div className="text-primary-500 hover:text-primary-700 cursor-pointer duration-300">
+                                                            {t('campaigns.show.addPaymentInfo')}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                {editingModeTrue(index, 'payment_details') && (
+                                                    <TableInput
+                                                        value={creator.payment_details || ''}
+                                                        type="text"
+                                                        creator={creator}
+                                                        objKey="payment_details"
+                                                        ref={inputRef}
+                                                        updateCampaignCreator={
+                                                            updateCampaignCreator
+                                                        }
+                                                        closeModal={() => setToEdit(null)}
+                                                    />
+                                                )}
+                                            </div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <select
@@ -373,8 +406,38 @@ export default function CreatorsOutreach({
                                             </select>
                                         </td>
                                         {/* -- KOL Address Column -- */}
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div>Add address</div>
+                                        <td className="px-6 py-4whitespace-normal min-w-[150px] max-w-[200px]">
+                                            <div
+                                                className="text-xs text-gray-900 cursor-pointer hover:text-primary-500 duration-300 relative"
+                                                onClick={(e) => setInlineEdit(e, index, 'address')}
+                                            >
+                                                <div
+                                                    className={`${
+                                                        editingModeTrue(index, 'address')
+                                                            ? 'hidden'
+                                                            : ' '
+                                                    }`}
+                                                >
+                                                    {creator.address || (
+                                                        <div className="text-primary-500 hover:text-primary-700 cursor-pointer duration-300">
+                                                            {t('campaigns.show.addAddress')}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                {editingModeTrue(index, 'address') && (
+                                                    <TableInput
+                                                        value={creator.address || ''}
+                                                        type="text"
+                                                        creator={creator}
+                                                        objKey="address"
+                                                        ref={inputRef}
+                                                        updateCampaignCreator={
+                                                            updateCampaignCreator
+                                                        }
+                                                        closeModal={() => setToEdit(null)}
+                                                    />
+                                                )}
+                                            </div>
                                         </td>
                                         {/* -- Sample Status Column -- */}
                                         <td className="px-6 py-4 whitespace-nowrap">
