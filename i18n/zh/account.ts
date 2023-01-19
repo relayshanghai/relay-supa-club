@@ -42,6 +42,7 @@ const account = {
         planName: '名称',
         active: '活跃',
         upgradeSubscription: '升级订阅',
+        cancelSubscription: '取消订阅',
         modal: {
             planFor: ' plan for ',
             monthlyProfiles: ' monthly profiles',

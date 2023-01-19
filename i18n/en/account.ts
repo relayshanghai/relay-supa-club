@@ -45,6 +45,7 @@ const account = {
         planName: 'Name',
         active: 'Active',
         upgradeSubscription: 'Upgrade subscription',
+        cancelSubscription: 'Cancel subscription',
         modal: {
             planFor: ' plan for ',
             monthlyProfiles: ' monthly profiles',

@@ -20,6 +20,10 @@ export const SubscriptionDetails = () => {
     const searchUsages = company?.usages.filter(({ type }) => type === 'search');
     // TODO: need multiple usage_limits
 
+    const handleCancelSubscription = async () => {
+        // TODO
+    };
+
     return (
         <div className="flex flex-col items-start space-y-4 p-4 bg-white rounded-lg w-full lg:max-w-2xl shadow-lg shadow-gray-200">
             <div className="flex flex-row justify-between w-full items-center">
@@ -131,14 +135,16 @@ export const SubscriptionDetails = () => {
                     </div>
                 </div>
             )}
-            <Link href="/pricing">
-                <a>
-                    <Button className="mt-5">
-                        {' '}
-                        {t('account.subscription.upgradeSubscription')}
-                    </Button>
-                </a>
-            </Link>
+            <div className="flex mt-5 space-x-6">
+                <Link href="/pricing">
+                    <a>
+                        <Button>{t('account.subscription.upgradeSubscription')}</Button>
+                    </a>
+                </Link>
+                <Button onClick={handleCancelSubscription} variant="secondary">
+                    {t('account.subscription.cancelSubscription')}
+                </Button>
+            </div>
         </div>
     );
 };
