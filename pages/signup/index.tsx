@@ -26,16 +26,27 @@ export default function Register() {
         password: '',
         confirmPassword: ''
     });
-    const { signup, logout } = useUser();
+    const { signup, logout, user } = useUser();
+    const [signupSuccess, setSignupSuccess] = useState(false);
+    const [initialLoad, setInitialLoad] = useState(true);
     useEffect(() => {
-        // sometimes the cookies and signed in status still persist to this page, so call logout again
-        logout();
-    }, [logout]);
+        const loutOutOnLoad = async () => {
+            // sometimes the cookies and signed in status still persist to this page, so call logout again
+
+            await logout();
+            setInitialLoad(false);
+        };
+        if (initialLoad) loutOutOnLoad();
+    }, [logout, initialLoad]);
+
+    useEffect(() => {
+        if (signupSuccess && user?.id) router.push('/signup/onboarding');
+    }, [initialLoad, router, signupSuccess, user]);
 
     const handleSubmit = async () => {
         setSubmitting(true);
         try {
-            await signup({
+            const signupRes = await signup({
                 email,
                 password,
                 data: {
@@ -43,7 +54,7 @@ export default function Register() {
                     last_name: lastName
                 }
             });
-            await router.push('/signup/onboarding');
+            if (signupRes?.session?.user.id) setSignupSuccess(true);
         } catch (error) {
             clientLogger(error, 'error');
             toast.error(t('login.oopsSomethingWentWrong'));

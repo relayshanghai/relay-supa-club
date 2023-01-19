@@ -12,9 +12,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const profile = JSON.parse(req.body) as ProfilePutBody;
 
         try {
-            //check profile id matches session user id
-            await checkSessionIdMatchesID(profile.id, res);
-
+            const matchesSession = await checkSessionIdMatchesID(profile.id);
+            if (!matchesSession) {
+                return res.status(httpCodes.UNAUTHORIZED).json({
+                    error: 'user is unauthorized for this action'
+                });
+            }
             const { data, error: profileUpsertError } = await upsertProfile(profile);
             if (profileUpsertError) {
                 serverLogger(profileUpsertError, 'error');

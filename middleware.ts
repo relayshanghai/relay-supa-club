@@ -39,9 +39,14 @@ export async function middleware(req: NextRequest) {
 
     // Check that user is logged in
     if (session?.user?.email) {
-        // this is a special case with onboarding. We require a user id, but not an activated company account.
-        if (req.nextUrl.pathname.includes('api/company/create')) return res;
-
+        // special case where we require a signed in user to create a company, but we don't want to redirect them to onboarding cause this happens before they are onboarded
+        if (req.nextUrl.pathname.includes('api/company/create')) {
+            const { user_id } = JSON.parse(await req.text());
+            if (!user_id || user_id !== session.user.id) {
+                return NextResponse.json({ error: 'user is unauthorized for this action' });
+            }
+            return res;
+        }
         // if signed up, but no company, redirect to onboarding
         const onboarded = await checkCompanyIsOnboarded(supabase, session.user.id);
         if (!onboarded) {
@@ -50,11 +55,7 @@ export async function middleware(req: NextRequest) {
             return NextResponse.redirect(redirectUrl);
         }
         // if already signed in and has company, redirect to dashboard
-        if (
-            req.nextUrl.pathname === '/' ||
-            req.nextUrl.pathname.includes('signup') ||
-            req.nextUrl.pathname.includes('login')
-        ) {
+        if (req.nextUrl.pathname === '/' || req.nextUrl.pathname.includes('login')) {
             redirectUrl.pathname = '/dashboard';
             return NextResponse.redirect(redirectUrl);
         }
