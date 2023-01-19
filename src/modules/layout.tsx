@@ -32,7 +32,7 @@ export const Layout = ({ children }: any) => {
                     setOpen={setSideBarOpen}
                 />
                 <div className="flex flex-col w-full overflow-hidden">
-                    <div className="flex items-center justify-between bg-white border-b border-gray-100">
+                    <div className="flex items-center justify-between bg-white shadow-lg shadow-gray-100 z-30">
                         <Button
                             onClick={() => setSideBarOpen(!sideBarOpen)}
                             variant="neutral"
