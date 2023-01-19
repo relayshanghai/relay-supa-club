@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
@@ -7,18 +6,14 @@ import { LanguageToggle } from 'src/components/common/language-toggle';
 import { HamburgerMenu, Spinner } from 'src/components/icons';
 import { Sidebar } from 'src/components/sidebar';
 
-import { useCompany } from 'src/hooks/use-company';
-import { useSubscription } from 'src/hooks/use-subscription';
 import { useUser } from 'src/hooks/use-user';
 import useOnOutsideClick from 'src/hooks/use-on-outside-click';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 
 export const Layout = ({ children }: any) => {
-    const router = useRouter();
     const { t } = useTranslation();
     const { profile, loading } = useUser();
-    const { company } = useCompany();
-    const { subscription } = useSubscription();
+
     const supabase = useSupabaseClient();
 
     const [accountMenuOpen, setAccountMenuOpen] = useState(false);
@@ -49,16 +44,6 @@ export const Layout = ({ children }: any) => {
                         <div className="px-8 py-4 flex flex-row items-center space-x-4">
                             <div className="text-sm flex flex-row items-center space-x-4">
                                 <LanguageToggle />
-                                {!!subscription && (
-                                    <Button onClick={() => router.push('/account')}>
-                                        {t('navbar.button.subscribeNow')}
-                                    </Button>
-                                )}
-                                <p>
-                                    {`${t('navbar.usage')}: ${company?.usages?.length || '0'}/${
-                                        company?.usage_limit || '0'
-                                    }`}
-                                </p>
                             </div>
                             <div>
                                 {!loading && !!profile?.id && (

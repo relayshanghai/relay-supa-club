@@ -56,8 +56,7 @@ export const useCompany = () => {
             };
             return await nextFetch<CompanyCreatePostResponse>(`company/create`, {
                 method: 'post',
-                body,
-                credentials: 'include'
+                body
             });
         },
         [user]

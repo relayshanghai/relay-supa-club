@@ -6,11 +6,11 @@ import { SubscriptionDetails } from './account-subscription-details';
 export const AccountPage = () => {
     const { t } = useTranslation();
     return (
-        <div className="flex flex-col p-6 space-y-6">
-            <div className="text-lg font-bold">{t('account.account')}</div>
+        <div className="flex flex-col p-2 space-y-6 items-center lg:p-6">
+            <div className="text-2xl font-bold">{t('account.account')}</div>
+            <SubscriptionDetails />
             <PersonalDetails />
             <CompanyDetails />
-            <SubscriptionDetails />
         </div>
     );
 };
