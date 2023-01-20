@@ -116,7 +116,6 @@ function MediaUploader({
             )}
             <div className="btn btn-fileupload group" onClick={onButtonClick}>
                 <Plus className="mr-2 fill-current text-gray-500 group-hover:text-primary-500 w-6 h-6" />
-                {/* <div className="text-xs text-tertiary-600">{t('campaigns.form.uploadImage')}</div>s */}
                 <input
                     onChange={onFileChange}
                     type="file"
