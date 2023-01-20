@@ -141,7 +141,7 @@ export const CompanyDetails = () => {
                                         <p>
                                             {' '}
                                             {profile.first_name}
-                                            {` `}
+                                            {' '}
                                             {profile.last_name}
                                         </p>
                                     </div>
