@@ -8,3 +8,5 @@ export type SocialMediaPlatform = CreatorPlatform | 'email' | 'twitter' | 'faceb
 
 export type LabelValueObject = { label: string; value: string };
 export type LocationWeighted = { id: string; weight: number };
+
+export type CreatorSearchTag = { tag: string; value: string };

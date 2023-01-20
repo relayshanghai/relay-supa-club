@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { imgProxy } from 'src/utils/fetcher';
-import { numFormatter, truncateWithDots } from 'src/utils/utils';
+import { numFormatter } from 'src/utils/utils';
 import { Post } from 'types';
 import dateFormat from 'src/utils/dateFormat';
 
@@ -27,7 +27,7 @@ function PostImage({ post }: { post: Post }) {
             <a
                 href={post?.video || post?.link}
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
                 className="bg-gray-200 hover:bg-gray-300 duration-300 text-gray-600 absolute text-xs right-2 bottom-2 px-2 py-1 rounded-md cursor-pointer"
             >
                 {t('creators.show.openLink')}
@@ -56,8 +56,8 @@ export const CreatorPost = ({ post }: { post: Post }) => {
         <div className="bg-white rounded-lg">
             <PostImage post={post} />
             <div className="p-4">
-                <h3 className="font-semibold text-gray-600 mb-1">
-                    {truncateWithDots(post?.title, 70) || truncateWithDots(post?.text, 70)}
+                <h3 className="font-semibold text-gray-600 mb-1 line-clamp-2">
+                    {post?.title || post?.text}
                 </h3>
                 <p className="text-gray-400 text-xs mb-1">
                     {
@@ -65,7 +65,7 @@ export const CreatorPost = ({ post }: { post: Post }) => {
                         dateFormat(post?.created)
                     }
                 </p>
-                <p className="text-gray-600 text-sm mb-2">{truncateWithDots(post?.text, 130)}</p>
+                <p className="text-gray-600 text-sm mb-2 line-clamp-4">{post?.text}</p>
                 <div className="text-xs text-primary-600 flex items-center flex-wrap mb-2">
                     {post?.hashtags?.length &&
                         post?.hashtags.map((hashtag, index) => (

@@ -15,7 +15,7 @@ export const SocialCard = ({ contact }: { contact: CreatorReportContact }) => {
     });
 
     return (
-        <div className="px-6 w-full lg:w-1/2 mb-2">
+        <div className="px-6 w-full mb-2">
             <div className="bg-white rounded-xl p-4 flex w-full overflow-hidden">
                 <a {...getHref(contact)} className="flex items-center">
                     <div className="w-10 h-10 mr-2 ">
