@@ -8,6 +8,8 @@ export const useReport = () => {
     const [report, setReport] = useState<CreatorReport | null>(null);
     const [reportCreatedAt, setReportCreatedAt] = useState<string | null>(null);
     const [errorMessage, setErrorMessage] = useState('');
+    const [loading, setLoading] = useState<boolean>(true);
+
     const { profile } = useUser();
 
     const getOrCreateReport = useCallback(
@@ -26,14 +28,17 @@ export const useReport = () => {
                 if (!report.success) throw new Error('Failed to fetch report');
                 setReport(report);
                 setReportCreatedAt(createdAt);
+                setLoading(false);
             } catch (error: any) {
                 setErrorMessage(error.message);
+                setLoading(false);
             }
         },
         [profile]
     );
 
     return {
+        loading,
         getOrCreateReport,
         report,
         reportCreatedAt,
