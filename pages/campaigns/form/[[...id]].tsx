@@ -10,7 +10,6 @@ import { useState, useEffect } from 'react';
 import MediaUploader from 'src/components/campaigns/MediaUploader';
 import CurrencyInput from 'src/components/campaigns/CurrencyInput';
 import toast from 'react-hot-toast';
-import { handleError } from 'src/utils/utils';
 import {
     MultiSelect,
     DatePicker,
@@ -127,15 +126,16 @@ export default function CampaignForm() {
             setSubmitting(true);
             try {
                 const result = await createCampaign(data);
+                if (!result.id) throw new Error('No campaign id returned');
                 if (media.length > 0) {
                     await uploadFiles(media, result.id);
                 }
-
                 toast(t('campaigns.form.successCreateMsg'));
                 setSubmitting(false);
                 router.push(`/campaigns/${encodeURIComponent(result.id)}`);
-            } catch (error) {
-                toast(handleError(error));
+            } catch (error: any) {
+                clientLogger(error, 'error');
+                toast(error.message || t('campaigns.oopsSomethingWrong'));
                 setSubmitting(false);
             }
         },
@@ -152,7 +152,8 @@ export default function CampaignForm() {
             } = campaignWithCompanyCreators;
             setSubmitting(true);
             try {
-                await updateCampaign(campaign);
+                const result = await updateCampaign(campaign);
+                if (!result.id) throw new Error('No campaign id returned');
                 if (campaignId && media.length > 0) {
                     await uploadFiles(media, campaignId);
                 }
@@ -161,9 +162,10 @@ export default function CampaignForm() {
                 }
                 toast(t('campaigns.form.successUpdateMsg'));
                 setSubmitting(false);
-                router.push(`/campaigns/${encodeURIComponent(campaign.id)}`);
-            } catch (error) {
-                toast(handleError(error));
+                router.push(`/campaigns/${encodeURIComponent(result.id)}`);
+            } catch (error: any) {
+                clientLogger(error, 'error');
+                toast(error.message || t('campaigns.oopsSomethingWrong'));
                 setSubmitting(false);
             }
         },

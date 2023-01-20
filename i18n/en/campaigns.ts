@@ -88,7 +88,7 @@ const campaigns = {
         initialEmail: 'Initial Email',
         followUpEmail: 'Follow Up Email',
         writeOwnMessage: 'Or write your own message',
-        sendEmailError: 'Ooops, something went wrong. Please try again.',
+        sendEmailError: 'Oops, something went wrong. Please try again.',
         sendAndGoToNext: 'Send and Open Next KOL',
         sendToAll: 'Send to All KOLs with this template'
     },
@@ -239,7 +239,8 @@ const campaigns = {
         successCreateMsg: 'You have created a campaign successfully!',
         successUpdateMsg: 'You have updated a campaign successfully!',
         dedicatedVideo: 'Dedicated Video',
-        integratedVideo: 'Integrated Video'
+        integratedVideo: 'Integrated Video',
+        oopsSomethingWrong: 'Oops, something went wrong. Please try again.'
     }
 };
 export default campaigns;

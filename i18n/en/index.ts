@@ -1,26 +1,20 @@
 import campaigns from './campaigns';
 import navbar from './navbar';
 import creators from './creators';
-import clients from './clients';
 import website from './website';
-import pools from './pools';
-import me from './me';
-import csm from './csm';
-import requestaccount from './requestaccount';
 import account from './account';
+import login from './login';
+import pricing from './pricing';
 
 const translations = {
     translation: {
         campaigns,
         navbar,
         creators,
-        clients,
         website,
-        pools,
-        me,
-        csm,
-        requestaccount,
-        account
+        account,
+        login,
+        pricing
     }
 };
 export default translations;

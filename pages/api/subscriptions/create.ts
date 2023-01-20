@@ -7,18 +7,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const { company_id, price_id } = JSON.parse(req.body);
 
         try {
-            const { data } = (await supabase
+            const { data: companyData } = await supabase
                 .from('companies')
                 .select('cus_id')
                 .eq('id', company_id)
-                .single()) as any;
+                .single();
 
-            await stripeClient.customers.listPaymentMethods(data.cus_id, {
+            if (!companyData || !companyData.cus_id) {
+                return res.status(500).json({ error: 'Missing company data' });
+            }
+
+            await stripeClient.customers.listPaymentMethods(companyData.cus_id, {
                 type: 'card'
             });
 
             const subscriptions = await stripeClient.subscriptions.list({
-                customer: data.cus_id,
+                customer: companyData.cus_id,
                 status: 'active'
             });
             const activeSubscription = subscriptions.data[0];
@@ -31,7 +35,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }
 
             const subscription = await stripeClient.subscriptions.create({
-                customer: data.cus_id,
+                customer: companyData.cus_id,
                 items: [{ price: price_id }],
                 proration_behavior: 'create_prorations'
             });

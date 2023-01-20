@@ -1,9 +1,10 @@
 import { useCallback, useEffect } from 'react';
 import { useReport } from 'src/hooks/use-report';
 import { CampaignCreatorDB } from 'src/utils/api/db';
-import { CreatorReportContact } from 'types';
+import { CreatorPlatform, CreatorReportContact } from 'types';
 import { SocialMediaIcon } from '../common/social-media-icon';
 import { isValidUrl } from 'src/utils/utils';
+import { clientLogger } from 'src/utils/logger';
 
 export const CreatorContacts = (creator: CampaignCreatorDB) => {
     const { getOrCreateReport, report } = useReport();
@@ -23,11 +24,10 @@ export const CreatorContacts = (creator: CampaignCreatorDB) => {
             try {
                 if (creator) {
                     const { platform, creator_id } = creator;
-                    await getOrCreateReport(platform, creator_id);
+                    await getOrCreateReport(platform as CreatorPlatform, creator_id);
                 }
             } catch (error) {
-                //eslint-disable-next-line
-                console.log(error);
+                clientLogger(error, 'error');
             }
         },
         [getOrCreateReport]

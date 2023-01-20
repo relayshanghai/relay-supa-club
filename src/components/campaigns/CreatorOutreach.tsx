@@ -11,6 +11,7 @@ import { CampaignCreatorDB } from 'src/utils/api/db/types';
 import { SocialMediaIcon } from '../common/social-media-icon';
 import { CreatorContacts } from './creator-contacts';
 import dateFormat from 'src/utils/dateFormat';
+import { SocialMediaPlatform } from 'types';
 // import { DatePicker } from 'src/components/ui';
 
 export default function CreatorsOutreach({
@@ -197,7 +198,9 @@ export default function CreatorsOutreach({
                                                     />
                                                     <div className="absolute right-0 bottom-0 ">
                                                         <SocialMediaIcon
-                                                            platform={creator.platform}
+                                                            platform={
+                                                                creator.platform as SocialMediaPlatform
+                                                            }
                                                             width={16}
                                                             height={16}
                                                             className="opacity-80"

@@ -88,7 +88,7 @@ export const Layout = ({ children }: any) => {
                                                     onClick={async () => {
                                                         await supabase.auth.signOut();
                                                         // need to trigger a page reload to get the new auth state, so don't use router.push
-                                                        window.location.href = '/';
+                                                        window.location.href = '/signup';
                                                     }}
                                                 >
                                                     {t('navbar.button.logout')}
