@@ -10,7 +10,7 @@ const account = {
         email: '电子邮件',
         emailPlaceholder: '输入您的邮箱地址',
         profileUpdated: '个人信息已更新',
-        oopsWentWrong: '哎呀，出错了'
+        oopsWentWrong: '哎呀，出错了',
     },
     company: {
         companyName: '公司名称',
@@ -22,7 +22,11 @@ const account = {
         role: '角色',
         pendingInvitations: '待处理的邀请',
         email: '电子邮件',
-        addMoreMembers: '邀请成员加入'
+        addMoreMembers: '邀请成员加入',
+        admin: '管理员',
+        member: '成员',
+        companyProfileUpdated: '公司信息已更新',
+        oopsWentWrong: '哎呀，出错了',
     },
     subscription: {
         plan: '计划',
@@ -54,8 +58,8 @@ const account = {
             subscribe: 'Subscribe',
             noteClickingSubscribeWillCharge:
                 'Note that clicking `Subscribe` will charge the default payment method.',
-            cancel: 'Cancel'
-        }
+            cancel: 'Cancel',
+        },
     },
     invite: {
         title: '邀请成员加入',
@@ -63,9 +67,9 @@ const account = {
         typeEmailAddressHere: '在此输入电子邮件地址',
         emailAddress: '电子邮件地址',
         sendInvitation: '发送邀请',
-        cancel: '取消'
+        cancel: '取消',
     },
-    cancel: '取消'
+    cancel: '取消',
 };
 
 export default account;

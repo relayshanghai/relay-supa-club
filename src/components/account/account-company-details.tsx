@@ -16,10 +16,10 @@ export const CompanyDetails = () => {
     const {
         values: companyValues,
         setFieldValue: setCompanyFieldValues,
-        reset: resetCompanyValues
+        reset: resetCompanyValues,
     } = useFields<{ name: string; website: string }>({
         name: '',
-        website: ''
+        website: '',
     });
     const [updating, setUpdating] = useState(false);
 
@@ -38,12 +38,12 @@ export const CompanyDetails = () => {
             setUpdating(true);
             await updateCompany({
                 name: companyValues.name,
-                website: companyValues.website
+                website: companyValues.website,
             });
-            toast.success('Company profile updated');
+            toast.success(t('account.company.companyProfileUpdated'));
             setEditMode(false);
         } catch (e) {
-            toast.error('Ops, something went wrong.');
+            toast.error(t('account.company.oopsWentWrong'));
         } finally {
             setUpdating(false);
         }
@@ -149,7 +149,11 @@ export const CompanyDetails = () => {
                                         <p className="text-xs font-normal text-gray-500">
                                             {t('account.company.role')}
                                         </p>
-                                        <p> {profile.admin ? 'Admin' : 'Member'}</p>
+                                        <p>
+                                            {profile.admin
+                                                ? t('account.company.admin')
+                                                : t('account.company.member')}
+                                        </p>
                                     </div>
                                 </div>
                             );

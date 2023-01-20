@@ -10,7 +10,7 @@ const account = {
         email: 'Email',
         emailPlaceholder: 'hello@relay.club',
         profileUpdated: 'Profile updated',
-        oopsWentWrong: 'Oops, something went wrong'
+        oopsWentWrong: 'Oops, something went wrong',
     },
     company: {
         companyName: 'Company name',
@@ -22,7 +22,11 @@ const account = {
         role: 'Role',
         pendingInvitations: 'Pending Invitations',
         email: 'Email',
-        addMoreMembers: 'Add more members'
+        addMoreMembers: 'Add more members',
+        admin: 'Admin',
+        member: 'Member',
+        companyProfileUpdated: 'Company profile updated',
+        oopsWentWrong: 'Oops, something went wrong',
     },
     subscription: {
         plan: 'Plan',
@@ -57,8 +61,8 @@ const account = {
             subscribe: 'Subscribe',
             noteClickingSubscribeWillCharge:
                 'Note that clicking `Subscribe` will charge the default payment method.',
-            cancel: 'Cancel'
-        }
+            cancel: 'Cancel',
+        },
     },
     invite: {
         title: 'Invite Members',
@@ -66,9 +70,9 @@ const account = {
         typeEmailAddressHere: 'Type email address here',
         emailAddress: 'Email address',
         sendInvitation: 'Send invitation',
-        cancel: 'Cancel'
+        cancel: 'Cancel',
     },
-    cancel: 'Cancel'
+    cancel: 'Cancel',
 };
 
 export default account;
