@@ -74,6 +74,8 @@ export const Search = () => {
         search({});
     }, [search]);
 
+    const noResults = resultPages.length === 0 || resultPages[0].length === 0;
+
     return (
         <div className="space-y-4">
             <div className="flex flex-row space-x-2">
@@ -494,7 +496,7 @@ export const Search = () => {
                         </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                        {resultPages.length > 0 ? (
+                        {!noResults ? (
                             resultPages.map((page) =>
                                 page.map((creator, i) => (
                                     <SearchResultRow
@@ -527,16 +529,18 @@ export const Search = () => {
                     <Spinner className="fill-primary-600 text-white w-12 h-12" />
                 </div>
             )}
-            <Button
-                onClick={async () => {
-                    setLoadingMore(true);
-                    await search({ page: page + 1 });
-                    setLoadingMore(false);
-                    setPage(page + 1);
-                }}
-            >
-                {t('creators.loadMore')}
-            </Button>
+            {!loading && !loadingMore && !noResults && (
+                <Button
+                    onClick={async () => {
+                        setLoadingMore(true);
+                        await search({ page: page + 1 });
+                        setLoadingMore(false);
+                        setPage(page + 1);
+                    }}
+                >
+                    {t('creators.loadMore')}
+                </Button>
+            )}
             <Modal
                 title={t('campaigns.modal.addToCampaign') || ''}
                 visible={!!showCampaignListModal}

@@ -5,6 +5,7 @@ const creators = {
     loadMore: '更多',
     searchResults: '为您找到相关结果',
     results: '结果',
+    noResults: '无结果',
     clearFilter: '清除筛选',
     selectedCreatorsDescr:
         '帮助您按名称找到您的 KOL, 并推荐与您正在寻找的 KOL 发布类似内容的 KOL。',

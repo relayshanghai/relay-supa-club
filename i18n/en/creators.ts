@@ -5,6 +5,7 @@ const creators = {
     loadMore: 'Load more',
     searchResults: 'Channels matching your profile search',
     results: 'Total Results',
+    noResults: 'No results found',
     clearFilter: 'Clear',
     selectedCreatorsDescr:
         'Helps you find your KOL by name and also recommends ones that post similar content the KOL you are looking for.',
