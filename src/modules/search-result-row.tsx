@@ -82,7 +82,7 @@ export const SearchResultRow = ({
                     </div>
                 </td>
             )}
-            <td className="py-2 px-4 flex flex-row items-center space-x-2">
+            <td className="py-2 px-4 flex flex-row items-center space-x-2 min-w-min">
                 {!placeholder ? (
                     <>
                         <img
@@ -91,10 +91,10 @@ export const SearchResultRow = ({
                             alt={handle}
                         />
                         <div>
-                            <div className="font-bold whhitespace-nowrap">
+                            <div className="font-bold line-clamp-2">
                                 {creator.account.user_profile.fullname}
                             </div>
-                            <div className="text-primary-500 text-sm">
+                            <div className="text-primary-500 text-sm line-clamp-1">
                                 {handle ? `@${handle}` : null}
                             </div>
                         </div>
