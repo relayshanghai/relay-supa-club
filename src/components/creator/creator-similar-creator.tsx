@@ -49,7 +49,7 @@ export const SimilarCreator = ({
                 </Button>
                 <Button className="ml-2">
                     <Link href={creator.url}>
-                        <a target="_blank" rel="noreferrer">
+                        <a target="_blank" rel="noopener noreferrer">
                             <ShareLink className="w-3 fill-current text-white" />
                         </a>
                     </Link>
