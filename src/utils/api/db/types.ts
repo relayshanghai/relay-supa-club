@@ -1,9 +1,12 @@
 import type { Database } from 'types/supabase';
 
 export type ProfileDB = Database['public']['Tables']['profiles']['Row'];
+export type ProfileDBUpdate = Database['public']['Tables']['profiles']['Update'];
+export type ProfileInsertDB = Database['public']['Tables']['profiles']['Insert'];
 
 export type CompanyDB = Database['public']['Tables']['companies']['Row'];
 export type CompanyDBUpdate = Database['public']['Tables']['companies']['Update'];
+export type CompanyDBInsert = Database['public']['Tables']['companies']['Insert'];
 
 export type CampaignDB = Database['public']['Tables']['campaigns']['Row'];
 export type CampaignDBUpdate = Database['public']['Tables']['campaigns']['Update'];

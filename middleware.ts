@@ -1,29 +1,86 @@
-import { createMiddlewareSupabaseClient } from '@supabase/auth-helpers-nextjs';
+import { createMiddlewareSupabaseClient, SupabaseClient } from '@supabase/auth-helpers-nextjs';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { Database } from 'types/supabase';
+
+/**
+ * 
+TODO: performance improvement. These two database calls might add too much loading time to each request. Consider adding a cache, or adding something to the session object that shows the user has a company and the company has a payment method.
+ */
+const checkCompanyIsOnboarded = async (
+    supabase: SupabaseClient<Database>,
+    userId: string,
+    req: NextRequest,
+    res: NextResponse
+) => {
+    const redirectUrl = req.nextUrl.clone();
+
+    const { data: profile } = await supabase
+        .from('profiles')
+        .select('company_id')
+        .eq('id', userId)
+        .single();
+    if (!profile?.company_id) {
+        if (req.nextUrl.pathname.includes('/signup/onboarding')) return res;
+        redirectUrl.pathname = '/signup/onboarding';
+        return NextResponse.redirect(redirectUrl);
+    }
+    // if company hasn't added payment method, redirect to onboarding
+    const { data: company } = await supabase
+        .from('companies')
+        .select('cus_id')
+        .eq('id', profile.company_id)
+        .single();
+    if (!company?.cus_id) {
+        if (req.nextUrl.pathname.includes('/signup/onboarding')) return res;
+        redirectUrl.pathname = '/signup/onboarding';
+        return NextResponse;
+    }
+};
+
 /** https://supabase.com/docs/guides/auth/auth-helpers/nextjs#auth-with-nextjs-middleware */
 export async function middleware(req: NextRequest) {
-    // ignore the home page
-    if (req.nextUrl.pathname === '/') return NextResponse.next();
-
     // We need to create a response and hand it to the supabase client to be able to modify the response headers.
     const res = NextResponse.next();
     // Create authenticated Supabase Client.
     const supabase = createMiddlewareSupabaseClient<Database>({ req, res });
-    // Check if we have a session
-    const { data } = await supabase.auth.getSession();
+    const {
+        data: { session }
+    } = await supabase.auth.getSession();
 
-    // Check auth condition
-    if (data?.session?.user?.email?.includes('@')) {
+    const redirectUrl = req.nextUrl.clone();
+
+    // Check that user is logged in
+    if (session?.user?.email) {
+        // this is a special case with onboarding. We require a user id, but not an activated company account.
+        if (req.nextUrl.pathname.includes('api/company/create')) return res;
+
+        // if signed up, but no company, redirect to onboarding
+        await checkCompanyIsOnboarded(supabase, session.user.id, req, res);
+
+        // if already signed in and has company, redirect to dashboard
+        if (
+            req.nextUrl.pathname === '/' ||
+            req.nextUrl.pathname.includes('signup') ||
+            req.nextUrl.pathname.includes('login')
+        ) {
+            redirectUrl.pathname = '/dashboard';
+            return NextResponse.redirect(redirectUrl);
+        }
         // Authentication successful, forward request to protected route.
         return res;
     }
+    // api requests, just return an error
+    if (req.nextUrl.pathname.includes('api')) {
+        return NextResponse.json({ error: 'unauthorized to use endpoint' });
+    }
 
-    // Auth condition not met, redirect to home page.
-    const redirectUrl = req.nextUrl.clone();
-    redirectUrl.pathname = '/';
-    // redirectUrl.searchParams.set(`redirectedFrom`, req.nextUrl.pathname);
+    // if already on signup or login page, just return the page
+    if (req.nextUrl.pathname.includes('signup') || req.nextUrl.pathname.includes('login')) {
+        return res;
+    }
+    // unauthenticated pages requests, send to signup
+    redirectUrl.pathname = '/signup';
     return NextResponse.redirect(redirectUrl);
 }
 
@@ -36,9 +93,8 @@ export const config = {
          * - _next/image (image optimization files)
          * - favicon.ico (favicon file)
          * - assets/* (assets files) (public/assets/*)
-         * - login/* (login page)
-         * - signup/* (signup page)
+         * - accept invite (accept invite api). User hasn't logged in yet
          */
-        '/((?!_next/static|_next/image|favicon.ico|assets/*|fonts/*|login/*|signup/*).*)'
+        '/((?!_next/static|_next/image|favicon.ico|assets/*|api/company/accept-invite*).*)'
     ]
 };

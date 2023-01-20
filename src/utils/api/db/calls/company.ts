@@ -1,5 +1,12 @@
 import { supabase } from 'src/utils/supabase-client';
-import type { CompanyDB, CompanyDBUpdate, InvitesDB, ProfileDB, UsagesDB } from '../types';
+import type {
+    CompanyDB,
+    CompanyDBInsert,
+    CompanyDBUpdate,
+    InvitesDB,
+    ProfileDB,
+    UsagesDB
+} from '../types';
 
 // Custom type for supabase queries where we select more than one row in a single query
 export type CompanyWithProfilesInvitesAndUsage = CompanyDB & {
@@ -7,6 +14,9 @@ export type CompanyWithProfilesInvitesAndUsage = CompanyDB & {
     invites: Pick<InvitesDB, 'id' | 'email' | 'used' | 'expire_at'>[];
     usages: Pick<UsagesDB, 'id'>[];
 };
+
+export const getCompanyCusId = async (companyId: string) =>
+    await supabase.from('companies').select('cus_id').eq('id', companyId).single();
 
 export const getCompanyWithProfilesInvitesAndUsage = async (companyId: string) =>
     await supabase
@@ -20,4 +30,7 @@ export const getCompanyWithProfilesInvitesAndUsage = async (companyId: string) =
         .single();
 
 export const updateCompany = async (data: CompanyDBUpdate) =>
-    await supabase.from('companies').update(data).eq('id', data.id).single();
+    await supabase.from('companies').update(data).eq('id', data.id).select().single();
+
+export const createCompany = async (data: CompanyDBInsert) =>
+    await supabase.from('companies').insert(data).select().single();

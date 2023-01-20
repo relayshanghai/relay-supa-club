@@ -1,22 +1,35 @@
 import { useRouter } from 'next/router';
+import {
+    CompanyAcceptInviteGetQueries,
+    CompanyAcceptInviteGetResponse,
+    CompanyAcceptInvitePostBody
+} from 'pages/api/company/accept-invite';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
+import { LanguageToggle } from 'src/components/common/language-toggle';
 import { Input } from 'src/components/input';
 import { Title } from 'src/components/title';
 import { useFields } from 'src/hooks/use-fields';
-import { nextFetch } from 'src/utils/fetcher';
+import { useUser } from 'src/hooks/use-user';
+import { nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';
+import { clientLogger } from 'src/utils/logger';
 
 export default function Register() {
+    const { t } = useTranslation();
+    const { login } = useUser();
+
     const router = useRouter();
     const {
-        values: { password, confirmPassword, firstName, lastName },
+        values: { password, confirmPassword, firstName, lastName, email },
         setFieldValue
     } = useFields({
         firstName: '',
         lastName: '',
         password: '',
-        confirmPassword: ''
+        confirmPassword: '',
+        email: ''
     });
     const token = router.query.token as string;
     const [registering, setRegistering] = useState(false);
@@ -25,61 +38,100 @@ export default function Register() {
     useEffect(() => {
         const checkInvite = async () => {
             try {
-                const tokenStatus = await nextFetch('company/accept-invite?token=' + token);
-                if (tokenStatus?.message) setInviteStatus(tokenStatus?.message);
+                const tokenStatus = await nextFetchWithQueries<
+                    CompanyAcceptInviteGetQueries,
+                    CompanyAcceptInviteGetResponse
+                >('company/accept-invite', { token });
+                if (tokenStatus.message && tokenStatus.email) {
+                    setFieldValue('email', tokenStatus.email);
+                    setInviteStatus(tokenStatus?.message);
+                } else setInviteStatus('inviteValid');
             } catch (error: any) {
+                clientLogger(error, 'error');
                 if (error.message) setInviteStatus(error.message);
             }
         };
         if (token) checkInvite();
-    }, [token]);
+    }, [token, setFieldValue]);
+
+    const handleSubmit = async () => {
+        try {
+            setRegistering(true);
+            const body: CompanyAcceptInvitePostBody = {
+                token,
+                password,
+                firstName,
+                lastName,
+                email
+            };
+            await nextFetch('company/accept-invite', {
+                method: 'post',
+                body
+            });
+            toast.success(t('login.inviteAccepted'));
+            await login(email, password);
+            router.push('/dashboard');
+        } catch (error: any) {
+            clientLogger(error, 'error');
+            if (error.message) toast.error(t(`login.${error.message}`));
+            else toast.error(t('login.oopsSomethingWentWrong'));
+        } finally {
+            setRegistering(false);
+        }
+    };
+    if (!token)
+        return (
+            <div className="mx-auto h-full flex flex-col justify-center items-center space-y-6">
+                <h2>{t('login.noInviteTokenFound')}</h2>
+                <Button onClick={() => router.back()}>{t('login.back')}</Button>
+            </div>
+        );
 
     return (
-        <div className="w-full h-full px-10 py-8">
-            <Title />
-            {token && inviteStatus === 'Invite is valid' && (
-                <form className="max-w-sm mx-auto h-full flex flex-col justify-center items-center space-y-6">
-                    <div>
-                        Someone invited you on <b>relay.club</b>. All you have to do is to accept
-                        the invitation by setting an account password below.
+        <div className="w-full h-screen px-10 flex flex-col">
+            <div className="sticky top-0 flex items-center w-full justify-between">
+                <Title />
+                <LanguageToggle />
+            </div>
+            {inviteStatus === 'inviteValid' && (
+                <form className="max-w-xs w-full mx-auto flex-grow flex flex-col justify-center items-center space-y-5">
+                    <div className="text-left w-full">
+                        <h1 className="font-bold text-4xl mb-2">{t('login.acceptInvite')}</h1>
+                        <h3 className="text-sm text-gray-600 mb-8">
+                            {t('login.someoneInvitedYouToJoinRelayClub')}
+                        </h3>
                     </div>
+                    <Input label={t('login.email')} value={email} disabled />
+
                     <Input
-                        label={'First Name'}
+                        label={t('login.firstName')}
                         type="text"
-                        placeholder="Enter your first name"
+                        placeholder={t('login.firstNamePlaceholder') || ''}
                         value={firstName}
                         required
-                        onChange={(e: any) => {
-                            setFieldValue('firstName', e.target.value);
-                        }}
+                        onChange={(e) => setFieldValue('firstName', e.target.value)}
                     />
                     <Input
-                        label={'Last Name'}
+                        label={t('login.lastName')}
                         type="text"
-                        placeholder="Enter your last name"
+                        placeholder={t('login.lastNamePlaceholder') || ''}
                         value={lastName}
                         required
-                        onChange={(e: any) => {
-                            setFieldValue('lastName', e.target.value);
-                        }}
+                        onChange={(e) => setFieldValue('lastName', e.target.value)}
                     />
                     <Input
-                        label={'Password'}
+                        label={t('login.password')}
                         type="password"
-                        placeholder="Enter a password"
+                        placeholder={t('login.passwordPlaceholder') || ''}
                         value={password}
-                        onChange={(e: any) => {
-                            setFieldValue('password', e.target.value);
-                        }}
+                        onChange={(e) => setFieldValue('password', e.target.value)}
                     />
                     <Input
-                        label={'Confirm your password'}
+                        label={t('login.confirmPassword')}
                         type="password"
-                        placeholder="Confirm password"
+                        placeholder={t('login.passwordPlaceholder') || ''}
                         value={confirmPassword}
-                        onChange={(e: any) => {
-                            setFieldValue('confirmPassword', e.target.value);
-                        }}
+                        onChange={(e) => setFieldValue('confirmPassword', e.target.value)}
                     />
                     <Button
                         disabled={
@@ -91,48 +143,24 @@ export default function Register() {
                             password !== confirmPassword ||
                             !token
                         }
-                        onClick={async (e) => {
+                        onClick={(e) => {
                             e.preventDefault();
-                            try {
-                                setRegistering(true);
-                                await nextFetch('company/accept-invite', {
-                                    method: 'post',
-                                    body: JSON.stringify({
-                                        token,
-                                        password,
-                                        firstName,
-                                        lastName
-                                    })
-                                });
-                                toast.success('Invite accepted');
-                                router.push('/login');
-                            } catch (error: any) {
-                                if (error.message) toast.error(error.message);
-                                else toast.error('Unknown error');
-                            } finally {
-                                setRegistering(false);
-                            }
+                            handleSubmit();
                         }}
                     >
-                        Set your password
+                        {t('login.signUp')}
                     </Button>
                 </form>
             )}
-            {token && inviteStatus === 'pending' && (
+            {inviteStatus === 'pending' && (
                 <div className="mx-auto h-full flex flex-col justify-center items-center space-y-6">
-                    <div>Checking invite status...</div>
+                    <p>{t('login.checkingInviteStatus')}</p>
                 </div>
             )}
-            {token && inviteStatus !== 'pending' && (
+            {inviteStatus !== 'pending' && inviteStatus !== 'inviteValid' && (
                 <div className="mx-auto h-full flex flex-col justify-center items-center space-y-6">
                     <h2>{inviteStatus}</h2>
-                    <Button onClick={() => router.back()}>Back</Button>
-                </div>
-            )}
-            {!token && inviteStatus !== 'pending' && (
-                <div className="mx-auto h-full flex flex-col justify-center items-center space-y-6">
-                    <h2>No invite token</h2>
-                    <Button onClick={() => router.back()}>Back</Button>
+                    <Button onClick={() => router.back()}>{t('login.back')}</Button>
                 </div>
             )}
         </div>

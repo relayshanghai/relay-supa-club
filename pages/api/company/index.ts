@@ -1,51 +1,78 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import httpCodes from 'src/constants/httpCodes';
 import {
     CompanyWithProfilesInvitesAndUsage,
     getCompanyWithProfilesInvitesAndUsage,
     updateCompany
 } from 'src/utils/api/db/calls/company';
-import { CompanyDBUpdate } from 'src/utils/api/db/types';
+import { CompanyDB, CompanyDBUpdate } from 'src/utils/api/db/types';
+import { serverLogger } from 'src/utils/logger';
 import { stripeClient } from 'src/utils/stripe-client';
 
-export type CompanyIndexGetQuery = CompanyWithProfilesInvitesAndUsage;
+export type CompanyGetQueries = {
+    id: string;
+};
+export type CompanyGetResponse = CompanyWithProfilesInvitesAndUsage;
 
-export interface CompanyIndexPostBody extends CompanyDBUpdate {
+export interface CompanyPostBody extends CompanyDBUpdate {
     id: string;
 }
+export type CompanyPostResponse = CompanyDB;
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'GET') {
-        const companyId = req.query.id as string;
-
-        const { data, error } = await getCompanyWithProfilesInvitesAndUsage(companyId);
-        if (error) {
-            return res.status(500).json(error);
+        const { id: companyId } = req.query as CompanyGetQueries;
+        if (!companyId) {
+            return res.status(httpCodes.BAD_REQUEST).json({ error: 'Missing company id' });
         }
 
-        return res.status(200).json(data);
+        const { data: company, error } = await getCompanyWithProfilesInvitesAndUsage(companyId);
+        if (error) {
+            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json(error);
+        }
+        if (!company) {
+            return res.status(httpCodes.NOT_FOUND).json({ error: 'Company not found' });
+        }
+
+        return res.status(httpCodes.OK).json(company);
     }
 
     if (req.method === 'POST') {
-        const updateData = JSON.parse(req.body) as CompanyIndexPostBody;
-
-        const { data, error } = updateCompany(updateData) as any;
-        if (error) {
-            return res.status(500).json(error);
-        }
-        if (!data || !data.cus_id || !data.name || !data.website) {
-            return res.status(500).json({ error: 'Missing data' });
-        }
-
-        await stripeClient.customers.update(data.cus_id, {
-            name: data.name,
-            description: data.website,
-            metadata: {
-                company_id: updateData.id
+        try {
+            const updateData = JSON.parse(req.body) as CompanyPostBody;
+            if (!updateData.id) {
+                return res.status(httpCodes.BAD_REQUEST).json({ error: 'Missing company id' });
             }
-        });
 
-        return res.status(200).json(data);
+            const { data: company, error } = await updateCompany(updateData);
+
+            if (error) {
+                serverLogger(error, 'error');
+                return res.status(httpCodes.INTERNAL_SERVER_ERROR).json(error);
+            }
+
+            if (!company || !company.cus_id || !company.name || !company.website) {
+                return res
+                    .status(httpCodes.INTERNAL_SERVER_ERROR)
+                    .json({ error: 'Missing company data' });
+            }
+
+            await stripeClient.customers.update(company.cus_id, {
+                name: company.name,
+                description: company.website,
+                metadata: {
+                    company_id: updateData.id
+                }
+            });
+
+            return res.status(httpCodes.OK).json(company);
+        } catch (error) {
+            serverLogger(error, 'error');
+            return res
+                .status(httpCodes.INTERNAL_SERVER_ERROR)
+                .json({ error: 'error updating company' });
+        }
     }
 
-    return res.status(400).json(null);
+    return res.status(httpCodes.METHOD_NOT_ALLOWED).json({});
 }
