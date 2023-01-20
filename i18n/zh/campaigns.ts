@@ -125,6 +125,7 @@ const campaigns = {
         creatorStatus: '状态',
         addedBy: '添加人',
         nextPoint: '推进状态',
+        selectDate: '选择日期',
         paymentInformation: '支付信息',
         paymentAmount: ' 应付金额',
         paidAmount: '已付金额',

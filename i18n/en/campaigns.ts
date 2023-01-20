@@ -130,6 +130,7 @@ const campaigns = {
         creatorStatus: 'Status',
         addedBy: 'Added By',
         nextPoint: 'Next Action Point',
+        selectDate: 'Select Date',
         paymentInformation: 'Payment Info',
         paymentAmount: 'Payment Amount',
         paidAmount: 'Paid Amount',

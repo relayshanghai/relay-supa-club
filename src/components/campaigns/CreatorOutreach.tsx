@@ -311,7 +311,7 @@ export default function CreatorsOutreach({
                                                         true
                                                     ) || (
                                                         <div className="text-primary-500 hover:text-primary-700 cursor-pointer duration-300">
-                                                            Select a date
+                                                            {t('campaigns.show.selectDate')}
                                                         </div>
                                                     )}
                                                 </div>
