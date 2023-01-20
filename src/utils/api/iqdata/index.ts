@@ -1,5 +1,5 @@
 import { headers } from 'src/utils/api/iqdata/constants';
-import { CreatorPlatform, CreatorReport } from 'types';
+import { CreatorPlatform, CreatorReport, CreatorSearchResult } from 'types';
 import { CreatorReportsMetadata } from 'types/iqdata/creator-reports-metadata';
 import { FetchCreatorsFilteredParams, prepareFetchCreatorsFiltered } from './transforms';
 
@@ -34,10 +34,13 @@ export const fetchIqDataGeos = async (term: string) =>
 export const fetchCreatorsFiltered = async (params: FetchCreatorsFilteredParams) => {
     const { platform, body } = prepareFetchCreatorsFiltered(params);
 
-    return await iqDataFetch(`search/newv1?platform=${platform}&auto_unhide=1`, {
-        method: 'post',
-        body: JSON.stringify(body)
-    });
+    return await iqDataFetch<CreatorSearchResult>(
+        `search/newv1?${new URLSearchParams({ platform, auto_unhide: '1' })}`,
+        {
+            method: 'post',
+            body: JSON.stringify(body)
+        }
+    );
 };
 
 export const requestNewReport = async (

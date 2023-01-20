@@ -38,7 +38,7 @@ export const TitleSection = ({
                     <a
                         href={user_profile.url}
                         target="_blank"
-                        rel="noreferrer"
+                        rel="noopener noreferrer"
                         className="text-sm text-primary-500 hover:text-primary-700 duration-300 cursor-pointer"
                     >
                         {t('creators.show.openLink')}
