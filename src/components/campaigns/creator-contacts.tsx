@@ -39,10 +39,10 @@ export const CreatorContacts = (creator: CampaignCreatorDB) => {
 
     return (
         <div className="">
-            {report && report.user_profile.contacts.length > 0 && (
+            {report && report.user_profile.contacts.length > 0 ? (
                 <div className="py-6">
                     <div className="flex">
-                        {report.user_profile.contacts.map((contact, index) => (
+                        {report.user_profile.contacts?.map((contact, index) => (
                             <div key={index} className="group/item">
                                 <a {...getHref(contact)} className="flex relative">
                                     <div className="w-4 h-4 group-hover:opacity-80 mr-1">
@@ -58,8 +58,9 @@ export const CreatorContacts = (creator: CampaignCreatorDB) => {
                         ))}
                     </div>
                 </div>
+            ) : (
+                <div className="text-xs tex text-tertiary-600">-</div>
             )}
-            {/* <div className="bg-white rounded-xl p-4 flex w-full overflow-hidden">Contacts</div> */}
         </div>
     );
 };

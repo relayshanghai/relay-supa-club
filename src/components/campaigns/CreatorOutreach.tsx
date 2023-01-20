@@ -214,8 +214,8 @@ export default function CreatorsOutreach({
                                                 </div>
                                             </div>
                                         </td>
-                                        {/* -- Status Column -- */}
-                                        <td className="px-6 py-4 whitespace-nowrap">
+                                        {/* -- Contact Column -- */}
+                                        <td className="px-6 py-4 whitespace-nowrap min-w-[150px]">
                                             <CreatorContacts {...creator} />
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
