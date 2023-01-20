@@ -1,6 +1,7 @@
+import { CreatorsReportGetQueries, CreatorsReportGetResponse } from 'pages/api/creators/report';
 import { useCallback, useState } from 'react';
-import { nextFetch } from 'src/utils/fetcher';
-import { CreatorReport } from 'types';
+import { nextFetchWithQueries } from 'src/utils/fetcher';
+import { CreatorPlatform, CreatorReport } from 'types';
 import { useUser } from './use-user';
 
 export const useReport = () => {
@@ -10,13 +11,18 @@ export const useReport = () => {
     const { profile } = useUser();
 
     const getOrCreateReport = useCallback(
-        async (platform: string, creator_id: string) => {
+        async (platform: CreatorPlatform, creator_id: string) => {
             try {
-                const { createdAt, ...report } = await nextFetch<
-                    CreatorReport & { createdAt: string }
-                >(
-                    `creators/report?platform=${platform}&creator_id=${creator_id}&company_id=${profile?.company_id}&user_id=${profile?.id}`
-                );
+                if (!profile?.company_id) throw new Error('User not logged in');
+                const { createdAt, ...report } = await nextFetchWithQueries<
+                    CreatorsReportGetQueries,
+                    CreatorsReportGetResponse
+                >('creators/report', {
+                    platform,
+                    creator_id,
+                    company_id: profile?.company_id,
+                    user_id: profile?.id
+                });
                 if (!report.success) throw new Error('Failed to fetch report');
                 setReport(report);
                 setReportCreatedAt(createdAt);

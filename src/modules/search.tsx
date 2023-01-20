@@ -56,8 +56,7 @@ export const Search = () => {
     const options = [1e3, 5e3, 1e4, 15e3, 25e3, 50e3, 1e5, 25e4, 50e4, 1e6]; // Search Filter - Subscribers and Avg view filter options: 1k, 5k, 10k, 15k, 25k, 50k, 100k, 250k, 500k, 1m
     const [showCampaignListModal, setShowCampaignListModal] = useState(false);
     const [selectedCreator, setSelectedCreator] = useState<CreatorSearchAccountObject | null>(null);
-    const [selectedPlatform, setSelectedPlatform] = useState('');
-    const { campaigns } = useCampaigns();
+    const { campaigns } = useCampaigns({});
 
     useEffect(() => {
         search();
@@ -482,7 +481,6 @@ export const Search = () => {
                                       setLookalike={setLookalike}
                                       setShowCampaignListModal={setShowCampaignListModal}
                                       setSelectedCreator={setSelectedCreator}
-                                      setSelectedPlatform={setSelectedPlatform}
                                   />
                               ))
                             : null}
@@ -506,7 +504,7 @@ export const Search = () => {
                             {campaigns.map((campaign, index) => (
                                 <CampaignModalCard
                                     campaign={campaign}
-                                    platform={selectedPlatform}
+                                    platform={platform}
                                     creator={selectedCreator}
                                     key={index}
                                 />
