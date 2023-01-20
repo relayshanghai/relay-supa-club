@@ -2,7 +2,7 @@ import { Layout } from 'src/modules/layout';
 import { useRouter } from 'next/router';
 import { useState, useEffect, ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import dateFormat from 'src/utils//dateFormat';
+import dateFormat from 'src/utils/dateFormat';
 import { PencilSquareIcon } from '@heroicons/react/20/solid';
 import Link from 'next/link';
 import CreatorsOutreach from '../../src/components/campaigns/CreatorOutreach';
@@ -130,12 +130,18 @@ export default function CampaignShow() {
                                     {t('campaigns.show.campaignLaunch')}
                                 </div>
                                 <div className="text-sm text-tertiary-600">
-                                    {currentCampaign?.date_start_campaign
+                                    {currentCampaign?.date_start_campaign &&
+                                    currentCampaign?.date_end_campaign
                                         ? //@ts-ignore
-                                          dateFormat(
+                                          `${dateFormat(
                                               currentCampaign?.date_start_campaign,
                                               'mediumDate'
-                                          )
+                                          )} - ${dateFormat(
+                                              currentCampaign?.date_end_campaign,
+                                              'mediumDate',
+                                              true,
+                                              true
+                                          )}`
                                         : '-'}
                                 </div>
                             </div>

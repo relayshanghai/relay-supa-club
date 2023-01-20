@@ -10,6 +10,7 @@ import { CampaignWithCompanyCreators } from 'src/utils/api/db';
 import { CampaignCreatorDB } from 'src/utils/api/db/types';
 import { SocialMediaIcon } from '../common/social-media-icon';
 import { CreatorContacts } from './creator-contacts';
+import dateFormat from 'src/utils/dateFormat';
 // import { DatePicker } from 'src/components/ui';
 
 export default function CreatorsOutreach({
@@ -289,16 +290,53 @@ export default function CreatorsOutreach({
                                             </div>
                                         </td>
                                         {/* -- Publication Date Column -- */}
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            {creator.publication_date ? (
-                                                <div className="text-xs text-gray-900">
-                                                    {creator.publication_date}
+                                        <td className="px-6 py-4 whitespace-nowrap min-w-[0px] max-w-[200px]">
+                                            <div
+                                                className="text-xs text-gray-900 cursor-pointer hover:text-primary-500 duration-300 relative"
+                                                onClick={(e) =>
+                                                    setInlineEdit(e, index, 'publication_date')
+                                                }
+                                            >
+                                                <div
+                                                    className={`${
+                                                        editingModeTrue(index, 'publication_date')
+                                                            ? 'hidden'
+                                                            : ''
+                                                    }`}
+                                                >
+                                                    {dateFormat(
+                                                        creator?.publication_date,
+                                                        'mediumDate',
+                                                        true,
+                                                        true
+                                                    ) || (
+                                                        <div className="text-primary-500 hover:text-primary-700 cursor-pointer duration-300">
+                                                            Select a date
+                                                        </div>
+                                                    )}
                                                 </div>
-                                            ) : (
-                                                <div className="text-xs text-gray-600">
-                                                    DatePicker{' '}
-                                                </div>
-                                            )}
+
+                                                {editingModeTrue(index, 'publication_date') && (
+                                                    <TableInput
+                                                        value={
+                                                            dateFormat(
+                                                                creator.publication_date,
+                                                                'isoDate',
+                                                                true,
+                                                                true
+                                                            ) || ''
+                                                        }
+                                                        type="date"
+                                                        creator={creator}
+                                                        objKey="publication_date"
+                                                        ref={inputRef}
+                                                        updateCampaignCreator={
+                                                            updateCampaignCreator
+                                                        }
+                                                        closeModal={() => setToEdit(null)}
+                                                    />
+                                                )}
+                                            </div>
                                         </td>
 
                                         <td className="px-6 py-4 whitespace-nowrap">

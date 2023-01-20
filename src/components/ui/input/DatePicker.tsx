@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { Control, Controller, FieldErrorsImpl, FieldValues } from 'react-hook-form';
+import dateFormat from 'src/utils/dateFormat';
 export interface Props {
     fieldName: string;
     label: string;
@@ -26,7 +27,7 @@ function DatePicker({ fieldName, label, control, errors, isRequired }: Props) {
                             {label}
                         </label>
                         <input
-                            value={value}
+                            value={dateFormat(value, 'isoDate', true, true)}
                             onChange={(val) => onChange(val)}
                             type="date"
                             name={fieldName}
