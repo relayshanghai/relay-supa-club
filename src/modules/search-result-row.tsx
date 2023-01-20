@@ -13,15 +13,13 @@ export const SearchResultRow = ({
     platform,
     setLookalike,
     setShowCampaignListModal,
-    setSelectedCreator,
-    setSelectedPlatform
+    setSelectedCreator
 }: {
     creator?: CreatorSearchAccountObject;
     platform: CreatorPlatform;
     setLookalike: (creator: CreatorSearchAccountObject) => void;
     setSelectedCreator: (creator: CreatorSearchAccountObject) => void;
     setShowCampaignListModal: (show: boolean) => void;
-    setSelectedPlatform: (platform: CreatorPlatform) => void;
 }) => {
     const { t } = useTranslation();
     const placeholder = !creator;
@@ -31,13 +29,12 @@ export const SearchResultRow = ({
           creator.account.user_profile.fullname
         : '';
 
-    // TODO: get real added to pool data
+    // placeholder if we want to reimplement 'pools'
     // const [addedToPool, setAddedToPool] = useState(false);
 
     const addToCampaign = () => {
         setShowCampaignListModal(true);
         if (creator) setSelectedCreator(creator);
-        setSelectedPlatform(platform);
     };
 
     return (
@@ -62,6 +59,7 @@ export const SearchResultRow = ({
                                 <a>{t('creators.index.analyzeProfile')}</a>
                             </Link>
                         </Button>
+                        {/* placeholder if we want to reimplement 'pools' */}
                         {/* <Button
                             onClick={() => setAddedToPool(!addedToPool)}
                             variant="secondary"

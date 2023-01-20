@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { fetcher, nextFetch } from 'src/utils/fetcher';
+import { nextFetch } from 'src/utils/fetcher';
 import useSWR from 'swr';
 
 import type {
@@ -8,11 +8,7 @@ import type {
 } from 'pages/api/campaigns/update';
 
 import { useUser } from './use-user';
-import {
-    CampaignCreatorDBInsert,
-    CampaignCreatorDB,
-    CampaignDBUpdate
-} from 'src/utils/api/db/types';
+import { CampaignCreatorDB, CampaignDBUpdate } from 'src/utils/api/db/types';
 import { CampaignWithCompanyCreators } from 'src/utils/api/db';
 import { CampaignsCreatePostBody, CampaignsCreatePostResponse } from 'pages/api/campaigns/create';
 import {
@@ -20,11 +16,15 @@ import {
     CampaignCreatorAddCreatorPostResponse
 } from 'pages/api/campaigns/add-creator';
 
-export const useCampaigns = ({ campaignId }: any = {}) => {
+export const useCampaigns = ({ campaignId }: { campaignId?: string }) => {
     const { profile } = useUser();
-    const { data: campaigns, mutate: refreshCampaign } = useSWR<CampaignWithCompanyCreators[]>(
-        profile?.company_id ? `/api/campaigns?id=${profile.company_id}` : null,
-        fetcher
+    const {
+        data: campaigns,
+        mutate: refreshCampaign,
+        isValidating
+    } = useSWR(
+        profile?.company_id ? `campaigns?id=${profile.company_id}` : null,
+        nextFetch<CampaignWithCompanyCreators[]>
     );
     const [loading, setLoading] = useState(false);
     const [campaign, setCampaign] = useState<CampaignWithCompanyCreators | null>(null);
@@ -73,7 +73,7 @@ export const useCampaigns = ({ campaignId }: any = {}) => {
     );
 
     const addCreatorToCampaign = useCallback(
-        async (input: CampaignCreatorDBInsert) => {
+        async (input: CampaignCreatorAddCreatorPostBody) => {
             setLoading(true);
             if (!campaign?.id) throw new Error('No campaign found');
             const body: CampaignCreatorAddCreatorPostBody = {
@@ -127,7 +127,7 @@ export const useCampaigns = ({ campaignId }: any = {}) => {
         createCampaign,
         updateCampaign,
         campaign,
-        loading,
+        loading: loading || isValidating,
         campaignCreators,
         addCreatorToCampaign,
         deleteCreatorInCampaign,

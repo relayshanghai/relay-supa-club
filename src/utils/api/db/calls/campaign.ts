@@ -30,15 +30,14 @@ export const updateCampaign = async (data: CampaignDBUpdate) =>
         .select()
         .single();
 
-export const insertCampaignCreator = async (data: CampaignCreatorDBInsert, campaign_id: string) =>
+export const insertCampaignCreator = async (data: CampaignCreatorDBInsert) =>
     await supabase
         .from('campaign_creators')
         .insert({
-            campaign_id: data.id,
             status: 'to contact',
             ...data
         })
-        .eq('campaign_id', campaign_id)
+        .eq('campaign_id', data.campaign_id)
         .select()
         .single();
 

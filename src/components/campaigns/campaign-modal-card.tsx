@@ -1,6 +1,6 @@
 import { PlusCircleIcon, CheckCircleIcon } from '@heroicons/react/24/solid';
 import { useCampaigns } from 'src/hooks/use-campaigns';
-import { CreatorSearchAccountObject } from 'types';
+import { CreatorPlatform, CreatorSearchAccountObject } from 'types';
 import { useEffect, useState } from 'react';
 import { Spinner } from '../icons';
 import toast from 'react-hot-toast';
@@ -15,7 +15,7 @@ export default function CampaignModalCard({
 }: {
     campaign: CampaignWithCompanyCreators;
     creator: CreatorSearchAccountObject | null;
-    platform: string;
+    platform: CreatorPlatform;
 }) {
     const supabase = useSupabaseClient();
     const { addCreatorToCampaign, loading } = useCampaigns({
@@ -34,7 +34,7 @@ export default function CampaignModalCard({
                 username: creator?.account.user_profile?.username,
                 fullname: creator?.account.user_profile?.fullname,
                 link_url: creator?.account.user_profile?.url,
-                platform: platform
+                platform
             });
         toast.success(t('campaigns.modal.addedSuccessfully'));
         setHasCreator(true);
