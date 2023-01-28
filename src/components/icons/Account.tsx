@@ -2,14 +2,7 @@ import { SVGProps } from 'react';
 
 export default function Account({ ...props }: SVGProps<SVGSVGElement>) {
     return (
-        <svg
-            width="800"
-            height="800"
-            viewBox="0 0 16 16"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            {...props}
-        >
+        <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="none" {...props}>
             <g fill="#000" fillRule="evenodd" clipRule="evenodd">
                 <path
                     d="M8 3a3 3 0 100 6 3 3 0 000-6zM6.5 6a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0z"

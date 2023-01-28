@@ -165,8 +165,8 @@ const Pricing = () => {
                                                         xmlns="http://www.w3.org/2000/svg"
                                                     >
                                                         <path
-                                                            fill-rule="evenodd"
-                                                            clip-rule="evenodd"
+                                                            fillRule="evenodd"
+                                                            clipRule="evenodd"
                                                             d="M2.151 10c0-1.846.635-3.542 1.688-4.897l11.21 11.209A7.948 7.948 0 0110.15 18c-4.41 0-8-3.589-8-8zm16 0a7.954 7.954 0 01-1.688 4.897L5.254 3.688A7.948 7.948 0 0110.151 2c4.411 0 8 3.589 8 8zm-8-10c-5.514 0-10 4.486-10 10s4.486 10 10 10 10-4.486 10-10-4.486-10-10-10z"
                                                             fill="currentColor"
                                                         />
@@ -183,8 +183,8 @@ const Pricing = () => {
                                                         xmlns="http://www.w3.org/2000/svg"
                                                     >
                                                         <path
-                                                            fill-rule="evenodd"
-                                                            clip-rule="evenodd"
+                                                            fillRule="evenodd"
+                                                            clipRule="evenodd"
                                                             d="M10.151 7a1 1 0 11.001-2 1 1 0 010 2zm1 7a1 1 0 01-2 0V9a1 1 0 012 0v5zm-1-14c-5.523 0-10 4.477-10 10s4.477 10 10 10c5.522 0 10-4.477 10-10s-4.478-10-10-10z"
                                                             fill="currentColor"
                                                         />
@@ -268,8 +268,8 @@ const Pricing = () => {
                                                     xmlns="http://www.w3.org/2000/svg"
                                                 >
                                                     <path
-                                                        fill-rule="evenodd"
-                                                        clip-rule="evenodd"
+                                                        fillRule="evenodd"
+                                                        clipRule="evenodd"
                                                         d="M2.151 10c0-1.846.635-3.542 1.688-4.897l11.21 11.209A7.948 7.948 0 0110.15 18c-4.41 0-8-3.589-8-8zm16 0a7.954 7.954 0 01-1.688 4.897L5.254 3.688A7.948 7.948 0 0110.151 2c4.411 0 8 3.589 8 8zm-8-10c-5.514 0-10 4.486-10 10s4.486 10 10 10 10-4.486 10-10-4.486-10-10-10z"
                                                         fill="currentColor"
                                                     />
@@ -286,8 +286,8 @@ const Pricing = () => {
                                                     xmlns="http://www.w3.org/2000/svg"
                                                 >
                                                     <path
-                                                        fill-rule="evenodd"
-                                                        clip-rule="evenodd"
+                                                        fillRule="evenodd"
+                                                        clipRule="evenodd"
                                                         d="M10.151 7a1 1 0 11.001-2 1 1 0 010 2zm1 7a1 1 0 01-2 0V9a1 1 0 012 0v5zm-1-14c-5.523 0-10 4.477-10 10s4.477 10 10 10c5.522 0 10-4.477 10-10s-4.478-10-10-10z"
                                                         fill="currentColor"
                                                     />
@@ -365,8 +365,8 @@ const Pricing = () => {
                                                     xmlns="http://www.w3.org/2000/svg"
                                                 >
                                                     <path
-                                                        fill-rule="evenodd"
-                                                        clip-rule="evenodd"
+                                                        fillRule="evenodd"
+                                                        clipRule="evenodd"
                                                         d="M2.151 10c0-1.846.635-3.542 1.688-4.897l11.21 11.209A7.948 7.948 0 0110.15 18c-4.41 0-8-3.589-8-8zm16 0a7.954 7.954 0 01-1.688 4.897L5.254 3.688A7.948 7.948 0 0110.151 2c4.411 0 8 3.589 8 8zm-8-10c-5.514 0-10 4.486-10 10s4.486 10 10 10 10-4.486 10-10-4.486-10-10-10z"
                                                         fill="currentColor"
                                                     />
@@ -383,8 +383,8 @@ const Pricing = () => {
                                                     xmlns="http://www.w3.org/2000/svg"
                                                 >
                                                     <path
-                                                        fill-rule="evenodd"
-                                                        clip-rule="evenodd"
+                                                        fillRule="evenodd"
+                                                        clipRule="evenodd"
                                                         d="M10.151 7a1 1 0 11.001-2 1 1 0 010 2zm1 7a1 1 0 01-2 0V9a1 1 0 012 0v5zm-1-14c-5.523 0-10 4.477-10 10s4.477 10 10 10c5.522 0 10-4.477 10-10s-4.478-10-10-10z"
                                                         fill="currentColor"
                                                     />
