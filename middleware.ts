@@ -32,7 +32,12 @@ export async function middleware(req: NextRequest) {
 
     // Special case: we need to be able to access this from the marketing page, so we need to allow CORS
     if (req.nextUrl.pathname.includes('/subscriptions/prices')) {
-        res.headers.set('Access-Control-Allow-Origin', '*');
+        const origin = req.headers.get('origin');
+        // TODO: once marketing sites are up, refine whitelist. Ticket: https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/76
+        if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
+            res.headers.set('Access-Control-Allow-Origin', '*');
+        } else if (origin?.includes('relay.club'))
+            res.headers.set('Access-Control-Allow-Origin', origin);
         res.headers.set('Access-Control-Allow-Methods', 'GET');
         return res;
     }
