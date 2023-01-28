@@ -2,7 +2,6 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { CompanyDB, CompanyDBInsert, createCompany, updateProfile } from 'src/utils/api/db';
 import { ensureCustomer } from 'src/utils/api/ensure-customer';
-import { checkSessionIdMatchesID } from 'src/utils/fetcher';
 import { serverLogger } from 'src/utils/logger';
 
 export type CompanyCreatePostBody = CompanyDBInsert & {
@@ -14,7 +13,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (req.method === 'POST') {
         try {
             const { user_id, name, website } = JSON.parse(req.body) as CompanyCreatePostBody;
-            checkSessionIdMatchesID(user_id, res);
             const { data: company, error } = await createCompany({ name, website });
 
             if (error) {

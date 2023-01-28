@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
@@ -15,30 +15,20 @@ import { clientLogger } from 'src/utils/logger';
 export default function Register() {
     const { t } = useTranslation();
     const router = useRouter();
-    const { loading, profile, refreshProfile } = useUser();
-    const { createCompany, company, refreshCompany } = useCompany();
+    const { loading } = useUser();
+    const { createCompany } = useCompany();
     const { values, setFieldValue } = useFields({
         name: '',
         website: ''
     });
     const [submitting, setSubmitting] = useState(false);
 
-    // const [paymentMethod, setPaymentMethod ] = useState(false);
-    // TODO: during this component's initial loading start, optimistically make a company. Then use the company ID to generate a Stripe customer id. Then create an add payment button that links to the stripe account dashboard, detect the payment method and add a customer id when finally submitting this page. middleware.ts checks for cus_id to confirm payment method.
-    useEffect(() => {
-        const checkForCompletedOnboard = async () => {
-            if (company?.cus_id) router.push('/dashboard');
-            else refreshCompany();
-        };
-        if (!loading) checkForCompletedOnboard();
-    }, [company?.cus_id, loading, profile, refreshCompany, router]);
-
     const handleSubmit = async () => {
         try {
             setSubmitting(true);
             await createCompany(values);
             toast.success(t('login.companyCreated'));
-            refreshProfile();
+            await router.push('/dashboard');
         } catch (e) {
             clientLogger(e, 'error');
             toast.error(t('login.oopsSomethingWentWrong'));

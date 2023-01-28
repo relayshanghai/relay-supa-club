@@ -20,6 +20,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 customer: data.cus_id,
                 status: 'active'
             });
+            return res.json({}); // turn off this endpoint while in progress to clean up console errors
             const subscription = subscriptions.data[0];
             if (!subscription)
                 return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({

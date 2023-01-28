@@ -1,6 +1,5 @@
-import { NextApiResponse } from 'next';
-import httpCodes from 'src/constants/httpCodes';
-import { supabase } from './supabase-client';
+import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
+import { NextApiRequest, NextApiResponse } from 'next';
 
 /** TODO: seems to be used only for Stripe? Re-org and put all stripe related work together */
 export const fetcher = (url: string) =>
@@ -76,15 +75,16 @@ export function imgProxy(url: string) {
     return proxyUrl + url;
 }
 
-export const checkSessionIdMatchesID = async (id: string, res: NextApiResponse) => {
-    if (!id) return res.status(httpCodes.UNAUTHORIZED).json({ error: 'no user id found' });
+export const checkSessionIdMatchesID = async (
+    id: string,
+    req: NextApiRequest,
+    res: NextApiResponse
+) => {
+    if (!id) return false;
+    const supabase = createServerSupabaseClient({ req, res });
     const {
         data: { session }
     } = await supabase.auth.getSession();
-
-    if (session?.user.id !== id) {
-        return res.status(httpCodes.UNAUTHORIZED).json({
-            error: 'user is unauthorized for this action'
-        });
-    }
+    if (session?.user.id !== id) return false;
+    return true;
 };
