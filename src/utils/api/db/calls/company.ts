@@ -12,7 +12,7 @@ import type {
 export type CompanyWithProfilesInvitesAndUsage = CompanyDB & {
     profiles: Pick<ProfileDB, 'id' | 'first_name' | 'last_name' | 'admin'>[];
     invites: Pick<InvitesDB, 'id' | 'email' | 'used' | 'expire_at'>[];
-    usages: Pick<UsagesDB, 'id'>[];
+    usages: Pick<UsagesDB, 'id' | 'type'>[];
 };
 
 export const getCompanyCusId = async (companyId: string) =>
@@ -23,7 +23,7 @@ export const getCompanyWithProfilesInvitesAndUsage = async (companyId: string) =
         .from('companies')
         .select(
             // If this query changes, make sure to update the CompanyWithProfilesInvitesAndUsage type
-            '*, profiles(id, first_name, last_name, admin), invites(id, email, used, expire_at), usages(id)'
+            '*, profiles(id, first_name, last_name, admin), invites(id, email, used, expire_at), usages(id, type)'
         )
         .eq('id', companyId)
         .eq('invites.used', false)
