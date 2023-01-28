@@ -15,7 +15,7 @@ const navbar = {
         transactions: '订单管理',
         billing: '套餐管理',
         subscribeNow: '立即订购',
-        account: '账户'
+        account: '账户',
     },
     mobile: {
         campaigns: '项目',
@@ -23,10 +23,10 @@ const navbar = {
         myCompany: '公司',
         creators: 'KOL',
         resourcePools: '资源',
-        profile: '我的'
+        profile: '我的',
     },
     usage: '已用',
     light: 'Light',
-    dark: 'Dark'
+    dark: 'Dark',
 };
 export default navbar;

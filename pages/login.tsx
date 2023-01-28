@@ -17,10 +17,10 @@ export default function Login() {
     const [loggingIn, setLoggingIn] = useState(false);
     const {
         values: { email, password },
-        setFieldValue
+        setFieldValue,
     } = useFields({
         email: '',
-        password: ''
+        password: '',
     });
 
     const handleSubmit = async () => {

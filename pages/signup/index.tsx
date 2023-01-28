@@ -18,13 +18,13 @@ export default function Register() {
     const router = useRouter();
     const {
         values: { firstName, lastName, email, password, confirmPassword },
-        setFieldValue
+        setFieldValue,
     } = useFields({
         firstName: '',
         lastName: '',
         email: '',
         password: '',
-        confirmPassword: ''
+        confirmPassword: '',
     });
     const { signup, logout, user } = useUser();
     const [signupSuccess, setSignupSuccess] = useState(false);
@@ -51,8 +51,8 @@ export default function Register() {
                 password,
                 data: {
                     first_name: firstName,
-                    last_name: lastName
-                }
+                    last_name: lastName,
+                },
             });
             if (signupRes?.session?.user.id) setSignupSuccess(true);
         } catch (error) {

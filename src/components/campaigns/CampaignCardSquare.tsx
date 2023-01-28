@@ -9,14 +9,14 @@ import {
     ReactElement,
     ReactFragment,
     ReactNode,
-    ReactPortal
+    ReactPortal,
 } from 'react';
 import { supabase } from 'src/utils/supabase-client';
 import { t } from 'i18next';
 import { CampaignWithCompanyCreators } from 'src/utils/api/db';
 
 export default function CampaignCardSquare({
-    campaign
+    campaign,
 }: {
     campaign: CampaignWithCompanyCreators;
 }) {
@@ -26,7 +26,7 @@ export default function CampaignCardSquare({
         const getFiles = async () => {
             const getFilePath = (filename: string) => {
                 const {
-                    data: { publicUrl }
+                    data: { publicUrl },
                 } = supabase.storage
                     .from('images')
                     .getPublicUrl(`campaigns/${campaign?.id}/${filename}`);
@@ -38,7 +38,7 @@ export default function CampaignCardSquare({
                 .list(`campaigns/${campaign?.id}`, {
                     limit: 100,
                     offset: 0,
-                    sortBy: { column: 'name', order: 'asc' }
+                    sortBy: { column: 'name', order: 'asc' },
                 });
 
             if (data?.[0]?.name) {
@@ -81,7 +81,7 @@ export default function CampaignCardSquare({
                                             | Iterable<ReactNode>
                                             | null
                                             | undefined,
-                                        index: Key | null | undefined
+                                        index: Key | null | undefined,
                                     ) => (
                                         <div
                                             key={index}
@@ -89,7 +89,7 @@ export default function CampaignCardSquare({
                                         >
                                             {tag}
                                         </div>
-                                    )
+                                    ),
                                 )}
                         </div>
                         <div className="bg-primary-50/60 text-primary-500 rounded-md px-2 py-1 text-xs inline-block absolute top-2 right-2">
@@ -124,7 +124,7 @@ export default function CampaignCardSquare({
                                                         {/* <div>{status[1]}</div> */}
                                                     </div>
                                                 </Link>
-                                            )
+                                            ),
                                         )
                                 }
                             </div>

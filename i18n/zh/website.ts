@@ -23,7 +23,7 @@ const website = {
         noAccount: '没有账号？',
         signUp: '注册账号',
         welcomeBack: '欢迎回来',
-        welcomeBackDesc: '欢迎回来，请输入您的登陆信息。'
+        welcomeBackDesc: '欢迎回来，请输入您的登陆信息。',
     },
     paymentWall: {
         accountExpired: '你的账户已失效 :(',
@@ -43,7 +43,7 @@ const website = {
         email: '电子邮箱',
         phonenumber: '联系电话',
         remarks: '备注',
-        contactUs: '联系我们'
+        contactUs: '联系我们',
     },
     signup: {
         signup: '注册账号',
@@ -62,7 +62,7 @@ const website = {
         login: '登录',
         successMsg: '恭喜，您已经完成注册！',
         confirmMsg: '请到您的电子邮箱去确认注册。',
-        passwordNotMatch: '密码输入不一致'
+        passwordNotMatch: '密码输入不一致',
     },
     company: {
         greetingTitle: '感谢您的到来！',
@@ -70,18 +70,18 @@ const website = {
         typeTitle: '我来自',
         brand: '品牌方',
         agency: '经纪公司', //FIXME:not sure abt the translation
-        other: '其他'
+        other: '其他',
     },
     wechat: {
         greetingTitle: '感谢您的到来！',
-        greetingText: '为了能更好的了解您的需求，请填写以下信息'
+        greetingText: '为了能更好的了解您的需求，请填写以下信息',
     },
     forgot: {
         forgotPassword: '忘记密码',
         forgotPasswordDesc: '我们将会给您发送一封重置密码的邮件。',
         requestPassword: '重置密码',
         email: '邮箱',
-        emailPlaceholder: '邮箱地址'
+        emailPlaceholder: '邮箱地址',
     },
     close: '关闭',
     next: '下一页',
@@ -103,6 +103,6 @@ const website = {
     maxLength: '至多输入',
     minLength: '至少需要输入',
     characters: '个字符',
-    back: '返回'
+    back: '返回',
 };
 export default website;

@@ -15,7 +15,7 @@ import {
     DatePicker,
     Checkbox,
     TextInput,
-    TextareaInput as TextArea
+    TextareaInput as TextArea,
 } from 'src/components/ui';
 import { Question, questions, TimelineQuestion } from 'src/components/campaigns/helper';
 import { useCampaigns } from 'src/hooks/use-campaigns';
@@ -28,7 +28,7 @@ import { useSupabaseClient } from '@supabase/auth-helpers-react';
 const TimelineInput = ({
     q,
     errors,
-    control
+    control,
 }: {
     q: Question;
     errors: Partial<
@@ -82,7 +82,7 @@ export default function CampaignForm() {
         control,
         reset,
         setValue,
-        formState: { errors }
+        formState: { errors },
     } = useForm();
     const methods = useForm();
     const campaignId = router.query.id?.[0];
@@ -103,7 +103,7 @@ export default function CampaignForm() {
                     .catch((error) => clientLogger(error, 'error'));
             }
         },
-        [supabase]
+        [supabase],
     );
 
     const deleteFiles = useCallback(
@@ -118,7 +118,7 @@ export default function CampaignForm() {
                     .catch((error) => clientLogger(error, 'error'));
             }
         },
-        [supabase]
+        [supabase],
     );
 
     const createHandler = useCallback(
@@ -139,7 +139,7 @@ export default function CampaignForm() {
                 setSubmitting(false);
             }
         },
-        [createCampaign, media, router, t, uploadFiles]
+        [createCampaign, media, router, t, uploadFiles],
     );
 
     const updateHandler = useCallback(
@@ -169,7 +169,7 @@ export default function CampaignForm() {
                 setSubmitting(false);
             }
         },
-        [updateCampaign, campaignId, media, purgedMedia, t, router, uploadFiles, deleteFiles]
+        [updateCampaign, campaignId, media, purgedMedia, t, router, uploadFiles, deleteFiles],
     );
 
     const onSubmit = useCallback(
@@ -182,13 +182,13 @@ export default function CampaignForm() {
                 await updateHandler(formData);
             }
         },
-        [media, purgedMedia, isAddMode, createHandler, updateHandler]
+        [media, purgedMedia, isAddMode, createHandler, updateHandler],
     );
 
     useEffect(() => {
         const getFilePath = (filename: string) => {
             const {
-                data: { publicUrl }
+                data: { publicUrl },
             } = supabase.storage.from('images').getPublicUrl(`campaigns/${campaignId}/${filename}`);
             return publicUrl;
         };
@@ -197,12 +197,12 @@ export default function CampaignForm() {
             const { data } = await supabase.storage.from('images').list(`campaigns/${campaignId}`, {
                 limit: 100,
                 offset: 0,
-                sortBy: { column: 'name', order: 'asc' }
+                sortBy: { column: 'name', order: 'asc' },
             });
 
             const previousMediaFormatted = data?.map((file) => ({
                 url: `${getFilePath(file.name)}`,
-                name: file.name
+                name: file.name,
             }));
 
             if (previousMediaFormatted) {

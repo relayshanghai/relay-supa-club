@@ -4,7 +4,7 @@ import { chinaFilter } from 'src/utils/utils';
 
 export const ProgressBlock = ({
     stats: statsFull,
-    title
+    title,
 }: {
     stats: { name: string; weight: number }[];
     title: string;

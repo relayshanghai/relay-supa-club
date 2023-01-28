@@ -23,7 +23,7 @@ export type CompanyAcceptInviteGetResponse = {
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
         const { token, password, firstName, lastName } = JSON.parse(
-            req.body
+            req.body,
         ) as CompanyAcceptInvitePostBody;
         const { data, error } = await supabase
             .from('invites')
@@ -38,17 +38,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
         if (data?.used || Date.now() >= new Date(data.expire_at ?? '').getTime()) {
             return res.status(httpCodes.UNAUTHORIZED).json({
-                error: 'inviteInvalid'
+                error: 'inviteInvalid',
             });
         }
 
         // Sign-up the user with the given credentials
         const {
             data: { user, session },
-            error: userError
+            error: userError,
         } = await supabase.auth.signUp({
             email: data.email,
-            password
+            password,
         });
 
         if (userError) {
@@ -61,7 +61,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 id: user?.id || session?.user.id || '',
                 first_name: firstName,
                 last_name: lastName,
-                company_id: data.company_id
+                company_id: data.company_id,
             });
             if (profileUpsertError) {
                 serverLogger(profileUpsertError, 'error');
@@ -77,7 +77,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const { data: invite, error: updateError } = await supabase
             .from('invites')
             .update({
-                used: true
+                used: true,
             })
             .eq('id', token)
             .single();
@@ -102,17 +102,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             if (error) {
                 serverLogger(error, 'error');
                 return res.status(httpCodes.UNAUTHORIZED).json({
-                    error: 'inviteInvalid'
+                    error: 'inviteInvalid',
                 });
             }
             if (data?.used) {
                 return res.status(httpCodes.UNAUTHORIZED).json({
-                    error: 'inviteUsed'
+                    error: 'inviteUsed',
                 });
             }
             if (Date.now() >= new Date(data.expire_at ?? '').getTime()) {
                 return res.status(httpCodes.UNAUTHORIZED).json({
-                    error: 'inviteExpired'
+                    error: 'inviteExpired',
                 });
             }
             return res.status(httpCodes.OK).json({ message: 'inviteValid', email: data.email });

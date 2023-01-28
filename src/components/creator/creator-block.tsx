@@ -6,7 +6,7 @@ import { SimilarCreator } from './creator-similar-creator';
 export const CreatorBlock = ({
     similarCreators,
     platform,
-    title
+    title,
 }: {
     similarCreators: SimilarUser[];
     platform: CreatorPlatform;

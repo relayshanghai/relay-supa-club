@@ -27,7 +27,10 @@ function Checkbox({ fieldName, register, errors, options, isRequired = false }: 
                             id={type.value}
                             className="checkbox"
                             {...register(fieldName, {
-                                required: { value: isRequired, message: t('website.requiredField') }
+                                required: {
+                                    value: isRequired,
+                                    message: t('website.requiredField'),
+                                },
                             })}
                             value={type.value}
                         />

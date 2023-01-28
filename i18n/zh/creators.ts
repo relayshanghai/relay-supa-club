@@ -26,7 +26,7 @@ const creators = {
     openProfile: '打开KOL',
     close: '取消',
     modal: {
-        viewFullProfile: '查看完整信息'
+        viewFullProfile: '查看完整信息',
     },
     filter: {
         title: '筛选KOL',
@@ -68,7 +68,7 @@ const creators = {
         engagement: '互动率',
         days: '天',
         months: '月',
-        upgradeSubscriptionToSeeMore: '升级您的订阅以查看更多结果。'
+        upgradeSubscriptionToSeeMore: '升级您的订阅以查看更多结果。',
     },
     show: {
         lastUpdate: '最近更新',
@@ -153,9 +153,9 @@ const creators = {
             genderSplit: '我们通过分析最近视频中的观众头像、姓名、描述和自拍照来确定这一点',
             ageSplit: '我们通过分析最近视频中的观众头像、姓名、描述和自拍照来确定这一点。',
             audienceLocation: '我们通过分析最近视频中的位置标签、文本、简介和标题来确定这一点',
-            language: '我们通过最近发布内容的文字来判断'
+            language: '我们通过最近发布内容的文字来判断',
         },
-        audienceGenderAge: '粉丝性别年龄'
+        audienceGenderAge: '粉丝性别年龄',
     },
     form: {
         createCreator: '创建KOL',
@@ -174,7 +174,7 @@ const creators = {
         categoriesDescription: '请选择此KOL擅长及活跃的类型',
         platformQuestion: '活跃平台',
         platformDescription: '请选择此KOL活跃的平台',
-        submitting: '提交中'
-    }
+        submitting: '提交中',
+    },
 };
 export default creators;

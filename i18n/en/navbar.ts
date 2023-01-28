@@ -14,18 +14,18 @@ const navbar = {
         transactions: 'Transactions',
         billing: 'Plans & Billing',
         subscribeNow: 'Subscribe Now',
-        account: 'Account'
+        account: 'Account',
     },
     mobile: {
         campaigns: 'Campaigns',
         myCompany: 'Company',
         creators: 'KOLs',
         resourcePools: 'Resources',
-        profile: 'Me'
+        profile: 'Me',
     },
     usage: 'Usage',
     light: 'Light',
-    dark: 'Dark'
+    dark: 'Dark',
 };
 
 export default navbar;

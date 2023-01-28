@@ -7,30 +7,30 @@ const nextConfig = {
             {
                 protocol: 'https',
                 hostname: 'yt3.*.com',
-                pathname: '**'
+                pathname: '**',
             },
             {
                 protocol: 'https',
                 hostname: 'imgp.*.icu',
-                pathname: '**'
+                pathname: '**',
             },
             {
                 protocol: 'https',
                 hostname: '*.tiktokcdn.com',
-                pathname: '**'
+                pathname: '**',
             },
             {
                 protocol: 'https',
                 hostname: 'image-cache.brainchild-tech.cn',
-                pathname: '**'
+                pathname: '**',
             },
             {
                 protocol: 'https',
                 hostname: 'quwgcjfxxojrvkenqgmi.supabase.co',
-                pathname: '**'
-            }
-        ]
-    }
+                pathname: '**',
+            },
+        ],
+    },
 };
 
 module.exports = nextConfig;

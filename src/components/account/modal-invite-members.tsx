@@ -10,7 +10,7 @@ export const InviteMembersModal = ({
     showAddMoreMembers,
     setShowAddMoreMembers,
     inviteEmail,
-    setInviteEmail
+    setInviteEmail,
 }: {
     showAddMoreMembers: boolean;
     setShowAddMoreMembers: (show: boolean) => void;

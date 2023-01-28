@@ -28,7 +28,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 });
             const product = await stripeClient.products.retrieve(
                 // TODO: fix this, investigate what we are really getting/sending, and make custom type for frontend to receive.
-                (subscription as any).plan.product
+                (subscription as any).plan.product,
             );
             (subscription as any).product = product;
 

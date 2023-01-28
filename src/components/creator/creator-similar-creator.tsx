@@ -9,7 +9,7 @@ import { ShareLink } from '../icons';
 
 export const SimilarCreator = ({
     creator,
-    platform
+    platform,
 }: {
     creator: SimilarUser;
     platform: CreatorPlatform;

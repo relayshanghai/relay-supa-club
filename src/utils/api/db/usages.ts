@@ -4,7 +4,7 @@ import { UsagesDBInsert } from './types';
 export const recordReportUsage = async (
     company_id: string,
     user_id: string,
-    creator_id: string
+    creator_id: string,
 ) => {
     const { data: company, error: companyError } = await supabase
         .from('companies')
@@ -32,7 +32,7 @@ export const recordReportUsage = async (
         company_id,
         user_id,
         type: 'report',
-        item_id: creator_id
+        item_id: creator_id,
     };
     const { error: insertError } = await supabase.from('usages').insert([usage]);
     if (insertError) return { error: 'Error recording usage' };
@@ -64,7 +64,7 @@ export const recordSearchUsage = async (company_id: string, user_id: string) => 
     const usage: UsagesDBInsert = {
         company_id,
         user_id,
-        type: 'search'
+        type: 'search',
     };
     const { error } = await supabase.from('usages').insert([usage]);
     if (error) return error;

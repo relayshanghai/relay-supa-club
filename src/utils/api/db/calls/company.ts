@@ -5,7 +5,7 @@ import type {
     CompanyDBUpdate,
     InvitesDB,
     ProfileDB,
-    UsagesDB
+    UsagesDB,
 } from '../types';
 
 // Custom type for supabase queries where we select more than one row in a single query
@@ -23,7 +23,7 @@ export const getCompanyWithProfilesInvitesAndUsage = async (companyId: string) =
         .from('companies')
         .select(
             // If this query changes, make sure to update the CompanyWithProfilesInvitesAndUsage type
-            '*, profiles(id, first_name, last_name, admin), invites(id, email, used, expire_at), usages(id, type)'
+            '*, profiles(id, first_name, last_name, admin), invites(id, email, used, expire_at), usages(id, type)',
         )
         .eq('id', companyId)
         .eq('invites.used', false)

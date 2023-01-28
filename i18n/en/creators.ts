@@ -26,7 +26,7 @@ const creators = {
     openProfile: 'Open Profile',
     close: 'Close',
     modal: {
-        viewFullProfile: 'View Full Profile'
+        viewFullProfile: 'View Full Profile',
     },
     filter: {
         title: 'Filter Creator',
@@ -69,7 +69,7 @@ const creators = {
         engagement: 'Engagement',
         days: 'days',
         months: 'months',
-        upgradeSubscriptionToSeeMore: 'Upgrade your subscription plan, to view more results.'
+        upgradeSubscriptionToSeeMore: 'Upgrade your subscription plan, to view more results.',
     },
     show: {
         lastUpdate: 'Last Updated',
@@ -157,9 +157,9 @@ const creators = {
                 'We determine this by analyzing the audiences profile pictures, name, profile description and selfies in recent posts',
             audienceLocation:
                 'We determine this by analyzing location tags, text, bio and caption in recent posts',
-            language: 'We determine this by analyzing texts in the recent posts'
+            language: 'We determine this by analyzing texts in the recent posts',
         },
-        audienceGenderAge: 'Audience gender by age'
+        audienceGenderAge: 'Audience gender by age',
     },
     form: {
         createCreator: 'Create KOL',
@@ -178,8 +178,8 @@ const creators = {
         categoriesDescription: 'Specify the categories this creator is active in',
         platformQuestion: 'Platform Active',
         platformDescription: 'Please specify which platforms this creator is active on',
-        submitting: 'Submitting'
-    }
+        submitting: 'Submitting',
+    },
 };
 
 export default creators;

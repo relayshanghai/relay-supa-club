@@ -13,7 +13,7 @@ export const SearchResultRow = ({
     platform,
     setLookalike,
     setShowCampaignListModal,
-    setSelectedCreator
+    setSelectedCreator,
 }: {
     creator: CreatorSearchAccountObject;
     platform: CreatorPlatform;

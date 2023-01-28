@@ -11,7 +11,7 @@ export const SocialCard = ({ contact }: { contact: CreatorReportContact }) => {
                 ? 'mailto:' + contact.formatted_value
                 : isValidUrl(contact.formatted_value)
                 ? contact.formatted_value
-                : ''
+                : '',
     });
 
     return (
