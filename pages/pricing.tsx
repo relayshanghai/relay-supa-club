@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Layout } from 'src/modules/layout';
+import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger';
+import { SubscriptionPricesGetResponse } from './api/subscriptions/prices';
 const details = {
     diy: [
         { title: 'twoHundredNewInfluencerProfilesPerMonth', icon: 'check' },
@@ -11,9 +13,9 @@ const details = {
         {
             title: 'clubbyStarterPack',
             icon: 'check',
-            info: 'includesCustomEmailTemplates'
+            info: 'includesCustomEmailTemplates',
         },
-        { title: 'influencerOutreachExpertWorkingOnYourCampaigns', icon: 'cross' }
+        { title: 'influencerOutreachExpertWorkingOnYourCampaigns', icon: 'cross' },
     ],
     diyMax: [
         { title: 'fourHundredFiftyNewInfluencerProfilesPerMonth', icon: 'check' },
@@ -23,9 +25,9 @@ const details = {
         {
             title: 'clubbyStarterPack',
             icon: 'check',
-            info: 'includesCustomEmailTemplates'
+            info: 'includesCustomEmailTemplates',
         },
-        { title: 'influencerOutreachExpertWorkingOnYourCampaigns', icon: 'cross' }
+        { title: 'influencerOutreachExpertWorkingOnYourCampaigns', icon: 'cross' },
     ],
     VIP: [
         { title: 'moreInfluencerProfiles', icon: 'check' },
@@ -35,27 +37,10 @@ const details = {
         {
             title: 'clubbyStarterPack',
             icon: 'check',
-            info: 'includesCustomEmailTemplates'
+            info: 'includesCustomEmailTemplates',
         },
-        { title: 'influencerOutreachExpertWorkingOnYourCampaigns', icon: 'check' }
-    ]
-};
-const prices = {
-    monthly: {
-        diy: '$150',
-        diyMax: '$270',
-        VIP: 'Contact us'
-    },
-    quarterly: {
-        diy: '$99',
-        diyMax: '$220',
-        VIP: 'Contact us'
-    },
-    annually: {
-        diy: '$89',
-        diyMax: '$199',
-        VIP: 'Contact us'
-    }
+        { title: 'influencerOutreachExpertWorkingOnYourCampaigns', icon: 'check' },
+    ],
 };
 
 const salesRefEmail = 'amy.hu@relay.club';
@@ -67,6 +52,29 @@ const unselectedTabClasses = 'py-1 px-4 border-x border-primary-500 cursor-point
 const selectedTabClasses = 'py-1 px-4 border-x border-primary-500 bg-primary-500 text-white';
 
 export type Period = 'monthly' | 'annually' | 'quarterly';
+type PriceTiers = {
+    diy: string;
+    diyMax: string;
+    VIP: string;
+};
+type Prices = {
+    monthly: PriceTiers;
+    quarterly: PriceTiers;
+    annually: PriceTiers;
+};
+
+const formatPrice = (price: string, currency: string, period: Period) => {
+    const pricePerMonth =
+        period === 'annually'
+            ? Number(price) / 12
+            : period === 'quarterly'
+            ? Number(price) / 4
+            : Number(price);
+    /** I think rounding to the dollar is OK for now, but if need be we can add cents */
+    const roundedPrice = Math.round(pricePerMonth);
+    if (currency === 'usd') return `$${roundedPrice}`;
+    return `${roundedPrice} ${currency}`;
+};
 
 /** Note: This file doesn't share a lot of the conventions we have elsewhere across the app, because this file is migrated from the marketing site, trying to make minimal changes in case we need to update both at the same time. */
 const Pricing = () => {
@@ -77,6 +85,54 @@ const Pricing = () => {
     const openConfirmModal = (plan: 'diy' | 'diyMax', period: Period) => {
         clientLogger({ plan, period });
     };
+
+    const [prices, setPrices] = useState<Prices>({
+        monthly: {
+            diy: '--',
+            diyMax: '--',
+            VIP: t('pricing.contactUs'),
+        },
+        quarterly: {
+            diy: '--',
+            diyMax: '--',
+            VIP: t('pricing.contactUs'),
+        },
+        annually: {
+            diy: '--',
+            diyMax: '--',
+            VIP: t('pricing.contactUs'),
+        },
+    });
+
+    useEffect(() => {
+        const fetchPrices = async () => {
+            try {
+                const res = await nextFetch<SubscriptionPricesGetResponse>('subscriptions/prices');
+                const { diy, diyMax } = res;
+                const monthly = {
+                    diy: formatPrice(diy.prices.monthly, diy.currency, 'monthly'),
+                    diyMax: formatPrice(diyMax.prices.monthly, diyMax.currency, 'monthly'),
+                    VIP: t('pricing.contactUs'),
+                };
+                const quarterly = {
+                    diy: formatPrice(diy.prices.quarterly, diy.currency, 'quarterly'),
+                    diyMax: formatPrice(diyMax.prices.quarterly, diyMax.currency, 'quarterly'),
+                    VIP: t('pricing.contactUs'),
+                };
+                const annually = {
+                    diy: formatPrice(diy.prices.annually, diy.currency, 'annually'),
+                    diyMax: formatPrice(diyMax.prices.annually, diyMax.currency, 'annually'),
+                    VIP: t('pricing.contactUs'),
+                };
+
+                setPrices({ monthly, quarterly, annually });
+            } catch (error) {
+                clientLogger(error, 'error');
+            }
+        };
+
+        fetchPrices();
+    }, [t]);
 
     return (
         <Layout>

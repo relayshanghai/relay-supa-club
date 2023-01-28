@@ -1,5 +1,5 @@
 import { supabase } from 'src/utils/supabase-client';
-import { stripeClient } from 'src/utils/stripe-client';
+import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 
 export const ensureCustomer = async ({ cus_id, company_id, id, name }: any, unwrap = false) => {
     if (cus_id) {
@@ -13,14 +13,14 @@ export const ensureCustomer = async ({ cus_id, company_id, id, name }: any, unwr
     const customer = await stripeClient.customers.create({
         name,
         metadata: {
-            company_id: company_id || id
-        }
+            company_id: company_id || id,
+        },
     });
 
     await supabase
         .from('companies')
         .update({
-            cus_id: customer.id
+            cus_id: customer.id,
         })
         .eq('id', company_id || id);
 

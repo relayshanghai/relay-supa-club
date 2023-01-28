@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { stripeClient } from 'src/utils/stripe-client';
+import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 import { supabase } from 'src/utils/supabase-client';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -18,26 +18,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }
 
             await stripeClient.customers.listPaymentMethods(companyData.cus_id, {
-                type: 'card'
+                type: 'card',
             });
 
             const subscriptions = await stripeClient.subscriptions.list({
                 customer: companyData.cus_id,
-                status: 'active'
+                status: 'active',
             });
             const activeSubscription = subscriptions.data[0];
 
             if (activeSubscription) {
                 await stripeClient.subscriptions.cancel(activeSubscription.id, {
                     invoice_now: true,
-                    prorate: true
+                    prorate: true,
                 });
             }
 
             const subscription = await stripeClient.subscriptions.create({
                 customer: companyData.cus_id,
                 items: [{ price: price_id }],
-                proration_behavior: 'create_prorations'
+                proration_behavior: 'create_prorations',
             });
 
             const price = await stripeClient.prices.retrieve(price_id);
@@ -46,7 +46,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             await supabase
                 .from('companies')
                 .update({
-                    usage_limit: product.metadata.usage_limit
+                    profiles_limit: product.metadata.profiles_limit,
                 })
                 .eq('id', company_id);
 

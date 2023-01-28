@@ -1,7 +1,32 @@
 import type Stripe from 'stripe';
 
-export type StripePlanWithPrice = Stripe.Product & { prices?: Stripe.Plan[] };
 export type StripePaymentMethods = Stripe.Response<Stripe.ApiList<Stripe.PaymentMethod>>;
+
+export type RelayPlan = {
+    currency: string;
+    prices: {
+        monthly: string;
+        quarterly: string;
+        annually: string;
+    };
+    profiles: string;
+    searches: string;
+};
+
+export interface RelayPlanStripeProduct extends Stripe.Product {
+    metadata: RelayAccountPlanMetadata;
+}
+
+/** Make sure to enter this metadata correctly in the Stripe dashboard under product > additional options > metadata  */
+export type RelayAccountPlanMetadata = {
+    /** How many searches they can do per month (stringified number) */
+    searches?: string;
+    /** How many influencer profiles are they allowed to search for per month (stringified number) */
+    profiles?: string;
+};
+export interface StripePriceWithProductMetadata extends Stripe.Price {
+    product: RelayPlanStripeProduct;
+}
 
 export type CreatorPlatform = 'instagram' | 'youtube' | 'tiktok';
 export type SocialMediaPlatform = CreatorPlatform | 'email' | 'twitter' | 'facebook' | 'wechat';

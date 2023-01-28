@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { stripeClient } from 'src/utils/stripe-client';
+import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 import { supabase } from 'src/utils/supabase-client';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -18,7 +18,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         if (!data.cus_id) return res.status(404).send({ message: 'No customer found' });
         const portal = await stripeClient.billingPortal.sessions.create({
             customer: data.cus_id,
-            return_url: 'http://localhost:3000/account'
+            return_url: 'http://localhost:3000/account',
         });
 
         return res.redirect(307, portal.url);

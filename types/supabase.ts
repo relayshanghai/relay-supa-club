@@ -11,7 +11,7 @@ export interface Database {
                     brief_opened_by_creator: boolean | null;
                     campaign_id: string | null;
                     created_at: string | null;
-                    creator_id: string | null;
+                    creator_id: string;
                     creator_model: string | null;
                     creator_token: string | null;
                     email_sent: boolean | null;
@@ -25,6 +25,7 @@ export interface Database {
                     paid_amount_currency: string;
                     payment_details: string | null;
                     payment_status: string;
+                    platform: string;
                     publication_date: string | null;
                     rate_cents: number;
                     rate_currency: string;
@@ -43,7 +44,7 @@ export interface Database {
                     brief_opened_by_creator?: boolean | null;
                     campaign_id?: string | null;
                     created_at?: string | null;
-                    creator_id?: string | null;
+                    creator_id: string;
                     creator_model?: string | null;
                     creator_token?: string | null;
                     email_sent?: boolean | null;
@@ -57,6 +58,7 @@ export interface Database {
                     paid_amount_currency?: string;
                     payment_details?: string | null;
                     payment_status?: string;
+                    platform?: string;
                     publication_date?: string | null;
                     rate_cents?: number;
                     rate_currency?: string;
@@ -75,7 +77,7 @@ export interface Database {
                     brief_opened_by_creator?: boolean | null;
                     campaign_id?: string | null;
                     created_at?: string | null;
-                    creator_id?: string | null;
+                    creator_id?: string;
                     creator_model?: string | null;
                     creator_token?: string | null;
                     email_sent?: boolean | null;
@@ -89,6 +91,7 @@ export interface Database {
                     paid_amount_currency?: string;
                     payment_details?: string | null;
                     payment_status?: string;
+                    platform?: string;
                     publication_date?: string | null;
                     rate_cents?: number;
                     rate_currency?: string;
@@ -182,8 +185,9 @@ export interface Database {
                     cus_id: string | null;
                     id: string;
                     name: string | null;
+                    profiles_limit: string;
+                    searches_limit: string;
                     updated_at: string | null;
-                    usage_limit: string;
                     website: string | null;
                 };
                 Insert: {
@@ -192,8 +196,9 @@ export interface Database {
                     cus_id?: string | null;
                     id?: string;
                     name?: string | null;
+                    profiles_limit?: string;
+                    searches_limit?: string;
                     updated_at?: string | null;
-                    usage_limit?: string;
                     website?: string | null;
                 };
                 Update: {
@@ -202,8 +207,9 @@ export interface Database {
                     cus_id?: string | null;
                     id?: string;
                     name?: string | null;
+                    profiles_limit?: string;
+                    searches_limit?: string;
                     updated_at?: string | null;
-                    usage_limit?: string;
                     website?: string | null;
                 };
             };

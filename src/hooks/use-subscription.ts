@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { nextFetch } from 'src/utils/fetcher';
 import Stripe from 'stripe';
 import useSWR from 'swr';
-import { StripePaymentMethods, StripePlanWithPrice } from 'types';
+import { StripePaymentMethods } from 'types';
 import { useUser } from './use-user';
 
 export const useSubscription = () => {
@@ -12,7 +12,7 @@ export const useSubscription = () => {
         profile?.company_id ? `subscriptions?id=${profile?.company_id}` : null,
         nextFetch<Stripe.Subscription>
     );
-    const { data: plans } = useSWR('subscriptions/plans', nextFetch<StripePlanWithPrice[]>);
+
     const { data: paymentMethods } = useSWR(
         profile?.company_id ? `subscriptions/payment-method?id=${profile.company_id}` : null,
         nextFetch<StripePaymentMethods>
@@ -24,8 +24,8 @@ export const useSubscription = () => {
                 method: 'post',
                 body: JSON.stringify({
                     ...input,
-                    id: profile?.company_id
-                })
+                    id: profile?.company_id,
+                }),
             });
             mutate();
         },
@@ -38,8 +38,8 @@ export const useSubscription = () => {
                 method: 'post',
                 body: JSON.stringify({
                     price_id: priceId,
-                    company_id: profile?.company_id
-                })
+                    company_id: profile?.company_id,
+                }),
             });
             mutate();
         },
@@ -49,8 +49,7 @@ export const useSubscription = () => {
     return {
         subscription,
         paymentMethods,
-        plans,
         updateCompany,
-        createSubscriptions
+        createSubscriptions,
     };
 };

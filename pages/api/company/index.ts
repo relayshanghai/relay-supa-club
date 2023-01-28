@@ -3,11 +3,11 @@ import httpCodes from 'src/constants/httpCodes';
 import {
     CompanyWithProfilesInvitesAndUsage,
     getCompanyWithProfilesInvitesAndUsage,
-    updateCompany
+    updateCompany,
 } from 'src/utils/api/db/calls/company';
 import { CompanyDB, CompanyDBUpdate } from 'src/utils/api/db/types';
 import { serverLogger } from 'src/utils/logger';
-import { stripeClient } from 'src/utils/stripe-client';
+import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 
 export type CompanyGetQueries = {
     id: string;
@@ -61,8 +61,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 name: company.name,
                 description: company.website,
                 metadata: {
-                    company_id: updateData.id
-                }
+                    company_id: updateData.id,
+                },
             });
 
             return res.status(httpCodes.OK).json(company);
