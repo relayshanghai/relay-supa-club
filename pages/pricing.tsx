@@ -68,7 +68,7 @@ const formatPrice = (price: string, currency: string, period: Period) => {
         period === 'annually'
             ? Number(price) / 12
             : period === 'quarterly'
-            ? Number(price) / 4
+            ? Number(price) / 3
             : Number(price);
     /** I think rounding to the dollar is OK for now, but if need be we can add cents */
     const roundedPrice = Math.round(pricePerMonth);
