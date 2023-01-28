@@ -16,6 +16,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     .from('companies')
                     .update({
                         profiles_limit: plan.metadata.profiles,
+                        searches_limit: plan.metadata.searches,
                     })
                     .eq('cus_id', body.data.object.customer)
                     .single();

@@ -17,9 +17,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 return res.status(500).json({ error: 'Missing company data' });
             }
 
-            await stripeClient.customers.listPaymentMethods(companyData.cus_id, {
-                type: 'card',
-            });
+            await stripeClient.customers.listPaymentMethods(companyData.cus_id);
 
             const subscriptions = await stripeClient.subscriptions.list({
                 customer: companyData.cus_id,
@@ -46,7 +44,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             await supabase
                 .from('companies')
                 .update({
-                    profiles_limit: product.metadata.profiles_limit,
+                    profiles_limit: product.metadata.profiles,
+                    searches_limit: product.metadata.searches,
                 })
                 .eq('id', company_id);
 
