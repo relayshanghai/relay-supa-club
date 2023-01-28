@@ -99,27 +99,42 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
 
             if (error) throw new Error(error.message || 'Unknown error');
             return data;
-        } catch (e: any) {
+        } catch (e: unknown) {
             clientLogger(e, 'error');
+            let message = 'Unknown error';
+            if (e instanceof Error) message = e.message ?? 'Unknown error';
+            throw new Error(message);
+        } finally {
             setLoading(false);
-            throw new Error(e.message || 'Unknown error');
         }
     };
-    const signup = async (options: any) => {
+    const signup = async ({
+        email,
+        password,
+        data
+    }: {
+        email: string;
+        password: string;
+        data: {
+            first_name: string;
+            last_name: string;
+        };
+    }) => {
         setLoading(true);
         try {
-            const { error, data } = await supabaseClient.auth.signUp({
-                email: options.email,
-                password: options.password,
-                options: {
-                    data: options.data
-                }
+            const { error, data: signupResData } = await supabaseClient.auth.signUp({
+                email,
+                password,
+                options: { data }
             });
 
             if (error) throw new Error(error?.message || 'Unknown error');
-            return data;
-        } catch (e: any) {
-            throw new Error(e.message || 'Unknown error');
+            return signupResData;
+        } catch (e: unknown) {
+            clientLogger(e, 'error');
+            let message = 'Unknown error';
+            if (e instanceof Error) message = e.message ?? 'Unknown error';
+            throw new Error(message);
         } finally {
             setLoading(false);
         }
@@ -134,8 +149,11 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
                     method: 'PUT',
                     body: { id: session.user?.id, ...body }
                 });
-            } catch (e: any) {
-                throw new Error(e.message || 'Unknown error');
+            } catch (e: unknown) {
+                clientLogger(e, 'error');
+                let message = 'Unknown error';
+                if (e instanceof Error) message = e.message ?? 'Unknown error';
+                throw new Error(message);
             } finally {
                 setLoading(false);
             }
