@@ -29,6 +29,14 @@ const checkCompanyIsOnboarded = async (supabase: SupabaseClient<Database>, userI
 export async function middleware(req: NextRequest) {
     // We need to create a response and hand it to the supabase client to be able to modify the response headers.
     const res = NextResponse.next();
+
+    // Special case: we need to be able to access this from the marketing page, so we need to allow CORS
+    if (req.nextUrl.pathname.includes('/subscriptions/prices')) {
+        res.headers.set('Access-Control-Allow-Origin', '*');
+        res.headers.set('Access-Control-Allow-Methods', 'GET');
+        return res;
+    }
+
     // Create authenticated Supabase Client.
     const supabase = createMiddlewareSupabaseClient<Database>({ req, res });
     const {
@@ -86,7 +94,6 @@ export const config = {
          * - favicon.ico (favicon file)
          * - assets/* (assets files) (public/assets/*)
          * - accept invite (accept invite api). User hasn't logged in yet
-         * - api/subscriptions/pricing (pricing api) needs to be accessible from marketing page
          */
         '/((?!_next/static|_next/image|favicon.ico|assets/*|api/company/accept-invite*).*)',
     ],
