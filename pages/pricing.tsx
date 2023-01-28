@@ -277,7 +277,7 @@ const Pricing = () => {
                         <div className="p-4 lg:w-1/3 md:w-1/2 w-full hover:-translate-y-3 transition-all ease-in-out">
                             <div className="h-full p-6 rounded-lg border-2 border-primary-500 flex flex-col relative overflow-hidden">
                                 <span className="bg-primary-500 text-white px-3 py-1 tracking-widest text-xs absolute right-0 top-0 rounded-bl">
-                                    POPULAR
+                                    {t('pricing.popular')}
                                 </span>
                                 <h2 className="text-sm tracking-widest title-font mb-1 font-medium">
                                     {t('pricing.diyMax')}
