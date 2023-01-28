@@ -24,9 +24,9 @@ const InputWithAutocomplete = forwardRef<HTMLDivElement, Props>(
             suggestions,
             placeholder,
             SuggestionComponent,
-            TagComponent
+            TagComponent,
         },
-        ref
+        ref,
     ) => {
         const [value, setValue] = useState('');
         return (
@@ -78,7 +78,7 @@ const InputWithAutocomplete = forwardRef<HTMLDivElement, Props>(
                 </div>
             </div>
         );
-    }
+    },
 );
 InputWithAutocomplete.displayName = 'InputWithAutocomplete';
 export default InputWithAutocomplete;

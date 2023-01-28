@@ -32,7 +32,7 @@ export async function middleware(req: NextRequest) {
     // Create authenticated Supabase Client.
     const supabase = createMiddlewareSupabaseClient<Database>({ req, res });
     const {
-        data: { session }
+        data: { session },
     } = await supabase.auth.getSession();
 
     const redirectUrl = req.nextUrl.clone();
@@ -87,6 +87,6 @@ export const config = {
          * - assets/* (assets files) (public/assets/*)
          * - accept invite (accept invite api). User hasn't logged in yet
          */
-        '/((?!_next/static|_next/image|favicon.ico|assets/*|api/company/accept-invite*).*)'
-    ]
+        '/((?!_next/static|_next/image|favicon.ico|assets/*|api/company/accept-invite*).*)',
+    ],
 };

@@ -17,7 +17,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 name,
                 ...data,
                 status: 'not started',
-                slug: name.toLowerCase().replace(/ /g, '-')
+                slug: name.toLowerCase().replace(/ /g, '-'),
             })
             .eq('company_id', company_id)
             .select()

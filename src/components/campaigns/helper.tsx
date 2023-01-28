@@ -4,12 +4,12 @@ import options from './options';
 
 export const typePromotions = [
     { label: 'campaigns.form.dedicatedVideo', value: 'Dedicated Video' },
-    { label: 'campaigns.form.integratedVideo', value: 'Integrated Video' }
+    { label: 'campaigns.form.integratedVideo', value: 'Integrated Video' },
 ];
 
 export const currencyOptions = [
     { label: 'USD', value: 'USD' },
-    { label: 'CNY', value: 'CNY' }
+    { label: 'CNY', value: 'CNY' },
 ];
 
 export type Question = {
@@ -39,35 +39,35 @@ export const questions: Question[] = [
         fieldName: 'name',
         isRequired: true,
         title: 'campaigns.form.nameQuestion',
-        desc: 'campaigns.form.nameDescription'
+        desc: 'campaigns.form.nameDescription',
     },
     {
         type: 'textArea',
         fieldName: 'description',
         isRequired: true,
         title: 'campaigns.form.descriptionQuestion',
-        desc: 'campaigns.form.descriptionDescription'
+        desc: 'campaigns.form.descriptionDescription',
     },
     {
         type: 'textInput',
         fieldName: 'product_name',
         isRequired: true,
         title: 'campaigns.form.productNameQuestion',
-        desc: 'campaigns.form.productNameDescription'
+        desc: 'campaigns.form.productNameDescription',
     },
     {
         type: 'textInput',
         fieldName: 'product_link',
         isRequired: false,
         title: 'campaigns.form.productLinkQuestion',
-        desc: 'campaigns.form.productLinkDescription'
+        desc: 'campaigns.form.productLinkDescription',
     },
     {
         fieldName: 'media_gallery',
         type: 'media',
         title: 'campaigns.form.mediaGalleryQuestion',
         desc: 'campaigns.form.mediaGalleryDescription',
-        isRequired: false
+        isRequired: false,
     },
     {
         type: 'multiSelect',
@@ -76,7 +76,7 @@ export const questions: Question[] = [
         options: options,
         placeholder: 'campaigns.form.tagsPlaceholder',
         title: 'campaigns.form.tagsQuestion',
-        desc: 'campaigns.form.tagsDescription'
+        desc: 'campaigns.form.tagsDescription',
     },
     {
         type: 'multiSelect',
@@ -85,19 +85,19 @@ export const questions: Question[] = [
         options: countryList.map((c) => {
             return {
                 label: c.name,
-                value: c.name
+                value: c.name,
             };
         }),
         placeholder: 'campaigns.form.targetPlaceholder',
         title: 'campaigns.form.targetQuestion',
-        desc: 'campaigns.form.targetDescription'
+        desc: 'campaigns.form.targetDescription',
     },
     {
         type: 'currencyInput',
         fieldName: 'budget_currency',
         isRequired: true,
         title: 'campaigns.form.budgetQuestion',
-        desc: 'campaigns.form.budgetDescription'
+        desc: 'campaigns.form.budgetDescription',
     },
     {
         type: 'timeline',
@@ -107,7 +107,7 @@ export const questions: Question[] = [
         label_end: 'campaigns.form.endDate',
         isRequired: false,
         title: 'campaigns.form.timelineQuestion',
-        desc: 'campaigns.form.timelineDescription'
+        desc: 'campaigns.form.timelineDescription',
     } as any,
     {
         type: 'checkbox',
@@ -115,6 +115,6 @@ export const questions: Question[] = [
         isRequired: true,
         options: typePromotions,
         title: 'campaigns.form.promotionQuestion',
-        desc: 'campaigns.form.promotionDescription'
-    }
+        desc: 'campaigns.form.promotionDescription',
+    },
 ];

@@ -15,7 +15,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 const { error } = await supabase
                     .from('companies')
                     .update({
-                        usage_limit: plan.metadata.usage_limit
+                        usage_limit: plan.metadata.usage_limit,
                     })
                     .eq('cus_id', body.data.object.customer)
                     .single();

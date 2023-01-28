@@ -16,7 +16,7 @@ const Handler: NextApiHandler = async (req, res) => {
             const matchesSession = await checkSessionIdMatchesID(profile.id, req, res);
             if (!matchesSession) {
                 return res.status(httpCodes.UNAUTHORIZED).json({
-                    error: 'user is unauthorized for this action'
+                    error: 'user is unauthorized for this action',
                 });
             }
             const { data, error: profileUpsertError } = await upsertProfile(profile);
@@ -28,7 +28,7 @@ const Handler: NextApiHandler = async (req, res) => {
         } catch (error) {
             serverLogger(error, 'error');
             return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({
-                error: 'error updating profile'
+                error: 'error updating profile',
             });
         }
     }

@@ -17,13 +17,13 @@ export default function Tabs({ currentTab, changeTab }: Props) {
         { label: t('campaigns.index.status.all'), value: '' },
         { label: t('campaigns.index.status.inProgress'), value: 'in progress' },
         { label: t('campaigns.index.status.notStarted'), value: 'not started' },
-        { label: t('campaigns.index.status.completed'), value: 'completed' }
+        { label: t('campaigns.index.status.completed'), value: 'completed' },
     ];
 
     const selectStyle: CSSProperties = {
         WebkitAppearance: 'none',
         MozAppearance: 'none',
-        appearance: 'none'
+        appearance: 'none',
     };
 
     const selectedTabStyles = (tab: TabLabel) => {
@@ -38,7 +38,7 @@ export default function Tabs({ currentTab, changeTab }: Props) {
                         key={index}
                         onClick={() => changeTab(tab.value)}
                         className={`font-semibold text-sm mr-4 hover:text-primary-500 hover:bg-primary-500 hover:bg-opacity-20 px-4 py-2 rounded-lg cursor-pointer duration-300 flex-shrink-0 ${selectedTabStyles(
-                            tab
+                            tab,
                         )}`}
                     >
                         {tab.label}

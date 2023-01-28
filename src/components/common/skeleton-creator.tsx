@@ -15,7 +15,7 @@ export default function SkeletonCreator({ rowLimit = 5 }) {
                             width: '4rem',
                             height: '4rem',
                             borderRadius: '50%',
-                            minWidth: '4rem'
+                            minWidth: '4rem',
                         }}
                     />
                     <div className="w-full h-16 bg-gray-200 animate-pulse rounded-md" />

@@ -36,7 +36,7 @@ export const AccountContext = createContext<AccountContextProps>({
 
     updateCompany: () => {},
     upsertProfile: () => {},
-    refreshProfile: () => {}
+    refreshProfile: () => {},
 });
 
 export const AccountProvider: FC<PropsWithChildren> = ({ children }: PropsWithChildren) => {
@@ -53,7 +53,7 @@ export const AccountProvider: FC<PropsWithChildren> = ({ children }: PropsWithCh
                 company,
                 updateCompany,
                 createInvite,
-                refreshProfile
+                refreshProfile,
             }}
         >
             {children}

@@ -40,7 +40,7 @@ export const chinaFilter = (str: string) => {
 export const toCurrency = (n: number, curr = 'USD', LanguageFormat?: string) =>
     Intl.NumberFormat(LanguageFormat, {
         style: 'currency',
-        currency: curr
+        currency: curr,
     }).format(n);
 
 export const truncateWithDots = (str: string | undefined | null, maxLength: number) => {

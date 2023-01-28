@@ -18,7 +18,7 @@ export interface FetchCreatorsFilteredParams {
 
 const locationTransform = ({ id, weight }: { id: string; weight: number | string }) => ({
     id,
-    weight: weight ? Number(weight) / 100 : 0.5
+    weight: weight ? Number(weight) / 100 : 0.5,
 });
 
 export const prepareFetchCreatorsFiltered = ({
@@ -35,14 +35,14 @@ export const prepareFetchCreatorsFiltered = ({
     gender,
     engagement,
     lastPost,
-    contactInfo
+    contactInfo,
 }: FetchCreatorsFilteredParams) => {
     const tagsValue = tags.map((tag: { tag: string }) => `#${tag.tag}`);
     const lookalikeValue = lookalike.map((account: CreatorAccount) => `@${account.user_id}`);
     const body = {
         paging: {
             limit: resultsPerPageLimit,
-            skip: page ? page * resultsPerPageLimit : null
+            skip: page ? page * resultsPerPageLimit : null,
         },
         filter: {
             audience_geo: audienceLocation.map(locationTransform) || [],
@@ -52,33 +52,33 @@ export const prepareFetchCreatorsFiltered = ({
             last_posted: lastPost || '',
             views: {
                 left_number: views ? views[0] : '',
-                right_number: views ? views[1] : ''
+                right_number: views ? views[1] : '',
             },
             followers: {
                 left_number: audience ? audience[0] : '',
-                right_number: audience ? audience[1] : ''
+                right_number: audience ? audience[1] : '',
             },
             relevance: {
                 value: [...tagsValue, ...lookalikeValue].join(' '),
-                weight: 0.5
+                weight: 0.5,
             },
             actions: [{ filter: 'relevance', action: 'must' }],
             ...(contactInfo
                 ? {
-                      with_contact: [{ type: 'email', action: 'should' }]
+                      with_contact: [{ type: 'email', action: 'should' }],
                   }
                 : {}),
             ...(engagement
                 ? {
                       engagement_rate: {
                           value: (engagement / 100).toFixed(2),
-                          operator: 'gte'
-                      }
+                          operator: 'gte',
+                      },
                   }
-                : {})
+                : {}),
         },
         sort: { field: 'followers', direction: 'desc' },
-        audience_source: 'any'
+        audience_source: 'any',
     };
     return { platform, body };
 };

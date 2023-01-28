@@ -140,9 +140,7 @@ export const CompanyDetails = () => {
                                         </p>
                                         <p>
                                             {' '}
-                                            {profile.first_name}
-                                            {' '}
-                                            {profile.last_name}
+                                            {profile.first_name} {profile.last_name}
                                         </p>
                                     </div>
                                     <div className="text-sm font-bold">

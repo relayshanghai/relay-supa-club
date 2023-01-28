@@ -133,7 +133,7 @@ interface CountryClass {
 }
 
 enum Code {
-    Us = 'US'
+    Us = 'US',
 }
 
 interface Extra {

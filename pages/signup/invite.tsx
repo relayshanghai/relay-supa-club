@@ -2,7 +2,7 @@ import { useRouter } from 'next/router';
 import {
     CompanyAcceptInviteGetQueries,
     CompanyAcceptInviteGetResponse,
-    CompanyAcceptInvitePostBody
+    CompanyAcceptInvitePostBody,
 } from 'pages/api/company/accept-invite';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -23,13 +23,13 @@ export default function Register() {
     const router = useRouter();
     const {
         values: { password, confirmPassword, firstName, lastName, email },
-        setFieldValue
+        setFieldValue,
     } = useFields({
         firstName: '',
         lastName: '',
         password: '',
         confirmPassword: '',
-        email: ''
+        email: '',
     });
     const token = router.query.token as string;
     const [registering, setRegistering] = useState(false);
@@ -62,11 +62,11 @@ export default function Register() {
                 password,
                 firstName,
                 lastName,
-                email
+                email,
             };
             await nextFetch('company/accept-invite', {
                 method: 'post',
-                body
+                body,
             });
             toast.success(t('login.inviteAccepted'));
             await login(email, password);

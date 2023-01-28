@@ -3,7 +3,7 @@ import { Button } from '../button';
 export const ErrorPopover = ({
     errorMessage,
     buttonText,
-    buttonAction
+    buttonAction,
 }: {
     errorMessage: string;
     buttonText?: string;

@@ -27,7 +27,7 @@ function TextInput({
     placeHolder,
     isRequired = false,
     maximLength,
-    minimLength
+    minimLength,
 }: Props) {
     const { t } = useTranslation();
 
@@ -47,18 +47,18 @@ function TextInput({
                         ? {
                               value: maximLength,
                               message: `${t('website.maxLength')} ${maximLength} ${t(
-                                  'website.characters'
-                              )}`
+                                  'website.characters',
+                              )}`,
                           }
                         : undefined,
                     minLength: minimLength
                         ? {
                               value: minimLength,
                               message: `${t('website.minLength')} ${minimLength} ${t(
-                                  'website.characters'
-                              )}`
+                                  'website.characters',
+                              )}`,
                           }
-                        : undefined
+                        : undefined,
                 })}
             />
             <p className="text-xs text-primary-400">{errors[fieldName]?.message?.toString()}</p>

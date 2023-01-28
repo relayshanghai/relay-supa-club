@@ -7,7 +7,7 @@ export const usePlans = () => {
     const { profile, user } = useUser();
     const { data } = useSWR(
         profile?.company_id ? `/api/company?id=${profile.company_id}` : null,
-        fetcher
+        fetcher,
     );
 
     const updateCompany = useCallback(
@@ -16,11 +16,11 @@ export const usePlans = () => {
                 method: 'post',
                 body: JSON.stringify({
                     ...input,
-                    id: profile?.company_id
-                })
+                    id: profile?.company_id,
+                }),
             });
         },
-        [profile]
+        [profile],
     );
 
     const createCompany = useCallback(
@@ -29,16 +29,16 @@ export const usePlans = () => {
                 method: 'post',
                 body: JSON.stringify({
                     ...input,
-                    user_id: user?.id
-                })
+                    user_id: user?.id,
+                }),
             });
         },
-        [user]
+        [user],
     );
 
     return {
         company: data,
         updateCompany,
-        createCompany
+        createCompany,
     };
 };

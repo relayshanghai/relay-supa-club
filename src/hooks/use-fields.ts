@@ -6,15 +6,15 @@ export const useFields = <T = Record<string, string | number>>(initialValues: T)
         (name: keyof T, value: T[keyof T]) => {
             setValues((snap) => ({
                 ...snap,
-                [name]: value
+                [name]: value,
             }));
         },
-        [setValues]
+        [setValues],
     );
 
     return {
         setFieldValue,
         reset: setValues,
-        values
+        values,
     };
 };

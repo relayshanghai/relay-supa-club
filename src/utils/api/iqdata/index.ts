@@ -14,15 +14,15 @@ export const iqDataFetch = async <T = any>(path: string, options: RequestInit = 
         ...options,
         headers: {
             ...headers,
-            ...options.headers
-        }
+            ...options.headers,
+        },
     });
     return (await res.json()) as T;
 };
 
 export const fetchIqDataLookalike = async (term: string, platform: CreatorPlatform) =>
     await iqDataFetch(
-        `https://socapi.icu/v2.0/api/dict/users/?q=${term}&type=lookalike&platform=${platform}&limit=5`
+        `https://socapi.icu/v2.0/api/dict/users/?q=${term}&type=lookalike&platform=${platform}&limit=5`,
     );
 
 export const fetchIqDataTopics = async (term: string, platform: CreatorPlatform, limit = 10) =>
@@ -38,8 +38,8 @@ export const fetchCreatorsFiltered = async (params: FetchCreatorsFilteredParams)
         `search/newv1?${new URLSearchParams({ platform, auto_unhide: '1' })}`,
         {
             method: 'post',
-            body: JSON.stringify(body)
-        }
+            body: JSON.stringify(body),
+        },
     );
 };
 
@@ -47,12 +47,12 @@ export const requestNewReport = async (
     platform: CreatorPlatform,
     id: string,
     subscribe = false,
-    dry_run = false
+    dry_run = false,
 ) =>
     await iqDataFetch<CreatorReport>(
         `reports/new?platform=${platform}&url=${id}&subscribe=${
             subscribe ? 1 : 0
-        }&dry_run=${dry_run}`
+        }&dry_run=${dry_run}`,
     );
 
 export const fetchReport = async (reportId: string) =>
@@ -61,5 +61,5 @@ export const fetchReport = async (reportId: string) =>
 //** omit id to get all previously generated reports of that platform */
 export const fetchReportsMetadata = async (platform: CreatorPlatform, creator_id?: string) =>
     await iqDataFetch<CreatorReportsMetadata>(
-        `reports?platform=${platform}${creator_id ? `&url=${creator_id}` : ''}`
+        `reports?platform=${platform}${creator_id ? `&url=${creator_id}` : ''}`,
     );

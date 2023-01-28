@@ -18,12 +18,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
         if (!data || !data.cus_id) {
             return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({
-                error: 'No payment method data'
+                error: 'No payment method data',
             });
         }
 
         const result = await stripeClient.customers.listPaymentMethods(data.cus_id, {
-            type: 'card'
+            type: 'card',
         });
 
         return res.status(httpCodes.OK).json(result);

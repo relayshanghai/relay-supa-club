@@ -12,11 +12,11 @@ export const PersonalDetails = () => {
     const {
         values: { firstName, lastName, email },
         setFieldValue: setUserFieldValues,
-        reset: resetUserValues
+        reset: resetUserValues,
     } = useFields({
         firstName: '',
         lastName: '',
-        email: ''
+        email: '',
     });
     const { userDataLoading, profile, user, upsertProfile, refreshProfile } =
         useContext(AccountContext);
@@ -28,7 +28,7 @@ export const PersonalDetails = () => {
             resetUserValues({
                 firstName: profile.first_name,
                 lastName: profile.last_name,
-                email: user?.email || ''
+                email: user?.email || '',
             });
         }
     }, [userDataLoading, profile, user, resetUserValues]);
@@ -40,7 +40,7 @@ export const PersonalDetails = () => {
             await upsertProfile({
                 first_name: firstName,
                 last_name: lastName,
-                email: email
+                email: email,
             });
             refreshProfile();
             toast.success(t('account.personal.profileUpdated'));

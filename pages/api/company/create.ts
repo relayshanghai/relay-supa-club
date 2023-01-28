@@ -23,7 +23,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const { data: profile, error: profileError } = await updateProfile({
                 id: user_id,
                 company_id: company.id,
-                admin: true
+                admin: true,
             });
 
             if (profileError) {
@@ -39,7 +39,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         } catch (error) {
             serverLogger(error, 'error');
             return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({
-                error: 'error creating company'
+                error: 'error creating company',
             });
         }
     }

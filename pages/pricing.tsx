@@ -11,9 +11,9 @@ const details = {
         {
             title: 'clubbyStarterPack',
             icon: 'check',
-            info: 'includesCustomEmailTemplates'
+            info: 'includesCustomEmailTemplates',
         },
-        { title: 'influencerOutreachExpertWorkingOnYourCampaigns', icon: 'cross' }
+        { title: 'influencerOutreachExpertWorkingOnYourCampaigns', icon: 'cross' },
     ],
     diyMax: [
         { title: 'fourHundredFiftyNewInfluencerProfilesPerMonth', icon: 'check' },
@@ -23,9 +23,9 @@ const details = {
         {
             title: 'clubbyStarterPack',
             icon: 'check',
-            info: 'includesCustomEmailTemplates'
+            info: 'includesCustomEmailTemplates',
         },
-        { title: 'influencerOutreachExpertWorkingOnYourCampaigns', icon: 'cross' }
+        { title: 'influencerOutreachExpertWorkingOnYourCampaigns', icon: 'cross' },
     ],
     VIP: [
         { title: 'moreInfluencerProfiles', icon: 'check' },
@@ -35,27 +35,27 @@ const details = {
         {
             title: 'clubbyStarterPack',
             icon: 'check',
-            info: 'includesCustomEmailTemplates'
+            info: 'includesCustomEmailTemplates',
         },
-        { title: 'influencerOutreachExpertWorkingOnYourCampaigns', icon: 'check' }
-    ]
+        { title: 'influencerOutreachExpertWorkingOnYourCampaigns', icon: 'check' },
+    ],
 };
 const prices = {
     monthly: {
         diy: '$150',
         diyMax: '$270',
-        VIP: 'Contact us'
+        VIP: 'Contact us',
     },
     quarterly: {
         diy: '$99',
         diyMax: '$220',
-        VIP: 'Contact us'
+        VIP: 'Contact us',
     },
     annually: {
         diy: '$89',
         diyMax: '$199',
-        VIP: 'Contact us'
-    }
+        VIP: 'Contact us',
+    },
 };
 
 const salesRefEmail = 'amy.hu@relay.club';

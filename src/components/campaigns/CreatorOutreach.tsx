@@ -10,7 +10,7 @@ import { CampaignWithCompanyCreators } from 'src/utils/api/db';
 import { CampaignCreatorDB } from 'src/utils/api/db/types';
 
 export default function CreatorsOutreach({
-    currentCampaign
+    currentCampaign,
 }: {
     currentCampaign: CampaignWithCompanyCreators;
 }) {
@@ -23,7 +23,7 @@ export default function CreatorsOutreach({
     const inputRef = useRef(null);
 
     const { deleteCreatorInCampaign, updateCreatorInCampaign, refreshCampaign } = useCampaigns({
-        campaignId: currentCampaign?.id
+        campaignId: currentCampaign?.id,
     });
     const tabs = [
         { label: 'toContact', value: 'to contact' },
@@ -31,19 +31,19 @@ export default function CreatorsOutreach({
         { label: 'inProgress', value: 'in progress' },
         { label: 'confirmed', value: 'confirmed' },
         { label: 'rejected', value: 'rejected' },
-        { label: 'ignored', value: 'ignored' }
+        { label: 'ignored', value: 'ignored' },
     ];
 
     const paymentStatus = [
         { id: 1, label: 'unpaid', value: 'unpaid' },
         { id: 2, label: 'partiallypaid', value: 'partial_paid' },
-        { id: 3, label: 'fullypaid', value: 'full_paid' }
+        { id: 3, label: 'fullypaid', value: 'full_paid' },
     ];
 
     const sampleStatus = [
         { id: 1, label: 'unsent', value: 'unsent' },
         { id: 2, label: 'sent', value: 'sent' },
-        { id: 3, label: 'delivered', value: 'delivered' }
+        { id: 3, label: 'delivered', value: 'delivered' },
     ];
 
     const columnLabels = [
@@ -54,7 +54,7 @@ export default function CreatorsOutreach({
         'paymentAmount',
         'paidAmount',
         'paymentStatus',
-        'sampleStatus'
+        'sampleStatus',
     ];
 
     const handleTabChange = (value: string) => {
@@ -65,7 +65,7 @@ export default function CreatorsOutreach({
     const handleDropdownSelect = async (
         e: ChangeEvent<HTMLSelectElement>,
         creator: CampaignCreatorDB,
-        objKey: string
+        objKey: string,
     ) => {
         e.stopPropagation();
         creator = { ...creator, [objKey]: e.target.value };
@@ -77,7 +77,7 @@ export default function CreatorsOutreach({
     const setInlineEdit = (
         e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>,
         index: number,
-        key: string
+        key: string,
     ) => {
         e.stopPropagation();
         setToEdit({ index, key });
@@ -85,7 +85,7 @@ export default function CreatorsOutreach({
 
     const deleteCampaignCreator = async (
         e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>,
-        creator: CampaignCreatorDB
+        creator: CampaignCreatorDB,
     ) => {
         e.stopPropagation();
         const c = confirm('Are you sure you want to delete?'); //TODO: need to add i18n here
@@ -199,7 +199,7 @@ export default function CreatorsOutreach({
                                                 {tabs.map((tab, index) => (
                                                     <option value={tab.value} key={index}>
                                                         {t(
-                                                            `campaigns.show.activities.outreach.${tab.label}`
+                                                            `campaigns.show.activities.outreach.${tab.label}`,
                                                         )}
                                                     </option>
                                                 ))}
@@ -312,7 +312,7 @@ export default function CreatorsOutreach({
                                                     handleDropdownSelect(
                                                         e,
                                                         creator,
-                                                        'payment_status'
+                                                        'payment_status',
                                                     )
                                                 }
                                                 value={creator.payment_status}
@@ -332,7 +332,7 @@ export default function CreatorsOutreach({
                                                     handleDropdownSelect(
                                                         e,
                                                         creator,
-                                                        'sample_status'
+                                                        'sample_status',
                                                     )
                                                 }
                                                 value={creator.sample_status}

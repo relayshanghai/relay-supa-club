@@ -8,7 +8,7 @@ import { LoadingPopover } from '../common/loading-popover';
 
 export default function CreatorSkeleton({
     error,
-    errorMessage
+    errorMessage,
 }: {
     error: boolean;
     errorMessage: any;

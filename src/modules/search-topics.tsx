@@ -10,7 +10,7 @@ export const SearchTopics = ({
     placeholder,
     filter,
     SuggestionComponent,
-    TagComponent
+    TagComponent,
 }: any) => {
     const [suggestions, setSuggestions] = useState<any[]>([]);
     const ref = useRef<any>();
@@ -34,8 +34,8 @@ export const SearchTopics = ({
                     signal: signal,
                     body: JSON.stringify({
                         term,
-                        platform
-                    })
+                        platform,
+                    }),
                 })
             ).json();
 
@@ -44,7 +44,7 @@ export const SearchTopics = ({
                 setSuggestions(filter ? filter(data) : data);
             }
         },
-        [platform, path, filter]
+        [platform, path, filter],
     );
 
     const addTag = useCallback(
@@ -52,7 +52,7 @@ export const SearchTopics = ({
             onSetTopics([...topics, item]);
             setSuggestions([]);
         },
-        [topics, onSetTopics]
+        [topics, onSetTopics],
     );
 
     const removeTag = useCallback(
@@ -65,7 +65,7 @@ export const SearchTopics = ({
                 onSetTopics(clone);
             }
         },
-        [topics, onSetTopics]
+        [topics, onSetTopics],
     );
 
     return (

@@ -32,6 +32,6 @@ const login = {
     companyNamePlaceholder: '输入您的公司名称',
     companyWebsite: '公司网站',
     companyWebsitePlaceholder: '输入您的公司网站的网址',
-    createCompany: '创建公司'
+    createCompany: '创建公司',
 };
 export default login;
