@@ -20,7 +20,7 @@ export default function CurrencyInput({
     errors,
     control,
     setValue,
-    defaultValue
+    defaultValue,
 }: Props) {
     const { t } = useTranslation();
     return (
@@ -45,8 +45,8 @@ export default function CurrencyInput({
                         valueAsNumber: true,
                         max: {
                             value: 999999999999999,
-                            message: `${t('website.maxLength')} 999999999999999`
-                        }
+                            message: `${t('website.maxLength')} 999999999999999`,
+                        },
                     })}
                     autoComplete="off"
                 />

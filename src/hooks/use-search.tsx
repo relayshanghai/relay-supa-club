@@ -6,7 +6,7 @@ import {
     CreatorPlatform,
     LocationWeighted,
     CreatorSearchTag,
-    CreatorSearchAccountObject
+    CreatorSearchAccountObject,
 } from 'types';
 import { useUser } from './use-user';
 
@@ -38,9 +38,9 @@ export const useSearch = () => {
         () => [
             { icon: '/assets/imgs/icons/yt.svg', label: 'YouTube', id: 'youtube' },
             { icon: '/assets/imgs/icons/instagram.svg', label: 'Instagram', id: 'instagram' },
-            { icon: '/assets/imgs/icons/tiktok.svg', label: 'TikTok', id: 'tiktok' }
+            { icon: '/assets/imgs/icons/tiktok.svg', label: 'TikTok', id: 'tiktok' },
         ],
-        []
+        [],
     );
     const ref = useRef<any>();
 
@@ -73,13 +73,13 @@ export const useSearch = () => {
                     contactInfo,
 
                     company_id: profile?.company_id,
-                    user_id: profile?.id
+                    user_id: profile?.id,
                 };
 
                 const res = await nextFetch<KolPostResponse>('kol', {
                     method: 'post',
                     signal,
-                    body: JSON.stringify(bodyData)
+                    body: JSON.stringify(bodyData),
                 });
                 if (loadMore) {
                     setResultPages((prev) => {
@@ -110,8 +110,8 @@ export const useSearch = () => {
             profile?.company_id,
             profile?.id,
             resultsPerPageLimit,
-            views
-        ]
+            views,
+        ],
     );
 
     return {
@@ -146,6 +146,6 @@ export const useSearch = () => {
         contactInfo,
         setContactInfo,
         resultsPerPageLimit,
-        setResultsPerPageLimit
+        setResultsPerPageLimit,
     };
 };

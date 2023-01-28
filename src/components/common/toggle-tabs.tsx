@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 export default function ToggleTabs({
     currentTab,
     setCurrentTab,
-    tabs
+    tabs,
 }: {
     currentTab: string;
     setCurrentTab: (value: string) => void;

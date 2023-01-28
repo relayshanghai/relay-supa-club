@@ -14,7 +14,7 @@ export const sendEmail = ({
     email,
     name,
     html,
-    subject
+    subject,
 }: {
     email: string;
     name?: string;

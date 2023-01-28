@@ -14,7 +14,7 @@ const translations = {
         website,
         account,
         login,
-        pricing
-    }
+        pricing,
+    },
 };
 export default translations;

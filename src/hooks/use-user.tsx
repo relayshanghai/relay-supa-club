@@ -7,7 +7,7 @@ import {
     useCallback,
     useContext,
     useEffect,
-    useState
+    useState,
 } from 'react';
 import { ProfileDB, ProfileInsertDB } from 'src/utils/api/db/types';
 import { nextFetch } from 'src/utils/fetcher';
@@ -20,7 +20,7 @@ const ctx = createContext<{
     loading: boolean;
     login: (
         email: string,
-        password: string
+        password: string,
     ) => Promise<{
         user: User | null;
         session: Session | null;
@@ -38,15 +38,15 @@ const ctx = createContext<{
     loading: true,
     login: async () => ({
         user: null,
-        session: null
+        session: null,
     }),
     logout: () => null,
     signup: async () => ({
         user: null,
-        session: null
+        session: null,
     }),
     upsertProfile: () => null,
-    refreshProfile: () => null
+    refreshProfile: () => null,
 });
 
 export const useUser = () => useContext(ctx);
@@ -80,7 +80,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
                 setLoading(false);
             }
         },
-        [supabaseClient, session?.user?.id]
+        [supabaseClient, session?.user?.id],
     );
 
     useEffect(() => {
@@ -94,7 +94,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
         try {
             const { data, error } = await supabaseClient.auth.signInWithPassword({
                 email,
-                password
+                password,
             });
 
             if (error) throw new Error(error.message || 'Unknown error');
@@ -111,7 +111,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
     const signup = async ({
         email,
         password,
-        data
+        data,
     }: {
         email: string;
         password: string;
@@ -125,7 +125,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
             const { error, data: signupResData } = await supabaseClient.auth.signUp({
                 email,
                 password,
-                options: { data }
+                options: { data },
             });
 
             if (error) throw new Error(error?.message || 'Unknown error');
@@ -147,7 +147,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
                 if (!session?.user?.id) throw new Error('User not found');
                 return await nextFetch<ProfilePutResponse>('profiles', {
                     method: 'PUT',
-                    body: { id: session.user?.id, ...body }
+                    body: { id: session.user?.id, ...body },
                 });
             } catch (e: unknown) {
                 clientLogger(e, 'error');
@@ -158,7 +158,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
                 setLoading(false);
             }
         },
-        [session?.user]
+        [session?.user],
     );
     const logout = async () => {
         await supabaseClient.auth.signOut();
@@ -176,7 +176,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
                 profile,
                 upsertProfile,
                 refreshProfile: getProfile,
-                logout
+                logout,
             }}
         >
             {children}

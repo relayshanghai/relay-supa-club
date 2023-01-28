@@ -18,17 +18,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             const subscriptions = await stripeClient.subscriptions.list({
                 customer: data.cus_id,
-                status: 'active'
+                status: 'active',
             });
             // return res.json({}); // turn off this endpoint while in progress to clean up console errors
             const subscription = subscriptions.data[0];
             if (!subscription)
                 return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({
-                    error: 'No subscription data'
+                    error: 'No subscription data',
                 });
             const product = await stripeClient.products.retrieve(
                 // TODO: fix this, investigate what we are really getting/sending, and make custom type for frontend to receive.
-                (subscription as any).plan.product
+                (subscription as any).plan.product,
             );
             (subscription as any).product = product;
 

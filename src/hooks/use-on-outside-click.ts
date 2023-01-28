@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 function useOnOutsideClick(
     ref: React.MutableRefObject<any>,
     handler: (e: MouseEvent | TouchEvent) => void,
-    secondRef?: React.MutableRefObject<any>
+    secondRef?: React.MutableRefObject<any>,
 ) {
     useEffect(() => {
         const listener = (event: MouseEvent | TouchEvent) => {

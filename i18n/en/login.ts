@@ -34,6 +34,6 @@ const login = {
     companyNamePlaceholder: "Enter your company's name",
     companyWebsite: 'Company website',
     companyWebsitePlaceholder: "Enter your company website's url",
-    createCompany: 'Create company'
+    createCompany: 'Create company',
 };
 export default login;

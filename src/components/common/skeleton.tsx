@@ -9,7 +9,7 @@
 export default function Skeleton({
     blocks = 1,
     className,
-    containerClassName
+    containerClassName,
 }: {
     blocks?: number;
     className?: string;

@@ -4,7 +4,7 @@ import { toCurrency } from 'src/utils/utils';
 
 export default function CampaignDetails({
     currentCampaign,
-    media
+    media,
 }: {
     currentCampaign: CampaignWithCompanyCreators;
     media: { url: string; name: string }[];
@@ -89,7 +89,7 @@ export default function CampaignDetails({
                                 currentCampaign.budget_currency &&
                                 toCurrency(
                                     currentCampaign.budget_cents,
-                                    currentCampaign.budget_currency
+                                    currentCampaign.budget_currency,
                                 )}
                         </p>
                     </div>

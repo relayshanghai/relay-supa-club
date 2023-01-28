@@ -7,7 +7,7 @@ export const upsertProfile = async (profile: ProfileInsertDB) =>
         .from('profiles')
         .upsert({
             updated_at: new Date().toISOString(),
-            ...profile
+            ...profile,
         })
         .select()
         .single();

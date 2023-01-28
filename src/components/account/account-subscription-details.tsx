@@ -31,7 +31,7 @@ export const SubscriptionDetails = () => {
                 <div className="flex flex-row justify-end">
                     <Link
                         href={`/api/subscriptions/portal?${new URLSearchParams({
-                            id: company?.id || ''
+                            id: company?.id || '',
                         })}`}
                     >
                         <a>
@@ -64,11 +64,11 @@ export const SubscriptionDetails = () => {
                                 <div className="text-sm">{t('account.subscription.renewsOn')}</div>
                                 <div className="text-sm font-bold ml-2">
                                     {new Date(
-                                        subscription.current_period_end * SECONDS_IN_MILLISECONDS
+                                        subscription.current_period_end * SECONDS_IN_MILLISECONDS,
                                     ).toLocaleDateString(i18n.language, {
                                         year: 'numeric',
                                         month: 'short',
-                                        day: 'numeric'
+                                        day: 'numeric',
                                     })}
                                 </div>
                             </div>
@@ -125,7 +125,7 @@ export const SubscriptionDetails = () => {
                     <div className="flex flex-row justify-end">
                         <Link
                             href={`/api/subscriptions/portal?${new URLSearchParams({
-                                id: company?.id || ''
+                                id: company?.id || '',
                             })}`}
                         >
                             <a>

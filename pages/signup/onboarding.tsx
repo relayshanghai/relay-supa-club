@@ -19,7 +19,7 @@ export default function Register() {
     const { createCompany } = useCompany();
     const { values, setFieldValue } = useFields({
         name: '',
-        website: ''
+        website: '',
     });
     const [submitting, setSubmitting] = useState(false);
 

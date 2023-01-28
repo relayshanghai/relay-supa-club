@@ -9,7 +9,7 @@ function TableInput({
     closeModal,
     creator,
     updateCampaignCreator,
-    ref
+    ref,
 }: {
     objKey: string;
     value: string;

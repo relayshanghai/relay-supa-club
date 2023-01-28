@@ -11,7 +11,7 @@ import { useUser } from 'src/hooks/use-user';
 
 export const CreatorPage = ({
     creator_id,
-    platform
+    platform,
 }: {
     creator_id: string;
     platform: CreatorPlatform;
@@ -20,14 +20,14 @@ export const CreatorPage = ({
     const [reportCreatedAt, setReportCreatedAt] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState(
-        !creator_id || !platform ? 'Invalid creator URL' : ''
+        !creator_id || !platform ? 'Invalid creator URL' : '',
     );
     const { profile } = useUser();
 
     const getOrCreateReport = useCallback(async () => {
         try {
             const { createdAt, ...report } = await nextFetch<CreatorReport & { createdAt: string }>(
-                `creators/report?platform=${platform}&creator_id=${creator_id}&company_id=${profile?.company_id}&user_id=${profile?.id}`
+                `creators/report?platform=${platform}&creator_id=${creator_id}&company_id=${profile?.company_id}&user_id=${profile?.id}`,
             );
             if (!report.success) throw new Error('Failed to fetch report');
             setReport(report);

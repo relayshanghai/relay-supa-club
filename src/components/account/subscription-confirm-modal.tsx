@@ -9,7 +9,7 @@ export const SubscriptionConfirmModal = ({
     confirmModalData,
     setConfirmModalData,
     subscription,
-    createSubscriptions
+    createSubscriptions,
 }: {
     confirmModalData: StripePlanWithPrice | null;
     setConfirmModalData: (value: StripePlanWithPrice | null) => void;
@@ -25,7 +25,7 @@ export const SubscriptionConfirmModal = ({
             toast.success(t('account.subscription.modal.subscriptionPurchased'), { id });
         } catch (e) {
             toast.error(t('account.subscription.modal.wentWrong'), {
-                id
+                id,
             });
         }
     };
@@ -52,7 +52,7 @@ export const SubscriptionConfirmModal = ({
                                 {price.interval === 'year' && (
                                     <p className="text-xs rounded p-1 bg-green-200">
                                         {t('account.subscription.modal.bestValue_price', {
-                                            price: priceAmount
+                                            price: priceAmount,
                                         })}
                                     </p>
                                 )}

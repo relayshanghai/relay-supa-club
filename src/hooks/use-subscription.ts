@@ -10,12 +10,12 @@ export const useSubscription = () => {
     // TODO: investigate why this type doesn't seem to match our code's usage
     const { data: subscription, mutate } = useSWR(
         profile?.company_id ? `subscriptions?id=${profile?.company_id}` : null,
-        nextFetch<Stripe.Subscription>
+        nextFetch<Stripe.Subscription>,
     );
     const { data: plans } = useSWR('subscriptions/plans', nextFetch<StripePlanWithPrice[]>);
     const { data: paymentMethods } = useSWR(
         profile?.company_id ? `subscriptions/payment-method?id=${profile.company_id}` : null,
-        nextFetch<StripePaymentMethods>
+        nextFetch<StripePaymentMethods>,
     );
 
     const updateCompany = useCallback(
@@ -24,12 +24,12 @@ export const useSubscription = () => {
                 method: 'post',
                 body: JSON.stringify({
                     ...input,
-                    id: profile?.company_id
-                })
+                    id: profile?.company_id,
+                }),
             });
             mutate();
         },
-        [profile, mutate]
+        [profile, mutate],
     );
 
     const createSubscriptions = useCallback(
@@ -38,12 +38,12 @@ export const useSubscription = () => {
                 method: 'post',
                 body: JSON.stringify({
                     price_id: priceId,
-                    company_id: profile?.company_id
-                })
+                    company_id: profile?.company_id,
+                }),
             });
             mutate();
         },
-        [profile, mutate]
+        [profile, mutate],
     );
 
     return {
@@ -51,6 +51,6 @@ export const useSubscription = () => {
         paymentMethods,
         plans,
         updateCompany,
-        createSubscriptions
+        createSubscriptions,
     };
 };

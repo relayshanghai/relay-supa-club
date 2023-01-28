@@ -16,7 +16,7 @@ function getEstFee(avgViews: number, country: string) {
     if (!country) cpm = { lowerBound: 20, upperBound: 60 };
     if (country) cpm = getCpm(country);
     return `${toCurrency((avgViews / 1000) * cpm.lowerBound)} - ${toCurrency(
-        (avgViews / 1000) * cpm.upperBound
+        (avgViews / 1000) * cpm.upperBound,
     )}`;
 }
 
@@ -29,13 +29,13 @@ const formatCreatorEconomics = (userProfile: CreatorReport['user_profile']) => {
             icon: <Money />,
             data: `$${getCpm(geo?.country?.name).lowerBound} - $${
                 getCpm(geo?.country?.name).upperBound
-            }`
+            }`,
         });
     if (avg_views && geo?.country?.name)
         stats.push({
             label: 'estFee',
             icon: <Money />,
-            data: getEstFee(avg_views, geo.country.name)
+            data: getEstFee(avg_views, geo.country.name),
         });
     return stats;
 };

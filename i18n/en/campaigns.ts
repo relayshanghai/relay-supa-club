@@ -5,13 +5,13 @@ const campaigns = {
             inProgress: 'In Progress',
             notStarted: 'Not Started',
             completed: 'Completed',
-            all: 'All'
+            all: 'All',
         },
         createCampaign: 'New Campaign',
         noCampaigns: "You don't have any campaigns",
         noCampaignsAvailable: 'Oops! No campaigns available.',
         clickCreate: 'Click here to create a campaign',
-        searchPlaceholder: 'Search campaigns...'
+        searchPlaceholder: 'Search campaigns...',
     },
     modal: {
         addToCampaign: 'Add To Campaign',
@@ -31,7 +31,7 @@ const campaigns = {
         comments: 'Internal Comments',
         viewProfile: 'View Profile',
         addedSuccessfully: 'KOL added successfully.',
-        deletedSuccessfully: 'KOL was deleted.'
+        deletedSuccessfully: 'KOL was deleted.',
     },
     creatorModal: {
         outreach: 'Outreach',
@@ -79,7 +79,7 @@ const campaigns = {
         partiallypaid: 'Partially Paid',
         sent: 'Sent',
         unsent: 'Unsent',
-        delivered: 'Delivered'
+        delivered: 'Delivered',
     },
     email: {
         dayLimit: 'You can only send a KOL an email every 24 hours to avoid spam.',
@@ -93,7 +93,7 @@ const campaigns = {
         writeOwnMessage: 'Or write your own message',
         sendEmailError: 'Oops, something went wrong. Please try again.',
         sendAndGoToNext: 'Send and Open Next KOL',
-        sendToAll: 'Send to All KOLs with this template'
+        sendToAll: 'Send to All KOLs with this template',
     },
 
     show: {
@@ -101,7 +101,7 @@ const campaigns = {
             'in progress': 'In Progress',
             'not started': 'Not Started',
             // eslint-disable-next-line quote-props
-            completed: 'Completed'
+            completed: 'Completed',
         },
         submitting: 'Submitting',
         creatorSearch: 'Search & Add KOL',
@@ -163,8 +163,8 @@ const campaigns = {
                     confirmed: 'Confirmed',
                     rejected: 'Rejected',
                     // eslint-disable-next-line quote-props
-                    ignored: 'Ignored'
-                }
+                    ignored: 'Ignored',
+                },
             },
             info: {
                 budget: 'Budget',
@@ -174,13 +174,13 @@ const campaigns = {
                 dates: 'Dates',
                 closingOutreach: 'Closing KOL Outreach',
                 campaignLaunch: 'Campaign Launch Date',
-                campaignEnd: 'Campaign End Date'
-            }
-        }
+                campaignEnd: 'Campaign End Date',
+            },
+        },
     },
     notes: {
         notes: 'Notes',
-        submit: 'Submit'
+        submit: 'Submit',
     },
     form: {
         createCampaign: 'Create Campaign',
@@ -237,7 +237,7 @@ const campaigns = {
         successUpdateMsg: 'You have updated a campaign successfully!',
         dedicatedVideo: 'Dedicated Video',
         integratedVideo: 'Integrated Video',
-        oopsSomethingWrong: 'Oops, something went wrong. Please try again.'
-    }
+        oopsSomethingWrong: 'Oops, something went wrong. Please try again.',
+    },
 };
 export default campaigns;

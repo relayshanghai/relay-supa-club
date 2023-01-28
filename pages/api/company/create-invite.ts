@@ -43,7 +43,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             .from('invites')
             .insert({
                 email,
-                company_id
+                company_id,
             })
             .select()
             .single();
@@ -67,13 +67,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             <p>You have been invited to join a company on the Supabase Dashboard.</p>
             <p>Click the button below to accept the invite.</p>
             <a href="${APP_URL}/signup/invite${new URLSearchParams({
-                    token: insertData.id
+                    token: insertData.id,
                 })}" style="background-color: #8B5CF6; color: white; margin: 5px; padding: 10px 20px; border-radius: 5px; text-decoration: none;">Accept Invite</a>
             <p>If you did not request this invite, you can safely ignore this email.</p>
             <p>Thanks,</p>
             <p style="margin-top: 16px">The Relay Team</p>
             </div>
-            `
+            `,
             });
         } catch (error) {
             serverLogger(error, 'error');
