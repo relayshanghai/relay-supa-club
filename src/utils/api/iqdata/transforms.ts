@@ -8,7 +8,7 @@ export interface FetchCreatorsFilteredParams {
     audienceLocation?: LocationWeighted[];
     resultsPerPageLimit?: number;
     page?: number;
-    audience?: string;
+    audience?: string[];
     views?: string[];
     gender?: string;
     engagement?: number;

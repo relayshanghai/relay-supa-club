@@ -80,9 +80,8 @@ export const checkSessionIdMatchesID = async (
     req: NextApiRequest,
     res: NextApiResponse
 ) => {
-    const supabase = createServerSupabaseClient({ req, res });
-
     if (!id) return false;
+    const supabase = createServerSupabaseClient({ req, res });
     const {
         data: { session }
     } = await supabase.auth.getSession();
