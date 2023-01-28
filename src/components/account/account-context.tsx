@@ -8,11 +8,10 @@ import { useCompany } from 'src/hooks/use-company';
 import { useUser } from 'src/hooks/use-user';
 import { CompanyWithProfilesInvitesAndUsage } from 'src/utils/api/db/calls/company';
 import { ProfileDB } from 'src/utils/api/db/types';
-import { StripePaymentMethods, StripePlanWithPrice } from 'types';
+import { StripePaymentMethods } from 'types';
 
 export interface AccountContextProps {
     userDataLoading: boolean;
-    plans?: StripePlanWithPrice;
     paymentMethods?: StripePaymentMethods;
     profile: ProfileDB | null;
     user: User | null;
@@ -27,7 +26,7 @@ export interface AccountContextProps {
 
 export const AccountContext = createContext<AccountContextProps>({
     userDataLoading: false,
-    plans: undefined,
+
     paymentMethods: undefined,
     profile: null,
     user: null,
