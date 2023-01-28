@@ -20,17 +20,17 @@ export const getStripePlanPrices = async () => {
 
     if (!diyPrices.data || !diyMaxPrices.data) throw new Error('no plans found');
     const diyMonthly = diyPrices.data.find(
-        (price) => price.recurring?.interval === 'month' && price.recurring.interval_count === 1
+        ({ recurring }) => recurring?.interval === 'month' && recurring.interval_count === 1,
     );
     const diyQuarterly = diyPrices.data.find(
-        (price) => price.recurring?.interval === 'month' && price.recurring.interval_count === 3
+        ({ recurring }) => recurring?.interval === 'month' && recurring.interval_count === 3,
     );
-    const diyAnnually = diyPrices.data.find((price) => price.recurring?.interval === 'year');
+    const diyAnnually = diyPrices.data.find(({ recurring }) => recurring?.interval === 'year');
     const diyMaxMonthly = diyMaxPrices.data.find(
-        (price) => price.recurring?.interval === 'month' && price.recurring.interval_count === 1
+        ({ recurring }) => recurring?.interval === 'month' && recurring.interval_count === 1,
     );
     const diyMaxQuarterly = diyMaxPrices.data.find(
-        (price) => price.recurring?.interval === 'month' && price.recurring.interval_count === 3
+        ({ recurring }) => recurring?.interval === 'month' && recurring.interval_count === 3,
     );
     const diyMaxAnnually = diyMaxPrices.data.find((price) => price.recurring?.interval === 'year');
 
