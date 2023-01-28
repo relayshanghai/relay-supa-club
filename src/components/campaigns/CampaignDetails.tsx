@@ -112,7 +112,7 @@ export default function CampaignDetails({
                         href={currentCampaign.product_link || '#'}
                         target="_blank"
                         className="text-sm text-primary-500 hover:text-primary-700 duration-300 mb-1 cursor-pointer break-words"
-                        rel="noreferrer"
+                        rel="noopener noreferrer"
                     >
                         {currentCampaign.product_link}
                     </a>
