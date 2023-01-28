@@ -1,6 +1,5 @@
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
-import { StripePlanWithPrice } from 'types';
 
 import { Button } from '../button';
 import { Modal } from '../modal';
@@ -11,8 +10,8 @@ export const SubscriptionConfirmModal = ({
     subscription,
     createSubscriptions,
 }: {
-    confirmModalData: StripePlanWithPrice | null;
-    setConfirmModalData: (value: StripePlanWithPrice | null) => void;
+    confirmModalData: any | null;
+    setConfirmModalData: (value: any | null) => void;
     subscription?: any;
     createSubscriptions: (planId: string) => void;
 }) => {
@@ -39,7 +38,7 @@ export const SubscriptionConfirmModal = ({
         >
             <h2 className="py-4">{t('account.subscription.modal.availableSubscriptions')}</h2>
             <div className="flex flex-col space-y-8">
-                {confirmModalData?.prices?.map((price, i) => {
+                {confirmModalData?.prices?.map((price: any, i: number) => {
                     const priceAmount = (Number(price.amount) / 100).toFixed(0);
                     return (
                         <div key={i} className="flex flex-row justify-between">
