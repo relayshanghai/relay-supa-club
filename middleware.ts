@@ -3,6 +3,8 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { Database } from 'types/supabase';
 
+const allowList = ['https://en-relay-club.vercel.app', 'https://relay.club'];
+
 /**
  * 
 TODO: performance improvement. These two database calls might add too much loading time to each request. Consider adding a cache, or adding something to the session object that shows the user has a company and the company has a payment method.
@@ -36,7 +38,7 @@ export async function middleware(req: NextRequest) {
         // TODO: once marketing sites are up, refine whitelist. Ticket: https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/76
         if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
             res.headers.set('Access-Control-Allow-Origin', '*');
-        } else if (origin?.includes('relay.club'))
+        } else if (origin && allowList.some((allowed) => origin.includes(allowed)))
             res.headers.set('Access-Control-Allow-Origin', origin);
         res.headers.set('Access-Control-Allow-Methods', 'GET');
         return res;
