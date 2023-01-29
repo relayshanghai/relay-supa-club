@@ -72,7 +72,12 @@ const formatPrice = (price: string, currency: string, period: Period) => {
             : Number(price);
     /** I think rounding to the dollar is OK for now, but if need be we can add cents */
     const roundedPrice = Math.round(pricePerMonth);
-    if (currency === 'usd') return `$${roundedPrice}`;
+    if (currency === 'usd')
+        return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+        }).format(roundedPrice);
+    // not sure what other currencies we will handle and if we can pass them directly to Intl.NumberFormat so this is a placeholder until we know
     return `${roundedPrice} ${currency}`;
 };
 
