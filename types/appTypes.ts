@@ -1,6 +1,6 @@
+import type { CompanyTable } from 'src/utils/api/db';
 import type Stripe from 'stripe';
-
-export type StripePaymentMethods = Stripe.Response<Stripe.ApiList<Stripe.PaymentMethod>>;
+import type { Database } from './supabase';
 
 export type RelayPlan = {
     currency: string;
@@ -28,6 +28,8 @@ export interface StripePriceWithProductMetadata extends Stripe.Price {
     product: RelayPlanStripeProduct;
 }
 
+export type SubscriptionStatus = 'awaiting_payment_method' | 'trial' | 'active';
+
 export type CreatorPlatform = 'instagram' | 'youtube' | 'tiktok';
 export type SocialMediaPlatform = CreatorPlatform | 'email' | 'twitter' | 'facebook' | 'wechat';
 
@@ -35,3 +37,11 @@ export type LabelValueObject = { label: string; value: string };
 export type LocationWeighted = { id: string; weight: number };
 
 export type CreatorSearchTag = { tag: string; value: string };
+
+export interface DatabaseWithCustomTypes extends Database {
+    public: Database['public'] & {
+        Tables: Database['public']['Tables'] & {
+            companies: CompanyTable;
+        };
+    };
+}

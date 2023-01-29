@@ -1,12 +1,25 @@
+import type { SubscriptionStatus } from 'types';
 import type { Database } from 'types/supabase';
 
 export type ProfileDB = Database['public']['Tables']['profiles']['Row'];
 export type ProfileDBUpdate = Database['public']['Tables']['profiles']['Update'];
 export type ProfileInsertDB = Database['public']['Tables']['profiles']['Insert'];
 
-export type CompanyDB = Database['public']['Tables']['companies']['Row'];
-export type CompanyDBUpdate = Database['public']['Tables']['companies']['Update'];
-export type CompanyDBInsert = Database['public']['Tables']['companies']['Insert'];
+export type CompanyTable = Database['public']['Tables']['companies'] & {
+    Row: Database['public']['Tables']['companies']['Row'] & {
+        subscription_status: SubscriptionStatus;
+    };
+    Insert: Database['public']['Tables']['companies']['Insert'] & {
+        subscription_status?: SubscriptionStatus;
+    };
+    Update: Database['public']['Tables']['companies']['Update'] & {
+        subscription_status?: SubscriptionStatus;
+    };
+};
+
+export type CompanyDB = CompanyTable['Row'];
+export type CompanyDBUpdate = CompanyTable['Update'];
+export type CompanyDBInsert = CompanyTable['Insert'];
 
 export type CampaignDB = Database['public']['Tables']['campaigns']['Row'];
 export type CampaignDBUpdate = Database['public']['Tables']['campaigns']['Update'];

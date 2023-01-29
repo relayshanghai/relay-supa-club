@@ -28,7 +28,7 @@ export default function Register() {
             setSubmitting(true);
             await createCompany(values);
             toast.success(t('login.companyCreated'));
-            await router.push('/dashboard');
+            await router.push('/signup/payment-onboard');
         } catch (e) {
             clientLogger(e, 'error');
             toast.error(t('login.oopsSomethingWentWrong'));
@@ -51,7 +51,7 @@ export default function Register() {
                         <div className="text-left w-full">
                             <h1 className="font-bold text-4xl mb-2">{t('login.onboardCompany')}</h1>
                             <h3 className="text-sm text-gray-600 mb-8">
-                                {t('login.addCompanyDetailsAndPaymentMethod')}
+                                {t('login.addCompanyDetails')}
                             </h3>
                         </div>
                         <Input
@@ -69,13 +69,7 @@ export default function Register() {
                             value={values.website}
                             onChange={(e) => setFieldValue('website', e.target.value)}
                         />
-                        <Button
-                            disabled={!values.name || submitting}
-                            onClick={(e) => {
-                                e.preventDefault();
-                                handleSubmit();
-                            }}
-                        >
+                        <Button disabled={!values.name || submitting} onClick={handleSubmit}>
                             {t('login.createCompany')}
                         </Button>
                     </>

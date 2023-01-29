@@ -27,11 +27,12 @@ const login = {
     createYourCompanyProfile: '创建您的公司简介',
     companyCreated: '公司已创建',
     onboardCompany: '入驻公司',
-    addCompanyDetailsAndPaymentMethod: '添加公司详细信息和付款方式',
+    addCompanyDetailsAndPaymentMethod: '添加公司详细信息',
     companyName: '公司名称',
     companyNamePlaceholder: '输入您的公司名称',
     companyWebsite: '公司网站',
     companyWebsitePlaceholder: '输入您的公司网站的网址',
     createCompany: '创建公司',
+    addPaymentMethod: '添加付款方式',
 };
 export default login;

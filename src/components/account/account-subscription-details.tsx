@@ -3,13 +3,13 @@ import { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SECONDS_IN_MILLISECONDS } from 'src/constants/conversions';
 import { useSubscription } from 'src/hooks/use-subscription';
+import { buildSubscriptionPortalUrl } from 'src/utils/api/stripe/helpers';
 
 import { Button } from '../button';
 import { AccountContext } from './account-context';
 
 export const SubscriptionDetails = () => {
-    const { subscription: subscriptionWrongType, paymentMethods } = useSubscription();
-
+    const { subscription: subscriptionWrongType } = useSubscription();
     // TODO: investigate why this type doesn't seem to match our code's usage
     const subscription = subscriptionWrongType as any;
 
@@ -18,7 +18,6 @@ export const SubscriptionDetails = () => {
     const { t, i18n } = useTranslation();
     const profileViewUsages = company?.usages.filter(({ type }) => type === 'profile_view');
     const searchUsages = company?.usages.filter(({ type }) => type === 'search');
-    // TODO: need multiple usage_limits
 
     const handleCancelSubscription = async () => {
         // TODO
@@ -29,20 +28,19 @@ export const SubscriptionDetails = () => {
             <div className="flex flex-row justify-between w-full items-center">
                 <h2 className="text-lg font-bold">{t('account.subscription.title')}</h2>
                 <div className="flex flex-row justify-end">
-                    <Link
-                        href={`/api/subscriptions/portal?${new URLSearchParams({
-                            id: company?.id || '',
-                        })}`}
-                    >
-                        <a>
-                            <Button variant="secondary">
-                                {t('account.subscription.viewBillingPortal')}
-                            </Button>
-                        </a>
-                    </Link>
+                    {company?.id && (
+                        <Link href={buildSubscriptionPortalUrl({ id: company.id })}>
+                            <a>
+                                <Button variant="secondary">
+                                    {t('account.subscription.viewBillingPortal')}
+                                </Button>
+                            </a>
+                        </Link>
+                    )}
                 </div>
             </div>
             <div className={`flex flex-row space-x-4 ${userDataLoading ? 'opacity-50' : ''}`}>
+                {/* detect if on free plan. */}
                 {subscription?.product ? (
                     <div className="flex flex-col space-y-2 ">
                         <div className={`w-full space-y-6 mb-8`}>
@@ -96,7 +94,7 @@ export const SubscriptionDetails = () => {
                                         {profileViewUsages?.length}
                                     </td>
                                     <td className="border px-4 py-2 text-right">
-                                        {subscription.product.metadata.usage_limit}
+                                        {company?.profiles_limit}
                                     </td>
                                 </tr>
                                 <tr>
@@ -119,22 +117,7 @@ export const SubscriptionDetails = () => {
                     </p>
                 )}
             </div>
-            {paymentMethods?.data?.length === 0 && (
-                <div className="w-full">
-                    <p>{t('account.subscription.beforePurchasingYouNeedPaymentMethod')}</p>
-                    <div className="flex flex-row justify-end">
-                        <Link
-                            href={`/api/subscriptions/portal?${new URLSearchParams({
-                                id: company?.id || '',
-                            })}`}
-                        >
-                            <a>
-                                <Button> {t('account.subscription.addPaymentMethod')}</Button>
-                            </a>
-                        </Link>
-                    </div>
-                </div>
-            )}
+
             <div className="flex space-x-6 justify-end w-full pt-5">
                 <Button onClick={handleCancelSubscription} variant="secondary">
                     {t('account.subscription.cancelSubscription')}

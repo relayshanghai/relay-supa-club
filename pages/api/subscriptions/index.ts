@@ -4,33 +4,49 @@ import { getCompanyCusId } from 'src/utils/api/db';
 import { serverLogger } from 'src/utils/logger';
 
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
+import Stripe from 'stripe';
+
+export type SubscriptionGetQueries = {
+    /** company id */
+    id: string;
+};
+export type SubscriptionGetResponse = Stripe.Subscription;
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'GET') {
-        const companyId = req.query.id;
-
+        const { id: companyId } = req.query as SubscriptionGetQueries;
         try {
             if (!companyId || typeof companyId !== 'string') throw new Error('No company id');
             const { data, error } = await getCompanyCusId(companyId);
-
+            const cusId = data?.cus_id;
             if (error) throw error;
-            if (!data || !data.cus_id) throw new Error('No data');
+            if (!cusId) throw new Error('No data');
 
             const subscriptions = await stripeClient.subscriptions.list({
-                customer: data.cus_id,
+                customer: cusId,
                 status: 'active',
             });
-            // return res.json({}); // turn off this endpoint while in progress to clean up console errors
             const subscription = subscriptions.data[0];
-            if (!subscription)
+            if (!subscription) {
+                const trial = await stripeClient.subscriptions.list({
+                    customer: cusId,
+                    status: 'trialing',
+                });
+                if (trial.data[0]) return res.status(httpCodes.OK).json(trial.data[0]);
+
                 return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({
                     error: 'No subscription data',
                 });
-            const product = await stripeClient.products.retrieve(
-                // TODO: fix this, investigate what we are really getting/sending, and make custom type for frontend to receive.
-                (subscription as any).plan.product,
-            );
-            (subscription as any).product = product;
+            }
+
+            // data the frontend needs:
+            // name of subscription plan,
+            // payment interval.
+            // current period end (renew date)
+            // usage limits
+            // if on trial
+
+            // console.log({ subscription });
 
             return res.status(httpCodes.OK).json(subscription);
         } catch (error) {

@@ -14,21 +14,27 @@ import { useUser } from './use-user';
 export const useCompany = () => {
     const { profile, user } = useUser();
     const { data: company, mutate: refreshCompany } = useSWR(
-        profile?.company_id ? `company?${new URLSearchParams({ id: profile.company_id })}` : null,
-        nextFetchWithQueries<CompanyGetQueries, CompanyWithProfilesInvitesAndUsage>,
+        profile?.company_id ? 'company' : null,
+        async (path) =>
+            await nextFetchWithQueries<CompanyGetQueries, CompanyWithProfilesInvitesAndUsage>(
+                path,
+                { id: profile?.company_id ?? '' },
+            ),
     );
 
     const updateCompany = useCallback(
-        async (input: CompanyPostBody) => {
+        async (input: Omit<CompanyPostBody, 'id'>) => {
+            if (!user?.id) throw new Error('No user found');
+            const body: CompanyCreatePostBody = {
+                ...input,
+                user_id: user.id,
+            };
             return await nextFetch<CompanyPostResponse>(`company`, {
                 method: 'post',
-                body: JSON.stringify({
-                    ...input,
-                    id: profile?.company_id,
-                }),
+                body: JSON.stringify(body),
             });
         },
-        [profile],
+        [user?.id],
     );
 
     const createInvite = useCallback(

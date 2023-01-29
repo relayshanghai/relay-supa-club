@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+// import { useSubscription } from 'src/hooks/use-subscription';
 import { Layout } from 'src/modules/layout';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger';
@@ -63,7 +64,11 @@ type Prices = {
     annually: PriceTiers;
 };
 
-const formatPrice = (price: string, currency: string, period: Period) => {
+const formatPrice = (
+    price: string,
+    currency: string,
+    period: 'monthly' | 'annually' | 'quarterly',
+) => {
     const pricePerMonth =
         period === 'annually'
             ? Number(price) / 12
@@ -84,10 +89,13 @@ const formatPrice = (price: string, currency: string, period: Period) => {
 /** Note: This file doesn't share a lot of the conventions we have elsewhere across the app, because this file is migrated from the marketing site, trying to make minimal changes in case we need to update both at the same time. */
 const Pricing = () => {
     const { t } = useTranslation();
+    // const { subscription } = useSubscription();
+    // todo: do not allow upgrade to already subscribed plan
+    // console.log('subscription', subscription);
 
     const [period, setPeriod] = useState<Period>('annually');
 
-    const openConfirmModal = (plan: 'diy' | 'diyMax', period: Period) => {
+    const paymentLink = (plan: 'diy' | 'diyMax', period: Period) => {
         clientLogger({ plan, period });
     };
 
@@ -114,6 +122,7 @@ const Pricing = () => {
             try {
                 const res = await nextFetch<SubscriptionPricesGetResponse>('subscriptions/prices');
                 const { diy, diyMax } = res;
+
                 const monthly = {
                     diy: formatPrice(diy.prices.monthly, diy.currency, 'monthly'),
                     diyMax: formatPrice(diyMax.prices.monthly, diyMax.currency, 'monthly'),
@@ -261,7 +270,7 @@ const Pricing = () => {
                                 })}
 
                                 <a
-                                    onClick={() => openConfirmModal('diy', period)}
+                                    onClick={() => paymentLink('diy', period)}
                                     className="flex items-center mt-auto text-white bg-gray-400 border-0 py-2 px-4 w-full focus:outline-none hover:bg-gray-500 rounded"
                                 >
                                     {t('pricing.buyNow')}
@@ -363,7 +372,7 @@ const Pricing = () => {
                                 ))}
 
                                 <button
-                                    onClick={() => openConfirmModal('diyMax', period)}
+                                    onClick={() => paymentLink('diyMax', period)}
                                     className="flex items-center mt-auto text-white bg-primary-500 border-0 py-2 px-4 w-full focus:outline-none hover:bg-primary-600 rounded"
                                 >
                                     {t('pricing.buyNow')}

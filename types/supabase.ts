@@ -187,6 +187,7 @@ export interface Database {
                     name: string | null;
                     profiles_limit: string;
                     searches_limit: string;
+                    subscription_status: string;
                     updated_at: string | null;
                     website: string | null;
                 };
@@ -198,6 +199,7 @@ export interface Database {
                     name?: string | null;
                     profiles_limit?: string;
                     searches_limit?: string;
+                    subscription_status?: string;
                     updated_at?: string | null;
                     website?: string | null;
                 };
@@ -209,6 +211,7 @@ export interface Database {
                     name?: string | null;
                     profiles_limit?: string;
                     searches_limit?: string;
+                    subscription_status?: string;
                     updated_at?: string | null;
                     website?: string | null;
                 };
