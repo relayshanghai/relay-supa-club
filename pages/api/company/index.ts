@@ -7,7 +7,7 @@ import {
 } from 'src/utils/api/db/calls/company';
 import { CompanyDB, CompanyDBUpdate } from 'src/utils/api/db/types';
 import { serverLogger } from 'src/utils/logger';
-import { stripeClient } from 'src/utils/stripe-client';
+import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 
 export type CompanyGetQueries = {
     id: string;

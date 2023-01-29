@@ -30,6 +30,7 @@ const pricing = {
     moreInfluencerProfiles: 'More influencer profiles',
     buyNow: 'Buy Now',
     contactUs: 'Contact us',
+    popular: 'POPULAR',
 };
 
 export default pricing;

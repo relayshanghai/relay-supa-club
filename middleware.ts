@@ -29,6 +29,19 @@ const checkCompanyIsOnboarded = async (supabase: SupabaseClient<Database>, userI
 export async function middleware(req: NextRequest) {
     // We need to create a response and hand it to the supabase client to be able to modify the response headers.
     const res = NextResponse.next();
+
+    // Special case: we need to be able to access this from the marketing page, so we need to allow CORS
+    if (req.nextUrl.pathname.includes('/subscriptions/prices')) {
+        const origin = req.headers.get('origin');
+        // TODO: once marketing sites are up, refine whitelist. Ticket: https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/76
+        if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
+            res.headers.set('Access-Control-Allow-Origin', '*');
+        } else if (origin?.includes('relay.club'))
+            res.headers.set('Access-Control-Allow-Origin', origin);
+        res.headers.set('Access-Control-Allow-Methods', 'GET');
+        return res;
+    }
+
     // Create authenticated Supabase Client.
     const supabase = createMiddlewareSupabaseClient<Database>({ req, res });
     const {

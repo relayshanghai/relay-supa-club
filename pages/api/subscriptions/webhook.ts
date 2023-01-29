@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { stripeClient } from 'src/utils/stripe-client';
+import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 import { supabase } from 'src/utils/supabase-client';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -15,7 +15,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 const { error } = await supabase
                     .from('companies')
                     .update({
-                        usage_limit: plan.metadata.usage_limit,
+                        profiles_limit: plan.metadata.profiles,
+                        searches_limit: plan.metadata.searches,
                     })
                     .eq('cus_id', body.data.object.customer)
                     .single();

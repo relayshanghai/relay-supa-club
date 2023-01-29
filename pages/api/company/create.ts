@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { CompanyDB, CompanyDBInsert, createCompany, updateProfile } from 'src/utils/api/db';
-import { ensureCustomer } from 'src/utils/api/ensure-customer';
+import { ensureCustomer } from 'src/utils/api/stripe/ensure-customer';
 import { serverLogger } from 'src/utils/logger';
 
 export type CompanyCreatePostBody = CompanyDBInsert & {

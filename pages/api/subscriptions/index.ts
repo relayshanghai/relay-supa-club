@@ -3,7 +3,7 @@ import httpCodes from 'src/constants/httpCodes';
 import { getCompanyCusId } from 'src/utils/api/db';
 import { serverLogger } from 'src/utils/logger';
 
-import { stripeClient } from 'src/utils/stripe-client';
+import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'GET') {

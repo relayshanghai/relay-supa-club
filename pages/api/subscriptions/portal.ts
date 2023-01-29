@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { stripeClient } from 'src/utils/stripe-client';
+import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 import { supabase } from 'src/utils/supabase-client';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
