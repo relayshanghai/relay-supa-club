@@ -44,6 +44,7 @@ export const updateCompany = async (update: CompanyDBUpdate) => {
         profiles_limit: _filter_out,
         searches_limit: _filter_out2,
         subscription_status: _filter_out3,
+        subscription_start_date: _filter_out4,
         ...updateData
     } = update;
     const { data, error } = await supabase
@@ -57,18 +58,30 @@ export const updateCompany = async (update: CompanyDBUpdate) => {
     return data as CompanyDBWithSubscription;
 };
 
+type CompanyUsageLimitUpdate = {
+    profiles_limit: string;
+    searches_limit: string;
+    trial_searches_limit?: string;
+    trial_profiles_limit?: string;
+    id: string;
+};
+
 export const updateCompanyUsageLimits = async ({
     profiles_limit,
     searches_limit,
+    trial_searches_limit,
+    trial_profiles_limit,
     id,
-}: {
-    profiles_limit: string;
-    searches_limit: string;
-    id: string;
-}) => {
+}: CompanyUsageLimitUpdate) => {
+    const update: Omit<CompanyUsageLimitUpdate, 'id'> = {
+        profiles_limit,
+        searches_limit,
+    };
+    if (trial_profiles_limit) update.trial_profiles_limit = trial_profiles_limit;
+    if (trial_searches_limit) update.trial_searches_limit = trial_searches_limit;
     const { data, error } = await supabase
         .from('companies')
-        .update({ profiles_limit, searches_limit })
+        .update(update)
         .eq('id', id)
         .select()
         .single();
@@ -79,14 +92,20 @@ export const updateCompanyUsageLimits = async ({
 
 export const updateCompanySubscriptionStatus = async ({
     subscription_status,
+    subscription_start_date,
     id,
 }: {
     subscription_status: SubscriptionStatus;
+    subscription_start_date?: string;
     id: string;
 }) => {
+    const update: CompanyDBUpdate = {
+        subscription_status,
+    };
+    if (subscription_start_date) update.subscription_start_date = subscription_start_date;
     const { data, error } = await supabase
         .from('companies')
-        .update({ subscription_status })
+        .update(update)
         .eq('id', id)
         .select()
         .single();
