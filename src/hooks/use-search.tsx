@@ -59,6 +59,7 @@ export const useSearch = () => {
 
             try {
                 const bodyData: KolPostRequest = {
+                    tags,
                     platform,
                     lookalike,
                     KOLLocation,
@@ -98,6 +99,7 @@ export const useSearch = () => {
             }
         },
         [
+            tags,
             KOLLocation,
             audience,
             audienceLocation,
