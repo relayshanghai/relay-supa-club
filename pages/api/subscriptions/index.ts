@@ -16,6 +16,7 @@ export type SubscriptionGetResponse = {
     interval: string;
     /** date in seconds */
     current_period_end: number;
+    status: Stripe.Subscription.Status;
 };
 
 interface ExpandedPlanWithProduct extends Stripe.Plan {
@@ -62,8 +63,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                             ? 'quarterly'
                             : 'monthly'
                         : subscription.plan.interval,
-
                 current_period_end: subscription.current_period_end,
+                status: subscription.status,
             };
 
             return res.status(httpCodes.OK).json(returnData);
