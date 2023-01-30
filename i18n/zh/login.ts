@@ -34,5 +34,6 @@ const login = {
     companyWebsitePlaceholder: '输入您的公司网站的网址',
     createCompany: '创建公司',
     addPaymentMethod: '添加付款方式',
+    userAlreadyRegistered: '用户已注册',
 };
 export default login;

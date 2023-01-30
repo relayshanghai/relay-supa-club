@@ -36,5 +36,6 @@ const login = {
     companyWebsitePlaceholder: "Enter your company website's url",
     createCompany: 'Create company',
     addPaymentMethod: 'Add payment method',
+    userAlreadyRegistered: 'User already registered',
 };
 export default login;
