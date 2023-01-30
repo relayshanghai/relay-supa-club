@@ -37,7 +37,7 @@ const recordUsage = async ({
         .from('usages')
         .select('item_id')
         .eq('company_id', company_id)
-        .eq('type', 'report')
+        .eq('type', type)
         .gte('created_at', currentMonthStartDate.toISOString())
         .lte('created_at', currentMonthEndDate.toISOString());
 
@@ -54,7 +54,7 @@ const recordUsage = async ({
     const usage: UsagesDBInsert = {
         company_id,
         user_id,
-        type: 'profile',
+        type,
         item_id: creator_id,
     };
     const { error: insertError } = await supabase.from('usages').insert([usage]);
