@@ -37,7 +37,7 @@ const recordUsage = async ({
         .from('usages')
         .select('item_id')
         .eq('company_id', company_id)
-        .eq('type', 'report')
+        .eq('type', type)
         .gte('created_at', currentMonthStartDate.toISOString())
         .lte('created_at', currentMonthEndDate.toISOString());
 
