@@ -32,7 +32,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }
 
             // Create the customer in stripe as well
-            // TODO: change this function to just return the cus_id, not add to company yet, until they confirm payment method?
             await ensureCustomer({ company_id: company.id, name });
 
             return res.status(httpCodes.OK).json({ profile, company });
