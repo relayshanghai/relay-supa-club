@@ -65,7 +65,14 @@ const PaymentOnboard = () => {
                     <Spinner className="fill-primary-600 text-white w-20 h-20" />
                 ) : (
                     <>
-                        {paymentMethods?.length === 0 ? (
+                        {paymentMethods?.length && paymentMethods?.length > 0 ? (
+                            <>
+                                <Button onClick={handleSubmit} disabled={submitting}>
+                                    Activate Trial
+                                </Button>
+                                <p className="text-sm text-gray-600 mt-2">{`Upon clicking "Activate Trial", you are agreeing to the terms and services of the 30 day trial, and agree to have your subscription automatically continued after 30 days at the DIY plan`}</p>
+                            </>
+                        ) : (
                             <Link
                                 href={buildSubscriptionPortalUrl({
                                     id: company.id,
@@ -79,13 +86,6 @@ const PaymentOnboard = () => {
                                     </Button>
                                 </a>
                             </Link>
-                        ) : (
-                            <>
-                                <Button onClick={handleSubmit} disabled={submitting}>
-                                    Activate Trial
-                                </Button>
-                                <p className="text-sm text-gray-600 mt-2">{`Upon clicking "Activate Trial", you are agreeing to the terms and services of the 30 day trial, and agree to have your subscription automatically continued after 30 days at the DIY plan`}</p>
-                            </>
                         )}
                     </>
                 )}
