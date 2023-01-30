@@ -63,14 +63,12 @@ const PaymentOnboard = () => {
                 ) : (
                     <>
                         {paymentMethods?.length && paymentMethods?.length > 0 ? (
-                            <>
+                            <div className="flex flex-col space-y-6">
                                 <Button onClick={handleSubmit} disabled={submitting}>
                                     {t('login.activateTrial')}
                                 </Button>
-                                <p className="text-sm text-gray-600 mt-2">
-                                    {t('login.signupTerms')}
-                                </p>
-                            </>
+                                <p className="text-xs text-gray-500">{t('login.signupTerms')}</p>
+                            </div>
                         ) : (
                             <Link
                                 href={buildSubscriptionPortalUrl({
