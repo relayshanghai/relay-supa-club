@@ -12,7 +12,7 @@ const stripeWebhookAllowlist = ['https://stripe.com/', 'https://hooks.stripe.com
 
 /**
  * 
-TODO: performance improvement. These two database calls might add too much loading time to each request. Consider adding a cache, or adding something to the session object that shows the user has a company and the company has a payment method.
+TODO https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/78: performance improvement. These two database calls might add too much loading time to each request. Consider adding a cache, or adding something to the session object that shows the user has a company and the company has a payment method.
  */
 const getCompanySubscriptionStatus = async (
     supabase: SupabaseClient<DatabaseWithCustomTypes>,
@@ -50,15 +50,14 @@ const checkOnboardingStatus = async (
         }
         return res;
     }
-    // if signed up, but no company, redirect to onboarding
     const subscriptionStatus = await getCompanySubscriptionStatus(supabase, session.user.id);
-
+    // if signed up, but no company, redirect to onboarding
     if (!subscriptionStatus) {
         if (req.nextUrl.pathname.includes('/signup/onboarding')) return res;
         redirectUrl.pathname = '/signup/onboarding';
         return NextResponse.redirect(redirectUrl);
     }
-    // if already registered, but no payment method, redirect to payment onboarding
+    // if company registered, but no payment method, redirect to payment onboarding
     if (subscriptionStatus === 'awaiting_payment_method') {
         // allow the endpoints payment onboarding page requires
         if (
