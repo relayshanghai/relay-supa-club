@@ -39,14 +39,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 });
             }
 
+            // TODO task V2-26n: re-implement subscription return data.
             // data the frontend needs:
             // name of subscription plan,
             // payment interval.
             // current period end (renew date)
             // usage limits
             // if on trial
-
-            // console.log({ subscription });
 
             return res.status(httpCodes.OK).json(subscription);
         } catch (error) {
