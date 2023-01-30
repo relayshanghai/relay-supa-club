@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { FREE_TRIAL_DAYS } from 'src/constants/free-trial';
+import httpCodes from 'src/constants/httpCodes';
 import {
     getCompanyCusId,
     updateCompanySubscriptionStatus,
@@ -20,7 +21,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const { company_id } = JSON.parse(req.body) as SubscriptionCreateTrialPostBody;
 
         try {
-            if (!company_id || typeof company_id !== 'string') throw new Error('No company id');
+            if (!company_id || typeof company_id !== 'string') {
+                return res.status(httpCodes.BAD_REQUEST).json({ error: 'Missing company id' });
+            }
             const { data, error } = await getCompanyCusId(company_id);
             const cusId = data?.cus_id;
             if (error) throw error;
@@ -28,7 +31,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             const paymentMethods = await stripeClient.customers.listPaymentMethods(cusId);
             if (paymentMethods?.data?.length === 0) {
-                return res.status(500).json({ error: 'Missing payment method' });
+                return res
+                    .status(httpCodes.INTERNAL_SERVER_ERROR)
+                    .json({ error: 'Missing payment method' });
             }
 
             const subscriptions = await stripeClient.subscriptions.list({
@@ -37,7 +42,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             });
             const activeSubscription = subscriptions.data[0];
             if (activeSubscription) {
-                return res.status(500).json({ error: 'Already subscribed' });
+                return res
+                    .status(httpCodes.INTERNAL_SERVER_ERROR)
+                    .json({ error: 'Already subscribed' });
             }
 
             const diyPrices = (await stripeClient.prices.list({
@@ -52,7 +59,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             );
             const diyTrialPriceId = diyTrialPrice?.id ?? '';
 
-            if (!diyTrialPriceId) return res.status(500).json({ error: 'Missing DIY trial price' });
+            if (!diyTrialPriceId)
+                return res
+                    .status(httpCodes.INTERNAL_SERVER_ERROR)
+                    .json({ error: 'Missing DIY trial price' });
 
             const createParams: Stripe.SubscriptionCreateParams = {
                 customer: cusId,
@@ -69,7 +79,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             })) as StripePriceWithProductMetadata;
 
             if (!price?.product?.metadata?.profiles || !price.product.metadata.searches)
-                return res.status(500).json({ error: 'Missing metadata' });
+                return res
+                    .status(httpCodes.INTERNAL_SERVER_ERROR)
+                    .json({ error: 'Missing metadata' });
 
             await updateCompanyUsageLimits({
                 profiles_limit: price.product.metadata.profiles,
@@ -81,12 +93,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 id: company_id,
             });
 
-            return res.status(200).json(subscription);
+            return res.status(httpCodes.OK).json(subscription);
         } catch (error) {
             serverLogger(error, 'error');
-            return res.status(500).json({ error: 'Something went wrong' });
+            return res
+                .status(httpCodes.INTERNAL_SERVER_ERROR)
+                .json({ error: 'Something went wrong' });
         }
     }
 
-    return res.status(400).json(null);
+    return res.status(httpCodes.METHOD_NOT_ALLOWED).json({});
 }
