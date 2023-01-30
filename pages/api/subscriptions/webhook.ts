@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import httpCodes from 'src/constants/httpCodes';
 import { updateCompanySubscriptionStatus, updateCompanyUsageLimits } from 'src/utils/api/db';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 import { serverLogger } from 'src/utils/logger';
@@ -7,10 +8,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (req.method === 'POST') {
         try {
             const sig = req.headers['stripe-signature'];
-            if (!sig) return res.status(400).json(null);
+            if (!sig) return res.status(httpCodes.BAD_REQUEST).json(null);
 
             const body = req.body;
-            // need to test in production if the webhook is actually called after trial ends.
+            // TODO task V2-26o: test in production (Staging) if the webhook is actually called after trial ends.
             // console.dir({ stripeHook: body }, { depth: null });
             // stripe should send this when the trial period ends
             if (body.type === 'invoice.created') {
@@ -35,13 +36,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     });
                 }
 
-                return res.status(200).json({});
+                return res.status(httpCodes.OK).json({});
             }
         } catch (error) {
             serverLogger(error, 'error');
-            return res.status(400).json({ error: 'error handling Stripe webhook' });
+            return res
+                .status(httpCodes.INTERNAL_SERVER_ERROR)
+                .json({ error: 'error handling Stripe webhook' });
         }
     }
 
-    return res.status(400).json(null);
+    return res.status(httpCodes.METHOD_NOT_ALLOWED).json({});
 }
