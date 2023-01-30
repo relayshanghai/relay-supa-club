@@ -56,10 +56,7 @@ const PaymentOnboard = () => {
             <form className="max-w-xs w-full mx-auto flex-grow flex flex-col justify-center items-center space-y-5">
                 <div className="text-left w-full">
                     <h1 className="font-bold text-4xl mb-2">{t('login.addPaymentMethod')}</h1>
-                    <h3 className="text-sm text-gray-600 mb-8">
-                        And activate your 30 day free trial.
-                        {/* {t('login.addCompanyDetailsAndPaymentMethod')} */}
-                    </h3>
+                    <h3 className="text-sm text-gray-600 mb-8">{t('login.andActivateTrial')}</h3>
                 </div>
                 {!company?.id ? (
                     <Spinner className="fill-primary-600 text-white w-20 h-20" />
@@ -68,9 +65,11 @@ const PaymentOnboard = () => {
                         {paymentMethods?.length && paymentMethods?.length > 0 ? (
                             <>
                                 <Button onClick={handleSubmit} disabled={submitting}>
-                                    Activate Trial
+                                    {t('login.activateTrial')}
                                 </Button>
-                                <p className="text-sm text-gray-600 mt-2">{`Upon clicking "Activate Trial", you are agreeing to the terms and services of the 30 day trial, and agree to have your subscription automatically continued after 30 days at the DIY plan`}</p>
+                                <p className="text-sm text-gray-600 mt-2">
+                                    {t('login.signupTerms')}
+                                </p>
                             </>
                         ) : (
                             <Link
@@ -81,8 +80,7 @@ const PaymentOnboard = () => {
                             >
                                 <a>
                                     <Button variant="secondary">
-                                        Add payment method in Stripe
-                                        {/* {t('account.subscription.viewBillingPortal')} */}
+                                        {t('login.addPaymentMethod')}
                                     </Button>
                                 </a>
                             </Link>
