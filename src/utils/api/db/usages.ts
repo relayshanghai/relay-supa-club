@@ -54,7 +54,7 @@ const recordUsage = async ({
     const usage: UsagesDBInsert = {
         company_id,
         user_id,
-        type: 'profile',
+        type,
         item_id: creator_id,
     };
     const { error: insertError } = await supabase.from('usages').insert([usage]);
