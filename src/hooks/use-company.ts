@@ -12,7 +12,7 @@ import useSWR from 'swr';
 import { useUser } from './use-user';
 
 export const useCompany = () => {
-    const { profile, user } = useUser();
+    const { profile, user, refreshProfile } = useUser();
     const { data: company, mutate: refreshCompany } = useSWR(
         profile?.company_id ? 'company' : null,
         async (path) =>
@@ -60,12 +60,15 @@ export const useCompany = () => {
                 ...input,
                 user_id: user?.id,
             };
-            return await nextFetch<CompanyCreatePostResponse>(`company/create`, {
+            const res = await nextFetch<CompanyCreatePostResponse>(`company/create`, {
                 method: 'post',
                 body,
             });
+            // create company adds company to user profile, so we need to refresh the profile
+            refreshProfile();
+            return res;
         },
-        [user],
+        [refreshProfile, user],
     );
 
     return {
