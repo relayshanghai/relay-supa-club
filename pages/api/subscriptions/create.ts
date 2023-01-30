@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import { SECONDS_IN_MILLISECONDS } from 'src/constants/conversions';
 import httpCodes from 'src/constants/httpCodes';
 import {
     getCompanyCusId,
@@ -69,8 +70,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 searches_limit: product.metadata.searches,
                 id: company_id,
             });
+
             await updateCompanySubscriptionStatus({
                 subscription_status: 'active',
+                subscription_start_date: new Date(
+                    subscription.start_date * SECONDS_IN_MILLISECONDS,
+                ).toISOString(),
                 id: company_id,
             });
 

@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { FREE_TRIAL_DAYS } from 'src/constants/free-trial';
+import { SECONDS_IN_MILLISECONDS } from 'src/constants/conversions';
 import httpCodes from 'src/constants/httpCodes';
 import {
     getCompanyCusId,
@@ -58,17 +58,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     recurring?.interval === 'month' && recurring.interval_count === 1,
             );
             const diyTrialPriceId = diyTrialPrice?.id ?? '';
-
-            if (!diyTrialPriceId)
+            if (!diyTrialPriceId || !diyTrialPrice)
                 return res
                     .status(httpCodes.INTERNAL_SERVER_ERROR)
                     .json({ error: 'Missing DIY trial price' });
+
+            const { trial_days, trial_profiles, trial_searches } = diyTrialPrice.product.metadata;
+            if (!trial_days || !trial_profiles || !trial_searches) {
+                return res
+                    .status(httpCodes.INTERNAL_SERVER_ERROR)
+                    .json({ error: 'Missing product metadata' });
+            }
 
             const createParams: Stripe.SubscriptionCreateParams = {
                 customer: cusId,
                 items: [{ price: diyTrialPriceId }],
                 proration_behavior: 'create_prorations',
-                trial_period_days: FREE_TRIAL_DAYS,
+                trial_period_days: Number(trial_days),
             };
 
             const subscription = await stripeClient.subscriptions.create(createParams);
@@ -86,10 +92,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             await updateCompanyUsageLimits({
                 profiles_limit: price.product.metadata.profiles,
                 searches_limit: price.product.metadata.searches,
+                trial_profiles_limit: trial_profiles,
+                trial_searches_limit: trial_searches,
                 id: company_id,
             });
+            const subscription_start_date =
+                (subscription.trial_start ?? subscription.start_date) * SECONDS_IN_MILLISECONDS;
+            if (!subscription_start_date) throw new Error('Missing subscription start date');
             await updateCompanySubscriptionStatus({
                 subscription_status: 'trial',
+                subscription_start_date: new Date(subscription_start_date).toISOString(),
                 id: company_id,
             });
 

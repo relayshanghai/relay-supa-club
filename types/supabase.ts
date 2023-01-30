@@ -187,7 +187,10 @@ export interface Database {
                     name: string | null;
                     profiles_limit: string;
                     searches_limit: string;
+                    subscription_start_date: string | null;
                     subscription_status: string;
+                    trial_profiles_limit: string;
+                    trial_searches_limit: string;
                     updated_at: string | null;
                     website: string | null;
                 };
@@ -199,7 +202,10 @@ export interface Database {
                     name?: string | null;
                     profiles_limit?: string;
                     searches_limit?: string;
+                    subscription_start_date?: string | null;
                     subscription_status?: string;
+                    trial_profiles_limit?: string;
+                    trial_searches_limit?: string;
                     updated_at?: string | null;
                     website?: string | null;
                 };
@@ -211,7 +217,10 @@ export interface Database {
                     name?: string | null;
                     profiles_limit?: string;
                     searches_limit?: string;
+                    subscription_start_date?: string | null;
                     subscription_status?: string;
+                    trial_profiles_limit?: string;
+                    trial_searches_limit?: string;
                     updated_at?: string | null;
                     website?: string | null;
                 };
