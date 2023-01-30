@@ -11,7 +11,6 @@ import { AccountContext } from './account-context';
 
 export const SubscriptionDetails = () => {
     const { subscription } = useSubscription();
-    // TODO task V2-26n: investigate why this type doesn't seem to match our code's usage. Get only the data we need here from backend. (see api/subscriptions/index.ts)
 
     const { userDataLoading, company } = useContext(AccountContext);
 
