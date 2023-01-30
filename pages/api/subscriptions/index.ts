@@ -50,7 +50,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 });
                 subscription = trial.data[0] as StripeSubscriptionWithPlan;
                 if (!subscription)
-                    return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({
+                    return res.status(httpCodes.NOT_FOUND).json({
                         error: 'No subscription data',
                     });
             }
@@ -70,9 +70,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             return res.status(httpCodes.OK).json(returnData);
         } catch (error) {
             serverLogger(error, 'error');
-            return res
-                .status(httpCodes.INTERNAL_SERVER_ERROR)
-                .json({ error: 'unable to get subscription' });
+            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
         }
     }
 
