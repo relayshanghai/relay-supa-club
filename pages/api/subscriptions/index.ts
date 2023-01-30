@@ -10,7 +10,21 @@ export type SubscriptionGetQueries = {
     /** company id */
     id: string;
 };
-export type SubscriptionGetResponse = Stripe.Subscription;
+export type SubscriptionGetResponse = {
+    name: string;
+    /** monthly, quarterly, yearly */
+    interval: string;
+    /** date in seconds */
+    current_period_end: number;
+};
+
+interface ExpandedPlanWithProduct extends Stripe.Plan {
+    product: Stripe.Product;
+}
+// Due to some poor typing in the Stripe SDK, we need to manually type this.
+interface StripeSubscriptionWithPlan extends Stripe.Subscription {
+    plan: ExpandedPlanWithProduct;
+}
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'GET') {
@@ -26,28 +40,33 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 customer: cusId,
                 status: 'active',
             });
-            const subscription = subscriptions.data[0];
+            let subscription = subscriptions.data[0] as StripeSubscriptionWithPlan;
             if (!subscription) {
                 const trial = await stripeClient.subscriptions.list({
                     customer: cusId,
                     status: 'trialing',
+                    expand: ['data.plan.product'],
                 });
-                if (trial.data[0]) return res.status(httpCodes.OK).json(trial.data[0]);
-
-                return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({
-                    error: 'No subscription data',
-                });
+                subscription = trial.data[0] as StripeSubscriptionWithPlan;
+                if (!subscription)
+                    return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({
+                        error: 'No subscription data',
+                    });
             }
 
-            // TODO task V2-26n: re-implement subscription return data.
-            // data the frontend needs:
-            // name of subscription plan,
-            // payment interval.
-            // current period end (renew date)
-            // usage limits
-            // if on trial
+            const returnData: SubscriptionGetResponse = {
+                name: subscription.plan.product.name,
+                interval:
+                    subscription.plan.interval === 'month'
+                        ? subscription.plan.interval_count === 3
+                            ? 'quarterly'
+                            : 'monthly'
+                        : subscription.plan.interval,
 
-            return res.status(httpCodes.OK).json(subscription);
+                current_period_end: subscription.current_period_end,
+            };
+
+            return res.status(httpCodes.OK).json(returnData);
         } catch (error) {
             serverLogger(error, 'error');
             return res
