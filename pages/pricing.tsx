@@ -89,13 +89,12 @@ const formatPrice = (
 /** Note: This file doesn't share a lot of the conventions we have elsewhere across the app, because this file is migrated from the marketing site, trying to make minimal changes in case we need to update both at the same time. */
 const Pricing = () => {
     const { t } = useTranslation();
+    // TODO task V2-26p: disable buttons for already subscribed plan
     // const { subscription } = useSubscription();
-    // todo: do not allow upgrade to already subscribed plan
-    // console.log('subscription', subscription);
 
     const [period, setPeriod] = useState<Period>('annually');
 
-    const paymentLink = (plan: 'diy' | 'diyMax', period: Period) => {
+    const openConfirmModal = (plan: 'diy' | 'diyMax', period: Period) => {
         clientLogger({ plan, period });
     };
 
@@ -270,7 +269,7 @@ const Pricing = () => {
                                 })}
 
                                 <a
-                                    onClick={() => paymentLink('diy', period)}
+                                    onClick={() => openConfirmModal('diy', period)}
                                     className="flex items-center mt-auto text-white bg-gray-400 border-0 py-2 px-4 w-full focus:outline-none hover:bg-gray-500 rounded"
                                 >
                                     {t('pricing.buyNow')}
@@ -372,7 +371,7 @@ const Pricing = () => {
                                 ))}
 
                                 <button
-                                    onClick={() => paymentLink('diyMax', period)}
+                                    onClick={() => openConfirmModal('diyMax', period)}
                                     className="flex items-center mt-auto text-white bg-primary-500 border-0 py-2 px-4 w-full focus:outline-none hover:bg-primary-600 rounded"
                                 >
                                     {t('pricing.buyNow')}

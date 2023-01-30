@@ -10,7 +10,7 @@ import { AccountContext } from './account-context';
 
 export const SubscriptionDetails = () => {
     const { subscription: subscriptionWrongType } = useSubscription();
-    // TODO: investigate why this type doesn't seem to match our code's usage
+    // TODO task V2-26n: investigate why this type doesn't seem to match our code's usage. Get only the data we need here from backend. (see api/subscriptions/index.ts)
     const subscription = subscriptionWrongType as any;
 
     const { userDataLoading, company } = useContext(AccountContext);
@@ -20,7 +20,7 @@ export const SubscriptionDetails = () => {
     const searchUsages = company?.usages.filter(({ type }) => type === 'search');
 
     const handleCancelSubscription = async () => {
-        // TODO
+        // TODO task V2-26q : implement cancel subscription
     };
 
     return (
