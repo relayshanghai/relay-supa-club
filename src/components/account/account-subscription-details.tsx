@@ -39,14 +39,12 @@ export const SubscriptionDetails = () => {
                         </Link>
                     )}
                 </div>
-            </div>{' '}
+            </div>
             {subscription && company && searchUsages && profileViewUsages ? (
                 <>
-                    {' '}
                     <div
                         className={`flex flex-row space-x-4 ${userDataLoading ? 'opacity-50' : ''}`}
                     >
-                        {/* detect if on free plan. */}
                         <div className="flex flex-col space-y-2 ">
                             <div className={`w-full space-y-6 mb-8`}>
                                 <div className="flex flex-col space-y-3">

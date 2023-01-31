@@ -26,7 +26,6 @@ const getCompanySubscriptionStatus = async (
             .single();
         if (!profile?.company_id) return { subscriptionStatus: false, subscriptionEndDate: null };
 
-        // if company hasn't added payment method, redirect to onboarding
         const { data: company } = await supabase
             .from('companies')
             .select('subscription_status, subscription_end_date')
