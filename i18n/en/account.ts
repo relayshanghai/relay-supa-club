@@ -39,7 +39,8 @@ const account = {
         searches: 'Searches',
         title: 'Subscription',
         viewBillingPortal: 'View billing portal',
-
+        freeTrial: 'Free trial',
+        canceled: 'Canceled',
         youHaveNoActiveSubscriptionPleasePurchaseBelow:
             'You have no active subscription. Please purchase one below.',
         beforePurchasingYouNeedPaymentMethod:
@@ -50,6 +51,9 @@ const account = {
         active: 'Active',
         upgradeSubscription: 'Upgrade subscription',
         cancelSubscription: 'Cancel subscription',
+        monthly: 'monthly',
+        quarterly: 'quarterly',
+        annually: 'annually',
         modal: {
             plan_planName: '{{planName}} plan',
             youAreAboutToSubscribeFor: 'You are about to subscribe for',
@@ -59,11 +63,8 @@ const account = {
             subscribe: 'Subscribe',
             noteClickingSubscribeWillCharge:
                 'Note that clicking `Subscribe` will charge the default payment method.',
-            cancel: 'Cancel',
+            close: 'Close',
             backToAccount: 'Back to account',
-            quarterly: 'quarterly',
-            annually: 'annually',
-            monthly: 'Monthly',
             perMonth: '/month',
             billed_period: 'Billed {{period}}',
         },

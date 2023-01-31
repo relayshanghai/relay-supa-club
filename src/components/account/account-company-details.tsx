@@ -158,35 +158,37 @@ export const CompanyDetails = () => {
                         })}
                 </div>
 
-                {Array.isArray(company?.invites) && company?.invites.length && (
-                    <>
-                        <p className="pt-8 pb-2 font-bold">
-                            {t('account.company.pendingInvitations')}
-                        </p>
-                        {company?.invites.map((invites) => {
-                            return (
-                                <div
-                                    key={invites.id}
-                                    className="flex flex-row space-x-8 items-center border-t border-b border-grey-200 w-full py-2"
-                                >
-                                    <div>
-                                        <p className="text-xs text-gray-500">
-                                            {t('account.company.email')}
-                                        </p>
-                                        <p>{invites.email}</p>
+                {company?.invites &&
+                    Array.isArray(company?.invites) &&
+                    company.invites.length > 0 && (
+                        <>
+                            <p className="pt-8 pb-2 font-bold">
+                                {t('account.company.pendingInvitations')}
+                            </p>
+                            {company?.invites.map((invites) => {
+                                return (
+                                    <div
+                                        key={invites.id}
+                                        className="flex flex-row space-x-8 items-center border-t border-b border-grey-200 w-full py-2"
+                                    >
+                                        <div>
+                                            <p className="text-xs text-gray-500">
+                                                {t('account.company.email')}
+                                            </p>
+                                            <p>{invites.email}</p>
+                                        </div>
                                     </div>
-                                </div>
-                            );
-                        })}
-                    </>
-                )}
-                <div className="pt-4">
-                    {profile?.admin && (
+                                );
+                            })}
+                        </>
+                    )}
+                {profile?.admin && (
+                    <div className="pt-4">
                         <Button variant="secondary" onClick={() => setShowAddMoreMembers(true)}>
                             {t('account.company.addMoreMembers')}
                         </Button>
-                    )}
-                </div>
+                    </div>
+                )}
             </div>
         </div>
     );

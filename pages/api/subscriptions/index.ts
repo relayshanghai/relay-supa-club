@@ -40,6 +40,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const subscriptions = await stripeClient.subscriptions.list({
                 customer: cusId,
                 status: 'active',
+                expand: ['data.plan.product'],
             });
             let subscription = subscriptions.data[0] as StripeSubscriptionWithPlan;
             if (!subscription) {
@@ -54,7 +55,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         error: 'No subscription data',
                     });
             }
-
             const returnData: SubscriptionGetResponse = {
                 name: subscription.plan.product.name,
                 interval:

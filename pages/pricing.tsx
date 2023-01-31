@@ -163,6 +163,18 @@ const Pricing = () => {
         fetchPrices();
     }, [t]);
 
+    const disableButton = (plan: 'diy' | 'diyMax') => {
+        if (!priceIds || !subscription?.name || !subscription.interval || !subscription.status)
+            return true;
+        let planName = 'DIY';
+        if (plan === 'diyMax') planName = 'DIY Max';
+        return (
+            subscription.name === planName &&
+            subscription.interval === period &&
+            subscription.status === 'active'
+        );
+    };
+
     return (
         <Layout>
             <SubscriptionConfirmModal
@@ -297,12 +309,7 @@ const Pricing = () => {
                                             priceIds ? priceIds['diy'][period] : '',
                                         )
                                     }
-                                    disabled={
-                                        !priceIds ||
-                                        (subscription?.name.toLowerCase() === 'diy' &&
-                                            subscription?.interval === period &&
-                                            subscription.status === 'active')
-                                    }
+                                    disabled={disableButton('diy')}
                                     className="flex"
                                 >
                                     {t('pricing.buyNow')}
@@ -411,12 +418,7 @@ const Pricing = () => {
                                             priceIds ? priceIds['diyMax'][period] : '',
                                         )
                                     }
-                                    disabled={
-                                        !priceIds ||
-                                        (subscription?.name.toLowerCase() === 'diymax' &&
-                                            subscription.interval === period &&
-                                            subscription.status === 'active')
-                                    }
+                                    disabled={disableButton('diyMax')}
                                     className="flex"
                                 >
                                     {t('pricing.buyNow')}

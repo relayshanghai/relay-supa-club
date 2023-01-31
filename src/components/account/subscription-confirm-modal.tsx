@@ -1,4 +1,5 @@
 import { useRouter } from 'next/router';
+import { SubscriptionCreatePostResponse } from 'pages/api/subscriptions/create';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
@@ -20,7 +21,7 @@ export const SubscriptionConfirmModal = ({
 }: {
     confirmModalData: SubscriptionConfirmModalData | null;
     setConfirmModalData: (value: SubscriptionConfirmModalData | null) => void;
-    createSubscription: (planId: string) => void;
+    createSubscription: (priceId: string) => Promise<SubscriptionCreatePostResponse>;
 }) => {
     const [submitStatus, setSubmitStatus] = useState<'initial' | 'submitting' | 'submitted'>(
         'initial',
@@ -31,9 +32,9 @@ export const SubscriptionConfirmModal = ({
         setSubmitStatus('submitting');
         const id = toast.loading(t('account.subscription.modal.subscribing'));
         try {
-            await createSubscription(priceId);
-            setConfirmModalData(null);
-            toast.success(t('account.subscription.modal.subscriptionPurchased'), { id });
+            const result = await createSubscription(priceId);
+            if (result?.status === 'active')
+                toast.success(t('account.subscription.modal.subscriptionPurchased'), { id });
             setSubmitStatus('submitted');
         } catch (e) {
             toast.error(t('account.subscription.modal.wentWrong'), {
@@ -53,8 +54,12 @@ export const SubscriptionConfirmModal = ({
                                 planName: plan === 'diy' ? 'DIY' : 'DIY Max',
                             })}
                         </h1>
-                        <Button variant="secondary" onClick={async () => setConfirmModalData(null)}>
-                            {t('account.subscription.modal.cancel')}
+                        <Button
+                            variant="secondary"
+                            className="!text-xs !px-2 !py-0"
+                            onClick={async () => setConfirmModalData(null)}
+                        >
+                            {t('account.subscription.modal.close')}
                         </Button>
                     </div>
 
@@ -63,7 +68,7 @@ export const SubscriptionConfirmModal = ({
                         <p className="text-sm font-bold">{`${price}${t(
                             'account.subscription.modal.perMonth',
                         )}. ${t('account.subscription.modal.billed_period', {
-                            period: t(`account.subscription.modal.${period}`),
+                            period: t(`account.subscription.${period}`),
                         })}`}</p>
 
                         <Button

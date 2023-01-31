@@ -15,7 +15,9 @@ import { StripePriceWithProductMetadata } from 'types';
 export type SubscriptionCreateTrialPostBody = {
     company_id: string;
 };
+
 export type SubscriptionCreateTrialResponse = Stripe.Response<Stripe.Subscription>;
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
         try {
@@ -73,7 +75,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 trial_period_days: Number(trial_days),
             };
 
-            const subscription = await stripeClient.subscriptions.create(createParams);
+            const subscription: SubscriptionCreateTrialResponse =
+                await stripeClient.subscriptions.create(createParams);
 
             // free trial follows DIY prices
             const price = (await stripeClient.prices.retrieve(diyTrialPriceId, {

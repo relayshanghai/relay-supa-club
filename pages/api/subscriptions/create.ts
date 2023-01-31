@@ -14,7 +14,10 @@ export type SubscriptionCreatePostBody = {
     company_id: string;
     price_id: string;
 };
-
+export type SubscriptionCreatePostResponse = Stripe.Response<Stripe.Subscription>;
+/**
+ * Although this is called 'create', it is really 'upgrade' subscription. Only one subscription is allowed per customer and our current signup flow requires all users to start with the free trial subscription. This means that when a user upgrades, we need to cancel the current subscription and create a new one.
+ */
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
         const { company_id, price_id } = JSON.parse(req.body) as SubscriptionCreatePostBody;
@@ -26,27 +29,34 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const { data: companyData } = await getCompanyCusId(company_id);
             const cusId = companyData?.cus_id;
             if (!companyData || !cusId) {
-                return res
-                    .status(httpCodes.INTERNAL_SERVER_ERROR)
-                    .json({ error: 'Missing company data' });
+                serverLogger(new Error('Missing company data'), 'error');
+                return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
             }
 
             const paymentMethods = await stripeClient.customers.listPaymentMethods(cusId);
             if (paymentMethods?.data?.length === 0) {
-                return res
-                    .status(httpCodes.INTERNAL_SERVER_ERROR)
-                    .json({ error: 'Missing payment method' });
+                serverLogger(new Error('Missing payment method'), 'error');
+
+                return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
             }
 
             const subscriptions = await stripeClient.subscriptions.list({
                 customer: cusId,
                 status: 'active',
             });
-            const activeSubscription = subscriptions.data[0];
+            let activeSubscription = subscriptions.data[0];
 
-            // All users should be starting with the free trial subscription
             if (!activeSubscription) {
-                return res.status(httpCodes.FORBIDDEN).json({ error: 'No active subscription' });
+                const trialSubscriptions = await stripeClient.subscriptions.list({
+                    customer: cusId,
+                    status: 'trialing',
+                });
+                activeSubscription = trialSubscriptions.data[0];
+                if (!activeSubscription) {
+                    return res
+                        .status(httpCodes.FORBIDDEN)
+                        .json({ error: 'No active subscription to upgrade' });
+                }
             }
 
             await stripeClient.subscriptions.cancel(activeSubscription.id, {
@@ -60,7 +70,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 proration_behavior: 'create_prorations',
             };
 
-            const subscription = await stripeClient.subscriptions.create(createParams);
+            const subscription: SubscriptionCreatePostResponse =
+                await stripeClient.subscriptions.create(createParams);
 
             const price = await stripeClient.prices.retrieve(price_id);
             const product = await stripeClient.products.retrieve(price.product as string);
@@ -82,9 +93,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             return res.status(httpCodes.OK).json(subscription);
         } catch (error) {
             serverLogger(error, 'error');
-            return res
-                .status(httpCodes.INTERNAL_SERVER_ERROR)
-                .json({ error: 'unable to create subscription' });
+            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
         }
     }
 
