@@ -18,9 +18,9 @@ export type SubscriptionCreateTrialPostBody = {
 export type SubscriptionCreateTrialResponse = Stripe.Response<Stripe.Subscription>;
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
-        const { company_id } = JSON.parse(req.body) as SubscriptionCreateTrialPostBody;
-
         try {
+            const { company_id } = JSON.parse(req.body) as SubscriptionCreateTrialPostBody;
+
             if (!company_id || typeof company_id !== 'string') {
                 return res.status(httpCodes.BAD_REQUEST).json({ error: 'Missing company id' });
             }
