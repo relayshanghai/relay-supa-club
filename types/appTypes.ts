@@ -2,6 +2,7 @@ import type { CompanyTable, UsagesTable } from 'src/utils/api/db';
 import type Stripe from 'stripe';
 import type { Database } from './supabase';
 
+export type SubscriptionPeriod = 'monthly' | 'annually' | 'quarterly';
 export type RelayPlan = {
     currency: string;
     prices: {
@@ -11,6 +12,11 @@ export type RelayPlan = {
     };
     profiles: string;
     searches: string;
+    priceIds: {
+        monthly: string;
+        quarterly: string;
+        annually: string;
+    };
 };
 
 export interface RelayPlanStripeProduct extends Stripe.Product {

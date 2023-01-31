@@ -1,87 +1,91 @@
+import { useRouter } from 'next/router';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
+import { SubscriptionPeriod } from 'types';
 
 import { Button } from '../button';
 import { Modal } from '../modal';
 
+export interface SubscriptionConfirmModalData {
+    plan: 'diy' | 'diyMax';
+    period: SubscriptionPeriod;
+    priceId: string;
+    price: string;
+}
 export const SubscriptionConfirmModal = ({
     confirmModalData,
     setConfirmModalData,
-    subscription,
-    createSubscriptions,
+    createSubscription,
 }: {
-    confirmModalData: any | null;
-    setConfirmModalData: (value: any | null) => void;
-    subscription?: any;
-    createSubscriptions: (planId: string) => void;
+    confirmModalData: SubscriptionConfirmModalData | null;
+    setConfirmModalData: (value: SubscriptionConfirmModalData | null) => void;
+    createSubscription: (planId: string) => void;
 }) => {
+    const [submitStatus, setSubmitStatus] = useState<'initial' | 'submitting' | 'submitted'>(
+        'initial',
+    );
+    const router = useRouter();
     const { t } = useTranslation();
     const handleCreateSubscription = async (priceId: string) => {
+        setSubmitStatus('submitting');
         const id = toast.loading(t('account.subscription.modal.subscribing'));
         try {
-            await createSubscriptions(priceId);
+            await createSubscription(priceId);
             setConfirmModalData(null);
             toast.success(t('account.subscription.modal.subscriptionPurchased'), { id });
+            setSubmitStatus('submitted');
         } catch (e) {
             toast.error(t('account.subscription.modal.wentWrong'), {
                 id,
             });
+            setSubmitStatus('initial');
         }
     };
+    const { price, period, priceId, plan } = confirmModalData || {};
     return (
-        <Modal
-            title={`${confirmModalData?.name}${t('account.subscription.modal.planFor')}${
-                confirmModalData?.metadata.usage_limit
-            }${t('account.subscription.modal.monthlyProfiles')}`}
-            visible={!!confirmModalData}
-            onClose={() => setConfirmModalData(null)}
-        >
-            <h2 className="py-4">{t('account.subscription.modal.availableSubscriptions')}</h2>
-            <div className="flex flex-col space-y-8">
-                {confirmModalData?.prices?.map((price: any, i: number) => {
-                    const priceAmount = (Number(price.amount) / 100).toFixed(0);
-                    return (
-                        <div key={i} className="flex flex-row justify-between">
-                            <div className="text-sm font-bold space-y-1 flex-col flex items-start">
-                                <p>
-                                    {priceAmount}
-                                    {` `}
-                                    {price.currency.toUpperCase()} / {price.interval}{' '}
-                                </p>
-                                {price.interval === 'year' && (
-                                    <p className="text-xs rounded p-1 bg-green-200">
-                                        {t('account.subscription.modal.bestValue_price', {
-                                            price: priceAmount,
-                                        })}
-                                    </p>
-                                )}
-                                {price.id === subscription?.plan?.id && (
-                                    <span className="text-xs bg-gray-200 p-1 rounded">
-                                        {t('account.subscription.active')}
-                                    </span>
-                                )}
-                            </div>
-                            <div className="text-sm font-bold">
-                                <Button
-                                    disabled={price.id === subscription?.plan?.id}
-                                    variant={price.interval === 'year' ? 'primary' : 'secondary'}
-                                    onClick={() => handleCreateSubscription(price.id)}
-                                >
-                                    {t('account.subscription.modal.subscribe')}
-                                </Button>
-                            </div>
-                        </div>
-                    );
-                })}
-            </div>
-            <div className="text-xs text-gray-600 mt-4">
-                {t('account.subscription.modal.noteClickingSubscribeWillCharge')}
-            </div>
-            <div className="pt-8 space-x-16 justify-center flex flex-row w-full">
-                <Button variant="secondary" onClick={async () => setConfirmModalData(null)}>
-                    {t('account.subscription.modal.cancel')}
-                </Button>
-            </div>
+        <Modal visible={!!confirmModalData} onClose={() => setConfirmModalData(null)}>
+            {price && period && priceId && plan ? (
+                <div className="p-2">
+                    <div className="flex justify-between mb-8">
+                        <h1 className="text-2xl text-primary-700">
+                            {t('account.subscription.modal.plan_planName', {
+                                planName: plan === 'diy' ? 'DIY' : 'DIY Max',
+                            })}
+                        </h1>
+                        <Button variant="secondary" onClick={async () => setConfirmModalData(null)}>
+                            {t('account.subscription.modal.cancel')}
+                        </Button>
+                    </div>
+
+                    <h2>{t('account.subscription.modal.youAreAboutToSubscribeFor')}</h2>
+                    <div className="flex justify-between items-center mt-4">
+                        <p className="text-sm font-bold">{`${price}${t(
+                            'account.subscription.modal.perMonth',
+                        )}. ${t('account.subscription.modal.billed_period', {
+                            period: t(`account.subscription.modal.${period}`),
+                        })}`}</p>
+
+                        <Button
+                            disabled={submitStatus === 'submitting'}
+                            onClick={() =>
+                                submitStatus === 'submitted'
+                                    ? router.push('/account')
+                                    : handleCreateSubscription(priceId)
+                            }
+                        >
+                            {submitStatus === 'submitted'
+                                ? t('account.subscription.modal.backToAccount')
+                                : t('account.subscription.modal.subscribe')}
+                        </Button>
+                    </div>
+                    <div className="text-xs text-gray-600 mt-8">
+                        {t('account.subscription.modal.noteClickingSubscribeWillCharge')}
+                    </div>
+                </div>
+            ) : (
+                <div />
+            )}
         </Modal>
     );
 };
