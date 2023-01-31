@@ -78,6 +78,18 @@ const account = {
         cancel: 'Cancel',
     },
     cancel: 'Cancel',
+    cancelModal: {
+        title: 'Cancel subscription',
+        areYouSureYouWantToCancelYourSubscription:
+            'Are you sure you want to cancel your subscription?',
+        youWillLoseAccessToAllData:
+            'You will lose access to all your projects and data once the current billing period expires.',
+        cancelSubscription: 'Cancel subscription',
+        orRenewAtDiscount_percentage: 'Or renew now at {{percentage}}% discount',
+        renewNow: 'Renew now',
+        cancelling: 'Cancelling...',
+        subscriptionCancelled: 'Subscription cancelled',
+    },
 };
 
 export default account;
