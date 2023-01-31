@@ -42,7 +42,7 @@ export interface StripePriceWithProductMetadata extends Stripe.Price {
     product: RelayPlanStripeProduct;
 }
 
-export type SubscriptionStatus = 'awaiting_payment_method' | 'trial' | 'active';
+export type SubscriptionStatus = 'awaiting_payment_method' | 'trial' | 'active' | 'canceled';
 /** "profile" for creator report, "search" for creator search */
 export type UsageType = 'profile' | 'search';
 
