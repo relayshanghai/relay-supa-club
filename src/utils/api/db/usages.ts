@@ -43,6 +43,8 @@ export const recordReportUsage = async (
 // We're not checking for search usages for now, but we might want to in the future
 // Note: we might want to consider not recording usages for the default loading of the search page
 export const recordSearchUsage = async (company_id: string, user_id: string) => {
+    // TODO task V2-26r: check if on trial and use the trial period limits.
+
     const { data: company, error: companyError } = await supabase
         .from('companies')
         .select('usage_limit')

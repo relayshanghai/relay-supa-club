@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { User } from '@supabase/supabase-js';
+import { CompanyPostBody } from 'pages/api/company';
+import { ProfilePutBody } from 'pages/api/profiles';
 
 import { createContext, FC, PropsWithChildren } from 'react';
 
@@ -8,20 +10,19 @@ import { useCompany } from 'src/hooks/use-company';
 import { useUser } from 'src/hooks/use-user';
 import { CompanyWithProfilesInvitesAndUsage } from 'src/utils/api/db/calls/company';
 import { ProfileDB } from 'src/utils/api/db/types';
-import { StripePaymentMethods } from 'types';
+import Stripe from 'stripe';
 
 export interface AccountContextProps {
     userDataLoading: boolean;
-    paymentMethods?: StripePaymentMethods;
+    paymentMethods?: Stripe.PaymentMethod[];
     profile: ProfileDB | null;
     user: User | null;
     company?: CompanyWithProfilesInvitesAndUsage;
     createInvite: (email: string) => void;
     refreshProfile: () => void;
 
-    // TODO: make types for these
-    upsertProfile: (data: any) => void;
-    updateCompany: (data: any) => void;
+    upsertProfile: (data: Omit<ProfilePutBody, 'id'>) => void;
+    updateCompany: (data: Omit<CompanyPostBody, 'id'>) => void;
 }
 
 export const AccountContext = createContext<AccountContextProps>({

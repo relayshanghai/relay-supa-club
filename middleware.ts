@@ -1,15 +1,23 @@
-import { createMiddlewareSupabaseClient, SupabaseClient } from '@supabase/auth-helpers-nextjs';
+import {
+    createMiddlewareSupabaseClient,
+    Session,
+    SupabaseClient,
+} from '@supabase/auth-helpers-nextjs';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { Database } from 'types/supabase';
+import { DatabaseWithCustomTypes } from 'types';
 
-const allowList = ['https://en-relay-club.vercel.app', 'https://relay.club'];
+const pricingAllowList = ['https://en-relay-club.vercel.app', 'https://relay.club'];
+const stripeWebhookAllowlist = ['https://stripe.com/', 'https://hooks.stripe.com/'];
 
 /**
  * 
-TODO: performance improvement. These two database calls might add too much loading time to each request. Consider adding a cache, or adding something to the session object that shows the user has a company and the company has a payment method.
+TODO https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/78: performance improvement. These two database calls might add too much loading time to each request. Consider adding a cache, or adding something to the session object that shows the user has a company and the company has a payment method.
  */
-const checkCompanyIsOnboarded = async (supabase: SupabaseClient<Database>, userId: string) => {
+const getCompanySubscriptionStatus = async (
+    supabase: SupabaseClient<DatabaseWithCustomTypes>,
+    userId: string,
+) => {
     const { data: profile } = await supabase
         .from('profiles')
         .select('company_id')
@@ -20,11 +28,78 @@ const checkCompanyIsOnboarded = async (supabase: SupabaseClient<Database>, userI
     // if company hasn't added payment method, redirect to onboarding
     const { data: company } = await supabase
         .from('companies')
-        .select('cus_id')
+        .select('subscription_status')
         .eq('id', profile.company_id)
         .single();
-    if (!company?.cus_id) return false;
-    return true;
+    return company?.subscription_status;
+};
+
+const checkOnboardingStatus = async (
+    req: NextRequest,
+    res: NextResponse,
+    session: Session,
+    supabase: SupabaseClient<DatabaseWithCustomTypes>,
+) => {
+    const redirectUrl = req.nextUrl.clone();
+
+    // special case where we require a signed in user to create a company, but we don't want to redirect them to onboarding cause this happens before they are onboarded
+    if (req.nextUrl.pathname.includes('api/company/create')) {
+        const { user_id } = JSON.parse(await req.text());
+        if (!user_id || user_id !== session.user.id) {
+            return NextResponse.json({ error: 'user is unauthorized for this action' });
+        }
+        return res;
+    }
+    const subscriptionStatus = await getCompanySubscriptionStatus(supabase, session.user.id);
+    // if signed up, but no company, redirect to onboarding
+    if (!subscriptionStatus) {
+        if (req.nextUrl.pathname.includes('/signup/onboarding')) return res;
+        redirectUrl.pathname = '/signup/onboarding';
+        return NextResponse.redirect(redirectUrl);
+    }
+    // if company registered, but no payment method, redirect to payment onboarding
+    if (subscriptionStatus === 'awaiting_payment_method') {
+        // allow the endpoints payment onboarding page requires
+        if (
+            req.nextUrl.pathname.includes('/api/company') ||
+            req.nextUrl.pathname.includes('/api/subscriptions')
+        )
+            return res;
+
+        if (req.nextUrl.pathname.includes('/signup/payment-onboard')) return res;
+        redirectUrl.pathname = '/signup/payment-onboard';
+        return NextResponse.redirect(redirectUrl);
+    }
+
+    // if already signed in and has company, when navigating to index or login page, redirect to dashboard
+    if (req.nextUrl.pathname === '/' || req.nextUrl.pathname.includes('login')) {
+        redirectUrl.pathname = '/dashboard';
+        return NextResponse.redirect(redirectUrl);
+    }
+
+    // Authentication successful, forward request to protected route.
+    return res;
+};
+
+/** Special case: we need to be able to access this from the marketing page, so we need to allow CORS */
+const allowPricingCors = (req: NextRequest, res: NextResponse) => {
+    const origin = req.headers.get('origin');
+    // TODO: once marketing sites are up, refine whitelist. Ticket: https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/76
+    if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
+        res.headers.set('Access-Control-Allow-Origin', '*');
+    } else if (origin && pricingAllowList.some((allowed) => origin.includes(allowed)))
+        res.headers.set('Access-Control-Allow-Origin', origin);
+    res.headers.set('Access-Control-Allow-Methods', 'GET');
+    return res;
+};
+const allowStripeCors = (req: NextRequest, res: NextResponse) => {
+    const origin = req.headers.get('origin');
+    if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
+        res.headers.set('Access-Control-Allow-Origin', '*');
+    } else if (origin && stripeWebhookAllowlist.some((allowed) => origin.includes(allowed)))
+        res.headers.set('Access-Control-Allow-Origin', origin);
+    res.headers.set('Access-Control-Allow-Methods', 'GET');
+    return res;
 };
 
 /** https://supabase.com/docs/guides/auth/auth-helpers/nextjs#auth-with-nextjs-middleware */
@@ -32,60 +107,29 @@ export async function middleware(req: NextRequest) {
     // We need to create a response and hand it to the supabase client to be able to modify the response headers.
     const res = NextResponse.next();
 
-    // Special case: we need to be able to access this from the marketing page, so we need to allow CORS
-    if (req.nextUrl.pathname.includes('/subscriptions/prices')) {
-        const origin = req.headers.get('origin');
-        // TODO: once marketing sites are up, refine whitelist. Ticket: https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/76
-        if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
-            res.headers.set('Access-Control-Allow-Origin', '*');
-        } else if (origin && allowList.some((allowed) => origin.includes(allowed)))
-            res.headers.set('Access-Control-Allow-Origin', origin);
-        res.headers.set('Access-Control-Allow-Methods', 'GET');
-        return res;
-    }
+    if (req.nextUrl.pathname.includes('api/subscriptions/prices'))
+        return allowPricingCors(req, res);
+    if (req.nextUrl.pathname.includes('api/subscriptions/webhook'))
+        return allowStripeCors(req, res);
 
     // Create authenticated Supabase Client.
-    const supabase = createMiddlewareSupabaseClient<Database>({ req, res });
-    const {
-        data: { session },
-    } = await supabase.auth.getSession();
+    const supabase = createMiddlewareSupabaseClient<DatabaseWithCustomTypes>({ req, res });
+    const { data: authData } = await supabase.auth.getSession();
+
+    // Check that user is logged in
+    if (authData.session?.user?.email)
+        return await checkOnboardingStatus(req, res, authData.session, supabase);
+
+    // not logged in -- api requests, just return an error
+    if (req.nextUrl.pathname.includes('api'))
+        return NextResponse.json({ error: 'unauthorized to use endpoint' });
+
+    // if already on signup or login page, just return the page
+    if (req.nextUrl.pathname.includes('signup') || req.nextUrl.pathname.includes('login'))
+        return res;
 
     const redirectUrl = req.nextUrl.clone();
 
-    // Check that user is logged in
-    if (session?.user?.email) {
-        // special case where we require a signed in user to create a company, but we don't want to redirect them to onboarding cause this happens before they are onboarded
-        if (req.nextUrl.pathname.includes('api/company/create')) {
-            const { user_id } = JSON.parse(await req.text());
-            if (!user_id || user_id !== session.user.id) {
-                return NextResponse.json({ error: 'user is unauthorized for this action' });
-            }
-            return res;
-        }
-        // if signed up, but no company, redirect to onboarding
-        const onboarded = await checkCompanyIsOnboarded(supabase, session.user.id);
-        if (!onboarded) {
-            if (req.nextUrl.pathname.includes('/signup/onboarding')) return res;
-            redirectUrl.pathname = '/signup/onboarding';
-            return NextResponse.redirect(redirectUrl);
-        }
-        // if already signed in and has company, redirect to dashboard
-        if (req.nextUrl.pathname === '/' || req.nextUrl.pathname.includes('login')) {
-            redirectUrl.pathname = '/dashboard';
-            return NextResponse.redirect(redirectUrl);
-        }
-        // Authentication successful, forward request to protected route.
-        return res;
-    }
-    // api requests, just return an error
-    if (req.nextUrl.pathname.includes('api')) {
-        return NextResponse.json({ error: 'unauthorized to use endpoint' });
-    }
-
-    // if already on signup or login page, just return the page
-    if (req.nextUrl.pathname.includes('signup') || req.nextUrl.pathname.includes('login')) {
-        return res;
-    }
     // unauthenticated pages requests, send to signup
     redirectUrl.pathname = '/signup';
     return NextResponse.redirect(redirectUrl);

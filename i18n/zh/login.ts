@@ -27,11 +27,17 @@ const login = {
     createYourCompanyProfile: '创建您的公司简介',
     companyCreated: '公司已创建',
     onboardCompany: '入驻公司',
-    addCompanyDetailsAndPaymentMethod: '添加公司详细信息和付款方式',
+    addCompanyDetails: '添加公司详细信息',
     companyName: '公司名称',
     companyNamePlaceholder: '输入您的公司名称',
     companyWebsite: '公司网站',
     companyWebsitePlaceholder: '输入您的公司网站的网址',
     createCompany: '创建公司',
+    addPaymentMethod: '添加付款方式',
+    andActivateTrial: '并激活您的30天免费试用。',
+    activateTrial: '激活试用',
+    userAlreadyRegistered: '用户已注册',
+    signupTerms:
+        '为了激活此30天免费试用，您必须使用您的付款详细信息注册并同意relay.club条款和服务。如果您在试用期结束前未停用付款，您将在30天后被收取每月DIY订阅费。',
 };
 export default login;

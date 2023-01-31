@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+// import { useSubscription } from 'src/hooks/use-subscription';
 import { Layout } from 'src/modules/layout';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger';
@@ -63,7 +64,11 @@ type Prices = {
     annually: PriceTiers;
 };
 
-const formatPrice = (price: string, currency: string, period: Period) => {
+const formatPrice = (
+    price: string,
+    currency: string,
+    period: 'monthly' | 'annually' | 'quarterly',
+) => {
     const pricePerMonth =
         period === 'annually'
             ? Number(price) / 12
@@ -84,6 +89,8 @@ const formatPrice = (price: string, currency: string, period: Period) => {
 /** Note: This file doesn't share a lot of the conventions we have elsewhere across the app, because this file is migrated from the marketing site, trying to make minimal changes in case we need to update both at the same time. */
 const Pricing = () => {
     const { t } = useTranslation();
+    // TODO task V2-26p: disable buttons for already subscribed plan
+    // const { subscription } = useSubscription();
 
     const [period, setPeriod] = useState<Period>('annually');
 
@@ -114,6 +121,7 @@ const Pricing = () => {
             try {
                 const res = await nextFetch<SubscriptionPricesGetResponse>('subscriptions/prices');
                 const { diy, diyMax } = res;
+
                 const monthly = {
                     diy: formatPrice(diy.prices.monthly, diy.currency, 'monthly'),
                     diyMax: formatPrice(diyMax.prices.monthly, diyMax.currency, 'monthly'),

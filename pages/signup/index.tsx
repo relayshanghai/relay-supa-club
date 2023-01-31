@@ -9,11 +9,9 @@ import { Input } from 'src/components/input';
 import { Title } from 'src/components/title';
 import { useFields } from 'src/hooks/use-fields';
 import { useUser } from 'src/hooks/use-user';
-import { clientLogger } from 'src/utils/logger';
 
 export default function Register() {
     const { t } = useTranslation();
-    const [submitting, setSubmitting] = useState(false);
 
     const router = useRouter();
     const {
@@ -26,7 +24,7 @@ export default function Register() {
         password: '',
         confirmPassword: '',
     });
-    const { signup, logout, user } = useUser();
+    const { signup, logout, user, loading } = useUser();
     const [signupSuccess, setSignupSuccess] = useState(false);
     const [initialLoad, setInitialLoad] = useState(true);
     useEffect(() => {
@@ -44,7 +42,6 @@ export default function Register() {
     }, [initialLoad, router, signupSuccess, user]);
 
     const handleSubmit = async () => {
-        setSubmitting(true);
         try {
             const signupRes = await signup({
                 email,
@@ -55,11 +52,11 @@ export default function Register() {
                 },
             });
             if (signupRes?.session?.user.id) setSignupSuccess(true);
-        } catch (error) {
-            clientLogger(error, 'error');
-            toast.error(t('login.oopsSomethingWentWrong'));
+        } catch (error: any) {
+            if (error?.message === 'User already registered')
+                toast.error(t('login.userAlreadyRegistered'));
+            else toast.error(t('login.oopsSomethingWentWrong'));
         } finally {
-            setSubmitting(false);
         }
     };
 
@@ -123,7 +120,7 @@ export default function Register() {
                         !email ||
                         !password ||
                         password !== confirmPassword ||
-                        submitting
+                        loading
                     }
                     onClick={(e) => {
                         e.preventDefault();

@@ -1,6 +1,6 @@
 import { useSessionContext, useSupabaseClient } from '@supabase/auth-helpers-react';
 import { Session, User } from '@supabase/supabase-js';
-import { ProfilePutResponse } from 'pages/api/profiles';
+import { ProfilePutBody, ProfilePutResponse } from 'pages/api/profiles';
 import {
     createContext,
     PropsWithChildren,
@@ -9,10 +9,19 @@ import {
     useEffect,
     useState,
 } from 'react';
-import { ProfileDB, ProfileInsertDB } from 'src/utils/api/db/types';
+import { ProfileDB } from 'src/utils/api/db/types';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger';
-import { Database } from 'types/supabase';
+import { DatabaseWithCustomTypes } from 'types';
+
+export type SignupData = {
+    email: string;
+    password: string;
+    data: {
+        first_name: string;
+        last_name: string;
+    };
+};
 
 const ctx = createContext<{
     user: User | null;
@@ -25,12 +34,12 @@ const ctx = createContext<{
         user: User | null;
         session: Session | null;
     }>;
-    signup: (options: any) => Promise<{
+    signup: (options: SignupData) => Promise<{
         user: User | null;
         session: Session | null;
     }>;
     logout: () => void;
-    upsertProfile: (updates: any) => void;
+    upsertProfile: (updates: Omit<ProfilePutBody, 'id'>) => void;
     refreshProfile: () => void;
 }>({
     user: null,
@@ -54,7 +63,7 @@ export const useUser = () => useContext(ctx);
 export const UserProvider = ({ children }: PropsWithChildren) => {
     const [profile, setProfile] = useState<ProfileDB | null>(null);
     const { isLoading, session } = useSessionContext();
-    const supabaseClient = useSupabaseClient<Database>();
+    const supabaseClient = useSupabaseClient<DatabaseWithCustomTypes>();
 
     const [loading, setLoading] = useState<boolean>(true);
     useEffect(() => {
@@ -70,7 +79,6 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
                     .select(`*`)
                     .eq('id', session?.user?.id)
                     .single();
-
                 if (error) throw error;
 
                 setProfile(data);
@@ -108,18 +116,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
             setLoading(false);
         }
     };
-    const signup = async ({
-        email,
-        password,
-        data,
-    }: {
-        email: string;
-        password: string;
-        data: {
-            first_name: string;
-            last_name: string;
-        };
-    }) => {
+    const signup = async ({ email, password, data }: SignupData) => {
         setLoading(true);
         try {
             const { error, data: signupResData } = await supabaseClient.auth.signUp({
@@ -141,7 +138,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
     };
 
     const upsertProfile = useCallback(
-        async (body: Omit<ProfileInsertDB, 'id'>) => {
+        async (body: Omit<ProfilePutBody, 'id'>) => {
             setLoading(true);
             try {
                 if (!session?.user?.id) throw new Error('User not found');

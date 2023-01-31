@@ -1,47 +1,61 @@
+import { SubscriptionGetQueries, SubscriptionGetResponse } from 'pages/api/subscriptions';
+import { SubscriptionCreatePostBody } from 'pages/api/subscriptions/create';
+import {
+    SubscriptionCreateTrialPostBody,
+    SubscriptionCreateTrialResponse,
+} from 'pages/api/subscriptions/create-trial';
+import {
+    PaymentMethodGetQueries,
+    PaymentMethodGetResponse,
+} from 'pages/api/subscriptions/payment-method';
 import { useCallback } from 'react';
-import { nextFetch } from 'src/utils/fetcher';
-import Stripe from 'stripe';
+import { nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';
 import useSWR from 'swr';
-import { StripePaymentMethods } from 'types';
 import { useUser } from './use-user';
 
 export const useSubscription = () => {
     const { profile } = useUser();
-    // TODO: investigate why this type doesn't seem to match our code's usage
     const { data: subscription, mutate } = useSWR(
-        profile?.company_id ? `subscriptions?id=${profile?.company_id}` : null,
-        nextFetch<Stripe.Subscription>,
+        profile?.company_id ? 'subscriptions' : null,
+        async (path) =>
+            await nextFetchWithQueries<SubscriptionGetQueries, SubscriptionGetResponse>(path, {
+                id: profile?.company_id ?? '',
+            }),
+    );
+    const { data: paymentMethods, mutate: refreshPaymentMethods } = useSWR(
+        profile?.company_id ? 'subscriptions/payment-method' : null,
+        async (path) =>
+            await nextFetchWithQueries<PaymentMethodGetQueries, PaymentMethodGetResponse>(path, {
+                id: profile?.company_id ?? '',
+            }),
     );
 
-    const { data: paymentMethods } = useSWR(
-        profile?.company_id ? `subscriptions/payment-method?id=${profile.company_id}` : null,
-        nextFetch<StripePaymentMethods>,
-    );
+    const createTrial = useCallback(async () => {
+        if (!profile?.company_id) throw new Error('No profile found');
+        const body: SubscriptionCreateTrialPostBody = {
+            company_id: profile?.company_id,
+        };
+        const res = await nextFetch<SubscriptionCreateTrialResponse>('subscriptions/create-trial', {
+            method: 'post',
+            body: JSON.stringify(body),
+        });
+        mutate();
+        return res;
+    }, [profile, mutate]);
 
-    const updateCompany = useCallback(
-        async (input: any) => {
-            await nextFetch('company', {
+    const createSubscription = useCallback(
+        async (priceId: string) => {
+            if (!profile?.company_id) throw new Error('No profile found');
+            const body: SubscriptionCreatePostBody = {
+                price_id: priceId,
+                company_id: profile?.company_id,
+            };
+            const res = await nextFetch('subscriptions/create', {
                 method: 'post',
-                body: JSON.stringify({
-                    ...input,
-                    id: profile?.company_id,
-                }),
+                body: JSON.stringify(body),
             });
             mutate();
-        },
-        [profile, mutate],
-    );
-
-    const createSubscriptions = useCallback(
-        async (priceId: any) => {
-            await nextFetch('subscriptions/create', {
-                method: 'post',
-                body: JSON.stringify({
-                    price_id: priceId,
-                    company_id: profile?.company_id,
-                }),
-            });
-            mutate();
+            return res;
         },
         [profile, mutate],
     );
@@ -49,7 +63,8 @@ export const useSubscription = () => {
     return {
         subscription,
         paymentMethods,
-        updateCompany,
-        createSubscriptions,
+        refreshPaymentMethods,
+        createSubscription,
+        createTrial,
     };
 };

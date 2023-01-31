@@ -2,10 +2,18 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 import { supabase } from 'src/utils/supabase-client';
+import Stripe from 'stripe';
+
+export type PaymentMethodGetQueries = {
+    /** company id */
+    id: string;
+};
+
+export type PaymentMethodGetResponse = Stripe.PaymentMethod[];
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'GET') {
-        const { id } = req.query;
+        const { id } = req.query as PaymentMethodGetQueries;
 
         const { data, error } = await supabase
             .from('companies')
@@ -26,7 +34,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             type: 'card',
         });
 
-        return res.status(httpCodes.OK).json(result);
+        return res.status(httpCodes.OK).json(result.data);
     }
 
     return res.status(httpCodes.METHOD_NOT_ALLOWED).json({});
