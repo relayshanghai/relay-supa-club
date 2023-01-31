@@ -1,7 +1,7 @@
 import { supabase } from 'src/utils/supabase-client';
 import { UsageType } from 'types';
 import { UsagesDBInsert } from './types';
-
+import { addMonths } from 'date-fns';
 const recordUsage = async ({
     type,
     startDate,
@@ -27,11 +27,8 @@ const recordUsage = async ({
         new Date().getMonth(),
         startDate.getDate(),
     );
-    const currentMonthEndDate = new Date(
-        new Date().getFullYear(),
-        new Date().getMonth() + 1,
-        startDate.getDate(),
-    );
+
+    const currentMonthEndDate = addMonths(currentMonthStartDate, 1);
 
     const { data: usagesData, error: usagesError } = await supabase
         .from('usages')

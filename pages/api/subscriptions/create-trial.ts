@@ -18,9 +18,9 @@ export type SubscriptionCreateTrialPostBody = {
 export type SubscriptionCreateTrialResponse = Stripe.Response<Stripe.Subscription>;
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
-        const { company_id } = JSON.parse(req.body) as SubscriptionCreateTrialPostBody;
-
         try {
+            const { company_id } = JSON.parse(req.body) as SubscriptionCreateTrialPostBody;
+
             if (!company_id || typeof company_id !== 'string') {
                 return res.status(httpCodes.BAD_REQUEST).json({ error: 'Missing company id' });
             }
@@ -31,9 +31,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             const paymentMethods = await stripeClient.customers.listPaymentMethods(cusId);
             if (paymentMethods?.data?.length === 0) {
-                return res
-                    .status(httpCodes.INTERNAL_SERVER_ERROR)
-                    .json({ error: 'Missing payment method' });
+                return res.status(httpCodes.BAD_REQUEST).json({ error: 'Missing payment method' });
             }
 
             const subscriptions = await stripeClient.subscriptions.list({
@@ -42,9 +40,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             });
             const activeSubscription = subscriptions.data[0];
             if (activeSubscription) {
-                return res
-                    .status(httpCodes.INTERNAL_SERVER_ERROR)
-                    .json({ error: 'Already subscribed' });
+                return res.status(httpCodes.BAD_REQUEST).json({ error: 'Already subscribed' });
             }
 
             const diyPrices = (await stripeClient.prices.list({
@@ -58,16 +54,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     recurring?.interval === 'month' && recurring.interval_count === 1,
             );
             const diyTrialPriceId = diyTrialPrice?.id ?? '';
-            if (!diyTrialPriceId || !diyTrialPrice)
-                return res
-                    .status(httpCodes.INTERNAL_SERVER_ERROR)
-                    .json({ error: 'Missing DIY trial price' });
+            if (!diyTrialPriceId || !diyTrialPrice) {
+                serverLogger(new Error('Missing DIY trial price'), 'error');
+                return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
+            }
 
             const { trial_days, trial_profiles, trial_searches } = diyTrialPrice.product.metadata;
             if (!trial_days || !trial_profiles || !trial_searches) {
-                return res
-                    .status(httpCodes.INTERNAL_SERVER_ERROR)
-                    .json({ error: 'Missing product metadata' });
+                serverLogger(new Error('Missing product metadata'), 'error');
+
+                return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
             }
 
             const createParams: Stripe.SubscriptionCreateParams = {
@@ -84,10 +80,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 expand: ['product'],
             })) as StripePriceWithProductMetadata;
 
-            if (!price?.product?.metadata?.profiles || !price.product.metadata.searches)
-                return res
-                    .status(httpCodes.INTERNAL_SERVER_ERROR)
-                    .json({ error: 'Missing metadata' });
+            if (!price?.product?.metadata?.profiles || !price.product.metadata.searches) {
+                serverLogger(new Error('Missing metadata'), 'error');
+                return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
+            }
 
             await updateCompanyUsageLimits({
                 profiles_limit: price.product.metadata.profiles,
@@ -108,9 +104,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             return res.status(httpCodes.OK).json(subscription);
         } catch (error) {
             serverLogger(error, 'error');
-            return res
-                .status(httpCodes.INTERNAL_SERVER_ERROR)
-                .json({ error: 'Something went wrong' });
+            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
         }
     }
 
