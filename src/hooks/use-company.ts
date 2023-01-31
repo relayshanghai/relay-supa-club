@@ -15,11 +15,10 @@ export const useCompany = () => {
     const { profile, user, refreshProfile } = useUser();
     const { data: company, mutate: refreshCompany } = useSWR(
         profile?.company_id ? 'company' : null,
-        async (path) =>
-            await nextFetchWithQueries<CompanyGetQueries, CompanyWithProfilesInvitesAndUsage>(
-                path,
-                { id: profile?.company_id ?? '' },
-            ),
+        (path) =>
+            nextFetchWithQueries<CompanyGetQueries, CompanyWithProfilesInvitesAndUsage>(path, {
+                id: profile?.company_id ?? '',
+            }),
     );
 
     const updateCompany = useCallback(
