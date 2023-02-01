@@ -9,10 +9,10 @@ import { SearchResultRow } from './search-result-row';
 import { CreatorSearchAccountObject } from 'types';
 import { Modal } from 'src/components/modal';
 import { useTranslation } from 'react-i18next';
-import { useCampaigns } from 'src/hooks/use-campaigns';
-import CampaignModalCard from 'src/components/campaigns/campaign-modal-card';
 import { Spinner } from 'src/components/icons';
 import { SkeletonSearchResultRow } from 'src/components/common/skeleton-search-result-row';
+import Link from 'next/link';
+import { AddToCampaignModal } from 'src/components/modal-add-to-campaign';
 
 const filterCountry = (items: any[]) => {
     return items.filter((item: any) => {
@@ -54,16 +54,15 @@ export const Search = () => {
         setLastPost,
         contactInfo,
         setContactInfo,
-
         resultsPerPageLimit,
         setResultsPerPageLimit,
+        usageExceeded,
     } = useSearch();
 
     const [filterModalOpen, setFilterModalOpen] = useState(false);
 
     const [showCampaignListModal, setShowCampaignListModal] = useState(false);
     const [selectedCreator, setSelectedCreator] = useState<CreatorSearchAccountObject | null>(null);
-    const { campaigns } = useCampaigns({});
 
     const [page, setPage] = useState(0);
     const [loadingMore, setLoadingMore] = useState(false);
@@ -501,7 +500,20 @@ export const Search = () => {
                         </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                        {!noResults ? (
+                        {usageExceeded ? (
+                            <tr>
+                                <td className="text-center py-4 space-y-4" colSpan={5}>
+                                    <p className="mb-4">{t('creators.usageExceeded')}</p>
+                                    <Link href="/pricing">
+                                        <a>
+                                            <Button>
+                                                {t('account.subscription.upgradeSubscription')}
+                                            </Button>
+                                        </a>
+                                    </Link>
+                                </td>
+                            </tr>
+                        ) : !noResults ? (
                             resultPages.map((page) =>
                                 page.map((creator, i) => (
                                     <SearchResultRow
@@ -546,35 +558,14 @@ export const Search = () => {
                     {t('creators.loadMore')}
                 </Button>
             )}
-            <Modal
-                title={t('campaigns.modal.addToCampaign') || ''}
-                visible={!!showCampaignListModal}
-                onClose={() => {
-                    setShowCampaignListModal(false);
+            <AddToCampaignModal
+                show={showCampaignListModal}
+                setShow={setShowCampaignListModal}
+                platform={platform}
+                selectedCreator={{
+                    ...selectedCreator?.account.user_profile,
                 }}
-            >
-                <>
-                    <div className="py-4 text-sm text-tertiary-800">
-                        {t('campaigns.modal.addThisInfluencer')}
-                    </div>
-                    {campaigns?.length ? (
-                        <div>
-                            {campaigns.map((campaign, index) => (
-                                <CampaignModalCard
-                                    campaign={campaign}
-                                    platform={platform}
-                                    creator={selectedCreator}
-                                    key={index}
-                                />
-                            ))}
-                        </div>
-                    ) : (
-                        <div className="text-sm text-gray-600">
-                            {t('campaigns.modal.noCampaigns')}
-                        </div>
-                    )}
-                </>
-            </Modal>
+            />
         </div>
     );
 };

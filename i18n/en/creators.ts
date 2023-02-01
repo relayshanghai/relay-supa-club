@@ -25,6 +25,7 @@ const creators = {
     openLink: 'Open Social Link',
     openProfile: 'Open Profile',
     close: 'Close',
+    usageExceeded: 'Search limit exceeded',
     modal: {
         viewFullProfile: 'View Full Profile',
     },

@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
-import { recordSearchUsage } from 'src/utils/api/db/usages';
+import { recordSearchUsage } from 'src/utils/api/db/calls/usages';
 import { fetchCreatorsFiltered } from 'src/utils/api/iqdata';
 import { FetchCreatorsFilteredParams } from 'src/utils/api/iqdata/transforms';
 import { serverLogger } from 'src/utils/logger';
@@ -18,7 +18,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const { company_id, user_id, ...searchParams } = JSON.parse(req.body) as KolPostRequest;
 
             const { error: recordError } = await recordSearchUsage(company_id, user_id);
-            if (recordError) res.status(httpCodes.NOT_FOUND).json({ error: recordError });
+            if (recordError) {
+                res.status(httpCodes.NOT_FOUND).json({ error: recordError });
+            }
 
             const results = await fetchCreatorsFiltered(searchParams);
 

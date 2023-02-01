@@ -1,5 +1,6 @@
 import { KolPostRequest, KolPostResponse } from 'pages/api/kol';
 import { useCallback, useMemo, useRef, useState } from 'react';
+import { UsageError } from 'src/utils/api/db';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger';
 import {
@@ -29,6 +30,7 @@ export const useSearch = () => {
 
     const [resultPages, setResultPages] = useState<CreatorSearchAccountObject[][]>([]);
     const [resultsTotal, setResultsTotal] = useState(0);
+    const [usageExceeded, setUsageExceeded] = useState(false);
 
     const platforms: {
         icon: string;
@@ -58,7 +60,7 @@ export const useSearch = () => {
             ref.current = controller;
 
             try {
-                const bodyData: KolPostRequest = {
+                const body: KolPostRequest = {
                     tags,
                     platform,
                     lookalike,
@@ -80,7 +82,7 @@ export const useSearch = () => {
                 const res = await nextFetch<KolPostResponse>('kol', {
                     method: 'post',
                     signal,
-                    body: JSON.stringify(bodyData),
+                    body,
                 });
                 if (loadMore) {
                     setResultPages((prev) => {
@@ -92,8 +94,11 @@ export const useSearch = () => {
                     setResultsTotal(res.total);
                     setResultPages([res.accounts]);
                 }
-            } catch (error) {
+            } catch (error: any) {
                 clientLogger(error, 'error');
+                if (error.message && Object.values(UsageError).includes(error.message)) {
+                    setUsageExceeded(true);
+                }
             } finally {
                 setLoading(false);
             }
@@ -149,5 +154,6 @@ export const useSearch = () => {
         setContactInfo,
         resultsPerPageLimit,
         setResultsPerPageLimit,
+        usageExceeded,
     };
 };
