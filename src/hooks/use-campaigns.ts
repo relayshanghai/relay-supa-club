@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { nextFetch } from 'src/utils/fetcher';
+import { nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';
 import useSWR from 'swr';
 
 import type {
@@ -15,6 +15,7 @@ import {
     CampaignCreatorAddCreatorPostBody,
     CampaignCreatorAddCreatorPostResponse,
 } from 'pages/api/campaigns/add-creator';
+import { CampaignsIndexGetQuery, CampaignsIndexGetResult } from 'pages/api/campaigns';
 
 export const useCampaigns = ({ campaignId }: { campaignId?: string }) => {
     const { profile } = useUser();
@@ -22,9 +23,10 @@ export const useCampaigns = ({ campaignId }: { campaignId?: string }) => {
         data: campaigns,
         mutate: refreshCampaign,
         isValidating,
-    } = useSWR(
-        profile?.company_id ? `campaigns?id=${profile.company_id}` : null,
-        nextFetch<CampaignWithCompanyCreators[]>,
+    } = useSWR(profile?.company_id ? 'campaigns' : null, (path) =>
+        nextFetchWithQueries<CampaignsIndexGetQuery, CampaignsIndexGetResult>(path, {
+            id: profile?.company_id ?? '',
+        }),
     );
     const [loading, setLoading] = useState(false);
     const [campaign, setCampaign] = useState<CampaignWithCompanyCreators | null>(null);

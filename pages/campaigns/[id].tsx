@@ -4,7 +4,7 @@ import { useState, useEffect, ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PencilSquareIcon } from '@heroicons/react/20/solid';
 import Link from 'next/link';
-import CreatorsOutreach from '../../src/components/campaigns/CreatorOutreach';
+import CreatorsOutreach from '../../src/components/campaigns/creator-outreach';
 import CampaignDetails from '../../src/components/campaigns/CampaignDetails';
 import { useCampaigns } from 'src/hooks/use-campaigns';
 import Image from 'next/image';

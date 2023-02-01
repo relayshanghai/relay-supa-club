@@ -26,7 +26,7 @@ export default function Instagram(props: SVGProps<SVGSVGElement>) {
                     <stop stop-color="#515BD4" offset="100%" />
                 </linearGradient>
             </defs>
-            <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+            <g id="Page-1" stroke="none" strokeWidth="1" fill="none" fill-rule="evenodd">
                 <g id="ic_instagram">
                     <path
                         d="M24,0 C37.2549,0 48,10.7451 48,24 C48,37.2549 37.2549,48 24,48 C10.7451,48 0,37.2549 0,24 C0,10.7451 10.7451,0 24,0 Z"

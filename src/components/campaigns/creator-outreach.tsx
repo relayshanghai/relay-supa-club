@@ -12,7 +12,6 @@ import { SocialMediaIcon } from '../common/social-media-icon';
 import { CreatorContacts } from './creator-contacts';
 import dateFormat from 'src/utils/dateFormat';
 import { SocialMediaPlatform } from 'types';
-// import { DatePicker } from 'src/components/ui';
 
 export default function CreatorsOutreach({
     currentCampaign,
