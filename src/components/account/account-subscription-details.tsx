@@ -6,12 +6,11 @@ import { useSubscription } from 'src/hooks/use-subscription';
 import { buildSubscriptionPortalUrl } from 'src/utils/api/stripe/helpers';
 
 import { Button } from '../button';
+import { Spinner } from '../icons';
 import { AccountContext } from './account-context';
 
 export const SubscriptionDetails = () => {
-    const { subscription: subscriptionWrongType } = useSubscription();
-    // TODO task V2-26n: investigate why this type doesn't seem to match our code's usage. Get only the data we need here from backend. (see api/subscriptions/index.ts)
-    const subscription = subscriptionWrongType as any;
+    const { subscription } = useSubscription();
 
     const { userDataLoading, company } = useContext(AccountContext);
 
@@ -38,24 +37,22 @@ export const SubscriptionDetails = () => {
                         </Link>
                     )}
                 </div>
-            </div>
-            <div className={`flex flex-row space-x-4 ${userDataLoading ? 'opacity-50' : ''}`}>
-                {/* detect if on free plan. */}
-                {subscription?.product ? (
+            </div>{' '}
+            {subscription && company && searchUsages && profileViewUsages ? (
+                <div className={`flex flex-row space-x-4 ${userDataLoading ? 'opacity-50' : ''}`}>
+                    {/* detect if on free plan. */}
                     <div className="flex flex-col space-y-2 ">
                         <div className={`w-full space-y-6 mb-8`}>
                             <div className="flex flex-col space-y-3">
                                 <div className="text-sm">{t('account.subscription.plan')}</div>
-                                <div className="text-sm font-bold ml-2">
-                                    {subscription.product.name}
-                                </div>
+                                <div className="text-sm font-bold ml-2">{subscription.name}</div>
                             </div>
                             <div className="flex flex-col space-y-3">
                                 <div className="text-sm">
                                     {t('account.subscription.paymentCycle')}
                                 </div>
                                 <div className="text-sm font-bold ml-2">
-                                    {subscription.plan.interval}
+                                    {subscription.interval}
                                 </div>
                             </div>
                             <div className="flex flex-col space-y-3">
@@ -91,10 +88,12 @@ export const SubscriptionDetails = () => {
                                         {t('account.subscription.profilesUnlocked')}
                                     </td>
                                     <td className="border px-4 py-2 text-right">
-                                        {profileViewUsages?.length}
+                                        {profileViewUsages.length}
                                     </td>
                                     <td className="border px-4 py-2 text-right">
-                                        {company?.profiles_limit}
+                                        {company.subscription_status === 'trial'
+                                            ? company.trial_profiles_limit
+                                            : company.profiles_limit}
                                     </td>
                                 </tr>
                                 <tr>
@@ -102,22 +101,24 @@ export const SubscriptionDetails = () => {
                                         {t('account.subscription.searches')}
                                     </td>
                                     <td className="border px-4 py-2 text-right">
-                                        {searchUsages?.length}
+                                        {searchUsages.length}
                                     </td>
                                     <td className="border px-4 py-2 text-right">
-                                        {subscription.product.metadata.usage_limit}
+                                        {company.subscription_status === 'trial'
+                                            ? company.trial_searches_limit
+                                            : company.searches_limit}
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
-                    </div>
-                ) : (
-                    <p className="text-sm py-2 text-gray-500 mt-5">
-                        {t('account.subscription.youHaveNoActiveSubscriptionPleasePurchaseBelow')}
-                    </p>
-                )}
-            </div>
-
+                    </div>{' '}
+                </div>
+            ) : (
+                <div className="w-full flex justify-center">
+                    {/* TODO task V2-32: make skeleton */}
+                    <Spinner className="w-8 h-8 fill-primary-400 text-white" />
+                </div>
+            )}
             <div className="flex space-x-6 justify-end w-full pt-5">
                 <Button onClick={handleCancelSubscription} variant="secondary">
                     {t('account.subscription.cancelSubscription')}
