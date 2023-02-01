@@ -3,40 +3,74 @@ import httpCodes from 'src/constants/httpCodes';
 import { getCompanyCusId } from 'src/utils/api/db';
 import { serverLogger } from 'src/utils/logger';
 
-import { stripeClient } from 'src/utils/stripe-client';
+import { stripeClient } from 'src/utils/api/stripe/stripe-client';
+import Stripe from 'stripe';
+import { SubscriptionPeriod } from 'types';
+
+export type SubscriptionGetQueries = {
+    /** company id */
+    id: string;
+};
+export type SubscriptionGetResponse = {
+    name: string;
+    interval: SubscriptionPeriod;
+    /** date in seconds */
+    current_period_end: number;
+    status: Stripe.Subscription.Status;
+};
+
+interface ExpandedPlanWithProduct extends Stripe.Plan {
+    product: Stripe.Product;
+}
+// Due to some poor typing in the Stripe SDK, we need to manually type this.
+interface StripeSubscriptionWithPlan extends Stripe.Subscription {
+    plan: ExpandedPlanWithProduct;
+}
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'GET') {
-        const companyId = req.query.id;
-
+        const { id: companyId } = req.query as SubscriptionGetQueries;
         try {
             if (!companyId || typeof companyId !== 'string') throw new Error('No company id');
             const { data, error } = await getCompanyCusId(companyId);
-
+            const cusId = data?.cus_id;
             if (error) throw error;
-            if (!data || !data.cus_id) throw new Error('No data');
+            if (!cusId) throw new Error('No data');
 
             const subscriptions = await stripeClient.subscriptions.list({
-                customer: data.cus_id,
-                status: 'active'
+                customer: cusId,
+                status: 'active',
+                expand: ['data.plan.product'],
             });
-            const subscription = subscriptions.data[0];
-            if (!subscription)
-                return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({
-                    error: 'No subscription data'
+            let subscription = subscriptions.data[0] as StripeSubscriptionWithPlan;
+            if (!subscription) {
+                const trial = await stripeClient.subscriptions.list({
+                    customer: cusId,
+                    status: 'trialing',
+                    expand: ['data.plan.product'],
                 });
-            const product = await stripeClient.products.retrieve(
-                // TODO: fix this, investigate what we are really getting/sending, and make custom type for frontend to receive.
-                (subscription as any).plan.product
-            );
-            (subscription as any).product = product;
+                subscription = trial.data[0] as StripeSubscriptionWithPlan;
+                if (!subscription)
+                    return res.status(httpCodes.NOT_FOUND).json({
+                        error: 'No subscription data',
+                    });
+            }
+            const returnData: SubscriptionGetResponse = {
+                name: subscription.plan.product.name,
+                interval:
+                    subscription.plan.interval === 'month'
+                        ? subscription.plan.interval_count === 3
+                            ? 'quarterly'
+                            : 'monthly'
+                        : 'annually',
+                current_period_end: subscription.current_period_end,
+                status: subscription.status,
+            };
 
-            return res.status(httpCodes.OK).json(subscription);
+            return res.status(httpCodes.OK).json(returnData);
         } catch (error) {
             serverLogger(error, 'error');
-            return res
-                .status(httpCodes.INTERNAL_SERVER_ERROR)
-                .json({ error: 'unable to get subscription' });
+            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
         }
     }
 

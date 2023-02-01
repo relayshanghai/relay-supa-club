@@ -1,97 +1,150 @@
-import { format } from 'date-fns';
 import Link from 'next/link';
 import { useContext, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SECONDS_IN_MILLISECONDS } from 'src/constants/conversions';
 import { useSubscription } from 'src/hooks/use-subscription';
-import { StripePlanWithPrice } from 'types';
+import { buildSubscriptionPortalUrl } from 'src/utils/api/stripe/helpers';
+
 import { Button } from '../button';
+import { Spinner } from '../icons';
 import { AccountContext } from './account-context';
-import { SubscriptionConfirmModal } from './subscription-confirm-modal';
+import { CancelSubscriptionModal } from './modal-cancel-subscription';
 
 export const SubscriptionDetails = () => {
-    const {
-        subscription: subscriptionWrongType,
-        paymentMethods,
-        createSubscriptions
-    } = useSubscription();
-
-    // TODO: investigate why this type doesn't seem to match our code's usage
-    const subscription = subscriptionWrongType as any;
-    const [confirmModalData, setConfirmModalData] = useState<StripePlanWithPrice | null>(null);
-
+    const { subscription } = useSubscription();
     const { userDataLoading, company } = useContext(AccountContext);
+    const { t, i18n } = useTranslation();
+    const profileViewUsages = company?.usages.filter(({ type }) => type === 'profile');
+    const searchUsages = company?.usages.filter(({ type }) => type === 'search');
 
-    const { t } = useTranslation();
+    const [showCancelModal, setShowCancelModal] = useState(false);
+    const handleCancelSubscription = async () => setShowCancelModal(true);
+
     return (
-        <div className="flex flex-col items-start space-y-4 p-4 bg-white rounded-lg w-full lg:max-w-2xl">
-            <SubscriptionConfirmModal
-                subscription={subscription}
-                createSubscriptions={createSubscriptions}
-                confirmModalData={confirmModalData}
-                setConfirmModalData={setConfirmModalData}
+        <div className="flex flex-col items-start space-y-4 p-4 bg-white rounded-lg w-full lg:max-w-2xl shadow-lg shadow-gray-200">
+            <CancelSubscriptionModal
+                visible={showCancelModal}
+                onClose={() => setShowCancelModal(false)}
             />
-
             <div className="flex flex-row justify-between w-full items-center">
-                <h2>{t('account.subscription.title')}</h2>
+                <h2 className="text-lg font-bold">{t('account.subscription.title')}</h2>
                 <div className="flex flex-row justify-end">
-                    <Button variant="secondary">
-                        <Link href={`/api/subscriptions/portal?id=${company?.id}`}>
-                            <a>{t('account.subscription.viewBillingPortal')}</a>
+                    {company?.id && (
+                        <Link href={buildSubscriptionPortalUrl({ id: company.id })}>
+                            <a>
+                                <Button variant="secondary">
+                                    {t('account.subscription.viewBillingPortal')}
+                                </Button>
+                            </a>
                         </Link>
-                    </Button>
+                    )}
                 </div>
             </div>
-            <div className={`flex flex-row space-x-4 ${userDataLoading ? 'opacity-50' : ''}`}>
-                {subscription?.product ? (
-                    <div className="flex flex-col space-y-2">
-                        <p>
-                            {t('account.subscription.youAreCurrentlyOn')}
-                            <b>{subscription.product.name}</b>{' '}
-                            {t('account.subscription.planWhichGivesYouATotalOf')}
-                            <b>{subscription.product.metadata.usage_limit}</b>
-                            {t('account.subscription.monthlyProfilesAt')}
-                            <b>
-                                {Number(subscription.plan.amount / 100).toLocaleString()} {` `}
-                                {subscription.plan.currency.toUpperCase()}
-                            </b>{' '}
-                            / <b>{subscription.plan.interval}</b>
-                            {t('account.subscription.youAreOnA')}
-                            <b>{subscription.plan.interval}</b>
-                            {t('account.subscription.cycleWhichWillEndOn')}
-                            <b>
-                                {format(
-                                    new Date(
-                                        subscription.current_period_end * SECONDS_IN_MILLISECONDS
-                                    ),
-                                    'MMM dd, Y'
+            {subscription && company && searchUsages && profileViewUsages ? (
+                <>
+                    <div
+                        className={`flex flex-row space-x-4 ${userDataLoading ? 'opacity-50' : ''}`}
+                    >
+                        <div className="flex flex-col space-y-2 ">
+                            <div className={`w-full space-y-6 mb-8`}>
+                                <div className="flex flex-col space-y-3">
+                                    <div className="text-sm">{t('account.subscription.plan')}</div>
+                                    <div className="text-sm font-bold ml-2">
+                                        {subscription.name}
+                                        {subscription.status === 'trialing' &&
+                                            ` - ${t('account.subscription.freeTrial')}`}
+                                        {subscription.status === 'canceled' &&
+                                            ` - ${t('account.subscription.canceled')}`}
+                                    </div>
+                                </div>
+                                <div className="flex flex-col space-y-3">
+                                    <div className="text-sm">
+                                        {t('account.subscription.paymentCycle')}
+                                    </div>
+                                    <div className="text-sm font-bold ml-2">
+                                        {t(`account.subscription.${subscription.interval}`)}
+                                    </div>
+                                </div>
+                                {subscription.status !== 'canceled' && (
+                                    <div className="flex flex-col space-y-3">
+                                        <div className="text-sm">
+                                            {t('account.subscription.renewsOn')}
+                                        </div>
+                                        <div className="text-sm font-bold ml-2">
+                                            {new Date(
+                                                subscription.current_period_end *
+                                                    SECONDS_IN_MILLISECONDS,
+                                            ).toLocaleDateString(i18n.language, {
+                                                year: 'numeric',
+                                                month: 'short',
+                                                day: 'numeric',
+                                            })}
+                                        </div>
+                                    </div>
                                 )}
-                            </b>
-                            .
-                        </p>
-                        <p>{t('account.subscription.notEnoughCheckOutPlansBelow')}</p>
+                            </div>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th className="p-2 pl-4 font-bold  text-left">
+                                            {t('account.subscription.usageLimits')}
+                                        </th>
+                                        <th className="px-4 font-medium text-right">
+                                            {t('account.subscription.used')}
+                                        </th>
+                                        <th className="px-4 font-medium text-right">
+                                            {t('account.subscription.monthlyLimit')}
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td className="border px-4 py-2">
+                                            {t('account.subscription.profilesUnlocked')}
+                                        </td>
+                                        <td className="border px-4 py-2 text-right">
+                                            {profileViewUsages.length}
+                                        </td>
+                                        <td className="border px-4 py-2 text-right">
+                                            {company.subscription_status === 'trial'
+                                                ? company.trial_profiles_limit
+                                                : company.profiles_limit}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td className="border px-4 py-2">
+                                            {t('account.subscription.searches')}
+                                        </td>
+                                        <td className="border px-4 py-2 text-right">
+                                            {searchUsages.length}
+                                        </td>
+                                        <td className="border px-4 py-2 text-right">
+                                            {company.subscription_status === 'trial'
+                                                ? company.trial_searches_limit
+                                                : company.searches_limit}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>{' '}
                     </div>
-                ) : (
-                    <p className="text-sm py-2 text-gray-500">
-                        {t('account.subscription.youHaveNoActiveSubscriptionPleasePurchaseBelow')}
-                    </p>
-                )}
-            </div>
-            {paymentMethods?.data?.length === 0 && (
-                <div className="w-full">
-                    <p>{t('account.subscription.beforePurchasingYouNeedPaymentMethod')}</p>
-                    <div className="flex flex-row justify-end">
-                        <Button>
-                            <Link href={`/api/subscriptions/portal?id=${company?.id}`}>
-                                <a> {t('account.subscription.addPaymentMethod')}</a>
-                            </Link>
+                    <div className="flex space-x-6 justify-end w-full pt-5">
+                        <Button onClick={handleCancelSubscription} variant="secondary">
+                            {t('account.subscription.cancelSubscription')}
                         </Button>
+                        <Link href="/pricing">
+                            <a>
+                                <Button>{t('account.subscription.upgradeSubscription')}</Button>
+                            </a>
+                        </Link>
                     </div>
+                </>
+            ) : (
+                <div className="w-full flex justify-center">
+                    {/* TODO task V2-32: make skeleton */}
+                    <Spinner className="w-8 h-8 fill-primary-400 text-white" />
                 </div>
             )}
-            <Link href="/pricing">
-                <Button>Upgrade subscription</Button>
-            </Link>
         </div>
     );
 };

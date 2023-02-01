@@ -16,7 +16,7 @@ export default function CampaignShow() {
     const {
         campaign: currentCampaign,
         updateCampaign,
-        refreshCampaign
+        refreshCampaign,
     } = useCampaigns({ campaignId: router.query.id as string });
     const supabase = useSupabaseClient();
 
@@ -26,18 +26,18 @@ export default function CampaignShow() {
 
     const tabs = [
         t('campaigns.show.activities.creatorOutreach'),
-        t('campaigns.show.activities.campaignInfo')
+        t('campaigns.show.activities.campaignInfo'),
     ];
 
     const campaignStatusTabs = [
         { label: t('campaigns.index.status.inProgress'), value: 'in progress' },
         { label: t('campaigns.index.status.notStarted'), value: 'not started' },
-        { label: t('campaigns.index.status.completed'), value: 'completed' }
+        { label: t('campaigns.index.status.completed'), value: 'completed' },
     ];
 
     const handleDropdownSelect = async (
         e: ChangeEvent<HTMLSelectElement>,
-        campaignWithCompanyCreators: CampaignWithCompanyCreators | null
+        campaignWithCompanyCreators: CampaignWithCompanyCreators | null,
     ) => {
         e.stopPropagation();
         if (!campaignWithCompanyCreators) return null;
@@ -55,7 +55,7 @@ export default function CampaignShow() {
         const getFiles = async () => {
             const getFilePath = (filename: string) => {
                 const {
-                    data: { publicUrl }
+                    data: { publicUrl },
                 } = supabase.storage
                     .from('images')
                     .getPublicUrl(`campaigns/${currentCampaign?.id}/${filename}`);
@@ -67,12 +67,12 @@ export default function CampaignShow() {
                 .list(`campaigns/${currentCampaign?.id}`, {
                     limit: 100,
                     offset: 0,
-                    sortBy: { column: 'name', order: 'asc' }
+                    sortBy: { column: 'name', order: 'asc' },
                 });
 
             const mediaFormatted = data?.map((file) => ({
                 url: `${getFilePath(file.name)}`,
-                name: file.name
+                name: file.name,
             }));
 
             if (mediaFormatted) {
@@ -130,17 +130,17 @@ export default function CampaignShow() {
                                     {currentCampaign?.date_start_campaign &&
                                     currentCampaign?.date_end_campaign
                                         ? `${new Date(
-                                              currentCampaign.date_start_campaign
+                                              currentCampaign.date_start_campaign,
                                           ).toLocaleDateString(i18n.language, {
                                               year: 'numeric',
                                               month: 'short',
-                                              day: 'numeric'
+                                              day: 'numeric',
                                           })} - ${new Date(
-                                              currentCampaign.date_end_campaign
+                                              currentCampaign.date_end_campaign,
                                           ).toLocaleDateString(i18n.language, {
                                               year: 'numeric',
                                               month: 'short',
-                                              day: 'numeric'
+                                              day: 'numeric',
                                           })}`
                                         : '-'}
                                 </div>

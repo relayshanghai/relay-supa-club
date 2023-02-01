@@ -1,7 +1,16 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import {
+    SubscriptionConfirmModal,
+    SubscriptionConfirmModalData,
+} from 'src/components/account/subscription-confirm-modal';
+import { Button } from 'src/components/button';
+import { useSubscription } from 'src/hooks/use-subscription';
 import { Layout } from 'src/modules/layout';
+import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger';
+import type { SubscriptionPeriod } from 'types';
+import type { SubscriptionPricesGetResponse } from './api/subscriptions/prices';
 const details = {
     diy: [
         { title: 'twoHundredNewInfluencerProfilesPerMonth', icon: 'check' },
@@ -11,9 +20,9 @@ const details = {
         {
             title: 'clubbyStarterPack',
             icon: 'check',
-            info: 'includesCustomEmailTemplates'
+            info: 'includesCustomEmailTemplates',
         },
-        { title: 'influencerOutreachExpertWorkingOnYourCampaigns', icon: 'cross' }
+        { title: 'influencerOutreachExpertWorkingOnYourCampaigns', icon: 'cross' },
     ],
     diyMax: [
         { title: 'fourHundredFiftyNewInfluencerProfilesPerMonth', icon: 'check' },
@@ -23,9 +32,9 @@ const details = {
         {
             title: 'clubbyStarterPack',
             icon: 'check',
-            info: 'includesCustomEmailTemplates'
+            info: 'includesCustomEmailTemplates',
         },
-        { title: 'influencerOutreachExpertWorkingOnYourCampaigns', icon: 'cross' }
+        { title: 'influencerOutreachExpertWorkingOnYourCampaigns', icon: 'cross' },
     ],
     VIP: [
         { title: 'moreInfluencerProfiles', icon: 'check' },
@@ -35,27 +44,10 @@ const details = {
         {
             title: 'clubbyStarterPack',
             icon: 'check',
-            info: 'includesCustomEmailTemplates'
+            info: 'includesCustomEmailTemplates',
         },
-        { title: 'influencerOutreachExpertWorkingOnYourCampaigns', icon: 'check' }
-    ]
-};
-const prices = {
-    monthly: {
-        diy: '$150',
-        diyMax: '$270',
-        VIP: 'Contact us'
-    },
-    quarterly: {
-        diy: '$99',
-        diyMax: '$220',
-        VIP: 'Contact us'
-    },
-    annually: {
-        diy: '$89',
-        diyMax: '$199',
-        VIP: 'Contact us'
-    }
+        { title: 'influencerOutreachExpertWorkingOnYourCampaigns', icon: 'check' },
+    ],
 };
 
 const salesRefEmail = 'amy.hu@relay.club';
@@ -66,20 +58,129 @@ const VIPEmailLink = `mailto:${salesRefEmail}?${new URLSearchParams({ subject, b
 const unselectedTabClasses = 'py-1 px-4 border-x border-primary-500 cursor-pointer';
 const selectedTabClasses = 'py-1 px-4 border-x border-primary-500 bg-primary-500 text-white';
 
-export type Period = 'monthly' | 'annually' | 'quarterly';
+type PriceTiers = {
+    diy: string;
+    diyMax: string;
+    VIP: string;
+};
+type Prices = {
+    monthly: PriceTiers;
+    quarterly: PriceTiers;
+    annually: PriceTiers;
+};
+
+const formatPrice = (
+    price: string,
+    currency: string,
+    period: 'monthly' | 'annually' | 'quarterly',
+) => {
+    const pricePerMonth =
+        period === 'annually'
+            ? Number(price) / 12
+            : period === 'quarterly'
+            ? Number(price) / 3
+            : Number(price);
+    /** I think rounding to the dollar is OK for now, but if need be we can add cents */
+    const roundedPrice = Math.round(pricePerMonth);
+    if (currency === 'usd')
+        return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+        }).format(roundedPrice);
+    // not sure what other currencies we will handle and if we can pass them directly to Intl.NumberFormat so this is a placeholder until we know
+    return `${roundedPrice} ${currency}`;
+};
 
 /** Note: This file doesn't share a lot of the conventions we have elsewhere across the app, because this file is migrated from the marketing site, trying to make minimal changes in case we need to update both at the same time. */
 const Pricing = () => {
     const { t } = useTranslation();
+    const { subscription, createSubscription } = useSubscription();
+    const [period, setPeriod] = useState<SubscriptionPeriod>('annually');
+    const [confirmModalData, setConfirmModalData] = useState<SubscriptionConfirmModalData | null>(
+        null,
+    );
+    const [priceIds, setPriceIds] = useState<{
+        diy: { monthly: string; quarterly: string; annually: string };
+        diyMax: { monthly: string; quarterly: string; annually: string };
+    } | null>(null);
 
-    const [period, setPeriod] = useState<Period>('annually');
-
-    const openConfirmModal = (plan: 'diy' | 'diyMax', period: Period) => {
+    const openConfirmModal = (
+        plan: 'diy' | 'diyMax',
+        period: SubscriptionPeriod,
+        priceId: string,
+    ) => {
+        setConfirmModalData({ plan, period, priceId, price: prices[period][plan] });
         clientLogger({ plan, period });
+    };
+
+    const [prices, setPrices] = useState<Prices>({
+        monthly: {
+            diy: '--',
+            diyMax: '--',
+            VIP: t('pricing.contactUs'),
+        },
+        quarterly: {
+            diy: '--',
+            diyMax: '--',
+            VIP: t('pricing.contactUs'),
+        },
+        annually: {
+            diy: '--',
+            diyMax: '--',
+            VIP: t('pricing.contactUs'),
+        },
+    });
+
+    useEffect(() => {
+        const fetchPrices = async () => {
+            try {
+                const res = await nextFetch<SubscriptionPricesGetResponse>('subscriptions/prices');
+                const { diy, diyMax } = res;
+
+                const monthly = {
+                    diy: formatPrice(diy.prices.monthly, diy.currency, 'monthly'),
+                    diyMax: formatPrice(diyMax.prices.monthly, diyMax.currency, 'monthly'),
+                    VIP: t('pricing.contactUs'),
+                };
+                const quarterly = {
+                    diy: formatPrice(diy.prices.quarterly, diy.currency, 'quarterly'),
+                    diyMax: formatPrice(diyMax.prices.quarterly, diyMax.currency, 'quarterly'),
+                    VIP: t('pricing.contactUs'),
+                };
+                const annually = {
+                    diy: formatPrice(diy.prices.annually, diy.currency, 'annually'),
+                    diyMax: formatPrice(diyMax.prices.annually, diyMax.currency, 'annually'),
+                    VIP: t('pricing.contactUs'),
+                };
+
+                setPrices({ monthly, quarterly, annually });
+                setPriceIds({ diy: diy.priceIds, diyMax: diyMax.priceIds });
+            } catch (error) {
+                clientLogger(error, 'error');
+            }
+        };
+
+        fetchPrices();
+    }, [t]);
+
+    const disableButton = (plan: 'diy' | 'diyMax') => {
+        if (!priceIds || !subscription?.name || !subscription.interval || !subscription.status)
+            return true;
+        const planName = plan === 'diyMax' ? 'DIY Max' : 'DIY';
+        return (
+            subscription.name === planName &&
+            subscription.interval === period &&
+            subscription.status === 'active'
+        );
     };
 
     return (
         <Layout>
+            <SubscriptionConfirmModal
+                confirmModalData={confirmModalData}
+                setConfirmModalData={setConfirmModalData}
+                createSubscription={createSubscription}
+            />
             <main className="pt-20 flex-grow">
                 <div className="flex flex-col items-center container mx-auto">
                     <div className="text-center max-w-3xl mx-auto mb-16">
@@ -165,8 +266,8 @@ const Pricing = () => {
                                                         xmlns="http://www.w3.org/2000/svg"
                                                     >
                                                         <path
-                                                            fill-rule="evenodd"
-                                                            clip-rule="evenodd"
+                                                            fillRule="evenodd"
+                                                            clipRule="evenodd"
                                                             d="M2.151 10c0-1.846.635-3.542 1.688-4.897l11.21 11.209A7.948 7.948 0 0110.15 18c-4.41 0-8-3.589-8-8zm16 0a7.954 7.954 0 01-1.688 4.897L5.254 3.688A7.948 7.948 0 0110.151 2c4.411 0 8 3.589 8 8zm-8-10c-5.514 0-10 4.486-10 10s4.486 10 10 10 10-4.486 10-10-4.486-10-10-10z"
                                                             fill="currentColor"
                                                         />
@@ -183,8 +284,8 @@ const Pricing = () => {
                                                         xmlns="http://www.w3.org/2000/svg"
                                                     >
                                                         <path
-                                                            fill-rule="evenodd"
-                                                            clip-rule="evenodd"
+                                                            fillRule="evenodd"
+                                                            clipRule="evenodd"
                                                             d="M10.151 7a1 1 0 11.001-2 1 1 0 010 2zm1 7a1 1 0 01-2 0V9a1 1 0 012 0v5zm-1-14c-5.523 0-10 4.477-10 10s4.477 10 10 10c5.522 0 10-4.477 10-10s-4.478-10-10-10z"
                                                             fill="currentColor"
                                                         />
@@ -199,9 +300,16 @@ const Pricing = () => {
                                     );
                                 })}
 
-                                <a
-                                    onClick={() => openConfirmModal('diy', period)}
-                                    className="flex items-center mt-auto text-white bg-gray-400 border-0 py-2 px-4 w-full focus:outline-none hover:bg-gray-500 rounded"
+                                <Button
+                                    onClick={() =>
+                                        openConfirmModal(
+                                            'diy',
+                                            period,
+                                            priceIds ? priceIds['diy'][period] : '',
+                                        )
+                                    }
+                                    disabled={disableButton('diy')}
+                                    className="flex"
                                 >
                                     {t('pricing.buyNow')}
                                     <svg
@@ -215,13 +323,13 @@ const Pricing = () => {
                                     >
                                         <path d="M5 12h14M12 5l7 7-7 7" />
                                     </svg>
-                                </a>
+                                </Button>
                             </div>
                         </div>
                         <div className="p-4 lg:w-1/3 md:w-1/2 w-full hover:-translate-y-3 transition-all ease-in-out">
                             <div className="h-full p-6 rounded-lg border-2 border-primary-500 flex flex-col relative overflow-hidden">
                                 <span className="bg-primary-500 text-white px-3 py-1 tracking-widest text-xs absolute right-0 top-0 rounded-bl">
-                                    POPULAR
+                                    {t('pricing.popular')}
                                 </span>
                                 <h2 className="text-sm tracking-widest title-font mb-1 font-medium">
                                     {t('pricing.diyMax')}
@@ -268,8 +376,8 @@ const Pricing = () => {
                                                     xmlns="http://www.w3.org/2000/svg"
                                                 >
                                                     <path
-                                                        fill-rule="evenodd"
-                                                        clip-rule="evenodd"
+                                                        fillRule="evenodd"
+                                                        clipRule="evenodd"
                                                         d="M2.151 10c0-1.846.635-3.542 1.688-4.897l11.21 11.209A7.948 7.948 0 0110.15 18c-4.41 0-8-3.589-8-8zm16 0a7.954 7.954 0 01-1.688 4.897L5.254 3.688A7.948 7.948 0 0110.151 2c4.411 0 8 3.589 8 8zm-8-10c-5.514 0-10 4.486-10 10s4.486 10 10 10 10-4.486 10-10-4.486-10-10-10z"
                                                         fill="currentColor"
                                                     />
@@ -286,8 +394,8 @@ const Pricing = () => {
                                                     xmlns="http://www.w3.org/2000/svg"
                                                 >
                                                     <path
-                                                        fill-rule="evenodd"
-                                                        clip-rule="evenodd"
+                                                        fillRule="evenodd"
+                                                        clipRule="evenodd"
                                                         d="M10.151 7a1 1 0 11.001-2 1 1 0 010 2zm1 7a1 1 0 01-2 0V9a1 1 0 012 0v5zm-1-14c-5.523 0-10 4.477-10 10s4.477 10 10 10c5.522 0 10-4.477 10-10s-4.478-10-10-10z"
                                                         fill="currentColor"
                                                     />
@@ -301,9 +409,16 @@ const Pricing = () => {
                                     </div>
                                 ))}
 
-                                <button
-                                    onClick={() => openConfirmModal('diyMax', period)}
-                                    className="flex items-center mt-auto text-white bg-primary-500 border-0 py-2 px-4 w-full focus:outline-none hover:bg-primary-600 rounded"
+                                <Button
+                                    onClick={() =>
+                                        openConfirmModal(
+                                            'diyMax',
+                                            period,
+                                            priceIds ? priceIds['diyMax'][period] : '',
+                                        )
+                                    }
+                                    disabled={disableButton('diyMax')}
+                                    className="flex"
                                 >
                                     {t('pricing.buyNow')}
                                     <svg
@@ -317,7 +432,7 @@ const Pricing = () => {
                                     >
                                         <path d="M5 12h14M12 5l7 7-7 7" />
                                     </svg>
-                                </button>
+                                </Button>
                             </div>
                         </div>
                         <div className="p-4 lg:w-1/3 md:w-1/2 w-full hover:-translate-y-3 transition-all ease-in-out">
@@ -365,8 +480,8 @@ const Pricing = () => {
                                                     xmlns="http://www.w3.org/2000/svg"
                                                 >
                                                     <path
-                                                        fill-rule="evenodd"
-                                                        clip-rule="evenodd"
+                                                        fillRule="evenodd"
+                                                        clipRule="evenodd"
                                                         d="M2.151 10c0-1.846.635-3.542 1.688-4.897l11.21 11.209A7.948 7.948 0 0110.15 18c-4.41 0-8-3.589-8-8zm16 0a7.954 7.954 0 01-1.688 4.897L5.254 3.688A7.948 7.948 0 0110.151 2c4.411 0 8 3.589 8 8zm-8-10c-5.514 0-10 4.486-10 10s4.486 10 10 10 10-4.486 10-10-4.486-10-10-10z"
                                                         fill="currentColor"
                                                     />
@@ -383,8 +498,8 @@ const Pricing = () => {
                                                     xmlns="http://www.w3.org/2000/svg"
                                                 >
                                                     <path
-                                                        fill-rule="evenodd"
-                                                        clip-rule="evenodd"
+                                                        fillRule="evenodd"
+                                                        clipRule="evenodd"
                                                         d="M10.151 7a1 1 0 11.001-2 1 1 0 010 2zm1 7a1 1 0 01-2 0V9a1 1 0 012 0v5zm-1-14c-5.523 0-10 4.477-10 10s4.477 10 10 10c5.522 0 10-4.477 10-10s-4.478-10-10-10z"
                                                         fill="currentColor"
                                                     />
@@ -402,20 +517,22 @@ const Pricing = () => {
                                     href={VIPEmailLink}
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="flex items-center mt-auto text-white bg-gray-400 border-0 py-2 px-4 w-full focus:outline-none hover:bg-gray-500 rounded"
+                                    className="mt-auto"
                                 >
-                                    {t('pricing.contactNow')}
-                                    <svg
-                                        fill="none"
-                                        stroke="currentColor"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        className="w-4 h-4 ml-auto"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path d="M5 12h14M12 5l7 7-7 7" />
-                                    </svg>
+                                    <Button className="flex w-full">
+                                        {t('pricing.contactNow')}
+                                        <svg
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            className="w-4 h-4 ml-auto"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path d="M5 12h14M12 5l7 7-7 7" />
+                                        </svg>
+                                    </Button>
                                 </a>
                             </div>
                         </div>

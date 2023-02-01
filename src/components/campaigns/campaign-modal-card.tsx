@@ -11,7 +11,7 @@ import { useSupabaseClient } from '@supabase/auth-helpers-react';
 export default function CampaignModalCard({
     campaign,
     creator,
-    platform
+    platform,
 }: {
     campaign: CampaignWithCompanyCreators;
     creator: CreatorSearchAccountObject | null;
@@ -19,7 +19,7 @@ export default function CampaignModalCard({
 }) {
     const supabase = useSupabaseClient();
     const { addCreatorToCampaign, loading } = useCampaigns({
-        campaignId: campaign?.id
+        campaignId: campaign?.id,
     });
     const [hasCreator, setHasCreator] = useState<boolean>(false);
     const [coverImageUrl, setCoverImageUrl] = useState('');
@@ -34,7 +34,7 @@ export default function CampaignModalCard({
                 username: creator?.account.user_profile?.username,
                 fullname: creator?.account.user_profile?.fullname,
                 link_url: creator?.account.user_profile?.url,
-                platform
+                platform,
             });
         toast.success(t('campaigns.modal.addedSuccessfully'));
         setHasCreator(true);
@@ -44,7 +44,7 @@ export default function CampaignModalCard({
         const getFiles = async () => {
             const getFilePath = (filename: string) => {
                 const {
-                    data: { publicUrl }
+                    data: { publicUrl },
                 } = supabase.storage
                     .from('images')
                     .getPublicUrl(`campaigns/${campaign?.id}/${filename}`);
@@ -56,7 +56,7 @@ export default function CampaignModalCard({
                 .list(`campaigns/${campaign?.id}`, {
                     limit: 100,
                     offset: 0,
-                    sortBy: { column: 'name', order: 'asc' }
+                    sortBy: { column: 'name', order: 'asc' },
                 });
 
             if (data?.[0]?.name) {
@@ -73,7 +73,7 @@ export default function CampaignModalCard({
         if (campaign && creator) {
             const creatorInCampaign = campaign?.campaign_creators?.find(
                 (campaignCreator) =>
-                    campaignCreator.creator_id === creator?.account.user_profile?.user_id
+                    campaignCreator.creator_id === creator?.account.user_profile?.user_id,
             );
             if (creatorInCampaign) {
                 setHasCreator(true);

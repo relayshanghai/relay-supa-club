@@ -9,7 +9,7 @@ function MediaUploader({
     setMedia,
     previousMedia,
     setPreviousMedia,
-    setPurgedMedia
+    setPurgedMedia,
 }: {
     media: File[];
     setMedia: (media: File[]) => void;
@@ -26,7 +26,7 @@ function MediaUploader({
             current || {
                 click: () => {
                     // quiet linter
-                }
+                },
             }
         ).click();
     };
@@ -56,7 +56,7 @@ function MediaUploader({
         //@ts-ignore
         setPurgedMedia((pm: any) => [...pm, previousMedia[index]]);
         setPreviousMedia([
-            ...previousMedia.filter((file: any) => previousMedia.indexOf(file) !== index)
+            ...previousMedia.filter((file: any) => previousMedia.indexOf(file) !== index),
         ]);
     };
 

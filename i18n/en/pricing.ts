@@ -29,7 +29,8 @@ const pricing = {
         'Includes custom email templates, subject headings, and search categories based on your brief',
     moreInfluencerProfiles: 'More influencer profiles',
     buyNow: 'Buy Now',
-    contactUs: 'Contact us'
+    contactUs: 'Contact us',
+    popular: 'POPULAR',
 };
 
 export default pricing;

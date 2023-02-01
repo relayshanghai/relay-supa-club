@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
@@ -15,30 +15,20 @@ import { clientLogger } from 'src/utils/logger';
 export default function Register() {
     const { t } = useTranslation();
     const router = useRouter();
-    const { loading, profile, refreshProfile } = useUser();
-    const { createCompany, company, refreshCompany } = useCompany();
+    const { loading } = useUser();
+    const { createCompany } = useCompany();
     const { values, setFieldValue } = useFields({
         name: '',
-        website: ''
+        website: '',
     });
     const [submitting, setSubmitting] = useState(false);
-
-    // const [paymentMethod, setPaymentMethod ] = useState(false);
-    // TODO: during this component's initial loading start, optimistically make a company. Then use the company ID to generate a Stripe customer id. Then create an add payment button that links to the stripe account dashboard, detect the payment method and add a customer id when finally submitting this page. middleware.ts checks for cus_id to confirm payment method.
-    useEffect(() => {
-        const checkForCompletedOnboard = async () => {
-            if (company?.cus_id) router.push('/dashboard');
-            else refreshCompany();
-        };
-        if (!loading) checkForCompletedOnboard();
-    }, [company?.cus_id, loading, profile, refreshCompany, router]);
 
     const handleSubmit = async () => {
         try {
             setSubmitting(true);
             await createCompany(values);
             toast.success(t('login.companyCreated'));
-            refreshProfile();
+            await router.push('/signup/payment-onboard');
         } catch (e) {
             clientLogger(e, 'error');
             toast.error(t('login.oopsSomethingWentWrong'));
@@ -54,14 +44,14 @@ export default function Register() {
                 <LanguageToggle />
             </div>
             <form className="max-w-xs w-full mx-auto flex-grow flex flex-col justify-center items-center space-y-5">
-                {loading ? (
+                {loading && !submitting ? (
                     <Spinner className="fill-primary-600 text-white w-20 h-20" />
                 ) : (
                     <>
                         <div className="text-left w-full">
                             <h1 className="font-bold text-4xl mb-2">{t('login.onboardCompany')}</h1>
                             <h3 className="text-sm text-gray-600 mb-8">
-                                {t('login.addCompanyDetailsAndPaymentMethod')}
+                                {t('login.addCompanyDetails')}
                             </h3>
                         </div>
                         <Input
@@ -79,13 +69,7 @@ export default function Register() {
                             value={values.website}
                             onChange={(e) => setFieldValue('website', e.target.value)}
                         />
-                        <Button
-                            disabled={!values.name || submitting}
-                            onClick={(e) => {
-                                e.preventDefault();
-                                handleSubmit();
-                            }}
-                        >
+                        <Button disabled={!values.name || submitting} onClick={handleSubmit}>
                             {t('login.createCompany')}
                         </Button>
                     </>

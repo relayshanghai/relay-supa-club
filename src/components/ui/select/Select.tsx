@@ -33,7 +33,7 @@ function MultiSelect({
     isRequired = false,
     placeholder,
     defaultValue,
-    maxLimit = 100
+    maxLimit = 100,
 }: MultiSelectProps) {
     const { t } = useTranslation();
     const [optionsSelected, setOptionsSelected] = useState<LabelValueObject[]>([]);
@@ -78,7 +78,7 @@ const SingleSelect = ({
     placeholder,
     valueName,
     setValue,
-    defaultValue
+    defaultValue,
 }: SelectProps) => {
     const { t } = useTranslation();
 

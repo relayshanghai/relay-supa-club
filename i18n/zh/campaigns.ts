@@ -5,13 +5,13 @@ const campaigns = {
             inProgress: '已开始',
             notStarted: '未开始',
             completed: '已完成',
-            all: '全部'
+            all: '全部',
         },
         createCampaign: '创建项目',
         noCampaigns: '您没有任何项目',
         noCampaignsAvailable: '哎呀！ 您没有可用的项目。',
         clickCreate: '单击此处创建项目',
-        searchPlaceholder: '搜索项目...'
+        searchPlaceholder: '搜索项目...',
     },
     modal: {
         addToCampaign: '添加到项目',
@@ -31,7 +31,7 @@ const campaigns = {
         comments: '公司备注',
         viewProfile: '查看KOL',
         addedSuccessfully: 'KOL已成功添加到项目',
-        deletedSuccessfully: 'KOL已从项目中删除'
+        deletedSuccessfully: 'KOL已从项目中删除',
     },
     creatorModal: {
         outreach: 'KOL沟通',
@@ -72,7 +72,7 @@ const campaigns = {
         partiallypaid: '部分付款',
         sent: '已发货',
         unsent: '未发货',
-        delivered: '已签收'
+        delivered: '已签收',
     },
     email: {
         dayLimit: '您只能每 24 小时向 KOL 发送一封邮件，以避免被识别为垃圾邮件',
@@ -85,14 +85,14 @@ const campaigns = {
         writeOwnMessage: '或者编写自己的模板',
         sendEmailError: '哎呀！出错了，请尝试再次发送。',
         sendAndGoToNext: '发送邮件并打开下一位KOL',
-        sendToAll: '用当前模版发送给所有KOL'
+        sendToAll: '用当前模版发送给所有KOL',
     },
     show: {
         status: {
             'in progress': '已开始',
             'not started': '未开始',
             // eslint-disable-next-line quote-props
-            completed: '已完成'
+            completed: '已完成',
         },
         submitting: '提交中',
         creatorSearch: '搜索和添加KOL',
@@ -160,8 +160,8 @@ const campaigns = {
                     confirmed: '已确认',
                     rejected: '已拒绝',
                     // eslint-disable-next-line quote-props
-                    ignored: '未回复'
-                }
+                    ignored: '未回复',
+                },
             },
             info: {
                 budget: '预算',
@@ -171,13 +171,13 @@ const campaigns = {
                 dates: '日期',
                 closingOutreach: 'KOL 招募结束日期',
                 campaignLaunch: '项目启动日期',
-                campaignEnd: '项目结束日期'
-            }
-        }
+                campaignEnd: '项目结束日期',
+            },
+        },
     },
     notes: {
         notes: '备注',
-        submit: '提交'
+        submit: '提交',
     },
     form: {
         createCampaign: '创建项目',
@@ -227,7 +227,7 @@ const campaigns = {
         successUpdateMsg: '您已成功更新项目信息!',
         dedicatedVideo: '专属广告',
         integratedVideo: '植入广告',
-        oopsSomethingWrong: '哎呀，出错了！'
-    }
+        oopsSomethingWrong: '哎呀，出错了！',
+    },
 };
 export default campaigns;

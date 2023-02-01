@@ -7,7 +7,7 @@ module.exports = {
         extend: {
             fontFamily: {
                 poppins: ['Poppins', 'sans-serif'],
-                sans: ['Poppins', 'sans-serif']
+                sans: ['Poppins', 'sans-serif'],
             },
             colors: {
                 primary: {
@@ -20,12 +20,12 @@ module.exports = {
                     600: '#7C3AED',
                     700: '#6D28D9',
                     800: '#5B21B6',
-                    900: '#4C1D95'
+                    900: '#4C1D95',
                 },
                 secondary: {
                     50: '#f8faff',
                     100: '#F4F7FF',
-                    500: '#599CC9'
+                    500: '#599CC9',
                 },
                 tertiary: {
                     50: '#f9fafb',
@@ -37,15 +37,15 @@ module.exports = {
                     600: '#4b5563',
                     700: '#374151',
                     800: '#1f2937',
-                    900: '#111827'
-                }
-            }
-        }
+                    900: '#111827',
+                },
+            },
+        },
     },
     variants: {
         extend: {
-            fontFamily: ['hover', 'focus']
-        }
+            fontFamily: ['hover', 'focus'],
+        },
     },
-    plugins: [require('@tailwindcss/line-clamp')]
+    plugins: [require('@tailwindcss/line-clamp')],
 };

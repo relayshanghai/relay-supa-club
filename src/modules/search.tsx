@@ -56,7 +56,7 @@ export const Search = () => {
         setContactInfo,
 
         resultsPerPageLimit,
-        setResultsPerPageLimit
+        setResultsPerPageLimit,
     } = useSearch();
 
     const [filterModalOpen, setFilterModalOpen] = useState(false);
@@ -119,7 +119,7 @@ export const Search = () => {
                         custom_name,
                         fullname,
                         picture,
-                        onClick
+                        onClick,
                     }: any) => {
                         const handle = `@${fullname || custom_name || username}`;
                         return (
@@ -217,14 +217,14 @@ export const Search = () => {
                             {!!audience.length && (
                                 <p>
                                     {`${t('creators.filter.subs')}: ${formatter(
-                                        audience[0]
+                                        audience[0],
                                     )} - ${formatter(audience[1])}`}
                                 </p>
                             )}
                             {!!views.length && (
                                 <p>
                                     {`${t('creators.filter.avgViews')}: ${formatter(
-                                        views[0]
+                                        views[0],
                                     )} - ${formatter(views[1])}`}
                                 </p>
                             )}
@@ -234,7 +234,7 @@ export const Search = () => {
                             )}
                             {lastPost && (
                                 <p>{`${t('creators.filter.lastPost')}: ${lastPost} ${t(
-                                    'creators.filter.days'
+                                    'creators.filter.days',
                                 )}`}</p>
                             )}
                         </div>
@@ -507,7 +507,7 @@ export const Search = () => {
                                         setShowCampaignListModal={setShowCampaignListModal}
                                         setSelectedCreator={setSelectedCreator}
                                     />
-                                ))
+                                )),
                             )
                         ) : loading ? (
                             [...Array(10)].map((_, i) => (

@@ -24,7 +24,7 @@ function TextArea({
     placeHolder,
     isRequired = false,
     maxLength,
-    minLength
+    minLength,
 }: Props) {
     const { t } = useTranslation();
 
@@ -45,12 +45,16 @@ function TextArea({
                     required: { value: isRequired, message: t('website.requiredField') },
                     maxLength: {
                         value: maxLength,
-                        message: `${t('website.maxLength')} ${maxLength} ${t('website.characters')}`
+                        message: `${t('website.maxLength')} ${maxLength} ${t(
+                            'website.characters',
+                        )}`,
                     },
                     minLength: {
                         value: minLength,
-                        message: `${t('website.minLength')} ${minLength} ${t('website.characters')}`
-                    }
+                        message: `${t('website.minLength')} ${minLength} ${t(
+                            'website.characters',
+                        )}`,
+                    },
                 })}
             />
             <p className="text-xs text-primary-400">

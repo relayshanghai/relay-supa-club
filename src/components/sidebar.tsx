@@ -56,7 +56,7 @@ const NavBarInner = ({ loggedIn }: { loggedIn: boolean | null }) => (
 export const Sidebar = ({
     loggedIn,
     open,
-    setOpen
+    setOpen,
 }: {
     loggedIn: boolean | null;
     open: boolean;

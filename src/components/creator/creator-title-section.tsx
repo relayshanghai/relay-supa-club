@@ -9,7 +9,7 @@ export const TitleSection = ({
     user_profile,
     reportCreatedAt,
     onAddToCampaign,
-    platform
+    platform,
 }: {
     user_profile: CreatorReport['user_profile'];
     reportCreatedAt: string | null;

@@ -13,7 +13,7 @@ export const SearchResultRow = ({
     platform,
     setLookalike,
     setShowCampaignListModal,
-    setSelectedCreator
+    setSelectedCreator,
 }: {
     creator: CreatorSearchAccountObject;
     platform: CreatorPlatform;
@@ -54,11 +54,9 @@ export const SearchResultRow = ({
 
                     {creator.account.user_profile.url && (
                         <Button>
-
                             <Link href={creator.account.user_profile.url}>
                                 <a target="_blank" rel="noopener noreferrer">
                                     <ShareLink className="w-3.5 h-3.5 fill-current text-white" />
-
                                 </a>
                             </Link>
                         </Button>

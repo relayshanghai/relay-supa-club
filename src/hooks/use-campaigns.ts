@@ -4,7 +4,7 @@ import useSWR from 'swr';
 
 import type {
     CampaignUpdatePostBody,
-    CampaignUpdatePostResponse
+    CampaignUpdatePostResponse,
 } from 'pages/api/campaigns/update';
 
 import { useUser } from './use-user';
@@ -13,7 +13,7 @@ import { CampaignWithCompanyCreators } from 'src/utils/api/db';
 import { CampaignsCreatePostBody, CampaignsCreatePostResponse } from 'pages/api/campaigns/create';
 import {
     CampaignCreatorAddCreatorPostBody,
-    CampaignCreatorAddCreatorPostResponse
+    CampaignCreatorAddCreatorPostResponse,
 } from 'pages/api/campaigns/add-creator';
 
 export const useCampaigns = ({ campaignId }: { campaignId?: string }) => {
@@ -21,10 +21,10 @@ export const useCampaigns = ({ campaignId }: { campaignId?: string }) => {
     const {
         data: campaigns,
         mutate: refreshCampaign,
-        isValidating
+        isValidating,
     } = useSWR(
         profile?.company_id ? `campaigns?id=${profile.company_id}` : null,
-        nextFetch<CampaignWithCompanyCreators[]>
+        nextFetch<CampaignWithCompanyCreators[]>,
     );
     const [loading, setLoading] = useState(false);
     const [campaign, setCampaign] = useState<CampaignWithCompanyCreators | null>(null);
@@ -46,15 +46,15 @@ export const useCampaigns = ({ campaignId }: { campaignId?: string }) => {
 
             const body: CampaignsCreatePostBody = {
                 ...input,
-                company_id: profile.company_id
+                company_id: profile.company_id,
             };
             return await nextFetch<CampaignsCreatePostResponse>('campaigns/create', {
                 method: 'post',
-                body
+                body,
             });
         },
 
-        [profile]
+        [profile],
     );
 
     const updateCampaign = useCallback(
@@ -62,14 +62,14 @@ export const useCampaigns = ({ campaignId }: { campaignId?: string }) => {
             if (!profile?.company_id) throw new Error('No profile found');
             const body: CampaignUpdatePostBody = {
                 ...input,
-                company_id: profile.company_id
+                company_id: profile.company_id,
             };
             return await nextFetch<CampaignUpdatePostResponse>('campaigns/update', {
                 method: 'post',
-                body
+                body,
             });
         },
-        [profile]
+        [profile],
     );
 
     const addCreatorToCampaign = useCallback(
@@ -78,16 +78,16 @@ export const useCampaigns = ({ campaignId }: { campaignId?: string }) => {
             if (!campaign?.id) throw new Error('No campaign found');
             const body: CampaignCreatorAddCreatorPostBody = {
                 ...input,
-                campaign_id: campaign.id
+                campaign_id: campaign.id,
             };
             await nextFetch<CampaignCreatorAddCreatorPostResponse>('campaigns/add-creator', {
                 method: 'post',
-                body
+                body,
             });
 
             setLoading(false);
         },
-        [campaign?.id]
+        [campaign?.id],
     );
 
     const updateCreatorInCampaign = useCallback(
@@ -98,12 +98,12 @@ export const useCampaigns = ({ campaignId }: { campaignId?: string }) => {
                 method: 'put',
                 body: {
                     ...input,
-                    campaign_id: campaign.id
-                }
+                    campaign_id: campaign.id,
+                },
             });
             setLoading(false);
         },
-        [campaign?.id]
+        [campaign?.id],
     );
 
     const deleteCreatorInCampaign = useCallback(
@@ -114,12 +114,12 @@ export const useCampaigns = ({ campaignId }: { campaignId?: string }) => {
                 method: 'delete',
                 body: {
                     ...input,
-                    campaign_id: campaign.id
-                }
+                    campaign_id: campaign.id,
+                },
             });
             setLoading(false);
         },
-        [campaign?.id]
+        [campaign?.id],
     );
 
     return {
@@ -132,6 +132,6 @@ export const useCampaigns = ({ campaignId }: { campaignId?: string }) => {
         addCreatorToCampaign,
         deleteCreatorInCampaign,
         updateCreatorInCampaign,
-        refreshCampaign
+        refreshCampaign,
     };
 };

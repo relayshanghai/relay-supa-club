@@ -5,7 +5,7 @@ import {
     CampaignCreatorDBInsert,
     CampaignDBUpdate,
     CampaignCreatorDBUpdate,
-    CampaignDB
+    CampaignDB,
 } from '../types';
 
 export type CampaignWithCompanyCreators = CampaignDB & {
@@ -24,7 +24,7 @@ export const updateCampaign = async (data: CampaignDBUpdate) =>
     await supabase
         .from('campaigns')
         .update({
-            ...data
+            ...data,
         })
         .eq('id', data.id)
         .select()
@@ -35,7 +35,7 @@ export const insertCampaignCreator = async (data: CampaignCreatorDBInsert) =>
         .from('campaign_creators')
         .insert({
             status: 'to contact',
-            ...data
+            ...data,
         })
         .eq('campaign_id', data.campaign_id)
         .select()

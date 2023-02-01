@@ -24,7 +24,7 @@ const website = {
         noAccount: "Don't have an account? ",
         signUp: 'Sign Up',
         welcomeBack: 'Welcome back',
-        welcomeBackDesc: 'Welcome back! Please enter your details.'
+        welcomeBackDesc: 'Welcome back! Please enter your details.',
     },
     paymentWall: {
         accountExpired: 'Seems like your account has expired :(',
@@ -47,7 +47,7 @@ const website = {
         remarks: 'Remarks',
         contactUs: 'Contact Us',
         welcomeBack: 'Welcome back',
-        welcomeBackDesc: 'Welcome back! Please enter your details.'
+        welcomeBackDesc: 'Welcome back! Please enter your details.',
     },
     signup: {
         signup: 'Sign up',
@@ -66,7 +66,7 @@ const website = {
         login: 'Log in',
         successMsg: 'Congrats! You have signed up successfully.',
         confirmMsg: 'Please go to your email for confirmation.',
-        passwordNotMatch: 'The passwords do not match'
+        passwordNotMatch: 'The passwords do not match',
     },
     company: {
         greetingTitle: 'Thank you for signing up!',
@@ -74,18 +74,18 @@ const website = {
         typeTitle: 'I represent',
         brand: 'Brand',
         agency: 'Agency',
-        other: 'Other'
+        other: 'Other',
     },
     wechat: {
         greetingTitle: 'Thank you for signing up!',
-        greetingText: 'To better help you, please fill in your contact information.'
+        greetingText: 'To better help you, please fill in your contact information.',
     },
     forgot: {
         forgotPassword: 'Forgot password',
         forgotPasswordDesc: 'We will send an email instruction to help you reset your password.',
         requestPassword: 'Request new password',
         email: 'Email',
-        emailPlaceholder: 'Email address'
+        emailPlaceholder: 'Email address',
     },
     close: 'Close',
     next: 'Next',
@@ -108,7 +108,7 @@ const website = {
     maxLength: 'Value must be maximum',
     minLength: 'Value must be minimum',
     characters: 'characters',
-    back: 'Back'
+    back: 'Back',
 };
 
 export default website;

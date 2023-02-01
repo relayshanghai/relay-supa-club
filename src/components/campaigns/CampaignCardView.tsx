@@ -3,7 +3,7 @@ import CampaignCardSquare from './CampaignCardSquare';
 
 export default function CampaignCardView({
     campaigns,
-    currentTab
+    currentTab,
 }: {
     campaigns: CampaignWithCompanyCreators[];
     currentTab: string;

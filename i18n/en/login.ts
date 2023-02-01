@@ -29,11 +29,17 @@ const login = {
     createYourCompanyProfile: 'Create your company profile',
     companyCreated: 'Company created',
     onboardCompany: 'Onboard Company',
-    addCompanyDetailsAndPaymentMethod: 'Add company details and payment method',
+    addCompanyDetails: 'Add company details',
     companyName: 'Company name',
     companyNamePlaceholder: "Enter your company's name",
     companyWebsite: 'Company website',
     companyWebsitePlaceholder: "Enter your company website's url",
-    createCompany: 'Create company'
+    createCompany: 'Create company',
+    addPaymentMethod: 'Add payment method',
+    andActivateTrial: 'And activate your 30 day free trial.',
+    activateTrial: 'Activate Trial',
+    userAlreadyRegistered: 'User already registered',
+    signupTerms:
+        'In order to activate this 30-day free trial, you must sign up with your payment details and agree to relay.club terms and services. You will be charged for a monthly DIY subscription after 30 days unless you deactivate payment before the end of the trial period.',
 };
 export default login;

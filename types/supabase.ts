@@ -185,8 +185,14 @@ export interface Database {
                     cus_id: string | null;
                     id: string;
                     name: string | null;
+                    profiles_limit: string;
+                    searches_limit: string;
+                    subscription_end_date: string | null;
+                    subscription_start_date: string | null;
+                    subscription_status: string;
+                    trial_profiles_limit: string;
+                    trial_searches_limit: string;
                     updated_at: string | null;
-                    usage_limit: string;
                     website: string | null;
                 };
                 Insert: {
@@ -195,8 +201,14 @@ export interface Database {
                     cus_id?: string | null;
                     id?: string;
                     name?: string | null;
+                    profiles_limit?: string;
+                    searches_limit?: string;
+                    subscription_end_date?: string | null;
+                    subscription_start_date?: string | null;
+                    subscription_status?: string;
+                    trial_profiles_limit?: string;
+                    trial_searches_limit?: string;
                     updated_at?: string | null;
-                    usage_limit?: string;
                     website?: string | null;
                 };
                 Update: {
@@ -205,8 +217,14 @@ export interface Database {
                     cus_id?: string | null;
                     id?: string;
                     name?: string | null;
+                    profiles_limit?: string;
+                    searches_limit?: string;
+                    subscription_end_date?: string | null;
+                    subscription_start_date?: string | null;
+                    subscription_status?: string;
+                    trial_profiles_limit?: string;
+                    trial_searches_limit?: string;
                     updated_at?: string | null;
-                    usage_limit?: string;
                     website?: string | null;
                 };
             };

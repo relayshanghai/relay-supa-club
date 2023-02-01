@@ -6,8 +6,8 @@ export const upsertProfile = async (profile: ProfileInsertDB) =>
     await supabase
         .from('profiles')
         .upsert({
-            updated_at: new Date().toString(),
-            ...profile
+            updated_at: new Date().toISOString(),
+            ...profile,
         })
         .select()
         .single();

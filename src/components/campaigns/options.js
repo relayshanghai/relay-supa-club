@@ -21,7 +21,7 @@ const options = [
     { value: 'technology', label: 'Technology' },
     { value: 'travel_vlog', label: 'Travel' },
     { value: 'interior', label: 'Home Interior' },
-    { value: 'other', label: 'Other' }
+    { value: 'other', label: 'Other' },
 ];
 
 export default options;

@@ -9,46 +9,54 @@ import { Input } from 'src/components/input';
 import { Title } from 'src/components/title';
 import { useFields } from 'src/hooks/use-fields';
 import { useUser } from 'src/hooks/use-user';
-import { clientLogger } from 'src/utils/logger';
 
 export default function Register() {
     const { t } = useTranslation();
-    const [submitting, setSubmitting] = useState(false);
 
     const router = useRouter();
     const {
         values: { firstName, lastName, email, password, confirmPassword },
-        setFieldValue
+        setFieldValue,
     } = useFields({
         firstName: '',
         lastName: '',
         email: '',
         password: '',
-        confirmPassword: ''
+        confirmPassword: '',
     });
-    const { signup, logout } = useUser();
+    const { signup, logout, user, loading } = useUser();
+    const [signupSuccess, setSignupSuccess] = useState(false);
+    const [initialLoad, setInitialLoad] = useState(true);
     useEffect(() => {
-        // sometimes the cookies and signed in status still persist to this page, so call logout again
-        logout();
-    }, [logout]);
+        const loutOutOnLoad = async () => {
+            // sometimes the cookies and signed in status still persist to this page, so call logout again
+
+            await logout();
+            setInitialLoad(false);
+        };
+        if (initialLoad) loutOutOnLoad();
+    }, [logout, initialLoad]);
+
+    useEffect(() => {
+        if (signupSuccess && user?.id) router.push('/signup/onboarding');
+    }, [initialLoad, router, signupSuccess, user]);
 
     const handleSubmit = async () => {
-        setSubmitting(true);
         try {
-            await signup({
+            const signupRes = await signup({
                 email,
                 password,
                 data: {
                     first_name: firstName,
-                    last_name: lastName
-                }
+                    last_name: lastName,
+                },
             });
-            await router.push('/signup/onboarding');
-        } catch (error) {
-            clientLogger(error, 'error');
-            toast.error(t('login.oopsSomethingWentWrong'));
+            if (signupRes?.session?.user.id) setSignupSuccess(true);
+        } catch (error: any) {
+            if (error?.message === 'User already registered')
+                toast.error(t('login.userAlreadyRegistered'));
+            else toast.error(t('login.oopsSomethingWentWrong'));
         } finally {
-            setSubmitting(false);
         }
     };
 
@@ -112,7 +120,7 @@ export default function Register() {
                         !email ||
                         !password ||
                         password !== confirmPassword ||
-                        submitting
+                        loading
                     }
                     onClick={(e) => {
                         e.preventDefault();

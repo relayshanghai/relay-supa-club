@@ -1,4 +1,4 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import { NextApiHandler } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { ProfileDB, ProfileInsertDB, upsertProfile } from 'src/utils/api/db';
 import { checkSessionIdMatchesID } from 'src/utils/fetcher';
@@ -7,14 +7,18 @@ import { serverLogger } from 'src/utils/logger';
 export type ProfilePutBody = ProfileInsertDB;
 export type ProfilePutResponse = ProfileDB;
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+const Handler: NextApiHandler = async (req, res) => {
+    // Create authenticated Supabase Client
     if (req.method === 'PUT') {
         const profile = JSON.parse(req.body) as ProfilePutBody;
 
         try {
-            //check profile id matches session user id
-            await checkSessionIdMatchesID(profile.id, res);
-
+            const matchesSession = await checkSessionIdMatchesID(profile.id, req, res);
+            if (!matchesSession) {
+                return res.status(httpCodes.UNAUTHORIZED).json({
+                    error: 'user is unauthorized for this action',
+                });
+            }
             const { data, error: profileUpsertError } = await upsertProfile(profile);
             if (profileUpsertError) {
                 serverLogger(profileUpsertError, 'error');
@@ -24,10 +28,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         } catch (error) {
             serverLogger(error, 'error');
             return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({
-                error: 'error updating profile'
+                error: 'error updating profile',
             });
         }
     }
 
     return res.status(httpCodes.METHOD_NOT_ALLOWED).json({});
-}
+};
+
+export default Handler;

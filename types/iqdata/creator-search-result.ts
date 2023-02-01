@@ -18,7 +18,7 @@ export interface CreatorSearchAccount {
 
 enum AudienceSource {
     Any = 'any',
-    Followers = 'followers'
+    Followers = 'followers',
 }
 
 export interface CreatorAccount {

@@ -32,8 +32,8 @@ const prepareStats = (audience: AudienceStats, t: TFunction) => {
             label: 'genders',
             stats: audience.audience_genders.map(({ code, weight }) => ({
                 name: t(`creators.filter.${code.toLowerCase()}`),
-                weight
-            }))
+                weight,
+            })),
         });
     if (audience.audience_ages)
         data.push({
@@ -41,8 +41,8 @@ const prepareStats = (audience: AudienceStats, t: TFunction) => {
             label: 'ages',
             stats: audience.audience_ages.map(({ code, weight }) => ({
                 name: code,
-                weight
-            }))
+                weight,
+            })),
         });
     if (audience.audience_languages)
         data.push({
@@ -50,8 +50,8 @@ const prepareStats = (audience: AudienceStats, t: TFunction) => {
             label: 'languages',
             stats: audience.audience_languages.map(({ name, weight }) => ({
                 name: name || '',
-                weight: weight || 0
-            }))
+                weight: weight || 0,
+            })),
         });
     if (audience.audience_geo)
         data.push({
@@ -59,8 +59,8 @@ const prepareStats = (audience: AudienceStats, t: TFunction) => {
             label: 'countries',
             stats: audience.audience_geo.countries.map(({ name, weight }) => ({
                 name: name || '',
-                weight: weight || 0
-            }))
+                weight: weight || 0,
+            })),
         });
     if (!!audience.audience_geo?.cities?.length)
         data.push({
@@ -68,8 +68,8 @@ const prepareStats = (audience: AudienceStats, t: TFunction) => {
             label: 'cities',
             stats: audience.audience_geo.cities.map(({ name, weight }) => ({
                 name: name || '',
-                weight: weight || 0
-            }))
+                weight: weight || 0,
+            })),
         });
     if (audience.audience_brand_affinity)
         data.push({
@@ -77,8 +77,8 @@ const prepareStats = (audience: AudienceStats, t: TFunction) => {
             label: 'audienceBrands',
             stats: audience.audience_brand_affinity.map(({ name, weight }) => ({
                 name,
-                weight
-            }))
+                weight,
+            })),
         });
     // if (obj.audience_ethnicities) data.push({ type: "progress", label: 'audienceEthnicity', stats: obj.audience_ethnicities })
     if (audience.audience_interests)
@@ -87,8 +87,8 @@ const prepareStats = (audience: AudienceStats, t: TFunction) => {
             label: 'audienceInterests',
             stats: audience.audience_interests.map(({ name, weight }) => ({
                 name: name || '',
-                weight: weight || 0
-            }))
+                weight: weight || 0,
+            })),
         });
 
     if (audience.audience_genders_per_age) {
@@ -101,26 +101,26 @@ const prepareStats = (audience: AudienceStats, t: TFunction) => {
                 ...[
                     {
                         name: `${code} ${t('creators.filter.male')}`,
-                        weight: male
+                        weight: male,
                     },
                     {
                         name: `${code} ${t('creators.filter.female')}`,
-                        weight: female
-                    }
-                ]
+                        weight: female,
+                    },
+                ],
             );
         });
         data.push({
             type: 'progress',
             label: 'audienceGenderAge',
-            stats: gendersByAge
+            stats: gendersByAge,
         });
     }
     if (audience.audience_lookalikes)
         data.push({
             type: 'kollist',
             label: 'similarAudienceKol',
-            stats: audience.audience_lookalikes as SimilarUser[]
+            stats: audience.audience_lookalikes as SimilarUser[],
         });
 
     return data;
@@ -128,7 +128,7 @@ const prepareStats = (audience: AudienceStats, t: TFunction) => {
 
 const AudienceStatsSection = ({
     stats,
-    platform
+    platform,
 }: {
     stats: Stat[];
     platform: CreatorPlatform;

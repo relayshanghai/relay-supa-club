@@ -9,7 +9,7 @@ import zh from './zh/index';
 // or even better, manage them separated from your code: https://react.i18next.com/guides/multiple-translation-files)
 const resources = {
     en,
-    zh
+    zh,
 };
 
 i18n.use(LanguageDetector)
@@ -22,8 +22,8 @@ i18n.use(LanguageDetector)
         // if you're using a language detector, do not define the lng option
 
         interpolation: {
-            escapeValue: false // react already safes from xss
-        }
+            escapeValue: false, // react already safes from xss
+        },
     });
 
 export default i18n;

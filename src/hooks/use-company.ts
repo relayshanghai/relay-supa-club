@@ -2,7 +2,7 @@ import { CompanyGetQueries, CompanyPostBody, CompanyPostResponse } from 'pages/a
 import { CompanyCreatePostBody, CompanyCreatePostResponse } from 'pages/api/company/create';
 import {
     CompanyCreateInvitePostBody,
-    CompanyCreateInvitePostResponse
+    CompanyCreateInvitePostResponse,
 } from 'pages/api/company/create-invite';
 import { useCallback } from 'react';
 import { CompanyWithProfilesInvitesAndUsage } from 'src/utils/api/db/calls/company';
@@ -12,23 +12,28 @@ import useSWR from 'swr';
 import { useUser } from './use-user';
 
 export const useCompany = () => {
-    const { profile, user } = useUser();
+    const { profile, user, refreshProfile } = useUser();
     const { data: company, mutate: refreshCompany } = useSWR(
-        profile?.company_id ? `company${new URLSearchParams({ id: profile.company_id })}` : null,
-        nextFetchWithQueries<CompanyGetQueries, CompanyWithProfilesInvitesAndUsage>
+        profile?.company_id ? 'company' : null,
+        (path) =>
+            nextFetchWithQueries<CompanyGetQueries, CompanyWithProfilesInvitesAndUsage>(path, {
+                id: profile?.company_id ?? '',
+            }),
     );
 
     const updateCompany = useCallback(
-        async (input: CompanyPostBody) => {
+        async (input: Omit<CompanyPostBody, 'id'>) => {
+            if (!user?.id) throw new Error('No user found');
+            const body: CompanyCreatePostBody = {
+                ...input,
+                user_id: user.id,
+            };
             return await nextFetch<CompanyPostResponse>(`company`, {
                 method: 'post',
-                body: JSON.stringify({
-                    ...input,
-                    id: profile?.company_id
-                })
+                body: JSON.stringify(body),
             });
         },
-        [profile]
+        [user?.id],
     );
 
     const createInvite = useCallback(
@@ -37,14 +42,14 @@ export const useCompany = () => {
             const body: CompanyCreateInvitePostBody = {
                 email: email,
                 company_id: profile.company_id,
-                name: `${profile.first_name} ${profile.last_name}`
+                name: `${profile.first_name} ${profile.last_name}`,
             };
             return await nextFetch<CompanyCreateInvitePostResponse>(`company/create-invite`, {
                 method: 'post',
-                body
+                body,
             });
         },
-        [profile]
+        [profile],
     );
 
     const createCompany = useCallback(
@@ -52,14 +57,17 @@ export const useCompany = () => {
             if (!user) throw new Error('No user found');
             const body: CompanyCreatePostBody = {
                 ...input,
-                user_id: user?.id
+                user_id: user?.id,
             };
-            return await nextFetch<CompanyCreatePostResponse>(`company/create`, {
+            const res = await nextFetch<CompanyCreatePostResponse>(`company/create`, {
                 method: 'post',
-                body
+                body,
             });
+            // create company adds company to user profile, so we need to refresh the profile
+            refreshProfile();
+            return res;
         },
-        [user]
+        [refreshProfile, user],
     );
 
     return {
@@ -67,6 +75,6 @@ export const useCompany = () => {
         updateCompany,
         createInvite,
         createCompany,
-        refreshCompany
+        refreshCompany,
     };
 };

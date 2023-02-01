@@ -247,7 +247,7 @@ const countryList = [
     { code: 'YT', name: 'Mayotte' },
     { code: 'ZA', name: 'South Africa' },
     { code: 'ZM', name: 'Zambia' },
-    { code: 'ZW', name: 'Zimbabwe' }
+    { code: 'ZW', name: 'Zimbabwe' },
 ];
 
 export { countryList };
