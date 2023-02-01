@@ -390,7 +390,10 @@ export const Search = () => {
                         </div>
                         <div>
                             <label className="text-sm">
-                                <div className="font-bold text-lg">Engagement Rate</div>
+                                <div className="font-bold text-lg">
+                                    {' '}
+                                    {t('creators.filter.engagementRate')}
+                                </div>
                                 <select
                                     className="bg-primary-200 rounded-md p-1 mt-1"
                                     value={engagement}
@@ -418,7 +421,9 @@ export const Search = () => {
                         </div>
                         <div>
                             <label className="text-sm">
-                                <div className="font-bold text-lg">Last Post</div>
+                                <div className="font-bold text-lg">
+                                    {t('creators.filter.lastPost')}
+                                </div>
                                 <select
                                     className="bg-primary-200 rounded-md p-1 mt-1"
                                     value={lastPost}
