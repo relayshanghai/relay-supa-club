@@ -39,7 +39,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 activeSubscription = trialSubscriptions.data[0];
                 if (!activeSubscription) {
                     return res
-                        .status(httpCodes.FORBIDDEN)
+                        .status(httpCodes.NOT_FOUND)
                         .json({ error: 'No active subscription to cancel' });
                 }
             }

@@ -6,6 +6,7 @@ import {
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { DatabaseWithCustomTypes } from 'types';
+import { serverLogger } from 'src/utils/logger';
 
 const pricingAllowList = ['https://en-relay-club.vercel.app', 'https://relay.club'];
 const stripeWebhookAllowlist = ['https://stripe.com/', 'https://hooks.stripe.com/'];
@@ -36,6 +37,7 @@ const getCompanySubscriptionStatus = async (
             subscriptionEndDate: company?.subscription_end_date,
         };
     } catch (error) {
+        serverLogger(error, 'error');
         return { subscriptionStatus: false, subscriptionEndDate: null };
     }
 };
