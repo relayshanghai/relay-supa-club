@@ -1,10 +1,10 @@
 const navbar = {
     title: 'Relay Club',
-    slogan: 'KOL Marketing Platform',
+    slogan: 'Influencer Marketing Platform',
     button: {
         campaigns: 'Campaigns',
         myCompany: 'My Company',
-        creators: 'KOLs',
+        creators: 'Influencers',
         resourcePools: 'Resource Pools',
         csm: 'CSM',
         logout: 'Log Out',
@@ -19,7 +19,7 @@ const navbar = {
     mobile: {
         campaigns: 'Campaigns',
         myCompany: 'Company',
-        creators: 'KOLs',
+        creators: 'Influencers',
         resourcePools: 'Resources',
         profile: 'Me',
     },
