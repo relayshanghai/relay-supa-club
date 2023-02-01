@@ -39,5 +39,6 @@ const login = {
     userAlreadyRegistered: '用户已注册',
     signupTerms:
         '为了激活此30天免费试用，您必须使用您的付款详细信息注册并同意relay.club条款和服务。如果您在试用期结束前未停用付款，您将在30天后被收取每月DIY订阅费。',
+    accountActivated: '帐户已激活',
 };
 export default login;
