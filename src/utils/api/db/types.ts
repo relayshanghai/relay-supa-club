@@ -1,4 +1,4 @@
-import type { SubscriptionStatus } from 'types';
+import type { SubscriptionStatus, UsageType } from 'types';
 import type { Database } from 'types/supabase';
 
 export type ProfileDB = Database['public']['Tables']['profiles']['Row'];
@@ -29,7 +29,19 @@ export type CampaignCreatorDB = Database['public']['Tables']['campaign_creators'
 export type CampaignCreatorDBInsert = Database['public']['Tables']['campaign_creators']['Insert'];
 export type CampaignCreatorDBUpdate = Database['public']['Tables']['campaign_creators']['Update'];
 
-export type UsagesDB = Database['public']['Tables']['usages']['Row'];
-export type UsagesDBInsert = Database['public']['Tables']['usages']['Insert'];
+export type UsagesTable = Database['public']['Tables']['usages'] & {
+    Row: Database['public']['Tables']['usages']['Row'] & {
+        type: UsageType;
+    };
+    Insert: Database['public']['Tables']['usages']['Insert'] & {
+        type: UsageType;
+    };
+    Update: Database['public']['Tables']['usages']['Update'] & {
+        type?: UsageType;
+    };
+};
+
+export type UsagesDB = UsagesTable['Row'];
+export type UsagesDBInsert = UsagesTable['Insert'];
 
 export type InvitesDB = Database['public']['Tables']['invites']['Row'];

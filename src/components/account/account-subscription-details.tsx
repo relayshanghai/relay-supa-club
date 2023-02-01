@@ -16,7 +16,7 @@ export const SubscriptionDetails = () => {
     const { userDataLoading, company } = useContext(AccountContext);
 
     const { t, i18n } = useTranslation();
-    const profileViewUsages = company?.usages.filter(({ type }) => type === 'profile_view');
+    const profileViewUsages = company?.usages.filter(({ type }) => type === 'profile');
     const searchUsages = company?.usages.filter(({ type }) => type === 'search');
 
     const handleCancelSubscription = async () => {

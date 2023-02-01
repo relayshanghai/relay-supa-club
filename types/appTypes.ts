@@ -1,4 +1,4 @@
-import type { CompanyTable } from 'src/utils/api/db';
+import type { CompanyTable, UsagesTable } from 'src/utils/api/db';
 import type Stripe from 'stripe';
 import type { Database } from './supabase';
 
@@ -23,12 +23,22 @@ export type RelayAccountPlanMetadata = {
     searches?: string;
     /** How many influencer profiles are they allowed to search for per month (stringified number) */
     profiles?: string;
+
+    // Only for DIY plan:
+    /** How many days is the trial period (stringified number) */
+    trial_days?: string;
+    /** How many searches are allowed during the trial period (stringified number) */
+    trial_searches?: string;
+    /** How many profiles are allowed during the trial period (stringified number) */
+    trial_profiles?: string;
 };
 export interface StripePriceWithProductMetadata extends Stripe.Price {
     product: RelayPlanStripeProduct;
 }
 
 export type SubscriptionStatus = 'awaiting_payment_method' | 'trial' | 'active';
+/** "profile" for creator report, "search" for creator search */
+export type UsageType = 'profile' | 'search';
 
 export type CreatorPlatform = 'instagram' | 'youtube' | 'tiktok';
 export type SocialMediaPlatform = CreatorPlatform | 'email' | 'twitter' | 'facebook' | 'wechat';
@@ -42,6 +52,7 @@ export interface DatabaseWithCustomTypes extends Database {
     public: Database['public'] & {
         Tables: Database['public']['Tables'] & {
             companies: CompanyTable;
+            usages: UsagesTable;
         };
     };
 }
