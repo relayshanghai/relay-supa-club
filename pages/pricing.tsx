@@ -166,8 +166,7 @@ const Pricing = () => {
     const disableButton = (plan: 'diy' | 'diyMax') => {
         if (!priceIds || !subscription?.name || !subscription.interval || !subscription.status)
             return true;
-        let planName = 'DIY';
-        if (plan === 'diyMax') planName = 'DIY Max';
+        const planName = plan === 'diyMax' ? 'DIY Max' : 'DIY';
         return (
             subscription.name === planName &&
             subscription.interval === period &&
