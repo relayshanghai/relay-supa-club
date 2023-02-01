@@ -75,6 +75,16 @@ const account = {
         cancel: '取消',
     },
     cancel: '取消',
+    cancelModal: {
+        title: '取消订阅',
+        areYouSureYouWantToCancelYourSubscription: '您确定要取消订阅吗？',
+        youWillLoseAccessToAllData: '本期订阅结束后，您将失去对所有数据的访问权限。',
+        cancelSubscription: '取消订阅',
+        orRenewAtDiscount_percentage: '或以 {{percentage}} 折扣续订',
+        renewNow: '立即续订',
+        cancelling: '取消中...',
+        subscriptionCancelled: '订阅已取消',
+    },
 };
 
 export default account;

@@ -6,6 +6,7 @@ import {
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { DatabaseWithCustomTypes } from 'types';
+import { serverLogger } from 'src/utils/logger';
 
 const pricingAllowList = ['https://en-relay-club.vercel.app', 'https://relay.club'];
 const stripeWebhookAllowlist = ['https://stripe.com/', 'https://hooks.stripe.com/'];
@@ -18,20 +19,27 @@ const getCompanySubscriptionStatus = async (
     supabase: SupabaseClient<DatabaseWithCustomTypes>,
     userId: string,
 ) => {
-    const { data: profile } = await supabase
-        .from('profiles')
-        .select('company_id')
-        .eq('id', userId)
-        .single();
-    if (!profile?.company_id) return false;
+    try {
+        const { data: profile } = await supabase
+            .from('profiles')
+            .select('company_id')
+            .eq('id', userId)
+            .single();
+        if (!profile?.company_id) return { subscriptionStatus: false, subscriptionEndDate: null };
 
-    // if company hasn't added payment method, redirect to onboarding
-    const { data: company } = await supabase
-        .from('companies')
-        .select('subscription_status')
-        .eq('id', profile.company_id)
-        .single();
-    return company?.subscription_status;
+        const { data: company } = await supabase
+            .from('companies')
+            .select('subscription_status, subscription_end_date')
+            .eq('id', profile.company_id)
+            .single();
+        return {
+            subscriptionStatus: company?.subscription_status,
+            subscriptionEndDate: company?.subscription_end_date,
+        };
+    } catch (error) {
+        serverLogger(error, 'error');
+        return { subscriptionStatus: false, subscriptionEndDate: null };
+    }
 };
 
 const checkOnboardingStatus = async (
@@ -50,13 +58,50 @@ const checkOnboardingStatus = async (
         }
         return res;
     }
-    const subscriptionStatus = await getCompanySubscriptionStatus(supabase, session.user.id);
+    const { subscriptionStatus, subscriptionEndDate } = await getCompanySubscriptionStatus(
+        supabase,
+        session.user.id,
+    );
     // if signed up, but no company, redirect to onboarding
     if (!subscriptionStatus) {
         if (req.nextUrl.pathname.includes('/signup/onboarding')) return res;
         redirectUrl.pathname = '/signup/onboarding';
         return NextResponse.redirect(redirectUrl);
     }
+    if (subscriptionStatus === 'active' || subscriptionStatus === 'trial') {
+        // if already signed in and has company, when navigating to index or login page, redirect to dashboard
+        if (req.nextUrl.pathname === '/' || req.nextUrl.pathname.includes('login')) {
+            redirectUrl.pathname = '/dashboard';
+            return NextResponse.redirect(redirectUrl);
+        }
+
+        // Authentication successful, forward request to protected route.
+        return res;
+    }
+    if (subscriptionStatus === 'canceled') {
+        // if subscription ended only allow access to account page, and subscription endpoints
+        const allowedPaths = [
+            '/signup',
+            '/login',
+            '/account',
+            '/api/subscriptions',
+            '/api/company',
+        ];
+        if (allowedPaths.some((path) => req.nextUrl.pathname.includes(path))) return res;
+        else {
+            if (!subscriptionEndDate) {
+                redirectUrl.pathname = '/account';
+                return NextResponse.redirect(redirectUrl);
+            }
+
+            const endDate = new Date(subscriptionEndDate);
+            if (endDate < new Date()) {
+                redirectUrl.pathname = '/account';
+                return NextResponse.redirect(redirectUrl);
+            } else return res;
+        }
+    }
+
     // if company registered, but no payment method, redirect to payment onboarding
     if (subscriptionStatus === 'awaiting_payment_method') {
         // allow the endpoints payment onboarding page requires
@@ -70,15 +115,6 @@ const checkOnboardingStatus = async (
         redirectUrl.pathname = '/signup/payment-onboard';
         return NextResponse.redirect(redirectUrl);
     }
-
-    // if already signed in and has company, when navigating to index or login page, redirect to dashboard
-    if (req.nextUrl.pathname === '/' || req.nextUrl.pathname.includes('login')) {
-        redirectUrl.pathname = '/dashboard';
-        return NextResponse.redirect(redirectUrl);
-    }
-
-    // Authentication successful, forward request to protected route.
-    return res;
 };
 
 /** Special case: we need to be able to access this from the marketing page, so we need to allow CORS */

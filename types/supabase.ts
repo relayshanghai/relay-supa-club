@@ -187,6 +187,7 @@ export interface Database {
                     name: string | null;
                     profiles_limit: string;
                     searches_limit: string;
+                    subscription_end_date: string | null;
                     subscription_start_date: string | null;
                     subscription_status: string;
                     trial_profiles_limit: string;
@@ -202,6 +203,7 @@ export interface Database {
                     name?: string | null;
                     profiles_limit?: string;
                     searches_limit?: string;
+                    subscription_end_date?: string | null;
                     subscription_start_date?: string | null;
                     subscription_status?: string;
                     trial_profiles_limit?: string;
@@ -217,6 +219,7 @@ export interface Database {
                     name?: string | null;
                     profiles_limit?: string;
                     searches_limit?: string;
+                    subscription_end_date?: string | null;
                     subscription_start_date?: string | null;
                     subscription_status?: string;
                     trial_profiles_limit?: string;

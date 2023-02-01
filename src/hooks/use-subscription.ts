@@ -1,5 +1,9 @@
 import { SubscriptionGetQueries, SubscriptionGetResponse } from 'pages/api/subscriptions';
 import {
+    SubscriptionCancelPostBody,
+    SubscriptionCancelPostResponse,
+} from 'pages/api/subscriptions/cancel';
+import {
     SubscriptionCreatePostBody,
     SubscriptionCreatePostResponse,
 } from 'pages/api/subscriptions/create';
@@ -7,6 +11,10 @@ import {
     SubscriptionCreateTrialPostBody,
     SubscriptionCreateTrialResponse,
 } from 'pages/api/subscriptions/create-trial';
+import {
+    SubscriptionDiscountRenewPostBody,
+    SubscriptionDiscountRenewPostResponse,
+} from 'pages/api/subscriptions/discount-renew';
 import {
     PaymentMethodGetQueries,
     PaymentMethodGetResponse,
@@ -63,11 +71,42 @@ export const useSubscription = () => {
         [profile, mutate],
     );
 
+    const createDiscountRenew = useCallback(async () => {
+        if (!profile?.company_id) throw new Error('No profile found');
+        const body: SubscriptionDiscountRenewPostBody = {
+            company_id: profile?.company_id,
+        };
+        const res = await nextFetch<SubscriptionDiscountRenewPostResponse>(
+            'subscriptions/discount-renew',
+            {
+                method: 'post',
+                body: JSON.stringify(body),
+            },
+        );
+        mutate();
+        return res;
+    }, [profile, mutate]);
+
+    const cancelSubscription = useCallback(async () => {
+        if (!profile?.company_id) throw new Error('No profile found');
+        const body: SubscriptionCancelPostBody = {
+            company_id: profile?.company_id,
+        };
+        const res = await nextFetch<SubscriptionCancelPostResponse>('subscriptions/cancel', {
+            method: 'post',
+            body: JSON.stringify(body),
+        });
+        mutate();
+        return res;
+    }, [profile, mutate]);
+
     return {
         subscription,
         paymentMethods,
         refreshPaymentMethods,
         createSubscription,
         createTrial,
+        createDiscountRenew,
+        cancelSubscription,
     };
 };

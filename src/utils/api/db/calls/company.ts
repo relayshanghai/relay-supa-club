@@ -93,16 +93,19 @@ export const updateCompanyUsageLimits = async ({
 export const updateCompanySubscriptionStatus = async ({
     subscription_status,
     subscription_start_date,
+    subscription_end_date,
     id,
 }: {
     subscription_status: SubscriptionStatus;
     subscription_start_date?: string;
+    subscription_end_date?: string;
     id: string;
 }) => {
     const update: CompanyDBUpdate = {
         subscription_status,
     };
     if (subscription_start_date) update.subscription_start_date = subscription_start_date;
+    if (subscription_end_date) update.subscription_end_date = subscription_end_date;
     const { data, error } = await supabase
         .from('companies')
         .update(update)
