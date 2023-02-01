@@ -1,11 +1,13 @@
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useReport } from 'src/hooks/use-report';
 import { CampaignCreatorDB } from 'src/utils/api/db';
-import { CreatorPlatform, CreatorReportContact } from 'types';
+import { CreatorReportContact } from 'types';
 import { SocialMediaIcon } from '../common/social-media-icon';
 import { isValidUrl } from 'src/utils/utils';
-import { clientLogger } from 'src/utils/logger';
 import ContactsSkeleton from './creator-contacts-skeleton';
+import { useTranslation } from 'react-i18next';
+import Link from 'next/link';
+import { Button } from '../button';
 
 const getHref = (contact: CreatorReportContact) => ({
     target: '_blank',
@@ -19,31 +21,28 @@ const getHref = (contact: CreatorReportContact) => ({
 });
 
 export const CreatorContacts = (creator: CampaignCreatorDB) => {
-    const { getOrCreateReport, report, loading } = useReport();
-
-    const getCreatorContacts = useCallback(
-        async (creator: CampaignCreatorDB) => {
-            try {
-                if (creator) {
-                    const { platform, creator_id } = creator;
-                    await getOrCreateReport(platform as CreatorPlatform, creator_id);
-                }
-            } catch (error) {
-                clientLogger(error, 'error');
-            }
-        },
-        [getOrCreateReport],
-    );
+    const { getOrCreateReport, report, loading, usageExceeded, gettingReport } = useReport();
+    const { t } = useTranslation();
 
     useEffect(() => {
-        getCreatorContacts(creator);
-    }, [creator, getCreatorContacts, report?.user_profile.contacts]);
+        if (creator && !report && !usageExceeded && !gettingReport) {
+            getOrCreateReport(creator.platform, creator.creator_id);
+        }
+    }, [creator, report, usageExceeded, gettingReport, getOrCreateReport]);
 
     return (
         <div>
             {loading ? (
                 <div>
                     <ContactsSkeleton />
+                </div>
+            ) : usageExceeded ? (
+                <div>
+                    <Link href="/pricing">
+                        <a>
+                            <Button>{t('account.subscription.upgradeSubscription')}</Button>
+                        </a>
+                    </Link>
                 </div>
             ) : (
                 <div>

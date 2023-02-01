@@ -1,12 +1,13 @@
 import { PlusCircleIcon, CheckCircleIcon } from '@heroicons/react/24/solid';
 import { useCampaigns } from 'src/hooks/use-campaigns';
-import { CreatorPlatform, CreatorSearchAccountObject } from 'types';
+import { CreatorUserProfile, CreatorPlatform } from 'types';
 import { useEffect, useState } from 'react';
 import { Spinner } from '../icons';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { CampaignWithCompanyCreators } from 'src/utils/api/db';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
+import { clientLogger } from 'src/utils/logger';
 
 export default function CampaignModalCard({
     campaign,
@@ -14,7 +15,7 @@ export default function CampaignModalCard({
     platform,
 }: {
     campaign: CampaignWithCompanyCreators;
-    creator: CreatorSearchAccountObject | null;
+    creator: CreatorUserProfile | null;
     platform: CreatorPlatform;
 }) {
     const supabase = useSupabaseClient();
@@ -26,18 +27,24 @@ export default function CampaignModalCard({
     const { t } = useTranslation();
 
     const handleAddCreatorToCampaign = async () => {
-        if (creator && !hasCreator)
+        if (!campaign || !creator || !creator.user_id)
+            return toast.error(t('campaigns.form.oopsSomethingWrong'));
+        try {
             await addCreatorToCampaign({
                 campaign_id: campaign.id,
-                creator_id: creator?.account.user_profile?.user_id,
-                avatar_url: creator?.account.user_profile?.picture,
-                username: creator?.account.user_profile?.username,
-                fullname: creator?.account.user_profile?.fullname,
-                link_url: creator?.account.user_profile?.url,
+                creator_id: creator.user_id,
+                avatar_url: creator.picture,
+                username: creator.username,
+                fullname: creator.fullname,
+                link_url: creator.url,
                 platform,
             });
-        toast.success(t('campaigns.modal.addedSuccessfully'));
-        setHasCreator(true);
+            toast.success(t('campaigns.modal.addedSuccessfully'));
+            setHasCreator(true);
+        } catch (error) {
+            clientLogger(error, 'error');
+            return toast.error(t('campaigns.form.oopsSomethingWrong'));
+        }
     };
 
     useEffect(() => {
@@ -72,8 +79,7 @@ export default function CampaignModalCard({
     useEffect(() => {
         if (campaign && creator) {
             const creatorInCampaign = campaign?.campaign_creators?.find(
-                (campaignCreator) =>
-                    campaignCreator.creator_id === creator?.account.user_profile?.user_id,
+                (campaignCreator) => campaignCreator.creator_id === creator?.user_id,
             );
             if (creatorInCampaign) {
                 setHasCreator(true);
@@ -82,10 +88,7 @@ export default function CampaignModalCard({
     }, [campaign, creator]);
 
     return (
-        <div
-            onClick={handleAddCreatorToCampaign}
-            className="bg-white text-sm px-2 py-3.5 rounded-lg mb-2 duration-300"
-        >
+        <div className="bg-white text-sm px-2 py-3.5 rounded-lg mb-2 duration-300">
             <div className="flex items-center justify-between">
                 <div className="flex items-center w-full min-w-0">
                     <img
@@ -105,12 +108,16 @@ export default function CampaignModalCard({
                 )}
 
                 {campaign && !hasCreator && (
-                    <div className="flex items-center justify-center w-6 h-6 bg-tertiary-100 rounded-md flex-shrink-0 hover:shadow-md duration-300 cursor-pointer">
+                    <button
+                        onClick={handleAddCreatorToCampaign}
+                        disabled={hasCreator || !campaign || !creator || !creator.user_id}
+                        className="flex items-center justify-center w-6 h-6 bg-gray-100 rounded-md flex-shrink-0 hover:shadow-md duration-300 text-gray-600 disabled:text-gray-400 disabled:cursor-not-allowed"
+                    >
                         {!loading && (
-                            <PlusCircleIcon className="fill-current text-tertiary-600 w-4 h-4" />
+                            <PlusCircleIcon className="fill-current text-current w-4 h-4" />
                         )}
                         {loading && <Spinner className=" fill-primary-600 text-white w-4 h-4" />}
-                    </div>
+                    </button>
                 )}
             </div>
         </div>

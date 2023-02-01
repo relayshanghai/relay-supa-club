@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
-import { recordReportUsage } from 'src/utils/api/db/usages';
+import { recordReportUsage } from 'src/utils/api/db/calls/usages';
 import { fetchReport, fetchReportsMetadata, requestNewReport } from 'src/utils/api/iqdata';
 import { serverLogger } from 'src/utils/logger';
 import { CreatorPlatform, CreatorReport } from 'types';
@@ -38,8 +38,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     creator_id,
                 );
                 if (recordError) {
-                    serverLogger(recordError, 'error');
-                    return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
+                    return res.status(httpCodes.BAD_REQUEST).json({ error: recordError });
                 }
 
                 return res.status(httpCodes.OK).json({ ...data, createdAt });

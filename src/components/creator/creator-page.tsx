@@ -1,13 +1,14 @@
-import { useState, useEffect, useCallback } from 'react';
-import { nextFetch } from 'src/utils/fetcher';
-import { CreatorPlatform, CreatorReport } from 'types';
+import { useEffect, useState } from 'react';
+import { CreatorPlatform } from 'types';
 import { TitleSection } from './creator-title-section';
 import { CreatorOverview } from './creator-page-overview';
 import Head from 'next/head';
 import { MetricsSection } from './creator-metrics-section';
 import { PopularPostsSection } from './creator-popular-posts';
 import CreatorSkeleton from './creator-skeleton';
-import { useUser } from 'src/hooks/use-user';
+
+import { useReport } from 'src/hooks/use-report';
+import { AddToCampaignModal } from '../modal-add-to-campaign';
 
 export const CreatorPage = ({
     creator_id,
@@ -16,38 +17,27 @@ export const CreatorPage = ({
     creator_id: string;
     platform: CreatorPlatform;
 }) => {
-    const [report, setReport] = useState<CreatorReport | null>(null);
-    const [reportCreatedAt, setReportCreatedAt] = useState<string | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [errorMessage, setErrorMessage] = useState(
-        !creator_id || !platform ? 'Invalid creator URL' : '',
-    );
-    const { profile } = useUser();
+    const { loading, report, getOrCreateReport, reportCreatedAt, errorMessage } = useReport();
 
-    const getOrCreateReport = useCallback(async () => {
-        try {
-            const { createdAt, ...report } = await nextFetch<CreatorReport & { createdAt: string }>(
-                `creators/report?platform=${platform}&creator_id=${creator_id}&company_id=${profile?.company_id}&user_id=${profile?.id}`,
-            );
-            if (!report.success) throw new Error('Failed to fetch report');
-            setReport(report);
-            setReportCreatedAt(createdAt);
-            setLoading(false);
-        } catch (error: any) {
-            setLoading(false);
-            setErrorMessage(error.message);
-        }
-    }, [platform, creator_id, profile]);
+    const [showCampaignListModal, setShowCampaignListModal] = useState(false);
 
     useEffect(() => {
-        if (creator_id && platform && profile?.id) getOrCreateReport();
-    }, [getOrCreateReport, platform, creator_id, profile?.id]);
+        getOrCreateReport(platform, creator_id);
+    }, [getOrCreateReport, platform, creator_id]);
 
     const onAddToCampaign = () => {
-        //TODO: Add to campaign
+        setShowCampaignListModal(true);
     };
     return (
         <div>
+            <AddToCampaignModal
+                show={showCampaignListModal}
+                setShow={setShowCampaignListModal}
+                platform={platform}
+                selectedCreator={{
+                    ...report?.user_profile,
+                }}
+            />
             <Head>
                 <title>{report?.user_profile.fullname || 'relay.club'}</title>
             </Head>
