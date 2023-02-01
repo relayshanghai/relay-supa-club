@@ -2,12 +2,17 @@ import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 import { ChangeEvent, MouseEvent, useRef, useState } from 'react';
 import Link from 'next/link';
-import Trashcan from 'src/components/icons/Trashcan';
+import { Trashcan } from 'src/components/icons';
 import { useCampaigns } from 'src/hooks/use-campaigns';
 import { toast } from 'react-hot-toast';
 import TableInput from './campaign-table-input';
 import { CampaignWithCompanyCreators } from 'src/utils/api/db';
 import { CampaignCreatorDB } from 'src/utils/api/db/types';
+import { SocialMediaIcon } from '../common/social-media-icon';
+import { CreatorContacts } from './creator-contacts';
+import dateFormat from 'src/utils/dateFormat';
+import { SocialMediaPlatform } from 'types';
+import { clientLogger } from 'src/utils/logger';
 
 export default function CreatorsOutreach({
     currentCampaign,
@@ -25,6 +30,7 @@ export default function CreatorsOutreach({
     const { deleteCreatorInCampaign, updateCreatorInCampaign, refreshCampaign } = useCampaigns({
         campaignId: currentCampaign?.id,
     });
+
     const tabs = [
         { label: 'toContact', value: 'to contact' },
         { label: 'contacted', value: 'contacted' },
@@ -48,12 +54,16 @@ export default function CreatorsOutreach({
 
     const columnLabels = [
         'account',
+        'contact',
         'creatorStatus',
         // 'addedBy',
         'nextPoint',
+        'publicationDate',
         'paymentAmount',
         'paidAmount',
+        'paymentInformation',
         'paymentStatus',
+        'kolAddress',
         'sampleStatus',
     ];
 
@@ -81,6 +91,14 @@ export default function CreatorsOutreach({
     ) => {
         e.stopPropagation();
         setToEdit({ index, key });
+    };
+
+    const openNotes = (
+        e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>,
+        creator: CampaignCreatorDB,
+    ) => {
+        // TODO: notes - ticket https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/17
+        clientLogger({ e, creator });
     };
 
     const deleteCampaignCreator = async (
@@ -114,18 +132,18 @@ export default function CreatorsOutreach({
         <div>
             {/* Outreach Tabs */}
             <div className="flex mb-4">
-                <div className="bg-gray-100 rounded-md px-4 py-2 text-sm text-gray-600 mr-4 cursor-pointer hover:bg-primary-500 hover:text-white duration-300 flex-shrink-0">
-                    <Link href="/dashboard">
+                <Link href="/dashboard">
+                    <div className="bg-gray-100 rounded-md px-4 py-2 text-xs text-gray-600 mr-4 cursor-pointer hover:bg-primary-500 hover:text-white duration-300 flex-shrink-0">
                         <a>{t('campaigns.show.activities.outreach.addNewCreator')}</a>
-                    </Link>
-                </div>
+                    </div>
+                </Link>
                 {/* TODO: make Tabs component reusable */}
                 <div className="hidden sm:flex items-center">
                     {tabs.map((tab, index) => (
                         <div
                             key={index}
                             onClick={() => handleTabChange(tab.value)}
-                            className={`font-semibold text-sm mr-4 hover:text-primary-500 hover:bg-primary-500 hover:bg-opacity-20 px-4 py-2 rounded-lg cursor-pointer duration-300 flex-shrink-0 focus:bg-primary-500 focus:text-primary-500 focus:bg-opacity-20 ${
+                            className={`font-semibold text-xs mr-4 hover:text-primary-500 hover:bg-primary-500 hover:bg-opacity-20 px-4 py-2 rounded-lg cursor-pointer duration-300 flex-shrink-0 focus:bg-primary-500 focus:text-primary-500 focus:bg-opacity-20 ${
                                 tabStatus === tab.value
                                     ? 'text-primary-500 bg-primary-500 bg-opacity-20'
                                     : 'text-gray-400 bg-gray-100 '
@@ -139,7 +157,7 @@ export default function CreatorsOutreach({
                     ))}
                 </div>
             </div>
-            {/* Outreach Table  */}
+            {/* -- Outreach Table -- */}
             <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200 overflow-y-visible">
                     <thead className="bg-white sticky top-0">
@@ -148,15 +166,15 @@ export default function CreatorsOutreach({
                                 <th
                                     key={index}
                                     scope="col"
-                                    className={`px-6 py-3 text-left text-xs font-normal text-gray-500 sticky left-0 tracking-wider min-w-[200px] max-w-[200px] bg-white ${
+                                    className={`px-6 py-3 text-left text-xs font-normal text-gray-500 sticky left-0 tracking-wider min-w-fit bg-white ${
                                         index === 0 ? 'sticky left-0 z-10' : ''
                                     }`}
                                 >
                                     {t(`campaigns.show.${label}`)}
                                 </th>
                             ))}
-                            {/*-- placeholder table header space for delete icon --*/}
-                            <th className=" px-3 py-3 text-left text-xs font-normal text-gray-500 sticky bg-white tracking-wider  min-w-[100px] max-w-[100px]">
+                            {/*-- placeholder table header space for notes and delete section --*/}
+                            <th className=" px-3 py-3 text-left text-xs font-normal text-gray-500 sticky right-0 bg-white tracking-wider  min-w-[150px] max-w-[150px] z-30">
                                 {''}
                             </th>
                         </tr>
@@ -167,19 +185,30 @@ export default function CreatorsOutreach({
                                 return (
                                     <tr
                                         key={index}
-                                        className="group hover:bg-primary-50 hover:relative text-sm"
+                                        className="group hover:bg-primary-50 hover:relative text-xs"
                                     >
+                                        {/* -- Account Column -- */}
                                         <td className="px-6 py-4 whitespace-nowrap sticky left-0 group-hover:bg-primary-50 w-[200px] bg-white z-30">
                                             <div className="flex items-center">
-                                                <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300">
+                                                <div className="relative flex-shrink-0 h-10 w-10 rounded-full bg-gray-300">
                                                     <img
                                                         className="h-10 w-10 rounded-full"
                                                         src={`https://image-cache.brainchild-tech.cn/?link=${creator.avatar_url}`}
                                                         alt=""
                                                     />
+                                                    <div className="absolute right-0 bottom-0 ">
+                                                        <SocialMediaIcon
+                                                            platform={
+                                                                creator.platform as SocialMediaPlatform
+                                                            }
+                                                            width={16}
+                                                            height={16}
+                                                            className="opacity-80"
+                                                        />
+                                                    </div>
                                                 </div>
                                                 <div className="ml-4">
-                                                    <div className="text-sm font-medium text-gray-900 truncate">
+                                                    <div className="text-xs font-medium text-gray-900 truncate">
                                                         {creator.fullname}
                                                     </div>
                                                     <div className="text-xs text-primary-500 inline-block truncate">
@@ -187,6 +216,10 @@ export default function CreatorsOutreach({
                                                     </div>
                                                 </div>
                                             </div>
+                                        </td>
+                                        {/* -- Contact Column -- */}
+                                        <td className="px-6 py-4 whitespace-nowrap min-w-[150px]">
+                                            <CreatorContacts {...creator} />
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <select
@@ -219,12 +252,13 @@ export default function CreatorsOutreach({
                                                     </div>
                                                 </div>
                                             ) : (
-                                                <div className="text-sm text-gray-600"> - </div>
+                                                <div className="text-xs text-gray-600"> - </div>
                                             )}
                                         </td> */}
-                                        <td className="px-6 py-4 whitespace-nowrap">
+                                        {/* -- Action Point Column -- */}
+                                        <td className="px-6 py-4 whitespace-normal min-w-[150px] max-w-[200px]">
                                             <div
-                                                className="text-sm text-gray-900 cursor-pointer hover:text-primary-500 duration-300 relative"
+                                                className="text-xs text-gray-900 cursor-pointer hover:text-primary-500 duration-300 relative"
                                                 onClick={(e) =>
                                                     setInlineEdit(e, index, 'next_step')
                                                 }
@@ -233,7 +267,7 @@ export default function CreatorsOutreach({
                                                     className={`${
                                                         editingModeTrue(index, 'next_step')
                                                             ? 'hidden'
-                                                            : ' '
+                                                            : ''
                                                     }`}
                                                 >
                                                     {creator.next_step || (
@@ -242,6 +276,7 @@ export default function CreatorsOutreach({
                                                         </div>
                                                     )}
                                                 </div>
+
                                                 {editingModeTrue(index, 'next_step') && (
                                                     <TableInput
                                                         value={creator.next_step || ''}
@@ -257,9 +292,59 @@ export default function CreatorsOutreach({
                                                 )}
                                             </div>
                                         </td>
+                                        {/* -- Publication Date Column -- */}
+                                        <td className="px-6 py-4 whitespace-nowrap min-w-[0px] max-w-[200px]">
+                                            <div
+                                                className="text-xs text-gray-900 cursor-pointer hover:text-primary-500 duration-300 relative"
+                                                onClick={(e) =>
+                                                    setInlineEdit(e, index, 'publication_date')
+                                                }
+                                            >
+                                                <div
+                                                    className={`${
+                                                        editingModeTrue(index, 'publication_date')
+                                                            ? 'hidden'
+                                                            : ''
+                                                    }`}
+                                                >
+                                                    {dateFormat(
+                                                        creator?.publication_date,
+                                                        'mediumDate',
+                                                        true,
+                                                        true,
+                                                    ) || (
+                                                        <div className="text-primary-500 hover:text-primary-700 cursor-pointer duration-300">
+                                                            {t('campaigns.show.selectDate')}
+                                                        </div>
+                                                    )}
+                                                </div>
+
+                                                {editingModeTrue(index, 'publication_date') && (
+                                                    <TableInput
+                                                        value={
+                                                            dateFormat(
+                                                                creator.publication_date,
+                                                                'isoDate',
+                                                                true,
+                                                                true,
+                                                            ) || ''
+                                                        }
+                                                        type="date"
+                                                        creator={creator}
+                                                        objKey="publication_date"
+                                                        ref={inputRef}
+                                                        updateCampaignCreator={
+                                                            updateCampaignCreator
+                                                        }
+                                                        closeModal={() => setToEdit(null)}
+                                                    />
+                                                )}
+                                            </div>
+                                        </td>
+
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div
-                                                className="text-sm text-left pr-2 text-gray-900 cursor-pointer hover:text-primary-500 duration-300 relative"
+                                                className="text-xs text-left pr-2 text-gray-900 cursor-pointer hover:text-primary-500 duration-300 relative"
                                                 onClick={(e) =>
                                                     setInlineEdit(e, index, 'rate_cents')
                                                 }
@@ -283,7 +368,7 @@ export default function CreatorsOutreach({
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div
-                                                className="text-sm text-left pr-2 text-gray-900 cursor-pointer hover:text-primary-500 duration-300 relative"
+                                                className="text-xs text-left pr-2 text-gray-900 cursor-pointer hover:text-primary-500 duration-300 relative"
                                                 onClick={(e) =>
                                                     setInlineEdit(e, index, 'paid_amount_cents')
                                                 }
@@ -296,6 +381,42 @@ export default function CreatorsOutreach({
                                                         type="number"
                                                         creator={creator}
                                                         objKey="paid_amount_cents"
+                                                        ref={inputRef}
+                                                        updateCampaignCreator={
+                                                            updateCampaignCreator
+                                                        }
+                                                        closeModal={() => setToEdit(null)}
+                                                    />
+                                                )}
+                                            </div>
+                                        </td>
+                                        {/* -- Payment Info Column -- */}
+                                        <td className="px-6 py-4 whitespace-normal min-w-[150px] max-w-[200px]">
+                                            <div
+                                                className="text-xs text-gray-900 cursor-pointer hover:text-primary-500 duration-300 relative"
+                                                onClick={(e) =>
+                                                    setInlineEdit(e, index, 'payment_details')
+                                                }
+                                            >
+                                                <div
+                                                    className={`${
+                                                        editingModeTrue(index, 'payment_details')
+                                                            ? 'hidden'
+                                                            : ' '
+                                                    }`}
+                                                >
+                                                    {creator.payment_details || (
+                                                        <div className="text-primary-500 hover:text-primary-700 cursor-pointer duration-300">
+                                                            {t('campaigns.show.addPaymentInfo')}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                {editingModeTrue(index, 'payment_details') && (
+                                                    <TableInput
+                                                        value={creator.payment_details || ''}
+                                                        type="text"
+                                                        creator={creator}
+                                                        objKey="payment_details"
                                                         ref={inputRef}
                                                         updateCampaignCreator={
                                                             updateCampaignCreator
@@ -325,6 +446,41 @@ export default function CreatorsOutreach({
                                                 ))}
                                             </select>
                                         </td>
+                                        {/* -- KOL Address Column -- */}
+                                        <td className="px-6 py-4whitespace-normal min-w-[150px] max-w-[200px]">
+                                            <div
+                                                className="text-xs text-gray-900 cursor-pointer hover:text-primary-500 duration-300 relative"
+                                                onClick={(e) => setInlineEdit(e, index, 'address')}
+                                            >
+                                                <div
+                                                    className={`${
+                                                        editingModeTrue(index, 'address')
+                                                            ? 'hidden'
+                                                            : ' '
+                                                    }`}
+                                                >
+                                                    {creator.address || (
+                                                        <div className="text-primary-500 hover:text-primary-700 cursor-pointer duration-300">
+                                                            {t('campaigns.show.addAddress')}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                {editingModeTrue(index, 'address') && (
+                                                    <TableInput
+                                                        value={creator.address || ''}
+                                                        type="text"
+                                                        creator={creator}
+                                                        objKey="address"
+                                                        ref={inputRef}
+                                                        updateCampaignCreator={
+                                                            updateCampaignCreator
+                                                        }
+                                                        closeModal={() => setToEdit(null)}
+                                                    />
+                                                )}
+                                            </div>
+                                        </td>
+                                        {/* -- Sample Status Column -- */}
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <select
                                                 onClick={(e) => e.stopPropagation()}
@@ -346,12 +502,23 @@ export default function CreatorsOutreach({
                                             </select>
                                         </td>
 
-                                        <td className="px-6 py-4 sm:sticky right-0 bg-white whitespace-nowrap z-50 group-hover:bg-primary-50 flex justify-end">
-                                            <div
-                                                onClick={(e) => deleteCampaignCreator(e, creator)}
-                                                className="p-2 rounded-md text-gray-600  bg-gray-50 hover:bg-gray-100 border border-gray-200 duration-300 outline-none appearance-none text-center"
-                                            >
-                                                <Trashcan className="w-4 h-4 cursor-pointer fill-tertiary-600 hover:fill-primary-600" />
+                                        <td className="px-6 py-4 sm:sticky right-0 bg-white whitespace-nowrap z-50 group-hover:bg-primary-50 ">
+                                            <div className="flex justify-end">
+                                                <div
+                                                    onClick={(e) => openNotes(e, creator)}
+                                                    className="p-2 rounded-md text-gray-600  bg-gray-50 hover:bg-gray-100 border border-gray-200 duration-300 outline-none appearance-none text-center font-medium mr-2 cursor-pointer"
+                                                >
+                                                    {/* TODO: notes ticket V2-17 */}
+                                                    Notes
+                                                </div>
+                                                <div
+                                                    onClick={(e) =>
+                                                        deleteCampaignCreator(e, creator)
+                                                    }
+                                                    className="p-2 rounded-md text-gray-600  bg-gray-50 hover:bg-gray-100 border border-gray-200 duration-300 outline-none appearance-none text-center cursor-pointer"
+                                                >
+                                                    <Trashcan className="w-4 h-4 fill-tertiary-600 hover:fill-primary-600" />
+                                                </div>
                                             </div>
                                         </td>
                                     </tr>

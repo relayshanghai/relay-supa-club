@@ -63,7 +63,7 @@ export const Search = () => {
 
     const [showCampaignListModal, setShowCampaignListModal] = useState(false);
     const [selectedCreator, setSelectedCreator] = useState<CreatorSearchAccountObject | null>(null);
-    const { campaigns } = useCampaigns();
+    const { campaigns } = useCampaigns({});
 
     const [page, setPage] = useState(0);
     const [loadingMore, setLoadingMore] = useState(false);
@@ -557,6 +557,7 @@ export const Search = () => {
                             {campaigns.map((campaign, index) => (
                                 <CampaignModalCard
                                     campaign={campaign}
+                                    platform={platform}
                                     creator={selectedCreator}
                                     key={index}
                                 />

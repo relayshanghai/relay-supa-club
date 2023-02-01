@@ -2,10 +2,9 @@ import { Layout } from 'src/modules/layout';
 import { useRouter } from 'next/router';
 import { useState, useEffect, ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import dateFormat from 'src/utils//dateFormat';
 import { PencilSquareIcon } from '@heroicons/react/20/solid';
 import Link from 'next/link';
-import CreatorsOutreach from '../../src/components/campaigns/CreatorOutreach';
+import CreatorsOutreach from '../../src/components/campaigns/creator-outreach';
 import CampaignDetails from '../../src/components/campaigns/CampaignDetails';
 import { useCampaigns } from 'src/hooks/use-campaigns';
 import Image from 'next/image';
@@ -18,12 +17,12 @@ export default function CampaignShow() {
         campaign: currentCampaign,
         updateCampaign,
         refreshCampaign,
-    } = useCampaigns({ campaignId: router.query.id });
+    } = useCampaigns({ campaignId: router.query.id as string });
     const supabase = useSupabaseClient();
 
     const [media, setMedia] = useState<{ url: string; name: string }[]>([]);
     const [currentTab, setCurrentTab] = useState(0);
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
 
     const tabs = [
         t('campaigns.show.activities.creatorOutreach'),
@@ -99,12 +98,10 @@ export default function CampaignShow() {
                     <div className="flex flex-col sm:flex-row items-center sm:items-left">
                         <div className="h-32 w-32 sm:mr-4 flex-shrink-0 mb-4 sm:mb-0">
                             <Image
-                                //@ts-ignore
                                 src={media?.[0]?.url || '/assets/imgs/image404.png'}
                                 alt="campaign photo"
                                 width={128}
                                 height={128}
-                                // layout=""
                                 className="object-cover rounded-2xl"
                             />
                         </div>
@@ -130,12 +127,21 @@ export default function CampaignShow() {
                                     {t('campaigns.show.campaignLaunch')}
                                 </div>
                                 <div className="text-sm text-tertiary-600">
-                                    {currentCampaign?.date_start_campaign
-                                        ? //@ts-ignore
-                                          dateFormat(
-                                              currentCampaign?.date_start_campaign,
-                                              'mediumDate',
-                                          )
+                                    {currentCampaign?.date_start_campaign &&
+                                    currentCampaign?.date_end_campaign
+                                        ? `${new Date(
+                                              currentCampaign.date_start_campaign,
+                                          ).toLocaleDateString(i18n.language, {
+                                              year: 'numeric',
+                                              month: 'short',
+                                              day: 'numeric',
+                                          })} - ${new Date(
+                                              currentCampaign.date_end_campaign,
+                                          ).toLocaleDateString(i18n.language, {
+                                              year: 'numeric',
+                                              month: 'short',
+                                              day: 'numeric',
+                                          })}`
                                         : '-'}
                                 </div>
                             </div>

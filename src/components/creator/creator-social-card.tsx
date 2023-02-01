@@ -23,7 +23,7 @@ export const SocialCard = ({ contact }: { contact: CreatorReportContact }) => {
                     </div>
 
                     <div className="ml-2">
-                        <p className="text-gray-600 font-semibold -mb-1 hover:text-primary-500 duration-300 cursor-pointer">
+                        <p className="text-gray-600 font-semibold -mb-1 hover:text-primary-500 duration-300 cursor-pointer truncate">
                             {contact.value}
                         </p>
                         <p className="text-gray-600 text-sm">{contact.type}</p>

@@ -28,7 +28,7 @@ export const SearchResultRow = ({
         creator.account.user_profile.fullname ||
         '';
 
-    // TODO: get real added to pool data
+    // placeholder if we want to reimplement 'pools'
     // const [addedToPool, setAddedToPool] = useState(false);
 
     const addToCampaign = () => {

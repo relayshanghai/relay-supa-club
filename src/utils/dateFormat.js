@@ -19,7 +19,7 @@ const timezone =
 const timezoneClip = /[^-+\dA-Z]/g;
 
 /**
- * @param {string | number | Date} date
+ * @param {string | number | Date | null} date
  * @param {string} mask
  * @param {boolean} utc
  * @param {boolean} gmt
@@ -134,7 +134,7 @@ export default function dateFormat(date, mask, utc, gmt) {
     });
 }
 
-export let masks = {
+export const masks = {
     default: 'ddd mmm dd yyyy HH:MM:ss',
     shortDate: 'm/d/yy',
     paddedShortDate: 'mm/dd/yyyy',
@@ -152,7 +152,7 @@ export let masks = {
 };
 
 // Internationalization strings
-export let i18n = {
+export const i18n = {
     dayNames: [
         'Sun',
         'Mon',

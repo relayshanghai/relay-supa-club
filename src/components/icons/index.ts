@@ -36,5 +36,6 @@ export { default as Spinner } from './Spinner';
 export { default as FourSquare } from './FourSquare';
 export { default as Account } from './Account';
 export { default as HamburgerMenu } from './HamburgerMenu';
+export { default as Link } from './Link';
 export { default as Heart } from './Heart';
 export { default as Edit } from './Edit';

@@ -1,6 +1,6 @@
 import { SVGProps } from 'react';
 import { SocialMediaPlatform } from 'types';
-import { Email, Facebook, Instagram, Tiktok, Twitter, Wechat, Youtube } from '../icons';
+import { Email, Facebook, Instagram, Tiktok, Twitter, Wechat, Youtube, Link } from '../icons';
 
 export const SocialMediaIcon = ({
     platform,
@@ -13,5 +13,6 @@ export const SocialMediaIcon = ({
     if (platform === 'facebook') return <Facebook {...props} />;
     if (platform === 'email') return <Email {...props} />;
     if (platform === 'wechat') return <Wechat {...props} />;
+    return <Link {...props} />;
     return null;
 };

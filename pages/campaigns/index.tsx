@@ -10,9 +10,8 @@ import { t } from 'i18next';
 
 const CampaignsPage = () => {
     const [currentTab, setCurrentTab] = useState('');
-    const loading = false;
 
-    const { campaigns } = useCampaigns();
+    const { campaigns, loading } = useCampaigns({});
 
     const renderCampaigns = () => {
         if (!campaigns?.length) {
@@ -37,7 +36,11 @@ const CampaignsPage = () => {
                         <Button>{t('campaigns.index.createCampaign')}</Button>
                     </Link>
                 </div>
-                {loading ? <Spinner /> : renderCampaigns()}
+                {loading ? (
+                    <Spinner className="mx-auto mt-10 w-10 h-10 fill-primary-600 text-white" />
+                ) : (
+                    renderCampaigns()
+                )}
             </div>
         </Layout>
     );

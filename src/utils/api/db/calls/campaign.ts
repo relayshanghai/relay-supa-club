@@ -13,12 +13,16 @@ export type CampaignWithCompanyCreators = CampaignDB & {
     campaign_creators: CampaignCreatorDB[];
 };
 
-export const getCampaignWithCompanyCreators = async (companyId: string) =>
+export const getCampaignWithCompanyCreators = async (companyId: string) => {
     // If this query changes, make sure to update the CampaignWithCompany type
-    await supabase
+    const { data, error } = await supabase
         .from('campaigns')
         .select('*, companies(id, name, cus_id), campaign_creators(*)')
         .eq('company_id', companyId);
+
+    if (error) throw error;
+    return data as CampaignWithCompanyCreators[];
+};
 
 export const updateCampaign = async (data: CampaignDBUpdate) =>
     await supabase
@@ -30,15 +34,14 @@ export const updateCampaign = async (data: CampaignDBUpdate) =>
         .select()
         .single();
 
-export const insertCampaignCreator = async (data: CampaignCreatorDBInsert, campaign_id: string) =>
+export const insertCampaignCreator = async (data: CampaignCreatorDBInsert) =>
     await supabase
         .from('campaign_creators')
         .insert({
-            campaign_id: data.id,
             status: 'to contact',
             ...data,
         })
-        .eq('campaign_id', campaign_id)
+        .eq('campaign_id', data.campaign_id)
         .select()
         .single();
 
