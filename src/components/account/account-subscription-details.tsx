@@ -11,7 +11,6 @@ import { AccountContext } from './account-context';
 
 export const SubscriptionDetails = () => {
     const { subscription } = useSubscription();
-
     const { userDataLoading, company } = useContext(AccountContext);
 
     const { t, i18n } = useTranslation();
@@ -45,28 +44,39 @@ export const SubscriptionDetails = () => {
                         <div className={`w-full space-y-6 mb-8`}>
                             <div className="flex flex-col space-y-3">
                                 <div className="text-sm">{t('account.subscription.plan')}</div>
-                                <div className="text-sm font-bold ml-2">{subscription.name}</div>
+                                <div className="text-sm font-bold ml-2">
+                                    {subscription.name}
+                                    {subscription.status === 'trialing' &&
+                                        ` - ${t('account.subscription.freeTrial')}`}
+                                    {subscription.status === 'canceled' &&
+                                        ` - ${t('account.subscription.canceled')}`}
+                                </div>
                             </div>
                             <div className="flex flex-col space-y-3">
                                 <div className="text-sm">
                                     {t('account.subscription.paymentCycle')}
                                 </div>
                                 <div className="text-sm font-bold ml-2">
-                                    {subscription.interval}
+                                    {t(`account.subscription.${subscription.interval}`)}
                                 </div>
                             </div>
-                            <div className="flex flex-col space-y-3">
-                                <div className="text-sm">{t('account.subscription.renewsOn')}</div>
-                                <div className="text-sm font-bold ml-2">
-                                    {new Date(
-                                        subscription.current_period_end * SECONDS_IN_MILLISECONDS,
-                                    ).toLocaleDateString(i18n.language, {
-                                        year: 'numeric',
-                                        month: 'short',
-                                        day: 'numeric',
-                                    })}
+                            {subscription.status !== 'canceled' && (
+                                <div className="flex flex-col space-y-3">
+                                    <div className="text-sm">
+                                        {t('account.subscription.renewsOn')}
+                                    </div>
+                                    <div className="text-sm font-bold ml-2">
+                                        {new Date(
+                                            subscription.current_period_end *
+                                                SECONDS_IN_MILLISECONDS,
+                                        ).toLocaleDateString(i18n.language, {
+                                            year: 'numeric',
+                                            month: 'short',
+                                            day: 'numeric',
+                                        })}
+                                    </div>
                                 </div>
-                            </div>
+                            )}
                         </div>
                         <table>
                             <thead>

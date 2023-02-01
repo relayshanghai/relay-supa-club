@@ -1,10 +1,16 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-// import { useSubscription } from 'src/hooks/use-subscription';
+import {
+    SubscriptionConfirmModal,
+    SubscriptionConfirmModalData,
+} from 'src/components/account/subscription-confirm-modal';
+import { Button } from 'src/components/button';
+import { useSubscription } from 'src/hooks/use-subscription';
 import { Layout } from 'src/modules/layout';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger';
-import { SubscriptionPricesGetResponse } from './api/subscriptions/prices';
+import type { SubscriptionPeriod } from 'types';
+import type { SubscriptionPricesGetResponse } from './api/subscriptions/prices';
 const details = {
     diy: [
         { title: 'twoHundredNewInfluencerProfilesPerMonth', icon: 'check' },
@@ -52,7 +58,6 @@ const VIPEmailLink = `mailto:${salesRefEmail}?${new URLSearchParams({ subject, b
 const unselectedTabClasses = 'py-1 px-4 border-x border-primary-500 cursor-pointer';
 const selectedTabClasses = 'py-1 px-4 border-x border-primary-500 bg-primary-500 text-white';
 
-export type Period = 'monthly' | 'annually' | 'quarterly';
 type PriceTiers = {
     diy: string;
     diyMax: string;
@@ -89,12 +94,22 @@ const formatPrice = (
 /** Note: This file doesn't share a lot of the conventions we have elsewhere across the app, because this file is migrated from the marketing site, trying to make minimal changes in case we need to update both at the same time. */
 const Pricing = () => {
     const { t } = useTranslation();
-    // TODO task V2-26p: disable buttons for already subscribed plan
-    // const { subscription } = useSubscription();
+    const { subscription, createSubscription } = useSubscription();
+    const [period, setPeriod] = useState<SubscriptionPeriod>('annually');
+    const [confirmModalData, setConfirmModalData] = useState<SubscriptionConfirmModalData | null>(
+        null,
+    );
+    const [priceIds, setPriceIds] = useState<{
+        diy: { monthly: string; quarterly: string; annually: string };
+        diyMax: { monthly: string; quarterly: string; annually: string };
+    } | null>(null);
 
-    const [period, setPeriod] = useState<Period>('annually');
-
-    const openConfirmModal = (plan: 'diy' | 'diyMax', period: Period) => {
+    const openConfirmModal = (
+        plan: 'diy' | 'diyMax',
+        period: SubscriptionPeriod,
+        priceId: string,
+    ) => {
+        setConfirmModalData({ plan, period, priceId, price: prices[period][plan] });
         clientLogger({ plan, period });
     };
 
@@ -139,6 +154,7 @@ const Pricing = () => {
                 };
 
                 setPrices({ monthly, quarterly, annually });
+                setPriceIds({ diy: diy.priceIds, diyMax: diyMax.priceIds });
             } catch (error) {
                 clientLogger(error, 'error');
             }
@@ -147,8 +163,24 @@ const Pricing = () => {
         fetchPrices();
     }, [t]);
 
+    const disableButton = (plan: 'diy' | 'diyMax') => {
+        if (!priceIds || !subscription?.name || !subscription.interval || !subscription.status)
+            return true;
+        const planName = plan === 'diyMax' ? 'DIY Max' : 'DIY';
+        return (
+            subscription.name === planName &&
+            subscription.interval === period &&
+            subscription.status === 'active'
+        );
+    };
+
     return (
         <Layout>
+            <SubscriptionConfirmModal
+                confirmModalData={confirmModalData}
+                setConfirmModalData={setConfirmModalData}
+                createSubscription={createSubscription}
+            />
             <main className="pt-20 flex-grow">
                 <div className="flex flex-col items-center container mx-auto">
                     <div className="text-center max-w-3xl mx-auto mb-16">
@@ -268,9 +300,16 @@ const Pricing = () => {
                                     );
                                 })}
 
-                                <a
-                                    onClick={() => openConfirmModal('diy', period)}
-                                    className="flex items-center mt-auto text-white bg-gray-400 border-0 py-2 px-4 w-full focus:outline-none hover:bg-gray-500 rounded"
+                                <Button
+                                    onClick={() =>
+                                        openConfirmModal(
+                                            'diy',
+                                            period,
+                                            priceIds ? priceIds['diy'][period] : '',
+                                        )
+                                    }
+                                    disabled={disableButton('diy')}
+                                    className="flex"
                                 >
                                     {t('pricing.buyNow')}
                                     <svg
@@ -284,7 +323,7 @@ const Pricing = () => {
                                     >
                                         <path d="M5 12h14M12 5l7 7-7 7" />
                                     </svg>
-                                </a>
+                                </Button>
                             </div>
                         </div>
                         <div className="p-4 lg:w-1/3 md:w-1/2 w-full hover:-translate-y-3 transition-all ease-in-out">
@@ -370,9 +409,16 @@ const Pricing = () => {
                                     </div>
                                 ))}
 
-                                <button
-                                    onClick={() => openConfirmModal('diyMax', period)}
-                                    className="flex items-center mt-auto text-white bg-primary-500 border-0 py-2 px-4 w-full focus:outline-none hover:bg-primary-600 rounded"
+                                <Button
+                                    onClick={() =>
+                                        openConfirmModal(
+                                            'diyMax',
+                                            period,
+                                            priceIds ? priceIds['diyMax'][period] : '',
+                                        )
+                                    }
+                                    disabled={disableButton('diyMax')}
+                                    className="flex"
                                 >
                                     {t('pricing.buyNow')}
                                     <svg
@@ -386,7 +432,7 @@ const Pricing = () => {
                                     >
                                         <path d="M5 12h14M12 5l7 7-7 7" />
                                     </svg>
-                                </button>
+                                </Button>
                             </div>
                         </div>
                         <div className="p-4 lg:w-1/3 md:w-1/2 w-full hover:-translate-y-3 transition-all ease-in-out">
@@ -471,20 +517,22 @@ const Pricing = () => {
                                     href={VIPEmailLink}
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="flex items-center mt-auto text-white bg-gray-400 border-0 py-2 px-4 w-full focus:outline-none hover:bg-gray-500 rounded"
+                                    className="mt-auto"
                                 >
-                                    {t('pricing.contactNow')}
-                                    <svg
-                                        fill="none"
-                                        stroke="currentColor"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        className="w-4 h-4 ml-auto"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path d="M5 12h14M12 5l7 7-7 7" />
-                                    </svg>
+                                    <Button className="flex w-full">
+                                        {t('pricing.contactNow')}
+                                        <svg
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            className="w-4 h-4 ml-auto"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path d="M5 12h14M12 5l7 7-7 7" />
+                                        </svg>
+                                    </Button>
                                 </a>
                             </div>
                         </div>

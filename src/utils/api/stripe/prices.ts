@@ -62,6 +62,11 @@ export const getStripePlanPrices = async () => {
             },
             profiles: diyMonthly.product.metadata.profiles,
             searches: diyMonthly.product.metadata.searches,
+            priceIds: {
+                monthly: diyMonthly.id,
+                quarterly: diyQuarterly.id,
+                annually: diyAnnually.id,
+            },
         },
         diyMax: {
             currency,
@@ -72,6 +77,11 @@ export const getStripePlanPrices = async () => {
             },
             profiles: diyMaxMonthly.product.metadata.profiles,
             searches: diyMaxMonthly.product.metadata.searches,
+            priceIds: {
+                monthly: diyMaxMonthly.id,
+                quarterly: diyMaxQuarterly.id,
+                annually: diyMaxAnnually.id,
+            },
         },
     };
     return response;

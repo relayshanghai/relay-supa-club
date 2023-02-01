@@ -5,6 +5,7 @@ import { serverLogger } from 'src/utils/logger';
 
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 import Stripe from 'stripe';
+import { SubscriptionPeriod } from 'types';
 
 export type SubscriptionGetQueries = {
     /** company id */
@@ -12,8 +13,7 @@ export type SubscriptionGetQueries = {
 };
 export type SubscriptionGetResponse = {
     name: string;
-    /** monthly, quarterly, yearly */
-    interval: string;
+    interval: SubscriptionPeriod;
     /** date in seconds */
     current_period_end: number;
     status: Stripe.Subscription.Status;
@@ -40,6 +40,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const subscriptions = await stripeClient.subscriptions.list({
                 customer: cusId,
                 status: 'active',
+                expand: ['data.plan.product'],
             });
             let subscription = subscriptions.data[0] as StripeSubscriptionWithPlan;
             if (!subscription) {
@@ -54,7 +55,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         error: 'No subscription data',
                     });
             }
-
             const returnData: SubscriptionGetResponse = {
                 name: subscription.plan.product.name,
                 interval:
@@ -62,7 +62,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         ? subscription.plan.interval_count === 3
                             ? 'quarterly'
                             : 'monthly'
-                        : subscription.plan.interval,
+                        : 'annually',
                 current_period_end: subscription.current_period_end,
                 status: subscription.status,
             };

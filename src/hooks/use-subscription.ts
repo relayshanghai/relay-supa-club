@@ -1,5 +1,8 @@
 import { SubscriptionGetQueries, SubscriptionGetResponse } from 'pages/api/subscriptions';
-import { SubscriptionCreatePostBody } from 'pages/api/subscriptions/create';
+import {
+    SubscriptionCreatePostBody,
+    SubscriptionCreatePostResponse,
+} from 'pages/api/subscriptions/create';
 import {
     SubscriptionCreateTrialPostBody,
     SubscriptionCreateTrialResponse,
@@ -50,7 +53,7 @@ export const useSubscription = () => {
                 price_id: priceId,
                 company_id: profile?.company_id,
             };
-            const res = await nextFetch('subscriptions/create', {
+            const res = await nextFetch<SubscriptionCreatePostResponse>('subscriptions/create', {
                 method: 'post',
                 body: JSON.stringify(body),
             });
