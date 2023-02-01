@@ -7,19 +7,20 @@ import { isValidUrl } from 'src/utils/utils';
 import { clientLogger } from 'src/utils/logger';
 import ContactsSkeleton from './creator-contacts-skeleton';
 
+const getHref = (contact: CreatorReportContact) => ({
+    target: '_blank',
+    rel: 'noreferrer',
+    href:
+        contact.type === 'email'
+            ? 'mailto:' + contact.formatted_value
+            : isValidUrl(contact.formatted_value)
+            ? contact.formatted_value
+            : '',
+});
+
 export const CreatorContacts = (creator: CampaignCreatorDB) => {
     const { getOrCreateReport, report, loading } = useReport();
 
-    const getHref = (contact: CreatorReportContact) => ({
-        target: '_blank',
-        rel: 'noreferrer',
-        href:
-            contact.type === 'email'
-                ? 'mailto:' + contact.formatted_value
-                : isValidUrl(contact.formatted_value)
-                ? contact.formatted_value
-                : ''
-    });
     const getCreatorContacts = useCallback(
         async (creator: CampaignCreatorDB) => {
             try {
@@ -31,7 +32,7 @@ export const CreatorContacts = (creator: CampaignCreatorDB) => {
                 clientLogger(error, 'error');
             }
         },
-        [getOrCreateReport]
+        [getOrCreateReport],
     );
 
     useEffect(() => {
@@ -55,9 +56,7 @@ export const CreatorContacts = (creator: CampaignCreatorDB) => {
                                             <div className="w-4 h-4 group-hover:opacity-80 mr-1">
                                                 <SocialMediaIcon platform={contact.type} />
                                             </div>
-                                            <div
-                                                className={`mt-1 group/text invisible group-hover/item:visible group-hover/edit:opacity-100 absolute inset-x-0 -bottom-6 text-xs text-primary-500`}
-                                            >
+                                            <div className="mt-1 group/text invisible group-hover/item:visible group-hover/edit:opacity-100 absolute inset-x-0 -bottom-6 text-xs text-primary-500">
                                                 {contact.value}
                                             </div>
                                         </a>

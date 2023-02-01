@@ -1,6 +1,7 @@
 import { CreatorsReportGetQueries, CreatorsReportGetResponse } from 'pages/api/creators/report';
 import { useCallback, useState } from 'react';
 import { nextFetchWithQueries } from 'src/utils/fetcher';
+import { clientLogger } from 'src/utils/logger';
 import { CreatorPlatform, CreatorReport } from 'types';
 import { useUser } from './use-user';
 
@@ -23,18 +24,19 @@ export const useReport = () => {
                     platform,
                     creator_id,
                     company_id: profile?.company_id,
-                    user_id: profile?.id
+                    user_id: profile?.id,
                 });
                 if (!report.success) throw new Error('Failed to fetch report');
                 setReport(report);
                 setReportCreatedAt(createdAt);
                 setLoading(false);
             } catch (error: any) {
-                setErrorMessage(error.message);
+                clientLogger(error, 'error');
+                setErrorMessage(error?.message || 'Failed fetching report');
                 setLoading(false);
             }
         },
-        [profile]
+        [profile],
     );
 
     return {
@@ -42,6 +44,6 @@ export const useReport = () => {
         getOrCreateReport,
         report,
         reportCreatedAt,
-        errorMessage
+        errorMessage,
     };
 };

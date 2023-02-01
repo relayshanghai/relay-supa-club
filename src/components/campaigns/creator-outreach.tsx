@@ -12,6 +12,7 @@ import { SocialMediaIcon } from '../common/social-media-icon';
 import { CreatorContacts } from './creator-contacts';
 import dateFormat from 'src/utils/dateFormat';
 import { SocialMediaPlatform } from 'types';
+import { clientLogger } from 'src/utils/logger';
 
 export default function CreatorsOutreach({
     currentCampaign,
@@ -96,8 +97,8 @@ export default function CreatorsOutreach({
         e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>,
         creator: CampaignCreatorDB,
     ) => {
-        //eslint-disable-next-line
-        console.log(e, creator);
+        // TODO: notes - ticket https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/17
+        clientLogger({ e, creator });
     };
 
     const deleteCampaignCreator = async (
@@ -507,6 +508,7 @@ export default function CreatorsOutreach({
                                                     onClick={(e) => openNotes(e, creator)}
                                                     className="p-2 rounded-md text-gray-600  bg-gray-50 hover:bg-gray-100 border border-gray-200 duration-300 outline-none appearance-none text-center font-medium mr-2 cursor-pointer"
                                                 >
+                                                    {/* TODO: notes ticket V2-17 */}
                                                     Notes
                                                 </div>
                                                 <div
