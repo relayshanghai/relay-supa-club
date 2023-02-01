@@ -44,7 +44,7 @@ export const SearchResultRow = ({
                         {t('creators.addToCampaign')}
                     </Button>
                     <Button onClick={() => setLookalike(creator)} variant="secondary">
-                        {t('creators.similarKol')}
+                        {t('creators.similarInfluencer')}
                     </Button>
                     <Button>
                         <Link href={`/creator/${platform}/${creator.account.user_profile.user_id}`}>

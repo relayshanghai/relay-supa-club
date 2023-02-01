@@ -63,7 +63,7 @@ export default function CreatorsOutreach({
         'paidAmount',
         'paymentInformation',
         'paymentStatus',
-        'kolAddress',
+        'influencerAddress',
         'sampleStatus',
     ];
 
@@ -81,7 +81,7 @@ export default function CreatorsOutreach({
         creator = { ...creator, [objKey]: e.target.value };
         await updateCreatorInCampaign(creator);
         refreshCampaign();
-        toast.success(t('campaigns.creatorModal.kolUpdated'));
+        toast.success(t('campaigns.creatorModal.influencerUpdated'));
     };
 
     const setInlineEdit = (
@@ -117,7 +117,7 @@ export default function CreatorsOutreach({
         await updateCreatorInCampaign(creator);
         setToEdit(null);
         refreshCampaign();
-        toast.success(t('campaigns.creatorModal.kolUpdated'));
+        toast.success(t('campaigns.creatorModal.influencerUpdated'));
     };
 
     // get the number of creators in each status
@@ -446,7 +446,7 @@ export default function CreatorsOutreach({
                                                 ))}
                                             </select>
                                         </td>
-                                        {/* -- KOL Address Column -- */}
+                                        {/* -- Influencer Address Column -- */}
                                         <td className="px-6 py-4whitespace-normal min-w-[150px] max-w-[200px]">
                                             <div
                                                 className="text-xs text-gray-900 cursor-pointer hover:text-primary-500 duration-300 relative"

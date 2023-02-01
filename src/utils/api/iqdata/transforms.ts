@@ -4,7 +4,7 @@ export interface FetchCreatorsFilteredParams {
     platform?: CreatorPlatform;
     tags?: { tag: string }[];
     lookalike?: CreatorAccount[];
-    KOLLocation?: LocationWeighted[];
+    influencerLocation?: LocationWeighted[];
     audienceLocation?: LocationWeighted[];
     resultsPerPageLimit?: number;
     page?: number;
@@ -26,7 +26,7 @@ export const prepareFetchCreatorsFiltered = ({
 
     tags = [],
     lookalike = [],
-    KOLLocation = [],
+    influencerLocation = [],
     audienceLocation = [],
     resultsPerPageLimit = 10,
     page = 0,
@@ -46,7 +46,7 @@ export const prepareFetchCreatorsFiltered = ({
         },
         filter: {
             audience_geo: audienceLocation.map(locationTransform) || [],
-            geo: KOLLocation.map(locationTransform) || [],
+            geo: influencerLocation.map(locationTransform) || [],
             gender: gender ? { code: gender.toUpperCase() } : '',
             lang: '',
             last_posted: lastPost || '',
