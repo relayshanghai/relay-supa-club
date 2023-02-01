@@ -8,13 +8,13 @@ import { Title } from './title';
 
 const ActiveLink = ({ href, children }: { href: string; children: string }) => {
     const router = useRouter();
-    const pathRoot = router.pathname.split('/')[1]; // /dashboard/creators => dashboard
-    const hrefRoot = href.split('/')[1]; // /dashboard/creators => dashboard
+    const pathRoot = router.pathname.split('/')[1]; // /dashboard/influencers => dashboard
+    const hrefRoot = href.split('/')[1]; // /dashboard/influencers => dashboard
 
     let isRouteActive = pathRoot === hrefRoot;
 
-    // creators page special case
-    if (pathRoot === 'creator' && hrefRoot === 'dashboard') {
+    // influencers page special case
+    if (pathRoot === 'influencer' && hrefRoot === 'dashboard') {
         isRouteActive = true;
     }
 
@@ -25,7 +25,7 @@ const ActiveLink = ({ href, children }: { href: string; children: string }) => {
                     isRouteActive ? 'text-primary-500 border-primary-500 border-l-4' : ''
                 }`}
             >
-                {(hrefRoot === 'creator' || hrefRoot === 'dashboard') && (
+                {(hrefRoot === 'influencer' || hrefRoot === 'dashboard') && (
                     <Compass height={18} width={18} className="mr-4 text-inherit" />
                 )}
                 {hrefRoot === 'campaigns' && (
@@ -46,9 +46,9 @@ const NavBarInner = ({ loggedIn }: { loggedIn: boolean | null }) => (
             <Title />
         </div>
         <div className="flex flex-col space-y-4 mt-8">
-            <ActiveLink href="/dashboard">{t('navbar.button.creators')}</ActiveLink>
-            <ActiveLink href="/campaigns">{t('navbar.button.campaigns')}</ActiveLink>
-            {loggedIn && <ActiveLink href="/account">{t('navbar.button.account')}</ActiveLink>}
+            <ActiveLink href="/dashboard">{t('navbar.influencers')}</ActiveLink>
+            <ActiveLink href="/campaigns">{t('navbar.campaigns')}</ActiveLink>
+            {loggedIn && <ActiveLink href="/account">{t('navbar.account')}</ActiveLink>}
         </div>
     </>
 );

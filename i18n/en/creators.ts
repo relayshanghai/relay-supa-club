@@ -1,15 +1,9 @@
 const creators = {
-    title: 'Influencer',
-    searchBar: 'Search by similar influencer',
-    newCreator: 'New Creator',
     loadMore: 'Load more',
-    searchResults: 'Channels matching your profile search',
     results: 'Total Results',
     noResults: 'No results found',
     clearFilter: 'Clear',
-    selectedCreatorsDescr:
-        'Helps you find your influencer by name and also recommends ones that post similar content the influencer you are looking for.',
-    selectedCreators: 'Search based on the following influencers',
+
     subscribers: 'Followers',
     avgViews: 'Avg. Views',
     engagements: 'Engagements',
@@ -29,7 +23,7 @@ const creators = {
         viewFullProfile: 'View Full Profile',
     },
     filter: {
-        title: 'Filter Creator',
+        title: 'Filter Influencers',
         intro: 'Narrow down to the ideal influencers for your brand!',
         choosePlatform: 'Choose your platform',
         influencerFilters: 'Influencer Filters',
@@ -146,7 +140,7 @@ const creators = {
             avgViews: 'The average sum of views on the last 30 posts',
             avgComments: 'The average sum of comments on the last 30 posts',
             avgLikes: 'The average sum of likes on the last 30 posts',
-            creatorLocation:
+            influencerLocation:
                 'We determine influencer location by analyzing location tags, language, caption in recent posts and text in bio.',
             engRate: 'Avg Likes divided by followers',
             lookAlikes: 'Influencers who write about similar topics',
@@ -159,25 +153,6 @@ const creators = {
             language: 'We determine this by analyzing texts in the recent posts',
         },
         audienceGenderAge: 'Audience gender by age',
-    },
-    form: {
-        createCreator: 'Create Influencer',
-        editCreator: 'Edit Influencer',
-        cancel: 'Cancel',
-        createProfile: 'Create Profile',
-        nameQuestion: 'Name',
-        nameDescription: 'Enter the name of the creator',
-        regionQuestion: 'Region',
-        regionDescription: 'Where is the creator located?',
-        avatarQuestion: 'Avatar',
-        avatarDescription: 'Upload an image to display the creator',
-        descriptionQuestion: 'Description',
-        descriptionDescription: 'Write a little description about this creator',
-        categoriesQuestion: 'Categories',
-        categoriesDescription: 'Specify the categories this creator is active in',
-        platformQuestion: 'Platform Active',
-        platformDescription: 'Please specify which platforms this creator is active on',
-        submitting: 'Submitting',
     },
 };
 

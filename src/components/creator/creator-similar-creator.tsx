@@ -43,7 +43,7 @@ export const SimilarCreator = ({
             </div>
             <div className="flex items-center ml-4">
                 <Button variant="secondary" className="px-3 py-1">
-                    <Link href={`/creator/${platform}/${creator.user_id}`}>
+                    <Link href={`/influencer/${platform}/${creator.user_id}`}>
                         <a>{t('creators.analyzeProfile')}</a>
                     </Link>
                 </Button>

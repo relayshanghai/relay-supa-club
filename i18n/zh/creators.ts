@@ -1,15 +1,9 @@
 const creators = {
-    title: '海外KOL ',
-    searchBar: '搜索类似KOL',
-    newCreator: '创建 KOL',
     loadMore: '更多',
-    searchResults: '为您找到相关结果',
     results: '结果',
     noResults: '无结果',
     clearFilter: '清除筛选',
-    selectedCreatorsDescr:
-        '帮助您按名称找到您的 KOL, 并推荐与您正在寻找的 KOL 发布类似内容的 KOL。',
-    selectedCreators: '根据以下KOL搜索',
+
     subscribers: '粉丝',
     avgViews: '平均观看量',
     engagements: '互动次数',
@@ -145,7 +139,7 @@ const creators = {
             avgViews: '最近 30 个视频的平均观看量总数。',
             avgComments: '最近 30 个视频的平均评论总数',
             avgLikes: '最近 30 个视频的平均点赞数',
-            creatorLocation:
+            influencerLocation:
                 '我们通过分析最近视频中的位置标签、语言、标题和KOL 的简介内容来确定 KOL 位置。',
             engRate: '平均点赞量除以粉丝量',
             lookAlikes: '写类似话题的KOL。',
@@ -155,25 +149,6 @@ const creators = {
             language: '我们通过最近发布内容的文字来判断',
         },
         audienceGenderAge: '粉丝性别年龄',
-    },
-    form: {
-        createCreator: '创建KOL',
-        editCreator: '编辑KOL',
-        cancel: '取消',
-        createProfile: '创建KOL资料',
-        nameQuestion: 'KOL名称',
-        nameDescription: '请输入KOL的名字',
-        regionQuestion: '地区',
-        regionDescription: 'KOL所在的地区？',
-        avatarQuestion: '头像',
-        avatarDescription: '请上传一张KOL的头像',
-        descriptionQuestion: 'KOL介绍',
-        descriptionDescription: '关于此KOL的描述',
-        categoriesQuestion: '分类',
-        categoriesDescription: '请选择此KOL擅长及活跃的类型',
-        platformQuestion: '活跃平台',
-        platformDescription: '请选择此KOL活跃的平台',
-        submitting: '提交中',
     },
 };
 export default creators;

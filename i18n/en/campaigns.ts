@@ -99,8 +99,6 @@ const campaigns = {
             completed: 'Completed',
         },
         submitting: 'Submitting',
-        creatorSearch: 'Search & Add Influencer',
-        searchForCreator: 'Search for Influencer',
         editCampaign: 'Edit Campaign',
         promotionPlatforms: 'Promotion Platforms',
         typeOfPromotion: 'Type of Promotion',
@@ -140,11 +138,11 @@ const campaigns = {
         important: 'Important',
         importantMessages: 'Important Messages',
         activities: {
-            creatorOutreach: 'Influencer Outreach',
+            influencerOutreach: 'Influencer Outreach',
             campaignInfo: 'Campaign Info',
             campaignTracking: 'Campaign Tracking',
             outreach: {
-                addNewCreator: 'Add New Influencer',
+                addNewInfluencer: 'Add New Influencer',
                 all: 'All',
                 toContact: 'To Contact',
                 contacted: 'Contacted',

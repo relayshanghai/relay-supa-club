@@ -134,7 +134,7 @@ export default function CreatorsOutreach({
             <div className="flex mb-4">
                 <Link href="/dashboard">
                     <div className="bg-gray-100 rounded-md px-4 py-2 text-xs text-gray-600 mr-4 cursor-pointer hover:bg-primary-500 hover:text-white duration-300 flex-shrink-0">
-                        <a>{t('campaigns.show.activities.outreach.addNewCreator')}</a>
+                        <a>{t('campaigns.show.activities.outreach.addNewInfluencer')}</a>
                     </div>
                 </Link>
                 {/* TODO: make Tabs component reusable */}

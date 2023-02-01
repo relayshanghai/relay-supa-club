@@ -25,7 +25,7 @@ export default function CampaignShow() {
     const { t, i18n } = useTranslation();
 
     const tabs = [
-        t('campaigns.show.activities.creatorOutreach'),
+        t('campaigns.show.activities.influencerOutreach'),
         t('campaigns.show.activities.campaignInfo'),
     ];
 

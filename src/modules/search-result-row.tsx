@@ -47,7 +47,9 @@ export const SearchResultRow = ({
                         {t('creators.similarInfluencer')}
                     </Button>
                     <Button>
-                        <Link href={`/creator/${platform}/${creator.account.user_profile.user_id}`}>
+                        <Link
+                            href={`/influencer/${platform}/${creator.account.user_profile.user_id}`}
+                        >
                             <a>{t('creators.analyzeProfile')}</a>
                         </Link>
                     </Button>

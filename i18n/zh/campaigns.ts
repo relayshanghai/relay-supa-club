@@ -93,8 +93,6 @@ const campaigns = {
             completed: '已完成',
         },
         submitting: '提交中',
-        creatorSearch: '搜索和添加KOL',
-        searchForCreator: '搜索KOL',
         editCampaign: '编辑项目',
         promotionPlatforms: '推广平台',
         typeOfPromotion: '推广类型',
@@ -134,11 +132,11 @@ const campaigns = {
         important: '重要',
         importantMessages: '重要消息',
         activities: {
-            creatorOutreach: 'KOL 招募',
+            influencerOutreach: 'KOL 招募',
             campaignInfo: '项目信息',
             campaignTracking: 'Campaign Tracking',
             outreach: {
-                addNewCreator: '添加KOL',
+                addNewInfluencer: '添加KOL',
                 all: '全部',
                 toContact: '待联系',
                 contacted: '已联系',
