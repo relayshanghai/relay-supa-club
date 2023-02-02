@@ -22,7 +22,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const activeSubscription = await getSubscription(company_id);
             if (!activeSubscription)
                 return res.status(httpCodes.NOT_FOUND).json({
-                    error: 'No subscription data',
+                    error: 'No active subscription to cancel',
                 });
 
             const subscription: SubscriptionCancelPostResponse =
