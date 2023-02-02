@@ -164,14 +164,18 @@ const Pricing = () => {
     }, [t]);
 
     const isCurrentPlan = (plan: 'diy' | 'diyMax') => {
-        if (!priceIds || !subscription?.name || !subscription.interval || !subscription.status)
-            return true;
         const planName = plan === 'diyMax' ? 'DIY Max' : 'DIY';
         return (
-            subscription.name === planName &&
+            subscription?.name === planName &&
             subscription.interval === period &&
             subscription.status === 'active'
         );
+    };
+
+    const disableButton = (plan: 'diy' | 'diyMax') => {
+        if (!priceIds || !subscription?.name || !subscription.interval || !subscription.status)
+            return true;
+        if (isCurrentPlan(plan)) return true;
     };
 
     return (
@@ -308,7 +312,7 @@ const Pricing = () => {
                                             priceIds ? priceIds['diy'][period] : '',
                                         )
                                     }
-                                    disabled={isCurrentPlan('diy')}
+                                    disabled={disableButton('diy')}
                                     className="flex"
                                 >
                                     {isCurrentPlan('diy')
@@ -419,7 +423,7 @@ const Pricing = () => {
                                             priceIds ? priceIds['diyMax'][period] : '',
                                         )
                                     }
-                                    disabled={isCurrentPlan('diyMax')}
+                                    disabled={disableButton('diyMax')}
                                     className="flex"
                                 >
                                     {isCurrentPlan('diyMax')
