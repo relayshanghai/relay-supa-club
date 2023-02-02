@@ -17,8 +17,8 @@ export const usageError = {
     invalidStatus: 'Invalid subscription status',
 };
 
-const handleCurrentPeriodExpired = async (company_id: string) => {
-    const subscription = await getSubscription(company_id);
+const handleCurrentPeriodExpired = async (companyId: string) => {
+    const subscription = await getSubscription(companyId);
     if (!subscription) {
         return { error: usageError.noSubscription };
     }
@@ -43,7 +43,7 @@ const handleCurrentPeriodExpired = async (company_id: string) => {
     const subscription_current_period_end = unixEpochToISOString(current_period_end);
 
     await updateCompanySubscriptionStatus({
-        id: company_id,
+        id: companyId,
         subscription_status,
         subscription_current_period_start,
         subscription_current_period_end,
