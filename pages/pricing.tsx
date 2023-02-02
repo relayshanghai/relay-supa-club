@@ -163,7 +163,7 @@ const Pricing = () => {
         fetchPrices();
     }, [t]);
 
-    const disableButton = (plan: 'diy' | 'diyMax') => {
+    const isCurrentPlan = (plan: 'diy' | 'diyMax') => {
         if (!priceIds || !subscription?.name || !subscription.interval || !subscription.status)
             return true;
         const planName = plan === 'diyMax' ? 'DIY Max' : 'DIY';
@@ -308,10 +308,12 @@ const Pricing = () => {
                                             priceIds ? priceIds['diy'][period] : '',
                                         )
                                     }
-                                    disabled={disableButton('diy')}
+                                    disabled={isCurrentPlan('diy')}
                                     className="flex"
                                 >
-                                    {t('pricing.buyNow')}
+                                    {isCurrentPlan('diy')
+                                        ? t('pricing.yourCurrentPlan')
+                                        : t('pricing.buyNow')}
                                     <svg
                                         fill="none"
                                         stroke="currentColor"
@@ -417,10 +419,12 @@ const Pricing = () => {
                                             priceIds ? priceIds['diyMax'][period] : '',
                                         )
                                     }
-                                    disabled={disableButton('diyMax')}
+                                    disabled={isCurrentPlan('diyMax')}
                                     className="flex"
                                 >
-                                    {t('pricing.buyNow')}
+                                    {isCurrentPlan('diyMax')
+                                        ? t('pricing.yourCurrentPlan')
+                                        : t('pricing.buyNow')}
                                     <svg
                                         fill="none"
                                         stroke="currentColor"
