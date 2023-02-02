@@ -1,11 +1,10 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
-import { getCompanyCusId } from 'src/utils/api/db';
 import { serverLogger } from 'src/utils/logger';
 
-import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 import Stripe from 'stripe';
 import { SubscriptionPeriod } from 'types';
+import { getSubscription } from 'src/utils/api/stripe/helpers';
 
 export type SubscriptionGetQueries = {
     /** company id */
@@ -19,50 +18,36 @@ export type SubscriptionGetResponse = {
     status: Stripe.Subscription.Status;
 };
 
-interface ExpandedPlanWithProduct extends Stripe.Plan {
-    product: Stripe.Product;
-}
-// Due to some poor typing in the Stripe SDK, we need to manually type this.
-interface StripeSubscriptionWithPlan extends Stripe.Subscription {
-    plan: ExpandedPlanWithProduct;
-}
-
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'GET') {
         const { id: companyId } = req.query as SubscriptionGetQueries;
         try {
             if (!companyId || typeof companyId !== 'string') throw new Error('No company id');
-            const { data, error } = await getCompanyCusId(companyId);
-            const cusId = data?.cus_id;
-            if (error) throw error;
-            if (!cusId) throw new Error('No data');
 
-            const subscriptions = await stripeClient.subscriptions.list({
-                customer: cusId,
-                status: 'active',
-                expand: ['data.plan.product'],
-            });
-            let subscription = subscriptions.data[0] as StripeSubscriptionWithPlan;
-            if (!subscription) {
-                const trial = await stripeClient.subscriptions.list({
-                    customer: cusId,
-                    status: 'trialing',
-                    expand: ['data.plan.product'],
+            const subscription = await getSubscription(companyId);
+            if (!subscription)
+                return res.status(httpCodes.NOT_FOUND).json({
+                    error: 'No subscription data',
                 });
-                subscription = trial.data[0] as StripeSubscriptionWithPlan;
-                if (!subscription)
-                    return res.status(httpCodes.NOT_FOUND).json({
-                        error: 'No subscription data',
-                    });
+            const intervalCount = subscription.plan.interval_count;
+            if (intervalCount !== 1 && intervalCount !== 3) {
+                throw new Error('Invalid interval count');
             }
+            const interval =
+                subscription.plan.interval === 'month'
+                    ? intervalCount === 3
+                        ? 'quarterly'
+                        : 'monthly'
+                    : subscription.plan.interval === 'year'
+                    ? 'annually'
+                    : null;
+            if (!interval) {
+                throw new Error('Invalid interval');
+            }
+
             const returnData: SubscriptionGetResponse = {
                 name: subscription.plan.product.name,
-                interval:
-                    subscription.plan.interval === 'month'
-                        ? subscription.plan.interval_count === 3
-                            ? 'quarterly'
-                            : 'monthly'
-                        : 'annually',
+                interval,
                 current_period_end: subscription.current_period_end,
                 status: subscription.status,
             };

@@ -6,6 +6,7 @@ import {
     updateCompanySubscriptionStatus,
     updateCompanyUsageLimits,
 } from 'src/utils/api/db';
+import { getSubscription } from 'src/utils/api/stripe/helpers';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 import { serverLogger } from 'src/utils/logger';
 import Stripe from 'stripe';
@@ -35,30 +36,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
             }
 
-            const paymentMethods = await stripeClient.customers.listPaymentMethods(cusId);
-            if (paymentMethods?.data?.length === 0) {
-                serverLogger(new Error('Missing payment method'), 'error');
-
-                return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
-            }
-
-            const subscriptions = await stripeClient.subscriptions.list({
-                customer: cusId,
-                status: 'active',
-            });
-            let activeSubscription = subscriptions.data[0];
-
+            const activeSubscription = await getSubscription(company_id);
             if (!activeSubscription) {
-                const trialSubscriptions = await stripeClient.subscriptions.list({
-                    customer: cusId,
-                    status: 'trialing',
-                });
-                activeSubscription = trialSubscriptions.data[0];
-                if (!activeSubscription) {
-                    return res
-                        .status(httpCodes.NOT_FOUND)
-                        .json({ error: 'No active subscription to upgrade' });
-                }
+                return res
+                    .status(httpCodes.NOT_FOUND)
+                    .json({ error: 'No active subscription to upgrade' });
             }
 
             const price_id = activeSubscription.items.data[0].price.id;
@@ -86,6 +68,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const price = await stripeClient.prices.retrieve(price_id);
             const product = await stripeClient.products.retrieve(price.product as string);
 
+            const subscription_start_date = subscription.start_date
+                ? new Date(subscription.start_date * SECONDS_IN_MILLISECONDS).toISOString()
+                : undefined;
+            if (!subscription_start_date) throw new Error('Missing subscription start date');
+
+            const subscription_current_period_start = subscription.current_period_start
+                ? new Date(
+                      subscription.current_period_start * SECONDS_IN_MILLISECONDS,
+                  ).toISOString()
+                : undefined;
+            const subscription_current_period_end = subscription.current_period_end
+                ? new Date(subscription.current_period_end * SECONDS_IN_MILLISECONDS).toISOString()
+                : undefined;
+
             await updateCompanyUsageLimits({
                 profiles_limit: product.metadata.profiles,
                 searches_limit: product.metadata.searches,
@@ -94,9 +90,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             await updateCompanySubscriptionStatus({
                 subscription_status: 'active',
-                subscription_start_date: new Date(
-                    subscription.start_date * SECONDS_IN_MILLISECONDS,
-                ).toISOString(),
+                subscription_start_date,
+                subscription_current_period_start,
+                subscription_current_period_end,
                 id: company_id,
             });
 
