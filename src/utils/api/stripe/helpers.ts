@@ -22,6 +22,7 @@ export interface StripeSubscriptionWithPlan extends Stripe.Subscription {
     plan: ExpandedPlanWithProduct;
 }
 
+/** gets the subscription regardless of whether it is an active or trial subscription */
 export const getSubscription = async (companyId: string) => {
     const { data, error } = await getCompanyCusId(companyId);
     const cusId = data?.cus_id;
