@@ -13,7 +13,7 @@ export const CancelSubscriptionModal = ({
     onClose: () => void;
 }) => {
     const { createDiscountRenew, cancelSubscription } = useSubscription();
-    const [submitting, setSubmitting] = useState(true);
+    const [submitting, setSubmitting] = useState(false);
     const handleCancel = async () => {
         setSubmitting(true);
         const id = toast.loading(t('account.cancelModal.cancelling'));
