@@ -63,7 +63,7 @@ export default function CreatorsOutreach({
         'paidAmount',
         'paymentInformation',
         'paymentStatus',
-        'kolAddress',
+        'influencerAddress',
         'sampleStatus',
     ];
 
@@ -81,7 +81,7 @@ export default function CreatorsOutreach({
         creator = { ...creator, [objKey]: e.target.value };
         await updateCreatorInCampaign(creator);
         refreshCampaign();
-        toast.success(t('campaigns.creatorModal.kolUpdated'));
+        toast.success(t('campaigns.creatorModal.influencerUpdated'));
     };
 
     const setInlineEdit = (
@@ -117,7 +117,7 @@ export default function CreatorsOutreach({
         await updateCreatorInCampaign(creator);
         setToEdit(null);
         refreshCampaign();
-        toast.success(t('campaigns.creatorModal.kolUpdated'));
+        toast.success(t('campaigns.creatorModal.influencerUpdated'));
     };
 
     // get the number of creators in each status
@@ -134,7 +134,7 @@ export default function CreatorsOutreach({
             <div className="flex mb-4">
                 <Link href="/dashboard">
                     <div className="bg-gray-100 rounded-md px-4 py-2 text-xs text-gray-600 mr-4 cursor-pointer hover:bg-primary-500 hover:text-white duration-300 flex-shrink-0">
-                        <a>{t('campaigns.show.activities.outreach.addNewCreator')}</a>
+                        <a>{t('campaigns.show.activities.outreach.addNewInfluencer')}</a>
                     </div>
                 </Link>
                 {/* TODO: make Tabs component reusable */}
@@ -446,7 +446,7 @@ export default function CreatorsOutreach({
                                                 ))}
                                             </select>
                                         </td>
-                                        {/* -- KOL Address Column -- */}
+                                        {/* -- Influencer Address Column -- */}
                                         <td className="px-6 py-4whitespace-normal min-w-[150px] max-w-[200px]">
                                             <div
                                                 className="text-xs text-gray-900 cursor-pointer hover:text-primary-500 duration-300 relative"

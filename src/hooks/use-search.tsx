@@ -1,4 +1,4 @@
-import { KolPostRequest, KolPostResponse } from 'pages/api/kol';
+import { InfluencerPostRequest, InfluencerPostResponse } from 'pages/api/influencer-search';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { usageError } from 'src/utils/api/db';
 import { nextFetch } from 'src/utils/fetcher';
@@ -17,7 +17,7 @@ export const useSearch = () => {
 
     const [tags, setTopicTags] = useState<CreatorSearchTag[]>([]);
     const [lookalike, setLookalike] = useState<any>();
-    const [KOLLocation, setKOLLocation] = useState<LocationWeighted[]>([]);
+    const [influencerLocation, setInfluencerLocation] = useState<LocationWeighted[]>([]);
     const [views, setViews] = useState<string[]>([]);
     const [audience, setAudience] = useState<string[]>([]);
     const [gender, setGender] = useState<string>();
@@ -60,11 +60,11 @@ export const useSearch = () => {
             ref.current = controller;
 
             try {
-                const body: KolPostRequest = {
+                const body: InfluencerPostRequest = {
                     tags,
                     platform,
                     lookalike,
-                    KOLLocation,
+                    influencerLocation,
                     audienceLocation,
                     resultsPerPageLimit,
                     page,
@@ -79,7 +79,7 @@ export const useSearch = () => {
                     user_id: profile?.id,
                 };
 
-                const res = await nextFetch<KolPostResponse>('kol', {
+                const res = await nextFetch<InfluencerPostResponse>('influencer-search', {
                     method: 'post',
                     signal,
                     body,
@@ -105,7 +105,7 @@ export const useSearch = () => {
         },
         [
             tags,
-            KOLLocation,
+            influencerLocation,
             audience,
             audienceLocation,
             contactInfo,
@@ -136,8 +136,8 @@ export const useSearch = () => {
         setTopicTags,
         lookalike,
         setLookalike,
-        KOLLocation,
-        setKOLLocation,
+        influencerLocation,
+        setInfluencerLocation,
         audienceLocation,
         setAudienceLocation,
         audience,

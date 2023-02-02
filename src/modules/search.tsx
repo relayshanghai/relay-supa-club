@@ -34,8 +34,8 @@ export const Search = () => {
         setTopicTags,
         lookalike,
         setLookalike,
-        KOLLocation,
-        setKOLLocation,
+        influencerLocation,
+        setInfluencerLocation,
         audienceLocation,
         setAudienceLocation,
         loading,
@@ -94,7 +94,7 @@ export const Search = () => {
             </div>
             <div>
                 <SearchTopics
-                    path="/api/kol/topics"
+                    path="/api/influencer-search/topics"
                     placeholder={t('creators.searchTopic')}
                     topics={tags}
                     platform={platform}
@@ -105,8 +105,8 @@ export const Search = () => {
             </div>
             <div className="flex flex-col md:flex-row md:space-x-4 md:space-y-0 items-start space-y-2">
                 <SearchTopics
-                    path="/api/kol/lookalike"
-                    placeholder={t('creators.similarKol')}
+                    path="/api/influencer-search/lookalike"
+                    placeholder={t('creators.similarInfluencer')}
                     topics={lookalike}
                     platform={platform}
                     onSetTopics={(topics: any) => {
@@ -147,17 +147,17 @@ export const Search = () => {
                     }}
                 />
                 <SearchTopics
-                    path="/api/kol/locations"
+                    path="/api/influencer-search/locations"
                     placeholder={t('creators.filter.locationPlaceholder')}
-                    topics={KOLLocation}
+                    topics={influencerLocation}
                     platform={platform}
                     filter={filterCountry}
                     onSetTopics={(topics: any) => {
-                        setKOLLocation(topics);
+                        setInfluencerLocation(topics);
                     }}
                 />
                 <SearchTopics
-                    path="/api/kol/locations"
+                    path="/api/influencer-search/locations"
                     placeholder={t('creators.filter.audienceLocation')}
                     topics={audienceLocation}
                     platform={platform}

@@ -87,7 +87,7 @@ export const CreatorOverview = ({ report }: { report: CreatorReport }) => {
             {/* similar */}
             {similarCreators.length > 0 && (
                 <div className="p-6 lg:w-1/2 flex flex-col">
-                    <h2 className={titleClass}>{t('creators.show.similarKols')}</h2>
+                    <h2 className={titleClass}>{t('creators.show.similarInfluencers')}</h2>
                     <div>
                         {similarCreators.map((creator, index) => (
                             <SimilarCreator
