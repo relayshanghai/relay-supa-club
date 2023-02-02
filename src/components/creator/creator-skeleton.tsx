@@ -5,7 +5,7 @@ import SkeletonCreatorBlock from '../common/skeleton-creator';
 import SkeletonWithTitle from '../common/skeleton-with-title';
 import Skeleton from '../common/skeleton';
 import { LoadingPopover } from '../common/loading-popover';
-import { UsageError } from 'src/utils/api/db';
+import { usageError } from 'src/utils/api/db';
 
 export default function CreatorSkeleton({
     error,
@@ -22,7 +22,7 @@ export default function CreatorSkeleton({
                 {!error && <LoadingPopover text={t('creators.show.generateReport')} />}
                 {error && (
                     <>
-                        {Object.values(UsageError).includes(errorMessage) ? (
+                        {Object.values(usageError).includes(errorMessage) ? (
                             <ErrorPopover
                                 errorMessage={errorMessage}
                                 buttonText={t('account.subscription.upgradeSubscription') || ''}

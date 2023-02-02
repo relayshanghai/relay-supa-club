@@ -1,6 +1,6 @@
 import { InfluencerPostRequest, InfluencerPostResponse } from 'pages/api/influencer-search';
 import { useCallback, useMemo, useRef, useState } from 'react';
-import { UsageError } from 'src/utils/api/db';
+import { usageError } from 'src/utils/api/db';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger';
 import {
@@ -96,7 +96,7 @@ export const useSearch = () => {
                 }
             } catch (error: any) {
                 clientLogger(error, 'error');
-                if (error.message && Object.values(UsageError).includes(error.message)) {
+                if (error.message && Object.values(usageError).includes(error.message)) {
                     setUsageExceeded(true);
                 }
             } finally {
