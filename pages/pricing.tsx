@@ -51,9 +51,12 @@ const details = {
 };
 
 const salesRefEmail = 'amy.hu@relay.club';
-const subject = 'relay.club%20VIP%20plan%20subscription';
-const body = 'Hi,%20I%20am%20interested%20in%20purchasing%20the%20VIP%20plan%20for%20my%20company.';
-const VIPEmailLink = `mailto:${salesRefEmail}?subject=${subject}&body=${body}`;
+const subject = 'relay.club VIP plan subscription';
+const body = "Hi, I'm interested in purchasing the VIP plan for my company.";
+const VIPEmailLink = `mailto:${salesRefEmail}?subject=${subject.replaceAll(
+    ' ',
+    '%20',
+)}&body=${body.replaceAll(' ', '%20')}`;
 
 const unselectedTabClasses = 'py-1 px-4 border-x border-primary-500 cursor-pointer';
 const selectedTabClasses = 'py-1 px-4 border-x border-primary-500 bg-primary-500 text-white';
