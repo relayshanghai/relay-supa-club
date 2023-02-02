@@ -94,13 +94,13 @@ export const useSearch = () => {
                     setResultsTotal(res.total);
                     setResultPages([res.accounts]);
                 }
+                setLoading(false);
             } catch (error: any) {
+                if (error?.message && error.message.includes('abort')) return;
                 clientLogger(error, 'error');
                 if (error.message && Object.values(usageError).includes(error.message)) {
                     setUsageExceeded(true);
                 }
-            } finally {
-                setLoading(false);
             }
         },
         [
