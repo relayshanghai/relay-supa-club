@@ -44,15 +44,20 @@ export const CancelSubscriptionModal = ({
             setSubmitting(false);
         }
     };
+    const handleClose = () => {
+        if (!submitting) {
+            onClose();
+        }
+    };
     return (
-        <Modal visible={visible} onClose={onClose}>
+        <Modal visible={visible} onClose={handleClose}>
             <div className="flex flex-col space-y-4 pt-4">
                 <div className="flex justify-between mb-8">
                     <h1 className="text-2xl text-primary-700"> {t('account.cancelModal.title')}</h1>
                     <Button
                         variant="secondary"
                         className="!text-xs !px-2 !py-0"
-                        onClick={async () => onClose()}
+                        onClick={async () => handleClose()}
                     >
                         {t('account.subscription.modal.close')}
                     </Button>
@@ -65,6 +70,7 @@ export const CancelSubscriptionModal = ({
                 </p>
                 <div className="flex flex-row space-x-4">
                     <Button
+                        disabled={submitting}
                         onClick={handleCancel}
                         className="bg-red-700 border-red-700 hover:bg-red-600 hover:border-red-600 m-auto"
                     >
