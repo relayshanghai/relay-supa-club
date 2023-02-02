@@ -29,9 +29,16 @@ export default function Register() {
             await createCompany(values);
             toast.success(t('login.companyCreated'));
             await router.push('/signup/payment-onboard');
-        } catch (e) {
+        } catch (e: any) {
             clientLogger(e, 'error');
-            toast.error(t('login.oopsSomethingWentWrong'));
+            if (
+                (e?.message && e.message.includes('No logged in user found')) ||
+                e.message.includes('No company name found')
+            ) {
+                toast.error(e.message);
+            } else {
+                toast.error(t('login.oopsSomethingWentWrong'));
+            }
         } finally {
             setSubmitting(false);
         }
