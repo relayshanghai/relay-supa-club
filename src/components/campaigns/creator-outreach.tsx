@@ -12,12 +12,13 @@ import { SocialMediaIcon } from '../common/social-media-icon';
 import { CreatorContacts } from './creator-contacts';
 import dateFormat from 'src/utils/dateFormat';
 import { SocialMediaPlatform } from 'types';
-import { clientLogger } from 'src/utils/logger';
 
 export default function CreatorsOutreach({
     currentCampaign,
+    setShowNotesModal,
 }: {
     currentCampaign: CampaignWithCompanyCreators;
+    setShowNotesModal: (value: boolean) => void;
 }) {
     const { t } = useTranslation();
     const router = useRouter();
@@ -95,10 +96,10 @@ export default function CreatorsOutreach({
 
     const openNotes = (
         e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>,
-        creator: CampaignCreatorDB,
+        // creator: CampaignCreatorDB,
     ) => {
-        // TODO: notes - ticket https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/17
-        clientLogger({ e, creator });
+        e.stopPropagation();
+        setShowNotesModal(true);
     };
 
     const deleteCampaignCreator = async (
@@ -238,7 +239,7 @@ export default function CreatorsOutreach({
                                                 ))}
                                             </select>
                                         </td>
-                                        {/* TODO: add added by column, need to update database relation  */}
+                                        {/* TODO: add added by column, Ticket V2-55 */}
                                         {/* <td
                                             id="creator-added-by"
                                             className="px-6 py-4 whitespace-nowrap"
@@ -505,7 +506,7 @@ export default function CreatorsOutreach({
                                         <td className="px-6 py-4 sm:sticky right-0 bg-white whitespace-nowrap z-50 group-hover:bg-primary-50 ">
                                             <div className="flex justify-end">
                                                 <div
-                                                    onClick={(e) => openNotes(e, creator)}
+                                                    onClick={(e) => openNotes(e)}
                                                     className="p-2 rounded-md text-gray-600  bg-gray-50 hover:bg-gray-100 border border-gray-200 duration-300 outline-none appearance-none text-center font-medium mr-2 cursor-pointer"
                                                 >
                                                     {/* TODO: notes ticket V2-17 */}

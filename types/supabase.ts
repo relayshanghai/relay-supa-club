@@ -104,6 +104,32 @@ export interface Database {
                     username?: string | null;
                 };
             };
+            campaign_notes: {
+                Row: {
+                    campaign_creator_id: string | null;
+                    created_at: string | null;
+                    id: number;
+                    important: boolean | null;
+                    message: string | null;
+                    user_id: string | null;
+                };
+                Insert: {
+                    campaign_creator_id?: string | null;
+                    created_at?: string | null;
+                    id?: number;
+                    important?: boolean | null;
+                    message?: string | null;
+                    user_id?: string | null;
+                };
+                Update: {
+                    campaign_creator_id?: string | null;
+                    created_at?: string | null;
+                    id?: number;
+                    important?: boolean | null;
+                    message?: string | null;
+                    user_id?: string | null;
+                };
+            };
             campaigns: {
                 Row: {
                     budget_cents: number | null;
@@ -187,6 +213,8 @@ export interface Database {
                     name: string | null;
                     profiles_limit: string;
                     searches_limit: string;
+                    subscription_current_period_end: string | null;
+                    subscription_current_period_start: string | null;
                     subscription_end_date: string | null;
                     subscription_start_date: string | null;
                     subscription_status: string;
@@ -203,6 +231,8 @@ export interface Database {
                     name?: string | null;
                     profiles_limit?: string;
                     searches_limit?: string;
+                    subscription_current_period_end?: string | null;
+                    subscription_current_period_start?: string | null;
                     subscription_end_date?: string | null;
                     subscription_start_date?: string | null;
                     subscription_status?: string;
@@ -219,6 +249,8 @@ export interface Database {
                     name?: string | null;
                     profiles_limit?: string;
                     searches_limit?: string;
+                    subscription_current_period_end?: string | null;
+                    subscription_current_period_start?: string | null;
                     subscription_end_date?: string | null;
                     subscription_start_date?: string | null;
                     subscription_status?: string;
