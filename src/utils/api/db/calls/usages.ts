@@ -1,6 +1,6 @@
-import { SECONDS_IN_MILLISECONDS } from 'src/constants/conversions';
 import { serverLogger } from 'src/utils/logger';
 import { supabase } from 'src/utils/supabase-client';
+import { unixEpochToISOString } from 'src/utils/utils';
 import { UsageType } from 'types';
 import { getSubscription } from '../../stripe/helpers';
 import { UsagesDBInsert } from '../types';
@@ -39,11 +39,8 @@ const handleCurrentPeriodExpired = async (company_id: string) => {
         serverLogger('Invalid subscription status', 'error');
         return { error: usageError.invalidStatus };
     }
-    const subscription_current_period_start = new Date(
-        current_period_start * SECONDS_IN_MILLISECONDS,
-    ).toISOString();
-
-    const subscription_current_period_end = new Date(current_period_end * 1000).toISOString();
+    const subscription_current_period_start = unixEpochToISOString(current_period_start);
+    const subscription_current_period_end = unixEpochToISOString(current_period_end);
 
     await updateCompanySubscriptionStatus({
         id: company_id,

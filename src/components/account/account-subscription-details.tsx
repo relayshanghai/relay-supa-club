@@ -1,9 +1,9 @@
 import Link from 'next/link';
 import { useContext, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { SECONDS_IN_MILLISECONDS } from 'src/constants/conversions';
 import { useSubscription } from 'src/hooks/use-subscription';
 import { buildSubscriptionPortalUrl } from 'src/utils/api/stripe/helpers';
+import { unixEpochToISOString } from 'src/utils/utils';
 
 import { Button } from '../button';
 import { Spinner } from '../icons';
@@ -19,7 +19,7 @@ export const SubscriptionDetails = () => {
 
     const [showCancelModal, setShowCancelModal] = useState(false);
     const handleCancelSubscription = async () => setShowCancelModal(true);
-
+    const periodEnd = unixEpochToISOString(subscription?.current_period_end);
     return (
         <div className="flex flex-col items-start space-y-4 p-4 bg-white rounded-lg w-full lg:max-w-2xl shadow-lg shadow-gray-200">
             <CancelSubscriptionModal
@@ -65,16 +65,13 @@ export const SubscriptionDetails = () => {
                                         {t(`account.subscription.${subscription.interval}`)}
                                     </div>
                                 </div>
-                                {subscription.status !== 'canceled' && (
+                                {subscription.status !== 'canceled' && periodEnd && (
                                     <div className="flex flex-col space-y-3">
                                         <div className="text-sm">
                                             {t('account.subscription.renewsOn')}
                                         </div>
                                         <div className="text-sm font-bold ml-2">
-                                            {new Date(
-                                                subscription.current_period_end *
-                                                    SECONDS_IN_MILLISECONDS,
-                                            ).toLocaleDateString(i18n.language, {
+                                            {new Date(periodEnd).toLocaleDateString(i18n.language, {
                                                 year: 'numeric',
                                                 month: 'short',
                                                 day: 'numeric',

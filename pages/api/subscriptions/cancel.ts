@@ -1,10 +1,10 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { SECONDS_IN_MILLISECONDS } from 'src/constants/conversions';
 import httpCodes from 'src/constants/httpCodes';
 import { updateCompanySubscriptionStatus } from 'src/utils/api/db';
 import { getSubscription } from 'src/utils/api/stripe/helpers';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 import { serverLogger } from 'src/utils/logger';
+import { unixEpochToISOString } from 'src/utils/utils';
 import Stripe from 'stripe';
 
 export type SubscriptionCancelPostBody = {
@@ -33,9 +33,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             await updateCompanySubscriptionStatus({
                 subscription_status: 'canceled',
                 id: company_id,
-                subscription_end_date: new Date(
-                    subscription.current_period_end * SECONDS_IN_MILLISECONDS,
-                ).toISOString(),
+                subscription_end_date: unixEpochToISOString(subscription.current_period_end),
             });
 
             return res.status(httpCodes.OK).json(subscription);

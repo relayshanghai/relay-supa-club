@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { SECONDS_IN_MILLISECONDS } from 'src/constants/conversions';
 import httpCodes from 'src/constants/httpCodes';
 import {
     getCompanyCusId,
@@ -8,6 +7,7 @@ import {
 } from 'src/utils/api/db';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 import { serverLogger } from 'src/utils/logger';
+import { unixEpochToISOString } from 'src/utils/utils';
 import Stripe from 'stripe';
 
 export type SubscriptionCreatePostBody = {
@@ -76,19 +76,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const price = await stripeClient.prices.retrieve(price_id);
             const product = await stripeClient.products.retrieve(price.product as string);
 
-            const subscription_start_date = subscription.start_date
-                ? new Date(subscription.start_date * SECONDS_IN_MILLISECONDS).toISOString()
-                : undefined;
+            const subscription_start_date = unixEpochToISOString(subscription.start_date);
             if (!subscription_start_date) throw new Error('Missing subscription start date');
-
-            const subscription_current_period_start = subscription.current_period_start
-                ? new Date(
-                      subscription.current_period_start * SECONDS_IN_MILLISECONDS,
-                  ).toISOString()
-                : undefined;
-            const subscription_current_period_end = subscription.current_period_end
-                ? new Date(subscription.current_period_end * SECONDS_IN_MILLISECONDS).toISOString()
-                : undefined;
 
             await updateCompanyUsageLimits({
                 profiles_limit: product.metadata.profiles,
@@ -99,8 +88,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             await updateCompanySubscriptionStatus({
                 subscription_status: 'active',
                 subscription_start_date,
-                subscription_current_period_start,
-                subscription_current_period_end,
+                subscription_current_period_start: unixEpochToISOString(
+                    subscription.current_period_start,
+                ),
+                subscription_current_period_end: unixEpochToISOString(
+                    subscription.current_period_end,
+                ),
                 id: company_id,
             });
 

@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { SECONDS_IN_MILLISECONDS } from 'src/constants/conversions';
 import httpCodes from 'src/constants/httpCodes';
 import {
     getCompanyCusId,
@@ -9,6 +8,7 @@ import {
 import { STRIPE_PRODUCT_ID_DIY } from 'src/utils/api/stripe/constants';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 import { serverLogger } from 'src/utils/logger';
+import { unixEpochToISOString } from 'src/utils/utils';
 import Stripe from 'stripe';
 import { StripePriceWithProductMetadata } from 'types';
 
@@ -96,29 +96,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 id: company_id,
             });
 
-            const subscription_start_date =
-                subscription.trial_start || subscription.start_date
-                    ? new Date(
-                          (subscription.trial_start ?? subscription.start_date) *
-                              SECONDS_IN_MILLISECONDS,
-                      ).toISOString()
-                    : undefined;
+            const subscription_start_date = unixEpochToISOString(
+                subscription.trial_start,
+                subscription.start_date,
+            );
             if (!subscription_start_date) throw new Error('Missing subscription start date');
-
-            const subscription_current_period_start = subscription.current_period_start
-                ? new Date(
-                      subscription.current_period_start * SECONDS_IN_MILLISECONDS,
-                  ).toISOString()
-                : undefined;
-            const subscription_current_period_end = subscription.current_period_end
-                ? new Date(subscription.current_period_end * SECONDS_IN_MILLISECONDS).toISOString()
-                : undefined;
 
             await updateCompanySubscriptionStatus({
                 subscription_status: 'trial',
                 subscription_start_date,
-                subscription_current_period_start,
-                subscription_current_period_end,
+                subscription_current_period_start: unixEpochToISOString(
+                    subscription.current_period_start,
+                ),
+                subscription_current_period_end: unixEpochToISOString(
+                    subscription.current_period_end,
+                ),
                 id: company_id,
             });
 
