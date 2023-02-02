@@ -73,7 +73,7 @@ export const Search = () => {
         search({});
     }, [search]);
 
-    const noResults = resultPages.length === 0 || resultPages[0].length === 0;
+    const noResults = resultPages.length === 0 || resultPages[0]?.length === 0;
 
     return (
         <div className="space-y-4">
