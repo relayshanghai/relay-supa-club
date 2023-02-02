@@ -110,7 +110,6 @@ const Pricing = () => {
         priceId: string,
     ) => {
         setConfirmModalData({ plan, period, priceId, price: prices[period][plan] });
-        clientLogger({ plan, period });
     };
 
     const [prices, setPrices] = useState<Prices>({
