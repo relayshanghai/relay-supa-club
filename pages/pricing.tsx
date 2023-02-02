@@ -53,10 +53,8 @@ const details = {
 const salesRefEmail = 'amy.hu@relay.club';
 const subject = 'relay.club VIP plan subscription';
 const body = "Hi, I'm interested in purchasing the VIP plan for my company.";
-const VIPEmailLink = `mailto:${salesRefEmail}?subject=${subject.replaceAll(
-    ' ',
-    '%20',
-)}&body=${body.replaceAll(' ', '%20')}`;
+const query = `subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+const VIPEmailLink = `mailto:${salesRefEmail}?${query}`;
 
 const unselectedTabClasses = 'py-1 px-4 border-x border-primary-500 cursor-pointer';
 const selectedTabClasses = 'py-1 px-4 border-x border-primary-500 bg-primary-500 text-white';
@@ -166,14 +164,18 @@ const Pricing = () => {
     }, [t]);
 
     const isCurrentPlan = (plan: 'diy' | 'diyMax') => {
-        if (!priceIds || !subscription?.name || !subscription.interval || !subscription.status)
-            return true;
         const planName = plan === 'diyMax' ? 'DIY Max' : 'DIY';
         return (
-            subscription.name === planName &&
+            subscription?.name === planName &&
             subscription.interval === period &&
             subscription.status === 'active'
         );
+    };
+
+    const disableButton = (plan: 'diy' | 'diyMax') => {
+        if (!priceIds || !subscription?.name || !subscription.interval || !subscription.status)
+            return true;
+        if (isCurrentPlan(plan)) return true;
     };
 
     return (
@@ -310,7 +312,7 @@ const Pricing = () => {
                                             priceIds ? priceIds['diy'][period] : '',
                                         )
                                     }
-                                    disabled={isCurrentPlan('diy')}
+                                    disabled={disableButton('diy')}
                                     className="flex"
                                 >
                                     {isCurrentPlan('diy')
@@ -421,7 +423,7 @@ const Pricing = () => {
                                             priceIds ? priceIds['diyMax'][period] : '',
                                         )
                                     }
-                                    disabled={isCurrentPlan('diyMax')}
+                                    disabled={disableButton('diyMax')}
                                     className="flex"
                                 >
                                     {isCurrentPlan('diyMax')
