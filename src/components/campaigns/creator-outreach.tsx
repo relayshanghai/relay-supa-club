@@ -106,7 +106,7 @@ export default function CreatorsOutreach({
         creator: CampaignCreatorDB,
     ) => {
         e.stopPropagation();
-        const c = confirm('Are you sure you want to delete?'); //TODO: need to add i18n here
+        const c = confirm(t('campaigns.modal.deleteConfirmation') as string);
         if (!c) return;
         await deleteCreatorInCampaign(creator);
         refreshCampaign();

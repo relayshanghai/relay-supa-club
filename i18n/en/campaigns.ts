@@ -32,6 +32,7 @@ const campaigns = {
         viewProfile: 'View Profile',
         addedSuccessfully: 'KOL added successfully.',
         deletedSuccessfully: 'KOL was deleted.',
+        deleteConfirmation: 'Are you sure you want to delete this KOL?',
     },
     creatorModal: {
         outreach: 'Outreach',

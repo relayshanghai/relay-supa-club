@@ -79,3 +79,19 @@
     font-display: swap;
     src: local('Poppins'), url(/assets/fonts/Poppins/Poppins-BoldItalic.ttf);
 }
+@font-face {
+    font-family: 'Poppins';
+    font-style: normal;
+    font-weight: 300;
+    font-stretch: 100%;
+    font-display: swap;
+    src: local('Poppins'), url(/assets/fonts/Poppins/Poppins-Light.ttf);
+}
+@font-face {
+    font-family: 'Poppins';
+    font-style: normal;
+    font-weight: 200;
+    font-stretch: 100%;
+    font-display: swap;
+    src: local('Poppins'), url(/assets/fonts/Poppins/Poppins-ExtraLight.ttf);
+}

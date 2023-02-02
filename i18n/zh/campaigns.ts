@@ -32,6 +32,7 @@ const campaigns = {
         viewProfile: '查看KOL',
         addedSuccessfully: 'KOL已成功添加到项目',
         deletedSuccessfully: 'KOL已从项目中删除',
+        deleteConfirmation: '您确定要从项目中删除此KOL吗？',
     },
     creatorModal: {
         outreach: 'KOL沟通',
