@@ -1,5 +1,6 @@
 import { CreatorsReportGetQueries, CreatorsReportGetResponse } from 'pages/api/creators/report';
 import { useCallback, useState } from 'react';
+import { usageError } from 'src/utils/api/db';
 import { nextFetchWithQueries } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger';
 import { CreatorPlatform, CreatorReport } from 'types';
@@ -10,12 +11,15 @@ export const useReport = () => {
     const [reportCreatedAt, setReportCreatedAt] = useState<string | null>(null);
     const [errorMessage, setErrorMessage] = useState('');
     const [loading, setLoading] = useState<boolean>(true);
+    const [usageExceeded, setUsageExceeded] = useState(false);
+    const [gettingReport, setGettingReport] = useState(false);
 
     const { profile } = useUser();
 
     const getOrCreateReport = useCallback(
         async (platform: CreatorPlatform, creator_id: string) => {
             try {
+                setGettingReport(true);
                 if (!profile?.company_id) throw new Error('User not logged in');
                 const { createdAt, ...report } = await nextFetchWithQueries<
                     CreatorsReportGetQueries,
@@ -29,11 +33,15 @@ export const useReport = () => {
                 if (!report.success) throw new Error('Failed to fetch report');
                 setReport(report);
                 setReportCreatedAt(createdAt);
-                setLoading(false);
             } catch (error: any) {
                 clientLogger(error, 'error');
-                setErrorMessage(error?.message || 'Failed fetching report');
+                if (error.message && Object.values(usageError).includes(error.message)) {
+                    setUsageExceeded(true);
+                    setErrorMessage(error.message);
+                } else setErrorMessage('Failed fetching report');
+            } finally {
                 setLoading(false);
+                setGettingReport(false);
             }
         },
         [profile],
@@ -45,5 +53,7 @@ export const useReport = () => {
         report,
         reportCreatedAt,
         errorMessage,
+        usageExceeded,
+        gettingReport,
     };
 };

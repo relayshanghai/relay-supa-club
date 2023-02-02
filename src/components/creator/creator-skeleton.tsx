@@ -5,6 +5,7 @@ import SkeletonCreatorBlock from '../common/skeleton-creator';
 import SkeletonWithTitle from '../common/skeleton-with-title';
 import Skeleton from '../common/skeleton';
 import { LoadingPopover } from '../common/loading-popover';
+import { usageError } from 'src/utils/api/db';
 
 export default function CreatorSkeleton({
     error,
@@ -20,11 +21,21 @@ export default function CreatorSkeleton({
             <div className="relative">
                 {!error && <LoadingPopover text={t('creators.show.generateReport')} />}
                 {error && (
-                    <ErrorPopover
-                        errorMessage={errorMessage}
-                        buttonText={t('website.back') || ''}
-                        buttonAction={() => router.back()}
-                    />
+                    <>
+                        {Object.values(usageError).includes(errorMessage) ? (
+                            <ErrorPopover
+                                errorMessage={errorMessage}
+                                buttonText={t('account.subscription.upgradeSubscription') || ''}
+                                buttonAction={() => router.push('/account')}
+                            />
+                        ) : (
+                            <ErrorPopover
+                                errorMessage={errorMessage}
+                                buttonText={t('website.back') || ''}
+                                buttonAction={() => router.back()}
+                            />
+                        )}
+                    </>
                 )}
             </div>
             <div className="flex flex-col lg:flex-row items-center mb-2">

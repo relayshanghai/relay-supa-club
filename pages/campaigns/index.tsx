@@ -19,6 +19,7 @@ const CampaignsPage = () => {
                 <div className="text-sm text-gray-600 h-full">
                     {t('campaigns.index.noCampaignsAvailable')}
                     <span className="text-primary-500 hover:text-primary-700 duration-300 cursor-pointer">
+                        {' '}
                         <Link href="/campaigns/form">{t('campaigns.index.clickCreate')}</Link>
                     </span>
                 </div>

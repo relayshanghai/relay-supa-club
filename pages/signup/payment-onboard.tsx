@@ -32,7 +32,7 @@ const PaymentOnboard = () => {
             setSubmitting(true);
             const result = await createTrial();
             if (result.status === 'trialing' || subscription?.status === 'active') {
-                toast.success(t('login.companyCreated'));
+                toast.success(t('login.accountActivated'));
                 await router.push('/dashboard');
             } else {
                 throw new Error(JSON.stringify(result));

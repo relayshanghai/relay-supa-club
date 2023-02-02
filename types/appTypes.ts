@@ -1,6 +1,10 @@
-import type { CompanyTable, UsagesTable } from 'src/utils/api/db';
+import type { CampaignCreatorsTable, CompanyTable, UsagesTable } from 'src/utils/api/db';
 import type Stripe from 'stripe';
 import type { Database } from './supabase';
+
+export type LabelValueObject = { label: string; value: string };
+export type LocationWeighted = { id: string; weight: number };
+export type CreatorSearchTag = { tag: string; value: string };
 
 export type SubscriptionPeriod = 'monthly' | 'annually' | 'quarterly';
 export type RelayPlan = {
@@ -49,16 +53,12 @@ export type UsageType = 'profile' | 'search';
 export type CreatorPlatform = 'instagram' | 'youtube' | 'tiktok';
 export type SocialMediaPlatform = CreatorPlatform | 'email' | 'twitter' | 'facebook' | 'wechat';
 
-export type LabelValueObject = { label: string; value: string };
-export type LocationWeighted = { id: string; weight: number };
-
-export type CreatorSearchTag = { tag: string; value: string };
-
 export interface DatabaseWithCustomTypes extends Database {
     public: Database['public'] & {
         Tables: Database['public']['Tables'] & {
             companies: CompanyTable;
             usages: UsagesTable;
+            campaign_creators: CampaignCreatorsTable;
         };
     };
 }

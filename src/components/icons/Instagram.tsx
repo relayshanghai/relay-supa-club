@@ -19,14 +19,14 @@ export default function Instagram(props: SVGProps<SVGSVGElement>) {
                     y2="-10.4999792%"
                     id="linearGradient-1"
                 >
-                    <stop stop-color="#F58529" offset="0%" />
-                    <stop stop-color="#FEDA77" offset="16.9%" />
-                    <stop stop-color="#DD2A7B" offset="47.8%" />
-                    <stop stop-color="#8134AF" offset="78%" />
-                    <stop stop-color="#515BD4" offset="100%" />
+                    <stop stopColor="#F58529" offset="0%" />
+                    <stop stopColor="#FEDA77" offset="16.9%" />
+                    <stop stopColor="#DD2A7B" offset="47.8%" />
+                    <stop stopColor="#8134AF" offset="78%" />
+                    <stop stopColor="#515BD4" offset="100%" />
                 </linearGradient>
             </defs>
-            <g id="Page-1" stroke="none" strokeWidth="1" fill="none" fill-rule="evenodd">
+            <g id="Page-1" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
                 <g id="ic_instagram">
                     <path
                         d="M24,0 C37.2549,0 48,10.7451 48,24 C48,37.2549 37.2549,48 24,48 C10.7451,48 0,37.2549 0,24 C0,10.7451 10.7451,0 24,0 Z"

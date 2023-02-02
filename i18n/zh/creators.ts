@@ -25,6 +25,7 @@ const creators = {
     openLink: '打开社交媒体链接',
     openProfile: '打开KOL',
     close: '取消',
+    usageExceeded: '搜索次数已达上限',
     modal: {
         viewFullProfile: '查看完整信息',
     },
