@@ -187,6 +187,8 @@ export interface Database {
                     name: string | null;
                     profiles_limit: string;
                     searches_limit: string;
+                    subscription_current_period_end: string | null;
+                    subscription_current_period_start: string | null;
                     subscription_end_date: string | null;
                     subscription_start_date: string | null;
                     subscription_status: string;
@@ -203,6 +205,8 @@ export interface Database {
                     name?: string | null;
                     profiles_limit?: string;
                     searches_limit?: string;
+                    subscription_current_period_end?: string | null;
+                    subscription_current_period_start?: string | null;
                     subscription_end_date?: string | null;
                     subscription_start_date?: string | null;
                     subscription_status?: string;
@@ -219,6 +223,8 @@ export interface Database {
                     name?: string | null;
                     profiles_limit?: string;
                     searches_limit?: string;
+                    subscription_current_period_end?: string | null;
+                    subscription_current_period_start?: string | null;
                     subscription_end_date?: string | null;
                     subscription_start_date?: string | null;
                     subscription_status?: string;
