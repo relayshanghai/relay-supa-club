@@ -12,7 +12,7 @@ const pricingAllowList = ['https://en-relay-club.vercel.app', 'https://relay.clu
 const stripeWebhookAllowlist = ['https://stripe.com/', 'https://hooks.stripe.com/'];
 
 /**
- * 
+ *
 TODO https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/78: performance improvement. These two database calls might add too much loading time to each request. Consider adding a cache, or adding something to the session object that shows the user has a company and the company has a payment method.
  */
 const getCompanySubscriptionStatus = async (
@@ -51,7 +51,7 @@ const checkOnboardingStatus = async (
     const redirectUrl = req.nextUrl.clone();
 
     // special case where we require a signed in user to create a company, but we don't want to redirect them to onboarding cause this happens before they are onboarded
-    if (req.nextUrl.pathname.includes('api/company/create')) {
+    if (req.nextUrl.pathname === '/api/company/create') {
         const { user_id } = JSON.parse(await req.text());
         if (!user_id || user_id !== session.user.id) {
             return NextResponse.json({ error: 'user is unauthorized for this action' });

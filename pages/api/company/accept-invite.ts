@@ -49,6 +49,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         } = await supabase.auth.signUp({
             email: data.email,
             password,
+            options: { data: { first_name: firstName, last_name: lastName } },
         });
 
         if (userError) {
