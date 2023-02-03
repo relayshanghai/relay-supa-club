@@ -9,10 +9,10 @@ import { SearchResultRow } from './search-result-row';
 import { CreatorSearchAccountObject } from 'types';
 import { Modal } from 'src/components/modal';
 import { useTranslation } from 'react-i18next';
-import { useCampaigns } from 'src/hooks/use-campaigns';
-import CampaignModalCard from 'src/components/campaigns/campaign-modal-card';
 import { Spinner } from 'src/components/icons';
 import { SkeletonSearchResultRow } from 'src/components/common/skeleton-search-result-row';
+import Link from 'next/link';
+import { AddToCampaignModal } from 'src/components/modal-add-to-campaign';
 
 const filterCountry = (items: any[]) => {
     return items.filter((item: any) => {
@@ -34,8 +34,8 @@ export const Search = () => {
         setTopicTags,
         lookalike,
         setLookalike,
-        KOLLocation,
-        setKOLLocation,
+        influencerLocation,
+        setInfluencerLocation,
         audienceLocation,
         setAudienceLocation,
         loading,
@@ -54,16 +54,15 @@ export const Search = () => {
         setLastPost,
         contactInfo,
         setContactInfo,
-
         resultsPerPageLimit,
         setResultsPerPageLimit,
+        usageExceeded,
     } = useSearch();
 
     const [filterModalOpen, setFilterModalOpen] = useState(false);
 
     const [showCampaignListModal, setShowCampaignListModal] = useState(false);
     const [selectedCreator, setSelectedCreator] = useState<CreatorSearchAccountObject | null>(null);
-    const { campaigns } = useCampaigns({});
 
     const [page, setPage] = useState(0);
     const [loadingMore, setLoadingMore] = useState(false);
@@ -74,7 +73,7 @@ export const Search = () => {
         search({});
     }, [search]);
 
-    const noResults = resultPages.length === 0 || resultPages[0].length === 0;
+    const noResults = resultPages.length === 0 || resultPages[0]?.length === 0;
 
     return (
         <div className="space-y-4">
@@ -95,7 +94,7 @@ export const Search = () => {
             </div>
             <div>
                 <SearchTopics
-                    path="/api/kol/topics"
+                    path="/api/influencer-search/topics"
                     placeholder={t('creators.searchTopic')}
                     topics={tags}
                     platform={platform}
@@ -106,8 +105,8 @@ export const Search = () => {
             </div>
             <div className="flex flex-col md:flex-row md:space-x-4 md:space-y-0 items-start space-y-2">
                 <SearchTopics
-                    path="/api/kol/lookalike"
-                    placeholder={t('creators.similarKol')}
+                    path="/api/influencer-search/lookalike"
+                    placeholder={t('creators.similarInfluencer')}
                     topics={lookalike}
                     platform={platform}
                     onSetTopics={(topics: any) => {
@@ -148,17 +147,17 @@ export const Search = () => {
                     }}
                 />
                 <SearchTopics
-                    path="/api/kol/locations"
+                    path="/api/influencer-search/locations"
                     placeholder={t('creators.filter.locationPlaceholder')}
-                    topics={KOLLocation}
+                    topics={influencerLocation}
                     platform={platform}
                     filter={filterCountry}
                     onSetTopics={(topics: any) => {
-                        setKOLLocation(topics);
+                        setInfluencerLocation(topics);
                     }}
                 />
                 <SearchTopics
-                    path="/api/kol/locations"
+                    path="/api/influencer-search/locations"
                     placeholder={t('creators.filter.audienceLocation')}
                     topics={audienceLocation}
                     platform={platform}
@@ -390,7 +389,10 @@ export const Search = () => {
                         </div>
                         <div>
                             <label className="text-sm">
-                                <div className="font-bold text-lg">Engagement Rate</div>
+                                <div className="font-bold text-lg">
+                                    {' '}
+                                    {t('creators.filter.engagementRate')}
+                                </div>
                                 <select
                                     className="bg-primary-200 rounded-md p-1 mt-1"
                                     value={engagement}
@@ -418,7 +420,9 @@ export const Search = () => {
                         </div>
                         <div>
                             <label className="text-sm">
-                                <div className="font-bold text-lg">Last Post</div>
+                                <div className="font-bold text-lg">
+                                    {t('creators.filter.lastPost')}
+                                </div>
                                 <select
                                     className="bg-primary-200 rounded-md p-1 mt-1"
                                     value={lastPost}
@@ -496,7 +500,20 @@ export const Search = () => {
                         </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                        {!noResults ? (
+                        {usageExceeded ? (
+                            <tr>
+                                <td className="text-center py-4 space-y-4" colSpan={5}>
+                                    <p className="mb-4">{t('creators.usageExceeded')}</p>
+                                    <Link href="/pricing">
+                                        <a>
+                                            <Button>
+                                                {t('account.subscription.upgradeSubscription')}
+                                            </Button>
+                                        </a>
+                                    </Link>
+                                </td>
+                            </tr>
+                        ) : !noResults ? (
                             resultPages.map((page) =>
                                 page.map((creator, i) => (
                                     <SearchResultRow
@@ -541,35 +558,14 @@ export const Search = () => {
                     {t('creators.loadMore')}
                 </Button>
             )}
-            <Modal
-                title={t('campaigns.modal.addToCampaign') || ''}
-                visible={!!showCampaignListModal}
-                onClose={() => {
-                    setShowCampaignListModal(false);
+            <AddToCampaignModal
+                show={showCampaignListModal}
+                setShow={setShowCampaignListModal}
+                platform={platform}
+                selectedCreator={{
+                    ...selectedCreator?.account.user_profile,
                 }}
-            >
-                <>
-                    <div className="py-4 text-sm text-tertiary-800">
-                        {t('campaigns.modal.addThisInfluencer')}
-                    </div>
-                    {campaigns?.length ? (
-                        <div>
-                            {campaigns.map((campaign, index) => (
-                                <CampaignModalCard
-                                    campaign={campaign}
-                                    platform={platform}
-                                    creator={selectedCreator}
-                                    key={index}
-                                />
-                            ))}
-                        </div>
-                    ) : (
-                        <div className="text-sm text-gray-600">
-                            {t('campaigns.modal.noCampaigns')}
-                        </div>
-                    )}
-                </>
-            </Modal>
+            />
         </div>
     );
 };

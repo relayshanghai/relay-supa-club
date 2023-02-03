@@ -1,11 +1,13 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
-import { CompanyDB, CompanyDBInsert, createCompany, updateProfile } from 'src/utils/api/db';
-import { ensureCustomer } from 'src/utils/api/stripe/ensure-customer';
+import { CompanyDB, createCompany, updateCompany, updateProfile } from 'src/utils/api/db';
+import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 import { serverLogger } from 'src/utils/logger';
 
-export type CompanyCreatePostBody = CompanyDBInsert & {
+export type CompanyCreatePostBody = {
     user_id: string;
+    name: string;
+    website?: string;
 };
 export type CompanyCreatePostResponse = CompanyDB;
 
@@ -15,12 +17,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const { user_id, name, website } = JSON.parse(req.body) as CompanyCreatePostBody;
             const { data: company, error } = await createCompany({ name, website });
 
-            if (error) {
+            if (error || !company?.id) {
                 serverLogger(error, 'error');
-                return res.status(httpCodes.INTERNAL_SERVER_ERROR).json(error);
+                return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
             }
 
-            const { data: profile, error: profileError } = await updateProfile({
+            const { error: profileError } = await updateProfile({
                 id: user_id,
                 company_id: company.id,
                 admin: true,
@@ -28,18 +30,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             if (profileError) {
                 serverLogger(profileError, 'error');
-                return res.status(httpCodes.INTERNAL_SERVER_ERROR).json(profileError);
+                return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
             }
 
-            // Create the customer in stripe as well
-            await ensureCustomer({ company_id: company.id, name });
+            const customer = await stripeClient.customers.create({
+                name,
+                metadata: {
+                    company_id: company.id,
+                },
+            });
+            await updateCompany({ id: company.id, cus_id: customer.id });
+            const response: CompanyCreatePostResponse = company;
 
-            return res.status(httpCodes.OK).json({ profile, company });
+            return res.status(httpCodes.OK).json(response);
         } catch (error) {
             serverLogger(error, 'error');
-            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({
-                error: 'error creating company',
-            });
+            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
         }
     }
 

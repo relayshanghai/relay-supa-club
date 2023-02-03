@@ -1,5 +1,6 @@
-import { KolPostRequest, KolPostResponse } from 'pages/api/kol';
+import { InfluencerPostRequest, InfluencerPostResponse } from 'pages/api/influencer-search';
 import { useCallback, useMemo, useRef, useState } from 'react';
+import { usageError } from 'src/utils/api/db';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger';
 import {
@@ -16,7 +17,7 @@ export const useSearch = () => {
 
     const [tags, setTopicTags] = useState<CreatorSearchTag[]>([]);
     const [lookalike, setLookalike] = useState<any>();
-    const [KOLLocation, setKOLLocation] = useState<LocationWeighted[]>([]);
+    const [influencerLocation, setInfluencerLocation] = useState<LocationWeighted[]>([]);
     const [views, setViews] = useState<string[]>([]);
     const [audience, setAudience] = useState<string[]>([]);
     const [gender, setGender] = useState<string>();
@@ -29,6 +30,7 @@ export const useSearch = () => {
 
     const [resultPages, setResultPages] = useState<CreatorSearchAccountObject[][]>([]);
     const [resultsTotal, setResultsTotal] = useState(0);
+    const [usageExceeded, setUsageExceeded] = useState(false);
 
     const platforms: {
         icon: string;
@@ -58,11 +60,11 @@ export const useSearch = () => {
             ref.current = controller;
 
             try {
-                const bodyData: KolPostRequest = {
+                const body: InfluencerPostRequest = {
                     tags,
                     platform,
                     lookalike,
-                    KOLLocation,
+                    influencerLocation,
                     audienceLocation,
                     resultsPerPageLimit,
                     page,
@@ -77,10 +79,10 @@ export const useSearch = () => {
                     user_id: profile?.id,
                 };
 
-                const res = await nextFetch<KolPostResponse>('kol', {
+                const res = await nextFetch<InfluencerPostResponse>('influencer-search', {
                     method: 'post',
                     signal,
-                    body: JSON.stringify(bodyData),
+                    body,
                 });
                 if (loadMore) {
                     setResultPages((prev) => {
@@ -92,15 +94,18 @@ export const useSearch = () => {
                     setResultsTotal(res.total);
                     setResultPages([res.accounts]);
                 }
-            } catch (error) {
-                clientLogger(error, 'error');
-            } finally {
                 setLoading(false);
+            } catch (error: any) {
+                if (error?.message && error.message.includes('abort')) return;
+                clientLogger(error, 'error');
+                if (error.message && Object.values(usageError).includes(error.message)) {
+                    setUsageExceeded(true);
+                }
             }
         },
         [
             tags,
-            KOLLocation,
+            influencerLocation,
             audience,
             audienceLocation,
             contactInfo,
@@ -131,8 +136,8 @@ export const useSearch = () => {
         setTopicTags,
         lookalike,
         setLookalike,
-        KOLLocation,
-        setKOLLocation,
+        influencerLocation,
+        setInfluencerLocation,
         audienceLocation,
         setAudienceLocation,
         audience,
@@ -149,5 +154,6 @@ export const useSearch = () => {
         setContactInfo,
         resultsPerPageLimit,
         setResultsPerPageLimit,
+        usageExceeded,
     };
 };

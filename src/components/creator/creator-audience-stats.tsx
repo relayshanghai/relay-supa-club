@@ -18,7 +18,7 @@ type WeightedStat = {
 };
 
 type Stat = {
-    type: 'progress' | 'kollist' | 'barchart';
+    type: 'progress' | 'influencerList' | 'barchart';
     label: string;
     stats: WeightedStat[] | SimilarUser[];
 };
@@ -118,8 +118,8 @@ const prepareStats = (audience: AudienceStats, t: TFunction) => {
     }
     if (audience.audience_lookalikes)
         data.push({
-            type: 'kollist',
-            label: 'similarAudienceKol',
+            type: 'influencerList',
+            label: 'similarAudienceInfluencers',
             stats: audience.audience_lookalikes as SimilarUser[],
         });
 
@@ -140,7 +140,7 @@ const AudienceStatsSection = ({
                     {stat.type === 'progress' && (
                         <ProgressBlock stats={stat.stats as WeightedStat[]} title={stat.label} />
                     )}
-                    {stat.type === 'kollist' && (
+                    {stat.type === 'influencerList' && (
                         <CreatorBlock
                             title={stat.label}
                             similarCreators={stat.stats as SimilarUser[]}

@@ -1,8 +1,10 @@
 import { useRouter } from 'next/router';
 import {
+    acceptInviteErrors,
     CompanyAcceptInviteGetQueries,
     CompanyAcceptInviteGetResponse,
     CompanyAcceptInvitePostBody,
+    CompanyAcceptInvitePostResponse,
 } from 'pages/api/company/accept-invite';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -18,7 +20,7 @@ import { clientLogger } from 'src/utils/logger';
 
 export default function Register() {
     const { t } = useTranslation();
-    const { login } = useUser();
+    const { login, logout } = useUser();
 
     const router = useRouter();
     const {
@@ -34,6 +36,9 @@ export default function Register() {
     const token = router.query.token as string;
     const [registering, setRegistering] = useState(false);
     const [inviteStatus, setInviteStatus] = useState('pending');
+    useEffect(() => {
+        logout();
+    }, [logout]);
 
     useEffect(() => {
         const checkInvite = async () => {
@@ -52,7 +57,7 @@ export default function Register() {
             }
         };
         if (token) checkInvite();
-    }, [token, setFieldValue]);
+    }, [token, setFieldValue, router]);
 
     const handleSubmit = async () => {
         try {
@@ -64,7 +69,7 @@ export default function Register() {
                 lastName,
                 email,
             };
-            await nextFetch('company/accept-invite', {
+            await nextFetch<CompanyAcceptInvitePostResponse>('company/accept-invite', {
                 method: 'post',
                 body,
             });
@@ -72,9 +77,15 @@ export default function Register() {
             await login(email, password);
             router.push('/dashboard');
         } catch (error: any) {
+            if (error?.message === 'User already registered') {
+                return router.push('/login');
+            }
             clientLogger(error, 'error');
-            if (error.message) toast.error(t(`login.${error.message}`));
-            else toast.error(t('login.oopsSomethingWentWrong'));
+            if (Object.values(acceptInviteErrors).includes(error?.message)) {
+                toast.error(t(`login.${error.message}`));
+            } else {
+                toast.error(t('login.oopsSomethingWentWrong'));
+            }
         } finally {
             setRegistering(false);
         }

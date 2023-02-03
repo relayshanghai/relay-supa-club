@@ -50,12 +50,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         if (insertError) {
             serverLogger(insertError, 'error');
-            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json(insertError);
+            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
         }
-        if (!insertData)
-            return res
-                .status(httpCodes.INTERNAL_SERVER_ERROR)
-                .json({ error: 'Error creating invite' });
+        if (!insertData) return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
         try {
             await sendEmail({
                 email,
@@ -66,7 +63,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             <h1>Hi ${name},</h1>
             <p>You have been invited to join a company on the Supabase Dashboard.</p>
             <p>Click the button below to accept the invite.</p>
-            <a href="${APP_URL}/signup/invite${new URLSearchParams({
+            <a href="${APP_URL}/signup/invite?${new URLSearchParams({
                     token: insertData.id,
                 })}" style="background-color: #8B5CF6; color: white; margin: 5px; padding: 10px 20px; border-radius: 5px; text-decoration: none;">Accept Invite</a>
             <p>If you did not request this invite, you can safely ignore this email.</p>
@@ -77,12 +74,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             });
         } catch (error) {
             serverLogger(error, 'error');
-            return res
-                .status(httpCodes.INTERNAL_SERVER_ERROR)
-                .json({ error: 'Error sending email' });
+            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
         }
+        const returnData: CompanyCreateInvitePostResponse = insertData;
 
-        return res.status(httpCodes.OK).json(insertData);
+        return res.status(httpCodes.OK).json(returnData);
     }
 
     return res.status(httpCodes.METHOD_NOT_ALLOWED).json({});

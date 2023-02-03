@@ -7,14 +7,14 @@ export const formatStats = (userProfile: CreatorReport['user_profile']) => {
     if (userProfile?.geo)
         stats.push({
             label: 'country',
-            descr: 'creatorLocation',
+            descr: 'influencerLocation',
             icon: <Followers />,
             data: userProfile.geo.country.name,
         });
     if (userProfile?.geo && userProfile?.geo?.city)
         stats.push({
             label: 'city',
-            descr: 'creatorLocation',
+            descr: 'influencerLocation',
             icon: <Followers />,
             data: userProfile.geo.city.name,
         });

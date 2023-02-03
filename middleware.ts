@@ -64,13 +64,13 @@ const checkOnboardingStatus = async (
     );
     // if signed up, but no company, redirect to onboarding
     if (!subscriptionStatus) {
-        if (req.nextUrl.pathname.includes('/signup/onboarding')) return res;
+        if (req.nextUrl.pathname === '/signup/onboarding') return res;
         redirectUrl.pathname = '/signup/onboarding';
         return NextResponse.redirect(redirectUrl);
     }
     if (subscriptionStatus === 'active' || subscriptionStatus === 'trial') {
         // if already signed in and has company, when navigating to index or login page, redirect to dashboard
-        if (req.nextUrl.pathname === '/' || req.nextUrl.pathname.includes('login')) {
+        if (req.nextUrl.pathname === '/' || req.nextUrl.pathname === '/login') {
             redirectUrl.pathname = '/dashboard';
             return NextResponse.redirect(redirectUrl);
         }
@@ -85,9 +85,13 @@ const checkOnboardingStatus = async (
             '/login',
             '/account',
             '/api/subscriptions',
+            '/api/subscriptions/payment-method',
+            '/api/subscriptions/portal',
+            '/api/subscriptions/create',
             '/api/company',
+            '/pricing',
         ];
-        if (allowedPaths.some((path) => req.nextUrl.pathname.includes(path))) return res;
+        if (allowedPaths.some((path) => req.nextUrl.pathname === path)) return res;
         else {
             if (!subscriptionEndDate) {
                 redirectUrl.pathname = '/account';
@@ -143,16 +147,12 @@ export async function middleware(req: NextRequest) {
     // We need to create a response and hand it to the supabase client to be able to modify the response headers.
     const res = NextResponse.next();
 
-    if (req.nextUrl.pathname.includes('api/subscriptions/prices'))
-        return allowPricingCors(req, res);
-    if (req.nextUrl.pathname.includes('api/subscriptions/webhook'))
-        return allowStripeCors(req, res);
+    if (req.nextUrl.pathname === '/api/subscriptions/prices') return allowPricingCors(req, res);
+    if (req.nextUrl.pathname === '/api/subscriptions/webhook') return allowStripeCors(req, res);
 
     // Create authenticated Supabase Client.
     const supabase = createMiddlewareSupabaseClient<DatabaseWithCustomTypes>({ req, res });
     const { data: authData } = await supabase.auth.getSession();
-
-    // Check that user is logged in
     if (authData.session?.user?.email)
         return await checkOnboardingStatus(req, res, authData.session, supabase);
 

@@ -20,7 +20,26 @@ export const InviteMembersModal = ({
     const { createInvite } = useContext(AccountContext);
 
     const { t } = useTranslation();
-
+    const handleSendInvite = async () => {
+        try {
+            await createInvite(inviteEmail);
+            setInviteEmail('');
+            setShowAddMoreMembers(false);
+            toast.success('Invite sent');
+        } catch (error: any) {
+            if (error?.message) {
+                if (error.message === 'Missing required fields') {
+                    toast.error('Missing required fields');
+                }
+                if (error.message === 'Invalid email') {
+                    toast.error('Invalid email');
+                }
+                if (error.message === 'Invite already exists and has not expired') {
+                    toast.error('Invite already exists and has not expired');
+                }
+            }
+        }
+    };
     return (
         <Modal
             title={t('account.invite.title') || ''}
@@ -39,15 +58,7 @@ export const InviteMembersModal = ({
                 />
             </div>
             <div className="pt-8 space-x-16 justify-center flex flex-row w-full">
-                <Button
-                    disabled={!inviteEmail}
-                    onClick={async () => {
-                        await createInvite(inviteEmail);
-                        setInviteEmail('');
-                        setShowAddMoreMembers(false);
-                        toast.success('Invite sent');
-                    }}
-                >
+                <Button disabled={!inviteEmail} onClick={handleSendInvite}>
                     {t('account.invite.sendInvitation')}
                 </Button>
                 <Button variant="secondary" onClick={async () => setShowAddMoreMembers(false)}>

@@ -64,7 +64,7 @@ export const Layout = ({ children }: any) => {
                                             >
                                                 <Link href="/account" passHref>
                                                     <a className="px-4 py-2 text-sm hover:bg-gray-100 active:bg-gray-200">
-                                                        {t('navbar.button.account')}
+                                                        {t('navbar.account')}
                                                     </a>
                                                 </Link>
                                                 <Button
@@ -76,7 +76,7 @@ export const Layout = ({ children }: any) => {
                                                         window.location.href = '/signup';
                                                     }}
                                                 >
-                                                    {t('navbar.button.logout')}
+                                                    {t('navbar.logout')}
                                                 </Button>
                                             </div>
                                         )}

@@ -53,7 +53,8 @@ const details = {
 const salesRefEmail = 'amy.hu@relay.club';
 const subject = 'relay.club VIP plan subscription';
 const body = "Hi, I'm interested in purchasing the VIP plan for my company.";
-const VIPEmailLink = `mailto:${salesRefEmail}?${new URLSearchParams({ subject, body })}`;
+const query = `subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+const VIPEmailLink = `mailto:${salesRefEmail}?${query}`;
 
 const unselectedTabClasses = 'py-1 px-4 border-x border-primary-500 cursor-pointer';
 const selectedTabClasses = 'py-1 px-4 border-x border-primary-500 bg-primary-500 text-white';
@@ -110,7 +111,6 @@ const Pricing = () => {
         priceId: string,
     ) => {
         setConfirmModalData({ plan, period, priceId, price: prices[period][plan] });
-        clientLogger({ plan, period });
     };
 
     const [prices, setPrices] = useState<Prices>({
@@ -163,15 +163,19 @@ const Pricing = () => {
         fetchPrices();
     }, [t]);
 
-    const disableButton = (plan: 'diy' | 'diyMax') => {
-        if (!priceIds || !subscription?.name || !subscription.interval || !subscription.status)
-            return true;
+    const isCurrentPlan = (plan: 'diy' | 'diyMax') => {
         const planName = plan === 'diyMax' ? 'DIY Max' : 'DIY';
         return (
-            subscription.name === planName &&
+            subscription?.name === planName &&
             subscription.interval === period &&
             subscription.status === 'active'
         );
+    };
+
+    const disableButton = (plan: 'diy' | 'diyMax') => {
+        if (!priceIds || !subscription?.name || !subscription.interval || !subscription.status)
+            return true;
+        if (isCurrentPlan(plan)) return true;
     };
 
     return (
@@ -311,7 +315,9 @@ const Pricing = () => {
                                     disabled={disableButton('diy')}
                                     className="flex"
                                 >
-                                    {t('pricing.buyNow')}
+                                    {isCurrentPlan('diy')
+                                        ? t('pricing.yourCurrentPlan')
+                                        : t('pricing.buyNow')}
                                     <svg
                                         fill="none"
                                         stroke="currentColor"
@@ -420,7 +426,9 @@ const Pricing = () => {
                                     disabled={disableButton('diyMax')}
                                     className="flex"
                                 >
-                                    {t('pricing.buyNow')}
+                                    {isCurrentPlan('diyMax')
+                                        ? t('pricing.yourCurrentPlan')
+                                        : t('pricing.buyNow')}
                                     <svg
                                         fill="none"
                                         stroke="currentColor"

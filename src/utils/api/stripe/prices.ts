@@ -1,6 +1,15 @@
 import Stripe from 'stripe';
 import { StripePriceWithProductMetadata, RelayPlan } from 'types';
-import { STRIPE_PRODUCT_ID_DIY, STRIPE_PRODUCT_ID_DIY_MAX } from './constants';
+import {
+    STRIPE_PRICE_MONTHLY_DIY,
+    STRIPE_PRICE_MONTHLY_DIY_MAX,
+    STRIPE_PRICE_QUARTERLY_DIY,
+    STRIPE_PRICE_QUARTERLY_DIY_MAX,
+    STRIPE_PRICE_YEARLY_DIY,
+    STRIPE_PRICE_YEARLY_DIY_MAX,
+    STRIPE_PRODUCT_ID_DIY,
+    STRIPE_PRODUCT_ID_DIY_MAX,
+} from './constants';
 import { stripeClient } from './stripe-client';
 
 /** Stripe prices come in cents,  divide by 1 hundred, and return a string with 2 decimal places */
@@ -19,20 +28,14 @@ export const getStripePlanPrices = async () => {
     })) as Stripe.ApiList<StripePriceWithProductMetadata>;
 
     if (!diyPrices.data || !diyMaxPrices.data) throw new Error('no plans found');
-    const diyMonthly = diyPrices.data.find(
-        ({ recurring }) => recurring?.interval === 'month' && recurring.interval_count === 1,
-    );
-    const diyQuarterly = diyPrices.data.find(
-        ({ recurring }) => recurring?.interval === 'month' && recurring.interval_count === 3,
-    );
-    const diyAnnually = diyPrices.data.find(({ recurring }) => recurring?.interval === 'year');
-    const diyMaxMonthly = diyMaxPrices.data.find(
-        ({ recurring }) => recurring?.interval === 'month' && recurring.interval_count === 1,
-    );
+    const diyMonthly = diyPrices.data.find(({ id }) => id === STRIPE_PRICE_MONTHLY_DIY);
+    const diyQuarterly = diyPrices.data.find(({ id }) => id === STRIPE_PRICE_QUARTERLY_DIY);
+    const diyAnnually = diyPrices.data.find(({ id }) => id === STRIPE_PRICE_YEARLY_DIY);
+    const diyMaxMonthly = diyMaxPrices.data.find(({ id }) => id === STRIPE_PRICE_MONTHLY_DIY_MAX);
     const diyMaxQuarterly = diyMaxPrices.data.find(
-        ({ recurring }) => recurring?.interval === 'month' && recurring.interval_count === 3,
+        ({ id }) => id === STRIPE_PRICE_QUARTERLY_DIY_MAX,
     );
-    const diyMaxAnnually = diyMaxPrices.data.find((price) => price.recurring?.interval === 'year');
+    const diyMaxAnnually = diyMaxPrices.data.find(({ id }) => id === STRIPE_PRICE_YEARLY_DIY_MAX);
 
     const currency = diyMonthly?.currency;
 
