@@ -6,7 +6,6 @@ import {
 } from 'pages/api/company/create-invite';
 import { useCallback } from 'react';
 import { CompanyWithProfilesInvitesAndUsage } from 'src/utils/api/db/calls/company';
-import { CompanyDBInsert } from 'src/utils/api/db/types';
 import { nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';
 import useSWR from 'swr';
 import { useUser } from './use-user';
@@ -23,17 +22,17 @@ export const useCompany = () => {
 
     const updateCompany = useCallback(
         async (input: Omit<CompanyPostBody, 'id'>) => {
-            if (!user?.id) throw new Error('No user found');
-            const body: CompanyCreatePostBody = {
+            if (!company?.id) throw new Error('No company found');
+            const body: CompanyPostBody = {
                 ...input,
-                user_id: user.id,
+                id: company.id,
             };
             return await nextFetch<CompanyPostResponse>(`company`, {
                 method: 'post',
                 body: JSON.stringify(body),
             });
         },
-        [user?.id],
+        [company?.id],
     );
 
     const createInvite = useCallback(
@@ -53,8 +52,9 @@ export const useCompany = () => {
     );
 
     const createCompany = useCallback(
-        async (input: CompanyDBInsert) => {
-            if (!user) throw new Error('No user found');
+        async (input: { name: string; website?: string }) => {
+            if (!user?.id) throw new Error('No logged in user found');
+            if (!input.name) throw new Error('No company name found');
             const body: CompanyCreatePostBody = {
                 ...input,
                 user_id: user?.id,

@@ -1,6 +1,6 @@
+import { User } from '@supabase/supabase-js';
 import { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
-import { upsertProfile } from 'src/utils/api/db';
 import { serverLogger } from 'src/utils/logger';
 import { supabase } from 'src/utils/supabase-client';
 
@@ -11,6 +11,7 @@ export type CompanyAcceptInvitePostBody = {
     lastName: string;
     email: string;
 };
+export type CompanyAcceptInvitePostResponse = User;
 
 export type CompanyAcceptInviteGetQueries = {
     token: string;
@@ -20,12 +21,23 @@ export type CompanyAcceptInviteGetResponse = {
     email?: string;
 };
 
+export const acceptInviteErrors = {
+    inviteInvalid: 'Invite is invalid or has expired',
+    userAlreadyRegistered: 'User is already registered',
+};
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
         const { token, password, firstName, lastName } = JSON.parse(
             req.body,
         ) as CompanyAcceptInvitePostBody;
-        const { data, error } = await supabase
+        if (!token || !password || !firstName || !lastName) {
+            return res.status(httpCodes.BAD_REQUEST).json({
+                error: 'Missing required parameters',
+            });
+        }
+
+        const { data: invite, error } = await supabase
             .from('invites')
             .select('*')
             .eq('id', token)
@@ -36,45 +48,44 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             serverLogger(error, 'error');
             return res.status(httpCodes.INTERNAL_SERVER_ERROR).json(error);
         }
-        if (data?.used || Date.now() >= new Date(data.expire_at ?? '').getTime()) {
+        if (invite?.used || Date.now() >= new Date(invite.expire_at ?? '').getTime()) {
             return res.status(httpCodes.UNAUTHORIZED).json({
-                error: 'inviteInvalid',
+                error: acceptInviteErrors.inviteInvalid,
+            });
+        }
+        if (!invite?.company_id) {
+            return res.status(httpCodes.UNAUTHORIZED).json({
+                error: acceptInviteErrors.inviteInvalid,
             });
         }
 
         // Sign-up the user with the given credentials
         const {
-            data: { user, session },
+            data: { user },
             error: userError,
         } = await supabase.auth.signUp({
-            email: data.email,
+            email: invite.email,
             password,
+            options: {
+                data: { first_name: firstName, last_name: lastName, company_id: invite.company_id },
+            },
         });
 
         if (userError) {
-            serverLogger(userError, 'error');
-            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json(userError);
-        }
-
-        if (user?.id || session?.user.id) {
-            const { error: profileUpsertError } = await upsertProfile({
-                id: user?.id || session?.user.id || '',
-                first_name: firstName,
-                last_name: lastName,
-                company_id: data.company_id,
-            });
-            if (profileUpsertError) {
-                serverLogger(profileUpsertError, 'error');
-                return res.status(httpCodes.INTERNAL_SERVER_ERROR).json(profileUpsertError);
+            if (userError?.message === 'User already registered') {
+                return res
+                    .status(httpCodes.BAD_REQUEST)
+                    .json({ error: acceptInviteErrors.userAlreadyRegistered });
             }
-        } else {
-            return res
-                .status(httpCodes.INTERNAL_SERVER_ERROR)
-                .json({ error: 'Failed to create user' });
+            serverLogger(userError, 'error');
+            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
+        }
+        if (!user) {
+            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
         }
 
         // Mark the invite as used
-        const { data: invite, error: updateError } = await supabase
+        const { error: updateError } = await supabase
             .from('invites')
             .update({
                 used: true,
@@ -84,10 +95,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         if (updateError) {
             serverLogger(updateError, 'error');
-            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json(updateError);
+            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
         }
 
-        return res.status(httpCodes.OK).json({ data, invite });
+        const returnData: CompanyAcceptInvitePostResponse = user;
+
+        return res.status(httpCodes.OK).json(returnData);
     }
     if (req.method === 'GET') {
         try {
