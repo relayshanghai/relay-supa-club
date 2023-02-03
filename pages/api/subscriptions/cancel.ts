@@ -1,9 +1,10 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { SECONDS_IN_MILLISECONDS } from 'src/constants/conversions';
 import httpCodes from 'src/constants/httpCodes';
-import { getCompanyCusId, updateCompanySubscriptionStatus } from 'src/utils/api/db';
+import { updateCompanySubscriptionStatus } from 'src/utils/api/db';
+import { getSubscription } from 'src/utils/api/stripe/helpers';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 import { serverLogger } from 'src/utils/logger';
+import { unixEpochToISOString } from 'src/utils/utils';
 import Stripe from 'stripe';
 
 export type SubscriptionCancelPostBody = {
@@ -18,31 +19,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             return res.status(httpCodes.BAD_REQUEST).json({ error: 'Missing company id' });
 
         try {
-            const { data: companyData } = await getCompanyCusId(company_id);
-            const cusId = companyData?.cus_id;
-            if (!companyData || !cusId) {
-                serverLogger(new Error('Missing company data'), 'error');
-                return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
-            }
-
-            const subscriptions = await stripeClient.subscriptions.list({
-                customer: cusId,
-                status: 'active',
-            });
-            let activeSubscription = subscriptions.data[0];
-
-            if (!activeSubscription) {
-                const trialSubscriptions = await stripeClient.subscriptions.list({
-                    customer: cusId,
-                    status: 'trialing',
+            const activeSubscription = await getSubscription(company_id);
+            if (!activeSubscription)
+                return res.status(httpCodes.NOT_FOUND).json({
+                    error: 'No active subscription to cancel',
                 });
-                activeSubscription = trialSubscriptions.data[0];
-                if (!activeSubscription) {
-                    return res
-                        .status(httpCodes.NOT_FOUND)
-                        .json({ error: 'No active subscription to cancel' });
-                }
-            }
 
             const subscription: SubscriptionCancelPostResponse =
                 await stripeClient.subscriptions.update(activeSubscription.id, {
@@ -52,9 +33,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             await updateCompanySubscriptionStatus({
                 subscription_status: 'canceled',
                 id: company_id,
-                subscription_end_date: new Date(
-                    subscription.current_period_end * SECONDS_IN_MILLISECONDS,
-                ).toISOString(),
+                subscription_end_date: unixEpochToISOString(subscription.current_period_end),
             });
 
             return res.status(httpCodes.OK).json(subscription);

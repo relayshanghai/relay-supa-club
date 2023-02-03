@@ -1,3 +1,5 @@
+import { SECONDS_IN_MILLISECONDS } from 'src/constants/conversions';
+
 export const handleError = (error: any) => {
     if (!error || typeof error !== 'object') return 'Oops! Something went wrong. Try again';
     const { response } = error;
@@ -46,4 +48,17 @@ export const toCurrency = (n: number, curr = 'USD', LanguageFormat?: string) =>
 export const truncateWithDots = (str: string | undefined | null, maxLength: number) => {
     if (!str) return '';
     return str.length > maxLength ? str.slice(0, maxLength) + '...' : str;
+};
+
+/**
+ * Accepts one or more Unix epoch timestamps and returns
+ * the ISOString representation of the first valid one.
+ */
+export const unixEpochToISOString = (...timestamps: (number | undefined | null)[]) => {
+    const firstValidTimestamp = timestamps.find((ts) => ts != undefined && !Number.isNaN(ts));
+    if (typeof firstValidTimestamp !== 'number') {
+        return;
+    }
+
+    return new Date(firstValidTimestamp * SECONDS_IN_MILLISECONDS).toISOString();
 };
