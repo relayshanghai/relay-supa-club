@@ -57,7 +57,7 @@ export const CancelSubscriptionModal = ({
                     <Button
                         variant="secondary"
                         className="!text-xs !px-2 !py-0"
-                        onClick={async () => handleClose()}
+                        onClick={handleClose}
                     >
                         {t('account.subscription.modal.close')}
                     </Button>
