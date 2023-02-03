@@ -9,12 +9,8 @@ import type {
     UsagesDB,
 } from '../types';
 
-export interface CompanyDBWithSubscription extends CompanyDB {
-    subscription_status: SubscriptionStatus;
-}
-
 // Custom type for supabase queries where we select more than one row in a single query
-export type CompanyWithProfilesInvitesAndUsage = CompanyDBWithSubscription & {
+export type CompanyWithProfilesInvitesAndUsage = CompanyDB & {
     profiles: Pick<ProfileDB, 'id' | 'first_name' | 'last_name' | 'admin'>[];
     invites: Pick<InvitesDB, 'id' | 'email' | 'used' | 'expire_at'>[];
     usages: Pick<UsagesDB, 'id' | 'type'>[];
@@ -57,7 +53,7 @@ export const updateCompany = async (update: CompanyDBUpdate) => {
         .single();
 
     if (error) throw error;
-    return data as CompanyDBWithSubscription;
+    return data;
 };
 
 type CompanyUsageLimitUpdate = {
