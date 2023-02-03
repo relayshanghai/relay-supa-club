@@ -69,14 +69,13 @@ export default function Register() {
                 lastName,
                 email,
             };
-            const signupRes = await nextFetch<CompanyAcceptInvitePostResponse>(
+            await nextFetch<CompanyAcceptInvitePostResponse>(
                 'company/accept-invite',
                 {
                     method: 'post',
                     body,
                 },
             );
-            if (!signupRes.company_id) throw new Error('No company id');
             toast.success(t('login.inviteAccepted'));
             await login(email, password);
             router.push('/dashboard');
