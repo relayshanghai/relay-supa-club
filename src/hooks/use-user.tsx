@@ -39,7 +39,7 @@ const ctx = createContext<{
         session: Session | null;
     }>;
     logout: () => void;
-    upsertProfile: (updates: Omit<ProfilePutBody, 'id'>) => void;
+    updateProfile: (updates: Omit<ProfilePutBody, 'id'>) => void;
     refreshProfile: () => void;
 }>({
     user: null,
@@ -54,7 +54,7 @@ const ctx = createContext<{
         user: null,
         session: null,
     }),
-    upsertProfile: () => null,
+    updateProfile: () => null,
     refreshProfile: () => null,
 });
 
@@ -137,7 +137,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
         }
     };
 
-    const upsertProfile = useCallback(
+    const updateProfile = useCallback(
         async (body: Omit<ProfilePutBody, 'id'>) => {
             setLoading(true);
             try {
@@ -171,7 +171,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
                 signup,
                 loading,
                 profile,
-                upsertProfile,
+                updateProfile,
                 refreshProfile: getProfile,
                 logout,
             }}

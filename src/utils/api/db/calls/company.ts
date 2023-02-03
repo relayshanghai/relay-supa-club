@@ -135,3 +135,6 @@ export const createCompany = async (data: CompanyDBInsert) => {
     data.subscription_status = 'awaiting_payment_method';
     return await supabase.from('companies').insert(data).select().single();
 };
+
+export const getCompanyByName = async (name: string) =>
+    await supabase.from('companies').select().eq('name', name).single();
