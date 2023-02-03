@@ -31,6 +31,7 @@ const pricing = {
     buyNow: 'Buy Now',
     contactUs: 'Contact us',
     popular: 'POPULAR',
+    yourCurrentPlan: 'Your current plan',
 };
 
 export default pricing;
