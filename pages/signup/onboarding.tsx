@@ -11,6 +11,7 @@ import { Title } from 'src/components/title';
 import { createCompanyValidationErrors, useCompany } from 'src/hooks/use-company';
 import { useFields } from 'src/hooks/use-fields';
 import { useUser } from 'src/hooks/use-user';
+import { hasCustomError } from 'src/utils/errors';
 import { clientLogger } from 'src/utils/logger';
 
 const errors = {
@@ -37,7 +38,7 @@ export default function Register() {
             await router.push('/signup/payment-onboard');
         } catch (e: any) {
             clientLogger(e, 'error');
-            if (e?.message && Object.values(errors).includes(e.message)) {
+            if (hasCustomError(e, errors)) {
                 toast.error(t(`login.${e.message}`));
             } else {
                 toast.error(t('login.oopsSomethingWentWrong'));

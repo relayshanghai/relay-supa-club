@@ -19,9 +19,9 @@ const Handler: NextApiHandler = async (req, res) => {
                     error: 'user is unauthorized for this action',
                 });
             }
-            const { data, error: profileUpsertError } = await updateProfile(profile);
-            if (profileUpsertError) {
-                serverLogger(profileUpsertError, 'error');
+            const { data, error: profileUpdateError } = await updateProfile(profile);
+            if (profileUpdateError) {
+                serverLogger(profileUpdateError, 'error');
                 return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
             }
             return res.status(httpCodes.OK).json(data);

@@ -35,7 +35,7 @@ export const PersonalDetails = () => {
 
     const { t } = useTranslation();
 
-    const handleupdateProfile = async () => {
+    const handleUpdateProfile = async () => {
         try {
             await updateProfile({
                 first_name: firstName,
@@ -110,7 +110,7 @@ export const PersonalDetails = () => {
 
             {editMode ? (
                 <div className="flex flex-row justify-end w-full space-x-4">
-                    <Button disabled={userDataLoading} onClick={handleupdateProfile}>
+                    <Button disabled={userDataLoading} onClick={handleUpdateProfile}>
                         {t('account.update')}
                     </Button>{' '}
                     <Button onClick={() => setEditMode(false)} variant="secondary">
