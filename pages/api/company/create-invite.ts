@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { APP_URL, emailRegex } from 'src/constants';
 import httpCodes from 'src/constants/httpCodes';
 import { InvitesDB } from 'src/utils/api/db';
+import { isCompanyOwnerOrRelayEmployee } from 'src/utils/auth';
 import { serverLogger } from 'src/utils/logger';
 import { sendEmail } from 'src/utils/send-in-blue-client';
 import { supabase } from 'src/utils/supabase-client';
@@ -21,6 +22,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         if (!emailRegex.test(email))
             return res.status(httpCodes.BAD_REQUEST).json({ error: 'Invalid email' });
+
+        if (!(await isCompanyOwnerOrRelayEmployee(req, res))) {
+            return res
+                .status(httpCodes.UNAUTHORIZED)
+                .json({ error: 'This action is limited to company admins' });
+        }
 
         const { data: existingInvite } = await supabase
             .from('invites')

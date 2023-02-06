@@ -11,7 +11,7 @@ import type {
 
 // Custom type for supabase queries where we select more than one row in a single query
 export type CompanyWithProfilesInvitesAndUsage = CompanyDB & {
-    profiles: Pick<ProfileDB, 'id' | 'first_name' | 'last_name' | 'admin'>[];
+    profiles: Pick<ProfileDB, 'id' | 'first_name' | 'last_name' | 'role'>[];
     invites: Pick<InvitesDB, 'id' | 'email' | 'used' | 'expire_at'>[];
     usages: Pick<UsagesDB, 'id' | 'type'>[];
 };
@@ -24,7 +24,7 @@ export const getCompanyWithProfilesInvitesAndUsage = async (companyId: string) =
         .from('companies')
         .select(
             // If this query changes, make sure to update the CompanyWithProfilesInvitesAndUsage type
-            '*, profiles(id, first_name, last_name, admin), invites(id, email, used, expire_at), usages(id, type)',
+            '*, profiles(id, first_name, last_name, role), invites(id, email, used, expire_at), usages(id, type)',
         )
         .eq('id', companyId)
         .eq('invites.used', false)
@@ -138,3 +138,6 @@ export const createCompany = (data: CompanyDBInsert) => {
 
 export const getCompanyByName = (name: string) =>
     supabase.from('companies').select().eq('name', name).single();
+
+export const getCompanyName = (id: string) =>
+    supabase.from('companies').select('name').eq('id', id).single();

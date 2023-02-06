@@ -1,7 +1,7 @@
 import { NextApiHandler } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { ProfileDB, ProfileInsertDB, updateProfile } from 'src/utils/api/db';
-import { checkSessionIdMatchesID } from 'src/utils/fetcher';
+import { checkSessionIdMatchesID } from 'src/utils/auth';
 import { serverLogger } from 'src/utils/logger';
 
 export type ProfilePutBody = ProfileInsertDB;

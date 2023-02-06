@@ -1,6 +1,7 @@
 import { User } from '@supabase/supabase-js';
 import { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
+import { updateUserRole } from 'src/utils/api/db';
 import { serverLogger } from 'src/utils/logger';
 import { supabase } from 'src/utils/supabase-client';
 
@@ -81,6 +82,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
         }
         if (!user) {
+            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
+        }
+
+        const { error: updateRoleError } = await updateUserRole(user.id, 'company_teammate');
+
+        if (updateRoleError) {
+            serverLogger(updateRoleError, 'error');
             return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
         }
 

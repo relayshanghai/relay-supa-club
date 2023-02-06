@@ -1,4 +1,4 @@
-import { CompanyGetQueries, CompanyPostBody, CompanyPostResponse } from 'pages/api/company';
+import { CompanyGetQueries, CompanyPutBody, CompanyPutResponse } from 'pages/api/company';
 import { CompanyCreatePostBody, CompanyCreatePostResponse } from 'pages/api/company/create';
 import {
     CompanyCreateInvitePostBody,
@@ -26,14 +26,14 @@ export const useCompany = () => {
     );
 
     const updateCompany = useCallback(
-        async (input: Omit<CompanyPostBody, 'id'>) => {
+        async (input: Omit<CompanyPutBody, 'id'>) => {
             if (!company?.id) throw new Error('No company found');
-            const body: CompanyPostBody = {
+            const body: CompanyPutBody = {
                 ...input,
                 id: company.id,
             };
-            return await nextFetch<CompanyPostResponse>(`company`, {
-                method: 'post',
+            return await nextFetch<CompanyPutResponse>(`company`, {
+                method: 'PUT',
                 body: JSON.stringify(body),
             });
         },

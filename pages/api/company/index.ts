@@ -2,22 +2,29 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import {
     CompanyWithProfilesInvitesAndUsage,
+    getCompanyByName,
+    getCompanyName,
     getCompanyWithProfilesInvitesAndUsage,
     updateCompany,
 } from 'src/utils/api/db/calls/company';
 import { CompanyDB, CompanyDBUpdate } from 'src/utils/api/db/types';
 import { serverLogger } from 'src/utils/logger';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
+import { isCompanyOwnerOrRelayEmployee } from 'src/utils/auth';
 
 export type CompanyGetQueries = {
     id: string;
 };
 export type CompanyGetResponse = CompanyWithProfilesInvitesAndUsage;
 
-export interface CompanyPostBody extends CompanyDBUpdate {
+export interface CompanyPutBody extends CompanyDBUpdate {
     id: string;
 }
-export type CompanyPostResponse = CompanyDB;
+export type CompanyPutResponse = CompanyDB;
+
+export const updateCompanyErrors = {
+    companyWithSameNameExists: 'companyWithSameNameExists',
+};
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'GET') {
@@ -42,11 +49,35 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
     }
 
-    if (req.method === 'POST') {
+    if (req.method === 'PUT') {
         try {
-            const updateData = JSON.parse(req.body) as CompanyPostBody;
+            const updateData = JSON.parse(req.body) as CompanyPutBody;
             if (!updateData.id) {
                 return res.status(httpCodes.BAD_REQUEST).json({ error: 'Missing company id' });
+            }
+
+            if (!(await isCompanyOwnerOrRelayEmployee(req, res))) {
+                return res
+                    .status(httpCodes.UNAUTHORIZED)
+                    .json({ error: 'This action is limited to company admins' });
+            }
+
+            if (updateData.name) {
+                try {
+                    const { data } = await getCompanyName(updateData.id);
+                    if (data?.name !== updateData.name) {
+                        const { data: companyWithSameName } = await getCompanyByName(
+                            updateData.name,
+                        );
+                        if (companyWithSameName) {
+                            return res
+                                .status(httpCodes.BAD_REQUEST)
+                                .json({ error: updateCompanyErrors.companyWithSameNameExists });
+                        }
+                    }
+                } catch (error) {
+                    serverLogger(error, 'error');
+                }
             }
 
             const company = await updateCompany(updateData);
@@ -67,7 +98,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     },
                 });
 
-            return res.status(httpCodes.OK).json(company);
+            const returnData: CompanyPutResponse = company;
+
+            return res.status(httpCodes.OK).json(returnData);
         } catch (error) {
             serverLogger(error, 'error');
             return res

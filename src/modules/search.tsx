@@ -514,8 +514,8 @@ export const Search = () => {
                                 </td>
                             </tr>
                         ) : !noResults ? (
-                            resultPages.map((page) =>
-                                page.map((creator, i) => (
+                            resultPages?.map((page) =>
+                                page?.map((creator, i) => (
                                     <SearchResultRow
                                         key={i}
                                         creator={creator}

@@ -1,7 +1,10 @@
+import { updateCompanyErrors } from 'pages/api/company';
 import { useContext, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { useFields } from 'src/hooks/use-fields';
+import { isAdmin } from 'src/utils/auth';
+import { hasCustomError } from 'src/utils/errors';
 import { Button } from '../button';
 import { Edit } from '../icons';
 import { Input } from '../input';
@@ -42,8 +45,13 @@ export const CompanyDetails = () => {
             });
             toast.success(t('account.company.companyProfileUpdated'));
             setEditMode(false);
-        } catch (e) {
-            toast.error(t('account.company.oopsWentWrong'));
+        } catch (e: any) {
+            if (hasCustomError(e, updateCompanyErrors)) {
+                // right now we only have the companyWithSameNameExists error that's also used in login
+                toast.error(t(`login.${e.message}`));
+            } else {
+                toast.error(t('account.company.oopsWentWrong'));
+            }
         } finally {
             setUpdating(false);
         }
@@ -95,7 +103,7 @@ export const CompanyDetails = () => {
                     </div>
                 </div>
             )}
-            {profile?.admin && (
+            {isAdmin(profile?.role) && (
                 <>
                     {editMode ? (
                         <div className="flex flex-row justify-end w-full space-x-4">
@@ -148,7 +156,7 @@ export const CompanyDetails = () => {
                                             {t('account.company.role')}
                                         </p>
                                         <p>
-                                            {profile.admin
+                                            {isAdmin(profile?.role)
                                                 ? t('account.company.admin')
                                                 : t('account.company.member')}
                                         </p>
@@ -182,7 +190,7 @@ export const CompanyDetails = () => {
                             })}
                         </>
                     )}
-                {profile?.admin && (
+                {isAdmin(profile?.role) && (
                     <div className="pt-4">
                         <Button variant="secondary" onClick={() => setShowAddMoreMembers(true)}>
                             {t('account.company.addMoreMembers')}

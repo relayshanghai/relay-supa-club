@@ -291,7 +291,6 @@ export interface Database {
             };
             profiles: {
                 Row: {
-                    admin: boolean | null;
                     avatar_url: string | null;
                     company_id: string | null;
                     created_at: string | null;
@@ -299,12 +298,11 @@ export interface Database {
                     first_name: string;
                     id: string;
                     last_name: string;
-                    onboarding: boolean;
                     phone: string | null;
+                    role: string | null;
                     updated_at: string | null;
                 };
                 Insert: {
-                    admin?: boolean | null;
                     avatar_url?: string | null;
                     company_id?: string | null;
                     created_at?: string | null;
@@ -312,12 +310,11 @@ export interface Database {
                     first_name: string;
                     id: string;
                     last_name: string;
-                    onboarding?: boolean;
                     phone?: string | null;
+                    role?: string | null;
                     updated_at?: string | null;
                 };
                 Update: {
-                    admin?: boolean | null;
                     avatar_url?: string | null;
                     company_id?: string | null;
                     created_at?: string | null;
@@ -325,8 +322,8 @@ export interface Database {
                     first_name?: string;
                     id?: string;
                     last_name?: string;
-                    onboarding?: boolean;
                     phone?: string | null;
+                    role?: string | null;
                     updated_at?: string | null;
                 };
             };

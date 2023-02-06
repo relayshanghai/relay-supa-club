@@ -6,7 +6,7 @@ import {
     getCompanyByName,
     updateCompany,
     updateProfile,
-    updateUserAdminRole,
+    updateUserRole,
 } from 'src/utils/api/db';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 import { serverLogger } from 'src/utils/logger';
@@ -27,11 +27,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         try {
             const { user_id, name, website } = JSON.parse(req.body) as CompanyCreatePostBody;
 
-            const { data: companyWithSameName } = await getCompanyByName(name);
-            if (companyWithSameName) {
-                return res
-                    .status(httpCodes.BAD_REQUEST)
-                    .json({ error: createCompanyErrors.companyWithSameNameExists });
+            try {
+                const { data: companyWithSameName } = await getCompanyByName(name);
+                if (companyWithSameName) {
+                    return res
+                        .status(httpCodes.BAD_REQUEST)
+                        .json({ error: createCompanyErrors.companyWithSameNameExists });
+                }
+            } catch (error) {
+                serverLogger(error, 'error');
             }
 
             const { data: company, error } = await createCompany({ name, website });
@@ -50,7 +54,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 serverLogger(profileError, 'error');
                 return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
             }
-            const { error: makeAdminError } = await updateUserAdminRole(user_id, true);
+            const { error: makeAdminError } = await updateUserRole(user_id, 'company_owner');
             if (makeAdminError) {
                 serverLogger(makeAdminError, 'error');
                 return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
