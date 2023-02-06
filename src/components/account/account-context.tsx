@@ -21,7 +21,7 @@ export interface AccountContextProps {
     createInvite: (email: string) => void;
     refreshProfile: () => void;
 
-    upsertProfile: (data: Omit<ProfilePutBody, 'id'>) => void;
+    updateProfile: (data: Omit<ProfilePutBody, 'id'>) => void;
     updateCompany: (data: Omit<CompanyPostBody, 'id'>) => void;
 }
 
@@ -35,12 +35,12 @@ export const AccountContext = createContext<AccountContextProps>({
     createInvite: () => {},
 
     updateCompany: () => {},
-    upsertProfile: () => {},
+    updateProfile: () => {},
     refreshProfile: () => {},
 });
 
 export const AccountProvider: FC<PropsWithChildren> = ({ children }: PropsWithChildren) => {
-    const { profile, user, loading: userDataLoading, upsertProfile, refreshProfile } = useUser();
+    const { profile, user, loading: userDataLoading, updateProfile, refreshProfile } = useUser();
     const { company, updateCompany, createInvite } = useCompany();
 
     return (
@@ -49,7 +49,7 @@ export const AccountProvider: FC<PropsWithChildren> = ({ children }: PropsWithCh
                 userDataLoading,
                 profile,
                 user,
-                upsertProfile,
+                updateProfile,
                 company,
                 updateCompany,
                 createInvite,
