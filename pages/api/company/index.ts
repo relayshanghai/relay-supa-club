@@ -10,6 +10,7 @@ import {
 import { CompanyDB, CompanyDBUpdate } from 'src/utils/api/db/types';
 import { serverLogger } from 'src/utils/logger';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
+import { isCompanyOwnerOrRelayEmployee } from 'src/utils/auth';
 
 export type CompanyGetQueries = {
     id: string;
@@ -54,6 +55,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             if (!updateData.id) {
                 return res.status(httpCodes.BAD_REQUEST).json({ error: 'Missing company id' });
             }
+
+            if (!(await isCompanyOwnerOrRelayEmployee(req, res))) {
+                return res
+                    .status(httpCodes.UNAUTHORIZED)
+                    .json({ error: 'This action is limited to company admins' });
+            }
+
             if (updateData.name) {
                 const { data } = await getCompanyName(updateData.id);
                 if (data?.name !== updateData.name) {

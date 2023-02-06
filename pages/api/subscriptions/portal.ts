@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { APP_URL } from 'src/constants';
 import httpCodes from 'src/constants/httpCodes';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
+import { isCompanyOwnerOrRelayEmployee } from 'src/utils/auth';
 import { supabase } from 'src/utils/supabase-client';
 
 export type SubscriptionPortalGetQueries = {
@@ -14,7 +15,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const { id, returnUrl } = req.query as SubscriptionPortalGetQueries;
         if (!id)
             return res.status(httpCodes.BAD_REQUEST).send({ message: 'No company id provided' });
-
+        if (!(await isCompanyOwnerOrRelayEmployee(req, res))) {
+            return res
+                .status(httpCodes.UNAUTHORIZED)
+                .json({ error: 'This action is limited to company admins' });
+        }
         const { data: company, error } = await supabase
             .from('companies')
             .select('cus_id, name, id')

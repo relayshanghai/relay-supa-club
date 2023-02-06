@@ -7,6 +7,7 @@ import {
 } from 'src/utils/api/db';
 import { getSubscription } from 'src/utils/api/stripe/helpers';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
+import { isCompanyOwnerOrRelayEmployee } from 'src/utils/auth';
 import { serverLogger } from 'src/utils/logger';
 import { unixEpochToISOString } from 'src/utils/utils';
 import Stripe from 'stripe';
@@ -21,7 +22,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const { company_id } = JSON.parse(req.body) as SubscriptionDiscountRenewPostBody;
         if (!company_id)
             return res.status(httpCodes.BAD_REQUEST).json({ error: 'Missing company id' });
-
+        if (!(await isCompanyOwnerOrRelayEmployee(req, res))) {
+            return res
+                .status(httpCodes.UNAUTHORIZED)
+                .json({ error: 'This action is limited to company admins' });
+        }
         try {
             const couponParams: Stripe.CouponCreateParams = {
                 duration: 'once',

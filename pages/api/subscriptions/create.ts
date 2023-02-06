@@ -6,6 +6,7 @@ import {
     updateCompanyUsageLimits,
 } from 'src/utils/api/db';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
+import { isCompanyOwnerOrRelayEmployee } from 'src/utils/auth';
 import { serverLogger } from 'src/utils/logger';
 import { unixEpochToISOString } from 'src/utils/utils';
 import Stripe from 'stripe';
@@ -24,7 +25,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         if (!company_id)
             return res.status(httpCodes.BAD_REQUEST).json({ error: 'Missing company id' });
         if (!price_id) return res.status(httpCodes.BAD_REQUEST).json({ error: 'Missing price id' });
-
+        if (!(await isCompanyOwnerOrRelayEmployee(req, res))) {
+            return res
+                .status(httpCodes.UNAUTHORIZED)
+                .json({ error: 'This action is limited to company admins' });
+        }
         try {
             const { data: companyData } = await getCompanyCusId(company_id);
             const cusId = companyData?.cus_id;
