@@ -1,6 +1,7 @@
 import { InfluencerPostRequest, InfluencerPostResponse } from 'pages/api/influencer-search';
 import { useCallback, useMemo, useRef, useState } from 'react';
-import { usageError } from 'src/utils/api/db';
+import { usageErrors } from 'src/utils/api/db';
+import { hasCustomError } from 'src/utils/errors';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger';
 import {
@@ -98,7 +99,7 @@ export const useSearch = () => {
             } catch (error: any) {
                 if (error?.message && error.message.includes('abort')) return;
                 clientLogger(error, 'error');
-                if (error.message && Object.values(usageError).includes(error.message)) {
+                if (hasCustomError(error, usageErrors)) {
                     setUsageExceeded(true);
                 }
             }

@@ -15,6 +15,7 @@ import { Input } from 'src/components/input';
 import { Title } from 'src/components/title';
 import { useFields } from 'src/hooks/use-fields';
 import { useUser } from 'src/hooks/use-user';
+import { hasCustomError } from 'src/utils/errors';
 import { nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger';
 
@@ -69,13 +70,10 @@ export default function Register() {
                 lastName,
                 email,
             };
-            await nextFetch<CompanyAcceptInvitePostResponse>(
-                'company/accept-invite',
-                {
-                    method: 'post',
-                    body,
-                },
-            );
+            await nextFetch<CompanyAcceptInvitePostResponse>('company/accept-invite', {
+                method: 'post',
+                body,
+            });
             toast.success(t('login.inviteAccepted'));
             await login(email, password);
             router.push('/dashboard');
@@ -84,7 +82,7 @@ export default function Register() {
                 return router.push('/login');
             }
             clientLogger(error, 'error');
-            if (Object.values(acceptInviteErrors).includes(error?.message)) {
+            if (hasCustomError(error, acceptInviteErrors)) {
                 toast.error(t(`login.${error.message}`));
             } else {
                 toast.error(t('login.oopsSomethingWentWrong'));
