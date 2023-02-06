@@ -7,3 +7,5 @@ export const STRIPE_PRODUCT_ID_DIY_MAX = 'prod_N7PH5AciWQkPyv';
 export const STRIPE_PRICE_MONTHLY_DIY_MAX = 'price_1MNAT0As9LEfZQ292rmiX8Cj';
 export const STRIPE_PRICE_QUARTERLY_DIY_MAX = 'price_1MNBZ8As9LEfZQ294QasjNYv';
 export const STRIPE_PRICE_YEARLY_DIY_MAX = 'price_1MNBZ8As9LEfZQ29vph62DoE';
+
+export const STRIPE_PRODUCT_ID_VIP = 'prod_NJ1l6867a0bkhL';
