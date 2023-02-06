@@ -3,6 +3,7 @@ import { useContext, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { useFields } from 'src/hooks/use-fields';
+import { isAdmin } from 'src/utils/auth';
 import { hasCustomError } from 'src/utils/errors';
 import { Button } from '../button';
 import { Edit } from '../icons';
@@ -56,11 +57,6 @@ export const CompanyDetails = () => {
         }
     };
 
-    const isAdmin =
-        profile?.role === 'company_owner' ||
-        profile?.role === 'relay_employee' ||
-        profile?.role === 'relay_expert';
-
     return (
         <div
             className={`flex flex-col items-start space-y-4 p-4 bg-white rounded-lg w-full lg:max-w-2xl relative ${
@@ -107,7 +103,7 @@ export const CompanyDetails = () => {
                     </div>
                 </div>
             )}
-            {isAdmin && (
+            {isAdmin(profile?.role) && (
                 <>
                     {editMode ? (
                         <div className="flex flex-row justify-end w-full space-x-4">
@@ -160,7 +156,7 @@ export const CompanyDetails = () => {
                                             {t('account.company.role')}
                                         </p>
                                         <p>
-                                            {isAdmin
+                                            {isAdmin(profile?.role)
                                                 ? t('account.company.admin')
                                                 : t('account.company.member')}
                                         </p>
@@ -194,7 +190,7 @@ export const CompanyDetails = () => {
                             })}
                         </>
                     )}
-                {isAdmin && (
+                {isAdmin(profile?.role) && (
                     <div className="pt-4">
                         <Button variant="secondary" onClick={() => setShowAddMoreMembers(true)}>
                             {t('account.company.addMoreMembers')}
