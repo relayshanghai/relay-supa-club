@@ -7,12 +7,17 @@ import {
     updateCompanyUsageLimits,
     updateUserRole,
 } from 'src/utils/api/db';
-import { STRIPE_PRODUCT_ID_VIP } from 'src/utils/api/stripe/constants';
+import {
+    DEFAULT_VIP_PROFILES_LIMIT,
+    DEFAULT_VIP_SEARCHES_LIMIT,
+    STRIPE_PRODUCT_ID_VIP,
+} from 'src/utils/api/stripe/constants';
 import { serverLogger } from 'src/utils/logger';
 import { sendEmail } from 'src/utils/send-in-blue-client';
 import { supabase } from 'src/utils/supabase-client';
 import { unixEpochToISOString } from 'src/utils/utils';
 import { CustomerSubscriptionCreated } from 'types';
+import { ulid } from 'ulid';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
@@ -33,9 +38,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         throw new Error('Missing customer ID in invoice body');
                     }
 
-                    const relayExpertPassword = Math.random().toString(36).slice(-8);
-                    const relayExpertEmail = RELAY_EXPERT_EMAIL;
-
                     const { data: company, error: companyError } = await getCompanyByCusId(
                         customerId,
                     );
@@ -43,8 +45,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         serverLogger(companyError, 'error');
                         return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
                     }
-                    const { data, error } = await supabase.auth.signUp({
-                        email: relayExpertEmail,
+
+                    const relayExpertPassword = ulid().slice(-8);
+                    const relayExpertEmail = RELAY_EXPERT_EMAIL;
+                    // add some randomness to the email to avoid 'email already registered' error
+                    const email = ulid() + '@relay.club';
+
+                    const { data: signupData, error: signupError } = await supabase.auth.signUp({
+                        email,
                         password: relayExpertPassword,
                         options: {
                             data: {
@@ -54,23 +62,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                             },
                         },
                     });
-                    if (!data.user?.id) {
-                        throw new Error('Missing user id in signup response');
-                    }
-                    await updateUserRole(data.user.id, 'relay_expert');
 
-                    if (error) {
-                        serverLogger(error, 'error');
+                    if (signupError) {
+                        serverLogger(signupError, 'error');
                         return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
                     }
-
-                    if (!price.metadata.profiles || !price.metadata.searches) {
-                        throw new Error('Missing profiles or searches limit in price metadata');
+                    if (!signupData.user?.id) {
+                        throw new Error('Missing user id in signup response');
                     }
+                    await updateUserRole(signupData.user.id, 'relay_expert');
+
+                    const profiles_limit = price.metadata.profiles || DEFAULT_VIP_PROFILES_LIMIT;
+                    const searches_limit = price.metadata.searches || DEFAULT_VIP_SEARCHES_LIMIT;
                     await updateCompanyUsageLimits({
-                        profiles_limit: price.metadata.profiles,
-                        searches_limit: price.metadata.searches,
-                        id: customerId,
+                        profiles_limit,
+                        searches_limit,
+                        id: company.id,
                     });
 
                     const subscription_start_date = unixEpochToISOString(
@@ -89,25 +96,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         subscription_current_period_end: unixEpochToISOString(
                             invoiceBody.data.object.current_period_end,
                         ),
-                        id: customerId,
+                        id: company.id,
                     });
-
+                    const html = `
+                            <p>Hi Relay Expert,</p>
+                            <p>Here are your login credentials:</p>
+                            <p>Email: ${email}</p>
+                            <p>Password: ${relayExpertPassword}</p>
+                            <p>Start date: ${subscription_start_date}</p>
+                            <p>Profiles limit: ${profiles_limit}</p>
+                            <p>Searches limit: ${searches_limit}</p>
+                                `;
                     await sendEmail({
                         email: relayExpertEmail,
                         name: 'Relay Expert',
                         subject: 'Relay Expert Account',
-                        html: `
-                        <p>Hi Relay Expert,</p>
-                        <p>Here are your login credentials:</p>
-                        <p>Email: ${relayExpertEmail}</p>
-                        <p>Password: ${relayExpertPassword}</p>
-                        <p>Start date: ${subscription_start_date}</p>
-                        <p>Profiles limit: ${price.metadata.profiles}</p>
-                        <p>Searches limit: ${price.metadata.searches}</p>
-                        
-`,
+                        html,
                     });
-                    return res.status(httpCodes.NO_CONTENT).json({});
+                    return res.status(httpCodes.NO_CONTENT);
                 } else {
                     return res.status(httpCodes.METHOD_NOT_ALLOWED).json({});
                 }
