@@ -41,7 +41,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
             }
 
-            const { error: profileError } = await updateProfile({
+            const { error: profileError, data: profile } = await updateProfile({
                 id: user_id,
                 company_id: company.id,
             });
@@ -58,6 +58,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             const customer = await stripeClient.customers.create({
                 name,
+                email: profile.email || '',
                 metadata: {
                     company_id: company.id,
                 },
