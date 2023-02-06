@@ -138,3 +138,6 @@ export const createCompany = (data: CompanyDBInsert) => {
 
 export const getCompanyByName = (name: string) =>
     supabase.from('companies').select().eq('name', name).single();
+
+export const getCompanyName = (id: string) =>
+    supabase.from('companies').select('name').eq('id', id).single();

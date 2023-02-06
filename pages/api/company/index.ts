@@ -2,6 +2,8 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import {
     CompanyWithProfilesInvitesAndUsage,
+    getCompanyByName,
+    getCompanyName,
     getCompanyWithProfilesInvitesAndUsage,
     updateCompany,
 } from 'src/utils/api/db/calls/company';
@@ -18,6 +20,10 @@ export interface CompanyPostBody extends CompanyDBUpdate {
     id: string;
 }
 export type CompanyPostResponse = CompanyDB;
+
+export const updateCompanyErrors = {
+    companyWithSameNameExists: 'companyWithSameNameExists',
+};
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'GET') {
@@ -47,6 +53,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const updateData = JSON.parse(req.body) as CompanyPostBody;
             if (!updateData.id) {
                 return res.status(httpCodes.BAD_REQUEST).json({ error: 'Missing company id' });
+            }
+            if (updateData.name) {
+                const { data } = await getCompanyName(updateData.id);
+                if (data?.name !== updateData.name) {
+                    const { data: companyWithSameName } = await getCompanyByName(updateData.name);
+                    if (companyWithSameName) {
+                        return res
+                            .status(httpCodes.BAD_REQUEST)
+                            .json({ error: updateCompanyErrors.companyWithSameNameExists });
+                    }
+                }
             }
 
             const company = await updateCompany(updateData);
