@@ -10,6 +10,9 @@ import { useCampaigns } from 'src/hooks/use-campaigns';
 import Image from 'next/image';
 import { CampaignWithCompanyCreators } from 'src/utils/api/db';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
+import { Modal } from 'src/components/modal';
+import CommentCard from 'src/components/campaigns/comment-card';
+import CommentInput from 'src/components/campaigns/comment-input';
 
 export default function CampaignShow() {
     const router = useRouter();
@@ -22,6 +25,7 @@ export default function CampaignShow() {
 
     const [media, setMedia] = useState<{ url: string; name: string }[]>([]);
     const [currentTab, setCurrentTab] = useState(0);
+    const [showNotesModal, setShowNotesModal] = useState(false);
     const { t, i18n } = useTranslation();
 
     const tabs = [
@@ -191,12 +195,28 @@ export default function CampaignShow() {
                     ))}
                 </div>
                 {currentTab === 0 && currentCampaign && (
-                    <CreatorsOutreach currentCampaign={currentCampaign} />
+                    <CreatorsOutreach
+                        currentCampaign={currentCampaign}
+                        setShowNotesModal={setShowNotesModal}
+                    />
                 )}
                 {currentTab === 1 && currentCampaign && (
                     <CampaignDetails currentCampaign={currentCampaign} media={media} />
                 )}
             </div>
+            <Modal
+                title={t('campaigns.modal.comments') as string}
+                visible={!!showNotesModal}
+                onClose={() => {
+                    setShowNotesModal(false);
+                }}
+            >
+                <div>
+                    <CommentCard />
+                    <CommentCard />
+                    <CommentInput />
+                </div>
+            </Modal>
         </Layout>
     );
 }

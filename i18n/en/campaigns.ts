@@ -32,6 +32,7 @@ const campaigns = {
         viewProfile: 'View Profile',
         addedSuccessfully: 'influencer added successfully.',
         deletedSuccessfully: 'influencer was deleted.',
+        deleteConfirmation: 'Are you sure you want to delete this influencer?',
     },
     creatorModal: {
         outreach: 'Outreach',
