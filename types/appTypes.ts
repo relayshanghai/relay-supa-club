@@ -1,4 +1,9 @@
-import type { CampaignCreatorsTable, CompanyTable, UsagesTable } from 'src/utils/api/db';
+import type {
+    CampaignCreatorsTable,
+    CompanyTable,
+    ProfilesTable,
+    UsagesTable,
+} from 'src/utils/api/db';
 import type Stripe from 'stripe';
 import type { Database } from './supabase';
 
@@ -53,12 +58,19 @@ export type UsageType = 'profile' | 'search';
 export type CreatorPlatform = 'instagram' | 'youtube' | 'tiktok';
 export type SocialMediaPlatform = CreatorPlatform | 'email' | 'twitter' | 'facebook' | 'wechat';
 
+/**
+ * relay expert is a relay employee assigned to the company to act on their behalf. Their usages are counted against the company's usages.
+ * relay_employee is an admin super user who can see all of the campaigns and companies.
+ */
+export type AccountRole = 'company_owner' | 'company_teammate' | 'relay_expert' | 'relay_employee';
+
 export interface DatabaseWithCustomTypes extends Database {
     public: Database['public'] & {
         Tables: Database['public']['Tables'] & {
             companies: CompanyTable;
             usages: UsagesTable;
             campaign_creators: CampaignCreatorsTable;
+            profiles: ProfilesTable;
         };
     };
 }

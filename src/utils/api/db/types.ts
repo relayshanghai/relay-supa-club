@@ -1,9 +1,21 @@
-import type { CreatorPlatform, SubscriptionStatus, UsageType } from 'types';
+import type { AccountRole, CreatorPlatform, SubscriptionStatus, UsageType } from 'types';
 import type { Database } from 'types/supabase';
 
-export type ProfileDB = Database['public']['Tables']['profiles']['Row'];
-export type ProfileDBUpdate = Database['public']['Tables']['profiles']['Update'];
-export type ProfileInsertDB = Database['public']['Tables']['profiles']['Insert'];
+export type ProfilesTable = Database['public']['Tables']['profiles'] & {
+    Row: Database['public']['Tables']['profiles']['Row'] & {
+        role?: AccountRole;
+    };
+    Insert: Database['public']['Tables']['profiles']['Insert'] & {
+        role?: AccountRole;
+    };
+    Update: Database['public']['Tables']['profiles']['Update'] & {
+        role?: AccountRole;
+    };
+};
+
+export type ProfileDB = ProfilesTable['Row'];
+export type ProfileDBUpdate = ProfilesTable['Update'];
+export type ProfileInsertDB = ProfilesTable['Insert'];
 
 export type CompanyTable = Database['public']['Tables']['companies'] & {
     Row: Database['public']['Tables']['companies']['Row'] & {

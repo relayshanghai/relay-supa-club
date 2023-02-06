@@ -104,6 +104,32 @@ export interface Database {
                     username?: string | null;
                 };
             };
+            campaign_notes: {
+                Row: {
+                    campaign_creator_id: string | null;
+                    created_at: string | null;
+                    id: number;
+                    important: boolean | null;
+                    message: string | null;
+                    user_id: string | null;
+                };
+                Insert: {
+                    campaign_creator_id?: string | null;
+                    created_at?: string | null;
+                    id?: number;
+                    important?: boolean | null;
+                    message?: string | null;
+                    user_id?: string | null;
+                };
+                Update: {
+                    campaign_creator_id?: string | null;
+                    created_at?: string | null;
+                    id?: number;
+                    important?: boolean | null;
+                    message?: string | null;
+                    user_id?: string | null;
+                };
+            };
             campaigns: {
                 Row: {
                     budget_cents: number | null;
@@ -265,7 +291,6 @@ export interface Database {
             };
             profiles: {
                 Row: {
-                    admin: boolean | null;
                     avatar_url: string | null;
                     company_id: string | null;
                     created_at: string | null;
@@ -273,12 +298,11 @@ export interface Database {
                     first_name: string;
                     id: string;
                     last_name: string;
-                    onboarding: boolean;
                     phone: string | null;
+                    role: string | null;
                     updated_at: string | null;
                 };
                 Insert: {
-                    admin?: boolean | null;
                     avatar_url?: string | null;
                     company_id?: string | null;
                     created_at?: string | null;
@@ -286,12 +310,11 @@ export interface Database {
                     first_name: string;
                     id: string;
                     last_name: string;
-                    onboarding?: boolean;
                     phone?: string | null;
+                    role?: string | null;
                     updated_at?: string | null;
                 };
                 Update: {
-                    admin?: boolean | null;
                     avatar_url?: string | null;
                     company_id?: string | null;
                     created_at?: string | null;
@@ -299,8 +322,8 @@ export interface Database {
                     first_name?: string;
                     id?: string;
                     last_name?: string;
-                    onboarding?: boolean;
                     phone?: string | null;
+                    role?: string | null;
                     updated_at?: string | null;
                 };
             };
