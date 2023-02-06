@@ -30,10 +30,9 @@ const campaigns = {
         content: 'Content',
         comments: 'Internal Comments',
         viewProfile: 'View Profile',
-
-        deleteConfirmation: 'Are you sure you want to delete this influencer?',
         addedSuccessfully: 'influencer added successfully.',
         deletedSuccessfully: 'influencer was deleted.',
+        deleteConfirmation: 'Are you sure you want to delete this influencer?',
     },
     creatorModal: {
         outreach: 'Outreach',

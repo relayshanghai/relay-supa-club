@@ -205,7 +205,7 @@ export default function CampaignShow() {
                 )}
             </div>
             <Modal
-                title={t('campaigns.modal.comments') || ''}
+                title={t('campaigns.modal.comments') as string}
                 visible={!!showNotesModal}
                 onClose={() => {
                     setShowNotesModal(false);

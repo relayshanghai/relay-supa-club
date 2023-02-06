@@ -94,10 +94,7 @@ export default function CreatorsOutreach({
         setToEdit({ index, key });
     };
 
-    const openNotes = (
-        e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>,
-        // creator: CampaignCreatorDB,
-    ) => {
+    const openNotes = (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
         e.stopPropagation();
         setShowNotesModal(true);
     };

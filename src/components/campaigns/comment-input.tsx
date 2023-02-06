@@ -7,7 +7,7 @@ export default function CommentInput() {
     const [comment, setComment] = useState('');
 
     const handleComment = (comment: string) => {
-        //TODO: send comment to supabase
+        //TODO: send comment to supabase V2-139
         //eslint-disable-next-line
         console.log(comment);
         setComment('');
@@ -17,7 +17,9 @@ export default function CommentInput() {
     };
 
     const enterComment = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-        if (e.key === 'Enter' && !e.shiftKey) handleComment(comment);
+        if (e.key === 'Enter' && !e.shiftKey) {
+            handleComment(comment);
+        }
     };
 
     return (
