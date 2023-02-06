@@ -6,7 +6,7 @@ import {
     getCompanyByName,
     updateCompany,
     updateProfile,
-    updateUserAdminRole,
+    updateUserRole,
 } from 'src/utils/api/db';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 import { serverLogger } from 'src/utils/logger';
@@ -50,7 +50,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 serverLogger(profileError, 'error');
                 return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
             }
-            const { error: makeAdminError } = await updateUserAdminRole(user_id, true);
+            const { error: makeAdminError } = await updateUserRole(user_id, 'company_owner');
             if (makeAdminError) {
                 serverLogger(makeAdminError, 'error');
                 return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
