@@ -506,8 +506,8 @@ export default function CreatorsOutreach({
                                                     onClick={(e) => openNotes(e)}
                                                     className="p-2 rounded-md text-gray-600  bg-gray-50 hover:bg-gray-100 border border-gray-200 duration-300 outline-none appearance-none text-center font-medium mr-2 cursor-pointer"
                                                 >
-                                                    {/* TODO: notes ticket V2-17 */}
-                                                    Notes
+                                                    {/* TODO: notes ticket V2-139 */}
+                                                    {t('campaigns.show.notes')}
                                                 </div>
                                                 <div
                                                     onClick={(e) =>

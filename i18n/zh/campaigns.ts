@@ -28,7 +28,7 @@ const campaigns = {
         outreach: 'KOL沟通',
         details: 'KOL信息',
         content: 'KOL信息',
-        comments: '公司备注',
+        comments: '内部备注',
         viewProfile: '查看KOL',
         addedSuccessfully: 'KOL已成功添加到项目',
         deletedSuccessfully: 'KOL已从项目中删除',
