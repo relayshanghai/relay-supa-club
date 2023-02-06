@@ -27,11 +27,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         try {
             const { user_id, name, website } = JSON.parse(req.body) as CompanyCreatePostBody;
 
-            const { data: companyWithSameName } = await getCompanyByName(name);
-            if (companyWithSameName) {
-                return res
-                    .status(httpCodes.BAD_REQUEST)
-                    .json({ error: createCompanyErrors.companyWithSameNameExists });
+            try {
+                const { data: companyWithSameName } = await getCompanyByName(name);
+                if (companyWithSameName) {
+                    return res
+                        .status(httpCodes.BAD_REQUEST)
+                        .json({ error: createCompanyErrors.companyWithSameNameExists });
+                }
+            } catch (error) {
+                serverLogger(error, 'error');
             }
 
             const { data: company, error } = await createCompany({ name, website });

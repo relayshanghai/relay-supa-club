@@ -63,14 +63,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }
 
             if (updateData.name) {
-                const { data } = await getCompanyName(updateData.id);
-                if (data?.name !== updateData.name) {
-                    const { data: companyWithSameName } = await getCompanyByName(updateData.name);
-                    if (companyWithSameName) {
-                        return res
-                            .status(httpCodes.BAD_REQUEST)
-                            .json({ error: updateCompanyErrors.companyWithSameNameExists });
+                try {
+                    const { data } = await getCompanyName(updateData.id);
+                    if (data?.name !== updateData.name) {
+                        const { data: companyWithSameName } = await getCompanyByName(
+                            updateData.name,
+                        );
+                        if (companyWithSameName) {
+                            return res
+                                .status(httpCodes.BAD_REQUEST)
+                                .json({ error: updateCompanyErrors.companyWithSameNameExists });
+                        }
                     }
+                } catch (error) {
+                    serverLogger(error, 'error');
                 }
             }
 
