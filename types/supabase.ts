@@ -104,6 +104,32 @@ export interface Database {
                     username?: string | null;
                 };
             };
+            campaign_notes: {
+                Row: {
+                    campaign_creator_id: string | null;
+                    created_at: string | null;
+                    id: number;
+                    important: boolean | null;
+                    message: string | null;
+                    user_id: string | null;
+                };
+                Insert: {
+                    campaign_creator_id?: string | null;
+                    created_at?: string | null;
+                    id?: number;
+                    important?: boolean | null;
+                    message?: string | null;
+                    user_id?: string | null;
+                };
+                Update: {
+                    campaign_creator_id?: string | null;
+                    created_at?: string | null;
+                    id?: number;
+                    important?: boolean | null;
+                    message?: string | null;
+                    user_id?: string | null;
+                };
+            };
             campaigns: {
                 Row: {
                     budget_cents: number | null;

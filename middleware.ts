@@ -12,7 +12,7 @@ const pricingAllowList = ['https://en-relay-club.vercel.app', 'https://relay.clu
 const stripeWebhookAllowlist = ['https://stripe.com/', 'https://hooks.stripe.com/'];
 
 /**
- * 
+ *
 TODO https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/78: performance improvement. These two database calls might add too much loading time to each request. Consider adding a cache, or adding something to the session object that shows the user has a company and the company has a payment method.
  */
 const getCompanySubscriptionStatus = async (
