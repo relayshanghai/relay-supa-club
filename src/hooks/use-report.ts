@@ -1,6 +1,7 @@
 import { CreatorsReportGetQueries, CreatorsReportGetResponse } from 'pages/api/creators/report';
 import { useCallback, useState } from 'react';
-import { usageError } from 'src/utils/api/db';
+import { usageErrors } from 'src/utils/api/db';
+import { hasCustomError } from 'src/utils/errors';
 import { nextFetchWithQueries } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger';
 import { CreatorPlatform, CreatorReport } from 'types';
@@ -35,7 +36,7 @@ export const useReport = () => {
                 setReportCreatedAt(createdAt);
             } catch (error: any) {
                 clientLogger(error, 'error');
-                if (error.message && Object.values(usageError).includes(error.message)) {
+                if (hasCustomError(error, usageErrors)) {
                     setUsageExceeded(true);
                     setErrorMessage(error.message);
                 } else setErrorMessage('Failed fetching report');

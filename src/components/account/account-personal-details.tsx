@@ -18,7 +18,7 @@ export const PersonalDetails = () => {
         lastName: '',
         email: '',
     });
-    const { userDataLoading, profile, user, upsertProfile, refreshProfile } =
+    const { userDataLoading, profile, user, updateProfile, refreshProfile } =
         useContext(AccountContext);
 
     const [editMode, setEditMode] = useState(false);
@@ -35,9 +35,9 @@ export const PersonalDetails = () => {
 
     const { t } = useTranslation();
 
-    const handleUpsertProfile = async () => {
+    const handleUpdateProfile = async () => {
         try {
-            await upsertProfile({
+            await updateProfile({
                 first_name: firstName,
                 last_name: lastName,
                 email: email,
@@ -110,7 +110,7 @@ export const PersonalDetails = () => {
 
             {editMode ? (
                 <div className="flex flex-row justify-end w-full space-x-4">
-                    <Button disabled={userDataLoading} onClick={handleUpsertProfile}>
+                    <Button disabled={userDataLoading} onClick={handleUpdateProfile}>
                         {t('account.update')}
                     </Button>{' '}
                     <Button onClick={() => setEditMode(false)} variant="secondary">

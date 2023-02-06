@@ -10,6 +10,11 @@ import { nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';
 import useSWR from 'swr';
 import { useUser } from './use-user';
 
+export const createCompanyValidationErrors = {
+    noLoggedInUserFound: 'noLoggedInUserFound',
+    noCompanyNameFound: 'noCompanyNameFound',
+};
+
 export const useCompany = () => {
     const { profile, user, refreshProfile } = useUser();
     const { data: company, mutate: refreshCompany } = useSWR(
@@ -53,8 +58,8 @@ export const useCompany = () => {
 
     const createCompany = useCallback(
         async (input: { name: string; website?: string }) => {
-            if (!user?.id) throw new Error('No logged in user found');
-            if (!input.name) throw new Error('No company name found');
+            if (!user?.id) throw new Error(createCompanyValidationErrors.noLoggedInUserFound);
+            if (!input.name) throw new Error(createCompanyValidationErrors.noCompanyNameFound);
             const body: CompanyCreatePostBody = {
                 ...input,
                 user_id: user?.id,

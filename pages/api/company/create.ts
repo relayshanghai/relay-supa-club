@@ -1,6 +1,13 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
-import { CompanyDB, createCompany, updateCompany, updateProfile } from 'src/utils/api/db';
+import {
+    CompanyDB,
+    createCompany,
+    getCompanyByName,
+    updateCompany,
+    updateProfile,
+    updateUserAdminRole,
+} from 'src/utils/api/db';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 import { serverLogger } from 'src/utils/logger';
 
@@ -11,10 +18,22 @@ export type CompanyCreatePostBody = {
 };
 export type CompanyCreatePostResponse = CompanyDB;
 
+export const createCompanyErrors = {
+    companyWithSameNameExists: 'companyWithSameNameExists',
+};
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
         try {
             const { user_id, name, website } = JSON.parse(req.body) as CompanyCreatePostBody;
+
+            const { data: companyWithSameName } = await getCompanyByName(name);
+            if (companyWithSameName) {
+                return res
+                    .status(httpCodes.BAD_REQUEST)
+                    .json({ error: createCompanyErrors.companyWithSameNameExists });
+            }
+
             const { data: company, error } = await createCompany({ name, website });
 
             if (error || !company?.id) {
@@ -25,11 +44,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const { error: profileError } = await updateProfile({
                 id: user_id,
                 company_id: company.id,
-                admin: true,
             });
 
             if (profileError) {
                 serverLogger(profileError, 'error');
+                return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
+            }
+            const { error: makeAdminError } = await updateUserAdminRole(user_id, true);
+            if (makeAdminError) {
+                serverLogger(makeAdminError, 'error');
                 return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
             }
 

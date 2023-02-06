@@ -1,4 +1,5 @@
 import { useRouter } from 'next/router';
+import { createCompanyErrors } from 'pages/api/company/create';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
@@ -7,10 +8,16 @@ import { LanguageToggle } from 'src/components/common/language-toggle';
 import { Spinner } from 'src/components/icons';
 import { Input } from 'src/components/input';
 import { Title } from 'src/components/title';
-import { useCompany } from 'src/hooks/use-company';
+import { createCompanyValidationErrors, useCompany } from 'src/hooks/use-company';
 import { useFields } from 'src/hooks/use-fields';
 import { useUser } from 'src/hooks/use-user';
+import { hasCustomError } from 'src/utils/errors';
 import { clientLogger } from 'src/utils/logger';
+
+const errors = {
+    ...createCompanyValidationErrors,
+    ...createCompanyErrors,
+};
 
 export default function Register() {
     const { t } = useTranslation();
@@ -31,11 +38,8 @@ export default function Register() {
             await router.push('/signup/payment-onboard');
         } catch (e: any) {
             clientLogger(e, 'error');
-            if (
-                (e?.message && e.message.includes('No logged in user found')) ||
-                e.message.includes('No company name found')
-            ) {
-                toast.error(e.message);
+            if (hasCustomError(e, errors)) {
+                toast.error(t(`login.${e.message}`));
             } else {
                 toast.error(t('login.oopsSomethingWentWrong'));
             }

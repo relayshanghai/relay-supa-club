@@ -16,8 +16,8 @@ export type CompanyWithProfilesInvitesAndUsage = CompanyDB & {
     usages: Pick<UsagesDB, 'id' | 'type'>[];
 };
 
-export const getCompanyCusId = async (companyId: string) =>
-    await supabase.from('companies').select('cus_id').eq('id', companyId).single();
+export const getCompanyCusId = (companyId: string) =>
+    supabase.from('companies').select('cus_id').eq('id', companyId).single();
 
 export const getCompanyWithProfilesInvitesAndUsage = async (companyId: string) => {
     const { data, error } = await supabase
@@ -131,7 +131,10 @@ export const updateCompanySubscriptionStatus = async ({
     return data;
 };
 
-export const createCompany = async (data: CompanyDBInsert) => {
+export const createCompany = (data: CompanyDBInsert) => {
     data.subscription_status = 'awaiting_payment_method';
-    return await supabase.from('companies').insert(data).select().single();
+    return supabase.from('companies').insert(data).select().single();
 };
+
+export const getCompanyByName = (name: string) =>
+    supabase.from('companies').select().eq('name', name).single();

@@ -6,7 +6,7 @@ import { getSubscription } from '../../stripe/helpers';
 import { UsagesDBInsert } from '../types';
 import { updateCompanySubscriptionStatus } from './company';
 
-export const usageError = {
+export const usageErrors = {
     noCompany: 'No company found',
     limitExceeded: 'Usage limit exceeded',
     noSubscriptionLimit: 'No subscription limit found',
@@ -20,11 +20,11 @@ export const usageError = {
 const handleCurrentPeriodExpired = async (companyId: string) => {
     const subscription = await getSubscription(companyId);
     if (!subscription) {
-        return { error: usageError.noSubscription };
+        return { error: usageErrors.noSubscription };
     }
     const { current_period_end, current_period_start } = subscription;
     if (!current_period_end || !current_period_start) {
-        return { error: usageError.noSubscriptionStartEndDate };
+        return { error: usageErrors.noSubscriptionStartEndDate };
     }
     const subscription_status =
         subscription.status === 'active'
@@ -37,7 +37,7 @@ const handleCurrentPeriodExpired = async (companyId: string) => {
     if (!subscription_status) {
         // as per how `updateCompanySubscriptionStatus` is used, our app should only be using the above statuses, so if we get something else, we should log it
         serverLogger('Invalid subscription status', 'error');
-        return { error: usageError.invalidStatus };
+        return { error: usageErrors.invalidStatus };
     }
     const subscription_current_period_start = unixEpochToISOString(current_period_start);
     const subscription_current_period_end = unixEpochToISOString(current_period_end);
@@ -69,7 +69,7 @@ const recordUsage = async ({
     creator_id?: string;
 }) => {
     if (!subscriptionLimit) {
-        return { error: usageError.noSubscription };
+        return { error: usageErrors.noSubscription };
     }
     const limit = Number(subscriptionLimit);
 
@@ -109,7 +109,7 @@ const recordUsage = async ({
     }
 
     if (usagesError || (usagesData?.length && usagesData.length >= limit)) {
-        return { error: usageError.limitExceeded };
+        return { error: usageErrors.limitExceeded };
     }
 
     const usage: UsagesDBInsert = {
@@ -120,7 +120,7 @@ const recordUsage = async ({
     };
     const { error: insertError } = await supabase.from('usages').insert([usage]);
     if (insertError) {
-        return { error: usageError.errorRecordingUsage };
+        return { error: usageErrors.errorRecordingUsage };
     }
 
     return { error: null };
@@ -139,7 +139,7 @@ export const recordReportUsage = async (
         .eq('id', company_id)
         .single();
     if (!company || companyError) {
-        return { error: usageError.noCompany };
+        return { error: usageErrors.noCompany };
     }
 
     const subscriptionLimit =
@@ -147,11 +147,11 @@ export const recordReportUsage = async (
             ? company.trial_profiles_limit
             : company.profiles_limit;
     if (!subscriptionLimit) {
-        return { error: usageError.noSubscriptionLimit };
+        return { error: usageErrors.noSubscriptionLimit };
     }
 
     if (!company.subscription_current_period_start || !company.subscription_current_period_end) {
-        return { error: usageError.noSubscriptionStartEndDate };
+        return { error: usageErrors.noSubscriptionStartEndDate };
     }
     const startDate = new Date(company.subscription_current_period_start);
     const endDate = new Date(company.subscription_current_period_end);
@@ -177,7 +177,7 @@ export const recordSearchUsage = async (company_id: string, user_id: string) => 
         .eq('id', company_id)
         .single();
     if (!company || companyError) {
-        return { error: usageError.noCompany };
+        return { error: usageErrors.noCompany };
     }
 
     const subscriptionLimit =
@@ -185,11 +185,11 @@ export const recordSearchUsage = async (company_id: string, user_id: string) => 
             ? company.trial_searches_limit
             : company.searches_limit;
     if (!subscriptionLimit) {
-        return { error: usageError.noSubscriptionLimit };
+        return { error: usageErrors.noSubscriptionLimit };
     }
 
     if (!company.subscription_current_period_start || !company.subscription_current_period_end) {
-        return { error: usageError.noSubscriptionStartEndDate };
+        return { error: usageErrors.noSubscriptionStartEndDate };
     }
     const startDate = new Date(company.subscription_current_period_start);
     const endDate = new Date(company.subscription_current_period_end);
