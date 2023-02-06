@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { User } from '@supabase/supabase-js';
-import { CompanyPostBody } from 'pages/api/company';
+import { CompanyPutBody } from 'pages/api/company';
 import { ProfilePutBody } from 'pages/api/profiles';
 
 import { createContext, FC, PropsWithChildren } from 'react';
@@ -22,7 +22,7 @@ export interface AccountContextProps {
     refreshProfile: () => void;
 
     updateProfile: (data: Omit<ProfilePutBody, 'id'>) => void;
-    updateCompany: (data: Omit<CompanyPostBody, 'id'>) => void;
+    updateCompany: (data: Omit<CompanyPutBody, 'id'>) => void;
 }
 
 export const AccountContext = createContext<AccountContextProps>({

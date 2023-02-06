@@ -18,3 +18,6 @@ export const updateProfile = (update: ProfileDBUpdate) => {
 
 export const updateUserRole = (userId: string, role: AccountRole) =>
     supabase.from('profiles').update({ role }).eq('id', userId).select().single();
+
+export const getUserRole = (userId: string) =>
+    supabase.from('profiles').select('role').eq('id', userId).single();
