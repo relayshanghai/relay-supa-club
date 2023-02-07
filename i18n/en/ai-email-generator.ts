@@ -1,6 +1,7 @@
 const aiEmailGenerator = {
     index: {
         title: 'AI Email Generator',
+        description: 'Generate emails to influencers with our AI Email Generator',
         status: {
             inProgress: 'In Progress',
             notStarted: 'Not Started',
@@ -39,6 +40,7 @@ const aiEmailGenerator = {
             influencerName: "Influencer's Name",
             brandName: 'Brand Name',
             instructions: 'Instructions for the influencer',
+            language: 'Email Language',
         },
     },
 };
