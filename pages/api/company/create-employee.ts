@@ -32,7 +32,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         try {
             const { email } = JSON.parse(req.body) as CreateEmployeePostBody;
 
-            if (!EMPLOYEE_EMAILS.some((employeeEmail) => employeeEmail === email)) {
+            if (!EMPLOYEE_EMAILS.includes(email)) {
                 return res
                     .status(httpCodes.BAD_REQUEST)
                     .json({ error: createEmployeeError.isNotEmployee });
