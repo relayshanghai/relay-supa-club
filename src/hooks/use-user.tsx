@@ -1,5 +1,10 @@
 import { useSessionContext, useSupabaseClient } from '@supabase/auth-helpers-react';
 import type { Session, User } from '@supabase/supabase-js';
+import { useRouter } from 'next/router';
+import type {
+    CreateEmployeePostBody,
+    CreateEmployeePostResponse,
+} from 'pages/api/company/create-employee';
 import type { ProfilePutBody, ProfilePutResponse } from 'pages/api/profiles';
 import {
     createContext,
@@ -9,6 +14,7 @@ import {
     useEffect,
     useState,
 } from 'react';
+import { createEmployeeError } from 'src/errors/company';
 import type { ProfileDB } from 'src/utils/api/db/types';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger';
@@ -61,6 +67,7 @@ const ctx = createContext<{
 export const useUser = () => useContext(ctx);
 
 export const UserProvider = ({ children }: PropsWithChildren) => {
+    const router = useRouter();
     const [profile, setProfile] = useState<ProfileDB | null>(null);
     const { isLoading, session } = useSessionContext();
     const supabaseClient = useSupabaseClient<DatabaseWithCustomTypes>();
@@ -126,6 +133,26 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
             });
 
             if (error) throw new Error(error?.message || 'Unknown error');
+
+            try {
+                const body: CreateEmployeePostBody = { email };
+                const createEmployeeRes = await nextFetch<CreateEmployeePostResponse>(
+                    'company/create-employee',
+                    {
+                        body,
+                    },
+                );
+                if (createEmployeeRes.id) await router.push('/dashboard');
+
+                return { user: null, session: null };
+            } catch (error) {
+                if (error instanceof Error && error.message === createEmployeeError.isNotEmployee) {
+                    // do nothing. most users will not be employees
+                } else {
+                    throw error; // problem creating employee
+                }
+            }
+
             return signupResData;
         } catch (e: unknown) {
             clientLogger(e, 'error');
