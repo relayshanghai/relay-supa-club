@@ -177,6 +177,7 @@ const campaigns = {
     notes: {
         notes: 'Notes',
         submit: 'Submit',
+        emptyComment: 'Please enter a comment before submit',
     },
     form: {
         createCampaign: 'Create Campaign',

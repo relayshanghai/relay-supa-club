@@ -5,7 +5,7 @@ export interface Database {
         Tables: {
             campaign_creators: {
                 Row: {
-                    added_by_id: number | null;
+                    added_by_id: string;
                     address: string | null;
                     avatar_url: string | null;
                     brief_opened_by_creator: boolean | null;
@@ -38,7 +38,7 @@ export interface Database {
                     username: string | null;
                 };
                 Insert: {
-                    added_by_id?: number | null;
+                    added_by_id: string;
                     address?: string | null;
                     avatar_url?: string | null;
                     brief_opened_by_creator?: boolean | null;
@@ -71,7 +71,7 @@ export interface Database {
                     username?: string | null;
                 };
                 Update: {
-                    added_by_id?: number | null;
+                    added_by_id?: string;
                     address?: string | null;
                     avatar_url?: string | null;
                     brief_opened_by_creator?: boolean | null;
@@ -106,28 +106,28 @@ export interface Database {
             };
             campaign_notes: {
                 Row: {
-                    campaign_creator_id: string | null;
+                    campaign_creator_id: string;
+                    comment: string | null;
                     created_at: string | null;
                     id: number;
                     important: boolean | null;
-                    message: string | null;
-                    user_id: string | null;
+                    user_id: string;
                 };
                 Insert: {
-                    campaign_creator_id?: string | null;
+                    campaign_creator_id: string;
+                    comment?: string | null;
                     created_at?: string | null;
                     id?: number;
                     important?: boolean | null;
-                    message?: string | null;
-                    user_id?: string | null;
+                    user_id: string;
                 };
                 Update: {
-                    campaign_creator_id?: string | null;
+                    campaign_creator_id?: string;
+                    comment?: string | null;
                     created_at?: string | null;
                     id?: number;
                     important?: boolean | null;
-                    message?: string | null;
-                    user_id?: string | null;
+                    user_id?: string;
                 };
             };
             campaigns: {
@@ -263,6 +263,7 @@ export interface Database {
             invites: {
                 Row: {
                     company_id: string;
+                    company_owner: boolean | null;
                     created_at: string | null;
                     email: string;
                     expire_at: string | null;
@@ -272,6 +273,7 @@ export interface Database {
                 };
                 Insert: {
                     company_id: string;
+                    company_owner?: boolean | null;
                     created_at?: string | null;
                     email: string;
                     expire_at?: string | null;
@@ -281,6 +283,7 @@ export interface Database {
                 };
                 Update: {
                     company_id?: string;
+                    company_owner?: boolean | null;
                     created_at?: string | null;
                     email?: string;
                     expire_at?: string | null;
@@ -361,6 +364,9 @@ export interface Database {
             [_ in never]: never;
         };
         Enums: {
+            [_ in never]: never;
+        };
+        CompositeTypes: {
             [_ in never]: never;
         };
     };
