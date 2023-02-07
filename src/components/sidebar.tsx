@@ -31,6 +31,9 @@ const ActiveLink = ({ href, children }: { href: string; children: string }) => {
                 {hrefRoot === 'campaigns' && (
                     <FourSquare height={18} width={18} className="mr-4 text-inherit" />
                 )}
+                {hrefRoot === 'ai-email-generator' && (
+                    <FourSquare height={18} width={18} className="mr-4 text-inherit" />
+                )}
                 {hrefRoot === 'account' && (
                     <Account height={18} width={18} className="mr-4 text-inherit" />
                 )}
@@ -48,6 +51,7 @@ const NavBarInner = ({ loggedIn }: { loggedIn: boolean | null }) => (
         <div className="flex flex-col space-y-4 mt-8">
             <ActiveLink href="/dashboard">{t('navbar.influencers')}</ActiveLink>
             <ActiveLink href="/campaigns">{t('navbar.campaigns')}</ActiveLink>
+            <ActiveLink href="/ai-email-generator">{t('navbar.ai-email-generator')}</ActiveLink>
             {loggedIn && <ActiveLink href="/account">{t('navbar.account')}</ActiveLink>}
         </div>
     </>

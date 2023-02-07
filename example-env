@@ -16,3 +16,7 @@ SIB_API_KEY=asdf
 
 # The app url. https://relay.club for production
 NEXT_PUBLIC_APP_URL=http://localhost:3000
+
+# Open API Stuff
+OPEN_API_ORGANIZATION_ID="relay.club"
+OPENAI_API_KEY=""
