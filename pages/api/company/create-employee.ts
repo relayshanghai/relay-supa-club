@@ -9,6 +9,7 @@ import {
     getProfileByEmail,
     updateCompany,
     updateCompanySubscriptionStatus,
+    updateCompanyUsageLimits,
     updateProfile,
     updateUserRole,
 } from 'src/utils/api/db';
@@ -65,6 +66,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     subscription_current_period_start: new Date().toISOString(),
                     subscription_end_date: new Date('2050-1-1').toISOString(),
                     subscription_start_date: new Date().toISOString(),
+                });
+                await updateCompanyUsageLimits({
+                    id: companyCreated.id,
+                    profiles_limit: '100000000',
+                    searches_limit: '1000000000',
                 });
                 company = companyCreated;
             } else {
