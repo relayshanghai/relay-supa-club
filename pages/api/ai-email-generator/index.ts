@@ -34,13 +34,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 productDescription,
                 productName,
                 senderName,
-            } = req.query as AIEmailGeneratorGetQuery;
+            } = JSON.parse(req.body) as AIEmailGeneratorGetQuery;
+
+            const languagePrompt =
+                'The email should be in' + language === 'zh'
+                    ? 'Chinese language.'
+                    : 'English language';
+            const instructionsPrompt = instructions
+                ? 'The email should include the following instructions for the receiver:' +
+                  instructions
+                : '';
 
             const data = await openai.createCompletion({
-                prompt: `Generate an email to ${influencerName}, regarding a marketing campaign collaboration with ${brandName}, for their product ${productName} which can be described as: ${productDescription}. The email should be in ${language} and should be sent by ${senderName}. The email should include the following instructions for the receiver: ${instructions}`,
+                prompt: `Generate an email to ${influencerName}, regarding a marketing campaign collaboration with ${brandName}, for their product ${productName} which can be described as: ${productDescription}. ${languagePrompt} and should be sent by ${senderName}. ${instructionsPrompt}}`,
                 model: 'text-davinci-002',
-                max_tokens: 7,
-                n: 2,
+                max_tokens: 200,
+                n: 1,
                 stop: '',
                 temperature: 0.5,
             });

@@ -9,6 +9,7 @@ const aiEmailGenerator = {
             all: 'All',
         },
         generateEmail: 'Generate Email',
+        loading: 'Loading...',
     },
     email: {
         dayLimit: 'You can only send an influencer an email every 24 hours to avoid spam.',
