@@ -1,6 +1,6 @@
 import { supabase } from 'src/utils/supabase-client';
-import { AccountRole } from 'types';
-import { ProfileDBUpdate, ProfileInsertDB } from '../types';
+import type { AccountRole } from 'types';
+import type { ProfileDBUpdate, ProfileInsertDB } from '../types';
 
 /** inserts profile but does not allow changing of role status, automatically updates `updated_at` field */
 export const insertProfile = (insert: ProfileInsertDB) => {
@@ -21,3 +21,6 @@ export const updateUserRole = (userId: string, role: AccountRole) =>
 
 export const getUserRole = (userId: string) =>
     supabase.from('profiles').select('role').eq('id', userId).single();
+
+export const getProfileByEmail = (email: string) =>
+    supabase.from('profiles').select().eq('email', email).single();

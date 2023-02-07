@@ -1,6 +1,8 @@
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
+import { createInviteErrors } from 'src/errors/company';
+import { hasCustomError } from 'src/utils/errors';
 import { Button } from '../button';
 import { Input } from '../input';
 import { Modal } from '../modal';
@@ -9,35 +11,31 @@ import { AccountContext } from './account-context';
 export const InviteMembersModal = ({
     showAddMoreMembers,
     setShowAddMoreMembers,
-    inviteEmail,
-    setInviteEmail,
 }: {
     showAddMoreMembers: boolean;
     setShowAddMoreMembers: (show: boolean) => void;
-    inviteEmail: string;
-    setInviteEmail: (email: string) => void;
 }) => {
-    const { createInvite } = useContext(AccountContext);
-
+    const { createInvite, refreshCompany } = useContext(AccountContext);
+    const [companyOwner, setCompanyOwner] = useState(false);
+    const [inviteEmail, setInviteEmail] = useState('');
+    const [submitting, setSubmitting] = useState(false);
     const { t } = useTranslation();
     const handleSendInvite = async () => {
         try {
-            await createInvite(inviteEmail);
+            setSubmitting(true);
+            await createInvite(inviteEmail, companyOwner);
             setInviteEmail('');
             setShowAddMoreMembers(false);
             toast.success('Invite sent');
+            refreshCompany();
         } catch (error: any) {
-            if (error?.message) {
-                if (error.message === 'Missing required fields') {
-                    toast.error('Missing required fields');
-                }
-                if (error.message === 'Invalid email') {
-                    toast.error('Invalid email');
-                }
-                if (error.message === 'Invite already exists and has not expired') {
-                    toast.error('Invite already exists and has not expired');
-                }
+            if (hasCustomError(error, createInviteErrors)) {
+                toast.error(t(`login.${error.message}`));
+            } else {
+                toast.error(t('login.oopsSomethingWentWrong'));
             }
+        } finally {
+            setSubmitting(false);
         }
     };
     return (
@@ -56,13 +54,23 @@ export const InviteMembersModal = ({
                     required
                     onChange={(e) => setInviteEmail(e.target.value)}
                 />
+
+                <input
+                    type="checkbox"
+                    id="companyOwner"
+                    onChange={() => setCompanyOwner(!companyOwner)}
+                    checked={companyOwner}
+                />
+                <label htmlFor="companyOwner" className="ml-2 text-sm">
+                    {t('account.invite.makeAdmin')}
+                </label>
             </div>
             <div className="pt-8 space-x-16 justify-center flex flex-row w-full">
-                <Button disabled={!inviteEmail} onClick={handleSendInvite}>
+                <Button disabled={!inviteEmail || submitting} onClick={handleSendInvite}>
                     {t('account.invite.sendInvitation')}
                 </Button>
                 <Button variant="secondary" onClick={async () => setShowAddMoreMembers(false)}>
-                    {t('account.invite.cancel')}{' '}
+                    {t('account.invite.cancel')}
                 </Button>
             </div>
         </Modal>

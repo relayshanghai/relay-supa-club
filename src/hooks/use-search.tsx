@@ -1,6 +1,6 @@
 import { InfluencerPostRequest, InfluencerPostResponse } from 'pages/api/influencer-search';
 import { useCallback, useMemo, useRef, useState } from 'react';
-import { usageErrors } from 'src/utils/api/db';
+import { usageErrors } from 'src/errors/usages';
 import { hasCustomError } from 'src/utils/errors';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger';

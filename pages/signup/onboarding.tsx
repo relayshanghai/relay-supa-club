@@ -1,5 +1,4 @@
 import { useRouter } from 'next/router';
-import { createCompanyErrors } from 'pages/api/company/create';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
@@ -8,7 +7,8 @@ import { LanguageToggle } from 'src/components/common/language-toggle';
 import { Spinner } from 'src/components/icons';
 import { Input } from 'src/components/input';
 import { Title } from 'src/components/title';
-import { createCompanyValidationErrors, useCompany } from 'src/hooks/use-company';
+import { createCompanyErrors, createCompanyValidationErrors } from 'src/errors/company';
+import { useCompany } from 'src/hooks/use-company';
 import { useFields } from 'src/hooks/use-fields';
 import { useUser } from 'src/hooks/use-user';
 import { hasCustomError } from 'src/utils/errors';

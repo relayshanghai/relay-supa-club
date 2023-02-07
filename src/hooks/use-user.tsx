@@ -1,6 +1,6 @@
 import { useSessionContext, useSupabaseClient } from '@supabase/auth-helpers-react';
-import { Session, User } from '@supabase/supabase-js';
-import { ProfilePutBody, ProfilePutResponse } from 'pages/api/profiles';
+import type { Session, User } from '@supabase/supabase-js';
+import type { ProfilePutBody, ProfilePutResponse } from 'pages/api/profiles';
 import {
     createContext,
     PropsWithChildren,
@@ -9,10 +9,10 @@ import {
     useEffect,
     useState,
 } from 'react';
-import { ProfileDB } from 'src/utils/api/db/types';
+import type { ProfileDB } from 'src/utils/api/db/types';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger';
-import { DatabaseWithCustomTypes } from 'types';
+import type { DatabaseWithCustomTypes } from 'types';
 
 export type SignupData = {
     email: string;

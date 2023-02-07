@@ -76,6 +76,7 @@ const account = {
         emailAddress: 'Email address',
         sendInvitation: 'Send invitation',
         cancel: 'Cancel',
+        makeAdmin: 'Make admin',
     },
     cancel: 'Cancel',
     cancelModal: {

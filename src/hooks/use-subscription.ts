@@ -1,21 +1,21 @@
-import { SubscriptionGetQueries, SubscriptionGetResponse } from 'pages/api/subscriptions';
-import {
+import type { SubscriptionGetQueries, SubscriptionGetResponse } from 'pages/api/subscriptions';
+import type {
     SubscriptionCancelPostBody,
     SubscriptionCancelPostResponse,
 } from 'pages/api/subscriptions/cancel';
-import {
+import type {
     SubscriptionCreatePostBody,
     SubscriptionCreatePostResponse,
 } from 'pages/api/subscriptions/create';
-import {
+import type {
     SubscriptionCreateTrialPostBody,
     SubscriptionCreateTrialResponse,
 } from 'pages/api/subscriptions/create-trial';
-import {
+import type {
     SubscriptionDiscountRenewPostBody,
     SubscriptionDiscountRenewPostResponse,
 } from 'pages/api/subscriptions/discount-renew';
-import {
+import type {
     PaymentMethodGetQueries,
     PaymentMethodGetResponse,
 } from 'pages/api/subscriptions/payment-method';
