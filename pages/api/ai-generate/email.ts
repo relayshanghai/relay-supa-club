@@ -17,7 +17,7 @@ export type AIEmailGeneratorGetQuery = {
 export type AIEmailGeneratorGetResult = CreateCompletionResponse['choices'];
 
 const configuration = new Configuration({
-    organization: process.env.OPEN_API_ORGANIZATION_ID,
+    organization: process.env.OPENAI_API_ORG,
     apiKey: process.env.OPENAI_API_KEY,
 });
 
@@ -49,7 +49,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             if (language !== 'en-US' && language !== 'zh') {
                 return res.status(httpCodes.BAD_REQUEST).json({});
             }
-            if (!process.env.OPENAI_API_KEY || !process.env.OPEN_API_ORGANIZATION_ID) {
+            if (!process.env.OPENAI_API_KEY || !process.env.OPENAI_API_ORG) {
                 return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
             }
 
