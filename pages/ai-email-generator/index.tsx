@@ -1,4 +1,4 @@
-import { AIEmailGeneratorGetQuery, AIEmailGeneratorGetResult } from 'pages/api/ai-generate/email';
+import type { AIEmailGeneratorGetQuery, AIEmailGeneratorGetResult } from 'pages/api/ai-generate/email';
 import { copyToClipboard } from 'src/utils/copyToClipboard';
 import { InputTextArea } from 'src/components/textarea';
 import { Transition } from '@headlessui/react';
