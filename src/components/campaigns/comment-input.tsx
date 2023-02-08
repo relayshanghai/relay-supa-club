@@ -49,8 +49,8 @@ export default function CommentInput({
             <div className="flex justify-center align-center space-x-2">
                 <div className="rounded-full w-6 h-6 p-1 row-center bg-primary-100 text-primary-500">
                     <div>
-                        {profile?.first_name ? profile.first_name[0] : ''}
-                        {profile?.last_name ? profile.last_name[0] : ''}
+                        {profile?.first_name ? profile.first_name[0].toUpperCase() : ''}
+                        {profile?.last_name ? profile.last_name[0].toUpperCase() : ''}
                     </div>
                 </div>
                 <textarea

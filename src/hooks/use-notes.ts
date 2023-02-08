@@ -16,7 +16,7 @@ export const useNotes = ({ campaignCreatorId }: { campaignCreatorId?: string }) 
             nextFetchWithQueries<CampaignNotesIndexGetQuery, CampaignNotesIndexGetResult>(path, {
                 id: campaignCreatorId ?? '',
             }),
-        { refreshInterval: 1000 },
+        { refreshInterval: 500 },
     );
 
     const createNote = useCallback(

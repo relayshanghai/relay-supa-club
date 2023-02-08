@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
-import type { CampaignNotesDB } from 'src/utils/api/db';
+import type { CampaignNotesWithProfiles } from 'src/utils/api/db';
 import { getCampaignNotes } from 'src/utils/api/db';
 import { serverLogger } from 'src/utils/logger';
 
@@ -8,7 +8,7 @@ export type CampaignNotesIndexGetQuery = {
     id: string;
 };
 
-export type CampaignNotesIndexGetResult = CampaignNotesDB[];
+export type CampaignNotesIndexGetResult = CampaignNotesWithProfiles[];
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'GET') {
