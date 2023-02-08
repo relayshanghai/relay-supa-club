@@ -19,7 +19,7 @@ export const CancelSubscriptionModal = ({
         const id = toast.loading(t('account.cancelModal.cancelling'));
         try {
             const result = await cancelSubscription();
-            if (result?.status === 'active')
+            if (result?.status)
                 toast.success(t('account.cancelModal.subscriptionCancelled'), { id });
         } catch (e) {
             toast.error(t('account.subscription.modal.wentWrong'), {
