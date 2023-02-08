@@ -56,7 +56,7 @@ const AIImageGenerator = () => {
     const generateSubject = useCallback(async () => {
         setLoadingSubject(true);
         setGeneratedSubject('');
-        const body: AIEmailGeneratorGetQuery = {
+        const body: AIEmailGeneratorPostBody = {
             brandName,
             language,
             influencerName,
