@@ -1,19 +1,15 @@
-import { CompanyGetQueries, CompanyPutBody, CompanyPutResponse } from 'pages/api/company';
-import { CompanyCreatePostBody, CompanyCreatePostResponse } from 'pages/api/company/create';
-import {
+import type { CompanyGetQueries, CompanyPutBody, CompanyPutResponse } from 'pages/api/company';
+import type { CompanyCreatePostBody, CompanyCreatePostResponse } from 'pages/api/company/create';
+import type {
     CompanyCreateInvitePostBody,
     CompanyCreateInvitePostResponse,
 } from 'pages/api/company/create-invite';
 import { useCallback } from 'react';
-import { CompanyWithProfilesInvitesAndUsage } from 'src/utils/api/db/calls/company';
+import { createCompanyValidationErrors } from 'src/errors/company';
+import type { CompanyWithProfilesInvitesAndUsage } from 'src/utils/api/db/calls/company';
 import { nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';
 import useSWR from 'swr';
 import { useUser } from './use-user';
-
-export const createCompanyValidationErrors = {
-    noLoggedInUserFound: 'noLoggedInUserFound',
-    noCompanyNameFound: 'noCompanyNameFound',
-};
 
 export const useCompany = () => {
     const { profile, user, refreshProfile } = useUser();
@@ -41,12 +37,13 @@ export const useCompany = () => {
     );
 
     const createInvite = useCallback(
-        async (email: string) => {
+        async (email: string, companyOwner: boolean) => {
             if (!profile?.company_id) throw new Error('No profile found');
             const body: CompanyCreateInvitePostBody = {
                 email: email,
                 company_id: profile.company_id,
                 name: `${profile.first_name} ${profile.last_name}`,
+                companyOwner,
             };
             return await nextFetch<CompanyCreateInvitePostResponse>(`company/create-invite`, {
                 method: 'post',

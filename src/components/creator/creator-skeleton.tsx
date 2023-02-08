@@ -5,7 +5,7 @@ import SkeletonCreatorBlock from '../common/skeleton-creator';
 import SkeletonWithTitle from '../common/skeleton-with-title';
 import Skeleton from '../common/skeleton';
 import { LoadingPopover } from '../common/loading-popover';
-import { usageErrors } from 'src/utils/api/db';
+import { usageErrors } from 'src/errors/usages';
 
 export default function CreatorSkeleton({
     error,

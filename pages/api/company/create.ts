@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
+import { createCompanyErrors } from 'src/errors/company';
 import {
     CompanyDB,
     createCompany,
@@ -17,10 +18,6 @@ export type CompanyCreatePostBody = {
     website?: string;
 };
 export type CompanyCreatePostResponse = CompanyDB;
-
-export const createCompanyErrors = {
-    companyWithSameNameExists: 'companyWithSameNameExists',
-};
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
@@ -45,7 +42,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
             }
 
-            const { error: profileError } = await updateProfile({
+            const { error: profileError, data: profile } = await updateProfile({
                 id: user_id,
                 company_id: company.id,
             });
@@ -62,6 +59,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             const customer = await stripeClient.customers.create({
                 name,
+                email: profile.email || '',
                 metadata: {
                     company_id: company.id,
                 },

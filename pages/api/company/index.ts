@@ -7,10 +7,11 @@ import {
     getCompanyWithProfilesInvitesAndUsage,
     updateCompany,
 } from 'src/utils/api/db/calls/company';
-import { CompanyDB, CompanyDBUpdate } from 'src/utils/api/db/types';
+import type { CompanyDB, CompanyDBUpdate } from 'src/utils/api/db/types';
 import { serverLogger } from 'src/utils/logger';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 import { isCompanyOwnerOrRelayEmployee } from 'src/utils/auth';
+import { updateCompanyErrors } from 'src/errors/company';
 
 export type CompanyGetQueries = {
     id: string;
@@ -21,10 +22,6 @@ export interface CompanyPutBody extends CompanyDBUpdate {
     id: string;
 }
 export type CompanyPutResponse = CompanyDB;
-
-export const updateCompanyErrors = {
-    companyWithSameNameExists: 'companyWithSameNameExists',
-};
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'GET') {

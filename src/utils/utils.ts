@@ -1,4 +1,5 @@
 import { SECONDS_IN_MILLISECONDS } from 'src/constants/conversions';
+import type { AccountRole } from 'types';
 
 export const handleError = (error: any) => {
     if (!error || typeof error !== 'object') return 'Oops! Something went wrong. Try again';
@@ -61,4 +62,13 @@ export const unixEpochToISOString = (...timestamps: (number | undefined | null)[
     }
 
     return new Date(firstValidTimestamp * SECONDS_IN_MILLISECONDS).toISOString();
+};
+
+export const isAdmin = (role?: AccountRole) => {
+    if (!role) {
+        return false;
+    }
+    const isAdmin =
+        role === 'company_owner' || role === 'relay_employee' || role === 'relay_expert';
+    return isAdmin;
 };

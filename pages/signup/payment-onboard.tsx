@@ -10,7 +10,7 @@ import { Title } from 'src/components/title';
 import { APP_URL } from 'src/constants';
 import { useCompany } from 'src/hooks/use-company';
 import { useSubscription } from 'src/hooks/use-subscription';
-import { buildSubscriptionPortalUrl } from 'src/utils/api/stripe/helpers';
+import { buildSubscriptionPortalUrl } from 'src/utils/api/stripe/portal';
 import { clientLogger } from 'src/utils/logger';
 
 const PaymentOnboard = () => {

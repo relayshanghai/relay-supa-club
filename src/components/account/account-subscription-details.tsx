@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { useContext, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSubscription } from 'src/hooks/use-subscription';
-import { buildSubscriptionPortalUrl } from 'src/utils/api/stripe/helpers';
+import { buildSubscriptionPortalUrl } from 'src/utils/api/stripe/portal';
 import { unixEpochToISOString } from 'src/utils/utils';
 
 import { Button } from '../button';

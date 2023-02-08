@@ -1,7 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+
 import { APP_URL, emailRegex } from 'src/constants';
 import httpCodes from 'src/constants/httpCodes';
-import { InvitesDB } from 'src/utils/api/db';
+import { createInviteErrors } from 'src/errors/company';
+import { getProfileByEmail, InvitesDB } from 'src/utils/api/db';
 import { isCompanyOwnerOrRelayEmployee } from 'src/utils/auth';
 import { serverLogger } from 'src/utils/logger';
 import { sendEmail } from 'src/utils/send-in-blue-client';
@@ -11,24 +13,40 @@ export interface CompanyCreateInvitePostBody {
     email: string;
     company_id: string;
     name: string;
+    companyOwner?: boolean;
 }
 export type CompanyCreateInvitePostResponse = InvitesDB;
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
-        const { email, company_id, name } = JSON.parse(req.body);
+        const { email, company_id, name, companyOwner } = JSON.parse(
+            req.body,
+        ) as CompanyCreateInvitePostBody;
         if (!email || !company_id)
-            return res.status(httpCodes.BAD_REQUEST).json({ error: 'Missing required fields' });
+            return res
+                .status(httpCodes.BAD_REQUEST)
+                .json({ error: createInviteErrors.missingRequiredFields });
 
         if (!emailRegex.test(email))
-            return res.status(httpCodes.BAD_REQUEST).json({ error: 'Invalid email' });
+            return res
+                .status(httpCodes.BAD_REQUEST)
+                .json({ error: createInviteErrors.invalidEmail });
 
         if (!(await isCompanyOwnerOrRelayEmployee(req, res))) {
             return res
                 .status(httpCodes.UNAUTHORIZED)
                 .json({ error: 'This action is limited to company admins' });
         }
-
+        try {
+            const { data: existingAccount } = await getProfileByEmail(email);
+            if (existingAccount) {
+                return res
+                    .status(httpCodes.BAD_REQUEST)
+                    .json({ error: createInviteErrors.userAlreadyExists });
+            }
+        } catch (error) {
+            serverLogger(error, 'error');
+        }
         const { data: existingInvite } = await supabase
             .from('invites')
             .select('expire_at, used')
@@ -44,13 +62,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         )
             return res
                 .status(httpCodes.BAD_REQUEST)
-                .json({ error: 'Invite already exists and has not expired' });
+                .json({ error: createInviteErrors.inviteExistsAndHasNotExpired });
 
         const { data: insertData, error: insertError } = await supabase
             .from('invites')
             .insert({
                 email,
                 company_id,
+                company_owner: companyOwner ?? false,
             })
             .select()
             .single();
@@ -64,11 +83,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             await sendEmail({
                 email,
                 name,
-                subject: 'You have been invited to join a company on Relay.Club',
+                subject: 'You have been invited to join a company on relay.club',
                 html: `
             <div style="padding: 5px; line-height: 2.5rem">
             <h1>Hi ${name},</h1>
-            <p>You have been invited to join a company on the Supabase Dashboard.</p>
+            <p>You have been invited to join a company on relay.club.</p>
             <p>Click the button below to accept the invite.</p>
             <a href="${APP_URL}/signup/invite?${new URLSearchParams({
                     token: insertData.id,
