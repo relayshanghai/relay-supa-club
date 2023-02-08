@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useUser } from 'src/hooks/use-user';
 import type { CampaignNotesWithProfiles } from 'src/utils/api/db';
+import { Pin, Trashcan } from 'src/components/icons';
 
 export default function CommentCard({ note }: { note: CampaignNotesWithProfiles }) {
     const { i18n } = useTranslation();
@@ -9,11 +10,19 @@ export default function CommentCard({ note }: { note: CampaignNotesWithProfiles 
 
     return (
         <div
-            className={`p-4 w-[300px] duration-300 flex flex-col ${
+            className={` relative group p-4 w-[300px] duration-300 flex flex-col ${
                 isYou ? 'place-self-end ' : 'place-self-start'
             }`}
         >
-            <div>
+            <div className="z-20 absolute flex space-x-1 top-2 right-0 bg-gray-100 invisible group-hover:visible ease-in-out duration-150">
+                <div className="p-2 rounded-md text-gray-600  bg-gray-50 hover:bg-gray-100 border border-gray-200 duration-300 outline-none appearance-none text-center cursor-pointer">
+                    <Pin className="w-4 h-4 fill-tertiary-600 hover:fill-primary-600" />
+                </div>
+                <div className="p-2 rounded-md text-gray-600  bg-gray-50 hover:bg-gray-100 border border-gray-200 duration-300 outline-none appearance-none text-center cursor-pointer">
+                    <Trashcan className="w-4 h-4 fill-tertiary-600 hover:fill-primary-600" />
+                </div>
+            </div>
+            <div className="">
                 <div className="flex align-center">
                     <div className="rounded-full w-6 h-6 row-center bg-primary-100 text-primary-500 mr-4">
                         <div className="p-2">
