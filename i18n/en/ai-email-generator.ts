@@ -9,6 +9,7 @@ const aiEmailGenerator = {
             all: 'All',
         },
         generateEmail: 'Generate Email',
+        generateSubject: 'Generate Subject',
         loading: 'Loading...',
     },
     email: {
@@ -33,6 +34,8 @@ const aiEmailGenerator = {
             influencerName: 'Influencer Name',
             brandName: 'Brand Name',
             instructions: 'Instructions for the influencer',
+            subjectLine: 'Generated Subject Line',
+            generatedEmail: 'Generated Email',
         },
         label: {
             senderName: "Sender's Name",
@@ -42,6 +45,8 @@ const aiEmailGenerator = {
             brandName: 'Brand Name',
             instructions: 'Instructions for the influencer',
             language: 'Email Language',
+            subjectLine: 'Generated Subject Line',
+            generatedEmail: 'Generated Email',
         },
     },
 };

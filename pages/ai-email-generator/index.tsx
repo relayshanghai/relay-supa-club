@@ -1,13 +1,13 @@
-import { Layout } from 'src/modules/layout';
-import { useCallback, useState } from 'react';
-import { Button } from 'src/components/button';
-import { t } from 'i18next';
-import { Input } from 'src/components/input';
-import { InputTextArea } from 'src/components/textarea';
-import { nextFetch } from 'src/utils/fetcher';
-import { AIEmailGeneratorGetQuery, AIEmailGeneratorGetResult } from 'pages/api/ai-email-generator';
+import { AIEmailGeneratorGetQuery, AIEmailGeneratorGetResult } from 'pages/api/ai-generate/email';
 import { copyToClipboard } from 'src/utils/copyToClipboard';
+import { InputTextArea } from 'src/components/textarea';
 import { Transition } from '@headlessui/react';
+import { Button } from 'src/components/button';
+import { nextFetch } from 'src/utils/fetcher';
+import { useCallback, useState } from 'react';
+import { Input } from 'src/components/input';
+import { Layout } from 'src/modules/layout';
+import { t } from 'i18next';
 
 const AIImageGenerator = () => {
     const [brandName, setBrandName] = useState('');
@@ -17,11 +17,13 @@ const AIImageGenerator = () => {
     const [productDescription, setProductDescription] = useState('');
     const [instructions, setInstructions] = useState('');
     const [senderName, setSenderName] = useState('');
-    const [loading, setLoading] = useState(false);
+    const [loadingEmail, setLoadingEmail] = useState(false);
     const [generatedEmail, setGeneratedEmail] = useState('');
+    const [generatedSubject, setGeneratedSubject] = useState('');
+    const [loadingSubject, setLoadingSubject] = useState(false);
 
     const generateEmail = useCallback(async () => {
-        setLoading(true);
+        setLoadingEmail(true);
         setGeneratedEmail('');
         const body: AIEmailGeneratorGetQuery = {
             brandName,
@@ -32,12 +34,12 @@ const AIImageGenerator = () => {
             instructions,
             senderName,
         };
-        const res = await nextFetch<AIEmailGeneratorGetResult>('ai-email-generator', {
+        const res = await nextFetch<AIEmailGeneratorGetResult>('ai-generate/email', {
             method: 'post',
             body: JSON.stringify(body),
         });
         setGeneratedEmail(res[0].text as string);
-        setLoading(false);
+        setLoadingEmail(false);
         return res;
     }, [
         brandName,
@@ -49,9 +51,47 @@ const AIImageGenerator = () => {
         senderName,
     ]);
 
-    const handleSubmit = async (e: any) => {
+    const generateSubject = useCallback(async () => {
+        setLoadingSubject(true);
+        setGeneratedSubject('');
+        const body: AIEmailGeneratorGetQuery = {
+            brandName,
+            language,
+            influencerName,
+            productName,
+            productDescription,
+            instructions,
+            senderName,
+        };
+        const res = await nextFetch<AIEmailGeneratorGetResult>('ai-generate/subject', {
+            method: 'post',
+            body: JSON.stringify(body),
+        });
+        setGeneratedSubject(res[0].text as string);
+        setLoadingSubject(false);
+        return res;
+    }, [
+        brandName,
+        language,
+        influencerName,
+        productName,
+        productDescription,
+        instructions,
+        senderName,
+    ]);
+
+    const handleSubmit = async (e: any, type: 'subject' | 'email' | 'both') => {
         e.preventDefault();
-        generateEmail();
+        if (type === 'email') await generateEmail();
+        else if (type === 'subject') await generateSubject();
+        else {
+            await generateEmail();
+            await generateSubject();
+        }
+    };
+
+    const removeExtraSpaces = (e: any) => {
+        return e.target.value.replace(/\s+/g, ' ').trim();
     };
 
     const languageOptions = [
@@ -67,16 +107,14 @@ const AIImageGenerator = () => {
                     <p className="text-sm mb-4">{t('aiEmailGenerator.index.description')}</p>
                 </div>
                 <div className="flex flex-row items-center justify-center gap-10 mt-10 w-full">
-                    <form
-                        onSubmit={handleSubmit}
-                        className="flex flex-col h-full items-center justify-end"
-                    >
+                    <form className="flex flex-col h-full items-center justify-end">
                         <label className="flex flex-col text-xs text-gray-500 font-bold w-full">
                             <div>{t('aiEmailGenerator.form.label.language')}</div>
+
                             <select
                                 value={language}
                                 onChange={(e) => setLanguage(e.target.value as 'en-US' | 'zh')}
-                                className="ring-opacity-5 placeholder-gray-400 appearance-none bg-white rounded-md block w-full px-3 py-2 border border-transparent shadow ring-1 sm:text-sm focus:border-primary-500 focus:ring-primary-500 focus:outline-none my-2"
+                                className="ring-opacity-5 placeholder-gray-400 appearance-none bg-white rounded-md block w-full px-3 py-2 border border-transparent shadow ring-1 ring-transparent cursor-pointer sm:text-sm focus:border-primary-500 focus:ring-primary-500 focus:outline-none my-2"
                             >
                                 {languageOptions.map((option) => (
                                     <option key={option.value} value={option.value}>
@@ -122,7 +160,7 @@ const AIImageGenerator = () => {
                             placeholder={t('campaigns.creatorModal.messagePlaceholder') as string}
                             value={productDescription}
                             onChange={(e) => {
-                                if (e.target.value.length > 100) {
+                                if (e.target.value.length > 600) {
                                     return;
                                 }
                                 setProductDescription(e.target.value);
@@ -134,18 +172,25 @@ const AIImageGenerator = () => {
                             placeholder={t('campaigns.creatorModal.messagePlaceholder') as string}
                             value={instructions}
                             onChange={(e) => {
-                                if (e.target.value.length > 100) {
+                                if (e.target.value.length > 600) {
                                     return;
                                 }
                                 setInstructions(e.target.value);
                             }}
                         />
-                        <Button disabled={loading} type="submit">
-                            {loading
-                                ? t('aiEmailGenerator.index.loading')
-                                : t('aiEmailGenerator.index.generateEmail')}
-                        </Button>
+                        <div className="flex flex-row gap-2 items-center">
+                            <Button
+                                disabled={loadingEmail && loadingSubject}
+                                type="submit"
+                                onClick={(e) => handleSubmit(e, 'both')}
+                            >
+                                {loadingEmail
+                                    ? t('aiEmailGenerator.index.loading')
+                                    : t('aiEmailGenerator.index.generateEmail')}
+                            </Button>
+                        </div>
                     </form>
+
                     <Transition
                         show={generatedEmail.length > 1}
                         enter="transition-all duration-300"
@@ -156,11 +201,27 @@ const AIImageGenerator = () => {
                         leaveTo="opacity-0"
                         className="flex flex-col items-center justify-end h-full"
                     >
-                        <textarea
-                            className="ring-opacity-5 max-w-lg h-full overflow-y-auto placeholder-gray-400 ring-black appearance-none bg-white rounded-md block w-96 px-3 py-2 border border-transparent shadow ring-1 sm:text-sm focus:outline-none my-2"
-                            value={generatedEmail}
+                        <InputTextArea
+                            onBlur={removeExtraSpaces}
+                            label={t('aiEmailGenerator.form.label.subjectLine')}
+                            value={generatedSubject}
+                            onChange={(e) => {
+                                setGeneratedSubject(e.target.value);
+                            }}
                         />
-                        <Button onClick={() => copyToClipboard(generatedEmail)}>Copy Text</Button>
+                        <label className="flex flex-col text-xs text-gray-500 font-bold h-full w-full">
+                            <div>{t('aiEmailGenerator.form.label.generatedEmail')}</div>
+                            <textarea
+                                className="ring-opacity-5 text-black placeholder-gray-400 appearance-none bg-white rounded-md block h-full w-full px-3 py-2 border border-transparent shadow ring-1 ring-transparent sm:text-sm focus:border-primary-500 focus:ring-primary-500 focus:outline-none my-2"
+                                value={generatedEmail}
+                            />
+                        </label>
+                        <Button
+                            onClick={() => copyToClipboard(generatedEmail)}
+                            disabled={generatedEmail.length < 1 && generateSubject.length < 1}
+                        >
+                            Copy Text
+                        </Button>
                     </Transition>
                 </div>
             </div>

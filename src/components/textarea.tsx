@@ -2,8 +2,9 @@ import { InputHTMLAttributes } from 'react';
 
 export const InputTextArea = ({
     label,
+    extraClasses,
     ...rest
-}: InputHTMLAttributes<HTMLTextAreaElement> & { label: string }) => {
+}: InputHTMLAttributes<HTMLTextAreaElement> & { label: string; extraClasses?: string }) => {
     return (
         <label className="flex flex-col text-xs text-gray-500 font-bold w-full">
             <div>
@@ -15,7 +16,7 @@ export const InputTextArea = ({
                     rest.disabled
                         ? 'bg-gray-100 cursor-not-allowed text-gray-500 ring-gray-500'
                         : 'text-gray-900 ring-gray-900'
-                }`}
+                } ${extraClasses}`}
                 {...rest}
             />
         </label>
