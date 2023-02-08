@@ -2,11 +2,10 @@ import { getCompanyByCusId, updateCompanySubscriptionStatus } from '../db';
 import httpCodes from 'src/constants/httpCodes';
 import { serverLogger } from 'src/utils/logger';
 
-import type { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiResponse } from 'next';
 import type { InvoicePaymentFailed } from 'types/stripe/invoice-payment-failed-webhook';
 
 export const handleInvoicePaymentFailed = async (
-    req: NextApiRequest,
     res: NextApiResponse,
     invoiceBody: InvoicePaymentFailed,
 ) => {

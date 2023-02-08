@@ -16,11 +16,10 @@ import { supabase } from 'src/utils/supabase-client';
 import { unixEpochToISOString } from 'src/utils/utils';
 import { ulid } from 'ulid';
 
-import type { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiResponse } from 'next';
 import type { CustomerSubscriptionCreated } from 'types';
 
 export const handleVIPSubscription = async (
-    req: NextApiRequest,
     res: NextApiResponse,
     invoiceBody: CustomerSubscriptionCreated,
 ) => {

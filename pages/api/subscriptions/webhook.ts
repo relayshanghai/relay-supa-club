@@ -37,14 +37,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 const price = invoiceBody.data.object.items.data[0].price;
                 const productID = price.product;
                 if (productID === STRIPE_PRODUCT_ID_VIP) {
-                    handleVIPSubscription(req, res, invoiceBody);
+                    return handleVIPSubscription(res, invoiceBody);
                 } else {
                     return res.status(httpCodes.METHOD_NOT_ALLOWED).json({});
                 }
             }
             if (body.type === handledWebhooks.invoicePaymentFailed) {
                 const invoiceBody = body as InvoicePaymentFailed;
-                return handleInvoicePaymentFailed(req, res, invoiceBody);
+                return handleInvoicePaymentFailed(res, invoiceBody);
             }
         } catch (error) {
             serverLogger(error, 'error');
