@@ -19,6 +19,9 @@ export type CompanyWithProfilesInvitesAndUsage = CompanyDB & {
 export const getCompanyCusId = (companyId: string) =>
     supabase.from('companies').select('cus_id').eq('id', companyId).single();
 
+export const getCompanyByCusId = (cusId: string) =>
+    supabase.from('companies').select().eq('cus_id', cusId).single();
+
 export const getCompanyWithProfilesInvitesAndUsage = async (companyId: string) => {
     const { data, error } = await supabase
         .from('companies')
