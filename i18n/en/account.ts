@@ -67,6 +67,12 @@ const account = {
             backToAccount: 'Back to account',
             perMonth: '/month',
             billed_period: 'Billed {{period}}',
+            actionLimitedToAdmins: 'This action is limited to company admins',
+            noActiveSubscriptionToUpgrade: 'No active subscription to upgrade',
+            unableToActivateSubscription: 'Unable to activate subscription',
+            missingCompanyData: 'Missing company data',
+            missingPriceId: 'Missing price ID',
+            noPaymentMethod: 'No payment method',
         },
     },
     invite: {

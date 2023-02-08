@@ -64,6 +64,12 @@ const account = {
             backToAccount: '返回账号',
             perMonth: '每月',
             billed_period: '收费周期：{{period}}',
+            actionLimitedToAdmins: '此操作仅限管理员执行',
+            noActiveSubscriptionToUpgrade: '没有可升级的订阅',
+            unableToActivateSubscription: '无法激活订阅',
+            missingCompanyData: '缺少公司数据',
+            missingPriceId: '缺少价格ID',
+            noPaymentMethod: '没有付款方式',
         },
     },
     invite: {
