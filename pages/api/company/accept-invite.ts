@@ -1,6 +1,7 @@
 import { User } from '@supabase/supabase-js';
 import { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
+import { acceptInviteErrors } from 'src/errors/company';
 import { updateUserRole } from 'src/utils/api/db';
 import { serverLogger } from 'src/utils/logger';
 import { supabase } from 'src/utils/supabase-client';
@@ -20,11 +21,6 @@ export type CompanyAcceptInviteGetQueries = {
 export type CompanyAcceptInviteGetResponse = {
     message: 'inviteValid';
     email?: string;
-};
-
-export const acceptInviteErrors = {
-    inviteInvalid: 'Invite is invalid or has expired',
-    userAlreadyRegistered: 'User is already registered',
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -85,7 +81,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
         }
 
-        const { error: updateRoleError } = await updateUserRole(user.id, 'company_teammate');
+        const { error: updateRoleError } = await updateUserRole(
+            user.id,
+            invite.company_owner ? 'company_owner' : 'company_teammate',
+        );
 
         if (updateRoleError) {
             serverLogger(updateRoleError, 'error');

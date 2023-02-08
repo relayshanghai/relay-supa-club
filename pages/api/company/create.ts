@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
+import { createCompanyErrors } from 'src/errors/company';
 import {
     CompanyDB,
     createCompany,
@@ -17,10 +18,6 @@ export type CompanyCreatePostBody = {
     website?: string;
 };
 export type CompanyCreatePostResponse = CompanyDB;
-
-export const createCompanyErrors = {
-    companyWithSameNameExists: 'companyWithSameNameExists',
-};
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
