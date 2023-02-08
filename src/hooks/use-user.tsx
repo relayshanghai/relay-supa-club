@@ -140,6 +140,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
                 const createEmployeeRes = await nextFetch<CreateEmployeePostResponse>(
                     'company/create-employee',
                     {
+                        method: 'POST',
                         body,
                     },
                 );
