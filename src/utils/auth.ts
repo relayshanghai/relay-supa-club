@@ -1,7 +1,7 @@
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { AccountRole } from 'types';
-import { getUserRole } from './api/db';
+import { getUserRole } from './api/db/calls/profiles';
+import { isAdmin } from './utils';
 
 export const checkSessionIdMatchesID = async (
     userId: string,
@@ -15,15 +15,6 @@ export const checkSessionIdMatchesID = async (
     } = await supabase.auth.getSession();
     if (session?.user.id !== userId) return false;
     return true;
-};
-
-export const isAdmin = (role?: AccountRole) => {
-    if (!role) {
-        return false;
-    }
-    const isAdmin =
-        role === 'company_owner' || role === 'relay_employee' || role === 'relay_expert';
-    return isAdmin;
 };
 
 export const isCompanyOwnerOrRelayEmployee = async (req: NextApiRequest, res: NextApiResponse) => {

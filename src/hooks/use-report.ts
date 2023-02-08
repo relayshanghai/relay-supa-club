@@ -1,6 +1,6 @@
 import { CreatorsReportGetQueries, CreatorsReportGetResponse } from 'pages/api/creators/report';
 import { useCallback, useState } from 'react';
-import { usageErrors } from 'src/utils/api/db';
+import { usageErrors } from 'src/errors/usages';
 import { hasCustomError } from 'src/utils/errors';
 import { nextFetchWithQueries } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger';

@@ -73,6 +73,7 @@ const account = {
         emailAddress: '电子邮件地址',
         sendInvitation: '发送邀请',
         cancel: '取消',
+        makeAdmin: '设为管理员',
     },
     cancel: '取消',
     cancelModal: {

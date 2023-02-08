@@ -1,9 +1,9 @@
-import { updateCompanyErrors } from 'pages/api/company';
 import { useContext, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
+import { updateCompanyErrors } from 'src/errors/company';
 import { useFields } from 'src/hooks/use-fields';
-import { isAdmin } from 'src/utils/auth';
+import { isAdmin } from 'src/utils/utils';
 import { hasCustomError } from 'src/utils/errors';
 import { Button } from '../button';
 import { Edit } from '../icons';
@@ -15,7 +15,6 @@ export const CompanyDetails = () => {
     const { userDataLoading, profile, company, updateCompany } = useContext(AccountContext);
 
     const [showAddMoreMembers, setShowAddMoreMembers] = useState(false);
-    const [inviteEmail, setInviteEmail] = useState('');
     const {
         values: companyValues,
         setFieldValue: setCompanyFieldValues,
@@ -66,8 +65,6 @@ export const CompanyDetails = () => {
             <InviteMembersModal
                 showAddMoreMembers={showAddMoreMembers}
                 setShowAddMoreMembers={setShowAddMoreMembers}
-                inviteEmail={inviteEmail}
-                setInviteEmail={setInviteEmail}
             />
 
             <h2 className="text-lg font-bold">{t('account.company.title')}</h2>

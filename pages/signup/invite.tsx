@@ -1,6 +1,5 @@
 import { useRouter } from 'next/router';
 import {
-    acceptInviteErrors,
     CompanyAcceptInviteGetQueries,
     CompanyAcceptInviteGetResponse,
     CompanyAcceptInvitePostBody,
@@ -13,6 +12,7 @@ import { Button } from 'src/components/button';
 import { LanguageToggle } from 'src/components/common/language-toggle';
 import { Input } from 'src/components/input';
 import { Title } from 'src/components/title';
+import { acceptInviteErrors } from 'src/errors/company';
 import { useFields } from 'src/hooks/use-fields';
 import { useUser } from 'src/hooks/use-user';
 import { hasCustomError } from 'src/utils/errors';

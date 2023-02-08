@@ -5,6 +5,7 @@ import {
     SubscriptionConfirmModalData,
 } from 'src/components/account/subscription-confirm-modal';
 import { Button } from 'src/components/button';
+import { SALES_REP_EMAIL } from 'src/constants/employeeContacts';
 import { useSubscription } from 'src/hooks/use-subscription';
 import { Layout } from 'src/modules/layout';
 import { nextFetch } from 'src/utils/fetcher';
@@ -50,11 +51,10 @@ const details = {
     ],
 };
 
-const salesRefEmail = 'amy.hu@relay.club';
 const subject = 'relay.club VIP plan subscription';
 const body = "Hi, I'm interested in purchasing the VIP plan for my company.";
 const query = `subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-const VIPEmailLink = `mailto:${salesRefEmail}?${query}`;
+const VIPEmailLink = `mailto:${SALES_REP_EMAIL}?${query}`;
 
 const unselectedTabClasses = 'py-1 px-4 border-x border-primary-500 cursor-pointer';
 const selectedTabClasses = 'py-1 px-4 border-x border-primary-500 bg-primary-500 text-white';

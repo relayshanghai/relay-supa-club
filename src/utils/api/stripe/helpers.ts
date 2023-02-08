@@ -1,18 +1,7 @@
-import { SubscriptionPortalGetQueries } from 'pages/api/subscriptions/portal';
 import { getCompanyCusId } from 'src/utils/api/db';
 
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 import Stripe from 'stripe';
-
-/** @param id company ID */
-export const buildSubscriptionPortalUrl = ({ id, returnUrl }: SubscriptionPortalGetQueries) => {
-    const url = new URL('/api/subscriptions/portal', window.location.origin);
-
-    url.searchParams.append('id', id);
-    if (returnUrl) url.searchParams.append('returnUrl', returnUrl);
-
-    return url.toString();
-};
 
 export interface ExpandedPlanWithProduct extends Stripe.Plan {
     product: Stripe.Product;

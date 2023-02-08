@@ -6,6 +6,7 @@ export interface Database {
             campaign_creators: {
                 Row: {
                     added_by_id: string;
+
                     address: string | null;
                     avatar_url: string | null;
                     brief_opened_by_creator: boolean | null;
