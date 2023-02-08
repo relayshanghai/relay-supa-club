@@ -8,6 +8,8 @@ import { useCallback, useState } from 'react';
 import { Input } from 'src/components/input';
 import { Layout } from 'src/modules/layout';
 import { t } from 'i18next';
+import { toast } from 'react-hot-toast';
+import { clientLogger } from 'src/utils/logger';
 
 const AIImageGenerator = () => {
     const [brandName, setBrandName] = useState('');
@@ -85,8 +87,17 @@ const AIImageGenerator = () => {
         if (type === 'email') await generateEmail();
         else if (type === 'subject') await generateSubject();
         else {
-            generateEmail();
-            generateSubject();
+            try {
+                await generateEmail();
+                await generateSubject();
+            } catch (e: any) {
+                clientLogger(e, 'error');
+                toast.error(t('aiEmailGenerator.index.requestError'));
+                setGeneratedEmail('');
+                setGeneratedSubject('');
+                setLoadingEmail(false);
+                setLoadingSubject(false);
+            }
         }
     };
 
@@ -218,7 +229,7 @@ const AIImageGenerator = () => {
                         </label>
                         <Button
                             onClick={() => copyToClipboard(generatedEmail)}
-                            disabled={generatedEmail.length < 1 && generateSubject.length < 1}
+                            disabled={loadingEmail || loadingSubject}
                         >
                             Copy Text
                         </Button>

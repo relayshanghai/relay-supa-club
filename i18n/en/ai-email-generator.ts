@@ -11,6 +11,7 @@ const aiEmailGenerator = {
         generateEmail: 'Generate Email',
         generateSubject: 'Generate Subject',
         loading: 'Loading...',
+        requestError: 'Oops, please check your data and try again.',
     },
     email: {
         dayLimit: 'You can only send an influencer an email every 24 hours to avoid spam.',
