@@ -171,7 +171,7 @@ const campaigns = {
     notes: {
         notes: '备注',
         submit: '提交',
-        emptyComment: '请输入备注再提交',
+        emptyComment: '请勿提交空白备注。',
     },
     form: {
         createCampaign: '创建项目',

@@ -21,6 +21,7 @@ export default function CommentCard({ note }: { note: CampaignNotesDB }) {
                 {/* temp placeholder texts below to be replaced in V2-139h */}
                 <div className="font-medium ">User name</div>
                 <div className="text-gray-400">
+                    {/* Replace this when settle with a date formatting library or function on Ticket V2-36 */}
                     {note.created_at &&
                         `${new Date(note.created_at).toLocaleDateString(i18n.language, {
                             year: 'numeric',

@@ -1,3 +1,4 @@
+//TODO TicketV2-146: Add types naming convention to comment
 import { supabase } from 'src/utils/supabase-client';
 import {
     CompanyDB,
@@ -66,10 +67,4 @@ export const getCampaignNotes = async (campaignCreatorId: string) => {
 };
 
 export const insertCampaignNote = async (note: CampaignNotesInsertDB) =>
-    await supabase
-        .from('campaign_notes')
-        .insert({
-            ...note,
-        })
-        .select()
-        .single();
+    await supabase.from('campaign_notes').insert(note).select().single();
