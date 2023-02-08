@@ -10,13 +10,14 @@ export const useNotes = ({ campaignCreatorId }: { campaignCreatorId?: string }) 
     const [loading, setLoading] = useState<boolean>(false);
     const { profile } = useUser();
 
-    const { data: campaignNotes } = useSWR('notes', (path) =>
-        nextFetchWithQueries<CampaignNotesIndexGetQuery, CampaignNotesIndexGetResult>(path, {
-            id: campaignCreatorId ?? '',
-        }),
+    const { data: campaignNotes } = useSWR(
+        'notes',
+        (path) =>
+            nextFetchWithQueries<CampaignNotesIndexGetQuery, CampaignNotesIndexGetResult>(path, {
+                id: campaignCreatorId ?? '',
+            }),
+        { refreshInterval: 1000 },
     );
-    //eslint-disable-next-line
-    console.log({ campaignCreatorId, campaignNotes });
 
     const createNote = useCallback(
         async (input: CampaignNotePostBody) => {

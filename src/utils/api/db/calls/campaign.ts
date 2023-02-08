@@ -60,7 +60,7 @@ export const getCampaignNotes = async (campaignCreatorId: string) => {
         .from('campaign_notes')
         .select('*')
         .eq('campaign_creator_id', campaignCreatorId)
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: true });
     if (error) throw error;
     return data as CampaignNotesDB[];
 };
