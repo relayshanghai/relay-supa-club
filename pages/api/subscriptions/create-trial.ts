@@ -1,12 +1,14 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
+import { createSubscriptionErrors } from 'src/errors/subscription';
 import {
     getCompanyCusId,
     updateCompanySubscriptionStatus,
     updateCompanyUsageLimits,
 } from 'src/utils/api/db';
-import { STRIPE_PRODUCT_ID_DIY } from 'src/utils/api/stripe/constants';
+import { STRIPE_PRICE_MONTHLY_DIY } from 'src/utils/api/stripe/constants';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
+import { isCompanyOwnerOrRelayEmployee } from 'src/utils/auth';
 import { serverLogger } from 'src/utils/logger';
 import { unixEpochToISOString } from 'src/utils/utils';
 import Stripe from 'stripe';
@@ -24,7 +26,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const { company_id } = JSON.parse(req.body) as SubscriptionCreateTrialPostBody;
 
             if (!company_id || typeof company_id !== 'string') {
-                return res.status(httpCodes.BAD_REQUEST).json({ error: 'Missing company id' });
+                return res
+                    .status(httpCodes.BAD_REQUEST)
+                    .json({ error: createSubscriptionErrors.missingCompanyData });
+            }
+            if (!(await isCompanyOwnerOrRelayEmployee(req, res))) {
+                return res
+                    .status(httpCodes.UNAUTHORIZED)
+                    .json({ error: createSubscriptionErrors.actionLimitedToAdmins });
             }
             const { data, error } = await getCompanyCusId(company_id);
             const cusId = data?.cus_id;
@@ -42,19 +51,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             });
             const activeSubscription = subscriptions.data[0];
             if (activeSubscription) {
-                return res.status(httpCodes.BAD_REQUEST).json({ error: 'Already subscribed' });
+                return res
+                    .status(httpCodes.BAD_REQUEST)
+                    .json({ error: createSubscriptionErrors.alreadySubscribed });
             }
 
-            const diyPrices = (await stripeClient.prices.list({
-                active: true,
+            const diyTrialPrice = (await stripeClient.prices.retrieve(STRIPE_PRICE_MONTHLY_DIY, {
                 expand: ['data.product'],
-                product: STRIPE_PRODUCT_ID_DIY,
-            })) as Stripe.ApiList<StripePriceWithProductMetadata>;
+            })) as StripePriceWithProductMetadata;
 
-            const diyTrialPrice = diyPrices.data.find(
-                ({ recurring }) =>
-                    recurring?.interval === 'month' && recurring.interval_count === 1,
-            );
             const diyTrialPriceId = diyTrialPrice?.id ?? '';
             if (!diyTrialPriceId || !diyTrialPrice) {
                 serverLogger(new Error('Missing DIY trial price'), 'error');
@@ -62,9 +67,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }
 
             const { trial_days, trial_profiles, trial_searches } = diyTrialPrice.product.metadata;
+
             if (!trial_days || !trial_profiles || !trial_searches) {
                 serverLogger(new Error('Missing product metadata'), 'error');
-
                 return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
             }
 
@@ -77,6 +82,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             const subscription: SubscriptionCreateTrialResponse =
                 await stripeClient.subscriptions.create(createParams);
+
+            if (!subscription || subscription.status !== 'trialing') {
+                return res
+                    .status(httpCodes.BAD_REQUEST)
+                    .json({ error: createSubscriptionErrors.unableToActivateSubscription });
+            }
 
             // free trial follows DIY prices
             const price = (await stripeClient.prices.retrieve(diyTrialPriceId, {

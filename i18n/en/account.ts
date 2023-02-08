@@ -73,6 +73,7 @@ const account = {
             missingCompanyData: 'Missing company data',
             missingPriceId: 'Missing price ID',
             noPaymentMethod: 'No payment method',
+            alreadySubscribed: 'Already subscribed',
         },
     },
     invite: {

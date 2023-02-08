@@ -5,4 +5,5 @@ export const createSubscriptionErrors = {
     missingCompanyData: 'missingCompanyData',
     missingPriceId: 'missingPriceId',
     noPaymentMethod: 'noPaymentMethod',
+    alreadySubscribed: 'alreadySubscribed',
 };

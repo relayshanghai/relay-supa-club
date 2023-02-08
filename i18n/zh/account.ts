@@ -70,6 +70,7 @@ const account = {
             missingCompanyData: '缺少公司数据',
             missingPriceId: '缺少价格ID',
             noPaymentMethod: '没有付款方式',
+            alreadySubscribed: '已订阅',
         },
     },
     invite: {

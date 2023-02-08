@@ -51,24 +51,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     .json({ error: createSubscriptionErrors.noPaymentMethod });
             }
 
-            // const subscriptions = await stripeClient.subscriptions.list({
-            //     customer: cusId,
-            //     status: 'active',
-            // });
-            // let activeSubscription = subscriptions.data[0];
+            const subscriptions = await stripeClient.subscriptions.list({
+                customer: cusId,
+                status: 'active',
+            });
+            let activeSubscription = subscriptions.data[0];
 
-            // if (!activeSubscription) {
-            //     const trialSubscriptions = await stripeClient.subscriptions.list({
-            //         customer: cusId,
-            //         status: 'trialing',
-            //     });
-            //     activeSubscription = trialSubscriptions.data[0];
-            //     if (!activeSubscription) {
-            //         return res
-            //             .status(httpCodes.FORBIDDEN)
-            //             .json({ error: createSubscriptionErrors.noActiveSubscriptionToUpgrade });
-            //     }
-            // }
+            if (!activeSubscription) {
+                const trialSubscriptions = await stripeClient.subscriptions.list({
+                    customer: cusId,
+                    status: 'trialing',
+                });
+                activeSubscription = trialSubscriptions.data[0];
+                if (!activeSubscription) {
+                    return res
+                        .status(httpCodes.FORBIDDEN)
+                        .json({ error: createSubscriptionErrors.noActiveSubscriptionToUpgrade });
+                }
+            }
             const createParams: Stripe.SubscriptionCreateParams = {
                 customer: cusId,
                 items: [{ price: price_id }],
@@ -85,10 +85,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 });
             }
 
-            // await stripeClient.subscriptions.cancel(activeSubscription.id, {
-            //     invoice_now: true,
-            //     prorate: true,
-            // });
+            // only cancel old subscription after new one is created successfully
+            await stripeClient.subscriptions.cancel(activeSubscription.id, {
+                invoice_now: true,
+                prorate: true,
+            });
 
             const price = await stripeClient.prices.retrieve(price_id);
             const product = await stripeClient.products.retrieve(price.product as string);
