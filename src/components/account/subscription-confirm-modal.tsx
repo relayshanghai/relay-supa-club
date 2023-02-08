@@ -3,6 +3,8 @@ import { SubscriptionCreatePostResponse } from 'pages/api/subscriptions/create';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
+import { createSubscriptionErrors } from 'src/errors/subscription';
+import { hasCustomError } from 'src/utils/errors';
 import { SubscriptionPeriod } from 'types';
 
 import { Button } from '../button';
@@ -36,10 +38,16 @@ export const SubscriptionConfirmModal = ({
             if (result?.status === 'active')
                 toast.success(t('account.subscription.modal.subscriptionPurchased'), { id });
             setSubmitStatus('submitted');
-        } catch (e) {
-            toast.error(t('account.subscription.modal.wentWrong'), {
-                id,
-            });
+        } catch (e: any) {
+            if (hasCustomError(e, createSubscriptionErrors)) {
+                toast.error(t(`account.subscription.modal.${e.message}`), {
+                    id,
+                });
+            } else {
+                toast.error(t('account.subscription.modal.wentWrong'), {
+                    id,
+                });
+            }
             setSubmitStatus('initial');
         }
     };

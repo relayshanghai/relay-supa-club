@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
+import { createSubscriptionErrors } from 'src/errors/subscription';
 import {
     getCompanyCusId,
     updateCompanySubscriptionStatus,
@@ -23,60 +24,71 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (req.method === 'POST') {
         const { company_id, price_id } = JSON.parse(req.body) as SubscriptionCreatePostBody;
         if (!company_id)
-            return res.status(httpCodes.BAD_REQUEST).json({ error: 'Missing company id' });
-        if (!price_id) return res.status(httpCodes.BAD_REQUEST).json({ error: 'Missing price id' });
+            return res
+                .status(httpCodes.BAD_REQUEST)
+                .json({ error: createSubscriptionErrors.missingCompanyData });
+        if (!price_id)
+            return res
+                .status(httpCodes.BAD_REQUEST)
+                .json({ error: createSubscriptionErrors.missingPriceId });
         if (!(await isCompanyOwnerOrRelayEmployee(req, res))) {
             return res
                 .status(httpCodes.UNAUTHORIZED)
-                .json({ error: 'This action is limited to company admins' });
+                .json({ error: createSubscriptionErrors.actionLimitedToAdmins });
         }
         try {
-            const { data: companyData } = await getCompanyCusId(company_id);
+            const { data: companyData, error: getCompanyError } = await getCompanyCusId(company_id);
             const cusId = companyData?.cus_id;
-            if (!companyData || !cusId) {
-                serverLogger(new Error('Missing company data'), 'error');
+            if (!companyData || !cusId || getCompanyError) {
+                serverLogger(getCompanyError ?? new Error('Missing company data'), 'error');
                 return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
             }
 
             const paymentMethods = await stripeClient.customers.listPaymentMethods(cusId);
             if (paymentMethods?.data?.length === 0) {
-                serverLogger(new Error('Missing payment method'), 'error');
-
-                return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
+                return res
+                    .status(httpCodes.BAD_REQUEST)
+                    .json({ error: createSubscriptionErrors.noPaymentMethod });
             }
 
-            const subscriptions = await stripeClient.subscriptions.list({
-                customer: cusId,
-                status: 'active',
-            });
-            let activeSubscription = subscriptions.data[0];
+            // const subscriptions = await stripeClient.subscriptions.list({
+            //     customer: cusId,
+            //     status: 'active',
+            // });
+            // let activeSubscription = subscriptions.data[0];
 
-            if (!activeSubscription) {
-                const trialSubscriptions = await stripeClient.subscriptions.list({
-                    customer: cusId,
-                    status: 'trialing',
-                });
-                activeSubscription = trialSubscriptions.data[0];
-                if (!activeSubscription) {
-                    return res
-                        .status(httpCodes.FORBIDDEN)
-                        .json({ error: 'No active subscription to upgrade' });
-                }
-            }
-
-            await stripeClient.subscriptions.cancel(activeSubscription.id, {
-                invoice_now: true,
-                prorate: true,
-            });
-
+            // if (!activeSubscription) {
+            //     const trialSubscriptions = await stripeClient.subscriptions.list({
+            //         customer: cusId,
+            //         status: 'trialing',
+            //     });
+            //     activeSubscription = trialSubscriptions.data[0];
+            //     if (!activeSubscription) {
+            //         return res
+            //             .status(httpCodes.FORBIDDEN)
+            //             .json({ error: createSubscriptionErrors.noActiveSubscriptionToUpgrade });
+            //     }
+            // }
             const createParams: Stripe.SubscriptionCreateParams = {
                 customer: cusId,
                 items: [{ price: price_id }],
                 proration_behavior: 'create_prorations',
             };
-
             const subscription: SubscriptionCreatePostResponse =
                 await stripeClient.subscriptions.create(createParams);
+
+            if (subscription.status !== 'active') {
+                // not active means the payment was declined.
+                await stripeClient.subscriptions.cancel(subscription.id, {});
+                return res.status(httpCodes.BAD_REQUEST).json({
+                    error: createSubscriptionErrors.unableToActivateSubscription,
+                });
+            }
+
+            // await stripeClient.subscriptions.cancel(activeSubscription.id, {
+            //     invoice_now: true,
+            //     prorate: true,
+            // });
 
             const price = await stripeClient.prices.retrieve(price_id);
             const product = await stripeClient.products.retrieve(price.product as string);
