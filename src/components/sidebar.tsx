@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import useAboveScreenWidth from 'src/hooks/use-above-screen-width';
 import { Compass, FourSquare, Account } from './icons';
+import EmailOutline from './icons/EmailOutline';
 import { Title } from './title';
 
 const ActiveLink = ({ href, children }: { href: string; children: string }) => {
@@ -32,7 +33,7 @@ const ActiveLink = ({ href, children }: { href: string; children: string }) => {
                     <FourSquare height={18} width={18} className="mr-4 text-inherit" />
                 )}
                 {hrefRoot === 'ai-email-generator' && (
-                    <FourSquare height={18} width={18} className="mr-4 text-inherit" />
+                    <EmailOutline height={18} width={18} className="mr-4 text-inherit" />
                 )}
                 {hrefRoot === 'account' && (
                     <Account height={18} width={18} className="mr-4 text-inherit" />

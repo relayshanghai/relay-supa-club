@@ -85,8 +85,8 @@ const AIImageGenerator = () => {
         if (type === 'email') await generateEmail();
         else if (type === 'subject') await generateSubject();
         else {
-            await generateEmail();
-            await generateSubject();
+            generateEmail();
+            generateSubject();
         }
     };
 
