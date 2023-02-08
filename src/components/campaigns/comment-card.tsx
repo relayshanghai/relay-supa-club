@@ -13,11 +13,12 @@ export default function CommentCard({ note }: { note: CampaignNotesDB }) {
                 isYou ? 'place-self-end' : 'place-self-start'
             }`}
         >
-            {/* temp placeholder texts below to be replaced in V2-139 */}
             <div className="flex align-center space-x-2">
                 <div className="rounded-full w-6 h-6 p-1 row-center bg-primary-100 text-primary-500">
+                    {/* temp placeholder texts below to be replaced in V2-139h */}
                     <div className="p-2">DX</div>
                 </div>
+                {/* temp placeholder texts below to be replaced in V2-139h */}
                 <div className="font-medium ">User name</div>
                 <div className="text-gray-400">
                     {note.created_at &&
