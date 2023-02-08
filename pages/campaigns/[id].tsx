@@ -1,18 +1,18 @@
-import { Layout } from 'src/modules/layout';
 import { useRouter } from 'next/router';
 import { useState, useEffect, ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PencilSquareIcon } from '@heroicons/react/20/solid';
 import Link from 'next/link';
+import { useSupabaseClient } from '@supabase/auth-helpers-react';
+import Image from 'next/image';
+import { Layout } from 'src/modules/layout';
 import CreatorsOutreach from '../../src/components/campaigns/creator-outreach';
 import CampaignDetails from '../../src/components/campaigns/CampaignDetails';
 import { useCampaigns } from 'src/hooks/use-campaigns';
-import Image from 'next/image';
-import { CampaignCreatorDB, CampaignWithCompanyCreators } from 'src/utils/api/db';
-import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import { Modal } from 'src/components/modal';
-import CommentCard from 'src/components/campaigns/comment-card';
 import CommentInput from 'src/components/campaigns/comment-input';
+import CommentCards from 'src/components/campaigns/comment-cards';
+import type { CampaignCreatorDB, CampaignWithCompanyCreators } from 'src/utils/api/db';
 
 export default function CampaignShow() {
     const router = useRouter();
@@ -214,7 +214,7 @@ export default function CampaignShow() {
                 }}
             >
                 <div>
-                    <CommentCard />
+                    <CommentCards currentCreator={currentCreator} />
                     <CommentInput currentCreator={currentCreator} />
                 </div>
             </Modal>

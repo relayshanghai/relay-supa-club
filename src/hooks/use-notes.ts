@@ -1,20 +1,20 @@
 import { useCallback, useState } from 'react';
+import useSWR from 'swr';
 import { useUser } from './use-user';
 import { clientLogger } from 'src/utils/logger';
-import { nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';
+import { nextFetch } from 'src/utils/fetcher';
 import { CampaignNotePostBody, CampaignNotePostResponse } from 'pages/api/notes/create';
-import useSWR from 'swr';
-import { CampaignNotesIndexGetQuery, CampaignNotesIndexGetResult } from 'pages/api/notes';
+import { CampaignNotesIndexGetResult } from 'pages/api/notes';
 
-export const useNotes = () => {
+export const useNotes = ({ campaignCreatorId }: { campaignCreatorId?: string }) => {
     const [loading, setLoading] = useState<boolean>(false);
     const { profile } = useUser();
 
-    const { data: campaignNotes } = useSWR(profile?.company_id ? 'notes' : null, (path) =>
-        nextFetchWithQueries<CampaignNotesIndexGetQuery, CampaignNotesIndexGetResult>(path, {
-            id: profile?.company_id ?? '',
-        }),
+    const { data: campaignNotes } = useSWR('notes', (path) =>
+        nextFetch<CampaignNotesIndexGetResult>(path, { method: 'get' }),
     );
+    //eslint-disable-next-line
+    console.log({ campaignCreatorId, campaignNotes });
 
     const createNote = useCallback(
         async (input: CampaignNotePostBody) => {

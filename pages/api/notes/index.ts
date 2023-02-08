@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
-import { CampaignNotesDB, getCampaignNotes } from 'src/utils/api/db';
+import type { CampaignNotesDB } from 'src/utils/api/db';
+import { getCampaignNotes } from 'src/utils/api/db';
 import { serverLogger } from 'src/utils/logger';
 
 export type CampaignNotesIndexGetQuery = {
@@ -13,7 +14,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (req.method === 'GET') {
         try {
             const { id: campaignCreatorId } = req.query as CampaignNotesIndexGetQuery;
-            const data = await getCampaignNotes(campaignCreatorId);
+            const { data } = await getCampaignNotes(campaignCreatorId);
+            // console.log({ data });
             return res.status(httpCodes.OK).json(data);
         } catch (error) {
             serverLogger(error, 'error');

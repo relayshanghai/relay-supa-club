@@ -2,16 +2,15 @@ import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 import { ChangeEvent, MouseEvent, useRef, useState } from 'react';
 import Link from 'next/link';
+import { toast } from 'react-hot-toast';
 import { Trashcan } from 'src/components/icons';
 import { useCampaigns } from 'src/hooks/use-campaigns';
-import { toast } from 'react-hot-toast';
 import TableInput from './campaign-table-input';
-import { CampaignWithCompanyCreators } from 'src/utils/api/db';
-import { CampaignCreatorDB } from 'src/utils/api/db/types';
 import { SocialMediaIcon } from '../common/social-media-icon';
 import { CreatorContacts } from './creator-contacts';
 import dateFormat from 'src/utils/dateFormat';
-import { SocialMediaPlatform } from 'types';
+import type { CampaignCreatorDB, CampaignWithCompanyCreators } from 'src/utils/api/db';
+import type { SocialMediaPlatform } from 'types';
 
 export default function CreatorsOutreach({
     currentCampaign,

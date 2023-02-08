@@ -14,7 +14,7 @@ export default function CommentInput({
 }) {
     const { t } = useTranslation();
     const [comment, setComment] = useState('');
-    const { createNote, loading } = useNotes();
+    const { createNote, loading } = useNotes({ campaignCreatorId: currentCreator?.id });
     const { profile } = useUser();
 
     const handleComment = async (comment: string) => {
