@@ -132,8 +132,9 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
                 options: { data },
             });
 
-            if (error) throw new Error(error?.message || 'Unknown error');
-
+            if (error) {
+                throw new Error(error?.message || 'Unknown error');
+            }
             try {
                 const body: CreateEmployeePostBody = { email };
                 const createEmployeeRes = await nextFetch<CreateEmployeePostResponse>(
@@ -142,7 +143,9 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
                         body,
                     },
                 );
-                if (createEmployeeRes.id) await router.push('/dashboard');
+                if (createEmployeeRes.id) {
+                    await router.push('/dashboard');
+                }
 
                 return { user: null, session: null };
             } catch (error) {
