@@ -6,7 +6,7 @@ import {
     updateCompanySubscriptionStatus,
     updateCompanyUsageLimits,
 } from 'src/utils/api/db';
-import { STRIPE_PRICE_MONTHLY_DIY } from 'src/utils/api/stripe/constants';
+import { STRIPE_PRICE_MONTHLY_DIY, STRIPE_PRODUCT_ID_DIY } from 'src/utils/api/stripe/constants';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 import { isCompanyOwnerOrRelayEmployee } from 'src/utils/auth';
 import { serverLogger } from 'src/utils/logger';
@@ -55,10 +55,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     .status(httpCodes.BAD_REQUEST)
                     .json({ error: createSubscriptionErrors.alreadySubscribed });
             }
-
-            const diyTrialPrice = (await stripeClient.prices.retrieve(STRIPE_PRICE_MONTHLY_DIY, {
+            const diyPrices = (await stripeClient.prices.list({
+                active: true,
                 expand: ['data.product'],
-            })) as StripePriceWithProductMetadata;
+                product: STRIPE_PRODUCT_ID_DIY,
+            })) as Stripe.ApiList<StripePriceWithProductMetadata>;
+            const diyTrialPrice = diyPrices.data.find(({ id }) => id === STRIPE_PRICE_MONTHLY_DIY);
 
             const diyTrialPriceId = diyTrialPrice?.id ?? '';
             if (!diyTrialPriceId || !diyTrialPrice) {
