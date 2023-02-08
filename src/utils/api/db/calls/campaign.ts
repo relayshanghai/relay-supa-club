@@ -7,6 +7,7 @@ import {
     CampaignCreatorDBUpdate,
     CampaignDB,
     CampaignNotesInsertDB,
+    CampaignNotesDB,
 } from '../types';
 
 export type CampaignWithCompanyCreators = CampaignDB & {
@@ -54,12 +55,15 @@ export const updateCampaignCreator = async (data: CampaignCreatorDBUpdate, campa
         .eq('campaign_id', campaign_id)
         .single();
 
-export const getCampaignNotes = async (campaignCreatorId: string) =>
-    await supabase
+export const getCampaignNotes = async (campaignCreatorId: string) => {
+    const { data, error } = await supabase
         .from('campaign_notes')
         .select('*')
         .eq('campaign_creator_id', campaignCreatorId)
         .order('created_at', { ascending: false });
+    if (error) throw error;
+    return data as CampaignNotesDB[];
+};
 
 export const insertCampaignNote = async (note: CampaignNotesInsertDB) =>
     await supabase

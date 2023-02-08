@@ -13,7 +13,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (req.method === 'GET') {
         try {
             const { id: companyId } = req.query as CampaignsIndexGetQuery;
-
             const data = await getCampaignWithCompanyCreators(companyId);
 
             const result: CampaignsIndexGetResult = data;
