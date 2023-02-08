@@ -43,7 +43,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     : 'English language';
 
             const data = await openai.createCompletion({
-                prompt: `Generate an email subject line to ${influencerName}, regarding a marketing campaign collaboration with ${brandName}, for their product ${productName} which can be described as: ${productDescription}. ${languagePrompt}.`,
+                prompt: `Generate an attention catching email subject line to ${influencerName}, regarding a marketing campaign collaboration with ${brandName}, for their product ${productName} which can be described as: ${productDescription}. ${languagePrompt}.`,
                 model: 'text-davinci-002',
                 max_tokens: 25,
                 n: 1,
