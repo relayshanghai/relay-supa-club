@@ -8,20 +8,22 @@ export type CampaignNotePostBody = CampaignNotesInsertDB;
 export type CampaignNotePostResponse = CampaignNotesDB;
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    if (req.method === 'DELETE') {
-        const { data } = JSON.parse(req.body);
-        const { data: campaignNotes, error } = await supabase
-            .from('campaign_notes')
-            .delete()
-            .eq('id', data.id);
-        // .eq('campaign_creator_notes', campaignCreatorId);
-
-        if (error) {
-            serverLogger(error, 'error');
-        }
-
-        return res.status(httpCodes.OK).json(campaignNotes);
+    if (req.method !== 'DELETE') {
+        return res.status(httpCodes.METHOD_NOT_ALLOWED).json({});
     }
 
-    return res.status(httpCodes.METHOD_NOT_ALLOWED).json({});
+    const { profileId, ...data } = JSON.parse(req.body);
+    //eslint-disable-next-line
+    console.log({ profileId }, data);
+    const { data: campaignNotes, error } = await supabase
+        .from('campaign_notes')
+        .delete()
+        .eq('id', data.id)
+        .eq('user_id', profileId);
+
+    if (error) {
+        serverLogger(error, 'error');
+    }
+
+    return res.status(httpCodes.OK).json(campaignNotes);
 }

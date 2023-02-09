@@ -41,18 +41,23 @@ export const useNotes = ({ campaignCreatorId }: { campaignCreatorId?: string }) 
         [profile],
     );
 
-    const deleteNote = useCallback(async (input: CampaignNotesDB) => {
-        setLoading(true);
-        try {
-            await nextFetch('notes/delete', {
-                method: 'delete',
-                body: { id: input.id },
-            });
-        } catch (error: any) {
-            clientLogger(error, 'error');
-            setLoading(false);
-        }
-    }, []);
+    const deleteNote = useCallback(
+        async (input: CampaignNotesDB) => {
+            setLoading(true);
+            if (!profile) throw new Error('No profile found');
+            try {
+                await nextFetch('notes/delete', {
+                    method: 'delete',
+                    body: { ...input, profileId: profile.id },
+                });
+            } catch (error: any) {
+                clientLogger(error, 'error');
+            } finally {
+                setLoading(false);
+            }
+        },
+        [profile],
+    );
 
     return {
         campaignNotes,

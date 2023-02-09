@@ -2,11 +2,22 @@ import { useTranslation } from 'react-i18next';
 import { useUser } from 'src/hooks/use-user';
 import type { CampaignNotesWithProfiles } from 'src/utils/api/db';
 import { Pin, Trashcan } from 'src/components/icons';
+import { useNotes } from 'src/hooks/use-notes';
 
 export default function CommentCard({ note }: { note: CampaignNotesWithProfiles }) {
     const { i18n } = useTranslation();
     const { profile } = useUser();
     const isYou = profile?.id === note?.user_id;
+    const { deleteNote } = useNotes({ campaignCreatorId: note.campaign_creator_id });
+
+    const handleDelete = (note: CampaignNotesWithProfiles) => {
+        deleteNote(note);
+    };
+
+    const toggleImportant = (note: CampaignNotesWithProfiles) => {
+        //eslint-disable-next-line
+        console.log('important', note);
+    };
 
     return (
         <div
@@ -15,10 +26,18 @@ export default function CommentCard({ note }: { note: CampaignNotesWithProfiles 
             }`}
         >
             <div className="z-20 absolute flex space-x-1 top-2 right-2 bg-gray-100 invisible group-hover:visible ease-in-out duration-150">
-                <div className="group/pin p-2 rounded-md text-gray-600  bg-gray-50 hover:bg-gray-100 border border-gray-200 duration-300 outline-none appearance-none text-center cursor-pointer">
+                <div
+                    className="group/pin p-2 rounded-md text-gray-600  bg-gray-50 hover:bg-gray-100 border border-gray-200 duration-300 outline-none appearance-none text-center cursor-pointer"
+                    onClick={() => toggleImportant(note)}
+                >
                     <Pin className="w-4 h-4 fill-tertiary-600 group-hover/pin:fill-primary-600" />
                 </div>
-                <div className="group/trashcan p-2 rounded-md text-gray-600  bg-gray-50 hover:bg-gray-100 border border-gray-200 duration-300 outline-none appearance-none text-center cursor-pointer">
+                <div
+                    className={`group/trashcan p-2 rounded-md text-gray-600  bg-gray-50 hover:bg-gray-100 border border-gray-200 duration-300 outline-none appearance-none text-center cursor-pointer ${
+                        isYou ? ' ' : 'hidden'
+                    }`}
+                    onClick={() => handleDelete(note)}
+                >
                     <Trashcan className="w-4 h-4 fill-tertiary-600 group-hover/trashcan:fill-primary-600" />
                 </div>
             </div>
