@@ -13,6 +13,10 @@ import { Layout } from 'src/modules/layout';
 import { t } from 'i18next';
 import { toast } from 'react-hot-toast';
 import { clientLogger } from 'src/utils/logger';
+import {
+    AIEmailSubjectGeneratorPostBody,
+    AIEmailSubjectGeneratorPostResult,
+} from 'pages/api/ai-generate/subject';
 
 const AIImageGenerator = () => {
     const [brandName, setBrandName] = useState('');
@@ -66,16 +70,14 @@ const AIImageGenerator = () => {
     const generateSubject = useCallback(async () => {
         setLoadingSubject(true);
         setGeneratedSubject('');
-        const body: AIEmailGeneratorPostBody = {
+        const body: AIEmailSubjectGeneratorPostBody = {
             brandName,
             language,
             influencerName,
             productName,
             productDescription,
-            instructions,
-            senderName,
         };
-        const res = await nextFetch<AIEmailGeneratorPostResult>('ai-generate/subject', {
+        const res = await nextFetch<AIEmailSubjectGeneratorPostResult>('ai-generate/subject', {
             method: 'post',
             body: JSON.stringify(body),
         });
@@ -86,15 +88,7 @@ const AIImageGenerator = () => {
         }
 
         return res;
-    }, [
-        brandName,
-        language,
-        influencerName,
-        productName,
-        productDescription,
-        instructions,
-        senderName,
-    ]);
+    }, [brandName, language, influencerName, productName, productDescription]);
 
     const handleSubmit = async (e: any, type: 'subject' | 'email' | 'both') => {
         e.preventDefault();
