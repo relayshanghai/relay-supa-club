@@ -69,3 +69,6 @@ export type UsagesDB = UsagesTable['Row'];
 export type UsagesDBInsert = UsagesTable['Insert'];
 
 export type InvitesDB = Database['public']['Tables']['invites']['Row'];
+
+export type CampaignNotesDB = Database['public']['Tables']['campaign_notes']['Row'];
+export type CampaignNotesInsertDB = Database['public']['Tables']['campaign_notes']['Insert'];

@@ -23,8 +23,6 @@ function TableInput({
 
     const handleFormSubmit = (e: any) => {
         creator = { ...creator, [objKey]: inputValue };
-        //eslint-disable-next-line
-        console.log(creator); //TODO: delete
         e.preventDefault();
         updateCampaignCreator(creator);
     };

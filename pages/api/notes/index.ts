@@ -1,28 +1,26 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
-import { CampaignWithCompanyCreators, getCampaignWithCompanyCreators } from 'src/utils/api/db';
+import type { CampaignNotesDB } from 'src/utils/api/db';
+import { getCampaignNotes } from 'src/utils/api/db';
 import { serverLogger } from 'src/utils/logger';
 
-export type CampaignsIndexGetQuery = {
+export type CampaignNotesIndexGetQuery = {
     id: string;
 };
 
-export type CampaignsIndexGetResult = CampaignWithCompanyCreators[];
+export type CampaignNotesIndexGetResult = CampaignNotesDB[];
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method !== 'GET') {
         return res.status(httpCodes.METHOD_NOT_ALLOWED).json({});
     }
-
     try {
-        const { id: companyId } = req.query as CampaignsIndexGetQuery;
-        if (!companyId) {
-            return res.status(httpCodes.BAD_REQUEST).json({ error: 'Missing company id' });
+        const { id: campaignCreatorId } = req.query as CampaignNotesIndexGetQuery;
+        if (!campaignCreatorId) {
+            return res.status(httpCodes.BAD_REQUEST).json({ error: 'Missing creator id' });
         }
-        const data = await getCampaignWithCompanyCreators(companyId);
-
-        const result: CampaignsIndexGetResult = data;
-
+        const data = await getCampaignNotes(campaignCreatorId);
+        const result: CampaignNotesIndexGetResult = data;
         return res.status(httpCodes.OK).json(result);
     } catch (error) {
         serverLogger(error, 'error');

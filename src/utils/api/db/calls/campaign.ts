@@ -1,3 +1,4 @@
+//TODO TicketV2-146: Add types naming convention to comment
 import { supabase } from 'src/utils/supabase-client';
 import {
     CompanyDB,
@@ -6,6 +7,8 @@ import {
     CampaignDBUpdate,
     CampaignCreatorDBUpdate,
     CampaignDB,
+    CampaignNotesInsertDB,
+    CampaignNotesDB,
 } from '../types';
 
 export type CampaignWithCompanyCreators = CampaignDB & {
@@ -52,3 +55,16 @@ export const updateCampaignCreator = async (data: CampaignCreatorDBUpdate, campa
         .eq('id', data.id)
         .eq('campaign_id', campaign_id)
         .single();
+
+export const getCampaignNotes = async (campaignCreatorId: string) => {
+    const { data, error } = await supabase
+        .from('campaign_notes')
+        .select('*')
+        .eq('campaign_creator_id', campaignCreatorId)
+        .order('created_at', { ascending: true });
+    if (error) throw error;
+    return data as CampaignNotesDB[];
+};
+
+export const insertCampaignNote = async (note: CampaignNotesInsertDB) =>
+    await supabase.from('campaign_notes').insert(note).select().single();
