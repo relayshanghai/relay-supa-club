@@ -3,13 +3,14 @@ import httpCodes from 'src/constants/httpCodes';
 import {
     CampaignCreatorDB,
     CampaignCreatorDBInsert,
-    insertCampaignCreator
+    insertCampaignCreator,
 } from 'src/utils/api/db';
 import { serverLogger } from 'src/utils/logger';
 import { CreatorPlatform } from 'types';
 
 export interface CampaignCreatorAddCreatorPostBody extends CampaignCreatorDBInsert {
     campaign_id: string;
+    added_by_id: string;
     platform: CreatorPlatform;
 }
 export type CampaignCreatorAddCreatorPostResponse = CampaignCreatorDB;
