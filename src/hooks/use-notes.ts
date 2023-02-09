@@ -11,7 +11,11 @@ export const useNotes = ({ campaignCreatorId }: { campaignCreatorId?: string }) 
     const [loading, setLoading] = useState<boolean>(false);
     const { profile } = useUser();
 
-    const { data: campaignNotes, mutate: refreshNotes } = useSWR(
+    const {
+        data: campaignNotes,
+        mutate: refreshNotes,
+        isLoading,
+    } = useSWR(
         'notes',
         (path) =>
             nextFetchWithQueries<CampaignNotesIndexGetQuery, CampaignNotesIndexGetResult>(path, {
@@ -77,6 +81,7 @@ export const useNotes = ({ campaignCreatorId }: { campaignCreatorId?: string }) 
     );
 
     return {
+        isLoading,
         campaignNotes,
         loading,
         createNote,
