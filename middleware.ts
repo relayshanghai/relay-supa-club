@@ -181,7 +181,8 @@ export const config = {
          * - favicon.ico (favicon file)
          * - assets/* (assets files) (public/assets/*)
          * - accept invite (accept invite api). User hasn't logged in yet
+         * - create-employee endpoint (api/company/create-employee)
          */
-        '/((?!_next/static|_next/image|favicon.ico|assets/*|api/company/accept-invite*).*)',
+        '/((?!_next/static|_next/image|favicon.ico|assets/*|api/company/accept-invite*|api/company/create-employee*).*)',
     ],
 };

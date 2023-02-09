@@ -8,16 +8,15 @@ export type CampaignNotePostBody = CampaignNotesInsertDB;
 export type CampaignNotePostResponse = CampaignNotesDB;
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    if (req.method === 'POST') {
-        const data = JSON.parse(req.body);
-        const { data: CampaignNote, error } = await insertCampaignNote(data);
+    if (req.method !== 'POST') {
+        return res.status(httpCodes.METHOD_NOT_ALLOWED).json({});
+    }
+    const data = JSON.parse(req.body);
+    const { data: campaignNote, error } = await insertCampaignNote(data);
 
-        if (error) {
-            serverLogger(error, 'error');
-        }
-
-        return res.status(httpCodes.OK).json(CampaignNote);
+    if (error) {
+        serverLogger(error, 'error');
     }
 
-    return res.status(httpCodes.METHOD_NOT_ALLOWED).json({});
+    return res.status(httpCodes.OK).json(campaignNote);
 }

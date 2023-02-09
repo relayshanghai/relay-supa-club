@@ -38,6 +38,7 @@ export default function CommentCard({ note }: { note: CampaignNotesWithProfiles 
                         {note.profiles.first_name} {note.profiles.last_name}
                     </div>
                     <div className="text-gray-400 self-center">
+                        {/* Replace this when settle with a date formatting library or function on Ticket V2-36 */}
                         {note.created_at &&
                             `${new Date(note.created_at).toLocaleDateString(i18n.language, {
                                 year: 'numeric',
