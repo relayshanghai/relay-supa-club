@@ -177,7 +177,8 @@ const AIImageGenerator = () => {
                             placeholder={t('campaigns.creatorModal.messagePlaceholder')}
                             value={productDescription}
                             onChange={(e) => {
-                                if (e.target.value.length > 600) {
+                                if (e.target.value.length > MAX_CHARACTER_LENGTH) {
+                                    toast.error(t('aiEmailGenerator.form.error.maxLength'));
                                     return;
                                 }
                                 setProductDescription(e.target.value);
@@ -189,7 +190,8 @@ const AIImageGenerator = () => {
                             placeholder={t('campaigns.creatorModal.messagePlaceholder')}
                             value={instructions}
                             onChange={(e) => {
-                                if (e.target.value.length > 600) {
+                                if (e.target.value.length > MAX_CHARACTER_LENGTH) {
+                                    toast.error(t('aiEmailGenerator.form.error.maxLength'));
                                     return;
                                 }
                                 setInstructions(e.target.value);

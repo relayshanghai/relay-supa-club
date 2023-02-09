@@ -50,6 +50,9 @@ const aiEmailGenerator = {
             generatedEmail: 'Generated Email',
             copyTextButton: 'Generated Email',
         },
+        error: {
+            maxLength: 'Maximum length reached',
+        },
     },
 };
 export default aiEmailGenerator;
