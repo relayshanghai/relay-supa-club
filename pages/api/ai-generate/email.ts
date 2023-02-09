@@ -58,7 +58,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     ? 'Simplified Mandarin Chinese,'
                     : 'English language';
             const instructionsPrompt = instructions
-                ? 'The email should include the following instructions for the receiver:' +
+                ? 'The email should include the following instructions for the receiver: ' +
                   instructions
                 : '';
 
