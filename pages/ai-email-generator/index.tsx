@@ -92,20 +92,20 @@ const AIImageGenerator = () => {
 
     const handleSubmit = async (e: any, type: 'subject' | 'email' | 'both') => {
         e.preventDefault();
-        if (type === 'email') await generateEmail();
-        else if (type === 'subject') await generateSubject();
-        else {
-            try {
+        try {
+            if (type === 'email') await generateEmail();
+            else if (type === 'subject') await generateSubject();
+            else {
                 await generateEmail();
                 await generateSubject();
-            } catch (e: any) {
-                clientLogger(e, 'error');
-                toast.error(t('aiEmailGenerator.index.requestError'));
-                setGeneratedEmail('');
-                setGeneratedSubject('');
-                setLoadingEmail(false);
-                setLoadingSubject(false);
             }
+        } catch (e: any) {
+            clientLogger(e, 'error');
+            toast.error(t('aiEmailGenerator.index.requestError'));
+            setGeneratedEmail('');
+            setGeneratedSubject('');
+            setLoadingEmail(false);
+            setLoadingSubject(false);
         }
     };
 
