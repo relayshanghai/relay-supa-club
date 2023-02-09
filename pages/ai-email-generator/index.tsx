@@ -237,7 +237,7 @@ const AIImageGenerator = () => {
                             onClick={() => copyToClipboard(generatedEmail)}
                             disabled={loadingEmail || loadingSubject}
                         >
-                            Copy Text
+                            {t('aiEmailGenerator.form.label.copyTextButton')}
                         </Button>
                     </Transition>
                 </div>
