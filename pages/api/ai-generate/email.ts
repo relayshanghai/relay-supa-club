@@ -57,7 +57,7 @@ export default async function handler(
             }
 
             const languagePrompt =
-                'The email should be in' + language === 'zh'
+                'The email should be in ' + language === 'zh'
                     ? 'Simplified Mandarin Chinese,'
                     : 'English language';
             const instructionsPrompt = instructions

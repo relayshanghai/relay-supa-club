@@ -42,8 +42,8 @@ export default async function handler(
             }
 
             const languagePrompt =
-                'The email should be in' + language === 'zh'
-                    ? 'Chinese language.'
+                'The email should be in ' + language === 'zh'
+                    ? 'Simplified Mandarin Chinese'
                     : 'English language';
 
             const data = await openai.createCompletion({
