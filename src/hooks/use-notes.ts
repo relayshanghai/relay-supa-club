@@ -31,9 +31,9 @@ export const useNotes = ({ campaignCreatorId }: { campaignCreatorId?: string }) 
                     method: 'post',
                     body,
                 });
-                setLoading(false);
             } catch (error: any) {
                 clientLogger(error, 'error');
+            } finally {
                 setLoading(false);
             }
         },
