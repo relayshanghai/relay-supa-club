@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router';
 import { AdminClientsGetResponse } from 'pages/api/admin/clients';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -10,6 +11,9 @@ const columnHeaders = ['Account', 'Campaigns', 'Staff', 'Contact', 'Subscription
 const Clients = () => {
     const [data, setData] = useState<AdminClientsGetResponse>([]);
     const [loading, setLoading] = useState<boolean>(false);
+
+    const router = useRouter();
+
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
@@ -44,7 +48,7 @@ const Clients = () => {
                                 ))}
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-200">
+                        <tbody className="divide-y divide-gray-100">
                             {data.map((client) => {
                                 const ownerProfiles = client.profiles.filter(
                                     (profile) => profile.role === 'company_owner',
@@ -67,7 +71,11 @@ const Clients = () => {
                                     client.subscription_status,
                                 ];
                                 return (
-                                    <tr key={client.id}>
+                                    <tr
+                                        key={client.id}
+                                        className="cursor-pointer hover:bg-gray-200"
+                                        onClick={() => router.push(`/admin/campaigns/${client.id}`)}
+                                    >
                                         {dataPints.map((dataPoint, index) => (
                                             <td
                                                 key={index}
