@@ -55,7 +55,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             const languagePrompt =
                 'The email should be in' + language === 'zh'
-                    ? 'Chinese language.'
+                    ? 'Simplified Mandarin Chinese,'
                     : 'English language';
             const instructionsPrompt = instructions
                 ? 'The email should include the following instructions for the receiver:' +
