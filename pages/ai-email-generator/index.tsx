@@ -65,7 +65,7 @@ const AIImageGenerator = () => {
             instructions,
             senderName,
         };
-        const res = await nextFetch<AIEmailGeneratorGetResult>('ai-generate/subject', {
+        const res = await nextFetch<AIEmailGeneratorPostResult>('ai-generate/subject', {
             method: 'post',
             body: JSON.stringify(body),
         });
