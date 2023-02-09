@@ -17,7 +17,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (error) {
         serverLogger(error, 'error');
-        return res.status(httpCodes.INTERNAL_SERVER_ERROR).json(error);
     }
 
     return res.status(httpCodes.OK).json(campaignNote);
