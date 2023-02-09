@@ -39,12 +39,19 @@ const AIImageGenerator = () => {
             instructions,
             senderName,
         };
-        const res = await nextFetch<AIEmailGeneratorPostResult>('ai-generate/email', {
-            method: 'post',
-            body: JSON.stringify(body),
-        });
-        setGeneratedEmail(res);
-        setLoadingEmail(false);
+        const res: AIEmailGeneratorPostResult = await nextFetch<AIEmailGeneratorPostResult>(
+            'ai-generate/email',
+            {
+                method: 'post',
+                body: JSON.stringify(body),
+            },
+        );
+
+        if (res.length > 0) {
+            setGeneratedEmail(res[0].text || '');
+            setLoadingEmail(false);
+        }
+
         return res;
     }, [
         brandName,
@@ -72,8 +79,12 @@ const AIImageGenerator = () => {
             method: 'post',
             body: JSON.stringify(body),
         });
-        setGeneratedSubject(res[0].text);
-        setLoadingSubject(false);
+
+        if (res.length > 0) {
+            setGeneratedSubject(res[0].text || '');
+            setLoadingSubject(false);
+        }
+
         return res;
     }, [
         brandName,

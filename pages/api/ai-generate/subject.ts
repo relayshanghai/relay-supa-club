@@ -4,7 +4,7 @@ import { serverLogger } from 'src/utils/logger';
 
 import { Configuration, CreateCompletionResponse, OpenAIApi } from 'openai';
 
-export type AIEmailSubjectGeneratorGetQuery = {
+export type AIEmailSubjectGeneratorPostBody = {
     brandName: string;
     language: 'en-US' | 'zh';
     influencerName: string;
@@ -12,29 +12,33 @@ export type AIEmailSubjectGeneratorGetQuery = {
     productDescription: string;
 };
 
-export type AIEmailSubjectGeneratorGetResult = CreateCompletionResponse['choices'];
+export type AIEmailSubjectGeneratorPostResult =
+    | Pick<CreateCompletionResponse['choices'][0], 'text'>[];
 
 const configuration = new Configuration({
     organization: process.env.OPENAI_API_ORG,
     apiKey: process.env.OPENAI_API_KEY,
 });
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+    req: NextApiRequest,
+    res: NextApiResponse<AIEmailSubjectGeneratorPostResult>,
+) {
     const openai = new OpenAIApi(configuration);
 
     if (req.method === 'POST') {
         try {
             const { brandName, influencerName, language, productDescription, productName } =
-                JSON.parse(req.body) as AIEmailSubjectGeneratorGetQuery;
+                JSON.parse(req.body) as AIEmailSubjectGeneratorPostBody;
 
             if (!brandName || !influencerName || !language || !productDescription || !productName) {
-                return res.status(httpCodes.BAD_REQUEST).json({});
+                return res.status(httpCodes.BAD_REQUEST).json([]);
             }
             if (language !== 'en-US' && language !== 'zh') {
-                return res.status(httpCodes.BAD_REQUEST).json({});
+                return res.status(httpCodes.BAD_REQUEST).json([]);
             }
             if (!process.env.OPENAI_API_KEY || !process.env.OPENAI_API_ORG) {
-                return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
+                return res.status(httpCodes.INTERNAL_SERVER_ERROR).json([]);
             }
 
             const languagePrompt =
@@ -51,13 +55,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 temperature: 0.5,
             });
 
-            const result = data.data.choices;
+            if (data.data && data.data.choices) {
+                data.data.choices = data.data.choices.map((choice) => {
+                    const { text } = choice;
+                    return { text };
+                });
+            }
+
+            const result: AIEmailSubjectGeneratorPostResult = data.data.choices;
 
             return res.status(httpCodes.OK).json(result);
         } catch (error) {
             serverLogger(error, 'error');
-            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
+            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json([]);
         }
     }
-    return res.status(httpCodes.METHOD_NOT_ALLOWED).json({});
+    return res.status(httpCodes.METHOD_NOT_ALLOWED).json([]);
 }

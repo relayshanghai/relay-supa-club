@@ -14,9 +14,7 @@ export type AIEmailGeneratorPostBody = {
     senderName: string;
 };
 
-export type AIEmailGeneratorPostResult =
-    | Pick<CreateCompletionResponse['choices'][0], 'text'>[]
-    | object;
+export type AIEmailGeneratorPostResult = Pick<CreateCompletionResponse['choices'][0], 'text'>[];
 
 const configuration = new Configuration({
     organization: process.env.OPENAI_API_ORG,
@@ -49,13 +47,13 @@ export default async function handler(
                 !productName ||
                 !senderName
             ) {
-                return res.status(httpCodes.BAD_REQUEST).json({});
+                return res.status(httpCodes.BAD_REQUEST).json([]);
             }
             if (language !== 'en-US' && language !== 'zh') {
-                return res.status(httpCodes.BAD_REQUEST).json({});
+                return res.status(httpCodes.BAD_REQUEST).json([]);
             }
             if (!process.env.OPENAI_API_KEY || !process.env.OPENAI_API_ORG) {
-                return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
+                return res.status(httpCodes.INTERNAL_SERVER_ERROR).json([]);
             }
 
             const languagePrompt =
@@ -88,8 +86,8 @@ export default async function handler(
             return res.status(httpCodes.OK).json(result);
         } catch (error) {
             serverLogger(error, 'error');
-            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
+            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json([]);
         }
     }
-    return res.status(httpCodes.METHOD_NOT_ALLOWED).json({});
+    return res.status(httpCodes.METHOD_NOT_ALLOWED).json([]);
 }
