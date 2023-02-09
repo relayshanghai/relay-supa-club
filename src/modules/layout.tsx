@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
 import { LanguageToggle } from 'src/components/common/language-toggle';
@@ -12,7 +12,12 @@ import { useSupabaseClient } from '@supabase/auth-helpers-react';
 
 export const Layout = ({ children }: any) => {
     const { t } = useTranslation();
-    const { profile, loading } = useUser();
+    const { profile, loading, refreshProfile } = useUser();
+
+    useEffect(() => {
+        // this fixes a bug where the profile is not loaded on the first page load when coming from signup
+        if (!loading && !profile?.id) refreshProfile();
+    }, [refreshProfile, profile, loading]);
 
     const supabase = useSupabaseClient();
 
@@ -30,6 +35,7 @@ export const Layout = ({ children }: any) => {
                     loggedIn={!!profile?.id && !loading}
                     open={sideBarOpen}
                     setOpen={setSideBarOpen}
+                    isRelayEmployee={profile?.role === 'relay_employee'}
                 />
                 <div className="flex flex-col w-full overflow-hidden">
                     <div className="flex items-center justify-between bg-white shadow-lg shadow-gray-100 z-30">
