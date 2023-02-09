@@ -108,7 +108,7 @@ const AIImageGenerator = () => {
             }
         } catch (e: any) {
             clientLogger(e, 'error');
-            toast.error(t('aiEmailGenerator.index.requestError'));
+            toast.error(t('aiEmailGenerator.index.requestError') || '');
             setGeneratedEmail('');
             setGeneratedSubject('');
             setLoadingEmail(false);
@@ -129,13 +129,15 @@ const AIImageGenerator = () => {
         <Layout>
             <div className="flex flex-col items-center p-6 w-full h-full">
                 <div className="flex flex-col items-center">
-                    <h1 className="text-2xl font-bold mb-4">{t('aiEmailGenerator.index.title')}</h1>
-                    <p className="text-sm mb-4">{t('aiEmailGenerator.index.description')}</p>
+                    <h1 className="text-2xl font-bold mb-4">
+                        {t('aiEmailGenerator.index.title') || ''}
+                    </h1>
+                    <p className="text-sm mb-4">{t('aiEmailGenerator.index.description') || ''}</p>
                 </div>
                 <div className="flex flex-row items-center justify-center gap-10 mt-10 w-full">
                     <form className="flex flex-col h-full items-center justify-end">
                         <label className="flex flex-col text-xs text-gray-500 font-bold w-full">
-                            <div>{t('aiEmailGenerator.form.label.language')}</div>
+                            <div>{t('aiEmailGenerator.form.label.language') || ''}</div>
 
                             <select
                                 value={language}
@@ -150,36 +152,38 @@ const AIImageGenerator = () => {
                             </select>
                         </label>
                         <Input
-                            label={t('aiEmailGenerator.form.label.brandName')}
-                            placeholder={t('aiEmailGenerator.form.placeholder.brandName')}
+                            label={t('aiEmailGenerator.form.label.brandName') || ''}
+                            placeholder={t('aiEmailGenerator.form.placeholder.brandName') || ''}
                             value={brandName}
                             onChange={(e) => setBrandName(e.target.value)}
                             required
                         />
                         <Input
-                            label={t('aiEmailGenerator.form.label.senderName')}
-                            placeholder="Your Name"
+                            label={t('aiEmailGenerator.form.label.senderName') || ''}
+                            placeholder={t('aiEmailGenerator.form.placeholder.senderName') || ''}
                             value={senderName}
                             onChange={(e) => setSenderName(e.target.value)}
                             required
                         />
                         <Input
-                            label={t('aiEmailGenerator.form.label.influencerName')}
-                            placeholder={t('aiEmailGenerator.form.placeholder.influencerName')}
+                            label={t('aiEmailGenerator.form.label.influencerName') || ''}
+                            placeholder={
+                                t('aiEmailGenerator.form.placeholder.influencerName') || ''
+                            }
                             value={influencerName}
                             onChange={(e) => setInfluencerName(e.target.value)}
                             required
                         />
                         <Input
-                            label={t('aiEmailGenerator.form.label.productName')}
-                            placeholder={t('aiEmailGenerator.form.placeholder.productName')}
+                            label={t('aiEmailGenerator.form.label.productName') || ''}
+                            placeholder={t('aiEmailGenerator.form.placeholder.productName') || ''}
                             value={productName}
                             onChange={(e) => setProductName(e.target.value)}
                             required
                         />
                         <InputTextArea
-                            label={t('aiEmailGenerator.form.label.productDescription')}
-                            placeholder={t('campaigns.creatorModal.messagePlaceholder')}
+                            label={t('aiEmailGenerator.form.label.productDescription') || ''}
+                            placeholder={t('campaigns.creatorModal.messagePlaceholder') || ''}
                             value={productDescription}
                             onChange={(e) => {
                                 if (e.target.value.length > MAX_CHARACTER_LENGTH) {
@@ -191,12 +195,12 @@ const AIImageGenerator = () => {
                             required
                         />
                         <InputTextArea
-                            label={t('aiEmailGenerator.form.label.instructions')}
-                            placeholder={t('campaigns.creatorModal.messagePlaceholder')}
+                            label={t('aiEmailGenerator.form.label.instructions') || ''}
+                            placeholder={t('campaigns.creatorModal.messagePlaceholder') || ''}
                             value={instructions}
                             onChange={(e) => {
                                 if (e.target.value.length > MAX_CHARACTER_LENGTH) {
-                                    toast.error(t('aiEmailGenerator.form.error.maxLength'));
+                                    toast.error(t('aiEmailGenerator.form.error.maxLength') || '');
                                     return;
                                 }
                                 setInstructions(e.target.value);
@@ -210,7 +214,7 @@ const AIImageGenerator = () => {
                             >
                                 {loadingEmail
                                     ? t('aiEmailGenerator.index.loading')
-                                    : t('aiEmailGenerator.index.generateEmail')}
+                                    : t('aiEmailGenerator.index.generateEmail') || ''}
                             </Button>
                         </div>
                     </form>
@@ -227,14 +231,14 @@ const AIImageGenerator = () => {
                     >
                         <InputTextArea
                             onBlur={removeExtraSpaces}
-                            label={t('aiEmailGenerator.form.label.subjectLine')}
+                            label={t('aiEmailGenerator.form.label.subjectLine') || ''}
                             value={generatedSubject}
                             onChange={(e) => {
                                 setGeneratedSubject(e.target.value);
                             }}
                         />
                         <label className="flex flex-col text-xs text-gray-500 font-bold h-full w-full">
-                            <div>{t('aiEmailGenerator.form.label.generatedEmail')}</div>
+                            <div>{t('aiEmailGenerator.form.label.generatedEmail') || ''}</div>
                             <textarea
                                 className="ring-opacity-5 text-black placeholder-gray-400 appearance-none bg-white rounded-md block h-full w-full px-3 py-2 border border-transparent shadow ring-1 ring-transparent sm:text-sm focus:border-primary-500 focus:ring-primary-500 focus:outline-none my-2"
                                 value={generatedEmail}
@@ -244,7 +248,7 @@ const AIImageGenerator = () => {
                             onClick={() => copyToClipboard(generatedEmail)}
                             disabled={loadingEmail || loadingSubject}
                         >
-                            {t('aiEmailGenerator.form.label.copyTextButton')}
+                            {t('aiEmailGenerator.form.label.copyTextButton') || ''}
                         </Button>
                     </Transition>
                 </div>
