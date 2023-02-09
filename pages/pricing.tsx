@@ -173,7 +173,8 @@ const Pricing = () => {
     };
 
     const disableButton = (plan: 'diy' | 'diyMax') => {
-        if (!priceIds) return true;
+        if (!priceIds || !subscription?.name || !subscription.interval || !subscription.status)
+            return true;
         if (isCurrentPlan(plan)) return true;
     };
 
