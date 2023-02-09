@@ -2,9 +2,9 @@ import { useCallback, useEffect, useState } from 'react';
 import useSWR from 'swr';
 import { useUser } from './use-user';
 import { clientLogger } from 'src/utils/logger';
-import { nextFetch } from 'src/utils/fetcher';
+import { nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';
 import { CampaignNotePostBody, CampaignNotePostResponse } from 'pages/api/notes/create';
-import { CampaignNotesIndexGetResult } from 'pages/api/notes';
+import { CampaignNotesIndexGetQuery, CampaignNotesIndexGetResult } from 'pages/api/notes';
 import { CampaignNotesDB, CampaignNotesWithProfiles } from 'src/utils/api/db';
 
 export const useNotes = ({ campaignCreatorId }: { campaignCreatorId?: string }) => {
@@ -21,8 +21,8 @@ export const useNotes = ({ campaignCreatorId }: { campaignCreatorId?: string }) 
     } = useSWR(
         'notes',
         (path) =>
-            nextFetch<CampaignNotesIndexGetResult>(path, {
-                method: 'get',
+            nextFetchWithQueries<CampaignNotesIndexGetQuery, CampaignNotesIndexGetResult>(path, {
+                id: campaignCreatorId ?? '',
             }),
         { refreshInterval: 500 },
     );
