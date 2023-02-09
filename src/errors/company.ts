@@ -19,3 +19,6 @@ export const createCompanyErrors = {
 export const updateCompanyErrors = {
     companyWithSameNameExists: 'companyWithSameNameExists',
 };
+export const createEmployeeError = {
+    isNotEmployee: 'isNotEmployee',
+};

@@ -40,46 +40,53 @@ export const SubscriptionDetails = () => {
                     )}
                 </div>
             </div>
-            {subscription && company && searchUsages && profileViewUsages ? (
+            {company && searchUsages && profileViewUsages ? (
                 <>
                     <div
                         className={`flex flex-row space-x-4 ${userDataLoading ? 'opacity-50' : ''}`}
                     >
                         <div className="flex flex-col space-y-2 ">
-                            <div className={`w-full space-y-6 mb-8`}>
-                                <div className="flex flex-col space-y-3">
-                                    <div className="text-sm">{t('account.subscription.plan')}</div>
-                                    <div className="text-sm font-bold ml-2">
-                                        {subscription.name}
-                                        {subscription.status === 'trialing' &&
-                                            ` - ${t('account.subscription.freeTrial')}`}
-                                        {subscription.status === 'canceled' &&
-                                            ` - ${t('account.subscription.canceled')}`}
-                                    </div>
-                                </div>
-                                <div className="flex flex-col space-y-3">
-                                    <div className="text-sm">
-                                        {t('account.subscription.paymentCycle')}
-                                    </div>
-                                    <div className="text-sm font-bold ml-2">
-                                        {t(`account.subscription.${subscription.interval}`)}
-                                    </div>
-                                </div>
-                                {subscription.status !== 'canceled' && periodEnd && (
+                            {subscription && (
+                                <div className={`w-full space-y-6 mb-8`}>
                                     <div className="flex flex-col space-y-3">
                                         <div className="text-sm">
-                                            {t('account.subscription.renewsOn')}
+                                            {t('account.subscription.plan')}
                                         </div>
                                         <div className="text-sm font-bold ml-2">
-                                            {new Date(periodEnd).toLocaleDateString(i18n.language, {
-                                                year: 'numeric',
-                                                month: 'short',
-                                                day: 'numeric',
-                                            })}
+                                            {subscription.name}
+                                            {subscription.status === 'trialing' &&
+                                                ` - ${t('account.subscription.freeTrial')}`}
+                                            {subscription.status === 'canceled' &&
+                                                ` - ${t('account.subscription.canceled')}`}
                                         </div>
                                     </div>
-                                )}
-                            </div>
+                                    <div className="flex flex-col space-y-3">
+                                        <div className="text-sm">
+                                            {t('account.subscription.paymentCycle')}
+                                        </div>
+                                        <div className="text-sm font-bold ml-2">
+                                            {t(`account.subscription.${subscription.interval}`)}
+                                        </div>
+                                    </div>
+                                    {subscription.status !== 'canceled' && periodEnd && (
+                                        <div className="flex flex-col space-y-3">
+                                            <div className="text-sm">
+                                                {t('account.subscription.renewsOn')}
+                                            </div>
+                                            <div className="text-sm font-bold ml-2">
+                                                {new Date(periodEnd).toLocaleDateString(
+                                                    i18n.language,
+                                                    {
+                                                        year: 'numeric',
+                                                        month: 'short',
+                                                        day: 'numeric',
+                                                    },
+                                                )}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
                             <table>
                                 <thead>
                                     <tr>
@@ -123,7 +130,7 @@ export const SubscriptionDetails = () => {
                                     </tr>
                                 </tbody>
                             </table>
-                        </div>{' '}
+                        </div>
                     </div>
                     <div className="flex space-x-6 justify-end w-full pt-5">
                         <Button onClick={handleCancelSubscription} variant="secondary">
