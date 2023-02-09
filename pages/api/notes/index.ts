@@ -14,9 +14,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (req.method !== 'GET') {
         return res.status(httpCodes.METHOD_NOT_ALLOWED).json({});
     }
-
     try {
         const { id: campaignCreatorId } = req.query as CampaignNotesIndexGetQuery;
+        if (!campaignCreatorId) {
+            return res.status(httpCodes.BAD_REQUEST).json({ error: 'Missing creator id' });
+        }
         const data = await getCampaignNotes(campaignCreatorId);
         const result: CampaignNotesIndexGetResult = data;
         return res.status(httpCodes.OK).json(result);
