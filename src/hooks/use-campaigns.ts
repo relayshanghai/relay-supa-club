@@ -80,6 +80,7 @@ export const useCampaigns = ({ campaignId }: { campaignId?: string }) => {
             if (!campaign?.id) throw new Error('No campaign found');
             const body: CampaignCreatorAddCreatorPostBody = {
                 ...input,
+                added_by_id: profile?.id ?? '',
                 campaign_id: campaign.id,
             };
             await nextFetch<CampaignCreatorAddCreatorPostResponse>('campaigns/add-creator', {
@@ -89,7 +90,7 @@ export const useCampaigns = ({ campaignId }: { campaignId?: string }) => {
 
             setLoading(false);
         },
-        [campaign?.id],
+        [campaign?.id, profile?.id],
     );
 
     const updateCreatorInCampaign = useCallback(
