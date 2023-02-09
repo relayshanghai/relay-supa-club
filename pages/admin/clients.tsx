@@ -4,8 +4,11 @@ import toast from 'react-hot-toast';
 import { Layout } from 'src/modules/layout';
 import { nextFetch } from 'src/utils/fetcher';
 
+const columnHeaders = ['Account', 'Campaigns', 'Staff', 'Contact', 'Subscription Status'];
+
 const Clients = () => {
     const [data, setData] = useState<AdminClientsGetResponse>([]);
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -17,7 +20,7 @@ const Clients = () => {
         };
         fetchData();
     }, []);
-    const columnHeaders = ['Account', 'Campaigns', 'Staff', 'Contact', 'Subscription Status'];
+
     return (
         <Layout>
             <div className="p-6">
