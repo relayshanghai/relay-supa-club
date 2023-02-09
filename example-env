@@ -2,6 +2,8 @@
 
 STRIPE_WEBHOOK_SECRET=asdf
 STRIPE_API_KEY=asdf
+
+# Stripe product IDs (Do not set in development to connect to test mode account)
 STRIPE_PRODUCT_ID_DIY=asdf
 STRIPE_PRICE_MONTHLY_DIY=asdf
 
