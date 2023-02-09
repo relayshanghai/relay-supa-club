@@ -82,7 +82,7 @@ export const useNotes = ({ campaignCreatorId }: { campaignCreatorId?: string }) 
             try {
                 await nextFetch('notes/update', {
                     method: 'put',
-                    body: { input },
+                    body: { ...input },
                 });
             } catch (error: any) {
                 clientLogger(error, 'error');
