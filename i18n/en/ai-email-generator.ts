@@ -33,7 +33,7 @@ const aiEmailGenerator = {
             productName: 'Product Name',
             productDescription: 'Product Description',
             influencerName: 'Influencer Name',
-            brandName: 'Brand Name',
+            brandName: "Your Brand's Name",
             instructions: 'Instructions for the influencer',
             subjectLine: 'Generated Subject Line',
             generatedEmail: 'Generated Email',
