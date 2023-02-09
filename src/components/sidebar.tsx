@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import useAboveScreenWidth from 'src/hooks/use-above-screen-width';
+import { useUser } from 'src/hooks/use-user';
 import { Compass, FourSquare, Account, Team } from './icons';
 import { Title } from './title';
 
@@ -75,15 +76,14 @@ export const Sidebar = ({
     loggedIn,
     open,
     setOpen,
-    isRelayEmployee,
 }: {
     loggedIn: boolean | null;
     open: boolean;
     setOpen: (open: boolean) => void;
-    isRelayEmployee: boolean;
 }) => {
     // 768px is 'md' in our tailwind
     const desktop = useAboveScreenWidth(768);
+    const { profile } = useUser();
 
     useEffect(() => {
         if (desktop) setOpen(true);
@@ -105,7 +105,10 @@ export const Sidebar = ({
                     open ? 'translate-x-0' : '-translate-x-full'
                 } ${open && desktop ? 'md:relative' : ''}`}
             >
-                <NavBarInner loggedIn={loggedIn} isRelayEmployee={isRelayEmployee} />
+                <NavBarInner
+                    loggedIn={loggedIn}
+                    isRelayEmployee={profile?.role === 'relay_employee'}
+                />
             </div>
         </>
     );

@@ -35,7 +35,6 @@ export const Layout = ({ children }: any) => {
                     loggedIn={!!profile?.id && !loading}
                     open={sideBarOpen}
                     setOpen={setSideBarOpen}
-                    isRelayEmployee={profile?.role === 'relay_employee'}
                 />
                 <div className="flex flex-col w-full overflow-hidden">
                     <div className="flex items-center justify-between bg-white shadow-lg shadow-gray-100 z-30">
