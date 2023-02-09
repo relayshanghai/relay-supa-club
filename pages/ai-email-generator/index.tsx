@@ -7,7 +7,7 @@ import { InputTextArea } from 'src/components/textarea';
 import { Transition } from '@headlessui/react';
 import { Button } from 'src/components/button';
 import { nextFetch } from 'src/utils/fetcher';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Input } from 'src/components/input';
 import { Layout } from 'src/modules/layout';
 import { t } from 'i18next';
@@ -24,17 +24,22 @@ const AIImageGenerator = () => {
     const { profile } = useUser();
     const { company } = useCompany();
 
-    const [brandName, setBrandName] = useState(company?.name || '');
+    const [brandName, setBrandName] = useState('');
     const [language, setLanguage] = useState<'en-US' | 'zh'>('en-US');
     const [influencerName, setInfluencerName] = useState('');
     const [productName, setProductName] = useState('');
     const [productDescription, setProductDescription] = useState('');
     const [instructions, setInstructions] = useState('');
-    const [senderName, setSenderName] = useState(profile?.first_name || '');
+    const [senderName, setSenderName] = useState('');
     const [loadingEmail, setLoadingEmail] = useState(false);
     const [generatedEmail, setGeneratedEmail] = useState('');
     const [generatedSubject, setGeneratedSubject] = useState('');
     const [loadingSubject, setLoadingSubject] = useState(false);
+
+    useEffect(() => {
+        setBrandName(company?.name || '');
+        setSenderName(profile?.first_name || '');
+    }, [profile, company]);
 
     const MAX_CHARACTER_LENGTH = 600;
 
@@ -58,11 +63,11 @@ const AIImageGenerator = () => {
             },
         );
 
-        if (res.length > 0) {
-            setGeneratedEmail(res[0].text || '');
-            setLoadingEmail(false);
+        if (!res.text) {
+            throw new Error('Email generation failed');
         }
-
+        setGeneratedEmail(res.text);
+        setLoadingEmail(false);
         return res;
     }, [
         brandName,
@@ -93,8 +98,6 @@ const AIImageGenerator = () => {
             setGeneratedSubject(res[0].text || '');
             setLoadingSubject(false);
         }
-
-        return res;
     }, [brandName, language, influencerName, productName, productDescription]);
 
     const handleSubmit = async (e: any, type: 'subject' | 'email' | 'both') => {
@@ -134,8 +137,8 @@ const AIImageGenerator = () => {
                     </h1>
                     <p className="text-sm mb-4">{t('aiEmailGenerator.index.description') || ''}</p>
                 </div>
-                <div className="flex flex-row items-center justify-center gap-10 mt-10 w-full">
-                    <form className="flex flex-col h-full items-center justify-end">
+                <div className="flex flex-col lg:flex-row items-center justify-center gap-10 mt-10 w-full">
+                    <form className="flex flex-col h-full items-center justify-end w-full md:w-1/3">
                         <label className="flex flex-col text-xs text-gray-500 font-bold w-full">
                             <div>{t('aiEmailGenerator.form.label.language') || ''}</div>
 
@@ -227,7 +230,7 @@ const AIImageGenerator = () => {
                         leave="transition-opacity duration-300"
                         leaveFrom="opacity-100"
                         leaveTo="opacity-0"
-                        className="flex flex-col items-center justify-end h-full"
+                        className="flex flex-col items-center justify-end h-full w-full md:w-2/3"
                     >
                         <InputTextArea
                             onBlur={removeExtraSpaces}
