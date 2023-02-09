@@ -17,15 +17,18 @@ import {
     AIEmailSubjectGeneratorPostBody,
     AIEmailSubjectGeneratorPostResult,
 } from 'pages/api/ai-generate/subject';
+import { useUser } from 'src/hooks/use-user';
 
 const AIImageGenerator = () => {
+    const { profile } = useUser();
+
     const [brandName, setBrandName] = useState('');
     const [language, setLanguage] = useState<'en-US' | 'zh'>('en-US');
     const [influencerName, setInfluencerName] = useState('');
     const [productName, setProductName] = useState('');
     const [productDescription, setProductDescription] = useState('');
     const [instructions, setInstructions] = useState('');
-    const [senderName, setSenderName] = useState('');
+    const [senderName, setSenderName] = useState(profile?.first_name || '');
     const [loadingEmail, setLoadingEmail] = useState(false);
     const [generatedEmail, setGeneratedEmail] = useState('');
     const [generatedSubject, setGeneratedSubject] = useState('');
