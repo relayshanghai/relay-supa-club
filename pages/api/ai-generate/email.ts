@@ -2,7 +2,8 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { serverLogger } from 'src/utils/logger';
 
-import { Configuration, CreateCompletionResponse, OpenAIApi } from 'openai';
+import { Configuration, OpenAIApi } from 'openai';
+import { OPENAI_API_KEY, OPENAI_API_ORG } from 'src/constants/openai';
 
 export type AIEmailGeneratorPostBody = {
     brandName: string;
@@ -14,17 +15,14 @@ export type AIEmailGeneratorPostBody = {
     senderName: string;
 };
 
-export type AIEmailGeneratorPostResult = Pick<CreateCompletionResponse['choices'][0], 'text'>[];
+export type AIEmailGeneratorPostResult = { text: string };
 
 const configuration = new Configuration({
-    organization: process.env.OPENAI_API_ORG,
-    apiKey: process.env.OPENAI_API_KEY,
+    organization: OPENAI_API_ORG,
+    apiKey: OPENAI_API_KEY,
 });
 
-export default async function handler(
-    req: NextApiRequest,
-    res: NextApiResponse<AIEmailGeneratorPostResult>,
-) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const openai = new OpenAIApi(configuration);
 
     if (req.method === 'POST') {
@@ -47,28 +45,30 @@ export default async function handler(
                 !productName ||
                 !senderName
             ) {
-                return res.status(httpCodes.BAD_REQUEST).json([]);
+                return res.status(httpCodes.BAD_REQUEST).json({});
             }
             if (language !== 'en-US' && language !== 'zh') {
-                return res.status(httpCodes.BAD_REQUEST).json([]);
+                return res.status(httpCodes.BAD_REQUEST).json({});
             }
             if (!process.env.OPENAI_API_KEY || !process.env.OPENAI_API_ORG) {
-                return res.status(httpCodes.INTERNAL_SERVER_ERROR).json([]);
+                return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
             }
 
-            const languagePrompt =
-                'The email should be in ' + language === 'zh'
-                    ? 'Simplified Mandarin Chinese,'
-                    : 'English language';
+            const languagePrompt = `The email should be in ${
+                language === 'zh' ? 'Simplified Mandarin Chinese,' : 'English language'
+            }`;
+
             const instructionsPrompt = instructions
-                ? 'The email should include the following instructions for the receiver: ' +
+                ? ' The email should include the following instructions for the receiver: ' +
                   instructions
                 : '';
 
+            const prompt = `Generate an email to ${influencerName}, regarding a marketing campaign collaboration with our brand ${brandName}, for our product ${productName} which can be described as: ${productDescription}. ${languagePrompt} and should be sent by ${senderName}.${instructionsPrompt}`;
+
             const data = await openai.createCompletion({
-                prompt: `Generate an email to ${influencerName}, regarding a marketing campaign collaboration with ${brandName}, for their product ${productName} which can be described as: ${productDescription}. ${languagePrompt} and should be sent by ${senderName}. ${instructionsPrompt}}`,
+                prompt,
                 model: 'text-davinci-002',
-                max_tokens: 50,
+                max_tokens: 500,
                 n: 1,
                 stop: '',
                 temperature: 0.5,
@@ -80,14 +80,17 @@ export default async function handler(
                     return { text };
                 });
             }
+            if (!data.data.choices || !data.data.choices[0].text) {
+                return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
+            }
 
-            const result: AIEmailGeneratorPostResult = data.data.choices;
+            const result: AIEmailGeneratorPostResult = { text: data.data.choices[0].text };
 
             return res.status(httpCodes.OK).json(result);
         } catch (error) {
             serverLogger(error, 'error');
-            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json([]);
+            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
         }
     }
-    return res.status(httpCodes.METHOD_NOT_ALLOWED).json([]);
+    return res.status(httpCodes.METHOD_NOT_ALLOWED).json({});
 }
