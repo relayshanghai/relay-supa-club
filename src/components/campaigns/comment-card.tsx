@@ -32,7 +32,7 @@ export default function CommentCard({ note }: { note: CampaignNotesWithProfiles 
 
     return (
         <div
-            className={` relative group hover:bg-gray-50 rounded-md p-4 mb-2 w-[250px] duration-300 flex flex-col ${
+            className={` relative group hover:bg-gray-50 rounded-md p-4 mb-2 w-[300px] duration-300 flex flex-col ${
                 isYou ? 'place-self-end ' : 'place-self-start'
             } & ${isImportant ? 'bg-secondary-100' : ''}`}
         >
@@ -42,7 +42,7 @@ export default function CommentCard({ note }: { note: CampaignNotesWithProfiles 
                 }`}
             />
 
-            <div className="z-20 absolute flex space-x-1 top-2- right-2 bg-gray-100 invisible group-hover:visible ease-in-out duration-150">
+            <div className="z-20 absolute flex space-x-1 -top-2 right-2 bg-gray-100 invisible group-hover:visible ease-in-out duration-150">
                 <div
                     className="group/pin p-2 rounded-md text-gray-600  bg-gray-50 hover:bg-gray-100 border border-gray-200 duration-300 outline-none appearance-none text-center cursor-pointer"
                     onClick={() => toggleImportant(note)}
@@ -88,8 +88,8 @@ export default function CommentCard({ note }: { note: CampaignNotesWithProfiles 
                 </div>
                 <div
                     className={`mt-2 ml-10 px-3 py-1 w-fit max-w-[200px] rounded-md ${
-                        isYou ? 'place-self-end bg-primary-100' : 'place-self-start bg-gray-50'
-                    }`}
+                        isYou ? 'place-self-end text-primary-500' : 'place-self-start bg-gray-50'
+                    } `}
                 >
                     {note?.comment}
                 </div>

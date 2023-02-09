@@ -10,7 +10,7 @@ export default function CommentCards({
     const { campaignNotes } = useNotes({ campaignCreatorId: currentCreator?.id });
 
     return (
-        <div className="text-xs w-full h-96 flex flex-col overflow-y-auto p-2">
+        <div className="text-xs w-full h-96 flex flex-col overflow-y-auto">
             {campaignNotes?.map((note) => (
                 <CommentCard key={note.id} note={note} />
             ))}
