@@ -10,16 +10,16 @@ export default function CommentCard({ note }: { note: CampaignNotesWithProfiles 
 
     return (
         <div
-            className={` relative group p-4 w-[300px] duration-300 flex flex-col ${
+            className={` relative group hover:bg-gray-50 rounded-md p-4 w-[300px] duration-300 flex flex-col ${
                 isYou ? 'place-self-end ' : 'place-self-start'
             }`}
         >
-            <div className="z-20 absolute flex space-x-1 top-2 right-0 bg-gray-100 invisible group-hover:visible ease-in-out duration-150">
-                <div className="p-2 rounded-md text-gray-600  bg-gray-50 hover:bg-gray-100 border border-gray-200 duration-300 outline-none appearance-none text-center cursor-pointer">
-                    <Pin className="w-4 h-4 fill-tertiary-600 hover:fill-primary-600" />
+            <div className="z-20 absolute flex space-x-1 top-2 right-2 bg-gray-100 invisible group-hover:visible ease-in-out duration-150">
+                <div className="group/pin p-2 rounded-md text-gray-600  bg-gray-50 hover:bg-gray-100 border border-gray-200 duration-300 outline-none appearance-none text-center cursor-pointer">
+                    <Pin className="w-4 h-4 fill-tertiary-600 group-hover/pin:fill-primary-600" />
                 </div>
-                <div className="p-2 rounded-md text-gray-600  bg-gray-50 hover:bg-gray-100 border border-gray-200 duration-300 outline-none appearance-none text-center cursor-pointer">
-                    <Trashcan className="w-4 h-4 fill-tertiary-600 hover:fill-primary-600" />
+                <div className="group/trashcan p-2 rounded-md text-gray-600  bg-gray-50 hover:bg-gray-100 border border-gray-200 duration-300 outline-none appearance-none text-center cursor-pointer">
+                    <Trashcan className="w-4 h-4 fill-tertiary-600 group-hover/trashcan:fill-primary-600" />
                 </div>
             </div>
             <div className="">
