@@ -71,7 +71,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 temperature: 0.5,
             });
 
-            const result = data.data.choices;
+            const result: AIEmailGeneratorGetResult = data.data.choices;
 
             return res.status(httpCodes.OK).json(result);
         } catch (error) {
