@@ -31,6 +31,8 @@ const AIImageGenerator = () => {
     const [generatedSubject, setGeneratedSubject] = useState('');
     const [loadingSubject, setLoadingSubject] = useState(false);
 
+    const MAX_CHARACTER_LENGTH = 600;
+
     const generateEmail = useCallback(async () => {
         setLoadingEmail(true);
         setGeneratedEmail('');
@@ -143,40 +145,36 @@ const AIImageGenerator = () => {
                             </select>
                         </label>
                         <Input
-                            label={t('aiEmailGenerator.form.label.brandName') as string}
-                            placeholder={t('aiEmailGenerator.form.placeholder.brandName') as string}
+                            label={t('aiEmailGenerator.form.label.brandName')}
+                            placeholder={t('aiEmailGenerator.form.placeholder.brandName')}
                             value={brandName}
                             onChange={(e) => setBrandName(e.target.value)}
                             required
                         />
                         <Input
-                            label={t('aiEmailGenerator.form.label.senderName') as string}
+                            label={t('aiEmailGenerator.form.label.senderName')}
                             placeholder="Your Name"
                             value={senderName}
                             onChange={(e) => setSenderName(e.target.value)}
                             required
                         />
                         <Input
-                            label={t('aiEmailGenerator.form.label.influencerName') as string}
-                            placeholder={
-                                t('aiEmailGenerator.form.placeholder.influencerName') as string
-                            }
+                            label={t('aiEmailGenerator.form.label.influencerName')}
+                            placeholder={t('aiEmailGenerator.form.placeholder.influencerName')}
                             value={influencerName}
                             onChange={(e) => setInfluencerName(e.target.value)}
                             required
                         />
                         <Input
-                            label={t('aiEmailGenerator.form.label.productName') as string}
-                            placeholder={
-                                t('aiEmailGenerator.form.placeholder.productName') as string
-                            }
+                            label={t('aiEmailGenerator.form.label.productName')}
+                            placeholder={t('aiEmailGenerator.form.placeholder.productName')}
                             value={productName}
                             onChange={(e) => setProductName(e.target.value)}
                             required
                         />
                         <InputTextArea
-                            label={t('aiEmailGenerator.form.label.productDescription') as string}
-                            placeholder={t('campaigns.creatorModal.messagePlaceholder') as string}
+                            label={t('aiEmailGenerator.form.label.productDescription')}
+                            placeholder={t('campaigns.creatorModal.messagePlaceholder')}
                             value={productDescription}
                             onChange={(e) => {
                                 if (e.target.value.length > 600) {
@@ -187,8 +185,8 @@ const AIImageGenerator = () => {
                             required
                         />
                         <InputTextArea
-                            label={t('aiEmailGenerator.form.label.instructions') as string}
-                            placeholder={t('campaigns.creatorModal.messagePlaceholder') as string}
+                            label={t('aiEmailGenerator.form.label.instructions')}
+                            placeholder={t('campaigns.creatorModal.messagePlaceholder')}
                             value={instructions}
                             onChange={(e) => {
                                 if (e.target.value.length > 600) {
