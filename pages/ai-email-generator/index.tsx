@@ -1,4 +1,7 @@
-import type { AIEmailGeneratorGetQuery, AIEmailGeneratorGetResult } from 'pages/api/ai-generate/email';
+import type {
+    AIEmailGeneratorPostBody,
+    AIEmailGeneratorPostResult,
+} from 'pages/api/ai-generate/email';
 import { copyToClipboard } from 'src/utils/copyToClipboard';
 import { InputTextArea } from 'src/components/textarea';
 import { Transition } from '@headlessui/react';
@@ -27,7 +30,7 @@ const AIImageGenerator = () => {
     const generateEmail = useCallback(async () => {
         setLoadingEmail(true);
         setGeneratedEmail('');
-        const body: AIEmailGeneratorGetQuery = {
+        const body: AIEmailGeneratorPostBody = {
             brandName,
             language,
             influencerName,
@@ -36,11 +39,11 @@ const AIImageGenerator = () => {
             instructions,
             senderName,
         };
-        const res = await nextFetch<AIEmailGeneratorGetResult>('ai-generate/email', {
+        const res = await nextFetch<AIEmailGeneratorPostResult>('ai-generate/email', {
             method: 'post',
             body: JSON.stringify(body),
         });
-        setGeneratedEmail(res[0].text as string);
+        setGeneratedEmail(res);
         setLoadingEmail(false);
         return res;
     }, [
@@ -69,7 +72,7 @@ const AIImageGenerator = () => {
             method: 'post',
             body: JSON.stringify(body),
         });
-        setGeneratedSubject(res[0].text as string);
+        setGeneratedSubject(res[0].text);
         setLoadingSubject(false);
         return res;
     }, [

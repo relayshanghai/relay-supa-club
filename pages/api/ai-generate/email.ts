@@ -4,7 +4,7 @@ import { serverLogger } from 'src/utils/logger';
 
 import { Configuration, CreateCompletionResponse, OpenAIApi } from 'openai';
 
-export type AIEmailGeneratorGetQuery = {
+export type AIEmailGeneratorPostBody = {
     brandName: string;
     language: 'en-US' | 'zh';
     influencerName: string;
@@ -14,14 +14,19 @@ export type AIEmailGeneratorGetQuery = {
     senderName: string;
 };
 
-export type AIEmailGeneratorGetResult = CreateCompletionResponse['choices'];
+export type AIEmailGeneratorPostResult =
+    | Pick<CreateCompletionResponse['choices'][0], 'text'>[]
+    | object;
 
 const configuration = new Configuration({
     organization: process.env.OPENAI_API_ORG,
     apiKey: process.env.OPENAI_API_KEY,
 });
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+    req: NextApiRequest,
+    res: NextApiResponse<AIEmailGeneratorPostResult>,
+) {
     const openai = new OpenAIApi(configuration);
 
     if (req.method === 'POST') {
@@ -34,7 +39,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 productDescription,
                 productName,
                 senderName,
-            } = JSON.parse(req.body) as AIEmailGeneratorGetQuery;
+            } = JSON.parse(req.body);
 
             if (
                 !brandName ||
@@ -71,7 +76,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 temperature: 0.5,
             });
 
-            const result: AIEmailGeneratorGetResult = data.data.choices;
+            if (data.data && data.data.choices) {
+                data.data.choices = data.data.choices.map((choice) => {
+                    const { text } = choice;
+                    return { text };
+                });
+            }
+
+            const result: AIEmailGeneratorPostResult = data.data.choices;
 
             return res.status(httpCodes.OK).json(result);
         } catch (error) {
