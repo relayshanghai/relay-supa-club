@@ -1,8 +1,8 @@
 import { toast } from 'react-hot-toast';
 
-const isClipboardAPISupported = navigator.clipboard && !!navigator.clipboard.writeText;
-
 export const copyToClipboard = (text: string): void => {
+    const isClipboardAPISupported = navigator.clipboard && !!navigator.clipboard.writeText;
+
     if (isClipboardAPISupported) {
         return;
     }
