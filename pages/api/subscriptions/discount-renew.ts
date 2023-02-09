@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
+import { createSubscriptionErrors } from 'src/errors/subscription';
 import {
     getCompanyCusId,
     updateCompanySubscriptionStatus,
@@ -37,28 +38,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const { data: companyData } = await getCompanyCusId(company_id);
             const cusId = companyData?.cus_id;
             if (!companyData || !cusId) {
-                serverLogger(new Error('Missing company data'), 'error');
-                return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
+                return res
+                    .status(httpCodes.BAD_REQUEST)
+                    .json({ error: createSubscriptionErrors.missingCompanyData });
             }
 
             const activeSubscription = await getSubscription(company_id);
             if (!activeSubscription) {
                 return res
-                    .status(httpCodes.NOT_FOUND)
-                    .json({ error: 'No active subscription to upgrade' });
+                    .status(httpCodes.FORBIDDEN)
+                    .json({ error: createSubscriptionErrors.noActiveSubscriptionToUpgrade });
             }
 
             const price_id = activeSubscription.items.data[0].price.id;
             if (!price_id) {
                 return res
-                    .status(httpCodes.NOT_FOUND)
-                    .json({ error: 'No active subscription price to upgrade' });
+                    .status(httpCodes.FORBIDDEN)
+                    .json({ error: createSubscriptionErrors.noActiveSubscriptionToUpgrade });
             }
-
-            await stripeClient.subscriptions.cancel(activeSubscription.id, {
-                invoice_now: true,
-                prorate: true,
-            });
 
             const createParams: Stripe.SubscriptionCreateParams = {
                 customer: cusId,
@@ -69,6 +66,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             const subscription: SubscriptionDiscountRenewPostResponse =
                 await stripeClient.subscriptions.create(createParams);
+
+            if (subscription.status !== 'active') {
+                // not active means the payment was declined.
+                await stripeClient.subscriptions.cancel(subscription.id, {});
+                return res.status(httpCodes.BAD_REQUEST).json({
+                    error: createSubscriptionErrors.unableToActivateSubscription,
+                });
+            }
+
+            // only cancel old subscription after new one is created successfully
+            await stripeClient.subscriptions.cancel(activeSubscription.id, {
+                invoice_now: true,
+                prorate: true,
+            });
 
             const price = await stripeClient.prices.retrieve(price_id);
             const product = await stripeClient.products.retrieve(price.product as string);
