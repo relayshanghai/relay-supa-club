@@ -19,7 +19,6 @@ export const useNotes = ({ campaignCreatorId }: { campaignCreatorId?: string }) 
             }),
         { refreshInterval: 500 },
     );
-
     const createNote = useCallback(
         async (input: CampaignNotePostBody) => {
             setLoading(true);
