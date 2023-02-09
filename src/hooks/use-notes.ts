@@ -11,7 +11,7 @@ export const useNotes = ({ campaignCreatorId }: { campaignCreatorId?: string }) 
     const [loading, setLoading] = useState<boolean>(false);
     const { profile } = useUser();
 
-    const { data: campaignNotes } = useSWR(
+    const { data: campaignNotes, mutate: refreshNotes } = useSWR(
         'notes',
         (path) =>
             nextFetchWithQueries<CampaignNotesIndexGetQuery, CampaignNotesIndexGetResult>(path, {
@@ -59,10 +59,30 @@ export const useNotes = ({ campaignCreatorId }: { campaignCreatorId?: string }) 
         [profile],
     );
 
+    const updateNote = useCallback(
+        async (input: CampaignNotesDB) => {
+            setLoading(true);
+            if (!profile) throw new Error('No profile found');
+            try {
+                await nextFetch('notes/update', {
+                    method: 'put',
+                    body: { input },
+                });
+            } catch (error: any) {
+                clientLogger(error, 'error');
+            } finally {
+                setLoading(false);
+            }
+        },
+        [profile],
+    );
+
     return {
         campaignNotes,
         loading,
         createNote,
         deleteNote,
+        updateNote,
+        refreshNotes,
     };
 };

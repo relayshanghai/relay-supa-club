@@ -3,29 +3,46 @@ import { useUser } from 'src/hooks/use-user';
 import type { CampaignNotesWithProfiles } from 'src/utils/api/db';
 import { Pin, Trashcan } from 'src/components/icons';
 import { useNotes } from 'src/hooks/use-notes';
+import toast from 'react-hot-toast';
 
 export default function CommentCard({ note }: { note: CampaignNotesWithProfiles }) {
-    const { i18n } = useTranslation();
+    const { t, i18n } = useTranslation();
     const { profile } = useUser();
+    const { deleteNote, updateNote, refreshNotes } = useNotes({
+        campaignCreatorId: note.campaign_creator_id,
+    });
     const isYou = profile?.id === note?.user_id;
-    const { deleteNote } = useNotes({ campaignCreatorId: note.campaign_creator_id });
 
-    const handleDelete = (note: CampaignNotesWithProfiles) => {
-        deleteNote(note);
+    const handleDelete = async (note: CampaignNotesWithProfiles) => {
+        const c = confirm(t('campaigns.notes.deleteConfirmation') as string);
+        if (!c) return;
+        await deleteNote(note);
+        refreshNotes();
+        toast.success(t('campaigns.notes.deletedSuccessfully'));
     };
 
-    const toggleImportant = (note: CampaignNotesWithProfiles) => {
-        //eslint-disable-next-line
-        console.log('important', note);
+    const toggleImportant = async (note: CampaignNotesWithProfiles) => {
+        note.important = !note.important;
+        await updateNote(note);
+        refreshNotes();
+        toast.success(t('campaigns.notes.updateSuccessfully'));
     };
+
+    const isImportant = note.important === true;
 
     return (
         <div
-            className={` relative group hover:bg-gray-50 rounded-md p-4 w-[300px] duration-300 flex flex-col ${
+            className={` relative group hover:bg-gray-50 rounded-md p-4 mb-2 w-[250px] duration-300 flex flex-col ${
                 isYou ? 'place-self-end ' : 'place-self-start'
-            }`}
+            } & ${isImportant ? 'bg-secondary-100' : ''}`}
         >
-            <div className="z-20 absolute flex space-x-1 top-2 right-2 bg-gray-100 invisible group-hover:visible ease-in-out duration-150">
+            <Pin
+                className={`w-4 h-4 fill-primary-600 absolute -top-1 -left-1 ${
+                    isImportant ? '' : 'hidden'
+                }`}
+            />
+
+            <div className="z-20 absolute flex space-x-1 top-2- right-2 bg-gray-100 invisible group-hover:visible ease-in-out duration-150">
                 <div
                     className="group/pin p-2 rounded-md text-gray-600  bg-gray-50 hover:bg-gray-100 border border-gray-200 duration-300 outline-none appearance-none text-center cursor-pointer"
                     onClick={() => toggleImportant(note)}

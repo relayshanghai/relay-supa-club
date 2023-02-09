@@ -111,7 +111,7 @@ export interface Database {
                     comment: string | null;
                     created_at: string | null;
                     id: number;
-                    important: boolean | null;
+                    important: boolean;
                     user_id: string;
                 };
                 Insert: {
@@ -119,7 +119,7 @@ export interface Database {
                     comment?: string | null;
                     created_at?: string | null;
                     id?: number;
-                    important?: boolean | null;
+                    important?: boolean;
                     user_id: string;
                 };
                 Update: {
@@ -127,7 +127,7 @@ export interface Database {
                     comment?: string | null;
                     created_at?: string | null;
                     id?: number;
-                    important?: boolean | null;
+                    important?: boolean;
                     user_id?: string;
                 };
             };

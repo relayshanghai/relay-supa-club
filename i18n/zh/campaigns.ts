@@ -172,6 +172,9 @@ const campaigns = {
         notes: '备注',
         submit: '提交',
         emptyComment: '请输入备注',
+        deleteConfirmation: '您确定要删除此备注吗？',
+        deletedSuccessfully: '备注已成功删除',
+        updateSuccessfully: '备注已成功更新',
     },
     form: {
         createCampaign: '创建项目',
