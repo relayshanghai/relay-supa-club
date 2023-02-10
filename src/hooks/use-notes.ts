@@ -3,9 +3,14 @@ import useSWR from 'swr';
 import { useUser } from './use-user';
 import { clientLogger } from 'src/utils/logger';
 import { nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';
-import { CampaignNotePostBody, CampaignNotePostResponse } from 'pages/api/notes/create';
-import { CampaignNotesIndexGetQuery, CampaignNotesIndexGetResult } from 'pages/api/notes';
-import { CampaignNotesDB, CampaignNotesWithProfiles } from 'src/utils/api/db';
+import type { CampaignNotePostBody, CampaignNotePostResponse } from 'pages/api/notes/create';
+import type { CampaignNotesIndexGetQuery, CampaignNotesIndexGetResult } from 'pages/api/notes';
+import type { CampaignNotesDB, CampaignNotesWithProfiles } from 'src/utils/api/db';
+import type {
+    CampaignNotesUpdatePutBody,
+    CampaignNotesUpdatePutResult,
+} from 'pages/api/notes/update';
+import type { CampaignNotesDeleteBody, CampaignNotesDeleteResponse } from 'pages/api/notes/delete';
 
 export const useNotes = ({ campaignCreatorId }: { campaignCreatorId?: string }) => {
     const [loading, setLoading] = useState<boolean>(false);
@@ -41,9 +46,7 @@ export const useNotes = ({ campaignCreatorId }: { campaignCreatorId?: string }) 
             setLoading(true);
             if (!profile) throw new Error('No profile found');
             try {
-                const body: CampaignNotePostBody = {
-                    ...input,
-                };
+                const body: CampaignNotePostBody = input;
                 await nextFetch<CampaignNotePostResponse>('notes/create', {
                     method: 'post',
                     body,
@@ -58,13 +61,17 @@ export const useNotes = ({ campaignCreatorId }: { campaignCreatorId?: string }) 
     );
 
     const deleteNote = useCallback(
-        async (input: CampaignNotesDB) => {
+        async ({ id }: CampaignNotesDB) => {
             setLoading(true);
             if (!profile) throw new Error('No profile found');
+            const body: CampaignNotesDeleteBody = {
+                id,
+                profileId: profile.id,
+            };
             try {
-                await nextFetch('notes/delete', {
+                await nextFetch<CampaignNotesDeleteResponse>('notes/delete', {
                     method: 'delete',
-                    body: { ...input, profileId: profile.id },
+                    body,
                 });
             } catch (error: any) {
                 clientLogger(error, 'error');
@@ -76,13 +83,17 @@ export const useNotes = ({ campaignCreatorId }: { campaignCreatorId?: string }) 
     );
 
     const updateNote = useCallback(
-        async (input: CampaignNotesDB) => {
+        async ({ id, important }: CampaignNotesDB) => {
             setLoading(true);
             if (!profile) throw new Error('No profile found');
+            const body: CampaignNotesUpdatePutBody = {
+                id,
+                important,
+            };
             try {
-                await nextFetch('notes/update', {
+                await nextFetch<CampaignNotesUpdatePutResult>('notes/update', {
                     method: 'put',
-                    body: { ...input },
+                    body,
                 });
             } catch (error: any) {
                 clientLogger(error, 'error');
