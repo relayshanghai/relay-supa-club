@@ -26,7 +26,7 @@ export default function CommentCards({
     }, [campaignCreatorNotes]);
 
     return (
-        <div className="text-xs w-full h-96 flex flex-col overflow-y-auto">
+        <div className=" text-xs w-full h-96 flex flex-col overflow-y-auto">
             {isLoading ? (
                 <CommentCardsSkeleton />
             ) : (
@@ -36,9 +36,21 @@ export default function CommentCards({
                             {t('campaigns.creatorModal.commentsDescr')}
                         </div>
                     ) : (
-                        campaignCreatorNotes?.map((note) => (
-                            <CommentCard key={note.id} note={note} />
-                        ))
+                        <>
+                            <div className="bg-gray-100 rounded-md p-3 sticky top-0 z-30 flex items-center">
+                                <img
+                                    className="h-8 w-8 rounded-full mr-4"
+                                    src={`https://image-cache.brainchild-tech.cn/?link=${currentCreator?.avatar_url}`}
+                                    alt=""
+                                />
+                                <div>{currentCreator?.fullname}</div>
+                            </div>
+                            <>
+                                {campaignCreatorNotes?.map((note) => (
+                                    <CommentCard key={note.id} note={note} />
+                                ))}
+                            </>
+                        </>
                     )}
                 </>
             )}
