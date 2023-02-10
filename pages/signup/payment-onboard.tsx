@@ -8,9 +8,11 @@ import { LanguageToggle } from 'src/components/common/language-toggle';
 import { Spinner } from 'src/components/icons';
 import { Title } from 'src/components/title';
 import { APP_URL } from 'src/constants';
+import { createSubscriptionErrors } from 'src/errors/subscription';
 import { useCompany } from 'src/hooks/use-company';
 import { useSubscription } from 'src/hooks/use-subscription';
 import { buildSubscriptionPortalUrl } from 'src/utils/api/stripe/portal';
+import { hasCustomError } from 'src/utils/errors';
 import { clientLogger } from 'src/utils/logger';
 
 const PaymentOnboard = () => {
@@ -31,7 +33,7 @@ const PaymentOnboard = () => {
         try {
             setSubmitting(true);
             const result = await createTrial();
-            if (result.status === 'trialing' || subscription?.status === 'active') {
+            if (result.status === 'trialing') {
                 toast.success(t('login.accountActivated'));
                 await router.push('/dashboard');
             } else {
@@ -39,9 +41,13 @@ const PaymentOnboard = () => {
             }
         } catch (e: any) {
             clientLogger(e, 'error');
-            if (e.message && e.message === 'Already subscribed') await router.push('/dashboard');
-
-            toast.error(t('login.oopsSomethingWentWrong'));
+            if (e.message && e.message === 'Already subscribed') {
+                await router.push('/dashboard');
+            } else if (hasCustomError(e, createSubscriptionErrors)) {
+                toast.error(t(`account.subscription.modal.${e.message}`));
+            } else {
+                toast.error(t('login.oopsSomethingWentWrong'));
+            }
         } finally {
             setSubmitting(false);
         }

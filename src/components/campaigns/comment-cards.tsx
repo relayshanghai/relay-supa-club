@@ -20,8 +20,8 @@ export default function CommentCards({
                 <CommentCardsSkeleton />
             ) : (
                 <>
-                    {campaignCreatorNotes?.length !== 0 ? (
-                        campaignCreatorNotes?.map((note) => (
+                    {campaignCreatorNotes?.length > 0 ? (
+                        campaignCreatorNotes.map((note) => (
                             <CommentCard key={note.id} note={note} />
                         ))
                     ) : (
