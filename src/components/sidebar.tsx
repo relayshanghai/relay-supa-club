@@ -3,7 +3,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import useAboveScreenWidth from 'src/hooks/use-above-screen-width';
-import { Compass, FourSquare, Account } from './icons';
+import { useUser } from 'src/hooks/use-user';
+import { Compass, FourSquare, Account, Team } from './icons';
 import { Title } from './title';
 
 const ActiveLink = ({ href, children }: { href: string; children: string }) => {
@@ -15,6 +16,9 @@ const ActiveLink = ({ href, children }: { href: string; children: string }) => {
 
     // influencers page special case
     if (pathRoot === 'influencer' && hrefRoot === 'dashboard') {
+        isRouteActive = true;
+    }
+    if (href === '/admin/clients' && router.pathname === '/admin/clients') {
         isRouteActive = true;
     }
 
@@ -34,13 +38,22 @@ const ActiveLink = ({ href, children }: { href: string; children: string }) => {
                 {hrefRoot === 'account' && (
                     <Account height={18} width={18} className="mr-4 text-inherit" />
                 )}
+                {href === '/admin/clients' && (
+                    <Team height={18} width={18} className="mr-4 text-inherit" />
+                )}
                 {children}
             </a>
         </Link>
     );
 };
 
-const NavBarInner = ({ loggedIn }: { loggedIn: boolean | null }) => (
+const NavBarInner = ({
+    loggedIn,
+    isRelayEmployee,
+}: {
+    loggedIn: boolean | null;
+    isRelayEmployee: boolean;
+}) => (
     <>
         <div className="px-1 pt-5">
             <Title />
@@ -50,6 +63,12 @@ const NavBarInner = ({ loggedIn }: { loggedIn: boolean | null }) => (
             <ActiveLink href="/campaigns">{t('navbar.campaigns')}</ActiveLink>
             {loggedIn && <ActiveLink href="/account">{t('navbar.account')}</ActiveLink>}
         </div>
+        {isRelayEmployee && (
+            <div className="flex flex-col space-y-4 mt-8">
+                <h2 className="ml-6">ADMIN</h2>
+                <ActiveLink href="/admin/clients">Clients</ActiveLink>
+            </div>
+        )}
     </>
 );
 
@@ -64,6 +83,7 @@ export const Sidebar = ({
 }) => {
     // 768px is 'md' in our tailwind
     const desktop = useAboveScreenWidth(768);
+    const { profile } = useUser();
 
     useEffect(() => {
         if (desktop) setOpen(true);
@@ -85,7 +105,10 @@ export const Sidebar = ({
                     open ? 'translate-x-0' : '-translate-x-full'
                 } ${open && desktop ? 'md:relative' : ''}`}
             >
-                <NavBarInner loggedIn={loggedIn} />
+                <NavBarInner
+                    loggedIn={loggedIn}
+                    isRelayEmployee={profile?.role === 'relay_employee'}
+                />
             </div>
         </>
     );
