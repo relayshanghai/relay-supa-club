@@ -33,14 +33,6 @@ export default function CommentCards({
                 <>
                     {campaignCreatorNotes?.length > 0 ? (
                         <>
-                            <div className="bg-gray-100 rounded-md p-3 sticky top-0 z-30 flex items-center">
-                                <img
-                                    className="h-8 w-8 rounded-full mr-4"
-                                    src={`https://image-cache.brainchild-tech.cn/?link=${currentCreator?.avatar_url}`}
-                                    alt=""
-                                />
-                                <div>{currentCreator?.fullname}</div>
-                            </div>
                             <>
                                 {campaignCreatorNotes?.map((note) => (
                                     <CommentCard key={note.id} note={note} />

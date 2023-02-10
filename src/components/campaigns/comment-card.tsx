@@ -36,13 +36,13 @@ export default function CommentCard({ note }: { note: CampaignNotesWithProfiles 
             } & ${isImportant ? 'bg-secondary-100' : ''}`}
         >
             <Pin
-                className={`w-4 h-4 fill-primary-600 absolute -top-1 -left-1 ${
+                className={`w-4 h-4 fill-primary-600 absolute top-3 left-3 ${
                     isImportant ? '' : 'hidden'
                 }`}
             />
 
             <div
-                className={`z-20 absolute flex space-x-1 -top-3 bg-gray-100 invisible group-hover:visible  ${
+                className={`z-20 absolute flex space-x-1 -top-2 bg-gray-100 invisible group-hover:visible  ${
                     isYou ? 'left-3' : 'right-3'
                 }`}
             >
