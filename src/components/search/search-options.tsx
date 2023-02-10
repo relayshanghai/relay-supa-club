@@ -48,18 +48,18 @@ export const SearchOptions = ({
 
     return (
         <>
+            <div className="py-4 w-full">
+                <SearchTopics
+                    path="/api/influencer-search/topics"
+                    placeholder={t('creators.searchTopic')}
+                    topics={tags}
+                    platform={platform}
+                    onSetTopics={(topics: any) => {
+                        setTopicTags(topics);
+                    }}
+                />
+            </div>
             <div className="flex flex-col md:flex-row md:space-x-4 md:space-y-0 items-start space-y-2">
-                <div className="py-4 w-full">
-                    <SearchTopics
-                        path="/api/influencer-search/topics"
-                        placeholder={t('creators.searchTopic')}
-                        topics={tags}
-                        platform={platform}
-                        onSetTopics={(topics: any) => {
-                            setTopicTags(topics);
-                        }}
-                    />
-                </div>
                 {/* remove all lookalike code: https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/154 */}
                 {/* <SearchTopics
                     path="/api/influencer-search/lookalike"
