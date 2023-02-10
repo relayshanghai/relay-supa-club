@@ -1,4 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import httpCodes from 'src/constants/httpCodes';
+import { serverLogger } from 'src/utils/logger';
 import { supabase } from 'src/utils/supabase-client';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -11,12 +13,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             .eq('campaign_id', campaign_id);
 
         if (error) {
-            // eslint-disable-next-line no-console
-            console.log(error);
-            return res.status(500).json(error);
+            serverLogger(error, 'error');
         }
-        return res.status(200).json(campaignCreators);
+        return res.status(httpCodes.OK).json(campaignCreators);
     }
 
-    return res.status(400).json(null);
+    return res.status(httpCodes.METHOD_NOT_ALLOWED).json({});
 }
