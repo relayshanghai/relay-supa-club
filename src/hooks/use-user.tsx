@@ -1,6 +1,6 @@
 import { useSessionContext, useSupabaseClient } from '@supabase/auth-helpers-react';
 import type { Session, User } from '@supabase/supabase-js';
-import { useRouter } from 'next/router';
+
 import type {
     CreateEmployeePostBody,
     CreateEmployeePostResponse,
@@ -14,7 +14,7 @@ import {
     useEffect,
     useState,
 } from 'react';
-import { createEmployeeError } from 'src/errors/company';
+
 import type { ProfileDB } from 'src/utils/api/db/types';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger';
@@ -44,6 +44,7 @@ const ctx = createContext<{
         user: User | null;
         session: Session | null;
     }>;
+    createEmployee: (email: string) => Promise<CreateEmployeePostResponse | null>;
     logout: () => void;
     updateProfile: (updates: Omit<ProfilePutBody, 'id'>) => void;
     refreshProfile: () => void;
@@ -55,6 +56,7 @@ const ctx = createContext<{
         user: null,
         session: null,
     }),
+    createEmployee: async () => null,
     logout: () => null,
     signup: async () => ({
         user: null,
@@ -67,7 +69,6 @@ const ctx = createContext<{
 export const useUser = () => useContext(ctx);
 
 export const UserProvider = ({ children }: PropsWithChildren) => {
-    const router = useRouter();
     const [profile, setProfile] = useState<ProfileDB | null>(null);
     const { isLoading, session } = useSessionContext();
     const supabaseClient = useSupabaseClient<DatabaseWithCustomTypes>();
@@ -123,49 +124,35 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
             setLoading(false);
         }
     };
+
     const signup = async ({ email, password, data }: SignupData) => {
-        setLoading(true);
-        try {
-            const { error, data: signupResData } = await supabaseClient.auth.signUp({
-                email,
-                password,
-                options: { data },
-            });
+        throw new Error('User already registered');
+        const { error, data: signupResData } = await supabaseClient.auth.signUp({
+            email,
+            password,
+            options: { data },
+        });
 
-            if (error) {
-                throw new Error(error?.message || 'Unknown error');
-            }
-            try {
-                const body: CreateEmployeePostBody = { email };
-                const createEmployeeRes = await nextFetch<CreateEmployeePostResponse>(
-                    'company/create-employee',
-                    {
-                        method: 'POST',
-                        body,
-                    },
-                );
-                if (createEmployeeRes.id) {
-                    await router.push('/dashboard');
-                }
-
-                return { user: null, session: null };
-            } catch (error) {
-                if (error instanceof Error && error.message === createEmployeeError.isNotEmployee) {
-                    // do nothing. most users will not be employees
-                } else {
-                    throw error; // problem creating employee
-                }
-            }
-
-            return signupResData;
-        } catch (e: unknown) {
-            clientLogger(e, 'error');
-            let message = 'Unknown error';
-            if (e instanceof Error) message = e.message ?? 'Unknown error';
-            throw new Error(message);
-        } finally {
-            setLoading(false);
+        if (error) {
+            throw new Error(error?.message || 'Unknown error');
         }
+
+        return signupResData;
+    };
+
+    const createEmployee = async (email: string) => {
+        const body: CreateEmployeePostBody = { email };
+        const createEmployeeRes = await nextFetch<CreateEmployeePostResponse>(
+            'company/create-employee',
+            {
+                method: 'POST',
+                body,
+            },
+        );
+        if (createEmployeeRes.id) {
+            throw new Error('Error creating employee');
+        }
+        return createEmployeeRes;
     };
 
     const updateProfile = useCallback(
@@ -198,7 +185,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
             value={{
                 user: session?.user || null,
                 login,
-
+                createEmployee,
                 signup,
                 loading,
                 profile,
