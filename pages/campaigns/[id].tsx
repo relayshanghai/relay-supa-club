@@ -5,7 +5,7 @@ import { PencilSquareIcon } from '@heroicons/react/20/solid';
 import Link from 'next/link';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import Image from 'next/image';
-import { Layout } from 'src/modules/layout';
+import { Layout } from 'src/components/layout';
 import CreatorsOutreach from '../../src/components/campaigns/creator-outreach';
 import CampaignDetails from '../../src/components/campaigns/CampaignDetails';
 import { useCampaigns } from 'src/hooks/use-campaigns';
