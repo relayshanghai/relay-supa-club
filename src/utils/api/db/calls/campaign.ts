@@ -9,11 +9,16 @@ import {
     CampaignDB,
     CampaignNotesInsertDB,
     CampaignNotesDB,
+    ProfileDB,
 } from '../types';
 
 export type CampaignWithCompanyCreators = CampaignDB & {
     companies: Pick<CompanyDB, 'id' | 'name' | 'cus_id'>;
     campaign_creators: CampaignCreatorDB[];
+};
+
+export type CampaignNotesWithProfiles = CampaignNotesDB & {
+    profiles: Pick<ProfileDB, 'id' | 'first_name' | 'last_name'>;
 };
 
 export const getCampaignWithCompanyCreators = async (companyId: string) => {
@@ -59,11 +64,12 @@ export const updateCampaignCreator = async (data: CampaignCreatorDBUpdate, campa
 export const getCampaignNotes = async (campaignCreatorId: string) => {
     const { data, error } = await supabase
         .from('campaign_notes')
-        .select('*')
+        .select('*, profiles(id, first_name, last_name)')
         .eq('campaign_creator_id', campaignCreatorId)
         .order('created_at', { ascending: true });
     if (error) throw error;
-    return data as CampaignNotesDB[];
+
+    return data as CampaignNotesWithProfiles[];
 };
 
 export const insertCampaignNote = async (note: CampaignNotesInsertDB) =>
