@@ -60,10 +60,10 @@ const Clients = () => {
                                         (contactEmailString +=
                                             (ownerProfiles[index].first_name + ': ' || '') +
                                             email +
-                                            (index === 0 ? '' : ', ')),
+                                            (index !== ownerProfiles.length - 1 ? ', ' : '')),
                                 );
 
-                                const dataPints = [
+                                const dataPoints = [
                                     client.name,
                                     client.campaigns.length,
                                     client.profiles.length,
@@ -76,9 +76,9 @@ const Clients = () => {
                                         className="cursor-pointer hover:bg-gray-200"
                                         onClick={() => router.push(`/admin/campaigns/${client.id}`)}
                                     >
-                                        {dataPints.map((dataPoint, index) => (
+                                        {dataPoints.map((dataPoint, index) => (
                                             <td
-                                                key={index}
+                                                key={columnHeaders[index] + dataPoint}
                                                 className="px-6 py-4 whitespace-nowrap text-sm text-gray-900"
                                             >
                                                 {dataPoint}
