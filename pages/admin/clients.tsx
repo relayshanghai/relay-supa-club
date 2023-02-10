@@ -1,19 +1,17 @@
-import { useRouter } from 'next/router';
+import Link from 'next/link';
 import { AdminClientsGetResponse } from 'pages/api/admin/clients';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
+import { Button } from 'src/components/button';
 import { Spinner } from 'src/components/icons';
 import { Layout } from 'src/components/layout';
 import { nextFetch } from 'src/utils/fetcher';
 
-const columnHeaders = ['Account', 'Campaigns', 'Staff', 'Contact', 'Subscription Status'];
+const columnHeaders = ['Account', 'Campaigns', 'Staff', 'Contact', 'Subscription Status', 'Search'];
 
 const Clients = () => {
     const [data, setData] = useState<AdminClientsGetResponse>([]);
     const [loading, setLoading] = useState<boolean>(false);
-
-    const router = useRouter();
-
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
@@ -69,19 +67,36 @@ const Clients = () => {
                                     client.profiles.length,
                                     contactEmailString,
                                     client.subscription_status,
+                                    'Search As',
                                 ];
                                 return (
-                                    <tr
-                                        key={client.id}
-                                        className="cursor-pointer hover:bg-gray-200"
-                                        onClick={() => router.push(`/admin/campaigns/${client.id}`)}
-                                    >
+                                    <tr key={client.id} className=" hover:bg-gray-100">
                                         {dataPoints.map((dataPoint, index) => (
                                             <td
                                                 key={columnHeaders[index] + dataPoint}
                                                 className="px-6 py-4 whitespace-nowrap text-sm text-gray-900"
                                             >
-                                                {dataPoint}
+                                                {columnHeaders[index] === 'Campaigns' ? (
+                                                    <div className="flex items-center justify-center">
+                                                        <Link
+                                                            href={`/admin/campaigns/${client.id}`}
+                                                        >
+                                                            <a>
+                                                                <Button>{dataPoint}</Button>
+                                                            </a>
+                                                        </Link>
+                                                    </div>
+                                                ) : columnHeaders[index] === 'Search' ? (
+                                                    <Link
+                                                        href={`/admin/search/${client.id}?company_name=${client.name}`}
+                                                    >
+                                                        <a>
+                                                            <Button>{dataPoint}</Button>
+                                                        </a>
+                                                    </Link>
+                                                ) : (
+                                                    dataPoint
+                                                )}
                                             </td>
                                         ))}
                                     </tr>
