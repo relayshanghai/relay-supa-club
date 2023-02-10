@@ -1,4 +1,4 @@
-import { KeyboardEvent, SetStateAction, useState } from 'react';
+import { ChangeEventHandler, KeyboardEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNotes } from 'src/hooks/use-notes';
 import { useUser } from 'src/hooks/use-user';
@@ -34,23 +34,24 @@ export default function CommentInput({
 
         setComment('');
     };
-    const handleInput = (e: { target: { value: SetStateAction<string> } }) => {
+    const handleInput: ChangeEventHandler<HTMLTextAreaElement> = (e) => {
         setComment(e.target.value);
     };
 
     const enterComment = (e: KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
             handleComment(comment);
         }
     };
 
     return (
-        <div className="bg-gray-50/50 text-xs px-3 py-3 w-full duration-300">
-            <div className="flex justify-center align-center space-x-2">
-                <div className="rounded-full w-6 h-6 p-1 row-center bg-primary-100 text-primary-500">
-                    <div>
-                        {profile?.first_name ? profile.first_name[0] : ''}
-                        {profile?.last_name ? profile.last_name[0] : ''}
+        <div className=" text-xs p-3 w-full">
+            <div className="flex items-center">
+                <div className="rounded-full w-6 h-6 row-center bg-primary-100 text-primary-500 mr-4">
+                    <div className="p-2">
+                        {profile?.first_name ? profile.first_name[0].toUpperCase() : ''}
+                        {profile?.last_name ? profile.last_name[0].toUpperCase() : ''}
                     </div>
                 </div>
                 <textarea
@@ -59,10 +60,10 @@ export default function CommentInput({
                     className="textarea-field placeholder:text-xs overflow-y-auto"
                     value={comment}
                     onChange={handleInput}
-                    onKeyUp={(e) => enterComment(e)}
+                    onKeyDown={(e) => enterComment(e)}
                 />
                 <button
-                    className="group p-2 rounded-md text-gray-600  bg-gray-50 hover:bg-gray-100 border border-gray-200 duration-300 outline-none appearance-none text-center cursor-pointer"
+                    className="group p-2 ml-2 rounded-md text-gray-600  bg-gray-50 hover:bg-gray-100 border border-gray-200 duration-300 outline-none appearance-none text-center cursor-pointer"
                     onClick={() => handleComment(comment)}
                 >
                     {loading ? (
