@@ -287,7 +287,7 @@ export default function CampaignForm() {
                                         <CurrencyInput
                                             register={register}
                                             errors={errors}
-                                            // isRequired
+                                            isRequired
                                             control={control}
                                             setValue={setValue}
                                             defaultValue="USD"
