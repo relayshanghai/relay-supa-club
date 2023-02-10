@@ -65,7 +65,6 @@ export default function Register() {
             if (signupRes?.session?.user.id) {
                 if (EMPLOYEE_EMAILS.includes(email)) {
                     const employeeRes = await createEmployee(email);
-
                     if (employeeRes?.id) {
                         setSignupSuccess(true);
                     } else {

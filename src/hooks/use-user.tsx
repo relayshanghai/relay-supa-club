@@ -148,7 +148,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
                 body,
             },
         );
-        if (createEmployeeRes.id) {
+        if (!createEmployeeRes.id) {
             throw new Error('Error creating employee');
         }
         return createEmployeeRes;
