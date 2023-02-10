@@ -3,7 +3,7 @@ import { AdminClientsGetResponse } from 'pages/api/admin/clients';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { Spinner } from 'src/components/icons';
-import { Layout } from 'src/modules/layout';
+import { Layout } from 'src/components/layout';
 import { nextFetch } from 'src/utils/fetcher';
 
 const columnHeaders = ['Account', 'Campaigns', 'Staff', 'Contact', 'Subscription Status'];

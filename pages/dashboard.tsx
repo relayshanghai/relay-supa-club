@@ -1,14 +1,7 @@
-import { Layout } from 'src/modules/layout';
-import { Search } from 'src/modules/search';
+import SearchPage from 'src/components/search/search-page';
 
 const Page = () => {
-    return (
-        <Layout>
-            <div className="flex flex-col p-6">
-                <Search />
-            </div>
-        </Layout>
-    );
+    return <SearchPage />;
 };
 
 export default Page;

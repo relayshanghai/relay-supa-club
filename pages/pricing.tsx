@@ -7,7 +7,7 @@ import {
 import { Button } from 'src/components/button';
 import { SALES_REP_EMAIL } from 'src/constants/employeeContacts';
 import { useSubscription } from 'src/hooks/use-subscription';
-import { Layout } from 'src/modules/layout';
+import { Layout } from 'src/components/layout';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger';
 import type { SubscriptionPeriod } from 'types';

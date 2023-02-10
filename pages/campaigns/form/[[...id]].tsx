@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { Layout } from 'src/modules/layout';
+import { Layout } from 'src/components/layout';
 import { useTranslation } from 'react-i18next';
 import { useForm, FormProvider, FieldErrorsImpl, Control, FieldValues } from 'react-hook-form';
 import FormWrapper from 'src/components/common/Form/FormWrapper/FormWrapper';

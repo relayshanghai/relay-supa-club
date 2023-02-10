@@ -2,7 +2,7 @@ import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 import { ErrorPopover } from 'src/components/common/error-popover';
 import { CreatorPage } from 'src/components/creator/creator-page';
-import { Layout } from 'src/modules/layout';
+import { Layout } from 'src/components/layout';
 
 const Page = () => {
     const { ids } = useRouter().query;

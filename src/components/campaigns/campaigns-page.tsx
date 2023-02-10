@@ -1,4 +1,4 @@
-import { Layout } from 'src/modules/layout';
+import { Layout } from 'src/components/layout';
 import { useState } from 'react';
 import Link from 'next/link';
 import Tabs from 'src/components/campaigns/tabs';
