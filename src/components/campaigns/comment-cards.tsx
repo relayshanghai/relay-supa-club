@@ -3,6 +3,7 @@ import CommentCard from './comment-card';
 import { useNotes } from 'src/hooks/use-notes';
 import type { CampaignCreatorDB } from 'src/utils/api/db';
 import CommentCardsSkeleton from './comment-cards-skeleton';
+import { useEffect, useRef } from 'react';
 
 export default function CommentCards({
     currentCreator,
@@ -13,6 +14,16 @@ export default function CommentCards({
     const { isLoading, campaignCreatorNotes } = useNotes({
         campaignCreatorId: currentCreator?.id,
     });
+
+    const commentsEndRef = useRef<null | HTMLDivElement>(null);
+
+    const scrollToBottom = () => {
+        commentsEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    };
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [campaignCreatorNotes]);
 
     return (
         <div className="text-xs w-full h-96 flex flex-col overflow-y-auto">
@@ -31,6 +42,7 @@ export default function CommentCards({
                     )}
                 </>
             )}
+            <div ref={commentsEndRef} />
         </div>
     );
 }
