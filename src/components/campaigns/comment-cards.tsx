@@ -20,14 +20,14 @@ export default function CommentCards({
                 <CommentCardsSkeleton />
             ) : (
                 <>
-                    {campaignCreatorNotes?.length === 0 ? (
-                        <div className="text-center text-gray-500 mt-4">
-                            {t('campaigns.creatorModal.commentsDescr')}
-                        </div>
-                    ) : (
+                    {campaignCreatorNotes?.length !== 0 ? (
                         campaignCreatorNotes?.map((note) => (
                             <CommentCard key={note.id} note={note} />
                         ))
+                    ) : (
+                        <div className="text-center text-gray-500 mt-4">
+                            {t('campaigns.creatorModal.commentsDescr')}
+                        </div>
                     )}
                 </>
             )}
