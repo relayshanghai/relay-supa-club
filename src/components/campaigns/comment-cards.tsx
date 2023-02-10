@@ -31,11 +31,7 @@ export default function CommentCards({
                 <CommentCardsSkeleton />
             ) : (
                 <>
-                    {campaignCreatorNotes?.length === 0 ? (
-                        <div className="text-center text-gray-500 mt-4">
-                            {t('campaigns.creatorModal.commentsDescr')}
-                        </div>
-                    ) : (
+                    {campaignCreatorNotes?.length > 0 ? (
                         <>
                             <div className="bg-gray-100 rounded-md p-3 sticky top-0 z-30 flex items-center">
                                 <img
@@ -51,6 +47,10 @@ export default function CommentCards({
                                 ))}
                             </>
                         </>
+                    ) : (
+                        <div className="text-center text-gray-500 mt-4">
+                            {t('campaigns.creatorModal.commentsDescr')}
+                        </div>
                     )}
                 </>
             )}

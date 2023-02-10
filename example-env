@@ -1,18 +1,37 @@
 # Stripe
+
 STRIPE_WEBHOOK_SECRET=asdf
 STRIPE_API_KEY=asdf
 
+# Stripe product IDs (Do not set in development to connect to test mode account)
+STRIPE_PRODUCT_ID_DIY=asdf
+STRIPE_PRICE_MONTHLY_DIY=asdf
+
+STRIPE_PRICE_QUARTERLY_DIY=asdf
+STRIPE_PRICE_YEARLY_DIY=asdf
+
+STRIPE_PRODUCT_ID_DIY_MAX=asdf
+STRIPE_PRICE_MONTHLY_DIY_MAX=asdf
+STRIPE_PRICE_QUARTERLY_DIY_MAX=asdf
+STRIPE_PRICE_YEARLY_DIY_MAX=asdf
+
+STRIPE_PRODUCT_ID_VIP=asdf
+
 # IQ data API
+
 DATA_PASS=asdf
 DATA_USER=asdf@relay.club
 DATA_KEY=asdf
 
 # Supabase
+
 NEXT_PUBLIC_SUPABASE_ANON_KEY=asdf
 NEXT_PUBLIC_SUPABASE_URL=https://asdf.supabase.co
 
 # Send in Blue
+
 SIB_API_KEY=asdf
 
 # The app url. https://app.relay.club for production
+
 NEXT_PUBLIC_APP_URL=http://localhost:3000

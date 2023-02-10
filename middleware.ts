@@ -7,6 +7,7 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { DatabaseWithCustomTypes } from 'types';
 import { serverLogger } from 'src/utils/logger';
+import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
 
 const pricingAllowList = ['https://en-relay-club.vercel.app', 'https://relay.club'];
 const stripeWebhookAllowlist = ['https://stripe.com/', 'https://hooks.stripe.com/'];
@@ -142,6 +143,13 @@ const allowStripeCors = (req: NextRequest, res: NextResponse) => {
     return res;
 };
 
+const checkIsRelayEmployee = async (res: NextResponse, email: string) => {
+    if (!EMPLOYEE_EMAILS.includes(email)) {
+        return NextResponse.json({ error: 'user is unauthorized for this action' });
+    }
+    return res;
+};
+
 /** https://supabase.com/docs/guides/auth/auth-helpers/nextjs#auth-with-nextjs-middleware */
 export async function middleware(req: NextRequest) {
     // We need to create a response and hand it to the supabase client to be able to modify the response headers.
@@ -153,6 +161,13 @@ export async function middleware(req: NextRequest) {
     // Create authenticated Supabase Client.
     const supabase = createMiddlewareSupabaseClient<DatabaseWithCustomTypes>({ req, res });
     const { data: authData } = await supabase.auth.getSession();
+    if (req.nextUrl.pathname.includes('/admin')) {
+        if (!authData.session?.user?.email) {
+            return NextResponse.json({ error: 'unauthorized to use endpoint' });
+        }
+        return await checkIsRelayEmployee(res, authData.session.user.email);
+    }
+
     if (authData.session?.user?.email)
         return await checkOnboardingStatus(req, res, authData.session, supabase);
 
