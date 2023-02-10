@@ -126,7 +126,6 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
     };
 
     const signup = async ({ email, password, data }: SignupData) => {
-        throw new Error('User already registered');
         const { error, data: signupResData } = await supabaseClient.auth.signUp({
             email,
             password,
