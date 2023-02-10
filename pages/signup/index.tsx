@@ -62,16 +62,18 @@ export default function Register() {
                     last_name: lastName,
                 },
             });
-            if (EMPLOYEE_EMAILS.includes(email)) {
-                const employeeRes = await createEmployee(email);
+            if (signupRes?.session?.user.id) {
+                if (EMPLOYEE_EMAILS.includes(email)) {
+                    const employeeRes = await createEmployee(email);
 
-                if (employeeRes?.id) {
-                    setSignupSuccess(true);
+                    if (employeeRes?.id) {
+                        setSignupSuccess(true);
+                    } else {
+                        throw new Error('Could not create employee');
+                    }
                 } else {
-                    throw new Error('Could not create employee');
+                    setSignupSuccess(true);
                 }
-            } else if (signupRes?.session?.user.id) {
-                setSignupSuccess(true);
             } else {
                 throw new Error('Could not sign up');
             }
