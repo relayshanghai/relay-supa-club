@@ -143,7 +143,6 @@ const allowStripeCors = (req: NextRequest, res: NextResponse) => {
     return res;
 };
 
-const relayEmployeeOnlyRoutes = ['/admin/clients', '/api/clients'];
 const checkIsRelayEmployee = async (res: NextResponse, email: string) => {
     if (!EMPLOYEE_EMAILS.includes(email)) {
         return NextResponse.json({ error: 'user is unauthorized for this action' });
@@ -162,7 +161,7 @@ export async function middleware(req: NextRequest) {
     // Create authenticated Supabase Client.
     const supabase = createMiddlewareSupabaseClient<DatabaseWithCustomTypes>({ req, res });
     const { data: authData } = await supabase.auth.getSession();
-    if (relayEmployeeOnlyRoutes.includes(req.nextUrl.pathname)) {
+    if (req.nextUrl.pathname.includes('/admin')) {
         if (!authData.session?.user?.email) {
             return NextResponse.json({ error: 'unauthorized to use endpoint' });
         }
