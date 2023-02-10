@@ -1,6 +1,6 @@
 Delete a user:
 
-set the profiles table to cascade delete:
+TODO: investigate setting the profiles table to cascade delete: https://github.com/supabase/storage-api/issues/65
 
 ```sql
 delete from profiles where id = '944be6e7-5ac1-4920-b23a-04faac1c610f';
