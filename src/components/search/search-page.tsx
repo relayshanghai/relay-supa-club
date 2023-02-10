@@ -12,10 +12,11 @@ import { SearchResultsTable } from './search-results-table';
 import { SearchFiltersModal } from './search-filters-modal';
 import { SearchOptions } from './search-options';
 import { Layout } from '../layout';
+import { useRouter } from 'next/router';
 
-const Search = () => {
+const Search = ({ companyId }: { companyId?: string }) => {
     const { t } = useTranslation();
-
+    const { company_name } = useRouter().query;
     const { platform, resultsTotal, search, noResults } = useSearch();
 
     const [filterModalOpen, setShowFiltersModal] = useState(false);
@@ -27,6 +28,9 @@ const Search = () => {
 
     return (
         <div className="space-y-4">
+            {companyId && (
+                <div className="absolute z-50 bg-red-400 text-white top-5 right-36 p-2 rounded-md animate-bounce">{`You are acting on behalf of company: ${company_name}`}</div>
+            )}
             <SelectPlatform />
 
             <SearchOptions setPage={setPage} setShowFiltersModal={setShowFiltersModal} />
@@ -66,18 +70,19 @@ const Search = () => {
                 selectedCreator={{
                     ...selectedCreator?.account.user_profile,
                 }}
+                companyId={companyId}
             />
             <SearchFiltersModal show={filterModalOpen} setShow={setShowFiltersModal} />
         </div>
     );
 };
 
-export const SearchPage = () => {
+export const SearchPage = ({ companyId }: { companyId?: string }) => {
     return (
         <Layout>
             <div className="flex flex-col p-6">
                 <SearchProvider>
-                    <Search />
+                    <Search companyId={companyId} />
                 </SearchProvider>
             </div>
         </Layout>

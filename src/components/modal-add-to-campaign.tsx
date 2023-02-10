@@ -9,13 +9,15 @@ export const AddToCampaignModal = ({
     setShow,
     platform,
     selectedCreator,
+    companyId,
 }: {
     show: boolean;
     setShow: (show: boolean) => void;
     platform: CreatorPlatform;
     selectedCreator: CreatorUserProfile | null;
+    companyId?: string;
 }) => {
-    const { campaigns } = useCampaigns({});
+    const { campaigns } = useCampaigns({ companyId });
 
     return (
         <Modal
