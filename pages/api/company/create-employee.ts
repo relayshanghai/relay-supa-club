@@ -3,10 +3,10 @@ import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
 import httpCodes from 'src/constants/httpCodes';
 import { createEmployeeError } from 'src/errors/company';
 import {
-    CompanyDB,
     createCompany,
     getCompanyByName,
     getProfileByEmail,
+    ProfileDB,
     updateCompany,
     updateCompanySubscriptionStatus,
     updateCompanyUsageLimits,
@@ -19,7 +19,7 @@ import { serverLogger } from 'src/utils/logger';
 export type CreateEmployeePostBody = {
     email: string;
 };
-export type CreateEmployeePostResponse = CompanyDB;
+export type CreateEmployeePostResponse = ProfileDB;
 
 const relayCompanyConfig = {
     name: 'relay.club',
@@ -89,9 +89,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 serverLogger(makeAdminError, 'error');
                 return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
             }
-            await updateProfile({ id: profile.id, company_id: company.id });
+            const { error: updateProfileError, data: updateProfileData } = await updateProfile({
+                id: profile.id,
+                company_id: company.id,
+            });
+            if (!updateProfileData || updateProfileError) {
+                serverLogger(updateProfileError, 'error');
+                return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
+            }
+            const response: CreateEmployeePostResponse = updateProfileData;
 
-            const response: CreateEmployeePostResponse = company;
             return res.status(httpCodes.OK).json(response);
         } catch (error) {
             serverLogger(error, 'error');

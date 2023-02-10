@@ -7,8 +7,10 @@ import { Button } from 'src/components/button';
 import { LanguageToggle } from 'src/components/common/language-toggle';
 import { Input } from 'src/components/input';
 import { Title } from 'src/components/title';
+import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
 import { useFields } from 'src/hooks/use-fields';
 import { useUser } from 'src/hooks/use-user';
+import { clientLogger } from 'src/utils/logger';
 
 export default function Register() {
     const { t } = useTranslation();
@@ -24,24 +26,33 @@ export default function Register() {
         password: '',
         confirmPassword: '',
     });
-    const { signup, logout, user, loading } = useUser();
+    const { signup, logout, profile, createEmployee } = useUser();
+    const [loading, setLoading] = useState(false);
     const [signupSuccess, setSignupSuccess] = useState(false);
     const [initialLoad, setInitialLoad] = useState(true);
     useEffect(() => {
-        const loutOutOnLoad = async () => {
+        const logOutOnLoad = async () => {
             // sometimes the cookies and signed in status still persist to this page, so call logout again
+            // TODO: move logout logic serverside https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/72
 
             await logout();
             setInitialLoad(false);
         };
-        if (initialLoad) loutOutOnLoad();
+        if (initialLoad) logOutOnLoad();
     }, [logout, initialLoad]);
 
     useEffect(() => {
-        if (signupSuccess && user?.id) router.push('/signup/onboarding');
-    }, [initialLoad, router, signupSuccess, user]);
+        if (signupSuccess && profile?.id) {
+            if (EMPLOYEE_EMAILS.includes(email)) {
+                router.push('/dashboard');
+            } else {
+                router.push('/signup/onboarding');
+            }
+        }
+    }, [email, initialLoad, router, signupSuccess, profile]);
 
     const handleSubmit = async () => {
+        setLoading(true);
         try {
             const signupRes = await signup({
                 email,
@@ -51,13 +62,32 @@ export default function Register() {
                     last_name: lastName,
                 },
             });
-            if (signupRes?.session?.user.id) setSignupSuccess(true);
+            if (signupRes?.session?.user.id) {
+                if (EMPLOYEE_EMAILS.includes(email)) {
+                    const employeeRes = await createEmployee(email);
+                    if (employeeRes?.id) {
+                        setSignupSuccess(true);
+                    } else {
+                        throw new Error('Could not create employee');
+                    }
+                } else {
+                    setSignupSuccess(true);
+                }
+            } else {
+                throw new Error('Could not sign up');
+            }
         } catch (error: any) {
-            if (error?.message === 'User already registered')
+            clientLogger(error, 'error');
+            // this is a supabase provided error so we don't have our custom error handling
+            if (error?.message === 'User already registered') {
                 toast.error(t('login.userAlreadyRegistered'));
-            else toast.error(t('login.oopsSomethingWentWrong'));
-        } finally {
+                router.push(`/login?email=${encodeURIComponent(email)}`);
+            } else {
+                toast.error(t('login.oopsSomethingWentWrong'));
+            }
+            setLoading(false);
         }
+        // why do we not set loading to false here? Because sometimes the user is logged in but the profile has not loaded yet. The next page needs the profile ready. Therefore we wait in the useEffect above for the profile to load before redirecting.
     };
 
     return (
