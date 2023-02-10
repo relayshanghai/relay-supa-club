@@ -1,4 +1,4 @@
-import { KeyboardEvent, SetStateAction, useState } from 'react';
+import { ChangeEventHandler, KeyboardEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNotes } from 'src/hooks/use-notes';
 import { useUser } from 'src/hooks/use-user';
@@ -34,12 +34,13 @@ export default function CommentInput({
 
         setComment('');
     };
-    const handleInput = (e: { target: { value: SetStateAction<string> } }) => {
+    const handleInput: ChangeEventHandler<HTMLTextAreaElement> = (e) => {
         setComment(e.target.value);
     };
 
     const enterComment = (e: KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
             handleComment(comment);
         }
     };
@@ -59,7 +60,7 @@ export default function CommentInput({
                     className="textarea-field placeholder:text-xs overflow-y-auto"
                     value={comment}
                     onChange={handleInput}
-                    onKeyUp={(e) => enterComment(e)}
+                    onKeyDown={(e) => enterComment(e)}
                 />
                 <button
                     className="group p-2 ml-2 rounded-md text-gray-600  bg-gray-50 hover:bg-gray-100 border border-gray-200 duration-300 outline-none appearance-none text-center cursor-pointer"
