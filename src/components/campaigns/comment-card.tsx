@@ -42,8 +42,8 @@ export default function CommentCard({ note }: { note: CampaignNotesWithProfiles 
             />
 
             <div
-                className={`z-20 absolute flex space-x-1 -top-2 bg-gray-100 invisible group-hover:visible  ${
-                    isYou ? 'left-2' : 'right-2'
+                className={`z-20 absolute flex space-x-1 -top-3 bg-gray-100 invisible group-hover:visible  ${
+                    isYou ? 'left-3' : 'right-3'
                 }`}
             >
                 <div
