@@ -231,7 +231,7 @@ const AIImageGenerator = () => {
                         />
                         <div className="flex flex-row gap-2 items-center">
                             <Button
-                                disabled={loadingEmail && loadingSubject}
+                                disabled={loadingEmail || loadingSubject}
                                 type="submit"
                                 onClick={(e) => handleSubmit(e, 'both')}
                             >
@@ -279,7 +279,9 @@ const AIImageGenerator = () => {
                                 />
                             </div>
                             <Button
-                                onClick={() => copyToClipboard(generatedEmail)}
+                                onClick={() =>
+                                    copyToClipboard(generatedSubjects[currentSubjectIndex])
+                                }
                                 disabled={loadingEmail || loadingSubject}
                             >
                                 {t('aiEmailGenerator.form.label.copySubjectButton') || ''}
