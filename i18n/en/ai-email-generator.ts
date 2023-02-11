@@ -12,20 +12,8 @@ const aiEmailGenerator = {
         generateSubject: 'Generate Subject',
         loading: 'Loading...',
         requestError: 'Oops, please check your data and try again.',
-    },
-    email: {
-        dayLimit: 'You can only send an influencer an email every 24 hours to avoid spam.',
-        emailSent: 'Email sent successfully',
-        sendEmail: 'Send Mail',
-        pickTemplate: 'Pick a template',
-        pickTemplateDescr:
-            'Pick one of our powerful pre-written templates to connect to your favorite influencer. Increase your chances of getting a reply.',
-        initialEmail: 'Initial Email',
-        followUpEmail: 'Follow Up Email',
-        writeOwnMessage: 'Or write your own message',
-        sendEmailError: 'Oops, something went wrong. Please try again.',
-        sendAndGoToNext: 'Send and Open Next Influencer',
-        sendToAll: 'Send to All influencers with this template',
+        generatedSuccessfully: 'Generated successfully',
+        generating: 'Generating...',
     },
     form: {
         placeholder: {
@@ -50,6 +38,8 @@ const aiEmailGenerator = {
             generatedEmail: 'Generated Email',
             copyEmailButton: 'Copy Email',
             copySubjectButton: 'Copy Subject',
+            regenerateEmail: 'Regenerate Email',
+            regenerateSubject: 'Regenerate Subject',
         },
         error: {
             maxLength: 'Maximum length reached',

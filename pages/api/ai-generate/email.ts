@@ -67,7 +67,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             const data = await openai.createCompletion({
                 prompt,
-                model: 'text-babbage-002',
+                model: 'text-babbage-001',
                 max_tokens: 500,
                 n: 1,
                 stop: '',

@@ -18,6 +18,11 @@ import {
 } from 'pages/api/ai-generate/subject';
 import { useUser } from 'src/hooks/use-user';
 import { useCompany } from 'src/hooks/use-company';
+import {
+    ArrowPathIcon,
+    ClipboardDocumentCheckIcon,
+    InboxArrowDownIcon,
+} from '@heroicons/react/24/solid';
 
 const AIImageGenerator = () => {
     const { profile } = useUser();
@@ -49,7 +54,6 @@ const AIImageGenerator = () => {
 
     const generateSubject = useCallback(async () => {
         setLoadingSubject(true);
-        setGeneratedSubject('');
         const body: AIEmailSubjectGeneratorPostBody = {
             brandName,
             language,
@@ -74,7 +78,6 @@ const AIImageGenerator = () => {
 
     const generateEmail = useCallback(async () => {
         setLoadingEmail(true);
-        setGeneratedEmail('');
         const body: AIEmailGeneratorPostBody = {
             brandName,
             language,
@@ -112,15 +115,21 @@ const AIImageGenerator = () => {
 
     const handleSubmit = async (e: any, type: 'subject' | 'email' | 'both') => {
         e.preventDefault();
+        const loadingToast = toast.loading(t('aiEmailGenerator.index.generating') || '');
         try {
-            if (type === 'email') await generateEmail();
-            else if (type === 'subject') await generateSubject();
-            else {
+            if (type === 'email') {
+                await generateEmail();
+            } else if (type === 'subject') {
+                await generateSubject();
+            } else {
                 await generateEmail();
                 await generateSubject();
             }
+            toast.dismiss(loadingToast);
+            toast.success(t('aiEmailGenerator.index.generatedSuccessfully') || '');
         } catch (e: any) {
             clientLogger(e, 'error');
+            toast.dismiss(loadingToast);
             toast.error(t('aiEmailGenerator.index.requestError') || '');
             resetFields();
         }
@@ -228,7 +237,9 @@ const AIImageGenerator = () => {
                                 disabled={loadingEmail || loadingSubject}
                                 type="submit"
                                 onClick={(e) => handleSubmit(e, 'both')}
+                                className="flex items-center gap-2"
                             >
+                                <InboxArrowDownIcon className="w-5 h-5 mr-2" />
                                 {loadingEmail
                                     ? t('aiEmailGenerator.index.loading')
                                     : t('aiEmailGenerator.index.generateEmail') || ''}
@@ -255,12 +266,25 @@ const AIImageGenerator = () => {
                                     rows={3}
                                 />
                             </div>
-                            <Button
-                                onClick={() => copyToClipboard(generatedSubject)}
-                                disabled={loadingEmail || loadingSubject}
-                            >
-                                {t('aiEmailGenerator.form.label.copySubjectButton') || ''}
-                            </Button>
+                            <div className="flex flex-row gap-5">
+                                <Button
+                                    onClick={() => copyToClipboard(generatedSubject)}
+                                    disabled={loadingEmail || loadingSubject}
+                                    className="flex items-center gap-2"
+                                >
+                                    <ClipboardDocumentCheckIcon className="w-4" />
+                                    {t('aiEmailGenerator.form.label.copySubjectButton') || ''}
+                                </Button>
+                                <Button
+                                    variant="secondary"
+                                    className="flex items-center gap-2"
+                                    onClick={(e) => handleSubmit(e, 'subject')}
+                                    disabled={loadingEmail || loadingSubject}
+                                >
+                                    <ArrowPathIcon className="w-4" />
+                                    {t('aiEmailGenerator.form.label.regenerateSubject') || ''}
+                                </Button>
+                            </div>
                         </div>
                         <div className="w-full flex flex-col justify-center items-center h-full ">
                             <label className="flex flex-col text-xs text-gray-500 font-bold h-full w-full">
@@ -273,12 +297,25 @@ const AIImageGenerator = () => {
                                     }}
                                 />
                             </label>
-                            <Button
-                                onClick={() => copyToClipboard(generatedEmail)}
-                                disabled={loadingEmail || loadingSubject}
-                            >
-                                {t('aiEmailGenerator.form.label.copyEmailButton') || ''}
-                            </Button>
+                            <div className="flex flex-row gap-5">
+                                <Button
+                                    onClick={() => copyToClipboard(generatedEmail)}
+                                    className="flex items-center gap-2"
+                                    disabled={loadingEmail || loadingSubject}
+                                >
+                                    <ClipboardDocumentCheckIcon className="w-4" />
+                                    {t('aiEmailGenerator.form.label.copyEmailButton') || ''}
+                                </Button>
+                                <Button
+                                    variant="secondary"
+                                    className="flex items-center gap-2"
+                                    onClick={(e) => handleSubmit(e, 'email')}
+                                    disabled={loadingEmail || loadingSubject}
+                                >
+                                    <ArrowPathIcon className="w-4" />
+                                    {t('aiEmailGenerator.form.label.regenerateEmail') || ''}
+                                </Button>
+                            </div>
                         </div>
                     </div>
                 </div>
