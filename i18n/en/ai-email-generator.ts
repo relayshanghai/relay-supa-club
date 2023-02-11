@@ -48,7 +48,8 @@ const aiEmailGenerator = {
             language: 'Email Language',
             subjectLine: 'Generated Subject Line',
             generatedEmail: 'Generated Email',
-            copyTextButton: 'Generated Email',
+            copyEmailButton: 'Copy Email',
+            copySubjectButton: 'Copy Subject',
         },
         error: {
             maxLength: 'Maximum length reached',

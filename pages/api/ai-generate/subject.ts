@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { serverLogger } from 'src/utils/logger';
 
-import { Configuration, CreateCompletionResponse, OpenAIApi } from 'openai';
+import { Configuration, OpenAIApi } from 'openai';
 
 export type AIEmailSubjectGeneratorPostBody = {
     brandName: string;
@@ -12,8 +12,7 @@ export type AIEmailSubjectGeneratorPostBody = {
     productDescription: string;
 };
 
-export type AIEmailSubjectGeneratorPostResult =
-    | Pick<CreateCompletionResponse['choices'][0], 'text'>[];
+export type AIEmailSubjectGeneratorPostResult = string[];
 
 const configuration = new Configuration({
     organization: process.env.OPENAI_API_ORG,
@@ -50,19 +49,24 @@ export default async function handler(
                 prompt: `Generate an attention catching email subject line to ${influencerName}, regarding a marketing campaign collaboration with ${brandName}, for their product ${productName} which can be described as: ${productDescription}. ${languagePrompt}.`,
                 model: 'text-davinci-002',
                 max_tokens: 25,
-                n: 1,
+                n: 5,
                 stop: '',
                 temperature: 0.5,
             });
 
+            const filteredData: AIEmailSubjectGeneratorPostResult = [];
             if (data.data && data.data.choices) {
-                data.data.choices = data.data.choices.map((choice) => {
+                data.data.choices.forEach((choice) => {
                     const { text } = choice;
-                    return { text };
+                    if (text && text.length > 0) {
+                        filteredData.push(text);
+                    }
                 });
+            } else {
+                return res.status(httpCodes.INTERNAL_SERVER_ERROR).json([]);
             }
 
-            const result: AIEmailSubjectGeneratorPostResult = data.data.choices;
+            const result: AIEmailSubjectGeneratorPostResult = filteredData;
 
             return res.status(httpCodes.OK).json(result);
         } catch (error) {

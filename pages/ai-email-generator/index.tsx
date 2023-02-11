@@ -4,7 +4,6 @@ import type {
 } from 'pages/api/ai-generate/email';
 import { copyToClipboard } from 'src/utils/copyToClipboard';
 import { InputTextArea } from 'src/components/textarea';
-import { Transition } from '@headlessui/react';
 import { Button } from 'src/components/button';
 import { nextFetch } from 'src/utils/fetcher';
 import { useCallback, useEffect, useState } from 'react';
@@ -19,6 +18,7 @@ import {
 } from 'pages/api/ai-generate/subject';
 import { useUser } from 'src/hooks/use-user';
 import { useCompany } from 'src/hooks/use-company';
+import { ArrowLeftCircleIcon, ArrowRightCircleIcon } from '@heroicons/react/24/solid';
 
 const AIImageGenerator = () => {
     const { profile } = useUser();
@@ -33,8 +33,11 @@ const AIImageGenerator = () => {
     const [senderName, setSenderName] = useState('');
     const [loadingEmail, setLoadingEmail] = useState(false);
     const [generatedEmail, setGeneratedEmail] = useState('');
-    const [generatedSubject, setGeneratedSubject] = useState('');
+    const [generatedSubjects, setGeneratedSubjects] = useState<AIEmailSubjectGeneratorPostResult>(
+        [],
+    );
     const [loadingSubject, setLoadingSubject] = useState(false);
+    const [currentSubjectIndex, setCurrentSubjectIndex] = useState(0);
 
     useEffect(() => {
         setBrandName(company?.name || '');
@@ -42,6 +45,36 @@ const AIImageGenerator = () => {
     }, [profile, company]);
 
     const MAX_CHARACTER_LENGTH = 600;
+
+    // Remove leading space
+    const removeLeadingSpace = (text: string) => {
+        return text.replace(/^\s+/, '');
+    };
+
+    const generateSubject = useCallback(async () => {
+        setLoadingSubject(true);
+        setGeneratedSubjects([]);
+        const body: AIEmailSubjectGeneratorPostBody = {
+            brandName,
+            language,
+            influencerName,
+            productName,
+            productDescription,
+        };
+        const res = await nextFetch<AIEmailSubjectGeneratorPostResult>('ai-generate/subject', {
+            method: 'post',
+            body: JSON.stringify(body),
+        });
+
+        if (res.length > 0) {
+            const formattedRes = res.map((item) => {
+                return removeLeadingSpace(item);
+            });
+
+            setGeneratedSubjects(formattedRes || []);
+            setLoadingSubject(false);
+        }
+    }, [brandName, language, influencerName, productName, productDescription]);
 
     const generateEmail = useCallback(async () => {
         setLoadingEmail(true);
@@ -66,7 +99,7 @@ const AIImageGenerator = () => {
         if (!res.text) {
             throw new Error('Email generation failed');
         }
-        setGeneratedEmail(res.text);
+        setGeneratedEmail(removeLeadingSpace(res.text));
         setLoadingEmail(false);
         return res;
     }, [
@@ -78,27 +111,6 @@ const AIImageGenerator = () => {
         instructions,
         senderName,
     ]);
-
-    const generateSubject = useCallback(async () => {
-        setLoadingSubject(true);
-        setGeneratedSubject('');
-        const body: AIEmailSubjectGeneratorPostBody = {
-            brandName,
-            language,
-            influencerName,
-            productName,
-            productDescription,
-        };
-        const res = await nextFetch<AIEmailSubjectGeneratorPostResult>('ai-generate/subject', {
-            method: 'post',
-            body: JSON.stringify(body),
-        });
-
-        if (res.length > 0) {
-            setGeneratedSubject(res[0].text || '');
-            setLoadingSubject(false);
-        }
-    }, [brandName, language, influencerName, productName, productDescription]);
 
     const handleSubmit = async (e: any, type: 'subject' | 'email' | 'both') => {
         e.preventDefault();
@@ -112,11 +124,15 @@ const AIImageGenerator = () => {
         } catch (e: any) {
             clientLogger(e, 'error');
             toast.error(t('aiEmailGenerator.index.requestError') || '');
-            setGeneratedEmail('');
-            setGeneratedSubject('');
-            setLoadingEmail(false);
-            setLoadingSubject(false);
+            resetFields();
         }
+    };
+
+    const resetFields = () => {
+        setGeneratedEmail('');
+        setGeneratedSubjects([]);
+        setLoadingEmail(false);
+        setLoadingSubject(false);
     };
 
     const removeExtraSpaces = (e: any) => {
@@ -131,14 +147,18 @@ const AIImageGenerator = () => {
     return (
         <Layout>
             <div className="flex flex-col items-center p-6 w-full h-full">
+                {/* HEADING */}
                 <div className="flex flex-col items-center">
                     <h1 className="text-2xl font-bold mb-4">
                         {t('aiEmailGenerator.index.title') || ''}
                     </h1>
                     <p className="text-sm mb-4">{t('aiEmailGenerator.index.description') || ''}</p>
                 </div>
-                <div className="flex flex-col lg:flex-row items-center justify-center gap-10 mt-10 w-full">
-                    <form className="flex flex-col h-full items-center justify-end w-full md:w-1/3">
+
+                {/* CONTENT */}
+                <div className="flex flex-col lg:flex-row lg:items-start items-center justify-center gap-10 mt-10 w-full lg:h-full">
+                    {/* INPUT FORM SECTION */}
+                    <form className="flex flex-col h-full items-center justify-start w-full md:w-1/3">
                         <label className="flex flex-col text-xs text-gray-500 font-bold w-full">
                             <div>{t('aiEmailGenerator.form.label.language') || ''}</div>
 
@@ -222,38 +242,68 @@ const AIImageGenerator = () => {
                         </div>
                     </form>
 
-                    <Transition
-                        show={generatedEmail.length > 1}
-                        enter="transition-all duration-300"
-                        enterFrom="opacity-0"
-                        enterTo="opacity-100"
-                        leave="transition-opacity duration-300"
-                        leaveFrom="opacity-100"
-                        leaveTo="opacity-0"
-                        className="flex flex-col items-center justify-end h-full w-full md:w-2/3"
+                    {/* EMAIL AND SUBJECT SECTION */}
+                    <div
+                        className={`${
+                            generatedEmail.length < 1 || generatedSubjects.length < 1
+                                ? 'opacity-0 hidden'
+                                : 'opacity-100'
+                        } flex transition-all duration-300 max-w-xl mb-10 flex-col items-center justify-start w-full md:w-2/3 gap-5 h-full`}
                     >
-                        <InputTextArea
-                            onBlur={removeExtraSpaces}
-                            label={t('aiEmailGenerator.form.label.subjectLine') || ''}
-                            value={generatedSubject}
-                            onChange={(e) => {
-                                setGeneratedSubject(e.target.value);
-                            }}
-                        />
-                        <label className="flex flex-col text-xs text-gray-500 font-bold h-full w-full">
-                            <div>{t('aiEmailGenerator.form.label.generatedEmail') || ''}</div>
-                            <textarea
-                                className="ring-opacity-5 text-black placeholder-gray-400 appearance-none bg-white rounded-md block h-full w-full px-3 py-2 border border-transparent shadow ring-1 ring-transparent sm:text-sm focus:border-primary-500 focus:ring-primary-500 focus:outline-none my-2"
-                                value={generatedEmail}
-                            />
-                        </label>
-                        <Button
-                            onClick={() => copyToClipboard(generatedEmail)}
-                            disabled={loadingEmail || loadingSubject}
-                        >
-                            {t('aiEmailGenerator.form.label.copyTextButton') || ''}
-                        </Button>
-                    </Transition>
+                        <div className="w-full flex flex-col items-center justify-center">
+                            <div className="w-full flex flex-row gap-2">
+                                <ArrowLeftCircleIcon
+                                    className="w-10 text-tertiary-400 hover:text-primary-500 cursor-pointer"
+                                    onClick={() => {
+                                        setCurrentSubjectIndex(
+                                            (prev) => (prev - 1) % generatedSubjects.length,
+                                        );
+                                    }}
+                                />
+                                <InputTextArea
+                                    onBlur={removeExtraSpaces}
+                                    label={t('aiEmailGenerator.form.label.subjectLine') || ''}
+                                    value={generatedSubjects[currentSubjectIndex]}
+                                    onChange={() => {
+                                        return;
+                                    }}
+                                    rows={3}
+                                />
+                                <ArrowRightCircleIcon
+                                    className="w-10 text-tertiary-400 hover:text-primary-500 cursor-pointer"
+                                    onClick={() => {
+                                        setCurrentSubjectIndex(
+                                            (prev) => (prev + 1) % generatedSubjects.length,
+                                        );
+                                    }}
+                                />
+                            </div>
+                            <Button
+                                onClick={() => copyToClipboard(generatedEmail)}
+                                disabled={loadingEmail || loadingSubject}
+                            >
+                                {t('aiEmailGenerator.form.label.copySubjectButton') || ''}
+                            </Button>
+                        </div>
+                        <div className="w-full flex flex-col justify-center items-center h-full ">
+                            <label className="flex flex-col text-xs text-gray-500 font-bold h-full w-full">
+                                <div>{t('aiEmailGenerator.form.label.generatedEmail') || ''}</div>
+                                <textarea
+                                    className="ring-opacity-5 text-black placeholder-gray-400 appearance-none bg-white rounded-md block h-[500px] lg:h-full w-full px-3 py-2 border border-transparent shadow ring-1 ring-transparent sm:text-sm focus:border-primary-500 focus:ring-primary-500 focus:outline-none my-2"
+                                    value={generatedEmail + generatedEmail}
+                                    onChange={() => {
+                                        return;
+                                    }}
+                                />
+                            </label>
+                            <Button
+                                onClick={() => copyToClipboard(generatedEmail)}
+                                disabled={loadingEmail || loadingSubject}
+                            >
+                                {t('aiEmailGenerator.form.label.copyEmailButton') || ''}
+                            </Button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </Layout>

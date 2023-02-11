@@ -74,17 +74,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 temperature: 0.5,
             });
 
-            if (data.data && data.data.choices) {
-                data.data.choices = data.data.choices.map((choice) => {
-                    const { text } = choice;
-                    return { text };
-                });
-            }
-            if (!data.data.choices || !data.data.choices[0].text) {
-                return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
+            let filteredData: AIEmailGeneratorPostResult = { text: '' };
+            if (data.data && data.data.choices && data.data.choices[0].text !== undefined) {
+                filteredData = { text: data.data.choices[0].text };
+            } else {
+                return res.status(httpCodes.INTERNAL_SERVER_ERROR).json([]);
             }
 
-            const result: AIEmailGeneratorPostResult = { text: data.data.choices[0].text };
+            const result: AIEmailGeneratorPostResult = filteredData;
 
             return res.status(httpCodes.OK).json(result);
         } catch (error) {
