@@ -18,7 +18,6 @@ import {
 } from 'pages/api/ai-generate/subject';
 import { useUser } from 'src/hooks/use-user';
 import { useCompany } from 'src/hooks/use-company';
-import { ArrowLeftCircleIcon, ArrowRightCircleIcon } from '@heroicons/react/24/solid';
 
 const AIImageGenerator = () => {
     const { profile } = useUser();
@@ -33,11 +32,9 @@ const AIImageGenerator = () => {
     const [senderName, setSenderName] = useState('');
     const [loadingEmail, setLoadingEmail] = useState(false);
     const [generatedEmail, setGeneratedEmail] = useState('');
-    const [generatedSubjects, setGeneratedSubjects] = useState<AIEmailSubjectGeneratorPostResult>(
-        [],
-    );
+    const [generatedSubject, setGeneratedSubject] = useState('');
     const [loadingSubject, setLoadingSubject] = useState(false);
-    const [currentSubjectIndex, setCurrentSubjectIndex] = useState(0);
+    // const [currentSubjectIndex, setCurrentSubjectIndex] = useState(0);
 
     useEffect(() => {
         setBrandName(company?.name || '');
@@ -53,7 +50,7 @@ const AIImageGenerator = () => {
 
     const generateSubject = useCallback(async () => {
         setLoadingSubject(true);
-        setGeneratedSubjects([]);
+        setGeneratedSubject('');
         const body: AIEmailSubjectGeneratorPostBody = {
             brandName,
             language,
@@ -66,14 +63,14 @@ const AIImageGenerator = () => {
             body: JSON.stringify(body),
         });
 
-        if (res.length > 0) {
-            const formattedRes = res.map((item) => {
-                return removeLeadingSpace(item);
-            });
-
-            setGeneratedSubjects(formattedRes || []);
-            setLoadingSubject(false);
+        if (!res.text) {
+            throw new Error('Email generation failed');
         }
+
+        setGeneratedSubject(removeLeadingSpace(res.text));
+        setLoadingSubject(false);
+
+        return res;
     }, [brandName, language, influencerName, productName, productDescription]);
 
     const generateEmail = useCallback(async () => {
@@ -99,8 +96,10 @@ const AIImageGenerator = () => {
         if (!res.text) {
             throw new Error('Email generation failed');
         }
+
         setGeneratedEmail(removeLeadingSpace(res.text));
         setLoadingEmail(false);
+
         return res;
     }, [
         brandName,
@@ -130,13 +129,9 @@ const AIImageGenerator = () => {
 
     const resetFields = () => {
         setGeneratedEmail('');
-        setGeneratedSubjects([]);
+        setGeneratedSubject('');
         setLoadingEmail(false);
         setLoadingSubject(false);
-    };
-
-    const removeExtraSpaces = (e: any) => {
-        return e.target.value.replace(/\s+/g, ' ').trim();
     };
 
     const languageOptions = [
@@ -245,43 +240,24 @@ const AIImageGenerator = () => {
                     {/* EMAIL AND SUBJECT SECTION */}
                     <div
                         className={`${
-                            generatedEmail.length < 1 || generatedSubjects.length < 1
+                            generatedEmail.length < 1 || generatedSubject.length < 1
                                 ? 'opacity-0 hidden'
                                 : 'opacity-100'
                         } flex transition-all duration-300 max-w-xl mb-10 flex-col items-center justify-start w-full md:w-2/3 gap-5 h-full`}
                     >
                         <div className="w-full flex flex-col items-center justify-center">
                             <div className="w-full flex flex-row gap-2">
-                                <ArrowLeftCircleIcon
-                                    className="w-10 text-tertiary-400 hover:text-primary-500 cursor-pointer"
-                                    onClick={() => {
-                                        setCurrentSubjectIndex(
-                                            (prev) => (prev - 1) % generatedSubjects.length,
-                                        );
-                                    }}
-                                />
                                 <InputTextArea
-                                    onBlur={removeExtraSpaces}
                                     label={t('aiEmailGenerator.form.label.subjectLine') || ''}
-                                    value={generatedSubjects[currentSubjectIndex]}
+                                    value={generatedSubject}
                                     onChange={() => {
                                         return;
                                     }}
                                     rows={3}
                                 />
-                                <ArrowRightCircleIcon
-                                    className="w-10 text-tertiary-400 hover:text-primary-500 cursor-pointer"
-                                    onClick={() => {
-                                        setCurrentSubjectIndex(
-                                            (prev) => (prev + 1) % generatedSubjects.length,
-                                        );
-                                    }}
-                                />
                             </div>
                             <Button
-                                onClick={() =>
-                                    copyToClipboard(generatedSubjects[currentSubjectIndex])
-                                }
+                                onClick={() => copyToClipboard(generatedSubject)}
                                 disabled={loadingEmail || loadingSubject}
                             >
                                 {t('aiEmailGenerator.form.label.copySubjectButton') || ''}
