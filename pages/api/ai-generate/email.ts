@@ -63,7 +63,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                   instructions
                 : '';
 
-            const prompt = `Generate an email to ${influencerName}, regarding a marketing campaign collaboration with our brand ${brandName}, for our product ${productName} which can be described as: ${productDescription}. ${influencerName} will advertise and market our product for us so ask if they'd be interested. ${languagePrompt}. The email sender name is ${senderName}. ${instructionsPrompt}`;
+            const prompt = `Generate an email to ${influencerName}, regarding a marketing campaign collaboration with our brand ${brandName}, for our product ${productName} which can be described as: ${productDescription}. ${influencerName} will advertise and market our product for us so ask if they'd be interested. ${languagePrompt}. The email sender name is ${senderName}.${instructionsPrompt}`;
 
             const data = await openai.createCompletion({
                 prompt,
