@@ -28,7 +28,7 @@ const campaigns = {
         outreach: 'KOL沟通',
         details: 'KOL信息',
         content: 'KOL信息',
-        comments: '公司备注',
+        comments: '内部备注',
         viewProfile: '查看KOL',
         addedSuccessfully: 'KOL已成功添加到项目',
         deletedSuccessfully: 'KOL已从项目中删除',
@@ -171,6 +171,10 @@ const campaigns = {
     notes: {
         notes: '备注',
         submit: '提交',
+        emptyComment: '请输入备注',
+        deleteConfirmation: '您确定要删除此备注吗？',
+        deletedSuccessfully: '备注已成功删除',
+        updateSuccessfully: '备注已成功更新',
     },
     form: {
         createCampaign: '创建项目',

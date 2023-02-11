@@ -177,6 +177,10 @@ const campaigns = {
     notes: {
         notes: 'Notes',
         submit: 'Submit',
+        emptyComment: 'Comments cannot be empty',
+        deleteConfirmation: 'Are you sure you want to delete this comment?',
+        deletedSuccessfully: 'Comment deleted successfully',
+        updateSuccessfully: 'Comment updated successfully',
     },
     form: {
         createCampaign: 'Create Campaign',

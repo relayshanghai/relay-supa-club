@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
@@ -13,6 +13,7 @@ import { useUser } from 'src/hooks/use-user';
 export default function Login() {
     const { t } = useTranslation();
     const router = useRouter();
+    const { email: emailQuery } = router.query;
     const { login } = useUser();
     const [loggingIn, setLoggingIn] = useState(false);
     const {
@@ -22,6 +23,11 @@ export default function Login() {
         email: '',
         password: '',
     });
+    useEffect(() => {
+        if (emailQuery) {
+            setFieldValue('email', emailQuery.toString());
+        }
+    }, [emailQuery, setFieldValue]);
 
     const handleSubmit = async () => {
         try {

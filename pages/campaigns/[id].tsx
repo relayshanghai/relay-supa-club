@@ -1,18 +1,18 @@
-import { Layout } from 'src/modules/layout';
 import { useRouter } from 'next/router';
 import { useState, useEffect, ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PencilSquareIcon } from '@heroicons/react/20/solid';
 import Link from 'next/link';
+import { useSupabaseClient } from '@supabase/auth-helpers-react';
+import Image from 'next/image';
+import { Layout } from 'src/components/layout';
 import CreatorsOutreach from '../../src/components/campaigns/creator-outreach';
 import CampaignDetails from '../../src/components/campaigns/CampaignDetails';
 import { useCampaigns } from 'src/hooks/use-campaigns';
-import Image from 'next/image';
-import { CampaignWithCompanyCreators } from 'src/utils/api/db';
-import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import { Modal } from 'src/components/modal';
-import CommentCard from 'src/components/campaigns/comment-card';
 import CommentInput from 'src/components/campaigns/comment-input';
+import CommentCards from 'src/components/campaigns/comment-cards';
+import type { CampaignCreatorDB, CampaignWithCompanyCreators } from 'src/utils/api/db';
 
 export default function CampaignShow() {
     const router = useRouter();
@@ -26,6 +26,7 @@ export default function CampaignShow() {
     const [media, setMedia] = useState<{ url: string; name: string }[]>([]);
     const [currentTab, setCurrentTab] = useState(0);
     const [showNotesModal, setShowNotesModal] = useState(false);
+    const [currentCreator, setCurrentCreator] = useState<CampaignCreatorDB | null>(null);
     const { t, i18n } = useTranslation();
 
     const tabs = [
@@ -198,6 +199,7 @@ export default function CampaignShow() {
                     <CreatorsOutreach
                         currentCampaign={currentCampaign}
                         setShowNotesModal={setShowNotesModal}
+                        setCurrentCreator={setCurrentCreator}
                     />
                 )}
                 {currentTab === 1 && currentCampaign && (
@@ -205,16 +207,27 @@ export default function CampaignShow() {
                 )}
             </div>
             <Modal
-                title={t('campaigns.modal.comments') as string}
+                title={
+                    <div className="flex items-center -mt-4 justify-between">
+                        <h3>{t('campaigns.modal.comments')}</h3>
+                        <div className="bg-gray-100 rounded-md p-3 sticky top-0 z-30 flex items-center">
+                            <img
+                                className="h-8 w-8 rounded-full mr-4"
+                                src={`https://image-cache.brainchild-tech.cn/?link=${currentCreator?.avatar_url}`}
+                                alt=""
+                            />
+                            <h3 className="font-medium text-sm">{currentCreator?.fullname}</h3>
+                        </div>
+                    </div>
+                }
                 visible={!!showNotesModal}
                 onClose={() => {
                     setShowNotesModal(false);
                 }}
             >
                 <div>
-                    <CommentCard />
-                    <CommentCard />
-                    <CommentInput />
+                    <CommentCards currentCreator={currentCreator} />
+                    <CommentInput currentCreator={currentCreator} />
                 </div>
             </Modal>
         </Layout>

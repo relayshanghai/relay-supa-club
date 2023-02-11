@@ -17,15 +17,22 @@ import {
 } from 'pages/api/campaigns/add-creator';
 import { CampaignsIndexGetQuery, CampaignsIndexGetResult } from 'pages/api/campaigns';
 
-export const useCampaigns = ({ campaignId }: { campaignId?: string }) => {
+export const useCampaigns = ({
+    campaignId,
+    companyId: passedInCompanyId,
+}: {
+    campaignId?: string;
+    companyId?: string;
+}) => {
     const { profile } = useUser();
+    const companyId = passedInCompanyId ?? profile?.company_id;
     const {
         data: campaigns,
         mutate: refreshCampaign,
         isValidating,
-    } = useSWR(profile?.company_id ? 'campaigns' : null, (path) =>
+    } = useSWR(companyId ? 'campaigns' : null, (path) =>
         nextFetchWithQueries<CampaignsIndexGetQuery, CampaignsIndexGetResult>(path, {
-            id: profile?.company_id ?? '',
+            id: companyId ?? '',
         }),
     );
     const [loading, setLoading] = useState(false);
@@ -33,7 +40,6 @@ export const useCampaigns = ({ campaignId }: { campaignId?: string }) => {
     const [campaignCreators, setCampaignCreators] = useState<
         CampaignWithCompanyCreators['campaign_creators'] | null
     >([]);
-
     useEffect(() => {
         if (campaigns && campaigns?.length > 0 && campaignId) {
             const campaign = campaigns?.find((c) => c.id === campaignId);
@@ -44,11 +50,11 @@ export const useCampaigns = ({ campaignId }: { campaignId?: string }) => {
 
     const createCampaign = useCallback(
         async (input: Omit<CampaignsCreatePostBody, 'company_id'>) => {
-            if (!profile?.company_id) throw new Error('No profile found');
+            if (!companyId) throw new Error('No profile found');
 
             const body: CampaignsCreatePostBody = {
                 ...input,
-                company_id: profile.company_id,
+                company_id: companyId,
             };
             return await nextFetch<CampaignsCreatePostResponse>('campaigns/create', {
                 method: 'post',
@@ -56,22 +62,22 @@ export const useCampaigns = ({ campaignId }: { campaignId?: string }) => {
             });
         },
 
-        [profile],
+        [companyId],
     );
 
     const updateCampaign = useCallback(
         async (input: CampaignDBUpdate) => {
-            if (!profile?.company_id) throw new Error('No profile found');
+            if (!companyId) throw new Error('No profile found');
             const body: CampaignUpdatePostBody = {
                 ...input,
-                company_id: profile.company_id,
+                company_id: companyId,
             };
             return await nextFetch<CampaignUpdatePostResponse>('campaigns/update', {
                 method: 'post',
                 body,
             });
         },
-        [profile],
+        [companyId],
     );
 
     const addCreatorToCampaign = useCallback(
@@ -80,6 +86,7 @@ export const useCampaigns = ({ campaignId }: { campaignId?: string }) => {
             if (!campaign?.id) throw new Error('No campaign found');
             const body: CampaignCreatorAddCreatorPostBody = {
                 ...input,
+                added_by_id: profile?.id ?? '',
                 campaign_id: campaign.id,
             };
             await nextFetch<CampaignCreatorAddCreatorPostResponse>('campaigns/add-creator', {
@@ -89,7 +96,7 @@ export const useCampaigns = ({ campaignId }: { campaignId?: string }) => {
 
             setLoading(false);
         },
-        [campaign?.id],
+        [campaign?.id, profile?.id],
     );
 
     const updateCreatorInCampaign = useCallback(

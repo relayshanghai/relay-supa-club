@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { CampaignWithCompanyCreators } from 'src/utils/api/db';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import { clientLogger } from 'src/utils/logger';
+import { useUser } from 'src/hooks/use-user';
 
 export default function CampaignModalCard({
     campaign,
@@ -24,10 +25,11 @@ export default function CampaignModalCard({
     });
     const [hasCreator, setHasCreator] = useState<boolean>(false);
     const [coverImageUrl, setCoverImageUrl] = useState('');
+    const { profile } = useUser();
     const { t } = useTranslation();
 
     const handleAddCreatorToCampaign = async () => {
-        if (!campaign || !creator || !creator.user_id)
+        if (!campaign || !creator || !creator.user_id || !profile)
             return toast.error(t('campaigns.form.oopsSomethingWrong'));
         try {
             await addCreatorToCampaign({
@@ -38,6 +40,7 @@ export default function CampaignModalCard({
                 fullname: creator.fullname,
                 link_url: creator.url,
                 platform,
+                added_by_id: profile.id,
             });
             toast.success(t('campaigns.modal.addedSuccessfully'));
             setHasCreator(true);

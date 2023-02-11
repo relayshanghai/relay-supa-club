@@ -2,29 +2,29 @@ import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 import { ChangeEvent, MouseEvent, useRef, useState } from 'react';
 import Link from 'next/link';
+import { toast } from 'react-hot-toast';
 import { Trashcan } from 'src/components/icons';
 import { useCampaigns } from 'src/hooks/use-campaigns';
-import { toast } from 'react-hot-toast';
 import TableInput from './campaign-table-input';
-import { CampaignWithCompanyCreators } from 'src/utils/api/db';
-import { CampaignCreatorDB } from 'src/utils/api/db/types';
 import { SocialMediaIcon } from '../common/social-media-icon';
 import { CreatorContacts } from './creator-contacts';
 import dateFormat from 'src/utils/dateFormat';
-import { SocialMediaPlatform } from 'types';
+import type { CampaignCreatorDB, CampaignWithCompanyCreators } from 'src/utils/api/db';
+import type { SocialMediaPlatform } from 'types';
 
 export default function CreatorsOutreach({
     currentCampaign,
     setShowNotesModal,
+    setCurrentCreator,
 }: {
     currentCampaign: CampaignWithCompanyCreators;
     setShowNotesModal: (value: boolean) => void;
+    setCurrentCreator: (value: CampaignCreatorDB) => void;
 }) {
     const { t } = useTranslation();
     const router = useRouter();
     const { pathname, query } = router;
     const [tabStatus, setTabStatus] = useState<string | string[]>(query.curTab || 'to contact');
-    // const [currentCreator, setCurrentCreator] = useState<CampaignCreatorDB | null>(null);
     const [toEdit, setToEdit] = useState<{ index: number; key: string } | null>(null);
     const inputRef = useRef(null);
 
@@ -94,8 +94,12 @@ export default function CreatorsOutreach({
         setToEdit({ index, key });
     };
 
-    const openNotes = (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
+    const openNotes = (
+        e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>,
+        creator: CampaignCreatorDB,
+    ) => {
         e.stopPropagation();
+        setCurrentCreator(creator);
         setShowNotesModal(true);
     };
 
@@ -503,11 +507,11 @@ export default function CreatorsOutreach({
                                         <td className="px-6 py-4 sm:sticky right-0 bg-white whitespace-nowrap z-50 group-hover:bg-primary-50 ">
                                             <div className="flex justify-end">
                                                 <div
-                                                    onClick={(e) => openNotes(e)}
+                                                    onClick={(e) => openNotes(e, creator)}
                                                     className="p-2 rounded-md text-gray-600  bg-gray-50 hover:bg-gray-100 border border-gray-200 duration-300 outline-none appearance-none text-center font-medium mr-2 cursor-pointer"
                                                 >
-                                                    {/* TODO: notes ticket V2-17 */}
-                                                    Notes
+                                                    {/* TODO: notes ticket V2-139 */}
+                                                    {t('campaigns.show.notes')}
                                                 </div>
                                                 <div
                                                     onClick={(e) =>

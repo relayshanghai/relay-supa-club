@@ -4,24 +4,23 @@ import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
 import { ShareLink } from 'src/components/icons';
+import { useSearch } from 'src/hooks/use-search';
 // import Heart from 'src/components/icons/Heart';
 import { formatter } from 'src/utils/formatter';
-import { CreatorPlatform, CreatorSearchAccountObject } from 'types';
+import { CreatorSearchAccountObject } from 'types';
 
 export const SearchResultRow = ({
     creator,
-    platform,
-    setLookalike,
+
     setShowCampaignListModal,
     setSelectedCreator,
 }: {
     creator: CreatorSearchAccountObject;
-    platform: CreatorPlatform;
-    setLookalike: (creator: CreatorSearchAccountObject) => void;
     setSelectedCreator: (creator: CreatorSearchAccountObject) => void;
     setShowCampaignListModal: (show: boolean) => void;
 }) => {
     const { t } = useTranslation();
+    const { platform, setLookalike } = useSearch();
     const handle =
         creator.account.user_profile.username ||
         creator.account.user_profile.custom_name ||

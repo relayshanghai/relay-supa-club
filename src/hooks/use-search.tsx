@@ -1,5 +1,15 @@
 import { InfluencerPostRequest, InfluencerPostResponse } from 'pages/api/influencer-search';
-import { useCallback, useMemo, useRef, useState } from 'react';
+import {
+    createContext,
+    Dispatch,
+    PropsWithChildren,
+    SetStateAction,
+    useCallback,
+    useContext,
+    useEffect,
+    useRef,
+    useState,
+} from 'react';
 import { usageErrors } from 'src/errors/usages';
 import { hasCustomError } from 'src/utils/errors';
 import { nextFetch } from 'src/utils/fetcher';
@@ -12,7 +22,79 @@ import {
 } from 'types';
 import { useUser } from './use-user';
 
-export const useSearch = () => {
+export interface SearchContext {
+    loading: boolean;
+    tags: CreatorSearchTag[];
+    setTopicTags: (tags: CreatorSearchTag[]) => void;
+    lookalike: any;
+    setLookalike: (lookalike: any) => void;
+    influencerLocation: LocationWeighted[];
+    setInfluencerLocation: (location: LocationWeighted[]) => void;
+    views: string[];
+    setViews: Dispatch<SetStateAction<string[]>>;
+    audience: string[];
+    setAudience: Dispatch<SetStateAction<string[]>>;
+    gender?: string;
+    setGender: (gender?: string) => void;
+    engagement?: number;
+    setEngagement: (engagement?: number) => void;
+    lastPost?: string;
+    setLastPost: (lastPost?: string) => void;
+    contactInfo?: string;
+    setContactInfo: (contactInfo?: string) => void;
+    audienceLocation: LocationWeighted[];
+    setAudienceLocation: (location: LocationWeighted[]) => void;
+    platform: CreatorPlatform;
+    setPlatform: (platform: CreatorPlatform) => void;
+    resultsPerPageLimit: number;
+    setResultsPerPageLimit: (limit: number) => void;
+    resultPages: CreatorSearchAccountObject[][];
+    setResultPages: (pages: CreatorSearchAccountObject[][]) => void;
+    resultsTotal: number;
+    setResultsTotal: (total: number) => void;
+    usageExceeded: boolean;
+    search: ({ page }: { page?: number | undefined }) => Promise<void>;
+    noResults: boolean;
+}
+
+const ctx = createContext<SearchContext>({
+    loading: false,
+    tags: [],
+    setTopicTags: () => null,
+    lookalike: null,
+    setLookalike: () => null,
+    influencerLocation: [],
+    setInfluencerLocation: () => null,
+    views: [],
+    setViews: () => null,
+    audience: [],
+    setAudience: () => null,
+    gender: undefined,
+    setGender: () => null,
+    engagement: undefined,
+    setEngagement: () => null,
+    lastPost: undefined,
+    setLastPost: () => null,
+    contactInfo: undefined,
+    setContactInfo: () => null,
+    audienceLocation: [],
+    setAudienceLocation: () => null,
+    platform: 'youtube',
+    setPlatform: () => null,
+    resultsPerPageLimit: 10,
+    setResultsPerPageLimit: () => null,
+    resultPages: [],
+    setResultPages: () => null,
+    resultsTotal: 0,
+    setResultsTotal: () => null,
+    usageExceeded: false,
+    search: async () => undefined,
+    noResults: true,
+});
+
+export const useSearch = () => useContext(ctx);
+
+export const SearchProvider = ({ children }: PropsWithChildren) => {
     const { profile } = useUser();
     const [loading, setLoading] = useState(false);
 
@@ -33,18 +115,6 @@ export const useSearch = () => {
     const [resultsTotal, setResultsTotal] = useState(0);
     const [usageExceeded, setUsageExceeded] = useState(false);
 
-    const platforms: {
-        icon: string;
-        label: string;
-        id: CreatorPlatform;
-    }[] = useMemo(
-        () => [
-            { icon: '/assets/imgs/icons/yt.svg', label: 'YouTube', id: 'youtube' },
-            { icon: '/assets/imgs/icons/instagram.svg', label: 'Instagram', id: 'instagram' },
-            { icon: '/assets/imgs/icons/tiktok.svg', label: 'TikTok', id: 'tiktok' },
-        ],
-        [],
-    );
     const ref = useRef<any>();
 
     const search = useCallback(
@@ -121,40 +191,53 @@ export const useSearch = () => {
             views,
         ],
     );
+    useEffect(() => {
+        // because search is a useCallback that depends on all the state variables, this will trigger a re-search when any of the state variables change.
+        // when the search filters change, we always want to start fresh from page 0
+        search({});
+    }, [search]);
 
-    return {
-        loading,
+    const noResults = resultPages.length === 0 || resultPages[0]?.length === 0;
 
-        resultPages,
-        setResultPages,
-        resultsTotal,
-        setResultsTotal,
-        platform,
-        platforms,
-        setPlatform,
-        search,
-        tags,
-        setTopicTags,
-        lookalike,
-        setLookalike,
-        influencerLocation,
-        setInfluencerLocation,
-        audienceLocation,
-        setAudienceLocation,
-        audience,
-        setAudience,
-        views,
-        setViews,
-        gender,
-        setGender,
-        engagement,
-        setEngagement,
-        lastPost,
-        setLastPost,
-        contactInfo,
-        setContactInfo,
-        resultsPerPageLimit,
-        setResultsPerPageLimit,
-        usageExceeded,
-    };
+    return (
+        <ctx.Provider
+            value={{
+                loading,
+
+                resultPages,
+                setResultPages,
+                resultsTotal,
+                setResultsTotal,
+                platform,
+                setPlatform,
+                search,
+                tags,
+                setTopicTags,
+                lookalike,
+                setLookalike,
+                influencerLocation,
+                setInfluencerLocation,
+                audienceLocation,
+                setAudienceLocation,
+                audience,
+                setAudience,
+                views,
+                setViews,
+                gender,
+                setGender,
+                engagement,
+                setEngagement,
+                lastPost,
+                setLastPost,
+                contactInfo,
+                setContactInfo,
+                resultsPerPageLimit,
+                setResultsPerPageLimit,
+                usageExceeded,
+                noResults,
+            }}
+        >
+            {children}
+        </ctx.Provider>
+    );
 };
