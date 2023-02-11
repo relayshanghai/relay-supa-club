@@ -292,7 +292,7 @@ const AIImageGenerator = () => {
                                 <div>{t('aiEmailGenerator.form.label.generatedEmail') || ''}</div>
                                 <textarea
                                     className="ring-opacity-5 text-black placeholder-gray-400 appearance-none bg-white rounded-md block h-[500px] lg:h-full w-full px-3 py-2 border border-transparent shadow ring-1 ring-transparent sm:text-sm focus:border-primary-500 focus:ring-primary-500 focus:outline-none my-2"
-                                    value={generatedEmail + generatedEmail}
+                                    value={generatedEmail}
                                     onChange={() => {
                                         return;
                                     }}

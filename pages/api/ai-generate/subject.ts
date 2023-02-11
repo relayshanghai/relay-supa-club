@@ -40,14 +40,14 @@ export default async function handler(
                 return res.status(httpCodes.INTERNAL_SERVER_ERROR).json([]);
             }
 
-            const languagePrompt =
-                'The email should be in ' + language === 'zh'
-                    ? 'Simplified Mandarin Chinese'
-                    : 'English language';
+            const languagePrompt = `The text should be in ${
+                language === 'zh' ? 'Simplified Mandarin Chinese' : 'English language'
+            }
+`;
 
             const data = await openai.createCompletion({
-                prompt: `Generate an attention catching email subject line to ${influencerName}, regarding a marketing campaign collaboration with ${brandName}, for their product ${productName} which can be described as: ${productDescription}. ${languagePrompt}.`,
-                model: 'text-davinci-002',
+                prompt: `Generate an email subject line in under 60 characters, regarding a marketing campaign collaboration with our company ${brandName} and our product ${productName} which can be described as: ${productDescription}. ${languagePrompt}.`,
+                model: 'text-babbage-001',
                 max_tokens: 25,
                 n: 5,
                 stop: '',

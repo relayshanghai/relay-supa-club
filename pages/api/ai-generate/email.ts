@@ -63,11 +63,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                   instructions
                 : '';
 
-            const prompt = `Generate an email to ${influencerName}, regarding a marketing campaign collaboration with our brand ${brandName}, for our product ${productName} which can be described as: ${productDescription}. ${languagePrompt} and should be sent by ${senderName}.${instructionsPrompt}`;
+            const prompt = `Generate an email to ${influencerName}, regarding a marketing campaign collaboration with our brand ${brandName}, for our product ${productName} which can be described as: ${productDescription}. ${languagePrompt}. It should be sent by ${senderName}. ${instructionsPrompt}`;
 
             const data = await openai.createCompletion({
                 prompt,
-                model: 'text-davinci-002',
+                model: 'text-babbage-002',
                 max_tokens: 500,
                 n: 1,
                 stop: '',
