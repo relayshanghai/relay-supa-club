@@ -12,17 +12,14 @@ export type AIEmailSubjectGeneratorPostBody = {
     productDescription: string;
 };
 
-export type AIEmailSubjectGeneratorPostResult = string[];
+export type AIEmailSubjectGeneratorPostResult = { text: string };
 
 const configuration = new Configuration({
     organization: process.env.OPENAI_API_ORG,
     apiKey: process.env.OPENAI_API_KEY,
 });
 
-export default async function handler(
-    req: NextApiRequest,
-    res: NextApiResponse<AIEmailSubjectGeneratorPostResult>,
-) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const openai = new OpenAIApi(configuration);
 
     if (req.method === 'POST') {
@@ -31,13 +28,13 @@ export default async function handler(
                 JSON.parse(req.body) as AIEmailSubjectGeneratorPostBody;
 
             if (!brandName || !influencerName || !language || !productDescription || !productName) {
-                return res.status(httpCodes.BAD_REQUEST).json([]);
+                return res.status(httpCodes.BAD_REQUEST).json({});
             }
             if (language !== 'en-US' && language !== 'zh') {
-                return res.status(httpCodes.BAD_REQUEST).json([]);
+                return res.status(httpCodes.BAD_REQUEST).json({});
             }
             if (!process.env.OPENAI_API_KEY || !process.env.OPENAI_API_ORG) {
-                return res.status(httpCodes.INTERNAL_SERVER_ERROR).json([]);
+                return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
             }
 
             const languagePrompt = `The text should be in ${
@@ -49,21 +46,16 @@ export default async function handler(
                 prompt: `Generate an email subject line in under 60 characters, regarding a marketing campaign collaboration with our company ${brandName} and our product ${productName} which can be described as: ${productDescription}. ${languagePrompt}.`,
                 model: 'text-babbage-001',
                 max_tokens: 25,
-                n: 5,
+                n: 1,
                 stop: '',
                 temperature: 0.5,
             });
 
-            const filteredData: AIEmailSubjectGeneratorPostResult = [];
-            if (data.data && data.data.choices) {
-                data.data.choices.forEach((choice) => {
-                    const { text } = choice;
-                    if (text && text.length > 0) {
-                        filteredData.push(text);
-                    }
-                });
+            let filteredData: AIEmailSubjectGeneratorPostResult = { text: '' };
+            if (data.data && data.data.choices && data.data.choices[0].text !== undefined) {
+                filteredData = { text: data.data.choices[0].text };
             } else {
-                return res.status(httpCodes.INTERNAL_SERVER_ERROR).json([]);
+                return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
             }
 
             const result: AIEmailSubjectGeneratorPostResult = filteredData;
@@ -71,7 +63,7 @@ export default async function handler(
             return res.status(httpCodes.OK).json(result);
         } catch (error) {
             serverLogger(error, 'error');
-            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json([]);
+            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
         }
     }
     return res.status(httpCodes.METHOD_NOT_ALLOWED).json([]);

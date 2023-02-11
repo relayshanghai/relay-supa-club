@@ -34,7 +34,6 @@ const AIImageGenerator = () => {
     const [generatedEmail, setGeneratedEmail] = useState('');
     const [generatedSubject, setGeneratedSubject] = useState('');
     const [loadingSubject, setLoadingSubject] = useState(false);
-    // const [currentSubjectIndex, setCurrentSubjectIndex] = useState(0);
 
     useEffect(() => {
         setBrandName(company?.name || '');
