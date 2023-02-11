@@ -8,7 +8,7 @@ import { Button } from 'src/components/button';
 import { nextFetch } from 'src/utils/fetcher';
 import { useCallback, useEffect, useState } from 'react';
 import { Input } from 'src/components/input';
-import { Layout } from 'src/modules/layout';
+import { Layout } from 'src/components/layout';
 import { t } from 'i18next';
 import { toast } from 'react-hot-toast';
 import { clientLogger } from 'src/utils/logger';
