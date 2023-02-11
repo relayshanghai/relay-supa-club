@@ -38,8 +38,8 @@ const aiEmailGenerator = {
             generatedEmail: 'Generated Email',
             copyEmailButton: 'Copy Email',
             copySubjectButton: 'Copy Subject',
-            regenerateEmail: 'Regenerate Email',
-            regenerateSubject: 'Regenerate Subject',
+            regenerateEmail: 'Generate New Email',
+            regenerateSubject: 'Generate New Subject',
         },
         error: {
             maxLength: 'Maximum length reached',

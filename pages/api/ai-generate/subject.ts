@@ -39,13 +39,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             const languagePrompt = `The text should be in ${
                 language === 'zh' ? 'Simplified Mandarin Chinese' : 'English language'
-            }
-`;
+            }`;
+
+            const prompt = `Generate an email subject line for an influencer, regarding a marketing campaign collaboration with our company ${brandName} and our product ${productName} which can be described as: ${productDescription}. The subject line should be attention catching and mention about marketing collaboration. ${languagePrompt}.`;
 
             const data = await openai.createCompletion({
-                prompt: `Generate an email subject line in under 60 characters, regarding a marketing campaign collaboration with our company ${brandName} and our product ${productName} which can be described as: ${productDescription}. ${languagePrompt}.`,
+                prompt,
                 model: 'text-babbage-001',
-                max_tokens: 25,
+                max_tokens: 50,
                 n: 1,
                 stop: '',
                 temperature: 0.5,

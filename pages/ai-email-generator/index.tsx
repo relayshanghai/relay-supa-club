@@ -164,7 +164,6 @@ const AIImageGenerator = () => {
                     <form className="flex flex-col h-full items-center justify-start w-full md:w-1/3">
                         <label className="flex flex-col text-xs text-gray-500 font-bold w-full">
                             <div>{t('aiEmailGenerator.form.label.language') || ''}</div>
-
                             <select
                                 value={language}
                                 onChange={(e) => setLanguage(e.target.value as 'en-US' | 'zh')}
