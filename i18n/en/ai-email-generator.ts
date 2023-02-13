@@ -13,7 +13,7 @@ const aiEmailGenerator = {
         loading: 'Loading...',
         requestError: 'Oops, please check your data and try again.',
         generatedSuccessfully: 'Generated successfully',
-        generating: 'Generating...',
+        generating: 'Generating. May take up to 30 seconds...',
     },
     form: {
         placeholder: {

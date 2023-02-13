@@ -24,6 +24,17 @@ import {
     InboxArrowDownIcon,
 } from '@heroicons/react/24/solid';
 
+const MAX_CHARACTER_LENGTH = 600;
+
+const removeLeadingSpace = (text: string) => {
+    return text.replace(/^\s+/, '');
+};
+
+const languageOptions = [
+    { value: 'en-US', label: 'English' },
+    { value: 'zh', label: '中文' },
+];
+
 const AIImageGenerator = () => {
     const { profile } = useUser();
     const { company } = useCompany();
@@ -45,13 +56,6 @@ const AIImageGenerator = () => {
         setSenderName(profile?.first_name || '');
     }, [profile, company]);
 
-    const MAX_CHARACTER_LENGTH = 600;
-
-    // Remove leading space
-    const removeLeadingSpace = (text: string) => {
-        return text.replace(/^\s+/, '');
-    };
-
     const generateSubject = useCallback(async () => {
         setLoadingSubject(true);
         const body: AIEmailSubjectGeneratorPostBody = {
@@ -63,7 +67,7 @@ const AIImageGenerator = () => {
         };
         const res = await nextFetch<AIEmailSubjectGeneratorPostResult>('ai-generate/subject', {
             method: 'post',
-            body: JSON.stringify(body),
+            body,
         });
 
         if (!res.text) {
@@ -91,7 +95,7 @@ const AIImageGenerator = () => {
             'ai-generate/email',
             {
                 method: 'post',
-                body: JSON.stringify(body),
+                body,
             },
         );
 
@@ -142,29 +146,18 @@ const AIImageGenerator = () => {
         setLoadingSubject(false);
     };
 
-    const languageOptions = [
-        { value: 'en-US', label: 'English' },
-        { value: 'zh', label: '中文' },
-    ];
-
     return (
         <Layout>
             <div className="flex flex-col items-center p-6 w-full h-full">
-                {/* HEADING */}
                 <div className="flex flex-col items-center">
-                    {/* TITLE */}
                     <h1 className="text-2xl font-bold mb-4">
                         {t('aiEmailGenerator.index.title') || ''}
                     </h1>
-                    {/* DESCRIPTION */}
                     <p className="text-sm mb-4">{t('aiEmailGenerator.index.description') || ''}</p>
                 </div>
 
-                {/* CONTENT */}
                 <div className="flex flex-col lg:flex-row lg:items-start items-center justify-center gap-10 mt-10 w-full lg:h-full">
-                    {/* INPUT FORM SECTION */}
                     <form className="flex flex-col h-full items-center justify-start w-full md:w-1/3">
-                        {/* LANGUAGE SELECTION */}
                         <label className="flex flex-col text-xs text-gray-500 font-bold w-full">
                             <div>{t('aiEmailGenerator.form.label.language') || ''}</div>
                             <select
@@ -180,7 +173,6 @@ const AIImageGenerator = () => {
                             </select>
                         </label>
 
-                        {/* PRODUCT NAME */}
                         <Input
                             label={t('aiEmailGenerator.form.label.brandName') || ''}
                             placeholder={t('aiEmailGenerator.form.placeholder.brandName') || ''}
@@ -189,7 +181,6 @@ const AIImageGenerator = () => {
                             required
                         />
 
-                        {/* SENDER NAME */}
                         <Input
                             label={t('aiEmailGenerator.form.label.senderName') || ''}
                             placeholder={t('aiEmailGenerator.form.placeholder.senderName') || ''}
@@ -198,7 +189,6 @@ const AIImageGenerator = () => {
                             required
                         />
 
-                        {/* INFLUENCER NAME */}
                         <Input
                             label={t('aiEmailGenerator.form.label.influencerName') || ''}
                             placeholder={
@@ -209,7 +199,6 @@ const AIImageGenerator = () => {
                             required
                         />
 
-                        {/* PRODUCT NAME */}
                         <Input
                             label={t('aiEmailGenerator.form.label.productName') || ''}
                             placeholder={t('aiEmailGenerator.form.placeholder.productName') || ''}
@@ -218,7 +207,6 @@ const AIImageGenerator = () => {
                             required
                         />
 
-                        {/* PRODUCT DESCRIPTION */}
                         <InputTextArea
                             label={t('aiEmailGenerator.form.label.productDescription') || ''}
                             placeholder={t('campaigns.creatorModal.messagePlaceholder') || ''}
@@ -233,7 +221,6 @@ const AIImageGenerator = () => {
                             required
                         />
 
-                        {/* INSTRUCTIONS */}
                         <InputTextArea
                             label={t('aiEmailGenerator.form.label.instructions') || ''}
                             placeholder={t('campaigns.creatorModal.messagePlaceholder') || ''}
@@ -247,7 +234,6 @@ const AIImageGenerator = () => {
                             }}
                         />
 
-                        {/* GENERATE BUTTON */}
                         <div className="flex flex-row gap-2 items-center">
                             <Button
                                 disabled={loadingEmail || loadingSubject}
@@ -263,7 +249,6 @@ const AIImageGenerator = () => {
                         </div>
                     </form>
 
-                    {/* EMAIL AND SUBJECT SECTION */}
                     <div
                         className={`${
                             generatedEmail.length < 1 || generatedSubject.length < 1
@@ -271,9 +256,7 @@ const AIImageGenerator = () => {
                                 : 'opacity-100'
                         } flex transition-all duration-300 max-w-xl mb-10 flex-col items-center justify-start w-full md:w-2/3 gap-5 h-full`}
                     >
-                        {/* GENERATED SUBJECT SECTION */}
                         <div className="w-full flex flex-col items-center justify-center">
-                            {/* SUBJECT TEXTAREA */}
                             <InputTextArea
                                 label={t('aiEmailGenerator.form.label.subjectLine') || ''}
                                 value={generatedSubject}
@@ -282,9 +265,8 @@ const AIImageGenerator = () => {
                                 }}
                                 rows={3}
                             />
-                            {/* SUBJECT BUTTONS */}
+
                             <div className="flex flex-col gap-2 md:flex-row md:gap-5">
-                                {/* COPY SUBJECT BUTTON */}
                                 <Button
                                     onClick={() => copyToClipboard(generatedSubject)}
                                     disabled={loadingEmail || loadingSubject}
@@ -293,7 +275,7 @@ const AIImageGenerator = () => {
                                     <ClipboardDocumentCheckIcon className="w-4" />
                                     {t('aiEmailGenerator.form.label.copySubjectButton') || ''}
                                 </Button>
-                                {/* REGENERATE SUBJECT BUTTON */}
+
                                 <Button
                                     variant="secondary"
                                     className="flex items-center gap-2"
@@ -306,9 +288,7 @@ const AIImageGenerator = () => {
                             </div>
                         </div>
 
-                        {/* GENERATED EMAIL SECTION */}
                         <div className="w-full flex flex-col justify-center items-center h-full ">
-                            {/* EMAIL TEXTAREA */}
                             <label className="flex flex-col text-xs text-gray-500 font-bold h-full w-full">
                                 <div>{t('aiEmailGenerator.form.label.generatedEmail') || ''}</div>
                                 <textarea
@@ -319,9 +299,7 @@ const AIImageGenerator = () => {
                                     }}
                                 />
                             </label>
-                            {/* EMAIL BUTTONS */}
                             <div className="flex flex-col gap-2 md:flex-row md:gap-5">
-                                {/* COPY EMAIL BUTTON */}
                                 <Button
                                     onClick={() => copyToClipboard(generatedEmail)}
                                     className="flex items-center gap-2"
@@ -330,7 +308,6 @@ const AIImageGenerator = () => {
                                     <ClipboardDocumentCheckIcon className="w-4" />
                                     {t('aiEmailGenerator.form.label.copyEmailButton') || ''}
                                 </Button>
-                                {/* REGENERATE EMAIL BUTTON */}
                                 <Button
                                     variant="secondary"
                                     className="flex items-center gap-2"
