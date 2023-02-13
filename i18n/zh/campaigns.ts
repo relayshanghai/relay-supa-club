@@ -10,7 +10,7 @@ const campaigns = {
         createCampaign: '创建项目',
         noCampaigns: '您没有任何项目',
         noCampaignsAvailable: '哎呀！ 您没有可用的项目。',
-        clickCreate: '单击此处创建项目',
+        clickCreate: '单击此处创建项目。',
         searchPlaceholder: '搜索项目...',
     },
     modal: {
