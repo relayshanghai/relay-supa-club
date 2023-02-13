@@ -84,6 +84,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const result: AIEmailGeneratorPostResult = { text: data.data.choices[0].text };
             return res.status(httpCodes.OK).json(result);
         } else {
+            serverLogger('No data returned from OpenAI API' + JSON.stringify(data), 'error');
             return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
         }
     } catch (error) {
