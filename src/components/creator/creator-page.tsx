@@ -42,8 +42,8 @@ export const CreatorPage = ({
                 <title>{report?.user_profile.fullname || 'relay.club'}</title>
             </Head>
             <div className="flex flex-col">
-                {!report || loading || errorMessage.length > 0 ? (
-                    <CreatorSkeleton error={errorMessage.length > 0} errorMessage={errorMessage} />
+                {!report || loading || errorMessage?.length > 0 ? (
+                    <CreatorSkeleton error={errorMessage?.length > 0} errorMessage={errorMessage} />
                 ) : (
                     <>
                         <TitleSection
