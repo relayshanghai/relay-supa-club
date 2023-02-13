@@ -22,6 +22,8 @@ const configuration = new Configuration({
     apiKey: OPENAI_API_KEY,
 });
 
+const MAX_CHARACTER_LENGTH = 600;
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const openai = new OpenAIApi(configuration);
     if (req.method !== 'POST') {
@@ -49,6 +51,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         ) {
             return res.status(httpCodes.BAD_REQUEST).json({});
         }
+        if (
+            brandName.length > 100 ||
+            influencerName.length > 100 ||
+            productName.length > 100 ||
+            senderName.length > 100 ||
+            productDescription.length < MAX_CHARACTER_LENGTH ||
+            (instructions && instructions.length > 100)
+        ) {
+            return res.status(httpCodes.BAD_REQUEST).json({});
+        }
         if (language !== 'en-US' && language !== 'zh') {
             return res.status(httpCodes.BAD_REQUEST).json({});
         }
@@ -65,11 +77,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             : trimmedDescription;
 
         const instructionsPrompt = instructions
-            ? ' The email should include the following instructions for the receiver: ' +
+            ? 'The email should include the following instructions for the receiver: ' +
               instructions
             : '';
 
-        const prompt = `write an email starting with "Dear ${influencerName}", to receiver: ${influencerName}, from sender: ${senderName}, regarding the sender's brand "${brandName}", and the sender's product "${productName}". The email should ask the receiver if they will advertise and promote the sender's product on the receiver's social media platforms. ${productName} can be described as: "${trimDescriptionPunctuation}".  ${languagePrompt}. ${instructionsPrompt}`;
+        const prompt = `write an email starting with "Dear ${influencerName}", to receiver: ${influencerName}, from sender: ${senderName}, regarding the sender's brand "${brandName}", and the sender's product "${productName}". The email should ask the receiver if they will advertise and promote the sender's product on the receiver's social media platforms. ${productName} can be described as: "${trimDescriptionPunctuation}". ${languagePrompt}. ${instructionsPrompt}.`;
 
         const data = await openai.createCompletion({
             prompt,

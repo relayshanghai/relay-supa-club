@@ -130,11 +130,11 @@ const AIImageGenerator = () => {
                 await generateSubject();
             }
             toast.dismiss(loadingToast);
-            toast.success(t('aiEmailGenerator.index.generatedSuccessfully') || '');
+            toast.success(t('aiEmailGenerator.index.status.generatedSuccessfully') || '');
         } catch (e: any) {
             clientLogger(e, 'error');
             toast.dismiss(loadingToast);
-            toast.error(t('aiEmailGenerator.index.requestError') || '');
+            toast.error(t('aiEmailGenerator.index.status.requestError') || '');
             resetFields();
         }
     };
@@ -243,7 +243,7 @@ const AIImageGenerator = () => {
                             >
                                 <InboxArrowDownIcon className="w-5 h-5 mr-2" />
                                 {loadingEmail
-                                    ? t('aiEmailGenerator.index.loading')
+                                    ? t('aiEmailGenerator.index.status.loading')
                                     : t('aiEmailGenerator.index.generateEmail') || ''}
                             </Button>
                         </div>

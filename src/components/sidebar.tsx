@@ -104,9 +104,6 @@ export const Sidebar = ({
                 }`}
                 onClick={() => setOpen(false)}
             />
-            
-            
-
             <div
                 className={`fixed inset-y-0 left-0 w-64 bg-white border-r border-gray-100 transition-all transform z-50 ${
                     open ? 'translate-x-0' : '-translate-x-full'
