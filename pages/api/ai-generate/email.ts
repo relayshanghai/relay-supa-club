@@ -56,8 +56,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             influencerName.length > 100 ||
             productName.length > 100 ||
             senderName.length > 100 ||
-            productDescription.length < MAX_CHARACTER_LENGTH ||
-            (instructions && instructions.length > 100)
+            productDescription.length > MAX_CHARACTER_LENGTH ||
+            (instructions && instructions.length > MAX_CHARACTER_LENGTH)
         ) {
             return res.status(httpCodes.BAD_REQUEST).json({});
         }
@@ -68,20 +68,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
         }
 
-        const languagePrompt = `The email should be in ${
-            language === 'zh' ? 'Simplified Mandarin Chinese,' : 'American English language'
+        const languagePrompt = `${
+            language === 'zh' ? 'Simplified Mandarin Chinese,' : 'American English'
         }`;
         const trimmedDescription = productDescription.trim();
         const trimDescriptionPunctuation = trimmedDescription.endsWith('.')
             ? trimmedDescription.slice(0, trimmedDescription.length - 1)
             : trimmedDescription;
 
-        const instructionsPrompt = instructions
-            ? 'The email should include the following instructions for the receiver: ' +
-              instructions
-            : '';
+        const prompt = `Generate an email inviting an influencer to collaborate on a product marketing campaign. The email is sent by an employee of the company and includes details about the product and instructions for the collaboration. It should also include a conclusion and call to action. The email should be written in ${languagePrompt}.
 
-        const prompt = `write an email starting with "Dear ${influencerName}", to receiver: ${influencerName}, from sender: ${senderName}, regarding the sender's brand "${brandName}", and the sender's product "${productName}". The email should ask the receiver if they will advertise and promote the sender's product on the receiver's social media platforms. ${productName} can be described as: "${trimDescriptionPunctuation}". ${languagePrompt}. ${instructionsPrompt}.`;
+        Inputs: brandName: ${brandName} ${
+            instructions && ', instructions: ' + instructions
+        }, influencerName: ${influencerName}, productDescription: ${trimDescriptionPunctuation}, productName: ${productName}, senderName: ${senderName}.`;
 
         const data = await openai.createCompletion({
             prompt,

@@ -119,7 +119,7 @@ const AIImageGenerator = () => {
 
     const handleSubmit = async (e: any, type: 'subject' | 'email' | 'both') => {
         e.preventDefault();
-        const loadingToast = toast.loading(t('aiEmailGenerator.index.generating') || '');
+        const loadingToast = toast.loading(t('aiEmailGenerator.index.status.generating') || '');
         try {
             if (type === 'email') {
                 await generateEmail();
