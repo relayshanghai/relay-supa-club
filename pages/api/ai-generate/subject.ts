@@ -40,7 +40,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
 
         const languagePrompt = `The text should be in ${
-            language === 'zh' ? 'Simplified Mandarin Chinese' : 'English language'
+            language === 'zh' ? 'Simplified Mandarin Chinese' : 'American English language'
         }`;
 
         const prompt = `Generate an email subject line for an influencer, regarding a marketing campaign collaboration with our company ${brandName} and our product ${productName} which can be described as: ${productDescription}. The subject line should be attention grabbing and mention a marketing collaboration. ${languagePrompt}.`;
@@ -60,7 +60,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             };
             return res.status(httpCodes.OK).json(result);
         } else {
-            serverLogger('No data returned from OpenAI API' + JSON.stringify(data), 'error');
+            serverLogger('No data returned from OpenAI API: ' + JSON.stringify(data), 'error');
             return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
         }
     } catch (error) {

@@ -57,7 +57,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
 
         const languagePrompt = `The email should be in ${
-            language === 'zh' ? 'Simplified Mandarin Chinese,' : 'English language'
+            language === 'zh' ? 'Simplified Mandarin Chinese,' : 'American English language'
         }`;
         const trimmedDescription = productDescription.trim();
         const trimDescriptionPunctuation = trimmedDescription.endsWith('.')
@@ -84,7 +84,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const result: AIEmailGeneratorPostResult = { text: data.data.choices[0].text };
             return res.status(httpCodes.OK).json(result);
         } else {
-            serverLogger('No data returned from OpenAI API' + JSON.stringify(data), 'error');
+            serverLogger('No data returned from OpenAI API: ' + JSON.stringify(data), 'error');
             return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
         }
     } catch (error) {
