@@ -178,7 +178,7 @@ const campaigns = {
     },
     form: {
         createCampaign: '创建项目',
-        editCampaign: '保存项目',
+        saveCampaign: '保存项目',
         cancel: '取消',
         selectClientQuestion: '选择客户',
         selectClientDescription: '如果您要为客户设置广告项目，请从右侧选择客户',
