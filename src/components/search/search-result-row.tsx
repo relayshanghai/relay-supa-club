@@ -49,7 +49,7 @@ export const SearchResultRow = ({
                         <Link
                             href={`/influencer/${platform}/${creator.account.user_profile.user_id}`}
                         >
-                            <a>{t('creators.analyzeProfile')}</a>
+                            <a target="_blank">{t('creators.analyzeProfile')}</a>
                         </Link>
                     </Button>
 
