@@ -35,7 +35,7 @@ export function isValidUrl(url: string) {
 
 export const chinaFilter = (str: string) => {
     if (!str) return 'N/A';
-    const filteredLocations = ['taiwan', 'hong kong'];
+    const filteredLocations = ['taiwan', 'hong kong', 'Taiwan'];
     if (filteredLocations.includes(str.toLowerCase())) return `China (${str})`;
     return str;
 };

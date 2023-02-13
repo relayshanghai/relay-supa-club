@@ -3,6 +3,7 @@ import { AdjustmentsVerticalIcon } from '@heroicons/react/24/solid';
 import { useTranslation } from 'react-i18next';
 import { useSearch } from 'src/hooks/use-search';
 import { formatter } from 'src/utils/formatter';
+import { chinaFilter } from 'src/utils/utils';
 import { Button } from '../button';
 import { SearchTopics } from './search-topics';
 
@@ -48,7 +49,7 @@ export const SearchOptions = ({
 
     return (
         <>
-            <div className="py-4 w-full">
+            <div className="py-4 w-full font-light">
                 <SearchTopics
                     path="/api/influencer-search/topics"
                     placeholder={t('creators.searchTopic')}
@@ -131,7 +132,7 @@ export const SearchOptions = ({
                                 key={item.id}
                                 onClick={onClick}
                             >
-                                {item.value || item.title}
+                                {item.value || chinaFilter(item.title)}
                                 <select
                                     value={selected.weight}
                                     className="ml-2 bg-primary-200 rounded-md"

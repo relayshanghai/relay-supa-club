@@ -1,5 +1,6 @@
 import { forwardRef, useState } from 'react';
 import { InputWithTags } from 'src/components/input-with-tags';
+import { chinaFilter } from 'src/utils/utils';
 export interface Props {
     disabled?: boolean;
     onChange: (value: string) => void;
@@ -30,7 +31,7 @@ const InputWithAutocomplete = forwardRef<HTMLDivElement, Props>(
     ) => {
         const [value, setValue] = useState('');
         return (
-            <div className="flex flex-col w-full" ref={ref}>
+            <div className="flex flex-col w-full " ref={ref}>
                 <InputWithTags
                     disabled={disabled}
                     tags={tags}
@@ -69,7 +70,7 @@ const InputWithAutocomplete = forwardRef<HTMLDivElement, Props>(
                                             setValue('');
                                         }}
                                     >
-                                        {item.value || item.title}
+                                        {item.value || chinaFilter(item.title)}
                                     </div>
                                 );
                             })}
