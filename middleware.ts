@@ -205,8 +205,8 @@ export const config = {
          * - assets/* (assets files) (public/assets/*)
          * - accept invite (accept invite api). User hasn't logged in yet
          * - create-employee endpoint (api/company/create-employee)
-         * - logout page logout
+         * - login, signup, logout (login, signup, logout pages)
          */
-        '/((?!_next/static|_next/image|favicon.ico|assets/*|api/company/accept-invite*|api/company/create-employee*|logout/*|login|signup|api/logout).*)',
+        '/((?!_next/static|_next/image|favicon.ico|assets/*|api/company/accept-invite*|api/company/create-employee*|login|signup|logout|api/logout).*)',
     ],
 };
