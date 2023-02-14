@@ -59,6 +59,15 @@ const checkOnboardingStatus = async (
         }
         return res;
     }
+    // special case where we require a signed in user to view their profile, but we don't want to redirect them to onboarding cause this happens before they are onboarded
+    if (req.nextUrl.pathname === '/api/profiles') {
+        // print req queries
+        const id = new URL(req.url).searchParams.get('id');
+        if (!id || id !== session.user.id) {
+            return NextResponse.json({ error: 'user is unauthorized for this action' });
+        }
+        return res;
+    }
     const { subscriptionStatus, subscriptionEndDate } = await getCompanySubscriptionStatus(
         supabase,
         session.user.id,
