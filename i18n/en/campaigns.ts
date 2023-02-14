@@ -184,7 +184,7 @@ const campaigns = {
     },
     form: {
         createCampaign: 'Create Campaign',
-        editCampaign: 'Edit Campaign',
+        saveCampaign: 'Save Campaign',
         cancel: 'Cancel',
         selectClientQuestion: 'Select a client',
         selectClientDescription:

@@ -30,6 +30,7 @@ export const useCampaigns = ({
         data: campaigns,
         mutate: refreshCampaign,
         isValidating,
+        isLoading,
     } = useSWR(companyId ? 'campaigns' : null, (path) =>
         nextFetchWithQueries<CampaignsIndexGetQuery, CampaignsIndexGetResult>(path, {
             id: companyId ?? '',
@@ -136,7 +137,9 @@ export const useCampaigns = ({
         createCampaign,
         updateCampaign,
         campaign,
-        loading: loading || isValidating,
+        loading,
+        isValidating,
+        isLoading,
         campaignCreators,
         addCreatorToCampaign,
         deleteCreatorInCampaign,

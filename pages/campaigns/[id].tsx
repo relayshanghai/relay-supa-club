@@ -89,12 +89,6 @@ export default function CampaignShow() {
         }
     }, [currentCampaign, supabase]);
 
-    // editable table inputs:
-    //1. when click on edit icon / input, it should be editable
-    //1.1 when click the input, should be able to switch to an editable input field with save and cancel icons
-    //1.2 on click save, save the changed value and call updateCreator API
-    //1.3 on click cancel, cancel the changed value and revert back to the original value
-
     return (
         <Layout>
             {/* -- Campaign banner starts here -- */}

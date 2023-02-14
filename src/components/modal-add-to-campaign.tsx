@@ -1,4 +1,5 @@
 import { t } from 'i18next';
+import Link from 'next/link';
 import { useCampaigns } from 'src/hooks/use-campaigns';
 import { CreatorPlatform, CreatorUserProfile } from 'types';
 import CampaignModalCard from './campaigns/campaign-modal-card';
@@ -25,11 +26,11 @@ export const AddToCampaignModal = ({
             visible={!!show}
             onClose={() => setShow(false)}
         >
-            <>
-                <div className="py-4 text-sm text-tertiary-800">
-                    {t('campaigns.modal.addThisInfluencer')}
-                </div>
-                {campaigns?.length ? (
+            {campaigns?.length ? (
+                <>
+                    <div className="py-4 text-sm text-tertiary-800">
+                        {t('campaigns.modal.addThisInfluencer')}
+                    </div>
                     <div>
                         {campaigns.map((campaign, index) => (
                             <CampaignModalCard
@@ -40,10 +41,15 @@ export const AddToCampaignModal = ({
                             />
                         ))}
                     </div>
-                ) : (
-                    <div className="text-sm text-gray-600">{t('campaigns.modal.noCampaigns')}</div>
-                )}
-            </>
+                </>
+            ) : (
+                <div className="text-sm text-gray-600 h-full">
+                    {t('campaigns.index.noCampaignsAvailable')}
+                    <div className="text-primary-500 hover:text-primary-700 duration-300 cursor-pointer">
+                        <Link href="/campaigns/form">{t('campaigns.index.clickCreate')}</Link>
+                    </div>
+                </div>
+            )}
         </Modal>
     );
 };
