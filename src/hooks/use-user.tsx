@@ -5,7 +5,12 @@ import type {
     CreateEmployeePostBody,
     CreateEmployeePostResponse,
 } from 'pages/api/company/create-employee';
-import type { ProfilePutBody, ProfilePutResponse } from 'pages/api/profiles';
+import type {
+    ProfileGetQuery,
+    ProfileGetResponse,
+    ProfilePutBody,
+    ProfilePutResponse,
+} from 'pages/api/profiles';
 import {
     createContext,
     PropsWithChildren,
@@ -14,11 +19,13 @@ import {
     useEffect,
     useState,
 } from 'react';
+import useSWR from 'swr';
 
 import type { ProfileDB } from 'src/utils/api/db/types';
-import { nextFetch } from 'src/utils/fetcher';
+import { nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger';
 import type { DatabaseWithCustomTypes } from 'types';
+import { useRouter } from 'next/router';
 
 export type SignupData = {
     email: string;
@@ -31,7 +38,7 @@ export type SignupData = {
 
 const ctx = createContext<{
     user: User | null;
-    profile: ProfileDB | null;
+    profile: ProfileDB | undefined;
     loading: boolean;
     login: (
         email: string,
@@ -50,7 +57,7 @@ const ctx = createContext<{
     refreshProfile: () => void;
 }>({
     user: null,
-    profile: null,
+    profile: undefined,
     loading: true,
     login: async () => ({
         user: null,
@@ -69,7 +76,7 @@ const ctx = createContext<{
 export const useUser = () => useContext(ctx);
 
 export const UserProvider = ({ children }: PropsWithChildren) => {
-    const [profile, setProfile] = useState<ProfileDB | null>(null);
+    const router = useRouter();
     const { isLoading, session } = useSessionContext();
     const supabaseClient = useSupabaseClient<DatabaseWithCustomTypes>();
 
@@ -77,33 +84,14 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
     useEffect(() => {
         setLoading(isLoading);
     }, [isLoading]);
-    const getProfile = useCallback(
-        async function () {
-            try {
-                setLoading(true);
 
-                const { data, error } = await supabaseClient
-                    .from('profiles')
-                    .select(`*`)
-                    .eq('id', session?.user?.id)
-                    .single();
-                if (error) throw error;
-
-                setProfile(data);
-            } catch (error: any) {
-                clientLogger(error, 'error');
-            } finally {
-                setLoading(false);
-            }
-        },
-        [supabaseClient, session?.user?.id],
+    const { data: profile, mutate: refreshProfile } = useSWR(
+        session?.user.id ? 'profiles' : null,
+        (path) =>
+            nextFetchWithQueries<ProfileGetQuery, ProfileGetResponse>(path, {
+                id: session?.user.id ?? '',
+            }),
     );
-
-    useEffect(() => {
-        if (session?.user?.id) {
-            getProfile();
-        }
-    }, [session, getProfile]);
 
     const login = async (email: string, password: string) => {
         setLoading(true);
@@ -155,13 +143,14 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
     };
 
     const updateProfile = useCallback(
-        async (body: Omit<ProfilePutBody, 'id'>) => {
+        async (updateData: Omit<ProfilePutBody, 'id'>) => {
             setLoading(true);
             try {
                 if (!session?.user?.id) throw new Error('User not found');
+                const body: ProfilePutBody = { ...updateData, id: session.user.id };
                 return await nextFetch<ProfilePutResponse>('profiles', {
                     method: 'PUT',
-                    body: { id: session.user?.id, ...body },
+                    body,
                 });
             } catch (e: unknown) {
                 clientLogger(e, 'error');
@@ -175,8 +164,10 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
         [session?.user],
     );
     const logout = async () => {
+        const email = session?.user?.email;
+        await refreshProfile(undefined);
         await supabaseClient.auth.signOut();
-        setProfile(null);
+        router.push(email ? `/logout/${encodeURIComponent(email)}` : '/logout');
     };
 
     return (
@@ -189,7 +180,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
                 loading,
                 profile,
                 updateProfile,
-                refreshProfile: getProfile,
+                refreshProfile,
                 logout,
             }}
         >

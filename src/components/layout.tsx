@@ -8,18 +8,15 @@ import { Sidebar } from 'src/components/sidebar';
 
 import { useUser } from 'src/hooks/use-user';
 import useOnOutsideClick from 'src/hooks/use-on-outside-click';
-import { useSupabaseClient } from '@supabase/auth-helpers-react';
 
 export const Layout = ({ children }: any) => {
     const { t } = useTranslation();
-    const { profile, loading, refreshProfile } = useUser();
+    const { profile, loading, refreshProfile, logout } = useUser();
 
     useEffect(() => {
         // this fixes a bug where the profile is not loaded on the first page load when coming from signup
         if (!loading && !profile?.id) refreshProfile();
     }, [refreshProfile, profile, loading]);
-
-    const supabase = useSupabaseClient();
 
     const [accountMenuOpen, setAccountMenuOpen] = useState(false);
     const accountMenuRef = useRef(null);
@@ -75,11 +72,7 @@ export const Layout = ({ children }: any) => {
                                                 <Button
                                                     className="px-4 py-2 text-sm hover:bg-gray-100 active:bg-gray-200"
                                                     variant="neutral"
-                                                    onClick={async () => {
-                                                        await supabase.auth.signOut();
-                                                        // need to trigger a page reload to get the new auth state, so don't use router.push
-                                                        window.location.href = '/signup';
-                                                    }}
+                                                    onClick={logout}
                                                 >
                                                     {t('navbar.logout')}
                                                 </Button>
