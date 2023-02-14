@@ -18,7 +18,7 @@ export const PersonalDetails = () => {
         lastName: '',
         email: '',
     });
-    const { userDataLoading, profile, user, updateProfile, refreshProfile } =
+    const { userDataLoading, profile, user, updateProfile, refreshProfile, refreshCompany } =
         useContext(AccountContext);
 
     const [editMode, setEditMode] = useState(false);
@@ -43,6 +43,7 @@ export const PersonalDetails = () => {
                 email: email,
             });
             refreshProfile();
+            refreshCompany();
             toast.success(t('account.personal.profileUpdated'));
             setEditMode(false);
         } catch (e) {
