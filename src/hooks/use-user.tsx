@@ -1,5 +1,5 @@
 import { useSessionContext, useSupabaseClient } from '@supabase/auth-helpers-react';
-import type { Session, User } from '@supabase/supabase-js';
+import type { Session, SupabaseClient, User } from '@supabase/supabase-js';
 
 import type {
     CreateEmployeePostBody,
@@ -13,19 +13,20 @@ import type {
 } from 'pages/api/profiles';
 import {
     createContext,
+    MutableRefObject,
     PropsWithChildren,
     useCallback,
     useContext,
     useEffect,
+    useRef,
     useState,
 } from 'react';
-import useSWR from 'swr';
+import useSWR, { KeyedMutator } from 'swr';
 
 import type { ProfileDB } from 'src/utils/api/db/types';
 import { nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger';
 import type { DatabaseWithCustomTypes } from 'types';
-import { useRouter } from 'next/router';
 
 export type SignupData = {
     email: string;
@@ -54,7 +55,9 @@ const ctx = createContext<{
     createEmployee: (email: string) => Promise<CreateEmployeePostResponse | null>;
     logout: () => void;
     updateProfile: (updates: Omit<ProfilePutBody, 'id'>) => void;
-    refreshProfile: () => void;
+    refreshProfile: KeyedMutator<ProfileGetResponse> | (() => void);
+    supabaseClient: SupabaseClient<DatabaseWithCustomTypes> | null;
+    getProfileController: MutableRefObject<AbortController | null | undefined>;
 }>({
     user: null,
     profile: undefined,
@@ -71,15 +74,16 @@ const ctx = createContext<{
     }),
     updateProfile: () => null,
     refreshProfile: () => null,
+    supabaseClient: null,
+    getProfileController: { current: null },
 });
 
 export const useUser = () => useContext(ctx);
 
 export const UserProvider = ({ children }: PropsWithChildren) => {
-    const router = useRouter();
     const { isLoading, session } = useSessionContext();
     const supabaseClient = useSupabaseClient<DatabaseWithCustomTypes>();
-
+    const getProfileController = useRef<AbortController | null>();
     const [loading, setLoading] = useState<boolean>(true);
     useEffect(() => {
         setLoading(isLoading);
@@ -87,10 +91,21 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
 
     const { data: profile, mutate: refreshProfile } = useSWR(
         session?.user.id ? 'profiles' : null,
-        (path) =>
-            nextFetchWithQueries<ProfileGetQuery, ProfileGetResponse>(path, {
-                id: session?.user.id ?? '',
-            }),
+        async (path) => {
+            if (getProfileController.current) {
+                getProfileController.current.abort();
+            }
+            const controller = new AbortController();
+            getProfileController.current = controller;
+
+            return await nextFetchWithQueries<ProfileGetQuery, ProfileGetResponse>(
+                path,
+                {
+                    id: session?.user.id ?? '',
+                },
+                { signal: controller.signal },
+            );
+        },
     );
 
     const login = async (email: string, password: string) => {
@@ -165,9 +180,8 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
     );
     const logout = async () => {
         const email = session?.user?.email;
-        await refreshProfile(undefined);
-        await supabaseClient.auth.signOut();
-        router.push(email ? `/logout/${encodeURIComponent(email)}` : '/logout');
+        // cannot use router.push() here because it won't cancel in-flight requests which wil re-set the cookie
+        window.location.href = email ? `/logout?email=${encodeURIComponent(email)}` : '/logout';
     };
 
     return (
@@ -182,6 +196,8 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
                 updateProfile,
                 refreshProfile,
                 logout,
+                supabaseClient,
+                getProfileController,
             }}
         >
             {children}

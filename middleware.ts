@@ -184,10 +184,6 @@ export async function middleware(req: NextRequest) {
     if (req.nextUrl.pathname.includes('api'))
         return NextResponse.json({ error: 'unauthorized to use endpoint' });
 
-    // if already on signup or login page, just return the page
-    if (req.nextUrl.pathname.includes('signup') || req.nextUrl.pathname.includes('login'))
-        return res;
-
     const redirectUrl = req.nextUrl.clone();
 
     // unauthenticated pages requests, send to signup
@@ -208,6 +204,6 @@ export const config = {
          * - create-employee endpoint (api/company/create-employee)
          * - logout page logout
          */
-        '/((?!_next/static|_next/image|favicon.ico|assets/*|api/company/accept-invite*|api/company/create-employee*|logout/*).*)',
+        '/((?!_next/static|_next/image|favicon.ico|assets/*|api/company/accept-invite*|api/company/create-employee*|logout/*|login|signup|api/logout).*)',
     ],
 };
