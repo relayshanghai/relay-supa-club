@@ -3,7 +3,6 @@ import { AdjustmentsVerticalIcon } from '@heroicons/react/24/solid';
 import { useTranslation } from 'react-i18next';
 import { useSearch } from 'src/hooks/use-search';
 import { formatter } from 'src/utils/formatter';
-import { chinaFilter } from 'src/utils/utils';
 import { Button } from '../button';
 import { SearchTopics } from './search-topics';
 
@@ -132,7 +131,7 @@ export const SearchOptions = ({
                                 key={item.id}
                                 onClick={onClick}
                             >
-                                {item.value || chinaFilter(item.title)}
+                                {item.value || item.title}
                                 <select
                                     value={selected.weight}
                                     className="ml-2 bg-primary-200 rounded-md"

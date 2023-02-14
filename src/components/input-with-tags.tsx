@@ -1,5 +1,4 @@
 import { DetailedHTMLProps, InputHTMLAttributes } from 'react';
-import { chinaFilter } from 'src/utils/utils';
 
 export interface Props
     extends DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> {
@@ -36,7 +35,7 @@ export const InputWithTags = ({
                                       key={i}
                                       onClick={() => onTagRemove(item)}
                                   >
-                                      {item.value || chinaFilter(item.title)}
+                                      {item.value || item.title}
                                       <p className="ml-2 text-gray-400 whitespace-nowrap cursor-pointer">
                                           x
                                       </p>
