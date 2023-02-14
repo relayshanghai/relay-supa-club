@@ -20,7 +20,7 @@ export const CreatorOverview = ({ report }: { report: CreatorReport }) => {
     const [showMoreSimilar, setShowMoreSimilar] = useState(false);
 
     const similarCreators =
-        report.user_profile.similar_users && report.user_profile.similar_users.length > 0
+        report.user_profile.similar_users && report.user_profile.similar_users?.length > 0
             ? showMoreSimilar
                 ? report.user_profile.similar_users
                 : report.user_profile.similar_users.slice(0, 5)
@@ -45,7 +45,7 @@ export const CreatorOverview = ({ report }: { report: CreatorReport }) => {
                 </div>
 
                 {/* contacts */}
-                {report.user_profile.contacts.length > 0 && (
+                {report.user_profile.contacts?.length > 0 && (
                     <div className="py-6">
                         <h2 className={`${titleClass} px-6`}>{t('creators.show.socialLinks')} </h2>
                         <div className="flex flex-wrap">
@@ -85,7 +85,7 @@ export const CreatorOverview = ({ report }: { report: CreatorReport }) => {
             </div>
 
             {/* similar */}
-            {similarCreators.length > 0 && (
+            {similarCreators?.length > 0 && (
                 <div className="p-6 lg:w-1/2 flex flex-col">
                     <h2 className={titleClass}>{t('creators.show.similarInfluencers')}</h2>
                     <div>
