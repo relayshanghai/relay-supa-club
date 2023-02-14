@@ -35,6 +35,18 @@ export const SearchResultRow = ({
         if (creator) setSelectedCreator(creator);
     };
 
+    // current image proxy is not working for instagram profiles, this is a temporary fix to show the original profile pic url for instagram, but still use the proxy for other platforms.
+    // we are considering to setup a new proxy in the future or gain access to the current one. TODO: Ticket V2-44
+    const profilePicUrl = () => {
+        let url = '';
+        if (platform === 'instagram') {
+            url = creator.account.user_profile.picture;
+        } else {
+            url = `https://image-cache.brainchild-tech.cn/?link=${creator.account.user_profile.picture}`;
+        }
+        return url;
+    };
+
     return (
         <tr className={`relative group duration-1 hover:bg-primary-100`}>
             <td className="invisible absolute flex right-28 -top-3 group-hover:visible">
@@ -66,11 +78,7 @@ export const SearchResultRow = ({
             </td>
 
             <td className="py-2 px-4 flex flex-row items-center space-x-2 min-w-min">
-                <img
-                    src={`https://image-cache.brainchild-tech.cn/?link=${creator.account.user_profile.picture}`}
-                    className="w-12 h-12"
-                    alt={handle}
-                />
+                <img src={profilePicUrl()} className="w-12 h-12" alt={handle} />
                 <div>
                     <div className="font-bold line-clamp-2">
                         {creator.account.user_profile.fullname}

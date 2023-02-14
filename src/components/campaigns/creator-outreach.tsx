@@ -130,6 +130,19 @@ export default function CreatorsOutreach({
     const editingModeTrue = (index: number, key: string) =>
         index === toEdit?.index && key === toEdit?.key;
 
+    // current image proxy is not working for instagram profiles, this is a temporary fix to show the original profile pic url for instagram, but still use the proxy for other platforms.
+    // we are considering to setup a new proxy in the future or gain access to the current one. TODO: Ticket V2-44
+    const profilePicUrl = (creator: CampaignCreatorDB) => {
+        if (!creator.avatar_url) return;
+        let url;
+        if (creator.platform === 'instagram') {
+            url = creator.avatar_url;
+        } else {
+            url = `https://image-cache.brainchild-tech.cn/?link=${creator.avatar_url}`;
+        }
+        return url;
+    };
+
     return (
         <div>
             {/* Outreach Tabs */}
@@ -195,7 +208,7 @@ export default function CreatorsOutreach({
                                                 <div className="relative flex-shrink-0 h-10 w-10 rounded-full bg-gray-300">
                                                     <img
                                                         className="h-10 w-10 rounded-full"
-                                                        src={`https://image-cache.brainchild-tech.cn/?link=${creator.avatar_url}`}
+                                                        src={profilePicUrl(creator)}
                                                         alt=""
                                                     />
                                                     <div className="absolute right-0 bottom-0 ">
