@@ -223,7 +223,7 @@ export default function CampaignForm() {
 
     const renderButton = !submitting ? (
         <button type="submit" className="btn btn-primary ml-2">
-            {isAddMode ? t('campaigns.form.createCampaign') : t('campaigns.form.editCampaign')}
+            {isAddMode ? t('campaigns.form.createCampaign') : t('campaigns.form.saveCampaign')}
         </button>
     ) : (
         <div className="btn btn-primary ml-2">
