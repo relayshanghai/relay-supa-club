@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';
+import { imgProxy, nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';
 import useSWR from 'swr';
 
 import type {
@@ -16,6 +16,20 @@ import {
     CampaignCreatorAddCreatorPostResponse,
 } from 'pages/api/campaigns/add-creator';
 import { CampaignsIndexGetQuery, CampaignsIndexGetResult } from 'pages/api/campaigns';
+
+const transformCampaignCreators = (creators: CampaignCreatorDB[]) => {
+    return creators.map((creator: CampaignCreatorDB) => {
+        // current image proxy is not working for instagram profiles, this is a temporary fix to show the original profile pic url for instagram, but use the proxy for other platforms.
+        // we are considering to setup a new proxy in the future or gain access to the current one. TODO: Ticket V2-44
+        if (creator.platform === 'youtube' || 'tiktok') {
+            return {
+                ...creator,
+                avatar_url: imgProxy(creator.avatar_url as string),
+            };
+        }
+        return creator;
+    });
+};
 
 export const useCampaigns = ({
     campaignId,
@@ -48,6 +62,7 @@ export const useCampaigns = ({
                 setCampaign(campaign);
             }
             if (campaign?.campaign_creators) {
+                transformCampaignCreators(campaign.campaign_creators);
                 setCampaignCreators(campaign.campaign_creators);
             }
         }

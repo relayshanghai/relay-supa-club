@@ -11,7 +11,6 @@ import { CreatorContacts } from './creator-contacts';
 import dateFormat from 'src/utils/dateFormat';
 import type { CampaignCreatorDB, CampaignWithCompanyCreators } from 'src/utils/api/db';
 import type { SocialMediaPlatform } from 'types';
-import { imgProxy } from 'src/utils/fetcher';
 
 export default function CreatorsOutreach({
     currentCampaign,
@@ -131,16 +130,6 @@ export default function CreatorsOutreach({
     const editingModeTrue = (index: number, key: string) =>
         index === toEdit?.index && key === toEdit?.key;
 
-    // current image proxy is not working for instagram profiles, this is a temporary fix to show the original profile pic url for instagram, but still use the proxy for other platforms.
-    // we are considering to setup a new proxy in the future or gain access to the current one. TODO: Ticket V2-44
-    const profilePicUrl = (creator: CampaignCreatorDB) => {
-        if (!creator.avatar_url) return;
-        if (creator.platform === 'instagram') {
-            return creator.avatar_url;
-        }
-        return imgProxy(creator.avatar_url);
-    };
-
     return (
         <div>
             {/* Outreach Tabs */}
@@ -206,7 +195,7 @@ export default function CreatorsOutreach({
                                                 <div className="relative flex-shrink-0 h-10 w-10 rounded-full bg-gray-300">
                                                     <img
                                                         className="h-10 w-10 rounded-full"
-                                                        src={profilePicUrl(creator)}
+                                                        src={creator.avatar_url}
                                                         alt=""
                                                     />
                                                     <div className="absolute right-0 bottom-0 ">
