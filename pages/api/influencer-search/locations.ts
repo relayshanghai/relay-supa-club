@@ -13,7 +13,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const filteredResults = results.map((result: { title: string; name: string }) => {
             if (
                 result.title.toLowerCase().includes('taiwan') ||
-                result.title.toLowerCase().includes('hongkong')
+                result.title.toLowerCase().includes('hongkong' || 'hong kong') ||
+                result.name.toLowerCase().includes('taiwan') ||
+                result.name.toLowerCase().includes('hongkong' || 'hong kong')
             ) {
                 return {
                     ...result,
