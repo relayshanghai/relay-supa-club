@@ -3,7 +3,7 @@ export interface CreatorUserProfile {
     user_id?: string;
     username?: string;
     fullname?: string;
-    picture: string;
+    picture?: string;
     url?: string;
 }
 
