@@ -2,7 +2,7 @@ import { User } from '@supabase/supabase-js';
 import { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { acceptInviteErrors } from 'src/errors/company';
-import { loginValidationErrors } from 'src/errors/login';
+import { inviteStatusErrors, loginValidationErrors } from 'src/errors/login';
 import { updateUserRole } from 'src/utils/api/db';
 import { serverLogger } from 'src/utils/logger';
 import { supabase } from 'src/utils/supabase-client';
@@ -130,17 +130,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             if (error) {
                 serverLogger(error, 'error');
                 return res.status(httpCodes.UNAUTHORIZED).json({
-                    error: 'inviteInvalid',
+                    error: inviteStatusErrors.inviteInvalid,
                 });
             }
             if (data?.used) {
                 return res.status(httpCodes.UNAUTHORIZED).json({
-                    error: 'inviteUsed',
+                    error: inviteStatusErrors.inviteUsed,
                 });
             }
             if (Date.now() >= new Date(data.expire_at ?? '').getTime()) {
                 return res.status(httpCodes.UNAUTHORIZED).json({
-                    error: 'inviteExpired',
+                    error: inviteStatusErrors.inviteExpired,
                 });
             }
             return res.status(httpCodes.OK).json({ message: 'inviteValid', email: data.email });

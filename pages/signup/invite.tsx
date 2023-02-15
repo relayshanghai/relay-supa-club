@@ -13,17 +13,21 @@ import { LanguageToggle } from 'src/components/common/language-toggle';
 import { Input } from 'src/components/input';
 import { Title } from 'src/components/title';
 import { acceptInviteErrors } from 'src/errors/company';
-import { loginValidationErrors } from 'src/errors/login';
+import { inviteStatusErrors, loginValidationErrors } from 'src/errors/login';
+import type { InviteStatusError } from 'src/errors/login';
 import { useFields } from 'src/hooks/use-fields';
 import { useUser } from 'src/hooks/use-user';
 import { hasCustomError } from 'src/utils/errors';
 import { nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger';
 import { SignupInputTypes, validateSignupInput } from 'src/utils/validation/signup';
+import { Spinner } from 'src/components/icons';
+
+type InviteStatus = InviteStatusError | 'pending' | 'inviteValid';
 
 export default function Register() {
     const { t } = useTranslation();
-    const { login, logout } = useUser();
+    const { login } = useUser();
 
     const router = useRouter();
     const {
@@ -38,7 +42,7 @@ export default function Register() {
     });
     const token = router.query.token as string;
     const [registering, setRegistering] = useState(false);
-    const [inviteStatus, setInviteStatus] = useState('pending');
+    const [inviteStatus, setInviteStatus] = useState<InviteStatus>('pending');
     const [validationErrors, setValidationErrors] = useState({
         firstName: '',
         lastName: '',
@@ -46,9 +50,6 @@ export default function Register() {
         password: '',
         confirmPassword: '',
     });
-    useEffect(() => {
-        logout();
-    }, [logout]);
 
     useEffect(() => {
         const checkInvite = async () => {
@@ -59,10 +60,10 @@ export default function Register() {
                 >('company/accept-invite', { token });
                 if (tokenStatus.message && tokenStatus.email) {
                     setFieldValue('email', tokenStatus.email);
-                    setInviteStatus(tokenStatus?.message);
+                    setInviteStatus(tokenStatus?.message as InviteStatus);
                 } else setInviteStatus('inviteValid');
             } catch (error: any) {
-                clientLogger(error, 'error');
+                if (hasCustomError(error, inviteStatusErrors)) clientLogger(error, 'error');
                 if (error.message) setInviteStatus(error.message);
             }
         };
@@ -79,12 +80,18 @@ export default function Register() {
                 lastName,
                 email,
             };
-            await nextFetch<CompanyAcceptInvitePostResponse>('company/accept-invite', {
+            const res = await nextFetch<CompanyAcceptInvitePostResponse>('company/accept-invite', {
                 method: 'post',
                 body,
             });
+            if (!res.id) {
+                throw new Error('Error accepting invite');
+            }
             toast.success(t('login.inviteAccepted'));
-            await login(email, password);
+            const loginRes = await login(email, password);
+            if (!loginRes.user?.id) {
+                throw new Error('Error logging in');
+            }
             router.push('/dashboard');
         } catch (error: any) {
             if (error?.message === 'User already registered') {
@@ -129,7 +136,7 @@ export default function Register() {
                 <Title />
                 <LanguageToggle />
             </div>
-            {inviteStatus === 'inviteValid' && (
+            {inviteStatus === 'inviteValid' ? (
                 <form className="max-w-xs w-full mx-auto flex-grow flex flex-col justify-center items-center space-y-5">
                     <div className="text-left w-full">
                         <h1 className="font-bold text-4xl mb-2">{t('login.acceptInvite')}</h1>
@@ -193,15 +200,14 @@ export default function Register() {
                         </div>
                     )}
                 </form>
-            )}
-            {inviteStatus === 'pending' && (
+            ) : inviteStatus === 'pending' ? (
                 <div className="mx-auto h-full flex flex-col justify-center items-center space-y-6">
                     <p>{t('login.checkingInviteStatus')}</p>
+                    <Spinner className="w-5 h-5 fill-primary-600 text-white" />{' '}
                 </div>
-            )}
-            {inviteStatus !== 'pending' && inviteStatus !== 'inviteValid' && (
+            ) : (
                 <div className="mx-auto h-full flex flex-col justify-center items-center space-y-6">
-                    <h2>{inviteStatus}</h2>
+                    <h2>{t(inviteStatus)}</h2>
                     <Button onClick={() => router.back()}>{t('login.back')}</Button>
                 </div>
             )}
