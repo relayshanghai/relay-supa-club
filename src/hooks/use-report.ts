@@ -17,6 +17,14 @@ export const useReport = () => {
 
     const { profile } = useUser();
 
+    const transformReport = (report: CreatorReport, platform: string) => {
+        // current image proxy is not working for instagram profiles, this is a temporary fix to show the original profile pic url for instagram, but still use the proxy for other platforms.
+        // we are considering to setup a new proxy in the future or gain access to the current one. TODO: Ticket V2-44
+        if (platform === 'youtube' || 'tiktok') {
+            report.user_profile.picture = imgProxy(report.user_profile.picture) as string;
+        }
+    };
+
     const getOrCreateReport = useCallback(
         async (platform: CreatorPlatform, creator_id: string) => {
             try {
@@ -32,13 +40,11 @@ export const useReport = () => {
                     user_id: profile?.id,
                 });
 
-                // current image proxy is not working for instagram profiles, this is a temporary fix to show the original profile pic url for instagram, but still use the proxy for other platforms.
-                // we are considering to setup a new proxy in the future or gain access to the current one. TODO: Ticket V2-44
-                if ((report.success && platform === 'youtube') || 'tiktok') {
-                    report.user_profile.picture = imgProxy(report.user_profile.picture) as string;
-                }
-
                 if (!report.success) throw new Error('Failed to fetch report');
+
+                if (report.success) {
+                    transformReport(report, platform);
+                }
                 setReport(report);
                 setReportCreatedAt(createdAt);
             } catch (error: any) {
