@@ -13,11 +13,13 @@ import { LanguageToggle } from 'src/components/common/language-toggle';
 import { Input } from 'src/components/input';
 import { Title } from 'src/components/title';
 import { acceptInviteErrors } from 'src/errors/company';
+import { loginValidationErrors } from 'src/errors/login';
 import { useFields } from 'src/hooks/use-fields';
 import { useUser } from 'src/hooks/use-user';
 import { hasCustomError } from 'src/utils/errors';
 import { nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger';
+import { SignupInputTypes, validateSignupInput } from 'src/utils/validation/signup';
 
 export default function Register() {
     const { t } = useTranslation();
@@ -37,6 +39,13 @@ export default function Register() {
     const token = router.query.token as string;
     const [registering, setRegistering] = useState(false);
     const [inviteStatus, setInviteStatus] = useState('pending');
+    const [validationErrors, setValidationErrors] = useState({
+        firstName: '',
+        lastName: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+    });
     useEffect(() => {
         logout();
     }, [logout]);
@@ -82,8 +91,8 @@ export default function Register() {
                 return router.push('/login');
             }
             clientLogger(error, 'error');
-            if (hasCustomError(error, acceptInviteErrors)) {
-                toast.error(t(`login.${error.message}`));
+            if (hasCustomError(error, { ...acceptInviteErrors, ...loginValidationErrors })) {
+                toast.error(t(error.message));
             } else {
                 toast.error(t('login.oopsSomethingWentWrong'));
             }
@@ -98,6 +107,21 @@ export default function Register() {
                 <Button onClick={() => router.back()}>{t('login.back')}</Button>
             </div>
         );
+
+    const setAndValidate = (type: SignupInputTypes, value: string) => {
+        setFieldValue(type, value);
+        const validationError = validateSignupInput(type, value, password);
+        if (validationError) {
+            setValidationErrors({ ...validationErrors, [type]: t(validationError) });
+        } else {
+            setValidationErrors({ ...validationErrors, [type]: '' });
+        }
+    };
+    const hasValidationErrors = Object.values(validationErrors).some((error) => error !== '');
+
+    const invalidFormInput =
+        !token || !firstName || !lastName || !email || !password || hasValidationErrors;
+    const submitDisabled = registering || invalidFormInput;
 
     return (
         <div className="w-full h-screen px-10 flex flex-col">
@@ -121,7 +145,7 @@ export default function Register() {
                         placeholder={t('login.firstNamePlaceholder') || ''}
                         value={firstName}
                         required
-                        onChange={(e) => setFieldValue('firstName', e.target.value)}
+                        onChange={(e) => setAndValidate('firstName', e.target.value)}
                     />
                     <Input
                         label={t('login.lastName')}
@@ -129,32 +153,24 @@ export default function Register() {
                         placeholder={t('login.lastNamePlaceholder') || ''}
                         value={lastName}
                         required
-                        onChange={(e) => setFieldValue('lastName', e.target.value)}
+                        onChange={(e) => setAndValidate('lastName', e.target.value)}
                     />
                     <Input
                         label={t('login.password')}
                         type="password"
                         placeholder={t('login.passwordPlaceholder') || ''}
                         value={password}
-                        onChange={(e) => setFieldValue('password', e.target.value)}
+                        onChange={(e) => setAndValidate('password', e.target.value)}
                     />
                     <Input
                         label={t('login.confirmPassword')}
                         type="password"
                         placeholder={t('login.passwordPlaceholder') || ''}
                         value={confirmPassword}
-                        onChange={(e) => setFieldValue('confirmPassword', e.target.value)}
+                        onChange={(e) => setAndValidate('confirmPassword', e.target.value)}
                     />
                     <Button
-                        disabled={
-                            registering ||
-                            !firstName ||
-                            !lastName ||
-                            !password ||
-                            !confirmPassword ||
-                            password !== confirmPassword ||
-                            !token
-                        }
+                        disabled={submitDisabled}
                         onClick={(e) => {
                             e.preventDefault();
                             handleSubmit();
@@ -162,6 +178,20 @@ export default function Register() {
                     >
                         {t('login.signUp')}
                     </Button>
+                    {hasValidationErrors && (
+                        <div className="w-full flex flex-col space-y-2">
+                            {Object.entries(validationErrors).map(([key, value]) => {
+                                if (value) {
+                                    return (
+                                        <p className="text-red-500 text-sm" key={key}>
+                                            {value}
+                                        </p>
+                                    );
+                                }
+                                return null;
+                            })}
+                        </div>
+                    )}
                 </form>
             )}
             {inviteStatus === 'pending' && (
