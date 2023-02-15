@@ -11,6 +11,7 @@ import { CreatorContacts } from './creator-contacts';
 import dateFormat from 'src/utils/dateFormat';
 import type { CampaignCreatorDB, CampaignWithCompanyCreators } from 'src/utils/api/db';
 import type { SocialMediaPlatform } from 'types';
+import { imgProxy } from 'src/utils/fetcher';
 
 export default function CreatorsOutreach({
     currentCampaign,
@@ -134,13 +135,10 @@ export default function CreatorsOutreach({
     // we are considering to setup a new proxy in the future or gain access to the current one. TODO: Ticket V2-44
     const profilePicUrl = (creator: CampaignCreatorDB) => {
         if (!creator.avatar_url) return;
-        let url;
         if (creator.platform === 'instagram') {
-            url = creator.avatar_url;
-        } else {
-            url = `https://image-cache.brainchild-tech.cn/?link=${creator.avatar_url}`;
+            return creator.avatar_url;
         }
-        return url;
+        return imgProxy(creator.avatar_url);
     };
 
     return (

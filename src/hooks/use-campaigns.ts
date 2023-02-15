@@ -44,8 +44,12 @@ export const useCampaigns = ({
     useEffect(() => {
         if (campaigns && campaigns?.length > 0 && campaignId) {
             const campaign = campaigns?.find((c) => c.id === campaignId);
-            if (campaign) setCampaign(campaign);
-            if (campaign?.campaign_creators) setCampaignCreators(campaign.campaign_creators);
+            if (campaign) {
+                setCampaign(campaign);
+            }
+            if (campaign?.campaign_creators) {
+                setCampaignCreators(campaign.campaign_creators);
+            }
         }
     }, [campaignId, campaigns]);
 
