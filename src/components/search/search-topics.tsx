@@ -38,7 +38,6 @@ export const SearchTopics = ({
                     }),
                 })
             ).json();
-
             if (res && (res.success || Array.isArray(res))) {
                 const data = res.data || res;
                 setSuggestions(filter ? filter(data) : data);

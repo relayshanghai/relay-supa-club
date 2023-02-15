@@ -30,7 +30,7 @@ const InputWithAutocomplete = forwardRef<HTMLDivElement, Props>(
     ) => {
         const [value, setValue] = useState('');
         return (
-            <div className="flex flex-col w-full" ref={ref}>
+            <div className="flex flex-col w-full " ref={ref}>
                 <InputWithTags
                     disabled={disabled}
                     tags={tags}
