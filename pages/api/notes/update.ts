@@ -4,7 +4,7 @@ import { serverLogger } from 'src/utils/logger';
 import { supabase } from 'src/utils/supabase-client';
 
 export type CampaignNotesUpdatePutBody = {
-    id: number;
+    id: string;
     important: boolean;
 };
 
