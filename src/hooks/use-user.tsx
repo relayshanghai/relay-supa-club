@@ -1,22 +1,30 @@
 import { useSessionContext, useSupabaseClient } from '@supabase/auth-helpers-react';
-import type { Session, User } from '@supabase/supabase-js';
+import type { Session, SupabaseClient, User } from '@supabase/supabase-js';
 
 import type {
     CreateEmployeePostBody,
     CreateEmployeePostResponse,
 } from 'pages/api/company/create-employee';
-import type { ProfilePutBody, ProfilePutResponse } from 'pages/api/profiles';
+import type {
+    ProfileGetQuery,
+    ProfileGetResponse,
+    ProfilePutBody,
+    ProfilePutResponse,
+} from 'pages/api/profiles';
 import {
     createContext,
+    MutableRefObject,
     PropsWithChildren,
     useCallback,
     useContext,
     useEffect,
+    useRef,
     useState,
 } from 'react';
+import useSWR, { KeyedMutator } from 'swr';
 
 import type { ProfileDB } from 'src/utils/api/db/types';
-import { nextFetch } from 'src/utils/fetcher';
+import { nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger';
 import type { DatabaseWithCustomTypes } from 'types';
 
@@ -31,7 +39,7 @@ export type SignupData = {
 
 const ctx = createContext<{
     user: User | null;
-    profile: ProfileDB | null;
+    profile: ProfileDB | undefined;
     loading: boolean;
     login: (
         email: string,
@@ -47,10 +55,12 @@ const ctx = createContext<{
     createEmployee: (email: string) => Promise<CreateEmployeePostResponse | null>;
     logout: () => void;
     updateProfile: (updates: Omit<ProfilePutBody, 'id'>) => void;
-    refreshProfile: () => void;
+    refreshProfile: KeyedMutator<ProfileGetResponse> | (() => void);
+    supabaseClient: SupabaseClient<DatabaseWithCustomTypes> | null;
+    getProfileController: MutableRefObject<AbortController | null | undefined>;
 }>({
     user: null,
-    profile: null,
+    profile: undefined,
     loading: true,
     login: async () => ({
         user: null,
@@ -64,46 +74,39 @@ const ctx = createContext<{
     }),
     updateProfile: () => null,
     refreshProfile: () => null,
+    supabaseClient: null,
+    getProfileController: { current: null },
 });
 
 export const useUser = () => useContext(ctx);
 
 export const UserProvider = ({ children }: PropsWithChildren) => {
-    const [profile, setProfile] = useState<ProfileDB | null>(null);
     const { isLoading, session } = useSessionContext();
     const supabaseClient = useSupabaseClient<DatabaseWithCustomTypes>();
-
+    const getProfileController = useRef<AbortController | null>();
     const [loading, setLoading] = useState<boolean>(true);
     useEffect(() => {
         setLoading(isLoading);
     }, [isLoading]);
-    const getProfile = useCallback(
-        async function () {
-            try {
-                setLoading(true);
 
-                const { data, error } = await supabaseClient
-                    .from('profiles')
-                    .select(`*`)
-                    .eq('id', session?.user?.id)
-                    .single();
-                if (error) throw error;
-
-                setProfile(data);
-            } catch (error: any) {
-                clientLogger(error, 'error');
-            } finally {
-                setLoading(false);
+    const { data: profile, mutate: refreshProfile } = useSWR(
+        session?.user.id ? 'profiles' : null,
+        async (path) => {
+            if (getProfileController.current) {
+                getProfileController.current.abort();
             }
-        },
-        [supabaseClient, session?.user?.id],
-    );
+            const controller = new AbortController();
+            getProfileController.current = controller;
 
-    useEffect(() => {
-        if (session?.user?.id) {
-            getProfile();
-        }
-    }, [session, getProfile]);
+            return await nextFetchWithQueries<ProfileGetQuery, ProfileGetResponse>(
+                path,
+                {
+                    id: session?.user.id ?? '',
+                },
+                { signal: controller.signal },
+            );
+        },
+    );
 
     const login = async (email: string, password: string) => {
         setLoading(true);
@@ -155,13 +158,14 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
     };
 
     const updateProfile = useCallback(
-        async (body: Omit<ProfilePutBody, 'id'>) => {
+        async (updateData: Omit<ProfilePutBody, 'id'>) => {
             setLoading(true);
             try {
                 if (!session?.user?.id) throw new Error('User not found');
+                const body: ProfilePutBody = { ...updateData, id: session.user.id };
                 return await nextFetch<ProfilePutResponse>('profiles', {
                     method: 'PUT',
-                    body: { id: session.user?.id, ...body },
+                    body,
                 });
             } catch (e: unknown) {
                 clientLogger(e, 'error');
@@ -175,8 +179,9 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
         [session?.user],
     );
     const logout = async () => {
-        await supabaseClient.auth.signOut();
-        setProfile(null);
+        const email = session?.user?.email;
+        // cannot use router.push() here because it won't cancel in-flight requests which wil re-set the cookie
+        window.location.href = email ? `/logout?email=${encodeURIComponent(email)}` : '/logout';
     };
 
     return (
@@ -189,8 +194,10 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
                 loading,
                 profile,
                 updateProfile,
-                refreshProfile: getProfile,
+                refreshProfile,
                 logout,
+                supabaseClient,
+                getProfileController,
             }}
         >
             {children}

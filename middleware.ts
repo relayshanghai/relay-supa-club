@@ -59,6 +59,15 @@ const checkOnboardingStatus = async (
         }
         return res;
     }
+    // special case where we require a signed in user to view their profile, but we don't want to redirect them to onboarding cause this happens before they are onboarded
+    if (req.nextUrl.pathname === '/api/profiles') {
+        // print req queries
+        const id = new URL(req.url).searchParams.get('id');
+        if (!id || id !== session.user.id) {
+            return NextResponse.json({ error: 'user is unauthorized for this action' });
+        }
+        return res;
+    }
     const { subscriptionStatus, subscriptionEndDate } = await getCompanySubscriptionStatus(
         supabase,
         session.user.id,
@@ -150,7 +159,10 @@ const checkIsRelayEmployee = async (res: NextResponse, email: string) => {
     return res;
 };
 
-/** https://supabase.com/docs/guides/auth/auth-helpers/nextjs#auth-with-nextjs-middleware */
+/** https://supabase.com/docs/guides/auth/auth-helpers/nextjs#auth-with-nextjs-middleware
+ * Note: We are applying the middleware to all routes. So almost all routes require authentication. Exceptions are in the `config` object at the bottom of this file.
+ *
+ */
 export async function middleware(req: NextRequest) {
     // We need to create a response and hand it to the supabase client to be able to modify the response headers.
     const res = NextResponse.next();
@@ -175,10 +187,6 @@ export async function middleware(req: NextRequest) {
     if (req.nextUrl.pathname.includes('api'))
         return NextResponse.json({ error: 'unauthorized to use endpoint' });
 
-    // if already on signup or login page, just return the page
-    if (req.nextUrl.pathname.includes('signup') || req.nextUrl.pathname.includes('login'))
-        return res;
-
     const redirectUrl = req.nextUrl.clone();
 
     // unauthenticated pages requests, send to signup
@@ -197,7 +205,8 @@ export const config = {
          * - assets/* (assets files) (public/assets/*)
          * - accept invite (accept invite api). User hasn't logged in yet
          * - create-employee endpoint (api/company/create-employee)
+         * - login, signup, logout (login, signup, logout pages)
          */
-        '/((?!_next/static|_next/image|favicon.ico|assets/*|api/company/accept-invite*|api/company/create-employee*).*)',
+        '/((?!_next/static|_next/image|favicon.ico|assets/*|api/company/accept-invite*|api/company/create-employee*|login|signup|logout|api/logout).*)',
     ],
 };
