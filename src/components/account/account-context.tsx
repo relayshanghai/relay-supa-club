@@ -15,7 +15,7 @@ import type Stripe from 'stripe';
 export interface AccountContextProps {
     userDataLoading: boolean;
     paymentMethods?: Stripe.PaymentMethod[];
-    profile: ProfileDB | null;
+    profile: ProfileDB | undefined;
     user: User | null;
     company?: CompanyWithProfilesInvitesAndUsage;
     createInvite: (email: string, companyOwner: boolean) => void;
@@ -29,7 +29,7 @@ export const AccountContext = createContext<AccountContextProps>({
     userDataLoading: false,
 
     paymentMethods: undefined,
-    profile: null,
+    profile: undefined,
     user: null,
     company: undefined,
     createInvite: () => {},
