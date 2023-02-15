@@ -15,7 +15,7 @@ export const InputWithTags = ({
     ...rest
 }: Props) => {
     return (
-        <label className="flex flex-col text-xs text-gray-500 font-bold w-full">
+        <label className="flex flex-col text-xs text-gray-500 font-medium w-full">
             <div className="text-gray-900 ring-gray-900 ring-opacity-5 bg-white rounded-md w-full border border-transparent shadow ring-1 sm:text-sm focus:border-primary-500 focus:ring-primary-500 focus:outline-none flex flex-row items-center px-2">
                 <div className="flex space-x-2 my-2 h-6">
                     {tags
@@ -31,12 +31,12 @@ export const InputWithTags = ({
                               }
                               return (
                                   <p
-                                      className="px-2 text-gray-900 rounded bg-gray-100 whitespace-nowrap hover:bg-gray-200 cursor-pointer flex justify-center"
+                                      className="px-2 text-gray-900 rounded bg-gray-100 whitespace-nowrap hover:bg-gray-200 cursor-pointer flex justify-center self-center"
                                       key={i}
                                       onClick={() => onTagRemove(item)}
                                   >
                                       {item.value || item.title}
-                                      <p className="ml-2 text-gray-400  whitespace-nowrap cursor-pointer">
+                                      <p className="ml-2 text-gray-400 whitespace-nowrap cursor-pointer">
                                           x
                                       </p>
                                   </p>
