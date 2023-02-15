@@ -26,20 +26,9 @@ export default function Register() {
         password: '',
         confirmPassword: '',
     });
-    const { signup, logout, profile, createEmployee } = useUser();
+    const { signup, profile, createEmployee } = useUser();
     const [loading, setLoading] = useState(false);
     const [signupSuccess, setSignupSuccess] = useState(false);
-    const [initialLoad, setInitialLoad] = useState(true);
-    useEffect(() => {
-        const logOutOnLoad = async () => {
-            // sometimes the cookies and signed in status still persist to this page, so call logout again
-            // TODO: move logout logic serverside https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/72
-
-            await logout();
-            setInitialLoad(false);
-        };
-        if (initialLoad) logOutOnLoad();
-    }, [logout, initialLoad]);
 
     useEffect(() => {
         if (signupSuccess && profile?.id) {
@@ -49,7 +38,7 @@ export default function Register() {
                 router.push('/signup/onboarding');
             }
         }
-    }, [email, initialLoad, router, signupSuccess, profile]);
+    }, [email, router, signupSuccess, profile]);
 
     const handleSubmit = async () => {
         setLoading(true);

@@ -2,6 +2,14 @@ import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getUserRole } from './api/db/calls/profiles';
 import { isAdmin } from './utils';
+import { serverLogger } from 'src/utils/logger';
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+
+if (!supabaseUrl || !supabaseAnonKey) {
+    serverLogger('NEXT_PUBLIC_SUPABASE_ANON_KEY or NEXT_PUBLIC_SUPABASE_URL not set', 'error');
+}
 
 export const checkSessionIdMatchesID = async (
     userId: string,
@@ -9,7 +17,13 @@ export const checkSessionIdMatchesID = async (
     res: NextApiResponse,
 ) => {
     if (!userId) return false;
-    const supabase = createServerSupabaseClient({ req, res });
+    const supabase = createServerSupabaseClient(
+        { req, res },
+        {
+            supabaseUrl,
+            supabaseKey: supabaseAnonKey,
+        },
+    );
     const {
         data: { session },
     } = await supabase.auth.getSession();
@@ -18,7 +32,13 @@ export const checkSessionIdMatchesID = async (
 };
 
 export const isCompanyOwnerOrRelayEmployee = async (req: NextApiRequest, res: NextApiResponse) => {
-    const supabase = createServerSupabaseClient({ req, res });
+    const supabase = createServerSupabaseClient(
+        { req, res },
+        {
+            supabaseUrl,
+            supabaseKey: supabaseAnonKey,
+        },
+    );
     const {
         data: { session },
     } = await supabase.auth.getSession();
