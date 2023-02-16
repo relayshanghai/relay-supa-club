@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
+import { APP_URL } from 'src/constants';
 import { useFields } from 'src/hooks/use-fields';
 import { clientLogger } from 'src/utils/logger';
 import { Button } from '../button';
@@ -18,10 +19,38 @@ export const PersonalDetails = () => {
         lastName: '',
         email: '',
     });
-    const { userDataLoading, profile, user, updateProfile, refreshProfile, refreshCompany } =
-        useContext(AccountContext);
+    const {
+        userDataLoading,
+        profile,
+        user,
+        updateProfile,
+        refreshProfile,
+        refreshCompany,
+        supabaseClient,
+    } = useContext(AccountContext);
 
     const [editMode, setEditMode] = useState(false);
+    const [generatingResetEmail, setGeneratingResetEmail] = useState(false);
+
+    const handleResetPassword = async () => {
+        setGeneratingResetEmail(true);
+        try {
+            if (!supabaseClient) {
+                throw new Error('Supabase client not initialized');
+            }
+            if (!email) {
+                throw new Error('Please enter your email');
+            }
+            const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+                redirectTo: `${APP_URL}/login/reset-password/${email}`,
+            });
+            if (error) throw error;
+            toast.success(t('login.resetPasswordEmailSent'));
+        } catch (error: any) {
+            toast.error(error.message || t('login.oopsSomethingWentWrong'));
+        }
+        setGeneratingResetEmail(false);
+    };
 
     useEffect(() => {
         if (!userDataLoading && profile) {
@@ -108,6 +137,13 @@ export const PersonalDetails = () => {
                     </div>
                 </div>
             )}
+            <Button
+                variant="secondary"
+                onClick={handleResetPassword}
+                disabled={generatingResetEmail}
+            >
+                {t('login.changePassword')}
+            </Button>
 
             {editMode ? (
                 <div className="flex flex-row justify-end w-full space-x-4">
