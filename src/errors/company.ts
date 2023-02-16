@@ -1,6 +1,6 @@
 export const acceptInviteErrors = {
-    inviteInvalid: 'Invite is invalid or has expired',
-    userAlreadyRegistered: 'User is already registered',
+    inviteInvalid: 'login.inviteInvalid',
+    userAlreadyRegistered: 'login.userAlreadyRegistered',
 };
 export const createInviteErrors = {
     inviteAlreadyExists: 'inviteAlreadyExists',

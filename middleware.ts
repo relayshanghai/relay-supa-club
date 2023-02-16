@@ -74,6 +74,9 @@ const checkOnboardingStatus = async (
     );
     // if signed up, but no company, redirect to onboarding
     if (!subscriptionStatus) {
+        if (req.nextUrl.pathname.includes('api')) {
+            return NextResponse.json({ error: 'user is unauthorized for this action' });
+        }
         if (req.nextUrl.pathname === '/signup/onboarding') return res;
         redirectUrl.pathname = '/signup/onboarding';
         return NextResponse.redirect(redirectUrl);
@@ -166,7 +169,6 @@ const checkIsRelayEmployee = async (res: NextResponse, email: string) => {
 export async function middleware(req: NextRequest) {
     // We need to create a response and hand it to the supabase client to be able to modify the response headers.
     const res = NextResponse.next();
-
     if (req.nextUrl.pathname === '/api/subscriptions/prices') return allowPricingCors(req, res);
     if (req.nextUrl.pathname === '/api/subscriptions/webhook') return allowStripeCors(req, res);
 
@@ -207,6 +209,6 @@ export const config = {
          * - create-employee endpoint (api/company/create-employee)
          * - login, signup, logout (login, signup, logout pages)
          */
-        '/((?!_next/static|_next/image|favicon.ico|assets/*|api/company/accept-invite*|api/company/create-employee*|login|signup|logout|api/logout).*)',
+        '/((?!_next/static|_next/image|favicon.ico|assets/*|api/company/accept-invite*|api/company/create-employee*|login*|signup|signup/invite*|logout|api/logout).*)',
     ],
 };
