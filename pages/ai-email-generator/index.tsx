@@ -30,11 +30,6 @@ const removeLeadingSpace = (text: string) => {
     return text.replace(/^\s+/, '');
 };
 
-const languageOptions = [
-    { value: 'en-US', label: 'English' },
-    { value: 'zh', label: '中文' },
-];
-
 const AIImageGenerator = () => {
     const { t } = useTranslation();
 
@@ -42,7 +37,6 @@ const AIImageGenerator = () => {
     const { company } = useCompany();
 
     const [brandName, setBrandName] = useState('');
-    const [language, setLanguage] = useState<'en-US' | 'zh'>('en-US');
     const [influencerName, setInfluencerName] = useState('');
     const [productName, setProductName] = useState('');
     const [productDescription, setProductDescription] = useState('');
@@ -62,7 +56,6 @@ const AIImageGenerator = () => {
         setLoadingSubject(true);
         const body: AIEmailSubjectGeneratorPostBody = {
             brandName,
-            language,
             influencerName,
             productName,
             productDescription,
@@ -80,13 +73,12 @@ const AIImageGenerator = () => {
         setLoadingSubject(false);
 
         return res;
-    }, [brandName, language, influencerName, productName, productDescription]);
+    }, [brandName, influencerName, productName, productDescription]);
 
     const generateEmail = useCallback(async () => {
         setLoadingEmail(true);
         const body: AIEmailGeneratorPostBody = {
             brandName,
-            language,
             influencerName,
             productName,
             productDescription,
@@ -109,15 +101,7 @@ const AIImageGenerator = () => {
         setLoadingEmail(false);
 
         return res;
-    }, [
-        brandName,
-        language,
-        influencerName,
-        productName,
-        productDescription,
-        instructions,
-        senderName,
-    ]);
+    }, [brandName, influencerName, productName, productDescription, instructions, senderName]);
 
     const handleSubmit = async (e: any, type: 'subject' | 'email' | 'both') => {
         e.preventDefault();
@@ -160,21 +144,9 @@ const AIImageGenerator = () => {
 
                 <div className="flex flex-col lg:flex-row lg:items-start items-center justify-center gap-10 mt-10 w-full lg:h-full">
                     <form className="flex flex-col h-full items-center justify-start w-full md:w-1/3">
-                        <label className="flex flex-col text-xs text-gray-500 font-bold w-full">
-                            <div>{t('aiEmailGenerator.form.label.language') || ''}</div>
-                            <select
-                                value={language}
-                                onChange={(e) => setLanguage(e.target.value as 'en-US' | 'zh')}
-                                className="ring-opacity-5 placeholder-gray-400 appearance-none bg-white rounded-md block w-full px-3 py-2 border border-transparent shadow ring-1 ring-transparent cursor-pointer sm:text-sm focus:border-primary-500 focus:ring-primary-500 focus:outline-none my-2"
-                            >
-                                {languageOptions.map((option) => (
-                                    <option key={option.value} value={option.value}>
-                                        {option.label}
-                                    </option>
-                                ))}
-                            </select>
-                        </label>
-
+                        <p className="text-sm mb-2 text-gray-500 font-semibold">
+                            {t('aiEmailGenerator.index.information')}
+                        </p>
                         <Input
                             label={t('aiEmailGenerator.form.label.brandName') || ''}
                             placeholder={t('aiEmailGenerator.form.placeholder.brandName') || ''}

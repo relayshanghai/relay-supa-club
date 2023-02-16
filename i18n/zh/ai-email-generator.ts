@@ -10,6 +10,7 @@ const aiEmailGenerator = {
         },
         generateEmail: '生成邮件',
         generateSubject: '生成主题',
+        information: '请仅以英文输入详细信息。',
     },
     form: {
         placeholder: {

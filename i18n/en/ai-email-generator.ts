@@ -10,6 +10,7 @@ const aiEmailGenerator = {
         },
         generateEmail: 'Generate Email',
         generateSubject: 'Generate Subject',
+        information: 'Please enter the details in English only.',
     },
     form: {
         placeholder: {

@@ -7,7 +7,6 @@ import { OPENAI_API_KEY, OPENAI_API_ORG } from 'src/constants/openai';
 
 export type AIEmailGeneratorPostBody = {
     brandName: string;
-    language: 'en-US' | 'zh';
     influencerName: string;
     productName: string;
     productDescription: string;
@@ -35,20 +34,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             brandName,
             influencerName,
             instructions,
-            language,
             productDescription,
             productName,
             senderName,
         } = JSON.parse(req.body) as AIEmailGeneratorPostBody;
 
-        if (
-            !brandName ||
-            !influencerName ||
-            !language ||
-            !productDescription ||
-            !productName ||
-            !senderName
-        ) {
+        if (!brandName || !influencerName || !productDescription || !productName || !senderName) {
             return res.status(httpCodes.BAD_REQUEST).json({});
         }
         if (
@@ -61,26 +52,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         ) {
             return res.status(httpCodes.BAD_REQUEST).json({});
         }
-        if (language !== 'en-US' && language !== 'zh') {
-            return res.status(httpCodes.BAD_REQUEST).json({});
-        }
         if (!process.env.OPENAI_API_KEY || !process.env.OPENAI_API_ORG) {
             return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
         }
 
-        const languagePrompt = `${
-            language === 'zh' ? 'Simplified Mandarin Chinese,' : 'American English'
-        }`;
         const trimmedDescription = productDescription.trim();
         const trimDescriptionPunctuation = trimmedDescription.endsWith('.')
             ? trimmedDescription.slice(0, trimmedDescription.length - 1)
             : trimmedDescription;
 
-        const prompt = `Compose an email to an influencer, expressing our interest in collaborating with them to promote a specific product offered by our company. The email should include the name of our company, the name of the product we want to promote, as well as relevant description about our product. In addition, the email should include instructions for the influencer on how they can participate in the collaboration, such as what type of content to create or what social media handles to promote on. Finally, the email should express gratitude for the influencer's time and consideration, and end with a call-to-action for them to respond if they are interested in the collaboration. Sign the email with sender name at the end. The email should be written in ${languagePrompt}.
-
-        Inputs: companyName: ${brandName} ${
-            instructions && ', instructions: ' + instructions
-        }, influencer name: ${influencerName}, productDescription: ${trimDescriptionPunctuation}, productName: ${productName}, senderName: ${senderName}.`;
+        const prompt = `Compose an email to influencer [${influencerName}], expressing our interest in collaborating with them to promote a specific product offered by our company: [${brandName}]. The email should include the name of our company, the name of the product: [${productName}] we want to promote, as well as relevant description about the product: [${trimDescriptionPunctuation}]. In addition, the email should include instructions for the influencer on how they can participate in the collaboration, such as what type of content to create or what social media handles to promote on. Finally, the email should express gratitude for the influencer's time and consideration, and end with a call-to-action for them to respond if they are interested in the collaboration. Sign the email with my name [${senderName}] at the end.`;
 
         const data = await openai.createCompletion({
             prompt,

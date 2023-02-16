@@ -6,7 +6,6 @@ import { Configuration, OpenAIApi } from 'openai';
 
 export type AIEmailSubjectGeneratorPostBody = {
     brandName: string;
-    language: 'en-US' | 'zh';
     influencerName: string;
     productName: string;
     productDescription: string;
@@ -25,25 +24,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(httpCodes.METHOD_NOT_ALLOWED).json([]);
     }
     try {
-        const { brandName, influencerName, language, productDescription, productName } = JSON.parse(
+        const { brandName, influencerName, productDescription, productName } = JSON.parse(
             req.body,
         ) as AIEmailSubjectGeneratorPostBody;
 
-        if (!brandName || !influencerName || !language || !productDescription || !productName) {
-            return res.status(httpCodes.BAD_REQUEST).json({});
-        }
-        if (language !== 'en-US' && language !== 'zh') {
+        if (!brandName || !influencerName || !productDescription || !productName) {
             return res.status(httpCodes.BAD_REQUEST).json({});
         }
         if (!process.env.OPENAI_API_KEY || !process.env.OPENAI_API_ORG) {
             return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
         }
 
-        const languagePrompt = `The text should be in ${
-            language === 'zh' ? 'Simplified Mandarin Chinese' : 'American English language'
-        }`;
-
-        const prompt = `Generate an email subject line for an influencer, regarding a marketing campaign collaboration with our company ${brandName} and our product ${productName} which can be described as: ${productDescription}. The subject line should be attention grabbing and mention a marketing collaboration. ${languagePrompt}.`;
+        const prompt = `Generate an email subject line for an influencer, regarding a marketing campaign collaboration with our company ${brandName} and our product ${productName} which can be described as: ${productDescription}. The subject line should be attention grabbing and mention a marketing collaboration.`;
 
         const data = await openai.createCompletion({
             prompt,
