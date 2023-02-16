@@ -44,7 +44,7 @@ export const useReport = () => {
 
                 if (!report.success) throw new Error('Failed to fetch report');
 
-                const transformed = transformReport(report, platform);
+                const transformed = transformReport(report);
                 setReport(transformed);
                 setReportCreatedAt(createdAt);
             } catch (error: any) {
