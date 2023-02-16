@@ -65,7 +65,7 @@ const NavBarInner = ({
         <div className="flex flex-col space-y-4 mt-8">
             <ActiveLink href="/dashboard">{t('navbar.influencers')}</ActiveLink>
             <ActiveLink href="/campaigns">{t('navbar.campaigns')}</ActiveLink>
-            <ActiveLink href="/ai-email-generator">{t('navbar.ai-email-generator')}</ActiveLink>
+            <ActiveLink href="/ai-email-generator">{t('navbar.aiEmailGenerator')}</ActiveLink>
             {loggedIn && <ActiveLink href="/account">{t('navbar.account')}</ActiveLink>}
         </div>
         {isRelayEmployee && (

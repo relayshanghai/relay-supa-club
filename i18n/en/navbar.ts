@@ -1,7 +1,7 @@
 const navbar = {
     campaigns: 'Campaigns',
     influencers: 'Influencers',
-    'ai-email-generator': 'AI Email Generator',
+    aiEmailGenerator: 'AI Email Generator',
     account: 'Account',
     logout: 'Log Out',
 };
