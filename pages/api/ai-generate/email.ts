@@ -76,11 +76,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             ? trimmedDescription.slice(0, trimmedDescription.length - 1)
             : trimmedDescription;
 
-        const prompt = `Generate an email inviting an influencer to collaborate on a product marketing campaign. The email is sent by an employee of the company and includes details about the product and instructions for the collaboration. It should also include a conclusion and call to action. The email should be written in ${languagePrompt}.
+        const prompt = `Compose an email to an influencer, expressing our interest in collaborating with them to promote a specific product offered by our company. The email should include the name of our company, the name of the product we want to promote, as well as relevant description about our product. In addition, the email should include instructions for the influencer on how they can participate in the collaboration, such as what type of content to create or what social media handles to promote on. Finally, the email should express gratitude for the influencer's time and consideration, and end with a call-to-action for them to respond if they are interested in the collaboration. Sign the email with sender name at the end. The email should be written in ${languagePrompt}.
 
-        Inputs: brandName: ${brandName} ${
+        Inputs: companyName: ${brandName} ${
             instructions && ', instructions: ' + instructions
-        }, influencerName: ${influencerName}, productDescription: ${trimDescriptionPunctuation}, productName: ${productName}, senderName: ${senderName}.`;
+        }, influencer name: ${influencerName}, productDescription: ${trimDescriptionPunctuation}, productName: ${productName}, senderName: ${senderName}.`;
 
         const data = await openai.createCompletion({
             prompt,
