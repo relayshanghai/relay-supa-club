@@ -57,7 +57,7 @@
     "lint-staged": {
         "*.{js,ts,tsx,md}": [
             "prettier --write",
-            "yarn lint:staged"
+            "npm run lint:staged"
         ]
     },
     "husky": {
@@ -66,6 +66,9 @@
         }
     },
     "engines": {
-        "yarn": "^1.22.17"
+        "node": "18.14.0"
+    },
+    "volta": {
+        "node": "18.14.0"
     }
 }
