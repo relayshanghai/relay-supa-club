@@ -15,8 +15,18 @@ type ResetInputTypes = 'password' | 'confirmPassword';
 const ResetPassword = () => {
     const { t } = useTranslation();
     const router = useRouter();
+    const { email: emailQuery } = router.query;
+    // supabase gives query params in the form of #key=value&key=value
+    const supabaseQueries = router.asPath.split('#')[1];
+    const supabaseQueriesObject = supabaseQueries
+        ? supabaseQueries.split('&').reduce<{ [key: string]: string }>((acc, curr) => {
+              const [key, value] = curr.split('=');
+              acc[key] = value.replaceAll('+', ' ');
+              return acc;
+          }, {})
+        : {};
+    const { error_description } = supabaseQueriesObject;
 
-    const { email: emailQuery, error_description } = router.query;
     const { login, supabaseClient } = useUser();
     const [submitting, setSubmitting] = useState(false);
     const {
@@ -41,6 +51,9 @@ const ResetPassword = () => {
     const handleSubmit = async () => {
         if (!supabaseClient) {
             throw new Error('Supabase client not initialized');
+        }
+        if (!email) {
+            throw new Error('No email found');
         }
         try {
             setSubmitting(true);
