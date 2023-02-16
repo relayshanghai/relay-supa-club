@@ -7,6 +7,7 @@ import { Button } from 'src/components/button';
 import { LanguageToggle } from 'src/components/common/language-toggle';
 import { Input } from 'src/components/input';
 import { Title } from 'src/components/title';
+import { APP_URL } from 'src/constants';
 import { useFields } from 'src/hooks/use-fields';
 import { useUser } from 'src/hooks/use-user';
 
@@ -14,8 +15,9 @@ export default function Login() {
     const { t } = useTranslation();
     const router = useRouter();
     const { email: emailQuery } = router.query;
-    const { login } = useUser();
+    const { login, supabaseClient } = useUser();
     const [loggingIn, setLoggingIn] = useState(false);
+    const [generatingResetEmail, setGeneratingResetEmail] = useState(false);
     const {
         values: { email, password },
         setFieldValue,
@@ -40,6 +42,26 @@ export default function Login() {
         } finally {
             setLoggingIn(false);
         }
+    };
+
+    const handleResetPassword = async () => {
+        setGeneratingResetEmail(true);
+        try {
+            if (!supabaseClient) {
+                throw new Error('Supabase client not initialized');
+            }
+            if (!email) {
+                throw new Error('Please enter your email');
+            }
+            const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+                redirectTo: `${APP_URL}/login/reset-password/${email}`,
+            });
+            if (error) throw error;
+            toast.success(t('login.resetPasswordEmailSent'));
+        } catch (error: any) {
+            toast.error(error.message || t('login.oopsSomethingWentWrong'));
+        }
+        setGeneratingResetEmail(false);
     };
 
     return (
@@ -84,6 +106,17 @@ export default function Login() {
                         </a>
                     </Link>
                 </p>
+                <button
+                    onClick={(e) => {
+                        e.preventDefault();
+                        handleResetPassword();
+                    }}
+                    disabled={generatingResetEmail}
+                >
+                    <p className="mt-4 inline text-gray-400 text-sm">
+                        {t('login.forgotPasswordClickHereToReset')}
+                    </p>
+                </button>
             </form>
         </div>
     );
