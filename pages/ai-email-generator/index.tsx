@@ -9,7 +9,6 @@ import { nextFetch } from 'src/utils/fetcher';
 import { useCallback, useEffect, useState } from 'react';
 import { Input } from 'src/components/input';
 import { Layout } from 'src/components/layout';
-import { t } from 'i18next';
 import { toast } from 'react-hot-toast';
 import { clientLogger } from 'src/utils/logger';
 import {
@@ -23,6 +22,7 @@ import {
     ClipboardDocumentCheckIcon,
     InboxArrowDownIcon,
 } from '@heroicons/react/24/solid';
+import { useTranslation } from 'react-i18next';
 
 const MAX_CHARACTER_LENGTH = 600;
 
@@ -36,6 +36,8 @@ const languageOptions = [
 ];
 
 const AIImageGenerator = () => {
+    const { t } = useTranslation();
+
     const { profile } = useUser();
     const { company } = useCompany();
 

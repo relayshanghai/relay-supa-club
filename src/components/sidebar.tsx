@@ -1,4 +1,3 @@
-import { t } from 'i18next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
@@ -7,6 +6,7 @@ import EmailOutline from './icons/EmailOutline';
 import { useUser } from 'src/hooks/use-user';
 import { Compass, FourSquare, Account, Team } from './icons';
 import { Title } from './title';
+import { useTranslation } from 'react-i18next';
 
 const ActiveLink = ({ href, children }: { href: string; children: string }) => {
     const router = useRouter();
@@ -57,25 +57,28 @@ const NavBarInner = ({
 }: {
     loggedIn: boolean | null;
     isRelayEmployee: boolean;
-}) => (
-    <>
-        <div className="px-1 pt-5">
-            <Title />
-        </div>
-        <div className="flex flex-col space-y-4 mt-8">
-            <ActiveLink href="/dashboard">{t('navbar.influencers')}</ActiveLink>
-            <ActiveLink href="/campaigns">{t('navbar.campaigns')}</ActiveLink>
-            <ActiveLink href="/ai-email-generator">{t('navbar.aiEmailGenerator')}</ActiveLink>
-            {loggedIn && <ActiveLink href="/account">{t('navbar.account')}</ActiveLink>}
-        </div>
-        {isRelayEmployee && (
-            <div className="flex flex-col space-y-4 mt-8">
-                <h2 className="ml-6">ADMIN</h2>
-                <ActiveLink href="/admin/clients">Clients</ActiveLink>
+}) => {
+    const { t } = useTranslation();
+    return (
+        <>
+            <div className="px-1 pt-5">
+                <Title />
             </div>
-        )}
-    </>
-);
+            <div className="flex flex-col space-y-4 mt-8">
+                <ActiveLink href="/dashboard">{t('navbar.influencers')}</ActiveLink>
+                <ActiveLink href="/campaigns">{t('navbar.campaigns')}</ActiveLink>
+                <ActiveLink href="/ai-email-generator">{t('navbar.aiEmailGenerator')}</ActiveLink>
+                {loggedIn && <ActiveLink href="/account">{t('navbar.account')}</ActiveLink>}
+            </div>
+            {isRelayEmployee && (
+                <div className="flex flex-col space-y-4 mt-8">
+                    <h2 className="ml-6">ADMIN</h2>
+                    <ActiveLink href="/admin/clients">Clients</ActiveLink>
+                </div>
+            )}
+        </>
+    );
+};
 
 export const Sidebar = ({
     loggedIn,
