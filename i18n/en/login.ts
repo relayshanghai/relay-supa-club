@@ -50,5 +50,13 @@ const login = {
     noLoggedInUserFound: 'No logged in user found',
     noCompanyNameFound: 'No company name found',
     companyWithSameNameExists: 'Company with same name already exists',
+    passwordNeedsTen: 'Password needs to be at least 10 characters long',
+    passwordNeedsNumber: 'Password needs to contain at least one number',
+    passwordNeedsSpecial: 'Password needs to contain at least one special character',
+    firstNameRequired: 'First name is required',
+    lastNameRequired: 'Last name is required',
+    emailInvalid: 'Invalid Email',
+    passwordsDoNotMatch: 'Passwords do not match',
+    invalidPassword: 'Invalid password',
 };
 export default login;
