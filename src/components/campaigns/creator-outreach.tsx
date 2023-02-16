@@ -195,7 +195,7 @@ export default function CreatorsOutreach({
                                                 <div className="relative flex-shrink-0 h-10 w-10 rounded-full bg-gray-300">
                                                     <img
                                                         className="h-10 w-10 rounded-full"
-                                                        src={`https://image-cache.brainchild-tech.cn/?link=${creator.avatar_url}`}
+                                                        src={creator.avatar_url}
                                                         alt=""
                                                     />
                                                     <div className="absolute right-0 bottom-0 ">

@@ -67,7 +67,7 @@ export const SearchResultRow = ({
 
             <td className="py-2 px-4 flex flex-row items-center space-x-2 min-w-min">
                 <img
-                    src={`https://image-cache.brainchild-tech.cn/?link=${creator.account.user_profile.picture}`}
+                    src={creator.account.user_profile.picture}
                     className="w-12 h-12"
                     alt={handle}
                 />

@@ -2,7 +2,7 @@ import { CreatorsReportGetQueries, CreatorsReportGetResponse } from 'pages/api/c
 import { useCallback, useState } from 'react';
 import { usageErrors } from 'src/errors/usages';
 import { hasCustomError } from 'src/utils/errors';
-import { nextFetchWithQueries } from 'src/utils/fetcher';
+import { imgProxy, nextFetchWithQueries } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger';
 import { CreatorPlatform, CreatorReport } from 'types';
 import { useUser } from './use-user';
@@ -16,6 +16,16 @@ export const useReport = () => {
     const [gettingReport, setGettingReport] = useState(false);
 
     const { profile } = useUser();
+
+    const transformReport = (report: CreatorReport) => {
+        return {
+            ...report,
+            user_profile: {
+                ...report.user_profile,
+                picture: imgProxy(report.user_profile.picture) ?? report.user_profile.picture,
+            },
+        };
+    };
 
     const getOrCreateReport = useCallback(
         async (platform: CreatorPlatform, creator_id: string) => {
@@ -31,8 +41,11 @@ export const useReport = () => {
                     company_id: profile?.company_id,
                     user_id: profile?.id,
                 });
+
                 if (!report.success) throw new Error('Failed to fetch report');
-                setReport(report);
+
+                const transformed = transformReport(report);
+                setReport(transformed);
                 setReportCreatedAt(createdAt);
             } catch (error: any) {
                 clientLogger(error, 'error');

@@ -5,7 +5,7 @@ import { supabase } from 'src/utils/supabase-client';
 
 export type CampaignNotesDeleteBody = {
     /** the note id */
-    id: number;
+    id: string;
     profileId: string;
 };
 export type CampaignNotesDeleteResponse = null;
