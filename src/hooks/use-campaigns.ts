@@ -19,15 +19,10 @@ import { CampaignsIndexGetQuery, CampaignsIndexGetResult } from 'pages/api/campa
 
 const transformCampaignCreators = (creators: CampaignCreatorDB[]) => {
     return creators.map((creator: CampaignCreatorDB) => {
-        // current image proxy is not working for instagram profiles, this is a temporary fix to show the original profile pic url for instagram, but use the proxy for other platforms.
-        // we are considering to setup a new proxy in the future or gain access to the current one. TODO: Ticket V2-44
-        if (creator.platform === 'youtube' || 'tiktok') {
-            return {
-                ...creator,
-                avatar_url: imgProxy(creator.avatar_url as string),
-            };
-        }
-        return creator;
+        return {
+            ...creator,
+            avatar_url: imgProxy(creator.avatar_url) ?? creator.avatar_url,
+        };
     });
 };
 
@@ -62,8 +57,8 @@ export const useCampaigns = ({
                 setCampaign(campaign);
             }
             if (campaign?.campaign_creators) {
-                transformCampaignCreators(campaign.campaign_creators);
-                setCampaignCreators(campaign.campaign_creators);
+                const transformed = transformCampaignCreators(campaign.campaign_creators);
+                setCampaignCreators(transformed);
             }
         }
     }, [campaignId, campaigns]);
