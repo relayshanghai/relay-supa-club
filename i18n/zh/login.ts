@@ -53,5 +53,6 @@ const login = {
     inputNewPassword: '输入新密码',
     updateAndLogIn: '更新并登录',
     passwordUpdated: '密码已更新',
+    passwordRequirements: '密码必须至少包含10个字符，其中至少1个特殊字符，1个数字',
 };
 export default login;

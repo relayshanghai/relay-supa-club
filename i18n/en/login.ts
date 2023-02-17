@@ -64,5 +64,7 @@ const login = {
     inputNewPassword: 'Input new password',
     updateAndLogIn: 'Update and log in',
     passwordUpdated: 'Password updated',
+    passwordRequirements:
+        'Must be at least 10 characters long and contain at least one number and one special character',
 };
 export default login;
