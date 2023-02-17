@@ -17,7 +17,7 @@ export const useReport = () => {
 
     const { profile } = useUser();
 
-    //The transform function is not used now, as the image proxy issue is handled directly where calls for the image.But this is left for future refactor.
+    //The transform function is not used now, as the image proxy issue is handled directly where calls for the image.But this is left for future refactor. TODO:Ticket V2-181
     // const transformReport = (report: CreatorReport, platform: string) => {
     //     if (platform === 'youtube' || platform === 'tiktok') {
     //         return {

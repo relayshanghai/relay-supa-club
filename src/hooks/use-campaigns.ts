@@ -17,7 +17,7 @@ import {
 } from 'pages/api/campaigns/add-creator';
 import { CampaignsIndexGetQuery, CampaignsIndexGetResult } from 'pages/api/campaigns';
 
-//The transform function is not used now, as the image proxy issue is handled directly where calls for the image.But this is left for future refactor.
+//The transform function is not used now, as the image proxy issue is handled directly where calls for the image.But this is left for future refactor. TODO:Ticket V2-181
 // const transformCampaignCreators = (creators: CampaignCreatorDB[]) => {
 //     return creators.map((creator: CampaignCreatorDB) => {
 //         return {
@@ -59,7 +59,7 @@ export const useCampaigns = ({
                 setCampaign(campaign);
             }
             if (campaign?.campaign_creators) {
-                setCampaignCreators(campaign?.campaign_creators);
+                setCampaignCreators(campaign.campaign_creators);
             }
         }
     }, [campaignId, campaigns]);
