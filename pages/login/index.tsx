@@ -91,10 +91,8 @@ export default function Login() {
                 />
                 <Button
                     disabled={!email || !password || loggingIn}
-                    onClick={(e) => {
-                        e.preventDefault();
-                        handleSubmit();
-                    }}
+                    type="button"
+                    onClick={handleSubmit}
                 >
                     {t('login.logIn')}
                 </Button>
@@ -106,13 +104,7 @@ export default function Login() {
                         </a>
                     </Link>
                 </p>
-                <button
-                    onClick={(e) => {
-                        e.preventDefault();
-                        handleResetPassword();
-                    }}
-                    disabled={generatingResetEmail}
-                >
+                <button type="button" onClick={handleResetPassword} disabled={generatingResetEmail}>
                     <p className="mt-4 inline text-gray-400 text-sm">
                         {t('login.forgotPasswordClickHereToReset')}
                     </p>
