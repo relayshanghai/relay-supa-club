@@ -8,7 +8,6 @@ import type { NextRequest } from 'next/server';
 import { DatabaseWithCustomTypes } from 'types';
 import { serverLogger } from 'src/utils/logger';
 import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
-import httpCodes from 'src/constants/httpCodes';
 
 const pricingAllowList = ['https://en-relay-club.vercel.app', 'https://relay.club'];
 const stripeWebhookAllowlist = ['https://stripe.com/', 'https://hooks.stripe.com/'];
@@ -56,16 +55,16 @@ const checkOnboardingStatus = async (
     if (req.nextUrl.pathname === '/api/company/create') {
         const { user_id } = JSON.parse(await req.text());
         if (!user_id || user_id !== session.user.id) {
-            return NextResponse.rewrite(redirectUrl.origin, { status: httpCodes.FORBIDDEN });
+            return NextResponse.json({ error: 'user is unauthorized for this action' });
         }
         return res;
     }
     // special case where we require a signed in user to view their profile, but we don't want to redirect them to onboarding cause this happens before they are onboarded
-    if (req.nextUrl.pathname === '/api/profiles' && req.method === 'GET') {
+    if (req.nextUrl.pathname === '/api/profiles') {
         // print req queries
         const id = new URL(req.url).searchParams.get('id');
         if (!id || id !== session.user.id) {
-            return NextResponse.rewrite(redirectUrl.origin, { status: httpCodes.FORBIDDEN });
+            return NextResponse.json({ error: 'user is unauthorized for this action' });
         }
         return res;
     }
@@ -76,7 +75,7 @@ const checkOnboardingStatus = async (
     // if signed up, but no company, redirect to onboarding
     if (!subscriptionStatus) {
         if (req.nextUrl.pathname.includes('api')) {
-            return NextResponse.rewrite(redirectUrl.origin, { status: httpCodes.FORBIDDEN });
+            return NextResponse.json({ error: 'user is unauthorized for this action' });
         }
         if (req.nextUrl.pathname === '/signup/onboarding') return res;
         redirectUrl.pathname = '/signup/onboarding';
@@ -178,7 +177,7 @@ export async function middleware(req: NextRequest) {
     const { data: authData } = await supabase.auth.getSession();
     if (req.nextUrl.pathname.includes('/admin')) {
         if (!authData.session?.user?.email) {
-            return NextResponse.rewrite(req.nextUrl.origin, { status: httpCodes.FORBIDDEN });
+            return NextResponse.json({ error: 'unauthorized to use endpoint' });
         }
         return await checkIsRelayEmployee(res, authData.session.user.email);
     }
@@ -188,7 +187,7 @@ export async function middleware(req: NextRequest) {
 
     // not logged in -- api requests, just return an error
     if (req.nextUrl.pathname.includes('api'))
-        return NextResponse.rewrite(req.nextUrl.origin, { status: httpCodes.FORBIDDEN });
+        return NextResponse.json({ error: 'unauthorized to use endpoint' });
 
     const redirectUrl = req.nextUrl.clone();
 
