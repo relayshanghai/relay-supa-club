@@ -1,9 +1,9 @@
-// import { createMiddlewareSupabaseClient } from '@supabase/auth-helpers-nextjs';
+import { createMiddlewareSupabaseClient } from '@supabase/auth-helpers-nextjs';
 // import type { Session, SupabaseClient } from '@supabase/auth-helpers-nextjs';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import type { DatabaseWithCustomTypes } from 'types';
-import { serverLogger } from 'src/utils/logger';
+// import { serverLogger } from 'src/utils/logger';
 import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
 import httpCodes from 'src/constants/httpCodes';
 
@@ -170,19 +170,17 @@ export async function middleware(req: NextRequest) {
     if (req.nextUrl.pathname === '/api/subscriptions/prices') return allowPricingCors(req, res);
     if (req.nextUrl.pathname === '/api/subscriptions/webhook') return allowStripeCors(req, res);
 
-    return res;
-
     // Create authenticated Supabase Client.
-    // const supabase = createMiddlewareSupabaseClient<DatabaseWithCustomTypes>({ req, res });
-    // const { data: authData } = await supabase.auth.getSession();
-    // if (req.nextUrl.pathname.includes('/admin')) {
-    //     if (!authData.session?.user?.email) {
-    //         return NextResponse.rewrite(req.nextUrl.origin, { status: httpCodes.FORBIDDEN });
-    //     }
-    //     return await checkIsRelayEmployee(res, authData.session.user.email);
-    // }
+    const supabase = createMiddlewareSupabaseClient<DatabaseWithCustomTypes>({ req, res });
+    const { data: authData } = await supabase.auth.getSession();
+    if (req.nextUrl.pathname.includes('/admin')) {
+        if (!authData.session?.user?.email) {
+            return NextResponse.rewrite(req.nextUrl.origin, { status: httpCodes.FORBIDDEN });
+        }
+        return await checkIsRelayEmployee(res, authData.session.user.email);
+    }
 
-    // if (authData.session?.user?.email)
+    if (authData.session?.user?.email) return res;
     //     return await checkOnboardingStatus(req, res, authData.session, supabase);
 
     // not logged in -- api requests, just return an error
