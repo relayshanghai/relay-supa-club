@@ -1,11 +1,8 @@
-import {
-    createMiddlewareSupabaseClient,
-    Session,
-    SupabaseClient,
-} from '@supabase/auth-helpers-nextjs';
+import { createMiddlewareSupabaseClient } from '@supabase/auth-helpers-nextjs';
+import type { Session, SupabaseClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { DatabaseWithCustomTypes } from 'types';
+import type { DatabaseWithCustomTypes } from 'types';
 import { serverLogger } from 'src/utils/logger';
 import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
 import { APP_URL } from 'src/constants';
