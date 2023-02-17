@@ -150,58 +150,43 @@ export default function Register() {
                     <Input label={t('login.email')} value={email} disabled />
 
                     <Input
+                        error={validationErrors.firstName}
                         label={t('login.firstName')}
                         type="text"
-                        placeholder={t('login.firstNamePlaceholder') || ''}
+                        placeholder={t('login.firstNamePlaceholder')}
                         value={firstName}
                         required
                         onChange={(e) => setAndValidate('firstName', e.target.value)}
                     />
                     <Input
+                        error={validationErrors.lastName}
                         label={t('login.lastName')}
                         type="text"
-                        placeholder={t('login.lastNamePlaceholder') || ''}
+                        placeholder={t('login.lastNamePlaceholder')}
                         value={lastName}
                         required
                         onChange={(e) => setAndValidate('lastName', e.target.value)}
                     />
                     <Input
+                        error={validationErrors.password}
+                        note={t('login.passwordRequirements')}
                         label={t('login.password')}
                         type="password"
-                        placeholder={t('login.passwordPlaceholder') || ''}
+                        placeholder={t('login.passwordPlaceholder')}
                         value={password}
                         onChange={(e) => setAndValidate('password', e.target.value)}
                     />
                     <Input
+                        error={validationErrors.confirmPassword}
                         label={t('login.confirmPassword')}
                         type="password"
-                        placeholder={t('login.passwordPlaceholder') || ''}
+                        placeholder={t('login.passwordPlaceholder')}
                         value={confirmPassword}
                         onChange={(e) => setAndValidate('confirmPassword', e.target.value)}
                     />
-                    <Button
-                        disabled={submitDisabled}
-                        onClick={(e) => {
-                            e.preventDefault();
-                            handleSubmit();
-                        }}
-                    >
+                    <Button disabled={submitDisabled} type="button" onClick={handleSubmit}>
                         {t('login.signUp')}
                     </Button>
-                    {hasValidationErrors && (
-                        <div className="w-full flex flex-col space-y-2">
-                            {Object.entries(validationErrors).map(([key, value]) => {
-                                if (value) {
-                                    return (
-                                        <p className="text-red-500 text-sm" key={key}>
-                                            {value}
-                                        </p>
-                                    );
-                                }
-                                return null;
-                            })}
-                        </div>
-                    )}
                 </form>
             ) : inviteStatus === 'pending' ? (
                 <div className="mx-auto h-full flex flex-col justify-center items-center space-y-6">
