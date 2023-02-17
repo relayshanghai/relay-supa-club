@@ -1,11 +1,11 @@
 /* eslint-disable no-console */
 
 const parseError = (error: any) => {
+    if (typeof error === 'string') return error;
     if (error && 'message' in error) {
         if ('stack' in error) return error;
         return error.message;
     }
-    if (typeof error === 'string') return error;
     return JSON.stringify(error);
 };
 export type LogLevel = 'log' | 'info' | 'error' | 'warn';
