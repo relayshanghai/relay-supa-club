@@ -53,6 +53,9 @@ export const AccountProvider: FC<PropsWithChildren> = ({ children }: PropsWithCh
         supabaseClient,
     } = useUser();
     const { company, updateCompany, createInvite, refreshCompany } = useCompany();
+    // TODO: make useCompany a context provider and use it in components that need it. get rid of this Context.
+    // https://github.com/relayshanghai/relay-supa-club/pull/98#discussion_r1108165502
+    // https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/148
 
     return (
         <AccountContext.Provider
