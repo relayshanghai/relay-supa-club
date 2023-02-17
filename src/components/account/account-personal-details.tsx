@@ -94,7 +94,7 @@ export const PersonalDetails = () => {
             }
             const { error } = await supabaseClient.auth.updateUser(
                 { email },
-                { emailRedirectTo: `${APP_URL}/login?email=${email}` },
+                { emailRedirectTo: `${APP_URL}/login?${new URLSearchParams({ email })}` },
             );
             if (error) throw error;
             toast.success(t('account.personal.confirmationEmailSentToNewAddress'));
@@ -134,7 +134,7 @@ export const PersonalDetails = () => {
                         <div className="flex flex-row justify-end w-full space-x-4 mb-6">
                             <Button disabled={userDataLoading} onClick={handleUpdateProfile}>
                                 {t('account.update')}
-                            </Button>{' '}
+                            </Button>
                             <Button onClick={() => setEditMode(false)} variant="secondary">
                                 {t('account.cancel')}
                             </Button>

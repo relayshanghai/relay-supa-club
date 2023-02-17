@@ -181,7 +181,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
     const logout = async () => {
         const email = session?.user?.email;
         // cannot use router.push() here because it won't cancel in-flight requests which wil re-set the cookie
-        window.location.href = email ? `/logout?email=${encodeURIComponent(email)}` : '/logout';
+        window.location.href = email ? `/logout?${new URLSearchParams({ email })}` : '/logout';
     };
 
     useEffect(() => {

@@ -14,7 +14,7 @@ import { useUser } from 'src/hooks/use-user';
 export default function Login() {
     const { t } = useTranslation();
     const router = useRouter();
-    const { email: emailQuery, update_email } = router.query;
+    const { email: emailQuery } = router.query;
     const { login, supabaseClient } = useUser();
     const [loggingIn, setLoggingIn] = useState(false);
     const [generatingResetEmail, setGeneratingResetEmail] = useState(false);
@@ -36,11 +36,7 @@ export default function Login() {
             setLoggingIn(true);
             await login(email, password);
             toast.success(t('login.loginSuccess'));
-            await router.push(
-                update_email && update_email === '1'
-                    ? `/dashboard?update_email=${1}`
-                    : '/dashboard',
-            );
+            await router.push('/dashboard');
         } catch (error: any) {
             toast.error(error.message || t('login.oopsSomethingWentWrong'));
         } finally {
