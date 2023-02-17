@@ -6,9 +6,8 @@ export interface Database {
             campaign_creators: {
                 Row: {
                     added_by_id: string;
-
                     address: string | null;
-                    avatar_url: string | null;
+                    avatar_url: string;
                     brief_opened_by_creator: boolean | null;
                     campaign_id: string | null;
                     created_at: string | null;
@@ -41,7 +40,7 @@ export interface Database {
                 Insert: {
                     added_by_id: string;
                     address?: string | null;
-                    avatar_url?: string | null;
+                    avatar_url: string;
                     brief_opened_by_creator?: boolean | null;
                     campaign_id?: string | null;
                     created_at?: string | null;
@@ -74,7 +73,7 @@ export interface Database {
                 Update: {
                     added_by_id?: string;
                     address?: string | null;
-                    avatar_url?: string | null;
+                    avatar_url?: string;
                     brief_opened_by_creator?: boolean | null;
                     campaign_id?: string | null;
                     created_at?: string | null;
@@ -110,7 +109,7 @@ export interface Database {
                     campaign_creator_id: string;
                     comment: string | null;
                     created_at: string | null;
-                    id: number;
+                    id: string;
                     important: boolean;
                     user_id: string;
                 };
@@ -118,7 +117,7 @@ export interface Database {
                     campaign_creator_id: string;
                     comment?: string | null;
                     created_at?: string | null;
-                    id?: number;
+                    id?: string;
                     important?: boolean;
                     user_id: string;
                 };
@@ -126,7 +125,7 @@ export interface Database {
                     campaign_creator_id?: string;
                     comment?: string | null;
                     created_at?: string | null;
-                    id?: number;
+                    id?: string;
                     important?: boolean;
                     user_id?: string;
                 };

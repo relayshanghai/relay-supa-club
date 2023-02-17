@@ -200,30 +200,32 @@ export default function CampaignShow() {
                     <CampaignDetails currentCampaign={currentCampaign} media={media} />
                 )}
             </div>
-            <Modal
-                title={
-                    <div className="flex items-center -mt-4 justify-between">
-                        <h3>{t('campaigns.modal.comments')}</h3>
-                        <div className="bg-gray-100 rounded-md p-3 sticky top-0 z-30 flex items-center">
-                            <img
-                                className="h-8 w-8 rounded-full mr-4"
-                                src={`https://image-cache.brainchild-tech.cn/?link=${currentCreator?.avatar_url}`}
-                                alt=""
-                            />
-                            <h3 className="font-medium text-sm">{currentCreator?.fullname}</h3>
+            {currentCreator && (
+                <Modal
+                    title={
+                        <div className="flex items-center -mt-4 justify-between">
+                            <h3>{t('campaigns.modal.comments')}</h3>
+                            <div className="bg-gray-100 rounded-md p-3 sticky top-0 z-30 flex items-center">
+                                <img
+                                    className="h-8 w-8 rounded-full mr-4"
+                                    src={currentCreator.avatar_url}
+                                    alt=""
+                                />
+                                <h3 className="font-medium text-sm">{currentCreator?.fullname}</h3>
+                            </div>
                         </div>
+                    }
+                    visible={!!showNotesModal}
+                    onClose={() => {
+                        setShowNotesModal(false);
+                    }}
+                >
+                    <div>
+                        <CommentCards currentCreator={currentCreator} />
+                        <CommentInput currentCreator={currentCreator} />
                     </div>
-                }
-                visible={!!showNotesModal}
-                onClose={() => {
-                    setShowNotesModal(false);
-                }}
-            >
-                <div>
-                    <CommentCards currentCreator={currentCreator} />
-                    <CommentInput currentCreator={currentCreator} />
-                </div>
-            </Modal>
+                </Modal>
+            )}
         </Layout>
     );
 }
