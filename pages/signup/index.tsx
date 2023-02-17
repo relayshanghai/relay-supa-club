@@ -165,10 +165,12 @@ export default function Register() {
                 </Button>
                 <p className="inline text-gray-500 text-sm">
                     {t('login.alreadyHaveAnAccount')}
-                    <Link href="/login">
-                        <a className="inline text-primary-700 hover:text-primary-600 cursor-pointer">
-                            {t('login.logIn')}
-                        </a>
+                    <Link
+                        href="/login"
+                        className="inline text-primary-700 hover:text-primary-600 cursor-pointer">
+
+                        {t('login.logIn')}
+
                     </Link>
                 </p>
                 {hasValidationErrors && (

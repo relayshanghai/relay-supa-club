@@ -78,10 +78,12 @@ export default function Login() {
                 </Button>
                 <p className="inline text-gray-500 text-sm">
                     {t('login.dontHaveAnAccount')}{' '}
-                    <Link href="/signup">
-                        <a className="inline text-primary-700 hover:text-primary-600 cursor-pointer">
-                            {t('login.signUp')}
-                        </a>
+                    <Link
+                        href="/signup"
+                        className="inline text-primary-700 hover:text-primary-600 cursor-pointer">
+
+                        {t('login.signUp')}
+
                     </Link>
                 </p>
             </form>

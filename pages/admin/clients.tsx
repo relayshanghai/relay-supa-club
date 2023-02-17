@@ -81,19 +81,19 @@ const Clients = () => {
                                                         <Link
                                                             href={`/admin/campaigns/${client.id}`}
                                                         >
-                                                            <a>
-                                                                <Button>{dataPoint}</Button>
-                                                            </a>
+
+                                                            <Button>{dataPoint}</Button>
+
                                                         </Link>
                                                     </div>
                                                 ) : columnHeaders[index] === 'Search' ? (
-                                                    <Link
+                                                    (<Link
                                                         href={`/admin/search/${client.id}?company_name=${client.name}`}
                                                     >
-                                                        <a>
-                                                            <Button>{dataPoint}</Button>
-                                                        </a>
-                                                    </Link>
+
+                                                        <Button>{dataPoint}</Button>
+
+                                                    </Link>)
                                                 ) : (
                                                     dataPoint
                                                 )}
