@@ -63,7 +63,7 @@ const checkOnboardingStatus = async (
         // print req queries
         const id = new URL(req.url).searchParams.get('id');
         if (!id || id !== session.user.id) {
-            return NextResponse.json({ error: 'user is unauthorized for this action' });
+            return new Response(null, { status: 404 });
         }
         return res;
     }
@@ -74,7 +74,7 @@ const checkOnboardingStatus = async (
     // if signed up, but no company, redirect to onboarding
     if (!subscriptionStatus) {
         if (req.nextUrl.pathname.includes('api')) {
-            return NextResponse.json({ error: 'user is unauthorized for this action' });
+            return new Response(null, { status: 404 });
         }
         if (req.nextUrl.pathname === '/signup/onboarding') return res;
         redirectUrl.pathname = '/signup/onboarding';
@@ -129,7 +129,7 @@ const checkOnboardingStatus = async (
 
         if (req.nextUrl.pathname.includes('/signup/payment-onboard')) return res;
         redirectUrl.pathname = '/signup/payment-onboard';
-        return NextResponse.redirect(`${APP_URL}/api/error`);
+        return NextResponse.redirect(redirectUrl);
     }
 };
 
@@ -156,7 +156,7 @@ const allowStripeCors = (req: NextRequest, res: NextResponse) => {
 
 const checkIsRelayEmployee = async (res: NextResponse, email: string) => {
     if (!EMPLOYEE_EMAILS.includes(email)) {
-        return NextResponse.redirect(`${APP_URL}/api/error`);
+        return new Response(null, { status: 404 });
     }
     return res;
 };
@@ -172,7 +172,7 @@ export async function middleware(req: NextRequest) {
 
     if (req.nextUrl.pathname === '/') {
         redirectUrl.pathname = '/dashboard';
-        return NextResponse.redirect(redirectUrl);
+        return new Response(null, { status: 302, headers: { Location: redirectUrl.href } });
     }
 
     if (req.nextUrl.pathname === '/api/subscriptions/prices') return allowPricingCors(req, res);
@@ -183,8 +183,7 @@ export async function middleware(req: NextRequest) {
     const { data: authData } = await supabase.auth.getSession();
     if (req.nextUrl.pathname.includes('/admin')) {
         if (!authData.session?.user?.email) {
-            redirectUrl.pathname = '/api/error';
-            return NextResponse.redirect(redirectUrl);
+            return new Response(null, { status: 404 });
         }
         return await checkIsRelayEmployee(res, authData.session.user.email);
     }
@@ -194,8 +193,7 @@ export async function middleware(req: NextRequest) {
 
     // not logged in -- api requests, just return an error
     if (req.nextUrl.pathname.includes('api')) {
-        redirectUrl.pathname = '/api/error';
-        return NextResponse.redirect(redirectUrl);
+        return new Response(null, { status: 404 });
     }
 
     // unauthenticated pages requests, send to signup
