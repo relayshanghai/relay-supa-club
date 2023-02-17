@@ -8,6 +8,7 @@ import type { NextRequest } from 'next/server';
 import { DatabaseWithCustomTypes } from 'types';
 import { serverLogger } from 'src/utils/logger';
 import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
+import { APP_URL } from 'src/constants';
 
 const pricingAllowList = ['https://en-relay-club.vercel.app', 'https://relay.club'];
 const stripeWebhookAllowlist = ['https://stripe.com/', 'https://hooks.stripe.com/'];
@@ -55,7 +56,7 @@ const checkOnboardingStatus = async (
     if (req.nextUrl.pathname === '/api/company/create') {
         const { user_id } = JSON.parse(await req.text());
         if (!user_id || user_id !== session.user.id) {
-            return NextResponse.json({ error: 'user is unauthorized for this action' });
+            return NextResponse.rewrite(`${APP_URL}/api/error`);
         }
         return res;
     }
@@ -64,7 +65,7 @@ const checkOnboardingStatus = async (
         // print req queries
         const id = new URL(req.url).searchParams.get('id');
         if (!id || id !== session.user.id) {
-            return NextResponse.json({ error: 'user is unauthorized for this action' });
+            return NextResponse.rewrite(`${APP_URL}/api/error`);
         }
         return res;
     }
@@ -75,17 +76,17 @@ const checkOnboardingStatus = async (
     // if signed up, but no company, redirect to onboarding
     if (!subscriptionStatus) {
         if (req.nextUrl.pathname.includes('api')) {
-            return NextResponse.json({ error: 'user is unauthorized for this action' });
+            return NextResponse.rewrite(`${APP_URL}/api/error`);
         }
         if (req.nextUrl.pathname === '/signup/onboarding') return res;
         redirectUrl.pathname = '/signup/onboarding';
-        return NextResponse.json({ error: 'user is unauthorized for this action' });
+        return NextResponse.rewrite(`${APP_URL}/api/error`);
     }
     if (subscriptionStatus === 'active' || subscriptionStatus === 'trial') {
         // if already signed in and has company, when navigating to index or login page, redirect to dashboard
         if (req.nextUrl.pathname === '/' || req.nextUrl.pathname === '/login') {
             redirectUrl.pathname = '/dashboard';
-            return NextResponse.json({ error: 'user is unauthorized for this action' });
+            return NextResponse.rewrite(`${APP_URL}/api/error`);
         }
 
         // Authentication successful, forward request to protected route.
@@ -108,13 +109,13 @@ const checkOnboardingStatus = async (
         else {
             if (!subscriptionEndDate) {
                 redirectUrl.pathname = '/account';
-                return NextResponse.json({ error: 'user is unauthorized for this action' });
+                return NextResponse.rewrite(`${APP_URL}/api/error`);
             }
 
             const endDate = new Date(subscriptionEndDate);
             if (endDate < new Date()) {
                 redirectUrl.pathname = '/account';
-                return NextResponse.json({ error: 'user is unauthorized for this action' });
+                return NextResponse.rewrite(`${APP_URL}/api/error`);
             } else return res;
         }
     }
@@ -130,7 +131,7 @@ const checkOnboardingStatus = async (
 
         if (req.nextUrl.pathname.includes('/signup/payment-onboard')) return res;
         redirectUrl.pathname = '/signup/payment-onboard';
-        return NextResponse.json({ error: 'user is unauthorized for this action' });
+        return NextResponse.rewrite(`${APP_URL}/api/error`);
     }
 };
 
@@ -157,7 +158,7 @@ const allowStripeCors = (req: NextRequest, res: NextResponse) => {
 
 const checkIsRelayEmployee = async (res: NextResponse, email: string) => {
     if (!EMPLOYEE_EMAILS.includes(email)) {
-        return NextResponse.json({ error: 'user is unauthorized for this action' });
+        return NextResponse.rewrite(`${APP_URL}/api/error`);
     }
     return res;
 };
@@ -177,7 +178,7 @@ export async function middleware(req: NextRequest) {
     const { data: authData } = await supabase.auth.getSession();
     if (req.nextUrl.pathname.includes('/admin')) {
         if (!authData.session?.user?.email) {
-            return NextResponse.json({ error: 'user is unauthorized for this action' });
+            return NextResponse.rewrite(`${APP_URL}/api/error`);
         }
         return await checkIsRelayEmployee(res, authData.session.user.email);
     }
@@ -186,14 +187,13 @@ export async function middleware(req: NextRequest) {
         return await checkOnboardingStatus(req, res, authData.session, supabase);
 
     // not logged in -- api requests, just return an error
-    if (req.nextUrl.pathname.includes('api'))
-        return NextResponse.json({ error: 'user is unauthorized for this action' });
+    if (req.nextUrl.pathname.includes('api')) return NextResponse.rewrite(`${APP_URL}/api/error`);
 
     const redirectUrl = req.nextUrl.clone();
 
     // unauthenticated pages requests, send to signup
     redirectUrl.pathname = '/signup';
-    return NextResponse.json({ error: 'user is unauthorized for this action' });
+    return NextResponse.rewrite(`${APP_URL}/api/error`);
 }
 
 export const config = {
