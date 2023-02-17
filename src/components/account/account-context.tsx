@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { User } from '@supabase/supabase-js';
+import { SupabaseClient, User } from '@supabase/supabase-js';
 import type { CompanyPutBody } from 'pages/api/company';
 import type { ProfilePutBody } from 'pages/api/profiles';
 
@@ -11,6 +11,7 @@ import { useUser } from 'src/hooks/use-user';
 import type { CompanyWithProfilesInvitesAndUsage } from 'src/utils/api/db/calls/company';
 import type { ProfileDB } from 'src/utils/api/db/types';
 import type Stripe from 'stripe';
+import { DatabaseWithCustomTypes } from 'types';
 
 export interface AccountContextProps {
     userDataLoading: boolean;
@@ -23,6 +24,7 @@ export interface AccountContextProps {
     refreshCompany: () => void;
     updateProfile: (data: Omit<ProfilePutBody, 'id'>) => void;
     updateCompany: (data: Omit<CompanyPutBody, 'id'>) => void;
+    supabaseClient: SupabaseClient<DatabaseWithCustomTypes> | null;
 }
 
 export const AccountContext = createContext<AccountContextProps>({
@@ -38,10 +40,18 @@ export const AccountContext = createContext<AccountContextProps>({
     updateProfile: () => {},
     refreshProfile: () => {},
     refreshCompany: () => {},
+    supabaseClient: null,
 });
 
 export const AccountProvider: FC<PropsWithChildren> = ({ children }: PropsWithChildren) => {
-    const { profile, user, loading: userDataLoading, updateProfile, refreshProfile } = useUser();
+    const {
+        profile,
+        user,
+        loading: userDataLoading,
+        updateProfile,
+        refreshProfile,
+        supabaseClient,
+    } = useUser();
     const { company, updateCompany, createInvite, refreshCompany } = useCompany();
 
     return (
@@ -56,6 +66,7 @@ export const AccountProvider: FC<PropsWithChildren> = ({ children }: PropsWithCh
                 createInvite,
                 refreshProfile,
                 refreshCompany,
+                supabaseClient,
             }}
         >
             {children}

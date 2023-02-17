@@ -210,6 +210,6 @@ export const config = {
          * - create-employee endpoint (api/company/create-employee)
          * - login, signup, logout (login, signup, logout pages)
          */
-        '/((?!_next/static|_next/image|favicon.ico|assets/*|api/company/accept-invite*|api/company/create-employee*|login*|signup|signup/invite*|logout|api/logout).*)',
+        '/((?!_next/static|_next/image|favicon.ico|assets/*|api/company/accept-invite*|api/company/create-employee*|login*|login/reset-password|signup|signup/invite*|logout|api/logout).*)',
     ],
 };
