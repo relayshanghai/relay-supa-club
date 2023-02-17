@@ -115,22 +115,25 @@ export default function Register() {
                     </h3>
                 </div>
                 <Input
+                    error={validationErrors.firstName}
                     label={t('login.firstName')}
                     type="first_name"
-                    placeholder={t('login.firstNamePlaceholder') || ''}
+                    placeholder={t('login.firstNamePlaceholder')}
                     value={firstName}
                     required
                     onChange={(e) => setAndValidate('firstName', e.target.value)}
                 />
                 <Input
+                    error={validationErrors.lastName}
                     label={t('login.lastName')}
                     type="last_name"
-                    placeholder={t('login.lastNamePlaceholder') || ''}
+                    placeholder={t('login.lastNamePlaceholder')}
                     value={lastName}
                     required
                     onChange={(e) => setAndValidate('lastName', e.target.value)}
                 />
                 <Input
+                    error={validationErrors.email}
                     label={t('login.email')}
                     type="email"
                     placeholder="hello@relay.club"
@@ -139,28 +142,25 @@ export default function Register() {
                     onChange={(e) => setAndValidate('email', e.target.value)}
                 />
                 <Input
+                    error={validationErrors.password}
+                    note={t('login.passwordRequirements')}
                     label={t('login.password')}
                     type="password"
-                    placeholder={t('login.passwordPlaceholder') || ''}
+                    placeholder={t('login.passwordPlaceholder')}
                     value={password}
                     required
                     onChange={(e) => setAndValidate('password', e.target.value)}
                 />
                 <Input
+                    error={validationErrors.confirmPassword}
                     label={t('login.confirmPassword')}
                     type="password"
-                    placeholder={t('login.passwordPlaceholder') || ''}
+                    placeholder={t('login.passwordPlaceholder')}
                     value={confirmPassword}
                     required
                     onChange={(e) => setAndValidate('confirmPassword', e.target.value)}
                 />
-                <Button
-                    disabled={submitDisabled}
-                    onClick={(e) => {
-                        e.preventDefault();
-                        handleSubmit();
-                    }}
-                >
+                <Button disabled={submitDisabled} type="button" onClick={handleSubmit}>
                     {t('login.signUp')}
                 </Button>
                 <p className="inline text-gray-500 text-sm">
@@ -173,20 +173,6 @@ export default function Register() {
 
                     </Link>
                 </p>
-                {hasValidationErrors && (
-                    <div className="w-full flex flex-col space-y-2">
-                        {Object.entries(validationErrors).map(([key, value]) => {
-                            if (value) {
-                                return (
-                                    <p className="text-red-500 text-sm" key={key}>
-                                        {value}
-                                    </p>
-                                );
-                            }
-                            return null;
-                        })}
-                    </div>
-                )}
             </form>
         </div>
     );

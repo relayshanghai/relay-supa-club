@@ -181,8 +181,23 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
     const logout = async () => {
         const email = session?.user?.email;
         // cannot use router.push() here because it won't cancel in-flight requests which wil re-set the cookie
-        window.location.href = email ? `/logout?email=${encodeURIComponent(email)}` : '/logout';
+        window.location.href = email ? `/logout?${new URLSearchParams({ email })}` : '/logout';
     };
+
+    useEffect(() => {
+        // detect if the email has been changed on the supabase side and update the profile
+        const updateEmail = async () => {
+            if (session?.user.email && profile?.email && session.user.email !== profile.email) {
+                try {
+                    await updateProfile({ ...profile, email: session.user.email });
+                    refreshProfile();
+                } catch (error) {
+                    clientLogger(error, 'error');
+                }
+            }
+        };
+        updateEmail();
+    }, [session?.user.email, profile?.email, updateProfile, profile, session, refreshProfile]);
 
     return (
         <ctx.Provider

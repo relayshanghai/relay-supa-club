@@ -11,6 +11,10 @@ const account = {
         emailPlaceholder: 'hello@relay.club',
         profileUpdated: 'Profile updated',
         oopsWentWrong: 'Oops, something went wrong',
+        updateEmail: 'Update email',
+        confirmationEmailSentToNewAddress: 'Confirmation email sent to new address',
+        pleaseEnterNewEmail: 'Please enter a new email',
+        pleaseEnterValidEmail: 'Please enter a valid email',
     },
     company: {
         companyName: 'Company name',

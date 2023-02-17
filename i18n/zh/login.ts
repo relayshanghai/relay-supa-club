@@ -48,5 +48,11 @@ const login = {
     noLoggedInUserFound: '找不到登录用户',
     noCompanyNameFound: '找不到公司名称',
     companyWithSameNameExists: '已存在具有相同名称的公司',
+    forgotPasswordClickHereToReset: '忘记密码? 点击这里重置',
+    changePassword: '更改密码',
+    inputNewPassword: '输入新密码',
+    updateAndLogIn: '更新并登录',
+    passwordUpdated: '密码已更新',
+    passwordRequirements: '密码必须至少包含10个字符，其中至少1个特殊字符，1个数字',
 };
 export default login;
