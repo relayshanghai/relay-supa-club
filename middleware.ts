@@ -61,7 +61,7 @@ const checkOnboardingStatus = async (
         return res;
     }
     // special case where we require a signed in user to view their profile, but we don't want to redirect them to onboarding cause this happens before they are onboarded
-    if (req.nextUrl.pathname === '/api/profiles') {
+    if (req.nextUrl.pathname === '/api/profiles' && req.method === 'GET') {
         // print req queries
         const id = new URL(req.url).searchParams.get('id');
         if (!id || id !== session.user.id) {
