@@ -16,6 +16,7 @@ import {
     CampaignCreatorAddCreatorPostResponse,
 } from 'pages/api/campaigns/add-creator';
 import { CampaignsIndexGetQuery, CampaignsIndexGetResult } from 'pages/api/campaigns';
+import { CampaignCreatorUpdatePutBody } from 'pages/api/campaigns/update-creator';
 
 const transformCampaignCreators = (creators: CampaignCreatorDB[]) => {
     return creators.map((creator: CampaignCreatorDB) => {
@@ -43,6 +44,7 @@ export const useCampaigns = ({
     } = useSWR(companyId ? 'campaigns' : null, (path) =>
         nextFetchWithQueries<CampaignsIndexGetQuery, CampaignsIndexGetResult>(path, {
             id: companyId ?? '',
+            profile_id: profile?.id ?? '',
         }),
     );
     const [loading, setLoading] = useState(false);
@@ -64,11 +66,13 @@ export const useCampaigns = ({
     }, [campaignId, campaigns]);
 
     const createCampaign = useCallback(
-        async (input: Omit<CampaignsCreatePostBody, 'company_id'>) => {
-            if (!companyId) throw new Error('No profile found');
+        async (input: Omit<CampaignsCreatePostBody, 'company_id' | 'profile_id'>) => {
+            if (!companyId) throw new Error('No company found');
+            if (!profile?.id) throw new Error('No profile found');
 
             const body: CampaignsCreatePostBody = {
                 ...input,
+                profile_id: profile.id,
                 company_id: companyId,
             };
             return await nextFetch<CampaignsCreatePostResponse>('campaigns/create', {
@@ -77,22 +81,24 @@ export const useCampaigns = ({
             });
         },
 
-        [companyId],
+        [companyId, profile?.id],
     );
 
     const updateCampaign = useCallback(
         async (input: CampaignDBUpdate) => {
             if (!companyId) throw new Error('No profile found');
+            if (!profile?.id) throw new Error('No profile found');
             const body: CampaignUpdatePostBody = {
                 ...input,
                 company_id: companyId,
+                profile_id: profile.id,
             };
             return await nextFetch<CampaignUpdatePostResponse>('campaigns/update', {
                 method: 'post',
                 body,
             });
         },
-        [companyId],
+        [companyId, profile?.id],
     );
 
     const addCreatorToCampaign = useCallback(
@@ -118,16 +124,20 @@ export const useCampaigns = ({
         async (input: CampaignCreatorDB) => {
             setLoading(true);
             if (!campaign?.id) throw new Error('No campaign found');
+            if (!profile?.id) throw new Error('No profile found');
+            const body: CampaignCreatorUpdatePutBody = {
+                ...input,
+                campaign_id: campaign.id,
+                profile_id: profile.id,
+            };
+            if (!campaign?.id) throw new Error('No campaign found');
             await nextFetch('campaigns/update-creator', {
                 method: 'put',
-                body: {
-                    ...input,
-                    campaign_id: campaign.id,
-                },
+                body,
             });
             setLoading(false);
         },
-        [campaign?.id],
+        [campaign?.id, profile?.id],
     );
 
     const deleteCreatorInCampaign = useCallback(
