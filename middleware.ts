@@ -167,6 +167,13 @@ const checkIsRelayEmployee = async (res: NextResponse, email: string) => {
 export async function middleware(req: NextRequest) {
     // We need to create a response and hand it to the supabase client to be able to modify the response headers.
     const res = NextResponse.next();
+    const redirectUrl = req.nextUrl.clone();
+
+    if (req.nextUrl.pathname === '/') {
+        redirectUrl.pathname = '/dashboard';
+        return NextResponse.redirect(redirectUrl);
+    }
+
     if (req.nextUrl.pathname === '/api/subscriptions/prices') return allowPricingCors(req, res);
     if (req.nextUrl.pathname === '/api/subscriptions/webhook') return allowStripeCors(req, res);
 
@@ -186,11 +193,9 @@ export async function middleware(req: NextRequest) {
     // not logged in -- api requests, just return an error
     if (req.nextUrl.pathname.includes('api')) return NextResponse.redirect(`${APP_URL}/api/error`);
 
-    const redirectUrl = req.nextUrl.clone();
-
     // unauthenticated pages requests, send to signup
     redirectUrl.pathname = '/signup';
-    return NextResponse.redirect(`${APP_URL}/api/error`);
+    return NextResponse.redirect(redirectUrl);
 }
 
 export const config = {
