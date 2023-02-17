@@ -2,7 +2,7 @@ import { CreatorsReportGetQueries, CreatorsReportGetResponse } from 'pages/api/c
 import { useCallback, useState } from 'react';
 import { usageErrors } from 'src/errors/usages';
 import { hasCustomError } from 'src/utils/errors';
-import { imgProxy, nextFetchWithQueries } from 'src/utils/fetcher';
+import { nextFetchWithQueries } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger';
 import { CreatorPlatform, CreatorReport } from 'types';
 import { useUser } from './use-user';
@@ -17,15 +17,19 @@ export const useReport = () => {
 
     const { profile } = useUser();
 
-    const transformReport = (report: CreatorReport) => {
-        return {
-            ...report,
-            user_profile: {
-                ...report.user_profile,
-                picture: imgProxy(report.user_profile.picture) ?? report.user_profile.picture,
-            },
-        };
-    };
+    //The transform function is not used now, as the image proxy issue is handled directly where calls for the image.But this is left for future refactor.
+    // const transformReport = (report: CreatorReport, platform: string) => {
+    //     if (platform === 'youtube' || platform === 'tiktok') {
+    //         return {
+    //             ...report,
+    //             user_profile: {
+    //                 ...report.user_profile,
+    //                 picture: imgProxy(report.user_profile.picture) as string,
+    //             },
+    //         };
+    //     }
+    //     return report;
+    // };
 
     const getOrCreateReport = useCallback(
         async (platform: CreatorPlatform, creator_id: string) => {
@@ -44,8 +48,8 @@ export const useReport = () => {
 
                 if (!report.success) throw new Error('Failed to fetch report');
 
-                const transformed = transformReport(report);
-                setReport(transformed);
+                // const transformed = transformReport(report, platform);
+                setReport(report);
                 setReportCreatedAt(createdAt);
             } catch (error: any) {
                 clientLogger(error, 'error');

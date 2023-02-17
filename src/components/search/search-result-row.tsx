@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
 import { ShareLink } from 'src/components/icons';
 import { useSearch } from 'src/hooks/use-search';
+import { imgProxy } from 'src/utils/fetcher';
 // import Heart from 'src/components/icons/Heart';
 import { formatter } from 'src/utils/formatter';
 import { CreatorSearchAccountObject } from 'types';
@@ -67,7 +68,7 @@ export const SearchResultRow = ({
 
             <td className="py-2 px-4 flex flex-row items-center space-x-2 min-w-min">
                 <img
-                    src={creator.account.user_profile.picture}
+                    src={imgProxy(creator.account.user_profile.picture) as string}
                     className="w-12 h-12"
                     alt={handle}
                 />
