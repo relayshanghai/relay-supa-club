@@ -105,7 +105,7 @@ export default function Login() {
                     </Link>
                 </p>
                 <button type="button" onClick={handleResetPassword} disabled={generatingResetEmail}>
-                    <p className="mt-4 inline text-gray-400 text-sm">
+                    <p className="mt-4 inline text-gray-400 text-sm pb-4 hover:text-primary-500">
                         {t('login.forgotPasswordClickHereToReset')}
                     </p>
                 </button>
