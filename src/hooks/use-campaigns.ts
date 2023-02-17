@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';
+import { imgProxy, nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';
 import useSWR from 'swr';
 
 import type {
@@ -16,6 +16,15 @@ import {
     CampaignCreatorAddCreatorPostResponse,
 } from 'pages/api/campaigns/add-creator';
 import { CampaignsIndexGetQuery, CampaignsIndexGetResult } from 'pages/api/campaigns';
+
+const transformCampaignCreators = (creators: CampaignCreatorDB[]) => {
+    return creators.map((creator: CampaignCreatorDB) => {
+        return {
+            ...creator,
+            avatar_url: imgProxy(creator.avatar_url) ?? creator.avatar_url,
+        };
+    });
+};
 
 export const useCampaigns = ({
     campaignId,
@@ -44,8 +53,13 @@ export const useCampaigns = ({
     useEffect(() => {
         if (campaigns && campaigns?.length > 0 && campaignId) {
             const campaign = campaigns?.find((c) => c.id === campaignId);
-            if (campaign) setCampaign(campaign);
-            if (campaign?.campaign_creators) setCampaignCreators(campaign.campaign_creators);
+            if (campaign) {
+                setCampaign(campaign);
+            }
+            if (campaign?.campaign_creators) {
+                const transformed = transformCampaignCreators(campaign.campaign_creators);
+                setCampaignCreators(transformed);
+            }
         }
     }, [campaignId, campaigns]);
 
