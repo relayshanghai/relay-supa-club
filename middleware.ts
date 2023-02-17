@@ -53,7 +53,8 @@ const checkOnboardingStatus = async (
     if (req.nextUrl.pathname === '/api/company/create') {
         const { user_id } = JSON.parse(await req.text());
         if (!user_id || user_id !== session.user.id) {
-            return NextResponse.redirect(`${APP_URL}/api/error`);
+            redirectUrl.pathname = '/api/error';
+            return NextResponse.redirect(redirectUrl);
         }
         return res;
     }
@@ -62,7 +63,7 @@ const checkOnboardingStatus = async (
         // print req queries
         const id = new URL(req.url).searchParams.get('id');
         if (!id || id !== session.user.id) {
-            return NextResponse.redirect(`${APP_URL}/api/error`);
+            return NextResponse.json({ error: 'user is unauthorized for this action' });
         }
         return res;
     }
@@ -73,17 +74,17 @@ const checkOnboardingStatus = async (
     // if signed up, but no company, redirect to onboarding
     if (!subscriptionStatus) {
         if (req.nextUrl.pathname.includes('api')) {
-            return NextResponse.redirect(`${APP_URL}/api/error`);
+            return NextResponse.json({ error: 'user is unauthorized for this action' });
         }
         if (req.nextUrl.pathname === '/signup/onboarding') return res;
         redirectUrl.pathname = '/signup/onboarding';
-        return NextResponse.redirect(`${APP_URL}/api/error`);
+        return NextResponse.redirect(redirectUrl);
     }
     if (subscriptionStatus === 'active' || subscriptionStatus === 'trial') {
         // if already signed in and has company, when navigating to index or login page, redirect to dashboard
         if (req.nextUrl.pathname === '/' || req.nextUrl.pathname === '/login') {
             redirectUrl.pathname = '/dashboard';
-            return NextResponse.redirect(`${APP_URL}/api/error`);
+            return NextResponse.redirect(redirectUrl);
         }
 
         // Authentication successful, forward request to protected route.
@@ -106,13 +107,13 @@ const checkOnboardingStatus = async (
         else {
             if (!subscriptionEndDate) {
                 redirectUrl.pathname = '/account';
-                return NextResponse.redirect(`${APP_URL}/api/error`);
+                return NextResponse.redirect(redirectUrl);
             }
 
             const endDate = new Date(subscriptionEndDate);
             if (endDate < new Date()) {
                 redirectUrl.pathname = '/account';
-                return NextResponse.redirect(`${APP_URL}/api/error`);
+                return NextResponse.redirect(redirectUrl);
             } else return res;
         }
     }
@@ -182,7 +183,8 @@ export async function middleware(req: NextRequest) {
     const { data: authData } = await supabase.auth.getSession();
     if (req.nextUrl.pathname.includes('/admin')) {
         if (!authData.session?.user?.email) {
-            return NextResponse.redirect(`${APP_URL}/api/error`);
+            redirectUrl.pathname = '/api/error';
+            return NextResponse.redirect(redirectUrl);
         }
         return await checkIsRelayEmployee(res, authData.session.user.email);
     }
@@ -191,7 +193,10 @@ export async function middleware(req: NextRequest) {
         return await checkOnboardingStatus(req, res, authData.session, supabase);
 
     // not logged in -- api requests, just return an error
-    if (req.nextUrl.pathname.includes('api')) return NextResponse.redirect(`${APP_URL}/api/error`);
+    if (req.nextUrl.pathname.includes('api')) {
+        redirectUrl.pathname = '/api/error';
+        return NextResponse.redirect(redirectUrl);
+    }
 
     // unauthenticated pages requests, send to signup
     redirectUrl.pathname = '/signup';
