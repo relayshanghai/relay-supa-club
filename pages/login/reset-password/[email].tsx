@@ -18,13 +18,10 @@ const ResetPassword = () => {
     const { email: emailQuery } = router.query;
     // supabase gives query params in the form of #key=value&key=value
     const supabaseQueries = router.asPath.split('#')[1];
-    const supabaseQueriesObject = supabaseQueries
-        ? supabaseQueries.split('&').reduce<{ [key: string]: string }>((acc, curr) => {
-              const [key, value] = curr.split('=');
-              acc[key] = value.replaceAll('+', ' ');
-              return acc;
-          }, {})
-        : {};
+    const supabaseQueriesObject = Object.fromEntries(
+        new URLSearchParams(supabaseQueries).entries(),
+    );
+
     const { error_description } = supabaseQueriesObject;
 
     const { login, supabaseClient } = useUser();
@@ -81,7 +78,7 @@ const ResetPassword = () => {
 
     useEffect(() => {
         supabaseClient?.auth.onAuthStateChange(async (event) => {
-            if (event == 'PASSWORD_RECOVERY') {
+            if (event === 'PASSWORD_RECOVERY') {
                 setResetDetected(true);
             }
         });
