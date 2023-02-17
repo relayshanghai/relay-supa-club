@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { CreatorPlatform } from 'types';
 import { TitleSection } from './creator-title-section';
 import { CreatorOverview } from './creator-page-overview';
-import Head from 'next/head';
 import { MetricsSection } from './creator-metrics-section';
 import { PopularPostsSection } from './creator-popular-posts';
 import CreatorSkeleton from './creator-skeleton';
@@ -38,9 +37,7 @@ export const CreatorPage = ({
                     ...report?.user_profile,
                 }}
             />
-            <Head>
-                <title>{report?.user_profile.fullname || 'relay.club'}</title>
-            </Head>
+
             <div className="flex flex-col">
                 {!report || loading || errorMessage?.length > 0 ? (
                     <CreatorSkeleton error={errorMessage?.length > 0} errorMessage={errorMessage} />
