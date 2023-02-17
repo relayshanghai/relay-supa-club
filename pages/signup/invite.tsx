@@ -60,11 +60,14 @@ export default function Register() {
                 >('company/accept-invite', { token });
                 if (tokenStatus.message && tokenStatus.email) {
                     setFieldValue('email', tokenStatus.email);
-                    setInviteStatus(tokenStatus?.message as InviteStatus);
+                    setInviteStatus(tokenStatus.message);
                 } else setInviteStatus('inviteValid');
             } catch (error: any) {
-                if (hasCustomError(error, inviteStatusErrors)) clientLogger(error, 'error');
-                if (error.message) setInviteStatus(error.message);
+                if (hasCustomError(error, inviteStatusErrors)) {
+                    setInviteStatus(error.message);
+                } else {
+                    clientLogger(error, 'error');
+                }
             }
         };
         if (token) checkInvite();
