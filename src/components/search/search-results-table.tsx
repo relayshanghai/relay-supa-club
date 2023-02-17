@@ -47,11 +47,11 @@ export const SearchResultsTable = ({
                             <td className="text-center py-4 space-y-4" colSpan={5}>
                                 <p className="mb-4">{t('creators.usageExceeded')}</p>
                                 <Link href="/pricing">
-                                    <a>
-                                        <Button>
-                                            {t('account.subscription.upgradeSubscription')}
-                                        </Button>
-                                    </a>
+
+                                    <Button>
+                                        {t('account.subscription.upgradeSubscription')}
+                                    </Button>
+
                                 </Link>
                             </td>
                         </tr>
