@@ -51,6 +51,7 @@ export const useReport = () => {
                 // const transformed = transformReport(report, platform);
                 setReport(report);
                 setReportCreatedAt(createdAt);
+                setErrorMessage('');
             } catch (error: any) {
                 clientLogger(error, 'error');
                 if (hasCustomError(error, usageErrors)) {
