@@ -78,7 +78,7 @@ const ResetPassword = () => {
 
     useEffect(() => {
         supabaseClient?.auth.onAuthStateChange(async (event) => {
-            if (event == 'PASSWORD_RECOVERY') {
+            if (event === 'PASSWORD_RECOVERY') {
                 setResetDetected(true);
             }
         });
