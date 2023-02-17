@@ -1,6 +1,4 @@
-import { InviteStatusError } from './login';
-
-export const acceptInviteErrors: { [key: string]: InviteStatusError } = {
+export const acceptInviteErrors = {
     inviteInvalid: 'login.inviteInvalid',
     userAlreadyRegistered: 'login.userAlreadyRegistered',
 };
