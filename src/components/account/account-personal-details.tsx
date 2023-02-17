@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
+import { APP_URL, emailRegex } from 'src/constants';
 import { useFields } from 'src/hooks/use-fields';
 import { clientLogger } from 'src/utils/logger';
 import { Button } from '../button';
@@ -18,10 +19,38 @@ export const PersonalDetails = () => {
         lastName: '',
         email: '',
     });
-    const { userDataLoading, profile, user, updateProfile, refreshProfile, refreshCompany } =
-        useContext(AccountContext);
+    const {
+        userDataLoading,
+        profile,
+        user,
+        updateProfile,
+        refreshProfile,
+        refreshCompany,
+        supabaseClient,
+    } = useContext(AccountContext);
 
     const [editMode, setEditMode] = useState(false);
+    const [generatingResetEmail, setGeneratingResetEmail] = useState(false);
+
+    const handleResetPassword = async () => {
+        setGeneratingResetEmail(true);
+        try {
+            if (!supabaseClient) {
+                throw new Error('Supabase client not initialized');
+            }
+            if (!email) {
+                throw new Error('Please enter your email');
+            }
+            const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+                redirectTo: `${APP_URL}/login/reset-password/${email}`,
+            });
+            if (error) throw error;
+            toast.success(t('login.resetPasswordEmailSent'));
+        } catch (error: any) {
+            toast.error(error.message || t('login.oopsSomethingWentWrong'));
+        }
+        setGeneratingResetEmail(false);
+    };
 
     useEffect(() => {
         if (!userDataLoading && profile) {
@@ -40,7 +69,6 @@ export const PersonalDetails = () => {
             await updateProfile({
                 first_name: firstName,
                 last_name: lastName,
-                email: email,
             });
             refreshProfile();
             refreshCompany();
@@ -49,6 +77,30 @@ export const PersonalDetails = () => {
         } catch (e) {
             clientLogger(e, 'error');
             toast.error(t('account.personal.oopsWentWrong'));
+        }
+    };
+    const handleUpdateEmail = async () => {
+        try {
+            if (!supabaseClient) {
+                throw new Error('Supabase client not initialized');
+            }
+            if (!email || email === profile?.email) {
+                throw new Error(t('account.personal.pleaseEnterNewEmail') || '');
+            }
+
+            // TODO: replace regex with library https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/176
+            if (!emailRegex.test(email)) {
+                throw new Error(t('account.personal.pleaseEnterValidEmail') || '');
+            }
+            const { error } = await supabaseClient.auth.updateUser(
+                { email },
+                { emailRedirectTo: `${APP_URL}/login?${new URLSearchParams({ email })}` },
+            );
+            if (error) throw error;
+            toast.success(t('account.personal.confirmationEmailSentToNewAddress'));
+        } catch (error: any) {
+            clientLogger(error, 'error');
+            toast.error(error?.message || t('account.personal.oopsWentWrong'));
         }
     };
 
@@ -77,48 +129,64 @@ export const PersonalDetails = () => {
                         required
                         onChange={(e) => setUserFieldValues('lastName', e.target.value)}
                     />
-                    {/* TODO: changing email should require a confirmation step */}
-                    {/* <Input
+
+                    {editMode && (
+                        <div className="flex flex-row justify-end w-full space-x-4 mb-6">
+                            <Button disabled={userDataLoading} onClick={handleUpdateProfile}>
+                                {t('account.update')}
+                            </Button>
+                            <Button onClick={() => setEditMode(false)} variant="secondary">
+                                {t('account.cancel')}
+                            </Button>
+                        </div>
+                    )}
+
+                    <Input
                         label={t('account.personal.email')}
                         type="email"
                         placeholder={t('account.personal.emailPlaceholder') || ''}
                         value={email}
                         required
                         onChange={(e) => setUserFieldValues('email', e.target.value)}
-                    /> */}
-                    <div className="flex flex-col space-y-3">
-                        <div className="text-sm">{t('account.personal.email')}</div>
-                        <div className="text-sm font-bold ml-2">{email}</div>
+                    />
+
+                    <div className="flex flex-row justify-end w-full space-x-4">
+                        <Button onClick={handleUpdateEmail}>
+                            {t('account.personal.updateEmail')}
+                        </Button>
+                        <Button onClick={() => setEditMode(false)} variant="secondary">
+                            {t('account.cancel')}
+                        </Button>
                     </div>
                 </div>
             ) : (
                 <div className={`w-full space-y-6`}>
                     <div className="flex flex-col space-y-3">
                         <div className="text-sm">{t('account.personal.firstName')}</div>
-                        <div className="text-sm font-bold ml-2">{firstName}</div>
+                        <div className="text-sm font-bold ml-2">{profile?.first_name}</div>
                     </div>
 
                     <div className="flex flex-col space-y-3">
                         <div className="text-sm">{t('account.personal.lastName')}</div>
-                        <div className="text-sm font-bold ml-2">{lastName}</div>
+                        <div className="text-sm font-bold ml-2">{profile?.last_name}</div>
                     </div>
                     <div className="flex flex-col space-y-3">
                         <div className="text-sm">{t('account.personal.email')}</div>
-                        <div className="text-sm font-bold ml-2">{email}</div>
+                        <div className="text-sm font-bold ml-2">{profile?.email}</div>
                     </div>
                 </div>
             )}
+            {!editMode && (
+                <Button
+                    variant="secondary"
+                    onClick={handleResetPassword}
+                    disabled={generatingResetEmail}
+                >
+                    {t('login.changePassword')}
+                </Button>
+            )}
 
-            {editMode ? (
-                <div className="flex flex-row justify-end w-full space-x-4">
-                    <Button disabled={userDataLoading} onClick={handleUpdateProfile}>
-                        {t('account.update')}
-                    </Button>{' '}
-                    <Button onClick={() => setEditMode(false)} variant="secondary">
-                        {t('account.cancel')}
-                    </Button>
-                </div>
-            ) : (
+            {!editMode && (
                 <Button
                     className={`absolute top-4 right-4 px-3 py-1 disabled:bg-white ${
                         userDataLoading ? 'opacity-75' : ''

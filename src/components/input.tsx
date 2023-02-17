@@ -2,8 +2,9 @@ import { InputHTMLAttributes } from 'react';
 
 export const Input = ({
     label,
+    error,
     ...rest
-}: InputHTMLAttributes<HTMLInputElement> & { label: string }) => {
+}: InputHTMLAttributes<HTMLInputElement> & { label: string; error?: string }) => {
     return (
         <label className="flex flex-col text-xs text-gray-500 font-bold w-full">
             <div>
@@ -18,6 +19,13 @@ export const Input = ({
                 }`}
                 {...rest}
             />
+            <span>
+                {error ? (
+                    <p className="text-red-500 text-xs">{error}</p>
+                ) : (
+                    <p className="text-xs">&nbsp;</p>
+                )}
+            </span>
         </label>
     );
 };
