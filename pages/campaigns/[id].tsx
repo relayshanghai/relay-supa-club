@@ -13,6 +13,7 @@ import { Modal } from 'src/components/modal';
 import CommentInput from 'src/components/campaigns/comment-input';
 import CommentCards from 'src/components/campaigns/comment-cards';
 import type { CampaignCreatorDB, CampaignWithCompanyCreators } from 'src/utils/api/db';
+import { imgProxy } from 'src/utils/fetcher';
 
 export default function CampaignShow() {
     const router = useRouter();
@@ -210,7 +211,7 @@ export default function CampaignShow() {
                             <div className="bg-gray-100 rounded-md p-3 sticky top-0 z-30 flex items-center">
                                 <img
                                     className="h-8 w-8 rounded-full mr-4"
-                                    src={currentCreator.avatar_url}
+                                    src={imgProxy(currentCreator.avatar_url)}
                                     alt=""
                                 />
                                 <h3 className="font-medium text-sm">{currentCreator?.fullname}</h3>

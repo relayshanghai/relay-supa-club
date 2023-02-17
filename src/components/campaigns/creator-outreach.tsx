@@ -11,6 +11,7 @@ import { CreatorContacts } from './creator-contacts';
 import dateFormat from 'src/utils/dateFormat';
 import type { CampaignCreatorDB, CampaignWithCompanyCreators } from 'src/utils/api/db';
 import type { SocialMediaPlatform } from 'types';
+import { imgProxy } from 'src/utils/fetcher';
 
 export default function CreatorsOutreach({
     currentCampaign,
@@ -195,7 +196,7 @@ export default function CreatorsOutreach({
                                                 <div className="relative flex-shrink-0 h-10 w-10 rounded-full bg-gray-300">
                                                     <img
                                                         className="h-10 w-10 rounded-full"
-                                                        src={creator.avatar_url}
+                                                        src={imgProxy(creator.avatar_url)}
                                                         alt=""
                                                     />
                                                     <div className="absolute right-0 bottom-0 ">

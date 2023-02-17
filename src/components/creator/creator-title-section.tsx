@@ -1,5 +1,6 @@
 import Image from 'next/legacy/image';
 import { useTranslation } from 'react-i18next';
+import { imgProxy } from 'src/utils/fetcher';
 
 import { CreatorPlatform, CreatorReport } from 'types';
 import { Button } from '../button';
@@ -22,7 +23,7 @@ export const TitleSection = ({
             <div className="flex items-center">
                 <div className="relative w-28 h-28">
                     <Image
-                        src={user_profile.picture}
+                        src={imgProxy(user_profile.picture) as string}
                         alt={`${user_profile.user_id}-profile-pic`}
                         layout="fill"
                         className="rounded-full"
