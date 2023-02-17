@@ -81,19 +81,15 @@ const Clients = () => {
                                                         <Link
                                                             href={`/admin/campaigns/${client.id}`}
                                                         >
-
                                                             <Button>{dataPoint}</Button>
-
                                                         </Link>
                                                     </div>
                                                 ) : columnHeaders[index] === 'Search' ? (
-                                                    (<Link
+                                                    <Link
                                                         href={`/admin/search/${client.id}?company_name=${client.name}`}
                                                     >
-
                                                         <Button>{dataPoint}</Button>
-
-                                                    </Link>)
+                                                    </Link>
                                                 ) : (
                                                     dataPoint
                                                 )}
@@ -111,3 +107,4 @@ const Clients = () => {
 };
 
 export default Clients;
+// TODO: protect route with getServeSideProps https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/183
