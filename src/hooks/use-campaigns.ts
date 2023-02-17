@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { imgProxy, nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';
+import { nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';
 import useSWR from 'swr';
 
 import type {
@@ -17,14 +17,15 @@ import {
 } from 'pages/api/campaigns/add-creator';
 import { CampaignsIndexGetQuery, CampaignsIndexGetResult } from 'pages/api/campaigns';
 
-const transformCampaignCreators = (creators: CampaignCreatorDB[]) => {
-    return creators.map((creator: CampaignCreatorDB) => {
-        return {
-            ...creator,
-            avatar_url: imgProxy(creator.avatar_url) ?? creator.avatar_url,
-        };
-    });
-};
+//The transform function is not used now, as the image proxy issue is handled directly where calls for the image.But this is left for future refactor. TODO:Ticket V2-181
+// const transformCampaignCreators = (creators: CampaignCreatorDB[]) => {
+//     return creators.map((creator: CampaignCreatorDB) => {
+//         return {
+//             ...creator,
+//             avatar_url: imgProxy(creator.avatar_url) as string,
+//         };
+//     });
+// };
 
 export const useCampaigns = ({
     campaignId,
@@ -50,6 +51,7 @@ export const useCampaigns = ({
     const [campaignCreators, setCampaignCreators] = useState<
         CampaignWithCompanyCreators['campaign_creators'] | null
     >([]);
+
     useEffect(() => {
         if (campaigns && campaigns?.length > 0 && campaignId) {
             const campaign = campaigns?.find((c) => c.id === campaignId);
@@ -57,8 +59,7 @@ export const useCampaigns = ({
                 setCampaign(campaign);
             }
             if (campaign?.campaign_creators) {
-                const transformed = transformCampaignCreators(campaign.campaign_creators);
-                setCampaignCreators(transformed);
+                setCampaignCreators(campaign.campaign_creators);
             }
         }
     }, [campaignId, campaigns]);
