@@ -8,7 +8,8 @@
         "start": "next start",
         "lint:staged": "eslint --ext .js,.jsx,.ts,.tsx --max-warnings=0",
         "lint": "eslint . --ext .js,.jsx,.ts,.tsx --max-warnings=0",
-        "type-check": "tsc --noEmit"
+        "type-check": "tsc --noEmit",
+        "postinstall": "next build"
     },
     "dependencies": {
         "@headlessui/react": "^1.7.3",
