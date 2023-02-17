@@ -5,7 +5,6 @@ import type { NextRequest } from 'next/server';
 import type { DatabaseWithCustomTypes } from 'types';
 import { serverLogger } from 'src/utils/logger';
 import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
-import { APP_URL } from 'src/constants';
 
 const pricingAllowList = ['https://en-relay-club.vercel.app', 'https://relay.club'];
 const stripeWebhookAllowlist = ['https://stripe.com/', 'https://hooks.stripe.com/'];
