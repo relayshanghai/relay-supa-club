@@ -47,7 +47,6 @@ export const useReport = () => {
                 const transformed = transformReport(report);
                 setReport(transformed);
                 setReportCreatedAt(createdAt);
-                setErrorMessage('');
             } catch (error: any) {
                 clientLogger(error, 'error');
                 if (hasCustomError(error, usageErrors)) {
