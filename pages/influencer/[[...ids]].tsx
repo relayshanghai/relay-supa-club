@@ -10,16 +10,20 @@ const Page = () => {
     const router = useRouter();
     return (
         <Layout>
-            {!Array.isArray(ids) || ids?.length < 2 ? (
-                <div className="relative p-6">
-                    <ErrorPopover
-                        errorMessage={'Invalid creator id or platform'}
-                        buttonText={t('website.back') || ''}
-                        buttonAction={() => router.back()}
-                    />
-                </div>
-            ) : (
-                <CreatorPage platform={ids[0] as any} creator_id={ids[1]} />
+            {ids && (
+                <>
+                    {!Array.isArray(ids) || ids?.length < 2 ? (
+                        <div className="relative p-6">
+                            <ErrorPopover
+                                errorMessage={'Invalid creator id or platform'}
+                                buttonText={t('website.back') || ''}
+                                buttonAction={() => router.back()}
+                            />
+                        </div>
+                    ) : (
+                        <CreatorPage platform={ids[0] as any} creator_id={ids[1]} />
+                    )}
+                </>
             )}
         </Layout>
     );
