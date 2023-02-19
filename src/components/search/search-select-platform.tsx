@@ -1,5 +1,6 @@
 import { useSearch } from 'src/hooks/use-search';
 import { CreatorPlatform } from 'types';
+import { Spinner } from '../icons';
 
 const platforms: {
     icon: string;
@@ -12,20 +13,24 @@ const platforms: {
 ];
 
 export const SelectPlatform = () => {
-    const { platform, setPlatform } = useSearch();
+    const { platform, setPlatform, loading } = useSearch();
     return (
         <div className="flex flex-row space-x-2">
             {platforms.map(({ id, label, icon }) => (
                 <button
-                    className={`transition px-2 rounded-lg hover:shadow-xl ${
-                        platform === id ? 'bg-white shadow-xl' : ''
+                    className={`transition duration-300 px-2 rounded-lg hover:shadow-md ${
+                        platform === id ? 'bg-white shadow-md' : ''
                     }`}
                     key={label}
                     onClick={() => {
                         setPlatform(id);
                     }}
                 >
-                    <img src={icon} height={32} width={32} alt={label} />
+                    {loading && platform === id ? (
+                        <Spinner className="fill-primary-600 text-white w-6 h-6" />
+                    ) : (
+                        <img src={icon} height={32} width={32} alt={label} />
+                    )}
                 </button>
             ))}
         </div>
