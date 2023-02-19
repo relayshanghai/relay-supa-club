@@ -21,6 +21,7 @@ export const SelectPlatform = () => {
                     className={`transition duration-300 px-2 rounded-lg hover:shadow-md ${
                         platform === id ? 'bg-white shadow-md' : ''
                     }`}
+                    disabled={loading}
                     key={label}
                     onClick={() => {
                         setPlatform(id);
