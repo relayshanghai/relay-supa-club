@@ -185,8 +185,9 @@ export async function middleware(req: NextRequest) {
     }
 
     // not logged in -- api requests, just return an error
-    if (req.nextUrl.pathname.includes('api'))
+    if (req.nextUrl.pathname.includes('api')) {
         return NextResponse.rewrite(req.nextUrl.origin, { status: httpCodes.FORBIDDEN });
+    }
 
     const redirectUrl = req.nextUrl.clone();
 
