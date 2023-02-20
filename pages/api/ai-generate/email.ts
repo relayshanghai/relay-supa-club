@@ -68,26 +68,30 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         const data = await openai.createCompletion({
             prompt:
-                'Compose an email to ' +
+                'Write an email (without subject) to ' +
                 influencerName +
-                " expressing our brand's interest in collaborating with them to promote our new product offered by our brand " +
+                ' with the following content: 1) Express our brand ' +
                 brandName +
-                '. Start the email by expressing that I love ' +
+                "'s interest in participating with" +
                 influencerName +
-                "'s content and that they would be a great match for our marketing campaign. Explain to them our new product: " +
+                'on a product marketing campaign. 2) Express that I love their content and appreciate their creativity. 3) Explain about our product:' +
+                brandName +
+                ' ' +
                 productName +
-                ', with the relevant description: ' +
+                '.' +
                 trimDescriptionPunctuation +
-                '. ' +
-                (instructions
-                    ? 'The email should include guidelines for them on how they can participate in the marketing campaign. Tell them that it would be great if they could follow the following guidelines: ' +
-                      trimmedInstructionsPunctuation
-                    : '') +
-                '\nFinally, the email should express gratitude for the their time and consideration, and end with a call-to-action for them to respond if they are interested in the collaboration. Sign the email with the name of the sender, ' +
-                senderName +
-                ' at the end.',
-            model: 'text-babbage-001',
-            max_tokens: 1024,
+                '. 4) Ask ' +
+                influencerName +
+                ' to follow these instructions:' +
+                ' "' +
+                trimmedInstructionsPunctuation +
+                '." ' +
+                '5) Express gratitude for ' +
+                influencerName +
+                "'s time and consideration, and end with a call-to-action for them to respond if they are interested in the collaboration. 6) Sign with the name: " +
+                senderName,
+            model: 'text-davinci-003',
+            max_tokens: 512,
             n: 1,
             stop: '',
             temperature: 0.4,
