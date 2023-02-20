@@ -76,18 +76,18 @@ const PaymentOnboard = () => {
                                 <p className="text-xs text-gray-500">{t('login.signupTerms')}</p>
                             </div>
                         ) : (
-                            <Link
+                            (<Link
                                 href={buildSubscriptionPortalUrl({
                                     id: company.id,
                                     returnUrl: `${APP_URL}/signup/payment-onboard`,
                                 })}
                             >
-                                <a>
-                                    <Button variant="secondary">
-                                        {t('login.addPaymentMethod')}
-                                    </Button>
-                                </a>
-                            </Link>
+
+                                <Button variant="secondary">
+                                    {t('login.addPaymentMethod')}
+                                </Button>
+
+                            </Link>)
                         )}
                     </>
                 )}

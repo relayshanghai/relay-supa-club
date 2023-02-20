@@ -64,10 +64,13 @@ export const Layout = ({ children }: any) => {
                                                 className="flex flex-col overflow-hidden w-28 absolute right-8 mt-2 origin-top-right bg-white border border-gray border-opacity-40 rounded-md shadow-lg z-10"
                                                 ref={accountMenuRef}
                                             >
-                                                <Link href="/account" passHref>
-                                                    <a className="px-4 py-2 text-sm hover:bg-gray-100 active:bg-gray-200">
-                                                        {t('navbar.account')}
-                                                    </a>
+                                                <Link
+                                                    href="/account"
+                                                    passHref
+                                                    className="px-4 py-2 text-sm hover:bg-gray-100 active:bg-gray-200">
+
+                                                    {t('navbar.account')}
+
                                                 </Link>
                                                 <Button
                                                     className="px-4 py-2 text-sm hover:bg-gray-100 active:bg-gray-200"

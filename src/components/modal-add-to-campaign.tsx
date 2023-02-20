@@ -46,7 +46,7 @@ export const AddToCampaignModal = ({
                 <div className="text-sm text-gray-600 h-full">
                     {t('campaigns.index.noCampaignsAvailable')}
                     <div className="text-primary-500 hover:text-primary-700 duration-300 cursor-pointer">
-                        <Link href="/campaigns/form">{t('campaigns.index.clickCreate')}</Link>
+                        <Link href="/campaigns/form" legacyBehavior>{t('campaigns.index.clickCreate')}</Link>
                     </div>
                 </div>
             )}

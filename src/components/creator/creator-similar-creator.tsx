@@ -43,14 +43,12 @@ export const SimilarCreator = ({
             <div className="flex items-center ml-4">
                 <Button variant="secondary" className="px-3 py-1">
                     <Link href={`/influencer/${platform}/${creator.user_id}`}>
-                        <a>{t('creators.analyzeProfile')}</a>
+                        {t('creators.analyzeProfile')}
                     </Link>
                 </Button>
                 <Button className="ml-2">
-                    <Link href={creator.url}>
-                        <a target="_blank" rel="noopener noreferrer">
-                            <ShareLink className="w-3 fill-current text-white" />
-                        </a>
+                    <Link href={creator.url} target="_blank" rel="noopener noreferrer">
+                        <ShareLink className="w-3 fill-current text-white" />
                     </Link>
                 </Button>
             </div>
