@@ -90,7 +90,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 influencerName +
                 "'s time and consideration, and end with a call-to-action for them to respond if they are interested in the collaboration. 6) Sign with the name: " +
                 senderName,
-            model: 'text-davinci-003',
+            model: 'text-curie-001',
             max_tokens: 512,
             n: 1,
             stop: '',
