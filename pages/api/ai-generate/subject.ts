@@ -35,15 +35,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
         }
 
-        const prompt = `Generate an email subject line for an influencer, regarding a marketing campaign collaboration with our company ${brandName} and our product ${productName} which can be described as: ${productDescription}. The subject line should be attention grabbing and mention a marketing collaboration.`;
+        const prompt = `Generate an email subject line, regarding a marketing campaign collaboration for our product ${productName}. The subject line should mention an invitation to marketing campaign collaboration/sponsorship in the beginning.`;
 
         const data = await openai.createCompletion({
             prompt,
             model: 'text-babbage-001',
-            max_tokens: 50,
+            max_tokens: 100,
             n: 1,
             stop: '',
-            temperature: 0.5,
+            temperature: 0.7,
         });
 
         if (data?.data?.choices[0]?.text) {

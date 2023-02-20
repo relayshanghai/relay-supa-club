@@ -61,15 +61,36 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             ? trimmedDescription.slice(0, trimmedDescription.length - 1)
             : trimmedDescription;
 
-        const prompt = `Compose an email to ${influencerName}, expressing our interest in collaborating with them to promote a specific product offered by our company: ${brandName}. The email should include the name of our company, the name of the product: ${productName} we want to promote, as well as relevant description about the product: ${trimDescriptionPunctuation}. In addition, the email should include instructions for the influencer on how they can participate in the collaboration, such as what type of content to create or what social media handles to promote on. Finally, the email should express gratitude for the influencer's time and consideration, and end with a call-to-action for them to respond if they are interested in the collaboration. Sign the email with my name ${senderName} at the end.`;
+        const trimmedInstructions = instructions?.trim();
+        const trimmedInstructionsPunctuation = trimmedInstructions?.endsWith('.')
+            ? trimmedInstructions?.slice(0, trimmedInstructions?.length - 1)
+            : trimmedInstructions;
 
         const data = await openai.createCompletion({
-            prompt,
+            prompt:
+                'Compose an email to ' +
+                influencerName +
+                " expressing our brand's interest in collaborating with them to promote our new product offered by our brand " +
+                brandName +
+                '. Start the email by expressing that I love ' +
+                influencerName +
+                "'s content and that they would be a great match for our marketing campaign. Explain to them our new product: " +
+                productName +
+                ', with the relevant description: ' +
+                trimDescriptionPunctuation +
+                '. ' +
+                (instructions !== undefined
+                    ? 'The email should include guidelines for them on how they can participate in the marketing campaign. Tell them that it would be great if they could follow the following guidelines: ' +
+                      trimmedInstructionsPunctuation
+                    : '') +
+                '\nFinally, the email should express gratitude for the their time and consideration, and end with a call-to-action for them to respond if they are interested in the collaboration. Sign the email with the name of the sender, ' +
+                senderName +
+                ' at the end.',
             model: 'text-babbage-001',
-            max_tokens: 500,
+            max_tokens: 1024,
             n: 1,
             stop: '',
-            temperature: 0.5,
+            temperature: 0.4,
         });
 
         if (data?.data?.choices[0]?.text) {
