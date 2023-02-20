@@ -8,12 +8,11 @@ import { Layout } from 'src/components/layout';
 const Page = () => {
     const router = useRouter();
     const { ids } = router.query;
-    const { isReady } = router;
     const { t } = useTranslation();
 
     return (
         <Layout>
-            {isReady ? (
+            {ids ? (
                 !ids || !Array.isArray(ids) || ids?.length < 2 ? (
                     <div className="relative p-6">
                         <ErrorPopover

@@ -34,9 +34,10 @@ export const useReport = () => {
     const getOrCreateReport = useCallback(
         async (platform: CreatorPlatform, creator_id: string) => {
             setLoading(true);
+            if (!profile) return;
             try {
                 setGettingReport(true);
-                if (!profile?.company_id) return serverLogger('No company id found');
+                if (!profile?.company_id) throw new Error('No company id found');
                 const { createdAt, ...report } = await nextFetchWithQueries<
                     CreatorsReportGetQueries,
                     CreatorsReportGetResponse
