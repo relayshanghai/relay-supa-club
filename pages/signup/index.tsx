@@ -163,7 +163,7 @@ export default function Register() {
                 <Button disabled={submitDisabled} type="button" onClick={handleSubmit}>
                     {t('login.signUp')}
                 </Button>
-                <p className="inline text-gray-500 text-sm">
+                <p className="inline text-gray-500 text-sm pb-4">
                     {t('login.alreadyHaveAnAccount')}
                     <Link
                         href="/login"
