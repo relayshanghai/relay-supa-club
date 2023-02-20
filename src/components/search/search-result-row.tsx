@@ -49,17 +49,20 @@ export const SearchResultRow = ({
                     <Button>
                         <Link
                             href={`/influencer/${platform}/${creator.account.user_profile.user_id}`}
-                        >
-                            <a target="_blank">{t('creators.analyzeProfile')}</a>
+                            target="_blank">
+                            {t('creators.analyzeProfile')}
                         </Link>
                     </Button>
 
                     {creator.account.user_profile.url && (
                         <Button>
-                            <Link href={creator.account.user_profile.url}>
-                                <a target="_blank" rel="noopener noreferrer">
-                                    <ShareLink className="w-3.5 h-3.5 fill-current text-white" />
-                                </a>
+                            <Link
+                                href={creator.account.user_profile.url}
+                                target="_blank"
+                                rel="noopener noreferrer">
+
+                                <ShareLink className="w-3.5 h-3.5 fill-current text-white" />
+
                             </Link>
                         </Button>
                     )}

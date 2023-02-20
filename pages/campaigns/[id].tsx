@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { PencilSquareIcon } from '@heroicons/react/20/solid';
 import Link from 'next/link';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
-import Image from 'next/image';
+import Image from 'next/legacy/image';
 import { Layout } from 'src/components/layout';
 import CreatorsOutreach from '../../src/components/campaigns/creator-outreach';
 import CampaignDetails from '../../src/components/campaigns/CampaignDetails';
@@ -167,7 +167,9 @@ export default function CampaignShow() {
                 </div>
                 {currentCampaign?.id && (
                     <div className=" absolute top-3 right-6 group w-8 h-8 bg-gray-50 hover:bg-gray-100 duration-300 font-semibold rounded-lg mr-2 cursor-pointer z-10 text-sm text-gray-500 flex items-center justify-center">
-                        <Link href={`/campaigns/form/${encodeURIComponent(currentCampaign?.id)}`}>
+                        <Link
+                            href={`/campaigns/form/${encodeURIComponent(currentCampaign?.id)}`}
+                            legacyBehavior>
                             <PencilSquareIcon
                                 name="edit"
                                 className="w-4 h-4 fill-current text-gray-300 group-hover:text-primary-500 duration-300"
