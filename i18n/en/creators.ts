@@ -66,7 +66,7 @@ const creators = {
         upgradeSubscriptionToSeeMore: 'Upgrade your subscription plan, to view more results.',
     },
     show: {
-        lastUpdate: 'Last Updated',
+        lastUpdate: 'The report was last updated on',
         editProfile: 'Edit Profile',
         description: 'Description',
         campaigns: 'Campaigns',

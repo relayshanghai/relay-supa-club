@@ -1,18 +1,15 @@
 import { useTranslation } from 'react-i18next';
 import { imgProxy } from 'src/utils/fetcher';
-
 import { CreatorPlatform, CreatorReport } from 'types';
 import { Button } from '../button';
 import { SocialMediaIcon } from '../common/social-media-icon';
 
 export const TitleSection = ({
     user_profile,
-    reportCreatedAt,
     onAddToCampaign,
     platform,
 }: {
     user_profile: CreatorReport['user_profile'];
-    reportCreatedAt: string | null;
     onAddToCampaign: () => void;
     platform: CreatorPlatform;
 }) => {
@@ -44,14 +41,6 @@ export const TitleSection = ({
                     </a>
                 </div>
             </div>
-            {reportCreatedAt && (
-                <span className="flex text-sm mt-3">
-                    <p className="text-gray-400 mr-2">{t('creators.show.lastUpdate')}</p>
-                    <p className="text-gray-600">
-                        {new Date(reportCreatedAt).toLocaleDateString()}
-                    </p>
-                </span>
-            )}
             <Button onClick={onAddToCampaign} className="my-6" variant="secondary">
                 {t('creators.show.addToCampaign')}
             </Button>
