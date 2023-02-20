@@ -2,8 +2,10 @@ import { AdjustmentsVerticalIcon } from '@heroicons/react/24/solid';
 
 import { useTranslation } from 'react-i18next';
 import { useSearch } from 'src/hooks/use-search';
+import { imgProxy } from 'src/utils/fetcher';
 import { formatter } from 'src/utils/formatter';
 import { Button } from '../button';
+import { SearchInfluencers } from './seach-influencers';
 import { SearchTopics } from './search-topics';
 
 const resultsPerPageOptions = [10, 20, 50, 100];
@@ -58,51 +60,11 @@ export const SearchOptions = ({
                         setTopicTags(topics);
                     }}
                 />
+                <SearchInfluencers platform={platform} />
             </div>
             <div className="flex flex-col md:flex-row md:space-x-4 md:space-y-0 items-start space-y-2">
                 {/* remove all lookalike code: https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/154 */}
-                {/* <SearchTopics
-                    path="/api/influencer-search/lookalike"
-                    placeholder={t('creators.similarInfluencer')}
-                    topics={lookalike}
-                    platform={platform}
-                    onSetTopics={(topics: any) => {
-                        setLookalike(topics);
-                    }}
-                    SuggestionComponent={({
-                        followers,
-                        username,
-                        custom_name,
-                        fullname,
-                        picture,
-                        onClick,
-                    }: any) => {
-                        const handle = `@${fullname || custom_name || username}`;
-                        return (
-                            <div
-                                className="p-2 hover:bg-gray-100 flex flex-row items-center space-x-2 cursor-pointer"
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    onClick({ title: handle });
-                                }}
-                            >
-                                <div className="w-8 h-8">
-                                    <img
-                                        src={`https://image-cache.brainchild-tech.cn/?link=${picture}`}
-                                        className="w-8 h-8 rounded-full"
-                                        alt={handle}
-                                    />
-                                </div>
-                                <div className="flex flex-col overflow-hidden">
-                                    <div className="font-bold whitespace-nowrap text-ellipsis overflow-hidden">
-                                        {handle}
-                                    </div>
-                                    <div className="text-sm">{formatter(followers)}</div>
-                                </div>
-                            </div>
-                        );
-                    }}
-                /> */}
+
                 <SearchTopics
                     path="/api/influencer-search/locations"
                     placeholder={t('creators.filter.locationPlaceholder')}
