@@ -79,7 +79,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 ', with the relevant description: ' +
                 trimDescriptionPunctuation +
                 '. ' +
-                (instructions !== undefined
+                (instructions
                     ? 'The email should include guidelines for them on how they can participate in the marketing campaign. Tell them that it would be great if they could follow the following guidelines: ' +
                       trimmedInstructionsPunctuation
                     : '') +
