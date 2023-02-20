@@ -3,7 +3,7 @@ import { useCallback, useState } from 'react';
 import { usageErrors } from 'src/errors/usages';
 import { hasCustomError } from 'src/utils/errors';
 import { nextFetchWithQueries } from 'src/utils/fetcher';
-import { clientLogger, serverLogger } from 'src/utils/logger';
+import { clientLogger } from 'src/utils/logger';
 import { CreatorPlatform, CreatorReport } from 'types';
 import { useUser } from './use-user';
 
