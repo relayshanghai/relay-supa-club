@@ -26,7 +26,7 @@ const Page = () => {
                     <CreatorPage platform={ids[0] as any} creator_id={ids[1]} />
                 )
             ) : (
-                <Spinner />
+                <Spinner className="mx-auto mt-10 w-10 h-10 fill-primary-600 text-white" />
             )}
         </Layout>
     );

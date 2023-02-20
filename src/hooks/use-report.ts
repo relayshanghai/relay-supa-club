@@ -3,7 +3,7 @@ import { useCallback, useState } from 'react';
 import { usageErrors } from 'src/errors/usages';
 import { hasCustomError } from 'src/utils/errors';
 import { nextFetchWithQueries } from 'src/utils/fetcher';
-import { clientLogger } from 'src/utils/logger';
+import { clientLogger, serverLogger } from 'src/utils/logger';
 import { CreatorPlatform, CreatorReport } from 'types';
 import { useUser } from './use-user';
 
@@ -33,9 +33,10 @@ export const useReport = () => {
 
     const getOrCreateReport = useCallback(
         async (platform: CreatorPlatform, creator_id: string) => {
+            setLoading(true);
             try {
                 setGettingReport(true);
-                if (!profile?.company_id) throw new Error('User not logged in');
+                if (!profile?.company_id) return serverLogger('No company id found');
                 const { createdAt, ...report } = await nextFetchWithQueries<
                     CreatorsReportGetQueries,
                     CreatorsReportGetResponse
