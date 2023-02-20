@@ -1,4 +1,3 @@
-import Image from 'next/legacy/image';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import { imgProxy } from 'src/utils/fetcher';
@@ -19,7 +18,7 @@ export const SimilarCreator = ({
         <div className="group bg-white flex items-center justify-between p-4 rounded-xl mb-2">
             <div className="flex items-center justify-between flex-1 overflow-hidden">
                 <div className="mr-4 flex-shrink-0 flex items-center">
-                    <Image
+                    <img
                         src={imgProxy(creator.picture) || '/assets/imgs/image404.png'}
                         className="rounded-full"
                         width={40}
@@ -49,9 +48,7 @@ export const SimilarCreator = ({
                 </Button>
                 <Button className="ml-2">
                     <Link href={creator.url} target="_blank" rel="noopener noreferrer">
-
                         <ShareLink className="w-3 fill-current text-white" />
-
                     </Link>
                 </Button>
             </div>
