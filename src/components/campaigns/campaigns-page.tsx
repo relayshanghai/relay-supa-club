@@ -7,8 +7,10 @@ import { Button } from 'src/components/button';
 import { useCampaigns } from 'src/hooks/use-campaigns';
 import CampaignCardView from 'src/components/campaigns/CampaignCardView';
 import { t } from 'i18next';
+import { useRouter } from 'next/router';
 
 const CampaignsPage = ({ companyId }: { companyId?: string }) => {
+    const { isReady } = useRouter();
     const [currentTab, setCurrentTab] = useState('');
 
     const { campaigns, isLoading } = useCampaigns({ companyId });
@@ -36,7 +38,7 @@ const CampaignsPage = ({ companyId }: { companyId?: string }) => {
                         <Button>{t('campaigns.index.createCampaign')}</Button>
                     </Link>
                 </div>
-                {isLoading ? (
+                {isLoading || !isReady ? (
                     <Spinner className="mx-auto mt-10 w-10 h-10 fill-primary-600 text-white" />
                 ) : (
                     renderCampaigns()
