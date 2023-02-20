@@ -19,6 +19,7 @@ const creators = {
     openProfile: '打开KOL',
     close: '取消',
     usageExceeded: '搜索次数已达上限',
+    resultsPerPage: '每页结果',
     modal: {
         viewFullProfile: '查看完整信息',
     },
@@ -41,6 +42,7 @@ const creators = {
         sectionSummary: '试着先从订阅数和粉丝类型来筛选',
         from: '从',
         to: '到',
+        max: '最大',
         any: '任何',
         or: '或',
         activeSearches: '当前搜索',

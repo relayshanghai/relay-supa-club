@@ -19,6 +19,7 @@ const creators = {
     openProfile: 'Open Profile',
     close: 'Close',
     usageExceeded: 'Search limit exceeded',
+    resultsPerPage: 'Results per page',
     modal: {
         viewFullProfile: 'View Full Profile',
     },
@@ -42,6 +43,7 @@ const creators = {
             'Try starting with number of subscribers and audience filters narrowing your search',
         from: 'From',
         to: 'To',
+        max: 'Max',
         any: 'Any',
         or: 'or',
         activeSearches: 'Current Search',

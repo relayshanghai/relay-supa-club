@@ -1,4 +1,5 @@
 import { CreatorPlatform, CreatorAccount, LocationWeighted } from 'types';
+type NullStringTuple = [null | string, null | string];
 
 export interface FetchCreatorsFilteredParams {
     platform?: CreatorPlatform;
@@ -8,8 +9,8 @@ export interface FetchCreatorsFilteredParams {
     audienceLocation?: LocationWeighted[];
     resultsPerPageLimit?: number;
     page?: number;
-    audience?: string[];
-    views?: string[];
+    audience: NullStringTuple;
+    views: NullStringTuple;
     gender?: string;
     engagement?: number;
     lastPost?: string;
@@ -51,12 +52,12 @@ export const prepareFetchCreatorsFiltered = ({
             lang: '',
             last_posted: lastPost || '',
             views: {
-                left_number: views ? views[0] : '',
-                right_number: views ? views[1] : '',
+                left_number: views ? views[0] ?? '' : '',
+                right_number: views ? views[1] ?? '' : '',
             },
             followers: {
-                left_number: audience ? audience[0] : '',
-                right_number: audience ? audience[1] : '',
+                left_number: audience ? audience[0] ?? '' : '',
+                right_number: audience ? audience[1] ?? '' : '',
             },
             relevance: {
                 value: [...tagsValue, ...lookalikeValue].join(' '),

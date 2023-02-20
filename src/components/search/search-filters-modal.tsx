@@ -45,14 +45,21 @@ export const SearchFiltersModal = ({
                             <div>
                                 <select
                                     className="bg-primary-200 rounded-md p-1 mt-1"
-                                    value={audience[0]}
+                                    value={audience[0] ?? undefined}
                                     onChange={(e) => {
-                                        setAudience((val) => [e.target.value, val[1]]);
+                                        setAudience((val) => [
+                                            e.target.value === 'any' ? null : e.target.value,
+                                            val[1],
+                                        ]);
                                     }}
                                 >
                                     <option value={'any'}>{t('creators.filter.from')}</option>
                                     {options.map((val) => (
-                                        <option value={val} key={val}>
+                                        <option
+                                            value={val}
+                                            key={val}
+                                            disabled={!!audience[1] && val >= Number(audience[1])}
+                                        >
                                             {formatter(val)}
                                         </option>
                                     ))}
@@ -61,14 +68,21 @@ export const SearchFiltersModal = ({
                             <div>
                                 <select
                                     className="bg-primary-200 rounded-md p-1 mt-1"
-                                    value={audience[1]}
+                                    value={audience[1] ?? undefined}
                                     onChange={(e) => {
-                                        setAudience((val) => [val[0], e.target.value]);
+                                        setAudience((val) => [
+                                            val[0],
+                                            e.target.value === 'any' ? null : e.target.value,
+                                        ]);
                                     }}
                                 >
                                     <option value={'any'}>{t('creators.filter.to')}</option>
                                     {options.map((val) => (
-                                        <option value={val} key={val}>
+                                        <option
+                                            value={val}
+                                            key={val}
+                                            disabled={!!audience[0] && val <= Number(audience[0])}
+                                        >
                                             {formatter(val)}
                                         </option>
                                     ))}
@@ -84,14 +98,21 @@ export const SearchFiltersModal = ({
                             <div>
                                 <select
                                     className="bg-primary-200 rounded-md p-1 mt-1"
-                                    value={views[0]}
+                                    value={views[0] ?? undefined}
                                     onChange={(e) => {
-                                        setViews((val) => [e.target.value, val[1]]);
+                                        setViews((val) => [
+                                            e.target.value === 'any' ? null : e.target.value,
+                                            val[1],
+                                        ]);
                                     }}
                                 >
                                     <option value={'any'}>{t('creators.filter.from')}</option>
                                     {options.map((val) => (
-                                        <option value={val} key={val}>
+                                        <option
+                                            value={val}
+                                            key={val}
+                                            disabled={!!views[1] && val >= Number(views[1])}
+                                        >
                                             {formatter(val)}
                                         </option>
                                     ))}
@@ -100,14 +121,21 @@ export const SearchFiltersModal = ({
                             <div>
                                 <select
                                     className="bg-primary-200 rounded-md p-1 mt-1"
-                                    value={views[1]}
+                                    value={views[1] ?? undefined}
                                     onChange={(e) => {
-                                        setViews((val) => [val[0], e.target.value]);
+                                        setViews((val) => [
+                                            val[0],
+                                            e.target.value === 'any' ? null : e.target.value,
+                                        ]);
                                     }}
                                 >
                                     <option value={'any'}>{t('creators.filter.to')}</option>
                                     {options.map((val) => (
-                                        <option value={val} key={val}>
+                                        <option
+                                            value={val}
+                                            key={val}
+                                            disabled={!!views[0] && val <= Number(views[0])}
+                                        >
                                             {formatter(val)}
                                         </option>
                                     ))}

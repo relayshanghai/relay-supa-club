@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 import { useState } from 'react';
 import { Button } from 'src/components/button';
 import { SearchProvider, useSearch } from 'src/hooks/use-search';
