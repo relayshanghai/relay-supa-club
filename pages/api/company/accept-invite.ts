@@ -2,9 +2,11 @@ import { User } from '@supabase/supabase-js';
 import { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { acceptInviteErrors } from 'src/errors/company';
+import { InviteStatusError, inviteStatusErrors, loginValidationErrors } from 'src/errors/login';
 import { updateUserRole } from 'src/utils/api/db';
 import { serverLogger } from 'src/utils/logger';
 import { supabase } from 'src/utils/supabase-client';
+import { validatePassword } from 'src/utils/validation/signup';
 
 export type CompanyAcceptInvitePostBody = {
     token: string;
@@ -19,7 +21,7 @@ export type CompanyAcceptInviteGetQueries = {
     token: string;
 };
 export type CompanyAcceptInviteGetResponse = {
-    message: 'inviteValid';
+    message: InviteStatusError;
     email?: string;
 };
 
@@ -30,7 +32,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         ) as CompanyAcceptInvitePostBody;
         if (!token || !password || !firstName || !lastName) {
             return res.status(httpCodes.BAD_REQUEST).json({
-                error: 'Missing required parameters',
+                error: loginValidationErrors.missingRequiredFields,
+            });
+        }
+        const passwordInvalid = validatePassword(password);
+        if (passwordInvalid) {
+            return res.status(httpCodes.BAD_REQUEST).json({
+                error: passwordInvalid,
             });
         }
 
@@ -121,19 +129,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 .single();
             if (error) {
                 serverLogger(error, 'error');
-                return res.status(httpCodes.UNAUTHORIZED).json({
-                    error: 'inviteInvalid',
-                });
+                const response: { error: InviteStatusError } = {
+                    error: inviteStatusErrors.inviteInvalid,
+                };
+                return res.status(httpCodes.UNAUTHORIZED).json(response);
             }
             if (data?.used) {
-                return res.status(httpCodes.UNAUTHORIZED).json({
-                    error: 'inviteUsed',
-                });
+                const response: { error: InviteStatusError } = {
+                    error: inviteStatusErrors.inviteUsed,
+                };
+                return res.status(httpCodes.UNAUTHORIZED).json(response);
             }
             if (Date.now() >= new Date(data.expire_at ?? '').getTime()) {
-                return res.status(httpCodes.UNAUTHORIZED).json({
-                    error: 'inviteExpired',
-                });
+                const response: { error: InviteStatusError } = {
+                    error: inviteStatusErrors.inviteExpired,
+                };
+                return res.status(httpCodes.UNAUTHORIZED).json(response);
             }
             return res.status(httpCodes.OK).json({ message: 'inviteValid', email: data.email });
         } catch (error) {

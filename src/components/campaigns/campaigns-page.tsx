@@ -20,7 +20,7 @@ const CampaignsPage = ({ companyId }: { companyId?: string }) => {
                 <div className="text-sm text-gray-600 h-full">
                     {t('campaigns.index.noCampaignsAvailable')}
                     <span className="text-primary-500 hover:text-primary-700 duration-300 cursor-pointer">
-                        <Link href="/campaigns/form">{t('campaigns.index.clickCreate')}</Link>
+                        <Link href="/campaigns/form" legacyBehavior>{t('campaigns.index.clickCreate')}</Link>
                     </span>
                 </div>
             );
@@ -33,7 +33,7 @@ const CampaignsPage = ({ companyId }: { companyId?: string }) => {
             <div className="flex flex-col p-6 w-full">
                 <div className="flex items-center justify-between mb-4 sm:mb-6">
                     <Tabs currentTab={currentTab} changeTab={setCurrentTab} />
-                    <Link href="/campaigns/form">
+                    <Link href="/campaigns/form" legacyBehavior>
                         <Button>{t('campaigns.index.createCampaign')}</Button>
                     </Link>
                 </div>

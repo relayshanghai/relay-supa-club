@@ -24,30 +24,30 @@ const ActiveLink = ({ href, children }: { href: string; children: string }) => {
     }
 
     return (
-        <Link href={href}>
-            <a
-                className={`flex items-center py-2 px-4 text-sm transition hover:text-primary-700 border-l-4 ${
-                    isRouteActive ? 'text-primary-500 border-primary-500 border-l-4' : ''
-                }`}
-            >
-                {(hrefRoot === 'influencer' || hrefRoot === 'dashboard') && (
-                    <Compass height={18} width={18} className="mr-4 text-inherit" />
-                )}
-                {hrefRoot === 'campaigns' && (
-                    <FourSquare height={18} width={18} className="mr-4 text-inherit" />
-                )}
-                {hrefRoot === 'ai-email-generator' && (
+        (<Link
+            href={href}
+            className={`flex items-center py-2 px-4 text-sm transition hover:text-primary-700 border-l-4 ${
+                isRouteActive ? 'text-primary-500 border-primary-500 border-l-4' : ''
+            }`}>
+
+            {(hrefRoot === 'influencer' || hrefRoot === 'dashboard') && (
+                <Compass height={18} width={18} className="mr-4 text-inherit" />
+            )}
+            {hrefRoot === 'campaigns' && (
+                <FourSquare height={18} width={18} className="mr-4 text-inherit" />
+            )}
+            {hrefRoot === 'ai-email-generator' && (
                     <EmailOutline height={18} width={18} className="mr-4 text-inherit" />
-                )}
-                {hrefRoot === 'account' && (
-                    <Account height={18} width={18} className="mr-4 text-inherit" />
-                )}
-                {href === '/admin/clients' && (
-                    <Team height={18} width={18} className="mr-4 text-inherit" />
-                )}
-                {children}
-            </a>
-        </Link>
+            )}
+            {hrefRoot === 'account' && (
+                <Account height={18} width={18} className="mr-4 text-inherit" />
+            )}
+            {href === '/admin/clients' && (
+                <Team height={18} width={18} className="mr-4 text-inherit" />
+            )}
+            {children}
+
+        </Link>)
     );
 };
 

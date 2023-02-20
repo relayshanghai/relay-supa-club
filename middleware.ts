@@ -1,13 +1,11 @@
-import {
-    createMiddlewareSupabaseClient,
-    Session,
-    SupabaseClient,
-} from '@supabase/auth-helpers-nextjs';
+import { createMiddlewareSupabaseClient } from '@supabase/auth-helpers-nextjs';
+import type { SupabaseClient, Session } from '@supabase/auth-helpers-nextjs';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { DatabaseWithCustomTypes } from 'types';
-import { serverLogger } from 'src/utils/logger';
+import type { DatabaseWithCustomTypes } from 'types';
 import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
+import httpCodes from 'src/constants/httpCodes';
+import { serverLogger } from 'src/utils/logger';
 
 const pricingAllowList = ['https://en-relay-club.vercel.app', 'https://relay.club'];
 const stripeWebhookAllowlist = ['https://stripe.com/', 'https://hooks.stripe.com/'];
@@ -55,16 +53,16 @@ const checkOnboardingStatus = async (
     if (req.nextUrl.pathname === '/api/company/create') {
         const { user_id } = JSON.parse(await req.text());
         if (!user_id || user_id !== session.user.id) {
-            return NextResponse.json({ error: 'user is unauthorized for this action' });
+            return NextResponse.rewrite(redirectUrl.origin, { status: httpCodes.FORBIDDEN });
         }
         return res;
     }
     // special case where we require a signed in user to view their profile, but we don't want to redirect them to onboarding cause this happens before they are onboarded
-    if (req.nextUrl.pathname === '/api/profiles') {
+    if (req.nextUrl.pathname === '/api/profiles' && req.method === 'GET') {
         // print req queries
         const id = new URL(req.url).searchParams.get('id');
         if (!id || id !== session.user.id) {
-            return NextResponse.json({ error: 'user is unauthorized for this action' });
+            return NextResponse.rewrite(redirectUrl.origin, { status: httpCodes.FORBIDDEN });
         }
         return res;
     }
@@ -74,6 +72,9 @@ const checkOnboardingStatus = async (
     );
     // if signed up, but no company, redirect to onboarding
     if (!subscriptionStatus) {
+        if (req.nextUrl.pathname.includes('api')) {
+            return NextResponse.rewrite(redirectUrl.origin, { status: httpCodes.FORBIDDEN });
+        }
         if (req.nextUrl.pathname === '/signup/onboarding') return res;
         redirectUrl.pathname = '/signup/onboarding';
         return NextResponse.redirect(redirectUrl);
@@ -166,7 +167,6 @@ const checkIsRelayEmployee = async (res: NextResponse, email: string) => {
 export async function middleware(req: NextRequest) {
     // We need to create a response and hand it to the supabase client to be able to modify the response headers.
     const res = NextResponse.next();
-
     if (req.nextUrl.pathname === '/api/subscriptions/prices') return allowPricingCors(req, res);
     if (req.nextUrl.pathname === '/api/subscriptions/webhook') return allowStripeCors(req, res);
 
@@ -175,17 +175,19 @@ export async function middleware(req: NextRequest) {
     const { data: authData } = await supabase.auth.getSession();
     if (req.nextUrl.pathname.includes('/admin')) {
         if (!authData.session?.user?.email) {
-            return NextResponse.json({ error: 'unauthorized to use endpoint' });
+            return NextResponse.rewrite(req.nextUrl.origin, { status: httpCodes.FORBIDDEN });
         }
         return await checkIsRelayEmployee(res, authData.session.user.email);
     }
 
-    if (authData.session?.user?.email)
+    if (authData.session?.user?.email) {
         return await checkOnboardingStatus(req, res, authData.session, supabase);
+    }
 
     // not logged in -- api requests, just return an error
-    if (req.nextUrl.pathname.includes('api'))
-        return NextResponse.json({ error: 'unauthorized to use endpoint' });
+    if (req.nextUrl.pathname.includes('api')) {
+        return NextResponse.rewrite(req.nextUrl.origin, { status: httpCodes.FORBIDDEN });
+    }
 
     const redirectUrl = req.nextUrl.clone();
 
@@ -207,6 +209,6 @@ export const config = {
          * - create-employee endpoint (api/company/create-employee)
          * - login, signup, logout (login, signup, logout pages)
          */
-        '/((?!_next/static|_next/image|favicon.ico|assets/*|api/company/accept-invite*|api/company/create-employee*|login|signup|logout|api/logout).*)',
+        '/((?!_next/static|_next/image|favicon.ico|assets/*|api/company/accept-invite*|api/company/create-employee*|login*|login/reset-password|signup|signup/invite*|logout|api/logout).*)',
     ],
 };

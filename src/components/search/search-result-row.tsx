@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
 import { ShareLink } from 'src/components/icons';
 import { useSearch } from 'src/hooks/use-search';
+import { imgProxy } from 'src/utils/fetcher';
 // import Heart from 'src/components/icons/Heart';
 import { formatter } from 'src/utils/formatter';
 import { CreatorSearchAccountObject } from 'types';
@@ -48,17 +49,20 @@ export const SearchResultRow = ({
                     <Button>
                         <Link
                             href={`/influencer/${platform}/${creator.account.user_profile.user_id}`}
-                        >
-                            <a target="_blank">{t('creators.analyzeProfile')}</a>
+                            target="_blank">
+                            {t('creators.analyzeProfile')}
                         </Link>
                     </Button>
 
                     {creator.account.user_profile.url && (
                         <Button>
-                            <Link href={creator.account.user_profile.url}>
-                                <a target="_blank" rel="noopener noreferrer">
-                                    <ShareLink className="w-3.5 h-3.5 fill-current text-white" />
-                                </a>
+                            <Link
+                                href={creator.account.user_profile.url}
+                                target="_blank"
+                                rel="noopener noreferrer">
+
+                                <ShareLink className="w-3.5 h-3.5 fill-current text-white" />
+
                             </Link>
                         </Button>
                     )}
@@ -67,7 +71,7 @@ export const SearchResultRow = ({
 
             <td className="py-2 px-4 flex flex-row items-center space-x-2 min-w-min">
                 <img
-                    src={`https://image-cache.brainchild-tech.cn/?link=${creator.account.user_profile.picture}`}
+                    src={imgProxy(creator.account.user_profile.picture) as string}
                     className="w-12 h-12"
                     alt={handle}
                 />

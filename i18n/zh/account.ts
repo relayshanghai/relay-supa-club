@@ -11,6 +11,10 @@ const account = {
         emailPlaceholder: '输入您的邮箱地址',
         profileUpdated: '个人信息已更新',
         oopsWentWrong: '哎呀，出错了',
+        updateEmail: '更新电子邮件',
+        confirmationEmailSentToNewAddress: '已发送确认邮件到新地址',
+        pleaseEnterNewEmail: '请输入新的电子邮件',
+        pleaseEnterValidEmail: '请输入有效的电子邮件',
     },
     company: {
         companyName: '公司名称',

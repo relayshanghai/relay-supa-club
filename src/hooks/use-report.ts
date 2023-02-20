@@ -17,6 +17,20 @@ export const useReport = () => {
 
     const { profile } = useUser();
 
+    //The transform function is not used now, as the image proxy issue is handled directly where calls for the image.But this is left for future refactor. TODO:Ticket V2-181
+    // const transformReport = (report: CreatorReport, platform: string) => {
+    //     if (platform === 'youtube' || platform === 'tiktok') {
+    //         return {
+    //             ...report,
+    //             user_profile: {
+    //                 ...report.user_profile,
+    //                 picture: imgProxy(report.user_profile.picture) as string,
+    //             },
+    //         };
+    //     }
+    //     return report;
+    // };
+
     const getOrCreateReport = useCallback(
         async (platform: CreatorPlatform, creator_id: string) => {
             try {
@@ -31,9 +45,13 @@ export const useReport = () => {
                     company_id: profile?.company_id,
                     user_id: profile?.id,
                 });
+
                 if (!report.success) throw new Error('Failed to fetch report');
+
+                // const transformed = transformReport(report, platform);
                 setReport(report);
                 setReportCreatedAt(createdAt);
+                setErrorMessage('');
             } catch (error: any) {
                 clientLogger(error, 'error');
                 if (hasCustomError(error, usageErrors)) {

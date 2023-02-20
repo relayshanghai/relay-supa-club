@@ -29,7 +29,7 @@ export default function CampaignModalCard({
     const { t } = useTranslation();
 
     const handleAddCreatorToCampaign = async () => {
-        if (!campaign || !creator || !creator.user_id || !profile)
+        if (!campaign || !creator || !creator.user_id || !profile || !creator.picture)
             return toast.error(t('campaigns.form.oopsSomethingWrong'));
         try {
             await addCreatorToCampaign({

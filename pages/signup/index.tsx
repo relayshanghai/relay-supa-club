@@ -11,6 +11,7 @@ import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
 import { useFields } from 'src/hooks/use-fields';
 import { useUser } from 'src/hooks/use-user';
 import { clientLogger } from 'src/utils/logger';
+import { SignupInputTypes, validateSignupInput } from 'src/utils/validation/signup';
 
 export default function Register() {
     const { t } = useTranslation();
@@ -29,6 +30,13 @@ export default function Register() {
     const { signup, profile, createEmployee } = useUser();
     const [loading, setLoading] = useState(false);
     const [signupSuccess, setSignupSuccess] = useState(false);
+    const [validationErrors, setValidationErrors] = useState({
+        firstName: '',
+        lastName: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+    });
 
     useEffect(() => {
         if (signupSuccess && profile?.id) {
@@ -79,6 +87,20 @@ export default function Register() {
         // why do we not set loading to false here? Because sometimes the user is logged in but the profile has not loaded yet. The next page needs the profile ready. Therefore we wait in the useEffect above for the profile to load before redirecting.
     };
 
+    const setAndValidate = (type: SignupInputTypes, value: string) => {
+        setFieldValue(type, value);
+        const validationError = validateSignupInput(type, value, password);
+        if (validationError) {
+            setValidationErrors({ ...validationErrors, [type]: t(validationError) });
+        } else {
+            setValidationErrors({ ...validationErrors, [type]: '' });
+        }
+    };
+    const hasValidationErrors = Object.values(validationErrors).some((error) => error !== '');
+
+    const invalidFormInput = !firstName || !lastName || !email || !password || hasValidationErrors;
+    const submitDisabled = invalidFormInput || loading;
+
     return (
         <div className="w-full h-screen px-10 flex flex-col">
             <div className="sticky top-0 flex items-center w-full justify-between">
@@ -93,67 +115,62 @@ export default function Register() {
                     </h3>
                 </div>
                 <Input
+                    error={validationErrors.firstName}
                     label={t('login.firstName')}
                     type="first_name"
-                    placeholder={t('login.firstNamePlaceholder') || ''}
+                    placeholder={t('login.firstNamePlaceholder')}
                     value={firstName}
                     required
-                    onChange={(e) => setFieldValue('firstName', e.target.value)}
+                    onChange={(e) => setAndValidate('firstName', e.target.value)}
                 />
                 <Input
+                    error={validationErrors.lastName}
                     label={t('login.lastName')}
                     type="last_name"
-                    placeholder={t('login.lastNamePlaceholder') || ''}
+                    placeholder={t('login.lastNamePlaceholder')}
                     value={lastName}
                     required
-                    onChange={(e) => setFieldValue('lastName', e.target.value)}
+                    onChange={(e) => setAndValidate('lastName', e.target.value)}
                 />
                 <Input
+                    error={validationErrors.email}
                     label={t('login.email')}
                     type="email"
                     placeholder="hello@relay.club"
                     value={email}
                     required
-                    onChange={(e) => setFieldValue('email', e.target.value)}
+                    onChange={(e) => setAndValidate('email', e.target.value)}
                 />
                 <Input
+                    error={validationErrors.password}
+                    note={t('login.passwordRequirements')}
                     label={t('login.password')}
                     type="password"
-                    placeholder={t('login.passwordPlaceholder') || ''}
+                    placeholder={t('login.passwordPlaceholder')}
                     value={password}
                     required
-                    onChange={(e) => setFieldValue('password', e.target.value)}
+                    onChange={(e) => setAndValidate('password', e.target.value)}
                 />
                 <Input
+                    error={validationErrors.confirmPassword}
                     label={t('login.confirmPassword')}
                     type="password"
-                    placeholder={t('login.passwordPlaceholder') || ''}
+                    placeholder={t('login.passwordPlaceholder')}
                     value={confirmPassword}
                     required
-                    onChange={(e) => setFieldValue('confirmPassword', e.target.value)}
+                    onChange={(e) => setAndValidate('confirmPassword', e.target.value)}
                 />
-                <Button
-                    disabled={
-                        !firstName ||
-                        !lastName ||
-                        !email ||
-                        !password ||
-                        password !== confirmPassword ||
-                        loading
-                    }
-                    onClick={(e) => {
-                        e.preventDefault();
-                        handleSubmit();
-                    }}
-                >
+                <Button disabled={submitDisabled} type="button" onClick={handleSubmit}>
                     {t('login.signUp')}
                 </Button>
-                <p className="inline text-gray-500 text-sm">
+                <p className="inline text-gray-500 text-sm pb-4">
                     {t('login.alreadyHaveAnAccount')}
-                    <Link href="/login">
-                        <a className="inline text-primary-700 hover:text-primary-600 cursor-pointer">
-                            {t('login.logIn')}
-                        </a>
+                    <Link
+                        href="/login"
+                        className="inline text-primary-700 hover:text-primary-600 cursor-pointer">
+
+                        {t('login.logIn')}
+
                     </Link>
                 </p>
             </form>

@@ -17,6 +17,16 @@ import {
 } from 'pages/api/campaigns/add-creator';
 import { CampaignsIndexGetQuery, CampaignsIndexGetResult } from 'pages/api/campaigns';
 
+//The transform function is not used now, as the image proxy issue is handled directly where calls for the image.But this is left for future refactor. TODO:Ticket V2-181
+// const transformCampaignCreators = (creators: CampaignCreatorDB[]) => {
+//     return creators.map((creator: CampaignCreatorDB) => {
+//         return {
+//             ...creator,
+//             avatar_url: imgProxy(creator.avatar_url) as string,
+//         };
+//     });
+// };
+
 export const useCampaigns = ({
     campaignId,
     companyId: passedInCompanyId,
@@ -41,11 +51,16 @@ export const useCampaigns = ({
     const [campaignCreators, setCampaignCreators] = useState<
         CampaignWithCompanyCreators['campaign_creators'] | null
     >([]);
+
     useEffect(() => {
         if (campaigns && campaigns?.length > 0 && campaignId) {
             const campaign = campaigns?.find((c) => c.id === campaignId);
-            if (campaign) setCampaign(campaign);
-            if (campaign?.campaign_creators) setCampaignCreators(campaign.campaign_creators);
+            if (campaign) {
+                setCampaign(campaign);
+            }
+            if (campaign?.campaign_creators) {
+                setCampaignCreators(campaign.campaign_creators);
+            }
         }
     }, [campaignId, campaigns]);
 

@@ -9,6 +9,7 @@ import CreatorSkeleton from './creator-skeleton';
 
 import { useReport } from 'src/hooks/use-report';
 import { AddToCampaignModal } from '../modal-add-to-campaign';
+import { useTranslation } from 'react-i18next';
 
 export const CreatorPage = ({
     creator_id,
@@ -20,6 +21,7 @@ export const CreatorPage = ({
     const { loading, report, getOrCreateReport, reportCreatedAt, errorMessage } = useReport();
 
     const [showCampaignListModal, setShowCampaignListModal] = useState(false);
+    const { t } = useTranslation();
 
     useEffect(() => {
         getOrCreateReport(platform, creator_id);
@@ -50,11 +52,20 @@ export const CreatorPage = ({
                             user_profile={report.user_profile}
                             platform={platform}
                             onAddToCampaign={onAddToCampaign}
-                            reportCreatedAt={reportCreatedAt}
                         />
                         <CreatorOverview report={report} />
                         <MetricsSection report={report} />
                         <PopularPostsSection report={report} />
+                        {reportCreatedAt && (
+                            <span className="flex text-xs mx-6 my-3">
+                                <p className="text-gray-400 mr-2">
+                                    {t('creators.show.lastUpdate')}
+                                </p>
+                                <p className="text-gray-600">
+                                    {new Date(reportCreatedAt).toLocaleDateString()}
+                                </p>
+                            </span>
+                        )}
                     </>
                 )}
             </div>

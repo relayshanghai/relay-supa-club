@@ -30,13 +30,13 @@ export const SubscriptionDetails = () => {
                 <h2 className="text-lg font-bold">{t('account.subscription.title')}</h2>
                 <div className="flex flex-row justify-end">
                     {company?.id && (
-                        <Link href={buildSubscriptionPortalUrl({ id: company.id })}>
-                            <a>
-                                <Button variant="secondary">
-                                    {t('account.subscription.viewBillingPortal')}
-                                </Button>
-                            </a>
-                        </Link>
+                        (<Link href={buildSubscriptionPortalUrl({ id: company.id })}>
+
+                            <Button variant="secondary">
+                                {t('account.subscription.viewBillingPortal')}
+                            </Button>
+
+                        </Link>)
                     )}
                 </div>
             </div>
@@ -137,9 +137,9 @@ export const SubscriptionDetails = () => {
                             {t('account.subscription.cancelSubscription')}
                         </Button>
                         <Link href="/pricing">
-                            <a>
-                                <Button>{t('account.subscription.upgradeSubscription')}</Button>
-                            </a>
+
+                            <Button>{t('account.subscription.upgradeSubscription')}</Button>
+
                         </Link>
                     </div>
                 </>

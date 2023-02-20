@@ -50,5 +50,21 @@ const login = {
     noLoggedInUserFound: 'No logged in user found',
     noCompanyNameFound: 'No company name found',
     companyWithSameNameExists: 'Company with same name already exists',
+    passwordNeedsTen: 'Must be at least 10 characters long',
+    passwordNeedsNumber: 'Must contain at least one number',
+    passwordNeedsSpecial: 'Must contain at least one special character',
+    firstNameRequired: 'First name is required',
+    lastNameRequired: 'Last name is required',
+    emailInvalid: 'Invalid Email',
+    passwordsDoNotMatch: 'Passwords do not match',
+    invalidPassword: 'Invalid password',
+    forgotPasswordClickHereToReset: 'Forgot password? Click here to reset',
+    resetPasswordEmailSent: 'Reset password email sent',
+    changePassword: 'Change password',
+    inputNewPassword: 'Input new password',
+    updateAndLogIn: 'Update and log in',
+    passwordUpdated: 'Password updated',
+    passwordRequirements:
+        'Must be at least 10 characters long and contain at least one number and one special character',
 };
 export default login;
