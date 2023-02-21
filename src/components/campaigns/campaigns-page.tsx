@@ -6,9 +6,10 @@ import { Spinner } from 'src/components/icons';
 import { Button } from 'src/components/button';
 import { useCampaigns } from 'src/hooks/use-campaigns';
 import CampaignCardView from 'src/components/campaigns/CampaignCardView';
-import { t } from 'i18next';
+import { useTranslation } from 'react-i18next';
 
 const CampaignsPage = ({ companyId }: { companyId?: string }) => {
+    const { t } = useTranslation();
     const [currentTab, setCurrentTab] = useState('');
 
     const { campaigns, isLoading } = useCampaigns({ companyId });
