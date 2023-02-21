@@ -1,9 +1,10 @@
-import { ChangeEvent, useCallback, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import useOnOutsideClick from 'src/hooks/use-on-outside-click';
 import { CreatorPlatform } from 'types';
 
 export const SearchInfluencers = (platform: CreatorPlatform) => {
     const searchRef = useRef<any>();
+
     const [creators, setCreators] = useState([]);
     const [loading, setLoading] = useState(false);
     const [displaySearch, setDisplaySearch] = useState(false);
@@ -12,26 +13,29 @@ export const SearchInfluencers = (platform: CreatorPlatform) => {
     });
 
     const searchCreators = useCallback(
-      async (term: any) => {
-        console.log(term, platform);
-        setLoading(true);
-        try {
-            const res = await (
-                fetch("/api/influencer-search/lookalike", {
-                    method: 'post',
-                    body: JSON.stringify({
-                        term,
-                        platform,
-                    }),
-                }),
-            );
-            console.log(res);
-            setCreators(res.data);
-            setLoading(false);
-        } catch (error) {
-            console.log(error);
-        }
-    },[platform],);
+        async (term: any) => {
+            setLoading(true);
+
+            try {
+                const res = await (
+                    await fetch('/api/influencer-search/lookalike', {
+                        method: 'post',
+                        body: JSON.stringify({
+                            term,
+                            platform,
+                        }),
+                    })
+                ).json();
+
+                console.log(res.data);
+                setCreators(res.data);
+                setLoading(false);
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        [platform],
+    );
 
     const handleSearch = (e) => {
         if (e.key === 'Enter' && e.target.value.trim()) {
@@ -56,9 +60,8 @@ export const SearchInfluencers = (platform: CreatorPlatform) => {
                 onKeyUp={handleSearch}
             />
             <div ref={searchRef}>
-                {displaySearch && creators?.map((creator, index) => (
-                    <div key={index}>{creator}</div>
-                ))}
+                {displaySearch &&
+                    creators?.map((creator, index) => <div key={index}>{creator}</div>)}
             </div>
         </div>
     );

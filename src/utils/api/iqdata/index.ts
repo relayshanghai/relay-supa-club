@@ -21,9 +21,7 @@ export const iqDataFetch = async <T = any>(path: string, options: RequestInit = 
 };
 
 export const fetchIqDataLookalike = async (term: string, platform: CreatorPlatform) =>
-    await iqDataFetch(
-        `https://socapi.icu/v2.0/api/dict/users/?q=${term}&type=lookalike&platform=${platform}&limit=5`,
-    );
+    await iqDataFetch(`dict/users/?q=${term}&type=lookalike&platform=${platform}&limit=5`);
 
 export const fetchIqDataTopics = async (term: string, platform: CreatorPlatform, limit = 10) =>
     await iqDataFetch(`dict/topic-tags/?q=${term}&platform=${platform}&limit=${limit}`);
