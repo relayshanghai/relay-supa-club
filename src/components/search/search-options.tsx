@@ -2,7 +2,7 @@ import { AdjustmentsVerticalIcon } from '@heroicons/react/24/solid';
 
 import { useTranslation } from 'react-i18next';
 import { useSearch } from 'src/hooks/use-search';
-import { formatter } from 'src/utils/formatter';
+import { numberFormatter } from 'src/utils/formatter';
 import { Button } from '../button';
 import { SearchTopics } from './search-topics';
 
@@ -174,10 +174,10 @@ export const SearchOptions = ({
                             {hasSetAudience && (
                                 <p>
                                     {`${t('creators.filter.subs')}: ${
-                                        audience[0] ? formatter(audience[0]) : 0
+                                        audience[0] ? numberFormatter(audience[0]) : 0
                                     } - ${
                                         audience[1]
-                                            ? formatter(audience[1])
+                                            ? numberFormatter(audience[1])
                                             : t('creators.filter.max')
                                     }`}
                                 </p>
@@ -185,9 +185,11 @@ export const SearchOptions = ({
                             {hasSetViews && (
                                 <p>
                                     {`${t('creators.filter.avgViews')}: ${
-                                        views[0] ? formatter(views[0]) : 0
+                                        views[0] ? numberFormatter(views[0]) : 0
                                     } - ${
-                                        views[1] ? formatter(views[1]) : t('creators.filter.max')
+                                        views[1]
+                                            ? numberFormatter(views[1])
+                                            : t('creators.filter.max')
                                     }`}
                                 </p>
                             )}
@@ -210,9 +212,9 @@ export const SearchOptions = ({
                             setResultsPerPageLimit(Number(e.target.value));
                         }}
                     >
-                        {resultsPerPageOptions.map((val) => (
-                            <option value={val} key={val}>
-                                {formatter(val)}
+                        {resultsPerPageOptions.map((option) => (
+                            <option value={option} key={option}>
+                                {numberFormatter(option)}
                             </option>
                         ))}
                     </select>
