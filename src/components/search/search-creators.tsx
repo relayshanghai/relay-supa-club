@@ -1,7 +1,7 @@
 import { ChangeEvent, KeyboardEvent, useCallback, useEffect, useRef, useState } from 'react';
 import useOnOutsideClick from 'src/hooks/use-on-outside-click';
 import { useTranslation } from 'react-i18next';
-import { serverLogger } from 'src/utils/logger';
+import { clientLogger } from 'src/utils/logger';
 import type { AudienceLookalike, CreatorPlatform } from 'types';
 import { Enter, Spinner } from '../icons';
 import CreatorCard from './search-creator-card';
@@ -92,7 +92,7 @@ export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
                         ) : (
                             <p className="text-xs text-gray-400 p-3">
                                 {t('creators.show.noSearchResults')}
-                            </div>
+                            </p>
                         )}
                     </div>
                 )}
