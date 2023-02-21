@@ -5,8 +5,8 @@ export const InputTextArea = ({
     ...rest
 }: TextareaHTMLAttributes<HTMLTextAreaElement> & { label: string }) => {
     return (
-        <label className="flex flex-col text-xs text-gray-500 font-bold w-full">
-            <div>
+        <label className="flex flex-col text-xs text-gray-500 w-full">
+            <div className="font-bold">
                 {label}
                 {rest.required ? <span className="text-xs ml-1 text-primary-500">*</span> : null}
             </div>

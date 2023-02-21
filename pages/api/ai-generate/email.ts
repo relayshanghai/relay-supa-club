@@ -66,30 +66,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             ? trimmedInstructions?.slice(0, trimmedInstructions?.length - 1)
             : trimmedInstructions;
 
+        const prompt = `Write an email (without subject) to ${influencerName} with the following content:
+        1) Express our brand ${brandName}'s interest in participating with ${influencerName} on a product marketing campaign.
+        2) Express that I love their content and appreciate their creativity.
+        3) Explain about our product: ${brandName} ${productName}${trimDescriptionPunctuation}.
+        ${
+            instructions
+                ? `4) Ask ${influencerName} to follow these instructions: "${trimmedInstructionsPunctuation}.`
+                : '4) Ask the influencer to post about the product on their social media.'
+        }
+        5) Express gratitude for ${influencerName}'s time and consideration, and end with a call-to-action for them to respond if they are interested in the collaboration.
+        6) Sign with the name: ${senderName}`;
+
         const data = await openai.createCompletion({
-            prompt:
-                'Write an email (without subject) to ' +
-                influencerName +
-                ' with the following content: 1) Express our brand ' +
-                brandName +
-                "'s interest in participating with" +
-                influencerName +
-                'on a product marketing campaign. 2) Express that I love their content and appreciate their creativity. 3) Explain about our product:' +
-                brandName +
-                ' ' +
-                productName +
-                '.' +
-                trimDescriptionPunctuation +
-                '. 4) Ask ' +
-                influencerName +
-                ' to follow these instructions:' +
-                ' "' +
-                trimmedInstructionsPunctuation +
-                '." ' +
-                '5) Express gratitude for ' +
-                influencerName +
-                "'s time and consideration, and end with a call-to-action for them to respond if they are interested in the collaboration. 6) Sign with the name: " +
-                senderName,
+            prompt,
             model: 'text-curie-001',
             max_tokens: 512,
             n: 1,

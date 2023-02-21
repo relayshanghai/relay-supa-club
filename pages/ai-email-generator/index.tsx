@@ -263,10 +263,12 @@ const AIImageGenerator = () => {
                         </div>
 
                         <div className="w-full flex flex-col justify-center items-center h-full ">
-                            <label className="flex flex-col text-xs text-gray-500 font-bold h-full w-full">
-                                <div>{t('aiEmailGenerator.form.label.generatedEmail') || ''}</div>
+                            <label className="flex flex-col text-xs text-gray-500 h-full w-full">
+                                <div className="font-bold">
+                                    {t('aiEmailGenerator.form.label.generatedEmail') || ''}
+                                </div>
                                 <textarea
-                                    className="ring-opacity-5 text-black placeholder-gray-400 appearance-none bg-white rounded-md block h-[500px] lg:h-full w-full px-3 py-2 border border-transparent shadow ring-1 ring-transparent sm:text-sm focus:border-primary-500 focus:ring-primary-500 focus:outline-none my-2"
+                                    className="ring-opacity-5 placeholder-gray-400 appearance-none bg-white rounded-md block w-full px-3 py-2 border border-transparent shadow ring-1 sm:text-sm focus:border-primary-500 focus:ring-primary-500 focus:outline-none my-2 h-full"
                                     value={generatedEmail}
                                     onChange={() => {
                                         return;
