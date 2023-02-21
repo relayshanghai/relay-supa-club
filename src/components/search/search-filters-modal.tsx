@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useSearch } from 'src/hooks/use-search';
-import { formatter } from 'src/utils/formatter';
+import { numberFormatter } from 'src/utils/formatter';
 import { Modal } from '../modal';
 
 /** Search Filter - Subscribers and Avg view filter options: 1k, 5k, 10k, 15k, 25k, 50k, 100k, 250k, 500k, 1m */
@@ -42,50 +42,55 @@ export const SearchFiltersModal = ({
                     <label className="text-sm">
                         <h4 className="font-bold text-lg">{t('creators.filter.subscribers')}</h4>
                         <div className="flex flex-row space-x-4">
-                            <div>
+                            <div className="flex items-center">
                                 <select
                                     className="bg-primary-200 rounded-md p-1 mt-1"
-                                    value={audience[0] ?? undefined}
+                                    value={audience[0] ?? 'any'}
                                     onChange={(e) => {
-                                        setAudience((val) => [
+                                        setAudience((audiencePrevious) => [
                                             e.target.value === 'any' ? null : e.target.value,
-                                            val[1],
+                                            audiencePrevious[1],
                                         ]);
                                     }}
                                 >
-                                    <option value={'any'}>{t('creators.filter.from')}</option>
-                                    {options.map((val) => (
+                                    <option value="any">{'0'}</option>
+                                    {options.map((option) => (
                                         <option
-                                            value={val}
-                                            key={val}
-                                            disabled={!!audience[1] && val >= Number(audience[1])}
+                                            value={option}
+                                            key={option}
+                                            disabled={
+                                                !!audience[1] && option >= Number(audience[1])
+                                            }
                                         >
-                                            {formatter(val)}
+                                            {numberFormatter(option)}
                                         </option>
                                     ))}
                                 </select>
-                            </div>
-                            <div>
+
+                                <p className="mx-2 font-bold">-</p>
+
                                 <select
                                     className="bg-primary-200 rounded-md p-1 mt-1"
-                                    value={audience[1] ?? undefined}
+                                    value={audience[1] ?? 'any'}
                                     onChange={(e) => {
-                                        setAudience((val) => [
-                                            val[0],
+                                        setAudience((audiencePrevious) => [
+                                            audiencePrevious[0],
                                             e.target.value === 'any' ? null : e.target.value,
                                         ]);
                                     }}
                                 >
-                                    <option value={'any'}>{t('creators.filter.to')}</option>
-                                    {options.map((val) => (
+                                    {options.map((option) => (
                                         <option
-                                            value={val}
-                                            key={val}
-                                            disabled={!!audience[0] && val <= Number(audience[0])}
+                                            value={option}
+                                            key={option}
+                                            disabled={
+                                                !!audience[0] && option <= Number(audience[0])
+                                            }
                                         >
-                                            {formatter(val)}
+                                            {numberFormatter(option)}
                                         </option>
                                     ))}
+                                    <option value="any">{t('creators.filter.max')}</option>
                                 </select>
                             </div>
                         </div>
@@ -95,50 +100,49 @@ export const SearchFiltersModal = ({
                     <label className="text-sm">
                         <div className="font-bold text-lg">{t('creators.filter.averageViews')}</div>
                         <div className="flex flex-row space-x-4">
-                            <div>
+                            <div className="flex items-center">
                                 <select
                                     className="bg-primary-200 rounded-md p-1 mt-1"
-                                    value={views[0] ?? undefined}
+                                    value={views[0] ?? 'any'}
                                     onChange={(e) => {
-                                        setViews((val) => [
+                                        setViews((viewsPrevious) => [
                                             e.target.value === 'any' ? null : e.target.value,
-                                            val[1],
+                                            viewsPrevious[1],
                                         ]);
                                     }}
                                 >
-                                    <option value={'any'}>{t('creators.filter.from')}</option>
-                                    {options.map((val) => (
+                                    <option value="any">{'0'}</option>
+                                    {options.map((option) => (
                                         <option
-                                            value={val}
-                                            key={val}
-                                            disabled={!!views[1] && val >= Number(views[1])}
+                                            value={option}
+                                            key={option}
+                                            disabled={!!views[1] && option >= Number(views[1])}
                                         >
-                                            {formatter(val)}
+                                            {numberFormatter(option)}
                                         </option>
                                     ))}
                                 </select>
-                            </div>
-                            <div>
+                                <p className="mx-2 font-bold">-</p>
                                 <select
                                     className="bg-primary-200 rounded-md p-1 mt-1"
-                                    value={views[1] ?? undefined}
+                                    value={views[1] ?? 'any'}
                                     onChange={(e) => {
-                                        setViews((val) => [
-                                            val[0],
+                                        setViews((viewsPrevious) => [
+                                            viewsPrevious[0],
                                             e.target.value === 'any' ? null : e.target.value,
                                         ]);
                                     }}
                                 >
-                                    <option value={'any'}>{t('creators.filter.to')}</option>
-                                    {options.map((val) => (
+                                    {options.map((option) => (
                                         <option
-                                            value={val}
-                                            key={val}
-                                            disabled={!!views[0] && val <= Number(views[0])}
+                                            value={option}
+                                            key={option}
+                                            disabled={!!views[0] && option <= Number(views[0])}
                                         >
-                                            {formatter(val)}
+                                            {numberFormatter(option)}
                                         </option>
                                     ))}
+                                    <option value="any">{t('creators.filter.max')}</option>
                                 </select>
                             </div>
                         </div>
@@ -158,16 +162,15 @@ export const SearchFiltersModal = ({
                                 }
                             }}
                         >
-                            <option value={'any'}>{t('creators.filter.any')}</option>
-                            <option value={'male'}>{t('creators.filter.male')}</option>
-                            <option value={'female'}>{t('creators.filter.female')}</option>
+                            <option value="any">{t('creators.filter.any')}</option>
+                            <option value="male">{t('creators.filter.male')}</option>
+                            <option value="female">{t('creators.filter.female')}</option>
                         </select>
                     </label>
                 </div>
                 <div>
                     <label className="text-sm">
                         <div className="font-bold text-lg">
-                            {' '}
                             {t('creators.filter.engagementRate')}
                         </div>
                         <select
@@ -181,11 +184,12 @@ export const SearchFiltersModal = ({
                                 }
                             }}
                         >
-                            <option value={'any'}>{t('creators.filter.any')}</option>
+                            <option value="any">{t('creators.filter.any')}</option>
                             {Array.from(Array(10)).map((_, i) => {
+                                const option = i + 1; // >1-10%
                                 return (
-                                    <option key={i} value={i + 1}>
-                                        {`>` + (i + 1) + `%`}
+                                    <option key={i} value={option}>
+                                        {`>` + option + `%`}
                                     </option>
                                 );
                             })}
@@ -229,8 +233,8 @@ export const SearchFiltersModal = ({
                                 }
                             }}
                         >
-                            <option value={'any'}>{t('creators.filter.any')}</option>
-                            <option value={'email'}>{t('creators.filter.emailAvailable')}</option>
+                            <option value="any">{t('creators.filter.any')}</option>
+                            <option value="email">{t('creators.filter.emailAvailable')}</option>
                         </select>
                     </label>
                 </div>
