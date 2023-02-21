@@ -2,7 +2,7 @@ import { AdjustmentsVerticalIcon } from '@heroicons/react/24/solid';
 
 import { useTranslation } from 'react-i18next';
 import { useSearch } from 'src/hooks/use-search';
-import { formatter } from 'src/utils/formatter';
+import { numberFormatter } from 'src/utils/formatter';
 import { Button } from '../button';
 import { SearchCreators } from './search-creators';
 import { SearchTopics } from './search-topics';
@@ -46,7 +46,8 @@ export const SearchOptions = ({
     } = useSearch();
 
     const { t } = useTranslation();
-
+    const hasSetViews = views[0] || views[1];
+    const hasSetAudience = audience[0] || audience[1];
     return (
         <>
             <div className="py-4 w-full font-light flex flex-col md:flex-row md:space-x-4 md:space-y-0 items-start space-y-2">
@@ -131,18 +132,26 @@ export const SearchOptions = ({
                             aria-hidden="true"
                         />
                         <div className="flex flex-row space-x-5 text-xs">
-                            {!!audience.length && (
+                            {hasSetAudience && (
                                 <p>
-                                    {`${t('creators.filter.subs')}: ${formatter(
-                                        audience[0],
-                                    )} - ${formatter(audience[1])}`}
+                                    {`${t('creators.filter.subs')}: ${
+                                        audience[0] ? numberFormatter(audience[0]) : 0
+                                    } - ${
+                                        audience[1]
+                                            ? numberFormatter(audience[1])
+                                            : t('creators.filter.max')
+                                    }`}
                                 </p>
                             )}
-                            {!!views.length && (
+                            {hasSetViews && (
                                 <p>
-                                    {`${t('creators.filter.avgViews')}: ${formatter(
-                                        views[0],
-                                    )} - ${formatter(views[1])}`}
+                                    {`${t('creators.filter.avgViews')}: ${
+                                        views[0] ? numberFormatter(views[0]) : 0
+                                    } - ${
+                                        views[1]
+                                            ? numberFormatter(views[1])
+                                            : t('creators.filter.max')
+                                    }`}
                                 </p>
                             )}
                             {gender && <p>{t(`creators.filter.${gender}`)}</p>}
@@ -164,19 +173,21 @@ export const SearchOptions = ({
                             setResultsPerPageLimit(Number(e.target.value));
                         }}
                     >
-                        {resultsPerPageOptions.map((val) => (
-                            <option value={val} key={val}>
-                                {formatter(val)}
+                        {resultsPerPageOptions.map((option) => (
+                            <option value={option} key={option}>
+                                {numberFormatter(option)}
                             </option>
                         ))}
                     </select>
-                    <p className="text-gray-500 text-sm">results per page</p>
-                    {audience.length || views.length || gender || engagement || lastPost ? (
+                    <p className="text-gray-500 text-sm mr-2 ml-1">
+                        {t('creators.resultsPerPage')}
+                    </p>
+                    {hasSetViews || hasSetAudience || gender || engagement || lastPost ? (
                         <Button
                             onClick={(e: any) => {
                                 e.preventDefault();
-                                setAudience([]);
-                                setViews([]);
+                                setAudience([null, null]);
+                                setViews([null, null]);
                                 setGender(undefined);
                                 setEngagement(undefined);
                                 setLastPost(undefined);
