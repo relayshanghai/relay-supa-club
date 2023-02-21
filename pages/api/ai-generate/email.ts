@@ -69,7 +69,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const prompt = `Write an email (without subject) to ${influencerName} with the following content:
         1) Express our brand ${brandName}'s interest in participating with ${influencerName} on a product marketing campaign.
         2) Express that I love their content and appreciate their creativity.
-        3) Explain about our product: ${brandName} ${productName}${trimDescriptionPunctuation}.
+        3) Enthusiastically introduce our product: ${brandName} ${productName}. ${trimDescriptionPunctuation}.
         ${
             instructions
                 ? `4) Ask ${influencerName} to follow these instructions: "${trimmedInstructionsPunctuation}.`
