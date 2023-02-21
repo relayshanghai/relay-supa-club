@@ -93,7 +93,7 @@ export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
                                 </div>
                             ))
                         ) : (
-                            <div className="text-xs text-gray-400 p-3">
+                            <p className="text-xs text-gray-400 p-3">
                                 {t('creators.show.noSearchResults')}
                             </div>
                         )}
