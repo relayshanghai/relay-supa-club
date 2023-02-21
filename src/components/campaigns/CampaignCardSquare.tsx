@@ -12,14 +12,15 @@ import {
     ReactPortal,
 } from 'react';
 import { supabase } from 'src/utils/supabase-client';
-import { t } from 'i18next';
 import { CampaignWithCompanyCreators } from 'src/utils/api/db';
+import { useTranslation } from 'react-i18next';
 
 export default function CampaignCardSquare({
     campaign,
 }: {
     campaign: CampaignWithCompanyCreators;
 }) {
+    const { t } = useTranslation();
     const [coverImageUrl, setCoverImageUrl] = useState<string | null>(null);
 
     useEffect(() => {

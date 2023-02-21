@@ -6,9 +6,10 @@ import { Spinner } from 'src/components/icons';
 import { Button } from 'src/components/button';
 import { useCampaigns } from 'src/hooks/use-campaigns';
 import CampaignCardView from 'src/components/campaigns/CampaignCardView';
-import { t } from 'i18next';
+import { useTranslation } from 'react-i18next';
 
 const CampaignsPage = ({ companyId }: { companyId?: string }) => {
+    const { t } = useTranslation();
     const [currentTab, setCurrentTab] = useState('');
 
     const { campaigns, isLoading } = useCampaigns({ companyId });
@@ -19,7 +20,9 @@ const CampaignsPage = ({ companyId }: { companyId?: string }) => {
                 <div className="text-sm text-gray-600 h-full">
                     {t('campaigns.index.noCampaignsAvailable')}
                     <span className="text-primary-500 hover:text-primary-700 duration-300 cursor-pointer">
-                        <Link href="/campaigns/form" legacyBehavior>{t('campaigns.index.clickCreate')}</Link>
+                        <Link href="/campaigns/form" legacyBehavior>
+                            {t('campaigns.index.clickCreate')}
+                        </Link>
                     </span>
                 </div>
             );
