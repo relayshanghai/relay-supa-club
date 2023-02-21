@@ -2,7 +2,7 @@ import { ChangeEvent, KeyboardEvent, useCallback, useEffect, useRef, useState } 
 import useOnOutsideClick from 'src/hooks/use-on-outside-click';
 import { useTranslation } from 'react-i18next';
 import { serverLogger } from 'src/utils/logger';
-import { AudienceLookalike, CreatorPlatform } from 'types';
+import type { AudienceLookalike, CreatorPlatform } from 'types';
 import { Enter, Spinner } from '../icons';
 import CreatorCard from './search-creator-card';
 import { nextFetch } from 'src/utils/fetcher';
@@ -32,7 +32,7 @@ export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
                 });
                 setCreators(data);
             } catch (error) {
-                serverLogger(error);
+                clientLogger(error);
             } finally {
                 setDisplaySearch(true);
                 setLoading(false);
@@ -90,7 +90,7 @@ export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
                                 </div>
                             ))
                         ) : (
-                            <div className="text-xs text-gray-400 p-3">
+                            <p className="text-xs text-gray-400 p-3">
                                 {t('creators.show.noSearchResults')}
                             </div>
                         )}
