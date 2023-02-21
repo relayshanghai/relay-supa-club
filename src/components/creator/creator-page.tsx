@@ -45,7 +45,11 @@ export const CreatorPage = ({
             </Head>
             <div className="flex flex-col">
                 {!report || loading || errorMessage?.length > 0 ? (
-                    <CreatorSkeleton error={errorMessage?.length > 0} errorMessage={errorMessage} />
+                    <CreatorSkeleton
+                        loading={loading}
+                        error={errorMessage?.length > 0}
+                        errorMessage={errorMessage}
+                    />
                 ) : (
                     <>
                         <TitleSection
