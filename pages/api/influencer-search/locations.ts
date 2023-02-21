@@ -10,7 +10,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const results = await fetchIqDataGeos(term);
 
         // Filter out Taiwan and Hong Kong in the location results from iqData and replace with China (Taiwan) and China (Hong Kong)
-        const filteredResults = results.map((result: { title: string; name: string }) => {
+        const filteredResults = results?.map((result: { title: string; name: string }) => {
             if (
                 result.title.toLowerCase().includes('taiwan') ||
                 result.title.toLowerCase().includes('hongkong' || 'hong kong') ||
