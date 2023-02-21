@@ -3,7 +3,7 @@ import useOnOutsideClick from 'src/hooks/use-on-outside-click';
 import { useTranslation } from 'react-i18next';
 import { serverLogger } from 'src/utils/logger';
 import { AudienceLookalike, CreatorPlatform } from 'types';
-import { Spinner } from '../icons';
+import { Enter, Spinner } from '../icons';
 import CreatorCard from './search-creator-card';
 
 export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
@@ -59,21 +59,27 @@ export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
     }, [platform]);
 
     return (
-        <div className="w-full font-medium relative flex flex-col">
+        <div className="group w-full font-medium relative flex flex-col">
             <input
-                className=" placeholder-gray-400 appearance-none bg-white rounded-md block w-full px-3 py-2 border border-gray-200 ring-1 ring-gray-900 ring-opacity-5 placeholder:text-sm focus:outline-none text-gray-600"
+                className="placeholder-gray-400 appearance-none bg-white rounded-md block w-full px-3 py-2 border border-gray-200 ring-1 ring-gray-900 ring-opacity-5 placeholder:text-sm focus:outline-none text-gray-600"
                 placeholder={t('creators.show.searchInfluencerPlaceholder') as string}
                 ref={searchRef}
                 id="creator-search"
-                autoFocus
                 value={searchTerm}
                 onChange={(e) => handleChange(e)}
                 onKeyUp={(e: KeyboardEvent<HTMLInputElement> & ChangeEvent<HTMLInputElement>) =>
                     handleSearch(e)
                 }
             />
-            {loading && (
+            {loading ? (
                 <Spinner className="w-5 h-5 absolute right-2 top-2.5 z-50 fill-primary-600 text-white" />
+            ) : (
+                <div className="absolute right-2 top-2.5 z-50 flex items-center">
+                    <p className="text-xs text-gray-400 mr-2">
+                        {t('creators.show.pressEnterToSearch')}
+                    </p>
+                    <Enter className="group-hover:fill-red w-6 h-6  fill-gray-500 " />
+                </div>
             )}
 
             <div ref={searchRef} className="relative w-full ">
