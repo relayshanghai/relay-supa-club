@@ -1,6 +1,6 @@
-import { t } from 'i18next';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 import { useSubscription } from 'src/hooks/use-subscription';
 import { Button } from '../button';
 import { Modal } from '../modal';
@@ -12,6 +12,7 @@ export const CancelSubscriptionModal = ({
     visible: boolean;
     onClose: () => void;
 }) => {
+    const { t } = useTranslation();
     const { createDiscountRenew, cancelSubscription } = useSubscription();
     const [submitting, setSubmitting] = useState(false);
     const handleCancel = async () => {
