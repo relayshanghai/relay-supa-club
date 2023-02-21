@@ -16,6 +16,7 @@ export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
 
     useOnOutsideClick(searchRef, () => {
         setDisplaySearch(false);
+        setSearchTerm('');
     });
 
     const searchLookAlike = useCallback(
