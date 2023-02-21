@@ -2,7 +2,7 @@ import { ChangeEvent, KeyboardEvent, useCallback, useEffect, useRef, useState } 
 import useOnOutsideClick from 'src/hooks/use-on-outside-click';
 import { useTranslation } from 'react-i18next';
 import { serverLogger } from 'src/utils/logger';
-import { AudienceLookalike, CreatorPlatform } from 'types';
+import type { AudienceLookalike, CreatorPlatform } from 'types';
 import { Enter, Spinner } from '../icons';
 import CreatorCard from './search-creator-card';
 
