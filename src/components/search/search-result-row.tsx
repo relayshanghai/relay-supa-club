@@ -44,18 +44,16 @@ export const SearchResultRow = ({
                     <Button onClick={addToCampaign} variant="secondary">
                         {t('creators.addToCampaign')}
                     </Button>
-                    <Button>
-                        <Link href={`/influencer/${platform}/${user_id}`} target="_blank">
-                            {t('creators.analyzeProfile')}
-                        </Link>
-                    </Button>
+                    <Link href={`/influencer/${platform}/${user_id}`} target="_blank">
+                        <Button>{t('creators.analyzeProfile')}</Button>
+                    </Link>
 
                     {url && (
-                        <Button>
-                            <Link href={url} target="_blank" rel="noopener noreferrer">
-                                <ShareLink className="w-3.5 h-3.5 fill-current text-white" />
-                            </Link>
-                        </Button>
+                        <Link href={url} target="_blank" rel="noopener noreferrer">
+                            <Button>
+                                <ShareLink className="w-4 h-5 fill-current text-white" />
+                            </Button>
+                        </Link>
                     )}
                 </div>
             </td>
