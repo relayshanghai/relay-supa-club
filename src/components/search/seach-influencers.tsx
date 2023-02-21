@@ -49,9 +49,9 @@ export const SearchInfluencers = (platform: CreatorPlatform) => {
     };
 
     return (
-        <div className="">
+        <div className="w-1/3 font-medium">
             <input
-                className="w-full border border-gray-200 text-gray-600 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-transparent"
+                className=" placeholder-gray-400 appearance-none bg-white rounded-md block w-full px-3 py-2 border border-gray-200 ring-1 ring-gray-900 ring-opacity-5 placeholder:text-sm focus:outline-none"
                 placeholder="Search for an Influencer"
                 ref={searchRef}
                 id="creator-search"

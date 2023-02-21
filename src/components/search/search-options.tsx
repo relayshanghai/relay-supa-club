@@ -49,7 +49,7 @@ export const SearchOptions = ({
 
     return (
         <>
-            <div className="py-4 w-full font-light">
+            <div className="py-4 w-full font-light flex flex-col md:flex-row md:space-x-4 md:space-y-0 items-start space-y-2">
                 <SearchTopics
                     path="/api/influencer-search/topics"
                     placeholder={t('creators.searchTopic')}

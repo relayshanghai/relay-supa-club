@@ -46,7 +46,7 @@ const InputWithAutocomplete = forwardRef<HTMLDivElement, Props>(
                 />
                 <div className="relative">
                     {!!suggestions.length && (
-                        <div className="absolute z-10 top-1 ring-1 ring-gray-200 left-0 w-full shadow-lg bg-white rounded-lg overflow-hidden">
+                        <div className="absolute text-sm z-10 top-1 ring-1 ring-gray-200 left-0 w-full bg-white rounded-lg overflow-hidden">
                             {suggestions.map((item: any, i: any) => {
                                 if (SuggestionComponent) {
                                     return (
