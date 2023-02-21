@@ -68,6 +68,9 @@ const creators = {
     },
     show: {
         lastUpdate: '报告更新于',
+        searchInfluencerPlaceholder: '搜索KOL',
+        noSearchResults: '没有搜索结果, 请尝试其他关键词',
+        pressEnterToSearch: '按回车键搜索',
         editProfile: '编辑信息',
         description: '描述',
         campaigns: '所有项目',

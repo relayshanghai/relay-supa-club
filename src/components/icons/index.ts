@@ -40,3 +40,4 @@ export { default as Link } from './Link';
 export { default as Heart } from './Heart';
 export { default as Edit } from './Edit';
 export { default as Send } from './Send';
+export { default as Enter } from './Enter';

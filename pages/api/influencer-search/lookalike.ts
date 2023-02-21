@@ -4,9 +4,7 @@ import { fetchIqDataLookalike } from 'src/utils/api/iqdata';
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
         const { term, platform } = JSON.parse(req.body);
-
         const results = await fetchIqDataLookalike(term, platform);
-
         return res.status(200).json(results);
     }
 

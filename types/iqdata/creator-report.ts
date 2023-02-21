@@ -20,7 +20,7 @@ interface AudienceLanguage {
     coords?: Coords;
 }
 
-interface AudienceLookalike {
+export interface AudienceLookalike {
     user_id: string;
     username?: string;
     picture: string;

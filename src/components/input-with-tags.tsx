@@ -16,7 +16,7 @@ export const InputWithTags = ({
 }: Props) => {
     return (
         <label className="flex flex-col text-xs text-gray-500 font-medium w-full">
-            <div className="text-gray-900 ring-gray-900 ring-opacity-5 bg-white rounded-md w-full border border-transparent shadow ring-1 sm:text-sm focus:border-primary-500 focus:ring-primary-500 focus:outline-none flex flex-row items-center px-2">
+            <div className="text-gray-900 ring-gray-900 ring-opacity-5 bg-white rounded-md w-full border border-gray-200 ring-1 sm:text-sm focus:border-primary-500 focus:ring-primary-500 focus:outline-none flex flex-row items-center px-2">
                 <div className="flex space-x-2 my-2 h-6">
                     {tags
                         ? tags.map((item: any, i: any) => {
