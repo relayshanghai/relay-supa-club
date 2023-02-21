@@ -2,7 +2,6 @@ import { AdjustmentsVerticalIcon } from '@heroicons/react/24/solid';
 
 import { useTranslation } from 'react-i18next';
 import { useSearch } from 'src/hooks/use-search';
-import { imgProxy } from 'src/utils/fetcher';
 import { formatter } from 'src/utils/formatter';
 import { Button } from '../button';
 import { SearchInfluencers } from './seach-influencers';
