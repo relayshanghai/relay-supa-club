@@ -67,7 +67,7 @@ const creators = {
         upgradeSubscriptionToSeeMore: '升级您的订阅以查看更多结果。',
     },
     show: {
-        lastUpdate: '最近更新',
+        lastUpdate: '报告更新于',
         editProfile: '编辑信息',
         description: '描述',
         campaigns: '所有项目',
