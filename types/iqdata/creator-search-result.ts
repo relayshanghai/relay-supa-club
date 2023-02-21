@@ -31,6 +31,7 @@ export interface CreatorAccount {
     account_type?: number;
     followers: number;
     engagements: number;
+    /** percentage represented as a decimal */
     engagement_rate: number;
     avg_views?: number;
     custom_name?: string;

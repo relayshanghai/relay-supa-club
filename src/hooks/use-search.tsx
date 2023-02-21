@@ -22,6 +22,8 @@ import {
 } from 'types';
 import { useUser } from './use-user';
 
+type NullStringTuple = [null | string, null | string];
+
 export interface SearchContext {
     loading: boolean;
     tags: CreatorSearchTag[];
@@ -30,10 +32,10 @@ export interface SearchContext {
     setLookalike: (lookalike: any) => void;
     influencerLocation: LocationWeighted[];
     setInfluencerLocation: (location: LocationWeighted[]) => void;
-    views: string[];
-    setViews: Dispatch<SetStateAction<string[]>>;
-    audience: string[];
-    setAudience: Dispatch<SetStateAction<string[]>>;
+    views: NullStringTuple;
+    setViews: Dispatch<SetStateAction<NullStringTuple>>;
+    audience: NullStringTuple;
+    setAudience: Dispatch<SetStateAction<NullStringTuple>>;
     gender?: string;
     setGender: (gender?: string) => void;
     engagement?: number;
@@ -65,9 +67,9 @@ const ctx = createContext<SearchContext>({
     setLookalike: () => null,
     influencerLocation: [],
     setInfluencerLocation: () => null,
-    views: [],
+    views: [null, null],
     setViews: () => null,
-    audience: [],
+    audience: [null, null],
     setAudience: () => null,
     gender: undefined,
     setGender: () => null,
@@ -101,8 +103,8 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
     const [tags, setTopicTags] = useState<CreatorSearchTag[]>([]);
     const [lookalike, setLookalike] = useState<any>();
     const [influencerLocation, setInfluencerLocation] = useState<LocationWeighted[]>([]);
-    const [views, setViews] = useState<string[]>([]);
-    const [audience, setAudience] = useState<string[]>([]);
+    const [views, setViews] = useState<NullStringTuple>([null, null]);
+    const [audience, setAudience] = useState<NullStringTuple>([null, null]);
     const [gender, setGender] = useState<string>();
     const [engagement, setEngagement] = useState<number>();
     const [lastPost, setLastPost] = useState<string>();

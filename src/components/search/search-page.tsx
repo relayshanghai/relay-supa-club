@@ -1,8 +1,7 @@
-/* eslint-disable @next/next/no-img-element */
 import { useState } from 'react';
 import { Button } from 'src/components/button';
 import { SearchProvider, useSearch } from 'src/hooks/use-search';
-import { formatter } from 'src/utils/formatter';
+import { numberFormatter } from 'src/utils/formatter';
 import { CreatorSearchAccountObject } from 'types';
 import { useTranslation } from 'react-i18next';
 import { Spinner } from 'src/components/icons';
@@ -37,7 +36,7 @@ const Search = ({ companyId }: { companyId?: string }) => {
 
             <div className="flex items-center">
                 <div className="font-bold text-sm">
-                    {`${t('creators.results')}: ${formatter(resultsTotal)}`}
+                    {`${t('creators.results')}: ${numberFormatter(resultsTotal)}`}
                 </div>
             </div>
 
