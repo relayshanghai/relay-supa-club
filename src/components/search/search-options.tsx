@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useSearch } from 'src/hooks/use-search';
 import { formatter } from 'src/utils/formatter';
 import { Button } from '../button';
-import { SearchInfluencers } from './seach-influencers';
+import { SearchCreators } from './search-creators';
 import { SearchTopics } from './search-topics';
 
 const resultsPerPageOptions = [10, 20, 50, 100];
@@ -59,7 +59,7 @@ export const SearchOptions = ({
                         setTopicTags(topics);
                     }}
                 />
-                <SearchInfluencers platform={platform} />
+                <SearchCreators platform={platform} />
             </div>
             <div className="flex flex-col md:flex-row md:space-x-4 md:space-y-0 items-start space-y-2">
                 {/* remove all lookalike code: https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/154 */}
