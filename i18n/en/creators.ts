@@ -67,6 +67,8 @@ const creators = {
     },
     show: {
         lastUpdate: 'The report was last updated on',
+        searchInfluencerPlaceholder: 'Search for an influencer',
+        noSearchResults: 'No results found, please try another keyword',
         editProfile: 'Edit Profile',
         description: 'Description',
         campaigns: 'Campaigns',

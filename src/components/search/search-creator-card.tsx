@@ -14,10 +14,7 @@ export default function CreatorCard({
     const { t } = useTranslation();
     return (
         <Link href={`/influencer/${platform}/${creator.user_id}`} target="_blank">
-            <div
-                className="flex items-center hover:bg-primary-50 cursor-pointer p-2 rounded-md"
-                // onClick={(e) => onClickFn(e, creator)}
-            >
+            <div className="flex items-center hover:bg-primary-50 cursor-pointer p-2 rounded-md">
                 <div className="w-8 h-8 rounded-full flex-shrink-0 relative mr-4">
                     <img
                         className="w-8 h-8 rounded-full flex-shrink-0"
