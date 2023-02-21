@@ -34,7 +34,7 @@ export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
                 ).json();
                 setCreators(res.data);
             } catch (error) {
-                serverLogger(error);
+                clientLogger(error);
             } finally {
                 setDisplaySearch(true);
                 setLoading(false);
