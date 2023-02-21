@@ -5,6 +5,7 @@ import { serverLogger } from 'src/utils/logger';
 import { AudienceLookalike, CreatorPlatform } from 'types';
 import { Enter, Spinner } from '../icons';
 import CreatorCard from './search-creator-card';
+import { nextFetch } from 'src/utils/fetcher';
 
 export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
     const searchRef = useRef<any>();
@@ -18,21 +19,18 @@ export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
         setDisplaySearch(false);
         setSearchTerm('');
     });
-
     const searchLookAlike = useCallback(
         async (term: any) => {
             setLoading(true);
             try {
-                const res = await (
-                    await fetch('/api/influencer-search/lookalike', {
-                        method: 'post',
-                        body: JSON.stringify({
-                            term,
-                            platform,
-                        }),
-                    })
-                ).json();
-                setCreators(res.data);
+                const { data } = await nextFetch('influencer-search/lookalike', {
+                    method: 'post',
+                    body: JSON.stringify({
+                        term,
+                        platform,
+                    }),
+                });
+                setCreators(data);
             } catch (error) {
                 serverLogger(error);
             } finally {
@@ -60,11 +58,10 @@ export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
     }, [platform]);
 
     return (
-        <div className="group w-full font-medium relative flex flex-col">
+        <div className="group w-full font-medium relative flex flex-col" ref={searchRef}>
             <input
                 className="placeholder-gray-400 appearance-none bg-white rounded-md block w-full px-3 py-2 border border-gray-200 ring-1 ring-gray-900 ring-opacity-5 placeholder:text-sm focus:outline-none text-gray-600"
                 placeholder={t('creators.show.searchInfluencerPlaceholder') as string}
-                ref={searchRef}
                 id="creator-search"
                 value={searchTerm}
                 onChange={(e) => handleChange(e)}
@@ -83,7 +80,7 @@ export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
                 </div>
             )}
 
-            <div ref={searchRef} className="relative w-full ">
+            <div className="relative w-full ">
                 {displaySearch && (
                     <div className="absolute text-sm z-10 top-1 ring-1 ring-gray-200 left-0 w-full bg-white rounded-md overflow-hidden py-2">
                         {creators?.length ? (
