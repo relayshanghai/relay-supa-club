@@ -23,6 +23,8 @@ import {
     InboxArrowDownIcon,
 } from '@heroicons/react/24/solid';
 import { useTranslation } from 'react-i18next';
+import { hasCustomError } from 'src/utils/errors';
+import { usageErrors } from 'src/errors/usages';
 
 const MAX_CHARACTER_LENGTH = 600;
 
@@ -59,6 +61,8 @@ const AIImageGenerator = () => {
             influencerName,
             productName,
             productDescription,
+            user_id: profile?.id || '',
+            company_id: company?.id || '',
         };
         const res = await nextFetch<AIEmailSubjectGeneratorPostResult>('ai-generate/subject', {
             method: 'post',
@@ -73,7 +77,7 @@ const AIImageGenerator = () => {
         setLoadingSubject(false);
 
         return res;
-    }, [brandName, influencerName, productName, productDescription]);
+    }, [brandName, influencerName, productName, productDescription, profile?.id, company?.id]);
 
     const generateEmail = useCallback(async () => {
         setLoadingEmail(true);
@@ -84,6 +88,8 @@ const AIImageGenerator = () => {
             productDescription,
             instructions,
             senderName,
+            user_id: profile?.id || '',
+            company_id: company?.id || '',
         };
         const res: AIEmailGeneratorPostResult = await nextFetch<AIEmailGeneratorPostResult>(
             'ai-generate/email',
@@ -101,7 +107,16 @@ const AIImageGenerator = () => {
         setLoadingEmail(false);
 
         return res;
-    }, [brandName, influencerName, productName, productDescription, instructions, senderName]);
+    }, [
+        brandName,
+        influencerName,
+        productName,
+        productDescription,
+        instructions,
+        senderName,
+        profile?.id,
+        company?.id,
+    ]);
 
     const handleSubmit = async (e: any, type: 'subject' | 'email' | 'both') => {
         e.preventDefault();
@@ -120,8 +135,12 @@ const AIImageGenerator = () => {
         } catch (e: any) {
             clientLogger(e, 'error');
             toast.dismiss(loadingToast);
-            toast.error(t('aiEmailGenerator.index.status.requestError') || '');
-            resetFields();
+            if (hasCustomError(e, usageErrors)) {
+                toast.error(t(e.message));
+            } else {
+                toast.error(t('aiEmailGenerator.index.status.requestError') || '');
+                resetFields();
+            }
         }
     };
 

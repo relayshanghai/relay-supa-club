@@ -1,5 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
+import {
+    AI_EMAIL_SUBSCRIPTION_USAGE_LIMIT,
+    AI_EMAIL_TRIAL_USAGE_LIMIT,
+} from 'src/constants/openai';
 import { createSubscriptionErrors } from 'src/errors/subscription';
 import {
     getCompanyCusId,
@@ -104,8 +108,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             await updateCompanyUsageLimits({
                 profiles_limit: price.product.metadata.profiles,
                 searches_limit: price.product.metadata.searches,
+                ai_email_generator_limit: AI_EMAIL_SUBSCRIPTION_USAGE_LIMIT,
                 trial_profiles_limit: trial_profiles,
                 trial_searches_limit: trial_searches,
+                trial_ai_email_generator_limit: AI_EMAIL_TRIAL_USAGE_LIMIT,
                 id: company_id,
             });
 

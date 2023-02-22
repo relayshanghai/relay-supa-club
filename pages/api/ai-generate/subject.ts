@@ -3,12 +3,15 @@ import httpCodes from 'src/constants/httpCodes';
 import { serverLogger } from 'src/utils/logger';
 
 import { Configuration, OpenAIApi } from 'openai';
+import { recordAiEmailGeneratorUsage } from 'src/utils/api/db';
 
 export type AIEmailSubjectGeneratorPostBody = {
     brandName: string;
     influencerName: string;
     productName: string;
     productDescription: string;
+    company_id: string;
+    user_id: string;
 };
 
 export type AIEmailSubjectGeneratorPostResult = { text: string };
@@ -24,15 +27,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(httpCodes.METHOD_NOT_ALLOWED).json([]);
     }
     try {
-        const { brandName, influencerName, productDescription, productName } = JSON.parse(
-            req.body,
-        ) as AIEmailSubjectGeneratorPostBody;
+        const { brandName, influencerName, productDescription, productName, company_id, user_id } =
+            req.body as AIEmailSubjectGeneratorPostBody;
 
-        if (!brandName || !influencerName || !productDescription || !productName) {
+        if (
+            !brandName ||
+            !influencerName ||
+            !productDescription ||
+            !productName ||
+            !company_id ||
+            !user_id
+        ) {
             return res.status(httpCodes.BAD_REQUEST).json({});
         }
         if (!process.env.OPENAI_API_KEY || !process.env.OPENAI_API_ORG) {
             return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
+        }
+
+        const { error: recordError } = await recordAiEmailGeneratorUsage(company_id, user_id);
+        if (recordError) {
+            res.status(httpCodes.NOT_FOUND).json({ error: recordError });
         }
 
         const trimmedDescription = productDescription.trim();

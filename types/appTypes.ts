@@ -53,7 +53,7 @@ export interface StripePriceWithProductMetadata extends Stripe.Price {
 
 export type SubscriptionStatus = 'awaiting_payment_method' | 'trial' | 'active' | 'canceled';
 /** "profile" for creator report, "search" for creator search */
-export type UsageType = 'profile' | 'search';
+export type UsageType = 'profile' | 'search' | 'ai_email';
 
 export type CreatorPlatform = 'instagram' | 'youtube' | 'tiktok';
 export type SocialMediaPlatform = CreatorPlatform | 'email' | 'twitter' | 'facebook' | 'wechat';

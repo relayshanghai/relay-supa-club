@@ -3,7 +3,7 @@ const creators = {
     results: 'Total Results',
     noResults: 'No results found',
     clearFilter: 'Clear',
-
+    failedToFetchReport: 'Failed to fetch report',
     subscribers: 'Followers',
     avgViews: 'Avg. Views',
     engagements: 'Engagements',

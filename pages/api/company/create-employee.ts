@@ -59,6 +59,7 @@ const getOrCreateCompany = async () => {
         id: companyCreated.id,
         profiles_limit: '100000000',
         searches_limit: '1000000000',
+        ai_email_generator_limit: '1000000000',
     });
 
     return { data: companyCreated, error: null };
