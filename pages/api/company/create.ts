@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import { RELAY_DOMAIN } from 'src/constants';
 import httpCodes from 'src/constants/httpCodes';
 import { createCompanyErrors } from 'src/errors/company';
 import {
@@ -23,6 +24,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (req.method === 'POST') {
         try {
             const { user_id, name, website } = JSON.parse(req.body) as CompanyCreatePostBody;
+            if (!user_id || !name) {
+                return res.status(httpCodes.BAD_REQUEST).json({});
+            }
+            // Do not allow users to create a company with our reserved name for internal employees
+            if (name === RELAY_DOMAIN) {
+                return res.status(httpCodes.BAD_REQUEST).json({});
+            }
 
             try {
                 const { data: companyWithSameName } = await getCompanyByName(name);
