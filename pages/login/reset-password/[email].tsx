@@ -107,7 +107,7 @@ const ResetPassword = () => {
             {error_description ? (
                 <h1>{error_description}</h1>
             ) : resetDetected ? (
-                <form className="max-w-xs w-full mx-auto flex-grow flex flex-col justify-center items-center space-y-5">
+                <form className="max-w-xs w-full mx-auto flex-grow flex flex-col justify-center items-center space-y-2">
                     <div className="text-left w-full">
                         <h1 className="font-bold text-4xl mb-2">{t('login.changePassword')}</h1>
                     </div>

@@ -107,12 +107,10 @@ export default function Register() {
                 <Title />
                 <LanguageToggle />
             </div>
-            <form className="max-w-xs w-full mx-auto flex-grow flex flex-col justify-center items-center space-y-5">
+            <form className="max-w-xs w-full mx-auto flex-grow flex flex-col justify-center items-center space-y-2">
                 <div className="text-left w-full">
                     <h1 className="font-bold text-4xl mb-2">{t('login.signUp')}</h1>
-                    <h3 className="text-sm text-gray-600 mb-8">
-                        {t('login.startYour30DayFreeTrial')}
-                    </h3>
+                    <h3 className="text-sm text-gray-600 mb-8">{t('login.signupSubtitle')}</h3>
                 </div>
                 <Input
                     error={validationErrors.firstName}
@@ -163,14 +161,13 @@ export default function Register() {
                 <Button disabled={submitDisabled} type="button" onClick={handleSubmit}>
                     {t('login.signUp')}
                 </Button>
-                <p className="inline text-gray-500 text-sm pb-4">
+                <p className="inline text-gray-500 text-md pb-4">
                     {t('login.alreadyHaveAnAccount')}
                     <Link
                         href="/login"
-                        className="inline text-primary-700 hover:text-primary-600 cursor-pointer">
-
+                        className="inline text-primary-700 hover:text-primary-600 cursor-pointer"
+                    >
                         {t('login.logIn')}
-
                     </Link>
                 </p>
             </form>

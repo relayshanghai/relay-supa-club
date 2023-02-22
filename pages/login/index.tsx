@@ -70,7 +70,7 @@ export default function Login() {
                 <Title />
                 <LanguageToggle />
             </div>
-            <form className="max-w-xs w-full mx-auto flex-grow flex flex-col justify-center items-center space-y-5">
+            <form className="max-w-xs w-full mx-auto flex-grow flex flex-col justify-center items-center space-y-2">
                 <div className="text-left w-full">
                     <h1 className="font-bold text-4xl mb-2">{t('login.logIn')}</h1>
                     <h3 className="text-sm text-gray-600 mb-8">{t('login.welcomeBack')}</h3>
@@ -100,10 +100,9 @@ export default function Login() {
                     {t('login.dontHaveAnAccount')}{' '}
                     <Link
                         href="/signup"
-                        className="inline text-primary-700 hover:text-primary-600 cursor-pointer">
-
+                        className="inline text-primary-700 hover:text-primary-600 cursor-pointer"
+                    >
                         {t('login.signUp')}
-
                     </Link>
                 </p>
                 <button type="button" onClick={handleResetPassword} disabled={generatingResetEmail}>

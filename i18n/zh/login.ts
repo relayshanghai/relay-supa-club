@@ -9,7 +9,7 @@ const login = {
     alreadyHaveAnAccount: '已经有账号了？',
     loginSuccess: '登录成功',
     oopsSomethingWentWrong: '哎呀！出错了',
-    startYour30DayFreeTrial: '现在开始您的30天免费试用。',
+    signupSubtitle: '立即开启30天免费试用轻松获得国际红人背书，加速品牌出海!',
     firstName: '名字',
     firstNamePlaceholder: '输入您的名字',
     lastName: '姓氏',
