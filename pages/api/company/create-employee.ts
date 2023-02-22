@@ -68,7 +68,7 @@ const getOrCreateCompany = async () => {
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
         try {
-            const { email } = JSON.parse(req.body) as CreateEmployeePostBody;
+            const { email } = req.body as CreateEmployeePostBody;
             if (!EMPLOYEE_EMAILS.includes(email)) {
                 return res
                     .status(httpCodes.BAD_REQUEST)

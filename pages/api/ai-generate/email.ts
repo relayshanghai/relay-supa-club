@@ -53,7 +53,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             !company_id ||
             !user_id
         ) {
-            return res.status(httpCodes.BAD_REQUEST).json({});
+            return res.status(httpCodes.BAD_REQUEST).json({ message: 'Missing required fields' });
         }
         if (
             brandName.length > 100 ||

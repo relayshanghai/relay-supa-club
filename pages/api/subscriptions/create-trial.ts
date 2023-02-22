@@ -27,7 +27,7 @@ export type SubscriptionCreateTrialResponse = Stripe.Response<Stripe.Subscriptio
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
         try {
-            const { company_id } = JSON.parse(req.body) as SubscriptionCreateTrialPostBody;
+            const { company_id } = req.body as SubscriptionCreateTrialPostBody;
 
             if (!company_id || typeof company_id !== 'string') {
                 return res

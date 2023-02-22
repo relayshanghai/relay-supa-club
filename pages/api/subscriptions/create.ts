@@ -23,7 +23,7 @@ export type SubscriptionCreatePostResponse = Stripe.Response<Stripe.Subscription
  */
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
-        const { company_id, price_id } = JSON.parse(req.body) as SubscriptionCreatePostBody;
+        const { company_id, price_id } = req.body as SubscriptionCreatePostBody;
         if (!company_id)
             return res
                 .status(httpCodes.BAD_REQUEST)

@@ -21,7 +21,7 @@ export type SubscriptionDiscountRenewPostResponse = Stripe.Response<Stripe.Subsc
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
-        const { company_id } = JSON.parse(req.body) as SubscriptionDiscountRenewPostBody;
+        const { company_id } = req.body as SubscriptionDiscountRenewPostBody;
         if (!company_id)
             return res.status(httpCodes.BAD_REQUEST).json({ error: 'Missing company id' });
         if (!(await isCompanyOwnerOrRelayEmployee(req, res))) {

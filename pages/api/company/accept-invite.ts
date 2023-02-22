@@ -27,7 +27,7 @@ export type CompanyAcceptInviteGetResponse = {
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
-        const { token, password, firstName, lastName } = JSON.parse(
+        const { token, password, firstName, lastName } = (
             req.body,
         ) as CompanyAcceptInvitePostBody;
         if (!token || !password || !firstName || !lastName) {

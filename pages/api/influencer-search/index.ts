@@ -15,7 +15,7 @@ export type InfluencerPostResponse = CreatorSearchResult;
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
         try {
-            const { company_id, user_id, ...searchParams } = JSON.parse(
+            const { company_id, user_id, ...searchParams } = (
                 req.body,
             ) as InfluencerPostRequest;
 

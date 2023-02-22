@@ -1,6 +1,7 @@
 import { useCallback, useRef, useState } from 'react';
 import InputWithAutocomplete from 'src/components/input-with-autocomplete';
 import useOnOutsideClick from 'src/hooks/use-on-outside-click';
+import { nextFetch } from 'src/utils/fetcher';
 
 export const SearchTopics = ({
     onSetTopics,
@@ -29,13 +30,13 @@ export const SearchTopics = ({
             ref.current = controller;
 
             const res = await (
-                await fetch(path, {
+                await nextFetch(path, {
                     method: 'post',
-                    signal: signal,
-                    body: JSON.stringify({
+                    signal,
+                    body: {
                         term,
                         platform,
-                    }),
+                    },
                 })
             ).json();
             if (res && (res.success || Array.isArray(res))) {

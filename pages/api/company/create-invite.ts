@@ -19,7 +19,7 @@ export type CompanyCreateInvitePostResponse = InvitesDB;
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
-        const { email, company_id, name, companyOwner } = JSON.parse(
+        const { email, company_id, name, companyOwner } = (
             req.body,
         ) as CompanyCreateInvitePostBody;
         if (!email || !company_id)

@@ -3,7 +3,7 @@ import { supabase } from 'src/utils/supabase-client';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
-        const { company_id, campaign_id } = JSON.parse(req.body);
+        const { company_id, campaign_id } = req.body;
 
         const { data, error } = await supabase
             .from('campaigns')

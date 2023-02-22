@@ -29,10 +29,20 @@ interface RequestInitWithBody extends RequestInit {
  * @returns fetch .json() data
  * @description fetcher for internal next API routes. Add a type to the generic to get types on your response.
  *  if it encounters an error, it will throw an Error with the error message from the response. Remember to add an `{error: ''}` to api responses.
+ * options.body does not need to be stringified.
+ * if options.method is POST or PUT, it will set the Content-Type header to application/json
  * @example `const data = await nextFetch<SomeType>('some/path')`
  */
 export const nextFetch = async <T = any>(path: string, options: RequestInitWithBody = {}) => {
     const body = options.body;
+    if (options.method?.toUpperCase() === 'POST' || options.method?.toUpperCase() === 'PUT') {
+        options.headers = {
+            'Content-Type': 'application/json',
+            // allow manual override of Content-Type by placing this after
+            ...options.headers,
+        };
+    }
+
     // if it's not a string, stringify it
     const stringified = body && typeof body !== 'string' ? JSON.stringify(body) : body;
     const optionsWithBody = { ...options, body: stringified };

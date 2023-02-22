@@ -41,7 +41,7 @@ const Handler: NextApiHandler = async (req, res) => {
     }
 
     if (req.method === 'PUT') {
-        const profile = JSON.parse(req.body) as ProfilePutBody;
+        const profile = req.body as ProfilePutBody;
 
         try {
             const matchesSession = await checkSessionIdMatchesID(profile.id, req, res);

@@ -5,7 +5,7 @@ import { supabase } from 'src/utils/supabase-client';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'DELETE') {
-        const { campaign_id, ...data } = JSON.parse(req.body);
+        const { campaign_id, ...data } = req.body;
         const { data: campaignCreators, error } = await supabase
             .from('campaign_creators')
             .delete()
