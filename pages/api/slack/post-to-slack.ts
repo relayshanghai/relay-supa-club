@@ -3,11 +3,12 @@ import httpCodes from 'src/constants/httpCodes';
 import { nextFetch } from 'src/utils/fetcher';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    const slackWebhook = process.env.SLACK_WEBHOOK;
+    // const URL = process.env.SLACK_WEBHOOK;
+    const URL = 'https://hooks.slack.com/services/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';
 
     if (req.method === 'POST') {
-        if (req.body.record && slackWebhook) {
-            // console.log(req.body.record);
+        if (req.body.record && URL) {
+            console.log(req.body.record);
 
             const reqBody = {
                 blocks: [
@@ -38,11 +39,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 ],
             };
 
-            const { data, error } = await nextFetch(slackWebhook, {
+            const { data, error } = await nextFetch(URL, {
                 method: 'POST',
                 body: JSON.stringify(reqBody),
+                headers: { 'Content-type': 'application/x-www-form-urlencoded' },
             });
-            // console.log(data, error);
+            console.log(data, error);
         }
 
         return res.status(httpCodes.OK).json({});
