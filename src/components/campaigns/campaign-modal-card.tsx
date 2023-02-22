@@ -9,6 +9,7 @@ import { CampaignWithCompanyCreators } from 'src/utils/api/db';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import { clientLogger } from 'src/utils/logger';
 import { useUser } from 'src/hooks/use-user';
+import { isMissing } from 'src/utils/utils';
 
 export default function CampaignModalCard({
     campaign,
@@ -113,7 +114,7 @@ export default function CampaignModalCard({
                 {campaign && !hasCreator && (
                     <button
                         onClick={handleAddCreatorToCampaign}
-                        disabled={hasCreator || !campaign || !creator || !creator.user_id}
+                        disabled={hasCreator || isMissing(campaign, creator, creator?.user_id)}
                         className="flex items-center justify-center w-6 h-6 bg-gray-100 rounded-md flex-shrink-0 hover:shadow-md duration-300 text-gray-600 disabled:text-gray-400 disabled:cursor-not-allowed"
                     >
                         {!loading && (

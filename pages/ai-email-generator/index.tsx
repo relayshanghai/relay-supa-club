@@ -25,6 +25,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { hasCustomError } from 'src/utils/errors';
 import { usageErrors } from 'src/errors/usages';
+import { isMissing } from 'src/utils/utils';
 
 const MAX_CHARACTER_LENGTH = 600;
 
@@ -154,13 +155,14 @@ const AIImageGenerator = () => {
         setLoadingSubject(false);
     };
 
-    const subjectLineRequiredMissing =
-        !brandName ||
-        !influencerName ||
-        !productName ||
-        !productDescription ||
-        !profile?.id ||
-        !company?.id;
+    const subjectLineRequiredMissing = isMissing(
+        brandName,
+        influencerName,
+        productName,
+        productDescription,
+        profile?.id,
+        company?.id,
+    );
     const emailRequiredMissing = subjectLineRequiredMissing || !senderName;
 
     return (

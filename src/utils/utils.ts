@@ -72,3 +72,6 @@ export const isAdmin = (role?: AccountRole) => {
         role === 'company_owner' || role === 'relay_employee' || role === 'relay_expert';
     return isAdmin;
 };
+
+/** returns true if any of the values passed in are falsy */
+export const isMissing = (...values: unknown[]) => values.findIndex((value) => !value) > -1;
