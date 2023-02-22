@@ -138,11 +138,11 @@ const AIImageGenerator = () => {
         } catch (e: any) {
             clientLogger(e, 'error');
             toast.dismiss(loadingToast);
+            resetFields();
             if (hasCustomError(e, usageErrors)) {
                 toast.error(t(e.message));
             } else {
                 toast.error(t('aiEmailGenerator.index.status.requestError') || '');
-                resetFields();
             }
         }
     };
