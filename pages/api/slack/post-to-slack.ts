@@ -1,6 +1,5 @@
 import { NextApiResponse, NextApiRequest } from 'next';
 import httpCodes from 'src/constants/httpCodes';
-import { nextFetch } from 'src/utils/fetcher';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     // const URL = process.env.SLACK_WEBHOOK;
@@ -39,15 +38,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 ],
             };
 
-            const { data, error } = await nextFetch(URL, {
+            const data = await fetch(URL, {
                 method: 'POST',
                 body: JSON.stringify(reqBody),
                 headers: { 'Content-type': 'application/x-www-form-urlencoded' },
             });
-            console.log(data, error);
+            console.log(data);
         }
 
-        return res.status(httpCodes.OK).json({});
+        return res.status(httpCodes.OK).json(data);
     }
 
     return res.status(httpCodes.METHOD_NOT_ALLOWED).json({});
