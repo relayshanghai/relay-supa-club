@@ -1,4 +1,5 @@
 import { NextApiResponse, NextApiRequest } from 'next';
+import httpCodes from 'src/constants/httpCodes';
 import { nextFetch } from 'src/utils/fetcher';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -37,11 +38,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 ],
             };
 
-            await nextFetch(slackWebhook, { method: 'POST', body: JSON.stringify(reqBody) });
+            const { data, error } = await nextFetch(slackWebhook, {
+                method: 'POST',
+                body: JSON.stringify(reqBody),
+            });
+            // console.log(data, error);
         }
 
-        return res.status(200).json(null);
+        return res.status(httpCodes.OK).json({});
     }
 
-    return res.status(200).json(null);
+    return res.status(httpCodes.METHOD_NOT_ALLOWED).json({});
 }
