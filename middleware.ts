@@ -130,6 +130,10 @@ const checkOnboardingStatus = async (
         redirectUrl.pathname = '/signup/payment-onboard';
         return NextResponse.redirect(redirectUrl);
     }
+
+    // should never reach here.
+    redirectUrl.pathname = '/signup';
+    return NextResponse.redirect(redirectUrl);
 };
 
 /** Special case: we need to be able to access this from the marketing page, so we need to allow CORS */
