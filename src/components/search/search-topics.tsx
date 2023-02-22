@@ -29,16 +29,15 @@ export const SearchTopics = ({
             const signal = controller.signal;
             ref.current = controller;
 
-            const res = await (
-                await nextFetch(path, {
-                    method: 'post',
-                    signal,
-                    body: {
-                        term,
-                        platform,
-                    },
-                })
-            ).json();
+            const res = await nextFetch(path, {
+                method: 'post',
+                signal,
+                body: {
+                    term,
+                    platform,
+                },
+            });
+
             if (res && (res.success || Array.isArray(res))) {
                 const data = res.data || res;
                 setSuggestions(filter ? filter(data) : data);
