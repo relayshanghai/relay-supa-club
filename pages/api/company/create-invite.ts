@@ -19,9 +19,7 @@ export type CompanyCreateInvitePostResponse = InvitesDB;
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
-        const { email, company_id, name, companyOwner } = (
-            req.body,
-        ) as CompanyCreateInvitePostBody;
+        const { email, company_id, name, companyOwner } = req.body as CompanyCreateInvitePostBody;
         if (!email || !company_id)
             return res
                 .status(httpCodes.BAD_REQUEST)
