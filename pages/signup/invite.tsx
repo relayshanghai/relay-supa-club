@@ -22,6 +22,7 @@ import { nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger';
 import { SignupInputTypes, validateSignupInput } from 'src/utils/validation/signup';
 import { Spinner } from 'src/components/icons';
+import { isMissing } from 'src/utils/utils';
 
 type InviteStatus = InviteStatusError | 'pending' | 'inviteValid';
 
@@ -141,7 +142,8 @@ export default function Register() {
     const hasValidationErrors = Object.values(validationErrors).some((error) => error !== '');
 
     const invalidFormInput =
-        !token || !firstName || !lastName || !email || !password || hasValidationErrors;
+        isMissing(token, firstName, lastName, email, password, confirmPassword) ||
+        hasValidationErrors;
     const submitDisabled = registering || invalidFormInput;
 
     return (

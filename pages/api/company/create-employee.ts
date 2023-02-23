@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import { RELAY_DOMAIN } from 'src/constants';
 import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
 import httpCodes from 'src/constants/httpCodes';
 import { createEmployeeError } from 'src/errors/company';
@@ -22,7 +23,7 @@ export type CreateEmployeePostBody = {
 export type CreateEmployeePostResponse = ProfileDB;
 
 const relayCompanyConfig = {
-    name: 'relay.club',
+    name: RELAY_DOMAIN,
     website: 'https://relay.club',
     email: 'tech@relay.club',
 };
@@ -59,6 +60,7 @@ const getOrCreateCompany = async () => {
         id: companyCreated.id,
         profiles_limit: '100000000',
         searches_limit: '1000000000',
+        ai_email_generator_limit: '1000000000',
     });
 
     return { data: companyCreated, error: null };
@@ -67,7 +69,7 @@ const getOrCreateCompany = async () => {
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
         try {
-            const { email } = JSON.parse(req.body) as CreateEmployeePostBody;
+            const { email } = req.body as CreateEmployeePostBody;
             if (!EMPLOYEE_EMAILS.includes(email)) {
                 return res
                     .status(httpCodes.BAD_REQUEST)
