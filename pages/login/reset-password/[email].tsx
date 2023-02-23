@@ -10,6 +10,7 @@ import { Title } from 'src/components/title';
 
 import { useFields } from 'src/hooks/use-fields';
 import { useUser } from 'src/hooks/use-user';
+import { isMissing } from 'src/utils/utils';
 import { validateSignupInput } from 'src/utils/validation/signup';
 type ResetInputTypes = 'password' | 'confirmPassword';
 const ResetPassword = () => {
@@ -95,7 +96,7 @@ const ResetPassword = () => {
     };
 
     const hasValidationErrors = Object.values(validationErrors).some((error) => error !== '');
-    const invalidFormInput = !email || !password || hasValidationErrors || !confirmPassword;
+    const invalidFormInput = isMissing(email, password, confirmPassword) || hasValidationErrors;
     const submitDisabled = invalidFormInput || submitting;
 
     return (

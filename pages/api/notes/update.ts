@@ -15,7 +15,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(httpCodes.METHOD_NOT_ALLOWED).json({});
     }
 
-    const { id, important } = JSON.parse(req.body) as CampaignNotesUpdatePutBody;
+    const { id, important } = req.body as CampaignNotesUpdatePutBody;
 
     if (!id) return res.status(httpCodes.BAD_REQUEST).json({});
 

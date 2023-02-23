@@ -41,6 +41,7 @@ const account = {
         monthlyLimit: 'Monthly limit',
         profilesUnlocked: 'Profiles unlocked',
         searches: 'Searches',
+        aiEmailGeneration: 'AI email generation',
         title: 'Subscription',
         viewBillingPortal: 'View billing portal',
         freeTrial: 'Free trial',

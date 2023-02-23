@@ -13,7 +13,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (req.method !== 'DELETE') {
         return res.status(httpCodes.METHOD_NOT_ALLOWED).json({});
     }
-    const { profileId, id } = JSON.parse(req.body) as CampaignNotesDeleteBody;
+    const { profileId, id } = req.body as CampaignNotesDeleteBody;
 
     if (!id || !profileId) return res.status(httpCodes.BAD_REQUEST).json({});
 
