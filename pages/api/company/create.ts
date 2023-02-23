@@ -4,7 +4,7 @@ import { createCompanyErrors } from 'src/errors/company';
 import {
     CompanyDB,
     createCompany,
-    getCompanyByName,
+    getAllCompanyNames,
     updateCompany,
     updateProfile,
     updateUserRole,
@@ -25,7 +25,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const { user_id, name, website } = JSON.parse(req.body) as CompanyCreatePostBody;
 
             try {
-                const { data: companyWithSameName } = await getCompanyByName(name);
+                const { data: companyNames } = await getAllCompanyNames();
+                const companyWithSameName = companyNames?.find(
+                    (companyName) => companyName.name?.toLowerCase() === name.toLowerCase(),
+                );
                 if (companyWithSameName) {
                     return res
                         .status(httpCodes.BAD_REQUEST)
