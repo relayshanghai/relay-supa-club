@@ -193,9 +193,14 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
     useEffect(() => {
         // detect if the email has been changed on the supabase side and update the profile
         const updateEmail = async () => {
+            // This situation might happen between the time the user is logged in and the profile is fetched, or if the user logs in with a different email
+            if (session?.user.id !== profile?.id) {
+                return refreshProfile();
+            }
+            // only proceed if the ids match and the emails are different
             if (session?.user.email && profile?.email && session.user.email !== profile.email) {
                 try {
-                    await updateProfile({ ...profile, email: session.user.email });
+                    await updateProfile({ email: session.user.email });
                     refreshProfile();
                 } catch (error) {
                     clientLogger(error, 'error');
