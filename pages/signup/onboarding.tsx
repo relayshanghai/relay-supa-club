@@ -22,7 +22,7 @@ const errors = {
 export default function Register() {
     const { t } = useTranslation();
     const router = useRouter();
-    const { loading } = useUser();
+    const { loading, logout } = useUser();
     const { createCompany } = useCompany();
     const { values, setFieldValue } = useFields({
         name: '',
@@ -85,6 +85,11 @@ export default function Register() {
                         </Button>
                     </>
                 )}
+                <div className="pt-20">
+                    <button type="button" className="text-sm text-gray-500" onClick={logout}>
+                        {t('login.stuckHereTryAgain')}
+                    </button>
+                </div>
             </form>
         </div>
     );

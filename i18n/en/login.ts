@@ -7,6 +7,7 @@ const login = {
     passwordPlaceholder: 'Enter your password',
     dontHaveAnAccount: "Don't have an account? ",
     alreadyHaveAnAccount: 'Already have an account? ',
+    stuckHereTryAgain: 'Stuck here? Sign out and try again',
     loginSuccess: 'Successfully logged in',
     oopsSomethingWentWrong: 'Oops! Something went wrong',
     startYour30DayFreeTrial: 'Start your 30-day free trial now.',

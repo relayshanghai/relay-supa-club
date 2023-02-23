@@ -11,6 +11,7 @@ import { APP_URL } from 'src/constants';
 import { createSubscriptionErrors } from 'src/errors/subscription';
 import { useCompany } from 'src/hooks/use-company';
 import { useSubscription } from 'src/hooks/use-subscription';
+import { useUser } from 'src/hooks/use-user';
 import { buildSubscriptionPortalUrl } from 'src/utils/api/stripe/portal';
 import { hasCustomError } from 'src/utils/errors';
 import { clientLogger } from 'src/utils/logger';
@@ -20,7 +21,7 @@ const PaymentOnboard = () => {
     const { company } = useCompany();
     const { subscription, createTrial, paymentMethods } = useSubscription();
     const [submitting, setSubmitting] = useState(false);
-
+    const { logout } = useUser();
     useEffect(() => {
         const redirectIfSubscribed = async () => {
             if (subscription?.status === 'trialing' || subscription?.status === 'active')
@@ -76,21 +77,22 @@ const PaymentOnboard = () => {
                                 <p className="text-xs text-gray-500">{t('login.signupTerms')}</p>
                             </div>
                         ) : (
-                            (<Link
+                            <Link
                                 href={buildSubscriptionPortalUrl({
                                     id: company.id,
                                     returnUrl: `${APP_URL}/signup/payment-onboard`,
                                 })}
                             >
-
-                                <Button variant="secondary">
-                                    {t('login.addPaymentMethod')}
-                                </Button>
-
-                            </Link>)
+                                <Button variant="secondary">{t('login.addPaymentMethod')}</Button>
+                            </Link>
                         )}
                     </>
                 )}
+                <div className="pt-20">
+                    <button type="button" className="text-sm text-gray-500" onClick={logout}>
+                        {t('login.stuckHereTryAgain')}
+                    </button>
+                </div>
             </form>
         </div>
     );
