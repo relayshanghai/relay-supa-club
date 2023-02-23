@@ -15,9 +15,9 @@ export const InputWithTags = ({
     ...rest
 }: Props) => {
     return (
-        <label className="flex flex-col text-xs text-gray-500 font-medium w-full">
-            <div className="text-gray-900 ring-gray-900 ring-opacity-5 bg-white rounded-md w-full border border-gray-200 ring-1 sm:text-sm focus:border-primary-500 focus:ring-primary-500 focus:outline-none flex flex-row items-center px-2">
-                <div className="flex space-x-2 my-2 h-6">
+        <label className="flex w-full flex-col text-xs font-medium text-gray-500">
+            <div className="flex w-full flex-row items-center rounded-md border border-gray-200 bg-white px-2 text-gray-900 ring-1 ring-gray-900 ring-opacity-5 focus:border-primary-500 focus:outline-none focus:ring-primary-500 sm:text-sm">
+                <div className="my-2 flex h-6 space-x-2">
                     {tags
                         ? tags.map((item: any, i: any) => {
                               if (TagComponent) {
@@ -31,12 +31,12 @@ export const InputWithTags = ({
                               }
                               return (
                                   <p
-                                      className="px-2 text-gray-900 rounded bg-gray-100 whitespace-nowrap hover:bg-gray-200 cursor-pointer flex justify-center self-center"
+                                      className="flex cursor-pointer justify-center self-center whitespace-nowrap rounded bg-gray-100 px-2 text-gray-900 hover:bg-gray-200"
                                       key={i}
                                       onClick={() => onTagRemove(item)}
                                   >
                                       {item.value || item.title}
-                                      <p className="ml-2 text-gray-400 whitespace-nowrap cursor-pointer">
+                                      <p className="ml-2 cursor-pointer whitespace-nowrap text-gray-400">
                                           x
                                       </p>
                                   </p>
@@ -46,7 +46,7 @@ export const InputWithTags = ({
                 </div>
                 <input
                     disabled={disabled}
-                    className="w-full text-gray-900 placeholder-gray-400 appearance-none bg-white px-3 py-2 border border-transparent sm:text-sm focus:border-transparent focus:ring-0 focus:outline-none"
+                    className="w-full appearance-none border border-transparent bg-white px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-transparent focus:outline-none focus:ring-0 sm:text-sm"
                     {...rest}
                 />
             </div>
