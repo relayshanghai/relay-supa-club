@@ -38,7 +38,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             //     ],
             // };
 
-            const data = await fetch(URL, {
+            await fetch(URL, {
                 method: 'POST',
                 body: JSON.stringify({ text: 'Hello, World!' }),
             });
