@@ -18,6 +18,7 @@ import { ulid } from 'ulid';
 
 import type { NextApiResponse } from 'next';
 import type { CustomerSubscriptionCreated } from 'types';
+import { AI_EMAIL_SUBSCRIPTION_USAGE_LIMIT } from 'src/constants/openai';
 
 export const handleVIPSubscription = async (
     res: NextApiResponse,
@@ -66,6 +67,7 @@ export const handleVIPSubscription = async (
     await updateCompanyUsageLimits({
         profiles_limit,
         searches_limit,
+        ai_email_generator_limit: AI_EMAIL_SUBSCRIPTION_USAGE_LIMIT,
         id: company.id,
     });
 

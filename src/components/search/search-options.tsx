@@ -52,7 +52,7 @@ export const SearchOptions = ({
         <>
             <div className="py-4 w-full font-light flex flex-col md:flex-row md:space-x-4 md:space-y-0 items-start space-y-2">
                 <SearchTopics
-                    path="/api/influencer-search/topics"
+                    path="influencer-search/topics"
                     placeholder={t('creators.searchTopic')}
                     topics={tags}
                     platform={platform}
@@ -66,7 +66,7 @@ export const SearchOptions = ({
                 {/* remove all lookalike code: https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/154 */}
 
                 <SearchTopics
-                    path="/api/influencer-search/locations"
+                    path="influencer-search/locations"
                     placeholder={t('creators.filter.locationPlaceholder')}
                     topics={influencerLocation}
                     platform={platform}
@@ -76,7 +76,7 @@ export const SearchOptions = ({
                     }}
                 />
                 <SearchTopics
-                    path="/api/influencer-search/locations"
+                    path="influencer-search/locations"
                     placeholder={t('creators.filter.audienceLocation')}
                     topics={audienceLocation}
                     platform={platform}

@@ -15,7 +15,7 @@ export type SubscriptionCancelPostResponse = Stripe.Response<Stripe.Subscription
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
-        const { company_id } = JSON.parse(req.body) as SubscriptionCancelPostBody;
+        const { company_id } = req.body as SubscriptionCancelPostBody;
         if (!company_id)
             return res.status(httpCodes.BAD_REQUEST).json({ error: 'Missing company id' });
 

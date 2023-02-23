@@ -8,7 +8,7 @@ export type CampaignUpdatePostResponse = CampaignDB;
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
-        const data = JSON.parse(req.body) as CampaignUpdatePostBody;
+        const data = req.body as CampaignUpdatePostBody;
 
         const { data: campaign, error } = await updateCampaign(data);
 

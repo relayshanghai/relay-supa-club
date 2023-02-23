@@ -3,7 +3,7 @@ const creators = {
     results: '结果',
     noResults: '无结果',
     clearFilter: '清除筛选',
-
+    failedToFetchReport: '无法获取报告',
     subscribers: '粉丝',
     avgViews: '平均观看量',
     engagements: '互动次数',

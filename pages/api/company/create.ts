@@ -28,7 +28,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 return res.status(httpCodes.BAD_REQUEST).json({});
             }
             // Do not allow users to create a company with our reserved name for internal employees
-            if (name === RELAY_DOMAIN) {
+            if (name.toLowerCase() === RELAY_DOMAIN.toLowerCase()) {
                 return res.status(httpCodes.BAD_REQUEST).json({});
             }
 

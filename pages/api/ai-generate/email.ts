@@ -4,6 +4,7 @@ import { serverLogger } from 'src/utils/logger';
 
 import { Configuration, OpenAIApi } from 'openai';
 import { OPENAI_API_KEY, OPENAI_API_ORG } from 'src/constants/openai';
+import { recordAiEmailGeneratorUsage } from 'src/utils/api/db';
 
 export type AIEmailGeneratorPostBody = {
     brandName: string;
@@ -12,6 +13,8 @@ export type AIEmailGeneratorPostBody = {
     productDescription: string;
     instructions?: string;
     senderName: string;
+    company_id: string;
+    user_id: string;
 };
 
 export type AIEmailGeneratorPostResult = { text: string };
@@ -37,10 +40,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             productDescription,
             productName,
             senderName,
-        } = JSON.parse(req.body) as AIEmailGeneratorPostBody;
+            company_id,
+            user_id,
+        } = req.body as AIEmailGeneratorPostBody;
 
-        if (!brandName || !influencerName || !productDescription || !productName || !senderName) {
-            return res.status(httpCodes.BAD_REQUEST).json({});
+        if (
+            !brandName ||
+            !influencerName ||
+            !productDescription ||
+            !productName ||
+            !senderName ||
+            !company_id ||
+            !user_id
+        ) {
+            return res.status(httpCodes.BAD_REQUEST).json({ message: 'Missing required fields' });
         }
         if (
             brandName.length > 100 ||
@@ -52,8 +65,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         ) {
             return res.status(httpCodes.BAD_REQUEST).json({});
         }
-        if (!process.env.OPENAI_API_KEY || !process.env.OPENAI_API_ORG) {
-            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
+
+        const { error: recordError } = await recordAiEmailGeneratorUsage(company_id, user_id);
+        if (recordError) {
+            res.status(httpCodes.NOT_FOUND).json({ error: recordError });
         }
 
         const trimmedDescription = productDescription.trim();

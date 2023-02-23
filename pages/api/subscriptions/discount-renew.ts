@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
+import { AI_EMAIL_SUBSCRIPTION_USAGE_LIMIT } from 'src/constants/openai';
 import { createSubscriptionErrors } from 'src/errors/subscription';
 import {
     getCompanyCusId,
@@ -20,7 +21,7 @@ export type SubscriptionDiscountRenewPostResponse = Stripe.Response<Stripe.Subsc
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
-        const { company_id } = JSON.parse(req.body) as SubscriptionDiscountRenewPostBody;
+        const { company_id } = req.body as SubscriptionDiscountRenewPostBody;
         if (!company_id)
             return res.status(httpCodes.BAD_REQUEST).json({ error: 'Missing company id' });
         if (!(await isCompanyOwnerOrRelayEmployee(req, res))) {
@@ -90,6 +91,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             await updateCompanyUsageLimits({
                 profiles_limit: product.metadata.profiles,
                 searches_limit: product.metadata.searches,
+                ai_email_generator_limit: AI_EMAIL_SUBSCRIPTION_USAGE_LIMIT,
                 id: company_id,
             });
 

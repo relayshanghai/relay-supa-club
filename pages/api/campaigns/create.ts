@@ -9,7 +9,7 @@ export type CampaignsCreatePostResponse = CampaignDB;
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
-        const { company_id, name, ...data } = JSON.parse(req.body) as CampaignsCreatePostBody;
+        const { company_id, name, ...data } = req.body as CampaignsCreatePostBody;
         const { data: campaign, error } = await supabase
             .from('campaigns')
             .insert({
