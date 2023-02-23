@@ -4,6 +4,7 @@ import { serverLogger } from 'src/utils/logger';
 
 import type { NextApiResponse } from 'next';
 import type { InvoicePaymentFailed } from 'types/stripe/invoice-payment-failed-webhook';
+import { RELAY_DOMAIN } from 'src/constants';
 
 export const handleInvoicePaymentFailed = async (
     res: NextApiResponse,
@@ -18,6 +19,11 @@ export const handleInvoicePaymentFailed = async (
     if (companyError) {
         serverLogger(companyError, 'error');
         return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
+    }
+
+    if (company.name === RELAY_DOMAIN) {
+        // no need to cancel the subscription for our internal employees company
+        return res.status(httpCodes.NO_CONTENT);
     }
 
     await updateCompanySubscriptionStatus({

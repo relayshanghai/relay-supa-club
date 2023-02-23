@@ -10,6 +10,7 @@ import CreatorSkeleton from './creator-skeleton';
 import { useReport } from 'src/hooks/use-report';
 import { AddToCampaignModal } from '../modal-add-to-campaign';
 import { useTranslation } from 'react-i18next';
+import { RELAY_DOMAIN } from 'src/constants';
 
 export const CreatorPage = ({
     creator_id,
@@ -41,7 +42,7 @@ export const CreatorPage = ({
                 }}
             />
             <Head>
-                <title>{report?.user_profile.fullname || 'relay.club'}</title>
+                <title>{report?.user_profile.fullname || RELAY_DOMAIN}</title>
             </Head>
             <div className="flex flex-col">
                 {!report || loading || errorMessage?.length > 0 ? (
