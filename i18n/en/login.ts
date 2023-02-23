@@ -9,7 +9,7 @@ const login = {
     alreadyHaveAnAccount: 'Already have an account? ',
     loginSuccess: 'Successfully logged in',
     oopsSomethingWentWrong: 'Oops! Something went wrong',
-    signupSubtitle: 'In seconds find the perfect influencers to endorse your product!',
+    signupSubtitle: 'Find the perfect influencers to endorse your product! 30 day free trial.',
     firstName: 'First name',
     firstNamePlaceholder: 'Enter your first name',
     lastName: 'Last name',
