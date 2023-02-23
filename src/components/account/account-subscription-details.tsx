@@ -16,6 +16,7 @@ export const SubscriptionDetails = () => {
     const { t, i18n } = useTranslation();
     const profileViewUsages = company?.usages.filter(({ type }) => type === 'profile');
     const searchUsages = company?.usages.filter(({ type }) => type === 'search');
+    const aiEmailUsages = company?.usages.filter(({ type }) => type === 'ai_email');
 
     const [showCancelModal, setShowCancelModal] = useState(false);
     const handleCancelSubscription = async () => setShowCancelModal(true);
@@ -30,17 +31,15 @@ export const SubscriptionDetails = () => {
                 <h2 className="text-lg font-bold">{t('account.subscription.title')}</h2>
                 <div className="flex flex-row justify-end">
                     {company?.id && (
-                        (<Link href={buildSubscriptionPortalUrl({ id: company.id })}>
-
+                        <Link href={buildSubscriptionPortalUrl({ id: company.id })}>
                             <Button variant="secondary">
                                 {t('account.subscription.viewBillingPortal')}
                             </Button>
-
-                        </Link>)
+                        </Link>
                     )}
                 </div>
             </div>
-            {company && searchUsages && profileViewUsages ? (
+            {company && searchUsages && profileViewUsages && aiEmailUsages ? (
                 <>
                     <div
                         className={`flex flex-row space-x-4 ${userDataLoading ? 'opacity-50' : ''}`}
@@ -128,6 +127,19 @@ export const SubscriptionDetails = () => {
                                                 : company.searches_limit}
                                         </td>
                                     </tr>
+                                    <tr>
+                                        <td className="border px-4 py-2">
+                                            {t('account.subscription.aiEmailGeneration')}
+                                        </td>
+                                        <td className="border px-4 py-2 text-right">
+                                            {aiEmailUsages.length}
+                                        </td>
+                                        <td className="border px-4 py-2 text-right">
+                                            {company.subscription_status === 'trial'
+                                                ? company.trial_ai_email_generator_limit
+                                                : company.ai_email_generator_limit}
+                                        </td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -137,9 +149,7 @@ export const SubscriptionDetails = () => {
                             {t('account.subscription.cancelSubscription')}
                         </Button>
                         <Link href="/pricing">
-
                             <Button>{t('account.subscription.upgradeSubscription')}</Button>
-
                         </Link>
                     </div>
                 </>

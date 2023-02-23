@@ -6,6 +6,7 @@ import account from './account';
 import login from './login';
 import pricing from './pricing';
 import aiEmailGenerator from './ai-email-generator';
+import usages from './usages';
 
 const translations = {
     translation: {
@@ -17,6 +18,7 @@ const translations = {
         login,
         pricing,
         aiEmailGenerator,
+        usages,
     },
 };
 export default translations;

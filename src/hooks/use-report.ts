@@ -1,5 +1,6 @@
 import { CreatorsReportGetQueries, CreatorsReportGetResponse } from 'pages/api/creators/report';
 import { useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { usageErrors } from 'src/errors/usages';
 import { hasCustomError } from 'src/utils/errors';
 import { nextFetchWithQueries } from 'src/utils/fetcher';
@@ -14,7 +15,7 @@ export const useReport = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const [usageExceeded, setUsageExceeded] = useState(false);
     const [gettingReport, setGettingReport] = useState(false);
-
+    const { t } = useTranslation();
     const { profile } = useUser();
 
     //The transform function is not used now, as the image proxy issue is handled directly where calls for the image.But this is left for future refactor. TODO:Ticket V2-181
@@ -58,14 +59,14 @@ export const useReport = () => {
                 clientLogger(error, 'error');
                 if (hasCustomError(error, usageErrors)) {
                     setUsageExceeded(true);
-                    setErrorMessage(error.message);
-                } else setErrorMessage('Failed fetching report');
+                    setErrorMessage(t(error.message) || '');
+                } else setErrorMessage(t('creators.failedToFetchReport') || '');
             } finally {
                 setLoading(false);
                 setGettingReport(false);
             }
         },
-        [profile],
+        [profile, t],
     );
 
     return {

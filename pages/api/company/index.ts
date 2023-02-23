@@ -48,7 +48,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (req.method === 'PUT') {
         try {
-            const updateData = JSON.parse(req.body) as CompanyPutBody;
+            const updateData = req.body as CompanyPutBody;
             if (!updateData.id) {
                 return res.status(httpCodes.BAD_REQUEST).json({ error: 'Missing company id' });
             }

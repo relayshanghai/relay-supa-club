@@ -206,6 +206,7 @@ export interface Database {
             };
             companies: {
                 Row: {
+                    ai_email_generator_limit: string;
                     avatar_url: string | null;
                     created_at: string | null;
                     cus_id: string | null;
@@ -218,12 +219,14 @@ export interface Database {
                     subscription_end_date: string | null;
                     subscription_start_date: string | null;
                     subscription_status: string;
+                    trial_ai_email_generator_limit: string;
                     trial_profiles_limit: string;
                     trial_searches_limit: string;
                     updated_at: string | null;
                     website: string | null;
                 };
                 Insert: {
+                    ai_email_generator_limit?: string;
                     avatar_url?: string | null;
                     created_at?: string | null;
                     cus_id?: string | null;
@@ -236,12 +239,14 @@ export interface Database {
                     subscription_end_date?: string | null;
                     subscription_start_date?: string | null;
                     subscription_status?: string;
+                    trial_ai_email_generator_limit?: string;
                     trial_profiles_limit?: string;
                     trial_searches_limit?: string;
                     updated_at?: string | null;
                     website?: string | null;
                 };
                 Update: {
+                    ai_email_generator_limit?: string;
                     avatar_url?: string | null;
                     created_at?: string | null;
                     cus_id?: string | null;
@@ -254,6 +259,7 @@ export interface Database {
                     subscription_end_date?: string | null;
                     subscription_start_date?: string | null;
                     subscription_status?: string;
+                    trial_ai_email_generator_limit?: string;
                     trial_profiles_limit?: string;
                     trial_searches_limit?: string;
                     updated_at?: string | null;

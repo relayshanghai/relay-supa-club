@@ -22,7 +22,7 @@ export type CompanyCreatePostResponse = CompanyDB;
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
         try {
-            const { user_id, name, website } = JSON.parse(req.body) as CompanyCreatePostBody;
+            const { user_id, name, website } = req.body as CompanyCreatePostBody;
 
             try {
                 const { data: companyWithSameName } = await getCompanyByName(name);
