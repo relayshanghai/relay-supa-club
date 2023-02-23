@@ -129,6 +129,12 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
     };
 
     const signup = async ({ email, password, data }: SignupData) => {
+        if (session?.user) {
+            const { error: signOutError } = await supabaseClient.auth.signOut();
+            if (signOutError) {
+                throw new Error(signOutError?.message || 'Error signing out previous session');
+            }
+        }
         const { error, data: signupResData } = await supabaseClient.auth.signUp({
             email,
             password,
