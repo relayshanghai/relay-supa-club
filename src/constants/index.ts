@@ -2,6 +2,8 @@
 export const APP_URL = process.env.NEXT_PUBLIC_APP_URL || '';
 if (!APP_URL) throw new Error('APP_URL not found');
 
+export const RELAY_DOMAIN = 'relay.club';
+
 // https://www.emailregex.com/
 export const emailRegex =
     /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;

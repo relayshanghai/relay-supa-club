@@ -1,6 +1,7 @@
 // Docs in https://github.com/sendinblue/APIv3-nodejs-library
 //@ts-ignore
 import SendInBlue from 'sib-api-v3-sdk'; // no types for this library
+import { RELAY_DOMAIN } from 'src/constants';
 
 const SIB_API_KEY = process.env.SIB_API_KEY;
 if (!SIB_API_KEY) throw new Error('SIB_API_KEY not set');
@@ -22,7 +23,7 @@ export const sendEmail = ({
     html: string;
 }) => {
     const sendSmtpEmail = new SendInBlue.SendSmtpEmail();
-    sendSmtpEmail.sender = { name: 'Relay.Club', email: 'no-reply@relay.club' };
+    sendSmtpEmail.sender = { name: RELAY_DOMAIN, email: 'no-reply@relay.club' };
     sendSmtpEmail.to = [{ email, name }];
     sendSmtpEmail.htmlContent = html;
     sendSmtpEmail.subject = subject;

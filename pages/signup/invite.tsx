@@ -5,7 +5,7 @@ import {
     CompanyAcceptInvitePostBody,
     CompanyAcceptInvitePostResponse,
 } from 'pages/api/company/accept-invite';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
@@ -22,12 +22,13 @@ import { nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger';
 import { SignupInputTypes, validateSignupInput } from 'src/utils/validation/signup';
 import { Spinner } from 'src/components/icons';
+import { isMissing } from 'src/utils/utils';
 
 type InviteStatus = InviteStatusError | 'pending' | 'inviteValid';
 
 export default function Register() {
     const { t } = useTranslation();
-    const { login } = useUser();
+    const { login, supabaseClient } = useUser();
 
     const router = useRouter();
     const {
@@ -73,9 +74,16 @@ export default function Register() {
         if (token) checkInvite();
     }, [token, setFieldValue, router]);
 
-    const handleSubmit = async () => {
+    const handleSubmit = useCallback(async () => {
         try {
             setRegistering(true);
+            if (!supabaseClient?.auth) {
+                throw new Error('Error loading supabase client');
+            }
+            const { error: signOutError } = await supabaseClient.auth.signOut();
+            if (signOutError) {
+                throw new Error(signOutError?.message || 'Error signing out previous session');
+            }
             const body: CompanyAcceptInvitePostBody = {
                 token,
                 password,
@@ -97,8 +105,12 @@ export default function Register() {
             }
             router.push('/dashboard');
         } catch (error: any) {
-            if (error?.message === 'User already registered') {
-                return router.push('/login');
+            if (
+                error?.message === 'User already registered' ||
+                error?.message === acceptInviteErrors.userAlreadyRegistered
+            ) {
+                toast.error(t(acceptInviteErrors.userAlreadyRegistered));
+                return await router.push('/login');
             }
             clientLogger(error, 'error');
             if (hasCustomError(error, { ...acceptInviteErrors, ...loginValidationErrors })) {
@@ -109,7 +121,7 @@ export default function Register() {
         } finally {
             setRegistering(false);
         }
-    };
+    }, [email, firstName, lastName, login, password, router, supabaseClient?.auth, t, token]);
     if (!token)
         return (
             <div className="mx-auto h-full flex flex-col justify-center items-center space-y-6">
@@ -130,7 +142,8 @@ export default function Register() {
     const hasValidationErrors = Object.values(validationErrors).some((error) => error !== '');
 
     const invalidFormInput =
-        !token || !firstName || !lastName || !email || !password || hasValidationErrors;
+        isMissing(token, firstName, lastName, email, password, confirmPassword) ||
+        hasValidationErrors;
     const submitDisabled = registering || invalidFormInput;
 
     return (

@@ -30,7 +30,7 @@ const InputWithAutocomplete = forwardRef<HTMLDivElement, Props>(
     ) => {
         const [value, setValue] = useState('');
         return (
-            <div className="flex flex-col w-full " ref={ref}>
+            <div className="flex w-full flex-col " ref={ref}>
                 <InputWithTags
                     disabled={disabled}
                     tags={tags}
@@ -46,7 +46,7 @@ const InputWithAutocomplete = forwardRef<HTMLDivElement, Props>(
                 />
                 <div className="relative">
                     {!!suggestions.length && (
-                        <div className="absolute text-sm z-10 top-1 ring-1 ring-gray-200 left-0 w-full bg-white rounded-lg overflow-hidden">
+                        <div className="absolute top-1 left-0 z-10 w-full overflow-hidden rounded-lg bg-white text-sm ring-1 ring-gray-200">
                             {suggestions.map((item: any, i: any) => {
                                 if (SuggestionComponent) {
                                     return (
@@ -62,7 +62,7 @@ const InputWithAutocomplete = forwardRef<HTMLDivElement, Props>(
                                 }
                                 return (
                                     <div
-                                        className="p-2 hover:bg-gray-100 cursor-pointer"
+                                        className="cursor-pointer p-2 hover:bg-gray-100"
                                         key={i}
                                         onClick={() => {
                                             onAddTag(item);

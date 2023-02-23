@@ -23,6 +23,9 @@ import {
     InboxArrowDownIcon,
 } from '@heroicons/react/24/solid';
 import { useTranslation } from 'react-i18next';
+import { hasCustomError } from 'src/utils/errors';
+import { usageErrors } from 'src/errors/usages';
+import { isMissing } from 'src/utils/utils';
 
 const MAX_CHARACTER_LENGTH = 600;
 
@@ -54,11 +57,16 @@ const AIImageGenerator = () => {
 
     const generateSubject = useCallback(async () => {
         setLoadingSubject(true);
+        if (!profile?.id || !company?.id) {
+            throw new Error('User or company not found');
+        }
         const body: AIEmailSubjectGeneratorPostBody = {
             brandName,
             influencerName,
             productName,
             productDescription,
+            user_id: profile.id,
+            company_id: company.id,
         };
         const res = await nextFetch<AIEmailSubjectGeneratorPostResult>('ai-generate/subject', {
             method: 'post',
@@ -73,7 +81,7 @@ const AIImageGenerator = () => {
         setLoadingSubject(false);
 
         return res;
-    }, [brandName, influencerName, productName, productDescription]);
+    }, [brandName, influencerName, productName, productDescription, profile?.id, company?.id]);
 
     const generateEmail = useCallback(async () => {
         setLoadingEmail(true);
@@ -84,6 +92,8 @@ const AIImageGenerator = () => {
             productDescription,
             instructions,
             senderName,
+            user_id: profile?.id || '',
+            company_id: company?.id || '',
         };
         const res: AIEmailGeneratorPostResult = await nextFetch<AIEmailGeneratorPostResult>(
             'ai-generate/email',
@@ -101,7 +111,16 @@ const AIImageGenerator = () => {
         setLoadingEmail(false);
 
         return res;
-    }, [brandName, influencerName, productName, productDescription, instructions, senderName]);
+    }, [
+        brandName,
+        influencerName,
+        productName,
+        productDescription,
+        instructions,
+        senderName,
+        profile?.id,
+        company?.id,
+    ]);
 
     const handleSubmit = async (e: any, type: 'subject' | 'email' | 'both') => {
         e.preventDefault();
@@ -120,8 +139,12 @@ const AIImageGenerator = () => {
         } catch (e: any) {
             clientLogger(e, 'error');
             toast.dismiss(loadingToast);
-            toast.error(t('aiEmailGenerator.index.status.requestError') || '');
             resetFields();
+            if (hasCustomError(e, usageErrors)) {
+                toast.error(t(e.message));
+            } else {
+                toast.error(t('aiEmailGenerator.index.status.requestError') || '');
+            }
         }
     };
 
@@ -131,6 +154,16 @@ const AIImageGenerator = () => {
         setLoadingEmail(false);
         setLoadingSubject(false);
     };
+
+    const subjectLineRequiredMissing = isMissing(
+        brandName,
+        influencerName,
+        productName,
+        productDescription,
+        profile?.id,
+        company?.id,
+    );
+    const emailRequiredMissing = subjectLineRequiredMissing || !senderName;
 
     return (
         <Layout>
@@ -210,7 +243,7 @@ const AIImageGenerator = () => {
 
                         <div className="flex flex-row gap-2 items-center">
                             <Button
-                                disabled={loadingEmail || loadingSubject}
+                                disabled={loadingEmail || loadingSubject || emailRequiredMissing}
                                 type="submit"
                                 onClick={(e) => handleSubmit(e, 'both')}
                                 className="flex items-center gap-2"
@@ -234,10 +267,8 @@ const AIImageGenerator = () => {
                             <InputTextArea
                                 label={t('aiEmailGenerator.form.label.subjectLine') || ''}
                                 value={generatedSubject}
-                                onChange={() => {
-                                    return;
-                                }}
-                                rows={3}
+                                readOnly
+                                rows={4}
                             />
 
                             <div className="flex flex-col gap-2 md:flex-row md:gap-5">
@@ -254,7 +285,9 @@ const AIImageGenerator = () => {
                                     variant="secondary"
                                     className="flex items-center gap-2"
                                     onClick={(e) => handleSubmit(e, 'subject')}
-                                    disabled={loadingEmail || loadingSubject}
+                                    disabled={
+                                        loadingEmail || loadingSubject || subjectLineRequiredMissing
+                                    }
                                 >
                                     <ArrowPathIcon className="w-4" />
                                     {t('aiEmailGenerator.form.label.regenerateSubject') || ''}
@@ -270,9 +303,8 @@ const AIImageGenerator = () => {
                                 <textarea
                                     className="ring-opacity-5 placeholder-gray-400 appearance-none bg-white rounded-md block w-full px-3 py-2 border border-transparent shadow ring-1 sm:text-sm focus:border-primary-500 focus:ring-primary-500 focus:outline-none my-2 h-full"
                                     value={generatedEmail}
-                                    onChange={() => {
-                                        return;
-                                    }}
+                                    readOnly
+                                    rows={18}
                                 />
                             </label>
                             <div className="flex flex-col gap-2 md:flex-row md:gap-5">
@@ -288,7 +320,9 @@ const AIImageGenerator = () => {
                                     variant="secondary"
                                     className="flex items-center gap-2"
                                     onClick={(e) => handleSubmit(e, 'email')}
-                                    disabled={loadingEmail || loadingSubject}
+                                    disabled={
+                                        loadingEmail || loadingSubject || emailRequiredMissing
+                                    }
                                 >
                                     <ArrowPathIcon className="w-4" />
                                     {t('aiEmailGenerator.form.label.regenerateEmail') || ''}
