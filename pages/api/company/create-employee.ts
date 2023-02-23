@@ -59,6 +59,7 @@ const getOrCreateCompany = async () => {
         id: companyCreated.id,
         profiles_limit: '100000000',
         searches_limit: '1000000000',
+        ai_email_generator_limit: '1000000000',
     });
 
     return { data: companyCreated, error: null };
@@ -67,7 +68,7 @@ const getOrCreateCompany = async () => {
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
         try {
-            const { email } = JSON.parse(req.body) as CreateEmployeePostBody;
+            const { email } = req.body as CreateEmployeePostBody;
             if (!EMPLOYEE_EMAILS.includes(email)) {
                 return res
                     .status(httpCodes.BAD_REQUEST)

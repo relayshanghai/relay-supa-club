@@ -11,6 +11,7 @@ import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
 import { useFields } from 'src/hooks/use-fields';
 import { useUser } from 'src/hooks/use-user';
 import { clientLogger } from 'src/utils/logger';
+import { isMissing } from 'src/utils/utils';
 import { SignupInputTypes, validateSignupInput } from 'src/utils/validation/signup';
 
 export default function Register() {
@@ -98,7 +99,7 @@ export default function Register() {
     };
     const hasValidationErrors = Object.values(validationErrors).some((error) => error !== '');
 
-    const invalidFormInput = !firstName || !lastName || !email || !password || hasValidationErrors;
+    const invalidFormInput = isMissing(firstName, lastName, email, password) || hasValidationErrors;
     const submitDisabled = invalidFormInput || loading;
 
     return (
@@ -167,10 +168,9 @@ export default function Register() {
                     {t('login.alreadyHaveAnAccount')}
                     <Link
                         href="/login"
-                        className="inline text-primary-700 hover:text-primary-600 cursor-pointer">
-
+                        className="inline text-primary-700 hover:text-primary-600 cursor-pointer"
+                    >
                         {t('login.logIn')}
-
                     </Link>
                 </p>
             </form>
