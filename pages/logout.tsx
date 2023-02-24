@@ -12,8 +12,7 @@ export default function Logout() {
         if (!supabaseClient) return;
         await supabaseClient.auth.signOut();
 
-        const res = await nextFetch('logout');
-        const data = await res.json();
+        const data = await nextFetch('logout');
         if (data.success) {
             if (profile?.id || user?.id) {
                 await refreshProfile(undefined, {

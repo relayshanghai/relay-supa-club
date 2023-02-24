@@ -23,7 +23,7 @@ export type CompanyCreatePostResponse = CompanyDB;
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
         try {
-            const { user_id, name, website } = JSON.parse(req.body) as CompanyCreatePostBody;
+            const { user_id, name, website } = req.body as CompanyCreatePostBody;
             if (!user_id || !name) {
                 return res.status(httpCodes.BAD_REQUEST).json({});
             }
