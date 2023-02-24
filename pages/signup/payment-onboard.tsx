@@ -59,7 +59,7 @@ const PaymentOnboard = () => {
                 <Title />
                 <LanguageToggle />
             </div>
-            <form className="max-w-xs w-full mx-auto flex-grow flex flex-col justify-center items-center space-y-5">
+            <form className="max-w-xs w-full mx-auto flex-grow flex flex-col justify-center items-center space-y-2">
                 <div className="text-left w-full">
                     <h1 className="font-bold text-4xl mb-2">{t('login.addPaymentMethod')}</h1>
                     <h3 className="text-sm text-gray-600 mb-8">{t('login.andActivateTrial')}</h3>
@@ -76,18 +76,14 @@ const PaymentOnboard = () => {
                                 <p className="text-xs text-gray-500">{t('login.signupTerms')}</p>
                             </div>
                         ) : (
-                            (<Link
+                            <Link
                                 href={buildSubscriptionPortalUrl({
                                     id: company.id,
                                     returnUrl: `${APP_URL}/signup/payment-onboard`,
                                 })}
                             >
-
-                                <Button variant="secondary">
-                                    {t('login.addPaymentMethod')}
-                                </Button>
-
-                            </Link>)
+                                <Button variant="secondary">{t('login.addPaymentMethod')}</Button>
+                            </Link>
                         )}
                     </>
                 )}
