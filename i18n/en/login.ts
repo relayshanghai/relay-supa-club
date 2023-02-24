@@ -58,7 +58,7 @@ const login = {
     emailInvalid: 'Invalid Email',
     passwordsDoNotMatch: 'Passwords do not match',
     invalidPassword: 'Invalid password',
-    forgotPasswordClickHereToReset: 'Forgot password? Click here to reset',
+    forgotPasswordReset: 'Forgot password? Reset',
     resetPasswordEmailSent: 'Reset password email sent',
     changePassword: 'Change password',
     inputNewPassword: 'Input new password',
