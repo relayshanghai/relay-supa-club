@@ -54,7 +54,7 @@ export default function Register() {
                 <Title />
                 <LanguageToggle />
             </div>
-            <form className="max-w-xs w-full mx-auto flex-grow flex flex-col justify-center items-center space-y-5">
+            <form className="max-w-xs w-full mx-auto flex-grow flex flex-col justify-center items-center space-y-2">
                 {loading && !submitting ? (
                     <Spinner className="fill-primary-600 text-white w-20 h-20" />
                 ) : (

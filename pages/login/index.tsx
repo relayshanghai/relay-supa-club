@@ -70,11 +70,23 @@ export default function Login() {
                 <Title />
                 <LanguageToggle />
             </div>
-            <form className="max-w-xs w-full mx-auto flex-grow flex flex-col justify-center items-center space-y-5">
+
+            <form className="max-w-xs w-full mx-auto flex-grow flex flex-col justify-center items-center space-y-2">
                 <div className="text-left w-full">
                     <h1 className="font-bold text-4xl mb-2">{t('login.logIn')}</h1>
                     <h3 className="text-sm text-gray-600 mb-8">{t('login.welcomeBack')}</h3>
                 </div>
+                <p className="inline text-gray-500 text-sm">
+                    {t('login.dontHaveAnAccount')}{' '}
+                    <Link
+                        href="/signup"
+                        className="inline text-primary-700 hover:text-primary-600 cursor-pointer"
+                    >
+                        <Button variant="secondary" className="text-xs px-1 pt-1 pb-1 ml-2">
+                            {t('login.signUp')}
+                        </Button>
+                    </Link>
+                </p>
                 <Input
                     label={t('login.email')}
                     type="email"
@@ -96,19 +108,10 @@ export default function Login() {
                 >
                     {t('login.logIn')}
                 </Button>
-                <p className="inline text-gray-500 text-sm">
-                    {t('login.dontHaveAnAccount')}{' '}
-                    <Link
-                        href="/signup"
-                        className="inline text-primary-700 hover:text-primary-600 cursor-pointer">
 
-                        {t('login.signUp')}
-
-                    </Link>
-                </p>
                 <button type="button" onClick={handleResetPassword} disabled={generatingResetEmail}>
                     <p className="mt-4 inline text-gray-400 text-sm pb-4 hover:text-primary-500">
-                        {t('login.forgotPasswordClickHereToReset')}
+                        {t('login.forgotPasswordReset')}
                     </p>
                 </button>
             </form>
