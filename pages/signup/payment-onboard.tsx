@@ -11,6 +11,7 @@ import { APP_URL } from 'src/constants';
 import { createSubscriptionErrors } from 'src/errors/subscription';
 import { useCompany } from 'src/hooks/use-company';
 import { useSubscription } from 'src/hooks/use-subscription';
+import { useUser } from 'src/hooks/use-user';
 import { buildSubscriptionPortalUrl } from 'src/utils/api/stripe/portal';
 import { hasCustomError } from 'src/utils/errors';
 import { clientLogger } from 'src/utils/logger';
@@ -20,7 +21,7 @@ const PaymentOnboard = () => {
     const { company } = useCompany();
     const { subscription, createTrial, paymentMethods } = useSubscription();
     const [submitting, setSubmitting] = useState(false);
-
+    const { logout } = useUser();
     useEffect(() => {
         const redirectIfSubscribed = async () => {
             if (subscription?.status === 'trialing' || subscription?.status === 'active')
@@ -87,6 +88,15 @@ const PaymentOnboard = () => {
                         )}
                     </>
                 )}
+                <div className="pt-20">
+                    <button type="button" className="text-sm text-gray-500" onClick={logout}>
+                        {t('login.stuckHereTryAgain1')}
+                        <Link className="text-primary-500" href="/logout">
+                            {t('login.signOut')}
+                        </Link>
+                        {t('login.stuckHereTryAgain2')}
+                    </button>
+                </div>
             </form>
         </div>
     );
