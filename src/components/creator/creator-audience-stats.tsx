@@ -24,8 +24,16 @@ type Stat = {
 };
 const prepareStats = (audience: AudienceStats, t: TFunction) => {
     const data: Stat[] = [];
-    if (audience.audience_types)
-        data.push({ type: 'progress', label: 'types', stats: audience.audience_types });
+    if (audience.audience_types) {
+        data.push({
+            type: 'progress',
+            label: 'types',
+            stats: audience.audience_types.map(({ code, weight }) => ({
+                name: t(`creators.show.${code.toLowerCase()}`),
+                weight,
+            })),
+        });
+    }
     if (audience.audience_genders)
         data.push({
             type: 'progress',
