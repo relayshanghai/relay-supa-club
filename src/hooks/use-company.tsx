@@ -6,13 +6,30 @@ import type {
 } from 'pages/api/company';
 import type { CompanyCreatePostBody, CompanyCreatePostResponse } from 'pages/api/company/create';
 
-import { useCallback } from 'react';
+import { createContext, PropsWithChildren, useCallback, useContext } from 'react';
 import { createCompanyValidationErrors } from 'src/errors/company';
 import { nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';
-import useSWR from 'swr';
+import useSWR, { KeyedMutator } from 'swr';
 import { useUser } from './use-user';
 
-export const useCompany = () => {
+export interface CompanyContext {
+    company: CompanyGetResponse | undefined;
+    updateCompany: (input: Omit<CompanyPutBody, 'id'>) => Promise<CompanyPutResponse | null>;
+    createCompany: (input: {
+        name: string;
+        website?: string;
+    }) => Promise<CompanyCreatePostResponse | null>;
+    refreshCompany: KeyedMutator<CompanyGetResponse> | (() => void);
+}
+
+const ctx = createContext<CompanyContext>({
+    company: undefined,
+    updateCompany: async () => null,
+    createCompany: async () => null,
+    refreshCompany: () => null,
+});
+
+const useCompanyHook = () => {
     const { profile, user, refreshProfile } = useUser();
     const { data: company, mutate: refreshCompany } = useSWR(
         profile?.company_id ? 'company' : null,
@@ -62,4 +79,29 @@ export const useCompany = () => {
         createCompany,
         refreshCompany,
     };
+};
+
+export const CompanyProvider = ({ children }: PropsWithChildren) => {
+    const { company, updateCompany, createCompany, refreshCompany } = useCompanyHook();
+
+    return (
+        <ctx.Provider
+            value={{
+                company,
+                updateCompany,
+                createCompany,
+                refreshCompany,
+            }}
+        >
+            {children}
+        </ctx.Provider>
+    );
+};
+
+export const useCompany = () => {
+    const hooks = useContext(ctx);
+    if (hooks === null) {
+        throw new Error('useCompany must be used within a CompanyProvider');
+    }
+    return hooks;
 };

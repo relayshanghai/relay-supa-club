@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { updateCompanyErrors } from 'src/errors/company';
@@ -8,14 +8,15 @@ import { hasCustomError } from 'src/utils/errors';
 import { Button } from '../button';
 import { Edit } from '../icons';
 import { Input } from '../input';
-import { AccountContext } from './account-context';
 import { InviteMembersModal } from './modal-invite-members';
 import { useInvites } from 'src/hooks/use-invites';
 import { useTeammates } from 'src/hooks/use-teammates';
+import { useCompany } from 'src/hooks/use-company';
+import { useUser } from 'src/hooks/use-user';
 
 export const CompanyDetails = () => {
-    const { userDataLoading, profile, company, updateCompany } = useContext(AccountContext);
-
+    const { company, updateCompany } = useCompany();
+    const { loading: userDataLoading, profile } = useUser();
     const { invites, createInvite } = useInvites();
     const { teammates } = useTeammates();
 
@@ -63,7 +64,7 @@ export const CompanyDetails = () => {
 
     return (
         <div
-            className={`flex flex-col items-start space-y-4 p-4 bg-white rounded-lg w-full lg:max-w-2xl relative ${
+            className={`relative flex w-full flex-col items-start space-y-4 rounded-lg bg-white p-4 lg:max-w-2xl ${
                 userDataLoading || updating ? 'opacity-50' : ''
             } shadow-lg shadow-gray-200`}
         >
@@ -97,19 +98,19 @@ export const CompanyDetails = () => {
                 <div className={`w-full space-y-6`}>
                     <div className="flex flex-col space-y-3">
                         <div className="text-sm">{t('account.company.companyName')}</div>
-                        <div className="text-sm font-bold ml-2">{companyValues.name}</div>
+                        <div className="ml-2 text-sm font-bold">{companyValues.name}</div>
                     </div>
 
                     <div className="flex flex-col space-y-3">
                         <div className="text-sm">{t('account.company.website')}</div>
-                        <div className="text-sm font-bold ml-2">{companyValues.website}</div>
+                        <div className="ml-2 text-sm font-bold">{companyValues.website}</div>
                     </div>
                 </div>
             )}
             {isAdmin(profile?.role) && (
                 <>
                     {editMode ? (
-                        <div className="flex flex-row justify-end w-full space-x-4">
+                        <div className="flex w-full flex-row justify-end space-x-4">
                             <Button
                                 disabled={userDataLoading || updating}
                                 onClick={handleUpdateCompany}
@@ -129,7 +130,7 @@ export const CompanyDetails = () => {
                             onClick={() => setEditMode(true)}
                             variant="secondary"
                         >
-                            <Edit className="text-primary-500 w-4 h-4" />
+                            <Edit className="h-4 w-4 text-primary-500" />
                         </Button>
                     )}
                 </>
@@ -137,13 +138,13 @@ export const CompanyDetails = () => {
             <hr className="w-full" />
             <div className="w-full pt-5">
                 <h3 className="pb-4 font-bold">{t('account.company.members')}</h3>
-                <div className="divide-y divide-grey-200">
+                <div className="divide-grey-200 divide-y">
                     {Array.isArray(teammates) &&
                         teammates.map((profile) => {
                             return (
                                 <div
                                     key={profile.id}
-                                    className="flex flex-row space-x-8 items-center w-full py-2"
+                                    className="flex w-full flex-row items-center space-x-8 py-2"
                                 >
                                     <div className="w-1/3">
                                         <p className="text-xs text-gray-500">
@@ -178,7 +179,7 @@ export const CompanyDetails = () => {
                             return (
                                 <div
                                     key={invites.id}
-                                    className="flex flex-row space-x-8 items-center border-t border-b border-grey-200 w-full py-2"
+                                    className="border-grey-200 flex w-full flex-row items-center space-x-8 border-t border-b py-2"
                                 >
                                     <div>
                                         <p className="text-xs text-gray-500">
