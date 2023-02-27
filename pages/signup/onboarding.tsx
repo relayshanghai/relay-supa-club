@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
@@ -22,7 +23,7 @@ const errors = {
 export default function Register() {
     const { t } = useTranslation();
     const router = useRouter();
-    const { loading } = useUser();
+    const { loading, logout } = useUser();
     const { createCompany } = useCompany();
     const { values, setFieldValue } = useFields({
         name: '',
@@ -85,6 +86,15 @@ export default function Register() {
                         </Button>
                     </>
                 )}
+                <div className="pt-20">
+                    <button type="button" className="text-sm text-gray-500" onClick={logout}>
+                        {t('login.stuckHereTryAgain1')}
+                        <Link className="text-primary-500" href="/logout">
+                            {t('login.signOut')}
+                        </Link>
+                        {t('login.stuckHereTryAgain2')}
+                    </button>
+                </div>
             </form>
         </div>
     );
