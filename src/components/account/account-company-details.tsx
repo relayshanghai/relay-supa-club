@@ -16,7 +16,7 @@ import { useTeammates } from 'src/hooks/use-teammates';
 export const CompanyDetails = () => {
     const { userDataLoading, profile, company, updateCompany } = useContext(AccountContext);
 
-    const { invites } = useInvites();
+    const { invites, createInvite } = useInvites();
     const { teammates } = useTeammates();
 
     const [showAddMoreMembers, setShowAddMoreMembers] = useState(false);
@@ -70,6 +70,7 @@ export const CompanyDetails = () => {
             <InviteMembersModal
                 showAddMoreMembers={showAddMoreMembers}
                 setShowAddMoreMembers={setShowAddMoreMembers}
+                createInvite={createInvite}
             />
 
             <h2 className="text-lg font-bold">{t('account.company.title')}</h2>

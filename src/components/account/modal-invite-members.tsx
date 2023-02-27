@@ -2,6 +2,7 @@ import { useContext, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { createInviteErrors } from 'src/errors/company';
+import { InvitesDB } from 'src/utils/api/db';
 import { hasCustomError } from 'src/utils/errors';
 import { Button } from '../button';
 import { Input } from '../input';
@@ -11,11 +12,13 @@ import { AccountContext } from './account-context';
 export const InviteMembersModal = ({
     showAddMoreMembers,
     setShowAddMoreMembers,
+    createInvite,
 }: {
     showAddMoreMembers: boolean;
     setShowAddMoreMembers: (show: boolean) => void;
+    createInvite: (email: string, companyOwner: boolean) => Promise<InvitesDB>;
 }) => {
-    const { createInvite, refreshCompany } = useContext(AccountContext);
+    const { refreshCompany } = useContext(AccountContext);
     const [companyOwner, setCompanyOwner] = useState(false);
     const [inviteEmail, setInviteEmail] = useState('');
     const [submitting, setSubmitting] = useState(false);
