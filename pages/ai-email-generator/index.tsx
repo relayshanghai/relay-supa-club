@@ -176,7 +176,6 @@ const AIImageGenerator = () => {
                         {t('aiEmailGenerator.index.title') || ''}
                     </h1>
                     <p className="text-xs mb-2">{t('aiEmailGenerator.index.description') || ''}</p>
-                    {/* <span className="border border-primary-400 text-primary-500 text-[0.65rem] px-2 py-1/2 rounded-2xl w-fit font-light mb-4"> */}
                     <p className="text-xs text-gray-500 font-semibold">
                         {t('aiEmailGenerator.index.information')}
                     </p>
