@@ -169,17 +169,21 @@ const AIImageGenerator = () => {
         <Layout>
             <div className="flex flex-col items-center p-6 w-full h-full">
                 <div className="flex flex-col items-center">
-                    <h1 className="text-2xl font-bold mb-4">
+                    <span className="bg-primary-500 text-white text-[0.65rem] px-2 py-1/2 rounded-2xl w-fit font-base mb-2">
+                        BETA
+                    </span>
+                    <h1 className="text-2xl font-bold mb-2">
                         {t('aiEmailGenerator.index.title') || ''}
                     </h1>
-                    <p className="text-sm mb-4">{t('aiEmailGenerator.index.description') || ''}</p>
+                    <p className="text-xs mb-2">{t('aiEmailGenerator.index.description') || ''}</p>
+                    {/* <span className="border border-primary-400 text-primary-500 text-[0.65rem] px-2 py-1/2 rounded-2xl w-fit font-light mb-4"> */}
+                    <p className="text-xs text-gray-500 font-semibold">
+                        {t('aiEmailGenerator.index.information')}
+                    </p>
                 </div>
 
                 <div className="flex flex-col lg:flex-row lg:items-start items-center justify-center gap-10 mt-10 w-full lg:h-full">
                     <form className="flex flex-col h-full items-center justify-start w-full md:w-1/3">
-                        <p className="text-sm mb-2 text-gray-500 font-semibold">
-                            {t('aiEmailGenerator.index.information')}
-                        </p>
                         <Input
                             label={t('aiEmailGenerator.form.label.brandName') || ''}
                             placeholder={t('aiEmailGenerator.form.placeholder.brandName') || ''}
@@ -295,19 +299,19 @@ const AIImageGenerator = () => {
                             </div>
                         </div>
 
-                        <div className="w-full flex flex-col justify-center items-center h-full ">
+                        <div className="w-full flex flex-col justify-center items-center h-full">
                             <label className="flex flex-col text-xs text-gray-500 h-full w-full">
                                 <div className="font-bold">
                                     {t('aiEmailGenerator.form.label.generatedEmail') || ''}
                                 </div>
                                 <textarea
-                                    className="ring-opacity-5 placeholder-gray-400 appearance-none bg-white rounded-md block w-full px-3 py-2 border border-transparent shadow ring-1 sm:text-sm focus:border-primary-500 focus:ring-primary-500 focus:outline-none my-2 h-full"
+                                    className="ring-opacity-5 placeholder-gray-400 appearance-none bg-white rounded-md block w-full px-3 py-2 border border-transparent shadow sm:text-xs focus:border-primary-500 focus:ring-primary-500 focus:outline-none my-2 h-full"
                                     value={generatedEmail}
                                     readOnly
                                     rows={18}
                                 />
                             </label>
-                            <div className="flex flex-col gap-2 md:flex-row md:gap-5">
+                            <div className="flex flex-col gap-2 md:flex-row md:gap-5 mb-2">
                                 <Button
                                     onClick={() => copyToClipboard(generatedEmail)}
                                     className="flex items-center gap-2"
