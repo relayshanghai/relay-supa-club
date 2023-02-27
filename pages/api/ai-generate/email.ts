@@ -87,7 +87,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         3) Enthusiastically introduce our product: ${brandName} ${productName}. ${trimDescriptionPunctuation}.
         ${
             instructions
-                ? `4) Ask ${influencerName} to follow these instructions: "${trimmedInstructionsPunctuation}.`
+                ? `4) Ask ${influencerName} to follow these instructions: ${trimmedInstructionsPunctuation}.`
                 : '4) Ask the influencer to post about the product on their social media.'
         }
         5) Express gratitude for ${influencerName}'s time and consideration, and end with a call-to-action for them to respond if they are interested in the collaboration.
