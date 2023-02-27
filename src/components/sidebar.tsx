@@ -69,7 +69,8 @@ const NavBarInner = ({
 
                 <ActiveLink href="/ai-email-generator">
                     {t('navbar.aiEmailGenerator')}
-                    <span className="bg-primary-500 text-white text-[0.65rem] px-2 py-1/2 rounded-2xl ml-2 w-fit font-base">
+                    {/* text-[0.65rem] is an exception to our font size rules, when the text-xs looks too big for this icon label, it now only appears in the BETA label */}
+                    <span className="py-1/2 font-base ml-2 w-fit rounded-2xl bg-primary-500 px-2 text-[0.65rem] text-white">
                         BETA
                     </span>
                 </ActiveLink>
