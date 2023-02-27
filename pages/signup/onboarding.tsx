@@ -4,10 +4,10 @@ import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
-import { LanguageToggle } from 'src/components/common/language-toggle';
+
 import { Spinner } from 'src/components/icons';
 import { Input } from 'src/components/input';
-import { Title } from 'src/components/title';
+import { OnboardLayout } from 'src/components/SignupLayout';
 import { createCompanyErrors, createCompanyValidationErrors } from 'src/errors/company';
 import { useCompany } from 'src/hooks/use-company';
 import { useFields } from 'src/hooks/use-fields';
@@ -50,19 +50,15 @@ export default function Register() {
     };
 
     return (
-        <div className="w-full h-screen px-10 flex flex-col">
-            <div className="sticky top-0 flex items-center w-full justify-between">
-                <Title />
-                <LanguageToggle />
-            </div>
-            <form className="max-w-xs w-full mx-auto flex-grow flex flex-col justify-center items-center space-y-2">
+        <OnboardLayout>
+            <form className="mx-auto flex w-full max-w-xs flex-grow flex-col items-center justify-center space-y-2">
                 {loading && !submitting ? (
-                    <Spinner className="fill-primary-600 text-white w-20 h-20" />
+                    <Spinner className="h-20 w-20 fill-primary-600 text-white" />
                 ) : (
                     <>
-                        <div className="text-left w-full">
-                            <h1 className="font-bold text-4xl mb-2">{t('login.onboardCompany')}</h1>
-                            <h3 className="text-sm text-gray-600 mb-8">
+                        <div className="w-full text-left">
+                            <h1 className="mb-2 text-4xl font-bold">{t('login.onboardCompany')}</h1>
+                            <h3 className="mb-8 text-sm text-gray-600">
                                 {t('login.addCompanyDetails')}
                             </h3>
                         </div>
@@ -96,6 +92,6 @@ export default function Register() {
                     </button>
                 </div>
             </form>
-        </div>
+        </OnboardLayout>
     );
 }

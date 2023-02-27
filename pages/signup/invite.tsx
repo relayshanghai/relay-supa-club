@@ -4,9 +4,8 @@ import { useCallback, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
-import { LanguageToggle } from 'src/components/common/language-toggle';
+
 import { Input } from 'src/components/input';
-import { Title } from 'src/components/title';
 import { acceptInviteErrors } from 'src/errors/company';
 import { inviteStatusErrors, loginValidationErrors } from 'src/errors/login';
 import type { InviteStatusError } from 'src/errors/login';
@@ -20,6 +19,7 @@ import type { SignupInputTypes } from 'src/utils/validation/signup';
 import { Spinner } from 'src/components/icons';
 import { isMissing } from 'src/utils/utils';
 import { useInvites } from 'src/hooks/use-invites';
+import { LoginSignupLayout } from 'src/components/SignupLayout';
 
 type InviteStatus = InviteStatusError | 'pending' | 'inviteValid';
 
@@ -127,7 +127,7 @@ export default function Register() {
     ]);
     if (!token)
         return (
-            <div className="mx-auto h-full flex flex-col justify-center items-center space-y-6">
+            <div className="mx-auto flex h-full flex-col items-center justify-center space-y-6">
                 <h2>{t('login.noInviteTokenFound')}</h2>
                 <Button onClick={() => router.back()}>{t('login.back')}</Button>
             </div>
@@ -150,16 +150,12 @@ export default function Register() {
     const submitDisabled = registering || invalidFormInput;
 
     return (
-        <div className="w-full h-screen px-10 flex flex-col">
-            <div className="sticky top-0 flex items-center w-full justify-between">
-                <Title />
-                <LanguageToggle />
-            </div>
+        <LoginSignupLayout>
             {inviteStatus === 'inviteValid' ? (
-                <form className="max-w-xs w-full mx-auto flex-grow flex flex-col justify-center items-center space-y-2">
-                    <div className="text-left w-full">
-                        <h1 className="font-bold text-4xl mb-2">{t('login.acceptInvite')}</h1>
-                        <h3 className="text-sm text-gray-600 mb-8">
+                <form className="mx-auto flex w-full max-w-xs flex-grow flex-col items-center justify-center space-y-2">
+                    <div className="w-full text-left">
+                        <h1 className="mb-2 text-4xl font-bold">{t('login.acceptInvite')}</h1>
+                        <h3 className="mb-8 text-sm text-gray-600">
                             {t('login.someoneInvitedYouToJoinRelayClub')}
                         </h3>
                     </div>
@@ -205,16 +201,16 @@ export default function Register() {
                     </Button>
                 </form>
             ) : inviteStatus === 'pending' ? (
-                <div className="mx-auto h-full flex flex-col justify-center items-center space-y-6">
+                <div className="mx-auto flex h-full flex-col items-center justify-center space-y-6">
                     <p>{t('login.checkingInviteStatus')}</p>
-                    <Spinner className="w-5 h-5 fill-primary-600 text-white" />{' '}
+                    <Spinner className="h-5 w-5 fill-primary-600 text-white" />{' '}
                 </div>
             ) : (
-                <div className="mx-auto h-full flex flex-col justify-center items-center space-y-6">
+                <div className="mx-auto flex h-full flex-col items-center justify-center space-y-6">
                     <h2>{t(inviteStatus)}</h2>
                     <Button onClick={() => router.back()}>{t('login.back')}</Button>
                 </div>
             )}
-        </div>
+        </LoginSignupLayout>
     );
 }

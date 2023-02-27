@@ -4,9 +4,9 @@ import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
-import { LanguageToggle } from 'src/components/common/language-toggle';
+
 import { Spinner } from 'src/components/icons';
-import { Title } from 'src/components/title';
+import { OnboardLayout } from 'src/components/SignupLayout';
 import { APP_URL } from 'src/constants';
 import { createSubscriptionErrors } from 'src/errors/subscription';
 import { useCompany } from 'src/hooks/use-company';
@@ -55,18 +55,14 @@ const PaymentOnboard = () => {
     };
 
     return (
-        <div className="w-full h-screen px-10 flex flex-col">
-            <div className="sticky top-0 flex items-center w-full justify-between">
-                <Title />
-                <LanguageToggle />
-            </div>
-            <form className="max-w-xs w-full mx-auto flex-grow flex flex-col justify-center items-center space-y-2">
-                <div className="text-left w-full">
-                    <h1 className="font-bold text-4xl mb-2">{t('login.addPaymentMethod')}</h1>
-                    <h3 className="text-sm text-gray-600 mb-8">{t('login.andActivateTrial')}</h3>
+        <OnboardLayout>
+            <form className="mx-auto flex w-full max-w-xs flex-grow flex-col items-center justify-center space-y-2">
+                <div className="w-full text-left">
+                    <h1 className="mb-2 text-4xl font-bold">{t('login.addPaymentMethod')}</h1>
+                    <h3 className="mb-8 text-sm text-gray-600">{t('login.andActivateTrial')}</h3>
                 </div>
                 {!company?.id ? (
-                    <Spinner className="fill-primary-600 text-white w-20 h-20" />
+                    <Spinner className="h-20 w-20 fill-primary-600 text-white" />
                 ) : (
                     <>
                         {paymentMethods?.length && paymentMethods?.length > 0 ? (
@@ -98,7 +94,7 @@ const PaymentOnboard = () => {
                     </button>
                 </div>
             </form>
-        </div>
+        </OnboardLayout>
     );
 };
 
