@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { useContext, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSubscription } from 'src/hooks/use-subscription';
+import { useUsages } from 'src/hooks/use-usages';
 import { buildSubscriptionPortalUrl } from 'src/utils/api/stripe/portal';
 import { unixEpochToISOString } from 'src/utils/utils';
 
@@ -12,11 +13,12 @@ import { CancelSubscriptionModal } from './modal-cancel-subscription';
 
 export const SubscriptionDetails = () => {
     const { subscription } = useSubscription();
+    const { usages } = useUsages();
     const { userDataLoading, company } = useContext(AccountContext);
     const { t, i18n } = useTranslation();
-    const profileViewUsages = company?.usages.filter(({ type }) => type === 'profile');
-    const searchUsages = company?.usages.filter(({ type }) => type === 'search');
-    const aiEmailUsages = company?.usages.filter(({ type }) => type === 'ai_email');
+    const profileViewUsages = usages?.filter(({ type }) => type === 'profile');
+    const searchUsages = usages?.filter(({ type }) => type === 'search');
+    const aiEmailUsages = usages?.filter(({ type }) => type === 'ai_email');
 
     const [showCancelModal, setShowCancelModal] = useState(false);
     const handleCancelSubscription = async () => setShowCancelModal(true);

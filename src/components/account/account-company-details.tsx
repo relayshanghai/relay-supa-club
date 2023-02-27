@@ -10,9 +10,14 @@ import { Edit } from '../icons';
 import { Input } from '../input';
 import { AccountContext } from './account-context';
 import { InviteMembersModal } from './modal-invite-members';
+import { useInvites } from 'src/hooks/use-invites';
+import { useTeammates } from 'src/hooks/use-teammates';
 
 export const CompanyDetails = () => {
     const { userDataLoading, profile, company, updateCompany } = useContext(AccountContext);
+
+    const { invites } = useInvites();
+    const { teammates } = useTeammates();
 
     const [showAddMoreMembers, setShowAddMoreMembers] = useState(false);
     const {
@@ -132,8 +137,8 @@ export const CompanyDetails = () => {
             <div className="w-full pt-5">
                 <h3 className="pb-4 font-bold">{t('account.company.members')}</h3>
                 <div className="divide-y divide-grey-200">
-                    {Array.isArray(company?.profiles) &&
-                        company?.profiles.map((profile) => {
+                    {Array.isArray(teammates) &&
+                        teammates.map((profile) => {
                             return (
                                 <div
                                     key={profile.id}
@@ -163,30 +168,28 @@ export const CompanyDetails = () => {
                         })}
                 </div>
 
-                {company?.invites &&
-                    Array.isArray(company?.invites) &&
-                    company.invites.length > 0 && (
-                        <>
-                            <p className="pt-8 pb-2 font-bold">
-                                {t('account.company.pendingInvitations')}
-                            </p>
-                            {company?.invites.map((invites) => {
-                                return (
-                                    <div
-                                        key={invites.id}
-                                        className="flex flex-row space-x-8 items-center border-t border-b border-grey-200 w-full py-2"
-                                    >
-                                        <div>
-                                            <p className="text-xs text-gray-500">
-                                                {t('account.company.email')}
-                                            </p>
-                                            <p>{invites.email}</p>
-                                        </div>
+                {invites && Array.isArray(invites) && invites.length > 0 && (
+                    <>
+                        <p className="pt-8 pb-2 font-bold">
+                            {t('account.company.pendingInvitations')}
+                        </p>
+                        {invites.map((invites) => {
+                            return (
+                                <div
+                                    key={invites.id}
+                                    className="flex flex-row space-x-8 items-center border-t border-b border-grey-200 w-full py-2"
+                                >
+                                    <div>
+                                        <p className="text-xs text-gray-500">
+                                            {t('account.company.email')}
+                                        </p>
+                                        <p>{invites.email}</p>
                                     </div>
-                                );
-                            })}
-                        </>
-                    )}
+                                </div>
+                            );
+                        })}
+                    </>
+                )}
                 {isAdmin(profile?.role) && (
                     <div className="pt-4">
                         <Button variant="secondary" onClick={() => setShowAddMoreMembers(true)}>

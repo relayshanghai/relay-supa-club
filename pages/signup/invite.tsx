@@ -1,10 +1,5 @@
 import { useRouter } from 'next/router';
-import {
-    CompanyAcceptInviteGetQueries,
-    CompanyAcceptInviteGetResponse,
-    CompanyAcceptInvitePostBody,
-    CompanyAcceptInvitePostResponse,
-} from 'pages/api/company/accept-invite';
+
 import { useCallback, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
@@ -18,11 +13,13 @@ import type { InviteStatusError } from 'src/errors/login';
 import { useFields } from 'src/hooks/use-fields';
 import { useUser } from 'src/hooks/use-user';
 import { hasCustomError } from 'src/utils/errors';
-import { nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';
+
 import { clientLogger } from 'src/utils/logger';
-import { SignupInputTypes, validateSignupInput } from 'src/utils/validation/signup';
+import { validateSignupInput } from 'src/utils/validation/signup';
+import type { SignupInputTypes } from 'src/utils/validation/signup';
 import { Spinner } from 'src/components/icons';
 import { isMissing } from 'src/utils/utils';
+import { useInvites } from 'src/hooks/use-invites';
 
 type InviteStatus = InviteStatusError | 'pending' | 'inviteValid';
 
@@ -51,14 +48,12 @@ export default function Register() {
         password: '',
         confirmPassword: '',
     });
+    const { getInviteStatus, acceptInvite } = useInvites();
 
     useEffect(() => {
-        const checkInvite = async () => {
+        const checkInvite = async (token: string) => {
             try {
-                const tokenStatus = await nextFetchWithQueries<
-                    CompanyAcceptInviteGetQueries,
-                    CompanyAcceptInviteGetResponse
-                >('company/accept-invite', { token });
+                const tokenStatus = await getInviteStatus(token);
                 if (tokenStatus.message && tokenStatus.email) {
                     setFieldValue('email', tokenStatus.email);
                     setInviteStatus(tokenStatus.message);
@@ -71,8 +66,8 @@ export default function Register() {
                 }
             }
         };
-        if (token) checkInvite();
-    }, [token, setFieldValue, router]);
+        if (token) checkInvite(token);
+    }, [token, setFieldValue, router, getInviteStatus]);
 
     const handleSubmit = useCallback(async () => {
         try {
@@ -84,16 +79,13 @@ export default function Register() {
             if (signOutError) {
                 throw new Error(signOutError?.message || 'Error signing out previous session');
             }
-            const body: CompanyAcceptInvitePostBody = {
+
+            const res = await acceptInvite({
                 token,
                 password,
                 firstName,
                 lastName,
                 email,
-            };
-            const res = await nextFetch<CompanyAcceptInvitePostResponse>('company/accept-invite', {
-                method: 'post',
-                body,
             });
             if (!res.id) {
                 throw new Error('Error accepting invite');
@@ -121,7 +113,18 @@ export default function Register() {
         } finally {
             setRegistering(false);
         }
-    }, [email, firstName, lastName, login, password, router, supabaseClient?.auth, t, token]);
+    }, [
+        acceptInvite,
+        email,
+        firstName,
+        lastName,
+        login,
+        password,
+        router,
+        supabaseClient?.auth,
+        t,
+        token,
+    ]);
     if (!token)
         return (
             <div className="mx-auto h-full flex flex-col justify-center items-center space-y-6">

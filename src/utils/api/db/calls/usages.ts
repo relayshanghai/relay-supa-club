@@ -2,9 +2,9 @@ import { usageErrors } from 'src/errors/usages';
 import { serverLogger } from 'src/utils/logger';
 import { supabase } from 'src/utils/supabase-client';
 import { unixEpochToISOString } from 'src/utils/utils';
-import { UsageType } from 'types';
+import type { UsageType } from 'types';
 import { getSubscription } from '../../stripe/helpers';
-import { UsagesDBInsert } from '../types';
+import type { UsagesDBInsert } from '../types';
 import { updateCompanySubscriptionStatus } from './company';
 
 const handleCurrentPeriodExpired = async (companyId: string) => {
@@ -227,4 +227,15 @@ export const recordAiEmailGeneratorUsage = async (company_id: string, user_id: s
         company_id,
         user_id,
     });
+};
+
+export const getUsagesByCompany = async (companyId: string) => {
+    const { data, error } = await supabase
+        .from('usages')
+        .select('type, created_at')
+        .eq('company_id', companyId);
+    if (error) {
+        throw new Error(error.message);
+    }
+    return data;
 };

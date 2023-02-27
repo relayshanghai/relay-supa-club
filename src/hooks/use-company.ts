@@ -1,12 +1,13 @@
-import type { CompanyGetQueries, CompanyPutBody, CompanyPutResponse } from 'pages/api/company';
-import type { CompanyCreatePostBody, CompanyCreatePostResponse } from 'pages/api/company/create';
 import type {
-    CompanyCreateInvitePostBody,
-    CompanyCreateInvitePostResponse,
-} from 'pages/api/company/create-invite';
+    CompanyGetQueries,
+    CompanyGetResponse,
+    CompanyPutBody,
+    CompanyPutResponse,
+} from 'pages/api/company';
+import type { CompanyCreatePostBody, CompanyCreatePostResponse } from 'pages/api/company/create';
+
 import { useCallback } from 'react';
 import { createCompanyValidationErrors } from 'src/errors/company';
-import type { CompanyWithProfilesInvitesAndUsage } from 'src/utils/api/db/calls/company';
 import { nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';
 import useSWR from 'swr';
 import { useUser } from './use-user';
@@ -16,7 +17,7 @@ export const useCompany = () => {
     const { data: company, mutate: refreshCompany } = useSWR(
         profile?.company_id ? 'company' : null,
         (path) =>
-            nextFetchWithQueries<CompanyGetQueries, CompanyWithProfilesInvitesAndUsage>(path, {
+            nextFetchWithQueries<CompanyGetQueries, CompanyGetResponse>(path, {
                 id: profile?.company_id ?? '',
             }),
     );
@@ -34,23 +35,6 @@ export const useCompany = () => {
             });
         },
         [company?.id],
-    );
-
-    const createInvite = useCallback(
-        async (email: string, companyOwner: boolean) => {
-            if (!profile?.company_id) throw new Error('No profile found');
-            const body: CompanyCreateInvitePostBody = {
-                email: email,
-                company_id: profile.company_id,
-                name: `${profile.first_name} ${profile.last_name}`,
-                companyOwner,
-            };
-            return await nextFetch<CompanyCreateInvitePostResponse>(`company/create-invite`, {
-                method: 'post',
-                body,
-            });
-        },
-        [profile],
     );
 
     const createCompany = useCallback(
@@ -75,7 +59,6 @@ export const useCompany = () => {
     return {
         company,
         updateCompany,
-        createInvite,
         createCompany,
         refreshCompany,
     };
