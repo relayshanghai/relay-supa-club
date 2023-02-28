@@ -3,7 +3,7 @@ const creators = {
     results: '结果',
     noResults: '无结果',
     clearFilter: '清除筛选',
-
+    failedToFetchReport: '无法获取报告',
     subscribers: '粉丝',
     avgViews: '平均观看量',
     engagements: '互动次数',
@@ -153,6 +153,10 @@ const creators = {
             audienceLocation: '我们通过分析最近视频中的位置标签、文本、简介和标题来确定这一点',
             language: '我们通过最近发布内容的文字来判断',
         },
+        mass_followers: '批量关注账号',
+        suspicious: '可疑',
+        influencers: 'KOL',
+        real: '真实',
         audienceGenderAge: '粉丝性别年龄',
     },
 };

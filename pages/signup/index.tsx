@@ -4,13 +4,13 @@ import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
-import { LanguageToggle } from 'src/components/common/language-toggle';
 import { Input } from 'src/components/input';
-import { Title } from 'src/components/title';
+import { LoginSignupLayout } from 'src/components/SignupLayout';
 import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
 import { useFields } from 'src/hooks/use-fields';
 import { useUser } from 'src/hooks/use-user';
 import { clientLogger } from 'src/utils/logger';
+import { isMissing } from 'src/utils/utils';
 import { SignupInputTypes, validateSignupInput } from 'src/utils/validation/signup';
 
 export default function Register() {
@@ -98,22 +98,28 @@ export default function Register() {
     };
     const hasValidationErrors = Object.values(validationErrors).some((error) => error !== '');
 
-    const invalidFormInput = !firstName || !lastName || !email || !password || hasValidationErrors;
+    const invalidFormInput = isMissing(firstName, lastName, email, password) || hasValidationErrors;
     const submitDisabled = invalidFormInput || loading;
 
     return (
-        <div className="w-full h-screen px-10 flex flex-col">
-            <div className="sticky top-0 flex items-center w-full justify-between">
-                <Title />
-                <LanguageToggle />
-            </div>
-            <form className="max-w-xs w-full mx-auto flex-grow flex flex-col justify-center items-center space-y-5">
-                <div className="text-left w-full">
-                    <h1 className="font-bold text-4xl mb-2">{t('login.signUp')}</h1>
-                    <h3 className="text-sm text-gray-600 mb-8">
-                        {t('login.startYour30DayFreeTrial')}
-                    </h3>
+        <LoginSignupLayout>
+            {' '}
+            <form className="mx-auto flex w-full max-w-xs flex-grow flex-col items-center justify-center space-y-2">
+                <div className="w-full text-left">
+                    <h1 className="mb-2 text-4xl font-bold">{t('login.signUp')}</h1>
+                    <h3 className="mb-8 text-sm text-gray-600">{t('login.signupSubtitle')}</h3>
                 </div>
+                <p className="text-md inline pb-4 text-gray-500">
+                    {t('login.alreadyHaveAnAccount')}
+                    <Link
+                        href="/login"
+                        className="inline cursor-pointer text-primary-700 hover:text-primary-600"
+                    >
+                        <Button variant="secondary" className="ml-2 px-1 pt-1 pb-1 text-xs">
+                            {t('login.logIn')}
+                        </Button>
+                    </Link>
+                </p>
                 <Input
                     error={validationErrors.firstName}
                     label={t('login.firstName')}
@@ -163,17 +169,7 @@ export default function Register() {
                 <Button disabled={submitDisabled} type="button" onClick={handleSubmit}>
                     {t('login.signUp')}
                 </Button>
-                <p className="inline text-gray-500 text-sm pb-4">
-                    {t('login.alreadyHaveAnAccount')}
-                    <Link
-                        href="/login"
-                        className="inline text-primary-700 hover:text-primary-600 cursor-pointer">
-
-                        {t('login.logIn')}
-
-                    </Link>
-                </p>
             </form>
-        </div>
+        </LoginSignupLayout>
     );
 }

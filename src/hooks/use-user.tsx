@@ -37,7 +37,7 @@ export type SignupData = {
     };
 };
 
-const ctx = createContext<{
+export interface UserContext {
     user: User | null;
     profile: ProfileDB | undefined;
     loading: boolean;
@@ -58,7 +58,9 @@ const ctx = createContext<{
     refreshProfile: KeyedMutator<ProfileGetResponse> | (() => void);
     supabaseClient: SupabaseClient<DatabaseWithCustomTypes> | null;
     getProfileController: MutableRefObject<AbortController | null | undefined>;
-}>({
+}
+
+const ctx = createContext<UserContext>({
     user: null,
     profile: undefined,
     loading: true,
@@ -78,7 +80,13 @@ const ctx = createContext<{
     getProfileController: { current: null },
 });
 
-export const useUser = () => useContext(ctx);
+export const useUser = () => {
+    const context = useContext(ctx);
+    if (context === null) {
+        throw new Error('useUser must be used within a UserProvider');
+    }
+    return context;
+};
 
 export const UserProvider = ({ children }: PropsWithChildren) => {
     const { isLoading, session } = useSessionContext();
@@ -129,6 +137,12 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
     };
 
     const signup = async ({ email, password, data }: SignupData) => {
+        if (session?.user) {
+            const { error: signOutError } = await supabaseClient.auth.signOut();
+            if (signOutError) {
+                throw new Error(signOutError?.message || 'Error signing out previous session');
+            }
+        }
         const { error, data: signupResData } = await supabaseClient.auth.signUp({
             email,
             password,
@@ -187,9 +201,14 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
     useEffect(() => {
         // detect if the email has been changed on the supabase side and update the profile
         const updateEmail = async () => {
+            // This situation might happen between the time the user is logged in and the profile is fetched, or if the user logs in with a different email
+            if (session?.user.id !== profile?.id) {
+                return refreshProfile();
+            }
+            // only proceed if the ids match and the emails are different
             if (session?.user.email && profile?.email && session.user.email !== profile.email) {
                 try {
-                    await updateProfile({ ...profile, email: session.user.email });
+                    await updateProfile({ email: session.user.email });
                     refreshProfile();
                 } catch (error) {
                     clientLogger(error, 'error');

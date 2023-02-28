@@ -7,7 +7,7 @@ export default function Enter(props: SVGProps<SVGSVGElement>) {
             viewBox="0 0 1200 1200"
             xmlns="http://www.w3.org/2000/svg"
             fill="currentColor"
-            className="w-6 h-6"
+            className="h-6 w-6"
             {...props}
         >
             <path

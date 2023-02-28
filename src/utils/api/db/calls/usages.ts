@@ -2,9 +2,9 @@ import { usageErrors } from 'src/errors/usages';
 import { serverLogger } from 'src/utils/logger';
 import { supabase } from 'src/utils/supabase-client';
 import { unixEpochToISOString } from 'src/utils/utils';
-import { UsageType } from 'types';
+import type { UsageType } from 'types';
 import { getSubscription } from '../../stripe/helpers';
-import { UsagesDBInsert } from '../types';
+import type { UsagesDBInsert } from '../types';
 import { updateCompanySubscriptionStatus } from './company';
 
 const handleCurrentPeriodExpired = async (companyId: string) => {
@@ -192,4 +192,50 @@ export const recordSearchUsage = async (company_id: string, user_id: string) => 
         company_id,
         user_id,
     });
+};
+
+export const recordAiEmailGeneratorUsage = async (company_id: string, user_id: string) => {
+    const { data: company, error: companyError } = await supabase
+        .from('companies')
+        .select(
+            'subscription_status, subscription_current_period_start, subscription_current_period_end, ai_email_generator_limit, trial_ai_email_generator_limit',
+        )
+        .eq('id', company_id)
+        .single();
+    if (!company || companyError) {
+        return { error: usageErrors.noCompany };
+    }
+    const subscriptionLimit =
+        company.subscription_status === 'trial'
+            ? company.trial_ai_email_generator_limit
+            : company.ai_email_generator_limit;
+
+    if (!subscriptionLimit) {
+        return { error: usageErrors.noSubscriptionLimit };
+    }
+    if (!company.subscription_current_period_start || !company.subscription_current_period_end) {
+        return { error: usageErrors.noSubscriptionStartEndDate };
+    }
+    const startDate = new Date(company.subscription_current_period_start);
+    const endDate = new Date(company.subscription_current_period_end);
+
+    return recordUsage({
+        type: 'ai_email',
+        startDate,
+        endDate,
+        subscriptionLimit,
+        company_id,
+        user_id,
+    });
+};
+
+export const getUsagesByCompany = async (companyId: string) => {
+    const { data, error } = await supabase
+        .from('usages')
+        .select('type, created_at')
+        .eq('company_id', companyId);
+    if (error) {
+        throw new Error(error.message);
+    }
+    return data;
 };

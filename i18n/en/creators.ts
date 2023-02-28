@@ -3,7 +3,7 @@ const creators = {
     results: 'Total Results',
     noResults: 'No results found',
     clearFilter: 'Clear',
-
+    failedToFetchReport: 'Failed to fetch report',
     subscribers: 'Followers',
     avgViews: 'Avg. Views',
     engagements: 'Engagements',
@@ -158,6 +158,10 @@ const creators = {
             language: 'We determine this by analyzing texts in the recent posts',
         },
         audienceGenderAge: 'Audience gender by age',
+        mass_followers: 'Mass Followers',
+        suspicious: 'Suspicious',
+        influencers: 'Influencers',
+        real: 'Real',
     },
 };
 

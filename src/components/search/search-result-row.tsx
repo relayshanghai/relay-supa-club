@@ -38,8 +38,8 @@ export const SearchResultRow = ({
     };
 
     return (
-        <tr className={`relative group duration-1 hover:bg-primary-100`}>
-            <td className="invisible absolute flex right-28 -top-3 group-hover:visible">
+        <tr className={`duration-1 group relative hover:bg-primary-100`}>
+            <td className="invisible absolute right-28 -top-3 flex group-hover:visible">
                 <div className="flex space-x-4">
                     <Button onClick={addToCampaign} variant="secondary">
                         {t('creators.addToCampaign')}
@@ -51,18 +51,18 @@ export const SearchResultRow = ({
                     {url && (
                         <Link href={url} target="_blank" rel="noopener noreferrer">
                             <Button>
-                                <ShareLink className="w-4 h-5 fill-current text-white" />
+                                <ShareLink className="h-5 w-4 fill-current text-white" />
                             </Button>
                         </Link>
                     )}
                 </div>
             </td>
 
-            <td className="py-2 px-4 flex flex-row items-center space-x-2 min-w-min">
-                <img src={imgProxy(picture) as string} className="w-12 h-12" alt={handle} />
+            <td className="flex min-w-min flex-row items-center space-x-2 py-2 px-4">
+                <img src={imgProxy(picture) as string} className="h-12 w-12" alt={handle} />
                 <div>
                     <div className="font-bold line-clamp-2">{fullname}</div>
-                    <div className="text-primary-500 text-sm line-clamp-1">
+                    <div className="text-sm text-primary-500 line-clamp-1">
                         {handle ? `@${handle}` : null}
                     </div>
                 </div>

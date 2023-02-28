@@ -21,7 +21,7 @@ function Checkbox({ fieldName, register, errors, options, isRequired = false }: 
         <div>
             {options.map((type, index) => {
                 return (
-                    <div key={index} className="flex items-center mb-1">
+                    <div key={index} className="mb-1 flex items-center">
                         <input
                             type="checkbox"
                             id={type.value}
@@ -34,7 +34,7 @@ function Checkbox({ fieldName, register, errors, options, isRequired = false }: 
                             })}
                             value={type.value}
                         />
-                        <label htmlFor={type.value} className="text-sm text-gray-600 hover">
+                        <label htmlFor={type.value} className="hover text-sm text-gray-600">
                             {t(type.label)}
                         </label>
                     </div>

@@ -8,7 +8,7 @@ export interface CampaignCreatorUpdatePutBody extends CampaignCreatorDBUpdate {
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'PUT') {
-        const { campaign_id, ...data } = JSON.parse(req.body);
+        const { campaign_id, ...data } = req.body;
         const { data: campaignCreators, error } = await updateCampaignCreator(data, campaign_id);
         if (error) {
             serverLogger(error, 'error');

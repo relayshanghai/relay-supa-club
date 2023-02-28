@@ -1,41 +1,18 @@
 import { supabase } from 'src/utils/supabase-client';
-import { SubscriptionStatus } from 'types';
-import type {
-    CompanyDB,
-    CompanyDBInsert,
-    CompanyDBUpdate,
-    InvitesDB,
-    ProfileDB,
-    UsagesDB,
-} from '../types';
-
-// Custom type for supabase queries where we select more than one row in a single query
-export type CompanyWithProfilesInvitesAndUsage = CompanyDB & {
-    profiles: Pick<ProfileDB, 'id' | 'first_name' | 'last_name' | 'role'>[];
-    invites: Pick<InvitesDB, 'id' | 'email' | 'used' | 'expire_at'>[];
-    usages: Pick<UsagesDB, 'id' | 'type'>[];
-};
+import type { SubscriptionStatus } from 'types';
+import type { CompanyDB, CompanyDBInsert, CompanyDBUpdate } from '../types';
 
 export const getCompanyCusId = (companyId: string) =>
     supabase.from('companies').select('cus_id').eq('id', companyId).single();
 
+export const getCompanyById = async (companyId: string) => {
+    const { data, error } = await supabase.from('companies').select().eq('id', companyId).single();
+    if (error) throw error;
+    return data as CompanyDB;
+};
+
 export const getCompanyByCusId = (cusId: string) =>
     supabase.from('companies').select().eq('cus_id', cusId).single();
-
-export const getCompanyWithProfilesInvitesAndUsage = async (companyId: string) => {
-    const { data, error } = await supabase
-        .from('companies')
-        .select(
-            // If this query changes, make sure to update the CompanyWithProfilesInvitesAndUsage type
-            '*, profiles(id, first_name, last_name, role), invites(id, email, used, expire_at), usages(id, type)',
-        )
-        .eq('id', companyId)
-        .eq('invites.used', false)
-        .single();
-
-    if (error) throw error;
-    return data as CompanyWithProfilesInvitesAndUsage;
-};
 
 /** updates the company, but does not allow usage limits or company onboarding status to be set */
 export const updateCompany = async (update: CompanyDBUpdate) => {
@@ -62,24 +39,32 @@ export const updateCompany = async (update: CompanyDBUpdate) => {
 type CompanyUsageLimitUpdate = {
     profiles_limit: string;
     searches_limit: string;
+    ai_email_generator_limit: string;
     trial_searches_limit?: string;
     trial_profiles_limit?: string;
+    trial_ai_email_generator_limit?: string;
     id: string;
 };
 
 export const updateCompanyUsageLimits = async ({
     profiles_limit,
     searches_limit,
+    ai_email_generator_limit,
     trial_searches_limit,
     trial_profiles_limit,
+    trial_ai_email_generator_limit,
     id,
 }: CompanyUsageLimitUpdate) => {
     const update: Omit<CompanyUsageLimitUpdate, 'id'> = {
         profiles_limit,
         searches_limit,
+        ai_email_generator_limit,
     };
     if (trial_profiles_limit) update.trial_profiles_limit = trial_profiles_limit;
     if (trial_searches_limit) update.trial_searches_limit = trial_searches_limit;
+    if (trial_ai_email_generator_limit)
+        update.trial_ai_email_generator_limit = trial_ai_email_generator_limit;
+
     const { data, error } = await supabase
         .from('companies')
         .update(update)
@@ -144,3 +129,11 @@ export const getCompanyByName = (name: string) =>
 
 export const getCompanyName = (id: string) =>
     supabase.from('companies').select('name').eq('id', id).single();
+
+export const getAllCompanyNames = () => supabase.from('companies').select('name');
+
+export const getTeammatesByCompanyId = async (companyId: string) => {
+    const { data, error } = await supabase.from('profiles').select().eq('company_id', companyId);
+    if (error) throw error;
+    return data;
+};

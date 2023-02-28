@@ -32,14 +32,14 @@ const Clients = () => {
                 {loading ? (
                     <Spinner className="h-5 w-5 fill-primary-600 text-white" />
                 ) : (
-                    <table className="bg-white  divide-y divide-gray-200 overflow-y-visible w-full">
+                    <table className="w-full  divide-y divide-gray-200 overflow-y-visible bg-white">
                         <thead>
                             <tr>
                                 {columnHeaders.map((header) => (
                                     <th
                                         key={header}
                                         scope="col"
-                                        className="px-6 py-3 text-left text-sm text-gray-600 tracking-wider min-w-fit "
+                                        className="min-w-fit px-6 py-3 text-left text-sm tracking-wider text-gray-600 "
                                     >
                                         {header}
                                     </th>
@@ -74,26 +74,22 @@ const Clients = () => {
                                         {dataPoints.map((dataPoint, index) => (
                                             <td
                                                 key={columnHeaders[index] + dataPoint}
-                                                className="px-6 py-4 whitespace-nowrap text-sm text-gray-900"
+                                                className="whitespace-nowrap px-6 py-4 text-sm text-gray-900"
                                             >
                                                 {columnHeaders[index] === 'Campaigns' ? (
                                                     <div className="flex items-center justify-center">
                                                         <Link
                                                             href={`/admin/campaigns/${client.id}`}
                                                         >
-
                                                             <Button>{dataPoint}</Button>
-
                                                         </Link>
                                                     </div>
                                                 ) : columnHeaders[index] === 'Search' ? (
-                                                    (<Link
+                                                    <Link
                                                         href={`/admin/search/${client.id}?company_name=${client.name}`}
                                                     >
-
                                                         <Button>{dataPoint}</Button>
-
-                                                    </Link>)
+                                                    </Link>
                                                 ) : (
                                                     dataPoint
                                                 )}

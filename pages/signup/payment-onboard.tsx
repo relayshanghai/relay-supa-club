@@ -4,13 +4,14 @@ import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
-import { LanguageToggle } from 'src/components/common/language-toggle';
+
 import { Spinner } from 'src/components/icons';
-import { Title } from 'src/components/title';
+import { LoginSignupLayout } from 'src/components/SignupLayout';
 import { APP_URL } from 'src/constants';
 import { createSubscriptionErrors } from 'src/errors/subscription';
 import { useCompany } from 'src/hooks/use-company';
 import { useSubscription } from 'src/hooks/use-subscription';
+import { useUser } from 'src/hooks/use-user';
 import { buildSubscriptionPortalUrl } from 'src/utils/api/stripe/portal';
 import { hasCustomError } from 'src/utils/errors';
 import { clientLogger } from 'src/utils/logger';
@@ -20,7 +21,7 @@ const PaymentOnboard = () => {
     const { company } = useCompany();
     const { subscription, createTrial, paymentMethods } = useSubscription();
     const [submitting, setSubmitting] = useState(false);
-
+    const { logout } = useUser();
     useEffect(() => {
         const redirectIfSubscribed = async () => {
             if (subscription?.status === 'trialing' || subscription?.status === 'active')
@@ -54,45 +55,46 @@ const PaymentOnboard = () => {
     };
 
     return (
-        <div className="w-full h-screen px-10 flex flex-col">
-            <div className="sticky top-0 flex items-center w-full justify-between">
-                <Title />
-                <LanguageToggle />
-            </div>
-            <form className="max-w-xs w-full mx-auto flex-grow flex flex-col justify-center items-center space-y-5">
-                <div className="text-left w-full">
-                    <h1 className="font-bold text-4xl mb-2">{t('login.addPaymentMethod')}</h1>
-                    <h3 className="text-sm text-gray-600 mb-8">{t('login.andActivateTrial')}</h3>
+        <LoginSignupLayout>
+            <form className="mx-auto flex w-full max-w-xs flex-grow flex-col items-center justify-center space-y-2">
+                <div className="w-full text-left">
+                    <h1 className="mb-2 text-4xl font-bold">{t('login.addPaymentMethod')}</h1>
+                    <h3 className="mb-8 text-sm text-gray-600">{t('login.andActivateTrial')}</h3>
                 </div>
                 {!company?.id ? (
-                    <Spinner className="fill-primary-600 text-white w-20 h-20" />
+                    <Spinner className="h-20 w-20 fill-primary-600 text-white" />
                 ) : (
                     <>
                         {paymentMethods?.length && paymentMethods?.length > 0 ? (
                             <div className="flex flex-col space-y-6">
-                                <Button onClick={handleSubmit} disabled={submitting}>
+                                <Button type="button" onClick={handleSubmit} disabled={submitting}>
                                     {t('login.activateTrial')}
                                 </Button>
                                 <p className="text-xs text-gray-500">{t('login.signupTerms')}</p>
                             </div>
                         ) : (
-                            (<Link
+                            <Link
                                 href={buildSubscriptionPortalUrl({
                                     id: company.id,
                                     returnUrl: `${APP_URL}/signup/payment-onboard`,
                                 })}
                             >
-
-                                <Button variant="secondary">
-                                    {t('login.addPaymentMethod')}
-                                </Button>
-
-                            </Link>)
+                                <Button variant="secondary">{t('login.addPaymentMethod')}</Button>
+                            </Link>
                         )}
                     </>
                 )}
+                <div className="pt-20">
+                    <button type="button" className="text-sm text-gray-500" onClick={logout}>
+                        {t('login.stuckHereTryAgain1')}
+                        <Link className="text-primary-500" href="/logout">
+                            {t('login.signOut')}
+                        </Link>
+                        {t('login.stuckHereTryAgain2')}
+                    </button>
+                </div>
             </form>
-        </div>
+        </LoginSignupLayout>
     );
 };
 

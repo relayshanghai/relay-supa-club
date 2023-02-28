@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
+import { AI_EMAIL_SUBSCRIPTION_USAGE_LIMIT } from 'src/constants/openai';
 import { createSubscriptionErrors } from 'src/errors/subscription';
 import {
     getCompanyCusId,
@@ -22,7 +23,7 @@ export type SubscriptionCreatePostResponse = Stripe.Response<Stripe.Subscription
  */
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
-        const { company_id, price_id } = JSON.parse(req.body) as SubscriptionCreatePostBody;
+        const { company_id, price_id } = req.body as SubscriptionCreatePostBody;
         if (!company_id)
             return res
                 .status(httpCodes.BAD_REQUEST)
@@ -100,6 +101,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             await updateCompanyUsageLimits({
                 profiles_limit: product.metadata.profiles,
                 searches_limit: product.metadata.searches,
+                ai_email_generator_limit: AI_EMAIL_SUBSCRIPTION_USAGE_LIMIT,
                 id: company_id,
             });
 

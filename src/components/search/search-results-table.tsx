@@ -22,36 +22,32 @@ export const SearchResultsTable = ({
                     loading ? 'opacity-60' : ''
                 }`}
             >
-                <thead className="bg-white sticky top-0">
+                <thead className="sticky top-0 bg-white">
                     <tr>
-                        <th className="w-2/4 px-4 py-4 text-xs text-gray-500 font-normal text-left">
+                        <th className="w-2/4 px-4 py-4 text-left text-xs font-normal text-gray-500">
                             {t('creators.account')}
                         </th>
-                        <th className="text-xs pr-4 whitespace-nowrap text-gray-500 font-normal text-left">
+                        <th className="whitespace-nowrap pr-4 text-left text-xs font-normal text-gray-500">
                             {t('creators.subscribers')}
                         </th>
-                        <th className="text-xs pr-4 whitespace-nowrap text-gray-500 font-normal text-left">
+                        <th className="whitespace-nowrap pr-4 text-left text-xs font-normal text-gray-500">
                             {t('creators.engagements')}
                         </th>
-                        <th className="text-xs pr-4 whitespace-nowrap text-gray-500 font-normal text-left">
+                        <th className="whitespace-nowrap pr-4 text-left text-xs font-normal text-gray-500">
                             {t('creators.engagementRate')}
                         </th>
-                        <th className="text-xs pr-4 whitespace-nowrap text-gray-500 font-normal text-left">
+                        <th className="whitespace-nowrap pr-4 text-left text-xs font-normal text-gray-500">
                             {t('creators.avgViews')}
                         </th>
                     </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="divide-y divide-gray-200 bg-white">
                     {usageExceeded ? (
                         <tr>
-                            <td className="text-center py-4 space-y-4" colSpan={5}>
+                            <td className="space-y-4 py-4 text-center" colSpan={5}>
                                 <p className="mb-4">{t('creators.usageExceeded')}</p>
                                 <Link href="/pricing">
-
-                                    <Button>
-                                        {t('account.subscription.upgradeSubscription')}
-                                    </Button>
-
+                                    <Button>{t('account.subscription.upgradeSubscription')}</Button>
                                 </Link>
                             </td>
                         </tr>
@@ -72,7 +68,7 @@ export const SearchResultsTable = ({
                         ))
                     ) : (
                         <tr>
-                            <td className="text-center py-4" colSpan={5}>
+                            <td className="py-4 text-center" colSpan={5}>
                                 {t('creators.noResults')}
                             </td>
                         </tr>

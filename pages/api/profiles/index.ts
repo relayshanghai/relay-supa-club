@@ -1,6 +1,6 @@
 import { NextApiHandler } from 'next';
 import httpCodes from 'src/constants/httpCodes';
-import { getProfileById, ProfileDB, ProfileInsertDB, updateProfile } from 'src/utils/api/db';
+import { getProfileById, ProfileDB, ProfileDBUpdate, updateProfile } from 'src/utils/api/db';
 import { checkSessionIdMatchesID } from 'src/utils/auth';
 import { serverLogger } from 'src/utils/logger';
 
@@ -10,7 +10,7 @@ export type ProfileGetQuery = {
 };
 export type ProfileGetResponse = ProfileDB;
 
-export type ProfilePutBody = ProfileInsertDB;
+export type ProfilePutBody = ProfileDBUpdate & { id: string };
 export type ProfilePutResponse = ProfileDB;
 
 const Handler: NextApiHandler = async (req, res) => {
@@ -41,7 +41,7 @@ const Handler: NextApiHandler = async (req, res) => {
     }
 
     if (req.method === 'PUT') {
-        const profile = JSON.parse(req.body) as ProfilePutBody;
+        const profile = req.body as ProfilePutBody;
 
         try {
             const matchesSession = await checkSessionIdMatchesID(profile.id, req, res);

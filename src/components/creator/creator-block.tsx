@@ -19,15 +19,15 @@ export const CreatorBlock = ({
     const creators = showMore ? similarCreators : similarCreators.slice(0, 5);
     if (creators.length === 0) return null;
     return (
-        <div className="flex flex-col w-full">
-            <h2 className="font-semibold text-gray-600 mb-2">{t(`creators.show.${title}`)}</h2>
+        <div className="flex w-full flex-col">
+            <h2 className="mb-2 font-semibold text-gray-600">{t(`creators.show.${title}`)}</h2>
             <div>
                 {creators.map((creator, index) => (
                     <SimilarCreator creator={creator} platform={platform} key={index} />
                 ))}
             </div>
             <button onClick={() => setShowMore(!showMore)} className="justify-self-end">
-                <p className="text-primary-500 hover:text-primary-700 duration-300 font-semibold text-sm text-right">
+                <p className="text-right text-sm font-semibold text-primary-500 duration-300 hover:text-primary-700">
                     {showMore ? t('creators.show.seeLess') : t('creators.show.seeMore')}
                 </p>
             </button>

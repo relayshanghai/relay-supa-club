@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router';
 import { useCallback, useEffect } from 'react';
 import { useUser } from 'src/hooks/use-user';
+import { nextFetch } from 'src/utils/fetcher';
 
 export default function Logout() {
     const router = useRouter();
@@ -11,8 +12,7 @@ export default function Logout() {
         if (!supabaseClient) return;
         await supabaseClient.auth.signOut();
 
-        const res = await fetch('/api/logout');
-        const data = await res.json();
+        const data = await nextFetch('logout');
         if (data.success) {
             if (profile?.id || user?.id) {
                 await refreshProfile(undefined, {

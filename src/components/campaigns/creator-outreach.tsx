@@ -134,22 +134,22 @@ export default function CreatorsOutreach({
     return (
         <div>
             {/* Outreach Tabs */}
-            <div className="flex mb-4">
+            <div className="mb-4 flex">
                 <Link href="/dashboard" legacyBehavior>
-                    <div className="bg-gray-100 rounded-md px-4 py-2 text-xs text-gray-600 mr-4 cursor-pointer hover:bg-primary-500 hover:text-white duration-300 flex-shrink-0">
+                    <div className="mr-4 flex-shrink-0 cursor-pointer rounded-md bg-gray-100 px-4 py-2 text-xs text-gray-600 duration-300 hover:bg-primary-500 hover:text-white">
                         <a>{t('campaigns.show.activities.outreach.addNewInfluencer')}</a>
                     </div>
                 </Link>
                 {/* TODO: make Tabs component reusable */}
-                <div className="hidden sm:flex items-center">
+                <div className="hidden items-center sm:flex">
                     {tabs.map((tab, index) => (
                         <div
                             key={index}
                             onClick={() => handleTabChange(tab.value)}
-                            className={`font-semibold text-xs mr-4 hover:text-primary-500 hover:bg-primary-500 hover:bg-opacity-20 px-4 py-2 rounded-lg cursor-pointer duration-300 flex-shrink-0 focus:bg-primary-500 focus:text-primary-500 focus:bg-opacity-20 ${
+                            className={`mr-4 flex-shrink-0 cursor-pointer rounded-lg px-4 py-2 text-xs font-semibold duration-300 hover:bg-primary-500 hover:bg-opacity-20 hover:text-primary-500 focus:bg-primary-500 focus:bg-opacity-20 focus:text-primary-500 ${
                                 tabStatus === tab.value
-                                    ? 'text-primary-500 bg-primary-500 bg-opacity-20'
-                                    : 'text-gray-400 bg-gray-100 '
+                                    ? 'bg-primary-500 bg-opacity-20 text-primary-500'
+                                    : 'bg-gray-100 text-gray-400 '
                             }`}
                         >
                             {t(`campaigns.show.activities.outreach.${tab.label}`)}
@@ -163,13 +163,13 @@ export default function CreatorsOutreach({
             {/* -- Outreach Table -- */}
             <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200 overflow-y-visible">
-                    <thead className="bg-white sticky top-0">
+                    <thead className="sticky top-0 bg-white">
                         <tr>
                             {columnLabels.map((label, index) => (
                                 <th
                                     key={index}
                                     scope="col"
-                                    className={`px-6 py-3 text-left text-xs font-normal text-gray-500 sticky left-0 tracking-wider min-w-fit bg-white ${
+                                    className={`sticky left-0 min-w-fit bg-white px-6 py-3 text-left text-xs font-normal tracking-wider text-gray-500 ${
                                         index === 0 ? 'sticky left-0 z-10' : ''
                                     }`}
                                 >
@@ -177,23 +177,23 @@ export default function CreatorsOutreach({
                                 </th>
                             ))}
                             {/*-- placeholder table header space for notes and delete section --*/}
-                            <th className=" px-3 py-3 text-left text-xs font-normal text-gray-500 sticky right-0 bg-white tracking-wider  min-w-[150px] max-w-[150px] z-30">
+                            <th className=" sticky right-0 z-30 min-w-[150px] max-w-[150px] bg-white px-3 py-3 text-left text-xs  font-normal tracking-wider text-gray-500">
                                 {''}
                             </th>
                         </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
+                    <tbody className="divide-y divide-gray-200 bg-white">
                         {currentCampaign?.campaign_creators.map((creator, index) => {
                             if (creator.status === tabStatus)
                                 return (
                                     <tr
                                         key={index}
-                                        className="group hover:bg-primary-50 hover:relative text-xs"
+                                        className="group text-xs hover:relative hover:bg-primary-50"
                                     >
                                         {/* -- Account Column -- */}
-                                        <td className="px-6 py-4 whitespace-nowrap sticky left-0 group-hover:bg-primary-50 w-[200px] bg-white z-30">
+                                        <td className="sticky left-0 z-30 w-[200px] whitespace-nowrap bg-white px-6 py-4 group-hover:bg-primary-50">
                                             <div className="flex items-center">
-                                                <div className="relative flex-shrink-0 h-10 w-10 rounded-full bg-gray-300">
+                                                <div className="relative h-10 w-10 flex-shrink-0 rounded-full bg-gray-300">
                                                     <img
                                                         className="h-10 w-10 rounded-full"
                                                         src={imgProxy(creator.avatar_url)}
@@ -211,26 +211,26 @@ export default function CreatorsOutreach({
                                                     </div>
                                                 </div>
                                                 <div className="ml-4">
-                                                    <div className="text-xs font-medium text-gray-900 truncate">
+                                                    <div className="truncate text-xs font-medium text-gray-900">
                                                         {creator.fullname}
                                                     </div>
-                                                    <div className="text-xs text-primary-500 inline-block truncate">
+                                                    <div className="inline-block truncate text-xs text-primary-500">
                                                         @{creator.username}
                                                     </div>
                                                 </div>
                                             </div>
                                         </td>
                                         {/* -- Contact Column -- */}
-                                        <td className="px-6 py-4 whitespace-nowrap min-w-[150px]">
+                                        <td className="min-w-[150px] whitespace-nowrap px-6 py-4">
                                             <CreatorContacts {...creator} />
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
+                                        <td className="whitespace-nowrap px-6 py-4">
                                             <select
                                                 onChange={(e) =>
                                                     handleDropdownSelect(e, creator, 'status')
                                                 }
                                                 value={creator.status}
-                                                className="-ml-1 text-xs px-4 py-2 rounded-md text-primary-500 font-semibold bg-primary-50 hover:bg-primary-100 border border-gray-200 duration-300 cursor-pointer outline-none mr-2.5 appearance-none text-center"
+                                                className="-ml-1 mr-2.5 cursor-pointer appearance-none rounded-md border border-gray-200 bg-primary-50 px-4 py-2 text-center text-xs font-semibold text-primary-500 outline-none duration-300 hover:bg-primary-100"
                                             >
                                                 {tabs.map((tab, index) => (
                                                     <option value={tab.value} key={index}>
@@ -259,9 +259,9 @@ export default function CreatorsOutreach({
                                             )}
                                         </td> */}
                                         {/* -- Action Point Column -- */}
-                                        <td className="px-6 py-4 whitespace-normal min-w-[150px] max-w-[200px]">
+                                        <td className="min-w-[150px] max-w-[200px] whitespace-normal px-6 py-4">
                                             <div
-                                                className="text-xs text-gray-900 cursor-pointer hover:text-primary-500 duration-300 relative"
+                                                className="relative cursor-pointer text-xs text-gray-900 duration-300 hover:text-primary-500"
                                                 onClick={(e) =>
                                                     setInlineEdit(e, index, 'next_step')
                                                 }
@@ -274,7 +274,7 @@ export default function CreatorsOutreach({
                                                     }`}
                                                 >
                                                     {creator.next_step || (
-                                                        <div className="text-primary-500 hover:text-primary-700 cursor-pointer duration-300">
+                                                        <div className="cursor-pointer text-primary-500 duration-300 hover:text-primary-700">
                                                             {t('campaigns.show.addActionPoint')}
                                                         </div>
                                                     )}
@@ -296,9 +296,9 @@ export default function CreatorsOutreach({
                                             </div>
                                         </td>
                                         {/* -- Publication Date Column -- */}
-                                        <td className="px-6 py-4 whitespace-nowrap min-w-[0px] max-w-[200px]">
+                                        <td className="min-w-[0px] max-w-[200px] whitespace-nowrap px-6 py-4">
                                             <div
-                                                className="text-xs text-gray-900 cursor-pointer hover:text-primary-500 duration-300 relative"
+                                                className="relative cursor-pointer text-xs text-gray-900 duration-300 hover:text-primary-500"
                                                 onClick={(e) =>
                                                     setInlineEdit(e, index, 'publication_date')
                                                 }
@@ -316,7 +316,7 @@ export default function CreatorsOutreach({
                                                         true,
                                                         true,
                                                     ) || (
-                                                        <div className="text-primary-500 hover:text-primary-700 cursor-pointer duration-300">
+                                                        <div className="cursor-pointer text-primary-500 duration-300 hover:text-primary-700">
                                                             {t('campaigns.show.selectDate')}
                                                         </div>
                                                     )}
@@ -345,9 +345,9 @@ export default function CreatorsOutreach({
                                             </div>
                                         </td>
 
-                                        <td className="px-6 py-4 whitespace-nowrap">
+                                        <td className="whitespace-nowrap px-6 py-4">
                                             <div
-                                                className="text-xs text-left pr-2 text-gray-900 cursor-pointer hover:text-primary-500 duration-300 relative"
+                                                className="relative cursor-pointer pr-2 text-left text-xs text-gray-900 duration-300 hover:text-primary-500"
                                                 onClick={(e) =>
                                                     setInlineEdit(e, index, 'rate_cents')
                                                 }
@@ -369,9 +369,9 @@ export default function CreatorsOutreach({
                                                 )}
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
+                                        <td className="whitespace-nowrap px-6 py-4">
                                             <div
-                                                className="text-xs text-left pr-2 text-gray-900 cursor-pointer hover:text-primary-500 duration-300 relative"
+                                                className="relative cursor-pointer pr-2 text-left text-xs text-gray-900 duration-300 hover:text-primary-500"
                                                 onClick={(e) =>
                                                     setInlineEdit(e, index, 'paid_amount_cents')
                                                 }
@@ -394,9 +394,9 @@ export default function CreatorsOutreach({
                                             </div>
                                         </td>
                                         {/* -- Payment Info Column -- */}
-                                        <td className="px-6 py-4 whitespace-normal min-w-[150px] max-w-[200px]">
+                                        <td className="min-w-[150px] max-w-[200px] whitespace-normal px-6 py-4">
                                             <div
-                                                className="text-xs text-gray-900 cursor-pointer hover:text-primary-500 duration-300 relative"
+                                                className="relative cursor-pointer text-xs text-gray-900 duration-300 hover:text-primary-500"
                                                 onClick={(e) =>
                                                     setInlineEdit(e, index, 'payment_details')
                                                 }
@@ -409,7 +409,7 @@ export default function CreatorsOutreach({
                                                     }`}
                                                 >
                                                     {creator.payment_details || (
-                                                        <div className="text-primary-500 hover:text-primary-700 cursor-pointer duration-300">
+                                                        <div className="cursor-pointer text-primary-500 duration-300 hover:text-primary-700">
                                                             {t('campaigns.show.addPaymentInfo')}
                                                         </div>
                                                     )}
@@ -429,7 +429,7 @@ export default function CreatorsOutreach({
                                                 )}
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
+                                        <td className="whitespace-nowrap px-6 py-4">
                                             <select
                                                 onClick={(e) => e.stopPropagation()}
                                                 onChange={(e) =>
@@ -440,7 +440,7 @@ export default function CreatorsOutreach({
                                                     )
                                                 }
                                                 value={creator.payment_status}
-                                                className="-ml-1 text-xs px-4 py-2 rounded-md text-green-500 font-semibold bg-green-50 hover:bg-green-100 border border-gray-200 duration-300 cursor-pointer outline-none mr-2.5 appearance-none text-center"
+                                                className="-ml-1 mr-2.5 cursor-pointer appearance-none rounded-md border border-gray-200 bg-green-50 px-4 py-2 text-center text-xs font-semibold text-green-500 outline-none duration-300 hover:bg-green-100"
                                             >
                                                 {paymentStatus.map((tab, index) => (
                                                     <option value={tab.value} key={index}>
@@ -450,9 +450,9 @@ export default function CreatorsOutreach({
                                             </select>
                                         </td>
                                         {/* -- Influencer Address Column -- */}
-                                        <td className="px-6 py-4whitespace-normal min-w-[150px] max-w-[200px]">
+                                        <td className="py-4whitespace-normal min-w-[150px] max-w-[200px] px-6">
                                             <div
-                                                className="text-xs text-gray-900 cursor-pointer hover:text-primary-500 duration-300 relative"
+                                                className="relative cursor-pointer text-xs text-gray-900 duration-300 hover:text-primary-500"
                                                 onClick={(e) => setInlineEdit(e, index, 'address')}
                                             >
                                                 <div
@@ -463,7 +463,7 @@ export default function CreatorsOutreach({
                                                     }`}
                                                 >
                                                     {creator.address || (
-                                                        <div className="text-primary-500 hover:text-primary-700 cursor-pointer duration-300">
+                                                        <div className="cursor-pointer text-primary-500 duration-300 hover:text-primary-700">
                                                             {t('campaigns.show.addAddress')}
                                                         </div>
                                                     )}
@@ -484,7 +484,7 @@ export default function CreatorsOutreach({
                                             </div>
                                         </td>
                                         {/* -- Sample Status Column -- */}
-                                        <td className="px-6 py-4 whitespace-nowrap">
+                                        <td className="whitespace-nowrap px-6 py-4">
                                             <select
                                                 onClick={(e) => e.stopPropagation()}
                                                 onChange={(e) =>
@@ -495,7 +495,7 @@ export default function CreatorsOutreach({
                                                     )
                                                 }
                                                 value={creator.sample_status}
-                                                className="-ml-1 text-xs px-4 py-2 rounded-md text-orange-500 font-semibold bg-orange-50 hover:bg-orange-100 border border-gray-200 duration-300 cursor-pointer outline-none mr-2.5 appearance-none text-center"
+                                                className="-ml-1 mr-2.5 cursor-pointer appearance-none rounded-md border border-gray-200 bg-orange-50 px-4 py-2 text-center text-xs font-semibold text-orange-500 outline-none duration-300 hover:bg-orange-100"
                                             >
                                                 {sampleStatus.map((tab, index) => (
                                                     <option value={tab.value} key={index}>
@@ -505,11 +505,11 @@ export default function CreatorsOutreach({
                                             </select>
                                         </td>
 
-                                        <td className="px-6 py-4 sm:sticky right-0 bg-white whitespace-nowrap z-50 group-hover:bg-primary-50 ">
+                                        <td className="right-0 z-50 whitespace-nowrap bg-white px-6 py-4 group-hover:bg-primary-50 sm:sticky ">
                                             <div className="flex justify-end">
                                                 <div
                                                     onClick={(e) => openNotes(e, creator)}
-                                                    className="p-2 rounded-md text-gray-600  bg-gray-50 hover:bg-gray-100 border border-gray-200 duration-300 outline-none appearance-none text-center font-medium mr-2 cursor-pointer"
+                                                    className="mr-2 cursor-pointer appearance-none  rounded-md border border-gray-200 bg-gray-50 p-2 text-center font-medium text-gray-600 outline-none duration-300 hover:bg-gray-100"
                                                 >
                                                     {/* TODO: notes ticket V2-139 */}
                                                     {t('campaigns.show.notes')}
@@ -518,9 +518,9 @@ export default function CreatorsOutreach({
                                                     onClick={(e) =>
                                                         deleteCampaignCreator(e, creator)
                                                     }
-                                                    className="p-2 rounded-md text-gray-600  bg-gray-50 hover:bg-gray-100 border border-gray-200 duration-300 outline-none appearance-none text-center cursor-pointer"
+                                                    className="cursor-pointer appearance-none rounded-md  border border-gray-200 bg-gray-50 p-2 text-center text-gray-600 outline-none duration-300 hover:bg-gray-100"
                                                 >
-                                                    <Trashcan className="w-4 h-4 fill-tertiary-600 hover:fill-primary-600" />
+                                                    <Trashcan className="h-4 w-4 fill-tertiary-600 hover:fill-primary-600" />
                                                 </div>
                                             </div>
                                         </td>

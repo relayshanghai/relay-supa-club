@@ -8,7 +8,7 @@ import { Compass, FourSquare, Account, Team } from './icons';
 import { Title } from './title';
 import { useTranslation } from 'react-i18next';
 
-const ActiveLink = ({ href, children }: { href: string; children: string }) => {
+const ActiveLink = ({ href, children }: { href: string; children: React.ReactNode }) => {
     const router = useRouter();
     const pathRoot = router.pathname.split('/')[1]; // /dashboard/influencers => dashboard
     const hrefRoot = href.split('/')[1]; // /dashboard/influencers => dashboard
@@ -24,12 +24,12 @@ const ActiveLink = ({ href, children }: { href: string; children: string }) => {
     }
 
     return (
-        (<Link
+        <Link
             href={href}
-            className={`flex items-center py-2 px-4 text-sm transition hover:text-primary-700 border-l-4 ${
-                isRouteActive ? 'text-primary-500 border-primary-500 border-l-4' : ''
-            }`}>
-
+            className={`flex items-center border-l-4 py-2 px-4 text-sm transition hover:text-primary-700 ${
+                isRouteActive ? 'border-l-4 border-primary-500 text-primary-500' : ''
+            }`}
+        >
             {(hrefRoot === 'influencer' || hrefRoot === 'dashboard') && (
                 <Compass height={18} width={18} className="mr-4 text-inherit" />
             )}
@@ -37,7 +37,7 @@ const ActiveLink = ({ href, children }: { href: string; children: string }) => {
                 <FourSquare height={18} width={18} className="mr-4 text-inherit" />
             )}
             {hrefRoot === 'ai-email-generator' && (
-                    <EmailOutline height={18} width={18} className="mr-4 text-inherit" />
+                <EmailOutline height={18} width={18} className="mr-4 text-inherit" />
             )}
             {hrefRoot === 'account' && (
                 <Account height={18} width={18} className="mr-4 text-inherit" />
@@ -46,8 +46,7 @@ const ActiveLink = ({ href, children }: { href: string; children: string }) => {
                 <Team height={18} width={18} className="mr-4 text-inherit" />
             )}
             {children}
-
-        </Link>)
+        </Link>
     );
 };
 
@@ -64,14 +63,20 @@ const NavBarInner = ({
             <div className="px-1 pt-5">
                 <Title />
             </div>
-            <div className="flex flex-col space-y-4 mt-8">
+            <div className="mt-8 flex flex-col space-y-4">
                 <ActiveLink href="/dashboard">{t('navbar.influencers')}</ActiveLink>
                 <ActiveLink href="/campaigns">{t('navbar.campaigns')}</ActiveLink>
-                <ActiveLink href="/ai-email-generator">{t('navbar.aiEmailGenerator')}</ActiveLink>
+
+                <ActiveLink href="/ai-email-generator">
+                    {t('navbar.aiEmailGenerator')}
+                    <span className="py-1/2 font-base ml-2 w-fit rounded-2xl bg-primary-500 px-2 text-[0.65rem] text-white">
+                        BETA
+                    </span>
+                </ActiveLink>
                 {loggedIn && <ActiveLink href="/account">{t('navbar.account')}</ActiveLink>}
             </div>
             {isRelayEmployee && (
-                <div className="flex flex-col space-y-4 mt-8">
+                <div className="mt-8 flex flex-col space-y-4">
                     <h2 className="ml-6">ADMIN</h2>
                     <ActiveLink href="/admin/clients">Clients</ActiveLink>
                 </div>
@@ -102,13 +107,13 @@ export const Sidebar = ({
         // mask is the dark overlay that appears when the sidebar is open
         <>
             <div
-                className={`fixed inset-0 transition-all z-50  ${
-                    desktop || !open ? 'opacity-0 pointer-events-none' : 'bg-black opacity-50'
+                className={`fixed inset-0 z-50 transition-all  ${
+                    desktop || !open ? 'pointer-events-none opacity-0' : 'bg-black opacity-50'
                 }`}
                 onClick={() => setOpen(false)}
             />
             <div
-                className={`fixed inset-y-0 left-0 w-64 bg-white border-r border-gray-100 transition-all transform z-50 ${
+                className={`fixed inset-y-0 left-0 z-50 w-64 transform border-r border-gray-100 bg-white transition-all ${
                     open ? 'translate-x-0' : '-translate-x-full'
                 } ${open && desktop ? 'md:relative' : ''}`}
             >

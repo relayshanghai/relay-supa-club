@@ -1,10 +1,11 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import { RELAY_DOMAIN } from 'src/constants';
 import httpCodes from 'src/constants/httpCodes';
 import { createCompanyErrors } from 'src/errors/company';
 import {
     CompanyDB,
     createCompany,
-    getCompanyByName,
+    getAllCompanyNames,
     updateCompany,
     updateProfile,
     updateUserRole,
@@ -22,10 +23,21 @@ export type CompanyCreatePostResponse = CompanyDB;
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
         try {
-            const { user_id, name, website } = JSON.parse(req.body) as CompanyCreatePostBody;
+            const { user_id, name: untrimmedName, website } = req.body as CompanyCreatePostBody;
+            const name = untrimmedName.trim();
+            if (!user_id || !name) {
+                return res.status(httpCodes.BAD_REQUEST).json({});
+            }
+            // Do not allow users to create a company with our reserved name for internal employees
+            if (name.toLowerCase() === RELAY_DOMAIN.toLowerCase()) {
+                return res.status(httpCodes.BAD_REQUEST).json({});
+            }
 
             try {
-                const { data: companyWithSameName } = await getCompanyByName(name);
+                const { data: companyNames } = await getAllCompanyNames();
+                const companyWithSameName = companyNames?.find(
+                    (companyName) => companyName.name?.toLowerCase() === name.toLowerCase(),
+                );
                 if (companyWithSameName) {
                     return res
                         .status(httpCodes.BAD_REQUEST)
@@ -47,7 +59,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 company_id: company.id,
             });
 
-            if (profileError) {
+            if (!profile || profileError) {
                 serverLogger(profileError, 'error');
                 return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
             }
