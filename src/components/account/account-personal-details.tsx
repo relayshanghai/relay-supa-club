@@ -1,13 +1,14 @@
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { APP_URL, emailRegex } from 'src/constants';
+import { useCompany } from 'src/hooks/use-company';
 import { useFields } from 'src/hooks/use-fields';
+import { useUser } from 'src/hooks/use-user';
 import { clientLogger } from 'src/utils/logger';
 import { Button } from '../button';
 import { Edit } from '../icons';
 import { Input } from '../input';
-import { AccountContext } from './account-context';
 
 export const PersonalDetails = () => {
     const {
@@ -19,15 +20,15 @@ export const PersonalDetails = () => {
         lastName: '',
         email: '',
     });
+    const { refreshCompany } = useCompany();
     const {
-        userDataLoading,
+        loading: userDataLoading,
         profile,
         user,
+        supabaseClient,
         updateProfile,
         refreshProfile,
-        refreshCompany,
-        supabaseClient,
-    } = useContext(AccountContext);
+    } = useUser();
 
     const [editMode, setEditMode] = useState(false);
     const [generatingResetEmail, setGeneratingResetEmail] = useState(false);
@@ -106,7 +107,7 @@ export const PersonalDetails = () => {
 
     return (
         <div
-            className={`flex flex-col items-start space-y-4 p-4 bg-white rounded-lg w-full lg:max-w-2xl relative ${
+            className={`relative flex w-full flex-col items-start space-y-4 rounded-lg bg-white p-4 lg:max-w-2xl ${
                 userDataLoading ? 'opacity-50' : ''
             } shadow-lg shadow-gray-200`}
         >
@@ -131,7 +132,7 @@ export const PersonalDetails = () => {
                     />
 
                     {editMode && (
-                        <div className="flex flex-row justify-end w-full space-x-4 mb-6">
+                        <div className="mb-6 flex w-full flex-row justify-end space-x-4">
                             <Button disabled={userDataLoading} onClick={handleUpdateProfile}>
                                 {t('account.update')}
                             </Button>
@@ -150,7 +151,7 @@ export const PersonalDetails = () => {
                         onChange={(e) => setUserFieldValues('email', e.target.value)}
                     />
 
-                    <div className="flex flex-row justify-end w-full space-x-4">
+                    <div className="flex w-full flex-row justify-end space-x-4">
                         <Button onClick={handleUpdateEmail}>
                             {t('account.personal.updateEmail')}
                         </Button>
@@ -163,16 +164,16 @@ export const PersonalDetails = () => {
                 <div className={`w-full space-y-6`}>
                     <div className="flex flex-col space-y-3">
                         <div className="text-sm">{t('account.personal.firstName')}</div>
-                        <div className="text-sm font-bold ml-2">{profile?.first_name}</div>
+                        <div className="ml-2 text-sm font-bold">{profile?.first_name}</div>
                     </div>
 
                     <div className="flex flex-col space-y-3">
                         <div className="text-sm">{t('account.personal.lastName')}</div>
-                        <div className="text-sm font-bold ml-2">{profile?.last_name}</div>
+                        <div className="ml-2 text-sm font-bold">{profile?.last_name}</div>
                     </div>
                     <div className="flex flex-col space-y-3">
                         <div className="text-sm">{t('account.personal.email')}</div>
-                        <div className="text-sm font-bold ml-2">{profile?.email}</div>
+                        <div className="ml-2 text-sm font-bold">{profile?.email}</div>
                     </div>
                 </div>
             )}
@@ -195,7 +196,7 @@ export const PersonalDetails = () => {
                     onClick={() => setEditMode(true)}
                     variant="secondary"
                 >
-                    <Edit className="text-primary-500 w-4 h-4" />
+                    <Edit className="h-4 w-4 text-primary-500" />
                 </Button>
             )}
         </div>

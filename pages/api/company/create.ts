@@ -59,7 +59,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 company_id: company.id,
             });
 
-            if (profileError) {
+            if (!profile || profileError) {
                 serverLogger(profileError, 'error');
                 return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
             }

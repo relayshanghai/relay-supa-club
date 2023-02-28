@@ -1,21 +1,24 @@
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { createInviteErrors } from 'src/errors/company';
+import { useCompany } from 'src/hooks/use-company';
+import { InvitesDB } from 'src/utils/api/db';
 import { hasCustomError } from 'src/utils/errors';
 import { Button } from '../button';
 import { Input } from '../input';
 import { Modal } from '../modal';
-import { AccountContext } from './account-context';
 
 export const InviteMembersModal = ({
     showAddMoreMembers,
     setShowAddMoreMembers,
+    createInvite,
 }: {
     showAddMoreMembers: boolean;
     setShowAddMoreMembers: (show: boolean) => void;
+    createInvite: (email: string, companyOwner: boolean) => Promise<InvitesDB>;
 }) => {
-    const { createInvite, refreshCompany } = useContext(AccountContext);
+    const { refreshCompany } = useCompany();
     const [companyOwner, setCompanyOwner] = useState(false);
     const [inviteEmail, setInviteEmail] = useState('');
     const [submitting, setSubmitting] = useState(false);
@@ -65,7 +68,7 @@ export const InviteMembersModal = ({
                     {t('account.invite.makeAdmin')}
                 </label>
             </div>
-            <div className="pt-8 space-x-16 justify-center flex flex-row w-full">
+            <div className="flex w-full flex-row justify-center space-x-16 pt-8">
                 <Button disabled={!inviteEmail || submitting} onClick={handleSendInvite}>
                     {t('account.invite.sendInvitation')}
                 </Button>
