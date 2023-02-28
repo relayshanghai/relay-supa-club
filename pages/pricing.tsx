@@ -185,17 +185,17 @@ const Pricing = () => {
                 setConfirmModalData={setConfirmModalData}
                 createSubscription={createSubscription}
             />
-            <main className="pt-20 flex-grow">
-                <div className="flex flex-col items-center container mx-auto">
-                    <div className="text-center max-w-3xl mx-auto mb-16">
-                        <h2 className="text-3xl md:text-4xl mt-4 mb-6 font-bold font-heading">
+            <main className="flex-grow pt-20">
+                <div className="container mx-auto flex flex-col items-center">
+                    <div className="mx-auto mb-16 max-w-3xl text-center">
+                        <h2 className="font-heading mt-4 mb-6 text-3xl font-bold md:text-4xl">
                             {t('pricing.chooseA')}
                             <span className="text-primary-500"> {t('pricing.plan')}</span>
                             {t('pricing.thatWorksBest')}
                         </h2>
-                        <p className="text-tertiary-600 leading-wide">{t('pricing.subTitle')}</p>
+                        <p className="leading-wide text-tertiary-600">{t('pricing.subTitle')}</p>
                     </div>
-                    <div className="flex mx-auto rounded-md mb-12 w-fit border-y-2 border-x border-primary-500">
+                    <div className="mx-auto mb-12 flex w-fit rounded-md border-y-2 border-x border-primary-500">
                         <div
                             onClick={() => setPeriod('monthly')}
                             className={
@@ -221,17 +221,17 @@ const Pricing = () => {
                             {t('pricing.annually')}
                         </div>
                     </div>
-                    <div className="flex flex-wrap justify-center m-auto container min-h-[32rem] w-full max-w-screen-xl">
-                        <div className="p-4 lg:w-1/3 md:w-1/2 w-full hover:-translate-y-3 transition-all ease-in-out">
-                            <div className="h-full p-6 rounded-lg border-2 border-gray-300 flex flex-col relative overflow-hidden">
-                                <h2 className="text-sm tracking-widest title-font mb-1 font-medium">
+                    <div className="container m-auto flex min-h-[32rem] w-full max-w-screen-xl flex-wrap justify-center">
+                        <div className="w-full p-4 transition-all ease-in-out hover:-translate-y-3 md:w-1/2 lg:w-1/3">
+                            <div className="relative flex h-full flex-col overflow-hidden rounded-lg border-2 border-gray-300 p-6">
+                                <h2 className="title-font mb-1 text-sm font-medium tracking-widest">
                                     {t('pricing.diy')}
                                 </h2>
-                                <h1 className="text-4xl text-gray-900 leading-none flex items-center pb-4 mb-4 border-b border-gray-200">
+                                <h1 className="mb-4 flex items-center border-b border-gray-200 pb-4 text-4xl leading-none text-gray-900">
                                     <span data-plan="diy" className="price">
                                         {prices[period].diy}
                                     </span>
-                                    <span className="text-lg ml-1 font-normal text-gray-500">
+                                    <span className="ml-1 text-lg font-normal text-gray-500">
                                         {t('pricing.perMonth')}
                                     </span>
                                 </h1>
@@ -239,15 +239,15 @@ const Pricing = () => {
                                     return (
                                         <div
                                             key={index}
-                                            className={`relative flex items-center mb-2 text-gray-600 ${
+                                            className={`relative mb-2 flex items-center text-gray-600 ${
                                                 index === 0 ? 'font-bold' : ''
                                             }`}
                                         >
                                             <span
-                                                className={`mr-2 self-start mt-1 inline-flex items-center justify-center rounded-full flex-shrink-0 ${
+                                                className={`mr-2 mt-1 inline-flex flex-shrink-0 items-center justify-center self-start rounded-full ${
                                                     icon === 'check'
-                                                        ? 'w-4 h-4 bg-gray-400 text-white'
-                                                        : 'w-4 h-4 text-red-300'
+                                                        ? 'h-4 w-4 bg-gray-400 text-white'
+                                                        : 'h-4 w-4 text-red-300'
                                                 }`}
                                             >
                                                 {icon === 'check' && (
@@ -257,7 +257,7 @@ const Pricing = () => {
                                                         stroke-linecap="round"
                                                         stroke-linejoin="round"
                                                         stroke-width="2.5"
-                                                        className="w-3 h-3"
+                                                        className="h-3 w-3"
                                                         viewBox="0 0 24 24"
                                                     >
                                                         <path d="M20 6L9 17l-5-5" />
@@ -280,9 +280,9 @@ const Pricing = () => {
                                             </span>
                                             {t('pricing.' + title)}{' '}
                                             {info && (
-                                                <div className="group w-4 h-4 absolute right-0 top-1 ">
+                                                <div className="group absolute right-0 top-1 h-4 w-4 ">
                                                     <svg
-                                                        className="fill-current text-gray-300 group-hover:text-gray-600 duration-300 cursor-pointer"
+                                                        className="cursor-pointer fill-current text-gray-300 duration-300 group-hover:text-gray-600"
                                                         viewBox="0 0 21 20"
                                                         fill="none"
                                                         xmlns="http://www.w3.org/2000/svg"
@@ -295,7 +295,7 @@ const Pricing = () => {
                                                         />
                                                     </svg>
 
-                                                    <p className="bg-white shadow-lg w-40 hidden group-hover:flex duration-300 absolute right-0 z-50 bottom-full text-xs p-5 rounded-md">
+                                                    <p className="absolute right-0 bottom-full z-50 hidden w-40 rounded-md bg-white p-5 text-xs shadow-lg duration-300 group-hover:flex">
                                                         {t('pricing.' + info)}
                                                     </p>
                                                 </div>
@@ -324,7 +324,7 @@ const Pricing = () => {
                                         stroke-linecap="round"
                                         stroke-linejoin="round"
                                         stroke-width="2"
-                                        className="w-4 h-4 ml-auto"
+                                        className="ml-auto h-4 w-4"
                                         viewBox="0 0 24 24"
                                     >
                                         <path d="M5 12h14M12 5l7 7-7 7" />
@@ -332,34 +332,34 @@ const Pricing = () => {
                                 </Button>
                             </div>
                         </div>
-                        <div className="p-4 lg:w-1/3 md:w-1/2 w-full hover:-translate-y-3 transition-all ease-in-out">
-                            <div className="h-full p-6 rounded-lg border-2 border-primary-500 flex flex-col relative overflow-hidden">
-                                <span className="bg-primary-500 text-white px-3 py-1 tracking-widest text-xs absolute right-0 top-0 rounded-bl">
+                        <div className="w-full p-4 transition-all ease-in-out hover:-translate-y-3 md:w-1/2 lg:w-1/3">
+                            <div className="relative flex h-full flex-col overflow-hidden rounded-lg border-2 border-primary-500 p-6">
+                                <span className="absolute right-0 top-0 rounded-bl bg-primary-500 px-3 py-1 text-xs tracking-widest text-white">
                                     {t('pricing.popular')}
                                 </span>
-                                <h2 className="text-sm tracking-widest title-font mb-1 font-medium">
+                                <h2 className="title-font mb-1 text-sm font-medium tracking-widest">
                                     {t('pricing.diyMax')}
                                 </h2>
-                                <h1 className="text-4xl text-gray-900 leading-none flex items-center pb-4 mb-4 border-b border-gray-200">
+                                <h1 className="mb-4 flex items-center border-b border-gray-200 pb-4 text-4xl leading-none text-gray-900">
                                     <span data-plan="diyMax" className="price">
                                         {prices[period].diyMax}
                                     </span>
-                                    <span className="text-lg ml-1 font-normal text-gray-500">
+                                    <span className="ml-1 text-lg font-normal text-gray-500">
                                         {t('pricing.perMonth')}
                                     </span>
                                 </h1>
                                 {details.diyMax.map(({ title, icon, info }, index) => (
                                     <div
                                         key={index}
-                                        className={`relative flex items-center mb-2 text-gray-600 ${
+                                        className={`relative mb-2 flex items-center text-gray-600 ${
                                             index === 0 ? 'font-bold' : ''
                                         }`}
                                     >
                                         <span
-                                            className={`mr-2 self-start mt-1 inline-flex items-center justify-center rounded-full flex-shrink-0 ${
+                                            className={`mr-2 mt-1 inline-flex flex-shrink-0 items-center justify-center self-start rounded-full ${
                                                 icon === 'check'
-                                                    ? 'w-4 h-4 bg-gray-400 text-white'
-                                                    : 'w-4 h-4 text-red-300'
+                                                    ? 'h-4 w-4 bg-gray-400 text-white'
+                                                    : 'h-4 w-4 text-red-300'
                                             }`}
                                         >
                                             {icon === 'check' && (
@@ -369,7 +369,7 @@ const Pricing = () => {
                                                     stroke-linecap="round"
                                                     stroke-linejoin="round"
                                                     stroke-width="2.5"
-                                                    className="w-3 h-3"
+                                                    className="h-3 w-3"
                                                     viewBox="0 0 24 24"
                                                 >
                                                     <path d="M20 6L9 17l-5-5" />
@@ -392,9 +392,9 @@ const Pricing = () => {
                                         </span>
                                         {t('pricing.' + title)}{' '}
                                         {info && (
-                                            <div className="group w-4 h-4 absolute right-0 top-1 ">
+                                            <div className="group absolute right-0 top-1 h-4 w-4 ">
                                                 <svg
-                                                    className="fill-current text-gray-300 group-hover:text-gray-600 duration-300 cursor-pointer"
+                                                    className="cursor-pointer fill-current text-gray-300 duration-300 group-hover:text-gray-600"
                                                     viewBox="0 0 21 20"
                                                     fill="none"
                                                     xmlns="http://www.w3.org/2000/svg"
@@ -407,7 +407,7 @@ const Pricing = () => {
                                                     />
                                                 </svg>
 
-                                                <p className="bg-white shadow-lg w-40 hidden group-hover:flex duration-300 absolute right-0 z-50 bottom-full text-xs p-5 rounded-md">
+                                                <p className="absolute right-0 bottom-full z-50 hidden w-40 rounded-md bg-white p-5 text-xs shadow-lg duration-300 group-hover:flex">
                                                     {t('pricing.' + info)}
                                                 </p>
                                             </div>
@@ -435,7 +435,7 @@ const Pricing = () => {
                                         stroke-linecap="round"
                                         stroke-linejoin="round"
                                         stroke-width="2"
-                                        className="w-4 h-4 ml-auto"
+                                        className="ml-auto h-4 w-4"
                                         viewBox="0 0 24 24"
                                     >
                                         <path d="M5 12h14M12 5l7 7-7 7" />
@@ -443,12 +443,12 @@ const Pricing = () => {
                                 </Button>
                             </div>
                         </div>
-                        <div className="p-4 lg:w-1/3 md:w-1/2 w-full hover:-translate-y-3 transition-all ease-in-out">
-                            <div className="h-full p-6 rounded-lg border-2 border-gray-300 flex flex-col relative overflow-hidden">
-                                <h2 className="text-sm tracking-widest title-font mb-1 font-medium">
+                        <div className="w-full p-4 transition-all ease-in-out hover:-translate-y-3 md:w-1/2 lg:w-1/3">
+                            <div className="relative flex h-full flex-col overflow-hidden rounded-lg border-2 border-gray-300 p-6">
+                                <h2 className="title-font mb-1 text-sm font-medium tracking-widest">
                                     {t('pricing.VIP')}
                                 </h2>
-                                <h1 className="text-4xl text-gray-900 leading-none flex items-center pb-4 mb-4 border-b border-gray-200">
+                                <h1 className="mb-4 flex items-center border-b border-gray-200 pb-4 text-4xl leading-none text-gray-900">
                                     <span data-plan="VIP" className="price">
                                         {t('pricing.contactUs')}
                                     </span>
@@ -457,15 +457,15 @@ const Pricing = () => {
                                 {details.VIP.map(({ title, icon, info }, index) => (
                                     <div
                                         key={index}
-                                        className={`relative flex items-center mb-2 text-gray-600 ${
+                                        className={`relative mb-2 flex items-center text-gray-600 ${
                                             index === 0 ? 'font-bold' : ''
                                         }`}
                                     >
                                         <span
-                                            className={`mr-2 self-start mt-1 inline-flex items-center justify-center rounded-full flex-shrink-0 ${
+                                            className={`mr-2 mt-1 inline-flex flex-shrink-0 items-center justify-center self-start rounded-full ${
                                                 icon === 'check'
-                                                    ? 'w-4 h-4 bg-gray-400 text-white'
-                                                    : 'w-4 h-4 text-red-300'
+                                                    ? 'h-4 w-4 bg-gray-400 text-white'
+                                                    : 'h-4 w-4 text-red-300'
                                             }`}
                                         >
                                             {icon === 'check' && (
@@ -475,7 +475,7 @@ const Pricing = () => {
                                                     stroke-linecap="round"
                                                     stroke-linejoin="round"
                                                     stroke-width="2.5"
-                                                    className="w-3 h-3"
+                                                    className="h-3 w-3"
                                                     viewBox="0 0 24 24"
                                                 >
                                                     <path d="M20 6L9 17l-5-5" />
@@ -498,9 +498,9 @@ const Pricing = () => {
                                         </span>
                                         {t('pricing.' + title)}
                                         {info && (
-                                            <div className="group w-4 h-4 absolute right-0 top-1 ">
+                                            <div className="group absolute right-0 top-1 h-4 w-4 ">
                                                 <svg
-                                                    className="fill-current text-gray-300 group-hover:text-gray-600 duration-300 cursor-pointer"
+                                                    className="cursor-pointer fill-current text-gray-300 duration-300 group-hover:text-gray-600"
                                                     viewBox="0 0 21 20"
                                                     fill="none"
                                                     xmlns="http://www.w3.org/2000/svg"
@@ -513,7 +513,7 @@ const Pricing = () => {
                                                     />
                                                 </svg>
 
-                                                <p className="bg-white shadow-lg w-40 hidden group-hover:flex duration-300 absolute right-0 z-50 bottom-full text-xs p-5 rounded-md">
+                                                <p className="absolute right-0 bottom-full z-50 hidden w-40 rounded-md bg-white p-5 text-xs shadow-lg duration-300 group-hover:flex">
                                                     {t('pricing.' + info)}
                                                 </p>
                                             </div>
@@ -535,7 +535,7 @@ const Pricing = () => {
                                             stroke-linecap="round"
                                             stroke-linejoin="round"
                                             stroke-width="2"
-                                            className="w-4 h-4 ml-auto"
+                                            className="ml-auto h-4 w-4"
                                             viewBox="0 0 24 24"
                                         >
                                             <path d="M5 12h14M12 5l7 7-7 7" />
@@ -546,10 +546,10 @@ const Pricing = () => {
                         </div>
                     </div>
                 </div>
-                <section className="py-20 mt-20 bg-primary-500 w-full">
+                <section className="mt-20 w-full bg-primary-500 py-20">
                     <div className="container mx-auto px-5">
-                        <div className="text-center max-w-xl mx-auto">
-                            <h2 className="mb-4 text-3xl text-white font-bold font-heading">
+                        <div className="mx-auto max-w-xl text-center">
+                            <h2 className="font-heading mb-4 text-3xl font-bold text-white">
                                 <span>{t('pricing.checkOutOur')}</span>
                                 <a className="text-primary-300" href="https://relay.club/blog">
                                     {t('pricing.blog')}

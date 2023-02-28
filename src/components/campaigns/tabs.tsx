@@ -32,12 +32,12 @@ export default function Tabs({ currentTab, changeTab }: Props) {
 
     return (
         <div>
-            <div className="hidden sm:flex overflow-x-auto">
+            <div className="hidden overflow-x-auto sm:flex">
                 {tabs.map((tab, index) => (
                     <div
                         key={index}
                         onClick={() => changeTab(tab.value)}
-                        className={`font-semibold text-sm mr-4 hover:text-primary-500 hover:bg-primary-500 hover:bg-opacity-20 px-4 py-2 rounded-lg cursor-pointer duration-300 flex-shrink-0 ${selectedTabStyles(
+                        className={`mr-4 flex-shrink-0 cursor-pointer rounded-lg px-4 py-2 text-sm font-semibold duration-300 hover:bg-primary-500 hover:bg-opacity-20 hover:text-primary-500 ${selectedTabStyles(
                             tab,
                         )}`}
                     >
@@ -49,13 +49,13 @@ export default function Tabs({ currentTab, changeTab }: Props) {
             <select
                 style={selectStyle}
                 onChange={(e) => changeTab(e.target.value)}
-                className="text-sm outline-none sm:hidden px-4 py-2 rounded-lg text-center text-primary-500 bg-primary-500 bg-opacity-20"
+                className="rounded-lg bg-primary-500 bg-opacity-20 px-4 py-2 text-center text-sm text-primary-500 outline-none sm:hidden"
             >
                 {tabs.map((tab, index) => (
                     <option
                         key={index}
                         value={tab.value}
-                        className={`font-semibold text-md mr-10 text-gray-400 hover:text-primary-500 cursor-pointer duration-300 flex-shrink-0 ${
+                        className={`text-md mr-10 flex-shrink-0 cursor-pointer font-semibold text-gray-400 duration-300 hover:text-primary-500 ${
                             currentTab === tab.value && 'text-primary-500'
                         }`}
                     >

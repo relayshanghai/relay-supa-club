@@ -37,7 +37,7 @@ export const CreatorOverview = ({ report }: { report: CreatorReport }) => {
                 <div className="p-6">
                     <h2 className={titleClass}>{t('creators.show.description')}</h2>
                     <p
-                        className="bg-white rounded-lg p-4 text-sm text-tertiary-600"
+                        className="rounded-lg bg-white p-4 text-sm text-tertiary-600"
                         style={{ whiteSpace: 'break-spaces' }}
                     >
                         {report.user_profile.description}
@@ -63,17 +63,17 @@ export const CreatorOverview = ({ report }: { report: CreatorReport }) => {
                         {creatorOverviewStats.map((stat, index) => (
                             <div
                                 key={index}
-                                className="bg-white rounded-md p-2.5 w-36 mr-2 mb-2 relative"
+                                className="relative mr-2 mb-2 w-36 rounded-md bg-white p-2.5"
                             >
-                                <div className="w-6 h-6">{stat.icon}</div>
-                                <p className="text-tertiary-600 font-semibold mb-1">{stat.data}</p>
-                                <p className="text-tertiary-600 text-sm">
+                                <div className="h-6 w-6">{stat.icon}</div>
+                                <p className="mb-1 font-semibold text-tertiary-600">{stat.data}</p>
+                                <p className="text-sm text-tertiary-600">
                                     {t(`creators.show.${stat.label}`)}
                                 </p>
                                 {stat?.descr && (
                                     <div className="group">
-                                        <Info className="w-4 h-4 absolute right-2 top-2 fill-current text-gray-400 group-hover:text-gray-600 duration-300 cursor-pointer" />
-                                        <p className="bg-white shadow-lg hidden group-hover:flex duration-300 absolute z-50 bottom-full right-2 text-xs p-2 rounded-md">
+                                        <Info className="absolute right-2 top-2 h-4 w-4 cursor-pointer fill-current text-gray-400 duration-300 group-hover:text-gray-600" />
+                                        <p className="absolute bottom-full right-2 z-50 hidden rounded-md bg-white p-2 text-xs shadow-lg duration-300 group-hover:flex">
                                             {t(`creators.show.statsDescr.${stat.descr}`)}
                                         </p>
                                     </div>
@@ -86,7 +86,7 @@ export const CreatorOverview = ({ report }: { report: CreatorReport }) => {
 
             {/* similar */}
             {similarCreators?.length > 0 && (
-                <div className="p-6 lg:w-1/2 flex flex-col">
+                <div className="flex flex-col p-6 lg:w-1/2">
                     <h2 className={titleClass}>{t('creators.show.similarInfluencers')}</h2>
                     <div>
                         {similarCreators.map((creator, index) => (
@@ -101,7 +101,7 @@ export const CreatorOverview = ({ report }: { report: CreatorReport }) => {
                         onClick={() => setShowMoreSimilar(!showMoreSimilar)}
                         className="justify-self-end"
                     >
-                        <p className="text-primary-500 hover:text-primary-700 duration-300 font-semibold text-sm text-right">
+                        <p className="text-right text-sm font-semibold text-primary-500 duration-300 hover:text-primary-700">
                             {showMoreSimilar
                                 ? t('creators.show.seeLess')
                                 : t('creators.show.seeMore')}

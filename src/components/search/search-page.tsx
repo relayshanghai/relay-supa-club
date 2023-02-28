@@ -28,14 +28,14 @@ const Search = ({ companyId }: { companyId?: string }) => {
     return (
         <div className="space-y-4">
             {companyId && (
-                <div className="absolute z-50 bg-red-400 text-white top-5 right-36 p-2 rounded-md animate-bounce">{`You are acting on behalf of company: ${company_name}`}</div>
+                <div className="absolute top-5 right-36 z-50 animate-bounce rounded-md bg-red-400 p-2 text-white">{`You are acting on behalf of company: ${company_name}`}</div>
             )}
             <SelectPlatform />
 
             <SearchOptions setPage={setPage} setShowFiltersModal={setShowFiltersModal} />
 
             <div className="flex items-center">
-                <div className="font-bold text-sm">
+                <div className="text-sm font-bold">
                     {`${t('creators.results')}: ${numberFormatter(resultsTotal)}`}
                 </div>
             </div>
@@ -46,8 +46,8 @@ const Search = ({ companyId }: { companyId?: string }) => {
             />
 
             {loadingMore && (
-                <div className="w-full flex justify-center p-10">
-                    <Spinner className="fill-primary-600 text-white w-12 h-12" />
+                <div className="flex w-full justify-center p-10">
+                    <Spinner className="h-12 w-12 fill-primary-600 text-white" />
                 </div>
             )}
             {!loadingMore && !noResults && (

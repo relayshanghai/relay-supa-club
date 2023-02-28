@@ -50,7 +50,7 @@ export const SearchOptions = ({
     const hasSetAudience = audience[0] || audience[1];
     return (
         <>
-            <div className="py-4 w-full font-light flex flex-col md:flex-row md:space-x-4 md:space-y-0 items-start space-y-2">
+            <div className="flex w-full flex-col items-start space-y-2 py-4 font-light md:flex-row md:space-x-4 md:space-y-0">
                 <SearchTopics
                     path="influencer-search/topics"
                     placeholder={t('creators.searchTopic')}
@@ -62,7 +62,7 @@ export const SearchOptions = ({
                 />
                 <SearchCreators platform={platform} />
             </div>
-            <div className="flex flex-col md:flex-row md:space-x-4 md:space-y-0 items-start space-y-2">
+            <div className="flex flex-col items-start space-y-2 md:flex-row md:space-x-4 md:space-y-0">
                 {/* remove all lookalike code: https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/154 */}
 
                 <SearchTopics
@@ -89,14 +89,14 @@ export const SearchOptions = ({
                         if (!selected) return null;
                         return (
                             <div
-                                className="pl-2 pr-1 text-gray-900 rounded bg-gray-100 whitespace-nowrap hover:bg-gray-200 cursor-pointer flex items-center flex-row"
+                                className="flex cursor-pointer flex-row items-center whitespace-nowrap rounded bg-gray-100 pl-2 pr-1 text-gray-900 hover:bg-gray-200"
                                 key={item.id}
                                 onClick={onClick}
                             >
                                 {item.value || item.title}
                                 <select
                                     value={selected.weight}
-                                    className="ml-2 bg-primary-200 rounded-md"
+                                    className="ml-2 rounded-md bg-primary-200"
                                     onClick={(e: any) => {
                                         e.preventDefault();
                                         e.stopPropagation();
@@ -125,10 +125,10 @@ export const SearchOptions = ({
                 <div className="flex flex-row items-center">
                     <button
                         onClick={() => setShowFiltersModal(true)}
-                        className={`group text-gray-900 ring-gray-900 ring-opacity-5 bg-white rounded-md border border-transparent shadow ring-1 sm:text-sm focus:border-primary-500 focus:ring-primary-500 focus:outline-none flex flex-row items-center px-2 py-1`}
+                        className={`group flex flex-row items-center rounded-md border border-transparent bg-white px-2 py-1 text-gray-900 shadow ring-1 ring-gray-900 ring-opacity-5 focus:border-primary-500 focus:outline-none focus:ring-primary-500 sm:text-sm`}
                     >
                         <AdjustmentsVerticalIcon
-                            className={`h-6 w-6 text-gray-400 transition duration-150 ease-in-out group-hover:text-opacity-80 mr-2`}
+                            className={`mr-2 h-6 w-6 text-gray-400 transition duration-150 ease-in-out group-hover:text-opacity-80`}
                             aria-hidden="true"
                         />
                         <div className="flex flex-row space-x-5 text-xs">
@@ -166,7 +166,7 @@ export const SearchOptions = ({
                         </div>
                     </button>
                     <select
-                        className="text-gray-900 ring-gray-900 ring-opacity-5 bg-white rounded-md border border-transparent shadow ring-1 sm:text-sm focus:border-primary-500 focus:ring-primary-500 focus:outline-none flex flex-row items-center cursor-pointer p-1 hover:text-opacity-80 ml-4 mr-2"
+                        className="ml-4 mr-2 flex cursor-pointer flex-row items-center rounded-md border border-transparent bg-white p-1 text-gray-900 shadow ring-1 ring-gray-900 ring-opacity-5 hover:text-opacity-80 focus:border-primary-500 focus:outline-none focus:ring-primary-500 sm:text-sm"
                         value={resultsPerPageLimit}
                         onChange={(e) => {
                             setPage(0);
@@ -179,7 +179,7 @@ export const SearchOptions = ({
                             </option>
                         ))}
                     </select>
-                    <p className="text-gray-500 text-sm mr-2 ml-1">
+                    <p className="mr-2 ml-1 text-sm text-gray-500">
                         {t('creators.resultsPerPage')}
                     </p>
                     {hasSetViews || hasSetAudience || gender || engagement || lastPost ? (

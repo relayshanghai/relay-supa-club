@@ -16,9 +16,9 @@ export default function Skeleton({
     containerClassName?: string;
 }) {
     return (
-        <div className={`flex flex-wrap space-x-2 mb-2 ${containerClassName}`}>
+        <div className={`mb-2 flex flex-wrap space-x-2 ${containerClassName}`}>
             {Array.from({ length: blocks }, (_, i) => (
-                <div key={i} className={`bg-gray-200 animate-pulse rounded-md ${className}`} />
+                <div key={i} className={`animate-pulse rounded-md bg-gray-200 ${className}`} />
             ))}
         </div>
     );

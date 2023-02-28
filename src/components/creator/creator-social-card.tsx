@@ -15,18 +15,18 @@ export const SocialCard = ({ contact }: { contact: CreatorReportContact }) => {
     });
 
     return (
-        <div className="px-6 w-full mb-2">
-            <div className="bg-white rounded-xl p-4 flex w-full overflow-hidden">
+        <div className="mb-2 w-full px-6">
+            <div className="flex w-full overflow-hidden rounded-xl bg-white p-4">
                 <a {...getHref(contact)} className="flex items-center">
-                    <div className="w-10 h-10 mr-2 ">
+                    <div className="mr-2 h-10 w-10 ">
                         <SocialMediaIcon platform={contact.type} />
                     </div>
 
                     <div className="ml-2">
-                        <p className="text-gray-600 font-semibold -mb-1 hover:text-primary-500 duration-300 cursor-pointer truncate">
+                        <p className="-mb-1 cursor-pointer truncate font-semibold text-gray-600 duration-300 hover:text-primary-500">
                             {contact.value}
                         </p>
-                        <p className="text-gray-600 text-sm">{contact.type}</p>
+                        <p className="text-sm text-gray-600">{contact.type}</p>
                     </div>
                 </a>
             </div>

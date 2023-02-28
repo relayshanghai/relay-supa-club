@@ -7,8 +7,8 @@ const Icons = () => {
             <div className="flex flex-wrap">
                 {Object.entries(icons).map(([name, Icon], i) => {
                     return (
-                        <div key={i} className="bg-slate-200 m-5">
-                            <Icon className="w-20 h-20 m-2 bg-white p-2 text-primary-700 fill-cyan-500" />
+                        <div key={i} className="m-5 bg-slate-200">
+                            <Icon className="m-2 h-20 w-20 bg-white fill-cyan-500 p-2 text-primary-700" />
                             <div>{name}</div>
                         </div>
                     );

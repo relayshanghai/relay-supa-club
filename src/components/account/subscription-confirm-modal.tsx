@@ -56,7 +56,7 @@ export const SubscriptionConfirmModal = ({
         <Modal visible={!!confirmModalData} onClose={() => setConfirmModalData(null)}>
             {price && period && priceId && plan ? (
                 <div className="p-2">
-                    <div className="flex justify-between mb-8">
+                    <div className="mb-8 flex justify-between">
                         <h1 className="text-2xl text-primary-700">
                             {t('account.subscription.modal.plan_planName', {
                                 planName: plan === 'diy' ? 'DIY' : 'DIY Max',
@@ -64,7 +64,7 @@ export const SubscriptionConfirmModal = ({
                         </h1>
                         <Button
                             variant="secondary"
-                            className="!text-xs !px-2 !py-0"
+                            className="!px-2 !py-0 !text-xs"
                             onClick={async () => setConfirmModalData(null)}
                         >
                             {t('account.subscription.modal.close')}
@@ -72,7 +72,7 @@ export const SubscriptionConfirmModal = ({
                     </div>
 
                     <h2>{t('account.subscription.modal.youAreAboutToSubscribeFor')}</h2>
-                    <div className="flex justify-between items-center mt-4">
+                    <div className="mt-4 flex items-center justify-between">
                         <p className="text-sm font-bold">{`${price}${t(
                             'account.subscription.modal.perMonth',
                         )}. ${t('account.subscription.modal.billed_period', {
@@ -92,7 +92,7 @@ export const SubscriptionConfirmModal = ({
                                 : t('account.subscription.modal.subscribe')}
                         </Button>
                     </div>
-                    <div className="text-xs text-gray-600 mt-8">
+                    <div className="mt-8 text-xs text-gray-600">
                         {t('account.subscription.modal.noteClickingSubscribeWillCharge')}
                     </div>
                 </div>

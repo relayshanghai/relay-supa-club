@@ -58,9 +58,9 @@ export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
     }, [platform]);
 
     return (
-        <div className="group w-full font-medium relative flex flex-col" ref={searchRef}>
+        <div className="group relative flex w-full flex-col font-medium" ref={searchRef}>
             <input
-                className="placeholder-gray-400 appearance-none bg-white rounded-md block w-full px-3 py-2 border border-gray-200 ring-1 ring-gray-900 ring-opacity-5 placeholder:text-sm focus:outline-none text-gray-600"
+                className="block w-full appearance-none rounded-md border border-gray-200 bg-white px-3 py-2 text-gray-600 placeholder-gray-400 ring-1 ring-gray-900 ring-opacity-5 placeholder:text-sm focus:outline-none"
                 placeholder={t('creators.show.searchInfluencerPlaceholder') as string}
                 id="creator-search"
                 value={searchTerm}
@@ -70,19 +70,19 @@ export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
                 }
             />
             {loading ? (
-                <Spinner className="w-5 h-5 absolute right-2 top-2.5 z-50 fill-primary-600 text-white" />
+                <Spinner className="absolute right-2 top-2.5 z-50 h-5 w-5 fill-primary-600 text-white" />
             ) : (
                 <div className="absolute right-2 top-2.5 z-50 flex items-center">
-                    <p className="text-xs text-gray-400 mr-2">
+                    <p className="mr-2 text-xs text-gray-400">
                         {t('creators.show.pressEnterToSearch')}
                     </p>
-                    <Enter className="group-hover:fill-red w-6 h-6  fill-gray-500 " />
+                    <Enter className="group-hover:fill-red h-6 w-6  fill-gray-500 " />
                 </div>
             )}
 
             <div className="relative w-full ">
                 {displaySearch && (
-                    <div className="absolute text-sm z-10 top-1 ring-1 ring-gray-200 left-0 w-full bg-white rounded-md overflow-hidden py-2">
+                    <div className="absolute top-1 left-0 z-10 w-full overflow-hidden rounded-md bg-white py-2 text-sm ring-1 ring-gray-200">
                         {creators?.length ? (
                             creators.map((creator, i) => (
                                 <div key={i}>
@@ -90,7 +90,7 @@ export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
                                 </div>
                             ))
                         ) : (
-                            <p className="text-xs text-gray-400 p-3">
+                            <p className="p-3 text-xs text-gray-400">
                                 {t('creators.show.noSearchResults')}
                             </p>
                         )}
