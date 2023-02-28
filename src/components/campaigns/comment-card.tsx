@@ -31,48 +31,48 @@ export default function CommentCard({ note }: { note: CampaignNotesWithProfiles 
 
     return (
         <div
-            className={` relative group hover:bg-gray-50 rounded-md p-4 mb-2 w-[300px] duration-300 flex flex-col ${
+            className={` group relative mb-2 flex w-[300px] flex-col rounded-md p-4 duration-300 hover:bg-gray-50 ${
                 isYou ? 'place-self-end ' : 'place-self-start'
             } & ${isImportant ? 'bg-secondary-100' : ''}`}
         >
             <Pin
-                className={`w-4 h-4 fill-primary-600 absolute top-3 left-3 ${
+                className={`absolute top-3 left-3 h-4 w-4 fill-primary-600 ${
                     isImportant ? '' : 'hidden'
                 }`}
             />
 
             <div
-                className={`z-20 absolute flex space-x-1 -top-2 bg-gray-100 invisible group-hover:visible  ${
+                className={`invisible absolute -top-2 z-20 flex space-x-1 bg-gray-100 group-hover:visible  ${
                     isYou ? 'left-3' : 'right-3'
                 }`}
             >
                 <div
-                    className="group/pin p-2 rounded-md text-gray-600  bg-gray-50 hover:bg-gray-100 border border-gray-200 duration-300 outline-none appearance-none text-center cursor-pointer"
+                    className="group/pin cursor-pointer appearance-none rounded-md  border border-gray-200 bg-gray-50 p-2 text-center text-gray-600 outline-none duration-300 hover:bg-gray-100"
                     onClick={() => toggleImportant(note)}
                 >
-                    <Pin className="w-4 h-4 fill-tertiary-600 group-hover/pin:fill-primary-600" />
+                    <Pin className="h-4 w-4 fill-tertiary-600 group-hover/pin:fill-primary-600" />
                 </div>
                 <div
-                    className={`group/trashcan p-2 rounded-md text-gray-600  bg-gray-50 hover:bg-gray-100 border border-gray-200 duration-300 outline-none appearance-none text-center cursor-pointer ${
+                    className={`group/trashcan cursor-pointer appearance-none rounded-md  border border-gray-200 bg-gray-50 p-2 text-center text-gray-600 outline-none duration-300 hover:bg-gray-100 ${
                         isYou ? ' ' : 'hidden'
                     }`}
                     onClick={() => handleDelete(note)}
                 >
-                    <Trashcan className="w-4 h-4 fill-tertiary-600 group-hover/trashcan:fill-primary-600" />
+                    <Trashcan className="h-4 w-4 fill-tertiary-600 group-hover/trashcan:fill-primary-600" />
                 </div>
             </div>
 
             <div className={`flex ${isYou ? 'flex-row-reverse' : ''}`}>
-                <div className="rounded-full w-6 h-6 row-center bg-gray-200 text-gray-500 ">
+                <div className="row-center h-6 w-6 rounded-full bg-gray-200 text-gray-500 ">
                     <div className="p-2">
                         {note.profiles.first_name ? note.profiles.first_name[0].toUpperCase() : ''}
                         {note.profiles.last_name ? note.profiles.last_name[0].toUpperCase() : ''}
                     </div>
                 </div>
-                <div className="font-medium text-gray-800 capitalize self-center mx-3">
+                <div className="mx-3 self-center font-medium capitalize text-gray-800">
                     {note.profiles.first_name}
                 </div>
-                <div className="text-gray-400 self-center">
+                <div className="self-center text-gray-400">
                     {/* Replace this when settle with a date formatting library or function on Ticket V2-36 */}
                     {note.created_at &&
                         `${new Date(note.created_at).toLocaleDateString(i18n.language, {
@@ -86,7 +86,7 @@ export default function CommentCard({ note }: { note: CampaignNotesWithProfiles 
                 </div>
             </div>
             <div
-                className={`mt-2 ml-10 px-3 py-1 w-fit max-w-[200px] rounded-md ${
+                className={`mt-2 ml-10 w-fit max-w-[200px] rounded-md px-3 py-1 ${
                     isYou ? 'place-self-end bg-primary-100' : 'place-self-start bg-gray-50'
                 } `}
             >

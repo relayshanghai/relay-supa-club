@@ -19,24 +19,24 @@ export const LanguageToggle = () => {
         <div>
             <div className="relative flex flex-col items-center">
                 <button ref={languageButtonRef} onClick={() => setDisplayOptions(!displayOptions)}>
-                    <Globe className="w-5 h-5 text-gray-300 hover:text-primary-500 duration-300" />
+                    <Globe className="h-5 w-5 text-gray-300 duration-300 hover:text-primary-500" />
                 </button>
                 {displayOptions && (
                     <div
                         ref={optionsRef}
-                        className="flex flex-col overflow-hidden w-28 absolute mt-9 mr-20 bg-white border border-gray border-opacity-40 rounded-md shadow-lg z-10"
+                        className="border-gray absolute z-10 mt-9 mr-20 flex w-28 flex-col overflow-hidden rounded-md border border-opacity-40 bg-white shadow-lg"
                     >
                         <button
                             onClick={() => toggleLanguage('zh')}
                             id="zh"
-                            className="px-4 py-2 text-sm hover:bg-gray-100 active:bg-gray-200 text-left"
+                            className="px-4 py-2 text-left text-sm hover:bg-gray-100 active:bg-gray-200"
                         >
                             中文
                         </button>
                         <button
                             onClick={() => toggleLanguage('en-US')}
                             id="en-US"
-                            className="px-4 py-2 text-sm hover:bg-gray-100 active:bg-gray-200 text-left"
+                            className="px-4 py-2 text-left text-sm hover:bg-gray-100 active:bg-gray-200"
                         >
                             English
                         </button>

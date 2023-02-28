@@ -212,12 +212,14 @@ export default function CreatorsOutreach({
                                                 </div>
                                                 <div className="ml-4">
                                                     <div className="truncate text-xs font-medium text-gray-900">
+
                                                         <Link
                                                             href={`/influencer/${creator.platform}/${creator.creator_id}`}
                                                             target="_blank"
                                                         >
                                                             {creator.fullname}
                                                         </Link>
+
                                                     </div>
                                                     <div className="inline-block truncate text-xs text-primary-500">
                                                         @{creator.username}

@@ -209,6 +209,7 @@ export default function CampaignShow() {
                     title={
                         <div className="-mt-4 flex items-center justify-between">
                             <h3>{t('campaigns.modal.comments')}</h3>
+
                             <Link
                                 href={`/influencer/${currentCreator.platform}/${currentCreator.creator_id}`}
                                 target="_blank"
@@ -224,6 +225,7 @@ export default function CampaignShow() {
                                     </h3>
                                 </div>
                             </Link>
+
                         </div>
                     }
                     visible={!!showNotesModal}

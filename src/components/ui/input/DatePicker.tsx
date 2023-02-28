@@ -23,7 +23,7 @@ function DatePicker({ fieldName, label, control, errors, isRequired }: Props) {
                 rules={{ required: { value: isRequired, message: t('website.requiredField') } }}
                 render={({ field: { value, onChange } }) => (
                     <div>
-                        <label htmlFor={fieldName} className="text-xs text-gray-600 pl-2">
+                        <label htmlFor={fieldName} className="pl-2 text-xs text-gray-600">
                             {label}
                         </label>
                         <input

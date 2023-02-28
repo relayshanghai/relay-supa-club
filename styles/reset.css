@@ -64,7 +64,8 @@ h6 {
 /*
     9. Create a root stacking context
   */
-  html, body,
+html,
+body,
 #root,
 #__next {
     isolation: isolate;

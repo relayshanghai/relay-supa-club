@@ -39,9 +39,7 @@ export const CreatorContacts = (creator: CampaignCreatorDB) => {
             ) : usageExceeded ? (
                 <div>
                     <Link href="/pricing">
-
                         <Button>{t('account.subscription.upgradeSubscription')}</Button>
-
                     </Link>
                 </div>
             ) : (
@@ -51,11 +49,11 @@ export const CreatorContacts = (creator: CampaignCreatorDB) => {
                             <div className="flex">
                                 {report?.user_profile.contacts?.map((contact, index) => (
                                     <div key={index} className="group/item">
-                                        <a {...getHref(contact)} className="flex relative">
-                                            <div className="w-4 h-4 group-hover:opacity-80 mr-1">
+                                        <a {...getHref(contact)} className="relative flex">
+                                            <div className="mr-1 h-4 w-4 group-hover:opacity-80">
                                                 <SocialMediaIcon platform={contact.type} />
                                             </div>
-                                            <div className="mt-1 group/text invisible group-hover/item:visible group-hover/edit:opacity-100 absolute inset-x-0 -bottom-6 text-xs text-primary-500">
+                                            <div className="group/text invisible absolute inset-x-0 -bottom-6 mt-1 text-xs text-primary-500 group-hover/item:visible group-hover/edit:opacity-100">
                                                 {contact.value}
                                             </div>
                                         </a>
@@ -64,7 +62,7 @@ export const CreatorContacts = (creator: CampaignCreatorDB) => {
                             </div>
                         </div>
                     ) : (
-                        <div className="text-xs tex text-tertiary-600">-</div>
+                        <div className="tex text-xs text-tertiary-600">-</div>
                     )}
                 </div>
             )}

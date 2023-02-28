@@ -35,16 +35,16 @@ export const SearchFiltersModal = ({
             onClose={() => setShow(false)}
             title={t('creators.filter.title') || ''}
         >
-            <div className="p-8 space-y-5">
+            <div className="space-y-5 p-8">
                 <h3>{t('creators.filter.intro')}</h3>
 
                 <div>
                     <label className="text-sm">
-                        <h4 className="font-bold text-lg">{t('creators.filter.subscribers')}</h4>
+                        <h4 className="text-lg font-bold">{t('creators.filter.subscribers')}</h4>
                         <div className="flex flex-row space-x-4">
                             <div className="flex items-center">
                                 <select
-                                    className="bg-primary-200 rounded-md p-1 mt-1"
+                                    className="mt-1 rounded-md bg-primary-200 p-1"
                                     value={audience[0] ?? 'any'}
                                     onChange={(e) => {
                                         setAudience((audiencePrevious) => [
@@ -70,7 +70,7 @@ export const SearchFiltersModal = ({
                                 <p className="mx-2 font-bold">-</p>
 
                                 <select
-                                    className="bg-primary-200 rounded-md p-1 mt-1"
+                                    className="mt-1 rounded-md bg-primary-200 p-1"
                                     value={audience[1] ?? 'any'}
                                     onChange={(e) => {
                                         setAudience((audiencePrevious) => [
@@ -98,11 +98,11 @@ export const SearchFiltersModal = ({
                 </div>
                 <div>
                     <label className="text-sm">
-                        <div className="font-bold text-lg">{t('creators.filter.averageViews')}</div>
+                        <div className="text-lg font-bold">{t('creators.filter.averageViews')}</div>
                         <div className="flex flex-row space-x-4">
                             <div className="flex items-center">
                                 <select
-                                    className="bg-primary-200 rounded-md p-1 mt-1"
+                                    className="mt-1 rounded-md bg-primary-200 p-1"
                                     value={views[0] ?? 'any'}
                                     onChange={(e) => {
                                         setViews((viewsPrevious) => [
@@ -124,7 +124,7 @@ export const SearchFiltersModal = ({
                                 </select>
                                 <p className="mx-2 font-bold">-</p>
                                 <select
-                                    className="bg-primary-200 rounded-md p-1 mt-1"
+                                    className="mt-1 rounded-md bg-primary-200 p-1"
                                     value={views[1] ?? 'any'}
                                     onChange={(e) => {
                                         setViews((viewsPrevious) => [
@@ -150,9 +150,9 @@ export const SearchFiltersModal = ({
                 </div>
                 <div>
                     <label className="text-sm">
-                        <div className="font-bold text-lg">{t('creators.filter.gender')}</div>
+                        <div className="text-lg font-bold">{t('creators.filter.gender')}</div>
                         <select
-                            className="bg-primary-200 rounded-md p-1 mt-1"
+                            className="mt-1 rounded-md bg-primary-200 p-1"
                             value={gender}
                             onChange={(e) => {
                                 if (e.target.value === 'any') {
@@ -170,11 +170,11 @@ export const SearchFiltersModal = ({
                 </div>
                 <div>
                     <label className="text-sm">
-                        <div className="font-bold text-lg">
+                        <div className="text-lg font-bold">
                             {t('creators.filter.engagementRate')}
                         </div>
                         <select
-                            className="bg-primary-200 rounded-md p-1 mt-1"
+                            className="mt-1 rounded-md bg-primary-200 p-1"
                             value={engagement}
                             onChange={(e) => {
                                 if (e.target.value === 'any' || Number(e.target.value) === 0) {
@@ -198,9 +198,9 @@ export const SearchFiltersModal = ({
                 </div>
                 <div>
                     <label className="text-sm">
-                        <div className="font-bold text-lg">{t('creators.filter.lastPost')}</div>
+                        <div className="text-lg font-bold">{t('creators.filter.lastPost')}</div>
                         <select
-                            className="bg-primary-200 rounded-md p-1 mt-1"
+                            className="mt-1 rounded-md bg-primary-200 p-1"
                             value={lastPost}
                             onChange={(e) => {
                                 if (e.target.value === 'any') {
@@ -219,11 +219,11 @@ export const SearchFiltersModal = ({
                 </div>
                 <div>
                     <label className="text-sm">
-                        <div className="font-bold text-lg">
+                        <div className="text-lg font-bold">
                             {t('creators.filter.contactInformation')}
                         </div>
                         <select
-                            className="bg-primary-200 rounded-md p-1 mt-1"
+                            className="mt-1 rounded-md bg-primary-200 p-1"
                             value={contactInfo}
                             onChange={(e) => {
                                 if (e.target.value === 'any') {

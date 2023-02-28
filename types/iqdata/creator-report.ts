@@ -57,7 +57,7 @@ interface AudienceFollowersData {
     audience_geo?: AudienceGeo;
     audience_lookalikes?: AudienceLookalike[];
     notable_users?: AudienceLookalike[];
-    audience_types?: any;
+    audience_types?: Audience[];
 }
 
 interface Audience {

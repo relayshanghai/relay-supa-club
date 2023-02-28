@@ -1,10 +1,9 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiHandler } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import {
-    CompanyWithProfilesInvitesAndUsage,
+    getCompanyById,
     getCompanyByName,
     getCompanyName,
-    getCompanyWithProfilesInvitesAndUsage,
     updateCompany,
 } from 'src/utils/api/db/calls/company';
 import type { CompanyDB, CompanyDBUpdate } from 'src/utils/api/db/types';
@@ -16,14 +15,14 @@ import { updateCompanyErrors } from 'src/errors/company';
 export type CompanyGetQueries = {
     id: string;
 };
-export type CompanyGetResponse = CompanyWithProfilesInvitesAndUsage;
+export type CompanyGetResponse = CompanyDB;
 
 export interface CompanyPutBody extends CompanyDBUpdate {
     id: string;
 }
 export type CompanyPutResponse = CompanyDB;
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+const handler: NextApiHandler = async (req, res) => {
     if (req.method === 'GET') {
         try {
             const { id: companyId } = req.query as CompanyGetQueries;
@@ -31,13 +30,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 return res.status(httpCodes.BAD_REQUEST).json({ error: 'Missing company id' });
             }
 
-            const company = await getCompanyWithProfilesInvitesAndUsage(companyId);
+            const company = await getCompanyById(companyId);
 
             if (!company) {
                 return res.status(httpCodes.NOT_FOUND).json({ error: 'Company not found' });
             }
+            const result: CompanyGetResponse = company;
 
-            return res.status(httpCodes.OK).json(company);
+            return res.status(httpCodes.OK).json(result);
         } catch (error) {
             serverLogger(error, 'error');
             return res
@@ -107,4 +107,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     return res.status(httpCodes.METHOD_NOT_ALLOWED).json({});
-}
+};
+
+export default handler;
