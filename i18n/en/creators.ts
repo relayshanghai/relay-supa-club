@@ -158,6 +158,10 @@ const creators = {
             language: 'We determine this by analyzing texts in the recent posts',
         },
         audienceGenderAge: 'Audience gender by age',
+        mass_followers: 'Mass Followers',
+        suspicious: 'Suspicious',
+        influencers: 'Influencers',
+        real: 'Real',
     },
 };
 
