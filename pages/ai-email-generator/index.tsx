@@ -16,7 +16,7 @@ import {
     AIEmailSubjectGeneratorPostResult,
 } from 'pages/api/ai-generate/subject';
 import { useUser } from 'src/hooks/use-user';
-import { CompanyProvider, useCompany } from 'src/hooks/use-company';
+import { useCompany } from 'src/hooks/use-company';
 import {
     ArrowPathIcon,
     ClipboardDocumentCheckIcon,
@@ -33,7 +33,7 @@ const removeLeadingSpace = (text: string) => {
     return text.replace(/^\s+/, '');
 };
 
-const AIImageGenerator = () => {
+const AIEmailGenerator = () => {
     const { t } = useTranslation();
 
     const { profile } = useUser();
@@ -166,176 +166,225 @@ const AIImageGenerator = () => {
     const emailRequiredMissing = subjectLineRequiredMissing || !senderName;
 
     return (
-        <div className="flex h-full w-full flex-col items-center p-6">
-            <div className="flex flex-col items-center">
-                <h1 className="mb-4 text-2xl font-bold">
-                    {t('aiEmailGenerator.index.title') || ''}
-                </h1>
-                <p className="mb-4 text-sm">{t('aiEmailGenerator.index.description') || ''}</p>
-            </div>
-
-            <div className="mt-10 flex w-full flex-col items-center justify-center gap-10 lg:h-full lg:flex-row lg:items-start">
-                <form className="flex h-full w-full flex-col items-center justify-start md:w-1/3">
-                    <p className="mb-2 text-sm font-semibold text-gray-500">
+        <Layout>
+            <div className="flex h-full w-full flex-col items-center p-6">
+                <div className="flex flex-col items-center">
+                    {/* text-[0.65rem] is an exception to our font size rules, when the text-xs looks too big for this icon label, it now only appears in the BETA label */}
+                    <span className="py-1/2 font-base mb-2 w-fit rounded-2xl bg-primary-500 px-2 text-[0.65rem] text-white">
+                        BETA
+                    </span>
+                    <h1 className="mb-2 text-2xl font-bold">
+                        {t('aiEmailGenerator.index.title') || ''}
+                    </h1>
+                    <p className="mb-2 text-xs">{t('aiEmailGenerator.index.description') || ''}</p>
+                    <p className="text-xs font-semibold text-gray-500">
                         {t('aiEmailGenerator.index.information')}
                     </p>
-                    <Input
-                        label={t('aiEmailGenerator.form.label.brandName') || ''}
-                        placeholder={t('aiEmailGenerator.form.placeholder.brandName') || ''}
-                        value={brandName}
-                        onChange={(e) => setBrandName(e.target.value)}
-                        required
-                    />
+                </div>
 
-                    <Input
-                        label={t('aiEmailGenerator.form.label.senderName') || ''}
-                        placeholder={t('aiEmailGenerator.form.placeholder.senderName') || ''}
-                        value={senderName}
-                        onChange={(e) => setSenderName(e.target.value)}
-                        required
-                    />
-
-                    <Input
-                        label={t('aiEmailGenerator.form.label.influencerName') || ''}
-                        placeholder={t('aiEmailGenerator.form.placeholder.influencerName') || ''}
-                        value={influencerName}
-                        onChange={(e) => setInfluencerName(e.target.value)}
-                        required
-                    />
-
-                    <Input
-                        label={t('aiEmailGenerator.form.label.productName') || ''}
-                        placeholder={t('aiEmailGenerator.form.placeholder.productName') || ''}
-                        value={productName}
-                        onChange={(e) => setProductName(e.target.value)}
-                        required
-                    />
-
-                    <InputTextArea
-                        label={t('aiEmailGenerator.form.label.productDescription') || ''}
-                        placeholder={t('campaigns.creatorModal.messagePlaceholder') || ''}
-                        value={productDescription}
-                        onChange={(e) => {
-                            if (e.target.value.length > MAX_CHARACTER_LENGTH) {
-                                toast.error(t('aiEmailGenerator.form.error.maxLength'));
-                                return;
-                            }
-                            setProductDescription(e.target.value);
-                        }}
-                        required
-                    />
-
-                    <InputTextArea
-                        label={t('aiEmailGenerator.form.label.instructions') || ''}
-                        placeholder={t('campaigns.creatorModal.messagePlaceholder') || ''}
-                        value={instructions}
-                        onChange={(e) => {
-                            if (e.target.value.length > MAX_CHARACTER_LENGTH) {
-                                toast.error(t('aiEmailGenerator.form.error.maxLength') || '');
-                                return;
-                            }
-                            setInstructions(e.target.value);
-                        }}
-                    />
-
-                    <div className="flex flex-row items-center gap-2">
-                        <Button
-                            disabled={loadingEmail || loadingSubject || emailRequiredMissing}
-                            type="submit"
-                            onClick={(e) => handleSubmit(e, 'both')}
-                            className="flex items-center gap-2"
-                        >
-                            <InboxArrowDownIcon className="mr-2 h-5 w-5" />
-                            {loadingEmail
-                                ? t('aiEmailGenerator.index.status.loading')
-                                : t('aiEmailGenerator.index.generateEmail') || ''}
-                        </Button>
-                    </div>
-                </form>
-
-                <div
-                    className={`${
-                        generatedEmail.length < 1 || generatedSubject.length < 1
-                            ? 'hidden opacity-0'
-                            : 'opacity-100'
-                    } mb-10 flex h-full w-full max-w-xl flex-col items-center justify-start gap-5 transition-all duration-300 md:w-2/3`}
-                >
-                    <div className="flex w-full flex-col items-center justify-center">
-                        <InputTextArea
-                            label={t('aiEmailGenerator.form.label.subjectLine') || ''}
-                            value={generatedSubject}
-                            readOnly
-                            rows={4}
+                <div className="mt-10 flex w-full flex-col items-center justify-center gap-10 lg:h-full lg:flex-row lg:items-start">
+                    <form className="flex h-full w-full flex-col items-center justify-start md:w-1/3">
+                        <Input
+                            label={t('aiEmailGenerator.form.label.brandName') || ''}
+                            placeholder={t('aiEmailGenerator.form.placeholder.brandName') || ''}
+                            value={brandName}
+                            onChange={(e) => setBrandName(e.target.value)}
+                            required
                         />
 
-                        <div className="flex flex-col gap-2 md:flex-row md:gap-5">
-                            <Button
-                                onClick={() => copyToClipboard(generatedSubject)}
-                                disabled={loadingEmail || loadingSubject}
-                                className="flex items-center gap-2"
-                            >
-                                <ClipboardDocumentCheckIcon className="w-4" />
-                                {t('aiEmailGenerator.form.label.copySubjectButton') || ''}
-                            </Button>
+                        <Input
+                            label={t('aiEmailGenerator.form.label.senderName') || ''}
+                            placeholder={t('aiEmailGenerator.form.placeholder.senderName') || ''}
+                            value={senderName}
+                            onChange={(e) => setSenderName(e.target.value)}
+                            required
+                        />
 
-                            <Button
-                                variant="secondary"
-                                className="flex items-center gap-2"
-                                onClick={(e) => handleSubmit(e, 'subject')}
-                                disabled={
-                                    loadingEmail || loadingSubject || subjectLineRequiredMissing
+                        <Input
+                            label={t('aiEmailGenerator.form.label.influencerName') || ''}
+                            placeholder={
+                                t('aiEmailGenerator.form.placeholder.influencerName') || ''
+                            }
+                            value={influencerName}
+                            onChange={(e) => setInfluencerName(e.target.value)}
+                            required
+                        />
+
+                        <Input
+                            label={t('aiEmailGenerator.form.label.productName') || ''}
+                            placeholder={t('aiEmailGenerator.form.placeholder.productName') || ''}
+                            value={productName}
+                            onChange={(e) => setProductName(e.target.value)}
+                            required
+                        />
+
+                        <InputTextArea
+                            label={t('aiEmailGenerator.form.label.productDescription') || ''}
+                            placeholder={t('campaigns.creatorModal.messagePlaceholder') || ''}
+                            value={productDescription}
+                            onChange={(e) => {
+                                if (e.target.value.length > MAX_CHARACTER_LENGTH) {
+                                    toast.error(t('aiEmailGenerator.form.error.maxLength'));
+                                    return;
                                 }
+                                setProductDescription(e.target.value);
+                            }}
+                            required
+                        />
+
+                        <InputTextArea
+                            label={t('aiEmailGenerator.form.label.instructions') || ''}
+                            placeholder={t('campaigns.creatorModal.messagePlaceholder') || ''}
+                            value={instructions}
+                            onChange={(e) => {
+                                if (e.target.value.length > MAX_CHARACTER_LENGTH) {
+                                    toast.error(t('aiEmailGenerator.form.error.maxLength') || '');
+                                    return;
+                                }
+                                setInstructions(e.target.value);
+                            }}
+                        />
+
+                        <div className="flex flex-row items-center gap-2">
+                            <Button
+                                disabled={loadingEmail || loadingSubject || emailRequiredMissing}
+                                type="submit"
+                                onClick={(e) => handleSubmit(e, 'both')}
+                                className="flex items-center gap-2"
                             >
-                                <ArrowPathIcon className="w-4" />
-                                {t('aiEmailGenerator.form.label.regenerateSubject') || ''}
+                                <InboxArrowDownIcon className="mr-2 h-5 w-5" />
+                                {loadingEmail
+                                    ? t('aiEmailGenerator.index.status.loading')
+                                    : t('aiEmailGenerator.index.generateEmail') || ''}
                             </Button>
                         </div>
-                    </div>
+                    </form>
 
-                    <div className="flex h-full w-full flex-col items-center justify-center ">
-                        <label className="flex h-full w-full flex-col text-xs text-gray-500">
-                            <div className="font-bold">
-                                {t('aiEmailGenerator.form.label.generatedEmail') || ''}
-                            </div>
-                            <textarea
-                                className="my-2 block h-full w-full appearance-none rounded-md border border-transparent bg-white px-3 py-2 placeholder-gray-400 shadow ring-1 ring-opacity-5 focus:border-primary-500 focus:outline-none focus:ring-primary-500 sm:text-sm"
-                                value={generatedEmail}
+                    <div
+                        className={`${
+                            generatedEmail.length < 1 || generatedSubject.length < 1
+                                ? 'hidden opacity-0'
+                                : 'opacity-100'
+                        } mb-10 flex h-full w-full max-w-xl flex-col items-center justify-start gap-5 transition-all duration-300 md:w-2/3`}
+                    >
+                        <div className="flex w-full flex-col items-center justify-center">
+                            <InputTextArea
+                                label={t('aiEmailGenerator.form.label.subjectLine') || ''}
+                                value={generatedSubject}
                                 readOnly
-                                rows={18}
+                                rows={4}
                             />
-                        </label>
-                        <div className="flex flex-col gap-2 md:flex-row md:gap-5">
-                            <Button
-                                onClick={() => copyToClipboard(generatedEmail)}
-                                className="flex items-center gap-2"
-                                disabled={loadingEmail || loadingSubject}
-                            >
-                                <ClipboardDocumentCheckIcon className="w-4" />
-                                {t('aiEmailGenerator.form.label.copyEmailButton') || ''}
-                            </Button>
-                            <Button
-                                variant="secondary"
-                                className="flex items-center gap-2"
-                                onClick={(e) => handleSubmit(e, 'email')}
-                                disabled={loadingEmail || loadingSubject || emailRequiredMissing}
-                            >
-                                <ArrowPathIcon className="w-4" />
-                                {t('aiEmailGenerator.form.label.regenerateEmail') || ''}
-                            </Button>
+
+                            <InputTextArea
+                                label={t('aiEmailGenerator.form.label.instructions') || ''}
+                                placeholder={t('campaigns.creatorModal.messagePlaceholder') || ''}
+                                value={instructions}
+                                onChange={(e) => {
+                                    if (e.target.value.length > MAX_CHARACTER_LENGTH) {
+                                        toast.error(
+                                            t('aiEmailGenerator.form.error.maxLength') || '',
+                                        );
+                                        return;
+                                    }
+                                    setInstructions(e.target.value);
+                                }}
+                            />
+
+                            <div className="flex flex-row items-center gap-2">
+                                <Button
+                                    onClick={() => copyToClipboard(generatedSubject)}
+                                    disabled={loadingEmail || loadingSubject}
+                                    className="flex items-center gap-2"
+                                >
+                                    <InboxArrowDownIcon className="mr-2 h-5 w-5" />
+                                    {loadingEmail
+                                        ? t('aiEmailGenerator.index.status.loading')
+                                        : t('aiEmailGenerator.index.generateEmail') || ''}
+                                </Button>
+                            </div>
+                        </div>
+
+                        <div
+                            className={`${
+                                generatedEmail.length < 1 || generatedSubject.length < 1
+                                    ? 'hidden opacity-0'
+                                    : 'opacity-100'
+                            } mb-10 flex h-full w-full max-w-xl flex-col items-center justify-start gap-5 transition-all duration-300 md:w-2/3`}
+                        >
+                            <div className="flex w-full flex-col items-center justify-center">
+                                <InputTextArea
+                                    label={t('aiEmailGenerator.form.label.subjectLine') || ''}
+                                    value={generatedSubject}
+                                    readOnly
+                                    rows={18}
+                                />
+
+                                <div className="flex flex-col gap-2 md:flex-row md:gap-5">
+                                    <Button
+                                        onClick={() => copyToClipboard(generatedSubject)}
+                                        disabled={loadingEmail || loadingSubject}
+                                        className="flex items-center gap-2"
+                                    >
+                                        <ClipboardDocumentCheckIcon className="w-4" />
+                                        {t('aiEmailGenerator.form.label.copySubjectButton') || ''}
+                                    </Button>
+
+                                    <Button
+                                        variant="secondary"
+                                        className="flex items-center gap-2"
+                                        onClick={(e) => handleSubmit(e, 'subject')}
+                                        disabled={
+                                            loadingEmail ||
+                                            loadingSubject ||
+                                            subjectLineRequiredMissing
+                                        }
+                                    >
+                                        <ArrowPathIcon className="w-4" />
+                                        {t('aiEmailGenerator.form.label.regenerateSubject') || ''}
+                                    </Button>
+                                </div>
+                            </div>
+
+                            <div className="flex h-full w-full flex-col items-center justify-center">
+                                <label className="flex h-full w-full flex-col text-xs text-gray-500">
+                                    <div className="font-bold">
+                                        {t('aiEmailGenerator.form.label.generatedEmail') || ''}
+                                    </div>
+                                    <textarea
+                                        className="my-2 block h-full w-full appearance-none rounded-md border border-transparent bg-white px-3 py-2 placeholder-gray-400 shadow ring-opacity-5 focus:border-primary-500 focus:outline-none focus:ring-primary-500 sm:text-xs"
+                                        value={generatedEmail}
+                                        readOnly
+                                        rows={18}
+                                    />
+                                </label>
+                                <div className="mb-2 flex flex-col gap-2 md:flex-row md:gap-5">
+                                    <Button
+                                        onClick={() => copyToClipboard(generatedEmail)}
+                                        className="flex items-center gap-2"
+                                        disabled={loadingEmail || loadingSubject}
+                                    >
+                                        <ClipboardDocumentCheckIcon className="w-4" />
+                                        {t('aiEmailGenerator.form.label.copyEmailButton') || ''}
+                                    </Button>
+                                    <Button
+                                        variant="secondary"
+                                        className="flex items-center gap-2"
+                                        onClick={(e) => handleSubmit(e, 'email')}
+                                        disabled={
+                                            loadingEmail || loadingSubject || emailRequiredMissing
+                                        }
+                                    >
+                                        <ArrowPathIcon className="w-4" />
+                                        {t('aiEmailGenerator.form.label.regenerateEmail') || ''}
+                                    </Button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </Layout>
     );
 };
 
-const AIImageGeneratorPage = () => (
-    <Layout>
-        <CompanyProvider>
-            <AIImageGenerator />
-        </CompanyProvider>
-    </Layout>
-);
-
-export default AIImageGeneratorPage;
+export default AIEmailGenerator;
