@@ -16,7 +16,7 @@ export const Input = ({ label, error, note, placeholder, ...rest }: InputProps) 
             </div>
             <input
                 placeholder={placeholder || ''}
-                className={`ring-opacity-5 placeholder-gray-400 appearance-none bg-white rounded-md block w-full px-3 py-2 border border-transparent shadow ring-1 sm:text-sm focus:border-primary-500 focus:ring-primary-500 focus:outline-none my-2 ${
+                className={`ring-opacity-5 placeholder-gray-400 appearance-none bg-white rounded-md block w-full px-3 py-2 border border-transparent shadow ring-1 sm:text-xs focus:border-primary-500 focus:ring-primary-500 focus:outline-none my-2 ${
                     rest.disabled
                         ? 'bg-gray-100 cursor-not-allowed text-gray-500 ring-gray-500'
                         : 'text-gray-900 ring-gray-900'
