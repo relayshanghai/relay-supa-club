@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { decimalToPercent } from 'src/utils/formatter';
 import { chinaFilter } from 'src/utils/utils';
 
 export const ProgressBlock = ({
@@ -24,7 +25,9 @@ export const ProgressBlock = ({
                             <div className="text-sm font-semibold text-gray-600">
                                 {stat.name ? chinaFilter(stat.name) : ''}
                             </div>
-                            <div className="text-sm text-gray-600">{stat.weight.toFixed(2)}%</div>
+                            <div className="text-sm text-gray-600">
+                                {decimalToPercent(stat.weight)}
+                            </div>
                         </div>
                         <div className="relative pt-1">
                             <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-primary-100">
