@@ -21,3 +21,7 @@ In the API, we're passing the following parameters.
 - **n:** The number of samples to return. We're using 1 sample. This is because we want to generate a single email and let users re-generate more emails if they want to.
 
 - **Temperature:** Temperature is used to control the randomness of the model. We're using 0.4. This is because we want to generate a long but accurate email. We're not using other values because it was either generating random emails or very short emails. The higher the temperature, the higher the model would take risks with the text. In the subject line, we wanted to generate a catchy text so randomness/temperature of 1 gave us expected results but the same wasn't the case with the emails since we wanted to generate text within the proper context, so 0.4 felt fine.
+
+**References:**
+- https://openai.com/pricing
+- https://platform.openai.com/docs/introduction
