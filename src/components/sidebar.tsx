@@ -8,7 +8,7 @@ import { Compass, FourSquare, Account, Team } from './icons';
 import { Title } from './title';
 import { useTranslation } from 'react-i18next';
 
-const ActiveLink = ({ href, children }: { href: string; children: any }) => {
+const ActiveLink = ({ href, children }: { href: string; children: React.ReactNode }) => {
     const router = useRouter();
     const pathRoot = router.pathname.split('/')[1]; // /dashboard/influencers => dashboard
     const hrefRoot = href.split('/')[1]; // /dashboard/influencers => dashboard
@@ -69,7 +69,6 @@ const NavBarInner = ({
 
                 <ActiveLink href="/ai-email-generator">
                     {t('navbar.aiEmailGenerator')}
-                    {/* text-[0.65rem] is an exception to our font size rules, when the text-xs looks too big for this icon label, it now only appears in the BETA label */}
                     <span className="py-1/2 font-base ml-2 w-fit rounded-2xl bg-primary-500 px-2 text-[0.65rem] text-white">
                         BETA
                     </span>
