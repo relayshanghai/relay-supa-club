@@ -23,7 +23,7 @@ export default function CommentCards({
 
     const importantMessages = () => {
         const pinnedMessages = campaignCreatorNotes?.filter((note) => note.important === true);
-        console.log(pinnedMessages);
+        // console.log(pinnedMessages);
         if (pinnedMessages.length > 0)
             return (
                 <div className="fixed z-20 w-full bg-gray-100 p-2 ">
