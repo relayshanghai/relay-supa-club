@@ -153,7 +153,7 @@ const creators = {
             audienceLocation: '我们通过分析最近视频中的位置标签、文本、简介和标题来确定这一点',
             language: '我们通过最近发布内容的文字来判断',
         },
-        mass_followers: '量级粉丝',
+        mass_followers: '批量关注账号',
         suspicious: '可疑',
         influencers: 'KOL',
         real: '真实',
