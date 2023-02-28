@@ -4,9 +4,8 @@ import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
-import { LanguageToggle } from 'src/components/common/language-toggle';
 import { Input } from 'src/components/input';
-import { Title } from 'src/components/title';
+import { LoginSignupLayout } from 'src/components/SignupLayout';
 import { APP_URL } from 'src/constants';
 import { useFields } from 'src/hooks/use-fields';
 import { useUser } from 'src/hooks/use-user';
@@ -65,24 +64,19 @@ export default function Login() {
     };
 
     return (
-        <div className="w-full h-screen px-10 flex flex-col">
-            <div className="sticky top-0 flex items-center w-full justify-between">
-                <Title />
-                <LanguageToggle />
-            </div>
-
-            <form className="max-w-xs w-full mx-auto flex-grow flex flex-col justify-center items-center space-y-2">
-                <div className="text-left w-full">
-                    <h1 className="font-bold text-4xl mb-2">{t('login.logIn')}</h1>
-                    <h3 className="text-sm text-gray-600 mb-8">{t('login.welcomeBack')}</h3>
+        <LoginSignupLayout>
+            <form className="mx-auto flex w-full max-w-xs flex-grow flex-col items-center justify-center space-y-2">
+                <div className="w-full text-left">
+                    <h1 className="mb-2 text-4xl font-bold">{t('login.logIn')}</h1>
+                    <h3 className="mb-8 text-sm text-gray-600">{t('login.welcomeBack')}</h3>
                 </div>
-                <p className="inline text-gray-500 text-sm">
+                <p className="inline text-sm text-gray-500">
                     {t('login.dontHaveAnAccount')}{' '}
                     <Link
                         href="/signup"
-                        className="inline text-primary-700 hover:text-primary-600 cursor-pointer"
+                        className="inline cursor-pointer text-primary-700 hover:text-primary-600"
                     >
-                        <Button variant="secondary" className="text-xs px-1 pt-1 pb-1 ml-2">
+                        <Button variant="secondary" className="ml-2 px-1 pt-1 pb-1 text-xs">
                             {t('login.signUp')}
                         </Button>
                     </Link>
@@ -110,11 +104,11 @@ export default function Login() {
                 </Button>
 
                 <button type="button" onClick={handleResetPassword} disabled={generatingResetEmail}>
-                    <p className="mt-4 inline text-gray-400 text-sm pb-4 hover:text-primary-500">
+                    <p className="mt-4 inline pb-4 text-sm text-gray-400 hover:text-primary-500">
                         {t('login.forgotPasswordReset')}
                     </p>
                 </button>
             </form>
-        </div>
+        </LoginSignupLayout>
     );
 }
