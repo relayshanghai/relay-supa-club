@@ -62,8 +62,8 @@ export const CreatorPage = ({
                         <MetricsSection report={report} />
                         <PopularPostsSection report={report} />
                         {reportCreatedAt && (
-                            <span className="flex text-xs mx-6 my-3">
-                                <p className="text-gray-400 mr-2">
+                            <span className="mx-6 my-3 flex text-xs">
+                                <p className="mr-2 text-gray-400">
                                     {t('creators.show.lastUpdate')}
                                 </p>
                                 <p className="text-gray-600">

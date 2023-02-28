@@ -93,27 +93,27 @@ export default function CampaignShow() {
     return (
         <Layout>
             {/* -- Campaign banner starts here -- */}
-            <div className="flex items-center justify-center md:justify-between w-full bg-white rounded-2xl sm:h-40 py-4 sm:py-0 px-4 relative">
+            <div className="relative flex w-full items-center justify-center rounded-2xl bg-white py-4 px-4 sm:h-40 sm:py-0 md:justify-between">
                 <div>
-                    <div className="flex flex-col sm:flex-row items-center sm:items-left">
-                        <div className="h-32 w-32 sm:mr-4 flex-shrink-0 mb-4 sm:mb-0">
+                    <div className="sm:items-left flex flex-col items-center sm:flex-row">
+                        <div className="mb-4 h-32 w-32 flex-shrink-0 sm:mr-4 sm:mb-0">
                             <Image
                                 src={media?.[0]?.url || '/assets/imgs/image404.png'}
                                 alt="campaign photo"
                                 width={128}
                                 height={128}
-                                className="object-cover rounded-2xl"
+                                className="rounded-2xl object-cover"
                             />
                         </div>
-                        <div className="flex flex-col justify-evenly items-center text-center sm:items-start sm:text-left">
+                        <div className="flex flex-col items-center justify-evenly text-center sm:items-start sm:text-left">
                             <div className="mb-1 flex flex-col items-center sm:flex-row ">
-                                <div className="font-semibold text-lg text-tertiary-600 sm:mr-2">
+                                <div className="text-lg font-semibold text-tertiary-600 sm:mr-2">
                                     {currentCampaign?.name}
                                 </div>
                                 <select
                                     onChange={(e) => handleDropdownSelect(e, currentCampaign)}
                                     value={currentCampaign?.status as string}
-                                    className="px-2 py-1 bg-primary-100 hover:bg-primary-200 text-primary-500 text-xs rounded-md duration-300 cursor-pointer"
+                                    className="cursor-pointer rounded-md bg-primary-100 px-2 py-1 text-xs text-primary-500 duration-300 hover:bg-primary-200"
                                 >
                                     {campaignStatusTabs.map((tab, index) => (
                                         <option value={tab.value} key={index}>
@@ -123,7 +123,7 @@ export default function CampaignShow() {
                                 </select>
                             </div>
                             <div className="mb-1">
-                                <div className="font-semibold text-sm text-tertiary-600">
+                                <div className="text-sm font-semibold text-tertiary-600">
                                     {t('campaigns.show.campaignLaunch')}
                                 </div>
                                 <div className="text-sm text-tertiary-600">
@@ -146,7 +146,7 @@ export default function CampaignShow() {
                                 </div>
                             </div>
                             <div>
-                                <div className="font-semibold text-sm text-tertiary-600 mb-1">
+                                <div className="mb-1 text-sm font-semibold text-tertiary-600">
                                     {t('campaigns.show.tags')}
                                 </div>
                                 <div className="flex h-7">
@@ -155,7 +155,7 @@ export default function CampaignShow() {
                                         currentCampaign?.tag_list.map((tag, index) => (
                                             <div
                                                 key={index}
-                                                className="bg-tertiary-50 rounded-md px-2 py-1 text-xs text-tertiary-600 mr-1 mb-1"
+                                                className="mr-1 mb-1 rounded-md bg-tertiary-50 px-2 py-1 text-xs text-tertiary-600"
                                             >
                                                 {tag}
                                             </div>
@@ -166,27 +166,27 @@ export default function CampaignShow() {
                     </div>
                 </div>
                 {currentCampaign?.id && (
-                    <div className=" absolute top-3 right-6 group w-8 h-8 bg-gray-50 hover:bg-gray-100 duration-300 font-semibold rounded-lg mr-2 cursor-pointer z-10 text-sm text-gray-500 flex items-center justify-center">
+                    <div className=" group absolute top-3 right-6 z-10 mr-2 flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg bg-gray-50 text-sm font-semibold text-gray-500 duration-300 hover:bg-gray-100">
                         <Link
                             href={`/campaigns/form/${encodeURIComponent(currentCampaign?.id)}`}
                             legacyBehavior
                         >
                             <PencilSquareIcon
                                 name="edit"
-                                className="w-4 h-4 fill-current text-gray-300 group-hover:text-primary-500 duration-300"
+                                className="h-4 w-4 fill-current text-gray-300 duration-300 group-hover:text-primary-500"
                             />
                         </Link>
                     </div>
                 )}
             </div>
             {/* -- Campaign outreach details starts --*/}
-            <div className="sm:h-40 py-0 md:py-6 px-4">
-                <div className="flex mb-4 overflow-x-auto">
+            <div className="py-0 px-4 sm:h-40 md:py-6">
+                <div className="mb-4 flex overflow-x-auto">
                     {tabs.map((tab, index) => (
                         <div
                             key={index}
                             onClick={() => setCurrentTab(index)}
-                            className={`font-semibold text-md mr-6 hover:text-primary-500 cursor-pointer duration-300 flex-shrink-0,
+                            className={`text-md flex-shrink-0, mr-6 cursor-pointer font-semibold duration-300 hover:text-primary-500
     ${currentTab === index ? 'text-primary-500' : 'text-gray-400'}`}
                         >
                             {tab}
@@ -207,15 +207,15 @@ export default function CampaignShow() {
             {currentCreator && (
                 <Modal
                     title={
-                        <div className="flex items-center -mt-4 justify-between">
+                        <div className="-mt-4 flex items-center justify-between">
                             <h3>{t('campaigns.modal.comments')}</h3>
-                            <div className="bg-gray-100 rounded-md p-3 sticky top-0 z-30 flex items-center">
+                            <div className="sticky top-0 z-30 flex items-center rounded-md bg-gray-100 p-3">
                                 <img
-                                    className="h-8 w-8 rounded-full mr-4"
+                                    className="mr-4 h-8 w-8 rounded-full"
                                     src={imgProxy(currentCreator.avatar_url)}
                                     alt=""
                                 />
-                                <h3 className="font-medium text-sm">{currentCreator?.fullname}</h3>
+                                <h3 className="text-sm font-medium">{currentCreator?.fullname}</h3>
                             </div>
                         </div>
                     }

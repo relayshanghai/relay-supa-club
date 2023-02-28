@@ -53,11 +53,11 @@ export const CancelSubscriptionModal = ({
     return (
         <Modal visible={visible} onClose={handleClose}>
             <div className="flex flex-col space-y-4 pt-4">
-                <div className="flex justify-between mb-8">
+                <div className="mb-8 flex justify-between">
                     <h1 className="text-2xl text-primary-700"> {t('account.cancelModal.title')}</h1>
                     <Button
                         variant="secondary"
-                        className="!text-xs !px-2 !py-0"
+                        className="!px-2 !py-0 !text-xs"
                         onClick={handleClose}
                     >
                         {t('account.subscription.modal.close')}
@@ -73,7 +73,7 @@ export const CancelSubscriptionModal = ({
                     <Button
                         disabled={submitting}
                         onClick={handleCancel}
-                        className="bg-red-700 border-red-700 hover:bg-red-600 hover:border-red-600 m-auto"
+                        className="m-auto border-red-700 bg-red-700 hover:border-red-600 hover:bg-red-600"
                     >
                         {t('account.cancelModal.cancelSubscription')}
                     </Button>

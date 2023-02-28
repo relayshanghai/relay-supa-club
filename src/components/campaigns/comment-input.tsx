@@ -46,9 +46,9 @@ export default function CommentInput({
     };
 
     return (
-        <div className=" text-xs p-3 w-full">
+        <div className=" w-full p-3 text-xs">
             <div className="flex items-center">
-                <div className="rounded-full w-6 h-6 row-center bg-primary-100 text-primary-500 mr-4">
+                <div className="row-center mr-4 h-6 w-6 rounded-full bg-primary-100 text-primary-500">
                     <div className="p-2">
                         {profile?.first_name ? profile.first_name[0].toUpperCase() : ''}
                         {profile?.last_name ? profile.last_name[0].toUpperCase() : ''}
@@ -57,19 +57,19 @@ export default function CommentInput({
                 <textarea
                     rows={1}
                     placeholder={t('campaigns.creatorModal.messagePlaceholder') as string}
-                    className="textarea-field placeholder:text-xs overflow-y-auto"
+                    className="textarea-field overflow-y-auto placeholder:text-xs"
                     value={comment}
                     onChange={handleInput}
                     onKeyDown={(e) => enterComment(e)}
                 />
                 <button
-                    className="group p-2 ml-2 rounded-md text-gray-600  bg-gray-50 hover:bg-gray-100 border border-gray-200 duration-300 outline-none appearance-none text-center cursor-pointer"
+                    className="group ml-2 cursor-pointer appearance-none rounded-md  border border-gray-200 bg-gray-50 p-2 text-center text-gray-600 outline-none duration-300 hover:bg-gray-100"
                     onClick={() => handleComment(comment)}
                 >
                     {loading ? (
-                        <Spinner className=" fill-primary-600 text-white w-4 h-4" />
+                        <Spinner className=" h-4 w-4 fill-primary-600 text-white" />
                     ) : (
-                        <Send className="w-4 h-4 fill-tertiary-600 group-hover:fill-primary-600" />
+                        <Send className="h-4 w-4 fill-tertiary-600 group-hover:fill-primary-600" />
                     )}
                 </button>
             </div>

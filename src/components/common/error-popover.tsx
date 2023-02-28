@@ -9,8 +9,8 @@ export const ErrorPopover = ({
     buttonText?: string;
     buttonAction?: () => void;
 }) => (
-    <div className="bg-red-50 text-right text-sm rounded-md px-6 py-4 absolute top-0 right-0 z-50">
-        <div className="text-red-600 mb-2">{errorMessage}</div>
+    <div className="absolute top-0 right-0 z-50 rounded-md bg-red-50 px-6 py-4 text-right text-sm">
+        <div className="mb-2 text-red-600">{errorMessage}</div>
         {buttonAction && buttonText && <Button onClick={buttonAction}>{buttonText}</Button>}
     </div>
 );

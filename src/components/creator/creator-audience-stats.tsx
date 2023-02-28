@@ -142,7 +142,7 @@ const AudienceStatsSection = ({
     platform: CreatorPlatform;
 }) => {
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
             {stats.map((stat, index) => (
                 <div key={index}>
                     {stat.type === 'progress' && (
@@ -184,7 +184,7 @@ export const AudienceStats = ({ report }: { report: CreatorReport }) => {
 
     return (
         <div className="p-6">
-            <div className="font-bold text-gray-600 mb-2">{t('creators.show.audienceStats')}</div>
+            <div className="mb-2 font-bold text-gray-600">{t('creators.show.audienceStats')}</div>
             <ToggleTabs currentTab={audienceTab} setCurrentTab={setAudienceTab} tabs={tabs} />
             {audienceTab === 'audience_followers' && followersStats.length > 0 && (
                 <AudienceStatsSection stats={followersStats} platform={platform} />

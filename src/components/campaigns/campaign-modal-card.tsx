@@ -92,22 +92,22 @@ export default function CampaignModalCard({
     }, [campaign, creator]);
 
     return (
-        <div className="bg-white text-sm px-2 py-3.5 rounded-lg mb-2 duration-300">
+        <div className="mb-2 rounded-lg bg-white px-2 py-3.5 text-sm duration-300">
             <div className="flex items-center justify-between">
-                <div className="flex items-center w-full min-w-0">
+                <div className="flex w-full min-w-0 items-center">
                     <img
                         src={coverImageUrl || '/assets/imgs/image404.png'}
                         alt=""
-                        className="w-6 h-6 rounded-full object-cover flex-shrink-0 mr-2"
+                        className="mr-2 h-6 w-6 flex-shrink-0 rounded-full object-cover"
                     />
-                    <div className="text-sm text-gray-600 truncate w-full mr-2">
+                    <div className="mr-2 w-full truncate text-sm text-gray-600">
                         {campaign?.name}
                     </div>
                 </div>
 
                 {campaign && hasCreator && (
-                    <div className="flex items-center justify-center w-6 h-6 bg-primary-100 rounded-md flex-shrink-0">
-                        <CheckCircleIcon className="fill-current text-primary-500 w-4 h-4" />
+                    <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md bg-primary-100">
+                        <CheckCircleIcon className="h-4 w-4 fill-current text-primary-500" />
                     </div>
                 )}
 
@@ -115,12 +115,12 @@ export default function CampaignModalCard({
                     <button
                         onClick={handleAddCreatorToCampaign}
                         disabled={hasCreator || isMissing(campaign, creator, creator?.user_id)}
-                        className="flex items-center justify-center w-6 h-6 bg-gray-100 rounded-md flex-shrink-0 hover:shadow-md duration-300 text-gray-600 disabled:text-gray-400 disabled:cursor-not-allowed"
+                        className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md bg-gray-100 text-gray-600 duration-300 hover:shadow-md disabled:cursor-not-allowed disabled:text-gray-400"
                     >
                         {!loading && (
-                            <PlusCircleIcon className="fill-current text-current w-4 h-4" />
+                            <PlusCircleIcon className="h-4 w-4 fill-current text-current" />
                         )}
-                        {loading && <Spinner className=" fill-primary-600 text-white w-4 h-4" />}
+                        {loading && <Spinner className=" h-4 w-4 fill-primary-600 text-white" />}
                     </button>
                 )}
             </div>

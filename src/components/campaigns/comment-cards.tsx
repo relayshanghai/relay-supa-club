@@ -26,7 +26,7 @@ export default function CommentCards({
     }, [campaignCreatorNotes]);
 
     return (
-        <div className=" text-xs w-full h-96 flex flex-col overflow-y-auto">
+        <div className=" flex h-96 w-full flex-col overflow-y-auto text-xs">
             {isLoading ? (
                 <CommentCardsSkeleton />
             ) : (
@@ -40,7 +40,7 @@ export default function CommentCards({
                             </>
                         </>
                     ) : (
-                        <div className="text-center text-gray-500 mt-4">
+                        <div className="mt-4 text-center text-gray-500">
                             {t('campaigns.creatorModal.commentsDescr')}
                         </div>
                     )}

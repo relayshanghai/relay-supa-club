@@ -53,11 +53,10 @@ export default function CampaignCardSquare({
     }, [campaign]);
 
     return (
-        (<Link href={`/campaigns/${campaign.id}`} passHref>
-
-            <div className="bg-white rounded-lg h-80 relative cursor-pointer sm:hover:shadow-lg duration-300">
+        <Link href={`/campaigns/${campaign.id}`} passHref>
+            <div className="relative h-80 cursor-pointer rounded-lg bg-white duration-300 sm:hover:shadow-lg">
                 {/* -- Campaign Card Image -- */}
-                <div className="rounded-lg h-48 w-full mb-2 relative">
+                <div className="relative mb-2 h-48 w-full rounded-lg">
                     <Image
                         src={coverImageUrl || '/assets/imgs/image404.png'}
                         alt="card-image"
@@ -66,9 +65,9 @@ export default function CampaignCardSquare({
                         sizes="(max-width: 768px) 100vw,
           (max-width: 1200px) 50vw,
           33vw"
-                        className="w-full h-full rounded-lg"
+                        className="h-full w-full rounded-lg"
                     />
-                    <div className="flex flex-wrap mb-1 absolute bottom-0 left-2">
+                    <div className="absolute bottom-0 left-2 mb-1 flex flex-wrap">
                         {!!campaign?.tag_list?.length &&
                             campaign?.tag_list.map(
                                 (
@@ -86,62 +85,64 @@ export default function CampaignCardSquare({
                                 ) => (
                                     <div
                                         key={index}
-                                        className="bg-tertiary-50/60 rounded-md inline-block leading-sm items-center px-2 py-1 text-xs text-tertiary-600 mr-1 mb-1 flex-shrink-0"
+                                        className="leading-sm mr-1 mb-1 inline-block flex-shrink-0 items-center rounded-md bg-tertiary-50/60 px-2 py-1 text-xs text-tertiary-600"
                                     >
                                         {tag}
                                     </div>
                                 ),
                             )}
                     </div>
-                    <div className="bg-primary-50/60 text-primary-500 rounded-md px-2 py-1 text-xs inline-block absolute top-2 right-2">
+                    <div className="absolute top-2 right-2 inline-block rounded-md bg-primary-50/60 px-2 py-1 text-xs text-primary-500">
                         {t(`campaigns.show.status.${campaign?.status}`)}
                     </div>
                 </div>
                 <div className="px-2">
                     {/* -- Campaign Card Text -- */}
                     <div>
-                        <div className="text-sm text-tertiary-600 font-semibold">
+                        <div className="text-sm font-semibold text-tertiary-600">
                             {campaign.name}
                         </div>
-                        <div className="text-xs text-tertiary-600 mb-2">
+                        <div className="mb-2 text-xs text-tertiary-600">
                             {campaign?.companies?.name}
                         </div>
-                        <div className="flex items-center flex-wrap">
+                        <div className="flex flex-wrap items-center">
                             {/* TODO: fix the counts and switch tabs on next PR */}
                             {
                                 //@ts-ignore
                                 campaign?.status_counts &&
                                     //@ts-ignore
-                                    Object.entries(campaign?.status_counts).map(
-                                        (status, index) => (
-                                            <Link key={index} href={`/campaigns/${campaign.id}`} legacyBehavior>
-                                                <div className="flex items-center text-xs px-1 py-0.5 bg-primary-100 text-gray-600 hover:text-primary-500 duration-300 bg-opacity-60 border border-gray-100 rounded-md mr-2 mb-2">
-                                                    <div className="mr-1">
-                                                        {t('campaigns.show.changeStatus')}
-                                                    </div>
-                                                    {/* <div>{status[1]}</div> */}
+                                    Object.entries(campaign?.status_counts).map((status, index) => (
+                                        <Link
+                                            key={index}
+                                            href={`/campaigns/${campaign.id}`}
+                                            legacyBehavior
+                                        >
+                                            <div className="mr-2 mb-2 flex items-center rounded-md border border-gray-100 bg-primary-100 bg-opacity-60 px-1 py-0.5 text-xs text-gray-600 duration-300 hover:text-primary-500">
+                                                <div className="mr-1">
+                                                    {t('campaigns.show.changeStatus')}
                                                 </div>
-                                            </Link>
-                                        ),
-                                    )
+                                                {/* <div>{status[1]}</div> */}
+                                            </div>
+                                        </Link>
+                                    ))
                             }
                         </div>
                     </div>
                     {/* -- Campaign Card Icons -- */}
-                    <div className="flex items-center absolute bottom-2 right-0">
-                        <div className="flex items-center justify-center w-7 h-7 bg-primary-500 bg-opacity-10 hover:bg-opacity-20 duration-300 text-sm text-primary-500 font-semibold rounded-md mr-2 cursor-pointer">
+                    <div className="absolute bottom-2 right-0 flex items-center">
+                        <div className="mr-2 flex h-7 w-7 cursor-pointer items-center justify-center rounded-md bg-primary-500 bg-opacity-10 text-sm font-semibold text-primary-500 duration-300 hover:bg-opacity-20">
                             <Link href={`/campaigns/${campaign.id}`} legacyBehavior>
                                 <ChartBarIcon
                                     name="stats"
-                                    className="w-4 h-4 fill-current text-primary-500"
+                                    className="h-4 w-4 fill-current text-primary-500"
                                 />
                             </Link>
                         </div>
-                        <div className="flex items-center justify-center w-7 h-7 bg-primary-500 bg-opacity-10 hover:bg-opacity-20 duration-300 text-sm text-primary-500 font-semibold rounded-md mr-2 cursor-pointer">
+                        <div className="mr-2 flex h-7 w-7 cursor-pointer items-center justify-center rounded-md bg-primary-500 bg-opacity-10 text-sm font-semibold text-primary-500 duration-300 hover:bg-opacity-20">
                             <Link href={`/campaigns/form/${campaign.id}`} legacyBehavior>
                                 <PencilSquareIcon
                                     name="edit"
-                                    className="w-4 h-4 fill-current text-primary-500"
+                                    className="h-4 w-4 fill-current text-primary-500"
                                 />
                             </Link>
                         </div>
@@ -149,7 +150,6 @@ export default function CampaignCardSquare({
                     {/* -- Campaign Card Icons Ends -- */}
                 </div>
             </div>
-
-        </Link>)
+        </Link>
     );
 }

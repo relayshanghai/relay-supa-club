@@ -15,9 +15,9 @@ export const SimilarCreator = ({
 }) => {
     const { t } = useTranslation();
     return (
-        <div className="group bg-white flex items-center justify-between p-4 rounded-xl mb-2">
-            <div className="flex items-center justify-between flex-1 overflow-hidden">
-                <div className="mr-4 flex-shrink-0 flex items-center">
+        <div className="group mb-2 flex items-center justify-between rounded-xl bg-white p-4">
+            <div className="flex flex-1 items-center justify-between overflow-hidden">
+                <div className="mr-4 flex flex-shrink-0 items-center">
                     <img
                         src={imgProxy(creator.picture) || '/assets/imgs/image404.png'}
                         className="rounded-full"
@@ -27,7 +27,7 @@ export const SimilarCreator = ({
                     />
                 </div>
                 <div className="flex-1">
-                    <p className="text-sm text-gray-600 duration-300 font-semibold">
+                    <p className="text-sm font-semibold text-gray-600 duration-300">
                         {creator.fullname}
                     </p>
                     <div>
@@ -40,7 +40,7 @@ export const SimilarCreator = ({
                     </div>
                 </div>
             </div>
-            <div className="flex items-center ml-4">
+            <div className="ml-4 flex items-center">
                 <Button variant="secondary" className="px-3 py-1">
                     <Link href={`/influencer/${platform}/${creator.user_id}`}>
                         {t('creators.analyzeProfile')}

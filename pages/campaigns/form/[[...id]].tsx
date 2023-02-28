@@ -227,13 +227,13 @@ export default function CampaignForm() {
         </button>
     ) : (
         <div className="btn btn-primary ml-2">
-            <Spinner className="w-5 h-5 fill-primary-600 text-white" />
+            <Spinner className="h-5 w-5 fill-primary-600 text-white" />
         </div>
     );
 
     return (
         <Layout>
-            <div className="max-w-5xl container mx-auto p-6">
+            <div className="container mx-auto max-w-5xl p-6">
                 <FormProvider {...methods}>
                     <form onSubmit={handleSubmit(onSubmit)} className="mt-4">
                         {questions.map((q) => {
@@ -309,7 +309,7 @@ export default function CampaignForm() {
                             );
                         })}
 
-                        <div className="buttons flex justify-end border-t border-gray-100 pt-6 mt-8">
+                        <div className="buttons mt-8 flex justify-end border-t border-gray-100 pt-6">
                             <div onClick={goBack} className="btn btn-secondary ">
                                 {t('campaigns.form.cancel')}
                             </div>
