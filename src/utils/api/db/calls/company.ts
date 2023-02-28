@@ -152,3 +152,5 @@ export const getCompanyByName = (name: string) =>
 
 export const getCompanyName = (id: string) =>
     supabase.from('companies').select('name').eq('id', id).single();
+
+export const getAllCompanyNames = () => supabase.from('companies').select('name');
