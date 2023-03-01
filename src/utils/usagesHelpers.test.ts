@@ -46,6 +46,6 @@ describe('getCurrentPeriodUsages', () => {
     test('returns empty array if no usages', () => {
         const usages: any[] = [];
         const result = getCurrentPeriodUsages(usages, lastMonth, now) as any;
-        expect(result).toBe([]);
+        expect(result).toEqual([]);
     });
 });
