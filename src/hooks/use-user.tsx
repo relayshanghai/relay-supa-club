@@ -37,7 +37,7 @@ export type SignupData = {
     };
 };
 
-const ctx = createContext<{
+export interface UserContext {
     user: User | null;
     profile: ProfileDB | undefined;
     loading: boolean;
@@ -58,7 +58,9 @@ const ctx = createContext<{
     refreshProfile: KeyedMutator<ProfileGetResponse> | (() => void);
     supabaseClient: SupabaseClient<DatabaseWithCustomTypes> | null;
     getProfileController: MutableRefObject<AbortController | null | undefined>;
-}>({
+}
+
+const ctx = createContext<UserContext>({
     user: null,
     profile: undefined,
     loading: true,
@@ -78,7 +80,13 @@ const ctx = createContext<{
     getProfileController: { current: null },
 });
 
-export const useUser = () => useContext(ctx);
+export const useUser = () => {
+    const context = useContext(ctx);
+    if (context === null) {
+        throw new Error('useUser must be used within a UserProvider');
+    }
+    return context;
+};
 
 export const UserProvider = ({ children }: PropsWithChildren) => {
     const { isLoading, session } = useSessionContext();

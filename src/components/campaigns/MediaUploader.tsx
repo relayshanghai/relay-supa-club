@@ -62,11 +62,11 @@ function MediaUploader({
 
     const mediaList = () =>
         media.map((file: any, index: number) => (
-            <div className="flex items-center justify-between mb-4" key={index}>
+            <div className="mb-4 flex items-center justify-between" key={index}>
                 <div className="flex">
-                    <div className="h-6 w-6 box-border mr-4">
+                    <div className="mr-4 box-border h-6 w-6">
                         <img
-                            className="w-full h-full object-cover rounded-md"
+                            className="h-full w-full rounded-md object-cover"
                             src={URL.createObjectURL(media[index])}
                             alt="media gallery icon"
                         />
@@ -76,18 +76,18 @@ function MediaUploader({
                 <Trashcan
                     onClick={() => removeFile(index)}
                     data-idx={index}
-                    className="cursor-pointer w-4 h-4 text-primary-400 hover:fill-primary-600"
+                    className="h-4 w-4 cursor-pointer text-primary-400 hover:fill-primary-600"
                 />
             </div>
         ));
 
     const previousMediaList = () =>
         previousMedia?.map((file: any, index: number) => (
-            <div className="flex items-center justify-between mb-4" key={index}>
+            <div className="mb-4 flex items-center justify-between" key={index}>
                 <div className="flex">
-                    <div className="h-6 w-6 box-border mr-4">
+                    <div className="mr-4 box-border h-6 w-6">
                         <img
-                            className="w-full h-full object-cover rounded-md"
+                            className="h-full w-full rounded-md object-cover"
                             src={file.url}
                             alt="media gallery icon"
                         />
@@ -97,7 +97,7 @@ function MediaUploader({
                 <Trashcan
                     onClick={() => removePreviousMedia(index)}
                     data-idx={index}
-                    className="cursor-pointer w-4 h-4 fill-tertiary-400 hover:fill-primary-500 duration-300"
+                    className="h-4 w-4 cursor-pointer fill-tertiary-400 duration-300 hover:fill-primary-500"
                 />
             </div>
         ));
@@ -110,12 +110,12 @@ function MediaUploader({
                     {mediaList()}
                 </div>
             ) : (
-                <div className="text-xs text-center text-tertiary-600 mb-4">
+                <div className="mb-4 text-center text-xs text-tertiary-600">
                     {t('campaigns.form.noMedia')}
                 </div>
             )}
             <div className="btn btn-fileupload group" onClick={onButtonClick}>
-                <Plus className="mr-2 fill-current text-gray-500 group-hover:text-primary-500 w-6 h-6" />
+                <Plus className="mr-2 h-6 w-6 fill-current text-gray-500 group-hover:text-primary-500" />
                 <input
                     onChange={onFileChange}
                     type="file"

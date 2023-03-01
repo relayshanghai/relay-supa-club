@@ -5,7 +5,7 @@ export default function CommentCardsSkeleton() {
         <div className="w-[300px] rounded-md bg-gray-50/50">
             <div className="flex items-center">
                 <Skeleton className="h-6 w-6 rounded-full bg-gray-200" />
-                <Skeleton className="h-2 w-8 bg-gray-500 mx-3" />
+                <Skeleton className="mx-3 h-2 w-8 bg-gray-500" />
                 <Skeleton className="h-2 w-16 bg-gray-200" />
             </div>
             <div className="mt-2 ml-10">
@@ -16,10 +16,10 @@ export default function CommentCardsSkeleton() {
     );
 
     const CommentCardReverseSkeleton = (
-        <div className="w-[300px] rounded-md bg-gray-50/50 place-self-end ">
+        <div className="w-[300px] place-self-end rounded-md bg-gray-50/50 ">
             <div className="flex flex-row-reverse items-center">
                 <Skeleton className="h-6 w-6 rounded-full bg-gray-200" />
-                <Skeleton className="h-2 w-8 bg-gray-500  mx-3" />
+                <Skeleton className="mx-3 h-2 w-8  bg-gray-500" />
                 <Skeleton className="h-2 w-16 bg-gray-200" />
             </div>
             <div className="mt-2 ml-10">
@@ -30,7 +30,7 @@ export default function CommentCardsSkeleton() {
     );
 
     return (
-        <div className="flex flex-col p-2 w-full space-y-2">
+        <div className="flex w-full flex-col space-y-2 p-2">
             {CommentCardSkeleton} {CommentCardSkeleton} {CommentCardSkeleton}
             {CommentCardReverseSkeleton}
         </div>

@@ -5,15 +5,15 @@ export const InputTextArea = ({
     ...rest
 }: TextareaHTMLAttributes<HTMLTextAreaElement> & { label: string }) => {
     return (
-        <label className="flex flex-col text-xs text-gray-500 w-full">
+        <label className="flex w-full flex-col text-xs text-gray-500">
             <div className="font-bold">
                 {label}
-                {rest.required ? <span className="text-xs ml-1 text-primary-500">*</span> : null}
+                {rest.required ? <span className="ml-1 text-xs text-primary-500">*</span> : null}
             </div>
             <textarea
-                className={`ring-opacity-5 placeholder-gray-400 appearance-none bg-white rounded-md block w-full px-3 py-2 border border-transparent shadow ring-1 sm:text-sm focus:border-primary-500 focus:ring-primary-500 focus:outline-none my-2 ${
+                className={`my-2 block w-full appearance-none rounded-md border border-transparent bg-white px-3 py-2 placeholder-gray-400 shadow ring-1 ring-opacity-5 focus:border-primary-500 focus:outline-none focus:ring-primary-500 sm:text-xs ${
                     rest.disabled
-                        ? 'bg-gray-100 cursor-not-allowed text-gray-500 ring-gray-500'
+                        ? 'cursor-not-allowed bg-gray-100 text-gray-500 ring-gray-500'
                         : 'text-gray-900 ring-gray-900'
                 }`}
                 {...rest}

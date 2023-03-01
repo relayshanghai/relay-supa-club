@@ -14,15 +14,15 @@ export default function ToggleTabs({
     return (
         <div>
             {/* <div className="text-gray-600 text-sm mb-2">Add creators from:</div> */}
-            <div className="flex items-center mb-6">
+            <div className="mb-6 flex items-center">
                 {tabs.map((tab, index) => (
                     <div
                         key={index}
                         onClick={() => setCurrentTab(tab.value)}
-                        className={`font-semibold text-sm mr-4 hover:text-primary-500 hover:bg-primary-500 hover:bg-opacity-20 px-4 py-2 rounded-lg cursor-pointer duration-300 flex-shrink-0 ${
+                        className={`mr-4 flex-shrink-0 cursor-pointer rounded-lg px-4 py-2 text-sm font-semibold duration-300 hover:bg-primary-500 hover:bg-opacity-20 hover:text-primary-500 ${
                             currentTab === tab.value
-                                ? 'text-primary-500 bg-primary-500 bg-opacity-20'
-                                : 'text-gray-400 bg-gray-100'
+                                ? 'bg-primary-500 bg-opacity-20 text-primary-500'
+                                : 'bg-gray-100 text-gray-400'
                         }`}
                     >
                         {t(tab.label)}

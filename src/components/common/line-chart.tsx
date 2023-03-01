@@ -5,8 +5,8 @@ import { numFormatter } from 'src/utils/utils';
 export default function LineChart({ data, dataKey }: { data: any[]; dataKey: string }) {
     const { t } = useTranslation();
     return (
-        <div className="bg-white rounded-lg text-xs inline-block py-6 pb-12 pr-6 w-full h-[250px]">
-            <h3 className="font-bold text-gray-600 text-lg text-center mb-4">
+        <div className="inline-block h-[250px] w-full rounded-lg bg-white py-6 pb-12 pr-6 text-xs">
+            <h3 className="mb-4 text-center text-lg font-bold text-gray-600">
                 {t(`creators.show.${dataKey}`)}
             </h3>
             <ResponsiveContainer width="100%">

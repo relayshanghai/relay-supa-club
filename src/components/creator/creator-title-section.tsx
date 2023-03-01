@@ -17,7 +17,7 @@ export const TitleSection = ({
     return (
         <div className="p-6">
             <div className="flex items-center">
-                <div className="relative w-28 h-28">
+                <div className="relative h-28 w-28">
                     <img
                         src={imgProxy(user_profile.picture) as string}
                         alt={`${user_profile.user_id}-profile-pic`}
@@ -28,14 +28,14 @@ export const TitleSection = ({
                     </div>
                 </div>
                 <div className="ml-6 flex-1">
-                    <h1 className="poppins font-bold text-4xl text-gray-800 mb-1">
+                    <h1 className="poppins mb-1 text-4xl font-bold text-gray-800">
                         {user_profile.fullname || user_profile.username}
                     </h1>
                     <a
                         href={user_profile.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-sm text-primary-500 hover:text-primary-700 duration-300 cursor-pointer"
+                        className="cursor-pointer text-sm text-primary-500 duration-300 hover:text-primary-700"
                     >
                         {t('creators.show.openLink')}
                     </a>

@@ -47,18 +47,18 @@ const CreatorEconomics = ({ userProfile }: { userProfile: CreatorReport['user_pr
     if (!economicsData.length) return null;
     return (
         <div className="p-6">
-            <h2 className="font-semibold text-gray-600 mb-2">
+            <h2 className="mb-2 font-semibold text-gray-600">
                 {t('creators.show.creatorEconomics')}
             </h2>
             <div className="flex flex-wrap">
                 {economicsData.map((stat, index) => (
                     <div
                         key={index}
-                        className="flex flex-col bg-white rounded-md p-2.5 w-36 mr-2 mb-2 flex-1 box-border self-stretch"
+                        className="mr-2 mb-2 box-border flex w-36 flex-1 flex-col self-stretch rounded-md bg-white p-2.5"
                     >
-                        <div className="w-6 h-6">{stat.icon}</div>
-                        <p className="text-tertiary-600 f36 font-semibold my-2">{stat.data}</p>
-                        <p className="text-tertiary-600 text-sm">
+                        <div className="h-6 w-6">{stat.icon}</div>
+                        <p className="f36 my-2 font-semibold text-tertiary-600">{stat.data}</p>
+                        <p className="text-sm text-tertiary-600">
                             {t(`creators.show.${stat.label}`)}
                         </p>
                     </div>
