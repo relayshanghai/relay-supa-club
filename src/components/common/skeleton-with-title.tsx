@@ -22,7 +22,7 @@ export default function SkeletonWithTitle({
 }) {
     return (
         <div className={`flex w-full flex-col ${containerClassName}`}>
-            <div className={`h-5 w-24 bg-gray-200 animate-pulse mb-2 ${titleClassName}`} />
+            <div className={`mb-2 h-5 w-24 animate-pulse bg-gray-200 ${titleClassName}`} />
             <Skeleton {...props} />
         </div>
     );

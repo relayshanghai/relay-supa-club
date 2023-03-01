@@ -1,5 +1,4 @@
 import { PropsWithChildren } from 'react';
-import { CompanyProvider } from 'src/hooks/use-company';
 import { LanguageToggle } from './common/language-toggle';
 import { Title } from './title';
 
@@ -11,11 +10,4 @@ export const LoginSignupLayout = ({ children }: PropsWithChildren) => (
         </div>
         {children}
     </div>
-);
-
-/** Same as LoginSignupLayout but with company context */
-export const OnboardLayout = ({ children }: PropsWithChildren) => (
-    <CompanyProvider>
-        <LoginSignupLayout>{children}</LoginSignupLayout>
-    </CompanyProvider>
 );

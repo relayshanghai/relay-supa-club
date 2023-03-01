@@ -1,13 +1,13 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
 
 import { Spinner } from 'src/components/icons';
 import { Input } from 'src/components/input';
-import { OnboardLayout } from 'src/components/SignupLayout';
+import { LoginSignupLayout } from 'src/components/SignupLayout';
 import { createCompanyErrors, createCompanyValidationErrors } from 'src/errors/company';
 import { useCompany } from 'src/hooks/use-company';
 import { useFields } from 'src/hooks/use-fields';
@@ -30,11 +30,13 @@ export default function Register() {
         website: '',
     });
     const [submitting, setSubmitting] = useState(false);
-
-    const handleSubmit = async () => {
+    const handleSubmit = useCallback(async () => {
         try {
             setSubmitting(true);
-            await createCompany(values);
+            const created = await createCompany(values);
+            if (!created?.cus_id) {
+                throw new Error('no cus_id, error creating company');
+            }
             toast.success(t('login.companyCreated'));
             await router.push('/signup/payment-onboard');
         } catch (e: any) {
@@ -47,10 +49,10 @@ export default function Register() {
         } finally {
             setSubmitting(false);
         }
-    };
+    }, [createCompany, router, t, values]);
 
     return (
-        <OnboardLayout>
+        <LoginSignupLayout>
             <form className="mx-auto flex w-full max-w-xs flex-grow flex-col items-center justify-center space-y-2">
                 {loading && !submitting ? (
                     <Spinner className="h-20 w-20 fill-primary-600 text-white" />
@@ -77,7 +79,11 @@ export default function Register() {
                             value={values.website}
                             onChange={(e) => setFieldValue('website', e.target.value)}
                         />
-                        <Button disabled={!values.name || submitting} onClick={handleSubmit}>
+                        <Button
+                            type="button"
+                            disabled={!values.name || submitting}
+                            onClick={handleSubmit}
+                        >
                             {t('login.createCompany')}
                         </Button>
                     </>
@@ -92,6 +98,6 @@ export default function Register() {
                     </button>
                 </div>
             </form>
-        </OnboardLayout>
+        </LoginSignupLayout>
     );
 }

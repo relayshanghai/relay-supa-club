@@ -18,7 +18,7 @@ export const SelectPlatform = () => {
         <div className="flex flex-row space-x-2">
             {platforms.map(({ id, label, icon }) => (
                 <button
-                    className={`transition duration-300 px-2 rounded-lg hover:shadow-md ${
+                    className={`rounded-lg px-2 transition duration-300 hover:shadow-md ${
                         platform === id ? 'bg-white shadow-md' : ''
                     }`}
                     disabled={loading}
@@ -28,7 +28,7 @@ export const SelectPlatform = () => {
                     }}
                 >
                     {loading && platform === id ? (
-                        <Spinner className="fill-primary-600 text-white w-6 h-6" />
+                        <Spinner className="h-6 w-6 fill-primary-600 text-white" />
                     ) : (
                         <img src={icon} height={32} width={32} alt={label} />
                     )}

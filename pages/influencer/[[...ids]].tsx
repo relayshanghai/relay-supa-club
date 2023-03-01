@@ -21,7 +21,7 @@ const Page = () => {
     return (
         <Layout>
             {routing ? (
-                <Spinner className="mx-auto mt-10 w-10 h-10 fill-primary-600 text-white" />
+                <Spinner className="mx-auto mt-10 h-10 w-10 fill-primary-600 text-white" />
             ) : !ids || !Array.isArray(ids) || ids?.length < 2 ? (
                 <div className="relative p-6">
                     <ErrorPopover

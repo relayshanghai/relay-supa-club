@@ -17,10 +17,10 @@ export const ProgressBlock = ({
 
     return (
         <div>
-            <div className="font-semibold text-gray-600 mb-2">{t(`creators.show.${title}`)}</div>
+            <div className="mb-2 font-semibold text-gray-600">{t(`creators.show.${title}`)}</div>
             {stats.map((stat, index: number) => (
                 <div key={index}>
-                    <div className="bg-white rounded-lg p-1.5 mb-2">
+                    <div className="mb-2 rounded-lg bg-white p-1.5">
                         <div className="flex items-center justify-between">
                             <div className="text-sm font-semibold text-gray-600">
                                 {stat.name ? chinaFilter(stat.name) : ''}
@@ -30,10 +30,10 @@ export const ProgressBlock = ({
                             </div>
                         </div>
                         <div className="relative pt-1">
-                            <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-primary-100">
+                            <div className="mb-4 flex h-2 overflow-hidden rounded bg-primary-100 text-xs">
                                 <div
                                     style={{ width: `${stat.weight * 100}%` }}
-                                    className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-primary-500 rounded"
+                                    className="flex flex-col justify-center whitespace-nowrap rounded bg-primary-500 text-center text-white shadow-none"
                                 />
                             </div>
                         </div>
@@ -41,7 +41,7 @@ export const ProgressBlock = ({
                 </div>
             ))}
             <button onClick={() => setShowMore(!showMore)} className="justify-self-end">
-                <p className="text-primary-500 hover:text-primary-700 duration-300 font-semibold text-sm text-right">
+                <p className="text-right text-sm font-semibold text-primary-500 duration-300 hover:text-primary-700">
                     {showMore ? t('creators.show.seeLess') : t('creators.show.seeMore')}
                 </p>
             </button>

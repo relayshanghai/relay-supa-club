@@ -29,8 +29,8 @@ const ctx = createContext<CompanyContext>({
     refreshCompany: () => null,
 });
 
-const useCompanyHook = () => {
-    const { profile, user, refreshProfile } = useUser();
+export const CompanyProvider = ({ children }: PropsWithChildren) => {
+    const { profile, refreshProfile } = useUser();
     const { data: company, mutate: refreshCompany } = useSWR(
         profile?.company_id ? 'company' : null,
         (path) =>
@@ -56,11 +56,11 @@ const useCompanyHook = () => {
 
     const createCompany = useCallback(
         async (input: { name: string; website?: string }) => {
-            if (!user?.id) throw new Error(createCompanyValidationErrors.noLoggedInUserFound);
+            if (!profile?.id) throw new Error(createCompanyValidationErrors.noLoggedInUserFound);
             if (!input.name) throw new Error(createCompanyValidationErrors.noCompanyNameFound);
             const body: CompanyCreatePostBody = {
                 ...input,
-                user_id: user?.id,
+                user_id: profile?.id,
             };
             const res = await nextFetch<CompanyCreatePostResponse>(`company/create`, {
                 method: 'post',
@@ -70,20 +70,8 @@ const useCompanyHook = () => {
             refreshProfile();
             return res;
         },
-        [refreshProfile, user],
+        [refreshProfile, profile],
     );
-
-    return {
-        company,
-        updateCompany,
-        createCompany,
-        refreshCompany,
-    };
-};
-
-export const CompanyProvider = ({ children }: PropsWithChildren) => {
-    const { company, updateCompany, createCompany, refreshCompany } = useCompanyHook();
-
     return (
         <ctx.Provider
             value={{
@@ -99,9 +87,9 @@ export const CompanyProvider = ({ children }: PropsWithChildren) => {
 };
 
 export const useCompany = () => {
-    const hooks = useContext(ctx);
-    if (hooks === null) {
+    const context = useContext(ctx);
+    if (context === null) {
         throw new Error('useCompany must be used within a CompanyProvider');
     }
-    return hooks;
+    return context;
 };

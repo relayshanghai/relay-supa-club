@@ -7,6 +7,7 @@ import '../i18n';
 import { createBrowserSupabaseClient } from '@supabase/auth-helpers-nextjs';
 import { SessionContextProvider, Session } from '@supabase/auth-helpers-react';
 import { useState } from 'react';
+import { CompanyProvider } from 'src/hooks/use-company';
 
 function MyApp({
     Component,
@@ -55,7 +56,9 @@ function MyApp({
                 initialSession={pageProps.initialSession}
             >
                 <UserProvider>
-                    <Component {...pageProps} />
+                    <CompanyProvider>
+                        <Component {...pageProps} />
+                    </CompanyProvider>
                 </UserProvider>
             </SessionContextProvider>
             <Toaster />

@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
 
 import { Spinner } from 'src/components/icons';
-import { OnboardLayout } from 'src/components/SignupLayout';
+import { LoginSignupLayout } from 'src/components/SignupLayout';
 import { APP_URL } from 'src/constants';
 import { createSubscriptionErrors } from 'src/errors/subscription';
 import { useCompany } from 'src/hooks/use-company';
@@ -55,7 +55,7 @@ const PaymentOnboard = () => {
     };
 
     return (
-        <OnboardLayout>
+        <LoginSignupLayout>
             <form className="mx-auto flex w-full max-w-xs flex-grow flex-col items-center justify-center space-y-2">
                 <div className="w-full text-left">
                     <h1 className="mb-2 text-4xl font-bold">{t('login.addPaymentMethod')}</h1>
@@ -67,7 +67,7 @@ const PaymentOnboard = () => {
                     <>
                         {paymentMethods?.length && paymentMethods?.length > 0 ? (
                             <div className="flex flex-col space-y-6">
-                                <Button onClick={handleSubmit} disabled={submitting}>
+                                <Button type="button" onClick={handleSubmit} disabled={submitting}>
                                     {t('login.activateTrial')}
                                 </Button>
                                 <p className="text-xs text-gray-500">{t('login.signupTerms')}</p>
@@ -94,7 +94,7 @@ const PaymentOnboard = () => {
                     </button>
                 </div>
             </form>
-        </OnboardLayout>
+        </LoginSignupLayout>
     );
 };
 

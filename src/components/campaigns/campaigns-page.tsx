@@ -17,9 +17,9 @@ const CampaignsPage = ({ companyId }: { companyId?: string }) => {
     const renderCampaigns = () => {
         if (!campaigns?.length) {
             return (
-                <div className="text-sm text-gray-600 h-full">
+                <div className="h-full text-sm text-gray-600">
                     {t('campaigns.index.noCampaignsAvailable')}
-                    <span className="text-primary-500 hover:text-primary-700 duration-300 cursor-pointer">
+                    <span className="cursor-pointer text-primary-500 duration-300 hover:text-primary-700">
                         <Link href="/campaigns/form" legacyBehavior>
                             {t('campaigns.index.clickCreate')}
                         </Link>
@@ -32,15 +32,15 @@ const CampaignsPage = ({ companyId }: { companyId?: string }) => {
 
     return (
         <Layout>
-            <div className="flex flex-col p-6 w-full">
-                <div className="flex items-center justify-between mb-4 sm:mb-6">
+            <div className="flex w-full flex-col p-6">
+                <div className="mb-4 flex items-center justify-between sm:mb-6">
                     <Tabs currentTab={currentTab} changeTab={setCurrentTab} />
                     <Link href="/campaigns/form" legacyBehavior>
                         <Button>{t('campaigns.index.createCampaign')}</Button>
                     </Link>
                 </div>
                 {isLoading ? (
-                    <Spinner className="mx-auto mt-10 w-10 h-10 fill-primary-600 text-white" />
+                    <Spinner className="mx-auto mt-10 h-10 w-10 fill-primary-600 text-white" />
                 ) : (
                     renderCampaigns()
                 )}
