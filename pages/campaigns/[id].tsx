@@ -209,14 +209,23 @@ export default function CampaignShow() {
                     title={
                         <div className="-mt-4 flex items-center justify-between">
                             <h3>{t('campaigns.modal.comments')}</h3>
-                            <div className="sticky top-0 z-30 flex items-center rounded-md bg-gray-100 p-3">
-                                <img
-                                    className="mr-4 h-8 w-8 rounded-full"
-                                    src={imgProxy(currentCreator.avatar_url)}
-                                    alt=""
-                                />
-                                <h3 className="text-sm font-medium">{currentCreator?.fullname}</h3>
-                            </div>
+
+                            <Link
+                                href={`/influencer/${currentCreator.platform}/${currentCreator.creator_id}`}
+                                target="_blank"
+                            >
+                                <div className="sticky top-0 z-30 flex items-center rounded-md bg-gray-100 p-3">
+                                    <img
+                                        className="mr-4 h-8 w-8 rounded-full"
+                                        src={imgProxy(currentCreator.avatar_url)}
+                                        alt=""
+                                    />
+                                    <h3 className="text-sm font-medium">
+                                        {currentCreator?.fullname}
+                                    </h3>
+                                </div>
+                            </Link>
+
                         </div>
                     }
                     visible={!!showNotesModal}
