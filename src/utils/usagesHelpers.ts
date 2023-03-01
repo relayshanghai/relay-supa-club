@@ -10,7 +10,7 @@ export const getCurrentPeriodUsages = (
     periodEnd: Date,
 ) => {
     if (!usages) {
-        return null;
+        return [];
     }
     const currentPeriodUsages = usages.filter(({ created_at }) => {
         if (!created_at) {
