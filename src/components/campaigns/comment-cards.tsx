@@ -14,7 +14,7 @@ export default function CommentCards({
     const { isLoading, campaignCreatorNotes } = useNotes({
         campaignCreatorId: currentCreator?.id,
     });
-    const [filteredMessages, setFilteredMessages] = useState<CampaignNotesWithProfiles[] | []>([]);
+    const [filteredMessages, setFilteredMessages] = useState<CampaignNotesWithProfiles[]>([]);
     const [filterImportant, setFilterImportant] = useState(false);
     const commentsEndRef = useRef<null | HTMLDivElement>(null);
 
