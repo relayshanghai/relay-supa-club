@@ -18,6 +18,5 @@ export const EMPLOYEE_EMAILS = [
     'reg@relay.club',
     'trini@relay.club',
     'jun@relay.club',
-    // testing empty push
     'james@relay.club',
 ];
