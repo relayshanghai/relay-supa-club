@@ -95,11 +95,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         const data = await openai.createCompletion({
             prompt,
-            model: 'text-curie-001',
-            max_tokens: 512,
-            n: 1,
+            model: 'text-curie-001', // Curie is closer to davinci model in terms of quality but is much faster
+            max_tokens: 512, // 512 tokens seems to work well for this task, we don't need to waste more tokens for our emails
+            n: 1, // Just generate a single email
             stop: '',
-            temperature: 0.4,
+            temperature: 0.4, // 0.4 seems to add some spice but also remain within the bounds of the prompt
         });
 
         if (data?.data?.choices[0]?.text) {
