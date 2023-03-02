@@ -70,10 +70,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         .json({ error: createSubscriptionErrors.noActiveSubscriptionToUpgrade });
                 }
             }
+
+            const nowInSeconds = Math.floor(Date.now() / 1000);
+
             const createParams: Stripe.SubscriptionCreateParams = {
                 customer: cusId,
                 items: [{ price: price_id }],
                 proration_behavior: 'create_prorations',
+                billing_cycle_anchor: nowInSeconds,
             };
             const subscription: SubscriptionCreatePostResponse =
                 await stripeClient.subscriptions.create(createParams);
