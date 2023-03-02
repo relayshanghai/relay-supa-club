@@ -35,11 +35,13 @@ export default function CommentCard({ note }: { note: CampaignNotesWithProfiles 
                 isYou ? 'place-self-end ' : 'place-self-start'
             } & ${isImportant ? 'bg-secondary-100' : ''}`}
         >
-            <Pin
-                className={`absolute top-3 left-3 h-4 w-4 fill-primary-600 ${
-                    isImportant ? '' : 'hidden'
+            <div
+                className={`absolute -top-2 flex  fill-primary-500 ${isImportant ? '' : 'hidden'} ${
+                    isYou ? 'right-2' : 'left-2'
                 }`}
-            />
+            >
+                <Pin className="h-4 w-4" />
+            </div>
 
             <div
                 className={`invisible absolute -top-2 z-20 flex space-x-1 bg-gray-100 group-hover:visible  ${
@@ -86,7 +88,7 @@ export default function CommentCard({ note }: { note: CampaignNotesWithProfiles 
                 </div>
             </div>
             <div
-                className={`mt-2 ml-10 w-fit max-w-[200px] rounded-md px-3 py-1 ${
+                className={`mt-2  w-fit max-w-[200px] rounded-md px-3 py-1 ${
                     isYou ? 'place-self-end bg-primary-100' : 'place-self-start bg-gray-50'
                 } `}
             >
