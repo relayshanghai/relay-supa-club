@@ -1,7 +1,4 @@
-import type {
-    AIEmailGeneratorPostBody,
-    AIEmailGeneratorPostResult,
-} from 'pages/api/ai-generate/email';
+import type { AIEmailGeneratorPostResult } from 'pages/api/ai-generate/email';
 import { copyToClipboard } from 'src/utils/copyToClipboard';
 import { InputTextArea } from 'src/components/textarea';
 import { Button } from 'src/components/button';
@@ -26,6 +23,7 @@ import { useTranslation } from 'react-i18next';
 import { hasCustomError } from 'src/utils/errors';
 import { usageErrors } from 'src/errors/usages';
 import { isMissing } from 'src/utils/utils';
+import { AIEmailGeneratorPostBody } from 'src/utils/api/ai-generate/email';
 
 const MAX_CHARACTER_LENGTH = 600;
 
