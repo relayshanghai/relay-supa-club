@@ -1,0 +1,19 @@
+# vercel environments
+
+Set environment variables for these different deploys at https://vercel.com/relay-club/relay-supa-club/settings/environment-variables
+
+# Vercel previews
+
+Previews use the TEST_MODE stripe keys, and the production database by default
+
+# Staging
+
+Staging has the same settings as previews, but it has a dedicated URL set with `NEXT_PUBLIC_APP_URL`
+Staging is connected to production database.
+To use the staging site https://staging-app.relay.club, merge your work to the `staging` branch and push it.
+
+# Testing
+
+Testing has its own database. It is called 'testing', under the relayclub projects in supabase.
+Testing has a dedicated URL set with `NEXT_PUBLIC_APP_URL`
+To use the testing site https://testing-app.relay.club, merge your work to the `testing` branch and push it.
