@@ -63,6 +63,13 @@ export default function Login() {
         setGeneratingResetEmail(false);
     };
 
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            handleSubmit();
+        }
+    };
+
     return (
         <LoginSignupLayout>
             <form className="mx-auto flex w-full max-w-xs flex-grow flex-col items-center justify-center space-y-2">
@@ -86,14 +93,19 @@ export default function Login() {
                     type="email"
                     placeholder="hello@relay.club"
                     value={email}
-                    onChange={(e) => setFieldValue('email', e.target.value)}
+                    onChange={(e) => {
+                        setFieldValue('email', e.target.value);
+                    }}
                 />
                 <Input
                     label={t('login.password')}
                     type="password"
                     placeholder="Enter your password"
                     value={password}
-                    onChange={(e) => setFieldValue('password', e.target.value)}
+                    onChange={(e) => {
+                        setFieldValue('password', e.target.value);
+                    }}
+                    onKeyDown={(e) => handleKeyDown(e)}
                 />
                 <Button
                     disabled={!email || !password || loggingIn}
