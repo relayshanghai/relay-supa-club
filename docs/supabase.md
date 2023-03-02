@@ -1,4 +1,4 @@
-Delete a user:
+## Delete a user
 
 TODO: investigate setting the profiles table to cascade delete: https://github.com/supabase/storage-api/issues/65
 
@@ -9,7 +9,7 @@ delete from usages where user_id = '944be6e7-5ac1-4920-b23a-04faac1c610f';
 delete from auth.users where id = '944be6e7-5ac1-4920-b23a-04faac1c610f';
 ```
 
-to backup the database:
+## Backup the database
 
 get the database url connection string from supabase dashboard project settings > database > connection string
 
@@ -19,7 +19,9 @@ pg_dump --schema=public -h db.<replace-this>.supabase.co -p 5432 -d postgres -U 
 
 It will prompt you for the db password you can find in bitwarden under supabase
 
-to restore the database (or copy it to another database):
+| note that this will not copy the auth data, so you will need to create new users in the new database
+
+## Restore the database (or copy it to another database):
 
 ```bash
 psql -h db.<replace-this>.supabase.co -p 5432 -d postgres -U postgres < backup.sql
