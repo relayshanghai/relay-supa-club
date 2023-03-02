@@ -1,4 +1,10 @@
-# vercel environments
+# Domains
+
+Domains are set at
+https://vercel.com/relay-club/relay-supa-club/settings/domains
+Use the DNS settings they suggest and add the records to aliyun
+
+# Vercel environments
 
 Set environment variables for these different deploys at https://vercel.com/relay-club/relay-supa-club/settings/environment-variables
 
