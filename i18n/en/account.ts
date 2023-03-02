@@ -38,6 +38,7 @@ const account = {
         paymentCycle: 'Payment cycle',
         usageLimits: 'Usage limits',
         used: 'Used',
+        usedThisPeriod: 'Used this period',
         monthlyLimit: 'Monthly limit',
         profilesUnlocked: 'Profiles unlocked',
         searches: 'Searches',
