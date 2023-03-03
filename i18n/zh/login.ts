@@ -59,6 +59,7 @@ const login = {
     emailInvalid: '电子邮件无效',
     passwordsDoNotMatch: '密码不匹配',
     forgotPasswordReset: '忘记密码? 重置',
+    resetPasswordEmailSent: '重置密码电子邮件已发送',
     changePassword: '更改密码',
     inputNewPassword: '输入新密码',
     updateAndLogIn: '更新并登录',

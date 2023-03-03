@@ -6,6 +6,8 @@ import { useSubscription } from 'src/hooks/use-subscription';
 import { useUsages } from 'src/hooks/use-usages';
 import { useUser } from 'src/hooks/use-user';
 import { buildSubscriptionPortalUrl } from 'src/utils/api/stripe/portal';
+import { clientLogger } from 'src/utils/logger';
+import { getCurrentPeriodUsages } from 'src/utils/usagesHelpers';
 import { unixEpochToISOString } from 'src/utils/utils';
 
 import { Button } from '../button';
@@ -18,13 +20,44 @@ export const SubscriptionDetails = () => {
     const { company } = useCompany();
     const { loading: userDataLoading } = useUser();
     const { t, i18n } = useTranslation();
+
+    const [showCancelModal, setShowCancelModal] = useState(false);
+    const handleCancelSubscription = async () => setShowCancelModal(true);
+
+    // these we get from stripe directly
+    const periodStart = unixEpochToISOString(subscription?.current_period_start);
+    const periodEnd = unixEpochToISOString(subscription?.current_period_end);
+
+    // these are updated when we detect current period has ended (in utils/api/db/usages), we query stripe and update the company
+    const companyPeriodStart = company?.subscription_current_period_start
+        ? new Date(company?.subscription_current_period_start).toISOString()
+        : null;
+    const companyPeriodEnd = company?.subscription_current_period_end
+        ? new Date(company?.subscription_current_period_end).toISOString()
+        : null;
+    if (companyPeriodStart && companyPeriodEnd && periodEnd && periodStart) {
+        // a debug, just to warn a developer if these aren't matching, maybe there is something wrong with the data
+        if (companyPeriodStart !== periodStart || companyPeriodEnd !== periodEnd) {
+            clientLogger(
+                `Company subscription period start/end does not match subscription period start/end. companyPeriodStart ${companyPeriodStart} periodStart ${periodStart}companyPeriodEnd ${companyPeriodEnd} periodEnd ${periodEnd}`,
+                'warn',
+            );
+        }
+    }
+
     const profileViewUsages = usages?.filter(({ type }) => type === 'profile');
     const searchUsages = usages?.filter(({ type }) => type === 'search');
     const aiEmailUsages = usages?.filter(({ type }) => type === 'ai_email');
 
-    const [showCancelModal, setShowCancelModal] = useState(false);
-    const handleCancelSubscription = async () => setShowCancelModal(true);
-    const periodEnd = unixEpochToISOString(subscription?.current_period_end);
+    const usagesThisPeriod =
+        usages && periodStart && periodEnd
+            ? getCurrentPeriodUsages(usages, new Date(periodStart), new Date(periodEnd))
+            : [];
+
+    const profileViewUsagesThisPeriod = usagesThisPeriod?.filter(({ type }) => type === 'profile');
+    const searchUsagesThisPeriod = usagesThisPeriod?.filter(({ type }) => type === 'search');
+    const aiEmailUsagesThisPeriod = usagesThisPeriod?.filter(({ type }) => type === 'ai_email');
+
     return (
         <div className="flex w-full flex-col items-start space-y-4 rounded-lg bg-white p-4 shadow-lg shadow-gray-200 lg:max-w-2xl">
             <CancelSubscriptionModal
@@ -100,6 +133,9 @@ export const SubscriptionDetails = () => {
                                             {t('account.subscription.used')}
                                         </th>
                                         <th className="px-4 text-right font-medium">
+                                            {t('account.subscription.usedThisPeriod')}
+                                        </th>
+                                        <th className="px-4 text-right font-medium">
                                             {t('account.subscription.monthlyLimit')}
                                         </th>
                                     </tr>
@@ -111,6 +147,9 @@ export const SubscriptionDetails = () => {
                                         </td>
                                         <td className="border px-4 py-2 text-right">
                                             {profileViewUsages.length}
+                                        </td>
+                                        <td className="border px-4 py-2 text-right">
+                                            {profileViewUsagesThisPeriod.length}
                                         </td>
                                         <td className="border px-4 py-2 text-right">
                                             {company.subscription_status === 'trial'
@@ -126,6 +165,9 @@ export const SubscriptionDetails = () => {
                                             {searchUsages.length}
                                         </td>
                                         <td className="border px-4 py-2 text-right">
+                                            {searchUsagesThisPeriod.length}
+                                        </td>
+                                        <td className="border px-4 py-2 text-right">
                                             {company.subscription_status === 'trial'
                                                 ? company.trial_searches_limit
                                                 : company.searches_limit}
@@ -137,6 +179,9 @@ export const SubscriptionDetails = () => {
                                         </td>
                                         <td className="border px-4 py-2 text-right">
                                             {aiEmailUsages.length}
+                                        </td>
+                                        <td className="border px-4 py-2 text-right">
+                                            {aiEmailUsagesThisPeriod.length}
                                         </td>
                                         <td className="border px-4 py-2 text-right">
                                             {company.subscription_status === 'trial'

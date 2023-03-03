@@ -36,3 +36,6 @@ next-env.d.ts
 # yarn stuff
 .yarnrc.yml
 .yarn/*
+
+# db backup
+backup.sql
