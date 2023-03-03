@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 
 const parseError = (error: any) => {
-    if (error && 'message' in error) {
+    if (error && error.message) {
         if ('stack' in error) return error;
         return error.message;
     }

@@ -101,6 +101,13 @@ export default function Register() {
     const invalidFormInput = isMissing(firstName, lastName, email, password) || hasValidationErrors;
     const submitDisabled = invalidFormInput || loading;
 
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            handleSubmit();
+        }
+    };
+
     return (
         <LoginSignupLayout>
             {' '}
@@ -165,6 +172,7 @@ export default function Register() {
                     value={confirmPassword}
                     required
                     onChange={(e) => setAndValidate('confirmPassword', e.target.value)}
+                    onKeyDown={(e) => handleKeyDown(e)}
                 />
                 <Button disabled={submitDisabled} type="button" onClick={handleSubmit}>
                     {t('login.signUp')}
