@@ -33,6 +33,7 @@ NEXT_PUBLIC_SUPABASE_URL=https://asdf.supabase.co
 
 TEST_NEXT_PUBLIC_SUPABASE_ANON_KEY=asdf
 TEST_NEXT_PUBLIC_SUPABASE_URL=https://asdf.supabase.co
+TEST_SUPABASE_SERVICE_KEY=asdf
 
 # Send in Blue
 
