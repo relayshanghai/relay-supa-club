@@ -1,4 +1,4 @@
-import { isValidUrl, numFormatter } from "./utils";
+import { chinaFilter, isValidUrl, numFormatter } from "./utils";
 
 describe("numformatter", () => {
     it("should return '-' if zero or NaN", () => {
@@ -59,5 +59,29 @@ describe("isValidUrl", () => {
         "https://127.0.0.1"
     ])("should return true for %s", (v) => {
         expect(isValidUrl(v)).toBe(true)
+    })
+})
+
+describe("chinaFilter", () => {
+    it("should return 'N/A' for empty strings", () => {
+        expect(chinaFilter('')).toBe('N/A')
+    })
+
+    it("should return formatted for Taiwan", () => {
+        // expect(chinaFilter('taiwan')).toBe('China (Taiwan)')
+        expect(chinaFilter('Taiwan')).toBe('China (Taiwan)')
+        // expect(chinaFilter('TAIWAN')).toBe('China (Taiwan)')
+    })
+
+    it("should return formatted for Hong Kong", () => {
+        // expect(chinaFilter('hong kong')).toBe('China (Hong Kong)')
+        expect(chinaFilter('Hong Kong')).toBe('China (Hong Kong)')
+        // expect(chinaFilter('HONG KONG')).toBe('China (Hong Kong)')
+    })
+
+    it("should return unformatted", () => {
+        expect(chinaFilter('Japan')).toBe('Japan')
+        expect(chinaFilter('Philippines')).toBe('Philippines')
+        expect(chinaFilter('Singapore')).toBe('Singapore')
     })
 })
