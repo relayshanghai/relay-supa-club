@@ -56,18 +56,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
 
         const data = await openai.createChatCompletion({
-            // prompt: prompt.message,
             messages: [
                 {
-                    role: 'user',
+                    role: 'user', // Ask the model to take the role of the user
                     content: prompt.message,
                 },
             ],
-            model: 'gpt-3.5-turbo', // Curie is closer to davinci model in terms of quality but is much faster
+            model: 'gpt-3.5-turbo', // GPT-3 model is the latest and greatest
             max_tokens: 512, // 512 tokens seems to work well for this task, we don't need to waste more tokens for our emails
             n: 1, // Just generate a single email
             stop: '',
-            temperature: 0.6,
+            temperature: 0.6, // Higher the number, higher the variation
         });
 
         if (data?.data?.choices[0]?.message?.content) {
