@@ -1,4 +1,4 @@
-import { chinaFilter, isValidUrl, numFormatter, toCurrency } from "./utils";
+import { chinaFilter, isValidUrl, numFormatter, toCurrency, truncateWithDots } from "./utils";
 
 describe("numformatter", () => {
     it("should return '-' if zero or NaN", () => {
@@ -97,5 +97,23 @@ describe("toCurrency", () => {
 
     it("should return CNY currency", () => {
         expect(toCurrency(100, 'CNY')).toBe("CN¥100.00")
+    })
+})
+
+describe("truncateWithDots", () => {
+    it("should return empty string", () => {
+        expect(truncateWithDots('', 10)).toBe('')
+        expect(truncateWithDots(undefined, 10)).toBe('')
+        expect(truncateWithDots(null, 10)).toBe('')
+    })
+
+    it("should return same string", () => {
+        expect(truncateWithDots("foo", 10)).toBe("foo")
+        expect(truncateWithDots("foobarbaz", 9)).toBe("foobarbaz")
+    })
+
+    it("should return truncated string", () => {
+        expect(truncateWithDots("foo bar baz boom", 10)).toBe("foo bar ba...")
+        expect(truncateWithDots("foobarbaz.", 9)).toBe("foobarbaz...")
     })
 })
