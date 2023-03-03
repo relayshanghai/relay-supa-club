@@ -1,4 +1,4 @@
-import { chinaFilter, isValidUrl, numFormatter } from "./utils";
+import { chinaFilter, isValidUrl, numFormatter, toCurrency } from "./utils";
 
 describe("numformatter", () => {
     it("should return '-' if zero or NaN", () => {
@@ -83,5 +83,19 @@ describe("chinaFilter", () => {
         expect(chinaFilter('Japan')).toBe('Japan')
         expect(chinaFilter('Philippines')).toBe('Philippines')
         expect(chinaFilter('Singapore')).toBe('Singapore')
+    })
+})
+
+describe("toCurrency", () => {
+    it("should throw if invalid currency", () => {
+        expect(() => toCurrency(0, 'XXXX')).toThrowError()
+    })
+
+    it("should return USD currency", () => {
+        expect(toCurrency(100)).toBe("$100.00")
+    })
+
+    it("should return CNY currency", () => {
+        expect(toCurrency(100, 'CNY')).toBe("CN¥100.00")
     })
 })
