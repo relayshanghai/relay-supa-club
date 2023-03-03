@@ -51,8 +51,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             instructions,
         });
 
+<<<<<<< HEAD
         if (prompt.status === 'error') {
             return res.status(httpCodes.BAD_REQUEST).json({ message: prompt.message });
+=======
+        const trimmedInstructions = instructions?.trim();
+        const trimmedInstructionsPunctuation = trimmedInstructions?.endsWith('.')
+            ? trimmedInstructions?.slice(0, trimmedInstructions?.length - 1)
+            : trimmedInstructions;
+
+        const prompt = `Write an email (without subject) to ${influencerName} with the following content:
+        1) Express our brand ${brandName}'s interest in participating with ${influencerName} on a product marketing campaign.
+        2) Express that I love their content and appreciate their creativity.
+        3) Enthusiastically introduce our product: ${brandName} ${productName}. ${trimDescriptionPunctuation}.
+        ${
+            instructions
+                ? `4) Ask ${influencerName} to follow these instructions: ${trimmedInstructionsPunctuation}.`
+                : '4) Ask the influencer to post about the product on their social media.'
+>>>>>>> refs/remotes/origin/fix-ai-email-double-quotes
         }
 
         const data = await openai.createCompletion({
