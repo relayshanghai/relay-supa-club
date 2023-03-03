@@ -51,37 +51,29 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             instructions,
         });
 
-<<<<<<< HEAD
         if (prompt.status === 'error') {
             return res.status(httpCodes.BAD_REQUEST).json({ message: prompt.message });
-=======
-        const trimmedInstructions = instructions?.trim();
-        const trimmedInstructionsPunctuation = trimmedInstructions?.endsWith('.')
-            ? trimmedInstructions?.slice(0, trimmedInstructions?.length - 1)
-            : trimmedInstructions;
-
-        const prompt = `Write an email (without subject) to ${influencerName} with the following content:
-        1) Express our brand ${brandName}'s interest in participating with ${influencerName} on a product marketing campaign.
-        2) Express that I love their content and appreciate their creativity.
-        3) Enthusiastically introduce our product: ${brandName} ${productName}. ${trimDescriptionPunctuation}.
-        ${
-            instructions
-                ? `4) Ask ${influencerName} to follow these instructions: ${trimmedInstructionsPunctuation}.`
-                : '4) Ask the influencer to post about the product on their social media.'
->>>>>>> refs/remotes/origin/fix-ai-email-double-quotes
         }
 
-        const data = await openai.createCompletion({
-            prompt: prompt.message,
-            model: 'text-curie-001', // Curie is closer to davinci model in terms of quality but is much faster
+        const data = await openai.createChatCompletion({
+            // prompt: prompt.message,
+            messages: [
+                {
+                    role: 'user',
+                    content: prompt.message,
+                },
+            ],
+            model: 'gpt-3.5-turbo', // Curie is closer to davinci model in terms of quality but is much faster
             max_tokens: 512, // 512 tokens seems to work well for this task, we don't need to waste more tokens for our emails
             n: 1, // Just generate a single email
             stop: '',
-            temperature: 0.4,
+            temperature: 0.6,
         });
 
-        if (data?.data?.choices[0]?.text) {
-            const result: AIEmailGeneratorPostResult = { text: data.data.choices[0].text };
+        if (data?.data?.choices[0]?.message?.content) {
+            const result: AIEmailGeneratorPostResult = {
+                text: data.data.choices[0].message.content,
+            };
             return res.status(httpCodes.OK).json(result);
         } else {
             serverLogger('No data returned from OpenAI API: ' + JSON.stringify(data), 'error');

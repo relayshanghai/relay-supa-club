@@ -74,15 +74,15 @@ export const generatePrompt = ({
         : trimmedInstructions;
 
     const prompt = `Write an email (without subject) to ${influencerName} with the following content:
-	1) Express our brand ${brandName}'s interest in participating with ${influencerName} on a product marketing campaign.
+	1) Express our brand ${brandName}'s interest in participating with them on a product marketing campaign.
 	2) Express that I love their content and appreciate their creativity.
-	3) Enthusiastically introduce our product: ${brandName} ${productName}. ${trimDescriptionPunctuation}.
+	3) Introduce our product: ${brandName} ${productName}. ${trimDescriptionPunctuation}.
 	${
         instructions
-            ? `4) Ask ${influencerName} to follow these instructions: ${trimmedInstructionsPunctuation}.`
-            : '4) Ask the influencer to post about the product on their social media.'
+            ? `4) Ask them to follow these instructions: ${trimmedInstructionsPunctuation}.`
+            : '4) Ask them to post about the product on their social media.'
     }
-	5) Express gratitude for ${influencerName}'s time and consideration, and end with a call-to-action for them to respond if they are interested in the collaboration.
+	5) Express my gratitude for ${influencerName}'s time and consideration, and end with a call-to-action for them to respond if they are interested in the collaboration.
 	6) Sign with the name: ${senderName}`;
 
     return {
