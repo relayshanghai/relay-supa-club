@@ -1,4 +1,4 @@
-import { chinaFilter, isValidUrl, numFormatter, toCurrency, truncateWithDots } from "./utils";
+import { chinaFilter, isAdmin, isValidUrl, numFormatter, toCurrency, truncateWithDots } from "./utils";
 
 describe("numformatter", () => {
     it("should return '-' if zero or NaN", () => {
@@ -115,5 +115,17 @@ describe("truncateWithDots", () => {
     it("should return truncated string", () => {
         expect(truncateWithDots("foo bar baz boom", 10)).toBe("foo bar ba...")
         expect(truncateWithDots("foobarbaz.", 9)).toBe("foobarbaz...")
+    })
+})
+
+describe("isAdmin", () => {
+    it("should return false if role is not provided", () => {
+        expect(isAdmin()).toBe(false)
+    })
+
+    it("should return true", () => {
+        expect(isAdmin("company_owner")).toBe(true)
+        expect(isAdmin("relay_employee")).toBe(true)
+        expect(isAdmin("relay_expert")).toBe(true)
     })
 })
