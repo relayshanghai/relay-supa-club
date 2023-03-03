@@ -1,4 +1,4 @@
-import { numFormatter } from "./utils";
+import { isValidUrl, numFormatter } from "./utils";
 
 describe("numformatter", () => {
     it("should return '-' if zero or NaN", () => {
@@ -42,5 +42,22 @@ describe("numformatter", () => {
     it("can handle e-notations", () => {
         expect(numFormatter(1.23e+20)).toBe("123000000000.0B")
         expect(numFormatter(1.23e-10)).toBe("1.23e-10")
+    })
+})
+
+describe("isValidUrl", () => {
+    test.each([
+        "https://www.google.com",
+        "https://www.google.com/search?q=url+validation",
+        "http://example.com",
+        "https://example.com",
+        "http://sub.example.com",
+        "https://sub.example.com",
+        "http://example.com:8080",
+        "https://example.com:8443",
+        "http://127.0.0.1",
+        "https://127.0.0.1"
+    ])("should return true for %s", (v) => {
+        expect(isValidUrl(v)).toBe(true)
     })
 })
