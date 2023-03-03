@@ -34,7 +34,7 @@ export const testSupabase = createClient<TestDB>(supabaseUrl, supabaseAnonKey);
 /** The service account is not beholden to RLS rules */
 export const testSupabaseServiceAccount = createClient<TestDB>(supabaseUrl, supabaseServiceKey);
 
-// Supabase does not allow raw SQL queries.
+// Supabase client does not allow raw SQL queries.
 // add functions to the db by using the sql editor in the dashboard, or by adding them in the functions tab of the db
 // note that `security definer` is what gives us permission to edit the auth schema
 /* 
@@ -54,6 +54,8 @@ BEGIN
 END;
 $$ LANGUAGE 'plpgsql' security definer;
 */
+
+// See more in the db/functions.sql file
 // Then you can call this function later
 // Call a function https://supabase.com/docs/reference/javascript/rpc
 
