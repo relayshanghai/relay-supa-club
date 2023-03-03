@@ -58,11 +58,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         const data = await openai.createCompletion({
             prompt,
-            model: 'text-babbage-001',
-            max_tokens: 50,
-            n: 1,
+            model: 'text-babbage-001', // Babbage generates short text and faster than davinci/curie. Also is a lot cheaper so perfect for subject lines.
+            max_tokens: 50, // We don't need too long subject lines, 50 tokens should be enough.
+            n: 1, // We only need one subject line.
             stop: '',
-            temperature: 1,
+            temperature: 1, // We want the subject line to be as catchy as possible, so more randomness.
         });
 
         if (data?.data?.choices[0]?.text) {
