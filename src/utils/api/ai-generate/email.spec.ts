@@ -56,12 +56,12 @@ describe('generatePrompt', () => {
             productName: 'ProductName',
             senderName: 'SenderName',
             user_id: 'user_id',
-            instructions: 'Follow these instructions',
+            instructions: 'Follow these instructions.',
         };
         const result = generatePrompt(data);
         expect(result.status).toBe('success');
         expect(result.message).toBe(
-            "Write an email (without subject) to InfluencerName with the following content:\n\t1) Express our brand BrandName's interest in participating with InfluencerName on a product marketing campaign.\n\t2) Express that I love their content and appreciate their creativity.\n\t3) Enthusiastically introduce our product: BrandName ProductName. ProductDescription.\n\t4) Ask InfluencerName to follow these instructions: Follow these instructions.\n\t5) Express gratitude for InfluencerName's time and consideration, and end with a call-to-action for them to respond if they are interested in the collaboration.\n\t6) Sign with the name: SenderName",
+            "Write an email (without subject) to InfluencerName with the following content:\n\t1) Express our brand BrandName's interest in participating with them on a product marketing campaign.\n\t2) Express that I love their content and appreciate their creativity.\n\t3) Introduce our product: BrandName ProductName. ProductDescription.\n\t4) Ask them to follow these instructions: Follow these instructions.\n\t5) Express my gratitude for InfluencerName's time and consideration, and end with a call-to-action for them to respond if they are interested in the collaboration.\n\t6) Sign with the name: SenderName",
         );
     });
 
@@ -70,7 +70,7 @@ describe('generatePrompt', () => {
             brandName: 'BrandName',
             company_id: 'company_id',
             influencerName: 'InfluencerName',
-            productDescription: 'ProductDescription',
+            productDescription: 'ProductDescription.',
             productName: 'ProductName',
             senderName: 'SenderName',
             user_id: 'user_id',
@@ -78,7 +78,7 @@ describe('generatePrompt', () => {
         const result = generatePrompt(data);
         expect(result.status).toBe('success');
         expect(result.message).toBe(
-            "Write an email (without subject) to InfluencerName with the following content:\n\t1) Express our brand BrandName's interest in participating with InfluencerName on a product marketing campaign.\n\t2) Express that I love their content and appreciate their creativity.\n\t3) Enthusiastically introduce our product: BrandName ProductName. ProductDescription.\n\t4) Ask the influencer to post about the product on their social media.\n\t5) Express gratitude for InfluencerName's time and consideration, and end with a call-to-action for them to respond if they are interested in the collaboration.\n\t6) Sign with the name: SenderName",
+            "Write an email (without subject) to InfluencerName with the following content:\n\t1) Express our brand BrandName's interest in participating with them on a product marketing campaign.\n\t2) Express that I love their content and appreciate their creativity.\n\t3) Introduce our product: BrandName ProductName. ProductDescription.\n\t4) Ask them to post about the product on their social media.\n\t5) Express my gratitude for InfluencerName's time and consideration, and end with a call-to-action for them to respond if they are interested in the collaboration.\n\t6) Sign with the name: SenderName",
         );
     });
 });
