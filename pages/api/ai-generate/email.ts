@@ -1,6 +1,6 @@
 import {
     AIEmailGeneratorPostBody,
-    generatePrompt,
+    generateEmailPrompt,
 } from './../../../src/utils/api/ai-generate/email';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
@@ -40,7 +40,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             res.status(httpCodes.NOT_FOUND).json({ error: recordError });
         }
 
-        const prompt = generatePrompt({
+        const prompt = generateEmailPrompt({
             brandName,
             company_id,
             influencerName,

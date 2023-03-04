@@ -11,7 +11,7 @@ export interface AIEmailGeneratorPostBody {
 
 export const MAX_CHARACTER_LENGTH = 600;
 
-export const generatePrompt = ({
+export const generateEmailPrompt = ({
     brandName,
     company_id,
     influencerName,

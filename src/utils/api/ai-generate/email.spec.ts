@@ -1,9 +1,9 @@
 import { describe } from 'node:test';
-import { generatePrompt, MAX_CHARACTER_LENGTH } from './email';
+import { generateEmailPrompt, MAX_CHARACTER_LENGTH } from './email';
 
 describe('generatePrompt', () => {
     test('returns error message when required fields are missing', () => {
-        const result = generatePrompt({
+        const result = generateEmailPrompt({
             brandName: '',
             company_id: '',
             influencerName: '',
@@ -27,7 +27,7 @@ describe('generatePrompt', () => {
             user_id: 'user_id',
             instructions: 'a'.repeat(MAX_CHARACTER_LENGTH + 1), // provide string greater than the MAX_CHARACTER_LENGTH
         };
-        const result = generatePrompt(data);
+        const result = generateEmailPrompt(data);
         expect(result.status).toBe('error');
         expect(result.message).toBe('Wrong character length provided');
     });
@@ -42,7 +42,7 @@ describe('generatePrompt', () => {
             senderName: 'SenderName',
             user_id: 'user_id',
         };
-        const result = generatePrompt(data);
+        const result = generateEmailPrompt(data);
         expect(result.status).toBe('success');
         expect(result.message).toBeDefined();
     });
@@ -58,7 +58,7 @@ describe('generatePrompt', () => {
             user_id: 'user_id',
             instructions: 'Follow these instructions.',
         };
-        const result = generatePrompt(data);
+        const result = generateEmailPrompt(data);
         expect(result.status).toBe('success');
         expect(result.message).toBe(
             "Write an email (without subject) to InfluencerName with the following content:\n\t1) Express our brand BrandName's interest in participating with them on a product marketing campaign.\n\t2) Express that I love their content and appreciate their creativity.\n\t3) Introduce our product: BrandName ProductName. ProductDescription.\n\t4) Ask them to follow these instructions: Follow these instructions.\n\t5) Express my gratitude for InfluencerName's time and consideration, and end with a call-to-action for them to respond if they are interested in the collaboration.\n\t6) Sign with the name: SenderName",
@@ -75,7 +75,7 @@ describe('generatePrompt', () => {
             senderName: 'SenderName',
             user_id: 'user_id',
         };
-        const result = generatePrompt(data);
+        const result = generateEmailPrompt(data);
         expect(result.status).toBe('success');
         expect(result.message).toBe(
             "Write an email (without subject) to InfluencerName with the following content:\n\t1) Express our brand BrandName's interest in participating with them on a product marketing campaign.\n\t2) Express that I love their content and appreciate their creativity.\n\t3) Introduce our product: BrandName ProductName. ProductDescription.\n\t4) Ask them to post about the product on their social media.\n\t5) Express my gratitude for InfluencerName's time and consideration, and end with a call-to-action for them to respond if they are interested in the collaboration.\n\t6) Sign with the name: SenderName",

@@ -1,18 +1,13 @@
+import {
+    AIEmailSubjectGeneratorPostBody,
+    generateSubjectPrompt,
+} from './../../../src/utils/api/ai-generate/subject';
 import { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { serverLogger } from 'src/utils/logger';
 
 import { Configuration, OpenAIApi } from 'openai';
 import { recordAiEmailGeneratorUsage } from 'src/utils/api/db';
-
-export type AIEmailSubjectGeneratorPostBody = {
-    brandName: string;
-    influencerName: string;
-    productName: string;
-    productDescription: string;
-    company_id: string;
-    user_id: string;
-};
 
 export type AIEmailSubjectGeneratorPostResult = { text: string };
 
@@ -27,19 +22,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(httpCodes.METHOD_NOT_ALLOWED).json([]);
     }
     try {
-        const { brandName, influencerName, productDescription, productName, company_id, user_id } =
+        const { brandName, productDescription, productName, company_id, user_id } =
             req.body as AIEmailSubjectGeneratorPostBody;
 
-        if (
-            !brandName ||
-            !influencerName ||
-            !productDescription ||
-            !productName ||
-            !company_id ||
-            !user_id
-        ) {
+        if (!brandName || !productDescription || !productName || !company_id || !user_id) {
             return res.status(httpCodes.BAD_REQUEST).json({});
         }
+
         if (!process.env.OPENAI_API_KEY || !process.env.OPENAI_API_ORG) {
             return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
         }
@@ -49,25 +38,35 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             res.status(httpCodes.NOT_FOUND).json({ error: recordError });
         }
 
-        const trimmedDescription = productDescription.trim();
-        const trimDescriptionPunctuation = trimmedDescription.endsWith('.')
-            ? trimmedDescription.slice(0, trimmedDescription.length - 1)
-            : trimmedDescription;
+        const prompt = generateSubjectPrompt({
+            brandName,
+            company_id,
+            productDescription,
+            productName,
+            user_id,
+        });
 
-        const prompt = `Generate a short email subject line, regarding a marketing campaign collaboration for our product ${productName}. Here is a description of the product: ${trimDescriptionPunctuation}. It should start with a catchy and attention grabbing headline and after that mention that this is a marketing campaign collaboration invitation.`;
+        if (prompt.status === 'error') {
+            return res.status(httpCodes.BAD_REQUEST).json({ message: prompt.message });
+        }
 
-        const data = await openai.createCompletion({
-            prompt,
-            model: 'text-babbage-001', // Babbage generates short text and faster than davinci/curie. Also is a lot cheaper so perfect for subject lines.
+        const data = await openai.createChatCompletion({
+            messages: [
+                {
+                    role: 'user', // Ask the model to take the role of the user
+                    content: prompt.message,
+                },
+            ],
+            model: 'gpt-3.5-turbo', // GPT-3 model is the latest and greatest
             max_tokens: 50, // We don't need too long subject lines, 50 tokens should be enough.
             n: 1, // We only need one subject line.
             stop: '',
             temperature: 1, // We want the subject line to be as catchy as possible, so more randomness.
         });
 
-        if (data?.data?.choices[0]?.text) {
+        if (data?.data?.choices[0]?.message?.content) {
             const result: AIEmailSubjectGeneratorPostResult = {
-                text: data.data.choices[0].text,
+                text: data.data.choices[0].message.content,
             };
             return res.status(httpCodes.OK).json(result);
         } else {
