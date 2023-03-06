@@ -1,8 +1,6 @@
-import {
-    AIEmailSubjectGeneratorPostBody,
-    generateSubjectPrompt,
-} from './../../../src/utils/api/ai-generate/subject';
-import { NextApiRequest, NextApiResponse } from 'next';
+import { generateSubjectPrompt } from './../../../src/utils/api/ai-generate/subject';
+import type { AIEmailSubjectGeneratorPostBody } from './../../../src/utils/api/ai-generate/subject';
+import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { serverLogger } from 'src/utils/logger';
 

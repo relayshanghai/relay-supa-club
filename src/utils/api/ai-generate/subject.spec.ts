@@ -1,4 +1,3 @@
-import { describe } from 'node:test';
 import { generateSubjectPrompt, MAX_CHARACTER_LENGTH } from './subject';
 
 describe('generatePrompt', () => {

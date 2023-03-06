@@ -1,4 +1,3 @@
-import { describe } from 'node:test';
 import { generateEmailPrompt, MAX_CHARACTER_LENGTH } from './email';
 
 describe('generatePrompt', () => {
