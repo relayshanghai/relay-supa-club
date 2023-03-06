@@ -23,7 +23,7 @@ describe('generatePrompt', () => {
             user_id: 'a'.repeat(MAX_CHARACTER_LENGTH + 1),
         });
         expect(result.status).toBe('error');
-        expect(result.message).toBe('Prompt is too long!');
+        expect(result.message).toBe('Wrong character length provided');
     });
 
     test('returns prompt when all required fields are present', () => {
@@ -35,5 +35,8 @@ describe('generatePrompt', () => {
             user_id: 'user id',
         });
         expect(result.status).toBe('success');
+        expect(result.message).toBe(
+            'Generate a short email subject line, regarding a marketing campaign collaboration for our product product name. Here is a description of the product: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa. It should start with a catchy and attention grabbing headline and after that mention that this is a marketing campaign collaboration invitation.',
+        );
     });
 });
