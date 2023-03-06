@@ -28,7 +28,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             //                 {
             //                     type: 'mrkdwn',
             //                     text: `*Email:*\n${req.body.record.email}`,
-            //                 },
+            //                 }
             //                 {
             //                     type: 'mrkdwn',
             //                     text: `*Company:*\n${req.body.record.company_id}`,
