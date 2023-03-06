@@ -28,11 +28,11 @@ describe('generatePrompt', () => {
 
     test('returns prompt when all required fields are present', () => {
         const result = generateSubjectPrompt({
-            brandName: 'a'.repeat(MAX_CHARACTER_LENGTH),
-            company_id: 'a'.repeat(MAX_CHARACTER_LENGTH),
+            brandName: 'brand name',
+            company_id: 'company id',
             productDescription: 'a'.repeat(MAX_CHARACTER_LENGTH),
-            productName: 'a'.repeat(MAX_CHARACTER_LENGTH),
-            user_id: 'a'.repeat(MAX_CHARACTER_LENGTH),
+            productName: 'product name',
+            user_id: 'user id',
         });
         expect(result.status).toBe('success');
     });
