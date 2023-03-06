@@ -43,4 +43,4 @@ test('populateDB', async () => {
     }
     expect(profile).toBeDefined();
     expect(profile?.company_id).toEqual(company?.id);
-}, 10000);
+}, 20000); // the test times out after 20 seconds. Because we are using a live remote supabase database, we need to wait for the database to respond. This should be enough time.

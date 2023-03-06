@@ -29,37 +29,16 @@ export interface TestDB extends DatabaseWithCustomTypes {
         Tables: DatabaseWithCustomTypes['public']['Tables'];
     };
 }
+
+/** Connects to the `testing` supabase project. Includes a `truncate_all_tables` function which is unavailable in the real database */
 export const testSupabase = createClient<TestDB>(supabaseUrl, supabaseAnonKey);
 
 /** The service account is not beholden to RLS rules */
 export const testSupabaseServiceAccount = createClient<TestDB>(supabaseUrl, supabaseServiceKey);
 
-// Supabase client does not allow raw SQL queries.
-// add functions to the db by using the sql editor in the dashboard, or by adding them in the functions tab of the db
-// note that `security definer` is what gives us permission to edit the auth schema
-/* 
-CREATE OR REPLACE FUNCTION truncate_all_tables(schema_name TEXT)
-RETURNS void AS $$
-DECLARE
-    table_name TEXT;
-BEGIN
-    FOR table_name IN
-        SELECT t.table_name
-        FROM information_schema.tables t
-        WHERE t.table_schema = schema_name
-        AND t.table_type = 'BASE TABLE'
-    LOOP
-        EXECUTE 'TRUNCATE TABLE ' || schema_name || '.' || table_name || ' CASCADE;';
-    END LOOP;
-END;
-$$ LANGUAGE 'plpgsql' security definer;
-*/
-
-// See more in the db/functions.sql file
-// Then you can call this function later
-// Call a function https://supabase.com/docs/reference/javascript/rpc
-
 export const wipeDatabase = async () => {
+    // Function defined in the db/functions.sql file
+    // Call a function https://supabase.com/docs/reference/javascript/rpc
     const { error } = await testSupabase.rpc('truncate_all_tables', {
         schema_name: 'public',
     });
