@@ -1,4 +1,4 @@
-import { SECONDS_IN_MILLISECONDS } from 'src/constants/conversions';
+import { SECONDS_IN_MILLISECONDS } from '../constants/conversions';
 import type { AccountRole } from 'types';
 
 export const handleError = (error: any) => {
