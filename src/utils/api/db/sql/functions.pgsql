@@ -18,3 +18,5 @@ BEGIN
     END LOOP;
 END;
 $$ LANGUAGE 'plpgsql' security definer;
+
+-- TODO: add the other existing functions. Also with the supabase config options. 

@@ -37,7 +37,7 @@ export const testSupabase = createClient<TestDB>(supabaseUrl, supabaseAnonKey);
 export const testSupabaseServiceAccount = createClient<TestDB>(supabaseUrl, supabaseServiceKey);
 
 export const wipeDatabase = async () => {
-    // Function defined in the db/functions.sql file
+    // Function defined in the utils/api/db/sql/functions.sql file
     // Call a function https://supabase.com/docs/reference/javascript/rpc
     const { error } = await testSupabase.rpc('truncate_all_tables', {
         schema_name: 'public',
