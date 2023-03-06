@@ -60,7 +60,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     content: prompt.message,
                 },
             ],
-            model: 'gpt-3.5-turbo', // GPT-3 model is the latest and greatest
+            model: 'gpt-3.5-turbo', // [Mar 23 2023] GPT-3 model is the latest and greatest
             max_tokens: 512, // 512 tokens seems to work well for this task, we don't need to waste more tokens for our emails
             n: 1, // Just generate a single email
             stop: '',

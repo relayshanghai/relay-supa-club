@@ -55,7 +55,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     content: prompt.message,
                 },
             ],
-            model: 'gpt-3.5-turbo', // GPT-3 model is the latest and greatest
+            model: 'gpt-3.5-turbo', // [Mar 23 2023] GPT-3 model is the latest and greatest
             max_tokens: 50, // We don't need too long subject lines, 50 tokens should be enough.
             n: 1, // We only need one subject line.
             stop: '',

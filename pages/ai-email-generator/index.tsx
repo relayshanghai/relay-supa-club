@@ -8,7 +8,7 @@ import { Input } from 'src/components/input';
 import { Layout } from 'src/components/layout';
 import { toast } from 'react-hot-toast';
 import { clientLogger } from 'src/utils/logger';
-import { AIEmailSubjectGeneratorPostResult } from 'pages/api/ai-generate/subject';
+import type { AIEmailSubjectGeneratorPostResult } from 'pages/api/ai-generate/subject';
 import { useUser } from 'src/hooks/use-user';
 import { useCompany } from 'src/hooks/use-company';
 import {
@@ -20,8 +20,8 @@ import { useTranslation } from 'react-i18next';
 import { hasCustomError } from 'src/utils/errors';
 import { usageErrors } from 'src/errors/usages';
 import { isMissing } from 'src/utils/utils';
-import { AIEmailGeneratorPostBody } from 'src/utils/api/ai-generate/email';
-import { AIEmailSubjectGeneratorPostBody } from 'src/utils/api/ai-generate/subject';
+import type { AIEmailGeneratorPostBody } from 'src/utils/api/ai-generate/email';
+import type { AIEmailSubjectGeneratorPostBody } from 'src/utils/api/ai-generate/subject';
 
 const MAX_CHARACTER_LENGTH = 600;
 
