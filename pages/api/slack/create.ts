@@ -7,46 +7,37 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (req.method === 'POST') {
         if (req.body.record && URL) {
-            // console.log(req.body.record);
-
-            // const reqBody = {
-            //     blocks: [
-            //         {
-            //             type: 'section',
-            //             text: {
-            //                 type: 'mrkdwn',
-            //                 text: ':robot_face:A new customer has signed up:',
-            //             },
-            //         },
-            //         {
-            //             type: 'section',
-            //             fields: [
-            //                 {
-            //                     type: 'mrkdwn',
-            //                     text: `*Name:*\n${req.body.record.firstName} ${req.body.record.lastName}`,
-            //                 },
-            //                 {
-            //                     type: 'mrkdwn',
-            //                     text: `*Email:*\n${req.body.record.email}`,
-            //                 }
-            //                 {
-            //                     type: 'mrkdwn',
-            //                     text: `*Company:*\n${req.body.record.company_id}`,
-            //                 },
-            //             ],
-            //         },
-            //     ],
-            // };
+            const reqBody = {
+                blocks: [
+                    {
+                        type: 'section',
+                        text: {
+                            type: 'mrkdwn',
+                            text: ':robot_face: A new customer has signed up:',
+                        },
+                    },
+                    {
+                        type: 'section',
+                        fields: [
+                            {
+                                type: 'mrkdwn',
+                                text: `*Name:*\n${req.body.record.first_name} ${req.body.record.last_name}`,
+                            },
+                            {
+                                type: 'mrkdwn',
+                                text: `*Email:*\n${req.body.record.email}`,
+                            },
+                        ],
+                    },
+                ],
+            };
 
             await fetch(URL, {
                 method: 'POST',
-                body: JSON.stringify({ text: 'Hello, World!' }),
+                body: JSON.stringify(reqBody),
             });
-            // console.log(data);
         }
-
-        return res.status(httpCodes.OK).json({});
     }
 
-    return res.status(httpCodes.METHOD_NOT_ALLOWED).json({});
+    return res.status(httpCodes.OK).json({});
 }
