@@ -49,7 +49,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             instructions,
         });
 
-        if (prompt.status === 'error') {
+        if (prompt === 'error') {
             return res.status(httpCodes.BAD_REQUEST).json({ message: prompt.message });
         }
 

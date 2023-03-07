@@ -1,3 +1,4 @@
+import { emailErrors } from './../../../errors/ai-email-generate';
 export interface AIEmailGeneratorPostBody {
     brandName: string;
     influencerName: string;
@@ -30,10 +31,7 @@ export const generateEmailPrompt = ({
         !company_id ||
         !user_id
     ) {
-        return {
-            status: 'error',
-            message: 'Missing required fields!',
-        };
+        throw new Error(emailErrors.missingRequiredFields);
     }
 
     if (
@@ -43,10 +41,7 @@ export const generateEmailPrompt = ({
         productName.length === 0 ||
         senderName.length === 0
     ) {
-        return {
-            status: 'error',
-            message: 'Missing required fields!',
-        };
+        throw new Error(emailErrors.missingRequiredFields);
     }
 
     if (
@@ -57,10 +52,7 @@ export const generateEmailPrompt = ({
         productDescription.length > MAX_CHARACTER_LENGTH ||
         (instructions && instructions.length > MAX_CHARACTER_LENGTH)
     ) {
-        return {
-            status: 'error',
-            message: 'Wrong character length provided',
-        };
+        throw new Error(emailErrors.wrongCharacterLength);
     }
 
     const trimmedDescription = productDescription.trim();
@@ -86,7 +78,6 @@ export const generateEmailPrompt = ({
 	6) Sign with the name: ${senderName}`;
 
     return {
-        status: 'success',
-        message: prompt,
+        prompt: prompt,
     };
 };

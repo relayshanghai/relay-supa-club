@@ -1,3 +1,4 @@
+import { subjectErrors } from './../../../errors/ai-email-generate';
 export interface AIEmailSubjectGeneratorPostBody {
     brandName: string;
     productName: string;
@@ -16,17 +17,11 @@ export const generateSubjectPrompt = ({
     user_id,
 }: AIEmailSubjectGeneratorPostBody) => {
     if (!brandName || !productDescription || !productName || !company_id || !user_id) {
-        return {
-            status: 'error',
-            message: 'Missing required fields!',
-        };
+        throw new Error(subjectErrors.missingRequiredFields);
     }
 
     if (brandName.length === 0 || productDescription.length === 0 || productName.length === 0) {
-        return {
-            status: 'error',
-            message: 'Missing required fields!',
-        };
+        throw new Error(subjectErrors.missingRequiredFields);
     }
 
     if (
@@ -34,10 +29,7 @@ export const generateSubjectPrompt = ({
         productName.length > 100 ||
         productDescription.length > MAX_CHARACTER_LENGTH
     ) {
-        return {
-            status: 'error',
-            message: 'Wrong character length provided',
-        };
+        throw new Error(subjectErrors.wrongCharacterLength);
     }
 
     const trimmedDescription = productDescription.trim();
@@ -48,7 +40,6 @@ export const generateSubjectPrompt = ({
     const prompt = `Generate a short email subject line, regarding a marketing campaign collaboration for our product ${productName}. Here is a description of the product: ${trimDescriptionPunctuation}. It should start with a catchy and attention grabbing headline and after that mention that this is a marketing campaign collaboration invitation.`;
 
     return {
-        status: 'success',
-        message: prompt,
+        prompt: prompt,
     };
 };
