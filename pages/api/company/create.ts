@@ -76,8 +76,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     company_id: company.id,
                 },
             });
-            await updateCompany({ id: company.id, cus_id: customer.id });
-            const response: CompanyCreatePostResponse = company;
+            const companyFinal = await updateCompany({ id: company.id, cus_id: customer.id });
+            const response: CompanyCreatePostResponse = companyFinal;
 
             return res.status(httpCodes.OK).json(response);
         } catch (error) {

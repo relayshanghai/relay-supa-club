@@ -15,6 +15,7 @@ export type SubscriptionGetResponse = {
     interval: SubscriptionPeriod;
     /** date in seconds */
     current_period_end: number;
+    current_period_start: number;
     status: Stripe.Subscription.Status;
 };
 
@@ -49,6 +50,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 name: subscription.plan.product.name,
                 interval,
                 current_period_end: subscription.current_period_end,
+                current_period_start: subscription.current_period_start,
                 status: subscription.status,
             };
 

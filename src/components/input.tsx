@@ -21,6 +21,9 @@ export const Input = ({ label, error, note, placeholder, ...rest }: InputProps) 
                         ? 'cursor-not-allowed bg-gray-100 text-gray-500 ring-gray-500'
                         : 'text-gray-900 ring-gray-900'
                 }`}
+                onKeyDown={(e) => {
+                    if (e.key === 'Enter') e.preventDefault();
+                }}
                 {...rest}
             />
             <span>
