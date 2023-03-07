@@ -1,9 +1,9 @@
 export const emailErrors = {
-    missingRequiredFields: 'Missing required fields!',
-    wrongCharacterLength: 'Wrong character length provided',
+    missingRequiredFields: 'aiEmailGenerator.form.error.missingRequiredFields',
+    wrongCharacterLength: 'aiEmailGenerator.form.error.wrongCharacterLength',
 };
 
 export const subjectErrors = {
-    missingRequiredFields: 'Missing required fields!',
-    wrongCharacterLength: 'Wrong character length provided',
+    missingRequiredFields: 'aiEmailGenerator.form.error.missingRequiredFields',
+    wrongCharacterLength: 'aiEmailGenerator.form.error.wrongCharacterLength',
 };

@@ -77,7 +77,5 @@ export const generateEmailPrompt = ({
 	5) Express my gratitude for ${influencerName}'s time and consideration, and end with a call-to-action for them to respond if they are interested in the collaboration.
 	6) Sign with the name: ${senderName}`;
 
-    return {
-        prompt: prompt,
-    };
+    return prompt;
 };

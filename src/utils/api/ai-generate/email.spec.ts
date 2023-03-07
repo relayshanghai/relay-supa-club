@@ -52,16 +52,10 @@ describe('generatePrompt', () => {
             senderName: 'SenderName',
             user_id: 'user_id',
         };
-        try {
-            const result = generateEmailPrompt(data);
-            expect(result.prompt).toBeDefined();
-        } catch (error: any) {
-            if (hasCustomError(error, emailErrors))
-                expect(
-                    error.message === emailErrors.missingRequiredFields ||
-                        error.message === emailErrors.wrongCharacterLength,
-                ).toBeTruthy();
-        }
+
+        const result = generateEmailPrompt(data);
+        expect(typeof result).toBe('string');
+        expect(result.length).toBeGreaterThan(0);
     });
 
     test('returns proper prompt message when all fields are provided', () => {
@@ -75,18 +69,11 @@ describe('generatePrompt', () => {
             user_id: 'user_id',
             instructions: 'Follow these instructions.',
         };
-        try {
-            const result = generateEmailPrompt(data);
-            expect(result.prompt).toBe(
-                "Write an email (without subject) to InfluencerName with the following content:\n\t1) Express our brand BrandName's interest in participating with them on a product marketing campaign.\n\t2) Express that I love their content and appreciate their creativity.\n\t3) Introduce our product: BrandName ProductName. ProductDescription.\n\t4) Ask them to follow these instructions: Follow these instructions.\n\t5) Express my gratitude for InfluencerName's time and consideration, and end with a call-to-action for them to respond if they are interested in the collaboration.\n\t6) Sign with the name: SenderName",
-            );
-        } catch (error: any) {
-            if (hasCustomError(error, emailErrors))
-                expect(
-                    error.message === emailErrors.missingRequiredFields ||
-                        error.message === emailErrors.wrongCharacterLength,
-                ).toBeTruthy();
-        }
+
+        const result = generateEmailPrompt(data);
+        expect(result).toBe(
+            "Write an email (without subject) to InfluencerName with the following content:\n\t1) Express our brand BrandName's interest in participating with them on a product marketing campaign.\n\t2) Express that I love their content and appreciate their creativity.\n\t3) Introduce our product: BrandName ProductName. ProductDescription.\n\t4) Ask them to follow these instructions: Follow these instructions.\n\t5) Express my gratitude for InfluencerName's time and consideration, and end with a call-to-action for them to respond if they are interested in the collaboration.\n\t6) Sign with the name: SenderName",
+        );
     });
 
     test('returns proper prompt message when all fields are provided without instructions', () => {
@@ -99,17 +86,10 @@ describe('generatePrompt', () => {
             senderName: 'SenderName',
             user_id: 'user_id',
         };
-        try {
-            const result = generateEmailPrompt(data);
-            expect(result.prompt).toBe(
-                "Write an email (without subject) to InfluencerName with the following content:\n\t1) Express our brand BrandName's interest in participating with them on a product marketing campaign.\n\t2) Express that I love their content and appreciate their creativity.\n\t3) Introduce our product: BrandName ProductName. ProductDescription.\n\t4) Ask them to post about the product on their social media.\n\t5) Express my gratitude for InfluencerName's time and consideration, and end with a call-to-action for them to respond if they are interested in the collaboration.\n\t6) Sign with the name: SenderName",
-            );
-        } catch (error: any) {
-            if (hasCustomError(error, emailErrors))
-                expect(
-                    error.message === emailErrors.missingRequiredFields ||
-                        error.message === emailErrors.wrongCharacterLength,
-                ).toBeTruthy();
-        }
+
+        const result = generateEmailPrompt(data);
+        expect(result).toBe(
+            "Write an email (without subject) to InfluencerName with the following content:\n\t1) Express our brand BrandName's interest in participating with them on a product marketing campaign.\n\t2) Express that I love their content and appreciate their creativity.\n\t3) Introduce our product: BrandName ProductName. ProductDescription.\n\t4) Ask them to post about the product on their social media.\n\t5) Express my gratitude for InfluencerName's time and consideration, and end with a call-to-action for them to respond if they are interested in the collaboration.\n\t6) Sign with the name: SenderName",
+        );
     });
 });

@@ -22,6 +22,7 @@ import { usageErrors } from 'src/errors/usages';
 import { isMissing } from 'src/utils/utils';
 import type { AIEmailGeneratorPostBody } from 'src/utils/api/ai-generate/email';
 import type { AIEmailSubjectGeneratorPostBody } from 'src/utils/api/ai-generate/subject';
+import { emailErrors, subjectErrors } from 'src/errors/ai-email-generate';
 
 const MAX_CHARACTER_LENGTH = 600;
 
@@ -76,7 +77,7 @@ const AIImageGenerator = () => {
         setLoadingSubject(false);
 
         return res;
-    }, [brandName, influencerName, productName, productDescription, profile?.id, company?.id]);
+    }, [brandName, productName, productDescription, profile?.id, company?.id]);
 
     const generateEmail = useCallback(async () => {
         setLoadingEmail(true);
@@ -135,7 +136,7 @@ const AIImageGenerator = () => {
             clientLogger(e, 'error');
             toast.dismiss(loadingToast);
             resetFields();
-            if (hasCustomError(e, usageErrors)) {
+            if (hasCustomError(e, { ...usageErrors, ...emailErrors, ...subjectErrors })) {
                 toast.error(t(e.message));
             } else {
                 toast.error(t('aiEmailGenerator.index.status.requestError') || '');
