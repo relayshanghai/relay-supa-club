@@ -36,23 +36,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             res.status(httpCodes.NOT_FOUND).json({ error: recordError });
         }
 
-        const prompt = generateSubjectPrompt({
-            brandName,
-            company_id,
-            productDescription,
-            productName,
-            user_id,
-        });
-
-        if (prompt.status === 'error') {
-            return res.status(httpCodes.BAD_REQUEST).json({ message: prompt.message });
+        let prompt = '';
+        try {
+            prompt = generateSubjectPrompt({
+                brandName,
+                company_id,
+                productDescription,
+                productName,
+                user_id,
+            });
+        } catch (error: any) {
+            return res.status(httpCodes.BAD_REQUEST).json({ error: error.message });
         }
 
         const data = await openai.createChatCompletion({
             messages: [
                 {
                     role: 'user', // Ask the model to take the role of the user
-                    content: prompt.message,
+                    content: prompt,
                 },
             ],
             model: 'gpt-3.5-turbo', // [Mar 23 2023] GPT-3 model is the latest and greatest
