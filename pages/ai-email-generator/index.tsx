@@ -1,7 +1,4 @@
-import type {
-    AIEmailGeneratorPostBody,
-    AIEmailGeneratorPostResult,
-} from 'pages/api/ai-generate/email';
+import type { AIEmailGeneratorPostResult } from 'pages/api/ai-generate/email';
 import { copyToClipboard } from 'src/utils/copyToClipboard';
 import { InputTextArea } from 'src/components/textarea';
 import { Button } from 'src/components/button';
@@ -11,10 +8,7 @@ import { Input } from 'src/components/input';
 import { Layout } from 'src/components/layout';
 import { toast } from 'react-hot-toast';
 import { clientLogger } from 'src/utils/logger';
-import {
-    AIEmailSubjectGeneratorPostBody,
-    AIEmailSubjectGeneratorPostResult,
-} from 'pages/api/ai-generate/subject';
+import type { AIEmailSubjectGeneratorPostResult } from 'pages/api/ai-generate/subject';
 import { useUser } from 'src/hooks/use-user';
 import { useCompany } from 'src/hooks/use-company';
 import {
@@ -26,6 +20,9 @@ import { useTranslation } from 'react-i18next';
 import { hasCustomError } from 'src/utils/errors';
 import { usageErrors } from 'src/errors/usages';
 import { isMissing } from 'src/utils/utils';
+import type { AIEmailGeneratorPostBody } from 'src/utils/api/ai-generate/email';
+import type { AIEmailSubjectGeneratorPostBody } from 'src/utils/api/ai-generate/subject';
+import { emailErrors, subjectErrors } from 'src/errors/ai-email-generate';
 
 const MAX_CHARACTER_LENGTH = 600;
 
@@ -62,7 +59,6 @@ const AIImageGenerator = () => {
         }
         const body: AIEmailSubjectGeneratorPostBody = {
             brandName,
-            influencerName,
             productName,
             productDescription,
             user_id: profile.id,
@@ -81,7 +77,7 @@ const AIImageGenerator = () => {
         setLoadingSubject(false);
 
         return res;
-    }, [brandName, influencerName, productName, productDescription, profile?.id, company?.id]);
+    }, [brandName, productName, productDescription, profile?.id, company?.id]);
 
     const generateEmail = useCallback(async () => {
         setLoadingEmail(true);
@@ -140,7 +136,7 @@ const AIImageGenerator = () => {
             clientLogger(e, 'error');
             toast.dismiss(loadingToast);
             resetFields();
-            if (hasCustomError(e, usageErrors)) {
+            if (hasCustomError(e, { ...usageErrors, ...emailErrors, ...subjectErrors })) {
                 toast.error(t(e.message));
             } else {
                 toast.error(t('aiEmailGenerator.index.status.requestError') || '');
