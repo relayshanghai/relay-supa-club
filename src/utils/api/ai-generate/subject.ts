@@ -37,7 +37,7 @@ export const generateSubjectPrompt = ({
         ? trimmedDescription.slice(0, trimmedDescription.length - 1)
         : trimmedDescription;
 
-    const prompt = `Generate a short email subject line, regarding a marketing campaign collaboration for our product ${productName}. Here is a description of the product: ${trimDescriptionPunctuation}. It should start with a catchy and attention grabbing headline and after that mention that this is a marketing campaign collaboration invitation.`;
+    const prompt = `Generate a short email subject line, regarding a marketing campaign collaboration for our product ${productName}. Here is a description of the product: ${trimDescriptionPunctuation}. The subject line should start with a catchy and attention grabbing headline and after that mention that this is a marketing campaign collaboration invitation.`;
 
     return prompt;
 };
