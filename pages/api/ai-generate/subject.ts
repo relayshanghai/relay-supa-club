@@ -52,11 +52,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const data = await openai.createChatCompletion({
             messages: [
                 {
-                    role: 'user', // Ask the model to take the role of the user
+                    role: 'user', // The user role makes the model follow instructions instead of having a conversation
                     content: prompt,
                 },
             ],
-            model: 'gpt-3.5-turbo', // [Mar 23 2023] GPT-3 model is the latest and greatest
+            model: 'gpt-3.5-turbo', // [Mar 2 2023] GPT-3 model is the latest and greatest
             max_tokens: 50, // We don't need too long subject lines, 50 tokens should be enough.
             n: 1, // We only need one subject line.
             stop: '',

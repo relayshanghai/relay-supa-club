@@ -58,11 +58,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const data = await openai.createChatCompletion({
             messages: [
                 {
-                    role: 'user', // Ask the model to take the role of the user
+                    role: 'user', // The user role makes the model follow instructions instead of having a conversation
                     content: prompt,
                 },
             ],
-            model: 'gpt-3.5-turbo', // [Mar 23 2023] GPT-3 model is the latest and greatest
+            model: 'gpt-3.5-turbo', // [Mar 2 2023] GPT-3 model is the latest and greatest
             max_tokens: 512, // 512 tokens seems to work well for this task, we don't need to waste more tokens for our emails
             n: 1, // Just generate a single email
             stop: '',
