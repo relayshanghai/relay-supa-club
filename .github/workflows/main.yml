@@ -16,7 +16,7 @@ jobs:
         run: cp supabase/config.toml.example supabase/config.toml
 
       - name: Start Supabase local development setup
-        run: supabase start
+        run: SUPABASE_SCANNER_BUFFER_SIZE=5mb supabase start
 
       - name: Verify generated types are up-to-date
         run: |
