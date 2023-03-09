@@ -29,5 +29,6 @@
     "editor.quickSuggestions": {
         "strings": true
     },
-    "Prettier-SQL.SQLFlavourOverride": "postgresql"
+    "Prettier-SQL.SQLFlavourOverride": "postgresql",
+    "Prettier-SQL.keywordCase": "upper"
 }
