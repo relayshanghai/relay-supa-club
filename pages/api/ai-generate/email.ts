@@ -1,3 +1,5 @@
+import { generateEmailPrompt } from './../../../src/utils/api/ai-generate/email';
+import type { AIEmailGeneratorPostBody } from './../../../src/utils/api/ai-generate/email';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { serverLogger } from 'src/utils/logger';
@@ -6,25 +8,12 @@ import { Configuration, OpenAIApi } from 'openai';
 import { OPENAI_API_KEY, OPENAI_API_ORG } from 'src/constants/openai';
 import { recordAiEmailGeneratorUsage } from 'src/utils/api/db';
 
-export type AIEmailGeneratorPostBody = {
-    brandName: string;
-    influencerName: string;
-    productName: string;
-    productDescription: string;
-    instructions?: string;
-    senderName: string;
-    company_id: string;
-    user_id: string;
-};
-
 export type AIEmailGeneratorPostResult = { text: string };
 
 const configuration = new Configuration({
     organization: OPENAI_API_ORG,
     apiKey: OPENAI_API_KEY,
 });
-
-const MAX_CHARACTER_LENGTH = 600;
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const openai = new OpenAIApi(configuration);
@@ -44,66 +33,46 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             user_id,
         } = req.body as AIEmailGeneratorPostBody;
 
-        if (
-            !brandName ||
-            !influencerName ||
-            !productDescription ||
-            !productName ||
-            !senderName ||
-            !company_id ||
-            !user_id
-        ) {
-            return res.status(httpCodes.BAD_REQUEST).json({ message: 'Missing required fields' });
-        }
-        if (
-            brandName.length > 100 ||
-            influencerName.length > 100 ||
-            productName.length > 100 ||
-            senderName.length > 100 ||
-            productDescription.length > MAX_CHARACTER_LENGTH ||
-            (instructions && instructions.length > MAX_CHARACTER_LENGTH)
-        ) {
-            return res.status(httpCodes.BAD_REQUEST).json({});
-        }
-
         const { error: recordError } = await recordAiEmailGeneratorUsage(company_id, user_id);
         if (recordError) {
             res.status(httpCodes.NOT_FOUND).json({ error: recordError });
         }
 
-        const trimmedDescription = productDescription.trim();
-        const trimDescriptionPunctuation = trimmedDescription.endsWith('.')
-            ? trimmedDescription.slice(0, trimmedDescription.length - 1)
-            : trimmedDescription;
+        let prompt = '';
 
-        const trimmedInstructions = instructions?.trim();
-        const trimmedInstructionsPunctuation = trimmedInstructions?.endsWith('.')
-            ? trimmedInstructions?.slice(0, trimmedInstructions?.length - 1)
-            : trimmedInstructions;
-
-        const prompt = `Write an email (without subject) to ${influencerName} with the following content:
-        1) Express our brand ${brandName}'s interest in participating with ${influencerName} on a product marketing campaign.
-        2) Express that I love their content and appreciate their creativity.
-        3) Enthusiastically introduce our product: ${brandName} ${productName}. ${trimDescriptionPunctuation}.
-        ${
-            instructions
-                ? `4) Ask ${influencerName} to follow these instructions: "${trimmedInstructionsPunctuation}.`
-                : '4) Ask the influencer to post about the product on their social media.'
+        try {
+            prompt = generateEmailPrompt({
+                brandName,
+                company_id,
+                influencerName,
+                productDescription,
+                productName,
+                senderName,
+                user_id,
+                instructions,
+            });
+        } catch (error: any) {
+            return res.status(httpCodes.BAD_REQUEST).json({ error: error.message });
         }
-        5) Express gratitude for ${influencerName}'s time and consideration, and end with a call-to-action for them to respond if they are interested in the collaboration.
-        6) Sign with the name: ${senderName}`;
 
-        const data = await openai.createCompletion({
-            prompt,
-            model: 'text-curie-001', // Curie is closer to davinci model in terms of quality but is much faster
+        const data = await openai.createChatCompletion({
+            messages: [
+                {
+                    role: 'user', // The user role makes the model follow instructions instead of having a conversation
+                    content: prompt,
+                },
+            ],
+            model: 'gpt-3.5-turbo', // [Mar 2 2023] GPT-3 model is the latest and greatest
             max_tokens: 512, // 512 tokens seems to work well for this task, we don't need to waste more tokens for our emails
             n: 1, // Just generate a single email
             stop: '',
-            temperature: 0.4, // 0.4 seems to add some spice but also remain within the bounds of the prompt
+            temperature: 0.6, // Higher the number, higher the variation
         });
 
-        if (data?.data?.choices[0]?.text) {
-            const result: AIEmailGeneratorPostResult = { text: data.data.choices[0].text };
+        if (data?.data?.choices[0]?.message?.content) {
+            const result: AIEmailGeneratorPostResult = {
+                text: data.data.choices[0].message.content,
+            };
             return res.status(httpCodes.OK).json(result);
         } else {
             serverLogger('No data returned from OpenAI API: ' + JSON.stringify(data), 'error');

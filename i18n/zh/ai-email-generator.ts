@@ -40,6 +40,8 @@ const aiEmailGenerator = {
         },
         error: {
             maxLength: '达到最大长度',
+            missingRequiredFields: '缺少必填字段！',
+            wrongCharacterLength: '提供的字符长度错误',
         },
     },
 };
