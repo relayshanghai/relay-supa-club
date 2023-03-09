@@ -1,13 +1,10 @@
 ## run tests
 
+Enable `pgtap` in the supabase dashboard by going to database > extensions and clicking the `enable` button next to `pgtap`
+
 Make sure you have docker running
 
-Make sure you have the supabase cli set up. [docs](https://supabase.com/docs/guides/cli/local-development)
-
-```bash
-npx supabase init
-npx supabase link --project-ref <project-id>
-```
+Make sure you have the local supabase environment set up
 
 Start the local supabase instance
 

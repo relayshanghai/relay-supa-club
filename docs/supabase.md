@@ -72,3 +72,14 @@ run this and the next script any time you make changes to the database tables or
 ```bash
 npx supabase gen types typescript --project-id <THE_PROJECT_ID> > types/supabase.ts
 ```
+
+## Local development
+
+Make sure you have the supabase cli set up. [docs](https://supabase.com/docs/guides/cli/local-development)
+
+```bash
+npx supabase init
+npx supabase link --project-ref <project-id>
+# pull the remote database schemas (note this can take a long time. If it fails, delete the migrations files and try again)
+npx supabase db remote commit
+```
