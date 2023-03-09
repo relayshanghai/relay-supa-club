@@ -1,10 +1,9 @@
-
 -- There is no way to make raw sql queries using the supabase client
 -- You can only add functions to the db by running this code in the sql editor in the dashboard
 -- Note that `security definer` is what gives us permission to edit the auth schema
 -- NEVER ADD THIS TO THE REAL DATABASE, ONLY USE IT WITH THE TESTING DATABASE
-CREATE OR REPLACE FUNCTION truncate_all_tables(schema_name TEXT)
-RETURNS void AS $$
+CREATE
+OR REPLACE FUNCTION public.truncate_all_tables (schema_name TEXT) RETURNS void AS $$
 DECLARE
     table_name TEXT;
 BEGIN
@@ -17,6 +16,25 @@ BEGIN
         EXECUTE 'TRUNCATE TABLE ' || schema_name || '.' || table_name || ' CASCADE;';
     END LOOP;
 END;
-$$ LANGUAGE 'plpgsql' security definer;
+$$ LANGUAGE 'plpgsql' SECURITY DEFINER;
 
--- TODO: add the other existing functions. Also with the supabase config options. 
+CREATE
+OR REPLACE FUNCTION public.is_relay_employee () RETURNS BOOLEAN AS $$
+DECLARE
+  result BOOLEAN DEFAULT FALSE;
+BEGIN
+  SELECT
+    (
+      SELECT
+        user_role
+      FROM
+        public.profiles
+      WHERE
+        id = auth.uid ()
+    ) = 'relay_employee'
+  INTO
+    result;
+  RETURN 
+    result;
+END;
+$$ LANGUAGE 'plpgsql' SECURITY DEFINER;

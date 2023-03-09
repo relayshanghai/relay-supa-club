@@ -98,6 +98,8 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+BEGIN;
+
 SELECT
   tests.create_test_users ();
 
