@@ -164,7 +164,7 @@ const allowSupabaseWebhookCors = (req: NextRequest, res: NextResponse) => {
         res.headers.set('Access-Control-Allow-Origin', '*');
     } else if (origin && supabaseWebhookAllowlist.some((allowed) => origin.includes(allowed)))
         res.headers.set('Access-Control-Allow-Origin', origin);
-    res.headers.set('Access-Control-Allow-Methods', 'GET');
+    res.headers.set('Access-Control-Allow-Methods', 'POST');
     return res;
 };
 
