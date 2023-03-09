@@ -173,6 +173,7 @@ export async function middleware(req: NextRequest) {
     const res = NextResponse.next();
     if (req.nextUrl.pathname === '/api/subscriptions/prices') return allowPricingCors(req, res);
     if (req.nextUrl.pathname === '/api/subscriptions/webhook') return allowStripeCors(req, res);
+    if (req.nextUrl.pathname === '/api/slack/create') return res;
 
     // Create authenticated Supabase Client.
     const supabase = createMiddlewareSupabaseClient<DatabaseWithCustomTypes>({ req, res });
@@ -213,6 +214,6 @@ export const config = {
          * - create-employee endpoint (api/company/create-employee)
          * - login, signup, logout (login, signup, logout pages)
          */
-        '/((?!_next/static|_next/image|favicon.ico|assets/*|api/invite/accept*|api/company/create-employee*|login*|login/reset-password|signup|signup/invite*|logout|api/logout|api/slack/create|https://relay-supa-club-git-slack-integration-relay-club.vercel.app/api/slack/create).*)',
+        '/((?!_next/static|_next/image|favicon.ico|assets/*|api/invite/accept*|api/company/create-employee*|login*|login/reset-password|signup|signup/invite*|logout|api/logout|api/slack/create).*)',
     ],
 };
