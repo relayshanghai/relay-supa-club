@@ -9,9 +9,7 @@ import { serverLogger } from 'src/utils/logger';
 
 const pricingAllowList = ['https://en-relay-club.vercel.app', 'https://relay.club'];
 const stripeWebhookAllowlist = ['https://stripe.com/', 'https://hooks.stripe.com/'];
-const supabaseWebhookAllowlist = [
-    'https://http://https://relay-supa-club-git-slack-integration-relay-club.vercel.app/api/slack/create',
-];
+
 /**
  *
 TODO https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/78: performance improvement. These two database calls might add too much loading time to each request. Consider adding a cache, or adding something to the session object that shows the user has a company and the company has a payment method.
@@ -158,15 +156,6 @@ const allowStripeCors = (req: NextRequest, res: NextResponse) => {
     res.headers.set('Access-Control-Allow-Methods', 'GET');
     return res;
 };
-const allowSupabaseWebhookCors = (req: NextRequest, res: NextResponse) => {
-    const origin = req.headers.get('origin');
-    if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
-        res.headers.set('Access-Control-Allow-Origin', '*');
-    } else if (origin && supabaseWebhookAllowlist.some((allowed) => origin.includes(allowed)))
-        res.headers.set('Access-Control-Allow-Origin', origin);
-    res.headers.set('Access-Control-Allow-Methods', 'POST');
-    return res;
-};
 
 const checkIsRelayEmployee = async (res: NextResponse, email: string) => {
     if (!EMPLOYEE_EMAILS.includes(email)) {
@@ -184,7 +173,6 @@ export async function middleware(req: NextRequest) {
     const res = NextResponse.next();
     if (req.nextUrl.pathname === '/api/subscriptions/prices') return allowPricingCors(req, res);
     if (req.nextUrl.pathname === '/api/subscriptions/webhook') return allowStripeCors(req, res);
-    if (req.nextUrl.pathname === '/api/slack') return allowSupabaseWebhookCors(req, res);
 
     // Create authenticated Supabase Client.
     const supabase = createMiddlewareSupabaseClient<DatabaseWithCustomTypes>({ req, res });
