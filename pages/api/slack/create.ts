@@ -78,7 +78,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         type: 'header',
                         text: {
                             type: 'plain_text',
-                            text: ':office: A company has been updated:',
+                            text: ':pencil2: A company has been updated:',
                             emoji: true,
                         },
                     },
