@@ -60,6 +60,18 @@ describe("isValidUrl", () => {
     ])("should return true for %s", (v) => {
         expect(isValidUrl(v)).toBe(true)
     })
+
+    test.each([
+        "http://",
+        "http://.",
+        "http://..",
+        "htp://example.com",
+        "http:/example.com",
+        "http//example.com",
+        "http:///example.com",
+    ])("should return false for %s", (v) => {
+        expect(isValidUrl(v)).toBe(false)
+    })
 })
 
 describe("chinaFilter", () => {
@@ -128,4 +140,12 @@ describe("isAdmin", () => {
         expect(isAdmin("relay_employee")).toBe(true)
         expect(isAdmin("relay_expert")).toBe(true)
     })
+})
+
+describe("unixEpochToISOString", () => {
+    it.todo("tests for unixEpochToISOString")
+})
+
+describe("isMissing", () => {
+    it.todo("tests for isMissing")
 })
