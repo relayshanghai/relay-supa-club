@@ -6,6 +6,9 @@ on:
 
 jobs:
   test:
+    env:
+      SUPABASE_SCANNER_BUFFER_SIZE: 5mb
+
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
@@ -16,11 +19,11 @@ jobs:
         run: cp supabase/config.toml.example supabase/config.toml
 
       - name: Start Supabase local development setup
-        run: SUPABASE_SCANNER_BUFFER_SIZE=5mb supabase start
+        run: supabase start
 
       - name: Verify generated types are up-to-date
         run: |
-          supabase gen types typescript --local > types.ts
+          supabase gen types typescript --local > types/supabase.ts
           if [ "$(git diff --ignore-space-at-eol types.ts | wc -l)" -gt "0" ]; then
             echo "Detected uncommitted changes after build. See status below:"
             git diff
