@@ -4,17 +4,19 @@ SELECT
   plan (1);
 
 SELECT
+  tests.create_test_users ();
+
+SELECT
   IS (
     (
       SELECT
-        email
+        user_role
       FROM
         profiles
       WHERE
-        id = tests.get_supabase_uid ('test_owner')
+        id = tests.get_supabase_uid ('owner')
     ),
-    'owner@test.com',
-    'Email inserted correctly'
+    'company_owner'
   );
 
 SELECT
