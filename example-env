@@ -4,6 +4,7 @@ STRIPE_WEBHOOK_SECRET=asdf
 STRIPE_API_KEY=asdf
 
 # Stripe product IDs (Do not set in development to connect to test mode account)
+
 STRIPE_PRODUCT_ID_DIY=asdf
 STRIPE_PRICE_MONTHLY_DIY=asdf
 
@@ -33,8 +34,14 @@ NEXT_PUBLIC_SUPABASE_URL=https://asdf.supabase.co
 SIB_API_KEY=asdf
 
 # The app url. https://relay.club for production
+
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 
 # Open API Stuff
+
 OPENAI_API_ORG="relay.club"
 OPENAI_API_KEY=""
+
+# Maintenance
+
+NEXT_PUBLIC_IQDATA_MAINTENANCE=false
