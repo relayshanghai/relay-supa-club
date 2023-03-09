@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import { createClient } from '@supabase/supabase-js';
 import { Database } from '../../types/supabase';
-import type { DatabaseWithCustomTypes } from '../../types';
+import type { AccountRole, DatabaseWithCustomTypes } from '../../types';
 
 const supabaseUrl = process.env.TEST_NEXT_PUBLIC_SUPABASE_URL || '';
 if (!supabaseUrl) console.log('TEST_NEXT_PUBLIC_SUPABASE_URL not set');
@@ -60,46 +60,80 @@ export const testUserEmail = 'test-user@test.test';
 export const testUserPassword = 'test-user-password';
 export const testCompanyName = 'test company';
 
-export const populateDB = async () => {
-    await wipeDatabase();
+interface FakeUser {
+    email: string;
+    password: string;
+    firstName?: string;
+    lastName?: string;
+    companyName?: string;
+    role?: AccountRole;
+}
 
+export const signInTestUser = async ({ email, password }: FakeUser) => {
+    const { data, error: error2 } = await testSupabase.auth.signInWithPassword({
+        email,
+        password,
+    });
+
+    if (error2) {
+        throw new Error(error2.message);
+    }
+    if (!data.user) {
+        throw new Error('No user returned from signin');
+    }
+    return data.user;
+};
+
+const signUpTestUser = async ({
+    email,
+    password,
+    firstName,
+    lastName,
+    companyName,
+    role,
+}: FakeUser) => {
     // signup a user
-    const { error } = await testSupabase.auth.signUp({
-        email: testUserEmail,
-        password: testUserPassword,
+    const { data, error } = await testSupabase.auth.signUp({
+        email,
+        password,
         options: {
             data: {
-                first_name: testUserFirstName,
-                last_name: testUserLastName,
+                first_name: firstName || testUserFirstName,
+                last_name: lastName || testUserLastName,
             },
         },
     });
     if (error) {
         throw new Error(error.message);
     }
-    // login the user
-    const { data, error: error2 } = await testSupabase.auth.signInWithPassword({
-        email: testUserEmail,
-        password: testUserPassword,
-    });
-
-    if (error2) {
-        throw new Error(error2.message);
-    }
-    const id = data?.user?.id || data?.session?.user?.id;
-    if (!id) {
-        throw new Error('no user id');
+    if (!data.user) {
+        throw new Error('No user returned from signup');
     }
 
-    // make a company for the user
-    const { data: company, error: error4 } = await testSupabase
-        .from('companies')
-        .insert({ name: testCompanyName })
-        .select()
-        .single();
+    let existingCompany;
 
-    if (error4) {
-        throw new Error(error4.message);
+    if (companyName) {
+        const { data: existingCompanyFound } = await testSupabaseServiceAccount
+            .from('companies')
+            .select()
+            .eq('name', companyName)
+            .single();
+
+        existingCompany = existingCompanyFound;
+    }
+
+    if (!existingCompany) {
+        // make a company for the user
+        const { data: company, error: error4 } = await testSupabaseServiceAccount
+            .from('companies')
+            .insert({ name: testCompanyName })
+            .select()
+            .single();
+
+        if (error4) {
+            throw new Error(error4.message);
+        }
+        existingCompany = company;
     }
 
     // the user's profile should be available because it was created by a trigger one the auth.users table. Also need to use the service account to bypass RLS
@@ -107,17 +141,33 @@ export const populateDB = async () => {
         .from('profiles')
         // using upsert here because sometimes the trigger has not fired yet
         .upsert({
-            id,
-            first_name: testUserFirstName,
-            last_name: testUserLastName,
-            company_id: company.id,
+            id: data.user.id,
+            first_name: firstName || testUserFirstName,
+            last_name: lastName || testUserLastName,
+            company_id: existingCompany.id,
             updated_at: new Date().toISOString(),
+            user_role: role || 'company_teammate',
         })
-        .eq('id', id)
+        .eq('id', data.user.id)
         .select()
         .single();
     if (error3) {
         throw new Error(error3.message);
+    }
+};
+
+/** Wipes the DB, the populates the database  */
+export const populateDB = async (users?: FakeUser[]) => {
+    await wipeDatabase();
+    if (users?.length === 0) {
+        await signUpTestUser({
+            email: testUserEmail,
+            password: testUserPassword,
+        });
+    } else if (users) {
+        for (const user of users) {
+            await signUpTestUser(user);
+        }
     }
     console.log('database populated');
 };

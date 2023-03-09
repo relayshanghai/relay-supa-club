@@ -3,10 +3,25 @@
 TODO: investigate setting the profiles table to cascade delete: https://github.com/supabase/storage-api/issues/65
 
 ```sql
-delete from campaign_notes where id = '944be6e7-5ac1-4920-b23a-04faac1c610f';
-delete from profiles where id = '944be6e7-5ac1-4920-b23a-04faac1c610f';
-delete from usages where user_id = '944be6e7-5ac1-4920-b23a-04faac1c610f';
-delete from auth.users where id = '944be6e7-5ac1-4920-b23a-04faac1c610f';
+delete from
+    campaign_notes
+where
+    id = '944be6e7-5ac1-4920-b23a-04faac1c610f';
+
+delete from
+    profiles
+where
+    id = '944be6e7-5ac1-4920-b23a-04faac1c610f';
+
+delete from
+    usages
+where
+    user_id = '944be6e7-5ac1-4920-b23a-04faac1c610f';
+
+delete from
+    auth.users
+where
+    id = '944be6e7-5ac1-4920-b23a-04faac1c610f';
 ```
 
 ## Backup the database
@@ -22,6 +37,8 @@ It will prompt you for the db password you can find in bitwarden under supabase
 | note that this will not copy the auth data, so you will need to create new users in the new database
 
 ## Restore the database (or copy it to another database):
+
+pg_dump [docs](https://www.postgresql.org/docs/9.4/app-pgdump.html)
 
 ```bash
 psql -h db.<replace-this>.supabase.co -p 5432 -d postgres -U postgres < backup.sql
@@ -39,3 +56,19 @@ function to trigger: handle_new_user
 orientation: row
 
 -   turn off email verification in auth > providers > email > confirm email
+
+### Get database schemas
+
+this will get all of supabase's functions, including the auth functions which we need to test the database, like using `auth.uid()` to get the current user's id that has been set in the auth cookie jwt.
+
+```bash
+pg_dump --schema-only -h db.<replace-this>.supabase.co -U postgres > schemas.sql
+```
+
+## Generate types
+
+run this and the next script any time you make changes to the database tables or functions
+
+```bash
+npx supabase gen types typescript --project-id <THE_PROJECT_ID> > types/supabase.ts
+```

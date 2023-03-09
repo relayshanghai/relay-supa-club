@@ -28,5 +28,6 @@
     },
     "editor.quickSuggestions": {
         "strings": true
-    }
+    },
+    "Prettier-SQL.SQLFlavourOverride": "postgresql"
 }

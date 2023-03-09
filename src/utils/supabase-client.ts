@@ -15,3 +15,10 @@ export const supabase = createClient<DatabaseWithCustomTypes>(
     supabaseAnonKey,
     options,
 );
+
+/** bybasses RLS rules */
+export const superuserSupabaseCLient = createClient<DatabaseWithCustomTypes>(
+    supabaseUrl,
+    process.env.SUPABASE_SERVICE_KEY || '',
+    options,
+);

@@ -1,4 +1,4 @@
-import { supabase } from 'src/utils/supabase-client';
+import { supabase, superuserSupabaseCLient } from 'src/utils/supabase-client';
 import type { AccountRole } from 'types';
 import type { ProfileDBUpdate, ProfileDBInsert } from '../types';
 
@@ -16,8 +16,9 @@ export const updateProfile = (update: ProfileDBUpdate) => {
     return supabase.from('profiles').update(updateData).eq('id', updateData.id).select().single();
 };
 
+/** called using the superuser client */
 export const updateUserRole = (userId: string, role: AccountRole) =>
-    supabase.from('profiles').update({ role }).eq('id', userId).select().single();
+    superuserSupabaseCLient.from('profiles').update({ role }).eq('id', userId).select().single();
 
 export const getUserRole = (userId: string) =>
     supabase.from('profiles').select('role').eq('id', userId).single();
