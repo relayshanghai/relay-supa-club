@@ -2,8 +2,8 @@ import { NextApiResponse, NextApiRequest } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    // const URL = process.env.SLACK_WEBHOOK;
-    const URL = 'https://hooks.slack.com/services/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'; //testing channel
+    const URL = process.env.SLACK_WEBHOOK;
+
     //Send a message to the slack channel when a new customer signs up
     if (req.method === 'POST' && URL) {
         let reqBody = {};
@@ -28,34 +28,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                             {
                                 type: 'mrkdwn',
                                 text: `*Email:*\n${req.body.record.email}`,
-                            },
-                        ],
-                    },
-                ],
-            };
-        }
-        //Send a message to the slack channel when a company has updated its subscription status
-        if (
-            req.body.table === 'companies' &&
-            req.body.record === 'UPDATE' &&
-            req.body.record.subscription_status !== req.body.old_record.subscription_status
-        ) {
-            reqBody = {
-                blocks: [
-                    {
-                        type: 'header',
-                        text: {
-                            type: 'plain_text',
-                            text: ':pencil2: A company has been updated:',
-                            emoji: true,
-                        },
-                    },
-                    {
-                        type: 'section',
-                        fields: [
-                            {
-                                type: 'mrkdwn',
-                                text: `*${req.body.record.name}* has updated its Subscription from **${req.body.old_record.subscription_status}** to **${req.body.record.subscription_status}**`,
                             },
                         ],
                     },
@@ -95,6 +67,35 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 ],
             };
         }
+
+        //Send a message to the slack channel when a company has updated its subscription status
+        if (req.body.table === 'companies' && req.body.record === 'UPDATE') {
+            if (req.body.record.subscription_status !== req.body.old_record.subscription_status) {
+                reqBody = {
+                    blocks: [
+                        {
+                            type: 'header',
+                            text: {
+                                type: 'plain_text',
+                                text: ':pencil2: A company has been updated:',
+                                emoji: true,
+                            },
+                        },
+                        {
+                            type: 'section',
+                            fields: [
+                                {
+                                    type: 'mrkdwn',
+                                    text: `*${req.body.record.name}* has updated its Subscription from **${req.body.old_record.subscription_status}** to **${req.body.record.subscription_status}**`,
+                                },
+                            ],
+                        },
+                    ],
+                };
+            }
+            return;
+        }
+
         await fetch(URL, {
             method: 'POST',
             body: JSON.stringify(reqBody),
