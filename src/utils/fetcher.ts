@@ -78,7 +78,7 @@ export const nextFetchWithQueries = async <Q extends Record<string, string>, T =
  *
  * @param url image url
  * @returns
- * @description this function is used to proxy images to bypass the Chinese firewall. "iqfluence.com" is the current instagram profile images domain that does not need the proxy.
+ * @description this function is used to proxy images to bypass the Chinese firewall. "sptds.icu" is the current instagram profile images domain that does not need the proxy.
  */
 
 // we are considering to setup a new proxy in the future or gain access to the current one. TODO: Ticket V2-44
@@ -86,7 +86,8 @@ export function imgProxy(url: string) {
     const proxyUrl = 'https://image-cache.brainchild-tech.cn/?link=';
     if (!url) return;
 
-    if (/iqfluence.com/.test(url)) return url; //iq data changed the instagram profile image domain from sptds.icu to iqfluence.com (2023-03-03)
+    if (/sptds.icu/.test(url)) return url;
+    if (/iqfluence.com/.test(url)) return url; //iq data changed the instagram profile image domain from sptds.icu to iqfluence.com on 2023-03-03 tempoerarily
 
     return proxyUrl + url;
 }
