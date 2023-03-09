@@ -1,4 +1,4 @@
-import { NextApiResponse, NextApiRequest } from 'next';
+import type { NextApiResponse, NextApiRequest } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -69,31 +69,45 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
 
         //Send a message to the slack channel when a company has updated its subscription status
-        if (req.body.table === 'companies' && req.body.record === 'UPDATE') {
-            if (req.body.record.subscription_status !== req.body.old_record.subscription_status) {
-                reqBody = {
-                    blocks: [
-                        {
-                            type: 'header',
-                            text: {
-                                type: 'plain_text',
-                                text: ':pencil2: A company has been updated:',
-                                emoji: true,
+        if (
+            req.body.table === 'companies' &&
+            req.body.type === 'UPDATE' &&
+            req.body.record.subscription_status !== req.body.old_record.subscription_status
+        ) {
+            reqBody = {
+                blocks: [
+                    {
+                        type: 'header',
+                        text: {
+                            type: 'plain_text',
+                            text: ':pencil2: A company has been updated:',
+                            emoji: true,
+                        },
+                    },
+                    {
+                        type: 'section',
+                        fields: [
+                            {
+                                type: 'mrkdwn',
+                                text: `*${req.body.record.name}* has updated its Subscription`,
                             },
-                        },
-                        {
-                            type: 'section',
-                            fields: [
-                                {
-                                    type: 'mrkdwn',
-                                    text: `*${req.body.record.name}* has updated its Subscription from **${req.body.old_record.subscription_status}** to **${req.body.record.subscription_status}**`,
-                                },
-                            ],
-                        },
-                    ],
-                };
-            }
-            return;
+                        ],
+                    },
+                    {
+                        type: 'section',
+                        fields: [
+                            {
+                                type: 'mrkdwn',
+                                text: `From:\n*${req.body.old_record.subscription_status}*`,
+                            },
+                            {
+                                type: 'mrkdwn',
+                                text: `To:\n*${req.body.record.subscription_status}*`,
+                            },
+                        ],
+                    },
+                ],
+            };
         }
 
         await fetch(URL, {
