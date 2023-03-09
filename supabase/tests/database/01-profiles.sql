@@ -1,20 +1,21 @@
 BEGIN;
 
 SELECT
-  plan (3);
+  plan (1);
 
 SELECT
-  has_table ('profiles');
+  tests.create_supabase_user ('test_owner', 'owner@test.com');
 
 SELECT
-  has_column ('public', 'profiles', 'id', 'id should exist');
-
-SELECT
-  has_column (
-    'public',
-    'profiles',
-    'user_id',
-    'user_id should exist'
+  ok (
+    (
+      SELECT
+        email
+      FROM
+        profiles
+      WHERE
+        id = tests.get_supabase_uid ('test_owner') IS NOT NULL
+    ) = 'owner@test.com'
   );
 
 SELECT

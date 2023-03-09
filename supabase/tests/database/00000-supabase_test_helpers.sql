@@ -1,7 +1,7 @@
 -- Enable pgTAP if it's not already enabled
-create extension if not exists pgtap
-with
-  schema extensions;
+CREATE EXTENSION IF NOT EXISTS pgtap
+WITH
+  SCHEMA extensions;
 
 -- We want to store all of this in the tests schema to keep it
 -- separate from any application data
@@ -46,10 +46,10 @@ authenticated;
  */
 CREATE
 OR REPLACE FUNCTION tests.create_supabase_user (
-  identifier text,
-  email text default null,
-  phone text default null
-) RETURNS uuid SECURITY DEFINER
+  identifier TEXT,
+  email TEXT DEFAULT NULL,
+  phone TEXT DEFAULT NULL
+) RETURNS UUID SECURITY DEFINER
 SET
   search_path = auth,
   pg_temp AS $$
@@ -84,7 +84,7 @@ $$ LANGUAGE plpgsql;
  * ```
  */
 CREATE
-OR REPLACE FUNCTION tests.get_supabase_user (identifier text) RETURNS json SECURITY DEFINER
+OR REPLACE FUNCTION tests.get_supabase_user (identifier TEXT) RETURNS json SECURITY DEFINER
 SET
   search_path = auth,
   pg_temp AS $$
@@ -116,7 +116,7 @@ $$ LANGUAGE plpgsql;
  * ```
  */
 CREATE
-OR REPLACE FUNCTION tests.get_supabase_uid (identifier text) RETURNS uuid SECURITY DEFINER
+OR REPLACE FUNCTION tests.get_supabase_uid (identifier TEXT) RETURNS UUID SECURITY DEFINER
 SET
   search_path = auth,
   pg_temp AS $$
@@ -148,7 +148,7 @@ $$ LANGUAGE plpgsql;
  * ```
  */
 CREATE
-OR REPLACE FUNCTION tests.authenticate_as (identifier text) RETURNS void AS $$
+OR REPLACE FUNCTION tests.authenticate_as (identifier TEXT) RETURNS void AS $$
         DECLARE
                 user_data json;
                 original_auth_data text;
@@ -213,7 +213,7 @@ $$ LANGUAGE plpgsql;
  * ```
  */
 CREATE
-OR REPLACE FUNCTION tests.rls_enabled (testing_schema text) RETURNS text AS $$
+OR REPLACE FUNCTION tests.rls_enabled (testing_schema TEXT) RETURNS TEXT AS $$
     select is(
         (select
            	count(pc.relname)::integer
@@ -224,7 +224,7 @@ OR REPLACE FUNCTION tests.rls_enabled (testing_schema text) RETURNS text AS $$
         ,
         0,
         'All tables in the' || testing_schema || ' schema should have row level security enabled');
-$$ LANGUAGE sql;
+$$ LANGUAGE SQL;
 
 /**
  * ### tests.rls_enabled(testing_schema text, testing_table text)
@@ -244,7 +244,7 @@ $$ LANGUAGE sql;
  * ```
  */
 CREATE
-OR REPLACE FUNCTION tests.rls_enabled (testing_schema text, testing_table text) RETURNS TEXT AS $$
+OR REPLACE FUNCTION tests.rls_enabled (testing_schema TEXT, testing_table TEXT) RETURNS TEXT AS $$
     select is(
         (select
            	count(*)::integer
@@ -255,65 +255,65 @@ OR REPLACE FUNCTION tests.rls_enabled (testing_schema text, testing_table text) 
         1,
         testing_table || 'table in the' || testing_schema || ' schema should have row level security enabled'
     );
-$$ LANGUAGE sql;
+$$ LANGUAGE SQL;
 
 -- we have to run some tests to get this to pass as the first test file.
 -- investigating options to make this better.  Maybe a dedicated test harness
 -- but we dont' want these functions to always exist on the database.
 BEGIN;
 
-select
+SELECT
   plan (7);
 
-select
+SELECT
   function_returns (
     'tests',
     'create_supabase_user',
-    Array['text', 'text', 'text'],
+    ARRAY['text', 'text', 'text'],
     'uuid'
   );
 
-select
+SELECT
   function_returns (
     'tests',
     'get_supabase_uid',
-    Array['text'],
+    ARRAY['text'],
     'uuid'
   );
 
-select
+SELECT
   function_returns (
     'tests',
     'get_supabase_user',
-    Array['text'],
+    ARRAY['text'],
     'json'
   );
 
-select
-  function_returns ('tests', 'authenticate_as', Array['text'], 'void');
+SELECT
+  function_returns ('tests', 'authenticate_as', ARRAY['text'], 'void');
 
-select
+SELECT
   function_returns (
     'tests',
     'clear_authentication',
-    Array[null],
+    ARRAY[NULL],
     'void'
   );
 
-select
+SELECT
   function_returns (
     'tests',
     'rls_enabled',
-    Array['text', 'text'],
+    ARRAY['text', 'text'],
     'text'
   );
 
-select
-  function_returns ('tests', 'rls_enabled', Array['text'], 'text');
+SELECT
+  function_returns ('tests', 'rls_enabled', ARRAY['text'], 'text');
 
-select
+SELECT
   *
-from
+FROM
   finish ();
 
 ROLLBACK;

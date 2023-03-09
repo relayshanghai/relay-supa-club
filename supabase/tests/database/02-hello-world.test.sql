@@ -1,15 +1,15 @@
-begin;
+BEGIN;
 
-select
+SELECT
   plan (1);
 
 -- only one statement to run
 SELECT
   has_column ('auth', 'users', 'id', 'id should exist');
 
-select
+SELECT
   *
-from
+FROM
   finish ();
 
-rollback;
+ROLLBACK;
