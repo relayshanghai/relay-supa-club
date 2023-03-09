@@ -4,7 +4,7 @@ import httpCodes from 'src/constants/httpCodes';
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     // const URL = process.env.SLACK_WEBHOOK;
     const URL = 'https://hooks.slack.com/services/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'; //testing channel
-
+    //Send a message to the slack channel when a new customer signs up
     if (req.method === 'POST' && URL) {
         let reqBody = {};
         if (req.body.table === 'profiles' && req.body.type === 'INSERT') {
@@ -34,6 +34,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 ],
             };
         }
+        //Send a message to the slack channel when a new company is created
         if (req.body.table === 'companies' && req.body.type === 'INSERT') {
             reqBody = {
                 blocks: [
@@ -65,14 +66,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 ],
             };
         }
-        if (req.body.table === 'companies' && req.body.type === 'UPDATE') {
+        //Send a message to the slack channel when a company has updated its subscription status
+        if (
+            req.body.table === 'companies' &&
+            req.body.record === 'UPDATE' &&
+            req.body.old_record.subscription_status !== req.body.record.subscription_status
+        ) {
             reqBody = {
                 blocks: [
                     {
                         type: 'header',
                         text: {
                             type: 'plain_text',
-                            text: ':office: A new company has been updated:',
+                            text: ':office: A company has been updated:',
                             emoji: true,
                         },
                     },
@@ -81,11 +87,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         fields: [
                             {
                                 type: 'mrkdwn',
-                                text: `*Name:*\n${req.body.record.name}`,
-                            },
-                            {
-                                type: 'mrkdwn',
-                                text: `*Subscription Status:*\n${req.body.record.subscription_status}`,
+                                text: `*${req.body.record.name}* has updated its Subscription from **${req.body.old_record.subscription_status}** to **${req.body.record.subscription_status}**`,
                             },
                         ],
                     },
