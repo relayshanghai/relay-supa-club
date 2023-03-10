@@ -112,6 +112,8 @@ begin;
 select plan(1); -- no. of tests in the file
 
 SELECT has_column('auth', 'users', 'id', 'id should exist');
+-- SELECT has_function('function_name'); -- test function
+-- SELECT policy_cmd_is('table', 'policy', 'command'); -- test policy
 
 select * from finish(); -- end test
 rollback;
@@ -142,15 +144,15 @@ function create_policy {
 CREATE POLICY $pl_name
 ON $tb_name
 FOR ALL
-TO authenticated
+-- TO authenticated
 USING (
-    auth.uid() = user_id
+    auth.uid() = id
 );
 -- WITH CHECK ()
 END
 )
     echo "$message" > "./supabase/policies/$pl_name.policy.sql"
-    echo "\include ./supabase/policies/$fn_name.policy.sql" >> "./supabase/policies/index.sql"
+    echo "\include ./supabase/policies/$pl_name.policy.sql" >> "./supabase/policies/index.sql"
 
     if [ -n "$editor" ]; then
         $editor ./supabase/policies/$pl_name.policy.sql
