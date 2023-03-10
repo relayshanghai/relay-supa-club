@@ -5,7 +5,7 @@ db_port=${DBPORT:-54322}
 db_user=${DBUSER:-postgres}
 db_name=${DBNAME:-postgres}
 
-script_name=$(basename "$0")
+script_name=$0
 
 # set editor
 editor=${EDITOR:-vim}
@@ -38,7 +38,7 @@ function drop_dbfn {
     fi
     
     # Use psql to drop the function
-    psql -h $db_host -p $db_port -U $db_user -d $db_name -c "DROP FUNCTION relay_$1();"
+    psql -h $db_host -p $db_port -U $db_user -d $db_name -c "DROP FUNCTION IF EXISTS relay_$1();"
 
     echo "Dropped $1. You still need to remove it from ./supabase/functions/index.sql"
 }
@@ -99,6 +99,97 @@ function save_password {
     chmod 600 ~/.pgpass
 }
 
+function create_test {
+    test_name=$1
+
+    if [ -z "$test_name" ]; then
+        echo "Test name is required"
+        exit 1
+    fi
+
+    message=$(cat <<-END
+begin;
+select plan(1); -- no. of tests in the file
+
+SELECT has_column('auth', 'users', 'id', 'id should exist');
+
+select * from finish(); -- end test
+rollback;
+END
+)
+    echo "$message" > "./supabase/tests/database/$test_name.test.sql"
+
+    if [ -n "$editor" ]; then
+        $editor ./supabase/tests/database/$test_name.test.sql
+    fi
+}
+
+function create_policy {
+    pl_name=$1
+    tb_name=$2
+
+    if [ -z "$pl_name" ]; then
+        echo "Policy name is required"
+        exit 1
+    fi
+
+    if [ -z "$tb_name" ]; then
+        echo "Table name is required"
+        exit 1
+    fi
+
+    message=$(cat <<-END
+CREATE POLICY $pl_name
+ON $tb_name
+FOR ALL
+TO authenticated
+USING (
+    auth.uid() = user_id
+);
+-- WITH CHECK ()
+END
+)
+    echo "$message" > "./supabase/policies/$pl_name.policy.sql"
+    echo "\include ./supabase/policies/$fn_name.policy.sql" >> "./supabase/policies/index.sql"
+
+    if [ -n "$editor" ]; then
+        $editor ./supabase/policies/$pl_name.policy.sql
+    fi
+}
+
+function list_policies {
+    psql -h $db_host -p $db_port -U $db_user -d $db_name -c "SELECT schemaname,tablename,policyname FROM pg_policies;"
+}
+
+function drop_policy {
+    pl_name=$1
+    tb_name=$2
+
+    if [ -z "$pl_name" ]; then
+        echo "Policy name is required"
+        exit 1
+    fi
+
+    if [ -z "$tb_name" ]; then
+        echo "Table name is required"
+        exit 1
+    fi
+
+    # Use psql to drop the function
+    psql -h $db_host -p $db_port -U $db_user -d $db_name -c "DROP POLICY IF EXISTS $pl_name on $tb_name;"
+}
+
+function import_policies {
+    file_path=./supabase/policies/index.sql
+
+    if [ ! -f "$file_path" ]; then
+      echo "Error: File $file_path does not exist"
+      exit 1
+    fi
+
+    psql -h $db_host -p $db_port -U $db_user -d $db_name -f $file_path
+}
+
 function help {
 message=$(cat <<-END
     $script_name <command>
@@ -133,6 +224,23 @@ message=$(cat <<-END
         ./$script_name save_password
 
     Creates a ~/.pgpass file
+
+    Create test:
+        ./$script_name create_test <test_name>
+
+    Create policy:
+        ./$script_name create_policy <policy_name> <table_name>
+
+    List policies:
+        ./$script_name list_policies
+
+    Import policies:
+        ./$script_name import_policies
+
+    Import all policies found in "./supabase/policies"
+
+    Drop a policy:
+        ./$script_name drop_policy <policy_name> <table_name>
 
     You can specify psql arguments such as
     DBHOST (default: localhost)
@@ -176,6 +284,21 @@ case $fn in
     ;;
   "save_password")
     save_password
+    ;;
+  "create_test")
+    create_test $@
+    ;;
+  "create_policy")
+    create_policy $@
+    ;;
+  "list_policies")
+    list_policies
+    ;;
+  "drop_policy")
+    drop_policy $@
+    ;;
+  "import_policies")
+    import_policies
     ;;
   *)
     supabase $fn $@
