@@ -15,6 +15,9 @@ jobs:
 
       - uses: supabase/setup-cli@v1
 
+      - name: Verify supabase cli version
+        run: supabase -v
+
       - name: Create supabase config file
         run: cp supabase/config.toml.example supabase/config.toml
 
