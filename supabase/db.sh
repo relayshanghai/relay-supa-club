@@ -192,6 +192,10 @@ function import_policies {
     psql -h $db_host -p $db_port -U $db_user -d $db_name -f $file_path
 }
 
+function gen_db_types {
+    npx supabase gen types typescript --local --schema=public > types/supabase.ts
+}
+
 function help {
 message=$(cat <<-END
     $script_name <command>
@@ -301,6 +305,9 @@ case $fn in
     ;;
   "import_policies")
     import_policies
+    ;;
+  "gen_db_types")
+    gen_db_types
     ;;
   *)
     supabase $fn $@
