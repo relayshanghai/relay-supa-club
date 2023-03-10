@@ -18,11 +18,11 @@ editor=${EDITOR:-vim}
 # `>` is a way to redirect the output to a file, stdout is the default output
 # `&>` also redirects the error output `stderr`
 if command -v code &> /dev/null; then
-    export editor=code
+    editor=code
 fi
 
 if command -v subl &> /dev/null; then
-    export EDITOR=subl
+    editor=subl
 fi
 
 # bufio.Scanner fix
