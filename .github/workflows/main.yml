@@ -36,4 +36,4 @@ jobs:
           fi
 
       - name: Run tests
-        run: supabase test
+        run: supabase test db
