@@ -24,6 +24,7 @@ https://pgtap.org/documentation.html#imokyourenotok
 https://medium.com/engineering-on-the-incline/unit-testing-postgres-with-pgtap-af09ec42795
 https://github.com/supabase/supabase/discussions/11948
 https://discord.com/channels/839993398554656828/1074402267626745946
+https://www.postgresql.org/docs/current/sql-createpolicy.html
 
 how should we handle superusers?
 

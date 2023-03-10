@@ -1,43 +1,76 @@
-ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 
-DROP POLICY IF EXISTS profiles_policy ON public.profiles;
+DROP POLICY IF EXISTS profiles_policy_select ON profiles;
 
--- in USING, id is the queried (existing) profile id
--- auth.uid() is provided by supabase from the auth token
--- to see whether USING vs WITH CHECK is using the old or new row see Table 287 at https://www.postgresql.org/docs/current/sql-createpolicy.html
--- in WITH CHEC K, id will be the profile id of the new row (that you are trying to update or insert)
-CREATE POLICY profiles_policy ON public.profiles USING (
-  (id = auth.uid ())
-  OR (public.is_relay_employee ())
-)
-WITH
-  CHECK (
+DROP POLICY IF EXISTS profiles_policy_insert ON profiles;
+
+DROP POLICY IF EXISTS profiles_policy_update ON profiles;
+
+DROP POLICY IF EXISTS profiles_policy_delete ON profiles;
+
+CREATE
+OR REPLACE FUNCTION is_relay_employee () RETURNS BOOLEAN AS $$
+DECLARE
+  result BOOLEAN DEFAULT FALSE;
+BEGIN
+  SELECT
     (
-      (
-        SELECT
-          user_role
-        FROM
-          public.profiles
-        WHERE
-          id = auth.uid ()
-      ) = user_role
-    )
-    AND (
-      (
-        SELECT
-          company_id
-        FROM
-          public.profiles
-        WHERE
-          id = auth.uid ()
-      ) = company_id
-    )
+      SELECT
+        user_role
+      FROM
+        profiles
+      WHERE
+        id = auth.uid ()
+    ) = 'relay_employee'
+  INTO
+    result;
+  RETURN 
+    result;
+END;
+$$ LANGUAGE 'plpgsql' SECURITY DEFINER;
+
+CREATE
+OR REPLACE FUNCTION check_profiles_update () RETURNS TRIGGER AS $$ BEGIN
+  RAISE EXCEPTION 'changing "user_role" is not allowed';
+  IF NEW.user_role <> OLD.user_role THEN
+    RAISE EXCEPTION 'changing "user_role" is not allowed';
+  END IF;
+
+  RETURN NEW;
+END;
+$$ LANGUAGE 'plpgsql' SECURITY DEFINER;
+
+-- SELECT policy - only allow to select own profile or if relay employee superuser
+CREATE POLICY profiles_policy_select ON profiles FOR
+SELECT
+  USING (
+    (id = auth.uid ())
+    OR (is_relay_employee ())
   );
+
+-- INSERT policy - do not allow any inserts (profile inserts must be made with the service key client)
+CREATE POLICY profiles_policy_insert ON profiles FOR INSERT
+WITH
+  CHECK (FALSE);
+
+-- UPDATE policy - Can only update own account (unless relay employee) and cannot update user_role or company_id (only service key account can do that)
+CREATE POLICY profiles_policy_update ON profiles FOR
+UPDATE
+WITH
+  CHECK (profile_security_policy ());
+
+-- DELETE policy - do not allow any deletes (must me made with service key)
+CREATE POLICY profiles_policy_delete ON profiles FOR DELETE USING (FALSE);
+
+CREATE
+OR REPLACE TRIGGER check_profile_update BEFORE
+UPDATE ON profiles FOR EACH ROW
+EXECUTE PROCEDURE check_profiles_update ();
 
 BEGIN;
 
 SELECT
-  plan (6);
+  plan (9);
 
 SELECT
   tests.create_test_users ();
@@ -134,9 +167,56 @@ SELECT
     'owner-first-name'
   );
 
+-- INSERTs
+SELECT
+  tests.clear_authentication ();
+
+SELECT
+  throws_ok (
+    $$ INSERT INTO profiles (id, email, last_name, first_name, user_role, company_id) VALUES ( uuid_generate_v4 (), 'owner-email', 'name', 'name', 'company_owner', (SELECT id FROM companies WHERE name = 'company1' )); $$,
+    'new row violates row-level security policy for table "profiles"'
+  );
+
+-- UPDATES 
+SELECT
+  tests.authenticate_as ('owner');
+
+-- can update own name
+UPDATE profiles
+SET
+  first_name = 'new-first-name'
+WHERE
+  id = tests.get_supabase_uid ('owner');
+
+SELECT
+  IS (
+    (
+      SELECT
+        first_name
+      FROM
+        profiles
+      WHERE
+        id = tests.get_supabase_uid ('owner')
+    ),
+    'new-first-name'
+  );
+
+-- cannot update user_role
+SELECT
+  throws_ok (
+    $$ UPDATE profiles SET user_role = 'relay_employee' WHERE id = tests.get_supabase_uid ('owner'); $$,
+    'changing "user_role" is not allowed'
+  );
+
 SELECT
   *
 FROM
   finish ();
+
+SELECT
+  truncate_all_tables ('auth');
+
+SELECT
+  truncate_all_tables ('public');
 
 ROLLBACK;
