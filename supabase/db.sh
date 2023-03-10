@@ -39,8 +39,7 @@ function drop_dbfn {
     
     # Use psql to drop the function
     psql -h $db_host -p $db_port -U $db_user -d $db_name -c "DROP FUNCTION IF EXISTS relay_$1();"
-
-    echo "Dropped $1. You still need to remove it from ./supabase/functions/index.sql"
+    sed -i "/\/$1\.sql/d" ./supabase/functions/index.sql
 }
 
 function import_dbfn {
@@ -179,6 +178,7 @@ function drop_policy {
 
     # Use psql to drop the function
     psql -h $db_host -p $db_port -U $db_user -d $db_name -c "DROP POLICY IF EXISTS $pl_name on $tb_name;"
+    sed -i "/\/$pl_name\.policy\.sql/d" ./supabase/policies/index.sql
 }
 
 function import_policies {
