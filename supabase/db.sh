@@ -5,8 +5,6 @@ db_port=${DBPORT:-54322}
 db_user=${DBUSER:-postgres}
 db_name=${DBNAME:-postgres}
 
-export -n PGPASSWORD=${PGPASSWORD:-postgres}
-
 script_name=$(basename "$0")
 
 # set editor
@@ -41,6 +39,8 @@ function drop_dbfn {
     
     # Use psql to drop the function
     psql -h $db_host -p $db_port -U $db_user -d $db_name -c "DROP FUNCTION relay_$1();"
+
+    echo "Dropped $1. You still need to remove it from ./supabase/functions/index.sql"
 }
 
 function import_dbfn {
