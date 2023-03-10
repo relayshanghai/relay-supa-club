@@ -1,5 +1,25 @@
 BEGIN;
 
+-- https://github.com/supabase/supabase/discussions/656 only allow to update own profile
+CREATE
+OR REPLACE FUNCTION check_profile_function () RETURNS TRIGGER AS $$ BEGIN
+  IF NEW.user_role <> OLD.user_role THEN
+    RAISE EXCEPTION 'changing "user_role" is not allowed';
+  END IF;
+  IF NEW.user_role <> OLD.company_id THEN
+    RAISE EXCEPTION 'changing "company_id" is not allowed';
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE 'plpgsql' SECURITY DEFINER;
+
+-- delete trigger
+DROP TRIGGER IF EXISTS check_profile_trigger ON public.profiles;
+
+CREATE TRIGGER check_profile_trigger BEFORE
+UPDATE ON public.profiles FOR EACH ROW
+EXECUTE PROCEDURE check_profile_function ();
+
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS profiles_policy_select ON public.profiles;
@@ -47,23 +67,6 @@ WITH
 -- DELETE policy - do not allow any deletes (must me made with service key)
 CREATE POLICY profiles_policy_delete ON public.profiles FOR DELETE USING (FALSE);
 
--- https://github.com/supabase/supabase/discussions/656 only allow to update own profile
--- CREATE
--- OR REPLACE FUNCTION check_profile_function () RETURNS TRIGGER AS $$ BEGIN
---   IF NEW.user_role <> OLD.user_role THEN
---     RAISE EXCEPTION 'changing "user_role" is not allowed';
---   END IF;
---   IF NEW.user_role <> OLD.company_id THEN
---     RAISE EXCEPTION 'changing "company_id" is not allowed';
---   END IF;
---   RETURN NEW;
--- END;
--- $$ LANGUAGE 'plpgsql' SECURITY DEFINER;
--- -- delete trigger
--- DROP TRIGGER IF EXISTS check_profile_trigger ON public.profiles;
--- CREATE TRIGGER check_profile_trigger BEFORE
--- UPDATE ON profiles FOR EACH ROW
--- EXECUTE PROCEDURE check_profile_function ();
 SELECT
   plan (9);
 
