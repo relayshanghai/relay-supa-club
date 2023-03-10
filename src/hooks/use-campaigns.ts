@@ -8,14 +8,17 @@ import type {
 } from 'pages/api/campaigns/update';
 
 import { useUser } from './use-user';
-import { CampaignCreatorDB, CampaignDBUpdate } from 'src/utils/api/db/types';
-import { CampaignWithCompanyCreators } from 'src/utils/api/db';
-import { CampaignsCreatePostBody, CampaignsCreatePostResponse } from 'pages/api/campaigns/create';
-import {
+import type { CampaignCreatorDB, CampaignDBUpdate } from 'src/utils/api/db/types';
+import type { CampaignWithCompanyCreators } from 'src/utils/api/db';
+import type {
+    CampaignsCreatePostBody,
+    CampaignsCreatePostResponse,
+} from 'pages/api/campaigns/create';
+import type {
     CampaignCreatorAddCreatorPostBody,
     CampaignCreatorAddCreatorPostResponse,
 } from 'pages/api/campaigns/add-creator';
-import { CampaignsIndexGetQuery, CampaignsIndexGetResult } from 'pages/api/campaigns';
+import type { CampaignsIndexGetQuery, CampaignsIndexGetResult } from 'pages/api/campaigns';
 
 //The transform function is not used now, as the image proxy issue is handled directly where calls for the image.But this is left for future refactor. TODO:Ticket V2-181
 // const transformCampaignCreators = (creators: CampaignCreatorDB[]) => {
