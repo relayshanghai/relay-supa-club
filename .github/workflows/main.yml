@@ -34,3 +34,6 @@ jobs:
             git diff
             exit 1
           fi
+
+      - name: Run tests
+        run: supabase test
