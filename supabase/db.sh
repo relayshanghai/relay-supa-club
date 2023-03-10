@@ -1,15 +1,22 @@
 #!/bin/bash
 
+# You shouldn't need to change these envrioment variables developing locally.
 db_host=${DBHOST:-localhost}
 db_port=${DBPORT:-54322}
 db_user=${DBUSER:-postgres}
 db_name=${DBNAME:-postgres}
 
+# first parameter
 script_name=$0
 
 # set editor
 editor=${EDITOR:-vim}
 
+# check if code command exists (so it will default to vscode if you have it available)
+# `command` is a unix command to see if a command exists in the path
+# `&> /dev/null` is a way to redirect the output to /dev/null (basically, don't show the output) dev/null is a special file that discards all input
+# `>` is a way to redirect the output to a file, stdout is the default output
+# `&>` also redirects the error output `stderr`
 if command -v code &> /dev/null; then
     export editor=code
 fi
@@ -26,19 +33,22 @@ function check_psql {
     if ! command -v psql &> /dev/null
     then
         echo "psql is not installed. Please install psql and try again."
+        # exit one is a unix command to exit the script with an error code
+# to exit with a success code, use exit 0
         exit 1
     fi
 }
 
-function drop_dbfn {
+function drop_db_function {
+    # null check. If the first parameter of the function ($1) is null, then exit
     if [ -z "$1" ]
     then
         echo "Usage: drop_dbfn <function_name>"
-        return
+        exit 1
     fi
     
     # Use psql to drop the function
-    psql -h $db_host -p $db_port -U $db_user -d $db_name -c "DROP FUNCTION IF EXISTS relay_$1();"
+    psql --host $db_host --port $db_port --username $db_user --dbname $db_name --command "DROP FUNCTION IF EXISTS relay_$1();"
 
     echo "Dropped $1. You still need to remove it from ./supabase/functions/index.sql"
 }
@@ -64,7 +74,7 @@ function connect {
 
 function create_dbfn {
     fn_name=${1:-hello_world}
-    message=$(cat <<-END
+    message=$(cat <<-TEMPLATE
 -- Do not remove relay_* prefix
 CREATE OR REPLACE FUNCTION relay_$fn_name()
 RETURNS text
@@ -74,10 +84,10 @@ BEGIN
   RETURN 'Hello Relay!';
 END;
 \$\$;
-END
+TEMPLATE
 )
-    echo "$message" > "./supabase/functions/$fn_name.sql"
-    echo "\include ./supabase/functions/$fn_name.sql" >> "./supabase/functions/index.sql"
+    echo "$message" > "./supabase/functions/$fn_name.sql" # > is a way to redirect the output to a file, stdout is the default output
+    echo "\include ./supabase/functions/$fn_name.sql" >> "./supabase/functions/index.sql" # >> is a way to append the output to a file
 
     if [ -n "$editor" ]; then
         $editor ./supabase/functions/$fn_name.sql
@@ -89,7 +99,7 @@ function supabase {
         echo "Cannot run 'npx supabase'. Make sure you can use supabase in your cli"
         exit 1
     fi
-
+    # $@ is a way to pass all the parameters to the function to the command
     npx supabase $@
 }
 
@@ -107,7 +117,7 @@ function create_test {
         exit 1
     fi
 
-    message=$(cat <<-END
+    message=$(cat <<-TEMPLATE
 begin;
 select plan(1); -- no. of tests in the file
 
@@ -117,7 +127,7 @@ SELECT has_column('auth', 'users', 'id', 'id should exist');
 
 select * from finish(); -- end test
 rollback;
-END
+TEMPLATE
 )
     echo "$message" > "./supabase/tests/database/$test_name.test.sql"
 
@@ -140,7 +150,7 @@ function create_policy {
         exit 1
     fi
 
-    message=$(cat <<-END
+    message=$(cat <<-TEMPLATE
 CREATE POLICY $pl_name
 ON $tb_name
 FOR ALL
@@ -149,7 +159,7 @@ USING (
     auth.uid() = id
 );
 -- WITH CHECK ()
-END
+TEMPLATE
 )
     echo "$message" > "./supabase/policies/$pl_name.policy.sql"
     echo "\include ./supabase/policies/$pl_name.policy.sql" >> "./supabase/policies/index.sql"
@@ -204,6 +214,8 @@ message=$(cat <<-END
         ./$script_name create_dbfn <function_name>
 
     Note that these are database functions (not edge functions)
+    All functions created with this command will have a relay_* prefix
+    This command creates a function in "./supabase/functions" and adds it to "./supabase/functions/index.sql"
 
     List functions:
         ./$script_name list_dbfn
@@ -213,7 +225,9 @@ message=$(cat <<-END
     Import functions:
         ./$script_name import_dbfn
 
-    Import all functions found in "./supabase/functions"
+    Imports all functions found in "./supabase/functions"
+    
+    Runs a postgres query to import all functions with relay_* prefix and adds them to the database that is connected based on what environment variables you have set for the DBHOST, DBPORT, DBUSER, DBNAME, and DBPASSWORD.
 
     Drop a function:
         ./$script_name drop_dbfn <function_name>
@@ -242,6 +256,8 @@ message=$(cat <<-END
 
     Import policies:
         ./$script_name import_policies
+
+    Runs a postgres query to import all functions with relay_* prefix and adds them to the database that is connected based on what environment variables you have set for the DBHOST, DBPORT, DBUSER, DBNAME, and DBPASSWORD.
 
     Import all policies found in "./supabase/policies"
 
