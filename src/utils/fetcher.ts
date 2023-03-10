@@ -2,7 +2,7 @@
 export const fetcher = (url: string) =>
     fetch(url, { credentials: 'include' }).then((res) => res.json());
 
-const handleResError = async (res: Response) => {
+export const handleResError = async (res: Response) => {
     if (!res.status.toString().startsWith('2')) {
         const json = await res.json();
         if (json?.error)

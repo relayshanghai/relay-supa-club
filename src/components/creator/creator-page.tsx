@@ -10,7 +10,8 @@ import CreatorSkeleton from './creator-skeleton';
 import { useReport } from 'src/hooks/use-report';
 import { AddToCampaignModal } from '../modal-add-to-campaign';
 import { useTranslation } from 'react-i18next';
-import { RELAY_DOMAIN } from 'src/constants';
+import { IQDATA_MAINTENANCE, RELAY_DOMAIN } from 'src/constants';
+import { MaintenanceMessage } from '../maintenance-message';
 
 export const CreatorPage = ({
     creator_id,
@@ -31,6 +32,11 @@ export const CreatorPage = ({
     const onAddToCampaign = () => {
         setShowCampaignListModal(true);
     };
+
+    if (IQDATA_MAINTENANCE) {
+        return <MaintenanceMessage />;
+    }
+
     return (
         <div>
             <AddToCampaignModal
