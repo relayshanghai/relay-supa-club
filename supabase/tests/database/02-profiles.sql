@@ -1,3 +1,5 @@
+BEGIN;
+
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS profiles_policy_select ON public.profiles;
@@ -33,8 +35,8 @@ $$ LANGUAGE 'plpgsql' SECURITY DEFINER;
 CREATE POLICY profiles_policy_select ON public.profiles FOR
 SELECT
   USING (
-    (id = auth.uid ())
-    OR (is_relay_employee ())
+    id = auth.uid ()
+    OR is_relay_employee ()
   );
 
 -- INSERT policy - do not allow any inserts (profile inserts must be made with the service key client)
@@ -62,8 +64,6 @@ CREATE POLICY profiles_policy_delete ON public.profiles FOR DELETE USING (FALSE)
 -- CREATE TRIGGER check_profile_trigger BEFORE
 -- UPDATE ON profiles FOR EACH ROW
 -- EXECUTE PROCEDURE check_profile_function ();
-BEGIN;
-
 SELECT
   plan (9);
 
