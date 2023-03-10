@@ -11,11 +11,11 @@ script_name=$0
 editor=${EDITOR:-vim}
 
 if command -v code &> /dev/null; then
-    export editor=code
+    editor=code
 fi
 
 if command -v subl &> /dev/null; then
-    export EDITOR=subl
+    editor=subl
 fi
 
 # bufio.Scanner fix
@@ -34,7 +34,7 @@ function drop_dbfn {
     if [ -z "$1" ]
     then
         echo "Usage: drop_dbfn <function_name>"
-        return
+        exit 1
     fi
     
     # Use psql to drop the function
