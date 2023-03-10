@@ -1,4 +1,5 @@
 import { headers } from 'src/utils/api/iqdata/constants';
+import { handleResError } from 'src/utils/fetcher';
 import { CreatorPlatform, CreatorReport, CreatorSearchResult } from 'types';
 import { CreatorReportsMetadata } from 'types/iqdata/creator-reports-metadata';
 import { FetchCreatorsFilteredParams, prepareFetchCreatorsFiltered } from './transforms';
@@ -17,7 +18,9 @@ export const iqDataFetch = async <T = any>(path: string, options: RequestInit = 
             ...options.headers,
         },
     });
-    return (await res.json()) as T;
+    await handleResError(res);
+    const json = await res.json();
+    return json as T;
 };
 
 export const fetchIqDataLookalike = async (term: string, platform: CreatorPlatform) =>
