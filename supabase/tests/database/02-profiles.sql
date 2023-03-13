@@ -1,37 +1,17 @@
 BEGIN;
 
--- https://github.com/supabase/supabase/discussions/656 only allow to update own profile
-CREATE
-OR REPLACE FUNCTION check_profile_function () RETURNS TRIGGER AS $$ BEGIN
-  IF NEW.user_role <> OLD.user_role THEN
-    RAISE EXCEPTION 'changing "user_role" is not allowed';
-  END IF;
-  IF NEW.user_role <> OLD.company_id THEN
-    RAISE EXCEPTION 'changing "company_id" is not allowed';
-  END IF;
-  RETURN NEW;
-END;
-$$ LANGUAGE 'plpgsql' SECURITY DEFINER;
+ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 
--- delete trigger
-DROP TRIGGER IF EXISTS check_profile_trigger ON public.profiles;
+DROP POLICY IF EXISTS profiles_policy_select ON profiles;
 
-CREATE TRIGGER check_profile_trigger BEFORE
-UPDATE ON public.profiles FOR EACH ROW
-EXECUTE PROCEDURE check_profile_function ();
+DROP POLICY IF EXISTS profiles_policy_insert ON profiles;
 
-ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS profiles_policy_update ON profiles;
 
-DROP POLICY IF EXISTS profiles_policy_select ON public.profiles;
-
-DROP POLICY IF EXISTS profiles_policy_insert ON public.profiles;
-
-DROP POLICY IF EXISTS profiles_policy_update ON public.profiles;
-
-DROP POLICY IF EXISTS profiles_policy_delete ON public.profiles;
+DROP POLICY IF EXISTS profiles_policy_delete ON profiles;
 
 CREATE
-OR REPLACE FUNCTION public.is_relay_employee () RETURNS BOOLEAN AS $$
+OR REPLACE FUNCTION is_relay_employee () RETURNS BOOLEAN AS $$
 DECLARE
   result BOOLEAN DEFAULT FALSE;
 BEGIN
@@ -52,7 +32,7 @@ END;
 $$ LANGUAGE 'plpgsql' SECURITY DEFINER;
 
 -- SELECT policy - only allow to select own profile or if relay employee superuser
-CREATE POLICY profiles_policy_select ON public.profiles FOR
+CREATE POLICY profiles_policy_select ON profiles FOR
 SELECT
   USING (
     id = auth.uid ()
@@ -60,12 +40,18 @@ SELECT
   );
 
 -- INSERT policy - do not allow any inserts (profile inserts must be made with the service key client)
-CREATE POLICY profiles_policy_insert ON public.profiles FOR INSERT
+CREATE POLICY profiles_policy_insert ON profiles FOR INSERT
 WITH
   CHECK (FALSE);
 
--- DELETE policy - do not allow any deletes (must me made with service key)
-CREATE POLICY profiles_policy_delete ON public.profiles FOR DELETE USING (FALSE);
+-- DELETE policy - do not allow any deletes (must be made with service key)
+CREATE POLICY profiles_policy_delete ON profiles FOR DELETE USING (FALSE);
+
+-- UPDATE policy - do not allow any updates (profile updates must be made with the service key client)
+CREATE POLICY profiles_policy_update ON profiles FOR
+UPDATE USING (FALSE)
+WITH
+  CHECK (FALSE);
 
 SELECT
   plan (9);
@@ -176,33 +162,23 @@ SELECT
   );
 
 -- UPDATES 
+-- cannot update. Will just return empty
+SELECT
+  tests.clear_authentication ();
+
+SELECT
+  is_empty (
+    $$ update profiles set first_name = 'updated by anon' returning first_name $$,
+    'anon users cannot update profiles'
+  );
+
 SELECT
   tests.authenticate_as ('owner');
 
--- can update own name
--- UPDATE profiles
--- SET
---   first_name = 'new-first-name'
--- WHERE
---   id = tests.get_supabase_uid ('owner');
 SELECT
-  IS (
-    (
-      SELECT
-        first_name
-      FROM
-        profiles
-      WHERE
-        id = tests.get_supabase_uid ('owner')
-    ),
-    'new-first-name'
-  );
-
--- cannot update user_role
-SELECT
-  throws_ok (
-    $$ UPDATE profiles SET user_role = 'relay_employee' WHERE id = tests.get_supabase_uid ('owner'); $$,
-    'changing "user_role" is not allowed'
+  is_empty (
+    $$ update profiles set first_name = 'updated by owner' returning first_name $$,
+    'users cannot update even their own profiles'
   );
 
 SELECT
