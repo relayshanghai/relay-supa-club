@@ -8,7 +8,12 @@ import {
 import { serverLogger } from 'src/utils/logger';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    const URL = process.env.SLACK_WEBHOOK;
+    if (req.query.token !== process.env.SLACK_TOKEN) {
+        return res.status(httpCodes.UNAUTHORIZED).json({});
+    }
+
+    const URL = req.query.token;
+
     if (req.method === 'POST' && URL) {
         try {
             await handleNewProfileMessage(req, URL);
