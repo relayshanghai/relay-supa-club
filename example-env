@@ -42,6 +42,9 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 OPENAI_API_ORG="relay.club"
 OPENAI_API_KEY=""
 
+# Slack
+SLACK_WEBHOOK=""
+
 # Maintenance
 
 NEXT_PUBLIC_IQDATA_MAINTENANCE=false
