@@ -12,6 +12,8 @@ import { SearchFiltersModal } from './search-filters-modal';
 import { SearchOptions } from './search-options';
 import { Layout } from '../layout';
 import { useRouter } from 'next/router';
+import { IQDATA_MAINTENANCE } from 'src/constants';
+import { MaintenanceMessage } from '../maintenance-message';
 
 const Search = ({ companyId }: { companyId?: string }) => {
     const { t } = useTranslation();
@@ -79,11 +81,15 @@ const Search = ({ companyId }: { companyId?: string }) => {
 export const SearchPage = ({ companyId }: { companyId?: string }) => {
     return (
         <Layout>
-            <div className="flex flex-col p-6">
-                <SearchProvider>
-                    <Search companyId={companyId} />
-                </SearchProvider>
-            </div>
+            {IQDATA_MAINTENANCE ? (
+                <MaintenanceMessage />
+            ) : (
+                <div className="flex flex-col p-6">
+                    <SearchProvider>
+                        <Search companyId={companyId} />
+                    </SearchProvider>
+                </div>
+            )}
         </Layout>
     );
 };
