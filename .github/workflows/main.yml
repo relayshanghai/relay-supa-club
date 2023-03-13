@@ -1,0 +1,40 @@
+run-name: Run main workflow by @${{ github.actor }}
+
+on:
+  push:
+
+env:
+  STRIPE_API_KEY: ${{ secrets.STRIPE_API_KEY }}
+  DATA_PASS: ${{ secrets.DATA_PASS }}
+  DATA_USER: ${{ secrets.DATA_USER }}
+  DATA_KEY: ${{ secrets.DATA_KEY }}
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+  NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+  SIB_API_KEY: ${{ secrets.SIB_API_KEY }}
+  NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL }}
+  OPENAI_API_ORG: ${{ secrets.OPENAI_API_ORG }}
+  OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: preview
+
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+
+    - run: npm ci
+    - run: npm run type-check
+    - run: npm run lint
+    - run: npm run build
+    - run: npm run test:run
