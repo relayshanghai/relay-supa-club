@@ -147,7 +147,7 @@ function create_policy {
     pl_name=$1
     tb_name=$2
 
-    if [ -z "$pl_name" || -z "$tb_name" ] ; then
+    if [ -z "$pl_name" ] || [ -z "$tb_name" ] ; then
         echo "$script_name create_policy <policy_name> <table_name>"
         exit 1
     fi
