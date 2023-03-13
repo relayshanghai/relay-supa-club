@@ -224,10 +224,13 @@ function test_database {
 
 
     if [ -n "$1" ]; then
+        docker exec $container mkdir -p /tmp/supabase/tests/database/
+        docker cp -q $script_dir/tests/00000-supabase_test_helpers.sql $container:/tmp/supabase/tests/database/
+        docker cp -q $script_dir/tests/00001-relay_test_helpers.sql $container:/tmp/supabase/tests/database/
+
         for file in "$@"
         do
             if [ -e "$script_dir/tests/database/$file.test.sql" ]; then
-                docker exec $container mkdir -p /tmp/supabase/tests/database/
                 docker cp -q $script_dir/tests/database/$file.test.sql $container:/tmp/supabase/tests/database/
             fi
         done
