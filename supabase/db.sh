@@ -53,7 +53,6 @@ function drop_database_function {
 
     psql --host $db_host --port $db_port --username $db_user --dbname $db_name --command "DROP FUNCTION IF EXISTS relay_$1();"
     sed -i "/\/$1\.sql/d" $script_dir/functions/index.sql
-    echo "Dropped $1. You still need to remove it from ./supabase/functions/index.sql"
 }
 
 function push_database_functions {
