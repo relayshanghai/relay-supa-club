@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import type {
+    SubscriptionConfirmModalData} from 'src/components/account/subscription-confirm-modal';
 import {
-    SubscriptionConfirmModal,
-    SubscriptionConfirmModalData,
+    SubscriptionConfirmModal
 } from 'src/components/account/subscription-confirm-modal';
 import { Button } from 'src/components/button';
 import { SALES_REP_EMAIL } from 'src/constants/employeeContacts';

@@ -5,7 +5,7 @@ import { serverLogger } from 'src/utils/logger';
 
 import type { NextApiRequest, NextApiResponse } from 'next';
 import type { CustomerSubscriptionCreated } from 'types';
-import { InvoicePaymentFailed } from 'types/stripe/invoice-payment-failed-webhook';
+import type { InvoicePaymentFailed } from 'types/stripe/invoice-payment-failed-webhook';
 import { handleVIPSubscription } from 'src/utils/api/stripe/handle-vip-webhook';
 import { handleInvoicePaymentFailed } from 'src/utils/api/stripe/handle-payment-failed-webhook';
 

@@ -1,4 +1,5 @@
-import { LegacyRef, useRef, useState } from 'react';
+import type { LegacyRef} from 'react';
+import { useRef, useState } from 'react';
 import i18next from 'i18next';
 import { Globe } from '../icons';
 import useOnOutsideClick from 'src/hooks/use-on-outside-click';

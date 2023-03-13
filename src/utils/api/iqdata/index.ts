@@ -1,8 +1,9 @@
 import { headers } from 'src/utils/api/iqdata/constants';
 import { handleResError } from 'src/utils/fetcher';
-import { CreatorPlatform, CreatorReport, CreatorSearchResult } from 'types';
-import { CreatorReportsMetadata } from 'types/iqdata/creator-reports-metadata';
-import { FetchCreatorsFilteredParams, prepareFetchCreatorsFiltered } from './transforms';
+import type { CreatorPlatform, CreatorReport, CreatorSearchResult } from 'types';
+import type { CreatorReportsMetadata } from 'types/iqdata/creator-reports-metadata';
+import type { FetchCreatorsFilteredParams} from './transforms';
+import { prepareFetchCreatorsFiltered } from './transforms';
 
 /**
  *

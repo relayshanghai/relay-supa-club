@@ -1,8 +1,8 @@
-import { TFunction } from 'i18next';
+import type { TFunction } from 'i18next';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { CreatorPlatform, CreatorReport, SimilarUser } from 'types';
+import type { CreatorPlatform, CreatorReport, SimilarUser } from 'types';
 import ToggleTabs from '../common/toggle-tabs';
 import { CreatorBlock } from './creator-block';
 import { ProgressBlock } from './creator-progress-block';

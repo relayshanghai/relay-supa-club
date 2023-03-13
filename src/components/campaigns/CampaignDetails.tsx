@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { CampaignWithCompanyCreators } from 'src/utils/api/db';
+import type { CampaignWithCompanyCreators } from 'src/utils/api/db';
 import { toCurrency } from 'src/utils/utils';
 
 export default function CampaignDetails({

@@ -1,4 +1,5 @@
-import { ChangeEvent, KeyboardEvent, useCallback, useEffect, useRef, useState } from 'react';
+import type { ChangeEvent, KeyboardEvent} from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import useOnOutsideClick from 'src/hooks/use-on-outside-click';
 import { useTranslation } from 'react-i18next';
 import { clientLogger } from 'src/utils/logger';

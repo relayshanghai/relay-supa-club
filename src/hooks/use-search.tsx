@@ -1,9 +1,10 @@
-import { InfluencerPostRequest, InfluencerPostResponse } from 'pages/api/influencer-search';
-import {
-    createContext,
+import type { InfluencerPostRequest, InfluencerPostResponse } from 'pages/api/influencer-search';
+import type {
     Dispatch,
     PropsWithChildren,
-    SetStateAction,
+    SetStateAction} from 'react';
+import {
+    createContext,
     useCallback,
     useContext,
     useEffect,
@@ -14,7 +15,7 @@ import { usageErrors } from 'src/errors/usages';
 import { hasCustomError } from 'src/utils/errors';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger';
-import {
+import type {
     CreatorPlatform,
     LocationWeighted,
     CreatorSearchTag,

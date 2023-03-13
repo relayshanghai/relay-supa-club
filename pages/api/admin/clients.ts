@@ -1,6 +1,6 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
-import { CampaignDB, CompanyDB, ProfileDB } from 'src/utils/api/db';
+import type { CampaignDB, CompanyDB, ProfileDB } from 'src/utils/api/db';
 import { supabase } from 'src/utils/supabase-client';
 
 interface ClientInfo extends CompanyDB {

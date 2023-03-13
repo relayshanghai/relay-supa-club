@@ -7,7 +7,7 @@
         "build": "next build",
         "start": "next start",
         "lint:staged": "eslint --ext .js,.jsx,.ts,.tsx --max-warnings=0",
-        "lint": "eslint . --ext .js,.jsx,.ts,.tsx --max-warnings=-1",
+        "lint": "eslint . --fix --ext .js,.jsx,.ts,.tsx --max-warnings=-1",
         "type-check": "tsc --noEmit",
         "test": "jest --watch",
         "test:run": "jest"

@@ -1,4 +1,4 @@
-import { FieldErrorsImpl, FieldValues, UseFormRegister } from 'react-hook-form';
+import type { FieldErrorsImpl, FieldValues, UseFormRegister } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
 export interface Props {

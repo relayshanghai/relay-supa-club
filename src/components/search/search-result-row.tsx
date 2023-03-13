@@ -5,7 +5,7 @@ import { ShareLink } from 'src/components/icons';
 import { useSearch } from 'src/hooks/use-search';
 import { imgProxy } from 'src/utils/fetcher';
 import { decimalToPercent, numberFormatter } from 'src/utils/formatter';
-import { CreatorSearchAccountObject } from 'types';
+import type { CreatorSearchAccountObject } from 'types';
 
 export const SearchResultRow = ({
     creator,

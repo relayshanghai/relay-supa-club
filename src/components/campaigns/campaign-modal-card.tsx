@@ -1,11 +1,11 @@
 import { PlusCircleIcon, CheckCircleIcon } from '@heroicons/react/24/solid';
 import { useCampaigns } from 'src/hooks/use-campaigns';
-import { CreatorUserProfile, CreatorPlatform } from 'types';
+import type { CreatorUserProfile, CreatorPlatform } from 'types';
 import { useEffect, useState } from 'react';
 import { Spinner } from '../icons';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
-import { CampaignWithCompanyCreators } from 'src/utils/api/db';
+import type { CampaignWithCompanyCreators } from 'src/utils/api/db';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import { clientLogger } from 'src/utils/logger';
 import { useUser } from 'src/hooks/use-user';

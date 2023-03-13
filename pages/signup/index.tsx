@@ -11,7 +11,8 @@ import { useFields } from 'src/hooks/use-fields';
 import { useUser } from 'src/hooks/use-user';
 import { clientLogger } from 'src/utils/logger';
 import { isMissing } from 'src/utils/utils';
-import { SignupInputTypes, validateSignupInput } from 'src/utils/validation/signup';
+import type { SignupInputTypes} from 'src/utils/validation/signup';
+import { validateSignupInput } from 'src/utils/validation/signup';
 
 export default function Register() {
     const { t } = useTranslation();

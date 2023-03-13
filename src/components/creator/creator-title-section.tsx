@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { imgProxy } from 'src/utils/fetcher';
-import { CreatorPlatform, CreatorReport } from 'types';
+import type { CreatorPlatform, CreatorReport } from 'types';
 import { Button } from '../button';
 import { SocialMediaIcon } from '../common/social-media-icon';
 

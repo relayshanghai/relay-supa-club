@@ -1,5 +1,5 @@
-import Stripe from 'stripe';
-import { StripePriceWithProductMetadata, RelayPlan } from 'types';
+import type Stripe from 'stripe';
+import type { StripePriceWithProductMetadata, RelayPlan } from 'types';
 import {
     STRIPE_PRICE_MONTHLY_DIY,
     STRIPE_PRICE_MONTHLY_DIY_MAX,

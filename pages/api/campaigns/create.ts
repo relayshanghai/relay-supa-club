@@ -1,6 +1,6 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
-import { CampaignDB, CampaignDBInsert } from 'src/utils/api/db';
+import type { CampaignDB, CampaignDBInsert } from 'src/utils/api/db';
 import { serverLogger } from 'src/utils/logger';
 import { supabase } from 'src/utils/supabase-client';
 
