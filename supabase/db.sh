@@ -1,9 +1,9 @@
 #!/bin/bash
 
-db_host=${DBHOST:-localhost}
-db_port=${DBPORT:-54322}
-db_user=${DBUSER:-postgres}
-db_name=${DBNAME:-postgres}
+db_host=${PGHOST:-localhost}
+db_port=${PGPORT:-54322}
+db_user=${PGUSER:-postgres}
+db_name=${PGDATABASE:-postgres}
 
 script_name=$0
 
@@ -30,7 +30,7 @@ function check_psql {
     fi
 }
 
-function drop_dbfn {
+function drop_database_function {
     if [ -z "$1" ]
     then
         echo "Usage: drop_dbfn <function_name>"
@@ -42,7 +42,7 @@ function drop_dbfn {
     sed -i "/\/$1\.sql/d" ./supabase/functions/index.sql
 }
 
-function import_dbfn {
+function push_database_functions {
     file_path=./supabase/functions/index.sql
 
     if [ ! -f "$file_path" ]; then
@@ -53,15 +53,15 @@ function import_dbfn {
     psql -h $db_host -p $db_port -U $db_user -d $db_name -f $file_path
 }
 
-function list_dbfn {
-    psql -h $db_host -p $db_port -U $db_user -d $db_name -c "SELECT routine_name FROM information_schema.routines WHERE routine_type = 'FUNCTION' AND routine_schema = 'public';" | grep "relay_"
+function list_database_functions {
+    psql -h $db_host -p $db_port -U $db_user -d $db_name -c "SELECT specific_schema,routine_name,data_type,external_language FROM information_schema.routines WHERE routine_type = 'FUNCTION' AND routine_schema = 'public' AND routine_name LIKE 'relay_%';"
 }
 
 function connect {
     psql -h $db_host -p $db_port -U $db_user -d $db_name
 }
 
-function create_dbfn {
+function create_database_functions {
     fn_name=${1:-hello_world}
     message=$(cat <<-END
 -- Do not remove relay_* prefix
@@ -102,7 +102,7 @@ function create_test {
     test_name=$1
 
     if [ -z "$test_name" ]; then
-        echo "Test name is required"
+        echo "$script_name create_test <test_name>"
         exit 1
     fi
 
@@ -129,13 +129,8 @@ function create_policy {
     pl_name=$1
     tb_name=$2
 
-    if [ -z "$pl_name" ]; then
-        echo "Policy name is required"
-        exit 1
-    fi
-
-    if [ -z "$tb_name" ]; then
-        echo "Table name is required"
+    if [ -z "$pl_name" || -z "$tb_name" ] ; then
+        echo "$script_name create_policy <policy_name> <table_name>"
         exit 1
     fi
 
@@ -159,20 +154,15 @@ END
 }
 
 function list_policies {
-    psql -h $db_host -p $db_port -U $db_user -d $db_name -c "SELECT schemaname,tablename,policyname FROM pg_policies;"
+    psql -h $db_host -p $db_port -U $db_user -d $db_name -c "SELECT schemaname,tablename,policyname,cmd,roles FROM pg_policies;"
 }
 
 function drop_policy {
     pl_name=$1
     tb_name=$2
 
-    if [ -z "$pl_name" ]; then
-        echo "Policy name is required"
-        exit 1
-    fi
-
-    if [ -z "$tb_name" ]; then
-        echo "Table name is required"
+    if [ -z "$pl_name" ] || [ -z "$tb_name" ] ; then
+        echo "$script_name drop_policy <policy_name> <table_name>"
         exit 1
     fi
 
@@ -181,7 +171,7 @@ function drop_policy {
     sed -i "/\/$pl_name\.policy\.sql/d" ./supabase/policies/index.sql
 }
 
-function import_policies {
+function push_policies {
     file_path=./supabase/policies/index.sql
 
     if [ ! -f "$file_path" ]; then
@@ -192,44 +182,34 @@ function import_policies {
     psql -h $db_host -p $db_port -U $db_user -d $db_name -f $file_path
 }
 
-function gen_db_types {
+function generate_database_types {
     npx supabase gen types typescript --local --schema=public > types/supabase.ts
 }
 
 function help {
 message=$(cat <<-END
-    $script_name <command>
+    $script_name <command> [params]
 
-    Create a function:
+    Create a "database" function - Note that these are database functions (not edge functions)
         ./$script_name create_dbfn <function_name>
 
-    Note that these are database functions (not edge functions)
-
-    List functions:
+    List database functions - Show functions that have relay_* prefix
         ./$script_name list_dbfn
 
-    Show functions that have relay_* prefix
+    Push database functions - Pushes ALL functions found in "./supabase/functions"
+        ./$script_name push_dbfn
 
-    Import functions:
-        ./$script_name import_dbfn
-
-    Import all functions found in "./supabase/functions"
-
-    Drop a function:
+    Drop a database function:
         ./$script_name drop_dbfn <function_name>
 
-    Use supabase:
+    Use supabase cli - You can also use supabase commands directly without specifying supa
         ./$script_name supa
-
-    You can also call supabase directly using this script
 
     Connect to database:
         ./$script_name connect
 
-    Save password:
+    Save password - Creates a ~/.pgpass file
         ./$script_name save_password
-
-    Creates a ~/.pgpass file
 
     Create test:
         ./$script_name create_test <test_name>
@@ -240,21 +220,11 @@ message=$(cat <<-END
     List policies:
         ./$script_name list_policies
 
-    Import policies:
-        ./$script_name import_policies
-
-    Import all policies found in "./supabase/policies"
+    Push policies - Pushes ALL policies found in "./supabase/policies"
+        ./$script_name push_policies
 
     Drop a policy:
         ./$script_name drop_policy <policy_name> <table_name>
-
-    You can specify psql arguments such as
-    DBHOST (default: localhost)
-    DBPORT (default: 54322)
-    DBUSER (default: postgres)
-    DBNAME (default: postgres)
-
-    DBHOST=remote.db DBPORT=1234 DBUSER=john DBNAME=foo ./$script_name <command>
 END
 )
 
@@ -277,16 +247,16 @@ case $fn in
     connect $@
     ;;
   "create_dbfn")
-    create_dbfn $@
+    create_database_functions $@
     ;;
-  "import_dbfn")
-    import_dbfn
+  "push_dbfn")
+    push_database_functions
     ;;
   "list_dbfn")
-    list_dbfn
+    list_database_functions
     ;;
   "drop_dbfn")
-    drop_dbfn $@
+    drop_database_function $@
     ;;
   "save_password")
     save_password
@@ -303,11 +273,11 @@ case $fn in
   "drop_policy")
     drop_policy $@
     ;;
-  "import_policies")
-    import_policies
+  "push_policies")
+    push_policies
     ;;
   "gen_db_types")
-    gen_db_types
+    generate_database_types
     ;;
   *)
     supabase $fn $@
