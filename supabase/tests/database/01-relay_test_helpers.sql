@@ -17,7 +17,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE
-OR REPLACE FUNCTION tests.create_company (NAME TEXT) RETURNS UUID AS $$ DECLARE company_id uuid; BEGIN company_id := uuid_generate_v4 (); INSERT INTO companies (id, NAME) VALUES (company_id, name); RETURN company_id; END; $$ LANGUAGE plpgsql;
+OR REPLACE FUNCTION tests.create_company (company_name TEXT, website TEXT) RETURNS UUID AS $$ DECLARE company_id uuid; BEGIN company_id := uuid_generate_v4 (); INSERT INTO companies (id, name, website) VALUES (company_id, company_name, website); RETURN company_id; END; $$ LANGUAGE plpgsql;
 
 CREATE
 OR REPLACE FUNCTION tests.create_test_users () RETURNS void AS $$
@@ -28,6 +28,9 @@ DECLARE
   company_name text;
   company2_name text;
   relay_company_name text;
+  company_website text;
+  company2_website text;
+  relay_company_website text;
   company_owner_first_name text;
   company_owner_last_name text;
   company_owner_email text;
@@ -54,6 +57,10 @@ BEGIN
   company2_name := 'company2';
   relay_company_name := 'relay.club';
 
+  company_website := 'company1.com';
+  company2_website := 'company2.com';
+  relay_company_website := 'relay.club';
+
   company_owner_first_name := 'owner-first-name';
   company_owner_last_name :=  'owner-last-name';
   company_member_first_name :=  'member-first-name';
@@ -63,9 +70,9 @@ BEGIN
   relay_employee_first_name :=  'relay-employee-first-name';
   relay_employee_last_name :=  'relay-employee-last-name';
 
-  company_id := tests.create_company (company_name);
-  company2_id := tests.create_company (company2_name);
-  relay_company_id := tests.create_company (relay_company_name);
+  company_id := tests.create_company (company_name, company_website);
+  company2_id := tests.create_company (company2_name, company2_website);
+  relay_company_id := tests.create_company (relay_company_name, relay_company_website);
 
   company_owner_id := tests.create_profile (
     company_owner_email,

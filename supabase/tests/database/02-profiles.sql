@@ -10,6 +10,7 @@ DROP POLICY IF EXISTS profiles_policy_update ON profiles;
 
 DROP POLICY IF EXISTS profiles_policy_delete ON profiles;
 
+-- TODO: move this elsewhere
 CREATE
 OR REPLACE FUNCTION is_relay_employee () RETURNS BOOLEAN AS $$
 DECLARE
