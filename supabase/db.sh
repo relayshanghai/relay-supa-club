@@ -6,6 +6,9 @@ db_port=${PGPORT:-54322}
 db_user=${PGUSER:-postgres}
 db_name=${PGDATABASE:-postgres}
 
+# get the script's directory
+script_dir="$(cd "$( dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 # first parameter
 script_name=$0
 
@@ -49,8 +52,7 @@ function drop_database_function {
     # Use psql to drop the function
 
     psql --host $db_host --port $db_port --username $db_user --dbname $db_name --command "DROP FUNCTION IF EXISTS relay_$1();"
-    sed -i "/\/$1\.sql/d" ./supabase/functions/index.sql
-    echo "Dropped $1. You still need to remove it from ./supabase/functions/index.sql"
+    sed -i "/\/$1\.sql/d" $script_dir/functions/index.sql
 }
 
 function push_database_functions {
@@ -120,6 +122,9 @@ function create_test {
 
     message=$(
         cat <<-TEMPLATE
+-- Functions directory: /tmp/supabase/functions
+-- Policies directory: /tmp/supabase/policies
+
 begin;
 select plan(1); -- no. of tests in the file
 
@@ -159,11 +164,11 @@ USING (
 -- WITH CHECK ()
 TEMPLATE
     )
-    echo "$message" >"./supabase/policies/$pl_name.policy.sql"
-    echo "\include ./supabase/policies/$pl_name.policy.sql" >>"./supabase/policies/index.sql"
+    echo "$message" >"$script_dir/policies/$pl_name.policy.sql"
+    echo "\include $script_dir/policies/$pl_name.policy.sql" >>"$script_dir/policies/index.sql"
 
     if [ -n "$editor" ]; then
-        $editor ./supabase/policies/$pl_name.policy.sql
+        $editor $script_dir/policies/$pl_name.policy.sql
     fi
 }
 
@@ -182,11 +187,11 @@ function drop_policy {
 
     # Use psql to drop the function
     psql -h $db_host -p $db_port -U $db_user -d $db_name -c "DROP POLICY IF EXISTS $pl_name on $tb_name;"
-    sed -i "/\/$pl_name\.policy\.sql/d" ./supabase/policies/index.sql
+    sed -i "/\/$pl_name\.policy\.sql/d" $script_dir/policies/index.sql
 }
 
 function push_policies {
-    file_path=./supabase/policies/index.sql
+    file_path=$script_dir/policies/index.sql
 
     if [ ! -f "$file_path" ]; then
         echo "Error: File $file_path does not exist"
@@ -197,7 +202,49 @@ function push_policies {
 }
 
 function generate_database_types {
-    npx supabase gen types typescript --local --schema=public > types/supabase.ts
+    npx supabase gen types typescript --local --schema=public > $script_dir/../types/supabase.ts
+}
+
+# Reverse engineered from
+# https://github.com/supabase/cli/blob/main/internal/db/test/test.go#L39
+function test_database {
+
+    # get the `project_id` in the config.toml
+    project_id=$(awk -F '[ "=]+' '$1=="project_id" {print $2}' "$script_dir/config.toml")
+    container="supabase_db_$project_id"
+
+    # copy files
+    docker cp -q $script_dir/functions $container:/tmp/supabase/
+    docker cp -q $script_dir/policies $container:/tmp/supabase/
+
+    if [ -z "$1" ]; then
+        docker cp -q $script_dir/tests $container:/tmp/supabase/
+    fi
+
+
+    if [ -n "$1" ]; then
+        docker exec $container mkdir -p /tmp/supabase/tests/database/
+        docker cp -q $script_dir/tests/00000-supabase_test_helpers.sql $container:/tmp/supabase/tests/database/
+        docker cp -q $script_dir/tests/00001-relay_test_helpers.sql $container:/tmp/supabase/tests/database/
+
+        for file in "$@"
+        do
+            if [ -e "$script_dir/tests/database/$file.test.sql" ]; then
+                docker cp -q $script_dir/tests/database/$file.test.sql $container:/tmp/supabase/tests/database/
+            fi
+        done
+    fi
+
+    docker cp -q $script_dir/utils/supa_pg_prove.sh $container:/tmp/supabase/
+
+    # run tests
+    docker exec -t $container bash /tmp/supabase/supa_pg_prove.sh /tmp/supabase/tests
+
+    # remove all copied files
+    docker exec $container rm -rf /tmp/supabase/functions
+    docker exec $container rm -rf /tmp/supabase/policies
+    docker exec $container rm -rf /tmp/supabase/tests
+    docker exec $container rm -rf /tmp/supabase/supa_pg_prove.sh
 }
 
 function help {
@@ -248,6 +295,9 @@ function help {
 
     Drop a policy:
         ./$script_name drop_policy <policy_name> <table_name>
+
+    Test database:
+        ./$script_name db_test [test1] [test2...]
 END
     )
 
@@ -260,13 +310,13 @@ fn=$1
 shift
 
 case $fn in
-"--help")
+  "--help")
     help
     ;;
-"supa")
+  "supa")
     supabase $@
     ;;
-"connect")
+  "connect")
     connect $@
     ;;
   "create_dbfn")
@@ -281,19 +331,19 @@ case $fn in
   "drop_dbfn")
     drop_database_function $@
     ;;
-"save_password")
+  "save_password")
     save_password
     ;;
-"create_test")
+  "create_test")
     create_test $@
     ;;
-"create_policy")
+  "create_policy")
     create_policy $@
     ;;
-"list_policies")
+  "list_policies")
     list_policies
     ;;
-"drop_policy")
+  "drop_policy")
     drop_policy $@
     ;;
   "push_policies")
@@ -301,6 +351,9 @@ case $fn in
     ;;
   "gen_db_types")
     generate_database_types
+    ;;
+  "db_test")
+    test_database $@
     ;;
 *)
     supabase $fn $@
