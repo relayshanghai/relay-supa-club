@@ -1,21 +1,26 @@
-// export type InsertPayload = {
-//     type: 'INSERT';
-//     table: string;
-//     schema: string;
-//     record: TableRecord<T>;
-//     old_record: null;
-// };
-// export type UpdatePayload = {
-//     type: 'UPDATE';
-//     table: string;
-//     schema: string;
-//     record: TableRecord<T>;
-//     old_record: TableRecord<T>;
-// };
-// export type DeletePayload = {
-//     type: 'DELETE';
-//     table: string;
-//     schema: string;
-//     record: null;
-//     old_record: TableRecord<T>;
-// };
+import type { CompanyDB, ProfileDB } from 'src/utils/api/db';
+
+//Reference: https://supabase.com/docs/guides/database/webhooks#payload
+export type InsertProfilePayload = {
+    type: 'INSERT';
+    table: string;
+    schema: string;
+    record: ProfileDB;
+    old_record: null;
+};
+
+export type InsertCompanyPayload = {
+    type: 'INSERT';
+    table: string;
+    schema: string;
+    record: CompanyDB;
+    old_record: null;
+};
+
+export type UpdateCompanyPayload = {
+    type: 'UPDATE';
+    table: string;
+    schema: string;
+    record: CompanyDB;
+    old_record: CompanyDB;
+};
