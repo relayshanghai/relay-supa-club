@@ -8,7 +8,7 @@ import {
 import { serverLogger } from 'src/utils/logger';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    if (req.query.token !== process.env.SLACK_TOKEN) {
+    if (req.query.token !== process.env.SLACK_WEBHOOK) {
         return res.status(httpCodes.UNAUTHORIZED).json({});
     }
 
