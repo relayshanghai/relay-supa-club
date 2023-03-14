@@ -1,3 +1,9 @@
+## Run a migration
+
+```bash
+todo
+```
+
 ## Delete a user
 
 TODO: investigate setting the profiles table to cascade delete: https://github.com/supabase/storage-api/issues/65
@@ -43,9 +49,10 @@ orientation: row
 ## Running locally
 
 Requires:
-- Docker
-- Supabase CLI
-- Git
+
+-   Docker
+-   Supabase CLI
+-   Git
 
 ---
 
@@ -56,6 +63,7 @@ Requires:
 ```
 npx supabase login
 ```
+
 Create a new access token [here](https://app.supabase.com/account/tokens)
 
 3. Link supabase project to local
@@ -96,5 +104,5 @@ These features are not yet available in the docker image as of writing.
 
 ### References
 
-- https://supabase.com/docs/guides/cli/local-development
-- https://supabase.com/docs/guides/cli/managing-environments
+-   https://supabase.com/docs/guides/cli/local-development
+-   https://supabase.com/docs/guides/cli/managing-environments
