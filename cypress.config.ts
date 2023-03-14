@@ -13,7 +13,7 @@ export default defineConfig({
             };
             return config;
         },
-        video: true,
+        video: false,
         baseUrl: 'http://localhost:3000',
     },
 });
