@@ -19,8 +19,8 @@ describe('template spec', () => {
         cy.contains('GRTR').should('not.exist');
 
         cy.getByTestId('creator-search').type('GRTR{enter}');
-        // look for second instance of GRTR
-        cy.contains('GRTR', { timeout: 20000 }).should('have.length', 2);
+        // cy.contains will not include the input element in the search, so this shows that the results are in the DOM
+        cy.contains('GRTR', { timeout: 20000 });
     });
     it('can search for a topic', () => {
         cy.loginTestUser();
@@ -31,6 +31,7 @@ describe('template spec', () => {
         cy.getByTestId('search-topics').within(() => {
             cy.get('input').type('alligators');
         });
+        // cy.contains will not include the input element text in the search, so this shows that the result options are in the DOM
         cy.contains('alligators', { timeout: 30000 }).click();
 
         cy.contains('Brave Wilderness', { timeout: 30000 }); // the first influencer search result for alligators
