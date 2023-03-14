@@ -25,15 +25,44 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 //
-// declare global {
-//   namespace Cypress {
-//     interface Chainable {
-//       login(email: string, password: string): Chainable<void>
-//       drag(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
-//       dismiss(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
-//       visit(originalFn: CommandOriginalFn, url: string, options: Partial<VisitOptions>): Chainable<Element>
-//     }
-//   }
-// }
+declare global {
+    // eslint-disable-next-line @typescript-eslint/no-namespace
+    namespace Cypress {
+        interface Chainable {
+            getByTestId: typeof getByTestId;
+            loginTestUser: typeof loginTestUser;
+            switchToEnglish: typeof switchToEnglish;
+        }
+    }
+}
+type CypressGetOptions =
+    | Partial<Cypress.Loggable & Cypress.Timeoutable & Cypress.Withinable & Cypress.Shadow>
+    | undefined;
+
+function getByTestId(selector: string, options?: CypressGetOptions) {
+    return cy.get(`[data-testid=${selector}]`, options);
+}
+
+Cypress.Commands.add('getByTestId', getByTestId);
+
+function loginTestUser(switchLangToEnglish = true) {
+    cy.visit('/login');
+    if (switchLangToEnglish) {
+        switchToEnglish();
+    }
+    cy.contains('Welcome back!'); // wait for login page load
+    cy.get('input[type="email"]').type(Cypress.env('TEST_USER_EMAIL'));
+    cy.get('input[type="password"]').type(Cypress.env('TEST_USER_PASSWORD'));
+    cy.get('form').get('button').contains('Log in').click();
+    cy.contains('Successfully logged in', { timeout: 10000 }); // the toast message
+    cy.contains('Campaigns', { timeout: 10000 }); // dashboard page load
+}
+Cypress.Commands.add('loginTestUser', loginTestUser);
+
+function switchToEnglish() {
+    getByTestId('language-toggle-button').click();
+    cy.contains('English').click();
+}
+Cypress.Commands.add('switchToEnglish', switchToEnglish);
 
 export {};
