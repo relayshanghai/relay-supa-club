@@ -71,7 +71,7 @@ function list_database_functions {
 }
 
 function connect {
-    psql -h $db_host -p $db_port -U $db_user -d $db_name
+    psql -h $db_host -p $db_port -U $db_user -d $db_name $@
 }
 
 function create_database_functions {
@@ -208,34 +208,33 @@ function generate_database_types {
 # Reverse engineered from
 # https://github.com/supabase/cli/blob/main/internal/db/test/test.go#L39
 function test_database {
-
     # get the `project_id` in the config.toml
     project_id=$(awk -F '[ "=]+' '$1=="project_id" {print $2}' "$script_dir/config.toml")
     container="supabase_db_$project_id"
 
     # copy files
-    docker cp -q $script_dir/functions $container:/tmp/supabase/
-    docker cp -q $script_dir/policies $container:/tmp/supabase/
+    docker cp $script_dir/functions $container:/tmp/supabase/ > /dev/null
+    docker cp $script_dir/policies $container:/tmp/supabase/ > /dev/null
 
     if [ -z "$1" ]; then
-        docker cp -q $script_dir/tests $container:/tmp/supabase/
+        docker cp $script_dir/tests $container:/tmp/supabase/ > /dev/null
     fi
 
 
     if [ -n "$1" ]; then
         docker exec $container mkdir -p /tmp/supabase/tests/database/
-        docker cp -q $script_dir/tests/00000-supabase_test_helpers.sql $container:/tmp/supabase/tests/database/
-        docker cp -q $script_dir/tests/00001-relay_test_helpers.sql $container:/tmp/supabase/tests/database/
+        docker cp $script_dir/tests/00000-supabase_test_helpers.sql $container:/tmp/supabase/tests/database/ > /dev/null
+        docker cp $script_dir/tests/00001-relay_test_helpers.sql $container:/tmp/supabase/tests/database/ > /dev/null
 
         for file in "$@"
         do
             if [ -e "$script_dir/tests/database/$file.test.sql" ]; then
-                docker cp -q $script_dir/tests/database/$file.test.sql $container:/tmp/supabase/tests/database/
+                docker cp $script_dir/tests/database/$file.test.sql $container:/tmp/supabase/tests/database/ > /dev/null
             fi
         done
     fi
 
-    docker cp -q $script_dir/utils/supa_pg_prove.sh $container:/tmp/supabase/
+    docker cp $script_dir/utils/supa_pg_prove.sh $container:/tmp/supabase/ > /dev/null
 
     # run tests
     docker exec -t $container bash /tmp/supabase/supa_pg_prove.sh /tmp/supabase/tests
