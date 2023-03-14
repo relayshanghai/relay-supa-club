@@ -8,7 +8,8 @@
         "start": "next start",
         "lint:staged": "eslint --ext .js,.jsx,.ts,.tsx --max-warnings=0",
         "lint": "eslint . --ext .js,.jsx,.ts,.tsx --max-warnings=-1",
-        "type-check": "tsc --noEmit",
+        "type-check": "tsc --project tsconfig.check.json",
+        "type-check:cypress": "tsc --project cypress/tsconfig.json",
         "test": "jest --watch",
         "test:run": "jest"
     },
