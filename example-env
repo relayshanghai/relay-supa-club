@@ -52,5 +52,5 @@ NEXT_PUBLIC_IQDATA_MAINTENANCE=false
 
 # Test user for cypress
 
-TEST_USER_EMAIL='test@test.test'
-TEST_USER_PASSWORD='asdfasdf'
+TEST_USER_EMAIL='test@example.com'
+TEST_USER_PASSWORD='123-abc-find-out-what-you-mean-to-me'
