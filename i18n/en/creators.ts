@@ -6,6 +6,7 @@ const creators = {
     failedToFetchReport: 'Failed to fetch report',
     subscribers: 'Followers',
     avgViews: 'Avg. Views',
+    actionButtons: 'Actions',
     engagements: 'Engagements',
     engagementRate: 'Engagement Rate',
     addToCampaign: 'Add to campaign',
