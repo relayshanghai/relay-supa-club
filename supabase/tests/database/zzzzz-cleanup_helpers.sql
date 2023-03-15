@@ -1,3 +1,8 @@
+SELECT tests.log('--------------------------------------------------------------------------------- [TESTS END]'::TEXT);
+
+-- suppress noise, we want it clean
+SET client_min_messages = warning;
+
 -- clean up usebasejump test helpers
 DROP FUNCTION IF EXISTS tests.create_supabase_user(text, text, text);
 DROP FUNCTION IF EXISTS tests.get_supabase_uid(text);
@@ -9,6 +14,9 @@ DROP FUNCTION IF EXISTS tests.rls_enabled(text, text);
 
 -- for some reason, drop function does not seem to work. force it with cascade
 DROP SCHEMA tests CASCADE;
+
+-- make it noisy again!
+SET client_min_messages = notice;
 
 BEGIN;
     select plan(6);

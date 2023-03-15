@@ -223,8 +223,9 @@ function test_database {
 
     if [ -n "$1" ]; then
         docker exec $container mkdir -p /tmp/supabase/tests/database/
-        docker cp $script_dir/tests/00000-supabase_test_helpers.sql $container:/tmp/supabase/tests/database/ > /dev/null
-        docker cp $script_dir/tests/00001-relay_test_helpers.sql $container:/tmp/supabase/tests/database/ > /dev/null
+        docker cp $script_dir/tests/database/00000-supabase_test_helpers.sql $container:/tmp/supabase/tests/database/ > /dev/null
+        docker cp $script_dir/tests/database/00001-relay_test_helpers.sql $container:/tmp/supabase/tests/database/ > /dev/null
+        docker cp $script_dir/tests/database/zzzzz-cleanup_helpers.sql $container:/tmp/supabase/tests/database/ > /dev/null
 
         for file in "$@"
         do
