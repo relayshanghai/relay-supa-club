@@ -125,15 +125,15 @@ function create_test {
 -- Functions directory: /tmp/supabase/functions
 -- Policies directory: /tmp/supabase/policies
 
-begin;
-select plan(1); -- no. of tests in the file
+BEGIN;
+SELECT plan(1); -- no. of tests in the file
 
 SELECT has_column('auth', 'users', 'id', 'id should exist');
 -- SELECT has_function('function_name'); -- test function
 -- SELECT policy_cmd_is('table', 'policy', 'command'); -- test policy
 
-select * from finish(); -- end test
-rollback;
+SELECT * FROM finish(); -- end test
+ROLLBACK;
 TEMPLATE
     )
     echo "$message" >"./supabase/tests/database/$test_name.test.sql"

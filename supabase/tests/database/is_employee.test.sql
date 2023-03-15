@@ -19,13 +19,13 @@ DO $$
     _row RECORD;
   BEGIN
     company_relay_id := tests.create_company('relay.club', 'https://relay.club');
-    -- company_id := tests.create_company('company a', 'https://company-a.com');
+    company_id := tests.create_company('company a', 'https://company-a.com');
 
     company_owner_id := tests.create_profile(
       'owner@email.com',
       'John',
       'Doe',
-      'owner',
+      'company_owner',
       company_id
     );
 
@@ -42,20 +42,23 @@ DO $$
 
     INSERT INTO test_vars values ('company_relay_id', company_relay_id);
   END;
-  $$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql;
 
--- check if function exists
 SELECT has_function('relay_is_employee');
 
--- authenticate as the company owner
 SELECT tests.authenticate_as('jacob@relay.club');
+SELECT is(
+  relay_is_employee(),
+  true,
+  'jacob@relay.club IS a Relay employee'
+);
 
--- check if relay employee
-SELECT ok(relay_is_employee());
-
--- SELECT tests.clear_authentication();
 SELECT tests.authenticate_as('owner@email.com');
-SELECT is(relay_is_employee(), false);
+SELECT is(
+  relay_is_employee(),
+  false,
+  'owner@email.com IS NOT a Relay employee'
+);
 
 SELECT * FROM finish();
 ROLLBACK;

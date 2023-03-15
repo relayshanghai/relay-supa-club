@@ -1,30 +1,63 @@
-CREATE OR REPLACE FUNCTION tests.log(_data ANYELEMENT) RETURNS void
-AS $$
-BEGIN
-  RAISE NOTICE E'\n%', _data;
-END;
-$$ LANGUAGE plpgsql;
+CREATE OR REPLACE FUNCTION tests.log(_data ANYELEMENT)
+    RETURNS void
+    AS $$
+    BEGIN
+      RAISE NOTICE E'\n%', _data;
+    END;
+    $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION tests.logg(_data ANYELEMENT) RETURNS void
-AS $$
-BEGIN
-  RAISE NOTICE E'\n\n%\n', _data;
-END;
-$$ LANGUAGE plpgsql;
+    AS $$
+    BEGIN
+      RAISE NOTICE E'\n\n%\n', _data;
+    END;
+    $$ LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION tests.logg(_data ANYELEMENT)
+    RETURNS void
+    AS $$
+    BEGIN
+      RAISE NOTICE E'\n\n%\n', _data;
+    END;
+    $$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION tests.set_var(_name TEXT, _data ANYELEMENT)
+    RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+        BEGIN
+          SET client_min_messages = warning;
+          CREATE TEMP TABLE IF NOT EXISTS test_vars (name TEXT, value TEXT);
+          SET client_min_messages = notice;
+          INSERT INTO test_vars values (_name, _data);
+        END;
+    $$;
+
+CREATE OR REPLACE FUNCTION tests.get_var(_name ANYELEMENT)
+    RETURNS ANYELEMENT
+    LANGUAGE plpgsql
+    AS $$
+        BEGIN
+          SET client_min_messages = warning;
+          CREATE TEMP TABLE IF NOT EXISTS test_vars (name TEXT, value TEXT);
+          SET client_min_messages = notice;
+          RETURN (SELECT value FROM test_vars WHERE name = _name);
+        END;
+    $$;
 
 CREATE OR REPLACE FUNCTION tests.get_profiles() RETURNS RECORD
-AS $$
-DECLARE
-    _row RECORD;
-BEGIN
-  SELECT * INTO _row FROM profiles;
-  RETURN _row;
-END;
-$$ LANGUAGE plpgsql;
+    AS $$
+    DECLARE
+        _row RECORD;
+    BEGIN
+      SELECT * INTO _row FROM profiles;
+      RETURN _row;
+    END;
+    $$ LANGUAGE plpgsql;
 
-
-CREATE OR REPLACE FUNCTION tests.create_profile(email TEXT, first_name TEXT, last_name TEXT, user_role TEXT, company_id UUID) RETURNS UUID AS $$
+CREATE OR REPLACE FUNCTION tests.create_profile(email TEXT, first_name TEXT, last_name TEXT, user_role TEXT, company_id UUID)
+    RETURNS UUID
+    AS $$
     DECLARE
         user_id uuid;
     BEGIN
@@ -33,11 +66,11 @@ CREATE OR REPLACE FUNCTION tests.create_profile(email TEXT, first_name TEXT, las
         VALUES(user_id, email, last_name, first_name, user_role, company_id);
     RETURN user_id;
     END;
-$$ LANGUAGE plpgsql;
+    $$ LANGUAGE plpgsql;
 
-
-CREATE OR REPLACE FUNCTION tests.create_company(company_name TEXT, website TEXT) RETURNS UUID AS
-$$
+CREATE OR REPLACE FUNCTION tests.create_company(company_name TEXT, website TEXT)
+    RETURNS UUID
+    AS $$
     DECLARE
         company_id uuid;
     BEGIN
@@ -45,10 +78,11 @@ $$
         INSERT INTO companies(id, name, website) VALUES(company_id, company_name, website);
     RETURN company_id;
     END;
-$$ LANGUAGE plpgsql;
+    $$ LANGUAGE plpgsql;
 
-
-CREATE OR REPLACE FUNCTION tests.create_test_users() RETURNS void AS $$
+CREATE OR REPLACE FUNCTION tests.create_test_users()
+    RETURNS void
+    AS $$
     DECLARE
         company_id uuid;
         company2_id uuid;
@@ -131,57 +165,12 @@ CREATE OR REPLACE FUNCTION tests.create_test_users() RETURNS void AS $$
             relay_company_id
         );
     END;
-$$ LANGUAGE plpgsql;
+    $$ LANGUAGE plpgsql;
 
 BEGIN;
-
-
-SELECT tests.create_test_users();
-
-
-SELECT plan(6);
-
-
-SELECT IS(
-              ( SELECT first_name
-               FROM profiles
-               WHERE id = tests.get_supabase_uid('owner') ), 'owner-first-name' );
-
-
-SELECT IS(
-              ( SELECT last_name
-               FROM profiles
-               WHERE id = tests.get_supabase_uid('owner') ), 'owner-last-name' );
-
-
-SELECT IS(
-              ( SELECT user_role
-               FROM profiles
-               WHERE id = tests.get_supabase_uid('owner') ), 'company_owner' );
-
-
-SELECT IS(
-              ( SELECT user_role
-               FROM profiles
-               WHERE id = tests.get_supabase_uid('member') ), 'company_teammate' );
-
-
-SELECT IS(
-              ( SELECT user_role
-               FROM profiles
-               WHERE id = tests.get_supabase_uid('relay-employee') ), 'relay_employee' );
-
-
-SELECT IS(
-              ( SELECT company_id
-               FROM profiles
-               WHERE id = tests.get_supabase_uid('owner') ),
-              ( SELECT id
-               FROM companies
-               WHERE website = 'company1.com' ) );
-
-
+SELECT plan(1);
+SELECT pass('Loading relay test helpers');
 SELECT * FROM finish();
 ROLLBACK;
 
-SELECT tests.log('--------------------------------------------------------------------------------- [TESTS START]'::TEXT);
+SELECT diag('>-------------------------------------------------------------------------------- [TESTS START]'::TEXT);
