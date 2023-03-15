@@ -57,6 +57,28 @@ describe('Main pages happy paths', () => {
 
         cy.contains('Channel Stats'); // not sure what else to look for on this page. Seems good enough for a happy path.
     });
+    it('can use account and pricing pages', () => {
+        cy.loginTestUser();
+        cy.contains('Account').click();
+        cy.contains('Subscription', { timeout: 10000 }); // loads account page
+
+        cy.url().should('include', `/account`);
+        // open one of the modals
+        cy.contains('button', 'Add more members').click();
+        cy.contains('Invite Members');
+        cy.contains('button', 'Cancel').click();
+        cy.contains('Invite Members').should('not.exist');
+
+        // upgrade subscription links to pricing page
+        cy.contains('button', 'Upgrade subscription').click();
+        cy.contains('Choose the best plan for you', { timeout: 10000 }); // loads pricing page
+        cy.url().should('include', `/pricing`);
+        cy.contains('DIY Max');
+        cy.contains('button', 'Buy Now').click();
+        cy.contains('button', 'Subscribe');
+        cy.contains('button', 'Close').click();
+        cy.contains('button', 'Subscribe').should('not.exist');
+    });
 });
 
 // Need to export an empty object to keep typescript happy. Otherwise, it will complain that the file is a module, but it has no imports or exports.
