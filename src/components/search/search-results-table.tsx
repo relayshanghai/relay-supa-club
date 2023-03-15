@@ -39,10 +39,13 @@ export const SearchResultsTable = ({
                         <th className="whitespace-nowrap pr-4 text-left text-xs font-normal text-gray-500">
                             {t('creators.avgViews')}
                         </th>
+                        <th className="whitespace-nowrap pr-4 text-center text-xs font-normal text-gray-500">
+                            {''}
+                        </th>
                     </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white">
-                    {usageExceeded ? (
+                    {usageExceeded && (
                         <tr>
                             <td className="space-y-4 py-4 text-center" colSpan={5}>
                                 <p className="mb-4">{t('creators.usageExceeded')}</p>
@@ -51,7 +54,10 @@ export const SearchResultsTable = ({
                                 </Link>
                             </td>
                         </tr>
-                    ) : !noResults ? (
+                    )}
+
+                    {!usageExceeded &&
+                        !noResults &&
                         resultPages?.map((page) =>
                             page?.map((creator, i) => (
                                 <SearchResultRow
@@ -61,18 +67,21 @@ export const SearchResultsTable = ({
                                     setSelectedCreator={setSelectedCreator}
                                 />
                             )),
-                        )
-                    ) : loading ? (
-                        [...Array(10)].map((_, i) => (
-                            <SkeletonSearchResultRow key={i} delay={i * 200} />
-                        ))
-                    ) : (
-                        <tr>
-                            <td className="py-4 text-center" colSpan={5}>
-                                {t('creators.noResults')}
-                            </td>
-                        </tr>
-                    )}
+                        )}
+
+                    {!usageExceeded &&
+                        noResults &&
+                        (loading ? (
+                            [...Array(10)].map((_, i) => (
+                                <SkeletonSearchResultRow key={i} delay={i * 200} />
+                            ))
+                        ) : (
+                            <tr>
+                                <td className="py-4 text-center" colSpan={5}>
+                                    {t('creators.noResults')}
+                                </td>
+                            </tr>
+                        ))}
                 </tbody>
             </table>
         </div>
