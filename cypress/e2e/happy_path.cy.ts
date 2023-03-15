@@ -93,6 +93,14 @@ describe('Main pages happy paths', () => {
             .type('123')
             .should('have.value', 'Test Company123');
     });
+    it('can open campaigns page', () => {
+        cy.loginTestUser();
+        cy.contains('Campaigns').click();
+        cy.contains('button', 'New Campaign', { timeout: 10000 }); // loads campaigns page
+        cy.url().should('include', `/campaigns`);
+
+        // TODO: After we have delete campaign function, test adding and editing/viewing campaigns. work item: https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/245
+    });
 });
 
 // Need to export an empty object to keep typescript happy. Otherwise, it will complain that the file is a module, but it has no imports or exports.
