@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import { useSearch } from 'src/hooks/use-search';
-import { CreatorSearchAccountObject } from 'types';
+import type { CreatorSearchAccountObject } from 'types';
 import { Button } from '../button';
 import { SkeletonSearchResultRow } from '../common/skeleton-search-result-row';
 import { SearchResultRow } from './search-result-row';
@@ -18,30 +18,28 @@ export const SearchResultsTable = ({
     return (
         <div className="w-full overflow-auto">
             <table
-                className={`min-w-full divide-y divide-gray-200 rounded-lg shadow ${
+                className={`w-full table-auto divide-y divide-gray-200 overflow-x-auto rounded-lg shadow ${
                     loading ? 'opacity-60' : ''
                 }`}
             >
                 <thead className="sticky top-0 bg-white">
                     <tr>
-                        <th className="w-2/4 px-4 py-4 text-left text-xs font-normal text-gray-500">
+                        <th className="p-4 text-left text-xs font-normal text-gray-500">
                             {t('creators.account')}
                         </th>
-                        <th className="whitespace-nowrap pr-4 text-left text-xs font-normal text-gray-500">
+                        <th className="whitespace-nowrap pr-4 text-right text-xs font-normal text-gray-500">
                             {t('creators.subscribers')}
                         </th>
-                        <th className="whitespace-nowrap pr-4 text-left text-xs font-normal text-gray-500">
+                        <th className="whitespace-nowrap pr-4 text-right text-xs font-normal text-gray-500">
                             {t('creators.engagements')}
                         </th>
-                        <th className="whitespace-nowrap pr-4 text-left text-xs font-normal text-gray-500">
+                        <th className="whitespace-nowrap pr-4 text-right text-xs font-normal text-gray-500">
                             {t('creators.engagementRate')}
                         </th>
-                        <th className="whitespace-nowrap pr-4 text-left text-xs font-normal text-gray-500">
+                        <th className="whitespace-nowrap text-right text-xs font-normal text-gray-500">
                             {t('creators.avgViews')}
                         </th>
-                        <th className="whitespace-nowrap pr-4 text-center text-xs font-normal text-gray-500">
-                            {''}
-                        </th>
+                        <th className="">{''}</th>
                     </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white">

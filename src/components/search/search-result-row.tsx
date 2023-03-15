@@ -10,7 +10,6 @@ import type { CreatorSearchAccountObject } from 'types';
 
 export const SearchResultRow = ({
     creator,
-
     setShowCampaignListModal,
     setSelectedCreator,
 }: {
@@ -39,35 +38,38 @@ export const SearchResultRow = ({
     };
 
     return (
-        <tr className="duration-1 group hover:bg-primary-100">
-            <td className="flex min-w-min flex-row items-center space-x-2 py-2 px-4">
-                <img src={imgProxy(picture) as string} className="h-12 w-12" alt={handle} />
-                <div>
-                    <div className="font-bold line-clamp-2">{fullname}</div>
-                    <div className="text-sm text-primary-500 line-clamp-1">
-                        {handle ? `@${handle}` : null}
+        <tr className="group hover:bg-primary-100 ">
+            <td className="w-full">
+                <div className="flex w-full flex-row gap-x-2 py-2 px-4">
+                    <img src={imgProxy(picture) as string} className="h-12 w-12" alt={handle} />
+                    <div>
+                        <div className="font-bold line-clamp-2">{fullname}</div>
+                        <div className="text-sm text-primary-500 line-clamp-1">
+                            {handle ? `@${handle}` : null}
+                        </div>
                     </div>
                 </div>
             </td>
-            <td className="text-sm">{numberFormatter(followers) ?? '-'}</td>
-            <td className="text-sm">{numberFormatter(engagements) ?? '-'}</td>
-            <td className="text-sm">{decimalToPercent(engagement_rate) ?? '-'}</td>
-            <td className="text-sm">{numberFormatter(avg_views) ?? '-'}</td>
-            <td className="">
-                <div className="flex items-center justify-center gap-x-4 opacity-0 duration-300 group-hover:opacity-100">
+            <td className="text-right text-sm">{numberFormatter(followers) ?? '-'}</td>
+            <td className="text-right text-sm">{numberFormatter(engagements) ?? '-'}</td>
+            <td className="text-right text-sm">{decimalToPercent(engagement_rate) ?? '-'}</td>
+            <td className="text-right text-sm">{numberFormatter(avg_views) ?? '-'}</td>
+            <td className="whitespace-nowrap px-10">
+                <div className="flex items-center gap-x-4 opacity-100 duration-300 group-hover:opacity-100">
                     <Button
                         onClick={addToCampaign}
                         variant="secondary"
                         className="flex items-center gap-1"
                     >
-                        <PlusCircleIcon className="h-5 w-5 lg:hidden" />
+                        <PlusCircleIcon className="h-5 w-5" />
                         <span className="hidden xl:inline-block">
                             {t('creators.addToCampaign')}
                         </span>
                     </Button>
+
                     <Link href={`/influencer/${platform}/${user_id}`} target="_blank">
                         <Button className="flex items-center gap-1">
-                            <PlusCircleIcon className="h-5 w-5 lg:hidden" />
+                            <PlusCircleIcon className="h-5 w-5" />
                             <span className="hidden xl:inline-block">
                                 {t('creators.analyzeProfile')}
                             </span>
