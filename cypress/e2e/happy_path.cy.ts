@@ -79,6 +79,20 @@ describe('Main pages happy paths', () => {
         cy.contains('button', 'Close').click();
         cy.contains('button', 'Subscribe').should('not.exist');
     });
+    it('can open ai email generator', () => {
+        // not actually testing functionality of the email generator. Just making sure the page opens.
+        cy.loginTestUser();
+        cy.contains('AI Email Generator').click();
+        cy.contains('Generate emails to influencers with our AI Email Generator', {
+            timeout: 10000,
+        }); // loads ai email generator page
+        cy.url().should('include', `/ai-email-generator`);
+        // pre-populates the brand name. can interact with form.
+        cy.get(`input[placeholder="Your Brand's Name"]`)
+            .should('have.value', 'Test Company')
+            .type('123')
+            .should('have.value', 'Test Company123');
+    });
 });
 
 // Need to export an empty object to keep typescript happy. Otherwise, it will complain that the file is a module, but it has no imports or exports.
