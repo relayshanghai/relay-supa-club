@@ -7,6 +7,8 @@ import {
 } from 'src/utils/api/slack/handle-messages';
 import { serverLogger } from 'src/utils/logger';
 
+// This api is a Supabase database webhook. It is triggered when a new row is inserted into the profiles table or a new row is inserted or updated in companies table. The webhook sends a Slack message to the channel specified in the Slack webhook URL.
+// Look at docs>supabase.md>database-webhook section for more info how this is set up on supabase.
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.query.token !== process.env.SLACK_WEBHOOK) {
         return res.status(httpCodes.UNAUTHORIZED).json({});
