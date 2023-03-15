@@ -39,13 +39,16 @@ export const SearchResultRow = ({
 
     return (
         <tr className={`duration-1 group relative hover:bg-primary-100`}>
-            <td className="invisible absolute right-28 -top-3 flex group-hover:visible">
+            <td
+                className="invisible absolute right-28 -top-3 flex group-hover:visible"
+                data-testid={`search-result-row-buttons/${user_id}`}
+            >
                 <div className="flex space-x-4">
                     <Button onClick={addToCampaign} variant="secondary">
                         {t('creators.addToCampaign')}
                     </Button>
                     <Link
-                        data-testid="analyze-button"
+                        data-testid={`analyze-button/${user_id}`}
                         href={`/influencer/${platform}/${user_id}`}
                         target="_blank"
                     >

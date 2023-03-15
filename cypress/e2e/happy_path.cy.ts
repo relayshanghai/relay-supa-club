@@ -38,14 +38,24 @@ describe('Main pages happy paths', () => {
     });
     it('can open analyze page', () => {
         cy.loginTestUser();
+        cy.contains('T-Series', { timeout: 20000 });
 
-        // wait for search results
-        cy.contains('T-Series', { timeout: 20000 }).click(); // the first influencer search result
-        cy.contains('analyze');
-        cy.getByTestId('analyze-button')
+        const tSeriesID = 'UCq-Fj5jknLsUf-MWSy4_brA';
+        cy.getByTestId(`search-result-row-buttons/${tSeriesID}`).invoke('show').contains('Analyze');
+        cy.getByTestId(`analyze-button/${tSeriesID}`)
             .should('have.attr', 'target', '_blank')
             .invoke('removeAttr', 'target') // remove target attribute so we can click it and stay on the same page
-            .click();
+
+            .click({ force: true }); // force click because the button is hidden because of our wierd hover UI
+
+        cy.contains('Contact influencer', { timeout: 10000 }); // loads analyze page
+
+        cy.url().should('include', `influencer/youtube/${tSeriesID}`);
+
+        cy.contains('button', 'Add To Campaign');
+        // TODO: test this feature. The problem is we are using a real live account, so we would need to create a campaign and then delete it. currently we don't have a way to delete campaigns. work item: https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/245
+
+        cy.contains('Channel Stats'); // not sure what else to look for on this page. Seems good enough for a happy path.
     });
 });
 
