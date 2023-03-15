@@ -62,6 +62,7 @@ export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
             <input
                 className="block w-full appearance-none rounded-md border border-gray-200 bg-white px-3 py-2 text-gray-600 placeholder-gray-400 ring-1 ring-gray-900 ring-opacity-5 placeholder:text-sm focus:outline-none"
                 placeholder={t('creators.show.searchInfluencerPlaceholder') as string}
+                data-testid="creator-search"
                 id="creator-search"
                 value={searchTerm}
                 onChange={(e) => handleChange(e)}

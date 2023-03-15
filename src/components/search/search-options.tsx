@@ -51,15 +51,17 @@ export const SearchOptions = ({
     return (
         <>
             <div className="flex w-full flex-col items-start space-y-2 py-4 font-light md:flex-row md:space-x-4 md:space-y-0">
-                <SearchTopics
-                    path="influencer-search/topics"
-                    placeholder={t('creators.searchTopic')}
-                    topics={tags}
-                    platform={platform}
-                    onSetTopics={(topics: any) => {
-                        setTopicTags(topics);
-                    }}
-                />
+                <div data-testid="search-topics">
+                    <SearchTopics
+                        path="influencer-search/topics"
+                        placeholder={t('creators.searchTopic')}
+                        topics={tags}
+                        platform={platform}
+                        onSetTopics={(topics: any) => {
+                            setTopicTags(topics);
+                        }}
+                    />
+                </div>
                 <SearchCreators platform={platform} />
             </div>
             <div className="flex flex-col items-start space-y-2 md:flex-row md:space-x-4 md:space-y-0">
