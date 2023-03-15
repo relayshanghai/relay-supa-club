@@ -1,4 +1,4 @@
-describe('template spec', () => {
+describe('Main pages happy paths', () => {
     it('can log in and load search page', () => {
         cy.visit('/');
         // starts on signup page. has an h1 that says signup in Chinese: 注册
@@ -35,6 +35,17 @@ describe('template spec', () => {
         cy.contains('alligators', { timeout: 30000 }).click();
 
         cy.contains('Brave Wilderness', { timeout: 30000 }); // the first influencer search result for alligators
+    });
+    it('can open analyze page', () => {
+        cy.loginTestUser();
+
+        // wait for search results
+        cy.contains('T-Series', { timeout: 20000 }).click(); // the first influencer search result
+        cy.contains('analyze');
+        cy.getByTestId('analyze-button')
+            .should('have.attr', 'target', '_blank')
+            .invoke('removeAttr', 'target') // remove target attribute so we can click it and stay on the same page
+            .click();
     });
 });
 

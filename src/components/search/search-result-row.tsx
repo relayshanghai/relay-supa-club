@@ -5,7 +5,7 @@ import { ShareLink } from 'src/components/icons';
 import { useSearch } from 'src/hooks/use-search';
 import { imgProxy } from 'src/utils/fetcher';
 import { decimalToPercent, numberFormatter } from 'src/utils/formatter';
-import { CreatorSearchAccountObject } from 'types';
+import type { CreatorSearchAccountObject } from 'types';
 
 export const SearchResultRow = ({
     creator,
@@ -44,7 +44,11 @@ export const SearchResultRow = ({
                     <Button onClick={addToCampaign} variant="secondary">
                         {t('creators.addToCampaign')}
                     </Button>
-                    <Link href={`/influencer/${platform}/${user_id}`} target="_blank">
+                    <Link
+                        data-testid="analyze-button"
+                        href={`/influencer/${platform}/${user_id}`}
+                        target="_blank"
+                    >
                         <Button>{t('creators.analyzeProfile')}</Button>
                     </Link>
 
