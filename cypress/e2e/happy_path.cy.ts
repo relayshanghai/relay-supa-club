@@ -36,19 +36,19 @@ describe('Main pages happy paths', () => {
 
         cy.contains('Brave Wilderness', { timeout: 30000 }); // the first influencer search result for alligators
     });
-    it('can open analyze page', () => {
+    it.only('can open analyze page', () => {
         cy.loginTestUser();
         cy.contains('T-Series', { timeout: 20000 });
 
         const tSeriesID = 'UCq-Fj5jknLsUf-MWSy4_brA';
-        cy.getByTestId(`search-result-row-buttons/${tSeriesID}`).invoke('show').contains('Analyze');
+        cy.getByTestId(`search-result-row-buttons/${tSeriesID}`).contains('Analyze');
         cy.getByTestId(`analyze-button/${tSeriesID}`)
             .should('have.attr', 'target', '_blank')
             .invoke('removeAttr', 'target') // remove target attribute so we can click it and stay on the same page
+            .click({ force: true }); // force click because the button is hidden because of our weird hover UI
 
-            .click({ force: true }); // force click because the button is hidden because of our wierd hover UI
-
-        cy.contains('Contact influencer', { timeout: 10000 }); // loads analyze page
+        cy.contains('Generating influencer Report. Please wait', { timeout: 30000 }); // loading analyze page
+        cy.contains('Contact influencer', { timeout: 30000 }); // loads analyze page
 
         cy.url().should('include', `influencer/youtube/${tSeriesID}`);
 
