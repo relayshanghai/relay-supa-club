@@ -39,3 +39,8 @@ next-env.d.ts
 
 # db backup
 backup.sql
+
+# cypress
+cypress/videos
+cypress/screenshots
+cypress/integration/*.js
