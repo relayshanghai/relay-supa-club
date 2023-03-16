@@ -1,10 +1,9 @@
 import { Menu } from '@headlessui/react';
 import { PlusCircleIcon } from '@heroicons/react/24/solid';
 import Link from 'next/link';
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
-import { DotsCircle, DotsHorizontal, ShareLink } from 'src/components/icons';
+import { DotsHorizontal, ShareLink } from 'src/components/icons';
 import { useSearch } from 'src/hooks/use-search';
 import { imgProxy } from 'src/utils/fetcher';
 import { decimalToPercent, numberFormatter } from 'src/utils/formatter';
@@ -39,8 +38,6 @@ export const SearchResultRow = ({
         if (creator) setSelectedCreator(creator);
     };
 
-    const [showOptions, setShowOptions] = useState(false);
-
     return (
         <tr className="group hover:bg-primary-100 ">
             <td className="w-full">
@@ -58,6 +55,7 @@ export const SearchResultRow = ({
             <td className="text-right text-sm">{numberFormatter(engagements) ?? '-'}</td>
             <td className="text-right text-sm">{decimalToPercent(engagement_rate) ?? '-'}</td>
             <td className="text-right text-sm">{numberFormatter(avg_views) ?? '-'}</td>
+
             <td className="sticky right-0 z-10 lg:relative">
                 <div className="relative hidden flex-row items-center justify-center gap-1 duration-100 group-hover:opacity-100 lg:flex lg:opacity-100">
                     <Button
@@ -85,16 +83,16 @@ export const SearchResultRow = ({
                     )}
                 </div>
 
-                <div className="relative flex flex-col items-center justify-center gap-1 lg:hidden">
-                    <Menu as="div" className="relative inline-block text-left">
-                        <Menu.Button>
+                <div className="flex flex-col items-center justify-center gap-1 lg:hidden">
+                    <Menu>
+                        <Menu.Button as="div" className="relative">
                             <Button>
                                 <DotsHorizontal />
                             </Button>
                         </Menu.Button>
 
-                        <Menu.Items className="absolute right-0 z-50 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                            <div className="px-1 py-1 ">
+                        <Menu.Items className="absolute right-0 z-50 w-56 divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                            <div className="px-1 py-1">
                                 <Menu.Item>
                                     {({ active }) => (
                                         <button

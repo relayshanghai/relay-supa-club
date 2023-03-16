@@ -23,7 +23,7 @@ export const SearchResultsTable = ({
                 }`}
             >
                 <thead className="sticky top-0 bg-white">
-                    <tr className="relative">
+                    <tr>
                         <th className="w-72 p-4 text-left text-xs font-normal text-gray-500">
                             {t('creators.account')}
                         </th>
