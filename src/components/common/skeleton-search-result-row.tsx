@@ -40,5 +40,11 @@ export const SkeletonSearchResultRow = ({ delay }: { delay: number }) => (
                 style={{ animationDelay: `${delay}ms` }}
             />
         </td>
+        <td className="text-sm">
+            <div
+                className="h-2 w-10 animate-pulse bg-gray-400"
+                style={{ animationDelay: `${delay}ms` }}
+            />
+        </td>
     </tr>
 );

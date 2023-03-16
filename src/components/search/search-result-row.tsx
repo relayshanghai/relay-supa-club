@@ -1,8 +1,10 @@
+import { Menu } from '@headlessui/react';
 import { PlusCircleIcon } from '@heroicons/react/24/solid';
 import Link from 'next/link';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
-import { ShareLink } from 'src/components/icons';
+import { DotsCircle, DotsHorizontal, ShareLink } from 'src/components/icons';
 import { useSearch } from 'src/hooks/use-search';
 import { imgProxy } from 'src/utils/fetcher';
 import { decimalToPercent, numberFormatter } from 'src/utils/formatter';
@@ -37,6 +39,8 @@ export const SearchResultRow = ({
         if (creator) setSelectedCreator(creator);
     };
 
+    const [showOptions, setShowOptions] = useState(false);
+
     return (
         <tr className="group hover:bg-primary-100 ">
             <td className="w-full">
@@ -54,8 +58,8 @@ export const SearchResultRow = ({
             <td className="text-right text-sm">{numberFormatter(engagements) ?? '-'}</td>
             <td className="text-right text-sm">{decimalToPercent(engagement_rate) ?? '-'}</td>
             <td className="text-right text-sm">{numberFormatter(avg_views) ?? '-'}</td>
-            <td className="">
-                <div className="flex flex-row items-center justify-center gap-1 duration-100 group-hover:opacity-100 lg:opacity-0">
+            <td className="sticky right-0 z-10 lg:relative">
+                <div className="relative hidden flex-row items-center justify-center gap-1 duration-100 group-hover:opacity-100 lg:flex lg:opacity-100">
                     <Button
                         onClick={addToCampaign}
                         variant="secondary"
@@ -79,6 +83,69 @@ export const SearchResultRow = ({
                             </Button>
                         </Link>
                     )}
+                </div>
+
+                <div className="relative flex flex-col items-center justify-center gap-1 lg:hidden">
+                    <Menu as="div" className="relative inline-block text-left">
+                        <Menu.Button>
+                            <Button>
+                                <DotsHorizontal />
+                            </Button>
+                        </Menu.Button>
+
+                        <Menu.Items className="absolute right-0 z-50 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                            <div className="px-1 py-1 ">
+                                <Menu.Item>
+                                    {({ active }) => (
+                                        <button
+                                            className={`${
+                                                active
+                                                    ? 'bg-violet-500 text-white'
+                                                    : 'text-gray-900'
+                                            } group flex w-full items-center justify-center rounded-md px-2 py-2 text-sm`}
+                                            onClick={addToCampaign}
+                                        >
+                                            {t('creators.addToCampaign')}
+                                        </button>
+                                    )}
+                                </Menu.Item>
+
+                                <Link href={`/influencer/${platform}/${user_id}`} target="_blank">
+                                    <Menu.Item>
+                                        {({ active }) => (
+                                            <button
+                                                className={`${
+                                                    active
+                                                        ? 'bg-violet-500 text-white'
+                                                        : 'text-gray-900'
+                                                } group flex w-full items-center justify-center rounded-md px-2 py-2 text-sm`}
+                                            >
+                                                {t('creators.analyzeProfile')}
+                                            </button>
+                                        )}
+                                    </Menu.Item>
+                                </Link>
+
+                                {url && (
+                                    <Link href={url} target="_blank" rel="noopener noreferrer">
+                                        <Menu.Item>
+                                            {({ active }) => (
+                                                <button
+                                                    className={`${
+                                                        active
+                                                            ? 'bg-violet-500 text-white'
+                                                            : 'text-gray-900'
+                                                    } group flex w-full items-center justify-center rounded-md px-2 py-2 text-sm`}
+                                                >
+                                                    <ShareLink className="w-5 fill-current" />
+                                                </button>
+                                            )}
+                                        </Menu.Item>
+                                    </Link>
+                                )}
+                            </div>
+                        </Menu.Items>
+                    </Menu>
                 </div>
             </td>
         </tr>

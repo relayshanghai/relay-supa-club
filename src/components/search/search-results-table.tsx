@@ -23,7 +23,7 @@ export const SearchResultsTable = ({
                 }`}
             >
                 <thead className="sticky top-0 bg-white">
-                    <tr>
+                    <tr className="relative">
                         <th className="w-72 p-4 text-left text-xs font-normal text-gray-500">
                             {t('creators.account')}
                         </th>
@@ -39,7 +39,7 @@ export const SearchResultsTable = ({
                         <th className="w-24 whitespace-nowrap text-right text-xs font-normal text-gray-500">
                             {t('creators.avgViews')}
                         </th>
-                        <th className="w-96">{''}</th>
+                        <th className="w-28 lg:w-96">{''}</th>
                     </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white">
