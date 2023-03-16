@@ -54,32 +54,28 @@ export const SearchResultRow = ({
             <td className="text-right text-sm">{numberFormatter(engagements) ?? '-'}</td>
             <td className="text-right text-sm">{decimalToPercent(engagement_rate) ?? '-'}</td>
             <td className="text-right text-sm">{numberFormatter(avg_views) ?? '-'}</td>
-            <td className="whitespace-nowrap px-10">
-                <div className="flex items-center gap-x-4 opacity-100 duration-300 group-hover:opacity-100">
+            <td className="">
+                <div className="flex flex-row items-center justify-center gap-1 duration-100 group-hover:opacity-100 lg:opacity-0">
                     <Button
                         onClick={addToCampaign}
                         variant="secondary"
                         className="flex items-center gap-1"
                     >
-                        <PlusCircleIcon className="h-5 w-5" />
-                        <span className="hidden xl:inline-block">
-                            {t('creators.addToCampaign')}
-                        </span>
+                        <PlusCircleIcon className="w-5" />
+                        <span className="">{t('creators.addToCampaign')}</span>
                     </Button>
 
                     <Link href={`/influencer/${platform}/${user_id}`} target="_blank">
-                        <Button className="flex items-center gap-1">
-                            <PlusCircleIcon className="h-5 w-5" />
-                            <span className="hidden xl:inline-block">
-                                {t('creators.analyzeProfile')}
-                            </span>
+                        <Button className="flex flex-row items-center">
+                            <PlusCircleIcon className="w-5" />
+                            <span className="">{t('creators.analyzeProfile')}</span>
                         </Button>
                     </Link>
 
                     {url && (
                         <Link href={url} target="_blank" rel="noopener noreferrer">
                             <Button>
-                                <ShareLink className="h-5 w-5 fill-current text-white" />
+                                <ShareLink className="w-5 fill-current text-white" />
                             </Button>
                         </Link>
                     )}

@@ -16,30 +16,30 @@ export const SearchResultsTable = ({
     const { t } = useTranslation();
     const { loading, resultPages, usageExceeded, noResults } = useSearch();
     return (
-        <div className="w-full overflow-auto">
+        <div className="w-full overflow-x-auto">
             <table
-                className={`w-full table-auto divide-y divide-gray-200 overflow-x-auto rounded-lg shadow ${
+                className={`w-full table-fixed divide-y divide-gray-200 rounded-lg shadow ${
                     loading ? 'opacity-60' : ''
                 }`}
             >
                 <thead className="sticky top-0 bg-white">
                     <tr>
-                        <th className="p-4 text-left text-xs font-normal text-gray-500">
+                        <th className="w-72 p-4 text-left text-xs font-normal text-gray-500">
                             {t('creators.account')}
                         </th>
-                        <th className="whitespace-nowrap pr-4 text-right text-xs font-normal text-gray-500">
+                        <th className="w-24 whitespace-nowrap pr-4 text-right text-xs font-normal text-gray-500">
                             {t('creators.subscribers')}
                         </th>
-                        <th className="whitespace-nowrap pr-4 text-right text-xs font-normal text-gray-500">
+                        <th className="w-24 whitespace-nowrap pr-4 text-right text-xs font-normal text-gray-500">
                             {t('creators.engagements')}
                         </th>
-                        <th className="whitespace-nowrap pr-4 text-right text-xs font-normal text-gray-500">
+                        <th className="w-24 whitespace-nowrap pr-4 text-right text-xs font-normal text-gray-500">
                             {t('creators.engagementRate')}
                         </th>
-                        <th className="whitespace-nowrap text-right text-xs font-normal text-gray-500">
+                        <th className="w-24 whitespace-nowrap text-right text-xs font-normal text-gray-500">
                             {t('creators.avgViews')}
                         </th>
-                        <th className="">{''}</th>
+                        <th className="w-96">{''}</th>
                     </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white">
