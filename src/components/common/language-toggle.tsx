@@ -8,8 +8,10 @@ export const LanguageToggle = () => {
     const [displayOptions, setDisplayOptions] = useState(false);
 
     const toggleLanguage = (value: string) => {
-        i18next.changeLanguage(value);
-        setDisplayOptions(false);
+        i18next.changeLanguage(value, () => {
+            setDisplayOptions(false);
+            localStorage.setItem('language', value);
+        });
     };
 
     const optionsRef: LegacyRef<HTMLDivElement> = useRef(null);
