@@ -13,14 +13,6 @@ CREATE OR REPLACE FUNCTION tests.logg(_data ANYELEMENT) RETURNS void
     END;
     $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION tests.logg(_data ANYELEMENT)
-    RETURNS void
-    AS $$
-    BEGIN
-      RAISE NOTICE E'\n\n%\n', _data;
-    END;
-    $$ LANGUAGE plpgsql;
-
 CREATE OR REPLACE FUNCTION tests.set_var(_name TEXT, _data ANYELEMENT)
     RETURNS void
     LANGUAGE plpgsql
@@ -45,7 +37,9 @@ CREATE OR REPLACE FUNCTION tests.get_var(_name ANYELEMENT)
         END;
     $$;
 
-CREATE OR REPLACE FUNCTION tests.get_profiles() RETURNS RECORD
+CREATE OR REPLACE FUNCTION tests.get_profiles()
+    RETURNS RECORD
+    SECURITY DEFINER
     AS $$
     DECLARE
         _row RECORD;

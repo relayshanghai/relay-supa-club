@@ -2,11 +2,12 @@
 -- Policies directory: /tmp/supabase/policies
 
 BEGIN;
-SELECT plan(6);
+SELECT plan(9);
 
 -- start includes
 \include /tmp/supabase/functions/is_employee.sql
-\include /tmp/supabase/policies/profiles_insert.policy.sql
+\include /tmp/supabase/policies/profiles_select.policy.sql
+\include /tmp/supabase/policies/profiles_delete.policy.sql
 -- end includes
 
 DO $$
@@ -58,46 +59,70 @@ $$ LANGUAGE plpgsql;
 -- make sure everything's available
 SELECT has_function('relay_is_employee');
 SELECT tests.rls_enabled('profiles');
-SELECT policy_cmd_is('profiles', 'profiles_insert', 'insert');
+SELECT policy_cmd_is('profiles', 'profiles_select', 'select');
+SELECT policy_cmd_is('profiles', 'profiles_delete', 'delete');
 
-PREPARE insert_profile AS
-  SELECT * FROM tests.create_profile(
-    'fake-owner@email.com',
-    'John',
-    'Fake',
-    'company_owner',
-    (SELECT tests.get_var('company_relay_id'::TEXT))::UUID
-  );
+PREPARE delete_others AS
+  DELETE FROM profiles
+  WHERE email = 'owner@email.com'
+  RETURNING email;
 
--- Test an anonymous
+PREPARE delete_own AS
+  DELETE FROM profiles
+  WHERE email = 'employee@email.com'
+  RETURNING email;
+
+PREPARE delete_own_relay AS
+  DELETE FROM profiles
+  WHERE email = 'jacob@relay.club'
+  RETURNING email;
+
+SAVEPOINT p2;
+
+-- Test anonymous
   SELECT tests.clear_authentication();
 
   SELECT
-    throws_ok(
-      'insert_profile',
-      null,
-      'Anonymous CANNOT insert into profiles'
+    is_empty(
+      'delete_others',
+      'Anonymous user CANNOT delete other profiles'
     );
 
--- Test staff user
+  ROLLBACK TO SAVEPOINT p2;
+
+-- Test basic user
   SELECT tests.authenticate_as('employee@email.com');
 
   SELECT
-    throws_ok(
-      'insert_profile',
-      null,
-      'Authenticated user CANNOT insert into profiles'
+    is_empty(
+      'delete_others',
+      'Authenticated user CANNOT delete other profiles'
     );
+
+  SELECT
+    is_empty(
+      'delete_own',
+      'Authenticated user CANNOT delete own profile'
+    );
+
+  ROLLBACK TO SAVEPOINT p2;
 
 -- Test staff user
   SELECT tests.authenticate_as('jacob@relay.club');
 
   SELECT
-    throws_ok(
-      'insert_profile',
-      null,
-      'Relay employee CANNOT insert into profiles'
+    is_empty(
+      'delete_others',
+      'Relay employee CANNOT delete other profiles'
     );
 
-SELECT * FROM finish(); -- end test
+  SELECT
+    is_empty(
+      'delete_own_relay',
+      'Relay employee CANNOT delete own profile'
+    );
+
+  ROLLBACK TO SAVEPOINT p2;
+
+SELECT * FROM finish();
 ROLLBACK;
