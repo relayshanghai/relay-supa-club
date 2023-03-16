@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import { createClient } from '@supabase/supabase-js';
-import { DatabaseWithCustomTypes } from 'types';
+import type { DatabaseWithCustomTypes } from 'types';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 if (!supabaseUrl) console.log('NEXT_PUBLIC_SUPABASE_URL not set');

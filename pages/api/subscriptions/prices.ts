@@ -1,7 +1,7 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { serverLogger } from 'src/utils/logger';
-import { RelayPlan } from 'types';
+import type { RelayPlan } from 'types';
 import { getStripePlanPrices } from 'src/utils/api/stripe/prices';
 
 export type SubscriptionPricesGetResponse = {

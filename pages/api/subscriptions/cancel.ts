@@ -1,4 +1,4 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { updateCompanySubscriptionStatus } from 'src/utils/api/db';
 import { getSubscription } from 'src/utils/api/stripe/helpers';
@@ -6,7 +6,7 @@ import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 import { isCompanyOwnerOrRelayEmployee } from 'src/utils/auth';
 import { serverLogger } from 'src/utils/logger';
 import { unixEpochToISOString } from 'src/utils/utils';
-import Stripe from 'stripe';
+import type Stripe from 'stripe';
 
 export type SubscriptionCancelPostBody = {
     company_id: string;

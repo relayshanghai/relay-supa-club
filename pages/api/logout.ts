@@ -1,5 +1,5 @@
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
-import { NextApiHandler } from 'next';
+import type { NextApiHandler } from 'next';
 import { serverLogger } from 'src/utils/logger';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';

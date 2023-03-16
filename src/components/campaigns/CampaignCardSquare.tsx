@@ -1,18 +1,19 @@
 import Link from 'next/link';
 import Image from 'next/legacy/image';
 import { ChartBarIcon, PencilSquareIcon } from '@heroicons/react/20/solid';
-import {
-    useState,
-    useEffect,
+import type {
     JSXElementConstructor,
     Key,
     ReactElement,
     ReactFragment,
     ReactNode,
-    ReactPortal,
+    ReactPortal} from 'react';
+import {
+    useState,
+    useEffect
 } from 'react';
 import { supabase } from 'src/utils/supabase-client';
-import { CampaignWithCompanyCreators } from 'src/utils/api/db';
+import type { CampaignWithCompanyCreators } from 'src/utils/api/db';
 import { useTranslation } from 'react-i18next';
 
 export default function CampaignCardSquare({

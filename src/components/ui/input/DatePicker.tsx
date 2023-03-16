@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import { Control, Controller, FieldErrorsImpl, FieldValues } from 'react-hook-form';
+import type { Control, FieldErrorsImpl, FieldValues } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 import dateFormat from 'src/utils/dateFormat';
 export interface Props {
     fieldName: string;

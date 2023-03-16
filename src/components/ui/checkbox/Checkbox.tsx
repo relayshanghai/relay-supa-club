@@ -1,6 +1,6 @@
-import { UseFormRegister, FieldValues, FieldErrorsImpl } from 'react-hook-form';
+import type { UseFormRegister, FieldValues, FieldErrorsImpl } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { LabelValueObject } from 'types';
+import type { LabelValueObject } from 'types';
 
 export interface Props {
     fieldName: string;

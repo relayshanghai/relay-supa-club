@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
-import { ChangeEvent, MouseEvent, useRef, useState } from 'react';
+import type { ChangeEvent, MouseEvent} from 'react';
+import { useRef, useState } from 'react';
 import Link from 'next/link';
 import { toast } from 'react-hot-toast';
 import { Trashcan } from 'src/components/icons';

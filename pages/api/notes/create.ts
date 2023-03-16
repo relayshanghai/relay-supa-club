@@ -1,4 +1,4 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import type { CampaignNotesDB, CampaignNotesInsertDB } from 'src/utils/api/db';
 import { insertCampaignNote } from 'src/utils/api/db';

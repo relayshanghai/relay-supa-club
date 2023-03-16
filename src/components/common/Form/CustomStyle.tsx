@@ -1,7 +1,7 @@
 //Custom style for React Select, using tailwind config color
 //TODO: find a way to use the tailwind terms
 
-import { StylesConfig, GroupBase } from 'react-select';
+import type { StylesConfig, GroupBase } from 'react-select';
 
 const CustomStyles: StylesConfig<any, true, GroupBase<any>> = {
     menuList: (base) => ({

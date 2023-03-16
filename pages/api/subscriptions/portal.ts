@@ -1,4 +1,4 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiRequest, NextApiResponse } from 'next';
 import { APP_URL } from 'src/constants';
 import httpCodes from 'src/constants/httpCodes';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';

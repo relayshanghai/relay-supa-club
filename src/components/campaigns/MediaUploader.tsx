@@ -1,4 +1,5 @@
-import { ChangeEventHandler, useRef } from 'react';
+import type { ChangeEventHandler} from 'react';
+import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import Plus from 'src/components/icons/Plus';
 import Trashcan from 'src/components/icons/Trashcan';

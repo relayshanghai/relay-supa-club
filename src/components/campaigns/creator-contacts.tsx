@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useReport } from 'src/hooks/use-report';
-import { CampaignCreatorDB } from 'src/utils/api/db';
-import { CreatorReportContact } from 'types';
+import type { CampaignCreatorDB } from 'src/utils/api/db';
+import type { CreatorReportContact } from 'types';
 import { SocialMediaIcon } from '../common/social-media-icon';
 import { isValidUrl } from 'src/utils/utils';
 import ContactsSkeleton from './creator-contacts-skeleton';
