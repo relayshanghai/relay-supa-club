@@ -18,8 +18,8 @@ import type {
     CampaignCreatorAddCreatorPostBody,
     CampaignCreatorAddCreatorPostResponse,
 } from 'pages/api/campaigns/add-creator';
-import { CampaignsIndexGetQuery, CampaignsIndexGetResult } from 'pages/api/campaigns';
-import {
+import type { CampaignsIndexGetQuery, CampaignsIndexGetResult } from 'pages/api/campaigns';
+import type {
     CampaignCreatorsDeleteBody,
     CampaignCreatorsDeleteResponse,
 } from 'pages/api/campaigns/delete-creator';
