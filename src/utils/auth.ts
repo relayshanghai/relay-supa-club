@@ -1,5 +1,5 @@
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
-import { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiRequest, NextApiResponse } from 'next';
 import { getUserRole } from './api/db/calls/profiles';
 import { isAdmin } from './utils';
 import { serverLogger } from 'src/utils/logger';

@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { imgProxy } from 'src/utils/fetcher';
 import { numFormatter } from 'src/utils/utils';
-import { Post } from 'types';
+import type { Post } from 'types';
 import dateFormat from 'src/utils/dateFormat';
 
 const preparePostStats = (stat: Post['stat']) => {

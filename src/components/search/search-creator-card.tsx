@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import { imgProxy } from 'src/utils/fetcher';
 import { numFormatter } from 'src/utils/utils';
-import { AudienceLookalike, CreatorPlatform } from 'types';
+import type { AudienceLookalike, CreatorPlatform } from 'types';
 
 export default function CreatorCard({
     creator,

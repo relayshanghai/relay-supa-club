@@ -1,4 +1,4 @@
-import { CreatorPlatform, CreatorAccount, LocationWeighted } from 'types';
+import type { CreatorPlatform, CreatorAccount, LocationWeighted } from 'types';
 type NullStringTuple = [null | string, null | string];
 
 export interface FetchCreatorsFilteredParams {

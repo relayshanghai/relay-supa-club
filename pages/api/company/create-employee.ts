@@ -1,13 +1,14 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiRequest, NextApiResponse } from 'next';
 import { RELAY_DOMAIN } from 'src/constants';
 import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
 import httpCodes from 'src/constants/httpCodes';
 import { createEmployeeError } from 'src/errors/company';
+import type {
+    ProfileDB} from 'src/utils/api/db';
 import {
     createCompany,
     getCompanyByName,
     getProfileByEmail,
-    ProfileDB,
     updateCompany,
     updateCompanySubscriptionStatus,
     updateCompanyUsageLimits,

@@ -1,5 +1,5 @@
 import { numFormatter } from 'src/utils/utils';
-import { CreatorReport } from 'types';
+import type { CreatorReport } from 'types';
 import { Engagements, Followers, LikesFilled, Views } from '../icons';
 
 export const formatStats = (userProfile: CreatorReport['user_profile']) => {
