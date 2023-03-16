@@ -19,6 +19,12 @@ import type {
     CampaignCreatorAddCreatorPostResponse,
 } from 'pages/api/campaigns/add-creator';
 import type { CampaignsIndexGetQuery, CampaignsIndexGetResult } from 'pages/api/campaigns';
+import type {
+    CampaignCreatorsDeleteBody,
+    CampaignCreatorsDeleteResponse,
+} from 'pages/api/campaigns/delete-creator';
+import { clientLogger } from 'src/utils/logger';
+
 
 //The transform function is not used now, as the image proxy issue is handled directly where calls for the image.But this is left for future refactor. TODO:Ticket V2-181
 // const transformCampaignCreators = (creators: CampaignCreatorDB[]) => {
@@ -135,17 +141,23 @@ export const useCampaigns = ({
     );
 
     const deleteCreatorInCampaign = useCallback(
-        async (input: CampaignCreatorDB) => {
+        async ({ id }: CampaignCreatorDB) => {
             setLoading(true);
             if (!campaign?.id) throw new Error('No campaign found');
-            await nextFetch('campaigns/delete-creator', {
-                method: 'delete',
-                body: {
-                    ...input,
-                    campaign_id: campaign.id,
-                },
-            });
-            setLoading(false);
+            const body: CampaignCreatorsDeleteBody = {
+                id,
+                campaignId: campaign.id,
+            };
+            try {
+                await nextFetch<CampaignCreatorsDeleteResponse>('campaigns/delete-creator', {
+                    method: 'delete',
+                    body,
+                });
+            } catch (error) {
+                clientLogger(error, 'error');
+            } finally {
+                setLoading(false);
+            }
         },
         [campaign?.id],
     );

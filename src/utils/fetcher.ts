@@ -35,7 +35,8 @@ interface RequestInitWithBody extends RequestInit {
  */
 export const nextFetch = async <T = any>(path: string, options: RequestInitWithBody = {}) => {
     const body = options.body;
-    if (options.method?.toUpperCase() === 'POST' || options.method?.toUpperCase() === 'PUT') {
+    const method = options.method?.toUpperCase();
+    if (method === 'POST' || method === 'PUT' || method === 'DELETE') {
         options.headers = {
             'Content-Type': 'application/json',
             // allow manual override of Content-Type by placing this after
