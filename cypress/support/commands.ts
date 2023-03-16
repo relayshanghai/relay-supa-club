@@ -40,7 +40,7 @@ type CypressGetOptions =
     | undefined;
 
 function getByTestId(selector: string, options?: CypressGetOptions) {
-    return cy.get(`[data-testid=${selector}]`, options);
+    return cy.get(`[data-testid="${selector}"]`, options);
 }
 
 Cypress.Commands.add('getByTestId', getByTestId);
