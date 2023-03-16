@@ -1,5 +1,5 @@
-import type { LegacyRef} from 'react';
 import { useRef, useState } from 'react';
+import type { LegacyRef } from 'react';
 import i18next from 'i18next';
 import { Globe } from '../icons';
 import useOnOutsideClick from 'src/hooks/use-on-outside-click';
@@ -20,7 +20,10 @@ export const LanguageToggle = () => {
         <div>
             <div className="relative flex flex-col items-center">
                 <button ref={languageButtonRef} onClick={() => setDisplayOptions(!displayOptions)}>
-                    <Globe className="h-5 w-5 text-gray-300 duration-300 hover:text-primary-500" />
+                    <Globe
+                        data-testid="language-toggle-button"
+                        className="h-5 w-5 text-gray-300 duration-300 hover:text-primary-500"
+                    />
                 </button>
                 {displayOptions && (
                     <div

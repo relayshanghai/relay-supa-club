@@ -61,7 +61,7 @@ const prepareStats = (audience: AudienceStats, t: TFunction) => {
                 weight: weight || 0,
             })),
         });
-    if (audience.audience_geo)
+    if (audience.audience_geo?.countries)
         data.push({
             type: 'progress',
             label: 'countries',
@@ -70,7 +70,7 @@ const prepareStats = (audience: AudienceStats, t: TFunction) => {
                 weight: weight || 0,
             })),
         });
-    if (!!audience.audience_geo?.cities?.length)
+    if (audience.audience_geo?.cities)
         data.push({
             type: 'progress',
             label: 'cities',

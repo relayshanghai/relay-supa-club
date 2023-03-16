@@ -1,16 +1,6 @@
 import type { InfluencerPostRequest, InfluencerPostResponse } from 'pages/api/influencer-search';
-import type {
-    Dispatch,
-    PropsWithChildren,
-    SetStateAction} from 'react';
-import {
-    createContext,
-    useCallback,
-    useContext,
-    useEffect,
-    useRef,
-    useState,
-} from 'react';
+import type { Dispatch, PropsWithChildren, SetStateAction } from 'react';
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { usageErrors } from 'src/errors/usages';
 import { hasCustomError } from 'src/utils/errors';
 import { nextFetch } from 'src/utils/fetcher';
@@ -170,7 +160,12 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
                 }
                 setLoading(false);
             } catch (error: any) {
-                if (error?.message && error.message.includes('abort')) return;
+                if (
+                    typeof error?.message === 'string' &&
+                    error.message.toLowerCase().includes('abort')
+                ) {
+                    return;
+                }
                 clientLogger(error, 'error');
                 if (hasCustomError(error, usageErrors)) {
                     setUsageExceeded(true);

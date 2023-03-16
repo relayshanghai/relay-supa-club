@@ -2,6 +2,7 @@ import { useCallback, useRef, useState } from 'react';
 import InputWithAutocomplete from 'src/components/input-with-autocomplete';
 import useOnOutsideClick from 'src/hooks/use-on-outside-click';
 import { nextFetch } from 'src/utils/fetcher';
+import { clientLogger } from 'src/utils/logger';
 
 export const SearchTopics = ({
     onSetTopics,
@@ -29,18 +30,28 @@ export const SearchTopics = ({
             const signal = controller.signal;
             ref.current = controller;
 
-            const res = await nextFetch(path, {
-                method: 'post',
-                signal,
-                body: {
-                    term,
-                    platform,
-                },
-            });
+            try {
+                const res = await nextFetch(path, {
+                    method: 'post',
+                    signal,
+                    body: {
+                        term,
+                        platform,
+                    },
+                });
 
-            if (res && (res.success || Array.isArray(res))) {
-                const data = res.data || res;
-                setSuggestions(filter ? filter(data) : data);
+                if (res && (res.success || Array.isArray(res))) {
+                    const data = res.data || res;
+                    setSuggestions(filter ? filter(data) : data);
+                }
+            } catch (error: any) {
+                if (
+                    typeof error?.message === 'string' &&
+                    error.message.toLowerCase().includes('abort')
+                ) {
+                    return;
+                }
+                clientLogger(error, 'error');
             }
         },
         [platform, path, filter],
