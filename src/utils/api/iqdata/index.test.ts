@@ -2,6 +2,7 @@ import { requestNewReport } from './index';
 import type { CreatorReport } from '../../../../types';
 describe('iqdata requests', () => {
     test('requestNewReport: reports/new', async () => {
+        // matches the mock returned by src/mocks/server.ts. Mock data is in './iqdata/reports-newWWE.json'
         const creatorId = 'UCJ5v_MCY6GNUBTO8-D3XoAg';
         const result: CreatorReport = await requestNewReport('youtube', creatorId);
         expect(result.success).toBe(true);

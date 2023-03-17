@@ -13,20 +13,22 @@ export interface TestMountOptions {
     pathname?: string;
     pushStub?: Cypress.Agent<any>;
 }
+const mockProfile: IUserContext['profile'] = {
+    id: '1',
+    role: 'company_owner',
+    company_id: '1',
+    avatar_url: null,
+    email: 'mock@example.com',
+    first_name: 'mock-first',
+    last_name: 'mock-last',
+    phone: null,
+    updated_at: '2021-09-01T00:00:00.000Z',
+    created_at: '2021-09-01T00:00:00.000Z',
+};
+
 const mockUserContext: IUserContext = {
     user: null,
-    profile: {
-        id: '1',
-        role: 'company_owner',
-        company_id: '1',
-        avatar_url: null,
-        email: 'mock@example.com',
-        first_name: 'mock-first',
-        last_name: 'mock-last',
-        phone: null,
-        updated_at: '2021-09-01T00:00:00.000Z',
-        created_at: '2021-09-01T00:00:00.000Z',
-    },
+    profile: mockProfile,
     loading: false,
     login: async () => ({
         user: null,
@@ -49,6 +51,7 @@ export const testMount = (component: React.ReactElement, options?: TestMountOpti
     const router = cy.stub(NextRouter, 'default');
     cy.stub(NextRouter, 'useRouter').returns({ pathname: options?.pathname ?? '/dashboard', push });
     // see: https://on.cypress.io/mounting-react
+
     mount(
         <AppRouterContext.Provider value={router as any}>
             <I18nextProvider i18n={i18n}>
