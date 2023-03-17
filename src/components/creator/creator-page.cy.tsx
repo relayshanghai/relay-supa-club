@@ -1,7 +1,7 @@
 import React from 'react';
 import { CreatorPage } from './creator-page';
 
-import { testMount } from 'src/utils/cypress-app-wrapper';
+import { testMount } from '../../utils/cypress-app-wrapper';
 
 describe('<CreatorPage />', () => {
     it('renders', () => {
