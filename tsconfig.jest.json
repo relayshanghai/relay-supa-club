@@ -3,5 +3,6 @@
     "compilerOptions": {
         "types": ["jest", "node"]
     },
-    "exclude": ["node_modules", "**/*.cy.*", "cypress/*/**", "cypress.config.ts"]
+    "include": ["**/*.test.*"],
+    "exclude": ["node_modules", "cypress", "./cypress.config.ts"]
 }
