@@ -44,3 +44,4 @@ backup.sql
 cypress/videos
 cypress/screenshots
 cypress/integration/*.js
+public/mockServiceWorker.js
