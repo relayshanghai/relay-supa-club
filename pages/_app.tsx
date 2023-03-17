@@ -20,7 +20,7 @@ function MyApp({
     useEffect(() => {
         const storedLanguage = localStorage.getItem('language');
         storedLanguage !== null ? i18n.changeLanguage(storedLanguage) : i18n.changeLanguage(); // triggers the language detector
-    });
+    }, []);
     return (
         <>
             <Head>
