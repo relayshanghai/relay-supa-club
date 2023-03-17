@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
-import type { ChangeEvent, MouseEvent} from 'react';
+import type { ChangeEvent, MouseEvent } from 'react';
 import { useRef, useState } from 'react';
 import Link from 'next/link';
 import { toast } from 'react-hot-toast';
@@ -135,7 +135,7 @@ export default function CreatorsOutreach({
     return (
         <div>
             {/* Outreach Tabs */}
-            <div className="mb-4 flex">
+            <div className="mb-4 flex overflow-x-auto">
                 <Link href="/dashboard" legacyBehavior>
                     <div className="mr-4 flex-shrink-0 cursor-pointer rounded-md bg-gray-100 px-4 py-2 text-xs text-gray-600 duration-300 hover:bg-primary-500 hover:text-white">
                         <a>{t('campaigns.show.activities.outreach.addNewInfluencer')}</a>
@@ -213,14 +213,12 @@ export default function CreatorsOutreach({
                                                 </div>
                                                 <div className="ml-4">
                                                     <div className="truncate text-xs font-medium text-gray-900">
-
                                                         <Link
                                                             href={`/influencer/${creator.platform}/${creator.creator_id}`}
                                                             target="_blank"
                                                         >
                                                             {creator.fullname}
                                                         </Link>
-
                                                     </div>
                                                     <div className="inline-block truncate text-xs text-primary-500">
                                                         @{creator.username}
