@@ -212,6 +212,22 @@ function generate_database_types {
     npx supabase gen types typescript --local --schema=public > $script_dir/../types/supabase.ts
 }
 
+function get_linked_project {
+    if [ -f "$script_dir/.temp/project-ref" ]; then
+        project_ref=$(cat $script_dir/.temp/project-ref)
+
+        if [ "$1" == "--verbose" ]; then
+            echo " ID: $project_ref"
+            echo "URL: https://app.supabase.com/project/$project_ref"
+        else
+            echo $project_ref
+        fi
+    else
+        echo "No projects linked. Pick one below"
+        npx supabase projects list
+    fi
+}
+
 # Reverse engineered from
 # https://github.com/supabase/cli/blob/main/internal/db/test/test.go#L39
 function test_database {
@@ -306,6 +322,9 @@ function help {
 
     Test database:
         ./$script_name db_test [test1] [test2...]
+
+    Display the linked project:
+        ./$script_name get_proj [--verbose]
 END
     )
 
@@ -362,6 +381,9 @@ case $fn in
     ;;
   "db_test")
     test_database $@
+    ;;
+  "get_proj")
+    get_linked_project $@
     ;;
 *)
     supabase $fn $@
