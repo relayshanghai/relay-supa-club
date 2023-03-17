@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearch } from 'src/hooks/use-search';
 import type { CreatorSearchAccountObject } from 'types';

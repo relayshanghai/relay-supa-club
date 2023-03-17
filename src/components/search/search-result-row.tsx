@@ -39,7 +39,7 @@ export const SearchResultRow = ({
     };
 
     return (
-        <tr className="group hover:bg-primary-100 ">
+        <tr className="group hover:bg-primary-100">
             <td className="w-full">
                 <div className="flex w-full flex-row gap-x-2 py-2 px-4">
                     <img src={imgProxy(picture) as string} className="h-12 w-12" alt={handle} />
@@ -83,7 +83,10 @@ export const SearchResultRow = ({
                     )}
                 </div>
 
-                <div className="flex flex-col items-center justify-center gap-1 lg:hidden">
+                <div
+                    className="flex flex-col items-center justify-center gap-1 lg:hidden"
+                    data-testid={`search-result-row-buttons/${user_id}`}
+                >
                     <Menu as="div" className="relative inline-block text-left">
                         <Menu.Button>
                             <Button>
@@ -96,6 +99,7 @@ export const SearchResultRow = ({
                                 <Menu.Item>
                                     {({ active }) => (
                                         <button
+                                            data-testid={`analyze-button/${user_id}`}
                                             className={`${
                                                 active
                                                     ? 'bg-violet-500 text-white'
@@ -112,6 +116,7 @@ export const SearchResultRow = ({
                                     <Menu.Item>
                                         {({ active }) => (
                                             <button
+                                                data-testid={`analyze-button/${user_id}`}
                                                 className={`${
                                                     active
                                                         ? 'bg-violet-500 text-white'
@@ -129,6 +134,7 @@ export const SearchResultRow = ({
                                         <Menu.Item>
                                             {({ active }) => (
                                                 <button
+                                                    data-testid={`analyze-button/${user_id}`}
                                                     className={`${
                                                         active
                                                             ? 'bg-violet-500 text-white'
