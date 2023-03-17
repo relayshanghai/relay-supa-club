@@ -25,6 +25,8 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 //
+import i18n from '../../i18n';
+
 declare global {
     // eslint-disable-next-line @typescript-eslint/no-namespace
     namespace Cypress {
@@ -46,10 +48,11 @@ function getByTestId(selector: string, options?: CypressGetOptions) {
 Cypress.Commands.add('getByTestId', getByTestId);
 
 function loginTestUser(switchLangToEnglish = true) {
-    cy.visit('/login');
     if (switchLangToEnglish) {
         switchToEnglish();
     }
+
+    cy.visit('/login');
     cy.contains('Welcome back!'); // wait for login page load
     cy.get('input[type="email"]').type(Cypress.env('TEST_USER_EMAIL'));
     cy.get('input[type="password"]').type(Cypress.env('TEST_USER_PASSWORD'));
@@ -60,8 +63,8 @@ function loginTestUser(switchLangToEnglish = true) {
 Cypress.Commands.add('loginTestUser', loginTestUser);
 
 function switchToEnglish() {
-    getByTestId('language-toggle-button').click();
-    cy.contains('English').click();
+    localStorage.setItem('language', 'en');
+    i18n.changeLanguage('en');
 }
 Cypress.Commands.add('switchToEnglish', switchToEnglish);
 
