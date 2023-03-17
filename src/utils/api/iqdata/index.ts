@@ -2,8 +2,10 @@ import { headers } from 'src/utils/api/iqdata/constants';
 import { handleResError } from 'src/utils/fetcher';
 import type { CreatorPlatform, CreatorReport, CreatorSearchResult } from 'types';
 import type { CreatorReportsMetadata } from 'types/iqdata/creator-reports-metadata';
-import type { FetchCreatorsFilteredParams} from './transforms';
+import type { FetchCreatorsFilteredParams } from './transforms';
 import { prepareFetchCreatorsFiltered } from './transforms';
+
+export const IQDATA_URL = 'https://socapi.icu/v2.0/api/';
 
 /**
  *
@@ -12,7 +14,7 @@ import { prepareFetchCreatorsFiltered } from './transforms';
  * @description fetcher for IQData API. API docs: https://iqdata.social/docs/api
  */
 export const iqDataFetch = async <T = any>(path: string, options: RequestInit = {}) => {
-    const res = await fetch('https://socapi.icu/v2.0/api/' + path, {
+    const res = await fetch(IQDATA_URL + path, {
         ...options,
         headers: {
             ...headers,
