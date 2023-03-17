@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { CreatorPlatform } from 'types';
+import type { CreatorPlatform } from 'types';
 import { TitleSection } from './creator-title-section';
 import { CreatorOverview } from './creator-page-overview';
 import Head from 'next/head';

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button } from 'src/components/button';
 import { SearchProvider, useSearch } from 'src/hooks/use-search';
 import { numberFormatter } from 'src/utils/formatter';
-import { CreatorSearchAccountObject } from 'types';
+import type { CreatorSearchAccountObject } from 'types';
 import { useTranslation } from 'react-i18next';
 import { Spinner } from 'src/components/icons';
 import { AddToCampaignModal } from 'src/components/modal-add-to-campaign';

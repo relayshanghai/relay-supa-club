@@ -1,7 +1,8 @@
 /* eslint-disable no-console */
 import { Layout } from 'src/components/layout';
 import { useTranslation } from 'react-i18next';
-import { useForm, FormProvider, FieldErrorsImpl, Control, FieldValues } from 'react-hook-form';
+import type { FieldErrorsImpl, Control, FieldValues } from 'react-hook-form';
+import { useForm, FormProvider } from 'react-hook-form';
 import FormWrapper from 'src/components/common/Form/FormWrapper/FormWrapper';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
@@ -17,11 +18,12 @@ import {
     TextInput,
     TextareaInput as TextArea,
 } from 'src/components/ui';
-import { Question, questions, TimelineQuestion } from 'src/components/campaigns/helper';
+import type { Question, TimelineQuestion } from 'src/components/campaigns/helper';
+import { questions } from 'src/components/campaigns/helper';
 import { useCampaigns } from 'src/hooks/use-campaigns';
 import { useCallback } from 'react';
 import { Spinner } from 'src/components/icons';
-import { CampaignWithCompanyCreators } from 'src/utils/api/db';
+import type { CampaignWithCompanyCreators } from 'src/utils/api/db';
 import { clientLogger } from 'src/utils/logger';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 

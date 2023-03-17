@@ -1,10 +1,10 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { recordSearchUsage } from 'src/utils/api/db/calls/usages';
 import { fetchCreatorsFiltered } from 'src/utils/api/iqdata';
-import { FetchCreatorsFilteredParams } from 'src/utils/api/iqdata/transforms';
+import type { FetchCreatorsFilteredParams } from 'src/utils/api/iqdata/transforms';
 import { serverLogger } from 'src/utils/logger';
-import { CreatorSearchResult } from 'types';
+import type { CreatorSearchResult } from 'types';
 
 export type InfluencerPostRequest = FetchCreatorsFilteredParams & {
     company_id: string;

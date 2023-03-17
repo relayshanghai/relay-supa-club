@@ -1,7 +1,7 @@
 import dynamic from 'next/dynamic';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CreatorReport } from 'types';
+import type { CreatorReport } from 'types';
 import { Info } from '../icons';
 import { SimilarCreator } from './creator-similar-creator';
 import { SocialCard } from './creator-social-card';

@@ -1,6 +1,6 @@
 //TODO TicketV2-146: Add types naming convention to comment
 import { supabase } from 'src/utils/supabase-client';
-import {
+import type {
     CompanyDB,
     CampaignCreatorDB,
     CampaignCreatorDBInsert,

@@ -11,17 +11,19 @@ import type {
     ProfilePutBody,
     ProfilePutResponse,
 } from 'pages/api/profiles';
+import type {
+    MutableRefObject,
+    PropsWithChildren} from 'react';
 import {
     createContext,
-    MutableRefObject,
-    PropsWithChildren,
     useCallback,
     useContext,
     useEffect,
     useRef,
     useState,
 } from 'react';
-import useSWR, { KeyedMutator } from 'swr';
+import type { KeyedMutator } from 'swr';
+import useSWR from 'swr';
 
 import type { ProfileDB } from 'src/utils/api/db/types';
 import { nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';

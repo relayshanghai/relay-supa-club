@@ -1,8 +1,8 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 import { supabase } from 'src/utils/supabase-client';
-import Stripe from 'stripe';
+import type Stripe from 'stripe';
 
 export type PaymentMethodGetQueries = {
     /** company id */

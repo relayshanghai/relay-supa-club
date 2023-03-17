@@ -1,5 +1,5 @@
 import { isValidUrl } from 'src/utils/utils';
-import { CreatorReportContact } from 'types';
+import type { CreatorReportContact } from 'types';
 import { SocialMediaIcon } from '../common/social-media-icon';
 
 export const SocialCard = ({ contact }: { contact: CreatorReportContact }) => {
