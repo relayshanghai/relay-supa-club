@@ -160,6 +160,26 @@ export default function CreatorsOutreach({
                         </div>
                     ))}
                 </div>
+                {/* On Mobile Show Select instead */}
+                <select
+                    className="appearance-none rounded-lg bg-primary-500 bg-opacity-20 px-4 py-2 text-center text-xs font-semibold text-primary-500 outline-none sm:hidden"
+                    onChange={(e) => handleTabChange(e.target.value)}
+                >
+                    {tabs.map((tab, index) => (
+                        <option
+                            key={index}
+                            value={tab.value}
+                            {...(tabStatus === tab.value && { selected: true })}
+                            className={`mr-4 flex-shrink-0 cursor-pointer rounded-lg bg-gray-100 px-4 py-2 text-xs font-semibold text-gray-400 duration-300 hover:bg-primary-500 hover:bg-opacity-20 hover:text-primary-500 ${
+                                tabStatus === tab.value &&
+                                'bg-primary-500 bg-opacity-20 text-purple-500'
+                            }`}
+                        >
+                            {t(`campaigns.show.activities.outreach.${tab.label}`)} &nbsp;
+                            {creatorsCount(tab.value) > 0 && creatorsCount(tab.value)}
+                        </option>
+                    ))}
+                </select>
             </div>
             {/* -- Outreach Table -- */}
             <div className="overflow-x-auto">
