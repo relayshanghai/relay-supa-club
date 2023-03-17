@@ -12,7 +12,7 @@ SELECT plan(9);
 
 -- make sure everything's available
 SELECT has_function('relay_is_employee');
-SELECT tests.rls_enabled('profiles');
+SELECT tests.rls_enabled('public', 'profiles');
 SELECT policy_cmd_is('profiles', 'profiles_select', 'select');
 SELECT policy_cmd_is('profiles', 'profiles_update', 'update');
 

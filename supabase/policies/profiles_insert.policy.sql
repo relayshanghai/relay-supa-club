@@ -1,3 +1,5 @@
+ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
+
 DROP POLICY IF EXISTS profiles_insert ON profiles;
 
 CREATE POLICY profiles_insert

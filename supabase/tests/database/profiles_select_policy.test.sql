@@ -2,7 +2,7 @@
 -- Policies directory: /tmp/supabase/policies
 
 BEGIN;
-SELECT plan(10);
+SELECT plan(11);
 
 -- start includes
 \include /tmp/supabase/functions/is_employee.sql
@@ -11,6 +11,7 @@ SELECT plan(10);
 
 -- make sure everything's available
 SELECT has_function('relay_is_employee');
+SELECT tests.rls_enabled('public', 'profiles');
 SELECT policy_cmd_is('profiles', 'profiles_select', 'select');
 
 -- Test anonymous
