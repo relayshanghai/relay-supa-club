@@ -36,7 +36,7 @@ describe('Main pages happy paths', () => {
 
         cy.contains('Brave Wilderness', { timeout: 30000 }); // the first influencer search result for alligators
     });
-    it.only('can open analyze page', () => {
+    it('can open analyze page', () => {
         cy.loginTestUser();
         cy.contains('T-Series', { timeout: 20000 });
 
