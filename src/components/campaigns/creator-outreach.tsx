@@ -153,10 +153,8 @@ export default function CreatorsOutreach({
                                     : 'bg-gray-100 text-gray-400 '
                             }`}
                         >
-                            {t(`campaigns.show.activities.outreach.${tab.label}`)}
-                            <span>
-                                &nbsp;{creatorsCount(tab.value) > 0 && creatorsCount(tab.value)}
-                            </span>
+                            {t(`campaigns.show.activities.outreach.${tab.label}`)}{' '}
+                            <span> {creatorsCount(tab.value) > 0 && creatorsCount(tab.value)}</span>
                         </div>
                     ))}
                 </div>
@@ -169,13 +167,13 @@ export default function CreatorsOutreach({
                         <option
                             key={index}
                             value={tab.value}
-                            {...(tabStatus === tab.value && { selected: true })}
+                            selected={tabStatus === tab.value}
                             className={`mr-4 flex-shrink-0 cursor-pointer rounded-lg bg-gray-100 px-4 py-2 text-xs font-semibold text-gray-400 duration-300 hover:bg-primary-500 hover:bg-opacity-20 hover:text-primary-500 ${
                                 tabStatus === tab.value &&
                                 'bg-primary-500 bg-opacity-20 text-purple-500'
                             }`}
                         >
-                            {t(`campaigns.show.activities.outreach.${tab.label}`)} &nbsp;
+                            {t(`campaigns.show.activities.outreach.${tab.label}`)}{' '}
                             {creatorsCount(tab.value) > 0 && creatorsCount(tab.value)}
                         </option>
                     ))}
