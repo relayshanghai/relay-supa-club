@@ -83,9 +83,9 @@ CREATE OR REPLACE FUNCTION relay_$fn_name()
 RETURNS text
 LANGUAGE plpgsql
 AS \$\$
-BEGIN
-  RETURN 'Hello Relay!';
-END;
+  BEGIN
+    RETURN 'Hello Relay!';
+  END;
 \$\$;
 TEMPLATE
     )
@@ -128,6 +128,11 @@ function create_test {
 BEGIN;
 SELECT plan(1); -- no. of tests in the file
 
+-- start includes
+-- \include /tmp/supabase/functions/function.sql
+-- \include /tmp/supabase/policies/foo.policy.sql
+-- end includes
+
 SELECT has_column('auth', 'users', 'id', 'id should exist');
 -- SELECT has_function('function_name'); -- test function
 -- SELECT policy_cmd_is('table', 'policy', 'command'); -- test policy
@@ -154,6 +159,8 @@ function create_policy {
 
     message=$(
         cat <<-TEMPLATE
+DROP POLICY IF EXISTS $pl_name ON $tb_name;
+
 CREATE POLICY $pl_name
 ON $tb_name
 FOR ALL
@@ -225,6 +232,7 @@ function test_database {
         docker exec $container mkdir -p /tmp/supabase/tests/database/
         docker cp $script_dir/tests/database/00000-supabase_test_helpers.sql $container:/tmp/supabase/tests/database/ > /dev/null
         docker cp $script_dir/tests/database/00001-relay_test_helpers.sql $container:/tmp/supabase/tests/database/ > /dev/null
+        docker cp $script_dir/tests/database/00002-seed.test.sql $container:/tmp/supabase/tests/database/ > /dev/null
         docker cp $script_dir/tests/database/zzzzz-cleanup_helpers.sql $container:/tmp/supabase/tests/database/ > /dev/null
 
         for file in "$@"
