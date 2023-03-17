@@ -14,8 +14,6 @@ export const SearchResultsTable = ({
     setShowCampaignListModal: (show: boolean) => void;
     setSelectedCreator: (creator: CreatorSearchAccountObject) => void;
 }) => {
-    const [selectedMenuRow, setSelectedMenuRow] = useState<number | null>(null);
-
     const { t } = useTranslation();
     const { loading, resultPages, usageExceeded, noResults } = useSearch();
     return (
@@ -64,9 +62,6 @@ export const SearchResultsTable = ({
                                 <SearchResultRow
                                     key={i}
                                     creator={creator}
-                                    rowIndex={i}
-                                    selectedMenuRow={selectedMenuRow}
-                                    setSelectedMenuRow={setSelectedMenuRow}
                                     setShowCampaignListModal={setShowCampaignListModal}
                                     setSelectedCreator={setSelectedCreator}
                                 />
