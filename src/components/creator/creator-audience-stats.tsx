@@ -1,8 +1,8 @@
-import { TFunction } from 'i18next';
+import type { TFunction } from 'i18next';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { CreatorPlatform, CreatorReport, SimilarUser } from 'types';
+import type { CreatorPlatform, CreatorReport, SimilarUser } from 'types';
 import ToggleTabs from '../common/toggle-tabs';
 import { CreatorBlock } from './creator-block';
 import { ProgressBlock } from './creator-progress-block';
@@ -61,7 +61,7 @@ const prepareStats = (audience: AudienceStats, t: TFunction) => {
                 weight: weight || 0,
             })),
         });
-    if (audience.audience_geo)
+    if (audience.audience_geo?.countries)
         data.push({
             type: 'progress',
             label: 'countries',
@@ -70,7 +70,7 @@ const prepareStats = (audience: AudienceStats, t: TFunction) => {
                 weight: weight || 0,
             })),
         });
-    if (!!audience.audience_geo?.cities?.length)
+    if (audience.audience_geo?.cities)
         data.push({
             type: 'progress',
             label: 'cities',

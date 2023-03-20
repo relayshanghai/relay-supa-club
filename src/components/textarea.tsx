@@ -1,4 +1,4 @@
-import { TextareaHTMLAttributes } from 'react';
+import type { TextareaHTMLAttributes } from 'react';
 
 export const InputTextArea = ({
     label,

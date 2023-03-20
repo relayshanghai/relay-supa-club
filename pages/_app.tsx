@@ -3,10 +3,11 @@ import type { AppProps } from 'next/app';
 import Head from 'next/head';
 import { Toaster } from 'react-hot-toast';
 import { UserProvider } from 'src/hooks/use-user';
-import '../i18n';
+import i18n from '../i18n';
 import { createBrowserSupabaseClient } from '@supabase/auth-helpers-nextjs';
-import { SessionContextProvider, Session } from '@supabase/auth-helpers-react';
-import { useState } from 'react';
+import type { Session } from '@supabase/auth-helpers-react';
+import { SessionContextProvider } from '@supabase/auth-helpers-react';
+import { useEffect, useState } from 'react';
 import { CompanyProvider } from 'src/hooks/use-company';
 
 function MyApp({
@@ -16,7 +17,10 @@ function MyApp({
     initialSession: Session;
 }>) {
     const [supabaseClient] = useState(() => createBrowserSupabaseClient());
-
+    useEffect(() => {
+        const storedLanguage = localStorage.getItem('language');
+        storedLanguage !== null ? i18n.changeLanguage(storedLanguage) : i18n.changeLanguage(); // triggers the language detector
+    }, []);
     return (
         <>
             <Head>

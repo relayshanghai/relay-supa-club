@@ -1,4 +1,4 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { fetchIqDataGeos } from 'src/utils/api/iqdata';
 import { chinaFilter } from 'src/utils/utils';

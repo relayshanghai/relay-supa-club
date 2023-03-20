@@ -1,5 +1,5 @@
-import { SVGProps } from 'react';
-import { SocialMediaPlatform } from 'types';
+import type { SVGProps } from 'react';
+import type { SocialMediaPlatform } from 'types';
 import { Email, Facebook, Instagram, Tiktok, Twitter, Wechat, Youtube, Link } from '../icons';
 
 export const SocialMediaIcon = ({

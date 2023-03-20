@@ -1,7 +1,7 @@
 import { getCompanyCusId } from 'src/utils/api/db';
 
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
-import Stripe from 'stripe';
+import type Stripe from 'stripe';
 
 export interface ExpandedPlanWithProduct extends Stripe.Plan {
     product: Stripe.Product;

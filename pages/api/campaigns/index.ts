@@ -1,6 +1,7 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
-import { CampaignWithCompanyCreators, getCampaignWithCompanyCreators } from 'src/utils/api/db';
+import type { CampaignWithCompanyCreators} from 'src/utils/api/db';
+import { getCampaignWithCompanyCreators } from 'src/utils/api/db';
 import { serverLogger } from 'src/utils/logger';
 
 export type CampaignsIndexGetQuery = {

@@ -1,4 +1,4 @@
-import { PropsWithChildren } from 'react';
+import type { PropsWithChildren } from 'react';
 import { LanguageToggle } from './common/language-toggle';
 import { Title } from './title';
 

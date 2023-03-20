@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import { imgProxy } from 'src/utils/fetcher';
 import { numFormatter } from 'src/utils/utils';
-import { CreatorPlatform, SimilarUser } from 'types';
+import type { CreatorPlatform, SimilarUser } from 'types';
 import { Button } from '../button';
 import { ShareLink } from '../icons';
 

@@ -314,8 +314,8 @@ export interface Database {
           id: string
           last_name: string
           phone: string | null
+          role: string | null
           updated_at: string | null
-          user_role: string | null
         }
         Insert: {
           avatar_url?: string | null
@@ -326,8 +326,8 @@ export interface Database {
           id: string
           last_name: string
           phone?: string | null
+          role?: string | null
           updated_at?: string | null
-          user_role?: string | null
         }
         Update: {
           avatar_url?: string | null
@@ -338,8 +338,8 @@ export interface Database {
           id?: string
           last_name?: string
           phone?: string | null
+          role?: string | null
           updated_at?: string | null
-          user_role?: string | null
         }
       }
       usages: {
@@ -383,4 +383,3 @@ export interface Database {
     }
   }
 }
-

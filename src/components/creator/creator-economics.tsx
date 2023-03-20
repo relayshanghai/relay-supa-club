@@ -1,4 +1,4 @@
-import { CreatorReport } from 'types';
+import type { CreatorReport } from 'types';
 import { toCurrency } from 'src/utils/utils';
 import cpm from 'src/constants/cpm';
 import { useTranslation } from 'react-i18next';

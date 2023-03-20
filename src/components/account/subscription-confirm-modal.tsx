@@ -1,11 +1,11 @@
 import { useRouter } from 'next/router';
-import { SubscriptionCreatePostResponse } from 'pages/api/subscriptions/create';
+import type { SubscriptionCreatePostResponse } from 'pages/api/subscriptions/create';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { createSubscriptionErrors } from 'src/errors/subscription';
 import { hasCustomError } from 'src/utils/errors';
-import { SubscriptionPeriod } from 'types';
+import type { SubscriptionPeriod } from 'types';
 
 import { Button } from '../button';
 import { Modal } from '../modal';

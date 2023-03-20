@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { CreatorReport } from 'types';
+import type { CreatorReport } from 'types';
 import LineChart from '../common/line-chart';
 import { AudienceStats } from './creator-audience-stats';
 const prepareStats = (stats: CreatorReport['user_profile']['stat_history']) => {

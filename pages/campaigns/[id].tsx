@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router';
-import { useState, useEffect, ChangeEvent } from 'react';
+import type { ChangeEvent } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PencilSquareIcon } from '@heroicons/react/20/solid';
 import Link from 'next/link';
