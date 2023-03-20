@@ -250,47 +250,37 @@ function test_database {
     container="supabase_db_$project_id"
 
     # copy files
-    docker exec $container mkdir -p /tmp/supabase/
-    docker cp $script_dir/functions $container:/tmp/supabase/
-    docker cp $script_dir/policies $container:/tmp/supabase/
+    docker exec $container mkdir -p /tmp/supabase/ > /dev/null
+    docker cp $script_dir/functions $container:/tmp/supabase/ > /dev/null
+    docker cp $script_dir/policies $container:/tmp/supabase/ > /dev/null
 
     if [ -z "$1" ]; then
-        docker cp $script_dir/tests $container:/tmp/supabase/
+        docker cp $script_dir/tests $container:/tmp/supabase/ > /dev/null
     fi
 
-
     if [ -n "$1" ]; then
-        docker exec $container mkdir -p /tmp/supabase/tests/database/
-        docker cp $script_dir/tests/database/00000-supabase_test_helpers.sql $container:/tmp/supabase/tests/database/
-        docker cp $script_dir/tests/database/00001-relay_test_helpers.sql $container:/tmp/supabase/tests/database/
-        docker cp $script_dir/tests/database/00002-seed.test.sql $container:/tmp/supabase/tests/database/
-        docker cp $script_dir/tests/database/zzzzz-cleanup_helpers.sql $container:/tmp/supabase/tests/database/
+        docker exec $container mkdir -p /tmp/supabase/tests/database/ > /dev/null
+        docker cp $script_dir/tests/database/00000-supabase_test_helpers.sql $container:/tmp/supabase/tests/database/ > /dev/null
+        docker cp $script_dir/tests/database/00001-relay_test_helpers.sql $container:/tmp/supabase/tests/database/ > /dev/null
+        docker cp $script_dir/tests/database/00002-seed.test.sql $container:/tmp/supabase/tests/database/ > /dev/null
+        docker cp $script_dir/tests/database/zzzzz-cleanup_helpers.sql $container:/tmp/supabase/tests/database/ > /dev/null
 
         for file in "$@"
         do
             if [ -e "$script_dir/tests/database/$file.test.sql" ]; then
-                docker cp $script_dir/tests/database/$file.test.sql $container:/tmp/supabase/tests/database/
+                docker cp $script_dir/tests/database/$file.test.sql $container:/tmp/supabase/tests/database/ > /dev/null
             fi
         done
     fi
 
-    docker cp $script_dir/utils/supa_pg_prove.sh $container:/tmp/supabase/
-
-    echo "[Database Supabase]"
-    docker exec $container ls /tmp/supabase/
-    echo "[Database Tests]"
-    docker exec $container ls /tmp/supabase/tests/database/
-    echo "[Database Functions]"
-    docker exec $container ls /tmp/supabase/functions/
-    echo "[Database Policies]"
-    docker exec $container ls /tmp/supabase/policies/
+    docker cp $script_dir/utils/supa_pg_prove.sh $container:/tmp/supabase/ > /dev/null
 
     # run tests
     docker exec -t $container bash /tmp/supabase/supa_pg_prove.sh /tmp/supabase/tests
     docker_exit_code=$?
 
     # remove all copied files
-    docker exec $container rm -rf /tmp/supabase
+    docker exec $container rm -rf /tmp/supabase > /dev/null
 
     exit $docker_exit_code
 }
