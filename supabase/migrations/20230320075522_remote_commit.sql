@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 15.1
+-- Dumped from database version 14.1
 -- Dumped by pg_dump version 15.1 (Debian 15.1-1.pgdg110+1)
 
 SET statement_timeout = 0;
@@ -259,7 +259,7 @@ CREATE TABLE "public"."profiles" (
     "last_name" "text" NOT NULL,
     "first_name" "text" NOT NULL,
     "email" "text",
-    "user_role" "text"
+    "role" "text"
 );
 
 
@@ -338,10 +338,10 @@ ALTER TABLE ONLY "public"."usages"
 
 
 --
--- Name: companies company-test; Type: TRIGGER; Schema: public; Owner: postgres
+-- Name: companies company; Type: TRIGGER; Schema: public; Owner: postgres
 --
 
-CREATE TRIGGER "company-test" AFTER INSERT OR UPDATE ON "public"."companies" FOR EACH ROW EXECUTE FUNCTION "supabase_functions"."http_request"('https://eoxj6q72qrx0qdn.m.pipedream.net', 'POST', '{"Content-type":"application/json"}', '{}', '1000');
+CREATE TRIGGER "company" AFTER INSERT OR UPDATE ON "public"."companies" FOR EACH ROW EXECUTE FUNCTION "supabase_functions"."http_request"('https://app.relay.club/api/slack/create', 'POST', '{"Content-type":"application/json"}', '{"token":"1234567890"}', '1000');
 
 
 --
@@ -366,24 +366,10 @@ CREATE TRIGGER "handle_updated_at" BEFORE UPDATE ON "public"."profiles" FOR EACH
 
 
 --
--- Name: companies new-company; Type: TRIGGER; Schema: public; Owner: postgres
+-- Name: profiles signup; Type: TRIGGER; Schema: public; Owner: postgres
 --
 
-CREATE TRIGGER "new-company" AFTER INSERT OR UPDATE ON "public"."companies" FOR EACH ROW EXECUTE FUNCTION "supabase_functions"."http_request"('https://relay-supa-club-git-slack-integration-relay-club.vercel.app/api/slack/create', 'POST', '{"Content-type":"application/json"}', '{}', '1000');
-
-
---
--- Name: profiles new-signup; Type: TRIGGER; Schema: public; Owner: postgres
---
-
-CREATE TRIGGER "new-signup" AFTER INSERT ON "public"."profiles" FOR EACH ROW EXECUTE FUNCTION "supabase_functions"."http_request"('https://relay-supa-club-git-slack-integration-relay-club.vercel.app/api/slack/create', 'POST', '{"Content-type":"application/json"}', '{}', '1000');
-
-
---
--- Name: profiles new-signup-test; Type: TRIGGER; Schema: public; Owner: postgres
---
-
-CREATE TRIGGER "new-signup-test" AFTER INSERT ON "public"."profiles" FOR EACH ROW EXECUTE FUNCTION "supabase_functions"."http_request"('https://eoxj6q72qrx0qdn.m.pipedream.net', 'POST', '{"Content-type":"application/json"}', '{}', '1000');
+CREATE TRIGGER "signup" AFTER INSERT ON "public"."profiles" FOR EACH ROW EXECUTE FUNCTION "supabase_functions"."http_request"('https://app.relay.club/api/slack/create', 'POST', '{"Content-type":"application/json"}', '{"token":"1234567890"}', '1000');
 
 
 --
@@ -470,28 +456,28 @@ ALTER TABLE ONLY "public"."usages"
 -- Name: campaigns Enable insert for authenticated users only; Type: POLICY; Schema: public; Owner: postgres
 --
 
--- CREATE POLICY "Enable insert for authenticated users only" ON "public"."campaigns" FOR INSERT TO "authenticated" WITH CHECK (true);
+CREATE POLICY "Enable insert for authenticated users only" ON "public"."campaigns" FOR INSERT TO "authenticated" WITH CHECK (true);
 
 
 --
 -- Name: profiles Public profiles are viewable by everyone.; Type: POLICY; Schema: public; Owner: postgres
 --
 
--- CREATE POLICY "Public profiles are viewable by everyone." ON "public"."profiles" FOR SELECT USING (true);
+CREATE POLICY "Public profiles are viewable by everyone." ON "public"."profiles" FOR SELECT USING (true);
 
 
 --
 -- Name: profiles Users can insert their own profile.; Type: POLICY; Schema: public; Owner: postgres
 --
 
--- CREATE POLICY "Users can insert their own profile." ON "public"."profiles" FOR INSERT WITH CHECK (("auth"."uid"() = "id"));
+CREATE POLICY "Users can insert their own profile." ON "public"."profiles" FOR INSERT WITH CHECK (("auth"."uid"() = "id"));
 
 
 --
 -- Name: profiles Users can update own profile.; Type: POLICY; Schema: public; Owner: postgres
 --
 
--- CREATE POLICY "Users can update own profile." ON "public"."profiles" FOR UPDATE USING (("auth"."uid"() = "id"));
+CREATE POLICY "Users can update own profile." ON "public"."profiles" FOR UPDATE USING (("auth"."uid"() = "id"));
 
 
 --
