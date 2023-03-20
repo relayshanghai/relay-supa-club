@@ -42,6 +42,8 @@ function check_psql {
 }
 
 function drop_database_function {
+    check_psql
+
     # null check. If the first parameter of the function ($1) is null, then exit
     if [ -z "$1" ]
     then
@@ -56,6 +58,8 @@ function drop_database_function {
 }
 
 function push_database_functions {
+    check_psql
+
     file_path=./supabase/functions/index.sql
 
     if [ ! -f "$file_path" ]; then
@@ -67,10 +71,14 @@ function push_database_functions {
 }
 
 function list_database_functions {
+    check_psql
+
     psql -h $db_host -p $db_port -U $db_user -d $db_name -c "SELECT specific_schema,routine_name,data_type,external_language FROM information_schema.routines WHERE routine_type = 'FUNCTION' AND routine_schema = 'public' AND routine_name LIKE 'relay_%';"
 }
 
 function connect {
+    check_psql
+
     psql -h $db_host -p $db_port -U $db_user -d $db_name $@
 }
 
@@ -180,10 +188,14 @@ TEMPLATE
 }
 
 function list_policies {
+    check_psql
+
     psql -h $db_host -p $db_port -U $db_user -d $db_name -c "SELECT schemaname,tablename,policyname,cmd,roles FROM pg_policies;"
 }
 
 function drop_policy {
+    check_psql
+
     pl_name=$1
     tb_name=$2
 
@@ -198,6 +210,8 @@ function drop_policy {
 }
 
 function push_policies {
+    check_psql
+
     file_path=$script_dir/policies/index.sql
 
     if [ ! -f "$file_path" ]; then
@@ -337,8 +351,6 @@ END
 
     echo "$message"
 }
-
-check_psql
 
 fn=$1
 shift
