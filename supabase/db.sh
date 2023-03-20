@@ -275,6 +275,8 @@ function test_database {
 
     docker cp $script_dir/utils/supa_pg_prove.sh $container:/tmp/supabase/
 
+    echo "[Database Supabase]"
+    docker exec $container ls /tmp/supabase/
     echo "[Database Tests]"
     docker exec $container ls /tmp/supabase/tests/database/
     echo "[Database Functions]"
@@ -284,12 +286,15 @@ function test_database {
 
     # run tests
     docker exec -t $container bash /tmp/supabase/supa_pg_prove.sh /tmp/supabase/tests
+    docker_exit_code=$?
 
     # remove all copied files
     docker exec $container rm -rf /tmp/supabase/functions
     docker exec $container rm -rf /tmp/supabase/policies
     docker exec $container rm -rf /tmp/supabase/tests
     docker exec $container rm -rf /tmp/supabase/supa_pg_prove.sh
+
+    exit $docker_exit_code
 }
 
 function help {
