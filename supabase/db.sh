@@ -250,6 +250,7 @@ function test_database {
     container="supabase_db_$project_id"
 
     # copy files
+    docker exec $container mkdir -p /tmp/supabase/
     docker cp $script_dir/functions $container:/tmp/supabase/
     docker cp $script_dir/policies $container:/tmp/supabase/
 
@@ -289,10 +290,7 @@ function test_database {
     docker_exit_code=$?
 
     # remove all copied files
-    docker exec $container rm -rf /tmp/supabase/functions
-    docker exec $container rm -rf /tmp/supabase/policies
-    docker exec $container rm -rf /tmp/supabase/tests
-    docker exec $container rm -rf /tmp/supabase/supa_pg_prove.sh
+    docker exec $container rm -rf /tmp/supabase
 
     exit $docker_exit_code
 }
