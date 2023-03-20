@@ -41,11 +41,9 @@ describe('Main pages happy paths', () => {
         cy.contains('T-Series', { timeout: 20000 });
 
         const tSeriesID = 'UCq-Fj5jknLsUf-MWSy4_brA';
-        cy.getByTestId(`#search-result-row-buttons/${tSeriesID}`)
-            .click({
-                force: true,
-            })
-            .contains('Analyze');
+        cy.getByTestId(`search-result-row-buttons/${tSeriesID}`).click({
+            force: true,
+        });
 
         cy.getByTestId(`analyze-button/${tSeriesID}`)
             .should('have.attr', 'target', '_blank')

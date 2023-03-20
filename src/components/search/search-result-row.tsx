@@ -83,12 +83,9 @@ export const SearchResultRow = ({
                     )}
                 </div>
 
-                <div
-                    className="flex flex-col items-center justify-center gap-1 lg:hidden"
-                    data-testid={`search-result-row-buttons/${user_id}`}
-                >
+                <div className="flex flex-col items-center justify-center gap-1 lg:hidden">
                     <Menu as="div" className="relative inline-block text-left">
-                        <Menu.Button>
+                        <Menu.Button as="div" data-testid={`search-result-row-buttons/${user_id}`}>
                             <Button>
                                 <DotsHorizontal />
                             </Button>
@@ -99,7 +96,6 @@ export const SearchResultRow = ({
                                 <Menu.Item>
                                     {({ active }) => (
                                         <button
-                                            data-testid={`analyze-button/${user_id}`}
                                             className={`${
                                                 active
                                                     ? 'bg-violet-500 text-white'
@@ -112,11 +108,14 @@ export const SearchResultRow = ({
                                     )}
                                 </Menu.Item>
 
-                                <Link href={`/influencer/${platform}/${user_id}`} target="_blank">
+                                <Link
+                                    href={`/influencer/${platform}/${user_id}`}
+                                    target="_blank"
+                                    data-testid={`analyze-button/${user_id}`}
+                                >
                                     <Menu.Item>
                                         {({ active }) => (
                                             <button
-                                                data-testid={`analyze-button/${user_id}`}
                                                 className={`${
                                                     active
                                                         ? 'bg-violet-500 text-white'
@@ -134,7 +133,6 @@ export const SearchResultRow = ({
                                         <Menu.Item>
                                             {({ active }) => (
                                                 <button
-                                                    data-testid={`analyze-button/${user_id}`}
                                                     className={`${
                                                         active
                                                             ? 'bg-violet-500 text-white'
