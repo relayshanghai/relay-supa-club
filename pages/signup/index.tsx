@@ -6,12 +6,12 @@ import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
 import { Input } from 'src/components/input';
 import { LoginSignupLayout } from 'src/components/SignupLayout';
-import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
+
 import { useFields } from 'src/hooks/use-fields';
 import { useUser } from 'src/hooks/use-user';
 import { clientLogger } from 'src/utils/logger';
-import { isMissing } from 'src/utils/utils';
-import type { SignupInputTypes} from 'src/utils/validation/signup';
+import { isMissing, isRelayEmail } from 'src/utils/utils';
+import type { SignupInputTypes } from 'src/utils/validation/signup';
 import { validateSignupInput } from 'src/utils/validation/signup';
 
 export default function Register() {
@@ -41,7 +41,7 @@ export default function Register() {
 
     useEffect(() => {
         if (signupSuccess && profile?.id) {
-            if (EMPLOYEE_EMAILS.includes(email)) {
+            if (isRelayEmail(email)) {
                 router.push('/dashboard');
             } else {
                 router.push('/signup/onboarding');
@@ -61,7 +61,7 @@ export default function Register() {
                 },
             });
             if (signupRes?.session?.user.id) {
-                if (EMPLOYEE_EMAILS.includes(email)) {
+                if (isRelayEmail(email)) {
                     const employeeRes = await createEmployee(email);
                     if (employeeRes?.id) {
                         setSignupSuccess(true);

@@ -1,10 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { RELAY_DOMAIN } from 'src/constants';
-import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
+
 import httpCodes from 'src/constants/httpCodes';
 import { createEmployeeError } from 'src/errors/company';
-import type {
-    ProfileDB} from 'src/utils/api/db';
+import type { ProfileDB } from 'src/utils/api/db';
 import {
     createCompany,
     getCompanyByName,
@@ -17,6 +16,7 @@ import {
 } from 'src/utils/api/db';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 import { serverLogger } from 'src/utils/logger';
+import { isRelayEmail } from 'src/utils/utils';
 
 export type CreateEmployeePostBody = {
     email: string;
@@ -71,7 +71,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (req.method === 'POST') {
         try {
             const { email } = req.body as CreateEmployeePostBody;
-            if (!EMPLOYEE_EMAILS.includes(email)) {
+            if (!isRelayEmail(email)) {
                 return res
                     .status(httpCodes.BAD_REQUEST)
                     .json({ error: createEmployeeError.isNotEmployee });

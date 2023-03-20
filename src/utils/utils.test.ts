@@ -1,6 +1,7 @@
 import {
     chinaFilter,
     isAdmin,
+    isRelayEmail,
     isValidUrl,
     numFormatter,
     toCurrency,
@@ -160,4 +161,11 @@ describe('unixEpochToISOString', () => {
 
 describe('isMissing', () => {
     it.todo('tests for isMissing');
+});
+
+describe('isRelayEmail', () => {
+    it('should check if email ends with @relay.club', () => {
+        expect(isRelayEmail('jim@relay.club')).toBe(true);
+        expect(isRelayEmail('jim@relay.not')).toBe(false);
+    });
 });

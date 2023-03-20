@@ -3,9 +3,9 @@ import type { SupabaseClient, Session } from '@supabase/auth-helpers-nextjs';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import type { DatabaseWithCustomTypes } from 'types';
-import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
 import httpCodes from 'src/constants/httpCodes';
 import { serverLogger } from 'src/utils/logger';
+import { isRelayEmail } from 'src/utils/utils';
 
 const pricingAllowList = ['https://en-relay-club.vercel.app', 'https://relay.club'];
 const stripeWebhookAllowlist = ['https://stripe.com/', 'https://hooks.stripe.com/'];
@@ -158,7 +158,7 @@ const allowStripeCors = (req: NextRequest, res: NextResponse) => {
 };
 
 const checkIsRelayEmployee = async (res: NextResponse, email: string) => {
-    if (!EMPLOYEE_EMAILS.includes(email)) {
+    if (!isRelayEmail(email)) {
         return NextResponse.json({ error: 'user is unauthorized for this action' });
     }
     return res;

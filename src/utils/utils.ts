@@ -73,5 +73,10 @@ export const isAdmin = (role?: AccountRole) => {
     return isAdmin;
 };
 
+export const isRelayEmail = (email: string) => {
+    // check that string ends with @relay.club
+    return email.endsWith('@relay.club');
+};
+
 /** returns true if any of the values passed in are falsy */
 export const isMissing = (...values: unknown[]) => values.findIndex((value) => !value) > -1;
