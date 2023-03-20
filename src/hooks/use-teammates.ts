@@ -11,10 +11,25 @@ export const useTeammates = () => {
     const { profile } = useUser();
     const { data: teammates, mutate: refreshTeammates } = useSWR(
         profile?.company_id ? 'company/teammates' : null,
-        (path) =>
-            nextFetchWithQueries<CompanyTeammatesGetQueries, CompanyTeammatesGetResponse>(path, {
+        async (path) => {
+            const result = await nextFetchWithQueries<
+                CompanyTeammatesGetQueries,
+                CompanyTeammatesGetResponse
+            >(path, {
                 id: profile?.company_id ?? '',
-            }),
+            });
+            result.sort(function (a, b) {
+                if (a.first_name.toLowerCase() < b.first_name.toLowerCase()) {
+                    return -1;
+                }
+                if (a.first_name.toLowerCase() > b.first_name.toLowerCase()) {
+                    return 1;
+                }
+                return 0;
+            });
+
+            return result;
+        },
     );
 
     return {
