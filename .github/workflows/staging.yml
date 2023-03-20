@@ -1,6 +1,7 @@
 run-name: Run staging workflow by @${{ github.actor }}
 
 on:
+    push:
     workflow_dispatch:
 
 env:
