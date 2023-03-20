@@ -65,8 +65,6 @@ export const SearchOptions = ({
                 <SearchCreators platform={platform} />
             </div>
             <div className="flex flex-col items-start space-y-2 md:flex-row md:space-x-4 md:space-y-0">
-                {/* remove all lookalike code: https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/154 */}
-
                 <SearchTopics
                     path="influencer-search/locations"
                     placeholder={t('creators.filter.locationPlaceholder')}
