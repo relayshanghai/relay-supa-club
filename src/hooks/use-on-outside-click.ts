@@ -1,4 +1,5 @@
-import { useEffect, KeyboardEvent } from 'react';
+import { useEffect } from 'react';
+import type { KeyboardEvent } from 'react';
 
 function useOnOutsideClick(
     ref: React.MutableRefObject<any>,
