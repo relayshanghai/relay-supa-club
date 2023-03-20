@@ -18,7 +18,7 @@ export const useTeammates = () => {
             >(path, {
                 id: profile?.company_id ?? '',
             });
-            result.sort(function (a, b) {
+            result.sort((a, b) => {
                 if (a.first_name.toLowerCase() < b.first_name.toLowerCase()) {
                     return -1;
                 }
