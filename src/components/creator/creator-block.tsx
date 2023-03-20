@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { SimilarUser, CreatorPlatform } from 'types';
+import type { SimilarUser, CreatorPlatform } from 'types';
 import { SimilarCreator } from './creator-similar-creator';
 
 export const CreatorBlock = ({

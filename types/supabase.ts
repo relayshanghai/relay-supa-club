@@ -314,8 +314,8 @@ export interface Database {
           id: string
           last_name: string
           phone: string | null
+          role: string | null
           updated_at: string | null
-          user_role: string | null
         }
         Insert: {
           avatar_url?: string | null
@@ -326,8 +326,8 @@ export interface Database {
           id: string
           last_name: string
           phone?: string | null
+          role?: string | null
           updated_at?: string | null
-          user_role?: string | null
         }
         Update: {
           avatar_url?: string | null
@@ -338,8 +338,8 @@ export interface Database {
           id?: string
           last_name?: string
           phone?: string | null
+          role?: string | null
           updated_at?: string | null
-          user_role?: string | null
         }
       }
       usages: {
@@ -373,259 +373,7 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
-      _get: {
-        Args: {
-          "": string
-        }
-        Returns: number
-      }
-      _get_latest: {
-        Args: {
-          "": string
-        }
-        Returns: number[]
-      }
-      _get_note:
-        | {
-            Args: {
-              "": string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              "": number
-            }
-            Returns: string
-          }
-      _query: {
-        Args: {
-          "": string
-        }
-        Returns: string
-      }
-      _relexists: {
-        Args: {
-          "": unknown
-        }
-        Returns: boolean
-      }
-      _todo: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
-      diag:
-        | {
-            Args: {
-              msg: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              msg: unknown
-            }
-            Returns: string
-          }
-        | {
-            Args: Record<PropertyKey, never>
-            Returns: string
-          }
-        | {
-            Args: Record<PropertyKey, never>
-            Returns: string
-          }
-      fail:
-        | {
-            Args: {
-              "": string
-            }
-            Returns: string
-          }
-        | {
-            Args: Record<PropertyKey, never>
-            Returns: string
-          }
-      finish: {
-        Args: Record<PropertyKey, never>
-        Returns: string[]
-      }
-      has_relation: {
-        Args: {
-          "": unknown
-        }
-        Returns: string
-      }
-      has_table: {
-        Args: {
-          "": unknown
-        }
-        Returns: string
-      }
-      has_view: {
-        Args: {
-          "": unknown
-        }
-        Returns: string
-      }
-      hasnt_relation: {
-        Args: {
-          "": unknown
-        }
-        Returns: string
-      }
-      hasnt_table: {
-        Args: {
-          "": unknown
-        }
-        Returns: string
-      }
-      hasnt_view: {
-        Args: {
-          "": unknown
-        }
-        Returns: string
-      }
-      in_todo: {
-        Args: Record<PropertyKey, never>
-        Returns: boolean
-      }
-      is_relay_employee: {
-        Args: Record<PropertyKey, never>
-        Returns: boolean
-      }
-      lives_ok: {
-        Args: {
-          "": string
-        }
-        Returns: string
-      }
-      no_plan: {
-        Args: Record<PropertyKey, never>
-        Returns: boolean[]
-      }
-      num_failed: {
-        Args: Record<PropertyKey, never>
-        Returns: number
-      }
-      ok: {
-        Args: {
-          "": boolean
-        }
-        Returns: string
-      }
-      os_name: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
-      pass:
-        | {
-            Args: {
-              "": string
-            }
-            Returns: string
-          }
-        | {
-            Args: Record<PropertyKey, never>
-            Returns: string
-          }
-      pg_version: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
-      pg_version_num: {
-        Args: Record<PropertyKey, never>
-        Returns: number
-      }
-      pgtap_version: {
-        Args: Record<PropertyKey, never>
-        Returns: number
-      }
-      plan: {
-        Args: {
-          "": number
-        }
-        Returns: string
-      }
-      skip:
-        | {
-            Args: {
-              why: string
-              how_many: number
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              "": string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              "": number
-            }
-            Returns: string
-          }
-      throws_ok: {
-        Args: {
-          "": string
-        }
-        Returns: string
-      }
-      todo:
-        | {
-            Args: {
-              why: string
-              how_many: number
-            }
-            Returns: boolean[]
-          }
-        | {
-            Args: {
-              how_many: number
-              why: string
-            }
-            Returns: boolean[]
-          }
-        | {
-            Args: {
-              why: string
-            }
-            Returns: boolean[]
-          }
-        | {
-            Args: {
-              how_many: number
-            }
-            Returns: boolean[]
-          }
-      todo_end: {
-        Args: Record<PropertyKey, never>
-        Returns: boolean[]
-      }
-      todo_start:
-        | {
-            Args: {
-              "": string
-            }
-            Returns: boolean[]
-          }
-        | {
-            Args: Record<PropertyKey, never>
-            Returns: boolean[]
-          }
-      truncate_all_tables:
-        | {
-            Args: Record<PropertyKey, never>
-            Returns: undefined
-          }
-        | {
-            Args: {
-              schema_name: string
-            }
-            Returns: undefined
-          }
+      [_ in never]: never
     }
     Enums: {
       [_ in never]: never

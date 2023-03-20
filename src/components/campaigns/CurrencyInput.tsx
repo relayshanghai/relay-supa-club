@@ -1,4 +1,4 @@
-import { Control, FieldValues, FieldErrorsImpl, UseFormRegister } from 'react-hook-form';
+import type { Control, FieldValues, FieldErrorsImpl, UseFormRegister } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { SingleSelect } from 'src/components/ui/select/Select';
 import { currencyOptions } from './helper';

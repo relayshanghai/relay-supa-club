@@ -1,5 +1,5 @@
 import { useSearch } from 'src/hooks/use-search';
-import { CreatorPlatform } from 'types';
+import type { CreatorPlatform } from 'types';
 import { Spinner } from '../icons';
 
 const platforms: {

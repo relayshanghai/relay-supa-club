@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import { useCampaigns } from 'src/hooks/use-campaigns';
-import { CreatorPlatform, CreatorUserProfile } from 'types';
+import type { CreatorPlatform, CreatorUserProfile } from 'types';
 import CampaignModalCard from './campaigns/campaign-modal-card';
 import { Modal } from './modal';
 

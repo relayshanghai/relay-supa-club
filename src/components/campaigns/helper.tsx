@@ -1,4 +1,4 @@
-import { LabelValueObject } from 'types';
+import type { LabelValueObject } from 'types';
 import { countryList } from '../../constants/country-list';
 import options from './options';
 

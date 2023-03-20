@@ -1,5 +1,6 @@
-import { forwardRef, MutableRefObject, useEffect, useState } from 'react';
-import { CampaignCreatorDB } from 'src/utils/api/db';
+import type { MutableRefObject} from 'react';
+import { forwardRef, useEffect, useState } from 'react';
+import type { CampaignCreatorDB } from 'src/utils/api/db';
 import { Confirm, Cross } from '../icons';
 
 function TableInput({

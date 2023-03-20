@@ -1,8 +1,10 @@
 import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
-import Select, { OnChangeValue } from 'react-select';
-import { Control, Controller, FieldErrorsImpl, FieldValues } from 'react-hook-form';
-import { LabelValueObject } from 'types';
+import type { OnChangeValue } from 'react-select';
+import Select from 'react-select';
+import type { Control, FieldErrorsImpl, FieldValues } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
+import type { LabelValueObject } from 'types';
 import CustomStyles from 'src/components/common/Form/CustomStyle';
 
 interface SelectProps {

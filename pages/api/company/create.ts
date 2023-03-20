@@ -1,9 +1,10 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiRequest, NextApiResponse } from 'next';
 import { RELAY_DOMAIN } from 'src/constants';
 import httpCodes from 'src/constants/httpCodes';
 import { createCompanyErrors } from 'src/errors/company';
+import type {
+    CompanyDB} from 'src/utils/api/db';
 import {
-    CompanyDB,
     createCompany,
     getAllCompanyNames,
     updateCompany,

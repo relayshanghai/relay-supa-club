@@ -1,4 +1,4 @@
-import { CampaignWithCompanyCreators } from 'src/utils/api/db';
+import type { CampaignWithCompanyCreators } from 'src/utils/api/db';
 import CampaignCardSquare from './CampaignCardSquare';
 
 export default function CampaignCardView({

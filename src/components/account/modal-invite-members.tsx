@@ -3,7 +3,7 @@ import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { createInviteErrors } from 'src/errors/company';
 import { useCompany } from 'src/hooks/use-company';
-import { InvitesDB } from 'src/utils/api/db';
+import type { InvitesDB } from 'src/utils/api/db';
 import { hasCustomError } from 'src/utils/errors';
 import { Button } from '../button';
 import { Input } from '../input';

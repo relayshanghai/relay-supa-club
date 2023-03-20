@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { AdminClientsGetResponse } from 'pages/api/admin/clients';
+import type { AdminClientsGetResponse } from 'pages/api/admin/clients';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { Button } from 'src/components/button';

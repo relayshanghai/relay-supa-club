@@ -1,4 +1,4 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { AI_EMAIL_SUBSCRIPTION_USAGE_LIMIT } from 'src/constants/openai';
 import { createSubscriptionErrors } from 'src/errors/subscription';
@@ -12,7 +12,7 @@ import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 import { isCompanyOwnerOrRelayEmployee } from 'src/utils/auth';
 import { serverLogger } from 'src/utils/logger';
 import { unixEpochToISOString } from 'src/utils/utils';
-import Stripe from 'stripe';
+import type Stripe from 'stripe';
 
 export type SubscriptionDiscountRenewPostBody = {
     company_id: string;

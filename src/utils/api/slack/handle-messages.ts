@@ -1,9 +1,12 @@
 import type { NextApiRequest } from 'next/types';
+import type { InsertCompanyPayload, InsertProfilePayload, UpdateCompanyPayload } from 'types';
 
 //Send a message to the slack channel when a new customer signs up
 export const handleNewProfileMessage = async (req: NextApiRequest, URL: string) => {
-    const { first_name: firstName, last_name: lastName, email } = req.body.record;
-    if (req.body.table === 'profiles' && req.body.type === 'INSERT') {
+    const data = req.body as InsertProfilePayload;
+    const { first_name: firstName, last_name: lastName, email } = data.record;
+    if (data.table === 'profiles' && data.type === 'INSERT') {
+        //For how to format Slack message body, see more at https://api.slack.com/messaging/composing/layouts
         const reqBody = {
             blocks: [
                 {
@@ -38,8 +41,9 @@ export const handleNewProfileMessage = async (req: NextApiRequest, URL: string) 
 
 //Send a message to the slack channel when a new customer signs up
 export const handleNewCompanyMessage = async (req: NextApiRequest, URL: string) => {
-    const { name: companyName, website, subscription_status: subscriptionStatus } = req.body.record;
-    if (req.body.table === 'companies' && req.body.type === 'INSERT') {
+    const data = req.body as InsertCompanyPayload;
+    const { name: companyName, website, subscription_status: subscriptionStatus } = data.record;
+    if (data.table === 'companies' && data.type === 'INSERT') {
         const reqBody = {
             blocks: [
                 {
@@ -78,11 +82,12 @@ export const handleNewCompanyMessage = async (req: NextApiRequest, URL: string) 
 
 //Send a message to the slack channel when a company has updated its subscription status
 export const handleCompanyUpdateMessage = async (req: NextApiRequest, URL: string) => {
-    const { name: companyName, subscription_status: subscriptionStatus } = req.body.record;
-    const { subscription_status: oldSubscriptionStatus } = req.body.old_record;
+    const data = req.body as UpdateCompanyPayload;
+    const { name: companyName, subscription_status: subscriptionStatus } = data.record;
+    const { subscription_status: oldSubscriptionStatus } = data.old_record;
     if (
-        req.body.table === 'companies' &&
-        req.body.type === 'UPDATE' &&
+        data.table === 'companies' &&
+        data.type === 'UPDATE' &&
         oldSubscriptionStatus !== subscriptionStatus
     ) {
         const reqBody = {

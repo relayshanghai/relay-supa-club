@@ -1,9 +1,9 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { recordReportUsage } from 'src/utils/api/db/calls/usages';
 import { fetchReport, fetchReportsMetadata, requestNewReport } from 'src/utils/api/iqdata';
 import { serverLogger } from 'src/utils/logger';
-import { CreatorPlatform, CreatorReport } from 'types';
+import type { CreatorPlatform, CreatorReport } from 'types';
 
 export type CreatorsReportGetQueries = {
     platform: CreatorPlatform;

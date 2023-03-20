@@ -1,9 +1,9 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { serverLogger } from 'src/utils/logger';
 
-import Stripe from 'stripe';
-import { SubscriptionPeriod } from 'types';
+import type Stripe from 'stripe';
+import type { SubscriptionPeriod } from 'types';
 import { getSubscription } from 'src/utils/api/stripe/helpers';
 
 export type SubscriptionGetQueries = {

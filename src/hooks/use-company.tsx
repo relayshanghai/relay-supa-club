@@ -6,10 +6,12 @@ import type {
 } from 'pages/api/company';
 import type { CompanyCreatePostBody, CompanyCreatePostResponse } from 'pages/api/company/create';
 
-import { createContext, PropsWithChildren, useCallback, useContext } from 'react';
+import type { PropsWithChildren} from 'react';
+import { createContext, useCallback, useContext } from 'react';
 import { createCompanyValidationErrors } from 'src/errors/company';
 import { nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';
-import useSWR, { KeyedMutator } from 'swr';
+import type { KeyedMutator } from 'swr';
+import useSWR from 'swr';
 import { useUser } from './use-user';
 
 export interface CompanyContext {
