@@ -388,13 +388,13 @@ export interface Database {
       _get_note:
         | {
             Args: {
-              "": number
+              "": string
             }
             Returns: string
           }
         | {
             Args: {
-              "": string
+              "": number
             }
             Returns: string
           }
@@ -416,11 +416,9 @@ export interface Database {
       }
       diag:
         | {
-            Args: Record<PropertyKey, never>
-            Returns: string
-          }
-        | {
-            Args: Record<PropertyKey, never>
+            Args: {
+              msg: string
+            }
             Returns: string
           }
         | {
@@ -430,20 +428,22 @@ export interface Database {
             Returns: string
           }
         | {
-            Args: {
-              msg: string
-            }
-            Returns: string
-          }
-      fail:
-        | {
             Args: Record<PropertyKey, never>
             Returns: string
           }
         | {
+            Args: Record<PropertyKey, never>
+            Returns: string
+          }
+      fail:
+        | {
             Args: {
               "": string
             }
+            Returns: string
+          }
+        | {
+            Args: Record<PropertyKey, never>
             Returns: string
           }
       finish: {
@@ -490,6 +490,10 @@ export interface Database {
         Args: Record<PropertyKey, never>
         Returns: boolean
       }
+      is_relay_employee: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
       lives_ok: {
         Args: {
           "": string
@@ -516,13 +520,13 @@ export interface Database {
       }
       pass:
         | {
-            Args: Record<PropertyKey, never>
-            Returns: string
-          }
-        | {
             Args: {
               "": string
             }
+            Returns: string
+          }
+        | {
+            Args: Record<PropertyKey, never>
             Returns: string
           }
       pg_version: {
@@ -553,13 +557,13 @@ export interface Database {
           }
         | {
             Args: {
-              "": number
+              "": string
             }
             Returns: string
           }
         | {
             Args: {
-              "": string
+              "": number
             }
             Returns: string
           }
@@ -580,6 +584,7 @@ export interface Database {
         | {
             Args: {
               how_many: number
+              why: string
             }
             Returns: boolean[]
           }
@@ -592,7 +597,6 @@ export interface Database {
         | {
             Args: {
               how_many: number
-              why: string
             }
             Returns: boolean[]
           }
@@ -602,13 +606,13 @@ export interface Database {
       }
       todo_start:
         | {
-            Args: Record<PropertyKey, never>
-            Returns: boolean[]
-          }
-        | {
             Args: {
               "": string
             }
+            Returns: boolean[]
+          }
+        | {
+            Args: Record<PropertyKey, never>
             Returns: boolean[]
           }
       truncate_all_tables:
@@ -631,4 +635,3 @@ export interface Database {
     }
   }
 }
-
