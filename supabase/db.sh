@@ -237,7 +237,7 @@ function get_linked_project {
             echo $project_ref
         fi
     else
-        echo "No projects linked. Pick one below"
+        echo "No projects linked. Pick one below."
         npx supabase projects list
     fi
 }
