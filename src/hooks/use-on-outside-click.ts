@@ -22,6 +22,7 @@ function useOnOutsideClick(
             handler(event);
         };
 
+        // Apply the same logic as above to escape keypress
         const keyboardListener = (event: any) => {
             if (event.key === 'Escape') {
                 if (secondRef) {

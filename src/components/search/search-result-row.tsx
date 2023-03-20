@@ -51,10 +51,10 @@ export const SearchResultRow = ({
                     </div>
                 </div>
             </td>
-            <td className="text-right text-sm">{numberFormatter(followers) ?? '-'}</td>
-            <td className="text-right text-sm">{numberFormatter(engagements) ?? '-'}</td>
-            <td className="text-right text-sm">{decimalToPercent(engagement_rate) ?? '-'}</td>
-            <td className="text-right text-sm">{numberFormatter(avg_views) ?? '-'}</td>
+            <td className="pr-4 text-right text-sm">{numberFormatter(followers) ?? '-'}</td>
+            <td className="pr-4 text-right text-sm">{numberFormatter(engagements) ?? '-'}</td>
+            <td className="pr-4 text-right text-sm">{decimalToPercent(engagement_rate) ?? '-'}</td>
+            <td className="pr-4 text-right text-sm">{numberFormatter(avg_views) ?? '-'}</td>
 
             <td className="sticky right-0 lg:relative">
                 <div className="relative hidden flex-row items-center justify-center gap-1 duration-100 group-hover:opacity-100 lg:flex lg:opacity-100">

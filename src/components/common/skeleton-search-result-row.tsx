@@ -16,33 +16,33 @@ export const SkeletonSearchResultRow = ({ delay }: { delay: number }) => (
                 />
             </div>
         </td>
-        <td className="text-sm">
+        <td className="pr-4 text-sm">
             <div
-                className="h-2 w-10 animate-pulse bg-gray-400"
+                className="ml-auto h-2 w-10 animate-pulse bg-gray-400"
+                style={{ animationDelay: `${delay}ms` }}
+            />
+        </td>
+        <td className="pr-4 text-sm">
+            <div
+                className="ml-auto h-2 w-10 animate-pulse bg-gray-400"
+                style={{ animationDelay: `${delay}ms` }}
+            />
+        </td>
+        <td className="pr-4 text-sm">
+            <div
+                className="ml-auto h-2 w-10 animate-pulse bg-gray-400"
+                style={{ animationDelay: `${delay}ms` }}
+            />
+        </td>
+        <td className="pr-4 text-sm">
+            <div
+                className="ml-auto h-2 w-10 animate-pulse bg-gray-400"
                 style={{ animationDelay: `${delay}ms` }}
             />
         </td>
         <td className="text-sm">
             <div
-                className="h-2 w-10 animate-pulse bg-gray-400"
-                style={{ animationDelay: `${delay}ms` }}
-            />
-        </td>
-        <td className="text-sm">
-            <div
-                className="h-2 w-10 animate-pulse bg-gray-400"
-                style={{ animationDelay: `${delay}ms` }}
-            />
-        </td>
-        <td className="text-sm">
-            <div
-                className="h-2 w-10 animate-pulse bg-gray-400"
-                style={{ animationDelay: `${delay}ms` }}
-            />
-        </td>
-        <td className="text-sm">
-            <div
-                className="h-2 w-10 animate-pulse bg-gray-400"
+                className="mx-auto h-10 w-7/12 animate-pulse bg-gray-400"
                 style={{ animationDelay: `${delay}ms` }}
             />
         </td>

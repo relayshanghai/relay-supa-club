@@ -36,7 +36,7 @@ export const SearchResultsTable = ({
                         <th className="w-24 whitespace-nowrap pr-4 text-right text-xs font-normal text-gray-500">
                             {t('creators.engagementRate')}
                         </th>
-                        <th className="w-24 whitespace-nowrap text-right text-xs font-normal text-gray-500">
+                        <th className="w-24 whitespace-nowrap pr-4 text-right text-xs font-normal text-gray-500">
                             {t('creators.avgViews')}
                         </th>
                         <th className="w-28 lg:w-96">{''}</th>
