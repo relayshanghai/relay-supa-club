@@ -20,7 +20,15 @@ As far as existing features, we don't have enough time to add granular tests to 
 
 # Jest
 
-run with `npm run test:run`
+Make sure your mock service worker is initialized. Run this to make a mockServiceWorker.js file in the root of your project:
+
+```
+npx msw init public
+```
+
+It will be ignored by git.
+
+run jest tests with `npm run test:run`
 
 run in watch mode with `npm run test`. You cal also pass a test name to run a specific test, e.g. `npm run test creators`
 
