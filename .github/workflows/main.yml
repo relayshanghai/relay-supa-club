@@ -48,7 +48,9 @@ jobs:
           fi
 
       - name: Run tests
-        run: supabase test db
+        run: |
+          chmod +x ./supabase/db.sh
+          ./supabase/db.sh db_test
 
   build:
     runs-on: ubuntu-latest
