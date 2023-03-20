@@ -57,22 +57,17 @@ export const SearchResultRow = ({
             <td className="pr-4 text-right text-sm">{numberFormatter(avg_views) ?? '-'}</td>
 
             <td className="sticky right-0 lg:relative">
-                <div className="relative hidden flex-row items-center justify-center gap-1 duration-100 group-hover:opacity-100 lg:flex lg:opacity-100">
-                    <Button
-                        onClick={addToCampaign}
-                        variant="secondary"
-                        className="flex items-center gap-1"
-                    >
-                        <PlusCircleIcon className="w-5" />
-                        <span className="">{t('creators.addToCampaign')}</span>
-                    </Button>
-
+                <div className="relative hidden flex-row items-center justify-center gap-2 duration-100 group-hover:opacity-100 lg:flex lg:opacity-100">
                     <Link href={`/influencer/${platform}/${user_id}`} target="_blank">
-                        <Button className="flex flex-row items-center">
-                            <PlusCircleIcon className="w-5" />
+                        <Button className="flex flex-row items-center" variant="secondary">
                             <span className="">{t('creators.analyzeProfile')}</span>
                         </Button>
                     </Link>
+
+                    <Button onClick={addToCampaign} className="flex items-center gap-1">
+                        <PlusCircleIcon className="w-5" />
+                        <span className="">{t('creators.addToCampaign')}</span>
+                    </Button>
 
                     {url && (
                         <Link href={url} target="_blank" rel="noopener noreferrer">
