@@ -1,7 +1,6 @@
 run-name: Run staging workflow by @${{ github.actor }}
 
 on:
-    push:
     workflow_dispatch:
 
 env:
@@ -28,5 +27,5 @@ jobs:
               run: cp supabase/config.toml.example supabase/config.toml
 
             - run: |
-                supabase link --project-ref $STAGING_PROJECT_ID
+                supabase link --project-ref=$STAGING_PROJECT_ID
                 supabase db push
