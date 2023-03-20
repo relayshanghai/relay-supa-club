@@ -20,7 +20,7 @@ BEGIN;
     END;
   $$ LANGUAGE plpgsql;
 
-  CREATE OR REPLACE FUNCTION create_profile(email TEXT, first_name TEXT, last_name TEXT, user_role TEXT, company_id UUID)
+  CREATE OR REPLACE FUNCTION create_profile(email TEXT, first_name TEXT, last_name TEXT, _role TEXT, company_id UUID)
   RETURNS RECORD
   SECURITY DEFINER
   LANGUAGE plpgsql
@@ -32,9 +32,9 @@ BEGIN;
       user_id := create_supabase_user(email, email);
 
       INSERT INTO profiles
-        (id, email, last_name, first_name, user_role, company_id)
+        (id, email, last_name, first_name, role, company_id)
       VALUES
-        (user_id, email, last_name, first_name, user_role, company_id)
+        (user_id, email, last_name, first_name, _role, company_id)
       RETURNING * INTO _row;
       RETURN _row;
     END;

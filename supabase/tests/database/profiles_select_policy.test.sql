@@ -19,25 +19,26 @@ SELECT policy_cmd_is('profiles', 'profiles_select', 'select');
 
   SELECT
     is(
-      (SELECT user_role FROM profiles WHERE id = tests.get_supabase_uid('owner@email.com')),
+      (SELECT role FROM profiles WHERE id = tests.get_supabase_uid('owner@email.com')),
       null,
       'Anonymous user CANNOT select other profiles'
     );
 
 -- test employee
   SELECT tests.authenticate_as('employee@email.com');
+
   SELECT is(
     relay_is_employee(),
     false,
     'Authenticated user IS NOT a relay employee'
   );
   SELECT is(
-    (SELECT user_role FROM profiles WHERE id = tests.get_supabase_uid('employee@email.com')),
+    (SELECT role FROM profiles WHERE id = tests.get_supabase_uid('employee@email.com')),
     'company_teammate',
     'Employee CAN select own profile'
   );
   SELECT is(
-    (SELECT user_role FROM profiles WHERE id = tests.get_supabase_uid('owner@email.com')),
+    (SELECT role FROM profiles WHERE id = tests.get_supabase_uid('owner@email.com')),
     null,
     'Employee CANNOT select other profiles'
   );
@@ -50,17 +51,17 @@ SELECT policy_cmd_is('profiles', 'profiles_select', 'select');
     'Authenticated user IS a Relay employee'
   );
   SELECT is(
-    (SELECT user_role FROM profiles WHERE id = tests.get_supabase_uid('jacob@relay.club')),
+    (SELECT role FROM profiles WHERE id = tests.get_supabase_uid('jacob@relay.club')),
     'relay_employee',
     'Relay employee CAN select own profile'
   );
   SELECT is(
-    (SELECT user_role FROM profiles WHERE id = tests.get_supabase_uid('employee@email.com')),
+    (SELECT role FROM profiles WHERE id = tests.get_supabase_uid('employee@email.com')),
     'company_teammate',
     'Relay employee CAN select other employee profiles'
   );
   SELECT is(
-    (SELECT user_role FROM profiles WHERE id = tests.get_supabase_uid('owner@email.com')),
+    (SELECT role FROM profiles WHERE id = tests.get_supabase_uid('owner@email.com')),
     'company_owner',
     'Relay employee CAN select company owner profile'
   );
