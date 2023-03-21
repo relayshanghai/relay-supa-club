@@ -12,7 +12,8 @@
         "type-check": "tsc --project tsconfig.check.json",
         "type-check:cypress": "tsc --project cypress/tsconfig.json",
         "test": "jest --watch",
-        "test:run": "jest"
+        "test:run": "jest",
+        "cypress": "npx cypress open"
     },
     "dependencies": {
         "@headlessui/react": "^1.7.11",

@@ -60,7 +60,7 @@ function loginTestUser(switchLangToEnglish = true) {
 Cypress.Commands.add('loginTestUser', loginTestUser);
 
 function switchToEnglish() {
-    getByTestId('language-toggle-button').click();
+    cy.get('#language-toggle-button').click();
     cy.contains('English').click();
 }
 Cypress.Commands.add('switchToEnglish', switchToEnglish);
