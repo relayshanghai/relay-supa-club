@@ -5,7 +5,6 @@ DROP POLICY IF EXISTS profiles_select ON profiles;
  -- temp fix for existing policies in the snapshot
 DROP POLICY IF EXISTS profiles_policy ON profiles;
 DROP POLICY IF EXISTS "Public profiles are viewable by everyone." ON profiles;
-DROP POLICY IF EXISTS "Users can update own profile." ON profiles;
 
 CREATE POLICY profiles_select
 ON profiles
