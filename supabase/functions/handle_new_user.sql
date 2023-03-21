@@ -16,4 +16,3 @@ AS $$
     RETURN new;
   END;
 $$
-
