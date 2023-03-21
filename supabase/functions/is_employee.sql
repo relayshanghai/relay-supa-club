@@ -5,6 +5,6 @@ CREATE OR REPLACE FUNCTION relay_is_employee()
   SECURITY DEFINER
   AS $$
     BEGIN
-    RETURN (SELECT role FROM profiles WHERE id = auth.uid()) = 'relay_employee';
+    RETURN (SELECT user_role FROM profiles WHERE id = auth.uid()) = 'relay_employee';
     END;
   $$;

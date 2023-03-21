@@ -32,7 +32,7 @@ BEGIN;
       user_id := create_supabase_user(email, email);
 
       INSERT INTO profiles
-        (id, email, last_name, first_name, role, company_id)
+        (id, email, last_name, first_name, user_role, company_id)
       VALUES
         (user_id, email, last_name, first_name, _role, company_id)
       RETURNING * INTO _row;

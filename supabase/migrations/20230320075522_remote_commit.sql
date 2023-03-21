@@ -259,7 +259,7 @@ CREATE TABLE "public"."profiles" (
     "last_name" "text" NOT NULL,
     "first_name" "text" NOT NULL,
     "email" "text",
-    "role" "text"
+    "user_role" "text"
 );
 
 

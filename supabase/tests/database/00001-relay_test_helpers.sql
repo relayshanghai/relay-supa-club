@@ -56,7 +56,7 @@ CREATE OR REPLACE FUNCTION tests.create_profile(email TEXT, first_name TEXT, las
         user_id uuid;
     BEGIN
         user_id := tests.create_supabase_user(email, email);
-        INSERT INTO profiles(id, email, last_name, first_name, role, company_id)
+        INSERT INTO profiles(id, email, last_name, first_name, user_role, company_id)
         VALUES(user_id, email, last_name, first_name, _role, company_id);
     RETURN user_id;
     END;
