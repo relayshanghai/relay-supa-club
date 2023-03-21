@@ -1,20 +1,38 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-// pages/_document.tsx
-const newrelic = require('newrelic');
+import newrelic from 'newrelic';
 import type { DocumentContext, DocumentInitialProps } from 'next/document';
 import Document, { Html, Head, Main, NextScript } from 'next/document';
+import { serverLogger } from 'src/utils/logger';
 
-class MyDocument extends Document {
-    static async getInitialProps(ctx: DocumentContext): Promise<DocumentInitialProps> {
+type NewRelicProps = {
+    browserTimingHeader: string;
+};
+
+class MyDocument extends Document<NewRelicProps> {
+    static async getInitialProps(
+        ctx: DocumentContext,
+    ): Promise<DocumentInitialProps & NewRelicProps> {
         const initialProps = await Document.getInitialProps(ctx);
+
+        /**
+         * For SSG pages the build is faster than the agent connect cycle
+         * In those cases, let's wait for the agent to connect before getting
+         * the browser agent script.
+         */
+        if (!newrelic.agent.collector.isConnected()) {
+            await new Promise((resolve) => {
+                newrelic.agent.on('connected', resolve);
+            });
+        }
 
         const browserTimingHeader = newrelic.getBrowserTimingHeader({
             hasToRemoveScriptWrapper: true,
+            allowTransactionlessInjection: true,
         });
+
+        serverLogger('NextJs New Relic redirecting to a page', 'info');
 
         return {
             ...initialProps,
-            //@ts-ignore
             browserTimingHeader,
         };
     }
@@ -25,10 +43,7 @@ class MyDocument extends Document {
                 <Head>
                     <script
                         type="text/javascript"
-                        dangerouslySetInnerHTML={{
-                            //@ts-ignore
-                            __html: this.props.browserTimingHeader,
-                        }}
+                        dangerouslySetInnerHTML={{ __html: this.props.browserTimingHeader }}
                     />
                 </Head>
                 <body>

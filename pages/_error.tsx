@@ -1,6 +1,10 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-// pages/_error.tsx
-function Error({ statusCode }: any) {
+import type { NextPage, NextPageContext } from 'next';
+
+type Props = {
+    statusCode: number | undefined;
+};
+
+const Error: NextPage<Props> = ({ statusCode }) => {
     return (
         <p>
             {statusCode
@@ -8,14 +12,15 @@ function Error({ statusCode }: any) {
                 : 'An error occurred on client'}
         </p>
     );
-}
+};
 
-Error.getInitialProps = ({ res, err }: any) => {
+Error.getInitialProps = async ({ res, err }: NextPageContext) => {
     if (typeof window == 'undefined') {
-        const newrelic = require('newrelic');
+        // use dynamic import to avoid typescript error
+        // https://2ality.com/2017/01/import-operator.html
+        const newrelic = await import('newrelic');
         newrelic.noticeError(err);
     } else {
-        //@ts-ignore
         window.newrelic.noticeError(err);
     }
 
