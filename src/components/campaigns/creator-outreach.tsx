@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 import type { ChangeEvent, MouseEvent } from 'react';
 import { useRef, useState } from 'react';
 import Link from 'next/link';
@@ -13,6 +14,7 @@ import dateFormat from 'src/utils/dateFormat';
 import type { CampaignCreatorDB, CampaignWithCompanyCreators } from 'src/utils/api/db';
 import type { SocialMediaPlatform } from 'types';
 import { imgProxy } from 'src/utils/fetcher';
+import Fuse from 'fuse.js';
 
 export default function CreatorsOutreach({
     currentCampaign,
@@ -24,11 +26,15 @@ export default function CreatorsOutreach({
     setCurrentCreator: (value: CampaignCreatorDB) => void;
 }) {
     const { t } = useTranslation();
+    const inputRef = useRef(null);
+
     const router = useRouter();
     const { pathname, query } = router;
+
     const [tabStatus, setTabStatus] = useState<string | string[]>(query.curTab || 'to contact');
     const [toEdit, setToEdit] = useState<{ index: number; key: string } | null>(null);
-    const inputRef = useRef(null);
+    const [searchTerm, setSearchTerm] = useState<string | ''>('');
+    const [influencersList, setInfluencersList] = useState<CampaignCreatorDB[]>([]);
 
     const { deleteCreatorInCampaign, updateCreatorInCampaign, refreshCampaign } = useCampaigns({
         campaignId: currentCampaign?.id,
@@ -70,9 +76,33 @@ export default function CreatorsOutreach({
         'sampleStatus',
     ];
 
+    useEffect(() => {
+        if (currentCampaign) {
+            setInfluencersList(currentCampaign.campaign_creators);
+        }
+    }, [currentCampaign]);
+
+    useEffect(() => {
+        const fuse = new Fuse(currentCampaign?.campaign_creators, {
+            minMatchCharLength: 1,
+            keys: ['fullname'],
+        });
+
+        if (searchTerm.length === 0) {
+            setInfluencersList(currentCampaign?.campaign_creators);
+            return;
+        }
+
+        setInfluencersList(fuse.search(searchTerm).map((result) => result.item));
+    }, [searchTerm, currentCampaign]);
+
     const handleTabChange = (value: string) => {
         router.push({ pathname, query: { ...query, curTab: value } });
         setTabStatus(value);
+    };
+
+    const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+        setSearchTerm(e.target.value);
     };
 
     const handleDropdownSelect = async (
@@ -158,6 +188,7 @@ export default function CreatorsOutreach({
                         </div>
                     ))}
                 </div>
+
                 {/* On Mobile Show Select instead */}
                 <select
                     className="appearance-none rounded-lg bg-primary-500 bg-opacity-20 px-4 py-2 text-center text-xs font-semibold text-primary-500 outline-none sm:hidden"
@@ -178,6 +209,17 @@ export default function CreatorsOutreach({
                         </option>
                     ))}
                 </select>
+            </div>
+            <div className="py-5">
+                <input
+                    className="block w-full appearance-none rounded-md border border-gray-200 bg-white px-3 py-2 text-gray-600 placeholder-gray-400 ring-1 ring-gray-900 ring-opacity-5 placeholder:text-sm focus:outline-none"
+                    placeholder={t('creators.show.searchInfluencerPlaceholder') as string}
+                    id="influencer-search"
+                    value={searchTerm}
+                    onChange={(e) => {
+                        handleInputChange(e);
+                    }}
+                />
             </div>
             {/* -- Outreach Table -- */}
             <div className="overflow-x-auto">
@@ -202,7 +244,19 @@ export default function CreatorsOutreach({
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200 bg-white">
-                        {currentCampaign?.campaign_creators.map((creator, index) => {
+                        {influencersList.length === 0 && (
+                            <tr>
+                                <td colSpan={columnLabels.length + 1} className="px-6 py-4">
+                                    <div className="flex justify-center">
+                                        <p className="text-sm text-gray-500">
+                                            {t('campaigns.show.activities.outreach.noInfluencers')}
+                                        </p>
+                                    </div>
+                                </td>
+                            </tr>
+                        )}
+
+                        {influencersList.map((creator, index) => {
                             if (creator.status === tabStatus)
                                 return (
                                     <tr
