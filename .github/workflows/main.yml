@@ -49,6 +49,9 @@ jobs:
                     exit 1
                   fi
 
+            - name: Run lint
+              run: supabase db lint
+
             - name: Run tests
               run: |
                 chmod +x ./supabase/db.sh
