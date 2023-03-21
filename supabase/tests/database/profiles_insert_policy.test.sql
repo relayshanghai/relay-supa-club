@@ -10,7 +10,7 @@ SELECT plan(6);
 -- end includes
 
 -- make sure everything's available
-SELECT has_function('relay_is_employee');
+SELECT has_function('is_relay_employee');
 SELECT tests.rls_enabled('public', 'profiles');
 SELECT policy_cmd_is('profiles', 'profiles_insert', 'insert');
 

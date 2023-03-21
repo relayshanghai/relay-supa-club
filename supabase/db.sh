@@ -53,7 +53,7 @@ function drop_database_function {
 
     # Use psql to drop the function
 
-    psql --host $db_host --port $db_port --username $db_user --dbname $db_name --command "DROP FUNCTION IF EXISTS relay_$1();"
+    psql --host $db_host --port $db_port --username $db_user --dbname $db_name --command "DROP FUNCTION IF EXISTS $1();"
     sed -i "/\/$1\.sql/d" $script_dir/functions/index.sql
 }
 
@@ -73,7 +73,7 @@ function push_database_functions {
 function list_database_functions {
     check_psql
 
-    psql -h $db_host -p $db_port -U $db_user -d $db_name -c "SELECT specific_schema,routine_name,data_type,external_language FROM information_schema.routines WHERE routine_type = 'FUNCTION' AND routine_schema = 'public' AND routine_name LIKE 'relay_%';"
+    psql -h $db_host -p $db_port -U $db_user -d $db_name -c "SELECT specific_schema,routine_name,data_type,external_language FROM information_schema.routines WHERE routine_type = 'FUNCTION' AND routine_schema = 'public';"
 }
 
 function connect {
@@ -86,8 +86,7 @@ function create_database_functions {
     fn_name=${1:-hello_world}
     message=$(
         cat <<-TEMPLATE
--- Do not remove relay_* prefix
-CREATE OR REPLACE FUNCTION relay_$fn_name()
+CREATE OR REPLACE FUNCTION $fn_name()
 RETURNS text
 LANGUAGE plpgsql
 AS \$\$
@@ -294,16 +293,15 @@ function help {
         ./$script_name create_dbfn <function_name>
 
     Note that these are database functions (not edge functions)
-    All functions created with this command will have a relay_* prefix
     This command creates a function in "./supabase/functions" and adds it to "./supabase/functions/index.sql"
 
-    List database functions - Show functions that have relay_* prefix
+    List database functions - Show database functions
         ./$script_name list_dbfn
 
     Push database functions - Pushes ALL functions found in "./supabase/functions"
         ./$script_name push_dbfn
         
-    Runs a postgres query to import all functions with relay_* prefix and adds them to the database that is connected based on what environment variables you have set for the DBHOST, DBPORT, DBUSER, DBNAME, and DBPASSWORD.
+    Runs a postgres query to push all functions to the local database.
 
     Drop a database function:
         ./$script_name drop_dbfn <function_name>
@@ -329,7 +327,7 @@ function help {
     Push policies - Pushes ALL policies found in "./supabase/policies"
         ./$script_name push_policies
         
-    Runs a postgres query to import all functions with relay_* prefix and adds them to the database that is connected based on what environment variables you have set for the DBHOST, DBPORT, DBUSER, DBNAME, and DBPASSWORD.
+    Runs a postgres query to push all policies to the local database.
 
     Drop a policy:
         ./$script_name drop_policy <policy_name> <table_name>

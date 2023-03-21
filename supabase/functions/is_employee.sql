@@ -1,5 +1,4 @@
--- Do not remove relay_* prefix
-CREATE OR REPLACE FUNCTION relay_is_employee()
+CREATE OR REPLACE FUNCTION is_relay_employee()
   RETURNS boolean
   LANGUAGE plpgsql
   SECURITY DEFINER

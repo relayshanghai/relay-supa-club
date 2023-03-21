@@ -10,7 +10,7 @@ SELECT plan(11);
 -- end includes
 
 -- make sure everything's available
-SELECT has_function('relay_is_employee');
+SELECT has_function('is_relay_employee');
 SELECT tests.rls_enabled('public', 'profiles');
 SELECT policy_cmd_is('profiles', 'profiles_select', 'select');
 
@@ -28,7 +28,7 @@ SELECT policy_cmd_is('profiles', 'profiles_select', 'select');
   SELECT tests.authenticate_as('employee@email.com');
 
   SELECT is(
-    relay_is_employee(),
+    is_relay_employee(),
     false,
     'Authenticated user IS NOT a relay employee'
   );
@@ -46,7 +46,7 @@ SELECT policy_cmd_is('profiles', 'profiles_select', 'select');
 -- test staff user
   SELECT tests.authenticate_as('jacob@relay.club');
   SELECT is(
-    relay_is_employee(),
+    is_relay_employee(),
     true,
     'Authenticated user IS a Relay employee'
   );

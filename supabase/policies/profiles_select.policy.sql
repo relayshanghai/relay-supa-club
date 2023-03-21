@@ -1,5 +1,3 @@
-BEGIN;
-
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS profiles_select ON profiles;
@@ -12,7 +10,5 @@ CREATE POLICY profiles_select
 ON profiles
 FOR SELECT
 USING (
-    id = auth.uid() OR relay_is_employee()
+    id = auth.uid() OR is_relay_employee()
 );
-
-COMMIT;
