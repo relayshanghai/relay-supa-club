@@ -45,5 +45,5 @@ export const isCompanyOwnerOrRelayEmployee = async (req: NextApiRequest, res: Ne
     if (!session?.user.id) return false;
     const { data: profile } = await getUserRole(session?.user.id);
 
-    return isAdmin(profile?.role);
+    return isAdmin(profile?.user_role);
 };

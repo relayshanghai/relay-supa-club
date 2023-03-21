@@ -51,7 +51,7 @@ export const SearchOptions = ({
     return (
         <>
             <div className="flex w-full flex-col items-start space-y-2 py-4 font-light md:flex-row md:space-x-4 md:space-y-0">
-                <div data-testid="search-topics">
+                <div data-testid="search-topics" className="w-full">
                     <SearchTopics
                         path="influencer-search/topics"
                         placeholder={t('creators.searchTopic')}
@@ -62,11 +62,11 @@ export const SearchOptions = ({
                         }}
                     />
                 </div>
-                <SearchCreators platform={platform} />
+                <div className="w-full">
+                    <SearchCreators platform={platform} />
+                </div>
             </div>
             <div className="flex flex-col items-start space-y-2 md:flex-row md:space-x-4 md:space-y-0">
-                {/* remove all lookalike code: https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/154 */}
-
                 <SearchTopics
                     path="influencer-search/locations"
                     placeholder={t('creators.filter.locationPlaceholder')}

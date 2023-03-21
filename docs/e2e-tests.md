@@ -11,6 +11,8 @@ Open cypress dashboard
 
 ```bash
 npx cypress open
+OR
+npm run cypress
 ```
 
 Click "E2E Testing" > "Chrome" > "Start E2E Testing in Chrome" then click on the "happy_path" test to run it.

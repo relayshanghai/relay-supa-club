@@ -64,12 +64,14 @@ export const unixEpochToISOString = (...timestamps: (number | undefined | null)[
     return new Date(firstValidTimestamp * SECONDS_IN_MILLISECONDS).toISOString();
 };
 
-export const isAdmin = (role?: AccountRole) => {
-    if (!role) {
+export const isAdmin = (user_role?: AccountRole) => {
+    if (!user_role) {
         return false;
     }
     const isAdmin =
-        role === 'company_owner' || role === 'relay_employee' || role === 'relay_expert';
+        user_role === 'company_owner' ||
+        user_role === 'relay_employee' ||
+        user_role === 'relay_expert';
     return isAdmin;
 };
 
