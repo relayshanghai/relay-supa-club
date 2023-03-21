@@ -3,9 +3,9 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "dev": "next dev",
+        "dev": "NODE_OPTIONS='-r @newrelic/next' next dev",
         "build": "next build",
-        "start": "next start",
+        "start": "NODE_OPTIONS='-r @newrelic/next' next start",
         "lint:staged": "eslint --ext .js,.jsx,.ts,.tsx --max-warnings=0",
         "lint": "eslint . --ext .js,.jsx,.ts,.tsx --max-warnings=-0",
         "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
@@ -17,6 +17,7 @@
     "dependencies": {
         "@headlessui/react": "^1.7.11",
         "@heroicons/react": "^2.0.15",
+        "@newrelic/next": "^0.4.0",
         "@supabase/auth-helpers-nextjs": "^0.5.4",
         "@supabase/auth-helpers-react": "^0.3.1",
         "@supabase/supabase-js": "^2.8.0",
@@ -24,6 +25,7 @@
         "dotenv": "^16.0.3",
         "i18next": "^22.4.9",
         "i18next-browser-languagedetector": "^7.0.1",
+        "newrelic": "^9.13.0",
         "next": "^13.1.6",
         "openai": "^3.1.0",
         "react": "^18.2.0",
