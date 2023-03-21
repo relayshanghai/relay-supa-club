@@ -21,11 +21,13 @@ export const LanguageToggle = () => {
     return (
         <div>
             <div className="relative flex flex-col items-center">
-                <button ref={languageButtonRef} onClick={() => setDisplayOptions(!displayOptions)}>
-                    <Globe
-                        data-testid="language-toggle-button"
-                        className="h-5 w-5 text-gray-300 duration-300 hover:text-primary-500"
-                    />
+                <button
+                    id="language-toggle-button"
+                    ref={languageButtonRef}
+                    data-testid="language-toggle-button"
+                    onClick={() => setDisplayOptions(!displayOptions)}
+                >
+                    <Globe className="h-5 w-5 text-gray-300 duration-300 hover:text-primary-500" />
                 </button>
                 {displayOptions && (
                     <div

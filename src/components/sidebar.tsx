@@ -119,7 +119,7 @@ export const Sidebar = ({
             >
                 <NavBarInner
                     loggedIn={loggedIn}
-                    isRelayEmployee={profile?.role === 'relay_employee'}
+                    isRelayEmployee={profile?.user_role === 'relay_employee'}
                 />
             </div>
         </>

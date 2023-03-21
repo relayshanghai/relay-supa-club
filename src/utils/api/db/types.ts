@@ -3,13 +3,13 @@ import type { Database } from 'types/supabase';
 
 export type ProfilesTable = Database['public']['Tables']['profiles'] & {
     Row: Database['public']['Tables']['profiles']['Row'] & {
-        role?: AccountRole;
+        user_role?: AccountRole;
     };
     Insert: Database['public']['Tables']['profiles']['Insert'] & {
-        role?: AccountRole;
+        user_role?: AccountRole;
     };
     Update: Database['public']['Tables']['profiles']['Update'] & {
-        role?: AccountRole;
+        user_role?: AccountRole;
     };
 };
 

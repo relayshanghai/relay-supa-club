@@ -107,7 +107,7 @@ export const CompanyDetails = () => {
                     </div>
                 </div>
             )}
-            {isAdmin(profile?.role) && (
+            {isAdmin(profile?.user_role) && (
                 <>
                     {editMode ? (
                         <div className="flex w-full flex-row justify-end space-x-4">
@@ -160,7 +160,7 @@ export const CompanyDetails = () => {
                                             {t('account.company.role')}
                                         </p>
                                         <p>
-                                            {isAdmin(profile?.role)
+                                            {isAdmin(profile?.user_role)
                                                 ? t('account.company.admin')
                                                 : t('account.company.member')}
                                         </p>
@@ -192,7 +192,7 @@ export const CompanyDetails = () => {
                         })}
                     </>
                 )}
-                {isAdmin(profile?.role) && (
+                {isAdmin(profile?.user_role) && (
                     <div className="pt-4">
                         <Button variant="secondary" onClick={() => setShowAddMoreMembers(true)}>
                             {t('account.company.addMoreMembers')}

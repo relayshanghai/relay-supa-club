@@ -1,3 +1,9 @@
+## Run a migration
+
+```bash
+todo
+```
+
 ## Delete a user
 
 TODO: investigate setting the profiles table to cascade delete: https://github.com/supabase/storage-api/issues/65
