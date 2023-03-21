@@ -1,4 +1,4 @@
-import type { ChangeEvent, KeyboardEvent} from 'react';
+import type { ChangeEvent, KeyboardEvent } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import useOnOutsideClick from 'src/hooks/use-on-outside-click';
 import { useTranslation } from 'react-i18next';
@@ -24,14 +24,14 @@ export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
         async (term: any) => {
             setLoading(true);
             try {
-                const { data } = await nextFetch('influencer-search/lookalike', {
+                const res = await nextFetch('influencer-search/lookalike', {
                     method: 'post',
                     body: JSON.stringify({
                         term,
                         platform,
                     }),
                 });
-                setCreators(data);
+                setCreators(res);
             } catch (error) {
                 clientLogger(error);
             } finally {
