@@ -18,15 +18,7 @@ export const useTeammates = () => {
             >(path, {
                 id: profile?.company_id ?? '',
             });
-            result.sort((a, b) => {
-                if (a.first_name.toLowerCase() < b.first_name.toLowerCase()) {
-                    return -1;
-                }
-                if (a.first_name.toLowerCase() > b.first_name.toLowerCase()) {
-                    return 1;
-                }
-                return 0;
-            });
+            result.sort((a, b) => a.first_name.toLowerCase().localeCompare(b.first_name.toLowerCase()));
 
             return result;
         },
