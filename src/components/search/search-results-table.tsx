@@ -1,7 +1,8 @@
 import Link from 'next/link';
+import { CampaignsIndexGetResult } from 'pages/api/campaigns';
 import { useTranslation } from 'react-i18next';
 import { useSearch } from 'src/hooks/use-search';
-import type { CreatorSearchAccountObject } from 'types';
+import type { CreatorSearchAccountObject, CreatorUserProfile } from 'types';
 import { Button } from '../button';
 import { SkeletonSearchResultRow } from '../common/skeleton-search-result-row';
 import { SearchResultRow } from './search-result-row';
@@ -9,9 +10,15 @@ import { SearchResultRow } from './search-result-row';
 export const SearchResultsTable = ({
     setShowCampaignListModal,
     setSelectedCreator,
+    setShowAlreadyAddedModal,
+    campaigns,
+    selectedCreator,
 }: {
     setShowCampaignListModal: (show: boolean) => void;
     setSelectedCreator: (creator: CreatorSearchAccountObject) => void;
+    setShowAlreadyAddedModal: (show: boolean) => void;
+    campaigns?: CampaignsIndexGetResult;
+    selectedCreator: CreatorUserProfile | null;
 }) => {
     const { t } = useTranslation();
     const { loading, resultPages, usageExceeded, noResults } = useSearch();
@@ -63,6 +70,9 @@ export const SearchResultsTable = ({
                                     creator={creator}
                                     setShowCampaignListModal={setShowCampaignListModal}
                                     setSelectedCreator={setSelectedCreator}
+                                    setShowAlreadyAddedModal={setShowAlreadyAddedModal}
+                                    campaigns={campaigns}
+                                    selectedCreator={selectedCreator}
                                 />
                             )),
                         )}

@@ -1,22 +1,29 @@
 import { Menu } from '@headlessui/react';
 import { PlusCircleIcon } from '@heroicons/react/24/solid';
 import Link from 'next/link';
+import { CampaignsIndexGetResult } from 'pages/api/campaigns';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
 import { DotsHorizontal, ShareLink } from 'src/components/icons';
 import { useSearch } from 'src/hooks/use-search';
 import { imgProxy } from 'src/utils/fetcher';
 import { decimalToPercent, numberFormatter } from 'src/utils/formatter';
-import type { CreatorSearchAccountObject } from 'types';
+import type { CreatorSearchAccountObject, CreatorUserProfile } from 'types';
 
 export const SearchResultRow = ({
     creator,
     setShowCampaignListModal,
     setSelectedCreator,
+    campaigns,
+    selectedCreator,
+    setShowAlreadyAddedModal,
 }: {
     creator: CreatorSearchAccountObject;
     setSelectedCreator: (creator: CreatorSearchAccountObject) => void;
     setShowCampaignListModal: (show: boolean) => void;
+    setShowAlreadyAddedModal: (show: boolean) => void;
+    campaigns?: CampaignsIndexGetResult;
+    selectedCreator: CreatorUserProfile | null;
 }) => {
     const { t } = useTranslation();
     const { platform } = useSearch();
@@ -34,7 +41,23 @@ export const SearchResultRow = ({
     } = creator.account.user_profile;
     const handle = username || custom_name || fullname || '';
     const addToCampaign = () => {
-        setShowCampaignListModal(true);
+        const campaignsList: string[] = [];
+
+        campaigns?.forEach((campaign) => {
+            if (campaign && selectedCreator) {
+                const creatorInCampaign = campaign?.campaign_creators?.find(
+                    (campaignCreator) => campaignCreator.creator_id === selectedCreator?.user_id,
+                );
+
+                if (creatorInCampaign) {
+                    campaignsList.push(campaign.name);
+                }
+            }
+        });
+
+        if (campaignsList.length) {
+            setShowAlreadyAddedModal(true);
+        } else setShowCampaignListModal(true);
         if (creator) setSelectedCreator(creator);
     };
 
