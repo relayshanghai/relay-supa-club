@@ -11,17 +11,8 @@ import type {
     ProfilePutBody,
     ProfilePutResponse,
 } from 'pages/api/profiles';
-import type {
-    MutableRefObject,
-    PropsWithChildren} from 'react';
-import {
-    createContext,
-    useCallback,
-    useContext,
-    useEffect,
-    useRef,
-    useState,
-} from 'react';
+import type { MutableRefObject, PropsWithChildren } from 'react';
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import type { KeyedMutator } from 'swr';
 import useSWR from 'swr';
 
@@ -39,7 +30,7 @@ export type SignupData = {
     };
 };
 
-export interface UserContext {
+export interface IUserContext {
     user: User | null;
     profile: ProfileDB | undefined;
     loading: boolean;
@@ -62,7 +53,7 @@ export interface UserContext {
     getProfileController: MutableRefObject<AbortController | null | undefined>;
 }
 
-const ctx = createContext<UserContext>({
+export const UserContext = createContext<IUserContext>({
     user: null,
     profile: undefined,
     loading: true,
@@ -83,7 +74,7 @@ const ctx = createContext<UserContext>({
 });
 
 export const useUser = () => {
-    const context = useContext(ctx);
+    const context = useContext(UserContext);
     if (context === null) {
         throw new Error('useUser must be used within a UserProvider');
     }
@@ -221,7 +212,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
     }, [session?.user.email, profile?.email, updateProfile, profile, session, refreshProfile]);
 
     return (
-        <ctx.Provider
+        <UserContext.Provider
             value={{
                 user: session?.user || null,
                 login,
@@ -237,6 +228,6 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
             }}
         >
             {children}
-        </ctx.Provider>
+        </UserContext.Provider>
     );
 };

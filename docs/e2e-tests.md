@@ -1,5 +1,13 @@
 # End 2 End Testings with Cypress
 
+## Strategy
+
+Because excessive e2e tests can slow down development cycles, we are mainly using the e2e tests to prove that the app is generally working as expected, hence 'happy path' testing. We are not testing every single feature, but we are testing the most important features.
+
+For more detailed testing, refer to the unit/component tests.
+
+## Run
+
 Make sure the app is running locally
 
 ```bash
@@ -16,6 +24,8 @@ npm run cypress
 ```
 
 Click "E2E Testing" > "Chrome" > "Start E2E Testing in Chrome" then click on the "happy_path" test to run it.
+
+We currently do not use any mocking for end to end test, everything is run against the live database.
 
 ## Some useful cypress features
 

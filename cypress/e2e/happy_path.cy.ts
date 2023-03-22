@@ -1,8 +1,13 @@
 describe('Main pages happy paths', () => {
-    it('can log in and load search page', () => {
+    it('can log in and load search page and switch language', () => {
         cy.visit('/');
         // starts on signup page. has an h1 that says signup in Chinese: 注册
         cy.get('h1').contains('注册');
+
+        cy.getByTestId('language-toggle-button').click();
+        cy.contains('English').click();
+        cy.get('h1').contains('Sign up');
+
         cy.loginTestUser();
 
         cy.contains('Campaigns', { timeout: 10000 }); // dashboard page load
@@ -36,9 +41,9 @@ describe('Main pages happy paths', () => {
 
         cy.contains('Brave Wilderness', { timeout: 30000 }); // the first influencer search result for alligators
     });
-    it.only('can open analyze page', () => {
+    it('can open analyze page', () => {
         cy.loginTestUser();
-        cy.contains('T-Series', { timeout: 20000 });
+        cy.contains('T-Series', { timeout: 30000 });
 
         const tSeriesID = 'UCq-Fj5jknLsUf-MWSy4_brA';
         cy.getByTestId(`search-result-row-buttons/${tSeriesID}`).click({
