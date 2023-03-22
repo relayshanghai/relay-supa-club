@@ -5,15 +5,8 @@ import type { ChangeEvent, MouseEvent } from 'react';
 import { useRef, useState } from 'react';
 import Link from 'next/link';
 import { toast } from 'react-hot-toast';
-import { Trashcan } from 'src/components/icons';
 import { useCampaigns } from 'src/hooks/use-campaigns';
-import TableInput from './campaign-table-input';
-import { SocialMediaIcon } from '../common/social-media-icon';
-import { CreatorContacts } from './creator-contacts';
-import dateFormat from 'src/utils/dateFormat';
 import type { CampaignCreatorDB, CampaignWithCompanyCreators } from 'src/utils/api/db';
-import type { SocialMediaPlatform } from 'types';
-import { imgProxy } from 'src/utils/fetcher';
 import Fuse from 'fuse.js';
 import InfluencerRow from './influencer-row';
 
