@@ -44,3 +44,9 @@ backup.sql
 cypress/videos
 cypress/screenshots
 cypress/integration/*.js
+
+# Sentry
+.sentryclirc
+
+# Sentry
+next.config.original.js
