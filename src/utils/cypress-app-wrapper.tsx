@@ -15,7 +15,7 @@ export interface TestMountOptions {
 }
 const mockProfile: IUserContext['profile'] = {
     id: '1',
-    role: 'company_owner',
+    user_role: 'company_owner',
     company_id: '1',
     avatar_url: null,
     email: 'mock@example.com',
