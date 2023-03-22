@@ -26,8 +26,17 @@ export const iqDataFetch = async <T = any>(path: string, options: RequestInit = 
     return json as T;
 };
 
-export const fetchIqDataLookalike = async (term: string, platform: CreatorPlatform) =>
-    await iqDataFetch(`dict/users/?q=${term}&type=lookalike&platform=${platform}&limit=5`);
+//** Search for influencers */
+// We are currently using iqdata lookalike api to search for influencers, there is no api available for searching influencers by name.
+// Currently IqData has two search options under their lookalikes endpoint:
+// 1. Audience lookalike: help you to find influencers with similar audience
+// 2. Influencer lookalike: help you to find influencers that post similar content
+// These two option returns different data, so we need to use both in our search in order to give customer the best results.
+export const fetchIqDataLookalikeByAudience = async (term: string, platform: CreatorPlatform) =>
+    await iqDataFetch(`dict/users/?q=${term}&type=lookalike&platform=${platform}&limit=5`); //Audience lookalike
+
+export const fetchIqDataLookalikeByInfluencer = async (term: string, platform: CreatorPlatform) =>
+    await iqDataFetch(`dict/users/?q=${term}&type=topic-tags&platform=${platform}&limit=5`); //Influencer lookalike
 
 export const fetchIqDataTopics = async (term: string, platform: CreatorPlatform, limit = 10) =>
     await iqDataFetch(`dict/topic-tags/?q=${term}&platform=${platform}&limit=${limit}`);

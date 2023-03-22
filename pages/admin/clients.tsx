@@ -49,7 +49,7 @@ const Clients = () => {
                         <tbody className="divide-y divide-gray-100">
                             {data.map((client) => {
                                 const ownerProfiles = client.profiles.filter(
-                                    (profile) => profile.role === 'company_owner',
+                                    (profile) => profile.user_role === 'company_owner',
                                 );
                                 const contactEmails = ownerProfiles.map((profile) => profile.email);
                                 let contactEmailString = '';

@@ -23,7 +23,11 @@ export default function CreatorCard({
                     />
                 </div>
                 <div className="text-xs text-gray-600">
-                    <div className="font-semibold">{creator.fullname}</div>
+                    <div className="font-semibold">
+                        {platform === 'instagram'
+                            ? creator.username || creator.fullname
+                            : creator.fullname}
+                    </div>
                     <div className="flex">
                         <div className="mr-2">{t('creators.show.followers')}</div>
                         <div>{numFormatter(creator.followers)}</div>

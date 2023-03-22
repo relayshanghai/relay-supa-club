@@ -16,33 +16,34 @@ export const SearchResultsTable = ({
     const { t } = useTranslation();
     const { loading, resultPages, usageExceeded, noResults } = useSearch();
     return (
-        <div className="w-full overflow-auto">
+        <div className="w-full overflow-x-auto">
             <table
-                className={`min-w-full divide-y divide-gray-200 rounded-lg shadow ${
+                className={`w-full table-fixed divide-y divide-gray-200 rounded-lg shadow ${
                     loading ? 'opacity-60' : ''
                 }`}
             >
                 <thead className="sticky top-0 bg-white">
                     <tr>
-                        <th className="w-2/4 px-4 py-4 text-left text-xs font-normal text-gray-500">
+                        <th className="w-72 p-4 text-left text-xs font-normal text-gray-500">
                             {t('creators.account')}
                         </th>
-                        <th className="whitespace-nowrap pr-4 text-left text-xs font-normal text-gray-500">
+                        <th className="w-24 whitespace-nowrap pr-4 text-right text-xs font-normal text-gray-500">
                             {t('creators.subscribers')}
                         </th>
-                        <th className="whitespace-nowrap pr-4 text-left text-xs font-normal text-gray-500">
+                        <th className="w-24 whitespace-nowrap pr-4 text-right text-xs font-normal text-gray-500">
                             {t('creators.engagements')}
                         </th>
-                        <th className="whitespace-nowrap pr-4 text-left text-xs font-normal text-gray-500">
+                        <th className="w-24 whitespace-nowrap pr-4 text-right text-xs font-normal text-gray-500">
                             {t('creators.engagementRate')}
                         </th>
-                        <th className="whitespace-nowrap pr-4 text-left text-xs font-normal text-gray-500">
+                        <th className="w-24 whitespace-nowrap pr-4 text-right text-xs font-normal text-gray-500">
                             {t('creators.avgViews')}
                         </th>
+                        <th className="w-28 lg:w-96">{''}</th>
                     </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white">
-                    {usageExceeded ? (
+                    {usageExceeded && (
                         <tr>
                             <td className="space-y-4 py-4 text-center" colSpan={5}>
                                 <p className="mb-4">{t('creators.usageExceeded')}</p>
@@ -51,7 +52,10 @@ export const SearchResultsTable = ({
                                 </Link>
                             </td>
                         </tr>
-                    ) : !noResults ? (
+                    )}
+
+                    {!usageExceeded &&
+                        !noResults &&
                         resultPages?.map((page) =>
                             page?.map((creator, i) => (
                                 <SearchResultRow
@@ -61,18 +65,21 @@ export const SearchResultsTable = ({
                                     setSelectedCreator={setSelectedCreator}
                                 />
                             )),
-                        )
-                    ) : loading ? (
-                        [...Array(10)].map((_, i) => (
-                            <SkeletonSearchResultRow key={i} delay={i * 200} />
-                        ))
-                    ) : (
-                        <tr>
-                            <td className="py-4 text-center" colSpan={5}>
-                                {t('creators.noResults')}
-                            </td>
-                        </tr>
-                    )}
+                        )}
+
+                    {!usageExceeded &&
+                        noResults &&
+                        (loading ? (
+                            [...Array(10)].map((_, i) => (
+                                <SkeletonSearchResultRow key={i} delay={i * 200} />
+                            ))
+                        ) : (
+                            <tr>
+                                <td className="py-4 text-center" colSpan={5}>
+                                    {t('creators.noResults')}
+                                </td>
+                            </tr>
+                        ))}
                 </tbody>
             </table>
         </div>
