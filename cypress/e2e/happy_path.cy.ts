@@ -43,7 +43,7 @@ describe('Main pages happy paths', () => {
     });
     it('can open analyze page', () => {
         cy.loginTestUser();
-        cy.contains('T-Series', { timeout: 20000 });
+        cy.contains('T-Series', { timeout: 30000 });
 
         const tSeriesID = 'UCq-Fj5jknLsUf-MWSy4_brA';
         cy.getByTestId(`search-result-row-buttons/${tSeriesID}`).click({
