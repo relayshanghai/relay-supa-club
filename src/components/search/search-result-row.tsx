@@ -17,6 +17,7 @@ export const SearchResultRow = ({
     campaigns,
     selectedCreator,
     setShowAlreadyAddedModal,
+    setCampaignsWithCreator,
 }: {
     creator: CreatorSearchAccountObject;
     setSelectedCreator: (creator: CreatorSearchAccountObject) => void;
@@ -24,6 +25,7 @@ export const SearchResultRow = ({
     setShowAlreadyAddedModal: (show: boolean) => void;
     campaigns?: CampaignsIndexGetResult;
     selectedCreator: CreatorUserProfile | null;
+    setCampaignsWithCreator: (campaigns: string[]) => void;
 }) => {
     const { t } = useTranslation();
     const { platform } = useSearch();
@@ -41,12 +43,15 @@ export const SearchResultRow = ({
     } = creator.account.user_profile;
     const handle = username || custom_name || fullname || '';
     const addToCampaign = () => {
+        if (creator) setSelectedCreator(creator);
+
         const campaignsList: string[] = [];
 
         campaigns?.forEach((campaign) => {
-            if (campaign && selectedCreator) {
+            if (campaign && creator.account.user_profile.user_id) {
                 const creatorInCampaign = campaign?.campaign_creators?.find(
-                    (campaignCreator) => campaignCreator.creator_id === selectedCreator?.user_id,
+                    (campaignCreator) =>
+                        campaignCreator.creator_id === creator?.account.user_profile.user_id,
                 );
 
                 if (creatorInCampaign) {
@@ -55,10 +60,10 @@ export const SearchResultRow = ({
             }
         });
 
-        if (campaignsList.length) {
+        if (campaignsList.length > 0) {
+            setCampaignsWithCreator(campaignsList);
             setShowAlreadyAddedModal(true);
         } else setShowCampaignListModal(true);
-        if (creator) setSelectedCreator(creator);
     };
 
     return (

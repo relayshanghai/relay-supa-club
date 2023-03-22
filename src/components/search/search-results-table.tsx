@@ -13,12 +13,14 @@ export const SearchResultsTable = ({
     setShowAlreadyAddedModal,
     campaigns,
     selectedCreator,
+    setCampaignsWithCreator,
 }: {
     setShowCampaignListModal: (show: boolean) => void;
     setSelectedCreator: (creator: CreatorSearchAccountObject) => void;
     setShowAlreadyAddedModal: (show: boolean) => void;
     campaigns?: CampaignsIndexGetResult;
     selectedCreator: CreatorUserProfile | null;
+    setCampaignsWithCreator: (campaigns: string[]) => void;
 }) => {
     const { t } = useTranslation();
     const { loading, resultPages, usageExceeded, noResults } = useSearch();
@@ -73,6 +75,7 @@ export const SearchResultsTable = ({
                                     setShowAlreadyAddedModal={setShowAlreadyAddedModal}
                                     campaigns={campaigns}
                                     selectedCreator={selectedCreator}
+                                    setCampaignsWithCreator={setCampaignsWithCreator}
                                 />
                             )),
                         )}

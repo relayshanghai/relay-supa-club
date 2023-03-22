@@ -55,26 +55,31 @@ export const DialogModal = ({
                                     {title}
                                 </Dialog.Title>
                                 <div className="mt-2">{children}</div>
+                                <div className="flex flex-row justify-end gap-2">
+                                    {okButtonText && (
+                                        <div className="mt-4">
+                                            <Button
+                                                type="button"
+                                                variant="secondary"
+                                                onClick={onOkay}
+                                            >
+                                                {okButtonText}
+                                            </Button>
+                                        </div>
+                                    )}
 
-                                {okButtonText && (
-                                    <div className="mt-4">
-                                        <Button type="button" variant="secondary" onClick={onOkay}>
-                                            {okButtonText}
-                                        </Button>
-                                    </div>
-                                )}
-
-                                {closeButtonText && (
-                                    <div className="mt-4">
-                                        <Button
-                                            type="button"
-                                            variant="primary"
-                                            onClick={() => onClose()}
-                                        >
-                                            {closeButtonText}
-                                        </Button>
-                                    </div>
-                                )}
+                                    {closeButtonText && (
+                                        <div className="mt-4">
+                                            <Button
+                                                type="button"
+                                                variant="primary"
+                                                onClick={() => onClose()}
+                                            >
+                                                {closeButtonText}
+                                            </Button>
+                                        </div>
+                                    )}
+                                </div>
                             </Dialog.Panel>
                         </Transition.Child>
                     </div>

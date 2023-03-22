@@ -31,6 +31,7 @@ const Search = ({ companyId }: { companyId?: string }) => {
     const [loadingMore, setLoadingMore] = useState(false);
 
     const [showAlreadyAddedModal, setShowAlreadyAddedModal] = useState(false);
+    const [campaignsWithCreator, setCampaignsWithCreator] = useState<string[]>([]);
 
     return (
         <div className="space-y-4">
@@ -55,6 +56,7 @@ const Search = ({ companyId }: { companyId?: string }) => {
                 setShowCampaignListModal={setShowCampaignListModal}
                 setShowAlreadyAddedModal={setShowAlreadyAddedModal}
                 campaigns={campaigns}
+                setCampaignsWithCreator={setCampaignsWithCreator}
             />
 
             {loadingMore && (
@@ -74,6 +76,7 @@ const Search = ({ companyId }: { companyId?: string }) => {
                     {t('creators.loadMore')}
                 </Button>
             )}
+
             <AddToCampaignModal
                 show={showCampaignListModal}
                 setShow={setShowCampaignListModal}
@@ -88,11 +91,7 @@ const Search = ({ companyId }: { companyId?: string }) => {
                 show={showAlreadyAddedModal}
                 setCampaignListModal={setShowCampaignListModal}
                 setShow={setShowAlreadyAddedModal}
-                platform={platform}
-                selectedCreator={{
-                    ...selectedCreator?.account.user_profile,
-                }}
-                campaigns={campaigns}
+                campaignsWithCreator={campaignsWithCreator}
             />
 
             <SearchFiltersModal show={filterModalOpen} setShow={setShowFiltersModal} />

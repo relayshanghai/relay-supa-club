@@ -12,16 +12,12 @@ export const InfluencerAlreadyAddedModal = ({
     show,
     setShow,
     setCampaignListModal,
-    platform,
-    selectedCreator,
-    campaigns,
+    campaignsWithCreator,
 }: {
     show: boolean;
     setShow: (show: boolean) => void;
     setCampaignListModal: (show: boolean) => void;
-    platform: CreatorPlatform;
-    selectedCreator: CreatorUserProfile | null;
-    campaigns?: CampaignsIndexGetResult | undefined;
+    campaignsWithCreator: CampaignWithCompanyCreators[];
 }) => {
     const { t } = useTranslation();
 
@@ -40,10 +36,9 @@ export const InfluencerAlreadyAddedModal = ({
             }}
         >
             <div className="flex flex-col gap-2">
-                <p>{t('campaigns.modal.influencerAlreadyAdded')}</p>
-                <p className="font-medium">
-                    {t('campaigns.modal.addedIn')}:{' '}
-                    {/* {campaignsWithInfluencer?.map((campaign) => campaign).join(', ')} */}
+                <p>
+                    {t('campaigns.modal.influencerAlreadyAdded')}{' '}
+                    {campaignsWithCreator?.map((campaign) => campaign).join(', ')}
                 </p>
             </div>
         </DialogModal>
