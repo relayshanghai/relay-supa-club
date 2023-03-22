@@ -5,6 +5,8 @@ import type { CreatorReportsMetadata } from 'types/iqdata/creator-reports-metada
 import type { FetchCreatorsFilteredParams } from './transforms';
 import { prepareFetchCreatorsFiltered } from './transforms';
 
+export const IQDATA_URL = 'https://socapi.icu/v2.0/api/';
+
 /**
  *
  * @param path will be prefixed by `https://socapi.icu/v2.0/api/`
@@ -12,7 +14,7 @@ import { prepareFetchCreatorsFiltered } from './transforms';
  * @description fetcher for IQData API. API docs: https://iqdata.social/docs/api
  */
 export const iqDataFetch = async <T = any>(path: string, options: RequestInit = {}) => {
-    const res = await fetch('https://socapi.icu/v2.0/api/' + path, {
+    const res = await fetch(IQDATA_URL + path, {
         ...options,
         headers: {
             ...headers,
