@@ -5,9 +5,9 @@ import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger';
 
 export default function MakeErrorPage() {
-    useEffect(() => {
-        throw new Error('Error from MakeErrorPage');
-    }, []);
+    // useEffect(() => {
+    //     throw new Error('Error from MakeErrorPage');
+    // }, []);
     useEffect(() => {
         clientLogger('clientLogger error', 'error');
         clientLogger('clientLogger info', 'info');
