@@ -22,19 +22,20 @@ e.g. You currently have `01234_big_update.sql`, split it into
 ## How should I start?
 
 1. Modify the database via three (3) methods:
-- SQL files
+
+-   SQL files
 
 ```bash
 supabase migration new new_column
 ```
 
-- Using [db script](db-script.md)
+-   Using [db script](db-script.md)
 
 ```
 supabase/db.sh --help
 ```
 
-- Supabase Studio
+-   Supabase Studio
 
     Visit http://localhost:54323/project/default/editor
 
@@ -61,9 +62,6 @@ supabase db diff --file=<migration_name>
 supabase gen types typescript --local --schema=public > types/supabase.ts
 # or
 supabase/db.sh gen_db_types
-
-# OPTIONALLY, you can run this command to check for errors
-supabase db reset
 ```
 
 4. Commit & Push your changes
@@ -76,9 +74,9 @@ git commit -am "My database changes"
 git push -u <branch-name>
 ```
 
-*Reference: [database migrations](https://supabase.com/docs/guides/cli/local-development#database-migrations)*
+_Reference: [database migrations](https://supabase.com/docs/guides/cli/local-development#database-migrations)_
 
-----
+---
 
 # Discarding database changes
 
@@ -102,8 +100,9 @@ To have a better testing experience, we made our own way of testing by talking d
 ```
 
 You can include (`\include`) external sql files from these directories:
-- `/tmp/database/policies` for policies
-- `/tmp/database/functions` for functions
+
+-   `/tmp/database/policies` for policies
+-   `/tmp/database/functions` for functions
 
 2. Run the test
 
@@ -115,20 +114,20 @@ You can include (`\include`) external sql files from these directories:
 ./supabase/db.sh db_test <test1> <test2>
 ```
 
-*References:*
+_References:_
 
-- [pgTap](https://pgtap.org/documentation.html)
-- [usebasejump's supabase test helpers](https://github.com/usebasejump/supabase-test-helpers)
+-   [pgTap](https://pgtap.org/documentation.html)
+-   [usebasejump's supabase test helpers](https://github.com/usebasejump/supabase-test-helpers)
 
 # Deploying database changes
 
-1. Open a PR to `develop` branch
+1. Open a PR to `main` branch
 
-2. Once your PR is approved by peers, merge and wait for the staging workflow to pass. 
+2. Once your PR is approved by peers, merge and wait for the github workflow to pass.
 
-*Reference: [deploy a migration](https://supabase.com/docs/guides/cli/managing-environments#deploy-a-migration)*
+_Reference: [deploy a migration](https://supabase.com/docs/guides/cli/managing-environments#deploy-a-migration)_
 
-----
+---
 
 # Adding sample data
 
@@ -139,4 +138,3 @@ You can include (`\include`) external sql files from these directories:
 ```bash
 supabase db reset
 ```
-

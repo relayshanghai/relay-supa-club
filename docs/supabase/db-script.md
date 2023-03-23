@@ -1,5 +1,7 @@
 # Database Helper Script
 
+This script allows us to auto generate and modify policies in your _LOCAL_ supabase environment
+
 ### You can also view help via:
 
 ```bash
@@ -32,7 +34,7 @@
 ./supabase/db.sh drop_dbfn <function_name>
 ```
 
-----
+---
 
 ## Policies
 
@@ -60,9 +62,24 @@
 ./supabase/db.sh drop_policy <policy_name>
 ```
 
-----
+---
 
 ## Other commands
+
+### Get the current linked project
+
+```bash
+./supabase/db.sh get_proj
+```
+
+### Testing the database
+
+```bash
+./supabase/db.sh db_test
+
+# or test a specific test
+./supabase/db.sh db_test test1
+```
 
 ### Connecting to the database
 
