@@ -1,4 +1,4 @@
-import { subjectErrors } from './../../../errors/ai-email-generate';
+import { subjectErrors } from '../../../errors/ai-email-generate';
 import { hasCustomError } from '../../errors';
 import { generateSubjectPrompt, MAX_CHARACTER_LENGTH } from './subject';
 

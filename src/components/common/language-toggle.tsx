@@ -22,10 +22,9 @@ export const LanguageToggle = () => {
         <div>
             <div className="relative flex flex-col items-center">
                 <button
-                    id="language-toggle-button"
                     ref={languageButtonRef}
-                    data-testid="language-toggle-button"
                     onClick={() => setDisplayOptions(!displayOptions)}
+                    data-testid="language-toggle-button"
                 >
                     <Globe className="h-5 w-5 text-gray-300 duration-300 hover:text-primary-500" />
                 </button>
