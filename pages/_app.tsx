@@ -12,7 +12,7 @@ import { CompanyProvider } from 'src/hooks/use-company';
 import TrackJS from 'src/utils/trackjs-isomorphic';
 import { withErrorBoundary } from 'react-error-boundary';
 
-if (!TrackJS.isInstalled()) {
+if (!TrackJS.isInstalled() && process.env.NEXT_PUBLIC_TRACKJS_TOKEN) {
   TrackJS.install({
     token: process.env.NEXT_PUBLIC_TRACKJS_TOKEN,
   });
@@ -80,7 +80,7 @@ function MyApp({
 
 const AppWithErrorHandler = withErrorBoundary(MyApp, {
   fallback: <div>Something went wrong</div>,
-  onError(error, info) {
+  onError(error) {
     TrackJS.track(error);
   },
 });
