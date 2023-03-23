@@ -54,3 +54,8 @@ NEXT_PUBLIC_IQDATA_MAINTENANCE=false
 
 TEST_USER_EMAIL='test@example.com'
 TEST_USER_PASSWORD='123-abc-find-out-what-you-mean-to-me'
+
+# Glithtip/Sentry
+
+NEXT_PUBLIC_SENTRY_DSN=https://asdfasdf
+SENTRY_DSN=https://asdfasdf
