@@ -1,12 +1,5 @@
-import Link from 'next/link';
-import { CampaignsIndexGetResult } from 'pages/api/campaigns';
-import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CampaignWithCompanyCreators } from 'src/utils/api/db';
-import type { CreatorPlatform, CreatorUserProfile } from 'types';
-import CampaignModalCard from './campaigns/campaign-modal-card';
 import { DialogModal } from './dialog-modal';
-import { Modal } from './modal';
 
 export const InfluencerAlreadyAddedModal = ({
     show,

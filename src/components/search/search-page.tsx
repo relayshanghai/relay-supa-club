@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Button } from 'src/components/button';
 import { SearchProvider, useSearch } from 'src/hooks/use-search';
 import { numberFormatter } from 'src/utils/formatter';

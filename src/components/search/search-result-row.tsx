@@ -1,21 +1,20 @@
 import { Menu } from '@headlessui/react';
 import { PlusCircleIcon } from '@heroicons/react/24/solid';
 import Link from 'next/link';
-import { CampaignsIndexGetResult } from 'pages/api/campaigns';
+import type { CampaignsIndexGetResult } from 'pages/api/campaigns';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
 import { DotsHorizontal, ShareLink } from 'src/components/icons';
 import { useSearch } from 'src/hooks/use-search';
 import { imgProxy } from 'src/utils/fetcher';
 import { decimalToPercent, numberFormatter } from 'src/utils/formatter';
-import type { CreatorSearchAccountObject, CreatorUserProfile } from 'types';
+import type { CreatorSearchAccountObject } from 'types';
 
 export const SearchResultRow = ({
     creator,
     setShowCampaignListModal,
     setSelectedCreator,
     campaigns,
-    selectedCreator,
     setShowAlreadyAddedModal,
     setCampaignsWithCreator,
 }: {
@@ -24,7 +23,6 @@ export const SearchResultRow = ({
     setShowCampaignListModal: (show: boolean) => void;
     setShowAlreadyAddedModal: (show: boolean) => void;
     campaigns?: CampaignsIndexGetResult;
-    selectedCreator: CreatorUserProfile | null;
     setCampaignsWithCreator: (campaigns: string[]) => void;
 }) => {
     const { t } = useTranslation();

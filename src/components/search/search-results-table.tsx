@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { CampaignsIndexGetResult } from 'pages/api/campaigns';
+import type { CampaignsIndexGetResult } from 'pages/api/campaigns';
 import { useTranslation } from 'react-i18next';
 import { useSearch } from 'src/hooks/use-search';
 import type { CreatorSearchAccountObject, CreatorUserProfile } from 'types';
@@ -74,7 +74,6 @@ export const SearchResultsTable = ({
                                     setSelectedCreator={setSelectedCreator}
                                     setShowAlreadyAddedModal={setShowAlreadyAddedModal}
                                     campaigns={campaigns}
-                                    selectedCreator={selectedCreator}
                                     setCampaignsWithCreator={setCampaignsWithCreator}
                                 />
                             )),
