@@ -17,7 +17,7 @@ export const InfluencerAlreadyAddedModal = ({
     show: boolean;
     setShow: (show: boolean) => void;
     setCampaignListModal: (show: boolean) => void;
-    campaignsWithCreator: CampaignWithCompanyCreators[];
+    campaignsWithCreator: string[];
 }) => {
     const { t } = useTranslation();
 
