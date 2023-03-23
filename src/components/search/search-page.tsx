@@ -49,9 +49,6 @@ const Search = ({ companyId }: { companyId?: string }) => {
             </div>
 
             <SearchResultsTable
-                selectedCreator={{
-                    ...selectedCreator?.account.user_profile,
-                }}
                 setSelectedCreator={setSelectedCreator}
                 setShowCampaignListModal={setShowCampaignListModal}
                 setShowAlreadyAddedModal={setShowAlreadyAddedModal}
