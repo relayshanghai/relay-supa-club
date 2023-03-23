@@ -60,7 +60,7 @@ export const DialogModal = ({
                                         <div className="mt-4">
                                             <Button
                                                 type="button"
-                                                variant="secondary"
+                                                variant="primary"
                                                 onClick={onOkay}
                                             >
                                                 {okButtonText}
@@ -72,7 +72,7 @@ export const DialogModal = ({
                                         <div className="mt-4">
                                             <Button
                                                 type="button"
-                                                variant="primary"
+                                                variant="secondary"
                                                 onClick={() => onClose()}
                                             >
                                                 {closeButtonText}
