@@ -37,6 +37,7 @@
     "react": "^18.2.0",
     "react-countup": "^6.4.1",
     "react-dom": "^18.2.0",
+    "react-error-boundary": "^4.0.1",
     "react-hook-form": "^7.43.1",
     "react-hot-toast": "^2.4.0",
     "react-i18next": "^12.1.5",
@@ -46,6 +47,8 @@
     "sib-api-v3-sdk": "^8.5.0",
     "stripe": "^11.11.0",
     "swr": "^2.0.3",
+    "trackjs": "^3.10.1",
+    "trackjs-node": "^1.0.1",
     "ulid": "^2.3.0"
   },
   "devDependencies": {

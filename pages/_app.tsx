@@ -9,6 +9,14 @@ import type { Session } from '@supabase/auth-helpers-react';
 import { SessionContextProvider } from '@supabase/auth-helpers-react';
 import { useEffect, useState } from 'react';
 import { CompanyProvider } from 'src/hooks/use-company';
+import TrackJS from 'src/utils/trackjs-isomorphic';
+import { withErrorBoundary } from 'react-error-boundary';
+
+if (!TrackJS.isInstalled()) {
+  TrackJS.install({
+    token: process.env.NEXT_PUBLIC_TRACKJS_TOKEN,
+  });
+}
 
 function MyApp({
     Component,
@@ -70,4 +78,11 @@ function MyApp({
     );
 }
 
-export default MyApp;
+const AppWithErrorHandler = withErrorBoundary(MyApp, {
+  fallback: <div>Something went wrong</div>,
+  onError(error, info) {
+    TrackJS.track(error);
+  },
+});
+
+export default AppWithErrorHandler;
