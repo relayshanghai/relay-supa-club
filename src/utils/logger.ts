@@ -1,24 +1,26 @@
 /* eslint-disable no-console */
 
-const parseError = (error: any) => {
-    if (error && error.message) {
-        if ('stack' in error) return error;
-        return error.message;
-    }
-    if (typeof error === 'string') return error;
-    return JSON.stringify(error);
-};
+import * as Sentry from '@sentry/nextjs';
+
 export type LogLevel = 'log' | 'info' | 'error' | 'warn';
 /**
  * TODO: replace with a proper logger library
  */
-export const clientLogger = (message: any, level: LogLevel = 'log') => {
-    console[level](parseError(message));
+export const clientLogger = (message: any, level: Sentry.SeverityLevel = 'log') => {
+    if (level === 'error') {
+        Sentry.captureException(message);
+    } else {
+        Sentry.captureMessage(message, level);
+    }
 };
 
 /**
  * TODO: replace with a proper logger library
  */
-export const serverLogger = (message: any, level: LogLevel = 'log') => {
-    console[level](parseError(message));
+export const serverLogger = (message: any, level: Sentry.SeverityLevel = 'log') => {
+    if (level === 'error') {
+        Sentry.captureException(message);
+    } else {
+        Sentry.captureMessage(message, level);
+    }
 };

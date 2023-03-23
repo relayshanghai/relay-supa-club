@@ -40,7 +40,7 @@ export const SubscriptionDetails = () => {
         if (companyPeriodStart !== periodStart || companyPeriodEnd !== periodEnd) {
             clientLogger(
                 `Company subscription period start/end does not match subscription period start/end. companyPeriodStart ${companyPeriodStart} periodStart ${periodStart}companyPeriodEnd ${companyPeriodEnd} periodEnd ${periodEnd}`,
-                'warn',
+                'warning',
             );
         }
     }

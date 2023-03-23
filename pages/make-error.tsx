@@ -3,12 +3,14 @@ import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger';
 
 export default function MakeErrorPage() {
+    // useEffect(() => {
+    //     throw new Error('Error from MakeErrorPage');
+    // }, []);
     useEffect(() => {
-        throw new Error('Error from MakeErrorPage');
-    }, []);
-    useEffect(() => {
-        nextFetch('make-error');
         clientLogger('clientLogger error', 'error');
+        clientLogger('clientLogger info', 'info');
+        clientLogger('clientLogger warning', 'warning');
+        nextFetch('make-error');
     }, []);
     return (
         <div>
