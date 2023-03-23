@@ -5,15 +5,15 @@ import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger';
 
 export default function MakeErrorPage() {
-    // useEffect(() => {
-    //     throw new Error('Error from MakeErrorPage');
-    // }, []);
-    // useEffect(() => {
-    //     clientLogger('clientLogger error', 'error');
-    //     clientLogger('clientLogger info', 'info');
-    //     clientLogger('clientLogger warning', 'warning');
-    //     nextFetch('make-error');
-    // }, []);
+    useEffect(() => {
+        throw new Error('Error from MakeErrorPage');
+    }, []);
+    useEffect(() => {
+        clientLogger('clientLogger error', 'error');
+        clientLogger('clientLogger info', 'info');
+        clientLogger('clientLogger warning', 'warn');
+        nextFetch('make-error');
+    }, []);
     const makeError = () => {
         throw new Error('Error from MakeErrorPage');
     };
