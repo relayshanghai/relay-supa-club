@@ -12,19 +12,19 @@ import { useUser } from 'src/hooks/use-user';
 import { isMissing } from 'src/utils/utils';
 
 export default function MoveInfluencerModalCard({
-    campaign,
+    targetCampaign,
     creator,
     currentCampaign,
 }: {
-    campaign: CampaignWithCompanyCreators;
-    creator: CampaignCreatorDB | null;
+    targetCampaign: CampaignWithCompanyCreators;
+    creator: CampaignCreatorDB;
     platform: CreatorPlatform;
     currentCampaign: CampaignWithCompanyCreators;
 }) {
     const supabase = useSupabaseClient();
 
-    const { addCreatorToCampaign, deleteCreatorInCampaign, loading } = useCampaigns({
-        campaignId: campaign.id,
+    const { addCreatorToCampaign, loading } = useCampaigns({
+        campaignId: targetCampaign.id,
     });
 
     const [hasCreator, setHasCreator] = useState<boolean>(false);
@@ -33,17 +33,10 @@ export default function MoveInfluencerModalCard({
     const { t } = useTranslation();
 
     const handleMoveCreatorToCampaign = async () => {
-        if (!campaign || !creator || !creator || !profile)
+        if (!targetCampaign || !creator || !creator || !profile)
             return toast.error(t('campaigns.form.oopsSomethingWrong'));
         try {
-            await addCreatorToCampaign({
-                ...creator,
-                campaign_id: campaign.id,
-            });
-            await deleteCreatorInCampaign({
-                ...creator,
-                campaign_id: currentCampaign.id,
-            });
+            await addCreatorToCampaign({ ...creator, campaign_id: targetCampaign.id });
             toast.success(t('campaigns.modal.movedSuccessfully'));
             setHasCreator(true);
         } catch (error) {
@@ -59,13 +52,13 @@ export default function MoveInfluencerModalCard({
                     data: { publicUrl },
                 } = supabase.storage
                     .from('images')
-                    .getPublicUrl(`campaigns/${campaign.id}/${filename}`);
+                    .getPublicUrl(`campaigns/${targetCampaign.id}/${filename}`);
                 return publicUrl;
             };
 
             const { data } = await supabase.storage
                 .from('images')
-                .list(`campaigns/${campaign.id}`, {
+                .list(`campaigns/${targetCampaign.id}`, {
                     limit: 100,
                     offset: 0,
                     sortBy: { column: 'name', order: 'asc' },
@@ -76,21 +69,21 @@ export default function MoveInfluencerModalCard({
                 setCoverImageUrl(imageUrl);
             }
         };
-        if (campaign) {
+        if (targetCampaign) {
             getFiles();
         }
-    }, [campaign, supabase]);
+    }, [targetCampaign, supabase]);
 
     useEffect(() => {
-        if (campaign && creator) {
-            const creatorInCampaign = campaign.campaign_creators.find(
+        if (targetCampaign && creator) {
+            const creatorInCampaign = targetCampaign.campaign_creators.find(
                 (campaignCreator) => campaignCreator.creator_id === creator.creator_id,
             );
             if (creatorInCampaign) {
                 setHasCreator(true);
             }
         }
-    }, [campaign, creator]);
+    }, [targetCampaign, creator]);
 
     return (
         <div className="mb-2 rounded-lg bg-white px-2 py-3.5 text-sm duration-300">
@@ -102,20 +95,22 @@ export default function MoveInfluencerModalCard({
                         className="mr-2 h-6 w-6 flex-shrink-0 rounded-full object-cover"
                     />
                     <div className="mr-2 w-full truncate text-sm text-gray-600">
-                        {campaign?.name}
+                        {targetCampaign?.name}
                     </div>
                 </div>
 
-                {campaign && hasCreator && (
+                {targetCampaign && hasCreator && (
                     <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md bg-primary-100">
                         <CheckCircleIcon className="h-4 w-4 fill-current text-primary-500" />
                     </div>
                 )}
 
-                {campaign && !hasCreator && (
+                {targetCampaign && !hasCreator && (
                     <button
                         onClick={handleMoveCreatorToCampaign}
-                        disabled={hasCreator || isMissing(campaign, creator, creator?.creator_id)}
+                        disabled={
+                            hasCreator || isMissing(targetCampaign, creator, creator?.creator_id)
+                        }
                         className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md bg-gray-100 text-gray-600 duration-300 hover:shadow-md disabled:cursor-not-allowed disabled:text-gray-400"
                     >
                         {!loading && (

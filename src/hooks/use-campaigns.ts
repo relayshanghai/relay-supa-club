@@ -25,7 +25,6 @@ import type {
 } from 'pages/api/campaigns/delete-creator';
 import { clientLogger } from 'src/utils/logger';
 
-
 //The transform function is not used now, as the image proxy issue is handled directly where calls for the image.But this is left for future refactor. TODO:Ticket V2-181
 // const transformCampaignCreators = (creators: CampaignCreatorDB[]) => {
 //     return creators.map((creator: CampaignCreatorDB) => {
@@ -36,6 +35,11 @@ import { clientLogger } from 'src/utils/logger';
 //     });
 // };
 
+/**
+ * Hook to fetch campaigns and create/update campaigns
+ * @param campaignId The campaign id to fetch
+ * @returns
+ */
 export const useCampaigns = ({
     campaignId,
     companyId: passedInCompanyId,

@@ -215,7 +215,7 @@ export default function CampaignShow() {
                     <CampaignDetails currentCampaign={currentCampaign} media={media} />
                 )}
 
-                {currentCampaign && currentCreator && (
+                {campaigns && currentCampaign && currentCreator && (
                     <MoveInfluencerModal
                         platform={currentCreator.platform}
                         selectedCreator={currentCreator}

@@ -17,9 +17,9 @@ export const MoveInfluencerModal = ({
     show: boolean;
     setShow: (show: boolean) => void;
     platform: CreatorPlatform;
-    selectedCreator: CampaignCreatorDB | null;
-    campaigns?: CampaignsIndexGetResult | undefined;
-    currentCampaign?: CampaignWithCompanyCreators;
+    selectedCreator: CampaignCreatorDB;
+    campaigns: CampaignsIndexGetResult;
+    currentCampaign: CampaignWithCompanyCreators;
 }) => {
     const { t } = useTranslation();
 
@@ -31,7 +31,7 @@ export const MoveInfluencerModal = ({
                 setShow(false);
             }}
         >
-            {campaigns?.length ? (
+            {campaigns.length ? (
                 <>
                     <div className="py-4 text-sm text-tertiary-800">
                         {t('campaigns.modal.addThisInfluencer')}
@@ -39,7 +39,7 @@ export const MoveInfluencerModal = ({
                     <div>
                         {campaigns.map((campaign, index) => (
                             <MoveInfluencerModalCard
-                                campaign={campaign}
+                                targetCampaign={campaign}
                                 currentCampaign={currentCampaign}
                                 platform={platform}
                                 creator={selectedCreator}
