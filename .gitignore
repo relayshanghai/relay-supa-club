@@ -48,6 +48,3 @@ public/mockServiceWorker.js
 
 # Sentry
 .sentryclirc
-
-# Sentry
-next.config.original.js
