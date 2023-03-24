@@ -164,6 +164,7 @@ const campaigns = {
                     // eslint-disable-next-line quote-props
                     ignored: 'Ignored',
                 },
+                noInfluencers: 'No influencers found',
             },
             info: {
                 budget: 'Budget',
