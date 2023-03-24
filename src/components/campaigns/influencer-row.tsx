@@ -11,6 +11,18 @@ import TableInput from './campaign-table-input';
 import dateFormat from 'src/utils/dateFormat';
 import { Trashcan } from '../icons';
 
+const paymentStatus = [
+    { id: 1, label: 'unpaid', value: 'unpaid' },
+    { id: 2, label: 'partiallypaid', value: 'partial_paid' },
+    { id: 3, label: 'fullypaid', value: 'full_paid' },
+];
+
+const sampleStatus = [
+    { id: 1, label: 'unsent', value: 'unsent' },
+    { id: 2, label: 'sent', value: 'sent' },
+    { id: 3, label: 'delivered', value: 'delivered' },
+];
+
 interface InfluencerRowProps {
     index: number;
     creator: CampaignCreatorDB;
@@ -37,19 +49,13 @@ interface InfluencerRowProps {
         creator: CampaignCreatorDB,
     ) => Promise<void>;
     openNotes: any;
+    openMoveInfluencerModal: (
+        e: React.MouseEvent<HTMLDivElement, globalThis.MouseEvent>,
+        creator: CampaignCreatorDB,
+    ) => void;
+    showMoveInfluencerModal: boolean;
+    setShowMoveInfluencerModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
-
-const paymentStatus = [
-    { id: 1, label: 'unpaid', value: 'unpaid' },
-    { id: 2, label: 'partiallypaid', value: 'partial_paid' },
-    { id: 3, label: 'fullypaid', value: 'full_paid' },
-];
-
-const sampleStatus = [
-    { id: 1, label: 'unsent', value: 'unsent' },
-    { id: 2, label: 'sent', value: 'sent' },
-    { id: 3, label: 'delivered', value: 'delivered' },
-];
 
 const InfluencerRow = ({
     index,
@@ -63,6 +69,9 @@ const InfluencerRow = ({
     setToEdit,
     deleteCampaignCreator,
     openNotes,
+    openMoveInfluencerModal,
+    showMoveInfluencerModal,
+    setShowMoveInfluencerModal,
 }: InfluencerRowProps) => {
     return (
         <tr key={index} className="group text-xs hover:relative hover:bg-primary-50">
@@ -317,6 +326,13 @@ const InfluencerRow = ({
 
             <td className="right-0 z-50 whitespace-nowrap bg-white px-6 py-4 group-hover:bg-primary-50 sm:sticky ">
                 <div className="flex justify-end">
+                    <div
+                        onClick={(e) => openMoveInfluencerModal(e, creator)}
+                        className="mr-2 cursor-pointer appearance-none  rounded-md border border-gray-200 bg-gray-50 p-2 text-center font-medium text-gray-600 outline-none duration-300 hover:bg-gray-100"
+                    >
+                        {/* TODO: notes ticket V2-139 */}
+                        {t('campaigns.show.moveInfluencer')}
+                    </div>
                     <div
                         onClick={(e) => openNotes(e, creator)}
                         className="mr-2 cursor-pointer appearance-none  rounded-md border border-gray-200 bg-gray-50 p-2 text-center font-medium text-gray-600 outline-none duration-300 hover:bg-gray-100"

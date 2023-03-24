@@ -10,15 +10,21 @@ import type { CampaignCreatorDB, CampaignWithCompanyCreators } from 'src/utils/a
 import Fuse from 'fuse.js';
 import InfluencerRow from './influencer-row';
 
+interface CreatorsOutreachProps {
+    currentCampaign: CampaignWithCompanyCreators;
+    setShowNotesModal: (value: boolean) => void;
+    setCurrentCreator: (value: CampaignCreatorDB) => void;
+    showMoveInfluencerModal: boolean;
+    setShowMoveInfluencerModal: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
 export default function CreatorsOutreach({
     currentCampaign,
     setShowNotesModal,
     setCurrentCreator,
-}: {
-    currentCampaign: CampaignWithCompanyCreators;
-    setShowNotesModal: (value: boolean) => void;
-    setCurrentCreator: (value: CampaignCreatorDB) => void;
-}) {
+    setShowMoveInfluencerModal,
+    showMoveInfluencerModal,
+}: CreatorsOutreachProps) {
     const { t } = useTranslation();
     const inputRef = useRef(null);
 
@@ -106,6 +112,15 @@ export default function CreatorsOutreach({
         e.stopPropagation();
         setCurrentCreator(creator);
         setShowNotesModal(true);
+    };
+
+    const openMoveInfluencerModal = (
+        e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>,
+        creator: CampaignCreatorDB,
+    ) => {
+        e.stopPropagation();
+        setCurrentCreator(creator);
+        setShowMoveInfluencerModal(true);
     };
 
     const deleteCampaignCreator = async (
@@ -220,7 +235,7 @@ export default function CreatorsOutreach({
                                 </th>
                             ))}
                             {/*-- placeholder table header space for notes and delete section --*/}
-                            <th className=" sticky right-0 z-30 min-w-[150px] max-w-[150px] bg-white px-3 py-3 text-left text-xs  font-normal tracking-wider text-gray-500">
+                            <th className=" sticky right-0 z-30 min-w-[280px] max-w-[280px] bg-white px-3 py-3 text-left text-xs  font-normal tracking-wider text-gray-500">
                                 {''}
                             </th>
                         </tr>
@@ -254,6 +269,9 @@ export default function CreatorsOutreach({
                                         tabs={tabs}
                                         openNotes={openNotes}
                                         deleteCampaignCreator={deleteCampaignCreator}
+                                        openMoveInfluencerModal={openMoveInfluencerModal}
+                                        showMoveInfluencerModal={showMoveInfluencerModal}
+                                        setShowMoveInfluencerModal={setShowMoveInfluencerModal}
                                     />
                                 );
                         })}
