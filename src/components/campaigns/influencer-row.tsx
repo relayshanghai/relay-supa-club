@@ -39,6 +39,18 @@ interface InfluencerRowProps {
     openNotes: any;
 }
 
+const paymentStatus = [
+    { id: 1, label: 'unpaid', value: 'unpaid' },
+    { id: 2, label: 'partiallypaid', value: 'partial_paid' },
+    { id: 3, label: 'fullypaid', value: 'full_paid' },
+];
+
+const sampleStatus = [
+    { id: 1, label: 'unsent', value: 'unsent' },
+    { id: 2, label: 'sent', value: 'sent' },
+    { id: 3, label: 'delivered', value: 'delivered' },
+];
+
 const InfluencerRow = ({
     index,
     creator,
@@ -52,18 +64,6 @@ const InfluencerRow = ({
     deleteCampaignCreator,
     openNotes,
 }: InfluencerRowProps) => {
-    const paymentStatus = [
-        { id: 1, label: 'unpaid', value: 'unpaid' },
-        { id: 2, label: 'partiallypaid', value: 'partial_paid' },
-        { id: 3, label: 'fullypaid', value: 'full_paid' },
-    ];
-
-    const sampleStatus = [
-        { id: 1, label: 'unsent', value: 'unsent' },
-        { id: 2, label: 'sent', value: 'sent' },
-        { id: 3, label: 'delivered', value: 'delivered' },
-    ];
-
     return (
         <tr key={index} className="group text-xs hover:relative hover:bg-primary-50">
             {/* -- Account Column -- */}
