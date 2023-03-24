@@ -33,7 +33,7 @@ const campaigns = {
         addedSuccessfully: 'KOL已成功添加到项目',
         deletedSuccessfully: 'KOL已从项目中删除',
         deleteConfirmation: '您确定要从项目中删除此KOL吗？',
-        doNotAdd: '不能添加',
+        doNotAdd: '不添加',
         addAnyway: '总是添加',
         influencerAlreadyAdded: '这个KOL已被添加到其他活动:',
     },
