@@ -33,6 +33,9 @@ const campaigns = {
         addedSuccessfully: 'influencer added successfully.',
         deletedSuccessfully: 'influencer was deleted.',
         deleteConfirmation: 'Are you sure you want to delete this influencer?',
+        doNotAdd: 'Do not Add',
+        addAnyway: 'Add Anyway',
+        influencerAlreadyAdded: 'This influencer already exists in other campaigns:',
     },
     creatorModal: {
         outreach: 'Outreach',
