@@ -14,6 +14,8 @@ import { Layout } from '../layout';
 import { useRouter } from 'next/router';
 import { IQDATA_MAINTENANCE } from 'src/constants';
 import { MaintenanceMessage } from '../maintenance-message';
+import { useCampaigns } from 'src/hooks/use-campaigns';
+import { InfluencerAlreadyAddedModal } from '../influencer-already-added';
 
 const Search = ({ companyId }: { companyId?: string }) => {
     const { t } = useTranslation();
@@ -23,9 +25,13 @@ const Search = ({ companyId }: { companyId?: string }) => {
     const [filterModalOpen, setShowFiltersModal] = useState(false);
     const [showCampaignListModal, setShowCampaignListModal] = useState(false);
     const [selectedCreator, setSelectedCreator] = useState<CreatorSearchAccountObject | null>(null);
+    const { campaigns } = useCampaigns({ companyId });
 
     const [page, setPage] = useState(0);
     const [loadingMore, setLoadingMore] = useState(false);
+
+    const [showAlreadyAddedModal, setShowAlreadyAddedModal] = useState(false);
+    const [campaignsWithCreator, setCampaignsWithCreator] = useState<string[]>([]);
 
     return (
         <div className="space-y-4">
@@ -45,6 +51,9 @@ const Search = ({ companyId }: { companyId?: string }) => {
             <SearchResultsTable
                 setSelectedCreator={setSelectedCreator}
                 setShowCampaignListModal={setShowCampaignListModal}
+                setShowAlreadyAddedModal={setShowAlreadyAddedModal}
+                campaigns={campaigns}
+                setCampaignsWithCreator={setCampaignsWithCreator}
             />
 
             {loadingMore && (
@@ -64,6 +73,7 @@ const Search = ({ companyId }: { companyId?: string }) => {
                     {t('creators.loadMore')}
                 </Button>
             )}
+
             <AddToCampaignModal
                 show={showCampaignListModal}
                 setShow={setShowCampaignListModal}
@@ -71,8 +81,16 @@ const Search = ({ companyId }: { companyId?: string }) => {
                 selectedCreator={{
                     ...selectedCreator?.account.user_profile,
                 }}
-                companyId={companyId}
+                campaigns={campaigns}
             />
+
+            <InfluencerAlreadyAddedModal
+                show={showAlreadyAddedModal}
+                setCampaignListModal={setShowCampaignListModal}
+                setShow={setShowAlreadyAddedModal}
+                campaignsWithCreator={campaignsWithCreator}
+            />
+
             <SearchFiltersModal show={filterModalOpen} setShow={setShowFiltersModal} />
         </div>
     );
