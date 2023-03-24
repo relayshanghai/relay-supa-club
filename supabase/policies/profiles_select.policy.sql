@@ -1,3 +1,5 @@
+-- Disable selecting rows on profiles table
+-- if auth.uid does not match the row.id or auth is not a relay employee
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS profiles_select ON profiles;

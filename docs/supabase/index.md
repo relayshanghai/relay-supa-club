@@ -13,7 +13,7 @@ The whole idea is to provide developers a way to track these changes on a "micro
 
 No, you can actually create one big migration and split it to several files. Make sure that they are named synchronously though!
 
-e.g. You currently have `01234_big_update.sql`, split it into
+e.g. You currently have `01234_big_update.sql`, split (copy/paste to smaller files) it into
 
     - 01234_update1.sql
     - 01235_update2.sql

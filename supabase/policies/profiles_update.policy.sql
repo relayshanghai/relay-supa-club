@@ -1,3 +1,4 @@
+-- Allow updates on profiles table if auth is able to select the row
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS profiles_update ON profiles;
