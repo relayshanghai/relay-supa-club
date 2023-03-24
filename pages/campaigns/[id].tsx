@@ -17,7 +17,6 @@ import type { CampaignCreatorDB, CampaignWithCompanyCreators } from 'src/utils/a
 import { imgProxy } from 'src/utils/fetcher';
 import { MoveInfluencerModal } from 'src/components/modal-move-influencer';
 import { useCompany } from 'src/hooks/use-company';
-import { CreatorUserProfile } from 'types';
 
 export default function CampaignShow() {
     const router = useRouter();
@@ -30,7 +29,7 @@ export default function CampaignShow() {
 
     const { company } = useCompany();
 
-    const { campaigns, isLoading } = useCampaigns({ companyId: company?.id });
+    const { campaigns } = useCampaigns({ companyId: company?.id });
 
     const [media, setMedia] = useState<{ url: string; name: string }[]>([]);
     const [currentTab, setCurrentTab] = useState(0);

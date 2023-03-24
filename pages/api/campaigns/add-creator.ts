@@ -1,11 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
-import type {
-    CampaignCreatorDB,
-    CampaignCreatorDBInsert} from 'src/utils/api/db';
-import {
-    insertCampaignCreator,
-} from 'src/utils/api/db';
+import type { CampaignCreatorDB, CampaignCreatorDBInsert } from 'src/utils/api/db';
+import { insertCampaignCreator } from 'src/utils/api/db';
 import { serverLogger } from 'src/utils/logger';
 import type { CreatorPlatform } from 'types';
 
@@ -19,6 +15,7 @@ export type CampaignCreatorAddCreatorPostResponse = CampaignCreatorDB;
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
         const data = req.body as CampaignCreatorAddCreatorPostBody;
+
         if (!data.campaign_id)
             return res.status(httpCodes.BAD_REQUEST).json({ error: 'No campaign id provided' });
         const { data: campaignCreators, error } = await insertCampaignCreator(data);

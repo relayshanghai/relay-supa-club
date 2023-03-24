@@ -1,6 +1,6 @@
-import { PlusCircleIcon, CheckCircleIcon, ArrowRightCircleIcon } from '@heroicons/react/24/solid';
+import { CheckCircleIcon, ArrowRightCircleIcon } from '@heroicons/react/24/solid';
 import { useCampaigns } from 'src/hooks/use-campaigns';
-import type { CreatorUserProfile, CreatorPlatform } from 'types';
+import type { CreatorPlatform } from 'types';
 import { useEffect, useState } from 'react';
 import { Spinner } from '../icons';
 import toast from 'react-hot-toast';
@@ -27,6 +27,10 @@ export default function MoveInfluencerModalCard({
         campaignId: targetCampaign.id,
     });
 
+    const { deleteCreatorInCampaign } = useCampaigns({
+        campaignId: currentCampaign.id,
+    });
+
     const [hasCreator, setHasCreator] = useState<boolean>(false);
     const [coverImageUrl, setCoverImageUrl] = useState('');
     const { profile } = useUser();
@@ -36,7 +40,16 @@ export default function MoveInfluencerModalCard({
         if (!targetCampaign || !creator || !creator || !profile)
             return toast.error(t('campaigns.form.oopsSomethingWrong'));
         try {
-            await addCreatorToCampaign({ ...creator, campaign_id: targetCampaign.id });
+            await addCreatorToCampaign({
+                ...creator,
+                campaign_id: targetCampaign.id,
+                platform: creator.platform,
+                added_by_id: profile.id,
+                id: undefined,
+            });
+
+            await deleteCreatorInCampaign(creator);
+
             toast.success(t('campaigns.modal.movedSuccessfully'));
             setHasCreator(true);
         } catch (error) {
