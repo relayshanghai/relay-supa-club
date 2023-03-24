@@ -155,7 +155,7 @@ const campaigns = {
                     // eslint-disable-next-line quote-props
                     ignored: '未回复',
                 },
-                noInfluencers: '无红人：无可展示红人',
+                noInfluencers: '无KOL：搜索无结果',
             },
             info: {
                 budget: '预算',
