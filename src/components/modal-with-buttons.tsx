@@ -1,5 +1,5 @@
 import { Dialog, Transition } from '@headlessui/react';
-import { Button } from '../../src/components/button';
+import { Button } from './button';
 import { Fragment } from 'react';
 
 export interface ModalProps {
@@ -12,7 +12,7 @@ export interface ModalProps {
     onOkay?: () => void;
 }
 
-export const DialogModal = ({
+export const ModalWithButtons = ({
     children,
     visible,
     onClose,

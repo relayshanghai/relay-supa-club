@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { DialogModal } from './dialog-modal';
+import { ModalWithButtons } from './modal-with-buttons';
 
 export const InfluencerAlreadyAddedModal = ({
     show,
@@ -15,7 +15,7 @@ export const InfluencerAlreadyAddedModal = ({
     const { t } = useTranslation();
 
     return (
-        <DialogModal
+        <ModalWithButtons
             title={t('campaigns.modal.addToCampaign') || ''}
             visible={!!show}
             onClose={() => {
@@ -30,10 +30,11 @@ export const InfluencerAlreadyAddedModal = ({
         >
             <div className="flex flex-col gap-2">
                 <p>
-                    {t('campaigns.modal.influencerAlreadyAdded')}{' '}
-                    {campaignsWithCreator?.map((campaign) => campaign).join(', ')}
+                    {`${t('campaigns.modal.influencerAlreadyAdded')} ${campaignsWithCreator
+                        ?.map((campaign) => campaign)
+                        .join(', ')}`}
                 </p>
             </div>
-        </DialogModal>
+        </ModalWithButtons>
     );
 };
