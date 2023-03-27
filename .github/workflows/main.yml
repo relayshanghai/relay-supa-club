@@ -19,38 +19,43 @@ env:
     TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
 
 jobs:
-    # supabase-test:
-    #     env:
-    #         SUPABASE_SCANNER_BUFFER_SIZE: 5mb
+    supabase-test:
+        env:
+            SUPABASE_SCANNER_BUFFER_SIZE: 5mb
 
-    #     runs-on: ubuntu-22.04
-    #     steps:
-    #         - uses: actions/checkout@v3
+        runs-on: ubuntu-22.04
+        steps:
+            - uses: actions/checkout@v3
 
-    #         - uses: supabase/setup-cli@v1
-    #           with:
-    #               version: latest
+            - uses: supabase/setup-cli@v1
+              with:
+                  version: latest
 
-    #         - name: Verify supabase cli version
-    #           run: supabase -v
+            - name: Verify supabase cli version
+              run: supabase -v
 
-    #         - name: Create supabase config file
-    #           run: cp supabase/config.toml.example supabase/config.toml
+            - name: Create supabase config file
+              run: cp supabase/config.toml.example supabase/config.toml
 
-    #         - name: Start Supabase local development setup
-    #           run: supabase start
+            - name: Start Supabase local development setup
+              run: supabase start
 
-    #         - name: Verify generated types are up-to-date
-    #           run: |
-    #               supabase gen types typescript --local --schema=public > types/supabase.ts
-    #               if [ "$(git diff --ignore-space-at-eol types/supabase.ts | wc -l)" -gt "0" ]; then
-    #                 echo "Detected uncommitted changes after build. See status below:"
-    #                 git diff
-    #                 exit 1
-    #               fi
+            - name: Verify generated types are up-to-date
+              run: |
+                  supabase gen types typescript --local --schema=public > types/supabase.ts
+                  if [ "$(git diff --ignore-space-at-eol types/supabase.ts | wc -l)" -gt "0" ]; then
+                    echo "Detected uncommitted changes after build. See status below:"
+                    git diff
+                    exit 1
+                  fi
 
-    #         - name: Run tests
-    #           run: supabase test db
+            - name: Run lint
+              run: supabase db lint
+
+            - name: Run tests
+              run: |
+                chmod +x ./supabase/db.sh
+                ./supabase/db.sh db_test
 
     build-and-unit-test:
         runs-on: ubuntu-latest

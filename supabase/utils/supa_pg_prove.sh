@@ -32,4 +32,4 @@ cleanup() {
 trap cleanup EXIT
 
 # run postgres unit tests
-pg_prove -h localhost -U postgres --ext .pg --ext .sql -r "$files"
+pg_prove --verbose -h localhost -U postgres --ext .pg --ext .sql -r "$files"

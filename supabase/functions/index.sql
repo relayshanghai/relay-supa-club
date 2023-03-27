@@ -1,1 +1,5 @@
-\include ./supabase/functions/hello_world.sql
+BEGIN;
+
+\include ./supabase/functions/is_employee.sql
+
+COMMIT;
