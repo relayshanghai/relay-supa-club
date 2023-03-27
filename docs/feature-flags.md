@@ -12,6 +12,8 @@ Create a constant in `src/constants/feature-flags` named `FEAT_<feature-name>`. 
 
 Add the environment variable to all, or certain previews in the vercel dashboard. For example, if you want to enable the feature on the testing site, but not on staging, then add the environment variable to the testing deploy.
 
+![setting environment variables in vercel](https://user-images.githubusercontent.com/52448067/227909115-871537fc-0319-43ab-8945-6c083fc560f8.png)
+
 ## Local development
 
 Add the environment variable to your `.env.local` file. For example `NEXT_PUBLIC_FEAT_MY_FEATURE=true`. You can also use a string: `NEXT_PUBLIC_FEAT_MY_FEATURE='true'`. Dotenv will read `true` as a string anyways.
