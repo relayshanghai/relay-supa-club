@@ -26,6 +26,9 @@ jobs:
             - name: Verify supabase cli version
               run: supabase -v
 
+            - name: Create supabase config file
+              run: cp supabase/config.toml.example supabase/config.toml
+
             - run: |
                   supabase link --project-ref=$SUPABASE_PROJECT_ID
                   supabase db push
