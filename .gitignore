@@ -45,3 +45,6 @@ cypress/videos
 cypress/screenshots
 cypress/integration/*.js
 public/mockServiceWorker.js
+
+# Sentry
+.sentryclirc
