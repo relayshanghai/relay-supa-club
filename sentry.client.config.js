@@ -16,7 +16,7 @@ Sentry.init({
     // Note: if you want to override the automatic release value, do not set a
     // `release` value here - use the environment variable `SENTRY_RELEASE`, so
     // that it will also get attached to your source maps
-     
+
     // This sets the sample rate to be 10%. You may want this to be 100% while
     // in development and sample at a lower rate in production
     replaysSessionSampleRate: 0.1,
@@ -25,4 +25,11 @@ Sentry.init({
     replaysOnErrorSampleRate: 1.0,
 
     integrations: [new Sentry.Replay()],
+    beforeSend(event) {
+        // Check if it is an exception, and if so, show the report dialog
+        if (event.exception) {
+            Sentry.showReportDialog({ eventId: event.event_id });
+        }
+        return event;
+    },
 });
