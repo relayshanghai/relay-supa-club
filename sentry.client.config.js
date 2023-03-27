@@ -25,6 +25,7 @@ Sentry.init({
     replaysOnErrorSampleRate: 1.0,
 
     integrations: [new Sentry.Replay()],
+    
     beforeSend(event) {
         // Check if it is an exception, and if so, show the report dialog
         if (event.exception) {
