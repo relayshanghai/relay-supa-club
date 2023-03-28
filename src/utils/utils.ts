@@ -1,3 +1,5 @@
+// IMPORTANT: Do not put any server-side or client-side specific code in this file. It is used by both.
+
 import { SECONDS_IN_MILLISECONDS } from 'src/constants/conversions';
 import type { AccountRole } from 'types';
 
