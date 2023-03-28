@@ -8,7 +8,7 @@ export type LogLevel = 'log' | 'info' | 'error' | 'warn';
 export const clientLogger = (message: any, level: LogLevel = 'log') => {
     if (level === 'error') {
         // if the error is just a string, we need to wrap it in an Error object so we can get a stack trace
-        Sentry.captureException(message?.message ? message : new Error(message));
+        Sentry.captureException(typeof message === 'string' ? new Error(message) : message);
     } else {
         // eslint-disable-next-line no-console
         console[level](parseError(message));
