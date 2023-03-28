@@ -4,7 +4,7 @@ import { parseError } from './utils';
 export type LogLevel = 'log' | 'info' | 'error' | 'warn';
 
 /**
- * TODO: replace with a proper logger library
+ * TODO: send server logs to rudderstack https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/295
  */
 export const serverLogger = (message: any, level: LogLevel = 'log') => {
     if (level === 'error') {
