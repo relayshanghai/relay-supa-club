@@ -1,3 +1,9 @@
+import * as Sentry from '@sentry/browser';
+import type { PropsWithChildren } from 'react';
+import { createContext, useCallback, useContext } from 'react';
+import type { KeyedMutator } from 'swr';
+import useSWR from 'swr';
+
 import type {
     CompanyGetQueries,
     CompanyGetResponse,
@@ -5,13 +11,8 @@ import type {
     CompanyPutResponse,
 } from 'pages/api/company';
 import type { CompanyCreatePostBody, CompanyCreatePostResponse } from 'pages/api/company/create';
-
-import type { PropsWithChildren} from 'react';
-import { createContext, useCallback, useContext } from 'react';
 import { createCompanyValidationErrors } from 'src/errors/company';
 import { nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';
-import type { KeyedMutator } from 'swr';
-import useSWR from 'swr';
 import { useUser } from './use-user';
 
 export interface CompanyContext {
@@ -35,10 +36,24 @@ export const CompanyProvider = ({ children }: PropsWithChildren) => {
     const { profile, refreshProfile } = useUser();
     const { data: company, mutate: refreshCompany } = useSWR(
         profile?.company_id ? 'company' : null,
-        (path) =>
-            nextFetchWithQueries<CompanyGetQueries, CompanyGetResponse>(path, {
+        async (path) => {
+            const fetchedCompany = await nextFetchWithQueries<
+                CompanyGetQueries,
+                CompanyGetResponse
+            >(path, {
                 id: profile?.company_id ?? '',
-            }),
+            });
+            if (profile && fetchedCompany?.name && !company?.name) {
+                Sentry.setUser({
+                    id: profile.id,
+                    email: profile.email ?? '',
+                    name: `${profile.first_name} ${profile.last_name}`,
+                    company_name: fetchedCompany.name,
+                    company_id: fetchedCompany.id,
+                });
+            }
+            return fetchedCompany;
+        },
     );
 
     const updateCompany = useCallback(
