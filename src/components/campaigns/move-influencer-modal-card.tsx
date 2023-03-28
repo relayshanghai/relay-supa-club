@@ -27,11 +27,16 @@ export default function MoveInfluencerModalCard({
         campaignId: targetCampaign.id,
     });
 
-    const { deleteCreatorInCampaign, refreshCampaign } = useCampaigns({
+    const {
+        deleteCreatorInCampaign,
+        loading: deleteCampaginLoading,
+        refreshCampaign,
+    } = useCampaigns({
         campaignId: currentCampaign.id,
     });
 
-    const [hasCreator, setHasCreator] = useState<boolean>(false);
+    const [currentHasCreator, setCurrentHasCreator] = useState<boolean>(false);
+    const [targetHasCreator, setTargetHasCreator] = useState<boolean>(false);
     const [coverImageUrl, setCoverImageUrl] = useState('');
     const { profile } = useUser();
     const { t } = useTranslation();
@@ -54,11 +59,12 @@ export default function MoveInfluencerModalCard({
             });
 
             await deleteCreatorInCampaign(creator);
+            setTargetHasCreator(true);
+            setCurrentHasCreator(false);
 
             refreshCampaign();
 
             toast.success(t('campaigns.modal.movedSuccessfully'));
-            setHasCreator(true);
         } catch (error) {
             clientLogger(error, 'error');
             return toast.error(t('campaigns.form.oopsSomethingWrong'));
@@ -100,10 +106,25 @@ export default function MoveInfluencerModalCard({
                 (campaignCreator) => campaignCreator.creator_id === creator.creator_id,
             );
             if (creatorInCampaign) {
-                setHasCreator(true);
+                setTargetHasCreator(true);
+            } else {
+                setTargetHasCreator(false);
             }
         }
     }, [targetCampaign, creator]);
+
+    useEffect(() => {
+        if (currentCampaign && creator) {
+            const creatorInCampaign = currentCampaign.campaign_creators.find(
+                (campaignCreator) => campaignCreator.creator_id === creator.creator_id,
+            );
+            if (creatorInCampaign) {
+                setCurrentHasCreator(true);
+            } else {
+                setCurrentHasCreator(false);
+            }
+        }
+    }, [currentCampaign, creator]);
 
     return (
         <div className="mb-2 rounded-lg bg-white px-2 py-3.5 text-sm duration-300">
@@ -119,24 +140,27 @@ export default function MoveInfluencerModalCard({
                     </div>
                 </div>
 
-                {targetCampaign && hasCreator && (
+                {targetCampaign && targetHasCreator && (
                     <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md bg-primary-100">
                         <CheckCircleIcon className="h-4 w-4 fill-current text-primary-500" />
                     </div>
                 )}
 
-                {targetCampaign && !hasCreator && (
+                {targetCampaign && !targetHasCreator && (
                     <button
                         onClick={handleMoveCreatorToCampaign}
                         disabled={
-                            hasCreator || isMissing(targetCampaign, creator, creator?.creator_id)
+                            targetHasCreator ||
+                            isMissing(targetCampaign, creator, creator?.creator_id)
                         }
                         className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md bg-gray-100 text-gray-600 duration-300 hover:shadow-md disabled:cursor-not-allowed disabled:text-gray-400"
                     >
-                        {!loading && (
+                        {!loading && !deleteCampaginLoading && (
                             <ArrowRightCircleIcon className="h-4 w-4 fill-current text-current" />
                         )}
-                        {loading && <Spinner className=" h-4 w-4 fill-primary-600 text-white" />}
+                        {(loading || deleteCampaginLoading) && (
+                            <Spinner className=" h-4 w-4 fill-primary-600 text-white" />
+                        )}
                     </button>
                 )}
             </div>

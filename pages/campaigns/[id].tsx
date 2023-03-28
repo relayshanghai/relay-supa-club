@@ -20,16 +20,14 @@ import { useCompany } from 'src/hooks/use-company';
 
 export default function CampaignShow() {
     const router = useRouter();
-    const {
-        campaign: currentCampaign,
-        updateCampaign,
-        refreshCampaign,
-    } = useCampaigns({ campaignId: router.query.id as string });
+    const { campaign: currentCampaign, updateCampaign } = useCampaigns({
+        campaignId: router.query.id as string,
+    });
     const supabase = useSupabaseClient();
 
     const { company } = useCompany();
 
-    const { campaigns } = useCampaigns({ companyId: company?.id });
+    const { campaigns, refreshCampaign } = useCampaigns({ companyId: company?.id });
 
     const [media, setMedia] = useState<{ url: string; name: string }[]>([]);
     const [currentTab, setCurrentTab] = useState(0);
