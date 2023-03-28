@@ -50,6 +50,7 @@ export default function MoveInfluencerModalCard({
                 link_url: creator.link_url,
                 platform: creator.platform,
                 added_by_id: profile.id,
+                id: undefined,
             });
 
             await deleteCreatorInCampaign(creator);
