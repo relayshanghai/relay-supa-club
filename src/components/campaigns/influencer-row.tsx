@@ -73,6 +73,8 @@ const InfluencerRow = ({
     showMoveInfluencerModal,
     setShowMoveInfluencerModal,
 }: InfluencerRowProps) => {
+    const handle = creator.username || creator.fullname || '';
+
     return (
         <tr key={index} className="group text-xs hover:relative hover:bg-primary-50">
             {/* -- Account Column -- */}
@@ -103,7 +105,7 @@ const InfluencerRow = ({
                             </Link>
                         </div>
                         <div className="inline-block truncate text-xs text-primary-500">
-                            @{creator.username}
+                            @{handle}
                         </div>
                     </div>
                 </div>
@@ -327,7 +329,9 @@ const InfluencerRow = ({
             <td className="right-0 z-50 whitespace-nowrap bg-white px-6 py-4 group-hover:bg-primary-50 sm:sticky ">
                 <div className="flex justify-end">
                     <div
-                        onClick={(e) => openMoveInfluencerModal(e, creator)}
+                        onClick={(e) => {
+                            openMoveInfluencerModal(e, creator);
+                        }}
                         className="mr-2 cursor-pointer appearance-none  rounded-md border border-gray-200 bg-gray-50 p-2 text-center font-medium text-gray-600 outline-none duration-300 hover:bg-gray-100"
                     >
                         {/* TODO: notes ticket V2-139 */}

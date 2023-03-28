@@ -27,7 +27,7 @@ export default function MoveInfluencerModalCard({
         campaignId: targetCampaign.id,
     });
 
-    const { deleteCreatorInCampaign } = useCampaigns({
+    const { deleteCreatorInCampaign, refreshCampaign } = useCampaigns({
         campaignId: currentCampaign.id,
     });
 
@@ -43,12 +43,18 @@ export default function MoveInfluencerModalCard({
             await addCreatorToCampaign({
                 ...creator,
                 campaign_id: targetCampaign.id,
+                creator_id: creator.creator_id,
+                avatar_url: creator.avatar_url,
+                username: creator.username,
+                fullname: creator.fullname,
+                link_url: creator.link_url,
                 platform: creator.platform,
                 added_by_id: profile.id,
-                id: undefined,
             });
 
             await deleteCreatorInCampaign(creator);
+
+            refreshCampaign();
 
             toast.success(t('campaigns.modal.movedSuccessfully'));
             setHasCreator(true);
