@@ -7,7 +7,7 @@ import {
     updateCompany,
 } from 'src/utils/api/db/calls/company';
 import type { CompanyDB, CompanyDBUpdate } from 'src/utils/api/db/types';
-import { serverLogger } from 'src/utils/logger';
+import { serverLogger } from 'src/utils/logger-server';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 import { isCompanyOwnerOrRelayEmployee } from 'src/utils/auth';
 import { updateCompanyErrors } from 'src/errors/company';

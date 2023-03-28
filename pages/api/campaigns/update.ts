@@ -1,8 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
-import type { CampaignDB, CampaignDBUpdate} from 'src/utils/api/db';
+import type { CampaignDB, CampaignDBUpdate } from 'src/utils/api/db';
 import { updateCampaign } from 'src/utils/api/db';
-import { serverLogger } from 'src/utils/logger';
+import { serverLogger } from 'src/utils/logger-server';
 
 export type CampaignUpdatePostBody = CampaignDBUpdate;
 export type CampaignUpdatePostResponse = CampaignDB;

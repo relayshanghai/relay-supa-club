@@ -6,7 +6,7 @@ import { useSubscription } from 'src/hooks/use-subscription';
 import { useUsages } from 'src/hooks/use-usages';
 import { useUser } from 'src/hooks/use-user';
 import { buildSubscriptionPortalUrl } from 'src/utils/api/stripe/portal';
-import { clientLogger } from 'src/utils/logger';
+import { clientLogger } from 'src/utils/logger-client';
 import { getCurrentPeriodUsages } from 'src/utils/usagesHelpers';
 import { unixEpochToISOString } from 'src/utils/utils';
 

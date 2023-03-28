@@ -3,8 +3,7 @@ import { RELAY_DOMAIN } from 'src/constants';
 import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
 import httpCodes from 'src/constants/httpCodes';
 import { createEmployeeError } from 'src/errors/company';
-import type {
-    ProfileDB} from 'src/utils/api/db';
+import type { ProfileDB } from 'src/utils/api/db';
 import {
     createCompany,
     getCompanyByName,
@@ -16,7 +15,7 @@ import {
     updateUserRole,
 } from 'src/utils/api/db';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
-import { serverLogger } from 'src/utils/logger';
+import { serverLogger } from 'src/utils/logger-server';
 
 export type CreateEmployeePostBody = {
     email: string;

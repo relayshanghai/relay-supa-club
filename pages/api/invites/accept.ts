@@ -10,7 +10,7 @@ import {
     markInviteUsed,
     updateUserRole,
 } from 'src/utils/api/db';
-import { serverLogger } from 'src/utils/logger';
+import { serverLogger } from 'src/utils/logger-server';
 import { supabase } from 'src/utils/supabase-client';
 import { validatePassword } from 'src/utils/validation/signup';
 

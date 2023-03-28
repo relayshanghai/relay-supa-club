@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { serverLogger } from 'src/utils/logger';
+import { serverLogger } from 'src/utils/logger-server';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     serverLogger('server logger error', 'error');

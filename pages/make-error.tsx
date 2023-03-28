@@ -4,7 +4,7 @@ import { Button } from 'src/components/button';
 import { Layout } from 'src/components/layout';
 import { useCompany } from 'src/hooks/use-company';
 import { nextFetch } from 'src/utils/fetcher';
-import { clientLogger } from 'src/utils/logger';
+import { clientLogger } from 'src/utils/logger-client';
 
 export default function MakeErrorPage() {
     // useEffect(() => {
