@@ -25,11 +25,13 @@ Sentry.init({
     replaysOnErrorSampleRate: 1.0,
 
     integrations: [new Sentry.Replay()],
-    beforeSend(event) {
-        // Check if it is an exception, and if so, show the report dialog
-        if (event.exception) {
-            Sentry.showReportDialog({ eventId: event.event_id });
-        }
-        return event;
-    },
+
+    // turn off user report dialog for now. We can turn back on when we've gotten rid of all the background errors that aren't real errors
+    // beforeSend(event) {
+    //     // Check if it is an exception, and if so, show the report dialog
+    //     if (event.exception) {
+    //         Sentry.showReportDialog({ eventId: event.event_id });
+    //     }
+    //     return event;
+    // },
 });

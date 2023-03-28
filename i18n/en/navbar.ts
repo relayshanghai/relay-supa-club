@@ -4,6 +4,7 @@ const navbar = {
     aiEmailGenerator: 'AI Email Generator',
     account: 'Account',
     logout: 'Log Out',
+    roi: 'ROI',
 };
 
 export default navbar;

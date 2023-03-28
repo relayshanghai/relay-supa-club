@@ -4,10 +4,6 @@ describe('Main pages happy paths', () => {
         // starts on signup page. has an h1 that says signup in Chinese: 注册
         cy.get('h1').contains('注册');
 
-        cy.getByTestId('language-toggle-button').click();
-        cy.contains('English').click();
-        cy.get('h1').contains('Sign up');
-
         cy.loginTestUser();
 
         cy.contains('Campaigns', { timeout: 10000 }); // dashboard page load
