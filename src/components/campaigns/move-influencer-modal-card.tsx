@@ -35,7 +35,7 @@ export default function MoveInfluencerModalCard({
         campaignId: currentCampaign.id,
     });
 
-    const [currentHasCreator, setCurrentHasCreator] = useState<boolean>(false);
+    const [_, setCurrentHasCreator] = useState<boolean>(false);
     const [targetHasCreator, setTargetHasCreator] = useState<boolean>(false);
     const [coverImageUrl, setCoverImageUrl] = useState('');
     const { profile } = useUser();
