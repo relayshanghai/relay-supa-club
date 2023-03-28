@@ -42,6 +42,8 @@ function check_psql {
 }
 
 function drop_database_function {
+    check_psql
+
     # null check. If the first parameter of the function ($1) is null, then exit
     if [ -z "$1" ]
     then
@@ -51,11 +53,13 @@ function drop_database_function {
 
     # Use psql to drop the function
 
-    psql --host $db_host --port $db_port --username $db_user --dbname $db_name --command "DROP FUNCTION IF EXISTS relay_$1();"
+    psql --host $db_host --port $db_port --username $db_user --dbname $db_name --command "DROP FUNCTION IF EXISTS $1();"
     sed -i "/\/$1\.sql/d" $script_dir/functions/index.sql
 }
 
 function push_database_functions {
+    check_psql
+
     file_path=./supabase/functions/index.sql
 
     if [ ! -f "$file_path" ]; then
@@ -67,10 +71,14 @@ function push_database_functions {
 }
 
 function list_database_functions {
-    psql -h $db_host -p $db_port -U $db_user -d $db_name -c "SELECT specific_schema,routine_name,data_type,external_language FROM information_schema.routines WHERE routine_type = 'FUNCTION' AND routine_schema = 'public' AND routine_name LIKE 'relay_%';"
+    check_psql
+
+    psql -h $db_host -p $db_port -U $db_user -d $db_name -c "SELECT specific_schema,routine_name,data_type,external_language FROM information_schema.routines WHERE routine_type = 'FUNCTION' AND routine_schema = 'public';"
 }
 
 function connect {
+    check_psql
+
     psql -h $db_host -p $db_port -U $db_user -d $db_name $@
 }
 
@@ -78,14 +86,13 @@ function create_database_functions {
     fn_name=${1:-hello_world}
     message=$(
         cat <<-TEMPLATE
--- Do not remove relay_* prefix
-CREATE OR REPLACE FUNCTION relay_$fn_name()
+CREATE OR REPLACE FUNCTION $fn_name()
 RETURNS text
 LANGUAGE plpgsql
 AS \$\$
-BEGIN
-  RETURN 'Hello Relay!';
-END;
+  BEGIN
+    RETURN 'Hello Relay!';
+  END;
 \$\$;
 TEMPLATE
     )
@@ -125,15 +132,20 @@ function create_test {
 -- Functions directory: /tmp/supabase/functions
 -- Policies directory: /tmp/supabase/policies
 
-begin;
-select plan(1); -- no. of tests in the file
+BEGIN;
+SELECT plan(1); -- no. of tests in the file
+
+-- start includes
+-- \include /tmp/supabase/functions/function.sql
+-- \include /tmp/supabase/policies/foo.policy.sql
+-- end includes
 
 SELECT has_column('auth', 'users', 'id', 'id should exist');
 -- SELECT has_function('function_name'); -- test function
 -- SELECT policy_cmd_is('table', 'policy', 'command'); -- test policy
 
-select * from finish(); -- end test
-rollback;
+SELECT * FROM finish(); -- end test
+ROLLBACK;
 TEMPLATE
     )
     echo "$message" >"./supabase/tests/database/$test_name.test.sql"
@@ -154,6 +166,8 @@ function create_policy {
 
     message=$(
         cat <<-TEMPLATE
+DROP POLICY IF EXISTS $pl_name ON $tb_name;
+
 CREATE POLICY $pl_name
 ON $tb_name
 FOR ALL
@@ -173,10 +187,14 @@ TEMPLATE
 }
 
 function list_policies {
+    check_psql
+
     psql -h $db_host -p $db_port -U $db_user -d $db_name -c "SELECT schemaname,tablename,policyname,cmd,roles FROM pg_policies;"
 }
 
 function drop_policy {
+    check_psql
+
     pl_name=$1
     tb_name=$2
 
@@ -191,6 +209,8 @@ function drop_policy {
 }
 
 function push_policies {
+    check_psql
+
     file_path=$script_dir/policies/index.sql
 
     if [ ! -f "$file_path" ]; then
@@ -205,6 +225,22 @@ function generate_database_types {
     npx supabase gen types typescript --local --schema=public > $script_dir/../types/supabase.ts
 }
 
+function get_linked_project {
+    if [ -f "$script_dir/.temp/project-ref" ]; then
+        project_ref=$(cat $script_dir/.temp/project-ref)
+
+        if [ "$1" == "--verbose" ]; then
+            echo " ID: $project_ref"
+            echo "URL: https://app.supabase.com/project/$project_ref"
+        else
+            echo $project_ref
+        fi
+    else
+        echo "No projects linked. Pick one below."
+        npx supabase projects list
+    fi
+}
+
 # Reverse engineered from
 # https://github.com/supabase/cli/blob/main/internal/db/test/test.go#L39
 function test_database {
@@ -213,6 +249,7 @@ function test_database {
     container="supabase_db_$project_id"
 
     # copy files
+    docker exec $container mkdir -p /tmp/supabase/ > /dev/null
     docker cp $script_dir/functions $container:/tmp/supabase/ > /dev/null
     docker cp $script_dir/policies $container:/tmp/supabase/ > /dev/null
 
@@ -220,11 +257,12 @@ function test_database {
         docker cp $script_dir/tests $container:/tmp/supabase/ > /dev/null
     fi
 
-
     if [ -n "$1" ]; then
-        docker exec $container mkdir -p /tmp/supabase/tests/database/
-        docker cp $script_dir/tests/00000-supabase_test_helpers.sql $container:/tmp/supabase/tests/database/ > /dev/null
-        docker cp $script_dir/tests/00001-relay_test_helpers.sql $container:/tmp/supabase/tests/database/ > /dev/null
+        docker exec $container mkdir -p /tmp/supabase/tests/database/ > /dev/null
+        docker cp $script_dir/tests/database/00000-supabase_test_helpers.sql $container:/tmp/supabase/tests/database/ > /dev/null
+        docker cp $script_dir/tests/database/00001-relay_test_helpers.sql $container:/tmp/supabase/tests/database/ > /dev/null
+        docker cp $script_dir/tests/database/00002-seed.test.sql $container:/tmp/supabase/tests/database/ > /dev/null
+        docker cp $script_dir/tests/database/zzzzz-cleanup_helpers.sql $container:/tmp/supabase/tests/database/ > /dev/null
 
         for file in "$@"
         do
@@ -238,12 +276,12 @@ function test_database {
 
     # run tests
     docker exec -t $container bash /tmp/supabase/supa_pg_prove.sh /tmp/supabase/tests
+    docker_exit_code=$?
 
     # remove all copied files
-    docker exec $container rm -rf /tmp/supabase/functions
-    docker exec $container rm -rf /tmp/supabase/policies
-    docker exec $container rm -rf /tmp/supabase/tests
-    docker exec $container rm -rf /tmp/supabase/supa_pg_prove.sh
+    docker exec $container rm -rf /tmp/supabase > /dev/null
+
+    exit $docker_exit_code
 }
 
 function help {
@@ -255,16 +293,15 @@ function help {
         ./$script_name create_dbfn <function_name>
 
     Note that these are database functions (not edge functions)
-    All functions created with this command will have a relay_* prefix
     This command creates a function in "./supabase/functions" and adds it to "./supabase/functions/index.sql"
 
-    List database functions - Show functions that have relay_* prefix
+    List database functions - Show database functions
         ./$script_name list_dbfn
 
     Push database functions - Pushes ALL functions found in "./supabase/functions"
         ./$script_name push_dbfn
         
-    Runs a postgres query to import all functions with relay_* prefix and adds them to the database that is connected based on what environment variables you have set for the DBHOST, DBPORT, DBUSER, DBNAME, and DBPASSWORD.
+    Runs a postgres query to push all functions to the local database.
 
     Drop a database function:
         ./$script_name drop_dbfn <function_name>
@@ -290,20 +327,21 @@ function help {
     Push policies - Pushes ALL policies found in "./supabase/policies"
         ./$script_name push_policies
         
-    Runs a postgres query to import all functions with relay_* prefix and adds them to the database that is connected based on what environment variables you have set for the DBHOST, DBPORT, DBUSER, DBNAME, and DBPASSWORD.
+    Runs a postgres query to push all policies to the local database.
 
     Drop a policy:
         ./$script_name drop_policy <policy_name> <table_name>
 
     Test database:
         ./$script_name db_test [test1] [test2...]
+
+    Display the linked project:
+        ./$script_name get_proj [--verbose]
 END
     )
 
     echo "$message"
 }
-
-check_psql
 
 fn=$1
 shift
@@ -353,6 +391,9 @@ case $fn in
     ;;
   "db_test")
     test_database $@
+    ;;
+  "get_proj")
+    get_linked_project $@
     ;;
 *)
     supabase $fn $@
