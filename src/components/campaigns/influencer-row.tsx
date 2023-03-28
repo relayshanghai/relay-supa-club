@@ -70,8 +70,6 @@ const InfluencerRow = ({
     deleteCampaignCreator,
     openNotes,
     openMoveInfluencerModal,
-    showMoveInfluencerModal,
-    setShowMoveInfluencerModal,
 }: InfluencerRowProps) => {
     const handle = creator.username || creator.fullname || '';
 
