@@ -6,6 +6,8 @@ import { I18nextProvider } from 'react-i18next';
 import i18n from 'i18n';
 import { UserContext } from 'src/hooks/use-user';
 import type { IUserContext } from 'src/hooks/use-user';
+import { createBrowserSupabaseClient } from '@supabase/auth-helpers-nextjs';
+import { SessionContextProvider } from '@supabase/auth-helpers-react';
 i18n.changeLanguage('en');
 
 export interface TestMountOptions {
@@ -56,12 +58,14 @@ export const testMount = (component: React.ReactElement, options?: TestMountOpti
         query: options?.query ?? {},
     });
     // see: https://on.cypress.io/mounting-react
-
+    const supabaseClient = createBrowserSupabaseClient();
     mount(
         <AppRouterContext.Provider value={router as any}>
-            <I18nextProvider i18n={i18n}>
-                <UserContext.Provider value={mockUserContext}>{component}</UserContext.Provider>
-            </I18nextProvider>
+            <SessionContextProvider supabaseClient={supabaseClient} initialSession={{} as any}>
+                <I18nextProvider i18n={i18n}>
+                    <UserContext.Provider value={mockUserContext}>{component}</UserContext.Provider>
+                </I18nextProvider>{' '}
+            </SessionContextProvider>
         </AppRouterContext.Provider>,
     );
 };
