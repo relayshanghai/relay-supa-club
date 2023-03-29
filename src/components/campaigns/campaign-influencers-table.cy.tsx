@@ -16,6 +16,8 @@ import type {
     CampaignDB,
     CampaignWithCompanyCreators,
 } from '../../utils/api/db';
+import { rest } from 'msw';
+import { APP_URL_CYPRESS } from '../../mocks/browser';
 
 const currentCampaign: CampaignDB = {
     id: 'campaign1',
@@ -45,7 +47,7 @@ const currentCampaign: CampaignDB = {
 const creator1: CampaignCreatorDB = {
     id: 'creator1',
     created_at: '2023-02-12T03:01:51.468377+00:00',
-    status: 'confirmed',
+    status: 'to contact',
     campaign_id: 'campaign1',
     updated_at: null,
     relay_creator_id: null,
@@ -92,7 +94,7 @@ const company = {
     name: 'Company 1',
     cus_id: 'cus_1',
 };
-const currentCampaignWithCompanyCreators: CampaignWithCompanyCreators = {
+const campaign1: CampaignWithCompanyCreators = {
     ...currentCampaign,
     companies: [company],
     campaign_creators: campaignCreators,
@@ -100,18 +102,18 @@ const currentCampaignWithCompanyCreators: CampaignWithCompanyCreators = {
 
 /** Campaign 2 has no influencers */
 const campaign2: CampaignWithCompanyCreators = {
-    ...currentCampaign,
+    ...campaign1,
     id: 'campaign2',
     name: 'Campaign 2',
 };
 
-const campaigns: CampaignWithCompanyCreators[] = [currentCampaign, campaign2];
+const campaigns: CampaignWithCompanyCreators[] = [campaign1, campaign2];
 const makeProps = () => {
     // cy.stub can only be called within a test
     const setShowNotesModal = cy.stub();
     const setCurrentCreator = cy.stub();
     const props: CreatorsOutreachProps = {
-        currentCampaign: currentCampaignWithCompanyCreators,
+        currentCampaign: campaign1,
         setShowNotesModal,
         setCurrentCreator,
         campaigns,
@@ -121,7 +123,29 @@ const makeProps = () => {
 };
 
 describe('CampaignInfluencersTable', () => {
-    it('should render successfully', () => {
+    before(async () => {
+        const { worker } = await import('../../mocks/browser');
+        worker.use(
+            // for the default msw handlers, we'll use more realistic data. For individual component tests we can pass in specific mocks with names like 'campaign1' instead of a real one. This makes the tests more readable and makes it easy to test different scenarios.
+            rest.get(`${APP_URL_CYPRESS}/api/campaigns`, (req, res, ctx) => {
+                return res(ctx.json(campaigns));
+            }),
+        );
+        worker.start();
+    });
+
+    it('should render table of influencers', () => {
         testMount(<CampaignInfluencersTable {...makeProps()} />);
+        cy.get('tr').contains('Creator1 name');
+        cy.contains('Creator2 name');
+        cy.contains('Creator3 name');
+    });
+    it('on an influencer row, I can see a button called "Move Influencer"', () => {
+        testMount(<CampaignInfluencersTable {...makeProps()} />);
+        cy.get('tr').get('button').contains('Move Influencer');
+    });
+    it('when I click on the "Move Influencer" button, I get a modal with a list of campaigns.', () => {
+        testMount(<CampaignInfluencersTable {...makeProps()} />);
+        cy.get('tr').get('button').contains('Move Influencer').click();
     });
 });
