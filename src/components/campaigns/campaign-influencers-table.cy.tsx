@@ -147,10 +147,13 @@ describe('CampaignInfluencersTable', () => {
 
         // modal appears
         // check for the text 'Add this influencer to your existing campaigns'
-
+        cy.contains('Add this influencer to your existing campaigns');
         // Might need to put a data-testid on the button cause its hard to select.
+        cy.get(`#move-influencer-button-${campaign2.id}`).click().wait(1000);
+        cy.get(`#move-influencer-spinner-${campaign2.id}`);
         // you might need a data-testid on the spinner too.
     });
+
     // 6. In the source campaign, I don't see the influencer anymore.
     // So this is accomplished by calling the api to remove the influencer. we don't need to test that implementation, we just need to check that that function was called, and that if we rerender the component with the influencer removed, it is no longer in the UI.
     it('Should remove the influencer from the source campaign when I click the move button in the modal', () => {

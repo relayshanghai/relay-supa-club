@@ -141,13 +141,17 @@ export default function MoveInfluencerModalCard({
                 </div>
 
                 {targetCampaign && targetHasCreator && (
-                    <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md bg-primary-100">
+                    <div
+                        className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md bg-primary-100"
+                        id={`move-influencer-checkmark-${targetCampaign.id}`}
+                    >
                         <CheckCircleIcon className="h-4 w-4 fill-current text-primary-500" />
                     </div>
                 )}
 
                 {targetCampaign && !targetHasCreator && (
                     <button
+                        id={`move-influencer-button-${targetCampaign.id}`}
                         onClick={handleMoveCreatorToCampaign}
                         disabled={
                             targetHasCreator ||
@@ -159,7 +163,10 @@ export default function MoveInfluencerModalCard({
                             <ArrowRightCircleIcon className="h-4 w-4 fill-current text-current" />
                         )}
                         {(loading || deleteCampaginLoading) && (
-                            <Spinner className=" h-4 w-4 fill-primary-600 text-white" />
+                            <Spinner
+                                id={`move-influencer-spinner-${targetCampaign.id}`}
+                                className=" h-4 w-4 fill-primary-600 text-white"
+                            />
                         )}
                     </button>
                 )}
