@@ -94,9 +94,10 @@ const company = {
     name: 'Company 1',
     cus_id: 'cus_1',
 };
+const companies: any = [company]; // weird typescript compile bug
 const campaign1: CampaignWithCompanyCreators = {
     ...currentCampaign,
-    companies: [company],
+    companies,
     campaign_creators: campaignCreators,
 };
 
