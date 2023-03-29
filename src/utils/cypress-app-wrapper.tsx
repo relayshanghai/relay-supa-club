@@ -12,6 +12,7 @@ export interface TestMountOptions {
     /** The pathname that it will tell the router the app is currently visiting */
     pathname?: string;
     pushStub?: Cypress.Agent<any>;
+    query?: Record<string, string>;
 }
 const mockProfile: IUserContext['profile'] = {
     id: '1',
@@ -49,7 +50,11 @@ const mockUserContext: IUserContext = {
 export const testMount = (component: React.ReactElement, options?: TestMountOptions) => {
     const push = options?.pushStub ?? cy.stub();
     const router = cy.stub(NextRouter, 'default');
-    cy.stub(NextRouter, 'useRouter').returns({ pathname: options?.pathname ?? '/dashboard', push });
+    cy.stub(NextRouter, 'useRouter').returns({
+        pathname: options?.pathname ?? '/dashboard',
+        push,
+        query: options?.query ?? {},
+    });
     // see: https://on.cypress.io/mounting-react
 
     mount(
