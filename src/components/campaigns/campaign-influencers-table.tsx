@@ -12,12 +12,10 @@ import InfluencerRow from './influencer-row';
 import { MoveInfluencerModal } from '../modal-move-influencer';
 import type { CampaignsIndexGetResult } from 'pages/api/campaigns';
 
-interface CreatorsOutreachProps {
+export interface CreatorsOutreachProps {
     currentCampaign: CampaignWithCompanyCreators;
     setShowNotesModal: (value: boolean) => void;
     setCurrentCreator: (value: CampaignCreatorDB) => void;
-    showMoveInfluencerModal: boolean;
-    setShowMoveInfluencerModal: React.Dispatch<React.SetStateAction<boolean>>;
     campaigns?: CampaignsIndexGetResult;
     currentCreator?: CampaignCreatorDB | null;
 }
@@ -26,8 +24,7 @@ export default function CampaignInfluencersTable({
     currentCampaign,
     setShowNotesModal,
     setCurrentCreator,
-    setShowMoveInfluencerModal,
-    showMoveInfluencerModal,
+
     campaigns,
     currentCreator,
 }: CreatorsOutreachProps) {
@@ -41,6 +38,8 @@ export default function CampaignInfluencersTable({
     const [toEdit, setToEdit] = useState<{ index: number; key: string } | null>(null);
     const [searchTerm, setSearchTerm] = useState<string | ''>('');
     const [influencersList, setInfluencersList] = useState<CampaignCreatorDB[]>([]);
+
+    const [showMoveInfluencerModal, setShowMoveInfluencerModal] = useState(false);
 
     const { deleteCreatorInCampaign, updateCreatorInCampaign, refreshCampaign } = useCampaigns({
         campaignId: currentCampaign?.id,

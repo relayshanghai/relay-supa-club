@@ -15,7 +15,6 @@ import CommentInput from 'src/components/campaigns/comment-input';
 import CommentCards from 'src/components/campaigns/comment-cards';
 import type { CampaignCreatorDB, CampaignWithCompanyCreators } from 'src/utils/api/db';
 import { imgProxy } from 'src/utils/fetcher';
-import { MoveInfluencerModal } from 'src/components/modal-move-influencer';
 import { useCompany } from 'src/hooks/use-company';
 
 export default function CampaignShow() {
@@ -34,7 +33,6 @@ export default function CampaignShow() {
     const [showNotesModal, setShowNotesModal] = useState(false);
     const [currentCreator, setCurrentCreator] = useState<CampaignCreatorDB | null>(null);
     const { t, i18n } = useTranslation();
-    const [showMoveInfluencerModal, setShowMoveInfluencerModal] = useState(false);
 
     const tabs = [
         t('campaigns.show.activities.influencerOutreach'),
@@ -204,8 +202,6 @@ export default function CampaignShow() {
                         currentCampaign={currentCampaign}
                         setShowNotesModal={setShowNotesModal}
                         setCurrentCreator={setCurrentCreator}
-                        showMoveInfluencerModal={showMoveInfluencerModal}
-                        setShowMoveInfluencerModal={setShowMoveInfluencerModal}
                         campaigns={campaigns}
                         currentCreator={currentCreator}
                     />
