@@ -14,7 +14,6 @@ import { IQDATA_MAINTENANCE, RELAY_DOMAIN } from 'src/constants';
 import { MaintenanceMessage } from '../maintenance-message';
 import { useCampaigns } from 'src/hooks/use-campaigns';
 import { useCompany } from 'src/hooks/use-company';
-import { useRouter } from 'next/router';
 
 export const CreatorPage = ({
     creator_id,
@@ -24,8 +23,6 @@ export const CreatorPage = ({
     platform: CreatorPlatform;
 }) => {
     const { loading, report, getOrCreateReport, reportCreatedAt, errorMessage } = useReport();
-
-    const [companyId, setCompanyId] = useState<string | null>(null);
 
     const [showCampaignListModal, setShowCampaignListModal] = useState(false);
     const { t } = useTranslation();
