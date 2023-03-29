@@ -12,6 +12,9 @@ import { AddToCampaignModal } from '../modal-add-to-campaign';
 import { useTranslation } from 'react-i18next';
 import { IQDATA_MAINTENANCE, RELAY_DOMAIN } from 'src/constants';
 import { MaintenanceMessage } from '../maintenance-message';
+import { useCampaigns } from 'src/hooks/use-campaigns';
+import { useCompany } from 'src/hooks/use-company';
+import { useRouter } from 'next/router';
 
 export const CreatorPage = ({
     creator_id,
@@ -21,6 +24,8 @@ export const CreatorPage = ({
     platform: CreatorPlatform;
 }) => {
     const { loading, report, getOrCreateReport, reportCreatedAt, errorMessage } = useReport();
+
+    const [companyId, setCompanyId] = useState<string | null>(null);
 
     const [showCampaignListModal, setShowCampaignListModal] = useState(false);
     const { t } = useTranslation();
@@ -32,6 +37,10 @@ export const CreatorPage = ({
     const onAddToCampaign = () => {
         setShowCampaignListModal(true);
     };
+
+    const { company } = useCompany();
+
+    const { campaigns } = useCampaigns({ companyId: company?.id });
 
     if (IQDATA_MAINTENANCE) {
         return <MaintenanceMessage />;
@@ -46,6 +55,7 @@ export const CreatorPage = ({
                 selectedCreator={{
                     ...report?.user_profile,
                 }}
+                campaigns={campaigns}
             />
             <Head>
                 <title>{report?.user_profile.fullname || RELAY_DOMAIN}</title>
