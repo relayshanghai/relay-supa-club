@@ -106,6 +106,7 @@ const campaign2: CampaignWithCompanyCreators = {
     ...campaign1,
     id: 'campaign2',
     name: 'Campaign 2',
+    campaign_creators: [],
 };
 
 const campaigns: CampaignWithCompanyCreators[] = [campaign1, campaign2];
