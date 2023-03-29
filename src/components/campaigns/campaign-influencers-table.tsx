@@ -102,7 +102,7 @@ export default function CampaignInfluencersTable({
     };
 
     const setInlineEdit = (
-        e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>,
+        e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
         index: number,
         key: string,
     ) => {
@@ -111,7 +111,7 @@ export default function CampaignInfluencersTable({
     };
 
     const openNotes = (
-        e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>,
+        e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
         creator: CampaignCreatorDB,
     ) => {
         e.stopPropagation();
@@ -120,7 +120,7 @@ export default function CampaignInfluencersTable({
     };
 
     const openMoveInfluencerModal = (
-        e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>,
+        e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
         creator: CampaignCreatorDB,
     ) => {
         e.stopPropagation();
@@ -129,7 +129,7 @@ export default function CampaignInfluencersTable({
     };
 
     const deleteCampaignCreator = async (
-        e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>,
+        e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
         creator: CampaignCreatorDB,
     ) => {
         e.stopPropagation();

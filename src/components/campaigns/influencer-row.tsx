@@ -1,7 +1,7 @@
 import { t } from 'i18next';
 import Link from 'next/link';
-import React from 'react';
-import type { ChangeEvent } from 'react';
+import type { Dispatch, RefObject, SetStateAction } from 'react';
+import type { ChangeEvent, MouseEvent } from 'react';
 import type { CampaignCreatorDB } from 'src/utils/api/db';
 import { imgProxy } from 'src/utils/fetcher';
 import type { SocialMediaPlatform } from 'types';
@@ -36,25 +36,25 @@ interface InfluencerRowProps {
         objKey: string,
     ) => Promise<void>;
     setInlineEdit: (
-        e: React.MouseEvent<HTMLDivElement, globalThis.MouseEvent>,
+        e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
         index: number,
         key: string,
     ) => void;
     editingModeTrue: (index: number, key: string) => boolean;
-    inputRef: React.RefObject<HTMLInputElement>;
+    inputRef: RefObject<HTMLInputElement>;
     updateCampaignCreator: (creator: CampaignCreatorDB) => void;
-    setToEdit: React.Dispatch<React.SetStateAction<null | { index: number; key: string }>>;
+    setToEdit: Dispatch<SetStateAction<null | { index: number; key: string }>>;
     deleteCampaignCreator: (
-        e: React.MouseEvent<HTMLDivElement, globalThis.MouseEvent>,
+        e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
         creator: CampaignCreatorDB,
     ) => Promise<void>;
     openNotes: any;
     openMoveInfluencerModal: (
-        e: React.MouseEvent<HTMLDivElement, globalThis.MouseEvent>,
+        e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
         creator: CampaignCreatorDB,
     ) => void;
     showMoveInfluencerModal: boolean;
-    setShowMoveInfluencerModal: React.Dispatch<React.SetStateAction<boolean>>;
+    setShowMoveInfluencerModal: Dispatch<SetStateAction<boolean>>;
 }
 
 const InfluencerRow = ({
@@ -144,7 +144,7 @@ const InfluencerRow = ({
                                         </td> */}
             {/* -- Action Point Column -- */}
             <td className="min-w-[150px] max-w-[200px] whitespace-normal px-6 py-4">
-                <div
+                <button
                     className="relative cursor-pointer text-xs text-gray-900 duration-300 hover:text-primary-500"
                     onClick={(e) => setInlineEdit(e, index, 'next_step')}
                 >
@@ -167,11 +167,11 @@ const InfluencerRow = ({
                             closeModal={() => setToEdit(null)}
                         />
                     )}
-                </div>
+                </button>
             </td>
             {/* -- Publication Date Column -- */}
             <td className="min-w-[0px] max-w-[200px] whitespace-nowrap px-6 py-4">
-                <div
+                <button
                     className="relative cursor-pointer text-xs text-gray-900 duration-300 hover:text-primary-500"
                     onClick={(e) => setInlineEdit(e, index, 'publication_date')}
                 >
@@ -198,11 +198,11 @@ const InfluencerRow = ({
                             closeModal={() => setToEdit(null)}
                         />
                     )}
-                </div>
+                </button>
             </td>
 
             <td className="whitespace-nowrap px-6 py-4">
-                <div
+                <button
                     className="relative cursor-pointer pr-2 text-left text-xs text-gray-900 duration-300 hover:text-primary-500"
                     onClick={(e) => setInlineEdit(e, index, 'rate_cents')}
                 >
@@ -218,10 +218,10 @@ const InfluencerRow = ({
                             closeModal={() => setToEdit(null)}
                         />
                     )}
-                </div>
+                </button>
             </td>
             <td className="whitespace-nowrap px-6 py-4">
-                <div
+                <button
                     className="relative cursor-pointer pr-2 text-left text-xs text-gray-900 duration-300 hover:text-primary-500"
                     onClick={(e) => setInlineEdit(e, index, 'paid_amount_cents')}
                 >
@@ -238,11 +238,11 @@ const InfluencerRow = ({
                             closeModal={() => setToEdit(null)}
                         />
                     )}
-                </div>
+                </button>
             </td>
             {/* -- Payment Info Column -- */}
             <td className="min-w-[150px] max-w-[200px] whitespace-normal px-6 py-4">
-                <div
+                <button
                     className="relative cursor-pointer text-xs text-gray-900 duration-300 hover:text-primary-500"
                     onClick={(e) => setInlineEdit(e, index, 'payment_details')}
                 >
@@ -266,7 +266,7 @@ const InfluencerRow = ({
                             closeModal={() => setToEdit(null)}
                         />
                     )}
-                </div>
+                </button>
             </td>
             <td className="whitespace-nowrap px-6 py-4">
                 <select
@@ -284,7 +284,7 @@ const InfluencerRow = ({
             </td>
             {/* -- Influencer Address Column -- */}
             <td className="py-4whitespace-normal min-w-[150px] max-w-[200px] px-6">
-                <div
+                <button
                     className="relative cursor-pointer text-xs text-gray-900 duration-300 hover:text-primary-500"
                     onClick={(e) => setInlineEdit(e, index, 'address')}
                 >
@@ -306,7 +306,7 @@ const InfluencerRow = ({
                             closeModal={() => setToEdit(null)}
                         />
                     )}
-                </div>
+                </button>
             </td>
             {/* -- Sample Status Column -- */}
             <td className="whitespace-nowrap px-6 py-4">
@@ -326,7 +326,7 @@ const InfluencerRow = ({
 
             <td className="right-0 z-50 whitespace-nowrap bg-white px-6 py-4 group-hover:bg-primary-50 sm:sticky ">
                 <div className="flex justify-end">
-                    <div
+                    <button
                         onClick={(e) => {
                             openMoveInfluencerModal(e, creator);
                         }}
@@ -334,20 +334,20 @@ const InfluencerRow = ({
                     >
                         {/* TODO: notes ticket V2-139 */}
                         {t('campaigns.show.moveInfluencer')}
-                    </div>
-                    <div
+                    </button>
+                    <button
                         onClick={(e) => openNotes(e, creator)}
                         className="mr-2 cursor-pointer appearance-none  rounded-md border border-gray-200 bg-gray-50 p-2 text-center font-medium text-gray-600 outline-none duration-300 hover:bg-gray-100"
                     >
                         {/* TODO: notes ticket V2-139 */}
                         {t('campaigns.show.notes')}
-                    </div>
-                    <div
+                    </button>
+                    <button
                         onClick={(e) => deleteCampaignCreator(e, creator)}
                         className="cursor-pointer appearance-none rounded-md  border border-gray-200 bg-gray-50 p-2 text-center text-gray-600 outline-none duration-300 hover:bg-gray-100"
                     >
                         <Trashcan className="h-4 w-4 fill-tertiary-600 hover:fill-primary-600" />
-                    </div>
+                    </button>
                 </div>
             </td>
         </tr>
