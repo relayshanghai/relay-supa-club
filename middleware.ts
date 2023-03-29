@@ -5,7 +5,7 @@ import type { NextRequest } from 'next/server';
 import type { DatabaseWithCustomTypes } from 'types';
 import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
 import httpCodes from 'src/constants/httpCodes';
-import { serverLogger } from 'src/utils/logger';
+import { serverLogger } from 'src/utils/logger-server';
 
 const pricingAllowList = ['https://en-relay-club.vercel.app', 'https://relay.club'];
 const stripeWebhookAllowlist = ['https://stripe.com/', 'https://hooks.stripe.com/'];
@@ -214,6 +214,6 @@ export const config = {
          * - create-employee endpoint (api/company/create-employee)
          * - login, signup, logout (login, signup, logout pages)
          */
-        '/((?!_next/static|_next/image|favicon.ico|assets/*|api/invite/accept*|api/company/create-employee*|login*|login/reset-password|signup|signup/invite*|logout|api/logout).*)',
+        '/((?!_next/static|_next/image|favicon.ico|assets/*|api/invites/accept*|api/company/create-employee*|login*|login/reset-password|signup|signup/invite*|logout|api/logout).*)',
     ],
 };

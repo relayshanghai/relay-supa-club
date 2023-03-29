@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import type { CampaignCreatorDBUpdate} from 'src/utils/api/db';
+import type { CampaignCreatorDBUpdate } from 'src/utils/api/db';
 import { updateCampaignCreator } from 'src/utils/api/db';
-import { serverLogger } from 'src/utils/logger';
+import { serverLogger } from 'src/utils/logger-server';
 
 export interface CampaignCreatorUpdatePutBody extends CampaignCreatorDBUpdate {
     campaign_id: string;

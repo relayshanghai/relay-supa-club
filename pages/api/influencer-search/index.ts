@@ -3,7 +3,7 @@ import httpCodes from 'src/constants/httpCodes';
 import { recordSearchUsage } from 'src/utils/api/db/calls/usages';
 import { fetchCreatorsFiltered } from 'src/utils/api/iqdata';
 import type { FetchCreatorsFilteredParams } from 'src/utils/api/iqdata/transforms';
-import { serverLogger } from 'src/utils/logger';
+import { serverLogger } from 'src/utils/logger-server';
 import type { CreatorSearchResult } from 'types';
 
 export type InfluencerPostRequest = FetchCreatorsFilteredParams & {

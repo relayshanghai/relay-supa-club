@@ -2,8 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { RELAY_DOMAIN } from 'src/constants';
 import httpCodes from 'src/constants/httpCodes';
 import { createCompanyErrors } from 'src/errors/company';
-import type {
-    CompanyDB} from 'src/utils/api/db';
+import type { CompanyDB } from 'src/utils/api/db';
 import {
     createCompany,
     getAllCompanyNames,
@@ -12,7 +11,7 @@ import {
     updateUserRole,
 } from 'src/utils/api/db';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
-import { serverLogger } from 'src/utils/logger';
+import { serverLogger } from 'src/utils/logger-server';
 
 export type CompanyCreatePostBody = {
     user_id: string;

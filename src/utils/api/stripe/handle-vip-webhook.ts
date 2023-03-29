@@ -10,7 +10,7 @@ import {
     DEFAULT_VIP_PROFILES_LIMIT,
     DEFAULT_VIP_SEARCHES_LIMIT,
 } from 'src/utils/api/stripe/constants';
-import { serverLogger } from 'src/utils/logger';
+import { serverLogger } from 'src/utils/logger-server';
 import { sendEmail } from 'src/utils/send-in-blue-client';
 import { supabase } from 'src/utils/supabase-client';
 import { unixEpochToISOString } from 'src/utils/utils';

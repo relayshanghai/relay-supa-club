@@ -10,7 +10,7 @@ import {
 import { getSubscription } from 'src/utils/api/stripe/helpers';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 import { isCompanyOwnerOrRelayEmployee } from 'src/utils/auth';
-import { serverLogger } from 'src/utils/logger';
+import { serverLogger } from 'src/utils/logger-server';
 import { unixEpochToISOString } from 'src/utils/utils';
 import type Stripe from 'stripe';
 

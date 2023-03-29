@@ -19,7 +19,7 @@ import useSWR from 'swr';
 
 import type { ProfileDB } from 'src/utils/api/db/types';
 import { nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';
-import { clientLogger } from 'src/utils/logger';
+import { clientLogger } from 'src/utils/logger-client';
 import type { DatabaseWithCustomTypes } from 'types';
 
 export type SignupData = {
