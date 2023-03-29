@@ -13,7 +13,7 @@ import { useFields } from 'src/hooks/use-fields';
 import { useUser } from 'src/hooks/use-user';
 import { hasCustomError } from 'src/utils/errors';
 
-import { clientLogger } from 'src/utils/logger';
+import { clientLogger } from 'src/utils/logger-client';
 import { validateSignupInput } from 'src/utils/validation/signup';
 import type { SignupInputTypes } from 'src/utils/validation/signup';
 import { Spinner } from 'src/components/icons';

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import useSWR from 'swr';
 import { useUser } from './use-user';
-import { clientLogger } from 'src/utils/logger';
+import { clientLogger } from 'src/utils/logger-client';
 import { nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';
 import type { CampaignNotePostBody, CampaignNotePostResponse } from 'pages/api/notes/create';
 import type { CampaignNotesIndexGetQuery, CampaignNotesIndexGetResult } from 'pages/api/notes';

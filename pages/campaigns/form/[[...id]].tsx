@@ -24,7 +24,7 @@ import { useCampaigns } from 'src/hooks/use-campaigns';
 import { useCallback } from 'react';
 import { Spinner } from 'src/components/icons';
 import type { CampaignWithCompanyCreators } from 'src/utils/api/db';
-import { clientLogger } from 'src/utils/logger';
+import { clientLogger } from 'src/utils/logger-client';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 
 const TimelineInput = ({

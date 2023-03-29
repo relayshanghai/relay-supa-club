@@ -1,10 +1,13 @@
-import type { CreatorsReportGetQueries, CreatorsReportGetResponse } from 'pages/api/creators/report';
+import type {
+    CreatorsReportGetQueries,
+    CreatorsReportGetResponse,
+} from 'pages/api/creators/report';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usageErrors } from 'src/errors/usages';
 import { hasCustomError } from 'src/utils/errors';
 import { nextFetchWithQueries } from 'src/utils/fetcher';
-import { clientLogger } from 'src/utils/logger';
+import { clientLogger } from 'src/utils/logger-client';
 import type { CreatorPlatform, CreatorReport } from 'types';
 import { useUser } from './use-user';
 

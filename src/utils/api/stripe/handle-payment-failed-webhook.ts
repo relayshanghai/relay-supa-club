@@ -1,6 +1,6 @@
 import { getCompanyByCusId, updateCompanySubscriptionStatus } from '../db';
 import httpCodes from 'src/constants/httpCodes';
-import { serverLogger } from 'src/utils/logger';
+import { serverLogger } from 'src/utils/logger-server';
 
 import type { NextApiResponse } from 'next';
 import type { InvoicePaymentFailed } from 'types/stripe/invoice-payment-failed-webhook';

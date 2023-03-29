@@ -2,7 +2,7 @@ import { generateSubjectPrompt } from './../../../src/utils/api/ai-generate/subj
 import type { AIEmailSubjectGeneratorPostBody } from './../../../src/utils/api/ai-generate/subject';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
-import { serverLogger } from 'src/utils/logger';
+import { serverLogger } from 'src/utils/logger-server';
 
 import { Configuration, OpenAIApi } from 'openai';
 import { recordAiEmailGeneratorUsage } from 'src/utils/api/db';

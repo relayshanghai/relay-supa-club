@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import type { CampaignDB, CampaignDBInsert } from 'src/utils/api/db';
-import { serverLogger } from 'src/utils/logger';
+import { serverLogger } from 'src/utils/logger-server';
 import { supabase } from 'src/utils/supabase-client';
 
 export type CampaignsCreatePostBody = CampaignDBInsert;

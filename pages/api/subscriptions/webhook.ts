@@ -1,7 +1,7 @@
 import httpCodes from 'src/constants/httpCodes';
 
 import { STRIPE_PRODUCT_ID_VIP } from 'src/utils/api/stripe/constants';
-import { serverLogger } from 'src/utils/logger';
+import { serverLogger } from 'src/utils/logger-server';
 
 import type { NextApiRequest, NextApiResponse } from 'next';
 import type { CustomerSubscriptionCreated } from 'types';

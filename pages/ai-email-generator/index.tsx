@@ -7,7 +7,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Input } from 'src/components/input';
 import { Layout } from 'src/components/layout';
 import { toast } from 'react-hot-toast';
-import { clientLogger } from 'src/utils/logger';
+import { clientLogger } from 'src/utils/logger-client';
 import type { AIEmailSubjectGeneratorPostResult } from 'pages/api/ai-generate/subject';
 import { useUser } from 'src/hooks/use-user';
 import { useCompany } from 'src/hooks/use-company';

@@ -13,7 +13,7 @@ import {
 import { STRIPE_PRICE_MONTHLY_DIY, STRIPE_PRODUCT_ID_DIY } from 'src/utils/api/stripe/constants';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 import { isCompanyOwnerOrRelayEmployee } from 'src/utils/auth';
-import { serverLogger } from 'src/utils/logger';
+import { serverLogger } from 'src/utils/logger-server';
 import { unixEpochToISOString } from 'src/utils/utils';
 import type Stripe from 'stripe';
 import type { StripePriceWithProductMetadata } from 'types';

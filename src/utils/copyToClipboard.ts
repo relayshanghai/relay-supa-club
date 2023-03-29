@@ -1,5 +1,5 @@
 import { toast } from 'react-hot-toast';
-import { clientLogger } from './logger';
+import { clientLogger } from './logger-client';
 
 export const copyToClipboard = (text: string): void => {
     const isClipboardAPISupported = navigator.clipboard && !!navigator.clipboard.writeText;

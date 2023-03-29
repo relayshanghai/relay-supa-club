@@ -1,5 +1,5 @@
 import { usageErrors } from 'src/errors/usages';
-import { serverLogger } from 'src/utils/logger';
+import { serverLogger } from 'src/utils/logger-server';
 import { supabase } from 'src/utils/supabase-client';
 import { unixEpochToISOString } from 'src/utils/utils';
 import type { UsageType } from 'types';

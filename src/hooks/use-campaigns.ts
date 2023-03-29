@@ -23,8 +23,7 @@ import type {
     CampaignCreatorsDeleteBody,
     CampaignCreatorsDeleteResponse,
 } from 'pages/api/campaigns/delete-creator';
-import { clientLogger } from 'src/utils/logger';
-
+import { clientLogger } from 'src/utils/logger-client';
 
 //The transform function is not used now, as the image proxy issue is handled directly where calls for the image.But this is left for future refactor. TODO:Ticket V2-181
 // const transformCampaignCreators = (creators: CampaignCreatorDB[]) => {
