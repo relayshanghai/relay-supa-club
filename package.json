@@ -92,10 +92,11 @@
     "engines": {
         "node": "18.14.0"
     },
-    "volta": {
-        "node": "18.14.0"
-    },
     "msw": {
         "workerDirectory": "public"
+    },
+    "volta": {
+        "node": "18.14.0",
+        "npm": "9.3.1"
     }
 }
