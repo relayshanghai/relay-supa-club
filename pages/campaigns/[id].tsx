@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import Image from 'next/legacy/image';
 import { Layout } from 'src/components/layout';
-import CreatorsOutreach from '../../src/components/campaigns/creator-outreach';
+import CampaignInfluencersTable from '../../src/components/campaigns/campaign-influencers-table';
 import CampaignDetails from '../../src/components/campaigns/CampaignDetails';
 import { useCampaigns } from 'src/hooks/use-campaigns';
 import { Modal } from 'src/components/modal';
@@ -200,27 +200,18 @@ export default function CampaignShow() {
                     ))}
                 </div>
                 {currentTab === 0 && currentCampaign && (
-                    <CreatorsOutreach
+                    <CampaignInfluencersTable
                         currentCampaign={currentCampaign}
                         setShowNotesModal={setShowNotesModal}
                         setCurrentCreator={setCurrentCreator}
                         showMoveInfluencerModal={showMoveInfluencerModal}
                         setShowMoveInfluencerModal={setShowMoveInfluencerModal}
+                        campaigns={campaigns}
+                        currentCreator={currentCreator}
                     />
                 )}
                 {currentTab === 1 && currentCampaign && (
                     <CampaignDetails currentCampaign={currentCampaign} media={media} />
-                )}
-
-                {campaigns && currentCampaign && currentCreator && (
-                    <MoveInfluencerModal
-                        platform={currentCreator.platform}
-                        selectedCreator={currentCreator}
-                        currentCampaign={currentCampaign}
-                        show={showMoveInfluencerModal}
-                        setShow={setShowMoveInfluencerModal}
-                        campaigns={campaigns}
-                    />
                 )}
             </div>
             {currentCreator && (

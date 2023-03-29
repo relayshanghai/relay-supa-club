@@ -9,6 +9,8 @@ import { useCampaigns } from 'src/hooks/use-campaigns';
 import type { CampaignCreatorDB, CampaignWithCompanyCreators } from 'src/utils/api/db';
 import Fuse from 'fuse.js';
 import InfluencerRow from './influencer-row';
+import { MoveInfluencerModal } from '../modal-move-influencer';
+import type { CampaignsIndexGetResult } from 'pages/api/campaigns';
 
 interface CreatorsOutreachProps {
     currentCampaign: CampaignWithCompanyCreators;
@@ -16,14 +18,18 @@ interface CreatorsOutreachProps {
     setCurrentCreator: (value: CampaignCreatorDB) => void;
     showMoveInfluencerModal: boolean;
     setShowMoveInfluencerModal: React.Dispatch<React.SetStateAction<boolean>>;
+    campaigns?: CampaignsIndexGetResult;
+    currentCreator?: CampaignCreatorDB | null;
 }
 
-export default function CreatorsOutreach({
+export default function CampaignInfluencersTable({
     currentCampaign,
     setShowNotesModal,
     setCurrentCreator,
     setShowMoveInfluencerModal,
     showMoveInfluencerModal,
+    campaigns,
+    currentCreator,
 }: CreatorsOutreachProps) {
     const { t } = useTranslation();
     const inputRef = useRef(null);
@@ -278,6 +284,17 @@ export default function CreatorsOutreach({
                     </tbody>
                 </table>
             </div>
+
+            {campaigns && currentCampaign && currentCreator && (
+                <MoveInfluencerModal
+                    platform={currentCreator.platform}
+                    selectedCreator={currentCreator}
+                    currentCampaign={currentCampaign}
+                    show={showMoveInfluencerModal}
+                    setShow={setShowMoveInfluencerModal}
+                    campaigns={campaigns}
+                />
+            )}
         </div>
     );
 }
