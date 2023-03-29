@@ -1,12 +1,5 @@
-import React from 'react';
+import React from 'react'; // turns out we need this or cypress complains
 // 1. on a campaign page, I get a list of influencers. -> campaigns/[id].tsx
-// 2. on an influencer row, I can see a button called "Move Influencer" -> campaign-influencers-table.tsx
-// 3. when I click on the "Move Influencer" button, I get a modal with a list of campaigns.
-// 4. when I click on the move button inside a campaign row and I get a loading spinner
-// 5. I get a checkmark and the old campaign doesn't have a checkmark.
-// 6. In the source campaign, I don't see the influencer anymore.
-// 7. In the target campaign, I see the influencer with all the details preserved from the source campaign.
-// Changed files: campaigns/[id].tsx, creator-outreach.tsx, influencer-row.tsx, move-influencer-modal-card.tsx, use-campaigns.tsx
 
 import { testMount } from '../../utils/cypress-app-wrapper';
 import type { CreatorsOutreachProps } from './campaign-influencers-table';
@@ -130,24 +123,40 @@ describe('CampaignInfluencersTable', () => {
         worker.use(
             // for the default msw handlers, we'll use more realistic data. For individual component tests we can pass in specific mocks with names like 'campaign1' instead of a real one. This makes the tests more readable and makes it easy to test different scenarios.
             rest.get(`${APP_URL_CYPRESS}/api/campaigns`, (req, res, ctx) => {
+                // we might want to investigate where in the children components this is being queried from, because this should just match the campaigns prop
+                // I think it is because `useCampaigns` is in `MoveInfluencerModalCard`
                 return res(ctx.json(campaigns));
             }),
         );
         worker.start();
     });
 
-    it('should render table of influencers', () => {
+    it('Should render table of influencers', () => {
         testMount(<CampaignInfluencersTable {...makeProps()} />);
         cy.get('tr').contains('Creator1 name');
         cy.contains('Creator2 name');
         cy.contains('Creator3 name');
     });
-    it('on an influencer row, I can see a button called "Move Influencer"', () => {
+    it('Should display an influencer table row where I can see a button called "Move Influencer"', () => {
         testMount(<CampaignInfluencersTable {...makeProps()} />);
         cy.get('tr').get('button').contains('Move Influencer');
     });
-    it('when I click on the "Move Influencer" button, I get a modal with a list of campaigns.', () => {
+    it('Should open a modal with a list of campaigns when i click "Move Influencer" button. When I click on the move button inside a campaign row I get a loading spinner', () => {
         testMount(<CampaignInfluencersTable {...makeProps()} />);
         cy.get('tr').get('button').contains('Move Influencer').click();
+
+        // modal appears
+        // check for the text 'Add this influencer to your existing campaigns'
+
+        // Might need to put a data-testid on the button cause its hard to select.
+        // you might need a data-testid on the spinner too.
     });
+    // 6. In the source campaign, I don't see the influencer anymore.
+    // So this is accomplished by calling the api to remove the influencer. we don't need to test that implementation, we just need to check that that function was called, and that if we rerender the component with the influencer removed, it is no longer in the UI.
+    it('Should remove the influencer from the source campaign when I click the move button in the modal', () => {
+        // still looking into whether we need to stub the `useCampaigns` hook, or whether we should just use `cy.intercept` to confirm the api call was made.
+        // https://blog.zenika.com/2022/10/07/a-few-ways-to-approach-cypress-component-testing-with-react-components/
+    });
+
+    // 7. In the target campaign, I see the influencer with all the details preserved from the source campaign.
 });
