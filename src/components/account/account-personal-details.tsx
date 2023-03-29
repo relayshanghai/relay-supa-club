@@ -5,7 +5,7 @@ import { APP_URL, emailRegex } from 'src/constants';
 import { useCompany } from 'src/hooks/use-company';
 import { useFields } from 'src/hooks/use-fields';
 import { useUser } from 'src/hooks/use-user';
-import { clientLogger } from 'src/utils/logger';
+import { clientLogger } from 'src/utils/logger-client';
 import { Button } from '../button';
 import { Edit } from '../icons';
 import { Input } from '../input';

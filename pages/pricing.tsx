@@ -1,16 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import type {
-    SubscriptionConfirmModalData} from 'src/components/account/subscription-confirm-modal';
-import {
-    SubscriptionConfirmModal
-} from 'src/components/account/subscription-confirm-modal';
+import type { SubscriptionConfirmModalData } from 'src/components/account/subscription-confirm-modal';
+import { SubscriptionConfirmModal } from 'src/components/account/subscription-confirm-modal';
 import { Button } from 'src/components/button';
 import { SALES_REP_EMAIL } from 'src/constants/employeeContacts';
 import { useSubscription } from 'src/hooks/use-subscription';
 import { Layout } from 'src/components/layout';
 import { nextFetch } from 'src/utils/fetcher';
-import { clientLogger } from 'src/utils/logger';
+import { clientLogger } from 'src/utils/logger-client';
 import type { SubscriptionPeriod } from 'types';
 import type { SubscriptionPricesGetResponse } from './api/subscriptions/prices';
 const details = {

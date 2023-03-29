@@ -1,9 +1,9 @@
 import type { NextApiHandler } from 'next';
 import httpCodes from 'src/constants/httpCodes';
-import type { ProfileDB, ProfileDBUpdate} from 'src/utils/api/db';
+import type { ProfileDB, ProfileDBUpdate } from 'src/utils/api/db';
 import { getProfileById, updateProfile } from 'src/utils/api/db';
 import { checkSessionIdMatchesID } from 'src/utils/auth';
-import { serverLogger } from 'src/utils/logger';
+import { serverLogger } from 'src/utils/logger-server';
 
 export type ProfileGetQuery = {
     /** user id from session */

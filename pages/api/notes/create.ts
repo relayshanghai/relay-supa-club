@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import type { CampaignNotesDB, CampaignNotesInsertDB } from 'src/utils/api/db';
 import { insertCampaignNote } from 'src/utils/api/db';
-import { serverLogger } from 'src/utils/logger';
+import { serverLogger } from 'src/utils/logger-server';
 
 export type CampaignNotePostBody = CampaignNotesInsertDB;
 export type CampaignNotePostResponse = CampaignNotesDB;

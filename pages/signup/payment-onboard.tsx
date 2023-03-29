@@ -14,7 +14,7 @@ import { useSubscription } from 'src/hooks/use-subscription';
 import { useUser } from 'src/hooks/use-user';
 import { buildSubscriptionPortalUrl } from 'src/utils/api/stripe/portal';
 import { hasCustomError } from 'src/utils/errors';
-import { clientLogger } from 'src/utils/logger';
+import { clientLogger } from 'src/utils/logger-client';
 
 const PaymentOnboard = () => {
     const { t } = useTranslation();

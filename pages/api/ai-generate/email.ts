@@ -2,7 +2,7 @@ import { generateEmailPrompt } from './../../../src/utils/api/ai-generate/email'
 import type { AIEmailGeneratorPostBody } from './../../../src/utils/api/ai-generate/email';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
-import { serverLogger } from 'src/utils/logger';
+import { serverLogger } from 'src/utils/logger-server';
 
 import { Configuration, OpenAIApi } from 'openai';
 import { OPENAI_API_KEY, OPENAI_API_ORG } from 'src/constants/openai';

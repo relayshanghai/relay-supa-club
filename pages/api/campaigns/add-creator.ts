@@ -1,12 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
-import type {
-    CampaignCreatorDB,
-    CampaignCreatorDBInsert} from 'src/utils/api/db';
-import {
-    insertCampaignCreator,
-} from 'src/utils/api/db';
-import { serverLogger } from 'src/utils/logger';
+import type { CampaignCreatorDB, CampaignCreatorDBInsert } from 'src/utils/api/db';
+import { insertCampaignCreator } from 'src/utils/api/db';
+import { serverLogger } from 'src/utils/logger-server';
 import type { CreatorPlatform } from 'types';
 
 export interface CampaignCreatorAddCreatorPostBody extends CampaignCreatorDBInsert {

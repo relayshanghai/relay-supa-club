@@ -5,7 +5,7 @@ import { createInviteErrors } from 'src/errors/company';
 import { getProfileByEmail, getExistingInvite, insertInvite } from 'src/utils/api/db';
 import type { InvitesDB } from 'src/utils/api/db/types';
 import { isCompanyOwnerOrRelayEmployee } from 'src/utils/auth';
-import { serverLogger } from 'src/utils/logger';
+import { serverLogger } from 'src/utils/logger-server';
 import { sendEmail } from 'src/utils/send-in-blue-client';
 
 export interface CompanyCreateInvitePostBody {
