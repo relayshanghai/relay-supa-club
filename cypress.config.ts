@@ -22,5 +22,7 @@ export default defineConfig({
             framework: 'next',
             bundler: 'webpack',
         },
+        viewportWidth: 1536,
+        viewportHeight: 960,
     },
 });
