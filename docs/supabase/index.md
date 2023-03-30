@@ -1,6 +1,6 @@
 # Creating changes to the database
 
-When creating a change to the database, it is recommended that you create granular changes.
+When creating a change to the database, it is recommended that you create granular changes. If you want to add two tables, make two separate changes/migration files.
 
 e.g. Here you add column `foo` first and create foreign key after.
 
