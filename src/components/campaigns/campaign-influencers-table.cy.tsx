@@ -153,6 +153,22 @@ describe('CampaignInfluencersTable', () => {
         cy.get(`#move-influencer-spinner-${campaign2.id}`);
         // you might need a data-testid on the spinner too.
     });
+    it('Check that a network request is made to the api to add the influencer is called', () => {
+        const requestUrl = `${APP_URL_CYPRESS}/api/campaigns/add-creator`;
+        cy.intercept('POST', requestUrl).as('add-creator-api-request');
+
+        cy.wait('@add-creator-api-request').then((interception) => {
+            // assert that the network request was made
+            expect(interception.request.method).to.eq('POST');
+            expect(interception.request.url).to.eq(requestUrl);
+
+            // assert that the request body matches what you want
+            expect(interception.request.body).to.deep.eq({
+                campaign_id: campaign2.id,
+                creator_id: creator1.creator_id,
+            });
+        });
+    });
 
     // 6. In the source campaign, I don't see the influencer anymore.
     // So this is accomplished by calling the api to remove the influencer. we don't need to test that implementation, we just need to check that that function was called, and that if we rerender the component with the influencer removed, it is no longer in the UI.

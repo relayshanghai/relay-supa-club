@@ -7,6 +7,9 @@ const frontendHandlers = [
     rest.get(`${APP_URL_CYPRESS}/api/creators/report`, (req, res, ctx) => {
         return res(ctx.json(tSeries));
     }),
+    rest.post(`${APP_URL_CYPRESS}/api/campaigns/add-creator`, (req, res, ctx) => {
+        return res(ctx.json({}));
+    }),
 ];
 /** for use in the browser */
 export const worker = setupWorker(...frontendHandlers);
