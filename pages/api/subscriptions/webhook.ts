@@ -8,6 +8,7 @@ import type { CustomerSubscriptionCreated } from 'types';
 import type { InvoicePaymentFailed } from 'types/stripe/invoice-payment-failed-webhook';
 import { handleVIPSubscription } from 'src/utils/api/stripe/handle-vip-webhook';
 import { handleInvoicePaymentFailed } from 'src/utils/api/stripe/handle-payment-failed-webhook';
+import { supabaseLogger } from 'src/utils/api/db/supabaseLogger';
 
 const handledWebhooks = {
     customerSubscriptionCreated: 'customer.subscription.created',
@@ -19,6 +20,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         try {
             const sig = req.headers['stripe-signature'];
             if (!sig) {
+                supabaseLogger(req);
                 return res.status(httpCodes.BAD_REQUEST).json({});
             }
 
@@ -26,8 +28,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             const body = req.body;
             if (!body || !body.type) {
+                supabaseLogger(req);
+
                 return res.status(httpCodes.BAD_REQUEST).json({});
             }
+            supabaseLogger(req);
+
             if (!Object.values(handledWebhooks).includes(body.type)) {
                 return res.status(httpCodes.METHOD_NOT_ALLOWED).json({});
             }
