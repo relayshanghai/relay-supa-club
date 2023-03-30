@@ -304,6 +304,29 @@ export interface Database {
           used?: boolean
         }
       }
+      logs: {
+        Row: {
+          created_at: string | null
+          data: Json | null
+          id: number
+          message: string | null
+          type: string
+        }
+        Insert: {
+          created_at?: string | null
+          data?: Json | null
+          id?: number
+          message?: string | null
+          type: string
+        }
+        Update: {
+          created_at?: string | null
+          data?: Json | null
+          id?: number
+          message?: string | null
+          type?: string
+        }
+      }
       profiles: {
         Row: {
           avatar_url: string | null
