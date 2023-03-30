@@ -5,6 +5,7 @@ import type { CampaignsIndexGetResult } from 'pages/api/campaigns';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
 import { DotsHorizontal, ShareLink } from 'src/components/icons';
+import { recommendedInfluencers } from 'src/constants/recommendedInfluencers';
 import { useSearch } from 'src/hooks/use-search';
 import { imgProxy } from 'src/utils/fetcher';
 import { decimalToPercent, numberFormatter } from 'src/utils/formatter';
@@ -40,6 +41,11 @@ export const SearchResultRow = ({
         avg_views,
     } = creator.account.user_profile;
     const handle = username || custom_name || fullname || '';
+
+    const recommendedInfluencer = recommendedInfluencers.some(
+        (influencerID) => influencerID === `${platform}/${user_id}`,
+    );
+
     const addToCampaign = () => {
         if (creator) setSelectedCreator(creator);
 
@@ -75,6 +81,11 @@ export const SearchResultRow = ({
                             {handle ? `@${handle}` : null}
                         </div>
                     </div>
+                    {recommendedInfluencer && (
+                        <span className="inline-flex items-center gap-1.5 rounded-md bg-blue-100 py-1.5 px-3 text-xs font-medium text-blue-800">
+                            Badge
+                        </span>
+                    )}
                 </div>
             </td>
             <td className="pr-4 text-right text-sm">{numberFormatter(followers) ?? '-'}</td>
