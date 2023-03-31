@@ -9,7 +9,7 @@ import type { Session } from '@supabase/auth-helpers-react';
 import { SessionContextProvider } from '@supabase/auth-helpers-react';
 import { useEffect, useState } from 'react';
 import { CompanyProvider } from 'src/hooks/use-company';
-import useRudderstack from 'src/hooks/use-rudderstack';
+import { useRudderstack } from 'src/hooks/use-rudderstack';
 
 function MyApp({
     Component,
@@ -17,7 +17,9 @@ function MyApp({
 }: AppProps<{
     initialSession: Session;
 }>) {
-    useRudderstack(); //enable rudderstack Analytics
+    const { InitiateRudderstackFrontend } = useRudderstack();
+    InitiateRudderstackFrontend(); //enable rudderstack Analytics
+
     const [supabaseClient] = useState(() => createBrowserSupabaseClient());
     useEffect(() => {
         const storedLanguage = localStorage.getItem('language');

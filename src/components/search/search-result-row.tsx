@@ -5,6 +5,7 @@ import type { CampaignsIndexGetResult } from 'pages/api/campaigns';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
 import { DotsHorizontal, ShareLink } from 'src/components/icons';
+import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { useSearch } from 'src/hooks/use-search';
 import { imgProxy } from 'src/utils/fetcher';
 import { decimalToPercent, numberFormatter } from 'src/utils/formatter';
@@ -25,6 +26,18 @@ export const SearchResultRow = ({
     campaigns?: CampaignsIndexGetResult;
     setCampaignsWithCreator: (campaigns: string[]) => void;
 }) => {
+    const { Track, Page } = useRudderstack();
+
+    const TrackOpenReport = () => {
+        Page('Search', {
+            platform: platform,
+        });
+        Track('Open Report', {
+            platform: platform,
+            creator: creator.account.user_profile.username,
+        });
+    };
+
     const { t } = useTranslation();
     const { platform } = useSearch();
     const {
@@ -85,7 +98,11 @@ export const SearchResultRow = ({
             <td className="sticky right-0 lg:relative">
                 <div className="relative hidden flex-row items-center justify-center gap-2 duration-100 group-hover:opacity-100 lg:flex lg:opacity-100">
                     <Link href={`/influencer/${platform}/${user_id}`} target="_blank">
-                        <Button className="flex flex-row items-center" variant="secondary">
+                        <Button
+                            className="flex flex-row items-center"
+                            variant="secondary"
+                            onClick={() => TrackOpenReport()}
+                        >
                             <span className="">{t('creators.analyzeProfile')}</span>
                         </Button>
                     </Link>
