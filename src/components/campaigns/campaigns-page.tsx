@@ -35,7 +35,7 @@ const CampaignsPage = ({ companyId }: { companyId?: string }) => {
             <div className="flex w-full flex-col p-6">
                 <div className="mb-4 flex items-center justify-between sm:mb-6">
                     <Tabs currentTab={currentTab} changeTab={setCurrentTab} />
-                    <Link href="/campaigns/form" legacyBehavior>
+                    <Link href="/campaigns/form">
                         <Button>{t('campaigns.index.createCampaign')}</Button>
                     </Link>
                 </div>
