@@ -1,4 +1,5 @@
 const creators = {
+    recommended: 'Recommended',
     loadMore: 'Load more',
     results: 'Total Results',
     noResults: 'No results found',
