@@ -1,7 +1,9 @@
 import React from 'react';
 import { testMount } from '../../utils/cypress-app-wrapper';
 import { SearchContext } from '../../hooks/use-search';
-const creator = {
+import type { CreatorSearchAccountObject } from '../../../types';
+import type { CampaignsIndexGetResult } from '../../../pages/api/campaigns';
+const creator: CreatorSearchAccountObject = {
     account: {
         user_profile: {
             user_id: '25025320',
@@ -20,7 +22,7 @@ const creator = {
     },
     match: {},
 };
-const campaigns = [
+const campaigns: CampaignsIndexGetResult = [
     {
         id: '2fefe314-b457-4812-95a5-9d9d73e2eb0d',
         created_at: '2023-02-12T02:52:44.285648+00:00',
