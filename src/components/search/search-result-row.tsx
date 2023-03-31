@@ -12,7 +12,7 @@ import { useSearch } from 'src/hooks/use-search';
 import { imgProxy } from 'src/utils/fetcher';
 import { decimalToPercent, numberFormatter } from 'src/utils/formatter';
 import type { CreatorSearchAccountObject } from 'types';
-import { Badge } from '../library';
+import { Badge, Tooltip } from '../library';
 
 export const SearchResultRow = ({
     creator,
@@ -87,9 +87,18 @@ export const SearchResultRow = ({
                         </div>
                     </div>
                     {FEAT_RECOMMENDED && isRecommendedInfluencer(platform, user_id) && (
-                        <Badge size={desktop ? 'medium' : 'small'} className="justify-self-end">
-                            {t('creators.recommended')}
-                        </Badge>
+                        <Tooltip
+                            content={t('creators.recommendedTooltip')}
+                            detail={t('creators.recommendedTooltipDetail')}
+                            className="flex flex-wrap items-center"
+                        >
+                            <Badge
+                                size={desktop ? 'medium' : 'small'}
+                                data-testid="recommended-badge"
+                            >
+                                {t('creators.recommended')}
+                            </Badge>
+                        </Tooltip>
                     )}
                 </div>
             </td>

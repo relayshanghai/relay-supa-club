@@ -1,5 +1,7 @@
 const creators = {
     recommended: '推荐',
+    recommendedTooltip: '推荐KOL',
+    recommendedTooltipDetail: '是与relay.club合作过的KOL，更有可能愿意合作',
     loadMore: '更多',
     results: '结果',
     noResults: '无结果',
