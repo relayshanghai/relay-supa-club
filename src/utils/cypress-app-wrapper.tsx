@@ -51,7 +51,8 @@ export const testMount = (component: React.ReactElement, options?: TestMountOpti
     const router = cy.stub(NextRouter, 'default');
     cy.stub(NextRouter, 'useRouter').returns({ pathname: options?.pathname ?? '/dashboard', push });
     // see: https://on.cypress.io/mounting-react
-
+    //@ts-expect-error
+    import('preline');
     mount(
         <AppRouterContext.Provider value={router as any}>
             <I18nextProvider i18n={i18n}>

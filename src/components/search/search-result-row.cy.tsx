@@ -168,6 +168,24 @@ describe('<CreatorPage />', () => {
         );
         cy.contains('Recommended').should('not.exist');
     });
+    it.only('shows tooltip on badge hover', () => {
+        testMount(
+            // needs some room to show the tooltip
+            <div className="pt-5">
+                <SearchContext.Provider value={{ platform: 'instagram' } as any}>
+                    <SearchResultRow {...setupProps()} />
+                </SearchContext.Provider>
+            </div>,
+        );
+        cy.contains(
+            'Are those which have worked with relay.club brands in the past and are known to be open to cooperation',
+        ).should('not.be.visible');
+        // .trigger('mouseenter') should work but it doesn't
+        cy.get('[data-testid=recommended-badge').click();
+        cy.contains(
+            'Are those which have worked with relay.club brands in the past and are known to be open to cooperation',
+        ).should('be.visible');
+    });
 });
 // Prevent TypeScript from reading file as legacy script
 export {};
