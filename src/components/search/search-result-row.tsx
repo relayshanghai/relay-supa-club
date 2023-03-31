@@ -7,6 +7,7 @@ import { Button } from 'src/components/button';
 import { DotsHorizontal, ShareLink } from 'src/components/icons';
 import { FEAT_RECOMMENDED } from 'src/constants/feature-flags';
 import { isRecommendedInfluencer } from 'src/constants/recommendedInfluencers';
+import useAboveScreenWidth from 'src/hooks/use-above-screen-width';
 import { useSearch } from 'src/hooks/use-search';
 import { imgProxy } from 'src/utils/fetcher';
 import { decimalToPercent, numberFormatter } from 'src/utils/formatter';
@@ -68,11 +69,17 @@ export const SearchResultRow = ({
         } else setShowCampaignListModal(true);
     };
 
+    const desktop = useAboveScreenWidth(1400);
+
     return (
         <tr className="group hover:bg-primary-100">
             <td className="w-full">
                 <div className="flex w-full flex-row gap-x-2 py-2 px-4">
-                    <img src={imgProxy(picture) as string} className="h-12 w-12" alt={handle} />
+                    <img
+                        src={imgProxy(picture) as string}
+                        className="h-12 w-12 [min-width:3rem]"
+                        alt={handle}
+                    />
                     <div>
                         <div className="font-bold line-clamp-2">{fullname}</div>
                         <div className="text-sm text-primary-500 line-clamp-1">
@@ -80,7 +87,7 @@ export const SearchResultRow = ({
                         </div>
                     </div>
                     {FEAT_RECOMMENDED && isRecommendedInfluencer(platform, user_id) && (
-                        <Badge size="small" className="justify-self-end">
+                        <Badge size={desktop ? 'medium' : 'small'} className="justify-self-end">
                             {t('creators.recommended')}
                         </Badge>
                     )}
