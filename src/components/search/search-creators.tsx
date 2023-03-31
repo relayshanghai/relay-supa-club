@@ -66,10 +66,8 @@ export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
                 data-testid="creator-search"
                 id="creator-search"
                 value={searchTerm}
-                onChange={(e) => handleChange(e)}
-                onKeyUp={(e: KeyboardEvent<HTMLInputElement> & ChangeEvent<HTMLInputElement>) =>
-                    handleSearch(e)
-                }
+                onChange={handleChange}
+                onKeyUp={handleSearch}
             />
             {loading ? (
                 <Spinner className="absolute right-2 top-2.5 z-50 h-5 w-5 fill-primary-600 text-white" />
