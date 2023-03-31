@@ -13,12 +13,7 @@ export interface CreatorSearchAccountObject {
 
 export interface CreatorSearchAccount {
     user_profile: CreatorAccount;
-    audience_source: AudienceSource;
-}
-
-enum AudienceSource {
-    Any = 'any',
-    Followers = 'followers',
+    audience_source: 'any' | 'followers';
 }
 
 export interface CreatorAccount {
