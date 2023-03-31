@@ -15,12 +15,12 @@ export const Badge = ({
     // variant = 'solid',
     ...props
 }: BadgeProps) => {
-    const px = size === 'small' ? 2 : size === 'medium' ? 3 : 4;
-    const py = size === 'small' ? 1 : size === 'medium' ? 1.5 : 2;
-    const text = size === 'small' ? 'xs' : 'md';
+    const px = size === 'small' ? 1 : size === 'medium' ? 3 : 4;
+    const py = size === 'small' ? 0 : size === 'medium' ? 1 : 2;
+    const fontSize = size === 'small' ? '[font-size:0.625rem]' : 'text-md';
     return (
         <span
-            className={`inline-flex items-center gap-1.5 self-center rounded-md bg-primary-500 py-${py} px-${px} text-${text} font-medium text-white`}
+            className={`inline-flex items-center gap-1.5 self-center rounded-md bg-primary-500 py-${py} px-${px} ${fontSize} font-medium text-white`}
             {...props}
         >
             {children}
