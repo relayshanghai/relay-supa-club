@@ -1,4 +1,5 @@
 const creators = {
+    recommended: '推荐',
     loadMore: '更多',
     results: '结果',
     noResults: '无结果',

@@ -15,7 +15,7 @@ import { useUser } from './use-user';
 
 type NullStringTuple = [null | string, null | string];
 
-export interface SearchContext {
+export interface ISearchContext {
     loading: boolean;
     tags: CreatorSearchTag[];
     setTopicTags: (tags: CreatorSearchTag[]) => void;
@@ -50,7 +50,7 @@ export interface SearchContext {
     noResults: boolean;
 }
 
-const ctx = createContext<SearchContext>({
+export const SearchContext = createContext<ISearchContext>({
     loading: false,
     tags: [],
     setTopicTags: () => null,
@@ -85,7 +85,7 @@ const ctx = createContext<SearchContext>({
     noResults: true,
 });
 
-export const useSearch = () => useContext(ctx);
+export const useSearch = () => useContext(SearchContext);
 
 export const SearchProvider = ({ children }: PropsWithChildren) => {
     const { profile } = useUser();
@@ -198,7 +198,7 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
     const noResults = resultPages.length === 0 || resultPages[0]?.length === 0;
 
     return (
-        <ctx.Provider
+        <SearchContext.Provider
             value={{
                 loading,
 
@@ -236,6 +236,6 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
             }}
         >
             {children}
-        </ctx.Provider>
+        </SearchContext.Provider>
     );
 };

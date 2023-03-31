@@ -13,6 +13,7 @@ export const Badge = ({
     children,
     size = 'medium',
     // variant = 'solid',
+    className,
     ...props
 }: BadgeProps) => {
     const px = size === 'small' ? 1 : size === 'medium' ? 3 : 4;
@@ -20,7 +21,7 @@ export const Badge = ({
     const fontSize = size === 'small' ? '[font-size:0.625rem]' : 'text-md';
     return (
         <span
-            className={`inline-flex items-center gap-1.5 self-center rounded-md bg-primary-500 py-${py} px-${px} ${fontSize} font-medium text-white`}
+            className={`inline-flex items-center gap-1.5 self-center rounded-md bg-primary-500 py-${py} px-${px} ${fontSize} font-medium text-white ${className}`}
             {...props}
         >
             {children}
