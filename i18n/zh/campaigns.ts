@@ -16,6 +16,8 @@ const campaigns = {
     modal: {
         addToCampaign: '添加到项目',
         addThisInfluencer: '将KOL添加到您已有的项目',
+        moveToCampaign: '移动到项目',
+        moveThisInfluencer: '将KOL移动到您已有的项目',
         createCampaign: '或创建一个新的项目',
         search: '搜索',
         favorites: '资源库',
@@ -43,8 +45,7 @@ const campaigns = {
         content: 'KOL信息',
         outbox: '发件箱',
         comments: '内部沟通',
-        commentsDescr:
-            '备注部分可用于在内部与您的团队就此 KOL 进行沟通。 这只有您的团队可以看到, KOL 看不到。',
+        commentsDescr: '备注部分可用于在内部与您的团队就此 KOL 进行沟通。 这只有您的团队可以看到, KOL 看不到。',
         outboxDescr: '发件箱可以查看和追踪给该KOL已发送邮件的详细信息和状态',
         viewProfile: '查看KOL',
         messagePlaceholder: '在这里写下您的信息',
