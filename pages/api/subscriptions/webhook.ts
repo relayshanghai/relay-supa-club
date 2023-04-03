@@ -8,6 +8,7 @@ import type { CustomerSubscriptionCreated } from 'types';
 import type { InvoicePaymentFailed } from 'types/stripe/invoice-payment-failed-webhook';
 import { handleVIPSubscription } from 'src/utils/api/stripe/handle-vip-webhook';
 import { handleInvoicePaymentFailed } from 'src/utils/api/stripe/handle-payment-failed-webhook';
+import { supabaseLogger } from 'src/utils/api/db';
 
 const handledWebhooks = {
     customerSubscriptionCreated: 'customer.subscription.created',
@@ -19,6 +20,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         try {
             const sig = req.headers['stripe-signature'];
             if (!sig) {
+                supabaseLogger({ type: 'stripe-webhook', message: 'no signature' });
                 return res.status(httpCodes.BAD_REQUEST).json({});
             }
 
@@ -26,8 +28,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             const body = req.body;
             if (!body || !body.type) {
+                supabaseLogger({
+                    type: 'stripe-webhook',
+                    message: 'no body or body.type',
+                    data: body,
+                });
+
                 return res.status(httpCodes.BAD_REQUEST).json({});
             }
+            supabaseLogger({ type: 'stripe-webhook', message: body.type, data: body });
+
             if (!Object.values(handledWebhooks).includes(body.type)) {
                 return res.status(httpCodes.METHOD_NOT_ALLOWED).json({});
             }
@@ -46,8 +56,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 const invoiceBody = body as InvoicePaymentFailed;
                 return handleInvoicePaymentFailed(res, invoiceBody);
             }
-        } catch (error) {
+        } catch (error: any) {
             serverLogger(error, 'error');
+            supabaseLogger({
+                type: 'stripe-webhook',
+                message: error.message ?? 'error',
+                data: JSON.parse(JSON.stringify(error)),
+            });
             return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
         }
     }

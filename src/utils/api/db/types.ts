@@ -1,5 +1,6 @@
 import type { AccountRole, CreatorPlatform, SubscriptionStatus, UsageType } from 'types';
 import type { Database } from 'types/supabase';
+import type { SupabaseLogType } from './calls/';
 
 export type ProfilesTable = Database['public']['Tables']['profiles'] & {
     Row: Database['public']['Tables']['profiles']['Row'] & {
@@ -72,3 +73,17 @@ export type InvitesDB = Database['public']['Tables']['invites']['Row'];
 
 export type CampaignNotesDB = Database['public']['Tables']['campaign_notes']['Row'];
 export type CampaignNotesInsertDB = Database['public']['Tables']['campaign_notes']['Insert'];
+
+export type LogsTable = Database['public']['Tables']['logs'] & {
+    Row: Database['public']['Tables']['logs']['Row'] & {
+        type: SupabaseLogType;
+    };
+    Insert: Database['public']['Tables']['logs']['Insert'] & {
+        type: SupabaseLogType;
+    };
+    Update: Database['public']['Tables']['logs']['Update'] & {
+        type?: SupabaseLogType;
+    };
+};
+export type LogsDB = LogsTable['Row'];
+export type LogsInsertDB = LogsTable['Insert'];
