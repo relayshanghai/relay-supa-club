@@ -96,11 +96,11 @@ AS \$\$
 \$\$;
 TEMPLATE
     )
-    echo "$message" >"./supabase/functions/$fn_name.sql"                                 # > is a way to redirect the output to a file, stdout is the default output
-    echo "\include ./supabase/functions/$fn_name.sql" >>"./supabase/functions/index.sql" # >> is a way to append the output to a file
+    echo "$message" >"$script_dir/functions/$fn_name.sql"                                 # > is a way to redirect the output to a file, stdout is the default output
+    sed -i "/COMMIT;/i\\\\\include ./supabase/functions/$fn_name.sql" "$script_dir/functions/index.sql"
 
     if [ -n "$editor" ]; then
-        $editor ./supabase/functions/$fn_name.sql
+        $editor $script_dir/functions/$fn_name.sql
     fi
 }
 
@@ -148,10 +148,10 @@ SELECT * FROM finish(); -- end test
 ROLLBACK;
 TEMPLATE
     )
-    echo "$message" >"./supabase/tests/database/$test_name.test.sql"
+    echo "$message" >"$script_dir/tests/database/$test_name.test.sql"
 
     if [ -n "$editor" ]; then
-        $editor ./supabase/tests/database/$test_name.test.sql
+        $editor $script_dir/tests/database/$test_name.test.sql
     fi
 }
 
@@ -179,7 +179,8 @@ USING (
 TEMPLATE
     )
     echo "$message" >"$script_dir/policies/$pl_name.policy.sql"
-    echo "\include $script_dir/policies/$pl_name.policy.sql" >>"$script_dir/policies/index.sql"
+    sed -i "/COMMIT;/i\\\\\include ./supabase/policies/$pl_name.policy.sql" "$script_dir/policies/index.sql"
+    # echo "\include $script_dir/policies/$pl_name.policy.sql" >>"$script_dir/policies/index.sql"
 
     if [ -n "$editor" ]; then
         $editor $script_dir/policies/$pl_name.policy.sql
