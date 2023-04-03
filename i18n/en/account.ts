@@ -3,6 +3,7 @@ const account = {
     update: 'Update',
     personal: {
         title: 'Personal details',
+        tezxt: 'test',
         firstName: 'First name',
         firstNamePLaceholder: 'Enter your first name',
         lastName: 'Last name',
