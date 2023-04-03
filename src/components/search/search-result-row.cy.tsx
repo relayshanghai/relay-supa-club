@@ -24,7 +24,7 @@ const creator: CreatorSearchAccountObject = {
     },
     match: {},
 };
-const campaigns = [jimTestCampaign, amyTestCampaign];
+const campaigns = [jimTestCampaign, amyTestCampaign] as any[];
 
 const setupProps = () => {
     return {
