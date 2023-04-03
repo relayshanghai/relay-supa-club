@@ -16,7 +16,6 @@ export const SearchResultsTable = ({
     campaigns,
     setCampaignsWithCreator,
     onlyRecommended,
-    setOnlyRecommended,
 }: {
     setShowCampaignListModal: (show: boolean) => void;
     setSelectedCreator: (creator: CreatorSearchAccountObject) => void;
@@ -24,7 +23,6 @@ export const SearchResultsTable = ({
     campaigns?: CampaignsIndexGetResult;
     setCampaignsWithCreator: (campaigns: string[]) => void;
     onlyRecommended: boolean;
-    setOnlyRecommended: (show: boolean) => void;
 }) => {
     const { t } = useTranslation();
     const {
