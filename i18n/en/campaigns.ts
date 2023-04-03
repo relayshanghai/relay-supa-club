@@ -16,6 +16,8 @@ const campaigns = {
     modal: {
         addToCampaign: 'Add To Campaign',
         addThisInfluencer: 'Add this influencer to your existing campaigns',
+        moveToCampaign: 'Move To Campaign',
+        moveThisInfluencer: 'Move this influencer to an existing campaign',
         createCampaign: ' or create a new campaign',
         search: 'Search',
         favorites: 'Favorites',

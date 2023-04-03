@@ -25,7 +25,7 @@ export const MoveInfluencerModal = ({
 
     return (
         <Modal
-            title={t('campaigns.modal.addToCampaign') || ''}
+            title={t('campaigns.modal.moveToCampaign') || ''}
             visible={!!show}
             onClose={() => {
                 setShow(false);
@@ -34,7 +34,7 @@ export const MoveInfluencerModal = ({
             {campaigns.length ? (
                 <>
                     <div className="py-4 text-sm text-tertiary-800">
-                        {t('campaigns.modal.addThisInfluencer')}
+                        {t('campaigns.modal.moveThisInfluencer')}
                     </div>
                     <div>
                         {campaigns.map((campaign, index) => (

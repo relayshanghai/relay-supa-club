@@ -41,7 +41,7 @@ export default function CampaignInfluencersTable({
 
     const [showMoveInfluencerModal, setShowMoveInfluencerModal] = useState(false);
 
-    const { deleteCreatorInCampaign, updateCreatorInCampaign, refreshCampaign } = useCampaigns({
+    const { deleteCreatorInCampaign, updateCreatorInCampaign, refreshCampaigns } = useCampaigns({
         campaignId: currentCampaign?.id,
     });
 
@@ -97,7 +97,7 @@ export default function CampaignInfluencersTable({
         e.stopPropagation();
         creator = { ...creator, [objKey]: e.target.value };
         await updateCreatorInCampaign(creator);
-        refreshCampaign();
+        refreshCampaigns();
         toast.success(t('campaigns.creatorModal.influencerUpdated'));
     };
 
@@ -135,15 +135,15 @@ export default function CampaignInfluencersTable({
         e.stopPropagation();
         const c = confirm(t('campaigns.modal.deleteConfirmation') as string);
         if (!c) return;
-        await deleteCreatorInCampaign(creator);
-        refreshCampaign();
+        await deleteCreatorInCampaign({ creatorId: creator.id, campaignId: currentCampaign.id });
+        refreshCampaigns();
         toast.success(t('campaigns.modal.deletedSuccessfully'));
     };
 
     const updateCampaignCreator = async (creator: CampaignCreatorDB) => {
         await updateCreatorInCampaign(creator);
         setToEdit(null);
-        refreshCampaign();
+        refreshCampaigns();
         toast.success(t('campaigns.creatorModal.influencerUpdated'));
     };
 

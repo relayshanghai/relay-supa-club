@@ -23,17 +23,10 @@ export default function MoveInfluencerModalCard({
 }) {
     const supabase = useSupabaseClient();
 
-    const { addCreatorToCampaign, loading } = useCampaigns({
-        campaignId: targetCampaign.id,
-    });
-
-    const {
-        deleteCreatorInCampaign,
-        loading: deleteCampaginLoading,
-        refreshCampaign,
-    } = useCampaigns({
-        campaignId: currentCampaign.id,
-    });
+    const { deleteCreatorInCampaign, addCreatorToCampaign, refreshCampaigns, loading } =
+        useCampaigns({
+            campaignId: currentCampaign.id,
+        });
 
     const [_, setCurrentHasCreator] = useState<boolean>(false);
     const [targetHasCreator, setTargetHasCreator] = useState<boolean>(false);
@@ -55,14 +48,16 @@ export default function MoveInfluencerModalCard({
                 link_url: creator.link_url,
                 platform: creator.platform,
                 added_by_id: profile.id,
-                id: undefined,
             });
 
-            await deleteCreatorInCampaign(creator);
+            await deleteCreatorInCampaign({
+                creatorId: creator.id,
+                campaignId: currentCampaign.id,
+            });
             setTargetHasCreator(true);
             setCurrentHasCreator(false);
 
-            refreshCampaign();
+            refreshCampaigns();
 
             toast.success(t('campaigns.modal.movedSuccessfully'));
         } catch (error) {
@@ -154,15 +149,16 @@ export default function MoveInfluencerModalCard({
                         id={`move-influencer-button-${targetCampaign.id}`}
                         onClick={handleMoveCreatorToCampaign}
                         disabled={
+                            loading ||
                             targetHasCreator ||
                             isMissing(targetCampaign, creator, creator?.creator_id)
                         }
                         className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md bg-gray-100 text-gray-600 duration-300 hover:shadow-md disabled:cursor-not-allowed disabled:text-gray-400"
                     >
-                        {!loading && !deleteCampaginLoading && (
+                        {!loading && (
                             <ArrowRightCircleIcon className="h-4 w-4 fill-current text-current" />
                         )}
-                        {(loading || deleteCampaginLoading) && (
+                        {loading && (
                             <Spinner
                                 id={`move-influencer-spinner-${targetCampaign.id}`}
                                 className=" h-4 w-4 fill-primary-600 text-white"

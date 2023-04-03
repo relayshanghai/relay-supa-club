@@ -3,6 +3,9 @@ import React from 'react'; // turns out we need this or cypress complains
 
 import { testMount } from '../../utils/cypress-app-wrapper';
 import type { CreatorsOutreachProps } from './campaign-influencers-table';
+import type { CampaignCreatorAddCreatorPostBody } from '../../../pages/api/campaigns/add-creator';
+import type { CampaignCreatorsDeleteBody } from '../../../pages/api/campaigns/delete-creator';
+
 import CampaignInfluencersTable from './campaign-influencers-table';
 import type {
     CampaignCreatorDB,
@@ -10,7 +13,7 @@ import type {
     CampaignWithCompanyCreators,
 } from '../../utils/api/db';
 import { rest } from 'msw';
-import { APP_URL_CYPRESS } from '../../mocks/browser';
+import { APP_URL_CYPRESS, worker } from '../../mocks/browser';
 
 const currentCampaign: CampaignDB = {
     id: 'campaign1',
@@ -23,53 +26,34 @@ const currentCampaign: CampaignDB = {
     status: 'not started',
     budget_cents: 15000,
     budget_currency: 'USD',
-    creator_count: null,
-    date_end_creator_outreach: null,
     date_start_campaign: '2023-02-20T00:00:00+00:00',
     date_end_campaign: '2023-02-24T00:00:00+00:00',
     slug: 'jim-test-campaign-february-2023',
     product_name: "JIm's Bug Tester",
-    requirements: null,
     tag_list: ['pets'],
     promo_types: ['Dedicated Video', 'Integrated Video'],
     target_locations: ['United States of America'],
     media: [{}],
     purge_media: [],
-    media_path: null,
 };
 const creator1: CampaignCreatorDB = {
     id: 'creator1',
     created_at: '2023-02-12T03:01:51.468377+00:00',
     status: 'to contact',
     campaign_id: 'campaign1',
-    updated_at: null,
-    relay_creator_id: null,
-    creator_model: null,
-    creator_token: null,
-    interested: null,
-    email_sent: null,
-    publication_date: null,
     rate_cents: 0,
     rate_currency: 'USD',
-    payment_details: null,
     payment_status: "'unpaid'::text",
     paid_amount_cents: 0,
     paid_amount_currency: 'USD',
-    address: null,
     sample_status: "'unsent'::text",
-    tracking_details: null,
-    reject_message: null,
-    brief_opened_by_creator: null,
-    need_support: null,
-    next_step: null,
-    avatar_url: '',
-    username: null,
     fullname: 'Creator1 name',
     link_url: 'https://www.youtube.com/channel/UCJQjhL019_F0nckUU88JAJA',
     creator_id: 'UCJQjhL019_F0nckUU88JAJA',
     platform: 'youtube',
     added_by_id: '9bfbc685-2881-47ac-b75a-c7e210f187f2',
 };
+
 const creator2: CampaignCreatorDB = {
     ...creator1,
     id: 'creator2',
@@ -117,23 +101,7 @@ const makeProps = () => {
     return props;
 };
 
-const addCreatorRequestUrl = `${APP_URL_CYPRESS}/api/campaigns/add-creator`;
-const deleteCreatorRequestUrl = `${APP_URL_CYPRESS}/api/campaigns/delete-creator`;
-
 describe('CampaignInfluencersTable', () => {
-    before(async () => {
-        const { worker } = await import('../../mocks/browser');
-        worker.use(
-            // for the default msw handlers, we'll use more realistic data. For individual component tests we can pass in specific mocks with names like 'campaign1' instead of a real one. This makes the tests more readable and makes it easy to test different scenarios.
-            rest.get(`${APP_URL_CYPRESS}/api/campaigns`, (req, res, ctx) => {
-                // we might want to investigate where in the children components this is being queried from, because this should just match the campaigns prop
-                // I think it is because `useCampaigns` is in `MoveInfluencerModalCard`
-                return res(ctx.json(campaigns));
-            }),
-        );
-        worker.start();
-    });
-
     it('Should render table of influencers', () => {
         testMount(<CampaignInfluencersTable {...makeProps()} />);
         cy.get('tr').contains('Creator1 name');
@@ -144,42 +112,63 @@ describe('CampaignInfluencersTable', () => {
         testMount(<CampaignInfluencersTable {...makeProps()} />);
         cy.get('tr').get('button').contains('Move Influencer');
     });
-    it('Should open a modal with a list of campaigns when i click "Move Influencer" button. When I click on the move button inside a campaign row I get a loading spinner', () => {
+    it('Should open a modal when i click "Move Influencer" button. The modal should have a title of "Move To Campaign" and subtitle "Move this influencer to an existing campaign". Should include a list of campaigns  When I click on the move button inside a campaign row I get a loading spinner', () => {
         testMount(<CampaignInfluencersTable {...makeProps()} />);
+
+        cy.contains('Move To Campaign').should('not.exist');
+
+        cy.contains('Move this influencer to an existing campaign').should('not.exist');
+        cy.get(`#move-influencer-button-${campaign2.id}`).should('not.exist');
+
         cy.get('tr').get('button').contains('Move Influencer').click();
 
-        // modal appears
-        // check for the text 'Add this influencer to your existing campaigns'
-        cy.contains('Add this influencer to your existing campaigns');
-        // Might need to put a data-testid on the button cause its hard to select.
+        cy.contains('Move To Campaign');
+        cy.contains('Move this influencer to an existing campaign');
+        cy.get(`#move-influencer-spinner-${campaign2.id}`).should('not.exist');
+
         cy.get(`#move-influencer-button-${campaign2.id}`).click();
 
-        // you might need a data-testid on the spinner too.
+        // shows a loading spinner
         cy.get(`#move-influencer-spinner-${campaign2.id}`);
     });
 
-    it('Check that a network request is made to the api to add the influencer is called', () => {
+    it('Check that a network request is called to the api to add the influencer to destination and delete them from source campaign', async () => {
+        worker.use(
+            rest.post(`${APP_URL_CYPRESS}/api/campaigns/add-creator`, async (req, res, ctx) => {
+                const body = (await req.json()) as CampaignCreatorAddCreatorPostBody;
+
+                expect(body.campaign_id).to.equal(campaign2.id);
+
+                // add a bit of delay to get the loading spinner to show
+                return res(ctx.delay(500), ctx.json({ success: true }));
+            }),
+            rest.delete(
+                `${APP_URL_CYPRESS}/api/campaigns/delete-creator`,
+                async (req, res, ctx) => {
+                    const body = (await req.json()) as CampaignCreatorsDeleteBody;
+
+                    expect(body.campaignId).to.equal(campaign1.id);
+                    expect(body.id).to.equal(creator1.id);
+
+                    return res(ctx.delay(500), ctx.json({ success: true }));
+                },
+            ),
+            // for the default msw handlers, we'll use more realistic data. For individual component tests we can pass in specific mocks with names like 'campaign1' instead of a real one. This makes the tests more readable and makes it easy to test different scenarios.
+            rest.get(`${APP_URL_CYPRESS}/api/campaigns`, (req, res, ctx) => {
+                // we might want to investigate where in the children components this is being queried from, because this should just match the campaigns prop
+                // I think it is because `useCampaigns` is in `MoveInfluencerModalCard`
+                return res(ctx.json(campaigns));
+            }),
+        );
+        worker.start();
         // Capture the network request to the api for the next test
-        cy.intercept('POST', addCreatorRequestUrl).as('add-creator-api-request');
-        cy.intercept('POST', deleteCreatorRequestUrl).as('delete-creator-api-request');
-
-        cy.wait('@add-creator-api-request', {
-            timeout: 10000,
-        }).then((interception) => {
-            console.log('request', interception.request.body);
-            // expect(interception.request.body).to.deep.equal({
-            //     creator_id: creator1.id,
-            //     campaign_id: campaign2.id,
-            // });
-        });
+        testMount(<CampaignInfluencersTable {...makeProps()} />);
+        cy.get('tr').get('button').contains('Move Influencer').click();
+        // when this button is clicked, it is not sending the request, cause of a filing nullcheck
+        cy.get(`#move-influencer-button-${campaign2.id}`).click();
+        // when request is done it should have the checkmark icon
+        cy.get(`#move-influencer-checkmark-${campaign2.id}`);
     });
 
-    // 6. In the source campaign, I don't see the influencer anymore.
-    // So this is accomplished by calling the api to remove the influencer. we don't need to test that implementation, we just need to check that that function was called, and that if we rerender the component with the influencer removed, it is no longer in the UI.
-    it('Should remove the influencer from the source campaign when I click the move button in the modal', () => {
-        // still looking into whether we need to stub the `useCampaigns` hook, or whether we should just use `cy.intercept` to confirm the api call was made.
-        // https://blog.zenika.com/2022/10/07/a-few-ways-to-approach-cypress-component-testing-with-react-components/
-    });
-
-    // 7. In the target campaign, I see the influencer with all the details preserved from the source campaign.
+    // 7. In the target campaign, I see the influencer with all the details preserved from the source campaign. -- this is hard to test in these kind of unit tests because to replicate this we would have to change the list of `campaigns` in the props, and then re-render the component. Basically just testing that the component is re-rendering when the props change. We can test this in an integration test if need be.
 });

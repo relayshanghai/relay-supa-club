@@ -26,7 +26,9 @@ export default function CampaignShow() {
 
     const { company } = useCompany();
 
-    const { campaigns, refreshCampaign } = useCampaigns({ companyId: company?.id });
+    const { campaigns, refreshCampaigns } = useCampaigns({
+        companyId: company?.id,
+    });
 
     const [media, setMedia] = useState<{ url: string; name: string }[]>([]);
     const [currentTab, setCurrentTab] = useState(0);
@@ -58,7 +60,7 @@ export default function CampaignShow() {
         } = campaignWithCompanyCreators;
         const status = e.target.value;
         await updateCampaign({ ...campaign, status });
-        refreshCampaign();
+        refreshCampaigns();
     };
 
     useEffect(() => {

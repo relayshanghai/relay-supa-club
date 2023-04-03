@@ -52,7 +52,7 @@ export const useCampaigns = ({
     const companyId = passedInCompanyId ?? profile?.company_id;
     const {
         data: campaigns,
-        mutate: refreshCampaign,
+        mutate: refreshCampaigns,
         isValidating,
         isLoading,
     } = useSWR(companyId ? 'campaigns' : null, (path) =>
@@ -113,45 +113,57 @@ export const useCampaigns = ({
     const addCreatorToCampaign = useCallback(
         async (input: CampaignCreatorAddCreatorPostBody) => {
             setLoading(true);
-            if (!campaign?.id) throw new Error('No campaign found');
-            const body: CampaignCreatorAddCreatorPostBody = {
-                ...input,
-                added_by_id: profile?.id ?? '',
-                campaign_id: campaign.id,
-            };
-            await nextFetch<CampaignCreatorAddCreatorPostResponse>('campaigns/add-creator', {
-                method: 'post',
-                body,
-            });
+            try {
+                if (!input.campaign_id) throw new Error('No campaign_id found');
+                if (!profile?.id) {
+                    throw new Error('No profile.id found');
+                }
+                const body: CampaignCreatorAddCreatorPostBody = {
+                    ...input,
+                    added_by_id: profile?.id,
+                    id: undefined, // force undefined so that the backend can generate a new id
+                    campaign_id: input.campaign_id,
+                };
+                await nextFetch<CampaignCreatorAddCreatorPostResponse>('campaigns/add-creator', {
+                    method: 'post',
+                    body,
+                });
+            } catch (error) {
+                clientLogger(error, 'error');
+            }
 
             setLoading(false);
         },
-        [campaign?.id, profile?.id],
+        [profile?.id],
     );
 
     const updateCreatorInCampaign = useCallback(
         async (input: CampaignCreatorDB) => {
             setLoading(true);
-            if (!campaign?.id) throw new Error('No campaign found');
-            await nextFetch('campaigns/update-creator', {
-                method: 'put',
-                body: {
-                    ...input,
-                    campaign_id: campaign.id,
-                },
-            });
+            try {
+                if (!campaign?.id) throw new Error('No campaign found');
+                await nextFetch('campaigns/update-creator', {
+                    method: 'put',
+                    body: {
+                        ...input,
+                        campaign_id: campaign.id,
+                    },
+                });
+            } catch (error) {
+                clientLogger(error, 'error');
+            }
             setLoading(false);
         },
         [campaign?.id],
     );
 
     const deleteCreatorInCampaign = useCallback(
-        async ({ id }: CampaignCreatorDB) => {
+        async ({ creatorId, campaignId }: { creatorId: string; campaignId: string }) => {
             setLoading(true);
-            if (!campaign?.id) throw new Error('No campaign found');
+            if (!campaignId) throw new Error('No campaign found');
             const body: CampaignCreatorsDeleteBody = {
-                id,
-                campaignId: campaign.id,
+                id: creatorId,
+                campaignId,
             };
             try {
                 await nextFetch<CampaignCreatorsDeleteResponse>('campaigns/delete-creator', {
@@ -164,7 +176,7 @@ export const useCampaigns = ({
                 setLoading(false);
             }
         },
-        [campaign?.id],
+        [],
     );
 
     return {
@@ -179,6 +191,6 @@ export const useCampaigns = ({
         addCreatorToCampaign,
         deleteCreatorInCampaign,
         updateCreatorInCampaign,
-        refreshCampaign,
+        refreshCampaigns,
     };
 };
