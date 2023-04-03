@@ -28,7 +28,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             const body = req.body;
             if (!body || !body.type) {
-                supabaseLogger({ type: 'stripe-webhook', message: 'no body or body.type' });
+                supabaseLogger({
+                    type: 'stripe-webhook',
+                    message: 'no body or body.type',
+                    data: body,
+                });
 
                 return res.status(httpCodes.BAD_REQUEST).json({});
             }
