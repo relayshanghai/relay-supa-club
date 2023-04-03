@@ -24,7 +24,6 @@ export default function CampaignModalCard({
     const { addCreatorToCampaign, loading } = useCampaigns({
         campaignId: campaign?.id,
     });
-    console.log({ loading });
     const [hasCreator, setHasCreator] = useState<boolean>(false);
     const [coverImageUrl, setCoverImageUrl] = useState('');
     const { profile } = useUser();
