@@ -2,7 +2,7 @@ import { useCallback, useRef, useState } from 'react';
 import InputWithAutocomplete from 'src/components/input-with-autocomplete';
 import useOnOutsideClick from 'src/hooks/use-on-outside-click';
 import { nextFetch } from 'src/utils/fetcher';
-import { clientLogger } from 'src/utils/logger';
+import { clientLogger } from 'src/utils/logger-client';
 
 export const SearchTopics = ({
     onSetTopics,

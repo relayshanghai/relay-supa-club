@@ -9,9 +9,9 @@ import { LoginSignupLayout } from 'src/components/SignupLayout';
 import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
 import { useFields } from 'src/hooks/use-fields';
 import { useUser } from 'src/hooks/use-user';
-import { clientLogger } from 'src/utils/logger';
+import { clientLogger } from 'src/utils/logger-client';
 import { isMissing } from 'src/utils/utils';
-import type { SignupInputTypes} from 'src/utils/validation/signup';
+import type { SignupInputTypes } from 'src/utils/validation/signup';
 import { validateSignupInput } from 'src/utils/validation/signup';
 
 export default function Register() {

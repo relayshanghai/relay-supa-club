@@ -16,6 +16,7 @@
         "nextjs",
         "onboarded",
         "relayclub",
+        "RUDDERSTACK",
         "signup",
         "supa",
         "supabase",
@@ -30,5 +31,7 @@
     },
     "editor.quickSuggestions": {
         "strings": true
-    }
+    },
+    "Prettier-SQL.SQLFlavourOverride": "postgresql",
+    "Prettier-SQL.keywordCase": "upper"
 }

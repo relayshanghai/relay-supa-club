@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import type { CampaignNotesWithProfiles } from 'src/utils/api/db';
 import { getCampaignNotes } from 'src/utils/api/db';
-import { serverLogger } from 'src/utils/logger';
+import { serverLogger } from 'src/utils/logger-server';
 
 export type CampaignNotesIndexGetQuery = {
     id: string;

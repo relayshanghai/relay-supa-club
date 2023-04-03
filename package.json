@@ -25,6 +25,7 @@
   "dependencies": {
     "@headlessui/react": "^1.7.11",
     "@heroicons/react": "^2.0.15",
+    "@sentry/nextjs": "^7.44.2",
     "@supabase/auth-helpers-nextjs": "^0.5.4",
     "@supabase/auth-helpers-react": "^0.3.1",
     "@supabase/supabase-js": "^2.8.0",
@@ -44,6 +45,7 @@
     "react-select": "^5.7.0",
     "react-visibility-sensor": "^5.1.1",
     "recharts": "^2.4.3",
+    "rudder-sdk-js": "^2.28.0",
     "sib-api-v3-sdk": "^8.5.0",
     "stripe": "^11.11.0",
     "swr": "^2.0.3",
@@ -89,10 +91,11 @@
   "engines": {
     "node": "18.14.0"
   },
-  "volta": {
-    "node": "18.14.0"
-  },
   "msw": {
     "workerDirectory": "public"
+  },
+  "volta": {
+    "node": "18.14.0",
+    "npm": "9.3.1"
   }
 }

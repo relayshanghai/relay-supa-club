@@ -2,7 +2,7 @@ import type { ChangeEvent, KeyboardEvent } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import useOnOutsideClick from 'src/hooks/use-on-outside-click';
 import { useTranslation } from 'react-i18next';
-import { clientLogger } from 'src/utils/logger';
+import { clientLogger } from 'src/utils/logger-client';
 import type { AudienceLookalike, CreatorPlatform } from 'types';
 import { Enter, Spinner } from '../icons';
 import CreatorCard from './search-creator-card';
@@ -66,10 +66,8 @@ export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
                 data-testid="creator-search"
                 id="creator-search"
                 value={searchTerm}
-                onChange={(e) => handleChange(e)}
-                onKeyUp={(e: KeyboardEvent<HTMLInputElement> & ChangeEvent<HTMLInputElement>) =>
-                    handleSearch(e)
-                }
+                onChange={handleChange}
+                onKeyUp={handleSearch}
             />
             {loading ? (
                 <Spinner className="absolute right-2 top-2.5 z-50 h-5 w-5 fill-primary-600 text-white" />

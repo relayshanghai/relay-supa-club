@@ -1,5 +1,6 @@
 import { useSessionContext, useSupabaseClient } from '@supabase/auth-helpers-react';
 import type { Session, SupabaseClient, User } from '@supabase/supabase-js';
+import * as Sentry from '@sentry/browser';
 
 import type {
     CreateEmployeePostBody,
@@ -18,7 +19,7 @@ import useSWR from 'swr';
 
 import type { ProfileDB } from 'src/utils/api/db/types';
 import { nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';
-import { clientLogger } from 'src/utils/logger';
+import { clientLogger } from 'src/utils/logger-client';
 import type { DatabaseWithCustomTypes } from 'types';
 
 export type SignupData = {
@@ -99,13 +100,22 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
             const controller = new AbortController();
             getProfileController.current = controller;
 
-            return await nextFetchWithQueries<ProfileGetQuery, ProfileGetResponse>(
+            const fetchedProfile = await nextFetchWithQueries<ProfileGetQuery, ProfileGetResponse>(
                 path,
                 {
                     id: session?.user.id ?? '',
                 },
                 { signal: controller.signal },
             );
+            // only set Sentry user if it is the first time we are fetching the profile
+            if (fetchedProfile?.email && !profile?.email) {
+                Sentry.setUser({
+                    email: fetchedProfile.email,
+                    id: fetchedProfile.id,
+                    name: `${fetchedProfile.first_name} ${fetchedProfile.last_name}`,
+                });
+            }
+            return fetchedProfile;
         },
     );
 
@@ -186,6 +196,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
         [session?.user],
     );
     const logout = async () => {
+        Sentry.setUser(null);
         const email = session?.user?.email;
         // cannot use router.push() here because it won't cancel in-flight requests which wil re-set the cookie
         window.location.href = email ? `/logout?${new URLSearchParams({ email })}` : '/logout';

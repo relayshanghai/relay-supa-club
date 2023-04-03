@@ -84,6 +84,7 @@ export const handleNewCompanyMessage = async (req: NextApiRequest, URL: string) 
 export const handleCompanyUpdateMessage = async (req: NextApiRequest, URL: string) => {
     const data = req.body as UpdateCompanyPayload;
     const { name: companyName, subscription_status: subscriptionStatus } = data.record;
+    if (!data.old_record) return; //If the old_record is not present, it means the record is being created for the first time (handled in handleNewCompanyMessage
     const { subscription_status: oldSubscriptionStatus } = data.old_record;
     if (
         data.table === 'companies' &&

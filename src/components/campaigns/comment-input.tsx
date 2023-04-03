@@ -1,10 +1,10 @@
-import type { ChangeEventHandler, KeyboardEvent} from 'react';
+import type { ChangeEventHandler, KeyboardEvent } from 'react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNotes } from 'src/hooks/use-notes';
 import { useUser } from 'src/hooks/use-user';
 import type { CampaignCreatorDB } from 'src/utils/api/db';
-import { clientLogger } from 'src/utils/logger';
+import { clientLogger } from 'src/utils/logger-client';
 import { Send, Spinner } from '../icons';
 import toast from 'react-hot-toast';
 

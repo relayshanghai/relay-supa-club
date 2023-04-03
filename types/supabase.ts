@@ -314,8 +314,8 @@ export interface Database {
           id: string
           last_name: string
           phone: string | null
-          role: string | null
           updated_at: string | null
+          user_role: string | null
         }
         Insert: {
           avatar_url?: string | null
@@ -326,8 +326,8 @@ export interface Database {
           id: string
           last_name: string
           phone?: string | null
-          role?: string | null
           updated_at?: string | null
+          user_role?: string | null
         }
         Update: {
           avatar_url?: string | null
@@ -338,8 +338,8 @@ export interface Database {
           id?: string
           last_name?: string
           phone?: string | null
-          role?: string | null
           updated_at?: string | null
+          user_role?: string | null
         }
       }
       usages: {
@@ -373,7 +373,10 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      is_relay_employee: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
@@ -383,3 +386,4 @@ export interface Database {
     }
   }
 }
+
