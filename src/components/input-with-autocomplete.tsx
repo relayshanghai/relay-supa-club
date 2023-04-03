@@ -5,7 +5,9 @@ export interface Props {
     onChange: (value: string) => void;
     onRemoveTag: (tag: any) => void;
     onAddTag: (tag: any) => void;
-    tags: string[];
+    tags: {
+        value: string;
+    }[];
     suggestions: string[];
     placeholder: string;
     SuggestionComponent?: React.FC<any>;
@@ -41,6 +43,22 @@ const InputWithAutocomplete = forwardRef<HTMLDivElement, Props>(
                     onChange={(e: any) => {
                         setValue(e.target.value);
                         onChange(e.target.value);
+                    }}
+                    onKeyDown={(e: React.KeyboardEvent) => {
+                        if (e.key === 'Enter') {
+                            if (value === '') return;
+
+                            onAddTag({ value });
+                            setValue('');
+                        } else if (e.key === 'Backspace' && !value) {
+                            e.preventDefault();
+                            let lastTag = '';
+                            if (tags.length === 0) return;
+                            lastTag = tags[tags.length - 1].value;
+
+                            setValue(lastTag);
+                            onRemoveTag(tags[tags.length - 1]);
+                        }
                     }}
                     TagComponent={TagComponent}
                 />

@@ -3,7 +3,9 @@ import type { DetailedHTMLProps, InputHTMLAttributes } from 'react';
 export interface Props
     extends DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> {
     disabled?: boolean;
-    tags: string[];
+    tags: {
+        value: string;
+    }[];
     onTagRemove: (tag: string) => void;
     TagComponent?: React.FC<any>;
 }
