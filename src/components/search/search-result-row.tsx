@@ -5,10 +5,14 @@ import type { CampaignsIndexGetResult } from 'pages/api/campaigns';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
 import { DotsHorizontal, ShareLink } from 'src/components/icons';
+import { FEAT_RECOMMENDED } from 'src/constants/feature-flags';
+import { isRecommendedInfluencer } from 'src/constants/recommendedInfluencers';
+import useAboveScreenWidth from 'src/hooks/use-above-screen-width';
 import { useSearch } from 'src/hooks/use-search';
 import { imgProxy } from 'src/utils/fetcher';
 import { decimalToPercent, numberFormatter } from 'src/utils/formatter';
 import type { CreatorSearchAccountObject } from 'types';
+import { Badge, Tooltip } from '../library';
 
 export const SearchResultRow = ({
     creator,
@@ -40,6 +44,7 @@ export const SearchResultRow = ({
         avg_views,
     } = creator.account.user_profile;
     const handle = username || custom_name || fullname || '';
+
     const addToCampaign = () => {
         if (creator) setSelectedCreator(creator);
 
@@ -64,17 +69,37 @@ export const SearchResultRow = ({
         } else setShowCampaignListModal(true);
     };
 
+    const desktop = useAboveScreenWidth(1400);
+
     return (
         <tr className="group hover:bg-primary-100">
             <td className="w-full">
                 <div className="flex w-full flex-row gap-x-2 py-2 px-4">
-                    <img src={imgProxy(picture) as string} className="h-12 w-12" alt={handle} />
+                    <img
+                        src={imgProxy(picture) as string}
+                        className="h-12 w-12 [min-width:3rem]"
+                        alt={handle}
+                    />
                     <div>
                         <div className="font-bold line-clamp-2">{fullname}</div>
                         <div className="text-sm text-primary-500 line-clamp-1">
                             {handle ? `@${handle}` : null}
                         </div>
                     </div>
+                    {FEAT_RECOMMENDED && isRecommendedInfluencer(platform, user_id) && (
+                        <Tooltip
+                            content={t('creators.recommendedTooltip')}
+                            detail={t('creators.recommendedTooltipDetail')}
+                            className="flex flex-wrap items-center"
+                        >
+                            <Badge
+                                size={desktop ? 'medium' : 'small'}
+                                data-testid="recommended-badge"
+                            >
+                                {t('creators.recommended')}
+                            </Badge>
+                        </Tooltip>
+                    )}
                 </div>
             </td>
             <td className="pr-4 text-right text-sm">{numberFormatter(followers) ?? '-'}</td>
