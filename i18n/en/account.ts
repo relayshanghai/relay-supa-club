@@ -3,7 +3,6 @@ const account = {
     update: 'Update',
     personal: {
         title: 'Personal details',
-        tezxt: 'test',
         firstName: 'First name',
         firstNamePLaceholder: 'Enter your first name',
         lastName: 'Last name',
@@ -68,8 +67,7 @@ const account = {
             subscriptionPurchased: 'Subscription purchased',
             wentWrong: 'Oops, something went wrong',
             subscribe: 'Subscribe',
-            noteClickingSubscribeWillCharge:
-                'Note that clicking `Subscribe` will charge the default payment method.',
+            noteClickingSubscribeWillCharge: 'Note that clicking `Subscribe` will charge the default payment method.',
             close: 'Close',
             backToAccount: 'Back to account',
             perMonth: '/month',
@@ -95,10 +93,8 @@ const account = {
     cancel: 'Cancel',
     cancelModal: {
         title: 'Cancel subscription',
-        areYouSureYouWantToCancelYourSubscription:
-            'Are you sure you want to cancel your subscription?',
-        youWillLoseAccessToAllData:
-            'You will lose access to all your projects and data once the current billing period expires.',
+        areYouSureYouWantToCancelYourSubscription: 'Are you sure you want to cancel your subscription?',
+        youWillLoseAccessToAllData: 'You will lose access to all your projects and data once the current billing period expires.',
         cancelSubscription: 'Cancel subscription',
         orRenewAtDiscount_percentage: 'Or renew now at {{percentage}}% discount',
         renewNow: 'Renew now',
