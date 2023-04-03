@@ -35,6 +35,10 @@ const currentCampaign: CampaignDB = {
     target_locations: ['United States of America'],
     media: [{}],
     purge_media: [],
+    creator_count: null,
+    date_end_creator_outreach: null,
+    requirements: null,
+    media_path: null,
 };
 const creator1: CampaignCreatorDB = {
     id: 'creator1',
@@ -52,6 +56,22 @@ const creator1: CampaignCreatorDB = {
     creator_id: 'UCJQjhL019_F0nckUU88JAJA',
     platform: 'youtube',
     added_by_id: '9bfbc685-2881-47ac-b75a-c7e210f187f2',
+    updated_at: null,
+    payment_details: null,
+    relay_creator_id: null,
+    creator_model: null,
+    creator_token: null,
+    interested: null,
+    email_sent: null,
+    publication_date: null,
+    address: null,
+    tracking_details: null,
+    reject_message: null,
+    brief_opened_by_creator: null,
+    need_support: null,
+    next_step: null,
+    avatar_url: '',
+    username: null,
 };
 
 const creator2: CampaignCreatorDB = {
