@@ -42,7 +42,7 @@ describe('<SearchPage />', () => {
             'Are those which have worked with relay.club brands in the past and are known to be open to cooperation',
         );
 
-        cy.findAllByRole('row').should('have.length', 2);
+        cy.findAllByRole('row').should('have.length', 3);
     });
 });
 
