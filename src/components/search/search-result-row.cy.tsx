@@ -126,8 +126,6 @@ const campaigns: CampaignsIndexGetResult = [
 ];
 
 const setupProps = () => {
-    cy.viewport(1920, 1080);
-
     return {
         creator,
         campaigns,
@@ -139,9 +137,9 @@ const setupProps = () => {
 };
 
 import { SearchResultRow } from './search-result-row';
+import { worker } from '../../mocks/browser';
 describe('<CreatorPage />', () => {
     before(async () => {
-        const { worker } = await import('../../mocks/browser');
         worker.start();
     });
 
@@ -171,14 +169,18 @@ describe('<CreatorPage />', () => {
         cy.contains('Recommended').should('not.exist');
     });
     it.only('shows tooltip on badge hover', () => {
+        const props = setupProps();
+        props.creator.account.user_profile.user_id = '25025320';
         testMount(
             // needs some room to show the tooltip
             <div className="pt-5">
                 <SearchContext.Provider value={{ platform: 'instagram' } as any}>
-                    <SearchResultRow {...setupProps()} />
+                    <SearchResultRow {...props} />
                 </SearchContext.Provider>
             </div>,
         );
+        cy.contains('Recommended');
+
         cy.contains(
             'Are those which have worked with relay.club brands in the past and are known to be open to cooperation',
         ).should('not.be.visible');
