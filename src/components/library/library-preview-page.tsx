@@ -49,6 +49,8 @@ const Switches = () => {
                 <library.Switch checked={true} onChange={() => null} />
                 <library.Switch disabled={true} checked={false} onChange={() => null} />
                 <library.Switch disabled checked={true} onChange={() => null} />
+                <library.Switch checked={true} onChange={() => null} beforeLabel="label before" />
+                <library.Switch checked={true} onChange={() => null} afterLabel="after" />
             </div>
         </div>
     );
