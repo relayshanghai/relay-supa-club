@@ -4,13 +4,17 @@ import * as library from './index';
 const Badges = () => (
     <div className="m-5">
         <h2 className="text-lg font-bold"> Badges</h2>
-        <p>Primary, Solid, Rounded, 3 sizes</p>
+        <p>Primary, Solid, Rounded, 3 sizes, squished Chinese for no wrap test </p>
         <div className="m-5 flex flex-wrap space-x-3 bg-slate-100 p-5">
             <library.Badge size="small">Small</library.Badge>
 
             <library.Badge size="medium">Medium</library.Badge>
 
             <library.Badge size="large">Large</library.Badge>
+
+            <div className="w-3">
+                <library.Badge size="medium">中文</library.Badge>
+            </div>
         </div>
     </div>
 );
