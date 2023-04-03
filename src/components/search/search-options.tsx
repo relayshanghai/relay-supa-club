@@ -214,12 +214,13 @@ export const SearchOptions = ({
                                 className="flex flex-wrap items-center"
                             >
                                 <Switch
+                                    data-testid="recommended-toggle"
                                     checked={onlyRecommended}
                                     onChange={(e) => {
                                         setOnlyRecommended(e.target.checked);
                                     }}
                                     beforeLabel="Recommended only"
-                                />{' '}
+                                />
                             </Tooltip>
                         </div>
                     )}

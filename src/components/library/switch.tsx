@@ -8,7 +8,7 @@ interface SwitchProps
     afterLabel?: string;
 }
 
-export const Switch = ({ beforeLabel, afterLabel, ...props }: SwitchProps) => {
+export const Switch = ({ beforeLabel, afterLabel, className, ...props }: SwitchProps) => {
     return (
         <div className="flex items-center">
             {beforeLabel && (
@@ -18,8 +18,7 @@ export const Switch = ({ beforeLabel, afterLabel, ...props }: SwitchProps) => {
             )}
             <input
                 type="checkbox"
-                id="hs-basic-with-description"
-                className="relative h-7 w-[3.25rem] shrink-0 cursor-pointer appearance-none rounded-full border-2 border-transparent bg-gray-100 outline-1 outline-red-500 ring-1 ring-gray-200 ring-offset-white transition-colors duration-200 ease-in-out before:inline-block before:h-6 before:w-6 before:translate-x-0 before:transform before:rounded-full before:bg-white before:shadow before:ring-0 before:transition before:duration-200 before:ease-in-out checked:bg-primary-50 checked:ring-primary-100 checked:before:translate-x-full checked:before:bg-primary-500 checked:before:shadow-primary-300"
+                className={`relative h-7 w-[3.25rem] shrink-0 cursor-pointer appearance-none rounded-full border-2 border-transparent bg-gray-100 outline-1 outline-red-500 ring-1 ring-gray-200 ring-offset-white transition-colors duration-200 ease-in-out before:inline-block before:h-6 before:w-6 before:translate-x-0 before:transform before:rounded-full before:bg-white before:shadow before:ring-0 before:transition before:duration-200 before:ease-in-out checked:bg-primary-50 checked:ring-primary-100 checked:before:translate-x-full checked:before:bg-primary-500 checked:before:shadow-primary-300 ${className}`}
                 {...props}
             />
             {afterLabel && (
