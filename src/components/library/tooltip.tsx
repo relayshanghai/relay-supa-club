@@ -5,7 +5,7 @@ interface Props extends DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLS
 }
 export type TooltipProps = PropsWithChildren<Props>;
 
-/** Wrap this around the component that you'd like to have the tooltip appear when hovered. see `pages/component-previews/library.tsx` for examples*/
+/** Wrap this around the component that you'd like to have the tooltip appear over when hovered. see `pages/component-previews/library.tsx` for examples*/
 export const Tooltip = ({ children, content, detail, className }: TooltipProps) => {
     return (
         <div className={`hs-tooltip [--placement:top] ${className}`}>
