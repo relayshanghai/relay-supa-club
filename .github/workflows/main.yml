@@ -81,7 +81,7 @@ jobs:
             - run: npm run test:run-jest-unit
             - run: npm run test-cypress-unit
 
-    cypress:
+    cypress-e2e:
         runs-on: ubuntu-22.04
         environment: preview
 
