@@ -1,6 +1,6 @@
 # Creating changes to the database
 
-When creating a change to the database, it is recommended that you create granular changes.
+When creating a change to the database, it is recommended that you create granular changes. If you want to add two tables, make two separate changes/migration files.
 
 e.g. Here you add column `foo` first and create foreign key after.
 
@@ -21,25 +21,27 @@ e.g. You currently have `01234_big_update.sql`, split (copy/paste to smaller fil
 
 ## How should I start?
 
-1. Modify the database via three (3) methods:
+### 1. Modify the database via three (3) methods:
 
--   SQL files
+    #### Method 1 (recommended): - Supabase Studio
 
-```bash
-supabase migration new new_column
-```
+         Visit http://localhost:54323/project/default/editor
 
--   Using [db script](db-script.md)
+    #### Method 2 SQL files
 
-```
-supabase/db.sh --help
-```
+        ```bash
+        supabase migration new new_column
+        ```
 
--   Supabase Studio
+        This will create a blank sql file that you can fill with new sql commands to modify the database.
 
-    Visit http://localhost:54323/project/default/editor
+    #### Method 3 Using [db script](db-script.md)
 
-2. Persist your changes to the local database
+        ```
+        supabase/db.sh --help
+        ```
+
+### 2. Persist your changes to the local database
 
     If you changed the database using Supabase studio, skip this step.
 
@@ -52,11 +54,12 @@ supabase/db.sh push_dbfn
 supabase db reset
 ```
 
-3. Create a migration file based on your changes
+### 3. Create a migration file based on your changes
 
 ```bash
 # create a migration file (you might not need this if you created a migration manually)
 supabase db diff --file=<migration_name>
+# normally, db diff just shows the difference, but if you add the --file flag, it will create a migration file for you
 
 # generate database types
 supabase gen types typescript --local --schema=public > types/supabase.ts
@@ -64,7 +67,11 @@ supabase gen types typescript --local --schema=public > types/supabase.ts
 supabase/db.sh gen_db_types
 ```
 
-4. Commit & Push your changes
+### 4. Commit & Push your changes (as you would for any code changes)
+
+This will not apply the changes to the production database. You still need to make a pull request.
+During the pull request, the github actions `main.yml` workflow will run the tests.
+When the pr is merged to main, the github actions `db-deploy.yml` workflow will apply the changes to the production database.
 
 ```bash
 # or you can use your git client
