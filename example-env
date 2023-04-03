@@ -56,5 +56,12 @@ TEST_USER_EMAIL='test@example.com'
 TEST_USER_PASSWORD='123-abc-find-out-what-you-mean-to-me'
 
 # Rudderstack
+
 NEXT_PUBLIC_RUDDERSTACK_APP_WRITE_KEY=""
 NEXT_PUBLIC_RUDDERSTACK_APP_DATA_PLANE_URL=""
+
+# Sentry
+
+# silences some errors in the console
+
+SENTRY_IGNORE_API_RESOLUTION_ERROR=1

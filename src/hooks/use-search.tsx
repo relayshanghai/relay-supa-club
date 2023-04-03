@@ -5,17 +5,12 @@ import { usageErrors } from 'src/errors/usages';
 import { hasCustomError } from 'src/utils/errors';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
-import type {
-    CreatorPlatform,
-    LocationWeighted,
-    CreatorSearchTag,
-    CreatorSearchAccountObject,
-} from 'types';
+import type { CreatorPlatform, LocationWeighted, CreatorSearchTag, CreatorSearchAccountObject } from 'types';
 import { useUser } from './use-user';
 
 type NullStringTuple = [null | string, null | string];
 
-export interface SearchContext {
+export interface ISearchContext {
     loading: boolean;
     tags: CreatorSearchTag[];
     setTopicTags: (tags: CreatorSearchTag[]) => void;
@@ -50,7 +45,7 @@ export interface SearchContext {
     noResults: boolean;
 }
 
-const ctx = createContext<SearchContext>({
+export const SearchContext = createContext<ISearchContext>({
     loading: false,
     tags: [],
     setTopicTags: () => null,
@@ -85,7 +80,7 @@ const ctx = createContext<SearchContext>({
     noResults: true,
 });
 
-export const useSearch = () => useContext(ctx);
+export const useSearch = () => useContext(SearchContext);
 
 export const SearchProvider = ({ children }: PropsWithChildren) => {
     const { profile } = useUser();
@@ -160,10 +155,7 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
                 }
                 setLoading(false);
             } catch (error: any) {
-                if (
-                    typeof error?.message === 'string' &&
-                    error.message.toLowerCase().includes('abort')
-                ) {
+                if (typeof error?.message === 'string' && error.message.toLowerCase().includes('abort')) {
                     return;
                 }
                 clientLogger(error, 'error');
@@ -198,7 +190,7 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
     const noResults = resultPages.length === 0 || resultPages[0]?.length === 0;
 
     return (
-        <ctx.Provider
+        <SearchContext.Provider
             value={{
                 loading,
 
@@ -236,6 +228,6 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
             }}
         >
             {children}
-        </ctx.Provider>
+        </SearchContext.Provider>
     );
 };

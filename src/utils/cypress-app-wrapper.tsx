@@ -59,6 +59,8 @@ export const testMount = (component: React.ReactElement, options?: TestMountOpti
     });
     // see: https://on.cypress.io/mounting-react
     const supabaseClient = createBrowserSupabaseClient();
+    //@ts-expect-error
+    import('preline');
     mount(
         <AppRouterContext.Provider value={router as any}>
             <SessionContextProvider supabaseClient={supabaseClient} initialSession={{} as any}>

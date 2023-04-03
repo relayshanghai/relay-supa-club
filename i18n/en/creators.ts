@@ -1,4 +1,8 @@
 const creators = {
+    recommended: 'Recommended',
+    recommendedTooltip: 'Recommended Influencers',
+    recommendedTooltipDetail:
+        'Are those which have worked with relay.club brands in the past and are known to be open to cooperation',
     loadMore: 'Load more',
     results: 'Total Results',
     noResults: 'No results found',
@@ -40,8 +44,7 @@ const creators = {
         emailAvailable: 'Email is available',
         audienceFilter: 'Audience Filter',
         searchButton: 'Search Influencer',
-        sectionSummary:
-            'Try starting with number of subscribers and audience filters narrowing your search',
+        sectionSummary: 'Try starting with number of subscribers and audience filters narrowing your search',
         from: 'From',
         to: 'To',
         max: 'Max',
@@ -154,8 +157,7 @@ const creators = {
                 'We determine this by analyzing the audiences profile pictures, name, profile description and selfies in recent posts',
             ageSplit:
                 'We determine this by analyzing the audiences profile pictures, name, profile description and selfies in recent posts',
-            audienceLocation:
-                'We determine this by analyzing location tags, text, bio and caption in recent posts',
+            audienceLocation: 'We determine this by analyzing location tags, text, bio and caption in recent posts',
             language: 'We determine this by analyzing texts in the recent posts',
         },
         audienceGenderAge: 'Audience gender by age',
