@@ -3,6 +3,8 @@ import { rest, setupWorker } from 'msw';
 import tSeries from './api/creators/report/tSeries.json';
 import jimTestCampaign from './api/campaigns/jimTestCampaign.json';
 import amyTestCampaign from './api/campaigns/amyTestCampaign.json';
+import defaultLandingPageInfluencerSearch from './api/influencer-search/indexDefaultSearch.json';
+
 // if in the future we want to use the browser-based msw outside of cypress, we'll need to change this
 export const APP_URL_CYPRESS = 'http://localhost:8080';
 
@@ -19,6 +21,9 @@ const frontendHandlers = [
         }
 
         return res(ctx.json([jimTestCampaign, amyTestCampaign]));
+    }),
+    rest.post(`${APP_URL_CYPRESS}/api/influencer-search`, (req, res, ctx) => {
+        return res(ctx.json(defaultLandingPageInfluencerSearch));
     }),
 ];
 /** for use in the browser */
