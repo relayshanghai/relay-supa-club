@@ -1,4 +1,4 @@
-import { getCompanyByCusId, updateCompanySubscriptionStatus } from '../db';
+import { getCompanyByCusId, supabaseLogger, updateCompanySubscriptionStatus } from '../db';
 import httpCodes from 'src/constants/httpCodes';
 import { serverLogger } from 'src/utils/logger-server';
 
@@ -18,10 +18,18 @@ export const handleInvoicePaymentFailed = async (
     const { data: company, error: companyError } = await getCompanyByCusId(customerId);
     if (companyError) {
         serverLogger(companyError, 'error');
+        supabaseLogger({
+            type: 'stripe-webhook',
+            message: 'Error getting company by customer ID',
+        });
         return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
     }
 
     if (company.name === RELAY_DOMAIN) {
+        supabaseLogger({
+            type: 'stripe-webhook',
+            message: 'Payment failed for Relay domain, no need to cancel subscription',
+        });
         // no need to cancel the subscription for our internal employees company
         return res.status(httpCodes.NO_CONTENT);
     }
@@ -29,6 +37,10 @@ export const handleInvoicePaymentFailed = async (
     await updateCompanySubscriptionStatus({
         subscription_status: 'canceled',
         id: company.id,
+    });
+    supabaseLogger({
+        type: 'stripe-webhook',
+        message: `Updated company subscription status to canceled, company ID: ${company.id}`,
     });
     return res.status(httpCodes.NO_CONTENT);
 };

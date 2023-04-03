@@ -2,6 +2,7 @@ import { RELAY_EXPERT_EMAIL } from 'src/constants/employeeContacts';
 import httpCodes from 'src/constants/httpCodes';
 import {
     getCompanyByCusId,
+    supabaseLogger,
     updateCompanySubscriptionStatus,
     updateCompanyUsageLimits,
     updateUserRole,
@@ -10,7 +11,6 @@ import {
     DEFAULT_VIP_PROFILES_LIMIT,
     DEFAULT_VIP_SEARCHES_LIMIT,
 } from 'src/utils/api/stripe/constants';
-import { serverLogger } from 'src/utils/logger-server';
 import { sendEmail } from 'src/utils/send-in-blue-client';
 import { supabase } from 'src/utils/supabase-client';
 import { unixEpochToISOString } from 'src/utils/utils';
@@ -30,9 +30,9 @@ export const handleVIPSubscription = async (
     }
 
     const { data: company, error: companyError } = await getCompanyByCusId(customerId);
+
     if (companyError) {
-        serverLogger(companyError, 'error');
-        return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
+        throw companyError;
     }
 
     const relayExpertPassword = ulid().slice(-8);
@@ -53,8 +53,7 @@ export const handleVIPSubscription = async (
     });
 
     if (signupError) {
-        serverLogger(signupError, 'error');
-        return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
+        throw signupError;
     }
     if (!signupData.user?.id) {
         throw new Error('Missing user id in signup response');
@@ -102,5 +101,11 @@ export const handleVIPSubscription = async (
         subject: 'Relay Expert Account',
         html,
     });
+
+    supabaseLogger({
+        type: 'stripe-webhook',
+        message: `Created VIP subscription for company ${company.name} and sent relay expert credentials to ${relayExpertEmail}`,
+    });
+
     return res.status(httpCodes.NO_CONTENT);
 };
