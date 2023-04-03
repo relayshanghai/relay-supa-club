@@ -102,6 +102,10 @@ const makeProps = () => {
 };
 
 describe('CampaignInfluencersTable', () => {
+    before(async () => {
+        worker.start();
+    });
+
     it('Should render table of influencers', () => {
         testMount(<CampaignInfluencersTable {...makeProps()} />);
         cy.get('tr').contains('Creator1 name');
@@ -160,7 +164,6 @@ describe('CampaignInfluencersTable', () => {
                 return res(ctx.json(campaigns));
             }),
         );
-        worker.start();
         // Capture the network request to the api for the next test
         testMount(<CampaignInfluencersTable {...makeProps()} />);
         cy.get('tr').get('button').contains('Move Influencer').click();
