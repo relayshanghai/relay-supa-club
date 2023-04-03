@@ -9,16 +9,25 @@ import { useCampaigns } from 'src/hooks/use-campaigns';
 import type { CampaignCreatorDB, CampaignWithCompanyCreators } from 'src/utils/api/db';
 import Fuse from 'fuse.js';
 import InfluencerRow from './influencer-row';
+import { MoveInfluencerModal } from '../modal-move-influencer';
+import type { CampaignsIndexGetResult } from 'pages/api/campaigns';
 
-export default function CreatorsOutreach({
-    currentCampaign,
-    setShowNotesModal,
-    setCurrentCreator,
-}: {
+export interface CreatorsOutreachProps {
     currentCampaign: CampaignWithCompanyCreators;
     setShowNotesModal: (value: boolean) => void;
     setCurrentCreator: (value: CampaignCreatorDB) => void;
-}) {
+    campaigns?: CampaignsIndexGetResult;
+    currentCreator?: CampaignCreatorDB | null;
+}
+
+export default function CampaignInfluencersTable({
+    currentCampaign,
+    setShowNotesModal,
+    setCurrentCreator,
+
+    campaigns,
+    currentCreator,
+}: CreatorsOutreachProps) {
     const { t } = useTranslation();
     const inputRef = useRef(null);
 
@@ -30,7 +39,9 @@ export default function CreatorsOutreach({
     const [searchTerm, setSearchTerm] = useState<string | ''>('');
     const [influencersList, setInfluencersList] = useState<CampaignCreatorDB[]>([]);
 
-    const { deleteCreatorInCampaign, updateCreatorInCampaign, refreshCampaign } = useCampaigns({
+    const [showMoveInfluencerModal, setShowMoveInfluencerModal] = useState(false);
+
+    const { deleteCreatorInCampaign, updateCreatorInCampaign, refreshCampaigns } = useCampaigns({
         campaignId: currentCampaign?.id,
     });
 
@@ -86,12 +97,12 @@ export default function CreatorsOutreach({
         e.stopPropagation();
         creator = { ...creator, [objKey]: e.target.value };
         await updateCreatorInCampaign(creator);
-        refreshCampaign();
+        refreshCampaigns();
         toast.success(t('campaigns.creatorModal.influencerUpdated'));
     };
 
     const setInlineEdit = (
-        e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>,
+        e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
         index: number,
         key: string,
     ) => {
@@ -100,7 +111,7 @@ export default function CreatorsOutreach({
     };
 
     const openNotes = (
-        e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>,
+        e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
         creator: CampaignCreatorDB,
     ) => {
         e.stopPropagation();
@@ -108,22 +119,31 @@ export default function CreatorsOutreach({
         setShowNotesModal(true);
     };
 
+    const openMoveInfluencerModal = (
+        e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
+        creator: CampaignCreatorDB,
+    ) => {
+        e.stopPropagation();
+        setCurrentCreator(creator);
+        setShowMoveInfluencerModal(true);
+    };
+
     const deleteCampaignCreator = async (
-        e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>,
+        e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
         creator: CampaignCreatorDB,
     ) => {
         e.stopPropagation();
         const c = confirm(t('campaigns.modal.deleteConfirmation') as string);
         if (!c) return;
-        await deleteCreatorInCampaign(creator);
-        refreshCampaign();
+        await deleteCreatorInCampaign({ creatorId: creator.id, campaignId: currentCampaign.id });
+        refreshCampaigns();
         toast.success(t('campaigns.modal.deletedSuccessfully'));
     };
 
     const updateCampaignCreator = async (creator: CampaignCreatorDB) => {
         await updateCreatorInCampaign(creator);
         setToEdit(null);
-        refreshCampaign();
+        refreshCampaigns();
         toast.success(t('campaigns.creatorModal.influencerUpdated'));
     };
 
@@ -220,7 +240,7 @@ export default function CreatorsOutreach({
                                 </th>
                             ))}
                             {/*-- placeholder table header space for notes and delete section --*/}
-                            <th className=" sticky right-0 z-30 min-w-[150px] max-w-[150px] bg-white px-3 py-3 text-left text-xs  font-normal tracking-wider text-gray-500">
+                            <th className=" sticky right-0 z-30 min-w-[280px] max-w-[280px] bg-white px-3 py-3 text-left text-xs  font-normal tracking-wider text-gray-500">
                                 {''}
                             </th>
                         </tr>
@@ -254,12 +274,26 @@ export default function CreatorsOutreach({
                                         tabs={tabs}
                                         openNotes={openNotes}
                                         deleteCampaignCreator={deleteCampaignCreator}
+                                        openMoveInfluencerModal={openMoveInfluencerModal}
+                                        showMoveInfluencerModal={showMoveInfluencerModal}
+                                        setShowMoveInfluencerModal={setShowMoveInfluencerModal}
                                     />
                                 );
                         })}
                     </tbody>
                 </table>
             </div>
+
+            {campaigns && currentCampaign && currentCreator && (
+                <MoveInfluencerModal
+                    platform={currentCreator.platform}
+                    selectedCreator={currentCreator}
+                    currentCampaign={currentCampaign}
+                    show={showMoveInfluencerModal}
+                    setShow={setShowMoveInfluencerModal}
+                    campaigns={campaigns}
+                />
+            )}
         </div>
     );
 }

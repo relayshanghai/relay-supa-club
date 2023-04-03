@@ -1,4 +1,5 @@
 import { rest, setupWorker } from 'msw';
+
 import tSeries from './api/creators/report/tSeries.json';
 // if in the future we want to use the browser-based msw outside of cypress, we'll need to change this
 export const APP_URL_CYPRESS = 'http://localhost:8080';

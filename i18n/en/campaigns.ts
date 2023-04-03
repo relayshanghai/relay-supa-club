@@ -16,6 +16,8 @@ const campaigns = {
     modal: {
         addToCampaign: 'Add To Campaign',
         addThisInfluencer: 'Add this influencer to your existing campaigns',
+        moveToCampaign: 'Move To Campaign',
+        moveThisInfluencer: 'Move this influencer to an existing campaign',
         createCampaign: ' or create a new campaign',
         search: 'Search',
         favorites: 'Favorites',
@@ -36,6 +38,7 @@ const campaigns = {
         doNotAdd: 'Do not Add',
         addAnyway: 'Add Anyway',
         influencerAlreadyAdded: 'This influencer already exists in other campaigns:',
+        movedSuccessfully: 'Influencer moved successfully!',
     },
     creatorModal: {
         outreach: 'Outreach',
@@ -79,6 +82,7 @@ const campaigns = {
         sent: 'Sent',
         unsent: 'Unsent',
         delivered: 'Delivered',
+        influencerUpdated: 'Influencer Information Updated',
     },
     email: {
         dayLimit: 'You can only send an influencer an email every 24 hours to avoid spam.',
@@ -141,6 +145,7 @@ const campaigns = {
         notes: 'Notes',
         important: 'Important',
         importantMessages: 'Important Messages',
+        moveInfluencer: 'Move Influencer',
         activities: {
             influencerOutreach: 'Influencer Outreach',
             campaignInfo: 'Campaign Info',

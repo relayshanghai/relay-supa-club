@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import Image from 'next/legacy/image';
 import { Layout } from 'src/components/layout';
-import CreatorsOutreach from '../../src/components/campaigns/creator-outreach';
+import CampaignInfluencersTable from '../../src/components/campaigns/campaign-influencers-table';
 import CampaignDetails from '../../src/components/campaigns/CampaignDetails';
 import { useCampaigns } from 'src/hooks/use-campaigns';
 import { Modal } from 'src/components/modal';
@@ -15,15 +15,20 @@ import CommentInput from 'src/components/campaigns/comment-input';
 import CommentCards from 'src/components/campaigns/comment-cards';
 import type { CampaignCreatorDB, CampaignWithCompanyCreators } from 'src/utils/api/db';
 import { imgProxy } from 'src/utils/fetcher';
+import { useCompany } from 'src/hooks/use-company';
 
 export default function CampaignShow() {
     const router = useRouter();
-    const {
-        campaign: currentCampaign,
-        updateCampaign,
-        refreshCampaign,
-    } = useCampaigns({ campaignId: router.query.id as string });
+    const { campaign: currentCampaign, updateCampaign } = useCampaigns({
+        campaignId: router.query.id as string,
+    });
     const supabase = useSupabaseClient();
+
+    const { company } = useCompany();
+
+    const { campaigns, refreshCampaigns } = useCampaigns({
+        companyId: company?.id,
+    });
 
     const [media, setMedia] = useState<{ url: string; name: string }[]>([]);
     const [currentTab, setCurrentTab] = useState(0);
@@ -55,7 +60,7 @@ export default function CampaignShow() {
         } = campaignWithCompanyCreators;
         const status = e.target.value;
         await updateCampaign({ ...campaign, status });
-        refreshCampaign();
+        refreshCampaigns();
     };
 
     useEffect(() => {
@@ -195,10 +200,12 @@ export default function CampaignShow() {
                     ))}
                 </div>
                 {currentTab === 0 && currentCampaign && (
-                    <CreatorsOutreach
+                    <CampaignInfluencersTable
                         currentCampaign={currentCampaign}
                         setShowNotesModal={setShowNotesModal}
                         setCurrentCreator={setCurrentCreator}
+                        campaigns={campaigns}
+                        currentCreator={currentCreator}
                     />
                 )}
                 {currentTab === 1 && currentCampaign && (
@@ -226,7 +233,6 @@ export default function CampaignShow() {
                                     </h3>
                                 </div>
                             </Link>
-
                         </div>
                     }
                     visible={!!showNotesModal}

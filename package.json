@@ -18,7 +18,7 @@
         "tailwind:build": "tailwindcss -i ./styles/globals.css -o ./build/index.css",
         "tailwind:watch": "tailwindcss -i ./styles/globals.css -o ./build/index.css --watch",
         "test-cypress-unit": "run-s tailwind:build test:run-cypress-unit",
-        "test:run": "jest",
+        "test:run-jest-unit": "jest",
         "test:run-cypress-unit": "cypress run --component",
         "cypress": "npx cypress open"
     },

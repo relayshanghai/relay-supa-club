@@ -16,6 +16,8 @@ const campaigns = {
     modal: {
         addToCampaign: '添加到项目',
         addThisInfluencer: '将KOL添加到您已有的项目',
+        moveToCampaign: '移动到项目',
+        moveThisInfluencer: '将KOL移动到您已有的项目',
         createCampaign: '或创建一个新的项目',
         search: '搜索',
         favorites: '资源库',

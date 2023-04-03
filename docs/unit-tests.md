@@ -28,7 +28,7 @@ npx msw init public
 
 It will be ignored by git.
 
-run jest tests with `npm run test:run`
+run jest tests one time through with `npm run test:run-jest-unit`
 
 run in watch mode with `npm run test`. You cal also pass a test name to run a specific test, e.g. `npm run test creators`
 

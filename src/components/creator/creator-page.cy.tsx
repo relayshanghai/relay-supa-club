@@ -7,7 +7,6 @@ import { APP_URL_CYPRESS, worker } from '../../mocks/browser';
 
 describe('<CreatorPage />', () => {
     before(async () => {
-        const { worker } = await import('../../mocks/browser');
         worker.start();
     });
 
