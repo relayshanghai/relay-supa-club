@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import * as library from './index';
 
 const Badges = () => (
@@ -32,16 +33,26 @@ const Tooltips = () => (
     </div>
 );
 
-const Switches = () => (
-    <div className="m-5">
-        <h2 className="text-lg font-bold"> Switches</h2>
-        <p>default, checked, with descriptions</p>
-        <div className="m-5 flex flex-wrap space-x-3 bg-slate-200 p-5">
-            <library.Switch checked={false} />
-            <library.Switch checked={true} />
+const Switches = () => {
+    const [checked, setChecked] = useState(false);
+    return (
+        <div className="m-5">
+            <h2 className="text-lg font-bold"> Switches</h2>
+            <p>default (live), checked, disabled, with descriptions, </p>
+            <div className="m-5 flex flex-wrap space-x-3 bg-slate-200 p-5">
+                <library.Switch
+                    checked={checked}
+                    onChange={(e) => {
+                        setChecked(e.target.checked);
+                    }}
+                />
+                <library.Switch checked={true} onChange={() => null} />
+                <library.Switch disabled={true} checked={false} onChange={() => null} />
+                <library.Switch disabled checked={true} onChange={() => null} />
+            </div>
         </div>
-    </div>
-);
+    );
+};
 
 const LibraryPage = () => (
     <>
