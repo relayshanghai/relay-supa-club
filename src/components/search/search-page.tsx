@@ -32,6 +32,7 @@ const Search = ({ companyId }: { companyId?: string }) => {
 
     const [showAlreadyAddedModal, setShowAlreadyAddedModal] = useState(false);
     const [campaignsWithCreator, setCampaignsWithCreator] = useState<string[]>([]);
+    const [onlyRecommended, setOnlyRecommended] = useState(false);
 
     return (
         <div className="space-y-4">
@@ -40,7 +41,12 @@ const Search = ({ companyId }: { companyId?: string }) => {
             )}
             <SelectPlatform />
 
-            <SearchOptions setPage={setPage} setShowFiltersModal={setShowFiltersModal} />
+            <SearchOptions
+                setPage={setPage}
+                setShowFiltersModal={setShowFiltersModal}
+                onlyRecommended={onlyRecommended}
+                setOnlyRecommended={setOnlyRecommended}
+            />
 
             <div className="flex items-center">
                 <div className="text-sm font-bold">
@@ -54,6 +60,8 @@ const Search = ({ companyId }: { companyId?: string }) => {
                 setShowAlreadyAddedModal={setShowAlreadyAddedModal}
                 campaigns={campaigns}
                 setCampaignsWithCreator={setCampaignsWithCreator}
+                onlyRecommended={onlyRecommended}
+                setOnlyRecommended={setOnlyRecommended}
             />
 
             {loadingMore && (
