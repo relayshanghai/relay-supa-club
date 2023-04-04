@@ -6,6 +6,8 @@ import { numberFormatter } from 'src/utils/formatter';
 import { Button } from '../button';
 import { SearchCreators } from './search-creators';
 import { SearchTopics } from './search-topics';
+import { Switch, Tooltip } from '../library';
+import { FEAT_RECOMMENDED } from 'src/constants/feature-flags';
 
 const resultsPerPageOptions = [10, 20, 50, 100];
 
@@ -18,9 +20,13 @@ const filterCountry = (items: any[]) => {
 export const SearchOptions = ({
     setPage,
     setShowFiltersModal,
+    onlyRecommended,
+    setOnlyRecommended,
 }: {
     setPage: (page: number) => void;
     setShowFiltersModal: (show: boolean) => void;
+    onlyRecommended: boolean;
+    setOnlyRecommended: (show: boolean) => void;
 }) => {
     const {
         platform,
@@ -200,6 +206,24 @@ export const SearchOptions = ({
                             {t('creators.clearFilter')}
                         </Button>
                     ) : null}
+                    {FEAT_RECOMMENDED && (
+                        <div className="ml-auto">
+                            <Tooltip
+                                content={t('creators.recommendedTooltip')}
+                                detail={t('creators.recommendedTooltipDetail')}
+                                className="flex flex-wrap items-center"
+                            >
+                                <Switch
+                                    data-testid="recommended-toggle"
+                                    checked={onlyRecommended}
+                                    onChange={(e) => {
+                                        setOnlyRecommended(e.target.checked);
+                                    }}
+                                    beforeLabel="Recommended only"
+                                />
+                            </Tooltip>
+                        </div>
+                    )}
                 </div>
             </div>
         </>
