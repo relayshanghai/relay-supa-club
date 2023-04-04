@@ -5,7 +5,7 @@ import { usageErrors } from 'src/errors/usages';
 import { hasCustomError } from 'src/utils/errors';
 import { nextFetchWithQueries } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
-import type { CreatorPlatform } from 'types';
+import type { CreatorPlatform, CreatorReport } from 'types';
 import { useUser } from './use-user';
 import useSWR from 'swr';
 
@@ -23,13 +23,28 @@ import useSWR from 'swr';
 //     return report;
 // };
 
-export const useReport = ({ platform, creator_id }: { platform: CreatorPlatform; creator_id: string }) => {
+// reports that have `createdAt` older than 59 days are considered stale
+export const reportIsStale = (createdAt: string) => {
+    const createdAtDate = new Date(createdAt);
+    const now = new Date();
+    const diff = now.getTime() - createdAtDate.getTime();
+    return diff > 59 * 24 * 60 * 60 * 1000;
+};
+export type UseReport = ({ platform, creator_id }: { platform: CreatorPlatform; creator_id: string }) => {
+    loading: boolean;
+    report: CreatorReport | undefined;
+    reportCreatedAt: string | undefined;
+    errorMessage: string;
+    usageExceeded: boolean;
+};
+
+export const useReport: UseReport = ({ platform, creator_id }: { platform: CreatorPlatform; creator_id: string }) => {
     const [errorMessage, setErrorMessage] = useState('');
     const [usageExceeded, setUsageExceeded] = useState(false);
     const { t } = useTranslation();
     const { profile } = useUser();
 
-    const { data, isLoading } = useSWR(
+    const { data, isLoading, mutate } = useSWR(
         platform && creator_id && profile?.company_id && profile?.id
             ? ['creators/report', platform, creator_id, profile?.company_id, profile?.id]
             : null,
@@ -59,6 +74,10 @@ export const useReport = ({ platform, creator_id }: { platform: CreatorPlatform;
         },
     );
     const { report, createdAt } = data || {};
+    // mutate, refresh stale caches
+    if (report && createdAt && reportIsStale(createdAt)) {
+        mutate();
+    }
 
     return {
         loading: isLoading,
