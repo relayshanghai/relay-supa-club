@@ -10,6 +10,7 @@ import { SessionContextProvider } from '@supabase/auth-helpers-react';
 import { useEffect, useState } from 'react';
 import { CompanyProvider } from 'src/hooks/use-company';
 import useRudderstack from 'src/hooks/use-rudderstack';
+import { LocalCacheProvider } from 'src/utils/local-cache-swr';
 
 function MyApp({
     Component,
@@ -51,9 +52,11 @@ function MyApp({
             </Head>
             <SessionContextProvider supabaseClient={supabaseClient} initialSession={pageProps.initialSession}>
                 <UserProvider>
-                    <CompanyProvider>
-                        <Component {...pageProps} />
-                    </CompanyProvider>
+                    <LocalCacheProvider>
+                        <CompanyProvider>
+                            <Component {...pageProps} />
+                        </CompanyProvider>
+                    </LocalCacheProvider>
                 </UserProvider>
             </SessionContextProvider>
             <Toaster />
