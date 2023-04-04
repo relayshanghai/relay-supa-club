@@ -56,19 +56,15 @@ export default function CampaignModalCard({
             const getFilePath = (filename: string) => {
                 const {
                     data: { publicUrl },
-                } = supabase.storage
-                    .from('images')
-                    .getPublicUrl(`campaigns/${campaign?.id}/${filename}`);
+                } = supabase.storage.from('images').getPublicUrl(`campaigns/${campaign?.id}/${filename}`);
                 return publicUrl;
             };
 
-            const { data } = await supabase.storage
-                .from('images')
-                .list(`campaigns/${campaign?.id}`, {
-                    limit: 100,
-                    offset: 0,
-                    sortBy: { column: 'name', order: 'asc' },
-                });
+            const { data } = await supabase.storage.from('images').list(`campaigns/${campaign?.id}`, {
+                limit: 100,
+                offset: 0,
+                sortBy: { column: 'name', order: 'asc' },
+            });
 
             if (data?.[0]?.name) {
                 const imageUrl = `${getFilePath(data?.[0]?.name)}`;
@@ -100,9 +96,7 @@ export default function CampaignModalCard({
                         alt=""
                         className="mr-2 h-6 w-6 flex-shrink-0 rounded-full object-cover"
                     />
-                    <div className="mr-2 w-full truncate text-sm text-gray-600">
-                        {campaign?.name}
-                    </div>
+                    <div className="mr-2 w-full truncate text-sm text-gray-600">{campaign?.name}</div>
                 </div>
 
                 {campaign && hasCreator && (
@@ -114,14 +108,10 @@ export default function CampaignModalCard({
                 {campaign && !hasCreator && (
                     <button
                         onClick={handleAddCreatorToCampaign}
-                        disabled={
-                            loading || hasCreator || isMissing(campaign, creator, creator?.user_id)
-                        }
+                        disabled={loading || hasCreator || isMissing(campaign, creator, creator?.user_id)}
                         className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md bg-gray-100 text-gray-600 duration-300 hover:shadow-md disabled:cursor-not-allowed  disabled:text-gray-400"
                     >
-                        {!loading && (
-                            <PlusCircleIcon className="h-4 w-4 fill-current text-current" />
-                        )}
+                        {!loading && <PlusCircleIcon className="h-4 w-4 fill-current text-current" />}
                         {loading && <Spinner className=" h-4 w-4 fill-primary-600 text-white" />}
                     </button>
                 )}

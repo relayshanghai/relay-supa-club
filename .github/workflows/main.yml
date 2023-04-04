@@ -79,7 +79,7 @@ jobs:
             - run: npm run type-check-all
             - run: npm run lint
             - run: npm run build
-            - run: npm run test:run-jest-unit
+            - run: npm run test
             - run: npm run test-cypress-unit
 
     cypress-e2e:

@@ -36,10 +36,7 @@ export default function CampaignShow() {
     const [currentCreator, setCurrentCreator] = useState<CampaignCreatorDB | null>(null);
     const { t, i18n } = useTranslation();
 
-    const tabs = [
-        t('campaigns.show.activities.influencerOutreach'),
-        t('campaigns.show.activities.campaignInfo'),
-    ];
+    const tabs = [t('campaigns.show.activities.influencerOutreach'), t('campaigns.show.activities.campaignInfo')];
 
     const campaignStatusTabs = [
         { label: t('campaigns.index.status.inProgress'), value: 'in progress' },
@@ -53,11 +50,7 @@ export default function CampaignShow() {
     ) => {
         e.stopPropagation();
         if (!campaignWithCompanyCreators) return null;
-        const {
-            campaign_creators: _filterOut,
-            companies: _filterOut2,
-            ...campaign
-        } = campaignWithCompanyCreators;
+        const { campaign_creators: _filterOut, companies: _filterOut2, ...campaign } = campaignWithCompanyCreators;
         const status = e.target.value;
         await updateCampaign({ ...campaign, status });
         refreshCampaigns();
@@ -68,19 +61,15 @@ export default function CampaignShow() {
             const getFilePath = (filename: string) => {
                 const {
                     data: { publicUrl },
-                } = supabase.storage
-                    .from('images')
-                    .getPublicUrl(`campaigns/${currentCampaign?.id}/${filename}`);
+                } = supabase.storage.from('images').getPublicUrl(`campaigns/${currentCampaign?.id}/${filename}`);
                 return publicUrl;
             };
 
-            const { data } = await supabase.storage
-                .from('images')
-                .list(`campaigns/${currentCampaign?.id}`, {
-                    limit: 100,
-                    offset: 0,
-                    sortBy: { column: 'name', order: 'asc' },
-                });
+            const { data } = await supabase.storage.from('images').list(`campaigns/${currentCampaign?.id}`, {
+                limit: 100,
+                offset: 0,
+                sortBy: { column: 'name', order: 'asc' },
+            });
 
             const mediaFormatted = data?.map((file) => ({
                 url: `${getFilePath(file.name)}`,
@@ -133,21 +122,22 @@ export default function CampaignShow() {
                                     {t('campaigns.show.campaignLaunch')}
                                 </div>
                                 <div className="text-sm text-tertiary-600">
-                                    {currentCampaign?.date_start_campaign &&
-                                    currentCampaign?.date_end_campaign
-                                        ? `${new Date(
-                                              currentCampaign.date_start_campaign,
-                                          ).toLocaleDateString(i18n.language, {
-                                              year: 'numeric',
-                                              month: 'short',
-                                              day: 'numeric',
-                                          })} - ${new Date(
-                                              currentCampaign.date_end_campaign,
-                                          ).toLocaleDateString(i18n.language, {
-                                              year: 'numeric',
-                                              month: 'short',
-                                              day: 'numeric',
-                                          })}`
+                                    {currentCampaign?.date_start_campaign && currentCampaign?.date_end_campaign
+                                        ? `${new Date(currentCampaign.date_start_campaign).toLocaleDateString(
+                                              i18n.language,
+                                              {
+                                                  year: 'numeric',
+                                                  month: 'short',
+                                                  day: 'numeric',
+                                              },
+                                          )} - ${new Date(currentCampaign.date_end_campaign).toLocaleDateString(
+                                              i18n.language,
+                                              {
+                                                  year: 'numeric',
+                                                  month: 'short',
+                                                  day: 'numeric',
+                                              },
+                                          )}`
                                         : '-'}
                                 </div>
                             </div>
@@ -173,10 +163,7 @@ export default function CampaignShow() {
                 </div>
                 {currentCampaign?.id && (
                     <div className=" group absolute top-3 right-6 z-10 mr-2 flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg bg-gray-50 text-sm font-semibold text-gray-500 duration-300 hover:bg-gray-100">
-                        <Link
-                            href={`/campaigns/form/${encodeURIComponent(currentCampaign?.id)}`}
-                            legacyBehavior
-                        >
+                        <Link href={`/campaigns/form/${encodeURIComponent(currentCampaign?.id)}`} legacyBehavior>
                             <PencilSquareIcon
                                 name="edit"
                                 className="h-4 w-4 fill-current text-gray-300 duration-300 group-hover:text-primary-500"
@@ -228,9 +215,7 @@ export default function CampaignShow() {
                                         src={imgProxy(currentCreator.avatar_url)}
                                         alt=""
                                     />
-                                    <h3 className="text-sm font-medium">
-                                        {currentCreator?.fullname}
-                                    </h3>
+                                    <h3 className="text-sm font-medium">{currentCreator?.fullname}</h3>
                                 </div>
                             </Link>
                         </div>

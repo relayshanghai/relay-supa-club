@@ -33,9 +33,7 @@ export const MoveInfluencerModal = ({
         >
             {campaigns.length ? (
                 <>
-                    <div className="py-4 text-sm text-tertiary-800">
-                        {t('campaigns.modal.moveThisInfluencer')}
-                    </div>
+                    <div className="py-4 text-sm text-tertiary-800">{t('campaigns.modal.moveThisInfluencer')}</div>
                     <div>
                         {campaigns.map((campaign, index) => (
                             <MoveInfluencerModalCard
