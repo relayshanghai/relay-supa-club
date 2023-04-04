@@ -186,9 +186,9 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
         Sentry.setUser(null);
         const email = session?.user?.email;
         // cannot use router.push() here because it won't cancel in-flight requests which wil re-set the cookie
-        if (profile?.id) {
-            localStorage.set(appCacheKey(profile.id), '[]');
-        }
+
+        localStorage.set(appCacheKey, '[]');
+
         window.location.href = email ? `/logout?${new URLSearchParams({ email })}` : '/logout';
     };
 

@@ -1,10 +1,9 @@
-import { useUser } from '../hooks/use-user';
 import type { PropsWithChildren } from 'react';
 import { createContext } from 'react';
 import type { Cache } from 'swr';
 import { SWRConfig } from 'swr';
 
-export const appCacheKey = (userId: string) => 'app-cache-' + userId;
+export const appCacheKey = 'app-cache';
 
 /** see https://swr.vercel.app/docs/advanced/cache#examples
  * This is a custom cache provider that uses `localStorage` as the cache.
@@ -14,17 +13,17 @@ export const appCacheKey = (userId: string) => 'app-cache-' + userId;
       <App/>
     </SWRConfig>
  */
-export function localStorageProvider(userId: string) {
+export function localStorageProvider() {
     // check if `localStorage` is available
     if (typeof localStorage === 'undefined') return new Map() as Cache<any>;
 
     // When initializing, we restore the data from `localStorage` into a map.
-    const map = new Map(JSON.parse(localStorage.getItem(appCacheKey(userId)) || '[]'));
+    const map = new Map(JSON.parse(localStorage.getItem(appCacheKey) || '[]'));
 
     // Before unloading the app, we write back all the data into `localStorage`.
     window.addEventListener('beforeunload', () => {
         const appCache = JSON.stringify(Array.from(map.entries()));
-        localStorage.setItem(appCacheKey(userId), appCache);
+        localStorage.setItem(appCacheKey, appCache);
     });
 
     // We still use the map for write & read for performance.
@@ -34,8 +33,5 @@ export function localStorageProvider(userId: string) {
 export const localCacheContext = createContext<Cache<any>>(new Map());
 
 export const LocalCacheProvider = ({ children }: PropsWithChildren) => {
-    const { profile } = useUser();
-    const userId = profile?.id || '';
-
-    return <SWRConfig value={{ provider: () => localStorageProvider(userId) }}>{children}</SWRConfig>;
+    return <SWRConfig value={{ provider: localStorageProvider }}>{children}</SWRConfig>;
 };
