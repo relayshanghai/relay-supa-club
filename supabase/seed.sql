@@ -1,7 +1,7 @@
 BEGIN;
 
 -- seed helpers
-  CREATE OR REPLACE FUNCTION create_supabase_user(identifier text, email text default null, phone text default null)
+  CREATE OR REPLACE FUNCTION create_supabase_user(identifier text, email text default null)
   RETURNS uuid
   SECURITY DEFINER
   SET search_path = auth, pg_temp
@@ -12,8 +12,8 @@ BEGIN;
 
         -- create the user
         user_id := extensions.uuid_generate_v4();
-        INSERT INTO auth.users (id, email, phone, raw_user_meta_data)
-        VALUES (user_id, coalesce(email, concat(user_id, '@test.com')), phone, json_build_object('test_identifier', identifier))
+        INSERT INTO auth.users (id, email, raw_user_meta_data)
+        VALUES (user_id, coalesce(email, concat(user_id, '@test.com')), json_build_object('test_identifier', identifier))
         RETURNING id INTO user_id;
 
         RETURN user_id;
@@ -76,6 +76,6 @@ BEGIN;
 -- cleanup
   DROP FUNCTION IF EXISTS create_company(TEXT, TEXT);
   DROP FUNCTION IF EXISTS create_profile(TEXT,TEXT,TEXT,TEXT,UUID);
-  DROP FUNCTION IF EXISTS create_supabase_user(TEXT,TEXT,TEXT);
+  DROP FUNCTION IF EXISTS create_supabase_user(TEXT,TEXT);
 
 COMMIT;
