@@ -272,6 +272,46 @@ export interface Database {
           website?: string | null
         }
       }
+      influencer_categories: {
+        Row: {
+          category: string | null
+          created_at: string | null
+          id: string
+          influencer: string | null
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string | null
+          id?: string
+          influencer?: string | null
+        }
+        Update: {
+          category?: string | null
+          created_at?: string | null
+          id?: string
+          influencer?: string | null
+        }
+      }
+      influencers: {
+        Row: {
+          created_at: string | null
+          email: string | null
+          id: string
+          name: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          name?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          name?: string | null
+        }
+      }
       invites: {
         Row: {
           company_id: string
@@ -327,6 +367,50 @@ export interface Database {
           type?: string
         }
       }
+      posts_content: {
+        Row: {
+          campaign: string | null
+          comment_count: number | null
+          created_at: string | null
+          id: string
+          influencer: string | null
+          is_reusable: boolean | null
+          like_count: number | null
+          publish_date: string | null
+          social_media_platform: string | null
+          type: string | null
+          url: string | null
+          view_count: number | null
+        }
+        Insert: {
+          campaign?: string | null
+          comment_count?: number | null
+          created_at?: string | null
+          id?: string
+          influencer?: string | null
+          is_reusable?: boolean | null
+          like_count?: number | null
+          publish_date?: string | null
+          social_media_platform?: string | null
+          type?: string | null
+          url?: string | null
+          view_count?: number | null
+        }
+        Update: {
+          campaign?: string | null
+          comment_count?: number | null
+          created_at?: string | null
+          id?: string
+          influencer?: string | null
+          is_reusable?: boolean | null
+          like_count?: number | null
+          publish_date?: string | null
+          social_media_platform?: string | null
+          type?: string | null
+          url?: string | null
+          view_count?: number | null
+        }
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -363,6 +447,46 @@ export interface Database {
           phone?: string | null
           updated_at?: string | null
           user_role?: string | null
+        }
+      }
+      social_media_platforms: {
+        Row: {
+          created_at: string | null
+          id: string
+          name: string | null
+          url: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          name?: string | null
+          url?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          name?: string | null
+          url?: string | null
+        }
+      }
+      social_media_profiles: {
+        Row: {
+          created_at: string | null
+          id: string
+          platform: string | null
+          url: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          platform?: string | null
+          url?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          platform?: string | null
+          url?: string | null
         }
       }
       usages: {

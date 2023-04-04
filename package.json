@@ -21,7 +21,8 @@
     "test:watch": "jest --watch",
     "test:run-cypress-unit": "cypress run --component",
     "cypress": "npx cypress open",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "supabase": "npx supabase start"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.11",
