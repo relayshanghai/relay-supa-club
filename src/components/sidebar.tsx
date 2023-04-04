@@ -7,7 +7,7 @@ import { useUser } from 'src/hooks/use-user';
 import { Compass, FourSquare, Account, Team, PieChart } from './icons';
 import { Title } from './title';
 import { useTranslation } from 'react-i18next';
-import { FEAT_ROI } from 'src/constants/feature-flags';
+import { FEAT_PERFORMANCE } from 'src/constants/feature-flags';
 
 const ActiveLink = ({ href, children }: { href: string; children: React.ReactNode }) => {
     const router = useRouter();
@@ -46,7 +46,9 @@ const ActiveLink = ({ href, children }: { href: string; children: React.ReactNod
             {href === '/admin/clients' && (
                 <Team height={18} width={18} className="mr-4 text-inherit" />
             )}
-            {href === '/roi' && <PieChart height={18} width={18} className="mr-4 text-inherit" />}
+            {href === '/performance' && (
+                <PieChart height={18} width={18} className="mr-4 text-inherit" />
+            )}
             {children}
         </Link>
     );
@@ -76,7 +78,9 @@ const NavBarInner = ({
                     </span>
                 </ActiveLink>
                 {loggedIn && <ActiveLink href="/account">{t('navbar.account')}</ActiveLink>}
-                {FEAT_ROI && <ActiveLink href="/roi">{t('navbar.roi')}</ActiveLink>}
+                {FEAT_PERFORMANCE && (
+                    <ActiveLink href="/performance">{t('navbar.performance')}</ActiveLink>
+                )}
             </div>
             {isRelayEmployee && (
                 <div className="mt-8 flex flex-col space-y-4">
