@@ -25,6 +25,10 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 //
+
+// https://testing-library.com/docs/cypress-testing-library/intro/#examples
+import '@testing-library/cypress/add-commands';
+
 import i18n from '../../i18n';
 
 declare global {

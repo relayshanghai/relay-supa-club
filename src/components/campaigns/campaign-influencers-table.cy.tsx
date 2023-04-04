@@ -7,11 +7,7 @@ import type { CampaignCreatorAddCreatorPostBody } from '../../../pages/api/campa
 import type { CampaignCreatorsDeleteBody } from '../../../pages/api/campaigns/delete-creator';
 
 import CampaignInfluencersTable from './campaign-influencers-table';
-import type {
-    CampaignCreatorDB,
-    CampaignDB,
-    CampaignWithCompanyCreators,
-} from '../../utils/api/db';
+import type { CampaignCreatorDB, CampaignDB, CampaignWithCompanyCreators } from '../../utils/api/db';
 import { rest } from 'msw';
 import { APP_URL_CYPRESS, worker } from '../../mocks/browser';
 
@@ -166,17 +162,14 @@ describe('CampaignInfluencersTable', () => {
                 // add a bit of delay to get the loading spinner to show
                 return res(ctx.delay(500), ctx.json({ success: true }));
             }),
-            rest.delete(
-                `${APP_URL_CYPRESS}/api/campaigns/delete-creator`,
-                async (req, res, ctx) => {
-                    const body = (await req.json()) as CampaignCreatorsDeleteBody;
+            rest.delete(`${APP_URL_CYPRESS}/api/campaigns/delete-creator`, async (req, res, ctx) => {
+                const body = (await req.json()) as CampaignCreatorsDeleteBody;
 
-                    expect(body.campaignId).to.equal(campaign1.id);
-                    expect(body.id).to.equal(creator1.id);
+                expect(body.campaignId).to.equal(campaign1.id);
+                expect(body.id).to.equal(creator1.id);
 
-                    return res(ctx.delay(500), ctx.json({ success: true }));
-                },
-            ),
+                return res(ctx.delay(500), ctx.json({ success: true }));
+            }),
             // for the default msw handlers, we'll use more realistic data. For individual component tests we can pass in specific mocks with names like 'campaign1' instead of a real one. This makes the tests more readable and makes it easy to test different scenarios.
             rest.get(`${APP_URL_CYPRESS}/api/campaigns`, (req, res, ctx) => {
                 // we might want to investigate where in the children components this is being queried from, because this should just match the campaigns prop

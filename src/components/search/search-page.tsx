@@ -17,7 +17,7 @@ import { MaintenanceMessage } from '../maintenance-message';
 import { useCampaigns } from 'src/hooks/use-campaigns';
 import { InfluencerAlreadyAddedModal } from '../influencer-already-added';
 
-const Search = ({ companyId }: { companyId?: string }) => {
+export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
     const { t } = useTranslation();
     const { company_name } = useRouter().query;
     const { platform, resultsTotal, search, noResults } = useSearch();
@@ -32,6 +32,7 @@ const Search = ({ companyId }: { companyId?: string }) => {
 
     const [showAlreadyAddedModal, setShowAlreadyAddedModal] = useState(false);
     const [campaignsWithCreator, setCampaignsWithCreator] = useState<string[]>([]);
+    const [onlyRecommended, setOnlyRecommended] = useState(false);
 
     return (
         <div className="space-y-4">
@@ -40,7 +41,12 @@ const Search = ({ companyId }: { companyId?: string }) => {
             )}
             <SelectPlatform />
 
-            <SearchOptions setPage={setPage} setShowFiltersModal={setShowFiltersModal} />
+            <SearchOptions
+                setPage={setPage}
+                setShowFiltersModal={setShowFiltersModal}
+                onlyRecommended={onlyRecommended}
+                setOnlyRecommended={setOnlyRecommended}
+            />
 
             <div className="flex items-center">
                 <div className="text-sm font-bold">
@@ -54,6 +60,7 @@ const Search = ({ companyId }: { companyId?: string }) => {
                 setShowAlreadyAddedModal={setShowAlreadyAddedModal}
                 campaigns={campaigns}
                 setCampaignsWithCreator={setCampaignsWithCreator}
+                onlyRecommended={onlyRecommended}
             />
 
             {loadingMore && (
@@ -104,7 +111,7 @@ export const SearchPage = ({ companyId }: { companyId?: string }) => {
             ) : (
                 <div className="flex flex-col p-6">
                     <SearchProvider>
-                        <Search companyId={companyId} />
+                        <SearchPageInner companyId={companyId} />
                     </SearchProvider>
                 </div>
             )}

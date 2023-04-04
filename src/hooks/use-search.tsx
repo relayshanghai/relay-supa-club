@@ -5,12 +5,7 @@ import { usageErrors } from 'src/errors/usages';
 import { hasCustomError } from 'src/utils/errors';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
-import type {
-    CreatorPlatform,
-    LocationWeighted,
-    CreatorSearchTag,
-    CreatorSearchAccountObject,
-} from 'types';
+import type { CreatorPlatform, LocationWeighted, CreatorSearchTag, CreatorSearchAccountObject } from 'types';
 import { useUser } from './use-user';
 
 type NullStringTuple = [null | string, null | string];
@@ -160,10 +155,7 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
                 }
                 setLoading(false);
             } catch (error: any) {
-                if (
-                    typeof error?.message === 'string' &&
-                    error.message.toLowerCase().includes('abort')
-                ) {
+                if (typeof error?.message === 'string' && error.message.toLowerCase().includes('abort')) {
                     return;
                 }
                 clientLogger(error, 'error');

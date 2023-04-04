@@ -2,27 +2,18 @@ import { useCallback, useEffect, useState } from 'react';
 import { nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';
 import useSWR from 'swr';
 
-import type {
-    CampaignUpdatePostBody,
-    CampaignUpdatePostResponse,
-} from 'pages/api/campaigns/update';
+import type { CampaignUpdatePostBody, CampaignUpdatePostResponse } from 'pages/api/campaigns/update';
 
 import { useUser } from './use-user';
 import type { CampaignCreatorDB, CampaignDBUpdate } from 'src/utils/api/db/types';
 import type { CampaignWithCompanyCreators } from 'src/utils/api/db';
-import type {
-    CampaignsCreatePostBody,
-    CampaignsCreatePostResponse,
-} from 'pages/api/campaigns/create';
+import type { CampaignsCreatePostBody, CampaignsCreatePostResponse } from 'pages/api/campaigns/create';
 import type {
     CampaignCreatorAddCreatorPostBody,
     CampaignCreatorAddCreatorPostResponse,
 } from 'pages/api/campaigns/add-creator';
 import type { CampaignsIndexGetQuery, CampaignsIndexGetResult } from 'pages/api/campaigns';
-import type {
-    CampaignCreatorsDeleteBody,
-    CampaignCreatorsDeleteResponse,
-} from 'pages/api/campaigns/delete-creator';
+import type { CampaignCreatorsDeleteBody, CampaignCreatorsDeleteResponse } from 'pages/api/campaigns/delete-creator';
 import { clientLogger } from 'src/utils/logger-client';
 
 //The transform function is not used now, as the image proxy issue is handled directly where calls for the image.But this is left for future refactor. TODO:Ticket V2-181
@@ -62,9 +53,10 @@ export const useCampaigns = ({
     );
     const [loading, setLoading] = useState(false);
     const [campaign, setCampaign] = useState<CampaignWithCompanyCreators | null>(null);
-    const [campaignCreators, setCampaignCreators] = useState<
-        CampaignWithCompanyCreators['campaign_creators'] | null
-    >([]);
+    const [campaignCreators, setCampaignCreators] = useState<CampaignWithCompanyCreators['campaign_creators'] | null>(
+        [],
+    );
+
     useEffect(() => {
         if (campaigns && campaigns?.length > 0 && campaignId) {
             const campaign = campaigns?.find((c) => c.id === campaignId);

@@ -18,11 +18,10 @@ export const Badge = ({
 }: BadgeProps) => {
     const px = size === 'small' ? 1 : size === 'medium' ? 3 : 4;
     const py = size === 'small' ? 0 : size === 'medium' ? 1 : 2;
-    const fontSize =
-        size === 'small' ? '[font-size:0.625rem]' : size === 'medium' ? 'text-sm' : 'text-sm';
+    const fontSize = size === 'small' ? '[font-size:0.625rem]' : size === 'medium' ? 'text-sm' : 'text-sm';
     return (
         <span
-            className={`inline-flex items-center gap-1.5 self-center rounded-md bg-primary-500 py-${py} px-${px} ${fontSize} font-medium text-white ${className}`}
+            className={`inline-flex items-center gap-1.5 self-center whitespace-nowrap rounded-md bg-primary-500 py-${py} px-${px} ${fontSize} font-medium text-white ${className}`}
             {...props}
         >
             {children}
