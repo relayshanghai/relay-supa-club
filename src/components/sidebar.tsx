@@ -27,27 +27,29 @@ const ActiveLink = ({ href, children }: { href: string; children: React.ReactNod
     return (
         <Link
             href={href}
-            className={`flex items-center border-l-4 py-2 px-4 text-sm transition hover:text-primary-700 ${
-                isRouteActive ? 'border-l-4 border-primary-500 text-primary-500' : ''
+            className={`flex items-center border-l-4 stroke-gray-800 py-2 px-4 text-sm transition hover:stroke-primary-700 hover:text-primary-700 ${
+                isRouteActive
+                    ? 'border-l-4 border-primary-500 stroke-primary-500 text-primary-500'
+                    : ''
             }`}
         >
             {(hrefRoot === 'influencer' || hrefRoot === 'dashboard') && (
                 <Compass height={18} width={18} className="mr-4 text-inherit" />
             )}
             {hrefRoot === 'campaigns' && (
-                <FourSquare height={18} width={18} className="mr-4 text-inherit" />
+                <FourSquare height={18} width={18} className="mr-4 stroke-inherit" />
             )}
             {hrefRoot === 'ai-email-generator' && (
-                <EmailOutline height={18} width={18} className="mr-4 text-inherit" />
+                <EmailOutline height={18} width={18} className="mr-4 stroke-inherit" />
             )}
             {hrefRoot === 'account' && (
-                <Account height={18} width={18} className="mr-4 text-inherit" />
+                <Account height={18} width={18} className="mr-4 stroke-inherit" />
             )}
             {href === '/admin/clients' && (
-                <Team height={18} width={18} className="mr-4 text-inherit" />
+                <Team height={18} width={18} className="mr-4 stroke-inherit" />
             )}
             {href === '/performance' && (
-                <PieChart height={18} width={18} className="mr-4 text-inherit" />
+                <PieChart height={18} width={18} className="mr-4 stroke-inherit" />
             )}
             {children}
         </Link>
