@@ -147,8 +147,7 @@ const creators = {
             avgViews: '最近 30 个视频的平均观看量总数。',
             avgComments: '最近 30 个视频的平均评论总数',
             avgLikes: '最近 30 个视频的平均点赞数',
-            influencerLocation:
-                '我们通过分析最近视频中的位置标签、语言、标题和KOL 的简介内容来确定 KOL 位置。',
+            influencerLocation: '我们通过分析最近视频中的位置标签、语言、标题和KOL 的简介内容来确定 KOL 位置。',
             engRate: '平均点赞量除以粉丝量',
             lookAlikes: '写类似话题的KOL。',
             genderSplit: '我们通过分析最近视频中的观众头像、姓名、描述和自拍照来确定这一点',

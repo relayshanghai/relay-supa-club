@@ -101,19 +101,12 @@ export default function CampaignInfluencersTable({
         toast.success(t('campaigns.creatorModal.influencerUpdated'));
     };
 
-    const setInlineEdit = (
-        e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
-        index: number,
-        key: string,
-    ) => {
+    const setInlineEdit = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, index: number, key: string) => {
         e.stopPropagation();
         setToEdit({ index, key });
     };
 
-    const openNotes = (
-        e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
-        creator: CampaignCreatorDB,
-    ) => {
+    const openNotes = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, creator: CampaignCreatorDB) => {
         e.stopPropagation();
         setCurrentCreator(creator);
         setShowNotesModal(true);
@@ -152,8 +145,7 @@ export default function CampaignInfluencersTable({
         return currentCampaign?.campaign_creators.filter((c) => c.status === status).length;
     };
 
-    const editingModeTrue = (index: number, key: string) =>
-        index === toEdit?.index && key === toEdit?.key;
+    const editingModeTrue = (index: number, key: string) => index === toEdit?.index && key === toEdit?.key;
 
     const tabs = [
         { label: 'toContact', value: 'to contact' },
@@ -202,8 +194,7 @@ export default function CampaignInfluencersTable({
                             value={tab.value}
                             selected={tabStatus === tab.value}
                             className={`mr-4 flex-shrink-0 cursor-pointer rounded-lg bg-gray-100 px-4 py-2 text-xs font-semibold text-gray-400 duration-300 hover:bg-primary-500 hover:bg-opacity-20 hover:text-primary-500 ${
-                                tabStatus === tab.value &&
-                                'bg-primary-500 bg-opacity-20 text-purple-500'
+                                tabStatus === tab.value && 'bg-primary-500 bg-opacity-20 text-purple-500'
                             }`}
                         >
                             {t(`campaigns.show.activities.outreach.${tab.label}`)}{' '}

@@ -47,10 +47,8 @@ const account = {
         viewBillingPortal: 'View billing portal',
         freeTrial: 'Free trial',
         canceled: 'Canceled',
-        youHaveNoActiveSubscriptionPleasePurchaseBelow:
-            'You have no active subscription. Please purchase one below.',
-        beforePurchasingYouNeedPaymentMethod:
-            'Before purchasing a subscription, you need to add a payment method.',
+        youHaveNoActiveSubscriptionPleasePurchaseBelow: 'You have no active subscription. Please purchase one below.',
+        beforePurchasingYouNeedPaymentMethod: 'Before purchasing a subscription, you need to add a payment method.',
         addPaymentMethod: 'Add payment method',
         availablePlans: 'Available plans',
         planName: 'Name',
@@ -67,8 +65,7 @@ const account = {
             subscriptionPurchased: 'Subscription purchased',
             wentWrong: 'Oops, something went wrong',
             subscribe: 'Subscribe',
-            noteClickingSubscribeWillCharge:
-                'Note that clicking `Subscribe` will charge the default payment method.',
+            noteClickingSubscribeWillCharge: 'Note that clicking `Subscribe` will charge the default payment method.',
             close: 'Close',
             backToAccount: 'Back to account',
             perMonth: '/month',
@@ -94,8 +91,7 @@ const account = {
     cancel: 'Cancel',
     cancelModal: {
         title: 'Cancel subscription',
-        areYouSureYouWantToCancelYourSubscription:
-            'Are you sure you want to cancel your subscription?',
+        areYouSureYouWantToCancelYourSubscription: 'Are you sure you want to cancel your subscription?',
         youWillLoseAccessToAllData:
             'You will lose access to all your projects and data once the current billing period expires.',
         cancelSubscription: 'Cancel subscription',

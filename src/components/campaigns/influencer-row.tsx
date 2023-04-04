@@ -35,11 +35,7 @@ interface InfluencerRowProps {
         creator: CampaignCreatorDB,
         objKey: string,
     ) => Promise<void>;
-    setInlineEdit: (
-        e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
-        index: number,
-        key: string,
-    ) => void;
+    setInlineEdit: (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, index: number, key: string) => void;
     editingModeTrue: (index: number, key: string) => boolean;
     inputRef: RefObject<HTMLInputElement>;
     updateCampaignCreator: (creator: CampaignCreatorDB) => void;
@@ -79,11 +75,7 @@ const InfluencerRow = ({
             <td className="sticky left-0 z-30 w-[200px] whitespace-nowrap bg-white px-6 py-4 group-hover:bg-primary-50">
                 <div className="flex items-center">
                     <div className="relative h-10 w-10 flex-shrink-0 rounded-full bg-gray-300">
-                        <img
-                            className="h-10 w-10 rounded-full"
-                            src={imgProxy(creator.avatar_url)}
-                            alt=""
-                        />
+                        <img className="h-10 w-10 rounded-full" src={imgProxy(creator.avatar_url)} alt="" />
                         <div className="absolute right-0 bottom-0 ">
                             <SocialMediaIcon
                                 platform={creator.platform as SocialMediaPlatform}
@@ -95,16 +87,11 @@ const InfluencerRow = ({
                     </div>
                     <div className="ml-4">
                         <div className="truncate text-xs font-medium text-gray-900">
-                            <Link
-                                href={`/influencer/${creator.platform}/${creator.creator_id}`}
-                                target="_blank"
-                            >
+                            <Link href={`/influencer/${creator.platform}/${creator.creator_id}`} target="_blank">
                                 {creator.fullname}
                             </Link>
                         </div>
-                        <div className="inline-block truncate text-xs text-primary-500">
-                            @{handle}
-                        </div>
+                        <div className="inline-block truncate text-xs text-primary-500">@{handle}</div>
                     </div>
                 </div>
             </td>
@@ -175,9 +162,7 @@ const InfluencerRow = ({
                     className="relative cursor-pointer text-xs text-gray-900 duration-300 hover:text-primary-500"
                     onClick={(e) => setInlineEdit(e, index, 'publication_date')}
                 >
-                    <div
-                        className={`${editingModeTrue(index, 'publication_date') ? 'hidden' : ''}`}
-                    >
+                    <div className={`${editingModeTrue(index, 'publication_date') ? 'hidden' : ''}`}>
                         {dateFormat(creator?.publication_date, 'mediumDate', true, true) || (
                             <div className="cursor-pointer text-primary-500 duration-300 hover:text-primary-700">
                                 {t('campaigns.show.selectDate')}
@@ -187,9 +172,7 @@ const InfluencerRow = ({
 
                     {editingModeTrue(index, 'publication_date') && (
                         <TableInput
-                            value={
-                                dateFormat(creator.publication_date, 'isoDate', true, true) || ''
-                            }
+                            value={dateFormat(creator.publication_date, 'isoDate', true, true) || ''}
                             type="date"
                             creator={creator}
                             objKey="publication_date"
@@ -225,8 +208,7 @@ const InfluencerRow = ({
                     className="relative cursor-pointer pr-2 text-left text-xs text-gray-900 duration-300 hover:text-primary-500"
                     onClick={(e) => setInlineEdit(e, index, 'paid_amount_cents')}
                 >
-                    {creator.paid_amount_cents?.toLocaleString() || '-'}{' '}
-                    {creator.paid_amount_currency}
+                    {creator.paid_amount_cents?.toLocaleString() || '-'} {creator.paid_amount_currency}
                     {editingModeTrue(index, 'paid_amount_cents') && (
                         <TableInput
                             value={creator.paid_amount_cents?.toLocaleString()}
@@ -246,9 +228,7 @@ const InfluencerRow = ({
                     className="relative cursor-pointer text-xs text-gray-900 duration-300 hover:text-primary-500"
                     onClick={(e) => setInlineEdit(e, index, 'payment_details')}
                 >
-                    <div
-                        className={`${editingModeTrue(index, 'payment_details') ? 'hidden' : ' '}`}
-                    >
+                    <div className={`${editingModeTrue(index, 'payment_details') ? 'hidden' : ' '}`}>
                         {creator.payment_details || (
                             <div className="cursor-pointer text-primary-500 duration-300 hover:text-primary-700">
                                 {t('campaigns.show.addPaymentInfo')}
