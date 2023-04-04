@@ -38,7 +38,10 @@ export const InputWithTags = ({
                                       onClick={() => onTagRemove(item)}
                                   >
                                       {item.value || item.title}
-                                      <span className="ml-2 cursor-pointer whitespace-nowrap text-gray-400">
+                                      <span
+                                          className="ml-2 cursor-pointer whitespace-nowrap text-gray-400"
+                                          id={`remove-tag-${item.value}`}
+                                      >
                                           x
                                       </span>
                                   </p>
