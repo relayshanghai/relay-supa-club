@@ -45,3 +45,5 @@ export { default as ChatBubbleTextOutline } from './ChatBubbleTextOutline';
 export { default as EyeOutline } from './EyeOutline';
 export { default as ThumbUpOutline } from './ThumbUpOutline';
 export { default as EmailOutline } from './EmailOutline';
+export { default as ArrowRight } from './ArrowRight';
+export { default as BoxFilled } from './BoxFilled';

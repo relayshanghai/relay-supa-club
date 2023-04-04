@@ -1,14 +1,18 @@
-import { useTranslation } from 'react-i18next';
+// import { useTranslation } from 'react-i18next';
 import { Layout } from 'src/components/layout';
+import { ArrowRight, BoxFilled, ThumbUpOutline } from '../icons';
+import { EyeOutline } from '../icons';
+import { ChatBubbleTextOutline } from '../icons';
 
 const PerformancePage = () => {
-    const { t } = useTranslation();
+    // const { t } = useTranslation();
 
-    const statCardStyle = 'bg-white p-6 shadow hover:shadow-md rounded-lg';
+    const statCardStyle =
+        'flex flex-col bg-white p-6 space-y-6 shadow hover:shadow-md rounded-lg hover:text-primary-500 hover:stroke-primary-500 transition duration-500 ease-in-out hover:cursor-default';
 
     return (
         <Layout>
-            <div className="max-3xl inline-flex h-full w-full flex-col items-center justify-center bg-gray-50">
+            <div className="m-auto flex h-full max-w-3xl flex-col items-center justify-center bg-gray-50">
                 <div className="flex flex-col items-start justify-start space-y-9 text-gray-700">
                     <div className="flex flex-col items-start justify-start space-y-2">
                         <h2 className="text-2xl tracking-wide ">Performance</h2>
@@ -23,11 +27,46 @@ const PerformancePage = () => {
                         </div>
                     </div>
                     <div className="md:grid-row-2 flex flex-col gap-4 md:grid md:grid-cols-4 ">
-                        <div className={`${statCardStyle} row-span-2 `}>Posts</div>
-                        <div className={`${statCardStyle} col-span-3 `}>Sales</div>
-                        <div className={statCardStyle}>Views</div>
-                        <div className={statCardStyle}>Views</div>
-                        <div className={statCardStyle}>Views</div>
+                        <div
+                            className={`${statCardStyle} row-span-2 flex flex-col justify-between text-center`}
+                        >
+                            <div className="flex flex-col space-y-6">
+                                <h4 className="text-base">Posts</h4>
+                                <h1 className="text-5xl font-semibold">43</h1>
+                            </div>
+                            {/* To enable to click and redirect to all posts page in next iteration */}
+                            <div className="flex h-28 w-full items-start justify-center rounded-xl bg-gradient-to-r from-primary-400 via-primary-200 to-primary-200 hover:cursor-pointer">
+                                <div className="flex items-center">
+                                    <ArrowRight className="stroke-white" />
+                                    <BoxFilled className="" />
+                                </div>
+                            </div>
+                        </div>
+                        <div className={`${statCardStyle} col-span-3 `}>
+                            <h4 className="text-base">Sales</h4>
+                            <h1 className="text-5xl font-semibold">$57,893</h1>
+                        </div>
+                        <div className={statCardStyle}>
+                            <ThumbUpOutline className=" stroke-gray-700" />
+                            <div>
+                                <h4 className="text-base">Likes</h4>
+                                <h1 className="text-2xl font-semibold">136,921</h1>
+                            </div>
+                        </div>
+                        <div className={statCardStyle}>
+                            <ChatBubbleTextOutline className=" stroke-gray-700" />
+                            <div>
+                                <h4 className="text-base">Comments</h4>
+                                <h1 className="text-2xl font-semibold">50,689</h1>
+                            </div>
+                        </div>
+                        <div className={statCardStyle}>
+                            <EyeOutline className=" stroke-gray-700" />
+                            <div>
+                                <h4 className="text-base">Views</h4>
+                                <h1 className="text-2xl font-semibold">1,350,689</h1>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
