@@ -10,7 +10,6 @@ import { SessionContextProvider } from '@supabase/auth-helpers-react';
 import { useEffect, useState } from 'react';
 import { CompanyProvider } from 'src/hooks/use-company';
 import useRudderstack from 'src/hooks/use-rudderstack';
-import { ReportsProvider } from 'src/hooks/use-report';
 
 function MyApp({
     Component,
@@ -68,9 +67,7 @@ function MyApp({
             >
                 <UserProvider>
                     <CompanyProvider>
-                        <ReportsProvider>
-                            <Component {...pageProps} />
-                        </ReportsProvider>
+                        <Component {...pageProps} />
                     </CompanyProvider>
                 </UserProvider>
             </SessionContextProvider>

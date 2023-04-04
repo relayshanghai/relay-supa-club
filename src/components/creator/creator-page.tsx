@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { CreatorPlatform } from 'types';
 import { TitleSection } from './creator-title-section';
 import { CreatorOverview } from './creator-page-overview';
@@ -7,13 +7,13 @@ import { MetricsSection } from './creator-metrics-section';
 import { PopularPostsSection } from './creator-popular-posts';
 import CreatorSkeleton from './creator-skeleton';
 
+import { useReport } from 'src/hooks/use-report';
 import { AddToCampaignModal } from '../modal-add-to-campaign';
 import { useTranslation } from 'react-i18next';
 import { IQDATA_MAINTENANCE, RELAY_DOMAIN } from 'src/constants';
 import { MaintenanceMessage } from '../maintenance-message';
 import { useCampaigns } from 'src/hooks/use-campaigns';
 import { useCompany } from 'src/hooks/use-company';
-import { reportsContext } from 'src/hooks/use-report';
 
 export const CreatorPage = ({
     creator_id,
@@ -22,17 +22,13 @@ export const CreatorPage = ({
     creator_id: string;
     platform: CreatorPlatform;
 }) => {
-    const { useReport } = useContext(reportsContext);
-    const { loading, report, getOrCreateReport, reportCreatedAt, errorMessage } = useReport({
-        platform,
-        creator_id,
-    });
+    const { loading, report, getOrCreateReport, reportCreatedAt, errorMessage } = useReport();
 
     const [showCampaignListModal, setShowCampaignListModal] = useState(false);
     const { t } = useTranslation();
 
     useEffect(() => {
-        getOrCreateReport();
+        getOrCreateReport(platform, creator_id);
     }, [getOrCreateReport, platform, creator_id]);
 
     const onAddToCampaign = () => {
