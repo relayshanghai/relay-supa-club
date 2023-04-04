@@ -3,6 +3,7 @@ import { Layout } from 'src/components/layout';
 import { ArrowRight, BoxFilled, ThumbUpOutline } from '../icons';
 import { EyeOutline } from '../icons';
 import { ChatBubbleTextOutline } from '../icons';
+import SalesBarChart from './sales-bar-chart';
 
 const PerformancePage = () => {
     // const { t } = useTranslation();
@@ -42,9 +43,15 @@ const PerformancePage = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className={`${statCardStyle} col-span-3 `}>
-                            <h4 className="text-base">Sales</h4>
-                            <h1 className="text-5xl font-semibold">$57,893</h1>
+                        <div className="hover:text -primary-500 col-span-3 flex space-y-6 rounded-lg bg-white p-6 shadow transition duration-500 ease-in-out hover:cursor-default hover:stroke-primary-500 hover:shadow-md ">
+                            <div className="flex w-1/2 flex-col space-y-6">
+                                <h4 className="text-base">Sales</h4>
+                                <h1 className="text-5xl font-semibold">$57,893</h1>
+                            </div>
+
+                            <div className="w-1/2">
+                                <SalesBarChart />
+                            </div>
                         </div>
                         <div className={statCardStyle}>
                             <ThumbUpOutline className=" stroke-gray-700" />
