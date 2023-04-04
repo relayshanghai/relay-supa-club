@@ -48,7 +48,7 @@ const InputWithAutocomplete = forwardRef<HTMLDivElement, Props>(
                         if (e.key === 'Enter') {
                             if (value === '') return;
 
-                            onAddTag({ value });
+                            onAddTag({ tag: value, value: value });
                             setValue('');
                         } else if (e.key === 'Backspace' && !value) {
                             e.preventDefault();
