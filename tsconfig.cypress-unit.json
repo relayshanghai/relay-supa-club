@@ -4,5 +4,5 @@
         "types": ["cypress", "node"]
     },
     "include": ["node_modules/cypress", "**/*.cy.*"],
-    "exclude": ["node_modules", "cypress"]
+    "exclude": ["node_modules", "cypress", "@testing-library/cypress"]
 }
