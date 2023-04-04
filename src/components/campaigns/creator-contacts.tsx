@@ -1,5 +1,4 @@
-import { useEffect } from 'react';
-import { useReport } from 'src/hooks/use-report';
+import { useContext, useEffect } from 'react';
 import type { CampaignCreatorDB } from 'src/utils/api/db';
 import type { CreatorReportContact } from 'types';
 import { SocialMediaIcon } from '../common/social-media-icon';
@@ -8,6 +7,7 @@ import ContactsSkeleton from './creator-contacts-skeleton';
 import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
 import { Button } from '../button';
+import { reportsContext } from 'src/hooks/use-report';
 
 const getHref = (contact: CreatorReportContact) => ({
     target: '_blank',
@@ -21,12 +21,17 @@ const getHref = (contact: CreatorReportContact) => ({
 });
 
 export const CreatorContacts = (creator: CampaignCreatorDB) => {
-    const { getOrCreateReport, report, loading, usageExceeded, gettingReport } = useReport();
+    const { useReport } = useContext(reportsContext);
+    const { loading, report, getOrCreateReport, usageExceeded, gettingReport } = useReport({
+        platform: creator.platform,
+        creator_id: creator.creator_id,
+    });
+
     const { t } = useTranslation();
 
     useEffect(() => {
         if (creator && !report && !usageExceeded && !gettingReport) {
-            getOrCreateReport(creator.platform, creator.creator_id);
+            getOrCreateReport();
         }
     }, [creator, report, usageExceeded, gettingReport, getOrCreateReport]);
 
