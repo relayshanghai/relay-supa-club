@@ -37,9 +37,7 @@ function DatePicker({ fieldName, label, control, errors, isRequired }: Props) {
                     </div>
                 )}
             />
-            <p className="text-xs text-primary-400">
-                {errors[fieldName] && errors[fieldName]?.message?.toString()}
-            </p>
+            <p className="text-xs text-primary-400">{errors[fieldName] && errors[fieldName]?.message?.toString()}</p>
         </div>
     );
 }

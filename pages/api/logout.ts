@@ -23,10 +23,7 @@ const handler: NextApiHandler = async (req, res) => {
     const cookieExpiry = new Date();
 
     // The cookie should already be deleted by the browser, but just in case, we'll delete it here as well.
-    res.setHeader(
-        'Set-Cookie',
-        `supabase-auth-token=deleted; Max-Age=0; Expires=${cookieExpiry.toUTCString()};`,
-    );
+    res.setHeader('Set-Cookie', `supabase-auth-token=deleted; Max-Age=0; Expires=${cookieExpiry.toUTCString()};`);
     return res.status(200).json({ success: true });
 };
 

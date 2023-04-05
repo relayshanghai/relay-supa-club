@@ -119,10 +119,7 @@ export default function Register() {
                 </div>
                 <p className="text-md inline pb-4 text-gray-500">
                     {t('login.alreadyHaveAnAccount')}
-                    <Link
-                        href="/login"
-                        className="inline cursor-pointer text-primary-700 hover:text-primary-600"
-                    >
+                    <Link href="/login" className="inline cursor-pointer text-primary-700 hover:text-primary-600">
                         <Button variant="secondary" className="ml-2 px-1 pt-1 pb-1 text-xs">
                             {t('login.logIn')}
                         </Button>

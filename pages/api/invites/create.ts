@@ -39,24 +39,18 @@ const handler: NextApiHandler = async (req, res) => {
 
     const { email, company_id, name, companyOwner } = req.body as CompanyCreateInvitePostBody;
     if (!email || !company_id)
-        return res
-            .status(httpCodes.BAD_REQUEST)
-            .json({ error: createInviteErrors.missingRequiredFields });
+        return res.status(httpCodes.BAD_REQUEST).json({ error: createInviteErrors.missingRequiredFields });
 
     if (!emailRegex.test(email))
         return res.status(httpCodes.BAD_REQUEST).json({ error: createInviteErrors.invalidEmail });
 
     if (!(await isCompanyOwnerOrRelayEmployee(req, res))) {
-        return res
-            .status(httpCodes.UNAUTHORIZED)
-            .json({ error: 'This action is limited to company admins' });
+        return res.status(httpCodes.UNAUTHORIZED).json({ error: 'This action is limited to company admins' });
     }
     try {
         const { data: existingAccount } = await getProfileByEmail(email);
         if (existingAccount) {
-            return res
-                .status(httpCodes.BAD_REQUEST)
-                .json({ error: createInviteErrors.userAlreadyExists });
+            return res.status(httpCodes.BAD_REQUEST).json({ error: createInviteErrors.userAlreadyExists });
         }
     } catch (error) {
         serverLogger(error, 'error');
@@ -68,9 +62,7 @@ const handler: NextApiHandler = async (req, res) => {
         existingInvite.used === false &&
         Date.now() < new Date(existingInvite.expire_at).getTime()
     )
-        return res
-            .status(httpCodes.BAD_REQUEST)
-            .json({ error: createInviteErrors.inviteExistsAndHasNotExpired });
+        return res.status(httpCodes.BAD_REQUEST).json({ error: createInviteErrors.inviteExistsAndHasNotExpired });
 
     const insertData = await insertInvite({ email, company_id, company_owner: companyOwner });
 

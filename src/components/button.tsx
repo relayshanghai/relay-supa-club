@@ -22,9 +22,7 @@ export const Button = ({ children, variant, className, ...rest }: ButtonProps) =
             className={
                 variant === 'neutral'
                     ? `${neutralClasses} ${className}`
-                    : `${defaultClasses} ${
-                          variant === 'secondary' ? secondaryClasses : primaryClasses
-                      } ${className}`
+                    : `${defaultClasses} ${variant === 'secondary' ? secondaryClasses : primaryClasses} ${className}`
             }
             {...rest}
         >

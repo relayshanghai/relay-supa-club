@@ -24,11 +24,7 @@ export const generateSubjectPrompt = ({
         throw new Error(subjectErrors.missingRequiredFields);
     }
 
-    if (
-        brandName.length > 100 ||
-        productName.length > 100 ||
-        productDescription.length > MAX_CHARACTER_LENGTH
-    ) {
+    if (brandName.length > 100 || productName.length > 100 || productDescription.length > MAX_CHARACTER_LENGTH) {
         throw new Error(subjectErrors.wrongCharacterLength);
     }
 

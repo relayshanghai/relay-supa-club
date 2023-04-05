@@ -63,9 +63,7 @@ function MultiSelect({
                     />
                 )}
             />
-            <p className="text-xs text-primary-400">
-                {errors && errors[fieldName]?.message?.toString()}
-            </p>
+            <p className="text-xs text-primary-400">{errors && errors[fieldName]?.message?.toString()}</p>
         </div>
     );
 }
@@ -105,9 +103,7 @@ const SingleSelect = ({
                     />
                 )}
             />
-            <p className="text-xs text-primary-400">
-                {errors && errors[fieldName]?.message?.toString()}
-            </p>
+            <p className="text-xs text-primary-400">{errors && errors[fieldName]?.message?.toString()}</p>
         </div>
     );
 };

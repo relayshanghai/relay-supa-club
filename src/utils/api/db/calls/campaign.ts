@@ -54,12 +54,7 @@ export const insertCampaignCreator = async (data: CampaignCreatorDBInsert) =>
         .single();
 
 export const updateCampaignCreator = async (data: CampaignCreatorDBUpdate, campaign_id: string) =>
-    await supabase
-        .from('campaign_creators')
-        .update(data)
-        .eq('id', data.id)
-        .eq('campaign_id', campaign_id)
-        .single();
+    await supabase.from('campaign_creators').update(data).eq('id', data.id).eq('campaign_id', campaign_id).single();
 
 export const getCampaignNotes = async (campaignCreatorId: string) => {
     const { data, error } = await supabase
