@@ -1,4 +1,5 @@
 import type { CreatorPlatform, CreatorAccount, LocationWeighted } from 'types';
+import type { InfluencerSearchRequestBody } from 'types/iqdata/influencer-search-request-body';
 type NullStringTuple = [null | string, null | string];
 
 export interface FetchCreatorsFilteredParams {
@@ -37,13 +38,16 @@ export const prepareFetchCreatorsFiltered = ({
     engagement,
     lastPost,
     contactInfo,
-}: FetchCreatorsFilteredParams) => {
+}: FetchCreatorsFilteredParams): {
+    platform: CreatorPlatform;
+    body: InfluencerSearchRequestBody;
+} => {
     const tagsValue = tags.map((tag: { tag: string }) => `#${tag.tag}`);
     const lookalikeValue = lookalike.map((account: CreatorAccount) => `@${account.user_id}`);
-    const body = {
+    const body: InfluencerSearchRequestBody = {
         paging: {
             limit: resultsPerPageLimit,
-            skip: page ? page * resultsPerPageLimit : null,
+            skip: page ? page * resultsPerPageLimit : undefined,
         },
         filter: {
             audience_geo: audienceLocation.map(locationTransform) || [],
@@ -59,6 +63,7 @@ export const prepareFetchCreatorsFiltered = ({
                 left_number: audience ? audience[0] ?? '' : '',
                 right_number: audience ? audience[1] ?? '' : '',
             },
+            username: { value: 'GRTR' },
             relevance: {
                 value: [...tagsValue, ...lookalikeValue].join(' '),
                 weight: 0.5,
@@ -77,7 +82,7 @@ export const prepareFetchCreatorsFiltered = ({
                       },
                   }
                 : {}),
-        },
+        } as any,
         sort: { field: 'followers', direction: 'desc' },
         audience_source: 'any',
     };

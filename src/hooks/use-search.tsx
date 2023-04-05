@@ -14,8 +14,6 @@ export interface ISearchContext {
     loading: boolean;
     tags: CreatorSearchTag[];
     setTopicTags: (tags: CreatorSearchTag[]) => void;
-    lookalike: any;
-    setLookalike: (lookalike: any) => void;
     influencerLocation: LocationWeighted[];
     setInfluencerLocation: (location: LocationWeighted[]) => void;
     views: NullStringTuple;
@@ -49,8 +47,6 @@ export const SearchContext = createContext<ISearchContext>({
     loading: false,
     tags: [],
     setTopicTags: () => null,
-    lookalike: null,
-    setLookalike: () => null,
     influencerLocation: [],
     setInfluencerLocation: () => null,
     views: [null, null],
@@ -87,7 +83,6 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
     const [loading, setLoading] = useState(false);
 
     const [tags, setTopicTags] = useState<CreatorSearchTag[]>([]);
-    const [lookalike, setLookalike] = useState<any>();
     const [influencerLocation, setInfluencerLocation] = useState<LocationWeighted[]>([]);
     const [views, setViews] = useState<NullStringTuple>([null, null]);
     const [audience, setAudience] = useState<NullStringTuple>([null, null]);
@@ -122,7 +117,6 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
                 const body: InfluencerPostRequest = {
                     tags,
                     platform,
-                    lookalike,
                     influencerLocation,
                     audienceLocation,
                     resultsPerPageLimit,
@@ -173,7 +167,6 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
             engagement,
             gender,
             lastPost,
-            lookalike,
             platform,
             profile?.company_id,
             profile?.id,
@@ -203,8 +196,6 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
                 search,
                 tags,
                 setTopicTags,
-                lookalike,
-                setLookalike,
                 influencerLocation,
                 setInfluencerLocation,
                 audienceLocation,

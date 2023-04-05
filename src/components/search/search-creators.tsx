@@ -20,11 +20,12 @@ export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
         setDisplaySearch(false);
         setSearchTerm('');
     });
-    const searchLookAlike = useCallback(
+    // TODO: update 'username' in useSearch
+    const searchByUsername = useCallback(
         async (term: any) => {
             setLoading(true);
             try {
-                const res = await nextFetch('influencer-search/lookalike', {
+                const res = await nextFetch('influencer-search/by-username', {
                     method: 'post',
                     body: JSON.stringify({
                         term,
@@ -45,7 +46,7 @@ export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
     const handleSearch = (e: KeyboardEvent<HTMLInputElement> & ChangeEvent<HTMLInputElement>) => {
         if (e.key === 'Enter' && e.target.value) {
             setSearchTerm(e.target.value.trim());
-            searchLookAlike(searchTerm);
+            searchByUsername(searchTerm);
         }
     };
 
@@ -73,9 +74,7 @@ export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
                 <Spinner className="absolute right-2 top-2.5 z-50 h-5 w-5 fill-primary-600 text-white" />
             ) : (
                 <div className="absolute right-2 top-2.5 z-50 flex items-center">
-                    <p className="mr-2 text-xs text-gray-400">
-                        {t('creators.show.pressEnterToSearch')}
-                    </p>
+                    <p className="mr-2 text-xs text-gray-400">{t('creators.show.pressEnterToSearch')}</p>
                     <Enter className="group-hover:fill-red h-6 w-6  fill-gray-500 " />
                 </div>
             )}
@@ -90,9 +89,7 @@ export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
                                 </div>
                             ))
                         ) : (
-                            <p className="p-3 text-xs text-gray-400">
-                                {t('creators.show.noSearchResults')}
-                            </p>
+                            <p className="p-3 text-xs text-gray-400">{t('creators.show.noSearchResults')}</p>
                         )}
                     </div>
                 )}
