@@ -34,31 +34,17 @@ const ActiveLink = ({ href, children }: { href: string; children: React.ReactNod
             {(hrefRoot === 'influencer' || hrefRoot === 'dashboard') && (
                 <Compass height={18} width={18} className="mr-4 text-inherit" />
             )}
-            {hrefRoot === 'campaigns' && (
-                <FourSquare height={18} width={18} className="mr-4 text-inherit" />
-            )}
-            {hrefRoot === 'ai-email-generator' && (
-                <EmailOutline height={18} width={18} className="mr-4 text-inherit" />
-            )}
-            {hrefRoot === 'account' && (
-                <Account height={18} width={18} className="mr-4 text-inherit" />
-            )}
-            {href === '/admin/clients' && (
-                <Team height={18} width={18} className="mr-4 text-inherit" />
-            )}
+            {hrefRoot === 'campaigns' && <FourSquare height={18} width={18} className="mr-4 text-inherit" />}
+            {hrefRoot === 'ai-email-generator' && <EmailOutline height={18} width={18} className="mr-4 text-inherit" />}
+            {hrefRoot === 'account' && <Account height={18} width={18} className="mr-4 text-inherit" />}
+            {href === '/admin/clients' && <Team height={18} width={18} className="mr-4 text-inherit" />}
             {href === '/roi' && <PieChart height={18} width={18} className="mr-4 text-inherit" />}
             {children}
         </Link>
     );
 };
 
-const NavBarInner = ({
-    loggedIn,
-    isRelayEmployee,
-}: {
-    loggedIn: boolean | null;
-    isRelayEmployee: boolean;
-}) => {
+const NavBarInner = ({ loggedIn, isRelayEmployee }: { loggedIn: boolean | null; isRelayEmployee: boolean }) => {
     const { t } = useTranslation();
     return (
         <>
@@ -120,10 +106,7 @@ export const Sidebar = ({
                     open ? 'translate-x-0' : '-translate-x-full'
                 } ${open && desktop ? 'md:relative' : ''}`}
             >
-                <NavBarInner
-                    loggedIn={loggedIn}
-                    isRelayEmployee={profile?.user_role === 'relay_employee'}
-                />
+                <NavBarInner loggedIn={loggedIn} isRelayEmployee={profile?.user_role === 'relay_employee'} />
             </div>
         </>
     );

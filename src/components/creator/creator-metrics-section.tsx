@@ -18,9 +18,7 @@ export const MetricsSection = ({ report }: { report: CreatorReport }) => {
     return (
         <div>
             {/* Channel stats charts */}
-            <h2 className="mb-2 pl-6 font-semibold text-gray-600">
-                {t('creators.show.channelStats')}
-            </h2>
+            <h2 className="mb-2 pl-6 font-semibold text-gray-600">{t('creators.show.channelStats')}</h2>
             <div className="flex flex-wrap">
                 {stats.map((stat, index) => (
                     <div key={index} className="w-full p-6 pt-0 lg:w-1/2">

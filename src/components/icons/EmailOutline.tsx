@@ -2,15 +2,7 @@ import * as React from 'react';
 
 function EmailOutline(props: React.SVGProps<SVGSVGElement>) {
     return (
-        <svg
-            stroke="currentColor"
-            fill="none"
-            strokeWidth={0}
-            viewBox="0 0 24 24"
-            height="1em"
-            width="1em"
-            {...props}
-        >
+        <svg stroke="currentColor" fill="none" strokeWidth={0} viewBox="0 0 24 24" height="1em" width="1em" {...props}>
             <path
                 strokeLinecap="round"
                 strokeLinejoin="round"

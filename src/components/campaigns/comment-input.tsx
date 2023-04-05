@@ -8,11 +8,7 @@ import { clientLogger } from 'src/utils/logger-client';
 import { Send, Spinner } from '../icons';
 import toast from 'react-hot-toast';
 
-export default function CommentInput({
-    currentCreator,
-}: {
-    currentCreator: CampaignCreatorDB | null;
-}) {
+export default function CommentInput({ currentCreator }: { currentCreator: CampaignCreatorDB | null }) {
     const { t } = useTranslation();
     const [comment, setComment] = useState('');
     const { createNote, loading } = useNotes({ campaignCreatorId: currentCreator?.id });

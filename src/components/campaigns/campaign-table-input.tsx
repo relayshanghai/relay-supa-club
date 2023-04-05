@@ -1,4 +1,4 @@
-import type { MutableRefObject} from 'react';
+import type { MutableRefObject } from 'react';
 import { forwardRef, useEffect, useState } from 'react';
 import type { CampaignCreatorDB } from 'src/utils/api/db';
 import { Confirm, Cross } from '../icons';
@@ -38,10 +38,7 @@ function TableInput({
             onClick={(e) => e.stopPropagation()}
             className="group absolute top-1/2 -left-4 z-[10] h-14 w-fit min-w-[200px] max-w-[360px] -translate-y-1/2 p-2 will-change-transform"
         >
-            <form
-                className="flex h-full min-h-0 items-center"
-                onSubmit={(e) => handleFormSubmit(e)}
-            >
+            <form className="flex h-full min-h-0 items-center" onSubmit={(e) => handleFormSubmit(e)}>
                 <input
                     type={type}
                     value={inputValue}

@@ -64,7 +64,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 items: [{ price: price_id }],
                 proration_behavior: 'create_prorations',
             };
-            if (coupon_id) createParams.coupon = coupon_id;
+            if (coupon_id) {
+                createParams.coupon = coupon_id;
+            }
 
             const subscription: SubscriptionCreatePostResponse = await stripeClient.subscriptions.create(createParams);
 

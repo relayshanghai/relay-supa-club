@@ -4,13 +4,7 @@ import { imgProxy } from 'src/utils/fetcher';
 import { numFormatter } from 'src/utils/utils';
 import type { AudienceLookalike, CreatorPlatform } from 'types';
 
-export default function CreatorCard({
-    creator,
-    platform,
-}: {
-    creator: AudienceLookalike;
-    platform: CreatorPlatform;
-}) {
+export default function CreatorCard({ creator, platform }: { creator: AudienceLookalike; platform: CreatorPlatform }) {
     const { t } = useTranslation();
     return (
         <Link href={`/influencer/${platform}/${creator.user_id}`} target="_blank">
@@ -24,9 +18,7 @@ export default function CreatorCard({
                 </div>
                 <div className="text-xs text-gray-600">
                     <div className="font-semibold">
-                        {platform === 'instagram'
-                            ? creator.username || creator.fullname
-                            : creator.fullname}
+                        {platform === 'instagram' ? creator.username || creator.fullname : creator.fullname}
                     </div>
                     <div className="flex">
                         <div className="mr-2">{t('creators.show.followers')}</div>

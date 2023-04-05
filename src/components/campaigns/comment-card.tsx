@@ -71,9 +71,7 @@ export default function CommentCard({ note }: { note: CampaignNotesWithProfiles 
                         {note.profiles.last_name ? note.profiles.last_name[0].toUpperCase() : ''}
                     </div>
                 </div>
-                <div className="mx-3 self-center font-medium capitalize text-gray-800">
-                    {note.profiles.first_name}
-                </div>
+                <div className="mx-3 self-center font-medium capitalize text-gray-800">{note.profiles.first_name}</div>
                 <div className="self-center text-gray-400">
                     {/* Replace this when settle with a date formatting library or function on Ticket V2-36 */}
                     {note.created_at &&
