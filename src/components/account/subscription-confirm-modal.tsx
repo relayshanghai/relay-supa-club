@@ -73,8 +73,13 @@ export const SubscriptionConfirmModal = ({
             clientLogger(error, 'error');
             setCouponInfo(null);
         }
+        if (!couponInfo || !couponInfo.valid) {
+            toast.error(t('pricing.invalidCoupon'));
+        } else {
+            if (couponInfo.percent_off) toast.success(t('pricing.couponApplied'));
+        }
         setCheckingCoupon(false);
-    }, [couponId]);
+    }, [couponId, couponInfo, t]);
 
     const priceNumber = Number(price?.split('$')[1]);
     const priceAfterCoupon =
@@ -116,7 +121,7 @@ export const SubscriptionConfirmModal = ({
                             disabled={checkingCoupon}
                             onClick={() => checkCoupon()}
                         >
-                            Apply coupon
+                            {t('pricing.applyCoupon')}
                         </Button>
                     </div>
                     {couponInfo?.valid && (
@@ -124,7 +129,10 @@ export const SubscriptionConfirmModal = ({
                             <p className="font-bold">{couponInfo.name}</p>
 
                             <div className="mt-2 flex">
-                                <p>discount: </p>
+                                <p>
+                                    {t('pricing.discount')}
+                                    {`: `}
+                                </p>
                                 <p className="ml-10">
                                     {couponInfo.percent_off}
                                     {` %`}

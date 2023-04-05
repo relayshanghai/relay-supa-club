@@ -5,7 +5,6 @@ import { SubscriptionConfirmModal } from './subscription-confirm-modal';
 import { APP_URL_CYPRESS, worker } from '../../mocks/browser';
 import { testMount } from '../../utils/cypress-app-wrapper';
 import { rest } from 'msw';
-// import { rest } from 'msw';
 
 const confirmModalData: SubscriptionConfirmModalData = {
     plan: 'diyMax',
@@ -36,7 +35,6 @@ describe('<SubscriptionConfirmModal />', () => {
         worker.start();
     });
     it('renders with payment and plan details', () => {
-        // worker.use(rest.get(`${APP_URL_CYPRESS}/`))
         const setConfirmModalData = cy.stub();
         const createSubscription = cy.stub();
         const props: SubscriptionConfirmModalProps = {
@@ -54,7 +52,7 @@ describe('<SubscriptionConfirmModal />', () => {
             expect(createSubscription).to.be.called;
         });
     });
-    it('lets user input a coupon and check it', () => {
+    it('lets user input a coupon id and check it', () => {
         worker.use(
             rest.get(`${APP_URL_CYPRESS}/api/subscriptions/coupon`, (req, res, ctx) => res(ctx.json(couponRes))),
         );
@@ -69,6 +67,9 @@ describe('<SubscriptionConfirmModal />', () => {
         testMount(<SubscriptionConfirmModal {...props} />);
         cy.get('input').type('100_percent_off_timekettle');
         cy.get('button').contains('Apply coupon').click();
+        // shows toast on success
+        cy.contains('Coupon applied');
+
         cy.contains('$0.00/month. Billed monthly');
     });
     it('sends coupon code in createSubscription call', () => {
@@ -92,6 +93,21 @@ describe('<SubscriptionConfirmModal />', () => {
         cy.findByRole('button', { name: 'Back to account' }).then(() => {
             expect(createSubscription).to.be.calledWith(confirmModalData.priceId, '100_percent_off_timekettle');
         });
+    });
+    it('shows error message when coupon is invalid', () => {
+        worker.use(rest.get(`${APP_URL_CYPRESS}/api/subscriptions/coupon`, (req, res, ctx) => res(ctx.status(400))));
+        const setConfirmModalData = cy.stub();
+        const createSubscription = cy.stub();
+        const props: SubscriptionConfirmModalProps = {
+            confirmModalData,
+            setConfirmModalData,
+            createSubscription,
+        };
+
+        testMount(<SubscriptionConfirmModal {...props} />);
+        cy.get('input').type('100_percent_off_timekettle');
+        cy.get('button').contains('Apply coupon').click();
+        cy.contains('Invalid coupon');
     });
 });
 
