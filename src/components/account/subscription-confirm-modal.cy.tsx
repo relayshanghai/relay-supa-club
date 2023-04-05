@@ -31,7 +31,24 @@ describe('<SubscriptionConfirmModal />', () => {
         cy.contains('DIY Max plan');
         cy.contains('You are about to subscribe for');
         cy.contains('150/month. Billed monthly');
-        cy.get('button').contains('Subscribe').should('not.be.disabled');
+        cy.findByRole('button', { name: 'Subscribe' }).should('not.be.disabled').click();
+        cy.findByRole('button', { name: 'Back to account' }).then(() => {
+            expect(createSubscription).to.be.called;
+        });
+    });
+    it('lets user input a coupon and check it', () => {
+        const setConfirmModalData = cy.stub();
+        const createSubscription = cy.stub();
+        const props: SubscriptionConfirmModalProps = {
+            confirmModalData,
+            setConfirmModalData,
+            createSubscription,
+        };
+
+        testMount(<SubscriptionConfirmModal {...props} />);
+        cy.get('input').type('testCoupon');
+        cy.get('button').contains('Check').click();
+        cy.contains('0/month. Billed monthly');
     });
 });
 
