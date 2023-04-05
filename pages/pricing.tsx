@@ -68,17 +68,9 @@ type Prices = {
     annually: PriceTiers;
 };
 
-const formatPrice = (
-    price: string,
-    currency: string,
-    period: 'monthly' | 'annually' | 'quarterly',
-) => {
+const formatPrice = (price: string, currency: string, period: 'monthly' | 'annually' | 'quarterly') => {
     const pricePerMonth =
-        period === 'annually'
-            ? Number(price) / 12
-            : period === 'quarterly'
-            ? Number(price) / 3
-            : Number(price);
+        period === 'annually' ? Number(price) / 12 : period === 'quarterly' ? Number(price) / 3 : Number(price);
     /** I think rounding to the dollar is OK for now, but if need be we can add cents */
     const roundedPrice = Math.round(pricePerMonth);
     if (currency === 'usd')
@@ -95,19 +87,13 @@ const Pricing = () => {
     const { t } = useTranslation();
     const { subscription, createSubscription } = useSubscription();
     const [period, setPeriod] = useState<SubscriptionPeriod>('annually');
-    const [confirmModalData, setConfirmModalData] = useState<SubscriptionConfirmModalData | null>(
-        null,
-    );
+    const [confirmModalData, setConfirmModalData] = useState<SubscriptionConfirmModalData | null>(null);
     const [priceIds, setPriceIds] = useState<{
         diy: { monthly: string; quarterly: string; annually: string };
         diyMax: { monthly: string; quarterly: string; annually: string };
     } | null>(null);
 
-    const openConfirmModal = (
-        plan: 'diy' | 'diyMax',
-        period: SubscriptionPeriod,
-        priceId: string,
-    ) => {
+    const openConfirmModal = (plan: 'diy' | 'diyMax', period: SubscriptionPeriod, priceId: string) => {
         setConfirmModalData({ plan, period, priceId, price: prices[period][plan] });
     };
 
@@ -163,16 +149,12 @@ const Pricing = () => {
 
     const isCurrentPlan = (plan: 'diy' | 'diyMax') => {
         const planName = plan === 'diyMax' ? 'DIY Max' : 'DIY';
-        return (
-            subscription?.name === planName &&
-            subscription.interval === period &&
-            subscription.status === 'active'
-        );
+        return subscription?.name === planName && subscription.interval === period && subscription.status === 'active';
     };
 
     const disableButton = (plan: 'diy' | 'diyMax') => {
-        if (!priceIds || !subscription?.name || !subscription.interval || !subscription.status)
-            return true;
+        // if (!priceIds || !subscription?.name || !subscription.interval || !subscription.status)
+        //     return true;
         if (isCurrentPlan(plan)) return true;
     };
 
@@ -196,25 +178,19 @@ const Pricing = () => {
                     <div className="mx-auto mb-12 flex w-fit rounded-md border-y-2 border-x border-primary-500">
                         <div
                             onClick={() => setPeriod('monthly')}
-                            className={
-                                period === 'monthly' ? selectedTabClasses : unselectedTabClasses
-                            }
+                            className={period === 'monthly' ? selectedTabClasses : unselectedTabClasses}
                         >
                             {t('pricing.monthly')}
                         </div>
                         <div
                             onClick={() => setPeriod('quarterly')}
-                            className={
-                                period === 'quarterly' ? selectedTabClasses : unselectedTabClasses
-                            }
+                            className={period === 'quarterly' ? selectedTabClasses : unselectedTabClasses}
                         >
                             {t('pricing.quarterly')}
                         </div>
                         <div
                             onClick={() => setPeriod('annually')}
-                            className={
-                                period === 'annually' ? selectedTabClasses : unselectedTabClasses
-                            }
+                            className={period === 'annually' ? selectedTabClasses : unselectedTabClasses}
                         >
                             {t('pricing.annually')}
                         </div>
@@ -304,18 +280,12 @@ const Pricing = () => {
 
                                 <Button
                                     onClick={() =>
-                                        openConfirmModal(
-                                            'diy',
-                                            period,
-                                            priceIds ? priceIds['diy'][period] : '',
-                                        )
+                                        openConfirmModal('diy', period, priceIds ? priceIds['diy'][period] : '')
                                     }
                                     disabled={disableButton('diy')}
                                     className="flex"
                                 >
-                                    {isCurrentPlan('diy')
-                                        ? t('pricing.yourCurrentPlan')
-                                        : t('pricing.buyNow')}
+                                    {isCurrentPlan('diy') ? t('pricing.yourCurrentPlan') : t('pricing.buyNow')}
                                     <svg
                                         fill="none"
                                         stroke="currentColor"
@@ -374,11 +344,7 @@ const Pricing = () => {
                                                 </svg>
                                             )}
                                             {icon === 'cross' && (
-                                                <svg
-                                                    viewBox="0 0 21 20"
-                                                    fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                >
+                                                <svg viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <path
                                                         fillRule="evenodd"
                                                         clipRule="evenodd"
@@ -415,18 +381,12 @@ const Pricing = () => {
 
                                 <Button
                                     onClick={() =>
-                                        openConfirmModal(
-                                            'diyMax',
-                                            period,
-                                            priceIds ? priceIds['diyMax'][period] : '',
-                                        )
+                                        openConfirmModal('diyMax', period, priceIds ? priceIds['diyMax'][period] : '')
                                     }
                                     disabled={disableButton('diyMax')}
                                     className="flex"
                                 >
-                                    {isCurrentPlan('diyMax')
-                                        ? t('pricing.yourCurrentPlan')
-                                        : t('pricing.buyNow')}
+                                    {isCurrentPlan('diyMax') ? t('pricing.yourCurrentPlan') : t('pricing.buyNow')}
                                     <svg
                                         fill="none"
                                         stroke="currentColor"
@@ -480,11 +440,7 @@ const Pricing = () => {
                                                 </svg>
                                             )}
                                             {icon === 'cross' && (
-                                                <svg
-                                                    viewBox="0 0 21 20"
-                                                    fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                >
+                                                <svg viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <path
                                                         fillRule="evenodd"
                                                         clipRule="evenodd"
@@ -519,12 +475,7 @@ const Pricing = () => {
                                     </div>
                                 ))}
 
-                                <a
-                                    href={VIPEmailLink}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    className="mt-auto"
-                                >
+                                <a href={VIPEmailLink} target="_blank" rel="noreferrer" className="mt-auto">
                                     <Button className="flex w-full">
                                         {t('pricing.contactNow')}
                                         <svg

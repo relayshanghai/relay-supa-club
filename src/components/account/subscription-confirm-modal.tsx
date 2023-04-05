@@ -9,6 +9,10 @@ import type { SubscriptionPeriod } from 'types';
 
 import { Button } from '../button';
 import { Modal } from '../modal';
+import { nextFetchWithQueries } from 'src/utils/fetcher';
+import type { CouponGetQueries, CouponGetResponse } from 'pages/api/subscriptions/coupon';
+import { clientLogger } from 'src/utils/logger-client';
+import { Input } from '../input';
 
 export interface SubscriptionConfirmModalData {
     plan: 'diy' | 'diyMax';
@@ -51,10 +55,33 @@ export const SubscriptionConfirmModal = ({
             setSubmitStatus('initial');
         }
     };
+    const [couponId, setCouponId] = useState<string>('');
+    const [couponInfo, setCouponInfo] = useState<CouponGetResponse | null>(null);
+    const [checkingCoupon, setCheckingCoupon] = useState<boolean>(false);
     const { price, period, priceId, plan } = confirmModalData || {};
+
+    const checkCoupon = async () => {
+        setCheckingCoupon(true);
+        try {
+            const coupon = await nextFetchWithQueries<CouponGetQueries, CouponGetResponse>(`subscriptions/coupon`, {
+                coupon_id: couponId,
+            });
+            setCouponInfo(coupon);
+        } catch (error) {
+            clientLogger(error, 'error');
+            setCouponInfo(null);
+        }
+        setCheckingCoupon(false);
+    };
+    const priceNumber = Number(price?.split('$')[1]);
+    const priceAfterCoupon =
+        price && !Number.isNaN(priceNumber) && couponInfo?.percent_off
+            ? '$' + (priceNumber * (1 - couponInfo.percent_off / 100)).toFixed(2)
+            : price;
+
     return (
         <Modal visible={!!confirmModalData} onClose={() => setConfirmModalData(null)}>
-            {price && period && priceId && plan ? (
+            {priceAfterCoupon && period && priceId && plan ? (
                 <div className="p-2">
                     <div className="mb-8 flex justify-between">
                         <h1 className="text-2xl text-primary-700">
@@ -71,14 +98,45 @@ export const SubscriptionConfirmModal = ({
                         </Button>
                     </div>
 
-                    <h2>{t('account.subscription.modal.youAreAboutToSubscribeFor')}</h2>
+                    <div className="flex items-center justify-around">
+                        <Input
+                            label="Coupon ID"
+                            type="text"
+                            value={couponId}
+                            onChange={(e) => {
+                                setCouponId(e.target.value);
+                            }}
+                        />
+                        <Button
+                            variant="secondary"
+                            className="ml-10 h-max !px-2 !py-2 !text-xs"
+                            disabled={checkingCoupon}
+                            onClick={() => checkCoupon()}
+                        >
+                            Apply coupon
+                        </Button>
+                    </div>
+                    {couponInfo?.valid && (
+                        <div className="flex flex-col items-center">
+                            <p className="font-bold">{couponInfo.name}</p>
+
+                            <div className="mt-2 flex">
+                                <p>discount: </p>
+                                <p className="ml-10">
+                                    {couponInfo.percent_off}
+                                    {` %`}
+                                </p>
+                            </div>
+                        </div>
+                    )}
+
+                    <h2 className="mt-10">{t('account.subscription.modal.youAreAboutToSubscribeFor')}</h2>
                     <div className="mt-4 flex items-center justify-between">
-                        <p className="text-sm font-bold">{`${price}${t('account.subscription.modal.perMonth')}. ${t(
-                            'account.subscription.modal.billed_period',
-                            {
-                                period: t(`account.subscription.${period}`),
-                            },
-                        )}`}</p>
+                        <p className="text-sm font-bold">{`${priceAfterCoupon}${t(
+                            'account.subscription.modal.perMonth',
+                        )}. ${t('account.subscription.modal.billed_period', {
+                            period: t(`account.subscription.${period}`),
+                        })}`}</p>
 
                         <Button
                             disabled={submitStatus === 'submitting'}
