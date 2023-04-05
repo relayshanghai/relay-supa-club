@@ -3,12 +3,11 @@
   "compilerOptions": {
     "noEmit": true,
     "allowJs": true,
+    "resolveJsonModule": true,
     // be explicit about types included
     // to avoid clashing with Jest types
-    "types": ["cypress", "@testing-library/cypress"],
-    "baseUrl": "../node_modules",
-    "resolveJsonModule": true
+    "types": ["cypress", "@testing-library/cypress"]
   },
-  "include": ["**/*.*", "../node_modules/cypress", "./**/*.ts"],
+  "include": ["../node_modules/cypress", "./**/*.ts"],
   "exclude": ["../node_modules"]
 }
