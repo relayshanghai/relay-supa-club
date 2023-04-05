@@ -1,4 +1,4 @@
-describe('Caching SWR requests', () => {
+describe('Caches SWR requests', () => {
     it('caches reports from `use-report`', () => {
         cy.loginTestUser();
 
