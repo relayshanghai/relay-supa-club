@@ -6,13 +6,7 @@ import type { CreatorPlatform, SimilarUser } from 'types';
 import { Button } from '../button';
 import { ShareLink } from '../icons';
 
-export const SimilarCreator = ({
-    creator,
-    platform,
-}: {
-    creator: SimilarUser;
-    platform: CreatorPlatform;
-}) => {
+export const SimilarCreator = ({ creator, platform }: { creator: SimilarUser; platform: CreatorPlatform }) => {
     const { t } = useTranslation();
     return (
         <div className="group mb-2 flex items-center justify-between rounded-xl bg-white p-4">
@@ -27,24 +21,16 @@ export const SimilarCreator = ({
                     />
                 </div>
                 <div className="flex-1">
-                    <p className="text-sm font-semibold text-gray-600 duration-300">
-                        {creator.fullname}
-                    </p>
+                    <p className="text-sm font-semibold text-gray-600 duration-300">{creator.fullname}</p>
                     <div>
-                        <p className="text-xs text-gray-600">
-                            {numFormatter(creator.followers)} followers
-                        </p>
-                        {creator?.geo && (
-                            <p className="text-xs text-gray-600">{creator?.geo?.country?.name}</p>
-                        )}
+                        <p className="text-xs text-gray-600">{numFormatter(creator.followers)} followers</p>
+                        {creator?.geo && <p className="text-xs text-gray-600">{creator?.geo?.country?.name}</p>}
                     </div>
                 </div>
             </div>
             <div className="ml-4 flex items-center">
                 <Button variant="secondary" className="px-3 py-1">
-                    <Link href={`/influencer/${platform}/${creator.user_id}`}>
-                        {t('creators.analyzeProfile')}
-                    </Link>
+                    <Link href={`/influencer/${platform}/${creator.user_id}`}>{t('creators.analyzeProfile')}</Link>
                 </Button>
                 <Button className="ml-2">
                     <Link href={creator.url} target="_blank" rel="noopener noreferrer">

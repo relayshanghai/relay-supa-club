@@ -3,13 +3,7 @@ import { RELAY_DOMAIN } from 'src/constants';
 import httpCodes from 'src/constants/httpCodes';
 import { createCompanyErrors } from 'src/errors/company';
 import type { CompanyDB } from 'src/utils/api/db';
-import {
-    createCompany,
-    getAllCompanyNames,
-    updateCompany,
-    updateProfile,
-    updateUserRole,
-} from 'src/utils/api/db';
+import { createCompany, getAllCompanyNames, updateCompany, updateProfile, updateUserRole } from 'src/utils/api/db';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 import { serverLogger } from 'src/utils/logger-server';
 

@@ -30,9 +30,7 @@ export const AddToCampaignModal = ({
         >
             {campaigns?.length ? (
                 <>
-                    <div className="py-4 text-sm text-tertiary-800">
-                        {t('campaigns.modal.addThisInfluencer')}
-                    </div>
+                    <div className="py-4 text-sm text-tertiary-800">{t('campaigns.modal.addThisInfluencer')}</div>
                     <div>
                         {campaigns.map((campaign, index) => (
                             <CampaignModalCard

@@ -78,9 +78,7 @@ const Clients = () => {
                                             >
                                                 {columnHeaders[index] === 'Campaigns' ? (
                                                     <div className="flex items-center justify-center">
-                                                        <Link
-                                                            href={`/admin/campaigns/${client.id}`}
-                                                        >
+                                                        <Link href={`/admin/campaigns/${client.id}`}>
                                                             <Button>{dataPoint}</Button>
                                                         </Link>
                                                     </div>

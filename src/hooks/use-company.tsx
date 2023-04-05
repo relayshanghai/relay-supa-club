@@ -4,12 +4,7 @@ import { createContext, useCallback, useContext } from 'react';
 import type { KeyedMutator } from 'swr';
 import useSWR from 'swr';
 
-import type {
-    CompanyGetQueries,
-    CompanyGetResponse,
-    CompanyPutBody,
-    CompanyPutResponse,
-} from 'pages/api/company';
+import type { CompanyGetQueries, CompanyGetResponse, CompanyPutBody, CompanyPutResponse } from 'pages/api/company';
 import type { CompanyCreatePostBody, CompanyCreatePostResponse } from 'pages/api/company/create';
 import { createCompanyValidationErrors } from 'src/errors/company';
 import { nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';
@@ -18,10 +13,7 @@ import { useUser } from './use-user';
 export interface CompanyContext {
     company: CompanyGetResponse | undefined;
     updateCompany: (input: Omit<CompanyPutBody, 'id'>) => Promise<CompanyPutResponse | null>;
-    createCompany: (input: {
-        name: string;
-        website?: string;
-    }) => Promise<CompanyCreatePostResponse | null>;
+    createCompany: (input: { name: string; website?: string }) => Promise<CompanyCreatePostResponse | null>;
     refreshCompany: KeyedMutator<CompanyGetResponse> | (() => void);
 }
 
@@ -34,27 +26,21 @@ const ctx = createContext<CompanyContext>({
 
 export const CompanyProvider = ({ children }: PropsWithChildren) => {
     const { profile, refreshProfile } = useUser();
-    const { data: company, mutate: refreshCompany } = useSWR(
-        profile?.company_id ? 'company' : null,
-        async (path) => {
-            const fetchedCompany = await nextFetchWithQueries<
-                CompanyGetQueries,
-                CompanyGetResponse
-            >(path, {
-                id: profile?.company_id ?? '',
+    const { data: company, mutate: refreshCompany } = useSWR(profile?.company_id ? 'company' : null, async (path) => {
+        const fetchedCompany = await nextFetchWithQueries<CompanyGetQueries, CompanyGetResponse>(path, {
+            id: profile?.company_id ?? '',
+        });
+        if (profile && fetchedCompany?.name && !company?.name) {
+            Sentry.setUser({
+                id: profile.id,
+                email: profile.email ?? '',
+                name: `${profile.first_name} ${profile.last_name}`,
+                company_name: fetchedCompany.name,
+                company_id: fetchedCompany.id,
             });
-            if (profile && fetchedCompany?.name && !company?.name) {
-                Sentry.setUser({
-                    id: profile.id,
-                    email: profile.email ?? '',
-                    name: `${profile.first_name} ${profile.last_name}`,
-                    company_name: fetchedCompany.name,
-                    company_id: fetchedCompany.id,
-                });
-            }
-            return fetchedCompany;
-        },
-    );
+        }
+        return fetchedCompany;
+    });
 
     const updateCompany = useCallback(
         async (input: Omit<CompanyPutBody, 'id'>) => {

@@ -1,11 +1,6 @@
 import type { NextApiHandler } from 'next';
 import httpCodes from 'src/constants/httpCodes';
-import {
-    getCompanyById,
-    getCompanyByName,
-    getCompanyName,
-    updateCompany,
-} from 'src/utils/api/db/calls/company';
+import { getCompanyById, getCompanyByName, getCompanyName, updateCompany } from 'src/utils/api/db/calls/company';
 import type { CompanyDB, CompanyDBUpdate } from 'src/utils/api/db/types';
 import { serverLogger } from 'src/utils/logger-server';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
@@ -40,9 +35,7 @@ const handler: NextApiHandler = async (req, res) => {
             return res.status(httpCodes.OK).json(result);
         } catch (error) {
             serverLogger(error, 'error');
-            return res
-                .status(httpCodes.INTERNAL_SERVER_ERROR)
-                .json({ error: 'Error finding company' });
+            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({ error: 'Error finding company' });
         }
     }
 
@@ -54,18 +47,14 @@ const handler: NextApiHandler = async (req, res) => {
             }
 
             if (!(await isCompanyOwnerOrRelayEmployee(req, res))) {
-                return res
-                    .status(httpCodes.UNAUTHORIZED)
-                    .json({ error: 'This action is limited to company admins' });
+                return res.status(httpCodes.UNAUTHORIZED).json({ error: 'This action is limited to company admins' });
             }
 
             if (updateData.name) {
                 try {
                     const { data } = await getCompanyName(updateData.id);
                     if (data?.name !== updateData.name) {
-                        const { data: companyWithSameName } = await getCompanyByName(
-                            updateData.name,
-                        );
+                        const { data: companyWithSameName } = await getCompanyByName(updateData.name);
                         if (companyWithSameName) {
                             return res
                                 .status(httpCodes.BAD_REQUEST)
@@ -80,9 +69,7 @@ const handler: NextApiHandler = async (req, res) => {
             const company = await updateCompany(updateData);
 
             if (!company || !company.cus_id || !company.name || !company.website) {
-                return res
-                    .status(httpCodes.INTERNAL_SERVER_ERROR)
-                    .json({ error: 'Missing company data' });
+                return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({ error: 'Missing company data' });
             }
 
             // if name or website changed, update stripe customer info
@@ -100,9 +87,7 @@ const handler: NextApiHandler = async (req, res) => {
             return res.status(httpCodes.OK).json(returnData);
         } catch (error) {
             serverLogger(error, 'error');
-            return res
-                .status(httpCodes.INTERNAL_SERVER_ERROR)
-                .json({ error: 'error updating company' });
+            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({ error: 'error updating company' });
         }
     }
 

@@ -79,10 +79,7 @@ export default function Login() {
                 </div>
                 <p className="inline text-sm text-gray-500">
                     {t('login.dontHaveAnAccount')}{' '}
-                    <Link
-                        href="/signup"
-                        className="inline cursor-pointer text-primary-700 hover:text-primary-600"
-                    >
+                    <Link href="/signup" className="inline cursor-pointer text-primary-700 hover:text-primary-600">
                         <Button variant="secondary" className="ml-2 px-1 pt-1 pb-1 text-xs">
                             {t('login.signUp')}
                         </Button>
@@ -107,11 +104,7 @@ export default function Login() {
                     }}
                     onKeyDown={(e) => handleKeyDown(e)}
                 />
-                <Button
-                    disabled={!email || !password || loggingIn}
-                    type="button"
-                    onClick={handleSubmit}
-                >
+                <Button disabled={!email || !password || loggingIn} type="button" onClick={handleSubmit}>
                     {t('login.logIn')}
                 </Button>
 

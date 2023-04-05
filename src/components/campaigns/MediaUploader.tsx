@@ -1,4 +1,4 @@
-import type { ChangeEventHandler} from 'react';
+import type { ChangeEventHandler } from 'react';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import Plus from 'src/components/icons/Plus';
@@ -56,9 +56,7 @@ function MediaUploader({
     const removePreviousMedia = (index: number) => {
         //@ts-ignore
         setPurgedMedia((pm: any) => [...pm, previousMedia[index]]);
-        setPreviousMedia([
-            ...previousMedia.filter((file: any) => previousMedia.indexOf(file) !== index),
-        ]);
+        setPreviousMedia([...previousMedia.filter((file: any) => previousMedia.indexOf(file) !== index)]);
     };
 
     const mediaList = () =>
@@ -111,9 +109,7 @@ function MediaUploader({
                     {mediaList()}
                 </div>
             ) : (
-                <div className="mb-4 text-center text-xs text-tertiary-600">
-                    {t('campaigns.form.noMedia')}
-                </div>
+                <div className="mb-4 text-center text-xs text-tertiary-600">{t('campaigns.form.noMedia')}</div>
             )}
             <div className="btn btn-fileupload group" onClick={onButtonClick}>
                 <Plus className="mr-2 h-6 w-6 fill-current text-gray-500 group-hover:text-primary-500" />

@@ -2,11 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { AI_EMAIL_SUBSCRIPTION_USAGE_LIMIT } from 'src/constants/openai';
 import { createSubscriptionErrors } from 'src/errors/subscription';
-import {
-    getCompanyCusId,
-    updateCompanySubscriptionStatus,
-    updateCompanyUsageLimits,
-} from 'src/utils/api/db';
+import { getCompanyCusId, updateCompanySubscriptionStatus, updateCompanyUsageLimits } from 'src/utils/api/db';
 import { getSubscription } from 'src/utils/api/stripe/helpers';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 import { isCompanyOwnerOrRelayEmployee } from 'src/utils/auth';
@@ -22,12 +18,9 @@ export type SubscriptionDiscountRenewPostResponse = Stripe.Response<Stripe.Subsc
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
         const { company_id } = req.body as SubscriptionDiscountRenewPostBody;
-        if (!company_id)
-            return res.status(httpCodes.BAD_REQUEST).json({ error: 'Missing company id' });
+        if (!company_id) return res.status(httpCodes.BAD_REQUEST).json({ error: 'Missing company id' });
         if (!(await isCompanyOwnerOrRelayEmployee(req, res))) {
-            return res
-                .status(httpCodes.UNAUTHORIZED)
-                .json({ error: 'This action is limited to company admins' });
+            return res.status(httpCodes.UNAUTHORIZED).json({ error: 'This action is limited to company admins' });
         }
         try {
             const couponParams: Stripe.CouponCreateParams = {
@@ -39,9 +32,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const { data: companyData } = await getCompanyCusId(company_id);
             const cusId = companyData?.cus_id;
             if (!companyData || !cusId) {
-                return res
-                    .status(httpCodes.BAD_REQUEST)
-                    .json({ error: createSubscriptionErrors.missingCompanyData });
+                return res.status(httpCodes.BAD_REQUEST).json({ error: createSubscriptionErrors.missingCompanyData });
             }
 
             const activeSubscription = await getSubscription(company_id);
@@ -65,8 +56,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 coupon: coupon.id,
             };
 
-            const subscription: SubscriptionDiscountRenewPostResponse =
-                await stripeClient.subscriptions.create(createParams);
+            const subscription: SubscriptionDiscountRenewPostResponse = await stripeClient.subscriptions.create(
+                createParams,
+            );
 
             if (subscription.status !== 'active') {
                 // not active means the payment was declined.
@@ -98,12 +90,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             await updateCompanySubscriptionStatus({
                 subscription_status: 'active',
                 subscription_start_date,
-                subscription_current_period_start: unixEpochToISOString(
-                    subscription.current_period_start,
-                ),
-                subscription_current_period_end: unixEpochToISOString(
-                    subscription.current_period_end,
-                ),
+                subscription_current_period_start: unixEpochToISOString(subscription.current_period_start),
+                subscription_current_period_end: unixEpochToISOString(subscription.current_period_end),
                 id: company_id,
             });
 
