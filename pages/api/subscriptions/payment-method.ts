@@ -15,11 +15,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (req.method === 'GET') {
         const { id } = req.query as PaymentMethodGetQueries;
 
-        const { data, error } = await supabase
-            .from('companies')
-            .select('cus_id, name')
-            .eq('id', id)
-            .single();
+        const { data, error } = await supabase.from('companies').select('cus_id, name').eq('id', id).single();
 
         if (error) {
             return res.status(httpCodes.INTERNAL_SERVER_ERROR).json(error);

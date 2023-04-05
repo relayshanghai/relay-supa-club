@@ -15,9 +15,7 @@ function getEstFee(avgViews: number, country: string) {
     if (!Number.isInteger(avgViews)) return 'N/A';
     if (!country) cpm = { lowerBound: 20, upperBound: 60 };
     if (country) cpm = getCpm(country);
-    return `${toCurrency((avgViews / 1000) * cpm.lowerBound)} - ${toCurrency(
-        (avgViews / 1000) * cpm.upperBound,
-    )}`;
+    return `${toCurrency((avgViews / 1000) * cpm.lowerBound)} - ${toCurrency((avgViews / 1000) * cpm.upperBound)}`;
 }
 
 const formatCreatorEconomics = (userProfile: CreatorReport['user_profile']) => {
@@ -27,9 +25,7 @@ const formatCreatorEconomics = (userProfile: CreatorReport['user_profile']) => {
         stats.push({
             label: 'cpm',
             icon: <Money />,
-            data: `$${getCpm(geo?.country?.name).lowerBound} - $${
-                getCpm(geo?.country?.name).upperBound
-            }`,
+            data: `$${getCpm(geo?.country?.name).lowerBound} - $${getCpm(geo?.country?.name).upperBound}`,
         });
     if (avg_views && geo?.country?.name)
         stats.push({
@@ -47,9 +43,7 @@ const CreatorEconomics = ({ userProfile }: { userProfile: CreatorReport['user_pr
     if (!economicsData.length) return null;
     return (
         <div className="p-6">
-            <h2 className="mb-2 font-semibold text-gray-600">
-                {t('creators.show.creatorEconomics')}
-            </h2>
+            <h2 className="mb-2 font-semibold text-gray-600">{t('creators.show.creatorEconomics')}</h2>
             <div className="flex flex-wrap">
                 {economicsData.map((stat, index) => (
                     <div
@@ -58,9 +52,7 @@ const CreatorEconomics = ({ userProfile }: { userProfile: CreatorReport['user_pr
                     >
                         <div className="h-6 w-6">{stat.icon}</div>
                         <p className="f36 my-2 font-semibold text-tertiary-600">{stat.data}</p>
-                        <p className="text-sm text-tertiary-600">
-                            {t(`creators.show.${stat.label}`)}
-                        </p>
+                        <p className="text-sm text-tertiary-600">{t(`creators.show.${stat.label}`)}</p>
                     </div>
                 ))}
             </div>

@@ -19,11 +19,8 @@ export const updateProfile = (update: ProfileDBUpdate) => {
 export const updateUserRole = (userId: string, user_role: AccountRole) =>
     supabase.from('profiles').update({ user_role }).eq('id', userId).select().single();
 
-export const getUserRole = (userId: string) =>
-    supabase.from('profiles').select('user_role').eq('id', userId).single();
+export const getUserRole = (userId: string) => supabase.from('profiles').select('user_role').eq('id', userId).single();
 
-export const getProfileByEmail = (email: string) =>
-    supabase.from('profiles').select().eq('email', email).single();
+export const getProfileByEmail = (email: string) => supabase.from('profiles').select().eq('email', email).single();
 
-export const getProfileById = (id: string) =>
-    supabase.from('profiles').select().eq('id', id).single();
+export const getProfileById = (id: string) => supabase.from('profiles').select().eq('id', id).single();

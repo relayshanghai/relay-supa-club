@@ -34,11 +34,7 @@ function PostImage({ post }: { post: Post }) {
             </a>
             <div className="absolute left-2 top-2 flex items-center">
                 <img
-                    src={
-                        post?.user_picture
-                            ? imgProxy(post?.user_picture)
-                            : '/assets/imgs/image404.png'
-                    }
+                    src={post?.user_picture ? imgProxy(post?.user_picture) : '/assets/imgs/image404.png'}
                     alt=""
                     className="mr-2 h-6 w-6 rounded-full"
                 />
@@ -56,9 +52,7 @@ export const CreatorPost = ({ post }: { post: Post }) => {
         <div className="rounded-lg bg-white">
             <PostImage post={post} />
             <div className="p-4">
-                <h3 className="mb-1 font-semibold text-gray-600 line-clamp-2">
-                    {post?.title || post?.text}
-                </h3>
+                <h3 className="mb-1 font-semibold text-gray-600 line-clamp-2">{post?.title || post?.text}</h3>
                 <p className="mb-1 text-xs text-gray-400">
                     {
                         //@ts-ignore TODO: remove this insane hacky library and use standard browser API
@@ -79,9 +73,7 @@ export const CreatorPost = ({ post }: { post: Post }) => {
                         {postStats.map((stat, index) => (
                             <div key={index} className="">
                                 <p className="font-semibold text-primary-500">{stat.value}</p>
-                                <p className="text-xs text-gray-600">
-                                    {t(`creators.show.${stat.label}`)}
-                                </p>
+                                <p className="text-xs text-gray-600">{t(`creators.show.${stat.label}`)}</p>
                             </div>
                         ))}
                     </div>

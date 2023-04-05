@@ -5,12 +5,10 @@ import { useUser } from './use-user';
 
 export const useUsages = () => {
     const { profile } = useUser();
-    const { data: usages, mutate: refreshUsages } = useSWR(
-        profile?.company_id ? 'usages' : null,
-        (path) =>
-            nextFetchWithQueries<UsagesGetQueries, UsagesGetResponse>(path, {
-                id: profile?.company_id ?? '',
-            }),
+    const { data: usages, mutate: refreshUsages } = useSWR(profile?.company_id ? 'usages' : null, (path) =>
+        nextFetchWithQueries<UsagesGetQueries, UsagesGetResponse>(path, {
+            id: profile?.company_id ?? '',
+        }),
     );
 
     return {

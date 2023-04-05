@@ -12,12 +12,8 @@ export const PopularPostsSection = ({ report }: { report: CreatorReport }) => {
     return (
         <>
             {topPosts?.length && <Posts posts={topPosts} title={t('creators.show.popularPosts')} />}
-            {recentPosts?.length && (
-                <Posts posts={recentPosts} title={t('creators.show.recentPosts')} />
-            )}
-            {commercialPosts?.length && (
-                <Posts posts={commercialPosts} title={t('creators.show.commercialPosts')} />
-            )}
+            {recentPosts?.length && <Posts posts={recentPosts} title={t('creators.show.recentPosts')} />}
+            {commercialPosts?.length && <Posts posts={commercialPosts} title={t('creators.show.commercialPosts')} />}
         </>
     );
 };

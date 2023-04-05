@@ -6,17 +6,12 @@ import { nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';
 import type { CampaignNotePostBody, CampaignNotePostResponse } from 'pages/api/notes/create';
 import type { CampaignNotesIndexGetQuery, CampaignNotesIndexGetResult } from 'pages/api/notes';
 import type { CampaignNotesDB, CampaignNotesWithProfiles } from 'src/utils/api/db';
-import type {
-    CampaignNotesUpdatePutBody,
-    CampaignNotesUpdatePutResult,
-} from 'pages/api/notes/update';
+import type { CampaignNotesUpdatePutBody, CampaignNotesUpdatePutResult } from 'pages/api/notes/update';
 import type { CampaignNotesDeleteBody, CampaignNotesDeleteResponse } from 'pages/api/notes/delete';
 
 export const useNotes = ({ campaignCreatorId }: { campaignCreatorId?: string }) => {
     const [loading, setLoading] = useState<boolean>(false);
-    const [campaignCreatorNotes, setCampaignCreatorNotes] = useState<CampaignNotesWithProfiles[]>(
-        [],
-    );
+    const [campaignCreatorNotes, setCampaignCreatorNotes] = useState<CampaignNotesWithProfiles[]>([]);
     const { profile } = useUser();
 
     const {
@@ -34,9 +29,7 @@ export const useNotes = ({ campaignCreatorId }: { campaignCreatorId?: string }) 
 
     useEffect(() => {
         if (campaignNotes && campaignNotes?.length > 0 && campaignCreatorId) {
-            const campaignCreatorNotes = campaignNotes?.filter(
-                (c) => c.campaign_creator_id === campaignCreatorId,
-            );
+            const campaignCreatorNotes = campaignNotes?.filter((c) => c.campaign_creator_id === campaignCreatorId);
             if (campaignCreatorNotes) setCampaignCreatorNotes(campaignCreatorNotes);
         }
     }, [campaignCreatorId, campaignNotes]);

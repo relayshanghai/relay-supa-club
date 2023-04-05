@@ -46,17 +46,13 @@ function TextInput({
                     maxLength: maximLength
                         ? {
                               value: maximLength,
-                              message: `${t('website.maxLength')} ${maximLength} ${t(
-                                  'website.characters',
-                              )}`,
+                              message: `${t('website.maxLength')} ${maximLength} ${t('website.characters')}`,
                           }
                         : undefined,
                     minLength: minimLength
                         ? {
                               value: minimLength,
-                              message: `${t('website.minLength')} ${minimLength} ${t(
-                                  'website.characters',
-                              )}`,
+                              message: `${t('website.minLength')} ${minimLength} ${t('website.characters')}`,
                           }
                         : undefined,
                 })}
