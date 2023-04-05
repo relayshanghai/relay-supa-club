@@ -76,7 +76,7 @@ export const testMount = (component: React.ReactElement, options?: TestMountOpti
                             {component}
                         </SWRConfig>
                     </UserContext.Provider>
-                </I18nextProvider>{' '}
+                </I18nextProvider>
             </SessionContextProvider>
         </AppRouterContext.Provider>,
     );
