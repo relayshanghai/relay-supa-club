@@ -6,11 +6,11 @@ import { testMount } from '../utils/cypress-app-wrapper';
 
 const TestComponent = () => {
     const { report: report } = useReport({ platform: 'youtube', creator_id: 'abc-creator' });
-    return <div>{report}</div>;
+    return <div>{JSON.stringify(report)}</div>;
 };
 
 describe('<CreatorPage />', () => {
-    before(async () => {
+    before(() => {
         worker.start();
     });
 
