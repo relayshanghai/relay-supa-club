@@ -37,7 +37,7 @@ describe('SearchOptions', () => {
 
         testMount(<SearchPage companyId={companyId} />);
 
-        cy.getByTestId('search-topics').within(() => {
+        cy.findByTestId('search-topics').within(() => {
             cy.get('input').type('alligators{enter}');
             cy.get('input').type('yomrwhite{enter}');
         });
@@ -54,7 +54,7 @@ describe('SearchOptions', () => {
 
         testMount(<SearchPage companyId={companyId} />);
 
-        cy.getByTestId('search-topics').within(() => {
+        cy.findByTestId('search-topics').within(() => {
             cy.get('input').type('alligators{enter}');
             cy.get('input').type('yomrwhite{enter}');
         });
@@ -66,7 +66,7 @@ describe('SearchOptions', () => {
         cy.get('#remove-tag-alligators').should('exist').click();
         cy.get('#remove-tag-yomrwhite').should('exist').click();
 
-        cy.getByTestId('search-topics').within(() => {
+        cy.findByTestId('search-topics').within(() => {
             cy.get('input').should('be.empty');
         });
     });
@@ -80,7 +80,7 @@ describe('SearchOptions', () => {
 
         testMount(<SearchPage companyId={companyId} />);
 
-        cy.getByTestId('search-topics').within(() => {
+        cy.findByTestId('search-topics').within(() => {
             cy.get('input')
                 .type('alligators{enter}')
                 .type('yomrwhite{enter}')
