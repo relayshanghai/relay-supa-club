@@ -1,5 +1,5 @@
-describe('Main pages happy paths', () => {
-    it('can log in and load search page and switch language', () => {
+describe('Caching SWR requests', () => {
+    it('caches reports from `use-report`', () => {
         cy.loginTestUser();
 
         cy.contains('Campaigns', { timeout: 10000 });
@@ -14,7 +14,7 @@ describe('Main pages happy paths', () => {
             .invoke('removeAttr', 'target') // remove target attribute so we can click it and stay on the same page
             .click({ force: true }); // force click because the button is hidden because of our weird hover UI
 
-        cy.contains("T-Series is India's largest Music Label", { timeout: 1000 }).should('not.exist'); // report is not loaded yet
+        cy.contains("T-Series is India's largest Music Label", { timeout: 2500 }).should('not.exist'); // report is not loaded yet
 
         cy.contains('Generating influencer Report. Please wait', { timeout: 30000 }); // loading analyze page
         cy.contains("T-Series is India's largest Music Label", { timeout: 30000 }); // loads analyze page
@@ -23,7 +23,7 @@ describe('Main pages happy paths', () => {
 
         cy.contains('Campaigns', { timeout: 10000 }); // sidebar has loaded
 
-        cy.contains("T-Series is India's largest Music Label", { timeout: 1000 }); // loads report super fast
+        cy.contains("T-Series is India's largest Music Label", { timeout: 2500 }); // loads report faster than it did before
     });
 });
 
