@@ -16,18 +16,18 @@ export interface SubscriptionConfirmModalData {
     priceId: string;
     price: string;
 }
+export interface SubscriptionConfirmModalProps {
+    confirmModalData: SubscriptionConfirmModalData | null;
+    setConfirmModalData: (value: SubscriptionConfirmModalData | null) => void;
+    createSubscription: (priceId: string) => Promise<SubscriptionCreatePostResponse>;
+}
+
 export const SubscriptionConfirmModal = ({
     confirmModalData,
     setConfirmModalData,
     createSubscription,
-}: {
-    confirmModalData: SubscriptionConfirmModalData | null;
-    setConfirmModalData: (value: SubscriptionConfirmModalData | null) => void;
-    createSubscription: (priceId: string) => Promise<SubscriptionCreatePostResponse>;
-}) => {
-    const [submitStatus, setSubmitStatus] = useState<'initial' | 'submitting' | 'submitted'>(
-        'initial',
-    );
+}: SubscriptionConfirmModalProps) => {
+    const [submitStatus, setSubmitStatus] = useState<'initial' | 'submitting' | 'submitted'>('initial');
     const router = useRouter();
     const { t } = useTranslation();
     const handleCreateSubscription = async (priceId: string) => {
@@ -73,11 +73,12 @@ export const SubscriptionConfirmModal = ({
 
                     <h2>{t('account.subscription.modal.youAreAboutToSubscribeFor')}</h2>
                     <div className="mt-4 flex items-center justify-between">
-                        <p className="text-sm font-bold">{`${price}${t(
-                            'account.subscription.modal.perMonth',
-                        )}. ${t('account.subscription.modal.billed_period', {
-                            period: t(`account.subscription.${period}`),
-                        })}`}</p>
+                        <p className="text-sm font-bold">{`${price}${t('account.subscription.modal.perMonth')}. ${t(
+                            'account.subscription.modal.billed_period',
+                            {
+                                period: t(`account.subscription.${period}`),
+                            },
+                        )}`}</p>
 
                         <Button
                             disabled={submitStatus === 'submitting'}
