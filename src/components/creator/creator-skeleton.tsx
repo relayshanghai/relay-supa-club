@@ -53,11 +53,7 @@ export default function CreatorSkeleton({
                     <Skeleton className="mb-12 h-10 w-32" />
                     <div className="mt-4 flex flex-col space-x-6 lg:flex-row">
                         <div className="w-full lg:w-1/2">
-                            <SkeletonWithTitle
-                                blocks={2}
-                                containerClassName="mb-12"
-                                className="h-24 w-32"
-                            />
+                            <SkeletonWithTitle blocks={2} containerClassName="mb-12" className="h-24 w-32" />
 
                             <SkeletonWithTitle className="h-32 w-full" />
                         </div>

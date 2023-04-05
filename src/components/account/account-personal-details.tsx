@@ -21,14 +21,7 @@ export const PersonalDetails = () => {
         email: '',
     });
     const { refreshCompany } = useCompany();
-    const {
-        loading: userDataLoading,
-        profile,
-        user,
-        supabaseClient,
-        updateProfile,
-        refreshProfile,
-    } = useUser();
+    const { loading: userDataLoading, profile, user, supabaseClient, updateProfile, refreshProfile } = useUser();
 
     const [editMode, setEditMode] = useState(false);
     const [generatingResetEmail, setGeneratingResetEmail] = useState(false);
@@ -152,9 +145,7 @@ export const PersonalDetails = () => {
                     />
 
                     <div className="flex w-full flex-row justify-end space-x-4">
-                        <Button onClick={handleUpdateEmail}>
-                            {t('account.personal.updateEmail')}
-                        </Button>
+                        <Button onClick={handleUpdateEmail}>{t('account.personal.updateEmail')}</Button>
                         <Button onClick={() => setEditMode(false)} variant="secondary">
                             {t('account.cancel')}
                         </Button>
@@ -178,11 +169,7 @@ export const PersonalDetails = () => {
                 </div>
             )}
             {!editMode && (
-                <Button
-                    variant="secondary"
-                    onClick={handleResetPassword}
-                    disabled={generatingResetEmail}
-                >
+                <Button variant="secondary" onClick={handleResetPassword} disabled={generatingResetEmail}>
                     {t('login.changePassword')}
                 </Button>
             )}

@@ -1,7 +1,4 @@
-import type {
-    CreatorsReportGetQueries,
-    CreatorsReportGetResponse,
-} from 'pages/api/creators/report';
+import type { CreatorsReportGetQueries, CreatorsReportGetResponse } from 'pages/api/creators/report';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usageErrors } from 'src/errors/usages';

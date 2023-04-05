@@ -13,12 +13,9 @@ export type SubscriptionPortalGetQueries = {
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'GET') {
         const { id, returnUrl } = req.query as SubscriptionPortalGetQueries;
-        if (!id)
-            return res.status(httpCodes.BAD_REQUEST).send({ message: 'No company id provided' });
+        if (!id) return res.status(httpCodes.BAD_REQUEST).send({ message: 'No company id provided' });
         if (!(await isCompanyOwnerOrRelayEmployee(req, res))) {
-            return res
-                .status(httpCodes.UNAUTHORIZED)
-                .json({ error: 'This action is limited to company admins' });
+            return res.status(httpCodes.UNAUTHORIZED).json({ error: 'This action is limited to company admins' });
         }
         const { data: company, error } = await supabase
             .from('companies')
@@ -27,9 +24,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             .single();
 
         if (error || !company.cus_id) {
-            return res
-                .status(httpCodes.INTERNAL_SERVER_ERROR)
-                .json({ error: 'Error finding company' });
+            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({ error: 'Error finding company' });
         }
 
         const portal = await stripeClient.billingPortal.sessions.create({

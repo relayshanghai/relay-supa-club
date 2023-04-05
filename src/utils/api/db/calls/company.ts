@@ -11,8 +11,7 @@ export const getCompanyById = async (companyId: string) => {
     return data as CompanyDB;
 };
 
-export const getCompanyByCusId = (cusId: string) =>
-    supabase.from('companies').select().eq('cus_id', cusId).single();
+export const getCompanyByCusId = (cusId: string) => supabase.from('companies').select().eq('cus_id', cusId).single();
 
 /** updates the company, but does not allow usage limits or company onboarding status to be set */
 export const updateCompany = async (update: CompanyDBUpdate) => {
@@ -25,12 +24,7 @@ export const updateCompany = async (update: CompanyDBUpdate) => {
         subscription_current_period_end: _filter_out6,
         ...updateData
     } = update;
-    const { data, error } = await supabase
-        .from('companies')
-        .update(updateData)
-        .eq('id', update.id)
-        .select()
-        .single();
+    const { data, error } = await supabase.from('companies').update(updateData).eq('id', update.id).select().single();
 
     if (error) throw error;
     return data;
@@ -62,15 +56,9 @@ export const updateCompanyUsageLimits = async ({
     };
     if (trial_profiles_limit) update.trial_profiles_limit = trial_profiles_limit;
     if (trial_searches_limit) update.trial_searches_limit = trial_searches_limit;
-    if (trial_ai_email_generator_limit)
-        update.trial_ai_email_generator_limit = trial_ai_email_generator_limit;
+    if (trial_ai_email_generator_limit) update.trial_ai_email_generator_limit = trial_ai_email_generator_limit;
 
-    const { data, error } = await supabase
-        .from('companies')
-        .update(update)
-        .eq('id', id)
-        .select()
-        .single();
+    const { data, error } = await supabase.from('companies').update(update).eq('id', id).select().single();
 
     if (error) throw error;
     return data;
@@ -104,16 +92,9 @@ export const updateCompanySubscriptionStatus = async ({
     };
     if (subscription_start_date) update.subscription_start_date = subscription_start_date;
     if (subscription_end_date) update.subscription_end_date = subscription_end_date;
-    if (subscription_current_period_start)
-        update.subscription_current_period_start = subscription_current_period_start;
-    if (subscription_current_period_end)
-        update.subscription_current_period_end = subscription_current_period_end;
-    const { data, error } = await supabase
-        .from('companies')
-        .update(update)
-        .eq('id', id)
-        .select()
-        .single();
+    if (subscription_current_period_start) update.subscription_current_period_start = subscription_current_period_start;
+    if (subscription_current_period_end) update.subscription_current_period_end = subscription_current_period_end;
+    const { data, error } = await supabase.from('companies').update(update).eq('id', id).select().single();
 
     if (error) throw error;
     return data;
@@ -124,11 +105,9 @@ export const createCompany = (data: CompanyDBInsert) => {
     return supabase.from('companies').insert(data).select().single();
 };
 
-export const getCompanyByName = (name: string) =>
-    supabase.from('companies').select().eq('name', name).single();
+export const getCompanyByName = (name: string) => supabase.from('companies').select().eq('name', name).single();
 
-export const getCompanyName = (id: string) =>
-    supabase.from('companies').select('name').eq('id', id).single();
+export const getCompanyName = (id: string) => supabase.from('companies').select('name').eq('id', id).single();
 
 export const getAllCompanyNames = () => supabase.from('companies').select('name');
 

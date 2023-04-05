@@ -11,11 +11,7 @@ import { clientLogger } from 'src/utils/logger-client';
 import type { AIEmailSubjectGeneratorPostResult } from 'pages/api/ai-generate/subject';
 import { useUser } from 'src/hooks/use-user';
 import { useCompany } from 'src/hooks/use-company';
-import {
-    ArrowPathIcon,
-    ClipboardDocumentCheckIcon,
-    InboxArrowDownIcon,
-} from '@heroicons/react/24/solid';
+import { ArrowPathIcon, ClipboardDocumentCheckIcon, InboxArrowDownIcon } from '@heroicons/react/24/solid';
 import { useTranslation } from 'react-i18next';
 import { hasCustomError } from 'src/utils/errors';
 import { usageErrors } from 'src/errors/usages';
@@ -91,13 +87,10 @@ const AIImageGenerator = () => {
             user_id: profile?.id || '',
             company_id: company?.id || '',
         };
-        const res: AIEmailGeneratorPostResult = await nextFetch<AIEmailGeneratorPostResult>(
-            'ai-generate/email',
-            {
-                method: 'post',
-                body,
-            },
-        );
+        const res: AIEmailGeneratorPostResult = await nextFetch<AIEmailGeneratorPostResult>('ai-generate/email', {
+            method: 'post',
+            body,
+        });
 
         if (!res.text) {
             throw new Error('Email generation failed');
@@ -169,13 +162,9 @@ const AIImageGenerator = () => {
                     <span className="py-1/2 font-base mb-2 w-fit rounded-2xl bg-primary-500 px-2 text-[0.65rem] text-white">
                         BETA
                     </span>
-                    <h1 className="mb-2 text-2xl font-bold">
-                        {t('aiEmailGenerator.index.title') || ''}
-                    </h1>
+                    <h1 className="mb-2 text-2xl font-bold">{t('aiEmailGenerator.index.title') || ''}</h1>
                     <p className="mb-2 text-xs">{t('aiEmailGenerator.index.description') || ''}</p>
-                    <p className="text-xs font-semibold text-gray-500">
-                        {t('aiEmailGenerator.index.information')}
-                    </p>
+                    <p className="text-xs font-semibold text-gray-500">{t('aiEmailGenerator.index.information')}</p>
                 </div>
 
                 <div className="mt-10 flex w-full flex-col items-center justify-center gap-10 lg:h-full lg:flex-row lg:items-start">
@@ -198,9 +187,7 @@ const AIImageGenerator = () => {
 
                         <Input
                             label={t('aiEmailGenerator.form.label.influencerName') || ''}
-                            placeholder={
-                                t('aiEmailGenerator.form.placeholder.influencerName') || ''
-                            }
+                            placeholder={t('aiEmailGenerator.form.placeholder.influencerName') || ''}
                             value={influencerName}
                             onChange={(e) => setInfluencerName(e.target.value)}
                             required
@@ -285,9 +272,7 @@ const AIImageGenerator = () => {
                                     variant="secondary"
                                     className="flex items-center gap-2"
                                     onClick={(e) => handleSubmit(e, 'subject')}
-                                    disabled={
-                                        loadingEmail || loadingSubject || subjectLineRequiredMissing
-                                    }
+                                    disabled={loadingEmail || loadingSubject || subjectLineRequiredMissing}
                                 >
                                     <ArrowPathIcon className="w-4" />
                                     {t('aiEmailGenerator.form.label.regenerateSubject') || ''}
@@ -297,9 +282,7 @@ const AIImageGenerator = () => {
 
                         <div className="flex h-full w-full flex-col items-center justify-center">
                             <label className="flex h-full w-full flex-col text-xs text-gray-500">
-                                <div className="font-bold">
-                                    {t('aiEmailGenerator.form.label.generatedEmail') || ''}
-                                </div>
+                                <div className="font-bold">{t('aiEmailGenerator.form.label.generatedEmail') || ''}</div>
                                 <textarea
                                     className="my-2 block h-full w-full appearance-none rounded-md border border-transparent bg-white px-3 py-2 placeholder-gray-400 shadow ring-opacity-5 focus:border-primary-500 focus:outline-none focus:ring-primary-500 sm:text-xs"
                                     value={generatedEmail}
@@ -320,9 +303,7 @@ const AIImageGenerator = () => {
                                     variant="secondary"
                                     className="flex items-center gap-2"
                                     onClick={(e) => handleSubmit(e, 'email')}
-                                    disabled={
-                                        loadingEmail || loadingSubject || emailRequiredMissing
-                                    }
+                                    disabled={loadingEmail || loadingSubject || emailRequiredMissing}
                                 >
                                     <ArrowPathIcon className="w-4" />
                                     {t('aiEmailGenerator.form.label.regenerateEmail') || ''}

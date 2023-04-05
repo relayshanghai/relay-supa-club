@@ -18,8 +18,7 @@ const pricing = {
     andLearnHowToGetTheMost: ' and learn how to get the most value out of your subscription.',
     twoHundredNewInfluencerProfilesPerMonth: '200 new influencer profiles unlocked per month',
     fourHundredFiftyNewInfluencerProfilesPerMonth: '450 new influencer profiles unlocked per month',
-    search264MillionInfluencers:
-        'Search 264 million+ influencers on YouTube, TikTok, and Instagram',
+    search264MillionInfluencers: 'Search 264 million+ influencers on YouTube, TikTok, and Instagram',
     unlimitedCampaigns: 'Unlimited campaigns',
     unlimitedUserAccountsPerCompany: 'Unlimited user accounts per company',
     clubbyStarterPack: '"Clubby" starter pack',

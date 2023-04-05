@@ -14,16 +14,9 @@ const stripeWebhookAllowlist = ['https://stripe.com/', 'https://hooks.stripe.com
  *
 TODO https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/78: performance improvement. These two database calls might add too much loading time to each request. Consider adding a cache, or adding something to the session object that shows the user has a company and the company has a payment method.
  */
-const getCompanySubscriptionStatus = async (
-    supabase: SupabaseClient<DatabaseWithCustomTypes>,
-    userId: string,
-) => {
+const getCompanySubscriptionStatus = async (supabase: SupabaseClient<DatabaseWithCustomTypes>, userId: string) => {
     try {
-        const { data: profile } = await supabase
-            .from('profiles')
-            .select('company_id')
-            .eq('id', userId)
-            .single();
+        const { data: profile } = await supabase.from('profiles').select('company_id').eq('id', userId).single();
         if (!profile?.company_id) return { subscriptionStatus: false, subscriptionEndDate: null };
 
         const { data: company } = await supabase
@@ -66,10 +59,7 @@ const checkOnboardingStatus = async (
         }
         return res;
     }
-    const { subscriptionStatus, subscriptionEndDate } = await getCompanySubscriptionStatus(
-        supabase,
-        session.user.id,
-    );
+    const { subscriptionStatus, subscriptionEndDate } = await getCompanySubscriptionStatus(supabase, session.user.id);
     // if signed up, but no company, redirect to onboarding
     if (!subscriptionStatus) {
         if (req.nextUrl.pathname.includes('api')) {
@@ -120,10 +110,7 @@ const checkOnboardingStatus = async (
     // if company registered, but no payment method, redirect to payment onboarding
     if (subscriptionStatus === 'awaiting_payment_method') {
         // allow the endpoints payment onboarding page requires
-        if (
-            req.nextUrl.pathname.includes('/api/company') ||
-            req.nextUrl.pathname.includes('/api/subscriptions')
-        )
+        if (req.nextUrl.pathname.includes('/api/company') || req.nextUrl.pathname.includes('/api/subscriptions'))
             return res;
 
         if (req.nextUrl.pathname.includes('/signup/payment-onboard')) return res;
