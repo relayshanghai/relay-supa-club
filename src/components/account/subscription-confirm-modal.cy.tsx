@@ -105,7 +105,7 @@ describe('<SubscriptionConfirmModal />', () => {
         };
 
         testMount(<SubscriptionConfirmModal {...props} />);
-        cy.get('input').type('100_percent_off_timekettle');
+        cy.get('input').type('not_a_coupon');
         cy.get('button').contains('Apply coupon').click();
         cy.contains('Invalid coupon');
     });

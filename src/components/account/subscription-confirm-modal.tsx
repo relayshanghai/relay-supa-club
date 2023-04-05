@@ -64,8 +64,9 @@ export const SubscriptionConfirmModal = ({
 
     const checkCoupon = useCallback(async () => {
         setCheckingCoupon(true);
+        let coupon;
         try {
-            const coupon = await nextFetchWithQueries<CouponGetQueries, CouponGetResponse>(`subscriptions/coupon`, {
+            coupon = await nextFetchWithQueries<CouponGetQueries, CouponGetResponse>(`subscriptions/coupon`, {
                 coupon_id: couponId,
             });
             setCouponInfo(coupon);
@@ -73,13 +74,15 @@ export const SubscriptionConfirmModal = ({
             clientLogger(error, 'error');
             setCouponInfo(null);
         }
-        if (!couponInfo || !couponInfo.valid) {
+        if (!coupon || !coupon.valid) {
             toast.error(t('pricing.invalidCoupon'));
         } else {
-            if (couponInfo.percent_off) toast.success(t('pricing.couponApplied'));
+            if (coupon.percent_off) {
+                toast.success(t('pricing.couponApplied'));
+            }
         }
         setCheckingCoupon(false);
-    }, [couponId, couponInfo, t]);
+    }, [couponId, t]);
 
     const priceNumber = Number(price?.split('$')[1]);
     const priceAfterCoupon =

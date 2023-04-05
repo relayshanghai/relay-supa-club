@@ -8,6 +8,7 @@ import { UserContext } from 'src/hooks/use-user';
 import type { IUserContext } from 'src/hooks/use-user';
 import { createBrowserSupabaseClient } from '@supabase/auth-helpers-nextjs';
 import { SessionContextProvider } from '@supabase/auth-helpers-react';
+import { Toaster } from 'react-hot-toast';
 i18n.changeLanguage('en');
 
 export interface TestMountOptions {
@@ -68,6 +69,7 @@ export const testMount = (component: React.ReactElement, options?: TestMountOpti
                     <UserContext.Provider value={mockUserContext}>{component}</UserContext.Provider>
                 </I18nextProvider>{' '}
             </SessionContextProvider>
+            <Toaster />
         </AppRouterContext.Provider>,
     );
 };
