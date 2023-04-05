@@ -1,8 +1,9 @@
 run-name: Run main workflow by @${{ github.actor }}
 
 on:
-    push:
-    workflow_dispatch:
+    pull_request:
+        # This will make sure that only pushes to active PRs will trigger the workflow
+        types: [opened, synchronize]
 
 env:
     STRIPE_API_KEY: ${{ secrets.STRIPE_API_KEY }}
