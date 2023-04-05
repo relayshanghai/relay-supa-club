@@ -1,3 +1,4 @@
+/// <reference types="@testing-library/cypress" />
 import { APP_URL_CYPRESS, worker } from '../../mocks/browser';
 import { testMount } from '../../utils/cypress-app-wrapper';
 import { rest } from 'msw';
