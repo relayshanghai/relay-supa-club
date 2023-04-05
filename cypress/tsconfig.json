@@ -1,11 +1,14 @@
 {
-    "extends": "../tsconfig.json",
-    "compilerOptions": {
-        "noEmit": true,
-        // be explicit about types included
-        // to avoid clashing with Jest types
-        "types": ["cypress", "@testing-library/cypress"]
-    },
-    "include": ["../node_modules/cypress", "./**/*.ts"],
-    "exclude": ["../node_modules"]
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "allowJs": true,
+    // be explicit about types included
+    // to avoid clashing with Jest types
+    "types": ["cypress", "@testing-library/cypress"],
+    "baseUrl": "../node_modules",
+    "resolveJsonModule": true
+  },
+  "include": ["**/*.*", "../node_modules/cypress", "./**/*.ts"],
+  "exclude": ["../node_modules"]
 }
