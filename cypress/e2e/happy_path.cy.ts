@@ -1,4 +1,4 @@
-describe.skip('Main pages happy paths', () => {
+describe('Main pages happy paths', () => {
     it('can log in and load search page and switch language', () => {
         cy.visit('/');
         // starts on signup page. has an h1 that says signup in Chinese: 注册
