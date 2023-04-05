@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import type { SubscriptionCreatePostResponse } from 'pages/api/subscriptions/create';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { createSubscriptionErrors } from 'src/errors/subscription';
@@ -23,7 +23,7 @@ export interface SubscriptionConfirmModalData {
 export interface SubscriptionConfirmModalProps {
     confirmModalData: SubscriptionConfirmModalData | null;
     setConfirmModalData: (value: SubscriptionConfirmModalData | null) => void;
-    createSubscription: (priceId: string) => Promise<SubscriptionCreatePostResponse>;
+    createSubscription: (priceId: string, couponId?: string) => Promise<SubscriptionCreatePostResponse>;
 }
 
 export const SubscriptionConfirmModal = ({
@@ -34,11 +34,17 @@ export const SubscriptionConfirmModal = ({
     const [submitStatus, setSubmitStatus] = useState<'initial' | 'submitting' | 'submitted'>('initial');
     const router = useRouter();
     const { t } = useTranslation();
-    const handleCreateSubscription = async (priceId: string) => {
+
+    const [couponId, setCouponId] = useState<string>('');
+    const [couponInfo, setCouponInfo] = useState<CouponGetResponse | null>(null);
+    const [checkingCoupon, setCheckingCoupon] = useState<boolean>(false);
+    const { price, period, priceId, plan } = confirmModalData || {};
+    const handleCreateSubscription = useCallback(async () => {
         setSubmitStatus('submitting');
         const id = toast.loading(t('account.subscription.modal.subscribing'));
         try {
-            const result = await createSubscription(priceId);
+            if (!priceId) throw new Error('noPriceId');
+            const result = await createSubscription(priceId, couponId);
             if (result?.status === 'active')
                 toast.success(t('account.subscription.modal.subscriptionPurchased'), { id });
             setSubmitStatus('submitted');
@@ -54,13 +60,9 @@ export const SubscriptionConfirmModal = ({
             }
             setSubmitStatus('initial');
         }
-    };
-    const [couponId, setCouponId] = useState<string>('');
-    const [couponInfo, setCouponInfo] = useState<CouponGetResponse | null>(null);
-    const [checkingCoupon, setCheckingCoupon] = useState<boolean>(false);
-    const { price, period, priceId, plan } = confirmModalData || {};
+    }, [t, createSubscription, priceId, couponId]);
 
-    const checkCoupon = async () => {
+    const checkCoupon = useCallback(async () => {
         setCheckingCoupon(true);
         try {
             const coupon = await nextFetchWithQueries<CouponGetQueries, CouponGetResponse>(`subscriptions/coupon`, {
@@ -72,7 +74,8 @@ export const SubscriptionConfirmModal = ({
             setCouponInfo(null);
         }
         setCheckingCoupon(false);
-    };
+    }, [couponId]);
+
     const priceNumber = Number(price?.split('$')[1]);
     const priceAfterCoupon =
         price && !Number.isNaN(priceNumber) && couponInfo?.percent_off
@@ -141,9 +144,7 @@ export const SubscriptionConfirmModal = ({
                         <Button
                             disabled={submitStatus === 'submitting'}
                             onClick={() =>
-                                submitStatus === 'submitted'
-                                    ? router.push('/account')
-                                    : handleCreateSubscription(priceId)
+                                submitStatus === 'submitted' ? router.push('/account') : handleCreateSubscription()
                             }
                         >
                             {submitStatus === 'submitted'

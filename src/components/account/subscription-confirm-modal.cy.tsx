@@ -71,6 +71,28 @@ describe('<SubscriptionConfirmModal />', () => {
         cy.get('button').contains('Apply coupon').click();
         cy.contains('$0.00/month. Billed monthly');
     });
+    it('sends coupon code in createSubscription call', () => {
+        worker.use(
+            rest.get(`${APP_URL_CYPRESS}/api/subscriptions/coupon`, (req, res, ctx) => res(ctx.json(couponRes))),
+        );
+        const setConfirmModalData = cy.stub();
+        const createSubscription = cy.stub();
+        const props: SubscriptionConfirmModalProps = {
+            confirmModalData,
+            setConfirmModalData,
+            createSubscription,
+        };
+
+        testMount(<SubscriptionConfirmModal {...props} />);
+        cy.get('input').type('100_percent_off_timekettle');
+        cy.get('button').contains('Apply coupon').click();
+        cy.contains('$0.00/month. Billed monthly');
+
+        cy.get('button').contains('Subscribe').click();
+        cy.findByRole('button', { name: 'Back to account' }).then(() => {
+            expect(createSubscription).to.be.calledWith(confirmModalData.priceId, '100_percent_off_timekettle');
+        });
+    });
 });
 
 export {};

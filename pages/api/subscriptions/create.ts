@@ -2,11 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { AI_EMAIL_SUBSCRIPTION_USAGE_LIMIT } from 'src/constants/openai';
 import { createSubscriptionErrors } from 'src/errors/subscription';
-import {
-    getCompanyCusId,
-    updateCompanySubscriptionStatus,
-    updateCompanyUsageLimits,
-} from 'src/utils/api/db';
+import { getCompanyCusId, updateCompanySubscriptionStatus, updateCompanyUsageLimits } from 'src/utils/api/db';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 import { isCompanyOwnerOrRelayEmployee } from 'src/utils/auth';
 import { serverLogger } from 'src/utils/logger-server';
@@ -16,6 +12,7 @@ import type Stripe from 'stripe';
 export type SubscriptionCreatePostBody = {
     company_id: string;
     price_id: string;
+    coupon_id?: string;
 };
 export type SubscriptionCreatePostResponse = Stripe.Response<Stripe.Subscription>;
 /**
@@ -23,19 +20,13 @@ export type SubscriptionCreatePostResponse = Stripe.Response<Stripe.Subscription
  */
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
-        const { company_id, price_id } = req.body as SubscriptionCreatePostBody;
+        const { company_id, price_id, coupon_id } = req.body as SubscriptionCreatePostBody;
         if (!company_id)
-            return res
-                .status(httpCodes.BAD_REQUEST)
-                .json({ error: createSubscriptionErrors.missingCompanyData });
+            return res.status(httpCodes.BAD_REQUEST).json({ error: createSubscriptionErrors.missingCompanyData });
         if (!price_id)
-            return res
-                .status(httpCodes.BAD_REQUEST)
-                .json({ error: createSubscriptionErrors.missingPriceId });
+            return res.status(httpCodes.BAD_REQUEST).json({ error: createSubscriptionErrors.missingPriceId });
         if (!(await isCompanyOwnerOrRelayEmployee(req, res))) {
-            return res
-                .status(httpCodes.UNAUTHORIZED)
-                .json({ error: createSubscriptionErrors.actionLimitedToAdmins });
+            return res.status(httpCodes.UNAUTHORIZED).json({ error: createSubscriptionErrors.actionLimitedToAdmins });
         }
         try {
             const { data: companyData, error: getCompanyError } = await getCompanyCusId(company_id);
@@ -47,9 +38,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             const paymentMethods = await stripeClient.customers.listPaymentMethods(cusId);
             if (paymentMethods?.data?.length === 0) {
-                return res
-                    .status(httpCodes.BAD_REQUEST)
-                    .json({ error: createSubscriptionErrors.noPaymentMethod });
+                return res.status(httpCodes.BAD_REQUEST).json({ error: createSubscriptionErrors.noPaymentMethod });
             }
 
             const subscriptions = await stripeClient.subscriptions.list({
@@ -75,8 +64,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 items: [{ price: price_id }],
                 proration_behavior: 'create_prorations',
             };
-            const subscription: SubscriptionCreatePostResponse =
-                await stripeClient.subscriptions.create(createParams);
+            if (coupon_id) createParams.coupon = coupon_id;
+
+            const subscription: SubscriptionCreatePostResponse = await stripeClient.subscriptions.create(createParams);
 
             if (subscription.status !== 'active') {
                 // not active means the payment was declined.
@@ -108,12 +98,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             await updateCompanySubscriptionStatus({
                 subscription_status: 'active',
                 subscription_start_date,
-                subscription_current_period_start: unixEpochToISOString(
-                    subscription.current_period_start,
-                ),
-                subscription_current_period_end: unixEpochToISOString(
-                    subscription.current_period_end,
-                ),
+                subscription_current_period_start: unixEpochToISOString(subscription.current_period_start),
+                subscription_current_period_end: unixEpochToISOString(subscription.current_period_end),
                 id: company_id,
             });
 
