@@ -144,32 +144,20 @@ export const SearchOptions = ({
                                 <p>
                                     {`${t('creators.filter.subs')}: ${
                                         audience[0] ? numberFormatter(audience[0]) : 0
-                                    } - ${
-                                        audience[1]
-                                            ? numberFormatter(audience[1])
-                                            : t('creators.filter.max')
-                                    }`}
+                                    } - ${audience[1] ? numberFormatter(audience[1]) : t('creators.filter.max')}`}
                                 </p>
                             )}
                             {hasSetViews && (
                                 <p>
-                                    {`${t('creators.filter.avgViews')}: ${
-                                        views[0] ? numberFormatter(views[0]) : 0
-                                    } - ${
-                                        views[1]
-                                            ? numberFormatter(views[1])
-                                            : t('creators.filter.max')
+                                    {`${t('creators.filter.avgViews')}: ${views[0] ? numberFormatter(views[0]) : 0} - ${
+                                        views[1] ? numberFormatter(views[1]) : t('creators.filter.max')
                                     }`}
                                 </p>
                             )}
                             {gender && <p>{t(`creators.filter.${gender}`)}</p>}
-                            {engagement && (
-                                <p>{`${t('creators.filter.engagement')}: >${engagement}%`}</p>
-                            )}
+                            {engagement && <p>{`${t('creators.filter.engagement')}: >${engagement}%`}</p>}
                             {lastPost && (
-                                <p>{`${t('creators.filter.lastPost')}: ${lastPost} ${t(
-                                    'creators.filter.days',
-                                )}`}</p>
+                                <p>{`${t('creators.filter.lastPost')}: ${lastPost} ${t('creators.filter.days')}`}</p>
                             )}
                         </div>
                     </button>
@@ -187,9 +175,7 @@ export const SearchOptions = ({
                             </option>
                         ))}
                     </select>
-                    <p className="mr-2 ml-1 text-sm text-gray-500">
-                        {t('creators.resultsPerPage')}
-                    </p>
+                    <p className="mr-2 ml-1 text-sm text-gray-500">{t('creators.resultsPerPage')}</p>
                     {hasSetViews || hasSetAudience || gender || engagement || lastPost ? (
                         <Button
                             onClick={(e: any) => {

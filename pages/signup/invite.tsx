@@ -113,18 +113,7 @@ export default function Register() {
         } finally {
             setRegistering(false);
         }
-    }, [
-        acceptInvite,
-        email,
-        firstName,
-        lastName,
-        login,
-        password,
-        router,
-        supabaseClient?.auth,
-        t,
-        token,
-    ]);
+    }, [acceptInvite, email, firstName, lastName, login, password, router, supabaseClient?.auth, t, token]);
     if (!token)
         return (
             <div className="mx-auto flex h-full flex-col items-center justify-center space-y-6">
@@ -145,8 +134,7 @@ export default function Register() {
     const hasValidationErrors = Object.values(validationErrors).some((error) => error !== '');
 
     const invalidFormInput =
-        isMissing(token, firstName, lastName, email, password, confirmPassword) ||
-        hasValidationErrors;
+        isMissing(token, firstName, lastName, email, password, confirmPassword) || hasValidationErrors;
     const submitDisabled = registering || invalidFormInput;
 
     return (
@@ -155,9 +143,7 @@ export default function Register() {
                 <form className="mx-auto flex w-full max-w-xs flex-grow flex-col items-center justify-center space-y-2">
                     <div className="w-full text-left">
                         <h1 className="mb-2 text-4xl font-bold">{t('login.acceptInvite')}</h1>
-                        <h3 className="mb-8 text-sm text-gray-600">
-                            {t('login.someoneInvitedYouToJoinRelayClub')}
-                        </h3>
+                        <h3 className="mb-8 text-sm text-gray-600">{t('login.someoneInvitedYouToJoinRelayClub')}</h3>
                     </div>
                     <Input label={t('login.email')} value={email} disabled />
 

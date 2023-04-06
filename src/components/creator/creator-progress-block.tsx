@@ -25,9 +25,7 @@ export const ProgressBlock = ({
                             <div className="text-sm font-semibold text-gray-600">
                                 {stat.name ? chinaFilter(stat.name) : ''}
                             </div>
-                            <div className="text-sm text-gray-600">
-                                {decimalToPercent(stat.weight)}
-                            </div>
+                            <div className="text-sm text-gray-600">{decimalToPercent(stat.weight)}</div>
                         </div>
                         <div className="relative pt-1">
                             <div className="mb-4 flex h-2 overflow-hidden rounded bg-primary-100 text-xs">

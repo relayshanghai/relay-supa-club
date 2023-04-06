@@ -41,8 +41,7 @@ export const fetchIqDataLookalikeByInfluencer = async (term: string, platform: C
 export const fetchIqDataTopics = async (term: string, platform: CreatorPlatform, limit = 10) =>
     await iqDataFetch(`dict/topic-tags/?q=${term}&platform=${platform}&limit=${limit}`);
 
-export const fetchIqDataGeos = async (term: string) =>
-    await iqDataFetch(`geos/?q=${term}&types=country&limit=5`);
+export const fetchIqDataGeos = async (term: string) => await iqDataFetch(`geos/?q=${term}&types=country&limit=5`);
 
 export const fetchCreatorsFiltered = async (params: FetchCreatorsFilteredParams) => {
     const { platform, body } = prepareFetchCreatorsFiltered(params);
@@ -56,23 +55,13 @@ export const fetchCreatorsFiltered = async (params: FetchCreatorsFilteredParams)
     );
 };
 
-export const requestNewReport = async (
-    platform: CreatorPlatform,
-    id: string,
-    subscribe = false,
-    dry_run = false,
-) =>
+export const requestNewReport = async (platform: CreatorPlatform, id: string, subscribe = false, dry_run = false) =>
     await iqDataFetch<CreatorReport>(
-        `reports/new?platform=${platform}&url=${id}&subscribe=${
-            subscribe ? 1 : 0
-        }&dry_run=${dry_run}`,
+        `reports/new?platform=${platform}&url=${id}&subscribe=${subscribe ? 1 : 0}&dry_run=${dry_run}`,
     );
 
-export const fetchReport = async (reportId: string) =>
-    await iqDataFetch<CreatorReport>(`reports/${reportId}`);
+export const fetchReport = async (reportId: string) => await iqDataFetch<CreatorReport>(`reports/${reportId}`);
 
 //** omit id to get all previously generated reports of that platform */
 export const fetchReportsMetadata = async (platform: CreatorPlatform, creator_id?: string) =>
-    await iqDataFetch<CreatorReportsMetadata>(
-        `reports?platform=${platform}${creator_id ? `&url=${creator_id}` : ''}`,
-    );
+    await iqDataFetch<CreatorReportsMetadata>(`reports?platform=${platform}${creator_id ? `&url=${creator_id}` : ''}`);

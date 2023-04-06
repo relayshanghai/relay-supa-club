@@ -28,11 +28,7 @@ export const Layout = ({ children }: any) => {
     return (
         <div className="h-full w-full">
             <div className="flex h-full flex-row">
-                <Sidebar
-                    loggedIn={!!profile?.id && !loading}
-                    open={sideBarOpen}
-                    setOpen={setSideBarOpen}
-                />
+                <Sidebar loggedIn={!!profile?.id && !loading} open={sideBarOpen} setOpen={setSideBarOpen} />
                 <div className="flex w-full flex-col overflow-hidden">
                     <div className="z-30 flex items-center justify-between bg-white shadow-lg shadow-gray-100">
                         <Button
@@ -82,9 +78,7 @@ export const Layout = ({ children }: any) => {
                                         )}
                                     </div>
                                 )}
-                                {loading && (
-                                    <Spinner className="h-9 w-9 fill-primary-600 p-2 text-white" />
-                                )}
+                                {loading && <Spinner className="h-9 w-9 fill-primary-600 p-2 text-white" />}
                             </div>
                         </div>
                     </div>

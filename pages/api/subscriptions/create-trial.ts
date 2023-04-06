@@ -1,15 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
-import {
-    AI_EMAIL_SUBSCRIPTION_USAGE_LIMIT,
-    AI_EMAIL_TRIAL_USAGE_LIMIT,
-} from 'src/constants/openai';
+import { AI_EMAIL_SUBSCRIPTION_USAGE_LIMIT, AI_EMAIL_TRIAL_USAGE_LIMIT } from 'src/constants/openai';
 import { createSubscriptionErrors } from 'src/errors/subscription';
-import {
-    getCompanyCusId,
-    updateCompanySubscriptionStatus,
-    updateCompanyUsageLimits,
-} from 'src/utils/api/db';
+import { getCompanyCusId, updateCompanySubscriptionStatus, updateCompanyUsageLimits } from 'src/utils/api/db';
 import { STRIPE_PRICE_MONTHLY_DIY, STRIPE_PRODUCT_ID_DIY } from 'src/utils/api/stripe/constants';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 import { isCompanyOwnerOrRelayEmployee } from 'src/utils/auth';
@@ -30,9 +23,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const { company_id } = req.body as SubscriptionCreateTrialPostBody;
 
             if (!company_id || typeof company_id !== 'string') {
-                return res
-                    .status(httpCodes.BAD_REQUEST)
-                    .json({ error: createSubscriptionErrors.missingCompanyData });
+                return res.status(httpCodes.BAD_REQUEST).json({ error: createSubscriptionErrors.missingCompanyData });
             }
             if (!(await isCompanyOwnerOrRelayEmployee(req, res))) {
                 return res
@@ -55,9 +46,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             });
             const activeSubscription = subscriptions.data[0];
             if (activeSubscription) {
-                return res
-                    .status(httpCodes.BAD_REQUEST)
-                    .json({ error: createSubscriptionErrors.alreadySubscribed });
+                return res.status(httpCodes.BAD_REQUEST).json({ error: createSubscriptionErrors.alreadySubscribed });
             }
             const diyPrices = (await stripeClient.prices.list({
                 active: true,
@@ -86,8 +75,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 trial_period_days: Number(trial_days),
             };
 
-            const subscription: SubscriptionCreateTrialResponse =
-                await stripeClient.subscriptions.create(createParams);
+            const subscription: SubscriptionCreateTrialResponse = await stripeClient.subscriptions.create(createParams);
 
             if (!subscription || subscription.status !== 'trialing') {
                 return res
@@ -115,21 +103,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 id: company_id,
             });
 
-            const subscription_start_date = unixEpochToISOString(
-                subscription.trial_start,
-                subscription.start_date,
-            );
+            const subscription_start_date = unixEpochToISOString(subscription.trial_start, subscription.start_date);
             if (!subscription_start_date) throw new Error('Missing subscription start date');
 
             await updateCompanySubscriptionStatus({
                 subscription_status: 'trial',
                 subscription_start_date,
-                subscription_current_period_start: unixEpochToISOString(
-                    subscription.current_period_start,
-                ),
-                subscription_current_period_end: unixEpochToISOString(
-                    subscription.current_period_end,
-                ),
+                subscription_current_period_start: unixEpochToISOString(subscription.current_period_start),
+                subscription_current_period_end: unixEpochToISOString(subscription.current_period_end),
                 id: company_id,
             });
 

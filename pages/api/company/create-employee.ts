@@ -71,9 +71,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         try {
             const { email } = req.body as CreateEmployeePostBody;
             if (!EMPLOYEE_EMAILS.includes(email)) {
-                return res
-                    .status(httpCodes.BAD_REQUEST)
-                    .json({ error: createEmployeeError.isNotEmployee });
+                return res.status(httpCodes.BAD_REQUEST).json({ error: createEmployeeError.isNotEmployee });
             }
             const { data: company, error: getOrCreateCompanyError } = await getOrCreateCompany();
             if (!company) {

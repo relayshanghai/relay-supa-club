@@ -1,9 +1,6 @@
 import type { TextareaHTMLAttributes } from 'react';
 
-export const InputTextArea = ({
-    label,
-    ...rest
-}: TextareaHTMLAttributes<HTMLTextAreaElement> & { label: string }) => {
+export const InputTextArea = ({ label, ...rest }: TextareaHTMLAttributes<HTMLTextAreaElement> & { label: string }) => {
     return (
         <label className="flex w-full flex-col text-xs text-gray-500">
             <div className="font-bold">

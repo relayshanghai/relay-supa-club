@@ -134,13 +134,7 @@ const prepareStats = (audience: AudienceStats, t: TFunction) => {
     return data;
 };
 
-const AudienceStatsSection = ({
-    stats,
-    platform,
-}: {
-    stats: Stat[];
-    platform: CreatorPlatform;
-}) => {
+const AudienceStatsSection = ({ stats, platform }: { stats: Stat[]; platform: CreatorPlatform }) => {
     return (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
             {stats.map((stat, index) => (
@@ -177,8 +171,7 @@ export const AudienceStats = ({ report }: { report: CreatorReport }) => {
         tabs.push({ label: `creators.show.audience_followers`, value: 'audience_followers' });
     if (commentersStats.length > 0)
         tabs.push({ label: `creators.show.audience_commenters`, value: 'audience_commenters' });
-    if (likersStats.length > 0)
-        tabs.push({ label: `creators.show.audience_likers`, value: 'audience_likers' });
+    if (likersStats.length > 0) tabs.push({ label: `creators.show.audience_likers`, value: 'audience_likers' });
 
     const platform = report.user_profile.type;
 

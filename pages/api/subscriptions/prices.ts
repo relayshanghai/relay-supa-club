@@ -16,9 +16,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             return res.status(httpCodes.OK).json(prices);
         } catch (error) {
             serverLogger(error, 'error');
-            return res
-                .status(httpCodes.INTERNAL_SERVER_ERROR)
-                .json({ error: 'unable to get plan prices' });
+            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({ error: 'unable to get plan prices' });
         }
     }
 

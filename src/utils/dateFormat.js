@@ -77,7 +77,7 @@ export default function dateFormat(date, mask, utc, gmt) {
                 d: d(),
                 _: _(),
                 dayName: i18n.dayNames[D()],
-                short: true
+                short: true,
             }),
         dddd: () => i18n.dayNames[D() + 7],
         DDDD: () =>
@@ -86,7 +86,7 @@ export default function dateFormat(date, mask, utc, gmt) {
                 m: m(),
                 d: d(),
                 _: _(),
-                dayName: i18n.dayNames[D() + 7]
+                dayName: i18n.dayNames[D() + 7],
             }),
         m: () => m() + 1,
         mm: () => pad(m() + 1),
@@ -109,21 +109,16 @@ export default function dateFormat(date, mask, utc, gmt) {
         T: () => (H() < 12 ? i18n.timeNames[4] : i18n.timeNames[5]),
         TT: () => (H() < 12 ? i18n.timeNames[6] : i18n.timeNames[7]),
         Z: () => (gmt ? 'GMT' : utc ? 'UTC' : formatTimezone(date)),
-        o: () =>
-            (o() > 0 ? '-' : '+') +
-            pad(Math.floor(Math.abs(o()) / 60) * 100 + (Math.abs(o()) % 60), 4),
+        o: () => (o() > 0 ? '-' : '+') + pad(Math.floor(Math.abs(o()) / 60) * 100 + (Math.abs(o()) % 60), 4),
         p: () =>
             (o() > 0 ? '-' : '+') +
             pad(Math.floor(Math.abs(o()) / 60), 2) +
             ':' +
             pad(Math.floor(Math.abs(o()) % 60), 2),
-        S: () =>
-            ['th', 'st', 'nd', 'rd'][
-                d() % 10 > 3 ? 0 : (((d() % 100) - (d() % 10) != 10) * d()) % 10
-            ],
+        S: () => ['th', 'st', 'nd', 'rd'][d() % 10 > 3 ? 0 : (((d() % 100) - (d() % 10) != 10) * d()) % 10],
         W: () => W(),
         WW: () => pad(W()),
-        N: () => N()
+        N: () => N(),
     };
 
     return mask.replace(token, (match) => {
@@ -148,7 +143,7 @@ export const masks = {
     isoTime: 'HH:MM:ss',
     isoDateTime: "yyyy-mm-dd'T'HH:MM:sso",
     isoUtcDateTime: "UTC:yyyy-mm-dd'T'HH:MM:ss'Z'",
-    expiresHeaderFormat: 'ddd, dd mmm yyyy HH:MM:ss Z'
+    expiresHeaderFormat: 'ddd, dd mmm yyyy HH:MM:ss Z',
 };
 
 // Internationalization strings
@@ -167,7 +162,7 @@ export const i18n = {
         'Wednesday',
         'Thursday',
         'Friday',
-        'Saturday'
+        'Saturday',
     ],
     monthNames: [
         'Jan',
@@ -193,9 +188,9 @@ export const i18n = {
         'September',
         'October',
         'November',
-        'December'
+        'December',
     ],
-    timeNames: ['a', 'p', 'am', 'pm', 'A', 'P', 'AM', 'PM']
+    timeNames: ['a', 'p', 'am', 'pm', 'A', 'P', 'AM', 'PM'],
 };
 
 const pad = (val, len = 2) => String(val).padStart(len, '0');
