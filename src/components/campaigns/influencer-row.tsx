@@ -1,7 +1,7 @@
 import { t } from 'i18next';
 import Link from 'next/link';
-import type { Dispatch, RefObject, SetStateAction } from 'react';
-import type { ChangeEvent, MouseEvent } from 'react';
+import { useState } from 'react';
+import type { ChangeEvent, MouseEvent, Dispatch, RefObject, SetStateAction } from 'react';
 import type { CampaignCreatorDB } from 'src/utils/api/db';
 import { imgProxy } from 'src/utils/fetcher';
 import type { SocialMediaPlatform } from 'types';
@@ -10,6 +10,7 @@ import { CreatorContacts } from './creator-contacts';
 import TableInput from './campaign-table-input';
 import dateFormat from 'src/utils/dateFormat';
 import { Trashcan } from '../icons';
+import { Button } from '../button';
 
 const paymentStatus = [
     { id: 1, label: 'unpaid', value: 'unpaid' },
@@ -23,7 +24,7 @@ const sampleStatus = [
     { id: 3, label: 'delivered', value: 'delivered' },
 ];
 
-interface InfluencerRowProps {
+export interface InfluencerRowProps {
     index: number;
     creator: CampaignCreatorDB;
     tabs: {
@@ -68,6 +69,7 @@ const InfluencerRow = ({
     openMoveInfluencerModal,
 }: InfluencerRowProps) => {
     const handle = creator.username || creator.fullname || '';
+    const [showContactInfo, setShowContactInfo] = useState(false);
 
     return (
         <tr key={index} className="group text-xs hover:relative hover:bg-primary-50">
@@ -97,7 +99,13 @@ const InfluencerRow = ({
             </td>
             {/* -- Contact Column -- */}
             <td className="min-w-[150px] whitespace-nowrap px-6 py-4">
-                <CreatorContacts {...creator} />
+                {showContactInfo ? (
+                    <CreatorContacts {...creator} />
+                ) : (
+                    <Button variant="secondary" onClick={() => setShowContactInfo(true)}>
+                        View Contact Info
+                    </Button>
+                )}
             </td>
             <td className="whitespace-nowrap px-6 py-4">
                 <select
