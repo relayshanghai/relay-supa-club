@@ -20,16 +20,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         try {
             const sig = req.headers['stripe-signature'];
             if (!sig) {
-                supabaseLogger({ type: 'stripe-webhook', message: 'no signature' });
+                await supabaseLogger({ type: 'stripe-webhook', message: 'no signature' });
                 return res.status(httpCodes.BAD_REQUEST).json({});
             }
             const ourSig = process.env.STRIPE_SIGNING_SECRET;
             if (!ourSig) {
-                supabaseLogger({ type: 'stripe-webhook', message: 'no signing secret' });
+                await supabaseLogger({ type: 'stripe-webhook', message: 'no signing secret' });
                 return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
             }
             if (sig !== ourSig) {
-                supabaseLogger({ type: 'stripe-webhook', message: 'signatures do not match' });
+                await supabaseLogger({ type: 'stripe-webhook', message: 'signatures do not match' });
                 return res.status(httpCodes.FORBIDDEN).json({});
             }
 
@@ -37,7 +37,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             const body = req.body;
             if (!body || !body.type) {
-                supabaseLogger({
+                await supabaseLogger({
                     type: 'stripe-webhook',
                     message: 'no body or body.type',
                     data: body,
@@ -67,7 +67,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }
         } catch (error: any) {
             serverLogger(error, 'error');
-            supabaseLogger({
+            await supabaseLogger({
                 type: 'stripe-webhook',
                 message: error.message ?? 'error',
                 data: JSON.parse(JSON.stringify(error)),
