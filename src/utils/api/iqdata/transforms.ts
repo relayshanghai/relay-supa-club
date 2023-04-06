@@ -1,5 +1,6 @@
+import { clientLogger } from 'src/utils/logger-client';
 import type { CreatorPlatform, CreatorAccount, LocationWeighted } from 'types';
-import type { InfluencerSearchRequestBody } from 'types/iqdata/influencer-search-request-body';
+import type { GenderAllCode, InfluencerSearchRequestBody } from 'types/iqdata/influencer-search-request-body';
 type NullStringTuple = [null | string, null | string];
 
 export interface FetchCreatorsFilteredParams {
@@ -20,9 +21,18 @@ export interface FetchCreatorsFilteredParams {
 }
 
 const locationTransform = ({ id, weight }: { id: string; weight: number | string }) => ({
-    id,
+    id: Number(id),
     weight: weight ? Number(weight) / 100 : 0.5,
 });
+
+const genderTransform = (gender?: string) => {
+    if (!gender) return undefined;
+    const upper = gender.toUpperCase();
+    const allowed: GenderAllCode[] = ['FEMALE', 'KNOWN', 'KNOWN', 'UNKNOWN'];
+    if (allowed.includes(upper as GenderAllCode)) return { code: upper as GenderAllCode };
+    clientLogger('bad option for gender: ' + gender, 'error');
+    return undefined;
+};
 
 export const prepareFetchCreatorsFiltered = ({
     platform = 'youtube',
@@ -53,19 +63,18 @@ export const prepareFetchCreatorsFiltered = ({
         filter: {
             audience_geo: audienceLocation.map(locationTransform) || [],
             geo: influencerLocation.map(locationTransform) || [],
-            gender: gender ? { code: gender.toUpperCase() } : '',
-            lang: '',
+            gender: genderTransform(gender),
+            // lang: '',
             username: { value: username },
-            last_posted: lastPost || '',
+            last_posted: lastPost ? Number(lastPost) : undefined,
             views: {
-                left_number: views ? views[0] ?? '' : '',
-                right_number: views ? views[1] ?? '' : '',
+                left_number: views ? Number(views[0]) ?? undefined : undefined,
+                right_number: views ? Number(views[1]) ?? undefined : undefined,
             },
             followers: {
-                left_number: audience ? audience[0] ?? '' : '',
-                right_number: audience ? audience[1] ?? '' : '',
+                left_number: audience ? Number(audience[0]) ?? undefined : undefined,
+                right_number: audience ? Number(audience[1]) ?? undefined : undefined,
             },
-            username: { value: 'GRTR' },
             relevance: {
                 value: [...tagsValue, ...lookalikeValue].join(' '),
                 weight: 0.5,
@@ -79,12 +88,12 @@ export const prepareFetchCreatorsFiltered = ({
             ...(engagement
                 ? {
                       engagement_rate: {
-                          value: (engagement / 100).toFixed(2),
+                          value: Number((engagement / 100).toFixed(2)),
                           operator: 'gte',
                       },
                   }
                 : {}),
-        } as any,
+        },
         sort: { field: 'followers', direction: 'desc' },
         audience_source: 'any',
     };
