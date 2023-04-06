@@ -13,6 +13,7 @@ import type { ProfileDB } from 'src/utils/api/db/types';
 import { nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
 import type { DatabaseWithCustomTypes } from 'types';
+import { appCacheKey } from 'src/utils/local-cache-swr';
 
 export type SignupData = {
     email: string;
@@ -185,6 +186,9 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
         Sentry.setUser(null);
         const email = session?.user?.email;
         // cannot use router.push() here because it won't cancel in-flight requests which wil re-set the cookie
+
+        localStorage.set(appCacheKey, '[]');
+
         window.location.href = email ? `/logout?${new URLSearchParams({ email })}` : '/logout';
     };
 

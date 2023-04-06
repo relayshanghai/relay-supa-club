@@ -8,6 +8,8 @@ import { UserContext } from 'src/hooks/use-user';
 import type { IUserContext } from 'src/hooks/use-user';
 import { createBrowserSupabaseClient } from '@supabase/auth-helpers-nextjs';
 import { SessionContextProvider } from '@supabase/auth-helpers-react';
+import { SWRConfig } from 'swr';
+import { localStorageProvider } from './local-cache-swr';
 import { Toaster } from 'react-hot-toast';
 i18n.changeLanguage('en');
 
@@ -16,6 +18,7 @@ export interface TestMountOptions {
     pathname?: string;
     pushStub?: Cypress.Agent<any>;
     query?: Record<string, string>;
+    useLocalStorageCache?: boolean;
 }
 const mockProfile: IUserContext['profile'] = {
     id: '1',
@@ -66,8 +69,15 @@ export const testMount = (component: React.ReactElement, options?: TestMountOpti
         <AppRouterContext.Provider value={router as any}>
             <SessionContextProvider supabaseClient={supabaseClient} initialSession={{} as any}>
                 <I18nextProvider i18n={i18n}>
-                    <UserContext.Provider value={mockUserContext}>{component}</UserContext.Provider>
-                </I18nextProvider>{' '}
+                    <UserContext.Provider value={mockUserContext}>
+                        {/* gets rid of the localStorage cache in tests */}
+                        <SWRConfig
+                            value={{ provider: options?.useLocalStorageCache ? localStorageProvider : () => new Map() }}
+                        >
+                            {component}
+                        </SWRConfig>
+                    </UserContext.Provider>
+                </I18nextProvider>
             </SessionContextProvider>
             <Toaster />
         </AppRouterContext.Provider>,

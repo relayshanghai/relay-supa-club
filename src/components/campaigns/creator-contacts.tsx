@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { useReport } from 'src/hooks/use-report';
 import type { CampaignCreatorDB } from 'src/utils/api/db';
 import type { CreatorReportContact } from 'types';
@@ -21,14 +20,11 @@ const getHref = (contact: CreatorReportContact) => ({
 });
 
 export const CreatorContacts = (creator: CampaignCreatorDB) => {
-    const { getOrCreateReport, report, loading, usageExceeded, gettingReport } = useReport();
+    const { report, loading, usageExceeded } = useReport({
+        platform: creator.platform,
+        creator_id: creator.creator_id,
+    });
     const { t } = useTranslation();
-
-    useEffect(() => {
-        if (creator && !report && !usageExceeded && !gettingReport) {
-            getOrCreateReport(creator.platform, creator.creator_id);
-        }
-    }, [creator, report, usageExceeded, gettingReport, getOrCreateReport]);
 
     return (
         <div>
