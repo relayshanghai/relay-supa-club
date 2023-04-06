@@ -9,6 +9,7 @@ import type { InvoicePaymentFailed } from 'types/stripe/invoice-payment-failed-w
 import { handleVIPSubscription } from 'src/utils/api/stripe/handle-vip-webhook';
 import { handleInvoicePaymentFailed } from 'src/utils/api/stripe/handle-payment-failed-webhook';
 import { supabaseLogger } from 'src/utils/api/db';
+import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 
 const handledWebhooks = {
     customerSubscriptionCreated: 'customer.subscription.created',
@@ -18,19 +19,25 @@ const handledWebhooks = {
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
         try {
-            const sig = req.headers['stripe-signature'];
-            if (!sig) {
+            const theirSig = req.headers['stripe-signature'];
+            if (!theirSig) {
                 await supabaseLogger({ type: 'stripe-webhook', message: 'no signature' });
-                return res.status(httpCodes.BAD_REQUEST).json({});
+                return res.status(httpCodes.BAD_REQUEST).json({ message: 'no signature' });
             }
             const ourSig = process.env.STRIPE_SIGNING_SECRET;
             if (!ourSig) {
                 await supabaseLogger({ type: 'stripe-webhook', message: 'no signing secret' });
-                return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
+                return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({ message: 'no signing secret' });
             }
-            if (sig !== ourSig) {
-                await supabaseLogger({ type: 'stripe-webhook', message: 'signatures do not match' });
-                return res.status(httpCodes.FORBIDDEN).json({});
+            try {
+                stripeClient.webhooks.constructEvent(req.body, theirSig, ourSig);
+            } catch (error: any) {
+                await supabaseLogger({
+                    type: 'stripe-webhook',
+                    message: 'signatures do not match',
+                    data: { theirSig, ourSig, error },
+                });
+                return res.status(httpCodes.FORBIDDEN).json({ message: 'signatures do not match' });
             }
 
             // TODO task V2-26o: test in production (Staging) if the webhook is actually called after trial ends.
@@ -43,12 +50,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     data: body,
                 });
 
-                return res.status(httpCodes.BAD_REQUEST).json({});
+                return res.status(httpCodes.BAD_REQUEST).json({ message: 'no body or body.type' });
             }
-            supabaseLogger({ type: 'stripe-webhook', message: body.type, data: body });
+            await supabaseLogger({ type: 'stripe-webhook', message: body.type, data: body });
 
             if (!Object.values(handledWebhooks).includes(body.type)) {
-                return res.status(httpCodes.METHOD_NOT_ALLOWED).json({});
+                return res.status(httpCodes.METHOD_NOT_ALLOWED).json({
+                    message: 'body.type not in handledWebhooks. handledWebhooks: ' + JSON.stringify(handledWebhooks),
+                });
             }
 
             if (body.type === handledWebhooks.customerSubscriptionCreated) {
@@ -58,7 +67,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 if (productID === STRIPE_PRODUCT_ID_VIP) {
                     return handleVIPSubscription(res, invoiceBody);
                 } else {
-                    return res.status(httpCodes.METHOD_NOT_ALLOWED).json({});
+                    await supabaseLogger({
+                        type: 'stripe-webhook',
+                        message: 'productID does not match handled projectIDs',
+                        data: { productID, STRIPE_PRODUCT_ID_VIP },
+                    });
+                    return res
+                        .status(httpCodes.METHOD_NOT_ALLOWED)
+                        .json({ message: 'productID does not match handled projectIDs' });
                 }
             }
             if (body.type === handledWebhooks.invoicePaymentFailed) {
@@ -72,7 +88,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 message: error.message ?? 'error',
                 data: JSON.parse(JSON.stringify(error)),
             });
-            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
+            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({ message: 'caught error. check supabase logs' });
         }
     }
 
