@@ -187,7 +187,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
         const email = session?.user?.email;
         // cannot use router.push() here because it won't cancel in-flight requests which wil re-set the cookie
 
-        localStorage.set(appCacheKey, '{}');
+        localStorage.set(appCacheKey, '[]');
 
         window.location.href = email ? `/logout?${new URLSearchParams({ email })}` : '/logout';
     };
