@@ -47,6 +47,7 @@ export const Layout = ({ children }: any) => {
                                 {!loading && !!profile?.id && (
                                     <div>
                                         <button
+                                            data-testid="layout-account-menu"
                                             onClick={() => setAccountMenuOpen(!accountMenuOpen)}
                                             ref={accountMenuButtonRef}
                                         >
