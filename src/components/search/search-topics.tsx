@@ -45,10 +45,7 @@ export const SearchTopics = ({
                     setSuggestions(filter ? filter(data) : data);
                 }
             } catch (error: any) {
-                if (
-                    typeof error?.message === 'string' &&
-                    error.message.toLowerCase().includes('abort')
-                ) {
+                if (typeof error?.message === 'string' && error.message.toLowerCase().includes('abort')) {
                     return;
                 }
                 clientLogger(error, 'error');

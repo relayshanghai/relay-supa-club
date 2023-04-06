@@ -17,8 +17,7 @@ describe('generatePrompt', () => {
         try {
             generateEmailPrompt(data);
         } catch (error: any) {
-            if (hasCustomError(error, emailErrors))
-                expect(error.message).toBe(emailErrors.missingRequiredFields);
+            if (hasCustomError(error, emailErrors)) expect(error.message).toBe(emailErrors.missingRequiredFields);
         }
     });
 
@@ -37,8 +36,7 @@ describe('generatePrompt', () => {
         try {
             generateEmailPrompt(data);
         } catch (error: any) {
-            if (hasCustomError(error, emailErrors))
-                expect(error.message).toBe(emailErrors.wrongCharacterLength);
+            if (hasCustomError(error, emailErrors)) expect(error.message).toBe(emailErrors.wrongCharacterLength);
         }
     });
 

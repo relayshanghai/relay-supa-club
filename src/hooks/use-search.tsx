@@ -5,12 +5,7 @@ import { usageErrors } from 'src/errors/usages';
 import { hasCustomError } from 'src/utils/errors';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
-import type {
-    CreatorPlatform,
-    LocationWeighted,
-    CreatorSearchTag,
-    CreatorSearchAccountObject,
-} from 'types';
+import type { CreatorPlatform, LocationWeighted, CreatorSearchTag, CreatorSearchAccountObject } from 'types';
 import { useUser } from './use-user';
 
 type NullStringTuple = [null | string, null | string];
@@ -21,6 +16,8 @@ export interface ISearchContext {
     setTopicTags: (tags: CreatorSearchTag[]) => void;
     lookalike: any;
     setLookalike: (lookalike: any) => void;
+    username: string;
+    setUsername: (username: string) => void;
     influencerLocation: LocationWeighted[];
     setInfluencerLocation: (location: LocationWeighted[]) => void;
     views: NullStringTuple;
@@ -56,6 +53,8 @@ export const SearchContext = createContext<ISearchContext>({
     setTopicTags: () => null,
     lookalike: null,
     setLookalike: () => null,
+    username: '',
+    setUsername: () => null,
     influencerLocation: [],
     setInfluencerLocation: () => null,
     views: [null, null],
@@ -93,6 +92,7 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
 
     const [tags, setTopicTags] = useState<CreatorSearchTag[]>([]);
     const [lookalike, setLookalike] = useState<any>();
+    const [username, setUsername] = useState<string>('');
     const [influencerLocation, setInfluencerLocation] = useState<LocationWeighted[]>([]);
     const [views, setViews] = useState<NullStringTuple>([null, null]);
     const [audience, setAudience] = useState<NullStringTuple>([null, null]);
@@ -128,6 +128,7 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
                     tags,
                     platform,
                     lookalike,
+                    username,
                     influencerLocation,
                     audienceLocation,
                     resultsPerPageLimit,
@@ -160,10 +161,7 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
                 }
                 setLoading(false);
             } catch (error: any) {
-                if (
-                    typeof error?.message === 'string' &&
-                    error.message.toLowerCase().includes('abort')
-                ) {
+                if (typeof error?.message === 'string' && error.message.toLowerCase().includes('abort')) {
                     return;
                 }
                 clientLogger(error, 'error');
@@ -179,6 +177,7 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
             audienceLocation,
             contactInfo,
             engagement,
+            username,
             gender,
             lastPost,
             lookalike,
@@ -213,6 +212,8 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
                 setTopicTags,
                 lookalike,
                 setLookalike,
+                username,
+                setUsername,
                 influencerLocation,
                 setInfluencerLocation,
                 audienceLocation,

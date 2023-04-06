@@ -11,13 +11,7 @@ import { useState, useEffect } from 'react';
 import MediaUploader from 'src/components/campaigns/MediaUploader';
 import CurrencyInput from 'src/components/campaigns/CurrencyInput';
 import toast from 'react-hot-toast';
-import {
-    MultiSelect,
-    DatePicker,
-    Checkbox,
-    TextInput,
-    TextareaInput as TextArea,
-} from 'src/components/ui';
+import { MultiSelect, DatePicker, Checkbox, TextInput, TextareaInput as TextArea } from 'src/components/ui';
 import type { Question, TimelineQuestion } from 'src/components/campaigns/helper';
 import { questions } from 'src/components/campaigns/helper';
 import { useCampaigns } from 'src/hooks/use-campaigns';
@@ -147,11 +141,7 @@ export default function CampaignForm() {
     const updateHandler = useCallback(
         async (campaignWithCompanyCreators: CampaignWithCompanyCreators | null) => {
             if (!campaignWithCompanyCreators) return null;
-            const {
-                campaign_creators: _unused1,
-                companies: _unused2,
-                ...campaign
-            } = campaignWithCompanyCreators;
+            const { campaign_creators: _unused1, companies: _unused2, ...campaign } = campaignWithCompanyCreators;
             setSubmitting(true);
             try {
                 const result = await updateCampaign(campaign);
@@ -295,9 +285,7 @@ export default function CampaignForm() {
                                             defaultValue="USD"
                                         />
                                     )}
-                                    {q.type === 'timeline' && (
-                                        <TimelineInput q={q} errors={errors} control={control} />
-                                    )}
+                                    {q.type === 'timeline' && <TimelineInput q={q} errors={errors} control={control} />}
                                     {q.type === 'checkbox' && (
                                         <Checkbox
                                             fieldName={q.fieldName}

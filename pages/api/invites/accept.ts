@@ -4,12 +4,7 @@ import httpCodes from 'src/constants/httpCodes';
 import { acceptInviteErrors } from 'src/errors/company';
 import { inviteStatusErrors, loginValidationErrors } from 'src/errors/login';
 import type { InviteStatusError } from 'src/errors/login';
-import {
-    getInviteById,
-    getInviteValidityData,
-    markInviteUsed,
-    updateUserRole,
-} from 'src/utils/api/db';
+import { getInviteById, getInviteValidityData, markInviteUsed, updateUserRole } from 'src/utils/api/db';
 import { serverLogger } from 'src/utils/logger-server';
 import { supabase } from 'src/utils/supabase-client';
 import { validatePassword } from 'src/utils/validation/signup';
@@ -79,9 +74,7 @@ const handlePost: NextApiHandler = async (req, res) => {
         if (userError) {
             // supabase returns this error if the user already exists
             if (userError?.message === 'User already registered') {
-                return res
-                    .status(httpCodes.BAD_REQUEST)
-                    .json({ error: acceptInviteErrors.userAlreadyRegistered });
+                return res.status(httpCodes.BAD_REQUEST).json({ error: acceptInviteErrors.userAlreadyRegistered });
             }
             serverLogger(userError, 'error');
             return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
@@ -135,9 +128,7 @@ const handleGet: NextApiHandler = async (req, res) => {
         return res.status(httpCodes.OK).json({ message: 'inviteValid', email: data.email });
     } catch (error) {
         serverLogger(error, 'error');
-        return res
-            .status(httpCodes.INTERNAL_SERVER_ERROR)
-            .json({ message: 'Something went wrong' });
+        return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({ message: 'Something went wrong' });
     }
 };
 const handler: NextApiHandler = async (req, res) => {

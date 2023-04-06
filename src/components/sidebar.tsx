@@ -8,6 +8,7 @@ import { Compass, FourSquare, Account, Team, PieChart } from './icons';
 import { Title } from './title';
 import { useTranslation } from 'react-i18next';
 import { FEAT_PERFORMANCE } from 'src/constants/feature-flags';
+import React from 'react';
 
 const ActiveLink = ({ href, children }: { href: string; children: React.ReactNode }) => {
     const router = useRouter();
@@ -28,41 +29,25 @@ const ActiveLink = ({ href, children }: { href: string; children: React.ReactNod
         <Link
             href={href}
             className={`flex items-center border-l-4 stroke-gray-800 py-2 px-4 text-sm transition hover:stroke-primary-700 hover:text-primary-700 ${
-                isRouteActive
-                    ? 'border-l-4 border-primary-500 stroke-primary-500 text-primary-500'
-                    : ''
+                isRouteActive ? 'border-l-4 border-primary-500 stroke-primary-500 text-primary-500' : ''
             }`}
         >
             {(hrefRoot === 'influencer' || hrefRoot === 'dashboard') && (
                 <Compass height={18} width={18} className="mr-4 text-inherit" />
             )}
-            {hrefRoot === 'campaigns' && (
-                <FourSquare height={18} width={18} className="mr-4 stroke-inherit" />
-            )}
+            {hrefRoot === 'campaigns' && <FourSquare height={18} width={18} className="mr-4 stroke-inherit" />}
             {hrefRoot === 'ai-email-generator' && (
                 <EmailOutline height={18} width={18} className="mr-4 stroke-inherit" />
             )}
-            {hrefRoot === 'account' && (
-                <Account height={18} width={18} className="mr-4 stroke-inherit" />
-            )}
-            {href === '/admin/clients' && (
-                <Team height={18} width={18} className="mr-4 stroke-inherit" />
-            )}
-            {href === '/performance' && (
-                <PieChart height={18} width={18} className="mr-4 stroke-inherit" />
-            )}
+            {hrefRoot === 'account' && <Account height={18} width={18} className="mr-4 stroke-inherit" />}
+            {href === '/admin/clients' && <Team height={18} width={18} className="mr-4 stroke-inherit" />}
+            {href === '/performance' && <PieChart height={18} width={18} className="mr-4 stroke-inherit" />}
             {children}
         </Link>
     );
 };
 
-const NavBarInner = ({
-    loggedIn,
-    isRelayEmployee,
-}: {
-    loggedIn: boolean | null;
-    isRelayEmployee: boolean;
-}) => {
+const NavBarInner = ({ loggedIn, isRelayEmployee }: { loggedIn: boolean | null; isRelayEmployee: boolean }) => {
     const { t } = useTranslation();
     return (
         <>
@@ -80,9 +65,7 @@ const NavBarInner = ({
                     </span>
                 </ActiveLink>
                 {loggedIn && <ActiveLink href="/account">{t('navbar.account')}</ActiveLink>}
-                {FEAT_PERFORMANCE && (
-                    <ActiveLink href="/performance">{t('navbar.performance')}</ActiveLink>
-                )}
+                {FEAT_PERFORMANCE && <ActiveLink href="/performance">{t('navbar.performance')}</ActiveLink>}
             </div>
             {isRelayEmployee && (
                 <div className="mt-8 flex flex-col space-y-4">
@@ -126,10 +109,7 @@ export const Sidebar = ({
                     open ? 'translate-x-0' : '-translate-x-full'
                 } ${open && desktop ? 'md:relative' : ''}`}
             >
-                <NavBarInner
-                    loggedIn={loggedIn}
-                    isRelayEmployee={profile?.user_role === 'relay_employee'}
-                />
+                <NavBarInner loggedIn={loggedIn} isRelayEmployee={profile?.user_role === 'relay_employee'} />
             </div>
         </>
     );

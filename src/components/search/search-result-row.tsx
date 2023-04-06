@@ -53,8 +53,7 @@ export const SearchResultRow = ({
         campaigns?.forEach((campaign) => {
             if (campaign && creator.account.user_profile.user_id) {
                 const creatorInCampaign = campaign?.campaign_creators?.find(
-                    (campaignCreator) =>
-                        campaignCreator.creator_id === creator?.account.user_profile.user_id,
+                    (campaignCreator) => campaignCreator.creator_id === creator?.account.user_profile.user_id,
                 );
 
                 if (creatorInCampaign) {
@@ -75,16 +74,10 @@ export const SearchResultRow = ({
         <tr className="group hover:bg-primary-100">
             <td className="w-full">
                 <div className="flex w-full flex-row gap-x-2 py-2 px-4">
-                    <img
-                        src={imgProxy(picture) as string}
-                        className="h-12 w-12 [min-width:3rem]"
-                        alt={handle}
-                    />
+                    <img src={imgProxy(picture) as string} className="h-12 w-12 [min-width:3rem]" alt={handle} />
                     <div>
                         <div className="font-bold line-clamp-2">{fullname}</div>
-                        <div className="text-sm text-primary-500 line-clamp-1">
-                            {handle ? `@${handle}` : null}
-                        </div>
+                        <div className="text-sm text-primary-500 line-clamp-1">{handle ? `@${handle}` : null}</div>
                     </div>
                     {FEAT_RECOMMENDED && isRecommendedInfluencer(platform, user_id) && (
                         <Tooltip
@@ -92,10 +85,7 @@ export const SearchResultRow = ({
                             detail={t('creators.recommendedTooltipDetail')}
                             className="flex flex-wrap items-center"
                         >
-                            <Badge
-                                size={desktop ? 'medium' : 'small'}
-                                data-testid="recommended-badge"
-                            >
+                            <Badge size={desktop ? 'medium' : 'small'} data-testid="recommended-badge">
                                 {t('creators.recommended')}
                             </Badge>
                         </Tooltip>
@@ -143,9 +133,7 @@ export const SearchResultRow = ({
                                     {({ active }) => (
                                         <button
                                             className={`${
-                                                active
-                                                    ? 'bg-violet-500 text-white'
-                                                    : 'text-gray-900'
+                                                active ? 'bg-violet-500 text-white' : 'text-gray-900'
                                             } group flex w-full items-center justify-center rounded-md px-2 py-2 text-sm`}
                                             onClick={addToCampaign}
                                         >
@@ -163,9 +151,7 @@ export const SearchResultRow = ({
                                         {({ active }) => (
                                             <button
                                                 className={`${
-                                                    active
-                                                        ? 'bg-violet-500 text-white'
-                                                        : 'text-gray-900'
+                                                    active ? 'bg-violet-500 text-white' : 'text-gray-900'
                                                 } group flex w-full items-center justify-center rounded-md px-2 py-2 text-sm`}
                                             >
                                                 {t('creators.analyzeProfile')}
@@ -180,9 +166,7 @@ export const SearchResultRow = ({
                                             {({ active }) => (
                                                 <button
                                                     className={`${
-                                                        active
-                                                            ? 'bg-violet-500 text-white'
-                                                            : 'text-gray-900'
+                                                        active ? 'bg-violet-500 text-white' : 'text-gray-900'
                                                     } group flex w-full items-center justify-center rounded-md px-2 py-2 text-sm`}
                                                 >
                                                     <ShareLink className="w-5 fill-current" />

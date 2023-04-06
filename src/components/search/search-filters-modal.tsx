@@ -6,13 +6,7 @@ import { Modal } from '../modal';
 /** Search Filter - Subscribers and Avg view filter options: 1k, 5k, 10k, 15k, 25k, 50k, 100k, 250k, 500k, 1m */
 const options = [1e3, 5e3, 1e4, 15e3, 25e3, 50e3, 1e5, 25e4, 50e4, 1e6];
 
-export const SearchFiltersModal = ({
-    show,
-    setShow,
-}: {
-    show: boolean;
-    setShow: (open: boolean) => void;
-}) => {
+export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: (open: boolean) => void }) => {
     const {
         audience,
         setAudience,
@@ -30,11 +24,7 @@ export const SearchFiltersModal = ({
 
     const { t } = useTranslation();
     return (
-        <Modal
-            visible={show}
-            onClose={() => setShow(false)}
-            title={t('creators.filter.title') || ''}
-        >
+        <Modal visible={show} onClose={() => setShow(false)} title={t('creators.filter.title') || ''}>
             <div className="space-y-5 p-8">
                 <h3>{t('creators.filter.intro')}</h3>
 
@@ -58,9 +48,7 @@ export const SearchFiltersModal = ({
                                         <option
                                             value={option}
                                             key={option}
-                                            disabled={
-                                                !!audience[1] && option >= Number(audience[1])
-                                            }
+                                            disabled={!!audience[1] && option >= Number(audience[1])}
                                         >
                                             {numberFormatter(option)}
                                         </option>
@@ -83,9 +71,7 @@ export const SearchFiltersModal = ({
                                         <option
                                             value={option}
                                             key={option}
-                                            disabled={
-                                                !!audience[0] && option <= Number(audience[0])
-                                            }
+                                            disabled={!!audience[0] && option <= Number(audience[0])}
                                         >
                                             {numberFormatter(option)}
                                         </option>
@@ -170,9 +156,7 @@ export const SearchFiltersModal = ({
                 </div>
                 <div>
                     <label className="text-sm">
-                        <div className="text-lg font-bold">
-                            {t('creators.filter.engagementRate')}
-                        </div>
+                        <div className="text-lg font-bold">{t('creators.filter.engagementRate')}</div>
                         <select
                             className="mt-1 rounded-md bg-primary-200 p-1"
                             value={engagement}
@@ -219,9 +203,7 @@ export const SearchFiltersModal = ({
                 </div>
                 <div>
                     <label className="text-sm">
-                        <div className="text-lg font-bold">
-                            {t('creators.filter.contactInformation')}
-                        </div>
+                        <div className="text-lg font-bold">{t('creators.filter.contactInformation')}</div>
                         <select
                             className="mt-1 rounded-md bg-primary-200 p-1"
                             value={contactInfo}

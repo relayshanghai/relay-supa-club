@@ -71,11 +71,7 @@ const recordUsage = async ({
     // if end date is in the past, we need to query stripe for latest subscription info and update the subscription current period end date
     if (endDate < now) {
         const result = await handleCurrentPeriodExpired(company_id);
-        if (
-            result.error ||
-            !result.subscription_current_period_start ||
-            !result.subscription_current_period_end
-        ) {
+        if (result.error || !result.subscription_current_period_start || !result.subscription_current_period_end) {
             return { error: result.error };
         }
         startDateToUse = result.subscription_current_period_start;
@@ -116,11 +112,7 @@ const recordUsage = async ({
     return { error: null };
 };
 
-export const recordReportUsage = async (
-    company_id: string,
-    user_id: string,
-    creator_id: string,
-) => {
+export const recordReportUsage = async (company_id: string, user_id: string, creator_id: string) => {
     const { data: company, error: companyError } = await supabase
         .from('companies')
         .select(
@@ -133,9 +125,7 @@ export const recordReportUsage = async (
     }
 
     const subscriptionLimit =
-        company.subscription_status === 'trial'
-            ? company.trial_profiles_limit
-            : company.profiles_limit;
+        company.subscription_status === 'trial' ? company.trial_profiles_limit : company.profiles_limit;
     if (!subscriptionLimit) {
         return { error: usageErrors.noSubscriptionLimit };
     }
@@ -171,9 +161,7 @@ export const recordSearchUsage = async (company_id: string, user_id: string) => 
     }
 
     const subscriptionLimit =
-        company.subscription_status === 'trial'
-            ? company.trial_searches_limit
-            : company.searches_limit;
+        company.subscription_status === 'trial' ? company.trial_searches_limit : company.searches_limit;
     if (!subscriptionLimit) {
         return { error: usageErrors.noSubscriptionLimit };
     }
@@ -230,10 +218,7 @@ export const recordAiEmailGeneratorUsage = async (company_id: string, user_id: s
 };
 
 export const getUsagesByCompany = async (companyId: string) => {
-    const { data, error } = await supabase
-        .from('usages')
-        .select('type, created_at')
-        .eq('company_id', companyId);
+    const { data, error } = await supabase.from('usages').select('type, created_at').eq('company_id', companyId);
     if (error) {
         throw new Error(error.message);
     }

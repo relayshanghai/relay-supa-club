@@ -14,8 +14,7 @@ describe('generatePrompt', () => {
         try {
             generateSubjectPrompt(data);
         } catch (error: any) {
-            if (hasCustomError(error, subjectErrors))
-                expect(error.message).toBe(subjectErrors.missingRequiredFields);
+            if (hasCustomError(error, subjectErrors)) expect(error.message).toBe(subjectErrors.missingRequiredFields);
         }
     });
 
@@ -29,8 +28,7 @@ describe('generatePrompt', () => {
                 user_id: '151515',
             });
         } catch (error: any) {
-            if (hasCustomError(error, subjectErrors))
-                expect(error.message).toBe(subjectErrors.wrongCharacterLength);
+            if (hasCustomError(error, subjectErrors)) expect(error.message).toBe(subjectErrors.wrongCharacterLength);
         }
     });
 

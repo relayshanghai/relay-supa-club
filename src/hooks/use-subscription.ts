@@ -1,12 +1,6 @@
 import type { SubscriptionGetQueries, SubscriptionGetResponse } from 'pages/api/subscriptions';
-import type {
-    SubscriptionCancelPostBody,
-    SubscriptionCancelPostResponse,
-} from 'pages/api/subscriptions/cancel';
-import type {
-    SubscriptionCreatePostBody,
-    SubscriptionCreatePostResponse,
-} from 'pages/api/subscriptions/create';
+import type { SubscriptionCancelPostBody, SubscriptionCancelPostResponse } from 'pages/api/subscriptions/cancel';
+import type { SubscriptionCreatePostBody, SubscriptionCreatePostResponse } from 'pages/api/subscriptions/create';
 import type {
     SubscriptionCreateTrialPostBody,
     SubscriptionCreateTrialResponse,
@@ -15,10 +9,7 @@ import type {
     SubscriptionDiscountRenewPostBody,
     SubscriptionDiscountRenewPostResponse,
 } from 'pages/api/subscriptions/discount-renew';
-import type {
-    PaymentMethodGetQueries,
-    PaymentMethodGetResponse,
-} from 'pages/api/subscriptions/payment-method';
+import type { PaymentMethodGetQueries, PaymentMethodGetResponse } from 'pages/api/subscriptions/payment-method';
 import { useCallback } from 'react';
 import { nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';
 import useSWR from 'swr';
@@ -55,11 +46,12 @@ export const useSubscription = () => {
     }, [profile, mutate]);
 
     const createSubscription = useCallback(
-        async (priceId: string) => {
+        async (priceId: string, couponId?: string) => {
             if (!profile?.company_id) throw new Error('No profile found');
             const body: SubscriptionCreatePostBody = {
                 price_id: priceId,
                 company_id: profile?.company_id,
+                coupon_id: couponId,
             };
             const res = await nextFetch<SubscriptionCreatePostResponse>('subscriptions/create', {
                 method: 'post',
@@ -76,13 +68,10 @@ export const useSubscription = () => {
         const body: SubscriptionDiscountRenewPostBody = {
             company_id: profile?.company_id,
         };
-        const res = await nextFetch<SubscriptionDiscountRenewPostResponse>(
-            'subscriptions/discount-renew',
-            {
-                method: 'post',
-                body: JSON.stringify(body),
-            },
-        );
+        const res = await nextFetch<SubscriptionDiscountRenewPostResponse>('subscriptions/discount-renew', {
+            method: 'post',
+            body: JSON.stringify(body),
+        });
         mutate();
         return res;
     }, [profile, mutate]);

@@ -1,18 +1,12 @@
 /** TODO: seems to be used only for Stripe? Re-org and put all stripe related work together */
-export const fetcher = (url: string) =>
-    fetch(url, { credentials: 'include' }).then((res) => res.json());
+export const fetcher = (url: string) => fetch(url, { credentials: 'include' }).then((res) => res.json());
 
 export const handleResError = async (res: Response) => {
     if (!res.status.toString().startsWith('2')) {
         const json = await res.json();
-        if (json?.error)
-            throw new Error(
-                typeof json.error === 'string' ? json.error : JSON.stringify(json.error),
-            );
+        if (json?.error) throw new Error(typeof json.error === 'string' ? json.error : JSON.stringify(json.error));
         if (json?.message)
-            throw new Error(
-                typeof json.message === 'string' ? json.message : JSON.stringify(json.message),
-            );
+            throw new Error(typeof json.message === 'string' ? json.message : JSON.stringify(json.message));
 
         if (res.statusText) throw new Error(res.statusText);
         else throw new Error('Something went wrong with the request.');

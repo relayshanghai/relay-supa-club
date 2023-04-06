@@ -60,9 +60,7 @@ export default function Register() {
                     <>
                         <div className="w-full text-left">
                             <h1 className="mb-2 text-4xl font-bold">{t('login.onboardCompany')}</h1>
-                            <h3 className="mb-8 text-sm text-gray-600">
-                                {t('login.addCompanyDetails')}
-                            </h3>
+                            <h3 className="mb-8 text-sm text-gray-600">{t('login.addCompanyDetails')}</h3>
                         </div>
                         <Input
                             label={t('login.companyName')}
@@ -79,11 +77,7 @@ export default function Register() {
                             value={values.website}
                             onChange={(e) => setFieldValue('website', e.target.value)}
                         />
-                        <Button
-                            type="button"
-                            disabled={!values.name || submitting}
-                            onClick={handleSubmit}
-                        >
+                        <Button type="button" disabled={!values.name || submitting} onClick={handleSubmit}>
                             {t('login.createCompany')}
                         </Button>
                     </>

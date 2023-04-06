@@ -1,8 +1,15 @@
 run-name: Run main workflow by @${{ github.actor }}
 
 on:
+    # only run on all pushes if it is to `main` branch
     push:
+        branches:
+            - main
+    # allow manual trigger of the workflow
     workflow_dispatch:
+    # Only pushes to active PRs will trigger the workflow, pushes to other branches will not trigger run
+    pull_request:
+        types: [opened, synchronize]
 
 env:
     STRIPE_API_KEY: ${{ secrets.STRIPE_API_KEY }}
@@ -79,7 +86,7 @@ jobs:
             - run: npm run type-check-all
             - run: npm run lint
             - run: npm run build
-            - run: npm run test:run-jest-unit
+            - run: npm run test
             - run: npm run test-cypress-unit
 
     cypress-e2e:

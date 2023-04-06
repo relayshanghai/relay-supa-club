@@ -1,37 +1,37 @@
 {
-    "cSpell.words": [
-        "camelcase",
-        "commenters",
-        "countup",
-        "Descr",
-        "fileupload",
-        "fullname",
-        "headlessui",
-        "heroicons",
-        "imgs",
-        "influencers",
-        "iqdata",
-        "languagedetector",
-        "linebreak",
-        "nextjs",
-        "onboarded",
-        "relayclub",
-        "RUDDERSTACK",
-        "signup",
-        "supa",
-        "supabase",
-        "tailwindcss",
-        "testid",
-        "tiktok",
-        "upsert",
-        "wechat"
-    ],
-    "files.associations": {
-        "*.css": "tailwindcss"
-    },
-    "editor.quickSuggestions": {
-        "strings": true
-    },
-    "Prettier-SQL.SQLFlavourOverride": "postgresql",
-    "Prettier-SQL.keywordCase": "upper"
+  "cSpell.words": [
+    "camelcase",
+    "commenters",
+    "countup",
+    "Descr",
+    "fileupload",
+    "fullname",
+    "headlessui",
+    "heroicons",
+    "imgs",
+    "influencers",
+    "iqdata",
+    "languagedetector",
+    "linebreak",
+    "nextjs",
+    "onboarded",
+    "relayclub",
+    "RUDDERSTACK",
+    "signup",
+    "supa",
+    "supabase",
+    "tailwindcss",
+    "testid",
+    "tiktok",
+    "upsert",
+    "wechat"
+  ],
+  "files.associations": {
+    "*.css": "tailwindcss"
+  },
+  "editor.quickSuggestions": {
+    "strings": true
+  },
+  "Prettier-SQL.SQLFlavourOverride": "postgresql",
+  "Prettier-SQL.keywordCase": "upper"
 }

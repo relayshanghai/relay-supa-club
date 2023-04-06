@@ -6,6 +6,8 @@ import type { CreatorSearchAccountObject } from 'types';
 import { Button } from '../button';
 import { SkeletonSearchResultRow } from '../common/skeleton-search-result-row';
 import { SearchResultRow } from './search-result-row';
+import { FEAT_RECOMMENDED } from 'src/constants/feature-flags';
+import { isRecommendedInfluencer } from 'src/constants/recommendedInfluencers';
 
 export const SearchResultsTable = ({
     setShowCampaignListModal,
@@ -13,15 +15,25 @@ export const SearchResultsTable = ({
     setShowAlreadyAddedModal,
     campaigns,
     setCampaignsWithCreator,
+    onlyRecommended,
 }: {
     setShowCampaignListModal: (show: boolean) => void;
     setSelectedCreator: (creator: CreatorSearchAccountObject) => void;
     setShowAlreadyAddedModal: (show: boolean) => void;
     campaigns?: CampaignsIndexGetResult;
     setCampaignsWithCreator: (campaigns: string[]) => void;
+    onlyRecommended: boolean;
 }) => {
     const { t } = useTranslation();
-    const { loading, resultPages, usageExceeded, noResults } = useSearch();
+    const { loading, platform, resultPages: resultPagesFull, usageExceeded, noResults } = useSearch();
+
+    const resultPages =
+        FEAT_RECOMMENDED && onlyRecommended
+            ? resultPagesFull.map((page) =>
+                  page?.filter((creator) => isRecommendedInfluencer(platform, creator.account.user_profile.user_id)),
+              )
+            : resultPagesFull;
+
     return (
         <div className="w-full overflow-x-auto">
             <table
@@ -80,9 +92,7 @@ export const SearchResultsTable = ({
                     {!usageExceeded &&
                         noResults &&
                         (loading ? (
-                            [...Array(10)].map((_, i) => (
-                                <SkeletonSearchResultRow key={i} delay={i * 200} />
-                            ))
+                            [...Array(10)].map((_, i) => <SkeletonSearchResultRow key={i} delay={i * 200} />)
                         ) : (
                             <tr>
                                 <td className="py-4 text-center" colSpan={5}>

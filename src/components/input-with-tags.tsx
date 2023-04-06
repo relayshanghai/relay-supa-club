@@ -1,19 +1,12 @@
 import type { DetailedHTMLProps, InputHTMLAttributes } from 'react';
 
-export interface Props
-    extends DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> {
+export interface Props extends DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> {
     disabled?: boolean;
     tags: string[];
     onTagRemove: (tag: string) => void;
     TagComponent?: React.FC<any>;
 }
-export const InputWithTags = ({
-    disabled,
-    tags = [],
-    onTagRemove,
-    TagComponent,
-    ...rest
-}: Props) => {
+export const InputWithTags = ({ disabled, tags = [], onTagRemove, TagComponent, ...rest }: Props) => {
     return (
         <label className="flex w-full flex-col text-xs font-medium text-gray-500">
             <div className="flex w-full flex-row items-center rounded-md border border-gray-200 bg-white px-2 text-gray-900 ring-1 ring-gray-900 ring-opacity-5 focus:border-primary-500 focus:outline-none focus:ring-primary-500 sm:text-sm">
@@ -21,13 +14,7 @@ export const InputWithTags = ({
                     {tags
                         ? tags.map((item: any, i: any) => {
                               if (TagComponent) {
-                                  return (
-                                      <TagComponent
-                                          key={i}
-                                          {...item}
-                                          onClick={() => onTagRemove(item)}
-                                      />
-                                  );
+                                  return <TagComponent key={i} {...item} onClick={() => onTagRemove(item)} />;
                               }
                               return (
                                   <p
@@ -36,9 +23,7 @@ export const InputWithTags = ({
                                       onClick={() => onTagRemove(item)}
                                   >
                                       {item.value || item.title}
-                                      <span className="ml-2 cursor-pointer whitespace-nowrap text-gray-400">
-                                          x
-                                      </span>
+                                      <span className="ml-2 cursor-pointer whitespace-nowrap text-gray-400">x</span>
                                   </p>
                               );
                           })
