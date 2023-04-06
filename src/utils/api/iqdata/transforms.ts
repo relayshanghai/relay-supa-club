@@ -5,6 +5,7 @@ export interface FetchCreatorsFilteredParams {
     platform?: CreatorPlatform;
     tags?: { tag: string }[];
     lookalike?: CreatorAccount[];
+    username: string;
     influencerLocation?: LocationWeighted[];
     audienceLocation?: LocationWeighted[];
     resultsPerPageLimit?: number;
@@ -24,13 +25,13 @@ const locationTransform = ({ id, weight }: { id: string; weight: number | string
 
 export const prepareFetchCreatorsFiltered = ({
     platform = 'youtube',
-
     tags = [],
     lookalike = [],
     influencerLocation = [],
     audienceLocation = [],
     resultsPerPageLimit = 10,
     page = 0,
+    username,
     audience,
     views,
     gender,
@@ -50,6 +51,7 @@ export const prepareFetchCreatorsFiltered = ({
             geo: influencerLocation.map(locationTransform) || [],
             gender: gender ? { code: gender.toUpperCase() } : '',
             lang: '',
+            username: { value: username },
             last_posted: lastPost || '',
             views: {
                 left_number: views ? views[0] ?? '' : '',
