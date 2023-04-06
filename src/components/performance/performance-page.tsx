@@ -1,11 +1,11 @@
-// import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
+import { useEffect, useState } from 'react';
 import { Layout } from 'src/components/layout';
 import { ArrowRight, BoxFilled, ThumbUpOutline } from '../icons';
 import { EyeOutline } from '../icons';
 import { ChatBubbleTextOutline } from '../icons';
 import SalesBarChart from './sales-bar-chart';
 import demoData from './demo.json';
-import { useEffect, useState } from 'react';
 import { toCurrency, numFormatter } from 'src/utils/utils';
 
 export interface PerformanceData {
@@ -18,7 +18,7 @@ export interface PerformanceData {
 }
 
 const PerformancePage = () => {
-    // const { t } = useTranslation();
+    const { t } = useTranslation();
     const [performanceData, setPerformanceData] = useState<PerformanceData | null>(null);
     //a function to get the data, currently using a demo json file, in next iteration will be replaced with a fetch request to supabase db
     const getPerformanceData = () => {
@@ -31,17 +31,17 @@ const PerformancePage = () => {
     const SocialStats = [
         {
             icon: ThumbUpOutline,
-            label: 'Likes',
+            label: t('performance.stats.likes'),
             value: performanceData ? numFormatter(performanceData.likes) : '',
         },
         {
             icon: ChatBubbleTextOutline,
-            label: 'Comments',
+            label: t('performance.stats.comments'),
             value: performanceData ? numFormatter(performanceData.comments) : '',
         },
         {
             icon: EyeOutline,
-            label: 'Views',
+            label: t('performance.stats.views'),
             value: performanceData ? numFormatter(performanceData.views) : '',
         },
     ];
@@ -59,8 +59,10 @@ const PerformancePage = () => {
                 {performanceData && (
                     <div className="m-6 flex flex-col items-start justify-center space-y-9 text-gray-700 ">
                         <div className="flex flex-col items-start justify-start space-y-2">
-                            <h2 className="text-2xl tracking-wide ">Performance</h2>
-                            <p className="text-xs leading-none tracking-wide ">All campaigns for TimeKettle</p>
+                            <h2 className="text-2xl tracking-wide ">{t('performance.title')}</h2>
+                            <p className="text-xs leading-none tracking-wide ">
+                                {t('performance.allCampaignsFor')}TimeKettle
+                            </p>
                             {/* To be replaced with a date range picker in next iteration */}
                             <div className="inline-flex w-full items-center justify-center rounded-lg border border-gray-300 p-1">
                                 <p className="text-xs leading-none tracking-wide ">2023-01-01 to 2023-04-01</p>
@@ -69,7 +71,7 @@ const PerformancePage = () => {
                         <div className="md:grid-row-2 flex flex-col gap-4 md:grid md:grid-cols-4 ">
                             <div className={`${statCardStyle} row-span-2 flex flex-col justify-between text-center`}>
                                 <div className="flex flex-col space-y-6">
-                                    <h4 className="text-base">Posts</h4>
+                                    <h4 className="text-base">{t('performance.stats.posts')}</h4>
                                     <h1 className="text-4xl font-semibold">{numFormatter(performanceData?.posts)}</h1>
                                 </div>
                                 {/* To enable to click and redirect to all posts page in next iteration */}
@@ -82,11 +84,9 @@ const PerformancePage = () => {
                             </div>
                             <div className="hover:text -primary-500 col-span-3 flex space-y-6 rounded-lg bg-white p-6 shadow transition duration-500 ease-in-out hover:cursor-default hover:stroke-primary-500 hover:shadow-md ">
                                 <div className="flex w-1/2 flex-col space-y-6">
-                                    <h4 className="text-base">Sales</h4>
+                                    <h4 className="text-base">{t('performance.stats.sales')}</h4>
 
-                                    <h1 className="text-4xl font-semibold">
-                                        {(toCurrency(performanceData?.sales), 0)}
-                                    </h1>
+                                    <h1 className="text-4xl font-semibold">{toCurrency(performanceData?.sales, 0)}</h1>
                                 </div>
 
                                 <div className="w-1/2">
