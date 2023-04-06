@@ -30,7 +30,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({ message: 'no signing secret' });
             }
             try {
-                stripeClient.webhooks.constructEvent(req.read(), theirSig, ourSig);
+                stripeClient.webhooks.constructEvent(JSON.stringify(req.body, null, 2), theirSig, ourSig);
             } catch (error: any) {
                 await supabaseLogger({
                     type: 'stripe-webhook',
