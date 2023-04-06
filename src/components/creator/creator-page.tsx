@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import type { CreatorPlatform } from 'types';
 import { TitleSection } from './creator-title-section';
 import { CreatorOverview } from './creator-page-overview';
@@ -16,14 +16,10 @@ import { useCampaigns } from 'src/hooks/use-campaigns';
 import { useCompany } from 'src/hooks/use-company';
 
 export const CreatorPage = ({ creator_id, platform }: { creator_id: string; platform: CreatorPlatform }) => {
-    const { loading, report, getOrCreateReport, reportCreatedAt, errorMessage } = useReport();
+    const { loading, report, reportCreatedAt, errorMessage } = useReport({ platform, creator_id });
 
     const [showCampaignListModal, setShowCampaignListModal] = useState(false);
     const { t } = useTranslation();
-
-    useEffect(() => {
-        getOrCreateReport(platform, creator_id);
-    }, [getOrCreateReport, platform, creator_id]);
 
     const onAddToCampaign = () => {
         setShowCampaignListModal(true);
