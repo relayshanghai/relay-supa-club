@@ -16,6 +16,23 @@ const handledWebhooks = {
     invoicePaymentFailed: 'invoice.payment_failed',
 };
 
+/** from https://github.com/stripe/stripe-node/blob/master/examples/webhook-signing/nextjs/pages/api/webhooks.ts */
+const buffer = (req: NextApiRequest) => {
+    return new Promise<Buffer>((resolve, reject) => {
+        const chunks: Buffer[] = [];
+
+        req.on('data', (chunk: Buffer) => {
+            chunks.push(chunk);
+        });
+
+        req.on('end', () => {
+            resolve(Buffer.concat(chunks));
+        });
+
+        req.on('error', reject);
+    });
+};
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
         try {
@@ -30,7 +47,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({ message: 'no signing secret' });
             }
             try {
-                stripeClient.webhooks.constructEvent(JSON.stringify(req.body, null, 2), theirSig, ourSig);
+                stripeClient.webhooks.constructEvent(await buffer(req), theirSig, ourSig);
             } catch (error: any) {
                 await supabaseLogger({
                     type: 'stripe-webhook',
