@@ -67,7 +67,7 @@ describe('SearchOptions', () => {
         });
     });
 
-    it('Should delete topic tags when pressing backspace', () => {
+    it('Should remove and edit the topic tags when pressing backspace', () => {
         worker.use(
             rest.post(`${APP_URL_CYPRESS}/api/influencer-search`, (req, res, ctx) => {
                 return res(ctx.json(defaultLandingPageInfluencerSearch));
