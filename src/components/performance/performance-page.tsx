@@ -58,7 +58,7 @@ const PerformancePage = () => {
         <Layout>
             <div className="mx-auto flex flex-col items-center justify-center bg-gray-50 md:h-full">
                 {performanceData && (
-                    <div className="m-4 flex flex-col items-start justify-center text-gray-700 md:m-6  ">
+                    <div className="m-8 flex flex-col items-start justify-center text-gray-700 md:m-6  ">
                         <div className="mb-9 flex min-h-fit flex-col items-start justify-start space-y-2">
                             <h2 className="text-2xl tracking-wide ">{t('performance.title')}</h2>
                             <p className="text-xs leading-none tracking-wide ">
@@ -71,12 +71,14 @@ const PerformancePage = () => {
                         </div>
                         <div className="md:grid-row-2 flex w-full flex-col gap-5 md:grid md:grid-cols-4 ">
                             <div className={`${statCardStyle} row-span-2 flex flex-col justify-between text-center`}>
-                                <div className="flex flex-col space-y-6">
+                                <div className="flex flex-col items-start space-y-6 md:items-center ">
                                     <h4 className="text-base">{t('performance.stats.posts')}</h4>
-                                    <h1 className="text-4xl font-semibold">{numFormatter(performanceData.posts)}</h1>
+                                    <h1 className="text-2xl font-semibold md:text-4xl">
+                                        {numFormatter(performanceData.posts)}
+                                    </h1>
                                 </div>
                                 {/* To enable to click and redirect to all posts page in next iteration */}
-                                <div className="flex h-28 w-full items-start justify-center rounded-xl bg-gradient-to-r from-primary-400 via-primary-200 to-primary-200 hover:cursor-pointer">
+                                <div className="flex h-28  items-start justify-center rounded-xl bg-gradient-to-r from-primary-400 via-primary-200 to-primary-200 hover:cursor-pointer">
                                     <div className="flex items-center">
                                         <ArrowRight className="stroke-white" />
                                         <BoxFilled className="" />
@@ -87,7 +89,9 @@ const PerformancePage = () => {
                                 <div className="flex w-1/2 flex-col space-y-6 transition duration-500 ease-in-out group-hover:text-primary-500 ">
                                     <h4 className="text-base">{t('performance.stats.sales')}</h4>
 
-                                    <h1 className="text-4xl font-semibold">{toCurrency(performanceData.sales, 0)}</h1>
+                                    <h1 className="text-2xl font-semibold md:text-4xl">
+                                        {toCurrency(performanceData.sales, 0)}
+                                    </h1>
                                 </div>
 
                                 <div className="invisible w-1/2 md:visible">
