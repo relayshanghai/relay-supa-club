@@ -31,6 +31,25 @@ const InputWithAutocomplete = forwardRef<HTMLDivElement, Props>(
         ref,
     ) => {
         const [value, setValue] = useState('');
+
+        const onKeyDownHandler = (e: React.KeyboardEvent) => {
+            if (e.key === 'Enter') {
+                if (value === '') return;
+                // Add tag and clear input
+                onAddTag({ tag: value, value: value });
+                setValue('');
+            } else if (e.key === 'Backspace' && !value) {
+                e.preventDefault();
+                // Set input value to last tag
+                let lastTag = '';
+                if (tags.length === 0) return;
+                lastTag = tags[tags.length - 1].value;
+                setValue(lastTag);
+                // Remove last tag
+                onRemoveTag(tags[tags.length - 1]);
+            }
+        };
+
         return (
             <div className="flex w-full flex-col " ref={ref}>
                 <InputWithTags
@@ -44,22 +63,7 @@ const InputWithAutocomplete = forwardRef<HTMLDivElement, Props>(
                         setValue(e.target.value);
                         onChange(e.target.value);
                     }}
-                    onKeyDown={(e: React.KeyboardEvent) => {
-                        if (e.key === 'Enter') {
-                            if (value === '') return;
-
-                            onAddTag({ tag: value, value: value });
-                            setValue('');
-                        } else if (e.key === 'Backspace' && !value) {
-                            e.preventDefault();
-                            let lastTag = '';
-                            if (tags.length === 0) return;
-                            lastTag = tags[tags.length - 1].value;
-
-                            setValue(lastTag);
-                            onRemoveTag(tags[tags.length - 1]);
-                        }
-                    }}
+                    onKeyDown={onKeyDownHandler}
                     TagComponent={TagComponent}
                 />
                 <div className="relative">
