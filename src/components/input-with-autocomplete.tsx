@@ -32,7 +32,7 @@ const InputWithAutocomplete = forwardRef<HTMLDivElement, Props>(
     ) => {
         const [value, setValue] = useState('');
 
-        const onKeyDownHandler = (e: React.KeyboardEvent) => {
+        const tagKeyboardInputHandler = (e: React.KeyboardEvent) => {
             if (e.key === 'Enter') {
                 if (value === '') return;
                 // Add tag and clear input
@@ -63,7 +63,7 @@ const InputWithAutocomplete = forwardRef<HTMLDivElement, Props>(
                         setValue(e.target.value);
                         onChange(e.target.value);
                     }}
-                    onKeyDown={onKeyDownHandler}
+                    onKeyDown={tagKeyboardInputHandler}
                     TagComponent={TagComponent}
                 />
                 <div className="relative">
