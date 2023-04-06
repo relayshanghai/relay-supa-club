@@ -29,6 +29,10 @@ const pricing = {
     contactUs: '联系我们',
     popular: '热门',
     yourCurrentPlan: '您当前的计划',
+    invalidCoupon: '无效的优惠券',
+    couponApplied: '优惠券已应用',
+    applyCoupon: '应用优惠券',
+    discount: '折扣',
 };
 
 export default pricing;
