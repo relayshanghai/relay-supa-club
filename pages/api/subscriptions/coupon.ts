@@ -13,7 +13,7 @@ const handler: NextApiHandler = async (req, res) => {
     }
     const { coupon_id } = req.query as unknown as CouponGetQueries;
 
-    if (!coupon_id) {
+    if (!coupon_id || typeof coupon_id !== 'string') {
         return res.status(httpCodes.BAD_REQUEST).json({ error: 'Missing coupon_id' });
     }
     const coupon = await stripeClient.coupons.retrieve(coupon_id);

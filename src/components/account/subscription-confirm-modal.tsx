@@ -87,7 +87,9 @@ export const SubscriptionConfirmModal = ({
     const priceNumber = Number(price?.split('$')[1]);
     const priceAfterCoupon =
         price && !Number.isNaN(priceNumber) && couponInfo?.percent_off
-            ? '$' + (priceNumber * (1 - couponInfo.percent_off / 100)).toFixed(2)
+            ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(
+                  priceNumber * (1 - couponInfo.percent_off / 100),
+              )
             : price;
 
     return (
@@ -138,7 +140,7 @@ export const SubscriptionConfirmModal = ({
                                 </p>
                                 <p className="ml-10">
                                     {couponInfo.percent_off}
-                                    {` %`}
+                                    {' %'}
                                 </p>
                             </div>
                         </div>
