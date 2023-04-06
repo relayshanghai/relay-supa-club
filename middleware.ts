@@ -6,6 +6,7 @@ import type { DatabaseWithCustomTypes } from 'types';
 import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
 import httpCodes from 'src/constants/httpCodes';
 import { serverLogger } from 'src/utils/logger-server';
+import { supabaseLogger } from 'src/utils/api/db';
 
 const pricingAllowList = ['https://en-relay-club.vercel.app', 'https://relay.club'];
 const stripeWebhookAllowlist = ['https://stripe.com/', 'https://hooks.stripe.com/'];
@@ -136,10 +137,20 @@ const allowPricingCors = (req: NextRequest, res: NextResponse) => {
 };
 const allowStripeCors = (req: NextRequest, res: NextResponse) => {
     const origin = req.headers.get('origin');
+    supabaseLogger({
+        type: 'stripe-webhook',
+        data: {
+            origin,
+            stripeWebhookAllowlist,
+            originCheck: stripeWebhookAllowlist.some((allowed) => origin?.includes(allowed)),
+        },
+    });
     if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
         res.headers.set('Access-Control-Allow-Origin', '*');
     } else if (origin && stripeWebhookAllowlist.some((allowed) => origin.includes(allowed))) {
         res.headers.set('Access-Control-Allow-Origin', origin);
+    } else {
+        return NextResponse.rewrite(req.nextUrl.origin, { status: httpCodes.FORBIDDEN });
     }
     res.headers.set('Access-Control-Allow-Methods', 'POST');
     return res;
