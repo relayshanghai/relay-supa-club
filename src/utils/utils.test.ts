@@ -113,7 +113,7 @@ describe('toCurrency', () => {
     });
 
     it('should return CNY currency', () => {
-        expect(toCurrency(100, 'CNY')).toBe('CN¥100.00');
+        expect(toCurrency(100, 2, 'CNY')).toBe('CN¥100.00');
     });
 });
 

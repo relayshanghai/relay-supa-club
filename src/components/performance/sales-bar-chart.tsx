@@ -1,5 +1,5 @@
 import { PureComponent } from 'react';
-import { BarChart, Bar, XAxis, Legend, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, ResponsiveContainer } from 'recharts';
 
 const data = [
     {
@@ -45,12 +45,7 @@ export default class SalesBarChart extends PureComponent {
         return (
             <ResponsiveContainer width="100%" height="100%">
                 <BarChart width={120} height={40} data={data}>
-                    <XAxis
-                        dataKey="name"
-                        style={{ fontSize: '70%' }}
-                        tickLine={false}
-                        axisLine={false}
-                    />
+                    <XAxis dataKey="name" style={{ fontSize: '70%' }} tickLine={false} axisLine={false} />
                     <Bar dataKey="uv" fill="#8884d8" />
                 </BarChart>
             </ResponsiveContainer>

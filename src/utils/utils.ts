@@ -49,10 +49,19 @@ export const chinaFilter = (str: string) => {
     return str;
 };
 
-export const toCurrency = (n: number, curr = 'USD', LanguageFormat?: string) =>
+/**
+ *
+ * @param n is the number to be converted to currency
+ * @param curr is the currency to be used
+ * @param LanguageFormat is the language to be used
+ * @param minFraction is the minimum fraction to be used
+ * @returns
+ */
+export const toCurrency = (n: number, minFraction = 2, curr = 'USD', LanguageFormat?: string) =>
     Intl.NumberFormat(LanguageFormat, {
         style: 'currency',
         currency: curr,
+        maximumFractionDigits: minFraction,
     }).format(n);
 
 export const truncateWithDots = (str: string | undefined | null, maxLength: number) => {
