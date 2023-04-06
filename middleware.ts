@@ -6,7 +6,6 @@ import type { DatabaseWithCustomTypes } from 'types';
 import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
 import httpCodes from 'src/constants/httpCodes';
 import { serverLogger } from 'src/utils/logger-server';
-import { supabaseLogger } from 'src/utils/api/db';
 
 const pricingAllowList = ['https://en-relay-club.vercel.app', 'https://relay.club'];
 const stripeWebhookAllowlist = ['https://stripe.com/', 'https://hooks.stripe.com/'];
@@ -137,7 +136,9 @@ const allowPricingCors = (req: NextRequest, res: NextResponse) => {
 };
 const allowStripeCors = (req: NextRequest, res: NextResponse) => {
     const origin = req.headers.get('origin');
-    supabaseLogger({
+
+    // eslint-disable-next-line no-console
+    console.log({
         type: 'stripe-webhook',
         data: {
             origin,
