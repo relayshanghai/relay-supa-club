@@ -1,54 +1,57 @@
-import { PureComponent } from 'react';
-import { BarChart, Bar, XAxis, ResponsiveContainer } from 'recharts';
+// Description: A temporary sales bar chart component for the demo to match the design.We could replace this with a better chart library in the future.
+//for now using a static height, in next iteration will be replaced with a dynamic height based on the data and also create a function to show latest 6 months data.
+const calcHeight = (amt: number) => {
+    const max = 16000;
+    const min = 2560;
+    const height = ((amt - min) / (max - min)) * 100;
+    return Math.floor(height);
+};
 
-const data = [
+const chartData = [
     {
         name: 'NOV',
-        uv: 3000,
-        pv: 1398,
-        amt: 2210,
+        color: 'bg-purple-200',
+        amt: calcHeight(10000),
     },
     {
         name: 'DEC',
-        uv: 2000,
-        pv: 9800,
-        amt: 2290,
+        color: 'bg-primary-400',
+        amt: calcHeight(16000),
     },
     {
         name: 'JAN',
-        uv: 2780,
-        pv: 3908,
-        amt: 2000,
+        color: 'bg-primary-600',
+        amt: calcHeight(5230),
     },
     {
         name: 'FEB',
-        uv: 1890,
-        pv: 4800,
-        amt: 2181,
+        color: 'bg-primary-400',
+        amt: calcHeight(4560),
     },
     {
         name: 'MAR',
-        uv: 2390,
-        pv: 3800,
-        amt: 2500,
+        color: 'bg-pink-500',
+        amt: calcHeight(9500),
     },
     {
         name: 'APR',
-        uv: 3490,
-        pv: 4300,
-        amt: 2100,
+        color: 'bg-primary-300',
+        amt: calcHeight(12500),
     },
 ];
 
-export default class SalesBarChart extends PureComponent {
-    render() {
-        return (
-            <ResponsiveContainer width="100%" height="100%">
-                <BarChart width={120} height={40} data={data}>
-                    <XAxis dataKey="name" style={{ fontSize: '70%' }} tickLine={false} axisLine={false} />
-                    <Bar dataKey="uv" fill="#8884d8" />
-                </BarChart>
-            </ResponsiveContainer>
-        );
-    }
+export default function SalesBarChart() {
+    return (
+        <div className="flex h-full space-x-4">
+            {chartData.map((data, index) => (
+                <div className="flex h-full flex-col justify-end" key={index}>
+                    <div
+                        className={`${data.color} mb-1 h-12 w-4 rounded-t-md opacity-70 transition duration-300 hover:opacity-100`}
+                        style={{ height: `${data.amt}%` }}
+                    />
+                    <div className=" text-xs uppercase text-gray-400">{data.name}</div>
+                </div>
+            ))}
+        </div>
+    );
 }

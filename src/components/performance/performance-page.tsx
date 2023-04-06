@@ -10,6 +10,7 @@ import { toCurrency, numFormatter } from 'src/utils/utils';
 
 export interface PerformanceData {
     company_id: string;
+    company_name: string;
     posts: number;
     sales: number;
     likes: number;
@@ -47,7 +48,7 @@ const PerformancePage = () => {
     ];
 
     const statCardStyle =
-        'flex flex-col bg-white p-6 space-y-6 shadow hover:shadow-md rounded-lg hover:text-primary-500 hover:stroke-primary-500 transition duration-500 ease-in-out hover:cursor-default';
+        'flex flex-col group bg-white p-6 space-y-6 shadow hover:shadow-md rounded-2xl hover:text-primary-500 hover:stroke-primary-500 transition duration-500 ease-in-out hover:cursor-default hover:scale-105 min-w-[168px] '; //min width 168px is from figma design, it also gives the card a reasonable width for large numbers
 
     useEffect(() => {
         getPerformanceData();
@@ -55,24 +56,24 @@ const PerformancePage = () => {
 
     return (
         <Layout>
-            <div className="mx-auto flex h-full max-w-3xl flex-col items-center justify-center bg-gray-50">
+            <div className="mx-auto flex flex-col items-center justify-center bg-gray-50 md:h-full">
                 {performanceData && (
-                    <div className="m-6 flex flex-col items-start justify-center space-y-9 text-gray-700 ">
-                        <div className="flex flex-col items-start justify-start space-y-2">
+                    <div className="m-4 flex flex-col items-start justify-center text-gray-700 md:m-6  ">
+                        <div className="mb-9 flex min-h-fit flex-col items-start justify-start space-y-2">
                             <h2 className="text-2xl tracking-wide ">{t('performance.title')}</h2>
                             <p className="text-xs leading-none tracking-wide ">
-                                {t('performance.allCampaignsFor')}TimeKettle
+                                {t('performance.allCampaignsFor')} {performanceData.company_name}
                             </p>
                             {/* To be replaced with a date range picker in next iteration */}
                             <div className="inline-flex w-full items-center justify-center rounded-lg border border-gray-300 p-1">
                                 <p className="text-xs leading-none tracking-wide ">2023-01-01 to 2023-04-01</p>
                             </div>
                         </div>
-                        <div className="md:grid-row-2 flex flex-col gap-4 md:grid md:grid-cols-4 ">
+                        <div className="md:grid-row-2 flex w-full flex-col gap-5 md:grid md:grid-cols-4 ">
                             <div className={`${statCardStyle} row-span-2 flex flex-col justify-between text-center`}>
                                 <div className="flex flex-col space-y-6">
                                     <h4 className="text-base">{t('performance.stats.posts')}</h4>
-                                    <h1 className="text-4xl font-semibold">{numFormatter(performanceData?.posts)}</h1>
+                                    <h1 className="text-4xl font-semibold">{numFormatter(performanceData.posts)}</h1>
                                 </div>
                                 {/* To enable to click and redirect to all posts page in next iteration */}
                                 <div className="flex h-28 w-full items-start justify-center rounded-xl bg-gradient-to-r from-primary-400 via-primary-200 to-primary-200 hover:cursor-pointer">
@@ -82,20 +83,20 @@ const PerformancePage = () => {
                                     </div>
                                 </div>
                             </div>
-                            <div className="hover:text -primary-500 col-span-3 flex space-y-6 rounded-lg bg-white p-6 shadow transition duration-500 ease-in-out hover:cursor-default hover:stroke-primary-500 hover:shadow-md ">
-                                <div className="flex w-1/2 flex-col space-y-6">
+                            <div className="hover:scale-10 group col-span-3 flex space-y-6 rounded-lg bg-white p-6 shadow transition duration-500 ease-in-out hover:scale-105 hover:cursor-default hover:stroke-primary-500 hover:text-primary-500 hover:shadow-md">
+                                <div className="flex w-1/2 flex-col space-y-6 transition duration-500 ease-in-out group-hover:text-primary-500 ">
                                     <h4 className="text-base">{t('performance.stats.sales')}</h4>
 
-                                    <h1 className="text-4xl font-semibold">{toCurrency(performanceData?.sales, 0)}</h1>
+                                    <h1 className="text-4xl font-semibold">{toCurrency(performanceData.sales, 0)}</h1>
                                 </div>
 
-                                <div className="w-1/2">
+                                <div className="invisible w-1/2 md:visible">
                                     <SalesBarChart />
                                 </div>
                             </div>
                             {SocialStats.map((stat, index) => (
                                 <div className={statCardStyle} key={index}>
-                                    <stat.icon className=" stroke-gray-700" />
+                                    <stat.icon className=" stroke-gray-700 group-hover:stroke-primary-500" />
                                     <div>
                                         <h4 className="text-base">{stat.label}</h4>
                                         <h1 className="text-2xl font-semibold">{stat.value}</h1>
