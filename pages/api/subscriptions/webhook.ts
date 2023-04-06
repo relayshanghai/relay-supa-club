@@ -72,12 +72,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 } else {
                     await supabaseLogger({
                         type: 'stripe-webhook',
-                        message: 'productID does not match handled projectIDs',
+                        message: 'productID does not match handled projectIDs: STRIPE_PRODUCT_ID_VIP',
                         data: { productID, STRIPE_PRODUCT_ID_VIP },
                     });
                     return res
-                        .status(httpCodes.METHOD_NOT_ALLOWED)
-                        .json({ message: 'productID does not match handled projectIDs' });
+                        .status(httpCodes.NO_CONTENT)
+                        .json({ message: 'productID does not match handled projectIDs: STRIPE_PRODUCT_ID_VIP' });
                 }
             }
             if (event.type === handledWebhooks.invoicePaymentFailed) {
