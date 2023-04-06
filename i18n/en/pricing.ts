@@ -31,6 +31,10 @@ const pricing = {
     contactUs: 'Contact us',
     popular: 'POPULAR',
     yourCurrentPlan: 'Your current plan',
+    invalidCoupon: 'Invalid coupon',
+    couponApplied: 'Coupon applied',
+    applyCoupon: 'Apply coupon',
+    discount: 'Discount',
 };
 
 export default pricing;

@@ -12,6 +12,7 @@ import type Stripe from 'stripe';
 export type SubscriptionCreatePostBody = {
     company_id: string;
     price_id: string;
+    coupon_id?: string;
 };
 export type SubscriptionCreatePostResponse = Stripe.Response<Stripe.Subscription>;
 /**
@@ -19,7 +20,7 @@ export type SubscriptionCreatePostResponse = Stripe.Response<Stripe.Subscription
  */
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
-        const { company_id, price_id } = req.body as SubscriptionCreatePostBody;
+        const { company_id, price_id, coupon_id } = req.body as SubscriptionCreatePostBody;
         if (!company_id)
             return res.status(httpCodes.BAD_REQUEST).json({ error: createSubscriptionErrors.missingCompanyData });
         if (!price_id)
@@ -63,6 +64,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 items: [{ price: price_id }],
                 proration_behavior: 'create_prorations',
             };
+            if (coupon_id) {
+                createParams.coupon = coupon_id;
+            }
+
             const subscription: SubscriptionCreatePostResponse = await stripeClient.subscriptions.create(createParams);
 
             if (subscription.status !== 'active') {

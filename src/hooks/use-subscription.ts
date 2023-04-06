@@ -46,11 +46,12 @@ export const useSubscription = () => {
     }, [profile, mutate]);
 
     const createSubscription = useCallback(
-        async (priceId: string) => {
+        async (priceId: string, couponId?: string) => {
             if (!profile?.company_id) throw new Error('No profile found');
             const body: SubscriptionCreatePostBody = {
                 price_id: priceId,
                 company_id: profile?.company_id,
+                coupon_id: couponId,
             };
             const res = await nextFetch<SubscriptionCreatePostResponse>('subscriptions/create', {
                 method: 'post',
