@@ -14,7 +14,7 @@ describe('SearchOptions', () => {
     it('Should render search page', () => {
         testMount(<SearchPage companyId={companyId} />);
 
-        cy.contains('Results per page').should('exist');
+        cy.contains('Results per page');
     });
 
     it('Should show top default influencers', () => {
