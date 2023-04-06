@@ -105,7 +105,7 @@ describe('chinaFilter', () => {
 
 describe('toCurrency', () => {
     it('should throw if invalid currency', () => {
-        expect(() => toCurrency(0, 'XXXX')).toThrowError();
+        expect(() => toCurrency(0, 2, 'XXXX')).toThrowError();
     });
 
     it('should return USD currency', () => {
