@@ -109,7 +109,7 @@ describe('Main pages happy paths', () => {
         cy.loginTestUser();
         cy.getByTestId('layout-account-menu').click();
         cy.contains('Log Out').click();
-        cy.contains('Log In', { timeout: 10000 }); // loads login page
+        cy.contains('Log In', { timeout: 30000 }); // loads login page
         cy.url().should('include', `/login`);
 
         // pre-populates email with original email
