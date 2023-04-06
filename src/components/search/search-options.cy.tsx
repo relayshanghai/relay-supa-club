@@ -59,10 +59,6 @@ describe('SearchOptions', () => {
             cy.get('input').type('yomrwhite{enter}');
         });
 
-        // cy.getByTestId('search-topics').within(() => {
-        //     cy.get('input').type('{backspace}{backspace}{backspace}{backspace}{backspace}');
-        // });
-
         cy.get('#remove-tag-alligators').should('exist').click();
         cy.get('#remove-tag-yomrwhite').should('exist').click();
 
