@@ -150,6 +150,7 @@ export async function middleware(req: NextRequest) {
     const res = NextResponse.next();
     if (req.nextUrl.pathname === '/api/subscriptions/prices') return allowPricingCors(req, res);
     if (req.nextUrl.pathname === '/api/slack/create') return res;
+    if (req.nextUrl.pathname === '/api/subscriptions/webhook') return res;
 
     // Create authenticated Supabase Client.
     const supabase = createMiddlewareSupabaseClient<DatabaseWithCustomTypes>({ req, res });
