@@ -138,9 +138,10 @@ const allowStripeCors = (req: NextRequest, res: NextResponse) => {
     const origin = req.headers.get('origin');
     if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
         res.headers.set('Access-Control-Allow-Origin', '*');
-    } else if (origin && stripeWebhookAllowlist.some((allowed) => origin.includes(allowed)))
+    } else if (origin && stripeWebhookAllowlist.some((allowed) => origin.includes(allowed))) {
         res.headers.set('Access-Control-Allow-Origin', origin);
-    res.headers.set('Access-Control-Allow-Methods', 'GET');
+    }
+    res.headers.set('Access-Control-Allow-Methods', 'POST');
     return res;
 };
 
