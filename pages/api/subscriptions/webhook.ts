@@ -23,6 +23,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 supabaseLogger({ type: 'stripe-webhook', message: 'no signature' });
                 return res.status(httpCodes.BAD_REQUEST).json({});
             }
+            const ourSig = process.env.STRIPE_SIGNING_SECRET;
+            if (!ourSig) {
+                supabaseLogger({ type: 'stripe-webhook', message: 'no signing secret' });
+                return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
+            }
+            if (sig !== ourSig) {
+                supabaseLogger({ type: 'stripe-webhook', message: 'signatures do not match' });
+                return res.status(httpCodes.FORBIDDEN).json({});
+            }
 
             // TODO task V2-26o: test in production (Staging) if the webhook is actually called after trial ends.
 

@@ -8,7 +8,6 @@ import httpCodes from 'src/constants/httpCodes';
 import { serverLogger } from 'src/utils/logger-server';
 
 const pricingAllowList = ['https://en-relay-club.vercel.app', 'https://relay.club'];
-const stripeWebhookAllowlist = ['https://stripe.com/', 'https://hooks.stripe.com/'];
 
 /**
  *
@@ -134,28 +133,6 @@ const allowPricingCors = (req: NextRequest, res: NextResponse) => {
     res.headers.set('Access-Control-Allow-Methods', 'GET');
     return res;
 };
-const allowStripeCors = (req: NextRequest, res: NextResponse) => {
-    const origin = req.headers.get('origin');
-
-    // eslint-disable-next-line no-console
-    console.log({
-        type: 'stripe-webhook',
-        data: {
-            origin,
-            stripeWebhookAllowlist,
-            originCheck: stripeWebhookAllowlist.some((allowed) => origin?.includes(allowed)),
-        },
-    });
-    if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
-        res.headers.set('Access-Control-Allow-Origin', '*');
-    } else if (origin && stripeWebhookAllowlist.some((allowed) => origin.includes(allowed))) {
-        res.headers.set('Access-Control-Allow-Origin', origin);
-    } else {
-        return NextResponse.rewrite(req.nextUrl.origin, { status: httpCodes.FORBIDDEN });
-    }
-    res.headers.set('Access-Control-Allow-Methods', 'POST');
-    return res;
-};
 
 const checkIsRelayEmployee = async (res: NextResponse, email: string) => {
     if (!EMPLOYEE_EMAILS.includes(email)) {
@@ -172,7 +149,6 @@ export async function middleware(req: NextRequest) {
     // We need to create a response and hand it to the supabase client to be able to modify the response headers.
     const res = NextResponse.next();
     if (req.nextUrl.pathname === '/api/subscriptions/prices') return allowPricingCors(req, res);
-    if (req.nextUrl.pathname === '/api/subscriptions/webhook') return allowStripeCors(req, res);
     if (req.nextUrl.pathname === '/api/slack/create') return res;
 
     // Create authenticated Supabase Client.
@@ -213,7 +189,8 @@ export const config = {
          * - accept invite (accept invite api). User hasn't logged in yet
          * - create-employee endpoint (api/company/create-employee)
          * - login, signup, logout (login, signup, logout pages)
+         * - Stripe webhook (instead use signing key to protect)
          */
-        '/((?!_next/static|_next/image|favicon.ico|assets/*|api/invites/accept*|api/company/create-employee*|login*|login/reset-password|signup|signup/invite*|logout|api/logout).*)',
+        '/((?!_next/static|_next/image|favicon.ico|assets/*|api/invites/accept*|api/company/create-employee*|login*|login/reset-password|signup|signup/invite*|logout|api/logout|api/subscriptions/webhook).*)',
     ],
 };
