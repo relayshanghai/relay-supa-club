@@ -25,20 +25,12 @@ export const SearchResultsTable = ({
     onlyRecommended: boolean;
 }) => {
     const { t } = useTranslation();
-    const {
-        loading,
-        platform,
-        resultPages: resultPagesFull,
-        usageExceeded,
-        noResults,
-    } = useSearch();
+    const { loading, platform, resultPages: resultPagesFull, usageExceeded, noResults } = useSearch();
 
     const resultPages =
         FEAT_RECOMMENDED && onlyRecommended
             ? resultPagesFull.map((page) =>
-                  page?.filter((creator) =>
-                      isRecommendedInfluencer(platform, creator.account.user_profile.user_id),
-                  ),
+                  page?.filter((creator) => isRecommendedInfluencer(platform, creator.account.user_profile.user_id)),
               )
             : resultPagesFull;
 
@@ -100,9 +92,7 @@ export const SearchResultsTable = ({
                     {!usageExceeded &&
                         noResults &&
                         (loading ? (
-                            [...Array(10)].map((_, i) => (
-                                <SkeletonSearchResultRow key={i} delay={i * 200} />
-                            ))
+                            [...Array(10)].map((_, i) => <SkeletonSearchResultRow key={i} delay={i * 200} />)
                         ) : (
                             <tr>
                                 <td className="py-4 text-center" colSpan={5}>

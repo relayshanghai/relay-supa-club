@@ -49,9 +49,7 @@ export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
             />
 
             <div className="flex items-center">
-                <div className="text-sm font-bold">
-                    {`${t('creators.results')}: ${numberFormatter(resultsTotal)}`}
-                </div>
+                <div className="text-sm font-bold">{`${t('creators.results')}: ${numberFormatter(resultsTotal)}`}</div>
             </div>
 
             <SearchResultsTable

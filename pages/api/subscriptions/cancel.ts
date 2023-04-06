@@ -16,13 +16,10 @@ export type SubscriptionCancelPostResponse = Stripe.Response<Stripe.Subscription
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
         const { company_id } = req.body as SubscriptionCancelPostBody;
-        if (!company_id)
-            return res.status(httpCodes.BAD_REQUEST).json({ error: 'Missing company id' });
+        if (!company_id) return res.status(httpCodes.BAD_REQUEST).json({ error: 'Missing company id' });
 
         if (!(await isCompanyOwnerOrRelayEmployee(req, res))) {
-            return res
-                .status(httpCodes.UNAUTHORIZED)
-                .json({ error: 'This action is limited to company admins' });
+            return res.status(httpCodes.UNAUTHORIZED).json({ error: 'This action is limited to company admins' });
         }
 
         try {
@@ -32,10 +29,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     error: 'No active subscription to cancel',
                 });
 
-            const subscription: SubscriptionCancelPostResponse =
-                await stripeClient.subscriptions.update(activeSubscription.id, {
+            const subscription: SubscriptionCancelPostResponse = await stripeClient.subscriptions.update(
+                activeSubscription.id,
+                {
                     cancel_at_period_end: true,
-                });
+                },
+            );
 
             await updateCompanySubscriptionStatus({
                 subscription_status: 'canceled',

@@ -48,21 +48,14 @@ export const ModalWithButtons = ({
                             leaveTo="opacity-0 scale-95"
                         >
                             <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-                                <Dialog.Title
-                                    as="h3"
-                                    className="text-lg font-medium leading-6 text-gray-900"
-                                >
+                                <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
                                     {title}
                                 </Dialog.Title>
                                 <div className="mt-2">{children}</div>
                                 <div className="flex flex-row justify-end gap-2">
                                     {okButtonText && (
                                         <div className="mt-4">
-                                            <Button
-                                                type="button"
-                                                variant="primary"
-                                                onClick={onOkay}
-                                            >
+                                            <Button type="button" variant="primary" onClick={onOkay}>
                                                 {okButtonText}
                                             </Button>
                                         </div>
@@ -70,11 +63,7 @@ export const ModalWithButtons = ({
 
                                     {closeButtonText && (
                                         <div className="mt-4">
-                                            <Button
-                                                type="button"
-                                                variant="secondary"
-                                                onClick={() => onClose()}
-                                            >
+                                            <Button type="button" variant="secondary" onClick={() => onClose()}>
                                                 {closeButtonText}
                                             </Button>
                                         </div>

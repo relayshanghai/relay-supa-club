@@ -1,11 +1,4 @@
-import {
-    chinaFilter,
-    isAdmin,
-    isValidUrl,
-    numFormatter,
-    toCurrency,
-    truncateWithDots,
-} from './utils';
+import { chinaFilter, isAdmin, isValidUrl, numFormatter, toCurrency, truncateWithDots } from './utils';
 
 describe('numformatter', () => {
     it("should return '-' if zero or NaN", () => {

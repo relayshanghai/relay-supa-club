@@ -1,12 +1,6 @@
 {
-  "plugins": [
-    "@typescript-eslint"
-  ],
-  "extends": [
-    "next",
-    "plugin:@typescript-eslint/recommended",
-    "prettier"
-  ],
+  "plugins": ["@typescript-eslint"],
+  "extends": ["next", "plugin:@typescript-eslint/recommended", "prettier"],
   "rules": {
     "@typescript-eslint/consistent-type-imports": "warn", // Require consistent use of type imports
     "camelcase": "off", // Don't warn about camelcase e.g. for API responses. var_name is fine

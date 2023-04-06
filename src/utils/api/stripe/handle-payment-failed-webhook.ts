@@ -6,10 +6,7 @@ import type { NextApiResponse } from 'next';
 import type { InvoicePaymentFailed } from 'types/stripe/invoice-payment-failed-webhook';
 import { RELAY_DOMAIN } from 'src/constants';
 
-export const handleInvoicePaymentFailed = async (
-    res: NextApiResponse,
-    invoiceBody: InvoicePaymentFailed,
-) => {
+export const handleInvoicePaymentFailed = async (res: NextApiResponse, invoiceBody: InvoicePaymentFailed) => {
     const customerId = invoiceBody.data.object.customer;
     if (!customerId) {
         throw new Error('Missing customer ID in invoice body');

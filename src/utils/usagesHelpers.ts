@@ -4,11 +4,7 @@ export type SimpleUsage = {
     type: UsageType;
     created_at: string | null;
 };
-export const getCurrentPeriodUsages = (
-    usages: SimpleUsage[],
-    periodStart: Date,
-    periodEnd: Date,
-) => {
+export const getCurrentPeriodUsages = (usages: SimpleUsage[], periodStart: Date, periodEnd: Date) => {
     if (!usages) {
         return [];
     }

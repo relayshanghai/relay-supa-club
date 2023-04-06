@@ -1,9 +1,4 @@
-import type {
-    CampaignCreatorsTable,
-    CompanyTable,
-    ProfilesTable,
-    UsagesTable,
-} from 'src/utils/api/db';
+import type { CampaignCreatorsTable, CompanyTable, ProfilesTable, UsagesTable } from 'src/utils/api/db';
 import type Stripe from 'stripe';
 import type { Database } from './supabase';
 

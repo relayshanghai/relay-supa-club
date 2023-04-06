@@ -4,24 +4,29 @@ import { SECONDS_IN_MILLISECONDS } from 'src/constants/conversions';
 import type { AccountRole } from 'types';
 
 export const parseError = (error: any) => {
-    if (error && error.message) {
+    if (!error) {
+        return new Error('undefined error');
+    }
+    if (error.message) {
         if ('stack' in error) return error;
         return error.message;
     }
-    if (typeof error === 'string') return error;
+    if (typeof error === 'string') {
+        return error;
+    }
     return JSON.stringify(error);
 };
 
 export const handleError = (error: any) => {
-    if (!error || typeof error !== 'object') return 'Oops! Something went wrong. Try again';
+    if (!error || typeof error !== 'object') {
+        return 'Oops! Something went wrong. Try again';
+    }
     const { response } = error;
     if (response?.data?.error) {
         return response.data.error;
     }
     if (response?.data?.errors) {
-        return `${Object.keys(response.data.errors)[0]} ${
-            response.data.errors[Object.keys(response.data.errors)[0]]
-        }`;
+        return `${Object.keys(response.data.errors)[0]} ${response.data.errors[Object.keys(response.data.errors)[0]]}`;
     }
     if (response?.data?.email) {
         return `${Object.keys(response.data)[0]} ${response.data.email[0]}`;
@@ -79,10 +84,7 @@ export const isAdmin = (user_role?: AccountRole) => {
     if (!user_role) {
         return false;
     }
-    const isAdmin =
-        user_role === 'company_owner' ||
-        user_role === 'relay_employee' ||
-        user_role === 'relay_expert';
+    const isAdmin = user_role === 'company_owner' || user_role === 'relay_employee' || user_role === 'relay_expert';
     return isAdmin;
 };
 

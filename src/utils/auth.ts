@@ -11,11 +11,7 @@ if (!supabaseUrl || !supabaseAnonKey) {
     serverLogger('NEXT_PUBLIC_SUPABASE_ANON_KEY or NEXT_PUBLIC_SUPABASE_URL not set', 'error');
 }
 
-export const checkSessionIdMatchesID = async (
-    userId: string,
-    req: NextApiRequest,
-    res: NextApiResponse,
-) => {
+export const checkSessionIdMatchesID = async (userId: string, req: NextApiRequest, res: NextApiResponse) => {
     if (!userId) return false;
     const supabase = createServerSupabaseClient(
         { req, res },

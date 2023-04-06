@@ -6,9 +6,7 @@ export default function LineChart({ data, dataKey }: { data: any[]; dataKey: str
     const { t } = useTranslation();
     return (
         <div className="inline-block h-[250px] w-full rounded-lg bg-white py-6 pb-12 pr-6 text-xs">
-            <h3 className="mb-4 text-center text-lg font-bold text-gray-600">
-                {t(`creators.show.${dataKey}`)}
-            </h3>
+            <h3 className="mb-4 text-center text-lg font-bold text-gray-600">{t(`creators.show.${dataKey}`)}</h3>
             <ResponsiveContainer width="100%">
                 <LC data={data}>
                     <XAxis dataKey="month" />

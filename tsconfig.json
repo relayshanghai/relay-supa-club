@@ -1,22 +1,25 @@
 {
-    "compilerOptions": {
-        "target": "es5",
-        "lib": ["dom", "dom.iterable", "esnext"],
-        "allowJs": true,
-        "skipLibCheck": true,
-        "strict": true,
-        "forceConsistentCasingInFileNames": true,
-        "noEmit": true,
-        "esModuleInterop": true,
-        "module": "esnext",
-        "moduleResolution": "node",
-        "resolveJsonModule": true,
-        "isolatedModules": true,
-        "jsx": "preserve",
-        "incremental": true,
-        "baseUrl": ".",
-        "types": ["node"]
+  "compilerOptions": {
+    "target": "es5",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "baseUrl": ".",
+    "paths": {
+      "src/*": ["src/*"]
     },
-    "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "pages/_error.js"],
-    "exclude": ["node_modules", "**/*.test.*", "**/*.cy.*", "cypress", "cypress.config.ts"]
+    "types": ["node"]
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "pages/_error.js"],
+  "exclude": ["node_modules", "**/*.test.*", "**/*.cy.*", "cypress", "cypress.config.ts"]
 }

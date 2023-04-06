@@ -1,66 +1,49 @@
-import type { ChangeEvent, KeyboardEvent } from 'react';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import useOnOutsideClick from 'src/hooks/use-on-outside-click';
+import { useCallback, useState } from 'react';
+import { useSearch } from 'src/hooks/use-search';
 import { useTranslation } from 'react-i18next';
-import { clientLogger } from 'src/utils/logger-client';
-import type { AudienceLookalike, CreatorPlatform } from 'types';
-import { Enter, Spinner } from '../icons';
-import CreatorCard from './search-creator-card';
-import { nextFetch } from 'src/utils/fetcher';
+import type { CreatorPlatform } from 'types';
+import type { ChangeEvent } from 'react';
 
 export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
-    const searchRef = useRef<any>();
-    const [creators, setCreators] = useState<AudienceLookalike[] | []>([]);
     const [searchTerm, setSearchTerm] = useState<string | ''>();
-    const [loading, setLoading] = useState<boolean>(false);
-    const [displaySearch, setDisplaySearch] = useState<boolean>(false);
     const { t } = useTranslation();
 
-    useOnOutsideClick(searchRef, () => {
-        setDisplaySearch(false);
-        setSearchTerm('');
-    });
-    // TODO: update 'username' in useSearch
-    const searchByUsername = useCallback(
-        async (term: any) => {
-            setLoading(true);
-            try {
-                const res = await nextFetch('influencer-search/by-username', {
-                    method: 'post',
-                    body: JSON.stringify({
-                        term,
-                        platform,
-                    }),
-                });
-                setCreators(res);
-            } catch (error) {
-                clientLogger(error);
-            } finally {
-                setDisplaySearch(true);
-                setLoading(false);
+    const { setPlatform, setUsername } = useSearch();
+
+    const debounce = (fn: any) => {
+        let timeout: any = null;
+        return (...args: any) => {
+            if (timeout) {
+                clearTimeout(timeout);
             }
-        },
+            timeout = setTimeout(() => {
+                fn(...args);
+            }, 500);
+        };
+    };
+
+    // Disabling the exhaustive-deps rule because we need to use the debounce function and we already know the required dependencies.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const searchInfluencer = useCallback(
+        debounce((term: any) => {
+            setPlatform(platform);
+            setUsername(term);
+        }),
         [platform],
     );
 
-    const handleSearch = (e: KeyboardEvent<HTMLInputElement> & ChangeEvent<HTMLInputElement>) => {
-        if (e.key === 'Enter' && e.target.value) {
-            setSearchTerm(e.target.value.trim());
-            searchByUsername(searchTerm);
-        }
-    };
-
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-        setSearchTerm(e.target.value);
-        if (searchTerm === '') setCreators([]);
-    };
+        setSearchTerm(e.target.value.trim());
 
-    useEffect(() => {
-        setSearchTerm('');
-    }, [platform]);
+        if (e.target.value.trim() === '') {
+            setUsername('');
+        }
+
+        searchInfluencer(e.target.value.trim());
+    };
 
     return (
-        <div className="group relative flex w-full flex-col font-medium" ref={searchRef}>
+        <div className="group relative flex w-full flex-col font-medium">
             <input
                 className="block w-full appearance-none rounded-md border border-gray-200 bg-white px-3 py-2 text-gray-600 placeholder-gray-400 ring-1 ring-gray-900 ring-opacity-5 placeholder:text-sm focus:outline-none"
                 placeholder={t('creators.show.searchInfluencerPlaceholder') as string}
@@ -68,32 +51,7 @@ export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
                 id="creator-search"
                 value={searchTerm}
                 onChange={handleChange}
-                onKeyUp={handleSearch}
             />
-            {loading ? (
-                <Spinner className="absolute right-2 top-2.5 z-50 h-5 w-5 fill-primary-600 text-white" />
-            ) : (
-                <div className="absolute right-2 top-2.5 z-50 flex items-center">
-                    <p className="mr-2 text-xs text-gray-400">{t('creators.show.pressEnterToSearch')}</p>
-                    <Enter className="group-hover:fill-red h-6 w-6  fill-gray-500 " />
-                </div>
-            )}
-
-            <div className="relative w-full ">
-                {displaySearch && (
-                    <div className="absolute top-1 left-0 z-10 w-full overflow-hidden rounded-md bg-white py-2 text-sm ring-1 ring-gray-200">
-                        {creators?.length ? (
-                            creators.map((creator, i) => (
-                                <div key={i}>
-                                    <CreatorCard creator={creator} platform={platform} />
-                                </div>
-                            ))
-                        ) : (
-                            <p className="p-3 text-xs text-gray-400">{t('creators.show.noSearchResults')}</p>
-                        )}
-                    </div>
-                )}
-            </div>
         </div>
     );
 };

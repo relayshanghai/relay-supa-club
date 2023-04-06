@@ -18,9 +18,7 @@ const ResetPassword = () => {
     const { email: emailQuery } = router.query;
     // supabase gives query params in the form of #key=value&key=value
     const supabaseQueries = router.asPath.split('#')[1];
-    const supabaseQueriesObject = Object.fromEntries(
-        new URLSearchParams(supabaseQueries).entries(),
-    );
+    const supabaseQueriesObject = Object.fromEntries(new URLSearchParams(supabaseQueries).entries());
 
     const { error_description } = supabaseQueriesObject;
 
