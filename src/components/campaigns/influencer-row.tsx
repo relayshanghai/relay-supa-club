@@ -103,7 +103,7 @@ const InfluencerRow = ({
                     <CreatorContacts {...creator} />
                 ) : (
                     <Button variant="secondary" onClick={() => setShowContactInfo(true)}>
-                        View Contact Info
+                        {t('campaigns.show.viewContactInfo')}
                     </Button>
                 )}
             </td>

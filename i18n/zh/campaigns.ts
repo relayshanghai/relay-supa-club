@@ -91,6 +91,7 @@ const campaigns = {
         sendToAll: '用当前模版发送给所有KOL',
     },
     show: {
+        viewContactInfo: '查看联系方式',
         status: {
             'in progress': '已开始',
             'not started': '未开始',
