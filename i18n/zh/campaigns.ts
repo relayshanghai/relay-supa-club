@@ -38,6 +38,7 @@ const campaigns = {
         doNotAdd: '不添加',
         addAnyway: '继续添加',
         influencerAlreadyAdded: '这个KOL已被添加到其他活动:',
+        movedSuccessfully: 'KOL已成功移动到项目',
     },
     creatorModal: {
         outreach: 'KOL沟通',
@@ -137,6 +138,7 @@ const campaigns = {
         notes: '备注',
         important: '重要',
         importantMessages: '重要消息',
+        moveInfluencer: '移动KOL',
         activities: {
             influencerOutreach: 'KOL 招募',
             campaignInfo: '项目信息',
