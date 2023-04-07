@@ -1,9 +1,7 @@
 /// <reference types="@testing-library/cypress" />
-import defaultLandingPageInfluencerSearch from '../../mocks/api/influencer-search/indexDefaultSearch.json';
 import { APP_URL_CYPRESS, worker } from '../../mocks/browser';
 import { testMount } from '../../utils/cypress-app-wrapper';
 import { SearchPage } from './search-page';
-import { rest } from 'msw';
 
 const companyId = 'ad942d94-41bb-441a-a4e6-66169854b865';
 
@@ -18,40 +16,34 @@ describe('SearchOptions', () => {
     });
 
     it('Should show top default influencers', () => {
-        worker.use(
-            rest.post(`${APP_URL_CYPRESS}/api/influencer-search`, (req, res, ctx) => {
-                return res(ctx.json(defaultLandingPageInfluencerSearch));
-            }),
-        );
-
         testMount(<SearchPage companyId={companyId} />);
         cy.get('[href="/influencer/youtube/UCq-Fj5jknLsUf-MWSy4_brA"]').should('exist');
     });
 
     it('Should add topic tags to search', () => {
-        worker.use(
-            rest.post(`${APP_URL_CYPRESS}/api/influencer-search`, (req, res, ctx) => {
-                return res(ctx.json(defaultLandingPageInfluencerSearch));
-            }),
-        );
-
         testMount(<SearchPage companyId={companyId} />);
+
+        cy.intercept({
+            method: 'POST',
+            url: `${APP_URL_CYPRESS}/api/influencer-search/topics`,
+        }).as('searchTopicsRequest');
 
         cy.findByTestId('search-topics').within(() => {
             cy.get('input').type('alligators{enter}');
+
+            // Check if the request was made
+            cy.get('@searchTopicsRequest.all').then((interceptions) => {
+                expect(interceptions).to.have.length(0);
+            });
+
             cy.get('input').type('yomrwhite{enter}');
         });
+
         cy.contains('alligators').should('exist');
         cy.contains('yomrwhite').should('exist');
     });
 
     it('should be empty when we remove topic tags', () => {
-        worker.use(
-            rest.post(`${APP_URL_CYPRESS}/api/influencer-search`, (req, res, ctx) => {
-                return res(ctx.json(defaultLandingPageInfluencerSearch));
-            }),
-        );
-
         testMount(<SearchPage companyId={companyId} />);
 
         cy.findByTestId('search-topics').within(() => {
@@ -68,12 +60,6 @@ describe('SearchOptions', () => {
     });
 
     it('Should remove and edit the topic tags when pressing backspace', () => {
-        worker.use(
-            rest.post(`${APP_URL_CYPRESS}/api/influencer-search`, (req, res, ctx) => {
-                return res(ctx.json(defaultLandingPageInfluencerSearch));
-            }),
-        );
-
         testMount(<SearchPage companyId={companyId} />);
 
         cy.findByTestId('search-topics').within(() => {
