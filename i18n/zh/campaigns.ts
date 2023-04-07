@@ -77,6 +77,7 @@ const campaigns = {
         sent: '已发货',
         unsent: '未发货',
         delivered: '已签收',
+        influencerUpdated: 'KOL信息已更新',
     },
     email: {
         dayLimit: '您只能每 24 小时向 KOL 发送一封邮件，以避免被识别为垃圾邮件',
