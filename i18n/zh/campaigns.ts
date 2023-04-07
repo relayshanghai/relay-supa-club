@@ -38,6 +38,7 @@ const campaigns = {
         doNotAdd: '不添加',
         addAnyway: '继续添加',
         influencerAlreadyAdded: '这个KOL已被添加到其他活动:',
+        movedSuccessfully: 'KOL已成功移动到项目',
     },
     creatorModal: {
         outreach: 'KOL沟通',
@@ -76,6 +77,7 @@ const campaigns = {
         sent: '已发货',
         unsent: '未发货',
         delivered: '已签收',
+        influencerUpdated: 'KOL信息已更新',
     },
     email: {
         dayLimit: '您只能每 24 小时向 KOL 发送一封邮件，以避免被识别为垃圾邮件',
@@ -91,6 +93,7 @@ const campaigns = {
         sendToAll: '用当前模版发送给所有KOL',
     },
     show: {
+        viewContactInfo: '查看联系方式',
         status: {
             'in progress': '已开始',
             'not started': '未开始',
@@ -136,6 +139,7 @@ const campaigns = {
         notes: '备注',
         important: '重要',
         importantMessages: '重要消息',
+        moveInfluencer: '移动KOL',
         activities: {
             influencerOutreach: 'KOL 招募',
             campaignInfo: '项目信息',

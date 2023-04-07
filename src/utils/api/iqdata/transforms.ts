@@ -27,7 +27,7 @@ const locationTransform = ({ id, weight }: { id: string; weight: number | string
 
 const genderTransform = (gender: string) => {
     const upper = gender.toUpperCase();
-    const allowed: GenderAllCode[] = ['FEMALE', 'KNOWN', 'KNOWN', 'UNKNOWN'];
+    const allowed: GenderAllCode[] = ['FEMALE', 'MALE', 'KNOWN', 'UNKNOWN'];
     if (allowed.includes(upper as GenderAllCode)) return { code: upper as GenderAllCode };
     clientLogger('bad option for gender: ' + gender, 'error');
     return undefined;
