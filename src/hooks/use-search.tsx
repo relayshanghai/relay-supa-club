@@ -99,7 +99,7 @@ export const useSearchResults = (page: number) => {
         setLoading,
     } = useSearch();
 
-    const { data, isLoading, mutate, isValidating } = useSWR(
+    const { data, isLoading, mutate, isValidating, error } = useSWR(
         profile?.id
             ? [
                   'influencer-search',
@@ -134,17 +134,16 @@ export const useSearchResults = (page: number) => {
             platform,
             resultsPerPageLimit,
         ]) => {
-            if (!profile?.company_id || !profile?.id) return;
-
-            if (ref.current) {
-                ref.current.abort();
-            }
-
-            const controller = new AbortController();
-            const signal = controller.signal;
-            ref.current = controller;
-
             try {
+                if (!profile?.company_id || !profile?.id) return;
+                if (ref.current) {
+                    ref.current.abort();
+                }
+
+                const controller = new AbortController();
+                const signal = controller.signal;
+                ref.current = controller;
+
                 const body: InfluencerPostRequest = {
                     tags,
                     platform,
@@ -168,7 +167,8 @@ export const useSearchResults = (page: number) => {
                     signal,
                     body,
                 });
-                return { results: res.accounts, resultsTotal: res.total };
+
+                return { results: res?.accounts, resultsTotal: res?.total };
             } catch (error: any) {
                 if (typeof error?.message === 'string' && error.message.toLowerCase().includes('abort')) {
                     return;
@@ -176,20 +176,29 @@ export const useSearchResults = (page: number) => {
                 clientLogger(error, 'error');
                 if (hasCustomError(error, usageErrors)) {
                     setUsageExceeded(true);
+                } else {
+                    throw error;
                 }
+            } finally {
+                setLoading(false);
             }
         },
     );
 
     useEffect(() => {
-        setLoading(isLoading);
-    }, [setLoading, isLoading]);
+        if (error) {
+            setLoading(false);
+        } else {
+            setLoading(isLoading);
+        }
+    }, [setLoading, isLoading, error]);
 
     const noResults = !data?.results || data?.results.length === 0;
     return {
         results: data?.results,
         resultsTotal: data?.resultsTotal || 0,
         loading: isLoading,
+        error,
         isValidating,
         noResults,
         mutate,

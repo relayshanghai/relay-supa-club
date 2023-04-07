@@ -19,6 +19,7 @@ export interface SearchResultsTableProps {
     results?: CreatorSearchAccountObject[];
     loading: boolean;
     moreResults?: JSX.Element;
+    error: any;
 }
 
 export const SearchResultsTable = ({
@@ -31,6 +32,7 @@ export const SearchResultsTable = ({
     results: resultsFull,
     loading: passedInLoading,
     moreResults,
+    error,
 }: SearchResultsTableProps) => {
     const { t } = useTranslation();
     const { platform, usageExceeded } = useSearch();
@@ -93,7 +95,7 @@ export const SearchResultsTable = ({
                         </tr>
                     )}
 
-                    {!usageExceeded && !noResults && results && (
+                    {!error && !usageExceeded && !noResults && results && (
                         <>
                             {results.map((creator, i) => (
                                 <SearchResultRow
@@ -110,7 +112,8 @@ export const SearchResultsTable = ({
                         </>
                     )}
 
-                    {!usageExceeded &&
+                    {!error &&
+                        !usageExceeded &&
                         noResults &&
                         (loading ? (
                             [...Array(10)].map((_, i) => <SkeletonSearchResultRow key={i} delay={i * 200} />)
@@ -121,6 +124,13 @@ export const SearchResultsTable = ({
                                 </td>
                             </tr>
                         ))}
+                    {error && (
+                        <tr>
+                            <td className="py-4 text-center" colSpan={5}>
+                                {t('creators.searchResultError')}
+                            </td>
+                        </tr>
+                    )}
                 </tbody>
             </table>
         </div>

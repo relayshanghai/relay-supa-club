@@ -27,7 +27,7 @@ export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
     const { campaigns } = useCampaigns({ companyId });
 
     const [page, setPage] = useState(0);
-    const { results: firstPageSearchResults, resultsTotal, noResults } = useSearchResults(0);
+    const { results: firstPageSearchResults, resultsTotal, noResults, error } = useSearchResults(0);
 
     const [showAlreadyAddedModal, setShowAlreadyAddedModal] = useState(false);
     const [campaignsWithCreator, setCampaignsWithCreator] = useState<string[]>([]);
@@ -60,6 +60,7 @@ export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
                 onlyRecommended={onlyRecommended}
                 loading={loading}
                 results={firstPageSearchResults}
+                error={error}
                 moreResults={
                     <>
                         {new Array(page).fill(0).map((_, i) => (

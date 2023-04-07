@@ -37,12 +37,22 @@ export const MoreResultsRows = ({
     setCampaignsWithCreator,
     onlyRecommended,
 }: MoreResultsRowsProps) => {
+    const { t } = useTranslation();
     const { resultsPerPageLimit, platform } = useSearch();
-    const { results: resultsFull, loading } = useSearchResults(page);
+    const { results: resultsFull, loading, error } = useSearchResults(page);
     const results =
         FEAT_RECOMMENDED && onlyRecommended
             ? resultsFull?.filter((creator) => isRecommendedInfluencer(platform, creator.account.user_profile.user_id))
             : resultsFull;
+
+    if (error)
+        return (
+            <tr>
+                <td className="py-4 text-center" colSpan={5}>
+                    {t('creators.searchResultError')}
+                </td>
+            </tr>
+        );
 
     if (loading) {
         return (

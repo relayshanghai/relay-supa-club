@@ -6,6 +6,7 @@ const creators = {
     loadMore: 'Load more',
     results: 'Total Results',
     noResults: 'No results found',
+    searchResultError: 'Failed to fetch search results',
     clearFilter: 'Clear',
     failedToFetchReport: 'Failed to fetch report',
     subscribers: 'Followers',

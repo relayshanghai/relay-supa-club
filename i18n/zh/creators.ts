@@ -5,6 +5,7 @@ const creators = {
     loadMore: '更多',
     results: '结果',
     noResults: '无结果',
+    searchResultError: '无法获取搜索结果',
     clearFilter: '清除筛选',
     failedToFetchReport: '无法获取报告',
     subscribers: '粉丝',
