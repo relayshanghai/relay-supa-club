@@ -33,12 +33,7 @@ const InputWithAutocomplete = forwardRef<HTMLDivElement, Props>(
         const [value, setValue] = useState('');
 
         const tagKeyboardInputHandler = (e: React.KeyboardEvent) => {
-            if (e.key === 'Enter') {
-                if (value === '') return;
-                // Add tag and clear input
-                onAddTag({ tag: value, value: value });
-                setValue('');
-            } else if (e.key === 'Backspace' && !value) {
+            if (e.key === 'Backspace' && !value) {
                 e.preventDefault();
                 // Set input value to last tag
                 let lastTag = '';
