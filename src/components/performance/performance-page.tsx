@@ -77,10 +77,10 @@ const PerformancePage = () => {
                                         {numFormatter(performanceData.posts)}
                                     </h1>
                                 </div>
-                                {/* To enable to click and redirect to all posts page in next iteration */}
-                                <div className="flex h-28  items-start justify-center rounded-xl bg-gradient-to-r from-primary-400 via-primary-200 to-primary-200 hover:cursor-pointer">
+                                {/* To enable to click and redirect to all posts page in next iteration, unhide the ArrowRight Icon when its enabled and add "All Posts" text */}
+                                <div className="flex h-28 items-center justify-center rounded-xl bg-gradient-to-r from-primary-400 via-primary-200 to-primary-200 hover:cursor-pointer ">
                                     <div className="flex items-center">
-                                        <ArrowRight className="stroke-white" />
+                                        <ArrowRight className="hidden stroke-white" />
                                         <BoxFilled className="" />
                                     </div>
                                 </div>
