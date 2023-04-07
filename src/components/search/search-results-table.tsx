@@ -8,6 +8,18 @@ import { SkeletonSearchResultRow } from '../common/skeleton-search-result-row';
 import { SearchResultRow } from './search-result-row';
 import { FEAT_RECOMMENDED } from 'src/constants/feature-flags';
 import { isRecommendedInfluencer } from 'src/constants/recommendedInfluencers';
+import { useEffect, useState } from 'react';
+export interface SearchResultsTableProps {
+    setShowCampaignListModal: (show: boolean) => void;
+    setSelectedCreator: (creator: CreatorSearchAccountObject) => void;
+    setShowAlreadyAddedModal: (show: boolean) => void;
+    campaigns?: CampaignsIndexGetResult;
+    setCampaignsWithCreator: (campaigns: string[]) => void;
+    onlyRecommended: boolean;
+    results?: CreatorSearchAccountObject[];
+    loading: boolean;
+    moreResults?: JSX.Element;
+}
 
 export const SearchResultsTable = ({
     setShowCampaignListModal,
@@ -16,23 +28,31 @@ export const SearchResultsTable = ({
     campaigns,
     setCampaignsWithCreator,
     onlyRecommended,
-}: {
-    setShowCampaignListModal: (show: boolean) => void;
-    setSelectedCreator: (creator: CreatorSearchAccountObject) => void;
-    setShowAlreadyAddedModal: (show: boolean) => void;
-    campaigns?: CampaignsIndexGetResult;
-    setCampaignsWithCreator: (campaigns: string[]) => void;
-    onlyRecommended: boolean;
-}) => {
+    results: resultsFull,
+    loading: passedInLoading,
+    moreResults,
+}: SearchResultsTableProps) => {
     const { t } = useTranslation();
-    const { loading, platform, resultPages: resultPagesFull, usageExceeded, noResults } = useSearch();
+    const { platform, usageExceeded } = useSearch();
+    const noResults = !resultsFull || resultsFull.length === 0;
 
-    const resultPages =
+    const results =
         FEAT_RECOMMENDED && onlyRecommended
-            ? resultPagesFull.map((page) =>
-                  page?.filter((creator) => isRecommendedInfluencer(platform, creator.account.user_profile.user_id)),
-              )
-            : resultPagesFull;
+            ? resultsFull?.filter((creator) => isRecommendedInfluencer(platform, creator.account.user_profile.user_id))
+            : resultsFull;
+
+    const [initialWait, setInitialWait] = useState(true);
+
+    // This addresses a bug whereby 'no results found' flashes when SWR is actually loading results from localStorage
+    useEffect(() => {
+        if (initialWait) {
+            setTimeout(() => {
+                setInitialWait(false);
+                // seems to be the minimum wait to avoid the flash
+            }, 1300);
+        }
+    }, [initialWait]);
+    const loading = initialWait || passedInLoading;
 
     return (
         <div className="w-full overflow-x-auto">
@@ -73,10 +93,9 @@ export const SearchResultsTable = ({
                         </tr>
                     )}
 
-                    {!usageExceeded &&
-                        !noResults &&
-                        resultPages?.map((page) =>
-                            page?.map((creator, i) => (
+                    {!usageExceeded && !noResults && results && (
+                        <>
+                            {results.map((creator, i) => (
                                 <SearchResultRow
                                     key={i}
                                     creator={creator}
@@ -86,8 +105,10 @@ export const SearchResultsTable = ({
                                     campaigns={campaigns}
                                     setCampaignsWithCreator={setCampaignsWithCreator}
                                 />
-                            )),
-                        )}
+                            ))}
+                            {moreResults}
+                        </>
+                    )}
 
                     {!usageExceeded &&
                         noResults &&
