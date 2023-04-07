@@ -64,11 +64,11 @@ export const chinaFilter = (str: string) => {
  * @param minFraction is the minimum fraction to be used
  * @returns
  */
-export const toCurrency = (n: number, minFraction = 2, curr = 'USD', LanguageFormat?: string) =>
+export const toCurrency = (n: number, maxFraction = 2, curr = 'USD', LanguageFormat?: string) =>
     Intl.NumberFormat(LanguageFormat, {
         style: 'currency',
         currency: curr,
-        maximumFractionDigits: minFraction,
+        maximumFractionDigits: maxFraction,
     }).format(n);
 
 export const truncateWithDots = (str: string | undefined | null, maxLength: number) => {
