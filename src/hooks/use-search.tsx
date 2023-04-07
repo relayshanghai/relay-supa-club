@@ -14,8 +14,6 @@ export interface ISearchContext {
     loading: boolean;
     tags: CreatorSearchTag[];
     setTopicTags: (tags: CreatorSearchTag[]) => void;
-    lookalike: any;
-    setLookalike: (lookalike: any) => void;
     username: string;
     setUsername: (username: string) => void;
     influencerLocation: LocationWeighted[];
@@ -51,8 +49,6 @@ export const SearchContext = createContext<ISearchContext>({
     loading: false,
     tags: [],
     setTopicTags: () => null,
-    lookalike: null,
-    setLookalike: () => null,
     username: '',
     setUsername: () => null,
     influencerLocation: [],
@@ -91,7 +87,6 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
     const [loading, setLoading] = useState(false);
 
     const [tags, setTopicTags] = useState<CreatorSearchTag[]>([]);
-    const [lookalike, setLookalike] = useState<any>();
     const [username, setUsername] = useState<string>('');
     const [influencerLocation, setInfluencerLocation] = useState<LocationWeighted[]>([]);
     const [views, setViews] = useState<NullStringTuple>([null, null]);
@@ -127,7 +122,6 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
                 const body: InfluencerPostRequest = {
                     tags,
                     platform,
-                    lookalike,
                     username,
                     influencerLocation,
                     audienceLocation,
@@ -180,7 +174,6 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
             username,
             gender,
             lastPost,
-            lookalike,
             platform,
             profile?.company_id,
             profile?.id,
@@ -210,8 +203,6 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
                 search,
                 tags,
                 setTopicTags,
-                lookalike,
-                setLookalike,
                 username,
                 setUsername,
                 influencerLocation,
