@@ -25,13 +25,19 @@ const locationTransform = ({ id, weight }: { id: string; weight: number | string
     weight: weight ? Number(weight) / 100 : 0.5,
 });
 
-const genderTransform = (gender?: string) => {
-    if (!gender) return undefined;
+const genderTransform = (gender: string) => {
     const upper = gender.toUpperCase();
     const allowed: GenderAllCode[] = ['FEMALE', 'KNOWN', 'KNOWN', 'UNKNOWN'];
     if (allowed.includes(upper as GenderAllCode)) return { code: upper as GenderAllCode };
     clientLogger('bad option for gender: ' + gender, 'error');
     return undefined;
+};
+const viewsTransform = (views: NullStringTuple) => {
+    const [left, right] = views;
+    return {
+        left_number: left ? Number(left) ?? undefined : undefined,
+        right_number: right ? Number(right) ?? undefined : undefined,
+    };
 };
 
 export const prepareFetchCreatorsFiltered = ({
@@ -55,47 +61,49 @@ export const prepareFetchCreatorsFiltered = ({
 } => {
     const tagsValue = tags.map((tag: { tag: string }) => `#${tag.tag}`);
     const lookalikeValue = lookalike.map((account: CreatorAccount) => `@${account.user_id}`);
+
     const body: InfluencerSearchRequestBody = {
         paging: {
             limit: resultsPerPageLimit,
             skip: page ? page * resultsPerPageLimit : undefined,
         },
         filter: {
-            audience_geo: audienceLocation.map(locationTransform) || [],
-            geo: influencerLocation.map(locationTransform) || [],
-            gender: genderTransform(gender),
-            // lang: '',
-            username: { value: username },
-            last_posted: lastPost ? Number(lastPost) : undefined,
-            views: {
-                left_number: views ? Number(views[0]) ?? undefined : undefined,
-                right_number: views ? Number(views[1]) ?? undefined : undefined,
-            },
-            followers: {
-                left_number: audience ? Number(audience[0]) ?? undefined : undefined,
-                right_number: audience ? Number(audience[1]) ?? undefined : undefined,
-            },
             relevance: {
                 value: [...tagsValue, ...lookalikeValue].join(' '),
-                weight: 0.5,
             },
             actions: [{ filter: 'relevance', action: 'must' }],
-            ...(contactInfo
-                ? {
-                      with_contact: [{ type: 'email', action: 'should' }],
-                  }
-                : {}),
-            ...(engagement
-                ? {
-                      engagement_rate: {
-                          value: Number((engagement / 100).toFixed(2)),
-                          operator: 'gte',
-                      },
-                  }
-                : {}),
         },
         sort: { field: 'followers', direction: 'desc' },
         audience_source: 'any',
     };
+
+    if (gender) {
+        body.filter.gender = genderTransform(gender);
+    }
+    if (username) {
+        body.filter.username = { value: username };
+    }
+    if (views) {
+        body.filter.views = viewsTransform(views);
+    }
+    if (audience) {
+        body.filter.followers = viewsTransform(audience);
+    }
+    if (audienceLocation) {
+        body.filter.audience_geo = audienceLocation.map(locationTransform) || [];
+    }
+    if (influencerLocation) {
+        body.filter.geo = influencerLocation.map(locationTransform) || [];
+    }
+    if (lastPost && Number(lastPost) >= 30) {
+        body.filter.last_posted = Number(lastPost);
+    }
+    if (contactInfo) {
+        body.filter.with_contact = [{ type: 'email', action: 'should' }];
+    }
+    if (engagement && Number(engagement) >= 0 && Number(engagement / 100)) {
+        body.filter.engagement_rate = { value: Number((engagement / 100).toFixed(2)), operator: 'gte' };
+    }
+
     return { platform, body };
 };
