@@ -64,8 +64,8 @@ const NavBarInner = ({ loggedIn, isRelayEmployee }: { loggedIn: boolean | null; 
                         BETA
                     </span>
                 </ActiveLink>
-                {loggedIn && <ActiveLink href="/account">{t('navbar.account')}</ActiveLink>}
                 {FEAT_PERFORMANCE && <ActiveLink href="/performance">{t('navbar.performance')}</ActiveLink>}
+                {loggedIn && <ActiveLink href="/account">{t('navbar.account')}</ActiveLink>}
             </div>
             {isRelayEmployee && (
                 <div className="mt-8 flex flex-col space-y-4">
