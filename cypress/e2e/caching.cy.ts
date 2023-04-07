@@ -25,6 +25,14 @@ describe('Caches SWR requests', () => {
 
         cy.contains("T-Series is India's largest Music Label", { timeout: 2500 }); // loads report faster than it did before
     });
+    it('caches searches on the dashboard', () => {
+        cy.loginTestUser();
+
+        cy.contains('T-Series', { timeout: 5000 }).should('not.exist');
+        cy.contains('T-Series', { timeout: 300000 }).should('exist');
+        cy.reload();
+        cy.contains('T-Series', { timeout: 5000 }).should('exist');
+    });
 });
 
 // Need to export an empty object to keep typescript happy. Otherwise, it will complain that the file is a module, but it has no imports or exports.
