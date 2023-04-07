@@ -99,6 +99,7 @@ const campaigns = {
     },
 
     show: {
+        viewContactInfo: 'View Contact Info',
         status: {
             'in progress': 'In Progress',
             'not started': 'Not Started',
