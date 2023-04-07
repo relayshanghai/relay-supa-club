@@ -1,5 +1,5 @@
 /// <reference types="@testing-library/cypress" />
-import { APP_URL_CYPRESS, worker } from '../../mocks/browser';
+import { worker } from '../../mocks/browser';
 import { testMount } from '../../utils/cypress-app-wrapper';
 import { SearchPage } from './search-page';
 
@@ -20,35 +20,15 @@ describe('SearchOptions', () => {
         cy.get('[href="/influencer/youtube/UCq-Fj5jknLsUf-MWSy4_brA"]').should('exist');
     });
 
-    it('Should add topic tags to search', () => {
-        testMount(<SearchPage companyId={companyId} />);
-
-        cy.intercept({
-            method: 'POST',
-            url: `${APP_URL_CYPRESS}/api/influencer-search/topics`,
-        }).as('searchTopicsRequest');
-
-        cy.findByTestId('search-topics').within(() => {
-            cy.get('input').type('alligators{enter}');
-
-            // Check if the request was made
-            cy.get('@searchTopicsRequest.all').then((interceptions) => {
-                expect(interceptions).to.have.length(0);
-            });
-
-            cy.get('input').type('yomrwhite{enter}');
-        });
-
-        cy.contains('alligators').should('exist');
-        cy.contains('yomrwhite').should('exist');
-    });
-
     it('should be empty when we remove topic tags', () => {
         testMount(<SearchPage companyId={companyId} />);
 
         cy.findByTestId('search-topics').within(() => {
-            cy.get('input').type('alligators{enter}');
-            cy.get('input').type('yomrwhite{enter}');
+            cy.get('input').type('alligators');
+            cy.get('#tag-search-result-alligators').should('exist').click();
+
+            cy.get('input').type('yomrwhite');
+            cy.get('#tag-search-result-yomrwhite').should('exist').click();
         });
 
         cy.get('#remove-tag-alligators').should('exist').click();
@@ -63,9 +43,13 @@ describe('SearchOptions', () => {
         testMount(<SearchPage companyId={companyId} />);
 
         cy.findByTestId('search-topics').within(() => {
+            cy.get('input').type('alligators');
+            cy.get('#tag-search-result-alligators').should('exist').click();
+
+            cy.get('input').type('yomrwhite');
+            cy.get('#tag-search-result-yomrwhite').should('exist').click();
+
             cy.get('input')
-                .type('alligators{enter}')
-                .type('yomrwhite{enter}')
                 .type('{backspace}{backspace}{backspace}{backspace}{backspace}')
                 .should('have.value', 'yomrw');
         });

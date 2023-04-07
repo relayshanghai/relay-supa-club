@@ -81,6 +81,7 @@ const InputWithAutocomplete = forwardRef<HTMLDivElement, Props>(
                                     <div
                                         className="cursor-pointer p-2 hover:bg-gray-100"
                                         key={i}
+                                        id={`tag-search-result-${item.value}`}
                                         onClick={() => {
                                             onAddTag(item);
                                             setValue('');
