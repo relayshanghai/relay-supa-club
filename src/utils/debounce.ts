@@ -1,4 +1,4 @@
-export const debounce = (fn: any) => {
+export const debounce = (fn: ()=>void) => {
     let timeout: any = null;
     return (...args: any) => {
         if (timeout) {
