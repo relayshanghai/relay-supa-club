@@ -1,6 +1,8 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useCallback, useRef, useState } from 'react';
 import InputWithAutocomplete from 'src/components/input-with-autocomplete';
 import useOnOutsideClick from 'src/hooks/use-on-outside-click';
+import { debounce } from 'src/utils/debounce';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
 
@@ -23,7 +25,7 @@ export const SearchTopics = ({
     });
 
     const setTopicSearch = useCallback(
-        async (term: any) => {
+        debounce(async (term: any) => {
             if (ref.current) ref.current.abort();
 
             const controller = new AbortController();
@@ -50,20 +52,20 @@ export const SearchTopics = ({
                 }
                 clientLogger(error, 'error');
             }
-        },
+        }),
         [platform, path, filter],
     );
 
     const addTag = useCallback(
-        (item: any) => {
+        debounce((item: any) => {
             onSetTopics([...topics, item]);
             setSuggestions([]);
-        },
+        }),
         [topics, onSetTopics],
     );
 
     const removeTag = useCallback(
-        (item: any) => {
+        debounce((item: any) => {
             const entry = topics.find((tag: any) => tag === item);
 
             if (entry) {
@@ -71,7 +73,7 @@ export const SearchTopics = ({
                 clone.splice(clone.indexOf(entry), 1);
                 onSetTopics(clone);
             }
-        },
+        }),
         [topics, onSetTopics],
     );
 
