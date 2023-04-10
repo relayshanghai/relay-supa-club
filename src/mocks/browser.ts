@@ -25,6 +25,14 @@ const frontendHandlers = [
     rest.post(`${APP_URL_CYPRESS}/api/influencer-search`, (req, res, ctx) => {
         return res(ctx.json(defaultLandingPageInfluencerSearch));
     }),
+    rest.post(`${APP_URL_CYPRESS}/api/influencer-search/topics`, async (req, res, ctx) => {
+        const { term } = await req.json();
+
+        return res(ctx.json({ success: true, data: [{ tag: term, value: term }] }));
+    }),
+    rest.post(`${APP_URL_CYPRESS}/api/influencer-search/locations`, async (req, res, ctx) => {
+        return res(ctx.json([]));
+    }),
 ];
 /** for use in the browser */
 export const worker = setupWorker(...frontendHandlers);

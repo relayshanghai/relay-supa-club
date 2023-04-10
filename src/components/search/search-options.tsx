@@ -54,6 +54,7 @@ export const SearchOptions = ({
     const { t } = useTranslation();
     const hasSetViews = views[0] || views[1];
     const hasSetAudience = audience[0] || audience[1];
+
     return (
         <>
             <div className="flex w-full flex-col items-start space-y-2 py-4 font-light md:flex-row md:space-x-4 md:space-y-0">
