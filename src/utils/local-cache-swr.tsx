@@ -2,6 +2,7 @@ import type { PropsWithChildren } from 'react';
 import { createContext } from 'react';
 import type { Cache } from 'swr';
 import { SWRConfig } from 'swr';
+import { clientLogger } from './logger-client';
 
 export const appCacheKey = 'app-cache';
 
@@ -23,7 +24,11 @@ export function localStorageProvider() {
     // Before unloading the app, we write back all the data into `localStorage`.
     window.addEventListener('beforeunload', () => {
         const appCache = JSON.stringify(Array.from(map.entries()));
-        localStorage.setItem(appCacheKey, appCache);
+        try {
+            localStorage.setItem(appCacheKey, appCache);
+        } catch (error) {
+            clientLogger(error, 'error');
+        }
     });
 
     // We still use the map for write & read for performance.
