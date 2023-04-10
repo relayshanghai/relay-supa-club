@@ -8,12 +8,79 @@ import { DotsHorizontal, ShareLink } from 'src/components/icons';
 import { FEAT_RECOMMENDED } from 'src/constants/feature-flags';
 import { isRecommendedInfluencer } from 'src/constants/recommendedInfluencers';
 import useAboveScreenWidth from 'src/hooks/use-above-screen-width';
-import { useSearch } from 'src/hooks/use-search';
+import { useSearch, useSearchResults } from 'src/hooks/use-search';
 import { imgProxy } from 'src/utils/fetcher';
 import { decimalToPercent, numberFormatter } from 'src/utils/formatter';
 import type { CreatorSearchAccountObject } from 'types';
 import { Badge, Tooltip } from '../library';
+import { SkeletonSearchResultRow } from '../common/skeleton-search-result-row';
 
+export interface SearchResultRowProps {
+    creator: CreatorSearchAccountObject;
+    setSelectedCreator: (creator: CreatorSearchAccountObject) => void;
+    setShowCampaignListModal: (show: boolean) => void;
+    setShowAlreadyAddedModal: (show: boolean) => void;
+    campaigns?: CampaignsIndexGetResult;
+    setCampaignsWithCreator: (campaigns: string[]) => void;
+}
+export interface MoreResultsRowsProps extends Omit<SearchResultRowProps, 'creator'> {
+    page: number;
+    onlyRecommended: boolean;
+}
+
+export const MoreResultsRows = ({
+    page,
+    setShowCampaignListModal,
+    setSelectedCreator,
+    setShowAlreadyAddedModal,
+    campaigns,
+    setCampaignsWithCreator,
+    onlyRecommended,
+}: MoreResultsRowsProps) => {
+    const { t } = useTranslation();
+    const { resultsPerPageLimit, platform } = useSearch();
+    const { results: resultsFull, loading, error } = useSearchResults(page);
+    const results =
+        FEAT_RECOMMENDED && onlyRecommended
+            ? resultsFull?.filter((creator) => isRecommendedInfluencer(platform, creator.account.user_profile.user_id))
+            : resultsFull;
+
+    if (error)
+        return (
+            <tr>
+                <td className="py-4 text-center" colSpan={5}>
+                    {t('creators.searchResultError')}
+                </td>
+            </tr>
+        );
+
+    if (loading) {
+        return (
+            <>
+                {new Array(resultsPerPageLimit).fill(0).map((_, i) => (
+                    <SkeletonSearchResultRow key={i} delay={i * 200} />
+                ))}
+            </>
+        );
+    }
+    return results ? (
+        <>
+            {results?.map((creator, i) => (
+                <SearchResultRow
+                    key={i}
+                    creator={creator}
+                    setShowCampaignListModal={setShowCampaignListModal}
+                    setSelectedCreator={setSelectedCreator}
+                    setShowAlreadyAddedModal={setShowAlreadyAddedModal}
+                    campaigns={campaigns}
+                    setCampaignsWithCreator={setCampaignsWithCreator}
+                />
+            ))}
+        </>
+    ) : (
+        <></>
+    );
+};
 export const SearchResultRow = ({
     creator,
     setShowCampaignListModal,
@@ -21,14 +88,7 @@ export const SearchResultRow = ({
     campaigns,
     setShowAlreadyAddedModal,
     setCampaignsWithCreator,
-}: {
-    creator: CreatorSearchAccountObject;
-    setSelectedCreator: (creator: CreatorSearchAccountObject) => void;
-    setShowCampaignListModal: (show: boolean) => void;
-    setShowAlreadyAddedModal: (show: boolean) => void;
-    campaigns?: CampaignsIndexGetResult;
-    setCampaignsWithCreator: (campaigns: string[]) => void;
-}) => {
+}: SearchResultRowProps) => {
     const { t } = useTranslation();
     const { platform } = useSearch();
     const {
@@ -74,7 +134,12 @@ export const SearchResultRow = ({
         <tr className="group hover:bg-primary-100">
             <td className="w-full">
                 <div className="flex w-full flex-row gap-x-2 py-2 px-4">
-                    <img src={imgProxy(picture) as string} className="h-12 w-12 [min-width:3rem]" alt={handle} />
+                    <img
+                        key={picture}
+                        src={imgProxy(picture) as string}
+                        className="h-12 w-12 [min-width:3rem]"
+                        alt={handle}
+                    />
                     <div>
                         <div className="font-bold line-clamp-2">{fullname}</div>
                         <div className="text-sm text-primary-500 line-clamp-1">{handle ? `@${handle}` : null}</div>

@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import { Button } from 'src/components/button';
-import { SearchProvider, useSearch } from 'src/hooks/use-search';
+import { SearchProvider, useSearch, useSearchResults } from 'src/hooks/use-search';
 import { numberFormatter } from 'src/utils/formatter';
 import type { CreatorSearchAccountObject } from 'types';
 import { useTranslation } from 'react-i18next';
-import { Spinner } from 'src/components/icons';
 import { AddToCampaignModal } from 'src/components/modal-add-to-campaign';
 import { SelectPlatform } from './search-select-platform';
 import { SearchResultsTable } from './search-results-table';
@@ -16,19 +15,19 @@ import { IQDATA_MAINTENANCE } from 'src/constants';
 import { MaintenanceMessage } from '../maintenance-message';
 import { useCampaigns } from 'src/hooks/use-campaigns';
 import { InfluencerAlreadyAddedModal } from '../influencer-already-added';
+import { MoreResultsRows } from './search-result-row';
 
 export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
     const { t } = useTranslation();
     const { company_name } = useRouter().query;
-    const { platform, resultsTotal, search, noResults } = useSearch();
-
+    const { platform, loading } = useSearch();
     const [filterModalOpen, setShowFiltersModal] = useState(false);
     const [showCampaignListModal, setShowCampaignListModal] = useState(false);
     const [selectedCreator, setSelectedCreator] = useState<CreatorSearchAccountObject | null>(null);
     const { campaigns } = useCampaigns({ companyId });
 
     const [page, setPage] = useState(0);
-    const [loadingMore, setLoadingMore] = useState(false);
+    const { results: firstPageSearchResults, resultsTotal, noResults, error } = useSearchResults(0);
 
     const [showAlreadyAddedModal, setShowAlreadyAddedModal] = useState(false);
     const [campaignsWithCreator, setCampaignsWithCreator] = useState<string[]>([]);
@@ -59,25 +58,28 @@ export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
                 campaigns={campaigns}
                 setCampaignsWithCreator={setCampaignsWithCreator}
                 onlyRecommended={onlyRecommended}
+                loading={loading}
+                results={firstPageSearchResults}
+                error={error}
+                moreResults={
+                    <>
+                        {new Array(page).fill(0).map((_, i) => (
+                            <MoreResultsRows
+                                key={i}
+                                page={i + 1}
+                                setSelectedCreator={setSelectedCreator}
+                                setShowCampaignListModal={setShowCampaignListModal}
+                                setShowAlreadyAddedModal={setShowAlreadyAddedModal}
+                                campaigns={campaigns}
+                                setCampaignsWithCreator={setCampaignsWithCreator}
+                                onlyRecommended={onlyRecommended}
+                            />
+                        ))}
+                    </>
+                }
             />
 
-            {loadingMore && (
-                <div className="flex w-full justify-center p-10">
-                    <Spinner className="h-12 w-12 fill-primary-600 text-white" />
-                </div>
-            )}
-            {!loadingMore && !noResults && (
-                <Button
-                    onClick={async () => {
-                        setLoadingMore(true);
-                        await search({ page: page + 1 });
-                        setLoadingMore(false);
-                        setPage(page + 1);
-                    }}
-                >
-                    {t('creators.loadMore')}
-                </Button>
-            )}
+            {!noResults && <Button onClick={async () => setPage(page + 1)}>{t('creators.loadMore')}</Button>}
 
             <AddToCampaignModal
                 show={showCampaignListModal}

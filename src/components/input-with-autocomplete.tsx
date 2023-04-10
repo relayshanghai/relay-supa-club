@@ -5,7 +5,9 @@ export interface Props {
     onChange: (value: string) => void;
     onRemoveTag: (tag: any) => void;
     onAddTag: (tag: any) => void;
-    tags: string[];
+    tags: {
+        value: string;
+    }[];
     suggestions: string[];
     placeholder: string;
     SuggestionComponent?: React.FC<any>;
@@ -29,6 +31,20 @@ const InputWithAutocomplete = forwardRef<HTMLDivElement, Props>(
         ref,
     ) => {
         const [value, setValue] = useState('');
+
+        const tagKeyboardInputHandler = (e: React.KeyboardEvent) => {
+            if (e.key === 'Backspace' && !value) {
+                e.preventDefault();
+                // Set input value to last tag
+                let lastTag = '';
+                if (tags.length === 0) return;
+                lastTag = tags[tags.length - 1].value;
+                setValue(lastTag);
+                // Remove last tag
+                onRemoveTag(tags[tags.length - 1]);
+            }
+        };
+
         return (
             <div className="flex w-full flex-col " ref={ref}>
                 <InputWithTags
@@ -42,6 +58,7 @@ const InputWithAutocomplete = forwardRef<HTMLDivElement, Props>(
                         setValue(e.target.value);
                         onChange(e.target.value);
                     }}
+                    onKeyDown={tagKeyboardInputHandler}
                     TagComponent={TagComponent}
                 />
                 <div className="relative">
@@ -64,6 +81,7 @@ const InputWithAutocomplete = forwardRef<HTMLDivElement, Props>(
                                     <div
                                         className="cursor-pointer p-2 hover:bg-gray-100"
                                         key={i}
+                                        id={`tag-search-result-${item.value}`}
                                         onClick={() => {
                                             onAddTag(item);
                                             setValue('');

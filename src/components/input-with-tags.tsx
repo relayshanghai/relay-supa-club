@@ -2,7 +2,9 @@ import type { DetailedHTMLProps, InputHTMLAttributes } from 'react';
 
 export interface Props extends DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> {
     disabled?: boolean;
-    tags: string[];
+    tags: {
+        value: string;
+    }[];
     onTagRemove: (tag: string) => void;
     TagComponent?: React.FC<any>;
 }
@@ -23,7 +25,12 @@ export const InputWithTags = ({ disabled, tags = [], onTagRemove, TagComponent, 
                                       onClick={() => onTagRemove(item)}
                                   >
                                       {item.value || item.title}
-                                      <span className="ml-2 cursor-pointer whitespace-nowrap text-gray-400">x</span>
+                                      <span
+                                          className="ml-2 cursor-pointer whitespace-nowrap text-gray-400"
+                                          id={`remove-tag-${item.value}`}
+                                      >
+                                          x
+                                      </span>
                                   </p>
                               );
                           })
