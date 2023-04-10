@@ -24,6 +24,7 @@ export const SearchTopics = ({
         setTopicSearch('');
     });
 
+    // Disabling the exhaustive-deps rule because we need to use the debounce function and we already know the required dependencies.
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const setTopicSearch = useCallback(
         debounce(async (term: any) => {
