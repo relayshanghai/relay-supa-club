@@ -11,6 +11,7 @@ import { useEffect, useState } from 'react';
 import { CompanyProvider } from 'src/hooks/use-company';
 import useRudderstack from 'src/hooks/use-rudderstack';
 import { LocalCacheProvider } from 'src/utils/local-cache-swr';
+import { Provider } from 'jotai';
 
 function MyApp({
     Component,
@@ -54,7 +55,9 @@ function MyApp({
                 <UserProvider>
                     <LocalCacheProvider>
                         <CompanyProvider>
-                            <Component {...pageProps} />
+                            <Provider>
+                                <Component {...pageProps} />
+                            </Provider>
                         </CompanyProvider>
                     </LocalCacheProvider>
                 </UserProvider>

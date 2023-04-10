@@ -10,16 +10,16 @@ import { SearchResultsTable } from './search-results-table';
 import { SearchFiltersModal } from './search-filters-modal';
 import { SearchOptions } from './search-options';
 import { Layout } from '../layout';
-import { useRouter } from 'next/router';
 import { IQDATA_MAINTENANCE } from 'src/constants';
 import { MaintenanceMessage } from '../maintenance-message';
 import { useCampaigns } from 'src/hooks/use-campaigns';
 import { InfluencerAlreadyAddedModal } from '../influencer-already-added';
 import { MoreResultsRows } from './search-result-row';
+import { useAtomValue } from 'jotai';
+import { clientRoleAtom } from 'atoms/clientRoleAtom';
 
 export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
     const { t } = useTranslation();
-    const { company_name } = useRouter().query;
     const { platform, loading } = useSearch();
     const [filterModalOpen, setShowFiltersModal] = useState(false);
     const [showCampaignListModal, setShowCampaignListModal] = useState(false);
@@ -32,11 +32,12 @@ export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
     const [showAlreadyAddedModal, setShowAlreadyAddedModal] = useState(false);
     const [campaignsWithCreator, setCampaignsWithCreator] = useState<string[]>([]);
     const [onlyRecommended, setOnlyRecommended] = useState(false);
+    const clientRoleData = useAtomValue(clientRoleAtom);
 
     return (
         <div className="space-y-4">
             {companyId && (
-                <div className="absolute top-5 right-36 z-50 animate-bounce rounded-md bg-red-400 p-2 text-white">{`You are acting on behalf of company: ${company_name}`}</div>
+                <div className="absolute top-5 right-36 z-50 animate-bounce rounded-md bg-red-400 p-2 text-white">{`You are acting on behalf of company: ${clientRoleData.company_name}`}</div>
             )}
             <SelectPlatform />
 
