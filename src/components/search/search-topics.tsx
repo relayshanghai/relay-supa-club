@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { useCallback, useRef, useState } from 'react';
 import InputWithAutocomplete from 'src/components/input-with-autocomplete';
 import useOnOutsideClick from 'src/hooks/use-on-outside-click';
@@ -19,11 +18,13 @@ export const SearchTopics = ({
     const [suggestions, setSuggestions] = useState<any[]>([]);
     const ref = useRef<any>();
     const inputRef = useRef<any>();
+
     useOnOutsideClick(inputRef, () => {
         setSuggestions([]);
         setTopicSearch('');
     });
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const setTopicSearch = useCallback(
         debounce(async (term: any) => {
             if (ref.current) ref.current.abort();
@@ -57,15 +58,15 @@ export const SearchTopics = ({
     );
 
     const addTag = useCallback(
-        debounce((item: any) => {
+        (item: any) => {
             onSetTopics([...topics, item]);
             setSuggestions([]);
-        }),
+        },
         [topics, onSetTopics],
     );
 
     const removeTag = useCallback(
-        debounce((item: any) => {
+        (item: any) => {
             const entry = topics.find((tag: any) => tag === item);
 
             if (entry) {
@@ -73,7 +74,7 @@ export const SearchTopics = ({
                 clone.splice(clone.indexOf(entry), 1);
                 onSetTopics(clone);
             }
-        }),
+        },
         [topics, onSetTopics],
     );
 
