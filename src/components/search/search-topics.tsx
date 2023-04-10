@@ -27,7 +27,7 @@ export const SearchTopics = ({
     // Disabling the exhaustive-deps rule because we need to use the debounce function and we already know the required dependencies.
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const setTopicSearch = useCallback(
-        debounce(async (term: any) => {
+        debounce(async (term: string) => {
             if (ref.current) ref.current.abort();
 
             const controller = new AbortController();
