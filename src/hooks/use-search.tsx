@@ -44,6 +44,7 @@ export interface ISearchContext {
 }
 
 export const SearchContext = createContext<ISearchContext>({
+    /** this 'loading' triggers when any page is loading */
     loading: true,
     setLoading: () => null,
     tags: [],
@@ -197,6 +198,7 @@ export const useSearchResults = (page: number) => {
     return {
         results: data?.results,
         resultsTotal: data?.resultsTotal || 0,
+        /** this 'loading' only triggers when this page is loading */
         loading: isLoading,
         error,
         isValidating,

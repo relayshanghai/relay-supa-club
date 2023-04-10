@@ -48,13 +48,17 @@ export const SearchResultsTable = ({
     // This addresses a bug whereby 'no results found' flashes when SWR is actually loading results from localStorage
     useEffect(() => {
         if (initialWait) {
-            setTimeout(() => {
+            const timeout = setTimeout(() => {
                 setInitialWait(false);
                 // seems to be the minimum wait to avoid the flash
-            }, 1300);
+            }, 5000);
+            // clear the timeout on unmount
+            return () => clearTimeout(timeout);
         }
     }, [initialWait]);
-    const loading = initialWait || passedInLoading;
+    // we will wait up to 5 seconds before showing 'no results found'.
+    // if we get results before 5 seconds, it will show them immediately
+    const loading = (noResults && initialWait) || passedInLoading;
 
     return (
         <div className="w-full overflow-x-auto">
