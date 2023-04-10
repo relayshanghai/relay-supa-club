@@ -54,7 +54,8 @@ describe('<SearchPage />', () => {
             </SearchProvider>,
         );
         cy.contains('Total Results');
-        cy.contains('No results found');
+        // there is a 5 second wait on the first load until 'no results' is shown
+        cy.contains('No results found', { timeout: 6000 });
     });
     it('renders error on search error', () => {
         worker.use(rest.post(`${APP_URL_CYPRESS}/api/influencer-search`, (_, res, ctx) => res(ctx.status(500))));
