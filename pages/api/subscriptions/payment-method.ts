@@ -26,9 +26,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             });
         }
 
-        const result = await stripeClient.customers.listPaymentMethods(data.cus_id, {
-            type: 'card',
-        });
+        const result = await stripeClient.customers.listPaymentMethods(data.cus_id);
 
         return res.status(httpCodes.OK).json(result.data);
     }

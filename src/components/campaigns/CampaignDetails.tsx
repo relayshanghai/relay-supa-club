@@ -72,7 +72,7 @@ export default function CampaignDetails({
                         <p className="font-semi text-sm text-tertiary-600">
                             {currentCampaign.budget_cents &&
                                 currentCampaign.budget_currency &&
-                                toCurrency(currentCampaign.budget_cents, currentCampaign.budget_currency)}
+                                toCurrency(currentCampaign.budget_cents, 2, currentCampaign.budget_currency)}
                         </p>
                     </div>
                 </div>

@@ -7,7 +7,8 @@ import { useUser } from 'src/hooks/use-user';
 import { Compass, FourSquare, Account, Team, PieChart } from './icons';
 import { Title } from './title';
 import { useTranslation } from 'react-i18next';
-import { FEAT_ROI } from 'src/constants/feature-flags';
+import { FEAT_PERFORMANCE } from 'src/constants/feature-flags';
+import React from 'react';
 
 const ActiveLink = ({ href, children }: { href: string; children: React.ReactNode }) => {
     const router = useRouter();
@@ -27,18 +28,20 @@ const ActiveLink = ({ href, children }: { href: string; children: React.ReactNod
     return (
         <Link
             href={href}
-            className={`flex items-center border-l-4 py-2 px-4 text-sm transition hover:text-primary-700 ${
-                isRouteActive ? 'border-l-4 border-primary-500 text-primary-500' : ''
+            className={`flex items-center border-l-4 stroke-gray-800 py-2 px-4 text-sm transition hover:stroke-primary-700 hover:text-primary-700 ${
+                isRouteActive ? 'border-l-4 border-primary-500 stroke-primary-500 text-primary-500' : ''
             }`}
         >
             {(hrefRoot === 'influencer' || hrefRoot === 'dashboard') && (
                 <Compass height={18} width={18} className="mr-4 text-inherit" />
             )}
-            {hrefRoot === 'campaigns' && <FourSquare height={18} width={18} className="mr-4 text-inherit" />}
-            {hrefRoot === 'ai-email-generator' && <EmailOutline height={18} width={18} className="mr-4 text-inherit" />}
-            {hrefRoot === 'account' && <Account height={18} width={18} className="mr-4 text-inherit" />}
-            {href === '/admin/clients' && <Team height={18} width={18} className="mr-4 text-inherit" />}
-            {href === '/roi' && <PieChart height={18} width={18} className="mr-4 text-inherit" />}
+            {hrefRoot === 'campaigns' && <FourSquare height={18} width={18} className="mr-4 stroke-inherit" />}
+            {hrefRoot === 'ai-email-generator' && (
+                <EmailOutline height={18} width={18} className="mr-4 stroke-inherit" />
+            )}
+            {hrefRoot === 'account' && <Account height={18} width={18} className="mr-4 stroke-inherit" />}
+            {href === '/admin/clients' && <Team height={18} width={18} className="mr-4 stroke-inherit" />}
+            {href === '/performance' && <PieChart height={18} width={18} className="mr-4 stroke-inherit" />}
             {children}
         </Link>
     );
@@ -61,8 +64,8 @@ const NavBarInner = ({ loggedIn, isRelayEmployee }: { loggedIn: boolean | null; 
                         BETA
                     </span>
                 </ActiveLink>
+                {FEAT_PERFORMANCE && <ActiveLink href="/performance">{t('navbar.performance')}</ActiveLink>}
                 {loggedIn && <ActiveLink href="/account">{t('navbar.account')}</ActiveLink>}
-                {FEAT_ROI && <ActiveLink href="/roi">{t('navbar.roi')}</ActiveLink>}
             </div>
             {isRelayEmployee && (
                 <div className="mt-8 flex flex-col space-y-4">
