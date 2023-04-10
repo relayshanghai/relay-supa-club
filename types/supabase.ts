@@ -295,66 +295,60 @@ export interface Database {
       influencer_posts: {
         Row: {
           campaign: string | null
-          comment_count: number | null
           created_at: string | null
           id: string
           influencer: string | null
           is_reusable: boolean | null
-          like_count: number | null
           platform: string | null
           publish_date: string | null
           type: string | null
           updated_at: string | null
           url: string | null
-          view_count: number | null
         }
         Insert: {
           campaign?: string | null
-          comment_count?: number | null
           created_at?: string | null
           id?: string
           influencer?: string | null
           is_reusable?: boolean | null
-          like_count?: number | null
           platform?: string | null
           publish_date?: string | null
           type?: string | null
           updated_at?: string | null
           url?: string | null
-          view_count?: number | null
         }
         Update: {
           campaign?: string | null
-          comment_count?: number | null
           created_at?: string | null
           id?: string
           influencer?: string | null
           is_reusable?: boolean | null
-          like_count?: number | null
           platform?: string | null
           publish_date?: string | null
           type?: string | null
           updated_at?: string | null
           url?: string | null
-          view_count?: number | null
         }
       }
       influencer_profiles: {
         Row: {
           created_at: string | null
           id: string
+          influencer: string | null
           platform: string | null
           url: string | null
         }
         Insert: {
           created_at?: string | null
           id?: string
+          influencer?: string | null
           platform?: string | null
           url?: string | null
         }
         Update: {
           created_at?: string | null
           id?: string
+          influencer?: string | null
           platform?: string | null
           url?: string | null
         }
@@ -438,6 +432,50 @@ export interface Database {
           id?: number
           message?: string | null
           type?: string
+        }
+      }
+      posts_performance: {
+        Row: {
+          campaign_id: string
+          comments_total: number | null
+          created_at: string | null
+          id: number
+          influencer_id: string
+          likes_total: number | null
+          orders_total: number | null
+          post_id: string
+          sales_revenue: number | null
+          sales_total: number | null
+          updated_at: string | null
+          views_total: number | null
+        }
+        Insert: {
+          campaign_id: string
+          comments_total?: number | null
+          created_at?: string | null
+          id?: number
+          influencer_id: string
+          likes_total?: number | null
+          orders_total?: number | null
+          post_id: string
+          sales_revenue?: number | null
+          sales_total?: number | null
+          updated_at?: string | null
+          views_total?: number | null
+        }
+        Update: {
+          campaign_id?: string
+          comments_total?: number | null
+          created_at?: string | null
+          id?: number
+          influencer_id?: string
+          likes_total?: number | null
+          orders_total?: number | null
+          post_id?: string
+          sales_revenue?: number | null
+          sales_total?: number | null
+          updated_at?: string | null
+          views_total?: number | null
         }
       }
       profiles: {
