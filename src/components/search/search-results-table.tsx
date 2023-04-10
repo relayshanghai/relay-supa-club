@@ -43,6 +43,7 @@ export const SearchResultsTable = ({
             ? resultsFull?.filter((creator) => isRecommendedInfluencer(platform, creator.account.user_profile.user_id))
             : resultsFull;
 
+    // initial wait is how long to wait before showing 'no results found'
     const [initialWait, setInitialWait] = useState(true);
 
     // This addresses a bug whereby 'no results found' flashes when SWR is actually loading results from localStorage
@@ -50,13 +51,12 @@ export const SearchResultsTable = ({
         if (initialWait) {
             const timeout = setTimeout(() => {
                 setInitialWait(false);
-                // seems to be the minimum wait to avoid the flash
+                // wait up to 5 seconds before showing 'no results found'.
             }, 5000);
             // clear the timeout on unmount
             return () => clearTimeout(timeout);
         }
     }, [initialWait]);
-    // we will wait up to 5 seconds before showing 'no results found'.
     // if we get results before 5 seconds, it will show them immediately
     const loading = (noResults && initialWait) || passedInLoading;
 
