@@ -1,7 +1,4 @@
-import type {
-    CompanyCreateInvitePostBody,
-    CompanyCreateInvitePostResponse,
-} from 'pages/api/invites/create';
+import type { CompanyCreateInvitePostBody, CompanyCreateInvitePostResponse } from 'pages/api/invites/create';
 import { nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';
 import useSWR from 'swr';
 import { useUser } from './use-user';
@@ -16,12 +13,10 @@ import type {
 
 export const useInvites = () => {
     const { profile } = useUser();
-    const { data: invites, mutate: refreshUsages } = useSWR(
-        profile?.company_id ? 'company' : null,
-        (path) =>
-            nextFetchWithQueries<InvitesGetQueries, InvitesGetResponse>(path, {
-                id: profile?.company_id ?? '',
-            }),
+    const { data: invites, mutate: refreshUsages } = useSWR(profile?.company_id ? 'invites' : null, (path) =>
+        nextFetchWithQueries<InvitesGetQueries, InvitesGetResponse>(path, {
+            id: profile?.company_id ?? '',
+        }),
     );
 
     const createInvite = useCallback(
@@ -42,10 +37,10 @@ export const useInvites = () => {
     );
 
     const getInviteStatus = useCallback(async (token: string) => {
-        const tokenStatus = await nextFetchWithQueries<
-            CompanyAcceptInviteGetQueries,
-            CompanyAcceptInviteGetResponse
-        >('invites/accept', { token });
+        const tokenStatus = await nextFetchWithQueries<CompanyAcceptInviteGetQueries, CompanyAcceptInviteGetResponse>(
+            'invites/accept',
+            { token },
+        );
         return tokenStatus;
     }, []);
 

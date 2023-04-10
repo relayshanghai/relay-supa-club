@@ -16,6 +16,8 @@ const campaigns = {
     modal: {
         addToCampaign: '添加到项目',
         addThisInfluencer: '将KOL添加到您已有的项目',
+        moveToCampaign: '移动到项目',
+        moveThisInfluencer: '将KOL移动到您已有的项目',
         createCampaign: '或创建一个新的项目',
         search: '搜索',
         favorites: '资源库',
@@ -36,6 +38,7 @@ const campaigns = {
         doNotAdd: '不添加',
         addAnyway: '继续添加',
         influencerAlreadyAdded: '这个KOL已被添加到其他活动:',
+        movedSuccessfully: 'KOL已成功移动到项目',
     },
     creatorModal: {
         outreach: 'KOL沟通',
@@ -43,8 +46,7 @@ const campaigns = {
         content: 'KOL信息',
         outbox: '发件箱',
         comments: '内部沟通',
-        commentsDescr:
-            '备注部分可用于在内部与您的团队就此 KOL 进行沟通。 这只有您的团队可以看到, KOL 看不到。',
+        commentsDescr: '备注部分可用于在内部与您的团队就此 KOL 进行沟通。 这只有您的团队可以看到, KOL 看不到。',
         outboxDescr: '发件箱可以查看和追踪给该KOL已发送邮件的详细信息和状态',
         viewProfile: '查看KOL',
         messagePlaceholder: '在这里写下您的信息',
@@ -75,6 +77,7 @@ const campaigns = {
         sent: '已发货',
         unsent: '未发货',
         delivered: '已签收',
+        influencerUpdated: 'KOL信息已更新',
     },
     email: {
         dayLimit: '您只能每 24 小时向 KOL 发送一封邮件，以避免被识别为垃圾邮件',
@@ -90,6 +93,7 @@ const campaigns = {
         sendToAll: '用当前模版发送给所有KOL',
     },
     show: {
+        viewContactInfo: '查看联系方式',
         status: {
             'in progress': '已开始',
             'not started': '未开始',
@@ -135,6 +139,7 @@ const campaigns = {
         notes: '备注',
         important: '重要',
         importantMessages: '重要消息',
+        moveInfluencer: '移动KOL',
         activities: {
             influencerOutreach: 'KOL 招募',
             campaignInfo: '项目信息',

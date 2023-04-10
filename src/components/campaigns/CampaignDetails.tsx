@@ -17,9 +17,7 @@ export default function CampaignDetails({
         <div className="sm:flex">
             <div className="mb-4 sm:mr-4 sm:mb-0 sm:w-3/5">
                 <div className="mb-4 w-full rounded-lg bg-white p-4 text-sm text-tertiary-600">
-                    <h3 className="mb-2 font-semibold">
-                        {t('campaigns.show.activities.info.projectDescription')}
-                    </h3>
+                    <h3 className="mb-2 font-semibold">{t('campaigns.show.activities.info.projectDescription')}</h3>
                     <p>{currentCampaign.description}</p>
                 </div>
                 {/* Campaign Images Gallery */}
@@ -28,15 +26,8 @@ export default function CampaignDetails({
                     {currentCampaign && media ? (
                         <div className="mb-6 flex flex-wrap">
                             {media.map((photo, index) => (
-                                <div
-                                    key={index}
-                                    className="mr-3 mb-3 box-border h-20 w-20 flex-shrink-0 rounded-md"
-                                >
-                                    <img
-                                        src={photo?.url}
-                                        alt=""
-                                        className="h-full w-full rounded-md object-cover"
-                                    />
+                                <div key={index} className="mr-3 mb-3 box-border h-20 w-20 flex-shrink-0 rounded-md">
+                                    <img src={photo?.url} alt="" className="h-full w-full rounded-md object-cover" />
                                 </div>
                             ))}
                         </div>
@@ -49,9 +40,7 @@ export default function CampaignDetails({
                 {/* Campaign Summary*/}
                 <div className="mb-4 w-full rounded-lg bg-white p-4 text-sm text-tertiary-600">
                     <div className="mb-4">
-                        <h3 className="mb-2 font-semibold">
-                            {t('campaigns.show.targetGeographic')}
-                        </h3>
+                        <h3 className="mb-2 font-semibold">{t('campaigns.show.targetGeographic')}</h3>
                         <div className="flex h-7">
                             {targetLocations.length > 0 &&
                                 targetLocations.map((tag, index) => (
@@ -65,9 +54,7 @@ export default function CampaignDetails({
                         </div>
                     </div>
                     <div className="mb-4">
-                        <h3 className="mb-2 font-semibold">
-                            {t('campaigns.show.typeOfPromotion')}
-                        </h3>
+                        <h3 className="mb-2 font-semibold">{t('campaigns.show.typeOfPromotion')}</h3>
                         <div className="flex h-7">
                             {promoTypes.length > 0 &&
                                 promoTypes.map((promoType, index) => (
@@ -81,16 +68,11 @@ export default function CampaignDetails({
                         </div>
                     </div>
                     <div className="mb-4">
-                        <h3 className="mb-2 font-semibold">
-                            {t('campaigns.show.activities.info.campaignBudget')}
-                        </h3>
+                        <h3 className="mb-2 font-semibold">{t('campaigns.show.activities.info.campaignBudget')}</h3>
                         <p className="font-semi text-sm text-tertiary-600">
                             {currentCampaign.budget_cents &&
                                 currentCampaign.budget_currency &&
-                                toCurrency(
-                                    currentCampaign.budget_cents,
-                                    currentCampaign.budget_currency,
-                                )}
+                                toCurrency(currentCampaign.budget_cents, 2, currentCampaign.budget_currency)}
                         </p>
                     </div>
                 </div>
@@ -98,16 +80,12 @@ export default function CampaignDetails({
                 {/* Campaign Product*/}
                 <div className="mb-4 w-full rounded-lg bg-white p-4 text-sm text-tertiary-600">
                     <div className="mb-2">
-                        <h3 className="mb-2 text-sm font-semibold text-gray-600">
-                            {t('campaigns.show.productName')}
-                        </h3>
+                        <h3 className="mb-2 text-sm font-semibold text-gray-600">{t('campaigns.show.productName')}</h3>
                         <p className="flex flex-wrap text-sm text-gray-600">
                             {currentCampaign.product_name || 'No product name set'}
                         </p>
                     </div>
-                    <h3 className="mb-2 text-sm font-semibold text-gray-600">
-                        {t('campaigns.show.productLink')}
-                    </h3>
+                    <h3 className="mb-2 text-sm font-semibold text-gray-600">{t('campaigns.show.productLink')}</h3>
                     <a
                         href={currentCampaign.product_link || '#'}
                         target="_blank"

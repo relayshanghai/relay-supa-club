@@ -8,22 +8,14 @@ import httpCodes from 'src/constants/httpCodes';
 import { serverLogger } from 'src/utils/logger-server';
 
 const pricingAllowList = ['https://en-relay-club.vercel.app', 'https://relay.club'];
-const stripeWebhookAllowlist = ['https://stripe.com/', 'https://hooks.stripe.com/'];
 
 /**
  *
 TODO https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/78: performance improvement. These two database calls might add too much loading time to each request. Consider adding a cache, or adding something to the session object that shows the user has a company and the company has a payment method.
  */
-const getCompanySubscriptionStatus = async (
-    supabase: SupabaseClient<DatabaseWithCustomTypes>,
-    userId: string,
-) => {
+const getCompanySubscriptionStatus = async (supabase: SupabaseClient<DatabaseWithCustomTypes>, userId: string) => {
     try {
-        const { data: profile } = await supabase
-            .from('profiles')
-            .select('company_id')
-            .eq('id', userId)
-            .single();
+        const { data: profile } = await supabase.from('profiles').select('company_id').eq('id', userId).single();
         if (!profile?.company_id) return { subscriptionStatus: false, subscriptionEndDate: null };
 
         const { data: company } = await supabase
@@ -66,10 +58,7 @@ const checkOnboardingStatus = async (
         }
         return res;
     }
-    const { subscriptionStatus, subscriptionEndDate } = await getCompanySubscriptionStatus(
-        supabase,
-        session.user.id,
-    );
+    const { subscriptionStatus, subscriptionEndDate } = await getCompanySubscriptionStatus(supabase, session.user.id);
     // if signed up, but no company, redirect to onboarding
     if (!subscriptionStatus) {
         if (req.nextUrl.pathname.includes('api')) {
@@ -120,10 +109,7 @@ const checkOnboardingStatus = async (
     // if company registered, but no payment method, redirect to payment onboarding
     if (subscriptionStatus === 'awaiting_payment_method') {
         // allow the endpoints payment onboarding page requires
-        if (
-            req.nextUrl.pathname.includes('/api/company') ||
-            req.nextUrl.pathname.includes('/api/subscriptions')
-        )
+        if (req.nextUrl.pathname.includes('/api/company') || req.nextUrl.pathname.includes('/api/subscriptions'))
             return res;
 
         if (req.nextUrl.pathname.includes('/signup/payment-onboard')) return res;
@@ -147,15 +133,6 @@ const allowPricingCors = (req: NextRequest, res: NextResponse) => {
     res.headers.set('Access-Control-Allow-Methods', 'GET');
     return res;
 };
-const allowStripeCors = (req: NextRequest, res: NextResponse) => {
-    const origin = req.headers.get('origin');
-    if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
-        res.headers.set('Access-Control-Allow-Origin', '*');
-    } else if (origin && stripeWebhookAllowlist.some((allowed) => origin.includes(allowed)))
-        res.headers.set('Access-Control-Allow-Origin', origin);
-    res.headers.set('Access-Control-Allow-Methods', 'GET');
-    return res;
-};
 
 const checkIsRelayEmployee = async (res: NextResponse, email: string) => {
     if (!EMPLOYEE_EMAILS.includes(email)) {
@@ -172,8 +149,8 @@ export async function middleware(req: NextRequest) {
     // We need to create a response and hand it to the supabase client to be able to modify the response headers.
     const res = NextResponse.next();
     if (req.nextUrl.pathname === '/api/subscriptions/prices') return allowPricingCors(req, res);
-    if (req.nextUrl.pathname === '/api/subscriptions/webhook') return allowStripeCors(req, res);
     if (req.nextUrl.pathname === '/api/slack/create') return res;
+    if (req.nextUrl.pathname === '/api/subscriptions/webhook') return res;
 
     // Create authenticated Supabase Client.
     const supabase = createMiddlewareSupabaseClient<DatabaseWithCustomTypes>({ req, res });
@@ -213,7 +190,8 @@ export const config = {
          * - accept invite (accept invite api). User hasn't logged in yet
          * - create-employee endpoint (api/company/create-employee)
          * - login, signup, logout (login, signup, logout pages)
+         * - Stripe webhook (instead use signing key to protect)
          */
-        '/((?!_next/static|_next/image|favicon.ico|assets/*|api/invites/accept*|api/company/create-employee*|login*|login/reset-password|signup|signup/invite*|logout|api/logout).*)',
+        '/((?!_next/static|_next/image|favicon.ico|assets/*|api/invites/accept*|api/company/create-employee*|login*|login/reset-password|signup|signup/invite*|logout|api/logout|api/subscriptions/webhook).*)',
     ],
 };

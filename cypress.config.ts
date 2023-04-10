@@ -14,6 +14,8 @@ export default defineConfig({
             };
             return config;
         },
+        viewportWidth: 1536,
+        viewportHeight: 960,
         baseUrl: 'http://localhost:3000',
     },
 
@@ -22,5 +24,7 @@ export default defineConfig({
             framework: 'next',
             bundler: 'webpack',
         },
+        viewportWidth: 1536,
+        viewportHeight: 960,
     },
 });

@@ -10,8 +10,4 @@ if (!supabaseAnonKey) console.log('NEXT_PUBLIC_SUPABASE_ANON_KEY not set');
 const options: any = {};
 
 /** ***THIS SHOULD ONLY BE USE SERVER-SIDE*** */
-export const supabase = createClient<DatabaseWithCustomTypes>(
-    supabaseUrl,
-    supabaseAnonKey,
-    options,
-);
+export const supabase = createClient<DatabaseWithCustomTypes>(supabaseUrl, supabaseAnonKey, options);

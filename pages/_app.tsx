@@ -10,6 +10,7 @@ import { SessionContextProvider } from '@supabase/auth-helpers-react';
 import { useEffect, useState } from 'react';
 import { CompanyProvider } from 'src/hooks/use-company';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { LocalCacheProvider } from 'src/utils/local-cache-swr';
 
 function MyApp({
     Component,
@@ -22,6 +23,10 @@ function MyApp({
 
     const [supabaseClient] = useState(() => createBrowserSupabaseClient());
     useEffect(() => {
+        //@ts-expect-error
+        import('preline');
+    }, []);
+    useEffect(() => {
         const storedLanguage = localStorage.getItem('language');
         storedLanguage !== null ? i18n.changeLanguage(storedLanguage) : i18n.changeLanguage(); // triggers the language detector
     }, []);
@@ -29,44 +34,31 @@ function MyApp({
         <>
             <Head>
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
-                <meta
-                    name="title"
-                    content="relay.club: A complete influencer management software solution"
-                />
+                <meta name="title" content="relay.club: A complete influencer management software solution" />
                 <meta
                     name="description"
                     content="Looking for a complete solution to manage influencer marketing for your brand? Our platform has millions of influencers &amp; assists in payments, analytics &amp; more!"
                 />
-                <meta
-                    property="og:title"
-                    content="relay.club: A complete influencer management software solution"
-                />
+                <meta property="og:title" content="relay.club: A complete influencer management software solution" />
                 <meta
                     property="og:description"
                     content="Looking for a complete solution to manage influencer marketing for your brand? Our platform has millions of influencers &amp; assists in payments, analytics &amp; more!"
                 />
                 <meta property="og:url" content="https://relay.club/" />
-                <meta
-                    property="og:site_name"
-                    content="relay.club: Influencer Management Software"
-                />
-                <meta
-                    name="twitter:title"
-                    content="relay.club: A complete influencer management software solution"
-                />
+                <meta property="og:site_name" content="relay.club: Influencer Management Software" />
+                <meta name="twitter:title" content="relay.club: A complete influencer management software solution" />
                 <meta
                     name="twitter:description"
                     content="Looking for a complete solution to manage influencer marketing for your brand? Our platform has millions of influencers &amp; assists in payments, analytics &amp; more!"
                 />
             </Head>
-            <SessionContextProvider
-                supabaseClient={supabaseClient}
-                initialSession={pageProps.initialSession}
-            >
+            <SessionContextProvider supabaseClient={supabaseClient} initialSession={pageProps.initialSession}>
                 <UserProvider>
-                    <CompanyProvider>
-                        <Component {...pageProps} />
-                    </CompanyProvider>
+                    <LocalCacheProvider>
+                        <CompanyProvider>
+                            <Component {...pageProps} />
+                        </CompanyProvider>
+                    </LocalCacheProvider>
                 </UserProvider>
             </SessionContextProvider>
             <Toaster />

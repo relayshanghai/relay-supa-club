@@ -5,13 +5,7 @@ import { useSubscription } from 'src/hooks/use-subscription';
 import { Button } from '../button';
 import { Modal } from '../modal';
 
-export const CancelSubscriptionModal = ({
-    visible,
-    onClose,
-}: {
-    visible: boolean;
-    onClose: () => void;
-}) => {
+export const CancelSubscriptionModal = ({ visible, onClose }: { visible: boolean; onClose: () => void }) => {
     const { t } = useTranslation();
     const { createDiscountRenew, cancelSubscription } = useSubscription();
     const [submitting, setSubmitting] = useState(false);
@@ -20,8 +14,7 @@ export const CancelSubscriptionModal = ({
         const id = toast.loading(t('account.cancelModal.cancelling'));
         try {
             const result = await cancelSubscription();
-            if (result?.status)
-                toast.success(t('account.cancelModal.subscriptionCancelled'), { id });
+            if (result?.status) toast.success(t('account.cancelModal.subscriptionCancelled'), { id });
         } catch (e) {
             toast.error(t('account.subscription.modal.wentWrong'), {
                 id,
@@ -55,20 +48,14 @@ export const CancelSubscriptionModal = ({
             <div className="flex flex-col space-y-4 pt-4">
                 <div className="mb-8 flex justify-between">
                     <h1 className="text-2xl text-primary-700"> {t('account.cancelModal.title')}</h1>
-                    <Button
-                        variant="secondary"
-                        className="!px-2 !py-0 !text-xs"
-                        onClick={handleClose}
-                    >
+                    <Button variant="secondary" className="!px-2 !py-0 !text-xs" onClick={handleClose}>
                         {t('account.subscription.modal.close')}
                     </Button>
                 </div>
                 <h3 className="text-lg font-bold">
                     {t('account.cancelModal.areYouSureYouWantToCancelYourSubscription')}
                 </h3>
-                <p className="text-gray-500">
-                    {t('account.cancelModal.youWillLoseAccessToAllData')}
-                </p>
+                <p className="text-gray-500">{t('account.cancelModal.youWillLoseAccessToAllData')}</p>
                 <div className="flex flex-row space-x-4">
                     <Button
                         disabled={submitting}

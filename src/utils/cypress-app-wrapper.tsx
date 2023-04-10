@@ -6,12 +6,19 @@ import { I18nextProvider } from 'react-i18next';
 import i18n from 'i18n';
 import { UserContext } from 'src/hooks/use-user';
 import type { IUserContext } from 'src/hooks/use-user';
+import { createBrowserSupabaseClient } from '@supabase/auth-helpers-nextjs';
+import { SessionContextProvider } from '@supabase/auth-helpers-react';
+import { SWRConfig } from 'swr';
+import { localStorageProvider } from './local-cache-swr';
+import { Toaster } from 'react-hot-toast';
 i18n.changeLanguage('en');
 
 export interface TestMountOptions {
     /** The pathname that it will tell the router the app is currently visiting */
     pathname?: string;
     pushStub?: Cypress.Agent<any>;
+    query?: Record<string, string>;
+    useLocalStorageCache?: boolean;
 }
 const mockProfile: IUserContext['profile'] = {
     id: '1',
@@ -49,14 +56,30 @@ const mockUserContext: IUserContext = {
 export const testMount = (component: React.ReactElement, options?: TestMountOptions) => {
     const push = options?.pushStub ?? cy.stub();
     const router = cy.stub(NextRouter, 'default');
-    cy.stub(NextRouter, 'useRouter').returns({ pathname: options?.pathname ?? '/dashboard', push });
+    cy.stub(NextRouter, 'useRouter').returns({
+        pathname: options?.pathname ?? '/dashboard',
+        push,
+        query: options?.query ?? {},
+    });
     // see: https://on.cypress.io/mounting-react
-
+    const supabaseClient = createBrowserSupabaseClient();
+    //@ts-expect-error
+    import('preline');
     mount(
         <AppRouterContext.Provider value={router as any}>
-            <I18nextProvider i18n={i18n}>
-                <UserContext.Provider value={mockUserContext}>{component}</UserContext.Provider>
-            </I18nextProvider>
+            <SessionContextProvider supabaseClient={supabaseClient} initialSession={{} as any}>
+                <I18nextProvider i18n={i18n}>
+                    <UserContext.Provider value={mockUserContext}>
+                        {/* gets rid of the localStorage cache in tests */}
+                        <SWRConfig
+                            value={{ provider: options?.useLocalStorageCache ? localStorageProvider : () => new Map() }}
+                        >
+                            {component}
+                        </SWRConfig>
+                    </UserContext.Provider>
+                </I18nextProvider>
+            </SessionContextProvider>
+            <Toaster />
         </AppRouterContext.Provider>,
     );
 };

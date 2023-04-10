@@ -32,9 +32,7 @@ export const getStripePlanPrices = async () => {
     const diyQuarterly = diyPrices.data.find(({ id }) => id === STRIPE_PRICE_QUARTERLY_DIY);
     const diyAnnually = diyPrices.data.find(({ id }) => id === STRIPE_PRICE_YEARLY_DIY);
     const diyMaxMonthly = diyMaxPrices.data.find(({ id }) => id === STRIPE_PRICE_MONTHLY_DIY_MAX);
-    const diyMaxQuarterly = diyMaxPrices.data.find(
-        ({ id }) => id === STRIPE_PRICE_QUARTERLY_DIY_MAX,
-    );
+    const diyMaxQuarterly = diyMaxPrices.data.find(({ id }) => id === STRIPE_PRICE_QUARTERLY_DIY_MAX);
     const diyMaxAnnually = diyMaxPrices.data.find(({ id }) => id === STRIPE_PRICE_YEARLY_DIY_MAX);
 
     const currency = diyMonthly?.currency;

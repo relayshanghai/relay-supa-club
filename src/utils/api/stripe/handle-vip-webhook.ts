@@ -2,15 +2,12 @@ import { RELAY_EXPERT_EMAIL } from 'src/constants/employeeContacts';
 import httpCodes from 'src/constants/httpCodes';
 import {
     getCompanyByCusId,
+    supabaseLogger,
     updateCompanySubscriptionStatus,
     updateCompanyUsageLimits,
     updateUserRole,
 } from 'src/utils/api/db';
-import {
-    DEFAULT_VIP_PROFILES_LIMIT,
-    DEFAULT_VIP_SEARCHES_LIMIT,
-} from 'src/utils/api/stripe/constants';
-import { serverLogger } from 'src/utils/logger-server';
+import { DEFAULT_VIP_PROFILES_LIMIT, DEFAULT_VIP_SEARCHES_LIMIT } from 'src/utils/api/stripe/constants';
 import { sendEmail } from 'src/utils/send-in-blue-client';
 import { supabase } from 'src/utils/supabase-client';
 import { unixEpochToISOString } from 'src/utils/utils';
@@ -20,19 +17,16 @@ import type { NextApiResponse } from 'next';
 import type { CustomerSubscriptionCreated } from 'types';
 import { AI_EMAIL_SUBSCRIPTION_USAGE_LIMIT } from 'src/constants/openai';
 
-export const handleVIPSubscription = async (
-    res: NextApiResponse,
-    invoiceBody: CustomerSubscriptionCreated,
-) => {
+export const handleVIPSubscription = async (res: NextApiResponse, invoiceBody: CustomerSubscriptionCreated) => {
     const customerId = invoiceBody.data.object.customer;
     if (!customerId) {
         throw new Error('Missing customer ID in invoice body');
     }
 
     const { data: company, error: companyError } = await getCompanyByCusId(customerId);
+
     if (companyError) {
-        serverLogger(companyError, 'error');
-        return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
+        throw companyError;
     }
 
     const relayExpertPassword = ulid().slice(-8);
@@ -53,8 +47,7 @@ export const handleVIPSubscription = async (
     });
 
     if (signupError) {
-        serverLogger(signupError, 'error');
-        return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
+        throw signupError;
     }
     if (!signupData.user?.id) {
         throw new Error('Missing user id in signup response');
@@ -79,12 +72,8 @@ export const handleVIPSubscription = async (
     await updateCompanySubscriptionStatus({
         subscription_status: 'active',
         subscription_start_date,
-        subscription_current_period_start: unixEpochToISOString(
-            invoiceBody.data.object.current_period_start,
-        ),
-        subscription_current_period_end: unixEpochToISOString(
-            invoiceBody.data.object.current_period_end,
-        ),
+        subscription_current_period_start: unixEpochToISOString(invoiceBody.data.object.current_period_start),
+        subscription_current_period_end: unixEpochToISOString(invoiceBody.data.object.current_period_end),
         id: company.id,
     });
     const html = `
@@ -102,5 +91,11 @@ export const handleVIPSubscription = async (
         subject: 'Relay Expert Account',
         html,
     });
+
+    supabaseLogger({
+        type: 'stripe-webhook',
+        message: `Created VIP subscription for company ${company.name} and sent relay expert credentials to ${relayExpertEmail}`,
+    });
+
     return res.status(httpCodes.NO_CONTENT);
 };

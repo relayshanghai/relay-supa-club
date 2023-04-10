@@ -16,6 +16,8 @@ const campaigns = {
     modal: {
         addToCampaign: 'Add To Campaign',
         addThisInfluencer: 'Add this influencer to your existing campaigns',
+        moveToCampaign: 'Move To Campaign',
+        moveThisInfluencer: 'Move this influencer to an existing campaign',
         createCampaign: ' or create a new campaign',
         search: 'Search',
         favorites: 'Favorites',
@@ -36,6 +38,7 @@ const campaigns = {
         doNotAdd: 'Do not Add',
         addAnyway: 'Add Anyway',
         influencerAlreadyAdded: 'This influencer already exists in other campaigns:',
+        movedSuccessfully: 'Influencer moved successfully!',
     },
     creatorModal: {
         outreach: 'Outreach',
@@ -45,8 +48,7 @@ const campaigns = {
         comments: 'Internal Comments',
         commentsDescr:
             'The comment section can be used to communicate with your team internally about this influencer. This is only seen by your team, and not by the influencer.',
-        outboxDescr:
-            'The outbox section can be used to track the detail and status of emails sent to the influencer.',
+        outboxDescr: 'The outbox section can be used to track the detail and status of emails sent to the influencer.',
         viewProfile: 'View Profile',
         messagePlaceholder: 'Write here',
         publicationDescr:
@@ -79,6 +81,7 @@ const campaigns = {
         sent: 'Sent',
         unsent: 'Unsent',
         delivered: 'Delivered',
+        influencerUpdated: 'Influencer Information Updated',
     },
     email: {
         dayLimit: 'You can only send an influencer an email every 24 hours to avoid spam.',
@@ -96,6 +99,7 @@ const campaigns = {
     },
 
     show: {
+        viewContactInfo: 'View Contact Info',
         status: {
             'in progress': 'In Progress',
             'not started': 'Not Started',
@@ -141,6 +145,7 @@ const campaigns = {
         notes: 'Notes',
         important: 'Important',
         importantMessages: 'Important Messages',
+        moveInfluencer: 'Move Influencer',
         activities: {
             influencerOutreach: 'Influencer Outreach',
             campaignInfo: 'Campaign Info',
@@ -191,8 +196,7 @@ const campaigns = {
         saveCampaign: 'Save Campaign',
         cancel: 'Cancel',
         selectClientQuestion: 'Select a client',
-        selectClientDescription:
-            'If you are setting up a campaign for a client, please pick a client on the right',
+        selectClientDescription: 'If you are setting up a campaign for a client, please pick a client on the right',
         addNewClient: 'Or add new client',
         nameQuestion: 'Campaign Name',
         nameDescription: 'Enter a fun and unique name for your campaign',
@@ -209,8 +213,7 @@ const campaigns = {
         noMedia: 'No media files uploaded yet',
         uploadImage: 'Upload Image',
         tagsQuestion: 'Tags',
-        tagsDescription:
-            'Please select a few key words that would describe your campaign and product.',
+        tagsDescription: 'Please select a few key words that would describe your campaign and product.',
         tagsPlaceholder: 'Please select relevant tags',
         requirements: 'Requirements',
         requirementsDescription:
@@ -222,8 +225,7 @@ const campaigns = {
         budgetQuestion: 'Budget',
         budgetDescription: 'How much budget do you want to allocate to this campaign?',
         numInfluencerQuestion: 'No. Of Influencers',
-        numInfluencerDescription:
-            'Specify the number of Influencers you would like to reach out to',
+        numInfluencerDescription: 'Specify the number of Influencers you would like to reach out to',
         timelineQuestion: 'Campaign Timeline',
         timelineDescription: 'Please specify your campaign launch date',
         outreachEnd: 'Influencer Outreach Closing Date',

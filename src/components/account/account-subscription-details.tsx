@@ -60,34 +60,25 @@ export const SubscriptionDetails = () => {
 
     return (
         <div className="flex w-full flex-col items-start space-y-4 rounded-lg bg-white p-4 shadow-lg shadow-gray-200 lg:max-w-2xl">
-            <CancelSubscriptionModal
-                visible={showCancelModal}
-                onClose={() => setShowCancelModal(false)}
-            />
+            <CancelSubscriptionModal visible={showCancelModal} onClose={() => setShowCancelModal(false)} />
             <div className="flex w-full flex-row items-center justify-between">
                 <h2 className="text-lg font-bold">{t('account.subscription.title')}</h2>
                 <div className="flex flex-row justify-end">
                     {company?.id && (
                         <Link href={buildSubscriptionPortalUrl({ id: company.id })}>
-                            <Button variant="secondary">
-                                {t('account.subscription.viewBillingPortal')}
-                            </Button>
+                            <Button variant="secondary">{t('account.subscription.viewBillingPortal')}</Button>
                         </Link>
                     )}
                 </div>
             </div>
             {company && searchUsages && profileViewUsages && aiEmailUsages ? (
                 <>
-                    <div
-                        className={`flex flex-row space-x-4 ${userDataLoading ? 'opacity-50' : ''}`}
-                    >
+                    <div className={`flex flex-row space-x-4 ${userDataLoading ? 'opacity-50' : ''}`}>
                         <div className="flex flex-col space-y-2 ">
                             {subscription && (
                                 <div className={`mb-8 w-full space-y-6`}>
                                     <div className="flex flex-col space-y-3">
-                                        <div className="text-sm">
-                                            {t('account.subscription.plan')}
-                                        </div>
+                                        <div className="text-sm">{t('account.subscription.plan')}</div>
                                         <div className="ml-2 text-sm font-bold">
                                             {subscription.name}
                                             {subscription.status === 'trialing' &&
@@ -97,27 +88,20 @@ export const SubscriptionDetails = () => {
                                         </div>
                                     </div>
                                     <div className="flex flex-col space-y-3">
-                                        <div className="text-sm">
-                                            {t('account.subscription.paymentCycle')}
-                                        </div>
+                                        <div className="text-sm">{t('account.subscription.paymentCycle')}</div>
                                         <div className="ml-2 text-sm font-bold">
                                             {t(`account.subscription.${subscription.interval}`)}
                                         </div>
                                     </div>
                                     {subscription.status !== 'canceled' && periodEnd && (
                                         <div className="flex flex-col space-y-3">
-                                            <div className="text-sm">
-                                                {t('account.subscription.renewsOn')}
-                                            </div>
+                                            <div className="text-sm">{t('account.subscription.renewsOn')}</div>
                                             <div className="ml-2 text-sm font-bold">
-                                                {new Date(periodEnd).toLocaleDateString(
-                                                    i18n.language,
-                                                    {
-                                                        year: 'numeric',
-                                                        month: 'short',
-                                                        day: 'numeric',
-                                                    },
-                                                )}
+                                                {new Date(periodEnd).toLocaleDateString(i18n.language, {
+                                                    year: 'numeric',
+                                                    month: 'short',
+                                                    day: 'numeric',
+                                                })}
                                             </div>
                                         </div>
                                     )}
@@ -145,9 +129,7 @@ export const SubscriptionDetails = () => {
                                         <td className="border px-4 py-2">
                                             {t('account.subscription.profilesUnlocked')}
                                         </td>
-                                        <td className="border px-4 py-2 text-right">
-                                            {profileViewUsages.length}
-                                        </td>
+                                        <td className="border px-4 py-2 text-right">{profileViewUsages.length}</td>
                                         <td className="border px-4 py-2 text-right">
                                             {profileViewUsagesThisPeriod.length}
                                         </td>
@@ -158,15 +140,9 @@ export const SubscriptionDetails = () => {
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td className="border px-4 py-2">
-                                            {t('account.subscription.searches')}
-                                        </td>
-                                        <td className="border px-4 py-2 text-right">
-                                            {searchUsages.length}
-                                        </td>
-                                        <td className="border px-4 py-2 text-right">
-                                            {searchUsagesThisPeriod.length}
-                                        </td>
+                                        <td className="border px-4 py-2">{t('account.subscription.searches')}</td>
+                                        <td className="border px-4 py-2 text-right">{searchUsages.length}</td>
+                                        <td className="border px-4 py-2 text-right">{searchUsagesThisPeriod.length}</td>
                                         <td className="border px-4 py-2 text-right">
                                             {company.subscription_status === 'trial'
                                                 ? company.trial_searches_limit
@@ -177,9 +153,7 @@ export const SubscriptionDetails = () => {
                                         <td className="border px-4 py-2">
                                             {t('account.subscription.aiEmailGeneration')}
                                         </td>
-                                        <td className="border px-4 py-2 text-right">
-                                            {aiEmailUsages.length}
-                                        </td>
+                                        <td className="border px-4 py-2 text-right">{aiEmailUsages.length}</td>
                                         <td className="border px-4 py-2 text-right">
                                             {aiEmailUsagesThisPeriod.length}
                                         </td>

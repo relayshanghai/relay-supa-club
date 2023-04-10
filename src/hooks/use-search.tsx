@@ -1,26 +1,22 @@
 import type { InfluencerPostRequest, InfluencerPostResponse } from 'pages/api/influencer-search';
 import type { Dispatch, PropsWithChildren, SetStateAction } from 'react';
-import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { usageErrors } from 'src/errors/usages';
 import { hasCustomError } from 'src/utils/errors';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
-import type {
-    CreatorPlatform,
-    LocationWeighted,
-    CreatorSearchTag,
-    CreatorSearchAccountObject,
-} from 'types';
+import type { CreatorPlatform, LocationWeighted, CreatorSearchTag } from 'types';
 import { useUser } from './use-user';
-
+import useSWR from 'swr';
 type NullStringTuple = [null | string, null | string];
 
-export interface SearchContext {
+export interface ISearchContext {
     loading: boolean;
+    setLoading: (loading: boolean) => void;
     tags: CreatorSearchTag[];
     setTopicTags: (tags: CreatorSearchTag[]) => void;
-    lookalike: any;
-    setLookalike: (lookalike: any) => void;
+    username: string;
+    setUsername: (username: string) => void;
     influencerLocation: LocationWeighted[];
     setInfluencerLocation: (location: LocationWeighted[]) => void;
     views: NullStringTuple;
@@ -41,21 +37,20 @@ export interface SearchContext {
     setPlatform: (platform: CreatorPlatform) => void;
     resultsPerPageLimit: number;
     setResultsPerPageLimit: (limit: number) => void;
-    resultPages: CreatorSearchAccountObject[][];
-    setResultPages: (pages: CreatorSearchAccountObject[][]) => void;
-    resultsTotal: number;
-    setResultsTotal: (total: number) => void;
     usageExceeded: boolean;
-    search: ({ page }: { page?: number | undefined }) => Promise<void>;
-    noResults: boolean;
+    setUsageExceeded: (exceeded: boolean) => void;
+    page: number;
+    setPage: (page: number) => void;
 }
 
-const ctx = createContext<SearchContext>({
-    loading: false,
+export const SearchContext = createContext<ISearchContext>({
+    /** this 'loading' triggers when any page is loading */
+    loading: true,
+    setLoading: () => null,
     tags: [],
     setTopicTags: () => null,
-    lookalike: null,
-    setLookalike: () => null,
+    username: '',
+    setUsername: () => null,
     influencerLocation: [],
     setInfluencerLocation: () => null,
     views: [null, null],
@@ -76,58 +71,84 @@ const ctx = createContext<SearchContext>({
     setPlatform: () => null,
     resultsPerPageLimit: 10,
     setResultsPerPageLimit: () => null,
-    resultPages: [],
-    setResultPages: () => null,
-    resultsTotal: 0,
-    setResultsTotal: () => null,
     usageExceeded: false,
-    search: async () => undefined,
-    noResults: true,
+    setUsageExceeded: () => null,
+    page: 0,
+    setPage: () => null,
 });
 
-export const useSearch = () => useContext(ctx);
+export const useSearch = () => useContext(SearchContext);
 
-export const SearchProvider = ({ children }: PropsWithChildren) => {
+export const useSearchResults = (page: number) => {
     const { profile } = useUser();
-    const [loading, setLoading] = useState(false);
-
-    const [tags, setTopicTags] = useState<CreatorSearchTag[]>([]);
-    const [lookalike, setLookalike] = useState<any>();
-    const [influencerLocation, setInfluencerLocation] = useState<LocationWeighted[]>([]);
-    const [views, setViews] = useState<NullStringTuple>([null, null]);
-    const [audience, setAudience] = useState<NullStringTuple>([null, null]);
-    const [gender, setGender] = useState<string>();
-    const [engagement, setEngagement] = useState<number>();
-    const [lastPost, setLastPost] = useState<string>();
-    const [contactInfo, setContactInfo] = useState<string>();
-    const [audienceLocation, setAudienceLocation] = useState<LocationWeighted[]>([]);
-    const [platform, setPlatform] = useState<CreatorPlatform>('youtube');
-    const [resultsPerPageLimit, setResultsPerPageLimit] = useState(10);
-
-    const [resultPages, setResultPages] = useState<CreatorSearchAccountObject[][]>([]);
-    const [resultsTotal, setResultsTotal] = useState(0);
-    const [usageExceeded, setUsageExceeded] = useState(false);
-
     const ref = useRef<any>();
 
-    const search = useCallback(
-        async ({ page = 0 }: { page?: number }) => {
-            setLoading(true);
-            if (!profile?.company_id || !profile?.id) return;
-            if (ref.current) {
-                ref.current.abort();
-            }
-            const loadMore = page > 0;
+    const {
+        tags,
+        username,
+        influencerLocation,
+        views,
+        audience,
+        gender,
+        engagement,
+        lastPost,
+        contactInfo,
+        audienceLocation,
+        platform,
+        resultsPerPageLimit,
+        setUsageExceeded,
+        setLoading,
+    } = useSearch();
 
-            const controller = new AbortController();
-            const signal = controller.signal;
-            ref.current = controller;
-
+    const { data, isLoading, mutate, isValidating, error } = useSWR(
+        profile?.id
+            ? [
+                  'influencer-search',
+                  page,
+                  tags,
+                  username,
+                  influencerLocation,
+                  views,
+                  audience,
+                  gender,
+                  engagement,
+                  lastPost,
+                  contactInfo,
+                  audienceLocation,
+                  platform,
+                  resultsPerPageLimit,
+              ]
+            : null,
+        async ([
+            path,
+            page,
+            tags,
+            username,
+            influencerLocation,
+            views,
+            audience,
+            gender,
+            engagement,
+            lastPost,
+            contactInfo,
+            audienceLocation,
+            platform,
+            resultsPerPageLimit,
+        ]) => {
             try {
+                if (!profile?.company_id || !profile?.id) return;
+                if (ref.current) {
+                    ref.current.abort();
+                }
+
+                const controller = new AbortController();
+                const signal = controller.signal;
+                ref.current = controller;
+
                 const body: InfluencerPostRequest = {
                     tags,
                     platform,
-                    lookalike,
+                    username,
                     influencerLocation,
                     audienceLocation,
                     resultsPerPageLimit,
@@ -138,81 +159,102 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
                     engagement,
                     lastPost,
                     contactInfo,
-
                     company_id: profile?.company_id,
                     user_id: profile?.id,
                 };
 
-                const res = await nextFetch<InfluencerPostResponse>('influencer-search', {
+                const res = await nextFetch<InfluencerPostResponse>(path, {
                     method: 'post',
                     signal,
                     body,
                 });
-                if (loadMore) {
-                    setResultPages((prev) => {
-                        const newPages = [...prev];
-                        newPages[page] = res.accounts;
-                        return newPages;
-                    });
-                } else {
-                    setResultsTotal(res.total);
-                    setResultPages([res.accounts]);
-                }
-                setLoading(false);
+
+                return { results: res?.accounts, resultsTotal: res?.total };
             } catch (error: any) {
-                if (
-                    typeof error?.message === 'string' &&
-                    error.message.toLowerCase().includes('abort')
-                ) {
+                if (typeof error?.message === 'string' && error.message.toLowerCase().includes('abort')) {
                     return;
                 }
                 clientLogger(error, 'error');
                 if (hasCustomError(error, usageErrors)) {
                     setUsageExceeded(true);
+                } else {
+                    throw error;
                 }
+            } finally {
+                setLoading(false);
             }
         },
-        [
-            tags,
-            influencerLocation,
-            audience,
-            audienceLocation,
-            contactInfo,
-            engagement,
-            gender,
-            lastPost,
-            lookalike,
-            platform,
-            profile?.company_id,
-            profile?.id,
-            resultsPerPageLimit,
-            views,
-        ],
     );
-    useEffect(() => {
-        // because search is a useCallback that depends on all the state variables, this will trigger a re-search when any of the state variables change.
-        // when the search filters change, we always want to start fresh from page 0
-        search({});
-    }, [search]);
 
-    const noResults = resultPages.length === 0 || resultPages[0]?.length === 0;
+    useEffect(() => {
+        if (error) {
+            setLoading(false);
+        } else {
+            setLoading(isLoading);
+        }
+    }, [setLoading, isLoading, error]);
+
+    const noResults = !data?.results || data?.results.length === 0;
+    return {
+        results: data?.results,
+        resultsTotal: data?.resultsTotal || 0,
+        /** this 'loading' only triggers when this page is loading */
+        loading: isLoading,
+        error,
+        isValidating,
+        noResults,
+        mutate,
+    };
+};
+
+export const SearchProvider = ({ children }: PropsWithChildren) => {
+    const [loading, setLoading] = useState(true);
+    const [resultsPerPageLimit, setResultsPerPageLimit] = useState(10);
+    const [usageExceeded, setUsageExceeded] = useState(false);
+    const [page, setPage] = useState(0);
+
+    // search options
+    const [tags, setTopicTags] = useState<CreatorSearchTag[]>([]);
+    const [username, setUsername] = useState<string>('');
+    const [influencerLocation, setInfluencerLocation] = useState<LocationWeighted[]>([]);
+    const [views, setViews] = useState<NullStringTuple>([null, null]);
+    const [audience, setAudience] = useState<NullStringTuple>([null, null]);
+    const [gender, setGender] = useState<string>();
+    const [engagement, setEngagement] = useState<number>();
+    const [lastPost, setLastPost] = useState<string>();
+    const [contactInfo, setContactInfo] = useState<string>();
+    const [audienceLocation, setAudienceLocation] = useState<LocationWeighted[]>([]);
+    const [platform, setPlatform] = useState<CreatorPlatform>('youtube');
+
+    // reset page to 0 when any other search params are changed
+    useEffect(() => {
+        setPage(0);
+    }, [
+        tags,
+        username,
+        influencerLocation,
+        views,
+        audience,
+        gender,
+        engagement,
+        lastPost,
+        contactInfo,
+        audienceLocation,
+        platform,
+        resultsPerPageLimit,
+    ]);
 
     return (
-        <ctx.Provider
+        <SearchContext.Provider
             value={{
                 loading,
-
-                resultPages,
-                setResultPages,
-                resultsTotal,
-                setResultsTotal,
+                setLoading,
                 platform,
                 setPlatform,
-                search,
                 tags,
                 setTopicTags,
-                lookalike,
-                setLookalike,
+                username,
+                setUsername,
                 influencerLocation,
                 setInfluencerLocation,
                 audienceLocation,
@@ -232,10 +274,12 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
                 resultsPerPageLimit,
                 setResultsPerPageLimit,
                 usageExceeded,
-                noResults,
+                setUsageExceeded,
+                page,
+                setPage,
             }}
         >
             {children}
-        </ctx.Provider>
+        </SearchContext.Provider>
     );
 };

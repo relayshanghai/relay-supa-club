@@ -5,11 +5,7 @@ import type { CampaignCreatorDB, CampaignNotesWithProfiles } from 'src/utils/api
 import CommentCardsSkeleton from './comment-cards-skeleton';
 import { useEffect, useRef, useState } from 'react';
 
-export default function CommentCards({
-    currentCreator,
-}: {
-    currentCreator: CampaignCreatorDB | null;
-}) {
+export default function CommentCards({ currentCreator }: { currentCreator: CampaignCreatorDB | null }) {
     const { t } = useTranslation();
     const { isLoading, campaignCreatorNotes } = useNotes({
         campaignCreatorId: currentCreator?.id,

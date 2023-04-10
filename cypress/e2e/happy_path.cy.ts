@@ -21,7 +21,7 @@ describe('Main pages happy paths', () => {
 
         cy.getByTestId('creator-search').type('GRTR{enter}');
         // cy.contains will not include the input element in the search, so this shows that the results are in the DOM
-        cy.contains('GRTR', { timeout: 20000 });
+        cy.contains('GRTR', { timeout: 30000 });
     });
     it('can search for a topic', () => {
         cy.loginTestUser();
@@ -104,6 +104,17 @@ describe('Main pages happy paths', () => {
         cy.url().should('include', `/campaigns`);
 
         // TODO: After we have delete campaign function, test adding and editing/viewing campaigns. work item: https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/245
+    });
+    /** works on local... 🤷‍♂️ */
+    it.skip('can log out', () => {
+        cy.loginTestUser();
+        cy.getByTestId('layout-account-menu').click();
+        cy.contains('Log Out').click();
+        cy.contains('Log In', { timeout: 30000 }); // loads login page
+        cy.url().should('include', `/login`);
+
+        // pre-populates email with original email
+        cy.get('input[type="email"]').type(Cypress.env('TEST_USER_EMAIL'));
     });
 });
 

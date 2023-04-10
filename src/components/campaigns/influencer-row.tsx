@@ -1,7 +1,7 @@
 import { t } from 'i18next';
 import Link from 'next/link';
-import React from 'react';
-import type { ChangeEvent } from 'react';
+import { useState } from 'react';
+import type { ChangeEvent, MouseEvent, Dispatch, RefObject, SetStateAction } from 'react';
 import type { CampaignCreatorDB } from 'src/utils/api/db';
 import { imgProxy } from 'src/utils/fetcher';
 import type { SocialMediaPlatform } from 'types';
@@ -10,34 +10,7 @@ import { CreatorContacts } from './creator-contacts';
 import TableInput from './campaign-table-input';
 import dateFormat from 'src/utils/dateFormat';
 import { Trashcan } from '../icons';
-
-interface InfluencerRowProps {
-    index: number;
-    creator: CampaignCreatorDB;
-    tabs: {
-        label: string;
-        value: string;
-    }[];
-    handleDropdownSelect: (
-        e: ChangeEvent<HTMLSelectElement>,
-        creator: CampaignCreatorDB,
-        objKey: string,
-    ) => Promise<void>;
-    setInlineEdit: (
-        e: React.MouseEvent<HTMLDivElement, globalThis.MouseEvent>,
-        index: number,
-        key: string,
-    ) => void;
-    editingModeTrue: (index: number, key: string) => boolean;
-    inputRef: React.RefObject<HTMLInputElement>;
-    updateCampaignCreator: (creator: CampaignCreatorDB) => void;
-    setToEdit: React.Dispatch<React.SetStateAction<null | { index: number; key: string }>>;
-    deleteCampaignCreator: (
-        e: React.MouseEvent<HTMLDivElement, globalThis.MouseEvent>,
-        creator: CampaignCreatorDB,
-    ) => Promise<void>;
-    openNotes: any;
-}
+import { Button } from '../button';
 
 const paymentStatus = [
     { id: 1, label: 'unpaid', value: 'unpaid' },
@@ -51,6 +24,36 @@ const sampleStatus = [
     { id: 3, label: 'delivered', value: 'delivered' },
 ];
 
+export interface InfluencerRowProps {
+    index: number;
+    creator: CampaignCreatorDB;
+    tabs: {
+        label: string;
+        value: string;
+    }[];
+    handleDropdownSelect: (
+        e: ChangeEvent<HTMLSelectElement>,
+        creator: CampaignCreatorDB,
+        objKey: string,
+    ) => Promise<void>;
+    setInlineEdit: (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, index: number, key: string) => void;
+    editingModeTrue: (index: number, key: string) => boolean;
+    inputRef: RefObject<HTMLInputElement>;
+    updateCampaignCreator: (creator: CampaignCreatorDB) => void;
+    setToEdit: Dispatch<SetStateAction<null | { index: number; key: string }>>;
+    deleteCampaignCreator: (
+        e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
+        creator: CampaignCreatorDB,
+    ) => Promise<void>;
+    openNotes: any;
+    openMoveInfluencerModal: (
+        e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
+        creator: CampaignCreatorDB,
+    ) => void;
+    showMoveInfluencerModal: boolean;
+    setShowMoveInfluencerModal: Dispatch<SetStateAction<boolean>>;
+}
+
 const InfluencerRow = ({
     index,
     creator,
@@ -63,18 +66,18 @@ const InfluencerRow = ({
     setToEdit,
     deleteCampaignCreator,
     openNotes,
+    openMoveInfluencerModal,
 }: InfluencerRowProps) => {
+    const handle = creator.username || creator.fullname || '';
+    const [showContactInfo, setShowContactInfo] = useState(false);
+
     return (
         <tr key={index} className="group text-xs hover:relative hover:bg-primary-50">
             {/* -- Account Column -- */}
             <td className="sticky left-0 z-30 w-[200px] whitespace-nowrap bg-white px-6 py-4 group-hover:bg-primary-50">
                 <div className="flex items-center">
                     <div className="relative h-10 w-10 flex-shrink-0 rounded-full bg-gray-300">
-                        <img
-                            className="h-10 w-10 rounded-full"
-                            src={imgProxy(creator.avatar_url)}
-                            alt=""
-                        />
+                        <img className="h-10 w-10 rounded-full" src={imgProxy(creator.avatar_url)} alt="" />
                         <div className="absolute right-0 bottom-0 ">
                             <SocialMediaIcon
                                 platform={creator.platform as SocialMediaPlatform}
@@ -86,22 +89,23 @@ const InfluencerRow = ({
                     </div>
                     <div className="ml-4">
                         <div className="truncate text-xs font-medium text-gray-900">
-                            <Link
-                                href={`/influencer/${creator.platform}/${creator.creator_id}`}
-                                target="_blank"
-                            >
+                            <Link href={`/influencer/${creator.platform}/${creator.creator_id}`} target="_blank">
                                 {creator.fullname}
                             </Link>
                         </div>
-                        <div className="inline-block truncate text-xs text-primary-500">
-                            @{creator.username}
-                        </div>
+                        <div className="inline-block truncate text-xs text-primary-500">@{handle}</div>
                     </div>
                 </div>
             </td>
             {/* -- Contact Column -- */}
             <td className="min-w-[150px] whitespace-nowrap px-6 py-4">
-                <CreatorContacts {...creator} />
+                {showContactInfo ? (
+                    <CreatorContacts {...creator} />
+                ) : (
+                    <Button variant="secondary" onClick={() => setShowContactInfo(true)}>
+                        {t('campaigns.show.viewContactInfo')}
+                    </Button>
+                )}
             </td>
             <td className="whitespace-nowrap px-6 py-4">
                 <select
@@ -135,7 +139,7 @@ const InfluencerRow = ({
                                         </td> */}
             {/* -- Action Point Column -- */}
             <td className="min-w-[150px] max-w-[200px] whitespace-normal px-6 py-4">
-                <div
+                <button
                     className="relative cursor-pointer text-xs text-gray-900 duration-300 hover:text-primary-500"
                     onClick={(e) => setInlineEdit(e, index, 'next_step')}
                 >
@@ -158,17 +162,15 @@ const InfluencerRow = ({
                             closeModal={() => setToEdit(null)}
                         />
                     )}
-                </div>
+                </button>
             </td>
             {/* -- Publication Date Column -- */}
             <td className="min-w-[0px] max-w-[200px] whitespace-nowrap px-6 py-4">
-                <div
+                <button
                     className="relative cursor-pointer text-xs text-gray-900 duration-300 hover:text-primary-500"
                     onClick={(e) => setInlineEdit(e, index, 'publication_date')}
                 >
-                    <div
-                        className={`${editingModeTrue(index, 'publication_date') ? 'hidden' : ''}`}
-                    >
+                    <div className={`${editingModeTrue(index, 'publication_date') ? 'hidden' : ''}`}>
                         {dateFormat(creator?.publication_date, 'mediumDate', true, true) || (
                             <div className="cursor-pointer text-primary-500 duration-300 hover:text-primary-700">
                                 {t('campaigns.show.selectDate')}
@@ -178,9 +180,7 @@ const InfluencerRow = ({
 
                     {editingModeTrue(index, 'publication_date') && (
                         <TableInput
-                            value={
-                                dateFormat(creator.publication_date, 'isoDate', true, true) || ''
-                            }
+                            value={dateFormat(creator.publication_date, 'isoDate', true, true) || ''}
                             type="date"
                             creator={creator}
                             objKey="publication_date"
@@ -189,11 +189,11 @@ const InfluencerRow = ({
                             closeModal={() => setToEdit(null)}
                         />
                     )}
-                </div>
+                </button>
             </td>
 
             <td className="whitespace-nowrap px-6 py-4">
-                <div
+                <button
                     className="relative cursor-pointer pr-2 text-left text-xs text-gray-900 duration-300 hover:text-primary-500"
                     onClick={(e) => setInlineEdit(e, index, 'rate_cents')}
                 >
@@ -209,15 +209,14 @@ const InfluencerRow = ({
                             closeModal={() => setToEdit(null)}
                         />
                     )}
-                </div>
+                </button>
             </td>
             <td className="whitespace-nowrap px-6 py-4">
-                <div
+                <button
                     className="relative cursor-pointer pr-2 text-left text-xs text-gray-900 duration-300 hover:text-primary-500"
                     onClick={(e) => setInlineEdit(e, index, 'paid_amount_cents')}
                 >
-                    {creator.paid_amount_cents?.toLocaleString() || '-'}{' '}
-                    {creator.paid_amount_currency}
+                    {creator.paid_amount_cents?.toLocaleString() || '-'} {creator.paid_amount_currency}
                     {editingModeTrue(index, 'paid_amount_cents') && (
                         <TableInput
                             value={creator.paid_amount_cents?.toLocaleString()}
@@ -229,17 +228,15 @@ const InfluencerRow = ({
                             closeModal={() => setToEdit(null)}
                         />
                     )}
-                </div>
+                </button>
             </td>
             {/* -- Payment Info Column -- */}
             <td className="min-w-[150px] max-w-[200px] whitespace-normal px-6 py-4">
-                <div
+                <button
                     className="relative cursor-pointer text-xs text-gray-900 duration-300 hover:text-primary-500"
                     onClick={(e) => setInlineEdit(e, index, 'payment_details')}
                 >
-                    <div
-                        className={`${editingModeTrue(index, 'payment_details') ? 'hidden' : ' '}`}
-                    >
+                    <div className={`${editingModeTrue(index, 'payment_details') ? 'hidden' : ' '}`}>
                         {creator.payment_details || (
                             <div className="cursor-pointer text-primary-500 duration-300 hover:text-primary-700">
                                 {t('campaigns.show.addPaymentInfo')}
@@ -257,7 +254,7 @@ const InfluencerRow = ({
                             closeModal={() => setToEdit(null)}
                         />
                     )}
-                </div>
+                </button>
             </td>
             <td className="whitespace-nowrap px-6 py-4">
                 <select
@@ -275,7 +272,7 @@ const InfluencerRow = ({
             </td>
             {/* -- Influencer Address Column -- */}
             <td className="py-4whitespace-normal min-w-[150px] max-w-[200px] px-6">
-                <div
+                <button
                     className="relative cursor-pointer text-xs text-gray-900 duration-300 hover:text-primary-500"
                     onClick={(e) => setInlineEdit(e, index, 'address')}
                 >
@@ -297,7 +294,7 @@ const InfluencerRow = ({
                             closeModal={() => setToEdit(null)}
                         />
                     )}
-                </div>
+                </button>
             </td>
             {/* -- Sample Status Column -- */}
             <td className="whitespace-nowrap px-6 py-4">
@@ -317,19 +314,28 @@ const InfluencerRow = ({
 
             <td className="right-0 z-50 whitespace-nowrap bg-white px-6 py-4 group-hover:bg-primary-50 sm:sticky ">
                 <div className="flex justify-end">
-                    <div
+                    <button
+                        onClick={(e) => {
+                            openMoveInfluencerModal(e, creator);
+                        }}
+                        className="mr-2 cursor-pointer appearance-none  rounded-md border border-gray-200 bg-gray-50 p-2 text-center font-medium text-gray-600 outline-none duration-300 hover:bg-gray-100"
+                    >
+                        {/* TODO: notes ticket V2-139 */}
+                        {t('campaigns.show.moveInfluencer')}
+                    </button>
+                    <button
                         onClick={(e) => openNotes(e, creator)}
                         className="mr-2 cursor-pointer appearance-none  rounded-md border border-gray-200 bg-gray-50 p-2 text-center font-medium text-gray-600 outline-none duration-300 hover:bg-gray-100"
                     >
                         {/* TODO: notes ticket V2-139 */}
                         {t('campaigns.show.notes')}
-                    </div>
-                    <div
+                    </button>
+                    <button
                         onClick={(e) => deleteCampaignCreator(e, creator)}
                         className="cursor-pointer appearance-none rounded-md  border border-gray-200 bg-gray-50 p-2 text-center text-gray-600 outline-none duration-300 hover:bg-gray-100"
                     >
                         <Trashcan className="h-4 w-4 fill-tertiary-600 hover:fill-primary-600" />
-                    </div>
+                    </button>
                 </div>
             </td>
         </tr>

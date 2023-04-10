@@ -111,10 +111,7 @@ export const CompanyDetails = () => {
                 <>
                     {editMode ? (
                         <div className="flex w-full flex-row justify-end space-x-4">
-                            <Button
-                                disabled={userDataLoading || updating}
-                                onClick={handleUpdateCompany}
-                            >
+                            <Button disabled={userDataLoading || updating} onClick={handleUpdateCompany}>
                                 {t('account.update')}
                             </Button>
                             <Button onClick={() => setEditMode(false)} variant="secondary">
@@ -142,23 +139,16 @@ export const CompanyDetails = () => {
                     {Array.isArray(teammates) &&
                         teammates.map((profile) => {
                             return (
-                                <div
-                                    key={profile.id}
-                                    className="flex w-full flex-row items-center space-x-8 py-2"
-                                >
+                                <div key={profile.id} className="flex w-full flex-row items-center space-x-8 py-2">
                                     <div className="w-1/3">
-                                        <p className="text-xs text-gray-500">
-                                            {t('account.company.fullName')}
-                                        </p>
+                                        <p className="text-xs text-gray-500">{t('account.company.fullName')}</p>
                                         <p>
                                             {' '}
                                             {profile.first_name} {profile.last_name}
                                         </p>
                                     </div>
                                     <div className="text-sm font-bold">
-                                        <p className="text-xs font-normal text-gray-500">
-                                            {t('account.company.role')}
-                                        </p>
+                                        <p className="text-xs font-normal text-gray-500">{t('account.company.role')}</p>
                                         <p>
                                             {isAdmin(profile?.user_role)
                                                 ? t('account.company.admin')
@@ -172,9 +162,7 @@ export const CompanyDetails = () => {
 
                 {invites && Array.isArray(invites) && invites.length > 0 && (
                     <>
-                        <p className="pt-8 pb-2 font-bold">
-                            {t('account.company.pendingInvitations')}
-                        </p>
+                        <p className="pt-8 pb-2 font-bold">{t('account.company.pendingInvitations')}</p>
                         {invites.map((invites) => {
                             return (
                                 <div
@@ -182,9 +170,7 @@ export const CompanyDetails = () => {
                                     className="border-grey-200 flex w-full flex-row items-center space-x-8 border-t border-b py-2"
                                 >
                                     <div>
-                                        <p className="text-xs text-gray-500">
-                                            {t('account.company.email')}
-                                        </p>
+                                        <p className="text-xs text-gray-500">{t('account.company.email')}</p>
                                         <p>{invites.email}</p>
                                     </div>
                                 </div>

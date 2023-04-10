@@ -2,16 +2,8 @@ import { useSessionContext, useSupabaseClient } from '@supabase/auth-helpers-rea
 import type { Session, SupabaseClient, User } from '@supabase/supabase-js';
 import * as Sentry from '@sentry/browser';
 
-import type {
-    CreateEmployeePostBody,
-    CreateEmployeePostResponse,
-} from 'pages/api/company/create-employee';
-import type {
-    ProfileGetQuery,
-    ProfileGetResponse,
-    ProfilePutBody,
-    ProfilePutResponse,
-} from 'pages/api/profiles';
+import type { CreateEmployeePostBody, CreateEmployeePostResponse } from 'pages/api/company/create-employee';
+import type { ProfileGetQuery, ProfileGetResponse, ProfilePutBody, ProfilePutResponse } from 'pages/api/profiles';
 import type { MutableRefObject, PropsWithChildren } from 'react';
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import type { KeyedMutator } from 'swr';
@@ -91,33 +83,30 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
         setLoading(isLoading);
     }, [isLoading]);
 
-    const { data: profile, mutate: refreshProfile } = useSWR(
-        session?.user.id ? 'profiles' : null,
-        async (path) => {
-            if (getProfileController.current) {
-                getProfileController.current.abort();
-            }
-            const controller = new AbortController();
-            getProfileController.current = controller;
+    const { data: profile, mutate: refreshProfile } = useSWR(session?.user.id ? 'profiles' : null, async (path) => {
+        if (getProfileController.current) {
+            getProfileController.current.abort();
+        }
+        const controller = new AbortController();
+        getProfileController.current = controller;
 
-            const fetchedProfile = await nextFetchWithQueries<ProfileGetQuery, ProfileGetResponse>(
-                path,
-                {
-                    id: session?.user.id ?? '',
-                },
-                { signal: controller.signal },
-            );
-            // only set Sentry user if it is the first time we are fetching the profile
-            if (fetchedProfile?.email && !profile?.email) {
-                Sentry.setUser({
-                    email: fetchedProfile.email,
-                    id: fetchedProfile.id,
-                    name: `${fetchedProfile.first_name} ${fetchedProfile.last_name}`,
-                });
-            }
-            return fetchedProfile;
-        },
-    );
+        const fetchedProfile = await nextFetchWithQueries<ProfileGetQuery, ProfileGetResponse>(
+            path,
+            {
+                id: session?.user.id ?? '',
+            },
+            { signal: controller.signal },
+        );
+        // only set Sentry user if it is the first time we are fetching the profile
+        if (fetchedProfile?.email && !profile?.email) {
+            Sentry.setUser({
+                email: fetchedProfile.email,
+                id: fetchedProfile.id,
+                name: `${fetchedProfile.first_name} ${fetchedProfile.last_name}`,
+            });
+        }
+        return fetchedProfile;
+    });
 
     const login = async (email: string, password: string) => {
         setLoading(true);
@@ -161,13 +150,10 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
 
     const createEmployee = async (email: string) => {
         const body: CreateEmployeePostBody = { email };
-        const createEmployeeRes = await nextFetch<CreateEmployeePostResponse>(
-            'company/create-employee',
-            {
-                method: 'POST',
-                body,
-            },
-        );
+        const createEmployeeRes = await nextFetch<CreateEmployeePostResponse>('company/create-employee', {
+            method: 'POST',
+            body,
+        });
         if (!createEmployeeRes.id) {
             throw new Error('Error creating employee');
         }
@@ -199,6 +185,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
         Sentry.setUser(null);
         const email = session?.user?.email;
         // cannot use router.push() here because it won't cancel in-flight requests which wil re-set the cookie
+
         window.location.href = email ? `/logout?${new URLSearchParams({ email })}` : '/logout';
     };
 

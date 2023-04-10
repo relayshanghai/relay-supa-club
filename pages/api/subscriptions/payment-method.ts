@@ -15,11 +15,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (req.method === 'GET') {
         const { id } = req.query as PaymentMethodGetQueries;
 
-        const { data, error } = await supabase
-            .from('companies')
-            .select('cus_id, name')
-            .eq('id', id)
-            .single();
+        const { data, error } = await supabase.from('companies').select('cus_id, name').eq('id', id).single();
 
         if (error) {
             return res.status(httpCodes.INTERNAL_SERVER_ERROR).json(error);
@@ -30,9 +26,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             });
         }
 
-        const result = await stripeClient.customers.listPaymentMethods(data.cus_id, {
-            type: 'card',
-        });
+        const result = await stripeClient.customers.listPaymentMethods(data.cus_id);
 
         return res.status(httpCodes.OK).json(result.data);
     }

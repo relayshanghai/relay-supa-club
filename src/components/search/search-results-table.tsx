@@ -6,6 +6,21 @@ import type { CreatorSearchAccountObject } from 'types';
 import { Button } from '../button';
 import { SkeletonSearchResultRow } from '../common/skeleton-search-result-row';
 import { SearchResultRow } from './search-result-row';
+import { FEAT_RECOMMENDED } from 'src/constants/feature-flags';
+import { isRecommendedInfluencer } from 'src/constants/recommendedInfluencers';
+import { useEffect, useState } from 'react';
+export interface SearchResultsTableProps {
+    setShowCampaignListModal: (show: boolean) => void;
+    setSelectedCreator: (creator: CreatorSearchAccountObject) => void;
+    setShowAlreadyAddedModal: (show: boolean) => void;
+    campaigns?: CampaignsIndexGetResult;
+    setCampaignsWithCreator: (campaigns: string[]) => void;
+    onlyRecommended: boolean;
+    results?: CreatorSearchAccountObject[];
+    loading: boolean;
+    moreResults?: JSX.Element;
+    error: any;
+}
 
 export const SearchResultsTable = ({
     setShowCampaignListModal,
@@ -13,15 +28,38 @@ export const SearchResultsTable = ({
     setShowAlreadyAddedModal,
     campaigns,
     setCampaignsWithCreator,
-}: {
-    setShowCampaignListModal: (show: boolean) => void;
-    setSelectedCreator: (creator: CreatorSearchAccountObject) => void;
-    setShowAlreadyAddedModal: (show: boolean) => void;
-    campaigns?: CampaignsIndexGetResult;
-    setCampaignsWithCreator: (campaigns: string[]) => void;
-}) => {
+    onlyRecommended,
+    results: resultsFull,
+    loading: passedInLoading,
+    moreResults,
+    error,
+}: SearchResultsTableProps) => {
     const { t } = useTranslation();
-    const { loading, resultPages, usageExceeded, noResults } = useSearch();
+    const { platform, usageExceeded } = useSearch();
+    const noResults = !resultsFull || resultsFull.length === 0;
+
+    const results =
+        FEAT_RECOMMENDED && onlyRecommended
+            ? resultsFull?.filter((creator) => isRecommendedInfluencer(platform, creator.account.user_profile.user_id))
+            : resultsFull;
+
+    // initial wait is how long to wait before showing 'no results found'
+    const [initialWait, setInitialWait] = useState(true);
+
+    // This addresses a bug whereby 'no results found' flashes when SWR is actually loading results from localStorage
+    useEffect(() => {
+        if (initialWait) {
+            const timeout = setTimeout(() => {
+                setInitialWait(false);
+                // wait up to 5 seconds before showing 'no results found'.
+            }, 5000);
+            // clear the timeout on unmount
+            return () => clearTimeout(timeout);
+        }
+    }, [initialWait]);
+    // if we get results before 5 seconds, it will show them immediately
+    const loading = (noResults && initialWait) || passedInLoading;
+
     return (
         <div className="w-full overflow-x-auto">
             <table
@@ -61,10 +99,9 @@ export const SearchResultsTable = ({
                         </tr>
                     )}
 
-                    {!usageExceeded &&
-                        !noResults &&
-                        resultPages?.map((page) =>
-                            page?.map((creator, i) => (
+                    {!error && !usageExceeded && !noResults && results && (
+                        <>
+                            {results.map((creator, i) => (
                                 <SearchResultRow
                                     key={i}
                                     creator={creator}
@@ -74,15 +111,16 @@ export const SearchResultsTable = ({
                                     campaigns={campaigns}
                                     setCampaignsWithCreator={setCampaignsWithCreator}
                                 />
-                            )),
-                        )}
+                            ))}
+                            {moreResults}
+                        </>
+                    )}
 
-                    {!usageExceeded &&
+                    {!error &&
+                        !usageExceeded &&
                         noResults &&
                         (loading ? (
-                            [...Array(10)].map((_, i) => (
-                                <SkeletonSearchResultRow key={i} delay={i * 200} />
-                            ))
+                            [...Array(10)].map((_, i) => <SkeletonSearchResultRow key={i} delay={i * 200} />)
                         ) : (
                             <tr>
                                 <td className="py-4 text-center" colSpan={5}>
@@ -90,6 +128,13 @@ export const SearchResultsTable = ({
                                 </td>
                             </tr>
                         ))}
+                    {error && (
+                        <tr>
+                            <td className="py-4 text-center" colSpan={5}>
+                                {t('creators.searchResultError')}
+                            </td>
+                        </tr>
+                    )}
                 </tbody>
             </table>
         </div>

@@ -7,12 +7,7 @@ export const getInvitesByCompany = async (companyId: string) => {
 };
 
 export const getInviteById = async (inviteId: string) => {
-    const { data, error } = await supabase
-        .from('invites')
-        .select()
-        .eq('id', inviteId)
-        .limit(1)
-        .single();
+    const { data, error } = await supabase.from('invites').select().eq('id', inviteId).limit(1).single();
     if (error) throw error;
     return data;
 };
@@ -44,12 +39,7 @@ export const getExistingInvite = async (email: string, companyId: string) => {
 };
 
 export const getInviteValidityData = async (inviteId: string) =>
-    await supabase
-        .from('invites')
-        .select('used, expire_at, email')
-        .eq('id', inviteId)
-        .limit(1)
-        .single();
+    await supabase.from('invites').select('used, expire_at, email').eq('id', inviteId).limit(1).single();
 
 export const insertInvite = async ({
     email,
