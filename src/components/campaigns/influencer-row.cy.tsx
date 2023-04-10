@@ -124,12 +124,12 @@ describe('<InfluencerRow />', () => {
             showMoveInfluencerModal: false,
         };
         testMount(<InfluencerRow {...props} />);
-        cy.findByTestId('contacts-skeleton').should('not.exist');
+        cy.get('div[data-testid=contacts-skeleton]').should('not.exist');
         cy.get('a[href="https://www.facebook.com/tseriesmusic"]').should('not.exist');
 
         cy.contains('View Contact Info').click();
         // shows loading spinner
-        cy.findByTestId('contacts-skeleton').should('exist');
+        cy.get('div[data-testid=contacts-skeleton]').should('exist');
         // shows contact info
         cy.get('a[href="https://www.facebook.com/tseriesmusic"]').should('exist');
     });
