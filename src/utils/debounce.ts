@@ -6,6 +6,6 @@ export const debounce = (fn: (...args: any[]) => void) => {
         }
         timeout = setTimeout(() => {
             fn(...args);
-        }, 500);
+        }, waitMs);
     };
 };
