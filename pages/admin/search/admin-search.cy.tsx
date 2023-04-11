@@ -7,12 +7,12 @@ import AdminSearch from './[id]';
 import { Provider } from 'jotai';
 import React from 'react';
 
-const HydrateAtoms = ({ initialValues, children }) => {
+const HydrateAtoms = ({ initialValues, children }: { initialValues: any; children: any }) => {
     useHydrateAtoms(initialValues);
     return children;
 };
 
-const TestProvider = ({ initialValues, children }) => (
+const TestProvider = ({ initialValues, children }: { initialValues: any; children: any }) => (
     <Provider>
         <HydrateAtoms initialValues={initialValues}>{children}</HydrateAtoms>
     </Provider>
