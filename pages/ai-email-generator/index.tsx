@@ -175,7 +175,6 @@ const AIImageGenerator = () => {
                             value={brandName}
                             onChange={(e) => setBrandName(e.target.value)}
                             required
-                            type="text"
                         />
 
                         <Input
@@ -184,7 +183,6 @@ const AIImageGenerator = () => {
                             value={senderName}
                             onChange={(e) => setSenderName(e.target.value)}
                             required
-                            type="text"
                         />
 
                         <Input
@@ -193,7 +191,6 @@ const AIImageGenerator = () => {
                             value={influencerName}
                             onChange={(e) => setInfluencerName(e.target.value)}
                             required
-                            type="text"
                         />
 
                         <Input
@@ -202,7 +199,6 @@ const AIImageGenerator = () => {
                             value={productName}
                             onChange={(e) => setProductName(e.target.value)}
                             required
-                            type="text"
                         />
 
                         <InputTextArea

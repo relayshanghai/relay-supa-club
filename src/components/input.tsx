@@ -7,10 +7,10 @@ export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 
     error?: string | null;
     note?: string | null;
     placeholder?: string | null;
-    type: HTMLInputTypeAttribute;
+    type?: HTMLInputTypeAttribute;
 }
 
-export const Input = ({ label, error, note, placeholder, type, ...rest }: InputProps) => {
+export const Input = ({ label, error, note, placeholder, type = 'text', ...rest }: InputProps) => {
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
     const togglePasswordVisibility = () => setIsPasswordVisible(!isPasswordVisible);
 

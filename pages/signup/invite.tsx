@@ -145,7 +145,7 @@ export default function Register() {
                         <h1 className="mb-2 text-4xl font-bold">{t('login.acceptInvite')}</h1>
                         <h3 className="mb-8 text-sm text-gray-600">{t('login.someoneInvitedYouToJoinRelayClub')}</h3>
                     </div>
-                    <Input label={t('login.email')} value={email} disabled type="text" />
+                    <Input label={t('login.email')} value={email} disabled />
 
                     <Input
                         error={validationErrors.firstName}
