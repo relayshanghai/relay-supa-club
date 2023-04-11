@@ -103,9 +103,7 @@ const Clients = () => {
                                                         </Link>
                                                     </div>
                                                 ) : columnHeaders[index] === 'Search' ? (
-                                                    <Link
-                                                        href={`/admin/search/${client.id}?company_name=${client.name}`}
-                                                    >
+                                                    <Link href={`/admin/search/${client.id}`}>
                                                         <Button
                                                             onClick={() =>
                                                                 client.name && onClickHandler(client.name, client.id)
