@@ -1,5 +1,5 @@
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/solid';
-import type { HTMLInputTypeAttribute, InputHTMLAttributes} from 'react';
+import type { HTMLInputTypeAttribute, InputHTMLAttributes } from 'react';
 import { useState } from 'react';
 
 export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'placeholder'> {
