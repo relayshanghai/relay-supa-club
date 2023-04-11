@@ -1,4 +1,4 @@
-export const debounce = (fn: (...args: any[]) => void) => {
+export const debounce = (fn: (...args: any[]) => void, waitMs = 500) => {
     let timeout: any = null;
     return (...args: any[]) => {
         if (timeout) {
@@ -6,6 +6,6 @@ export const debounce = (fn: (...args: any[]) => void) => {
         }
         timeout = setTimeout(() => {
             fn(...args);
-        }, 500);
+        }, waitMs);
     };
 };
