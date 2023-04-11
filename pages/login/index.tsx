@@ -8,7 +8,7 @@ import { Input } from 'src/components/input';
 import { LoginSignupLayout } from 'src/components/SignupLayout';
 import { APP_URL } from 'src/constants';
 import { useFields } from 'src/hooks/use-fields';
-// import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { useUser } from 'src/hooks/use-user';
 
 export default function Login() {
@@ -25,7 +25,18 @@ export default function Login() {
         email: '',
         password: '',
     });
-    // const { Identify } = useRudderstack();
+    const { Identify, Page } = useRudderstack();
+
+    useEffect(() => {
+        if (profile) {
+            Identify(profile.id, {
+                email: profile.email,
+                name: profile.first_name + ' ' + profile.last_name,
+                userRole: profile.user_role,
+            });
+        }
+        Page('Login');
+    }, [Identify, Page, profile]);
 
     useEffect(() => {
         if (emailQuery) {
@@ -38,13 +49,6 @@ export default function Login() {
             setLoggingIn(true);
             await login(email, password);
             toast.success(t('login.loginSuccess'));
-            //eslint-disable-next-line
-            console.log({ profile });
-            // Identify(profile?.id, {
-            //     email: profile?.email,
-            //     name: `${profile?.first_name} ${profile?.last_name}`,
-            // });
-
             await router.push('/dashboard');
         } catch (error: any) {
             toast.error(error.message || t('login.oopsSomethingWentWrong'));
