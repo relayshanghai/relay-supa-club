@@ -272,6 +272,113 @@ export interface Database {
           website?: string | null
         }
       }
+      influencer_categories: {
+        Row: {
+          category: string | null
+          created_at: string | null
+          id: string
+          influencer: string | null
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string | null
+          id?: string
+          influencer?: string | null
+        }
+        Update: {
+          category?: string | null
+          created_at?: string | null
+          id?: string
+          influencer?: string | null
+        }
+      }
+      influencer_posts: {
+        Row: {
+          campaign: string | null
+          created_at: string | null
+          id: string
+          influencer: string | null
+          is_reusable: boolean | null
+          platform: string | null
+          publish_date: string | null
+          type: string | null
+          updated_at: string | null
+          url: string | null
+        }
+        Insert: {
+          campaign?: string | null
+          created_at?: string | null
+          id?: string
+          influencer?: string | null
+          is_reusable?: boolean | null
+          platform?: string | null
+          publish_date?: string | null
+          type?: string | null
+          updated_at?: string | null
+          url?: string | null
+        }
+        Update: {
+          campaign?: string | null
+          created_at?: string | null
+          id?: string
+          influencer?: string | null
+          is_reusable?: boolean | null
+          platform?: string | null
+          publish_date?: string | null
+          type?: string | null
+          updated_at?: string | null
+          url?: string | null
+        }
+      }
+      influencer_profiles: {
+        Row: {
+          created_at: string | null
+          id: string
+          influencer: string | null
+          platform: string | null
+          url: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          influencer?: string | null
+          platform?: string | null
+          url?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          influencer?: string | null
+          platform?: string | null
+          url?: string | null
+        }
+      }
+      influencers: {
+        Row: {
+          address: string | null
+          avatar_url: string | null
+          created_at: string | null
+          email: string | null
+          id: string
+          name: string | null
+        }
+        Insert: {
+          address?: string | null
+          avatar_url?: string | null
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          name?: string | null
+        }
+        Update: {
+          address?: string | null
+          avatar_url?: string | null
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          name?: string | null
+        }
+      }
       invites: {
         Row: {
           company_id: string
@@ -325,6 +432,50 @@ export interface Database {
           id?: number
           message?: string | null
           type?: string
+        }
+      }
+      posts_performance: {
+        Row: {
+          campaign_id: string
+          comments_total: number | null
+          created_at: string | null
+          id: number
+          influencer_id: string
+          likes_total: number | null
+          orders_total: number | null
+          post_id: string
+          sales_revenue: number | null
+          sales_total: number | null
+          updated_at: string | null
+          views_total: number | null
+        }
+        Insert: {
+          campaign_id: string
+          comments_total?: number | null
+          created_at?: string | null
+          id?: number
+          influencer_id: string
+          likes_total?: number | null
+          orders_total?: number | null
+          post_id: string
+          sales_revenue?: number | null
+          sales_total?: number | null
+          updated_at?: string | null
+          views_total?: number | null
+        }
+        Update: {
+          campaign_id?: string
+          comments_total?: number | null
+          created_at?: string | null
+          id?: number
+          influencer_id?: string
+          likes_total?: number | null
+          orders_total?: number | null
+          post_id?: string
+          sales_revenue?: number | null
+          sales_total?: number | null
+          updated_at?: string | null
+          views_total?: number | null
         }
       }
       profiles: {
