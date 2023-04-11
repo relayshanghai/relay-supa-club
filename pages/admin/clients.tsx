@@ -1,4 +1,4 @@
-import { clientRoleAtom } from 'atoms/clientRoleAtom';
+import { clientRoleAtom } from 'src/atoms/clientRoleAtom';
 import { useSetAtom } from 'jotai';
 import Link from 'next/link';
 import type { AdminClientsGetResponse } from 'pages/api/admin/clients';

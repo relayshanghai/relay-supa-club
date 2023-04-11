@@ -16,7 +16,7 @@ import { useCampaigns } from 'src/hooks/use-campaigns';
 import { InfluencerAlreadyAddedModal } from '../influencer-already-added';
 import { MoreResultsRows } from './search-result-row';
 import { useAtomValue } from 'jotai';
-import { clientRoleAtom } from 'atoms/clientRoleAtom';
+import { clientRoleAtom } from 'src/atoms/clientRoleAtom';
 
 export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
     const { t } = useTranslation();

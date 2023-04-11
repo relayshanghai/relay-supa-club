@@ -1,11 +1,11 @@
 import SearchPage from 'src/components/search/search-page';
-import { clientRoleAtom } from 'atoms/clientRoleAtom';
+import { clientRoleAtom } from 'src/atoms/clientRoleAtom';
 import { useAtomValue } from 'jotai';
 
-const Campaigns = () => {
+const AdminSearch = () => {
     const clientRoleData = useAtomValue(clientRoleAtom);
 
     return <SearchPage companyId={clientRoleData.company_id} />;
 };
 
-export default Campaigns;
+export default AdminSearch;

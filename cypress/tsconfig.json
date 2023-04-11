@@ -4,6 +4,7 @@
     "noEmit": true,
     "allowJs": true,
     "resolveJsonModule": true,
+    "esModuleInterop": true,
     // be explicit about types included
     // to avoid clashing with Jest types
     "types": ["cypress", "@testing-library/cypress"]
