@@ -1,6 +1,6 @@
-export const debounce = (fn: (term: string) => void) => {
+export const debounce = (fn: (...args: any[]) => void) => {
     let timeout: any = null;
-    return (...args: any) => {
+    return (...args: any[]) => {
         if (timeout) {
             clearTimeout(timeout);
         }
