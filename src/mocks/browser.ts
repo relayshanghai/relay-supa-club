@@ -10,7 +10,7 @@ export const APP_URL_CYPRESS = 'http://localhost:8080';
 
 const frontendHandlers = [
     rest.get(`${APP_URL_CYPRESS}/api/creators/report`, (req, res, ctx) => {
-        return res(ctx.json(tSeries));
+        return res(ctx.delay(1000), ctx.json(tSeries));
     }),
     rest.get(`${APP_URL_CYPRESS}/api/campaigns`, (req, res, ctx) => {
         const id = req.url.searchParams.get('id');
