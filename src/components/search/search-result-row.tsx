@@ -14,6 +14,7 @@ import { decimalToPercent, numberFormatter } from 'src/utils/formatter';
 import type { CreatorSearchAccountObject } from 'types';
 import { Badge, Tooltip } from '../library';
 import { SkeletonSearchResultRow } from '../common/skeleton-search-result-row';
+import { useRudderstack } from 'src/hooks/use-rudderstack';
 
 export interface SearchResultRowProps {
     creator: CreatorSearchAccountObject;
@@ -85,6 +86,7 @@ export const SearchResultRow = ({
 }: SearchResultRowProps) => {
     const { t } = useTranslation();
     const { platform } = useSearch();
+    const { Track } = useRudderstack();
     const {
         username,
         custom_name,
@@ -158,7 +160,11 @@ export const SearchResultRow = ({
 
             <td className="sticky right-0 lg:relative">
                 <div className="relative hidden flex-row items-center justify-center gap-2 duration-100 group-hover:opacity-100 lg:flex lg:opacity-100">
-                    <Link href={`/influencer/${platform}/${user_id}`} target="_blank">
+                    <Link
+                        href={`/influencer/${platform}/${user_id}`}
+                        target="_blank"
+                        onClick={() => Track('Opened a report from Search', { platform, user_id })}
+                    >
                         <Button className="flex flex-row items-center" variant="secondary">
                             <span className="">{t('creators.analyzeProfile')}</span>
                         </Button>
