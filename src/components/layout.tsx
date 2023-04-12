@@ -26,9 +26,9 @@ export const Layout = ({ children }: any) => {
     const [sideBarOpen, setSideBarOpen] = useState(true);
 
     return (
-        <div className="fixed flex h-full flex-row overflow-auto">
+        <div className="fixed flex h-full w-full flex-row overflow-auto">
             <Sidebar loggedIn={!!profile?.id && !loading} open={sideBarOpen} setOpen={setSideBarOpen} />
-            <div className="flex w-full flex-col overflow-hidden">
+            <div className="flex flex-col overflow-hidden">
                 <div className="z-30 flex items-center justify-between bg-white shadow-sm shadow-gray-200">
                     <Button
                         onClick={() => setSideBarOpen(!sideBarOpen)}
