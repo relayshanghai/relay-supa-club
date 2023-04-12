@@ -7,7 +7,7 @@ import * as Sentry from '@sentry/nextjs';
 const SENTRY_DSN = process.env.SENTRY_DSN || process.env.NEXT_PUBLIC_SENTRY_DSN;
 
 const inDev = () => {
-    return process.env.NODE_ENV === 'development' || window?.location?.hostname === 'localhost';
+    return process.env.NODE_ENV === 'development';
 };
 
 Sentry.init({
