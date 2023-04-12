@@ -9,7 +9,7 @@ import type { Session } from '@supabase/auth-helpers-react';
 import { SessionContextProvider } from '@supabase/auth-helpers-react';
 import { useEffect, useState } from 'react';
 import { CompanyProvider } from 'src/hooks/use-company';
-import { InitiateRudderstackFrontend } from 'src/hooks/use-rudderstack';
+import { rudderInitialized } from 'src/utils/rudder-initialize';
 import { LocalCacheProvider } from 'src/utils/local-cache-swr';
 
 function MyApp({
@@ -18,7 +18,9 @@ function MyApp({
 }: AppProps<{
     initialSession: Session;
 }>) {
-    InitiateRudderstackFrontend(); //enable rudderstack Analytics
+    useEffect(() => {
+        rudderInitialized();
+    }, []); //enable rudderstack Analytics
 
     const [supabaseClient] = useState(() => createBrowserSupabaseClient());
     useEffect(() => {

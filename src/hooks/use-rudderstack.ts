@@ -1,49 +1,20 @@
-import { useEffect } from 'react';
+import type { apiObject } from 'rudder-sdk-js';
 
-export async function InitiateRudderstackFrontend() {
-    //these keys are for RudderStack App-Frontend Source, if we need to add new source we need to add new keys
-    const WRITE_KEY = process.env.NEXT_PUBLIC_RUDDERSTACK_APP_WRITE_KEY;
-    const DATA_PLANE_URL = process.env.NEXT_PUBLIC_RUDDERSTACK_APP_DATA_PLANE_URL;
-
-    useEffect(() => {
-        const rudderInitialized = async () => {
-            if (!WRITE_KEY || !DATA_PLANE_URL) {
-                return;
-            }
-            window.rudder = await import('rudder-sdk-js');
-
-            window.rudder?.load(WRITE_KEY, DATA_PLANE_URL, {
-                integrations: { All: true }, // load call options
-            });
-
-            window.rudder?.ready(() => {
-                //eslint-disable-next-line no-console
-                console.log('All set!');
-            });
-        };
-
-        rudderInitialized();
-    }, [DATA_PLANE_URL, WRITE_KEY]);
+//There are more traits properties, but we only need these for now. Ref: https://www.rudderstack.com/docs/event-spec/standard-events/identify/#identify-traits
+export interface IdentityTraits extends apiObject {
+    email: string;
+    firstName: string;
+    lastName: string;
+    company: {
+        id?: string;
+    };
 }
-
 export const useRudderstack = () => {
-    const Identify = () => {
-        if (typeof window === 'undefined') return;
-        window.rudder?.identify;
-    };
-    const Page = () => {
-        if (typeof window === 'undefined') return;
-        window.rudder?.page;
-    };
-
-    const Track = () => {
-        if (typeof window === 'undefined') return;
-        window.rudder?.track;
+    const IdentifyUser = (userId: string, traits: IdentityTraits) => {
+        window.rudder.identify(userId, traits);
     };
 
     return {
-        Identify,
-        Page,
-        Track,
+        IdentifyUser,
     };
 };

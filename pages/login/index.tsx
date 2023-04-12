@@ -8,8 +8,8 @@ import { Input } from 'src/components/input';
 import { LoginSignupLayout } from 'src/components/SignupLayout';
 import { APP_URL } from 'src/constants';
 import { useFields } from 'src/hooks/use-fields';
-import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { useUser } from 'src/hooks/use-user';
+import { useRudderstack } from 'src/hooks/use-rudderstack';
 
 export default function Login() {
     const { t } = useTranslation();
@@ -18,6 +18,7 @@ export default function Login() {
     const { login, supabaseClient, profile } = useUser();
     const [loggingIn, setLoggingIn] = useState(false);
     const [generatingResetEmail, setGeneratingResetEmail] = useState(false);
+    const { IdentifyUser } = useRudderstack();
     const {
         values: { email, password },
         setFieldValue,
@@ -25,18 +26,17 @@ export default function Login() {
         email: '',
         password: '',
     });
-    const { Identify, Page } = useRudderstack();
 
     useEffect(() => {
-        if (profile) {
-            Identify(profile.id, {
-                email: profile.email,
-                name: profile.first_name + ' ' + profile.last_name,
-                userRole: profile.user_role,
+        if (profile?.id) {
+            IdentifyUser(profile.id, {
+                firstName: `${profile.first_name}`,
+                lastName: `${profile.last_name}`,
+                email: `${profile.email}`,
+                company: { id: `${profile.company_id}` },
             });
         }
-        Page('Login');
-    }, [Identify, Page, profile]);
+    }, [IdentifyUser, profile]);
 
     useEffect(() => {
         if (emailQuery) {
@@ -50,6 +50,7 @@ export default function Login() {
             await login(email, password);
             toast.success(t('login.loginSuccess'));
             await router.push('/dashboard');
+            window.rudder.track('login');
         } catch (error: any) {
             toast.error(error.message || t('login.oopsSomethingWentWrong'));
         } finally {
