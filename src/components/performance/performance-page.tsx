@@ -53,11 +53,11 @@ const PerformancePage = () => {
 
     return (
         <Layout>
-            <section className="mx-auto flex w-11/12 max-w-screen-xl flex-col items-center justify-center bg-gray-50 md:h-full">
+            <section className="mx-auto flex h-[calc(100vh_-_3.5rem)] w-11/12 max-w-screen-xl flex-col items-center justify-center bg-gray-50">
                 {performanceData && (
-                    <div className="flex h-full flex-col items-start justify-center p-8 text-gray-700 md:w-full">
+                    <div className="flex h-full flex-col items-start justify-center p-8 text-gray-900 md:w-full">
                         <div className="mb-9 flex min-h-fit flex-col items-start justify-start space-y-2">
-                            <h2 className="text-2xl font-medium ">{t('performance.title')}</h2>
+                            <h2 className="text-2xl font-bold ">{t('performance.title')}</h2>
                             <p className="text-xs leading-none ">
                                 {t('performance.allCampaignsFor')} {performanceData.company_name}
                             </p>
