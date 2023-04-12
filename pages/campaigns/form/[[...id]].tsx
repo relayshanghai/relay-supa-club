@@ -20,6 +20,7 @@ import { Spinner } from 'src/components/icons';
 import type { CampaignWithCompanyCreators } from 'src/utils/api/db';
 import { clientLogger } from 'src/utils/logger-client';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
+import { useRudderstack } from 'src/hooks/use-rudderstack';
 
 const TimelineInput = ({
     q,
@@ -65,7 +66,7 @@ const TimelineInput = ({
 export default function CampaignForm() {
     const router = useRouter();
     const supabase = useSupabaseClient();
-
+    const { Track } = useRudderstack();
     const [submitting, setSubmitting] = useState(false);
     const [media, setMedia] = useState<File[]>([]);
     // only used in edit existing campaign mode.
@@ -128,6 +129,7 @@ export default function CampaignForm() {
                 }
                 toast(t('campaigns.form.successCreateMsg'));
                 setSubmitting(false);
+                Track('New Campaign Created');
                 router.push(`/campaigns/${encodeURIComponent(result.id)}`);
             } catch (error: any) {
                 clientLogger(error, 'error');
@@ -135,7 +137,7 @@ export default function CampaignForm() {
                 setSubmitting(false);
             }
         },
-        [createCampaign, media, router, t, uploadFiles],
+        [Track, createCampaign, media, router, t, uploadFiles],
     );
 
     const updateHandler = useCallback(
