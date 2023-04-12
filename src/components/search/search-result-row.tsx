@@ -25,7 +25,6 @@ export interface SearchResultRowProps {
 }
 export interface MoreResultsRowsProps extends Omit<SearchResultRowProps, 'creator'> {
     page: number;
-    onlyRecommended: boolean;
 }
 
 export const MoreResultsRows = ({
@@ -35,15 +34,10 @@ export const MoreResultsRows = ({
     setShowAlreadyAddedModal,
     campaigns,
     setCampaignsWithCreator,
-    onlyRecommended,
 }: MoreResultsRowsProps) => {
     const { t } = useTranslation();
-    const { resultsPerPageLimit, platform } = useSearch();
-    const { results: resultsFull, loading, error } = useSearchResults(page);
-    const results =
-        FEAT_RECOMMENDED && onlyRecommended
-            ? resultsFull?.filter((creator) => isRecommendedInfluencer(platform, creator.account.user_profile.user_id))
-            : resultsFull;
+    const { resultsPerPageLimit } = useSearch();
+    const { results, loading, error } = useSearchResults(page);
 
     if (error)
         return (
