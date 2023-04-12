@@ -20,13 +20,9 @@ const filterCountry = (items: any[]) => {
 export const SearchOptions = ({
     setPage,
     setShowFiltersModal,
-    onlyRecommended,
-    setOnlyRecommended,
 }: {
     setPage: (page: number) => void;
     setShowFiltersModal: (show: boolean) => void;
-    onlyRecommended: boolean;
-    setOnlyRecommended: (show: boolean) => void;
 }) => {
     const {
         platform,
@@ -49,6 +45,8 @@ export const SearchOptions = ({
         setContactInfo,
         resultsPerPageLimit,
         setResultsPerPageLimit,
+        onlyRecommended,
+        setOnlyRecommended,
     } = useSearch();
 
     const { t } = useTranslation();

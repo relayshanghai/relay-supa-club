@@ -41,6 +41,8 @@ export interface ISearchContext {
     setUsageExceeded: (exceeded: boolean) => void;
     page: number;
     setPage: (page: number) => void;
+    onlyRecommended: boolean;
+    setOnlyRecommended: (onlyRecommended: boolean) => void;
 }
 
 export const SearchContext = createContext<ISearchContext>({
@@ -75,6 +77,8 @@ export const SearchContext = createContext<ISearchContext>({
     setUsageExceeded: () => null,
     page: 0,
     setPage: () => null,
+    onlyRecommended: false,
+    setOnlyRecommended: () => null,
 });
 
 export const useSearch = () => useContext(SearchContext);
@@ -94,6 +98,7 @@ export const useSearchResults = (page: number) => {
         lastPost,
         contactInfo,
         audienceLocation,
+        onlyRecommended,
         platform,
         resultsPerPageLimit,
         setUsageExceeded,
@@ -115,6 +120,7 @@ export const useSearchResults = (page: number) => {
                   lastPost,
                   contactInfo,
                   audienceLocation,
+                  onlyRecommended,
                   platform,
                   resultsPerPageLimit,
               ]
@@ -132,6 +138,7 @@ export const useSearchResults = (page: number) => {
             lastPost,
             contactInfo,
             audienceLocation,
+            onlyRecommended,
             platform,
             resultsPerPageLimit,
         ]) => {
@@ -159,6 +166,7 @@ export const useSearchResults = (page: number) => {
                     engagement,
                     lastPost,
                     contactInfo,
+                    only_recommended: onlyRecommended,
                     company_id: profile?.company_id,
                     user_id: profile?.id,
                 };
@@ -225,6 +233,7 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
     const [contactInfo, setContactInfo] = useState<string>();
     const [audienceLocation, setAudienceLocation] = useState<LocationWeighted[]>([]);
     const [platform, setPlatform] = useState<CreatorPlatform>('youtube');
+    const [onlyRecommended, setOnlyRecommended] = useState(false);
 
     // reset page to 0 when any other search params are changed
     useEffect(() => {
@@ -242,6 +251,7 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
         audienceLocation,
         platform,
         resultsPerPageLimit,
+        onlyRecommended,
     ]);
 
     return (
@@ -277,6 +287,8 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
                 setUsageExceeded,
                 page,
                 setPage,
+                onlyRecommended,
+                setOnlyRecommended,
             }}
         >
             {children}

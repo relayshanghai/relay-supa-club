@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-
+const dotenv = require('dotenv');
 const nextJest = require('next/jest');
+dotenv.config({ path: './.env.local' });
 // @ts-ignore
 const createJestConfig = nextJest({
     // Provide the path to your Next.js app to load next.config.js and .env files in your test environment
