@@ -31,7 +31,6 @@ export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
 
     const [showAlreadyAddedModal, setShowAlreadyAddedModal] = useState(false);
     const [campaignsWithCreator, setCampaignsWithCreator] = useState<string[]>([]);
-    const [onlyRecommended, setOnlyRecommended] = useState(false);
 
     return (
         <div className="space-y-4">
@@ -40,12 +39,7 @@ export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
             )}
             <SelectPlatform />
 
-            <SearchOptions
-                setPage={setPage}
-                setShowFiltersModal={setShowFiltersModal}
-                onlyRecommended={onlyRecommended}
-                setOnlyRecommended={setOnlyRecommended}
-            />
+            <SearchOptions setPage={setPage} setShowFiltersModal={setShowFiltersModal} />
 
             <div className="flex items-center">
                 <div className="text-sm font-bold">{`${t('creators.results')}: ${numberFormatter(resultsTotal)}`}</div>
@@ -57,7 +51,6 @@ export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
                 setShowAlreadyAddedModal={setShowAlreadyAddedModal}
                 campaigns={campaigns}
                 setCampaignsWithCreator={setCampaignsWithCreator}
-                onlyRecommended={onlyRecommended}
                 loading={loading}
                 results={firstPageSearchResults}
                 error={error}
@@ -72,7 +65,6 @@ export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
                                 setShowAlreadyAddedModal={setShowAlreadyAddedModal}
                                 campaigns={campaigns}
                                 setCampaignsWithCreator={setCampaignsWithCreator}
-                                onlyRecommended={onlyRecommended}
                             />
                         ))}
                     </>
