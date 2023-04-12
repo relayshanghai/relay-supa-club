@@ -57,7 +57,13 @@ const NavBarInner = ({ loggedIn, isRelayEmployee }: { loggedIn: boolean | null; 
             <div className="mt-8 flex flex-col space-y-4">
                 <ActiveLink href="/dashboard">{t('navbar.influencers')}</ActiveLink>
                 <ActiveLink href="/campaigns">{t('navbar.campaigns')}</ActiveLink>
-                <ActiveLink href="/ai-email-generator">{t('navbar.aiEmailGenerator')}</ActiveLink>
+
+                <ActiveLink href="/ai-email-generator">
+                    {t('navbar.aiEmailGenerator')}
+                    <span className="py-1/2 font-base ml-2 w-fit rounded-2xl bg-primary-500 px-2 text-[0.65rem] text-white">
+                        BETA
+                    </span>
+                </ActiveLink>
                 {FEAT_PERFORMANCE && <ActiveLink href="/performance">{t('navbar.performance')}</ActiveLink>}
                 {loggedIn && <ActiveLink href="/account">{t('navbar.account')}</ActiveLink>}
             </div>
