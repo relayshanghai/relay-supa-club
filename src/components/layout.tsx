@@ -26,65 +26,63 @@ export const Layout = ({ children }: any) => {
     const [sideBarOpen, setSideBarOpen] = useState(true);
 
     return (
-        <div className="h-full w-full">
-            <div className="flex h-full flex-row">
-                <Sidebar loggedIn={!!profile?.id && !loading} open={sideBarOpen} setOpen={setSideBarOpen} />
-                <div className="flex w-full flex-col overflow-hidden">
-                    <div className="z-30 flex items-center justify-between bg-white shadow-lg shadow-gray-100">
-                        <Button
-                            onClick={() => setSideBarOpen(!sideBarOpen)}
-                            variant="neutral"
-                            className="flex items-center p-4 hover:text-primary-500"
-                        >
-                            <HamburgerMenu height={24} width={24} />
-                        </Button>
+        <div className="fixed flex h-full w-full flex-row overflow-auto">
+            <Sidebar loggedIn={!!profile?.id && !loading} open={sideBarOpen} setOpen={setSideBarOpen} />
+            <div className="flex w-full flex-col">
+                <div className="z-30 flex items-center justify-between bg-white shadow-sm shadow-gray-200">
+                    <Button
+                        onClick={() => setSideBarOpen(!sideBarOpen)}
+                        variant="neutral"
+                        className="flex items-center p-4 hover:text-primary-500"
+                    >
+                        <HamburgerMenu height={24} width={24} />
+                    </Button>
 
-                        <div className="flex flex-row items-center space-x-4 px-8 py-4">
-                            <div className="flex flex-row items-center space-x-4 text-sm">
-                                <LanguageToggle />
-                            </div>
-                            <div>
-                                {!loading && !!profile?.id && (
-                                    <div>
-                                        <button
-                                            data-testid="layout-account-menu"
-                                            onClick={() => setAccountMenuOpen(!accountMenuOpen)}
-                                            ref={accountMenuButtonRef}
+                    <div className="flex flex-row items-center space-x-4 px-8 py-4">
+                        <div className="flex flex-row items-center space-x-4 text-sm">
+                            <LanguageToggle />
+                        </div>
+                        <div>
+                            {!loading && !!profile?.id && (
+                                <div>
+                                    <button
+                                        data-testid="layout-account-menu"
+                                        onClick={() => setAccountMenuOpen(!accountMenuOpen)}
+                                        ref={accountMenuButtonRef}
+                                    >
+                                        <p className="h-9 w-9 rounded-full bg-primary-50 p-2 text-xs font-bold text-primary-600">
+                                            {profile?.first_name ? profile.first_name[0] : ''}
+                                            {profile?.last_name ? profile.last_name[0] : ''}
+                                        </p>
+                                    </button>
+                                    {accountMenuOpen && (
+                                        <div
+                                            className="border-gray absolute right-8 z-10 mt-2 flex w-28 origin-top-right flex-col overflow-hidden rounded-md border border-opacity-40 bg-white shadow-lg"
+                                            ref={accountMenuRef}
                                         >
-                                            <p className="h-9 w-9 rounded-full bg-primary-50 p-2 text-xs font-bold text-primary-600">
-                                                {profile?.first_name ? profile.first_name[0] : ''}
-                                                {profile?.last_name ? profile.last_name[0] : ''}
-                                            </p>
-                                        </button>
-                                        {accountMenuOpen && (
-                                            <div
-                                                className="border-gray absolute right-8 z-10 mt-2 flex w-28 origin-top-right flex-col overflow-hidden rounded-md border border-opacity-40 bg-white shadow-lg"
-                                                ref={accountMenuRef}
+                                            <Link
+                                                href="/account"
+                                                passHref
+                                                className="px-4 py-2 text-sm hover:bg-gray-100 active:bg-gray-200"
                                             >
-                                                <Link
-                                                    href="/account"
-                                                    passHref
-                                                    className="px-4 py-2 text-sm hover:bg-gray-100 active:bg-gray-200"
-                                                >
-                                                    {t('navbar.account')}
-                                                </Link>
-                                                <Button
-                                                    className="px-4 py-2 text-sm hover:bg-gray-100 active:bg-gray-200"
-                                                    variant="neutral"
-                                                    onClick={logout}
-                                                >
-                                                    {t('navbar.logout')}
-                                                </Button>
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
-                                {loading && <Spinner className="h-9 w-9 fill-primary-600 p-2 text-white" />}
-                            </div>
+                                                {t('navbar.account')}
+                                            </Link>
+                                            <Button
+                                                className="px-4 py-2 text-sm hover:bg-gray-100 active:bg-gray-200"
+                                                variant="neutral"
+                                                onClick={logout}
+                                            >
+                                                {t('navbar.logout')}
+                                            </Button>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                            {loading && <Spinner className="h-9 w-9 fill-primary-600 p-2 text-white" />}
                         </div>
                     </div>
-                    <div className="h-full overflow-auto">{children}</div>
                 </div>
+                <div className="overflow-auto"> {children}</div>
             </div>
         </div>
     );
