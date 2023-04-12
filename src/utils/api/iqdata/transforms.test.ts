@@ -1,6 +1,5 @@
 import type { FetchCreatorsFilteredParams } from './transforms';
-import { isRecommendedTransform } from './transforms';
-import { prepareFetchCreatorsFiltered } from './transforms';
+import { isRecommendedTransform, prepareFetchCreatorsFiltered } from './transforms';
 
 const defaultOptions: FetchCreatorsFilteredParams = {
     platform: 'youtube',
@@ -79,6 +78,10 @@ describe('prepareFetchCreatorsFiltered', () => {
         expect(result).toEqual(['UCh_ugKacslKhsGGdXP0cRRA', 'UCwyXamwtzfDIvRjEFcqNmSw', 'UCbCmjCuTUZos6Inko4u57UQ']);
         const result2 = isRecommendedTransform('instagram', recommendedInfluencers);
         expect(result2).toEqual(['25025320', '208560325']);
+
+        // it throws if more than 1000 influencers are passed in
+        const recommendedInfluencers2 = Array.from({ length: 1001 }, (_, i) => 'youtube/' + i.toString());
+        expect(() => isRecommendedTransform('youtube', recommendedInfluencers2)).toThrow();
     });
     it('includes recommendedInfluencers transform', () => {
         const options: FetchCreatorsFilteredParams = {
@@ -86,7 +89,7 @@ describe('prepareFetchCreatorsFiltered', () => {
             only_recommended: true,
         };
         const { body } = prepareFetchCreatorsFiltered(options);
-        expect(body.filter.filter_ids.length).toBeGreaterThan(0);
+        expect(body.filter.filter_ids?.length).toBeGreaterThan(0);
 
         const options2: FetchCreatorsFilteredParams = {
             ...defaultOptions,

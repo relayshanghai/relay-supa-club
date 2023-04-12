@@ -48,6 +48,12 @@ export const isRecommendedTransform = (platform: CreatorPlatform, influencerIdsW
     const recommendedByPlatform = influencerIdsWithPlatform
         .filter((idWithPlatform) => idWithPlatform.split('/')[0] === platform)
         .map((idWithPlatform) => idWithPlatform.split('/')[1]);
+    if (recommendedByPlatform.length > 1000) {
+        // TODO: For now we can only handle 1000 influencers per platform, so if we exceed that we will need to reimplement some things: https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/352
+        throw new Error(
+            `Too many recommended influencers for platform ${platform}. Please remove some from the recommendedInfluencers list.`,
+        );
+    }
     return recommendedByPlatform;
 };
 
