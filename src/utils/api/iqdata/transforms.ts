@@ -1,3 +1,4 @@
+import { recommendedInfluencers } from 'src/constants/recommendedInfluencers';
 import { clientLogger } from 'src/utils/logger-client';
 import type { CreatorPlatform, CreatorAccount, LocationWeighted } from 'types';
 import type { GenderAllCode, InfluencerSearchRequestBody } from 'types/iqdata/influencer-search-request-body';
@@ -104,6 +105,7 @@ export const prepareFetchCreatorsFiltered = ({
     if (engagement && Number(engagement) >= 0 && Number(engagement / 100)) {
         body.filter.engagement_rate = { value: Number((engagement / 100).toFixed(2)), operator: 'gte' };
     }
+    body.filter.filter_ids = recommendedInfluencers.map((id) => id.split('/')[1]);
 
     return { platform, body };
 };
