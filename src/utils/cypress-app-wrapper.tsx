@@ -9,7 +9,6 @@ import type { IUserContext } from 'src/hooks/use-user';
 import { createBrowserSupabaseClient } from '@supabase/auth-helpers-nextjs';
 import { SessionContextProvider } from '@supabase/auth-helpers-react';
 import { SWRConfig } from 'swr';
-import { localStorageProvider } from './local-cache-swr';
 import { Toaster } from 'react-hot-toast';
 i18n.changeLanguage('en');
 
@@ -71,11 +70,7 @@ export const testMount = (component: React.ReactElement, options?: TestMountOpti
                 <I18nextProvider i18n={i18n}>
                     <UserContext.Provider value={mockUserContext}>
                         {/* gets rid of the localStorage cache in tests */}
-                        <SWRConfig
-                            value={{ provider: options?.useLocalStorageCache ? localStorageProvider : () => new Map() }}
-                        >
-                            {component}
-                        </SWRConfig>
+                        <SWRConfig value={{ provider: () => new Map() }}>{component}</SWRConfig>
                     </UserContext.Provider>
                 </I18nextProvider>
             </SessionContextProvider>

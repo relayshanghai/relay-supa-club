@@ -31,7 +31,7 @@ export const SearchResultsTable = ({
     error,
 }: SearchResultsTableProps) => {
     const { t } = useTranslation();
-    const { usageExceeded } = useSearch();
+    const { usageExceeded, loading: searchLoading } = useSearch();
     const noResults = !results || results.length === 0;
 
     // initial wait is how long to wait before showing 'no results found'
@@ -43,11 +43,11 @@ export const SearchResultsTable = ({
             const timeout = setTimeout(() => {
                 setInitialWait(false);
                 // wait up to 5 seconds before showing 'no results found'.
-            }, 5000);
+            }, 1000);
             // clear the timeout on unmount
             return () => clearTimeout(timeout);
         }
-    }, [initialWait]);
+    }, [initialWait, searchLoading]);
     // if we get results before 5 seconds, it will show them immediately
     const loading = (noResults && initialWait) || passedInLoading;
 
