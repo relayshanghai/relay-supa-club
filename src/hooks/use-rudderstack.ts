@@ -9,12 +9,31 @@ export interface IdentityTraits extends apiObject {
         id?: string;
     };
 }
+
+export interface PageProperties extends apiObject {
+    path?: string;
+    url?: string;
+    title?: string;
+    referer?: string;
+    search?: string;
+}
+
 export const useRudderstack = () => {
     const IdentifyUser = (userId: string, traits: IdentityTraits) => {
         window.rudder.identify(userId, traits);
     };
 
+    const Page = (pageName: string, properties?: PageProperties) => {
+        window.rudder.page(pageName, properties);
+    };
+
+    const Track = (eventName: string, properties?: apiObject) => {
+        window.rudder.track(eventName, properties);
+    };
+
     return {
         IdentifyUser,
+        Page,
+        Track,
     };
 };

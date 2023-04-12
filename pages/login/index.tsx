@@ -50,7 +50,6 @@ export default function Login() {
             await login(email, password);
             toast.success(t('login.loginSuccess'));
             await router.push('/dashboard');
-            window.rudder.track('login');
         } catch (error: any) {
             toast.error(error.message || t('login.oopsSomethingWentWrong'));
         } finally {

@@ -10,6 +10,7 @@ import { LoginSignupLayout } from 'src/components/SignupLayout';
 import { APP_URL } from 'src/constants';
 import { createSubscriptionErrors } from 'src/errors/subscription';
 import { useCompany } from 'src/hooks/use-company';
+import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { useSubscription } from 'src/hooks/use-subscription';
 import { useUser } from 'src/hooks/use-user';
 import { buildSubscriptionPortalUrl } from 'src/utils/api/stripe/portal';
@@ -21,7 +22,9 @@ const PaymentOnboard = () => {
     const { company } = useCompany();
     const { subscription, createTrial, paymentMethods } = useSubscription();
     const [submitting, setSubmitting] = useState(false);
-    const { logout } = useUser();
+    const { logout, profile } = useUser();
+    const { IdentifyUser } = useRudderstack();
+
     useEffect(() => {
         const redirectIfSubscribed = async () => {
             if (subscription?.status === 'trialing' || subscription?.status === 'active')
@@ -37,6 +40,14 @@ const PaymentOnboard = () => {
             if (result.status === 'trialing') {
                 toast.success(t('login.accountActivated'));
                 await router.push('/dashboard');
+                if (profile) {
+                    IdentifyUser(profile.id, {
+                        firstName: `${profile.first_name}`,
+                        lastName: `${profile.last_name}`,
+                        email: `${profile.email}`,
+                        company: { id: `${profile.company_id}` },
+                    });
+                }
             } else {
                 throw new Error(JSON.stringify(result));
             }
