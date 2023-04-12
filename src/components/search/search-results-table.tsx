@@ -117,6 +117,7 @@ export const SearchResultsTable = ({
                                 <td className="py-4 text-center" colSpan={5}>
                                     {t('creators.noResults')}
                                 </td>
+                                <td />
                             </tr>
                         ))}
                     {error && (
@@ -124,6 +125,7 @@ export const SearchResultsTable = ({
                             <td className="py-4 text-center" colSpan={5}>
                                 {t('creators.searchResultError')}
                             </td>
+                            <td />
                         </tr>
                     )}
                 </tbody>
