@@ -143,7 +143,9 @@ export const useSearchResults = (page: number) => {
             resultsPerPageLimit,
         ]) => {
             try {
-                if (!profile?.company_id || !profile?.id) return;
+                if (!profile?.company_id || !profile?.id) {
+                    throw new Error('No profile');
+                }
                 if (ref.current) {
                     ref.current.abort();
                 }
@@ -176,18 +178,17 @@ export const useSearchResults = (page: number) => {
                     signal,
                     body,
                 });
-
+                if (!res?.accounts) {
+                    throw new Error('no accounts in results');
+                }
                 return { results: res?.accounts, resultsTotal: res?.total };
             } catch (error: any) {
-                if (typeof error?.message === 'string' && error.message.toLowerCase().includes('abort')) {
-                    return;
-                }
-                clientLogger(error, 'error');
                 if (hasCustomError(error, usageErrors)) {
                     setUsageExceeded(true);
-                } else {
-                    throw error;
+                } else if (!error?.message?.includes('abort')) {
+                    clientLogger(error, 'error');
                 }
+                throw error;
             } finally {
                 setLoading(false);
             }
@@ -208,7 +209,7 @@ export const useSearchResults = (page: number) => {
         resultsTotal: data?.resultsTotal || 0,
         /** this 'loading' only triggers when this page is loading */
         loading: isLoading,
-        error,
+        error: error?.message?.includes('abort') ? undefined : error,
         isValidating,
         noResults,
         mutate,
@@ -216,6 +217,7 @@ export const useSearchResults = (page: number) => {
 };
 
 export const SearchProvider = ({ children }: PropsWithChildren) => {
+    // this 'loading' triggers when any page is loading
     const [loading, setLoading] = useState(true);
     const [resultsPerPageLimit, setResultsPerPageLimit] = useState(10);
     const [usageExceeded, setUsageExceeded] = useState(false);

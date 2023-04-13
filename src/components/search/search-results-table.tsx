@@ -6,7 +6,7 @@ import type { CreatorSearchAccountObject } from 'types';
 import { Button } from '../button';
 import { SkeletonSearchResultRow } from '../common/skeleton-search-result-row';
 import { SearchResultRow } from './search-result-row';
-import { useEffect, useState } from 'react';
+
 export interface SearchResultsTableProps {
     setShowCampaignListModal: (show: boolean) => void;
     setSelectedCreator: (creator: CreatorSearchAccountObject) => void;
@@ -15,6 +15,7 @@ export interface SearchResultsTableProps {
     setCampaignsWithCreator: (campaigns: string[]) => void;
     results?: CreatorSearchAccountObject[];
     loading: boolean;
+    validating: boolean;
     moreResults?: JSX.Element;
     error: any;
 }
@@ -26,30 +27,16 @@ export const SearchResultsTable = ({
     campaigns,
     setCampaignsWithCreator,
     results,
-    loading: passedInLoading,
+    loading: firstPageLoading,
+    validating,
     moreResults,
     error,
 }: SearchResultsTableProps) => {
     const { t } = useTranslation();
-    const { usageExceeded, loading: searchLoading } = useSearch();
+    const { usageExceeded, loading: topSearchLoading } = useSearch();
     const noResults = !results || results.length === 0;
 
-    // initial wait is how long to wait before showing 'no results found'
-    const [initialWait, setInitialWait] = useState(true);
-
-    // This addresses a bug whereby 'no results found' flashes when SWR is actually loading results from localStorage
-    useEffect(() => {
-        if (initialWait) {
-            const timeout = setTimeout(() => {
-                setInitialWait(false);
-                // wait up to 5 seconds before showing 'no results found'.
-            }, 5000);
-            // clear the timeout on unmount
-            return () => clearTimeout(timeout);
-        }
-    }, [initialWait, searchLoading]);
-    // if we get results before 5 seconds, it will show them immediately
-    const loading = (noResults && initialWait) || passedInLoading;
+    const loading = firstPageLoading || topSearchLoading || (noResults && validating);
 
     return (
         <div className="w-full overflow-x-auto">
