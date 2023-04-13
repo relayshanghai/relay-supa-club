@@ -10,9 +10,7 @@ import { SessionContextProvider } from '@supabase/auth-helpers-react';
 import { useEffect, useState } from 'react';
 import { CompanyProvider } from 'src/hooks/use-company';
 import useRudderstack from 'src/hooks/use-rudderstack';
-import { useCacheProvider } from 'src/utils/cache-provider';
-import { SWRConfig } from 'swr';
-import { appCacheDBKey, appCacheStoreKey } from 'src/constants';
+import { CacheProvider } from 'src/utils/indexeddb-cache-provider';
 
 function MyApp({
     Component,
@@ -30,14 +28,7 @@ function MyApp({
         const storedLanguage = localStorage.getItem('language');
         storedLanguage !== null ? i18n.changeLanguage(storedLanguage) : i18n.changeLanguage(); // triggers the language detector
     }, []);
-    useEffect(() => {
-        localStorage.removeItem(appCacheDBKey); // get rid of our previous localStorage cache. We can remove this line after a few weeks
-    }, []);
 
-    const cacheProvider = useCacheProvider({
-        dbName: appCacheDBKey,
-        storeName: appCacheStoreKey,
-    });
     return (
         <>
             <Head>
@@ -62,13 +53,13 @@ function MyApp({
             </Head>
 
             <SessionContextProvider supabaseClient={supabaseClient} initialSession={pageProps.initialSession}>
-                <SWRConfig value={{ provider: cacheProvider || (() => new Map() as any) }}>
+                <CacheProvider>
                     <UserProvider>
                         <CompanyProvider>
                             <Component {...pageProps} />
                         </CompanyProvider>
                     </UserProvider>
-                </SWRConfig>
+                </CacheProvider>
             </SessionContextProvider>
             <Toaster />
         </>
