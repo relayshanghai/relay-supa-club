@@ -8,6 +8,7 @@ import { Input } from 'src/components/input';
 import { LoginSignupLayout } from 'src/components/SignupLayout';
 import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
 import { useFields } from 'src/hooks/use-fields';
+import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { useUser } from 'src/hooks/use-user';
 import { clientLogger } from 'src/utils/logger-client';
 import { isMissing } from 'src/utils/utils';
@@ -16,6 +17,7 @@ import { validateSignupInput } from 'src/utils/validation/signup';
 
 export default function Register() {
     const { t } = useTranslation();
+    const { Track } = useRudderstack();
 
     const router = useRouter();
     const {
@@ -74,6 +76,7 @@ export default function Register() {
             } else {
                 throw new Error('Could not sign up');
             }
+            Track('Clicked on Sign Up', { firstName, lastName, email });
         } catch (error: any) {
             clientLogger(error, 'error');
             // this is a supabase provided error so we don't have our custom error handling

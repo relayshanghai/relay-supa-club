@@ -100,6 +100,7 @@ export default function Register() {
             router.push('/dashboard');
             if (profile) {
                 IdentifyUser(profile.id, {
+                    name: `${profile.first_name} ${profile.last_name}`,
                     firstName: `${profile.first_name}`,
                     lastName: `${profile.last_name}`,
                     email: `${profile.email}`,

@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
-
 import { Spinner } from 'src/components/icons';
 import { LoginSignupLayout } from 'src/components/SignupLayout';
 import { APP_URL } from 'src/constants';
@@ -19,11 +18,23 @@ import { clientLogger } from 'src/utils/logger-client';
 
 const PaymentOnboard = () => {
     const { t } = useTranslation();
+    const { IdentifyUser, Track } = useRudderstack();
     const { company } = useCompany();
     const { subscription, createTrial, paymentMethods } = useSubscription();
     const [submitting, setSubmitting] = useState(false);
     const { logout, profile } = useUser();
-    const { IdentifyUser } = useRudderstack();
+
+    useEffect(() => {
+        if (profile?.id && company?.name) {
+            IdentifyUser(profile.id, {
+                name: `${profile.first_name} ${profile.last_name}`,
+                firstName: `${profile.first_name}`,
+                lastName: `${profile.last_name}`,
+                email: `${profile.email}`,
+                company: { name: `${company.name}` },
+            });
+        }
+    }, [IdentifyUser, company, profile]);
 
     useEffect(() => {
         const redirectIfSubscribed = async () => {
@@ -40,14 +51,7 @@ const PaymentOnboard = () => {
             if (result.status === 'trialing') {
                 toast.success(t('login.accountActivated'));
                 await router.push('/dashboard');
-                if (profile) {
-                    IdentifyUser(profile.id, {
-                        firstName: `${profile.first_name}`,
-                        lastName: `${profile.last_name}`,
-                        email: `${profile.email}`,
-                        company: { id: `${profile.company_id}` },
-                    });
-                }
+                Track('Trial Started');
             } else {
                 throw new Error(JSON.stringify(result));
             }

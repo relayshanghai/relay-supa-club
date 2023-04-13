@@ -69,6 +69,7 @@ export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
                         ))}
                     </>
                 }
+                onlyRecommended={false}
             />
 
             {!noResults && <Button onClick={async () => setPage(page + 1)}>{t('creators.loadMore')}</Button>}

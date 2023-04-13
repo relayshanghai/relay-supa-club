@@ -7,6 +7,7 @@ export interface IdentityTraits extends apiObject {
     lastName: string;
     company: {
         id?: string;
+        name?: string;
     };
 }
 
