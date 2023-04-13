@@ -12,6 +12,7 @@ import { CompanyProvider } from 'src/hooks/use-company';
 import useRudderstack from 'src/hooks/use-rudderstack';
 import { useCacheProvider } from 'src/utils/cache-provider';
 import { SWRConfig } from 'swr';
+import { appCacheDBKey, appCacheStoreKey } from 'src/constants';
 
 function MyApp({
     Component,
@@ -29,9 +30,13 @@ function MyApp({
         const storedLanguage = localStorage.getItem('language');
         storedLanguage !== null ? i18n.changeLanguage(storedLanguage) : i18n.changeLanguage(); // triggers the language detector
     }, []);
+    useEffect(() => {
+        localStorage.removeItem(appCacheDBKey); // get rid of our previous localStorage cache. We can remove this line after a few weeks
+    }, []);
+
     const cacheProvider = useCacheProvider({
-        dbName: 'my-app',
-        storeName: 'swr-cache',
+        dbName: appCacheDBKey,
+        storeName: appCacheStoreKey,
     });
     return (
         <>
@@ -55,18 +60,16 @@ function MyApp({
                     content="Looking for a complete solution to manage influencer marketing for your brand? Our platform has millions of influencers &amp; assists in payments, analytics &amp; more!"
                 />
             </Head>
-            {cacheProvider && (
-                <SWRConfig value={{ provider: cacheProvider }}>
-                    <SessionContextProvider supabaseClient={supabaseClient} initialSession={pageProps.initialSession}>
-                        <UserProvider>
-                            <CompanyProvider>
-                                <Component {...pageProps} />
-                            </CompanyProvider>
-                        </UserProvider>
-                    </SessionContextProvider>
-                </SWRConfig>
-            )}
 
+            <SessionContextProvider supabaseClient={supabaseClient} initialSession={pageProps.initialSession}>
+                <SWRConfig value={{ provider: cacheProvider || (() => new Map() as any) }}>
+                    <UserProvider>
+                        <CompanyProvider>
+                            <Component {...pageProps} />
+                        </CompanyProvider>
+                    </UserProvider>
+                </SWRConfig>
+            </SessionContextProvider>
             <Toaster />
         </>
     );
