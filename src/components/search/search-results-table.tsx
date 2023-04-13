@@ -43,7 +43,7 @@ export const SearchResultsTable = ({
             const timeout = setTimeout(() => {
                 setInitialWait(false);
                 // wait up to 5 seconds before showing 'no results found'.
-            }, 1000);
+            }, 5000);
             // clear the timeout on unmount
             return () => clearTimeout(timeout);
         }
