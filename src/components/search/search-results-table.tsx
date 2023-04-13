@@ -6,8 +6,6 @@ import type { CreatorSearchAccountObject } from 'types';
 import { Button } from '../button';
 import { SkeletonSearchResultRow } from '../common/skeleton-search-result-row';
 import { SearchResultRow } from './search-result-row';
-import { FEAT_RECOMMENDED } from 'src/constants/feature-flags';
-import { isRecommendedInfluencer } from 'src/constants/recommendedInfluencers';
 import { useEffect, useState } from 'react';
 export interface SearchResultsTableProps {
     setShowCampaignListModal: (show: boolean) => void;
@@ -15,7 +13,6 @@ export interface SearchResultsTableProps {
     setShowAlreadyAddedModal: (show: boolean) => void;
     campaigns?: CampaignsIndexGetResult;
     setCampaignsWithCreator: (campaigns: string[]) => void;
-    onlyRecommended: boolean;
     results?: CreatorSearchAccountObject[];
     loading: boolean;
     moreResults?: JSX.Element;
@@ -28,20 +25,14 @@ export const SearchResultsTable = ({
     setShowAlreadyAddedModal,
     campaigns,
     setCampaignsWithCreator,
-    onlyRecommended,
-    results: resultsFull,
+    results,
     loading: passedInLoading,
     moreResults,
     error,
 }: SearchResultsTableProps) => {
     const { t } = useTranslation();
-    const { platform, usageExceeded } = useSearch();
-    const noResults = !resultsFull || resultsFull.length === 0;
-
-    const results =
-        FEAT_RECOMMENDED && onlyRecommended
-            ? resultsFull?.filter((creator) => isRecommendedInfluencer(platform, creator.account.user_profile.user_id))
-            : resultsFull;
+    const { usageExceeded } = useSearch();
+    const noResults = !results || results.length === 0;
 
     // initial wait is how long to wait before showing 'no results found'
     const [initialWait, setInitialWait] = useState(true);
@@ -126,6 +117,7 @@ export const SearchResultsTable = ({
                                 <td className="py-4 text-center" colSpan={5}>
                                     {t('creators.noResults')}
                                 </td>
+                                <td />
                             </tr>
                         ))}
                     {error && (
@@ -133,6 +125,7 @@ export const SearchResultsTable = ({
                             <td className="py-4 text-center" colSpan={5}>
                                 {t('creators.searchResultError')}
                             </td>
+                            <td />
                         </tr>
                     )}
                 </tbody>
