@@ -1,8 +1,9 @@
+import { deleteDB } from 'idb';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect } from 'react';
+import { appCacheDBKey } from 'src/constants';
 import { useUser } from 'src/hooks/use-user';
 import { nextFetch } from 'src/utils/fetcher';
-import { appCacheKey } from 'src/utils/local-cache-swr';
 
 export default function Logout() {
     const router = useRouter();
@@ -22,8 +23,7 @@ export default function Logout() {
                     rollbackOnError: false,
                     throwOnError: false,
                 });
-                localStorage.setItem(appCacheKey, '[]');
-
+                await deleteDB(appCacheDBKey);
                 return;
             }
             window.location.href = email ? `/login?email=${email}` : '/login';

@@ -1,4 +1,9 @@
+import { deleteDB } from 'idb';
+
 describe('Caches SWR requests', () => {
+    beforeEach(async () => {
+        await deleteDB('app-cache');
+    });
     it('caches reports from `use-report`', () => {
         cy.loginTestUser();
 
