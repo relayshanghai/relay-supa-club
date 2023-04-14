@@ -1,4 +1,4 @@
-export async function rudderInitialized(waitMs = 3000): Promise<Window['rudder']> {
+export async function rudderInitialized(waitMs = 5000): Promise<Window['rudder']> {
     window.rudder = await import('rudder-sdk-js');
 
     return new Promise((resolve, reject) => {
@@ -20,12 +20,12 @@ export async function rudderInitialized(waitMs = 3000): Promise<Window['rudder']
         rudder.ready(() => {
             //eslint-disable-next-line no-console
             console.log('All set!');
-            resolve(rudder);
+            return resolve(rudder);
         });
         setTimeout(() => {
             //eslint-disable-next-line no-console
             console.log('RudderStack load timeout');
-            reject('RudderStack load timeout');
+            return reject('RudderStack load timeout');
         }, waitMs);
     });
 }
