@@ -22,6 +22,7 @@ declare global {
             startSession: typeof rudderSDK.startSession;
             endSession: typeof rudderSDK.endSession;
             getSessionId: typeof rudderSDK.getSessionId;
+            /** log out window.rudder in the console and you will see this, but it is not in the rudderSDK type */
             initialized?: boolean;
         };
     }
