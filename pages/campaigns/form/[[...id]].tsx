@@ -66,7 +66,7 @@ const TimelineInput = ({
 export default function CampaignForm() {
     const router = useRouter();
     const supabase = useSupabaseClient();
-    const { Track } = useRudderstack();
+    const { trackEvent } = useRudderstack();
     const [submitting, setSubmitting] = useState(false);
     const [media, setMedia] = useState<File[]>([]);
     // only used in edit existing campaign mode.
@@ -129,7 +129,7 @@ export default function CampaignForm() {
                 }
                 toast(t('campaigns.form.successCreateMsg'));
                 setSubmitting(false);
-                Track('New Campaign Created');
+                trackEvent('New Campaign Created');
                 router.push(`/campaigns/${encodeURIComponent(result.id)}`);
             } catch (error: any) {
                 clientLogger(error, 'error');
@@ -137,7 +137,7 @@ export default function CampaignForm() {
                 setSubmitting(false);
             }
         },
-        [Track, createCampaign, media, router, t, uploadFiles],
+        [trackEvent, createCampaign, media, router, t, uploadFiles],
     );
 
     const updateHandler = useCallback(

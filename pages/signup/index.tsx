@@ -17,7 +17,7 @@ import { validateSignupInput } from 'src/utils/validation/signup';
 
 export default function Register() {
     const { t } = useTranslation();
-    const { Track } = useRudderstack();
+    const { trackEvent } = useRudderstack();
 
     const router = useRouter();
     const {
@@ -76,7 +76,7 @@ export default function Register() {
             } else {
                 throw new Error('Could not sign up');
             }
-            Track('Clicked on Sign Up', { firstName, lastName, email });
+            trackEvent('Clicked on Sign Up', { firstName, lastName, email });
         } catch (error: any) {
             clientLogger(error, 'error');
             // this is a supabase provided error so we don't have our custom error handling

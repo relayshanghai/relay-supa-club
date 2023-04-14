@@ -9,8 +9,8 @@ import type { Session } from '@supabase/auth-helpers-react';
 import { SessionContextProvider } from '@supabase/auth-helpers-react';
 import { useEffect, useState } from 'react';
 import { CompanyProvider } from 'src/hooks/use-company';
-import { rudderInitialized } from 'src/utils/rudder-initialize';
 import { CacheProvider } from 'src/utils/indexeddb-cache-provider';
+import { RudderStackProvider } from 'src/hooks/use-rudderstack';
 
 function MyApp({
     Component,
@@ -18,10 +18,6 @@ function MyApp({
 }: AppProps<{
     initialSession: Session;
 }>) {
-    useEffect(() => {
-        rudderInitialized();
-    }, []); //enable rudderstack Analytics
-
     const [supabaseClient] = useState(() => createBrowserSupabaseClient());
     useEffect(() => {
         //@ts-expect-error
@@ -59,7 +55,9 @@ function MyApp({
                 <CacheProvider>
                     <UserProvider>
                         <CompanyProvider>
-                            <Component {...pageProps} />
+                            <RudderStackProvider>
+                                <Component {...pageProps} />
+                            </RudderStackProvider>
                         </CompanyProvider>
                     </UserProvider>
                 </CacheProvider>

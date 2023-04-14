@@ -10,6 +10,7 @@ import { createBrowserSupabaseClient } from '@supabase/auth-helpers-nextjs';
 import { SessionContextProvider } from '@supabase/auth-helpers-react';
 import { SWRConfig } from 'swr';
 import { Toaster } from 'react-hot-toast';
+import { RudderStackProvider } from 'src/hooks/use-rudderstack';
 i18n.changeLanguage('en');
 
 export interface TestMountOptions {
@@ -69,8 +70,10 @@ export const testMount = (component: React.ReactElement, options?: TestMountOpti
             <SessionContextProvider supabaseClient={supabaseClient} initialSession={{} as any}>
                 <I18nextProvider i18n={i18n}>
                     <UserContext.Provider value={mockUserContext}>
-                        {/* gets rid of the localStorage cache in tests */}
-                        <SWRConfig value={{ provider: () => new Map() }}>{component}</SWRConfig>
+                        <RudderStackProvider>
+                            {/* gets rid of the localStorage cache in tests */}
+                            <SWRConfig value={{ provider: () => new Map() }}>{component}</SWRConfig>
+                        </RudderStackProvider>
                     </UserContext.Provider>
                 </I18nextProvider>
             </SessionContextProvider>

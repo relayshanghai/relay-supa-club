@@ -9,7 +9,7 @@ import { useRudderstack } from 'src/hooks/use-rudderstack';
 
 export const SimilarCreator = ({ creator, platform }: { creator: SimilarUser; platform: CreatorPlatform }) => {
     const { t } = useTranslation();
-    const { Track } = useRudderstack();
+    const { trackEvent } = useRudderstack();
 
     return (
         <div className="group mb-2 flex items-center justify-between rounded-xl bg-white p-4">
@@ -36,7 +36,7 @@ export const SimilarCreator = ({ creator, platform }: { creator: SimilarUser; pl
                     variant="secondary"
                     className="px-3 py-1"
                     onClick={() => {
-                        Track('Opened a report from Similar Influencer Section', {
+                        trackEvent('Opened a report from Similar Influencer Section', {
                             platform,
                             user_id: `${creator.user_id}`,
                         });
