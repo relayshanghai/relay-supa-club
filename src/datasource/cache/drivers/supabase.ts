@@ -1,9 +1,10 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { createClient } from '@supabase/supabase-js';
 import type { DatabaseWithCustomTypes } from 'types';
+import type { Json } from 'types/supabase';
 import type { CacheInterface } from '../types';
 
-type SupabaseCacheItem = { [s: string]: any };
+type SupabaseCacheItem = Json;
 
 export class Supabase implements CacheInterface<Supabase> {
     protected client: SupabaseClient<DatabaseWithCustomTypes>;
