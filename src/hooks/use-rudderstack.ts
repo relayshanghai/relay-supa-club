@@ -21,15 +21,21 @@ export interface PageProperties extends apiObject {
 
 export const useRudderstack = () => {
     const IdentifyUser = (userId: string, traits: IdentityTraits) => {
-        window.rudder.identify(userId, traits);
+        if (window !== undefined) {
+            window.rudder.identify(userId, traits);
+        }
     };
 
     const Page = (pageName: string, properties?: PageProperties) => {
-        window.rudder.page(pageName, properties);
+        if (window !== undefined) {
+            window.rudder.page(pageName, properties);
+        }
     };
 
     const Track = (eventName: string, properties?: apiObject) => {
-        window.rudder.track(eventName, properties);
+        if (window !== undefined) {
+            window.rudder.track(eventName, properties);
+        }
     };
 
     return {
