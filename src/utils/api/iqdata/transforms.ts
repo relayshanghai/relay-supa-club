@@ -32,7 +32,7 @@ const genderTransform = (gender: string) => {
     const upper = gender.toUpperCase();
     const allowed: GenderAllCode[] = ['FEMALE', 'MALE', 'KNOWN', 'UNKNOWN'];
     if (allowed.includes(upper as GenderAllCode)) return { code: upper as GenderAllCode };
-    clientLogger('bad option for gender: ' + gender, 'error');
+    clientLogger('bad option for gender: ' + gender, 'error', true); // unexpected
     return undefined;
 };
 const viewsTransform = (views: NullStringTuple) => {
