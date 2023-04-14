@@ -18,7 +18,7 @@ export default function Login() {
     const { login, supabaseClient, profile } = useUser();
     const [loggingIn, setLoggingIn] = useState(false);
     const [generatingResetEmail, setGeneratingResetEmail] = useState(false);
-    const { IdentifyUser } = useRudderstack();
+    const { identifyUser } = useRudderstack();
     const {
         values: { email, password },
         setFieldValue,
@@ -29,7 +29,7 @@ export default function Login() {
 
     useEffect(() => {
         if (profile?.id) {
-            IdentifyUser(profile.id, {
+            identifyUser(profile.id, {
                 name: `${profile.first_name} ${profile.last_name}`,
                 firstName: `${profile.first_name}`,
                 lastName: `${profile.last_name}`,
@@ -37,7 +37,7 @@ export default function Login() {
                 company: { id: `${profile.company_id}` },
             });
         }
-    }, [IdentifyUser, profile]);
+    }, [identifyUser, profile]);
 
     useEffect(() => {
         if (emailQuery) {

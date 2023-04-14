@@ -27,7 +27,7 @@ type InviteStatus = InviteStatusError | 'pending' | 'inviteValid';
 export default function Register() {
     const { t } = useTranslation();
     const { login, supabaseClient, profile } = useUser();
-    const { IdentifyUser } = useRudderstack();
+    const { identifyUser } = useRudderstack();
 
     const router = useRouter();
     const {
@@ -99,7 +99,7 @@ export default function Register() {
             }
             router.push('/dashboard');
             if (profile) {
-                IdentifyUser(profile.id, {
+                identifyUser(profile.id, {
                     name: `${profile.first_name} ${profile.last_name}`,
                     firstName: `${profile.first_name}`,
                     lastName: `${profile.last_name}`,
@@ -125,7 +125,7 @@ export default function Register() {
             setRegistering(false);
         }
     }, [
-        IdentifyUser,
+        identifyUser,
         acceptInvite,
         email,
         firstName,
