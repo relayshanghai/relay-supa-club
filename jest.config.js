@@ -11,12 +11,12 @@ const createJestConfig = nextJest({
 // Add any custom config to be passed to Jest
 /** @type {import('jest').Config} */
 const customJestConfig = {
-    testPathIgnorePatterns: ['<rootDir>/.next/', '<rootDir>/cypress/', '<rootDir>/node_modules/'],
+    testPathIgnorePatterns: ['<rootDir>/.next/', '<rootDir>/cypress/', '<rootDir>/node_modules/'], // ignore cypress and next.js folders
     preset: 'ts-jest',
     testEnvironment: 'node',
     moduleDirectories: ['node_modules', '<rootDir>'],
     setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
-    testMatch: ['**/*.test.ts'],
+    testMatch: ['**/*.test.ts'], // run only tests with .test.ts extension
 };
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
