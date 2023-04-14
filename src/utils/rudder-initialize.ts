@@ -1,5 +1,5 @@
 export async function rudderInitialized(waitMs = 5000): Promise<Window['rudder']> {
-    window.rudder = (await import('rudder-sdk-js')) as unknown as Window['rudder'];
+    window.rudder = await import('rudder-sdk-js');
 
     return new Promise((resolve, reject) => {
         //these keys are for RudderStack App-Frontend Source, if we need to add new source we need to add new keys
