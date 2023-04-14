@@ -18,7 +18,8 @@
     "paths": {
       "src/*": ["src/*"]
     },
-    "types": ["node"]
+    "types": ["node"],
+    "typeRoots": ["./node_modules/@types", "./src/types"]
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "pages/_error.js"],
   "exclude": ["node_modules", "**/*.test.*", "**/*.cy.*", "cypress", "cypress.config.ts"]
