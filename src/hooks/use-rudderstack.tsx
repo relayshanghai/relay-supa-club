@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import type { PropsWithChildren } from 'react';
 import { useCallback } from 'react';
 import { useState, useEffect, useContext, createContext } from 'react';
@@ -25,27 +26,21 @@ export interface PageProperties extends apiObject {
     search?: string;
 }
 
-const waitForTrue = (condition: () => boolean, timeout = 10000, interval = 100) => {
+const waitForRudderstack = (timeout = 10000, interval = 100) => {
     return new Promise((resolve, reject) => {
         const startTime = Date.now();
-        const checkCondition = () => {
-            if (condition()) {
+        const checkStarted = () => {
+            const rudder = window?.rudder;
+            if (rudder?.initialized) {
                 resolve(true);
             } else if (Date.now() - startTime > timeout) {
-                reject(new Error('Timeout'));
+                reject(false);
             } else {
-                setTimeout(checkCondition, interval);
+                setTimeout(checkStarted, interval);
             }
         };
-        checkCondition();
+        checkStarted();
     });
-};
-
-export const reportIsStale = (createdAt: string) => {
-    const createdAtDate = new Date(createdAt);
-    const now = new Date();
-    const diff = now.getTime() - createdAtDate.getTime();
-    return diff > 59 * 24 * 60 * 60 * 1000;
 };
 
 export interface RudderStackContext {
@@ -75,31 +70,45 @@ export const RudderStackProvider = ({ children }: PropsWithChildren) => {
                 setRudderStart(true);
             }
         };
-        getRudder();
-    }, []);
+        if (profile?.id) {
+            getRudder();
+        }
+    }, [profile?.id]);
 
     const identifyUser = useCallback(
         async (userId: string, traits: IdentityTraits) => {
-            await waitForTrue(() => rudderStart);
+            console.log('before identifyUser');
+
+            const started = await waitForRudderstack();
+            if (!started) {
+                return;
+            }
             rudder?.identify(userId, traits);
+            console.log('identifyUser');
         },
-        [rudder, rudderStart],
+        [rudder],
     );
 
     const pageView = async (pageName: string, properties?: PageProperties) => {
-        await waitForTrue(() => rudderStart);
-
+        const started = await waitForRudderstack();
+        if (!started) {
+            return;
+        }
         rudder?.page(pageName, properties);
     };
 
     const trackEvent = async (eventName: string, properties?: apiObject) => {
-        await waitForTrue(() => rudderStart);
-
+        console.log('before trackEvent', eventName, properties);
+        const started = await waitForRudderstack();
+        if (!started) {
+            return;
+        }
+        console.log('before trackEvent');
         rudder?.track(eventName, properties);
     };
 
     useEffect(() => {
-        if (profile?.id) {
+        if (profile?.id && rudderStart) {
             identifyUser(profile.id, {
                 name: `${profile.first_name} ${profile.last_name}`,
                 firstName: `${profile.first_name}`,
@@ -108,7 +117,7 @@ export const RudderStackProvider = ({ children }: PropsWithChildren) => {
                 company: { id: `${profile.company_id}` },
             });
         }
-    }, [identifyUser, profile]);
+    }, [identifyUser, profile, rudderStart]);
 
     const value = {
         identifyUser,
@@ -121,7 +130,7 @@ export const RudderStackProvider = ({ children }: PropsWithChildren) => {
 export const useRudderstack = () => {
     const context = useContext(rudderStackContext);
     if (context === null) {
-        throw new Error('useCompany must be used within a CompanyProvider');
+        throw new Error('useRudderstack must be used within a RudderStackProvider');
     }
     return context;
 };

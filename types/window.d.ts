@@ -22,6 +22,7 @@ declare global {
             startSession: typeof rudderSDK.startSession;
             endSession: typeof rudderSDK.endSession;
             getSessionId: typeof rudderSDK.getSessionId;
+            initialized: typeof rudderSDK.initialized;
         };
     }
 }
