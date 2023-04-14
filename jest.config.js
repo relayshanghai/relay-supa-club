@@ -11,15 +11,12 @@ const createJestConfig = nextJest({
 // Add any custom config to be passed to Jest
 /** @type {import('jest').Config} */
 const customJestConfig = {
-    globals: {
-        'ts-jest': {
-            tsconfig: 'tsconfig.jest.json',
-        },
-    },
+    testPathIgnorePatterns: ['<rootDir>/.next/', '<rootDir>/cypress/', '<rootDir>/node_modules/'],
     preset: 'ts-jest',
     testEnvironment: 'node',
     moduleDirectories: ['node_modules', '<rootDir>'],
     setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+    testMatch: ['**/*.test.ts'],
 };
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
