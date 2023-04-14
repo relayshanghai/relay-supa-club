@@ -7,6 +7,8 @@ export async function rudderInitialized(waitMs = 3000): Promise<Window['rudder']
         const DATA_PLANE_URL = process.env.NEXT_PUBLIC_RUDDERSTACK_APP_DATA_PLANE_URL;
 
         if (!WRITE_KEY || !DATA_PLANE_URL) {
+            //eslint-disable-next-line no-console
+            console.log('RudderStack keys not set');
             return reject('RudderStack keys not set');
         }
         const rudder = (window.rudder = window.rudder || []);
@@ -21,6 +23,8 @@ export async function rudderInitialized(waitMs = 3000): Promise<Window['rudder']
             resolve(rudder);
         });
         setTimeout(() => {
+            //eslint-disable-next-line no-console
+            console.log('RudderStack load timeout');
             reject('RudderStack load timeout');
         }, waitMs);
     });
