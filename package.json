@@ -84,7 +84,7 @@
     "typescript": "4.9.5"
   },
   "lint-staged": {
-    "(pages|src|styles|types|i18n|docs)/**/*": [
+    "(pages|src|styles|types|i18n|docs)/**/!(*supabase).ts": [
       "prettier --no-error-on-unmatched-pattern --write"
     ],
     "(pages|src|styles|types|i18n|docs)/**/*.{js,jsx,ts,tsx}": [
