@@ -1,4 +1,5 @@
 import type { apiObject } from 'rudder-sdk-js';
+import { rudderInitialized } from 'src/utils/rudder-initialize';
 
 //There are more traits properties, but we only need these for now. Ref: https://www.rudderstack.com/docs/event-spec/standard-events/identify/#identify-traits
 export interface IdentityTraits extends apiObject {
@@ -20,27 +21,24 @@ export interface PageProperties extends apiObject {
 }
 
 export const useRudderstack = () => {
-    const IdentifyUser = (userId: string, traits: IdentityTraits) => {
-        if (window !== undefined) {
-            window.rudder.identify(userId, traits);
-        }
+    const identifyUser = (userId: string, traits: IdentityTraits) => {
+        rudderInitialized();
+        window.rudder.identify(userId, traits);
     };
 
-    const Page = (pageName: string, properties?: PageProperties) => {
-        if (window !== undefined) {
-            window.rudder.page(pageName, properties);
-        }
+    const pageView = (pageName: string, properties?: PageProperties) => {
+        rudderInitialized();
+        window.rudder.page(pageName, properties);
     };
 
-    const Track = (eventName: string, properties?: apiObject) => {
-        if (window !== undefined) {
-            window.rudder.track(eventName, properties);
-        }
+    const trackEvent = (eventName: string, properties?: apiObject) => {
+        rudderInitialized();
+        window.rudder.track(eventName, properties);
     };
 
     return {
-        IdentifyUser,
-        Page,
-        Track,
+        identifyUser,
+        pageView,
+        trackEvent,
     };
 };

@@ -23,7 +23,7 @@ const errors = {
 
 export default function Register() {
     const { t } = useTranslation();
-    const { Track } = useRudderstack();
+    const { trackEvent } = useRudderstack();
     const router = useRouter();
     const { loading, logout } = useUser();
     const { createCompany } = useCompany();
@@ -40,7 +40,7 @@ export default function Register() {
                 throw new Error('no cus_id, error creating company');
             }
             toast.success(t('login.companyCreated'));
-            Track('Clicked on Create Company', { company: values.name });
+            trackEvent('Clicked on Create Company', { company: values.name });
             await router.push('/signup/payment-onboard');
         } catch (e: any) {
             clientLogger(e, 'error');
@@ -52,7 +52,7 @@ export default function Register() {
         } finally {
             setSubmitting(false);
         }
-    }, [Track, createCompany, router, t, values]);
+    }, [trackEvent, createCompany, router, t, values]);
 
     return (
         <LoginSignupLayout>

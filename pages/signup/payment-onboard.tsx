@@ -18,7 +18,7 @@ import { clientLogger } from 'src/utils/logger-client';
 
 const PaymentOnboard = () => {
     const { t } = useTranslation();
-    const { IdentifyUser, Track } = useRudderstack();
+    const { identifyUser, trackEvent } = useRudderstack();
     const { company } = useCompany();
     const { subscription, createTrial, paymentMethods } = useSubscription();
     const [submitting, setSubmitting] = useState(false);
@@ -26,7 +26,7 @@ const PaymentOnboard = () => {
 
     useEffect(() => {
         if (profile?.id && company?.name) {
-            IdentifyUser(profile.id, {
+            identifyUser(profile.id, {
                 name: `${profile.first_name} ${profile.last_name}`,
                 firstName: `${profile.first_name}`,
                 lastName: `${profile.last_name}`,
@@ -34,7 +34,7 @@ const PaymentOnboard = () => {
                 company: { name: `${company.name}` },
             });
         }
-    }, [IdentifyUser, company, profile]);
+    }, [identifyUser, company, profile]);
 
     useEffect(() => {
         const redirectIfSubscribed = async () => {
@@ -51,7 +51,7 @@ const PaymentOnboard = () => {
             if (result.status === 'trialing') {
                 toast.success(t('login.accountActivated'));
                 await router.push('/dashboard');
-                Track('Trial Started');
+                trackEvent('Trial Started');
             } else {
                 throw new Error(JSON.stringify(result));
             }

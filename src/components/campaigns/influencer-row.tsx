@@ -71,7 +71,7 @@ const InfluencerRow = ({
 }: InfluencerRowProps) => {
     const handle = creator.username || creator.fullname || '';
     const [showContactInfo, setShowContactInfo] = useState(false);
-    const { Track } = useRudderstack();
+    const { trackEvent } = useRudderstack();
 
     return (
         <tr key={index} className="group text-xs hover:relative hover:bg-primary-50">
@@ -93,7 +93,7 @@ const InfluencerRow = ({
                         <div
                             className="ml-4"
                             onClick={() =>
-                                Track('Opened a report from Campaign Page', {
+                                trackEvent('Opened a report from Campaign Page', {
                                     platform: `${creator.platform}`,
                                     user_id: `${creator.creator_id}`,
                                 })

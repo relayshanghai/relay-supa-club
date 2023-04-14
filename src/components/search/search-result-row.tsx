@@ -86,7 +86,7 @@ export const SearchResultRow = ({
 }: SearchResultRowProps) => {
     const { t } = useTranslation();
     const { platform } = useSearch();
-    const { Track } = useRudderstack();
+    const { trackEvent } = useRudderstack();
     const {
         username,
         custom_name,
@@ -163,7 +163,7 @@ export const SearchResultRow = ({
                     <Link
                         href={`/influencer/${platform}/${user_id}`}
                         target="_blank"
-                        onClick={() => Track('Opened a report from Search', { platform, user_id })}
+                        onClick={() => trackEvent('Opened a report from Search', { platform, user_id })}
                     >
                         <Button className="flex flex-row items-center" variant="secondary">
                             <span className="">{t('creators.analyzeProfile')}</span>
