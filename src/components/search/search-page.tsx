@@ -27,11 +27,10 @@ export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
     const { campaigns } = useCampaigns({ companyId });
 
     const [page, setPage] = useState(0);
-    const { results: firstPageSearchResults, resultsTotal, noResults, error } = useSearchResults(0);
+    const { results: firstPageSearchResults, resultsTotal, noResults, error, isValidating } = useSearchResults(0);
 
     const [showAlreadyAddedModal, setShowAlreadyAddedModal] = useState(false);
     const [campaignsWithCreator, setCampaignsWithCreator] = useState<string[]>([]);
-    const [onlyRecommended, setOnlyRecommended] = useState(false);
     const clientRoleData = useAtomValue(clientRoleAtom);
 
     return (
@@ -54,6 +53,7 @@ export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
                 campaigns={campaigns}
                 setCampaignsWithCreator={setCampaignsWithCreator}
                 loading={loading}
+                validating={isValidating}
                 results={firstPageSearchResults}
                 error={error}
                 moreResults={

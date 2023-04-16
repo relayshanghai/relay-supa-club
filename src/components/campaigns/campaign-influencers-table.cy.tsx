@@ -1,3 +1,6 @@
+/// <reference types="@testing-library/cypress" />
+// @ts-check
+
 import React from 'react'; // turns out we need this or cypress complains
 // 1. on a campaign page, I get a list of influencers. -> campaigns/[id].tsx
 

@@ -1,4 +1,6 @@
 /// <reference types="@testing-library/cypress" />
+// @ts-check
+
 import type { CampaignCreatorDB } from '../../utils/api/db';
 
 import React from 'react';

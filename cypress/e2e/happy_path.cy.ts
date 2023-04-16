@@ -74,7 +74,7 @@ describe('Main pages happy paths', () => {
         cy.contains('Invite Members').should('not.exist');
 
         // upgrade subscription links to pricing page
-        cy.contains('button', 'Upgrade subscription').click();
+        cy.contains('button', 'Upgrade subscription', { timeout: 10000 }).click(); // loads subscription data
         cy.contains('Choose the best plan for you', { timeout: 10000 }); // loads pricing page
         cy.url().should('include', `/pricing`);
         cy.contains('DIY Max');

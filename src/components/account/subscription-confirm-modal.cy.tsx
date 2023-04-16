@@ -1,4 +1,5 @@
 /// <reference types="@testing-library/cypress" />
+// @ts-check
 import React from 'react';
 import type { SubscriptionConfirmModalData, SubscriptionConfirmModalProps } from './subscription-confirm-modal';
 import { SubscriptionConfirmModal } from './subscription-confirm-modal';
