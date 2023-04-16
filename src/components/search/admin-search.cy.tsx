@@ -1,9 +1,9 @@
 /// <reference types="@testing-library/cypress" />
-import { testMount } from '../../../src/utils/cypress-app-wrapper';
-import { clientRoleAtom } from '../../../src/atoms/clientRoleAtom';
-import { worker } from '../../../src/mocks/browser';
+import { testMount } from '../../utils/cypress-app-wrapper';
+import { clientRoleAtom } from '../../atoms/clientRoleAtom';
+import { worker } from '../../mocks/browser';
 import { useHydrateAtoms } from 'jotai/utils';
-import AdminSearch from './[id]';
+import AdminSearch from '../../../pages/admin/search/[id]';
 import { Provider } from 'jotai';
 import React from 'react';
 
