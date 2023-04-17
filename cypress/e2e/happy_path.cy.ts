@@ -1,6 +1,12 @@
+import { deleteDB } from 'idb';
+
 describe('Main pages happy paths', () => {
+    beforeEach(async () => {
+        await deleteDB('app-cache');
+    });
     it('can log in and load search page and switch language', () => {
         cy.visit('/');
+        localStorage.setItem('language', 'zh');
         // starts on signup page. has an h1 that says signup in Chinese: 注册
         cy.get('h1').contains('注册');
 
