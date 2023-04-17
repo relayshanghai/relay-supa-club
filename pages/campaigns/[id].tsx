@@ -2,7 +2,7 @@ import { useRouter } from 'next/router';
 import type { ChangeEvent } from 'react';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PencilSquareIcon } from '@heroicons/react/20/solid';
+import { PencilSquareIcon, TrashIcon } from '@heroicons/react/20/solid';
 import Link from 'next/link';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import Image from 'next/legacy/image';
@@ -14,8 +14,12 @@ import { Modal } from 'src/components/modal';
 import CommentInput from 'src/components/campaigns/comment-input';
 import CommentCards from 'src/components/campaigns/comment-cards';
 import type { CampaignCreatorDB, CampaignWithCompanyCreators } from 'src/utils/api/db';
-import { imgProxy } from 'src/utils/fetcher';
+import { imgProxy, nextFetch } from 'src/utils/fetcher';
 import { useCompany } from 'src/hooks/use-company';
+import type { CampaignDeleteResponse } from 'pages/api/campaigns/delete';
+import { clientLogger } from 'src/utils/logger-client';
+import type { CampaignDeleteBody } from 'pages/api/campaigns/delete';
+import { Spinner } from 'src/components/icons';
 
 export default function CampaignShow() {
     const router = useRouter();
@@ -35,6 +39,7 @@ export default function CampaignShow() {
     const [showNotesModal, setShowNotesModal] = useState(false);
     const [currentCreator, setCurrentCreator] = useState<CampaignCreatorDB | null>(null);
     const { t, i18n } = useTranslation();
+    const [loading, setLoading] = useState(false);
 
     const tabs = [t('campaigns.show.activities.influencerOutreach'), t('campaigns.show.activities.campaignInfo')];
 
@@ -54,6 +59,26 @@ export default function CampaignShow() {
         const status = e.target.value;
         await updateCampaign({ ...campaign, status });
         refreshCampaigns();
+    };
+
+    const deleteCampaignHandler = async () => {
+        if (!currentCampaign) return;
+
+        const body: CampaignDeleteBody = {
+            id: currentCampaign.id,
+        };
+
+        try {
+            await nextFetch<CampaignDeleteResponse>('campaigns/delete', {
+                method: 'delete',
+                body,
+            });
+        } catch (error) {
+            clientLogger(error, 'error');
+        } finally {
+            setLoading(false);
+            router.push('/campaigns');
+        }
     };
 
     useEffect(() => {
@@ -161,6 +186,19 @@ export default function CampaignShow() {
                         </div>
                     </div>
                 </div>
+                {currentCampaign?.id && (
+                    <div className=" group absolute top-3 right-16 z-10 mr-2 flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg bg-red-50 text-sm font-semibold text-red-500 duration-300 hover:bg-red-100">
+                        {loading ? (
+                            <Spinner className="h-4 w-4 fill-red-600 text-red-200" />
+                        ) : (
+                            <TrashIcon
+                                name="delete"
+                                className="h-4 w-4 fill-current text-red-300 duration-300 group-hover:text-red-500"
+                                onClick={deleteCampaignHandler}
+                            />
+                        )}
+                    </div>
+                )}
                 {currentCampaign?.id && (
                     <div className=" group absolute top-3 right-6 z-10 mr-2 flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg bg-gray-50 text-sm font-semibold text-gray-500 duration-300 hover:bg-gray-100">
                         <Link href={`/campaigns/form/${encodeURIComponent(currentCampaign?.id)}`} legacyBehavior>
