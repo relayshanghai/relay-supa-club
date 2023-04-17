@@ -1,5 +1,5 @@
 /// <reference types="@testing-library/cypress" />
-
+// @ts-check
 import React from 'react';
 import { SearchPageInner } from './search-page';
 import { testMount } from '../../utils/cypress-app-wrapper';
