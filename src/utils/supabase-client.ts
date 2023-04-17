@@ -9,9 +9,5 @@ if (!supabaseAnonKey) console.log('NEXT_PUBLIC_SUPABASE_ANON_KEY not set');
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY || '';
 if (!supabaseServiceKey) console.log('SUPABASE_SERVICE_KEY not set');
 
-const options: any = {};
-
-/** ***THIS SHOULD ONLY BE USE SERVER-SIDE*** */
-export const supabase = createClient<DatabaseWithCustomTypes>(supabaseUrl, supabaseAnonKey, options);
-
-export const supabaseServiceAccount = createClient<DatabaseWithCustomTypes>(supabaseUrl, supabaseServiceKey, options);
+/** ***THIS SHOULD ONLY BE USED SERVER-SIDE*** */
+export const supabase = createClient<DatabaseWithCustomTypes>(supabaseUrl, supabaseServiceKey);

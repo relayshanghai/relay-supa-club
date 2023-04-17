@@ -76,10 +76,22 @@ npx supabase projects list
 npx supabase link --project-ref <project-id>
 ```
 
+Point the webapp to the local database by changing the `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` in `.env.local`
+
+Get the api rul, anon key and service key by running `npx supabase status`
+
+```
+NEXT_PUBLIC_SUPABASE_URL=http://localhost:54321
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<find with supabase status>
+SUPABASE_SERVICE_KEY=<find with supabase status>
+```
+
 4. Start supabase docker
 
 ```
+
 npx supabase start
+
 ```
 
 This should automatically run the docker image and migrations. You can access Supabase studio [here](http://localhost:54323)
