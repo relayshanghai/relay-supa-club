@@ -4,6 +4,8 @@ export async function rudderInitialized() {
     const DATA_PLANE_URL = process.env.NEXT_PUBLIC_RUDDERSTACK_APP_DATA_PLANE_URL;
 
     if (!WRITE_KEY || !DATA_PLANE_URL) {
+        // eslint-disable-next-line no-console
+        console.log('RudderStack keys not set');
         return;
     }
     window.rudder = await import('rudder-sdk-js');
