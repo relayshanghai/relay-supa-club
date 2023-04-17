@@ -84,7 +84,7 @@ describe('Main pages happy paths', () => {
         cy.contains('Choose the best plan for you', { timeout: 10000 }); // loads pricing page
         cy.url().should('include', `/pricing`);
         cy.contains('DIY Max');
-        cy.contains('button', 'Buy Now', { timeout: 10000 }).click();
+        cy.contains('button', 'Buy Now').click();
         cy.contains('button', 'Subscribe');
         cy.contains('button', 'Close').click();
         cy.contains('button', 'Subscribe').should('not.exist');
