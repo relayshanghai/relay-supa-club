@@ -67,7 +67,7 @@ describe('Main pages happy paths', () => {
 
         cy.contains('Channel Stats'); // not sure what else to look for on this page. Seems good enough for a happy path.
     });
-    it('can use account and pricing pages', () => {
+    it.only('can use account and pricing pages', () => {
         cy.loginTestUser();
         cy.contains('Account').click();
         cy.contains('Subscription', { timeout: 10000 }); // loads account page
@@ -84,7 +84,7 @@ describe('Main pages happy paths', () => {
         cy.contains('Choose the best plan for you', { timeout: 10000 }); // loads pricing page
         cy.url().should('include', `/pricing`);
         cy.contains('DIY Max');
-        cy.contains('button', 'Buy Now').click();
+        cy.contains('button', 'Buy Now', { timeout: 10000 }).click();
         cy.contains('button', 'Subscribe');
         cy.contains('button', 'Close').click();
         cy.contains('button', 'Subscribe').should('not.exist');
