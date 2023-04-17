@@ -17,7 +17,6 @@ export default defineConfig({
         viewportWidth: 1536,
         viewportHeight: 960,
         baseUrl: 'http://localhost:3000',
-        defaultCommandTimeout: 10000,
     },
 
     component: {

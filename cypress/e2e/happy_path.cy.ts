@@ -1,8 +1,8 @@
 describe('Main pages happy paths', () => {
     it('can log in and load search page and switch language', () => {
         cy.visit('/');
-        // starts on signup page. has an h1 that says signup in Chinese: 注册
-        cy.get('h1').contains('注册');
+        // starts on signup page. has an h1 that says signup in Chinese: 注册 or in English: Sign up, now that the language is set to follow browser
+        cy.get('h1').contains(/注册|Sign up/g);
 
         cy.loginTestUser();
 
@@ -18,7 +18,7 @@ describe('Main pages happy paths', () => {
         // search for an influencer
         // ensure GRTR is not in the search results
         cy.contains('GRTR').should('not.exist');
-
+        cy.wait(3000);
         cy.getByTestId('creator-search').type('GRTR{enter}');
         // cy.contains will not include the input element in the search, so this shows that the results are in the DOM
         cy.contains('GRTR', { timeout: 30000 });
