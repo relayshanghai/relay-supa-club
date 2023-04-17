@@ -1,3 +1,6 @@
+/// <reference types="@testing-library/cypress" />
+// @ts-check
+
 import React from 'react';
 import { CreatorPage } from './creator-page';
 

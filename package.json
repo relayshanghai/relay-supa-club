@@ -10,8 +10,6 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx --max-warnings=-1",
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
     "type-check:app": "tsc",
-    "type-check:cypress": "tsc --project cypress/tsconfig.json",
-    "type-check:cypress-unit": "echo 'reimplement: tsc --project tsconfig.cypress-unit.json'",
     "type-check-all": "run-p type-check:*",
     "test": "jest",
     "tailwind:build": "tailwindcss -i ./styles/globals.css -o ./build/index.css",

@@ -1,3 +1,5 @@
+/// <reference types="@testing-library/cypress" />
+// @ts-check
 import React from 'react';
 import { testMount } from '../../utils/cypress-app-wrapper';
 import { SearchContext } from '../../hooks/use-search';
