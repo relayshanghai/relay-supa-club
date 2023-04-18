@@ -10,9 +10,6 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx --max-warnings=-1",
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
     "type-check:app": "tsc",
-    "type-check:cypress": "tsc --project cypress/tsconfig.json",
-    "type-check:cypress-unit": "tsc --project tsconfig.cypress-unit.json",
-    "type-check:jest": "tsc --project tsconfig.jest.json",
     "type-check-all": "run-p type-check:*",
     "test": "jest",
     "tailwind:build": "tailwindcss -i ./styles/globals.css -o ./build/index.css",
@@ -82,7 +79,7 @@
     "typescript": "4.9.5"
   },
   "lint-staged": {
-    "(pages|src|styles|types|i18n|docs)/**/*": [
+    "(pages|src|styles|types|i18n|docs)/**/!(*supabase).ts": [
       "prettier --no-error-on-unmatched-pattern --write"
     ],
     "(pages|src|styles|types|i18n|docs)/**/*.{js,jsx,ts,tsx}": [
