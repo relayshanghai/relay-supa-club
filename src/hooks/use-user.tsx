@@ -85,11 +85,19 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
     }, [isLoading]);
 
     const { data: profile, mutate: refreshProfile } = useSWR(session?.user.id ? 'profiles' : null, async () => {
+        if (getProfileController.current) {
+            getProfileController.current.abort();
+        }
+        const controller = new AbortController();
+        getProfileController.current = controller;
+
         const { data: fetchedProfile, error } = await supabaseClient
             .from('profiles')
             .select()
+            .abortSignal(getProfileController.current?.signal)
             .eq('id', session?.user.id)
             .single();
+
         if (error) {
             clientLogger(error, 'error');
             throw new Error(error.message || 'Unknown error');
