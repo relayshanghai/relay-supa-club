@@ -18,23 +18,11 @@ import { clientLogger } from 'src/utils/logger-client';
 
 const PaymentOnboard = () => {
     const { t } = useTranslation();
-    const { identifyUser, trackEvent } = useRudderstack();
+    const { trackEvent } = useRudderstack();
     const { company } = useCompany();
     const { subscription, createTrial, paymentMethods } = useSubscription();
     const [submitting, setSubmitting] = useState(false);
-    const { logout, profile } = useUser();
-
-    useEffect(() => {
-        if (profile?.id && company?.name) {
-            identifyUser(profile.id, {
-                name: `${profile.first_name} ${profile.last_name}`,
-                firstName: `${profile.first_name}`,
-                lastName: `${profile.last_name}`,
-                email: `${profile.email}`,
-                company: { name: `${company.name}` },
-            });
-        }
-    }, [identifyUser, company, profile]);
+    const { logout } = useUser();
 
     useEffect(() => {
         const redirectIfSubscribed = async () => {

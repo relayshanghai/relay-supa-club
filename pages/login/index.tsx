@@ -9,16 +9,14 @@ import { LoginSignupLayout } from 'src/components/SignupLayout';
 import { APP_URL } from 'src/constants';
 import { useFields } from 'src/hooks/use-fields';
 import { useUser } from 'src/hooks/use-user';
-import { useRudderstack } from 'src/hooks/use-rudderstack';
 
 export default function Login() {
     const { t } = useTranslation();
     const router = useRouter();
     const { email: emailQuery } = router.query;
-    const { login, supabaseClient, profile } = useUser();
+    const { login, supabaseClient } = useUser();
     const [loggingIn, setLoggingIn] = useState(false);
     const [generatingResetEmail, setGeneratingResetEmail] = useState(false);
-    const { identifyUser } = useRudderstack();
     const {
         values: { email, password },
         setFieldValue,
@@ -26,18 +24,6 @@ export default function Login() {
         email: '',
         password: '',
     });
-
-    useEffect(() => {
-        if (profile?.id) {
-            identifyUser(profile.id, {
-                name: `${profile.first_name} ${profile.last_name}`,
-                firstName: `${profile.first_name}`,
-                lastName: `${profile.last_name}`,
-                email: `${profile.email}`,
-                company: { id: `${profile.company_id}` },
-            });
-        }
-    }, [identifyUser, profile]);
 
     useEffect(() => {
         if (emailQuery) {

@@ -20,14 +20,12 @@ import { Spinner } from 'src/components/icons';
 import { isMissing } from 'src/utils/utils';
 import { useInvites } from 'src/hooks/use-invites';
 import { LoginSignupLayout } from 'src/components/SignupLayout';
-import { useRudderstack } from 'src/hooks/use-rudderstack';
 
 type InviteStatus = InviteStatusError | 'pending' | 'inviteValid';
 
 export default function Register() {
     const { t } = useTranslation();
-    const { login, supabaseClient, profile } = useUser();
-    const { identifyUser } = useRudderstack();
+    const { login, supabaseClient } = useUser();
 
     const router = useRouter();
     const {
@@ -98,15 +96,6 @@ export default function Register() {
                 throw new Error('Error logging in');
             }
             router.push('/dashboard');
-            if (profile) {
-                identifyUser(profile.id, {
-                    name: `${profile.first_name} ${profile.last_name}`,
-                    firstName: `${profile.first_name}`,
-                    lastName: `${profile.last_name}`,
-                    email: `${profile.email}`,
-                    company: { id: `${profile.company_id}` },
-                });
-            }
         } catch (error: any) {
             if (
                 error?.message === 'User already registered' ||
@@ -124,20 +113,7 @@ export default function Register() {
         } finally {
             setRegistering(false);
         }
-    }, [
-        identifyUser,
-        acceptInvite,
-        email,
-        firstName,
-        lastName,
-        login,
-        password,
-        profile,
-        router,
-        supabaseClient?.auth,
-        t,
-        token,
-    ]);
+    }, [acceptInvite, email, firstName, lastName, login, password, router, supabaseClient?.auth, t, token]);
     if (!token)
         return (
             <div className="mx-auto flex h-full flex-col items-center justify-center space-y-6">
