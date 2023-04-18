@@ -79,7 +79,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
     const supabaseClient = useSupabaseClient<DatabaseWithCustomTypes>();
     const getProfileController = useRef<AbortController | null>();
     const [loading, setLoading] = useState<boolean>(true);
-    const { identifyUser } = useRudderstack();
+    const { identifyFromProfile } = useRudderstack();
     useEffect(() => {
         setLoading(isLoading);
     }, [isLoading]);
@@ -112,16 +112,10 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
 
     // identify user with RudderStack on profile change
     useEffect(() => {
-        if (profile?.id) {
-            identifyUser(profile.id, {
-                name: `${profile.first_name} ${profile.last_name}`,
-                firstName: `${profile.first_name}`,
-                lastName: `${profile.last_name}`,
-                email: `${profile.email}`,
-                company: { id: `${profile.company_id}` },
-            });
+        if (profile) {
+            identifyFromProfile(profile);
         }
-    }, [identifyUser, profile]);
+    }, [identifyFromProfile, profile]);
 
     const login = async (email: string, password: string) => {
         setLoading(true);
