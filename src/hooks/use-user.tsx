@@ -154,6 +154,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
             id,
             first_name: data.first_name,
             last_name: data.last_name,
+            email,
         };
         const createProfileResponse = await nextFetch<ProfileInsertBody>('profiles', {
             method: 'POST',
