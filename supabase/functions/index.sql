@@ -1,5 +1,5 @@
 BEGIN;
 
-\include ./supabase/functions/is_employee.sql
+\include ./supabase/functions/is_relay_employee.sql
 
 COMMIT;

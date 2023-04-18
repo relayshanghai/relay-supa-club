@@ -5,7 +5,7 @@ BEGIN;
 SELECT plan(6);
 
 -- start includes
-\include /tmp/supabase/functions/is_employee.sql
+\include /tmp/supabase/functions/is_relay_employee.sql
 \include /tmp/supabase/policies/profiles_insert.policy.sql
 -- end includes
 
