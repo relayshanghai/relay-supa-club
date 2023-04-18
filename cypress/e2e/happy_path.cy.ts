@@ -67,7 +67,7 @@ describe('Main pages happy paths', () => {
 
         cy.contains('Channel Stats'); // not sure what else to look for on this page. Seems good enough for a happy path.
     });
-    it.only('can use account and pricing pages', () => {
+    it('can use account and pricing pages', () => {
         cy.loginTestUser();
         cy.contains('Account').click();
         cy.contains('Subscription', { timeout: 10000 }); // loads account page
