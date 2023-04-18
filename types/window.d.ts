@@ -4,7 +4,7 @@ declare global {
     interface Window {
         // use the rudderanalytics object to call the RudderStack client-side SDK methods
         // from 'rudder-sdk-js'
-        rudder?: {
+        rudder: {
             load: typeof rudderSDK.load;
             ready: typeof rudderSDK.ready;
             reset: typeof rudderSDK.reset;

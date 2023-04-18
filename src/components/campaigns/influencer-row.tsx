@@ -11,6 +11,7 @@ import TableInput from './campaign-table-input';
 import dateFormat from 'src/utils/dateFormat';
 import { Trashcan } from '../icons';
 import { Button } from '../button';
+import { useRudderstack } from 'src/hooks/use-rudderstack';
 
 const paymentStatus = [
     { id: 1, label: 'unpaid', value: 'unpaid' },
@@ -70,6 +71,7 @@ const InfluencerRow = ({
 }: InfluencerRowProps) => {
     const handle = creator.username || creator.fullname || '';
     const [showContactInfo, setShowContactInfo] = useState(false);
+    const { trackEvent } = useRudderstack();
 
     return (
         <tr key={index} className="group text-xs hover:relative hover:bg-primary-50">
@@ -87,14 +89,20 @@ const InfluencerRow = ({
                             />
                         </div>
                     </div>
-                    <div className="ml-4">
-                        <div className="truncate text-xs font-medium text-gray-900">
-                            <Link href={`/influencer/${creator.platform}/${creator.creator_id}`} target="_blank">
-                                {creator.fullname}
-                            </Link>
+                    <Link href={`/influencer/${creator.platform}/${creator.creator_id}`} target="_blank">
+                        <div
+                            className="ml-4"
+                            onClick={() =>
+                                trackEvent('Opened a report from Campaign Page', {
+                                    platform: creator.platform,
+                                    user_id: creator.creator_id,
+                                })
+                            }
+                        >
+                            <div className="truncate text-xs font-medium text-gray-900">{creator.fullname}</div>
+                            <div className="inline-block truncate text-xs text-primary-500">@{handle}</div>
                         </div>
-                        <div className="inline-block truncate text-xs text-primary-500">@{handle}</div>
-                    </div>
+                    </Link>
                 </div>
             </td>
             {/* -- Contact Column -- */}
