@@ -10,13 +10,12 @@ import type { CampaignCreatorDB, CampaignWithCompanyCreators } from 'src/utils/a
 import Fuse from 'fuse.js';
 import InfluencerRow from './influencer-row';
 import { MoveInfluencerModal } from '../modal-move-influencer';
-import type { CampaignsIndexGetResult } from 'pages/api/campaigns';
 
 export interface CreatorsOutreachProps {
     currentCampaign: CampaignWithCompanyCreators;
     setShowNotesModal: (value: boolean) => void;
     setCurrentCreator: (value: CampaignCreatorDB) => void;
-    campaigns?: CampaignsIndexGetResult;
+    campaigns?: CampaignWithCompanyCreators[];
     currentCreator?: CampaignCreatorDB | null;
 }
 

@@ -1,4 +1,4 @@
-import { useSessionContext, useSupabaseClient } from '@supabase/auth-helpers-react';
+import { useSessionContext } from '@supabase/auth-helpers-react';
 import type { Session, SupabaseClient, User } from '@supabase/supabase-js';
 import * as Sentry from '@sentry/browser';
 
@@ -13,6 +13,7 @@ import type { ProfileDB } from 'src/utils/api/db/types';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
 import type { DatabaseWithCustomTypes } from 'types';
+import { useClientDb } from 'src/utils/client-db/use-client-db';
 
 export type SignupData = {
     email: string;
@@ -76,7 +77,7 @@ export const useUser = () => {
 
 export const UserProvider = ({ children }: PropsWithChildren) => {
     const { isLoading, session } = useSessionContext();
-    const supabaseClient = useSupabaseClient<DatabaseWithCustomTypes>();
+    const { supabaseClient, getProfileById } = useClientDb();
     const getProfileController = useRef<AbortController | null>();
     const [loading, setLoading] = useState<boolean>(true);
     useEffect(() => {
@@ -89,12 +90,10 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
         }
         const controller = new AbortController();
         getProfileController.current = controller;
-
-        const { data: fetchedProfile, error } = await supabaseClient
-            .from('profiles')
-            .select()
-            .eq('id', session?.user.id)
-            .single();
+        if (!session?.user.id) {
+            return;
+        }
+        const { data: fetchedProfile, error } = await getProfileById(session?.user.id);
         if (error) {
             clientLogger(error, 'error');
             throw new Error(error.message || 'Unknown error');

@@ -1,7 +1,7 @@
 import { Menu } from '@headlessui/react';
 import { PlusCircleIcon } from '@heroicons/react/24/solid';
 import Link from 'next/link';
-import type { CampaignsIndexGetResult } from 'pages/api/campaigns';
+import type { CampaignWithCompanyCreators } from 'src/utils/client-db/campaigns';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
 import { DotsHorizontal, ShareLink } from 'src/components/icons';
@@ -20,7 +20,7 @@ export interface SearchResultRowProps {
     setSelectedCreator: (creator: CreatorSearchAccountObject) => void;
     setShowCampaignListModal: (show: boolean) => void;
     setShowAlreadyAddedModal: (show: boolean) => void;
-    campaigns?: CampaignsIndexGetResult;
+    campaigns?: CampaignWithCompanyCreators[];
     setCampaignsWithCreator: (campaigns: string[]) => void;
 }
 export interface MoreResultsRowsProps extends Omit<SearchResultRowProps, 'creator'> {
