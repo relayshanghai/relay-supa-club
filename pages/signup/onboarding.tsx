@@ -11,6 +11,7 @@ import { LoginSignupLayout } from 'src/components/SignupLayout';
 import { createCompanyErrors, createCompanyValidationErrors } from 'src/errors/company';
 import { useCompany } from 'src/hooks/use-company';
 import { useFields } from 'src/hooks/use-fields';
+import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { useUser } from 'src/hooks/use-user';
 import { hasCustomError } from 'src/utils/errors';
 import { clientLogger } from 'src/utils/logger-client';
@@ -22,6 +23,7 @@ const errors = {
 
 export default function Register() {
     const { t } = useTranslation();
+    const { trackEvent } = useRudderstack();
     const router = useRouter();
     const { loading, logout } = useUser();
     const { createCompany } = useCompany();
@@ -38,6 +40,7 @@ export default function Register() {
                 throw new Error('no cus_id, error creating company');
             }
             toast.success(t('login.companyCreated'));
+            trackEvent('Clicked on Create Company', { company: values.name });
             await router.push('/signup/payment-onboard');
         } catch (e: any) {
             clientLogger(e, 'error');
@@ -49,7 +52,7 @@ export default function Register() {
         } finally {
             setSubmitting(false);
         }
-    }, [createCompany, router, t, values]);
+    }, [trackEvent, createCompany, router, t, values]);
 
     return (
         <LoginSignupLayout>
