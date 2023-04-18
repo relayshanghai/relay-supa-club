@@ -59,7 +59,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }
             const { error: makeAdminError } = await updateUserRole(user_id, 'company_owner');
             if (makeAdminError) {
-                serverLogger(makeAdminError, 'error');
+                serverLogger(makeAdminError, 'error', true);
                 return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
             }
 
@@ -75,7 +75,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             return res.status(httpCodes.OK).json(response);
         } catch (error) {
-            serverLogger(error, 'error');
+            serverLogger(error, 'error', true);
             return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
         }
     }
