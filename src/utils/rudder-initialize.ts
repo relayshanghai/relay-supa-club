@@ -15,8 +15,8 @@ export async function rudderInitialized() {
         integrations: { All: true }, // load call options
     });
 
-    rudder.ready(() => {
-        //eslint-disable-next-line no-console
-        console.log('All set!');
-    });
+    // rudder.ready(() => {
+    //     //eslint-disable-next-line no-console
+    //     console.log('All set!');
+    // });
 }
