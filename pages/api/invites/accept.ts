@@ -100,7 +100,7 @@ const handlePost: NextApiHandler = async (req, res) => {
 
         return res.status(httpCodes.OK).json(returnData);
     } catch (error) {
-        serverLogger(error, 'error');
+        serverLogger(error, 'error', true);
         return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
     }
 };
