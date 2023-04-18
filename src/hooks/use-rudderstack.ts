@@ -22,17 +22,23 @@ export interface PageProperties extends apiObject {
 
 export const useRudderstack = () => {
     const identifyUser = async (userId: string, traits: IdentityTraits) => {
-        await rudderInitialized();
+        if (!window.rudder) {
+            await rudderInitialized();
+        }
         window.rudder.identify(userId, traits);
     };
 
     const pageView = async (pageName: string, properties?: PageProperties) => {
-        await rudderInitialized();
+        if (!window.rudder) {
+            await rudderInitialized();
+        }
         window.rudder.page(pageName, properties);
     };
 
     const trackEvent = async (eventName: string, properties?: apiObject) => {
-        await rudderInitialized();
+        if (!window.rudder) {
+            await rudderInitialized();
+        }
         window.rudder.track(eventName, properties);
     };
 
