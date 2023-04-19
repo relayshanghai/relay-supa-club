@@ -140,7 +140,7 @@ const Pricing = () => {
                 setPrices({ monthly, quarterly, annually });
                 setPriceIds({ diy: diy.priceIds, diyMax: diyMax.priceIds });
             } catch (error) {
-                clientLogger(error, 'error');
+                clientLogger(error, 'error', true); // send to sentry cause there's something wrong with the pricing endpoint
             }
         };
 
