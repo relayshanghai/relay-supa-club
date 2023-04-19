@@ -10,7 +10,7 @@ export interface ModalProps {
 
 export const Modal: React.FC<ModalProps> = ({ children, visible, onClose, title }) => {
     return (
-        <Transition appear show={visible} as={Fragment}>
+        <Transition appear={visible} show={visible} as={Fragment}>
             <Dialog as="div" className="relative z-10" onClose={onClose}>
                 <Transition.Child
                     as={Fragment}
