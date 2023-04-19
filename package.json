@@ -81,7 +81,7 @@
     "typescript": "4.9.5"
   },
   "lint-staged": {
-    "supabase/(policies|functions|tests)/**/(*|seed).sql": [
+    "(supabase|supabase/policies|supabase/functions|supabase/tests)/**/(*|seed).sql": [
       "command -v sqlfluff &>/dev/null",
       "sqlfluff fix --force"
     ],
