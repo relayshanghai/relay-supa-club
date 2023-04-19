@@ -7,7 +7,7 @@ export type CampaignWithCompanyCreators = CampaignDB & {
     campaign_creators: CampaignCreatorDB[];
 };
 
-export const getCampaignWithCompanyCreatorsCall =
+export const getCampaignsWithCompanyCreatorsCall =
     (supabaseClient: SupabaseClient<DatabaseWithCustomTypes>) => async (companyId?: string | null) => {
         if (!companyId) return;
         // If this query changes, make sure to update the CampaignWithCompany type

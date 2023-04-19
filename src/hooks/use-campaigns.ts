@@ -40,7 +40,7 @@ export const useCampaigns = ({
     companyId?: string;
 }) => {
     const { profile } = useUser();
-    const { getCampaignWithCompanyCreators } = useClientDb();
+    const { getCampaignsWithCompanyCreators } = useClientDb();
 
     const companyId = passedInCompanyId ?? profile?.company_id;
     const {
@@ -48,7 +48,7 @@ export const useCampaigns = ({
         mutate: refreshCampaigns,
         isValidating,
         isLoading,
-    } = useSWR(companyId ? 'campaigns' : null, () => getCampaignWithCompanyCreators(companyId));
+    } = useSWR(companyId ? 'campaigns' : null, () => getCampaignsWithCompanyCreators(companyId));
     const [loading, setLoading] = useState(false);
     const [campaign, setCampaign] = useState<CampaignWithCompanyCreators | null>(null);
     const [campaignCreators, setCampaignCreators] = useState<CampaignWithCompanyCreators['campaign_creators'] | null>(

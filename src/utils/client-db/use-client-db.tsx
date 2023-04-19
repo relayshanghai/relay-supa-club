@@ -1,6 +1,6 @@
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import type { DatabaseWithCustomTypes } from 'types';
-import { getCampaignWithCompanyCreatorsCall } from './campaigns';
+import { getCampaignsWithCompanyCreatorsCall } from './campaigns';
 import { getProfileByIdCall } from './profiles';
 export const useClientDb = () => {
     const supabaseClient = useSupabaseClient<DatabaseWithCustomTypes>();
@@ -9,11 +9,11 @@ export const useClientDb = () => {
     const getProfileById = getProfileByIdCall(supabaseClient);
 
     // campaigns
-    const getCampaignWithCompanyCreators = getCampaignWithCompanyCreatorsCall(supabaseClient);
+    const getCampaignsWithCompanyCreators = getCampaignsWithCompanyCreatorsCall(supabaseClient);
 
     return {
         supabaseClient,
         getProfileById,
-        getCampaignWithCompanyCreators,
+        getCampaignsWithCompanyCreators,
     };
 };
