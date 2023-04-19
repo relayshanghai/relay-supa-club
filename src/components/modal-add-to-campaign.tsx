@@ -3,7 +3,7 @@ import type { CampaignsIndexGetResult } from 'pages/api/campaigns';
 import { useTranslation } from 'react-i18next';
 import type { CreatorPlatform, CreatorUserProfile } from 'types';
 import CampaignModalCard from './campaigns/campaign-modal-card';
-import { Modal } from './modal';
+import { Modal } from './library';
 
 export const AddToCampaignModal = ({
     show,

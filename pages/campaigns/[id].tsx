@@ -10,7 +10,7 @@ import { Layout } from 'src/components/layout';
 import CampaignInfluencersTable from '../../src/components/campaigns/campaign-influencers-table';
 import CampaignDetails from '../../src/components/campaigns/CampaignDetails';
 import { useCampaigns } from 'src/hooks/use-campaigns';
-import { Modal } from 'src/components/modal';
+import { Modal } from 'src/components/library';
 import CommentInput from 'src/components/campaigns/comment-input';
 import CommentCards from 'src/components/campaigns/comment-cards';
 import type { CampaignCreatorDB, CampaignWithCompanyCreators } from 'src/utils/api/db';
@@ -88,10 +88,10 @@ export default function CampaignShow() {
     return (
         <Layout>
             {/* -- Campaign banner starts here -- */}
-            <div className="relative flex w-full items-center justify-center rounded-2xl bg-white py-4 px-4 sm:h-40 sm:py-0 md:justify-between">
+            <div className="relative flex w-full items-center justify-center rounded-2xl bg-white px-4 py-4 sm:h-40 sm:py-0 md:justify-between">
                 <div>
                     <div className="sm:items-left flex flex-col items-center sm:flex-row">
-                        <div className="mb-4 h-32 w-32 flex-shrink-0 sm:mr-4 sm:mb-0">
+                        <div className="mb-4 h-32 w-32 flex-shrink-0 sm:mb-0 sm:mr-4">
                             <Image
                                 src={media?.[0]?.url || '/assets/imgs/image404.png'}
                                 alt="campaign photo"
@@ -151,7 +151,7 @@ export default function CampaignShow() {
                                         currentCampaign?.tag_list.map((tag, index) => (
                                             <div
                                                 key={index}
-                                                className="mr-1 mb-1 rounded-md bg-tertiary-50 px-2 py-1 text-xs text-tertiary-600"
+                                                className="mb-1 mr-1 rounded-md bg-tertiary-50 px-2 py-1 text-xs text-tertiary-600"
                                             >
                                                 {tag}
                                             </div>
@@ -162,7 +162,7 @@ export default function CampaignShow() {
                     </div>
                 </div>
                 {currentCampaign?.id && (
-                    <div className=" group absolute top-3 right-6 z-10 mr-2 flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg bg-gray-50 text-sm font-semibold text-gray-500 duration-300 hover:bg-gray-100">
+                    <div className=" group absolute right-6 top-3 z-10 mr-2 flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg bg-gray-50 text-sm font-semibold text-gray-500 duration-300 hover:bg-gray-100">
                         <Link href={`/campaigns/form/${encodeURIComponent(currentCampaign?.id)}`} legacyBehavior>
                             <PencilSquareIcon
                                 name="edit"
@@ -173,7 +173,7 @@ export default function CampaignShow() {
                 )}
             </div>
             {/* -- Campaign outreach details starts --*/}
-            <div className="py-0 px-4 sm:h-40 md:py-6">
+            <div className="px-4 py-0 sm:h-40 md:py-6">
                 <div className="mb-4 flex overflow-x-auto">
                     {tabs.map((tab, index) => (
                         <div

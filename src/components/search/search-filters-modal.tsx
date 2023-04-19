@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useSearch } from 'src/hooks/use-search';
 import { numberFormatter } from 'src/utils/formatter';
-import { Modal } from '../modal';
+import { Modal } from '../library';
 
 /** Search Filter - Subscribers and Avg view filter options: 1k, 5k, 10k, 15k, 25k, 50k, 100k, 250k, 500k, 1m */
 const options = [1e3, 5e3, 1e4, 15e3, 25e3, 50e3, 1e5, 25e4, 50e4, 1e6];
