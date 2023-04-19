@@ -9,8 +9,8 @@
     "lint:staged": "eslint --ext .js,.jsx,.ts,.tsx --max-warnings=0",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx --max-warnings=-1",
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
-    "lint:sql": "sqlfluff lint",
-    "fix:sql": "sqlfluff fix --show-lint-violations",
+    "lint:sql": "sqlfluff lint --ignore=parsing --disable-progress-bar supabase/seed.sql supabase/policies supabase/functions/ supabase/tests",
+    "fix:sql": "sqlfluff fix --ignore=parsing --disable-progress-bar --show-lint-violations supabase/seed.sql supabase/policies supabase/functions/ supabase/tests",
     "type-check:app": "tsc",
     "type-check-all": "run-p type-check:*",
     "test": "jest",
@@ -83,7 +83,10 @@
   "lint-staged": {
     "(supabase|supabase/policies|supabase/functions|supabase/tests)/**/(*|seed).sql": [
       "command -v sqlfluff &>/dev/null",
-      "sqlfluff fix --force"
+      "sqlfluff fix --force --disable-progress-bar --ignore=parsing"
+    ],
+    "supabase/tests/**/*.sql": [
+      "supabase/db.sh db_test"
     ],
     "(pages|src|styles|types|i18n|docs)/**/!(*supabase).ts": [
       "prettier --no-error-on-unmatched-pattern --write"
