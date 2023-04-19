@@ -95,7 +95,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
             return;
         }
         const { data: fetchedProfile, error } = await getProfileById(
-            session?.user.id,
+            session.user.id,
             getProfileController.current?.signal,
         );
         if (error) {
