@@ -17,13 +17,13 @@ SELECT policy_cmd_is('profiles', 'profiles_update', 'update');
 PREPARE update_others AS
 UPDATE profiles
 SET email = 'owner-updated@email.com'
-WHERE email = 'owner@email.com'
+WHERE email = 'william.edward.douglas@blue-moonlight-stream.com'
 RETURNING email;
 
 PREPARE update_own AS
 UPDATE profiles
 SET email = 'employee-updated@email.com'
-WHERE email = 'employee@email.com'
+WHERE email = 'christopher.david.thompson@blue-moonlight-stream.com'
 RETURNING email;
 
 PREPARE update_own_relay AS
@@ -49,7 +49,7 @@ SELECT is_empty(
 ROLLBACK TO SAVEPOINT p1;
 
 -- Test basic user
-SELECT tests.authenticate_as('employee@email.com');
+SELECT tests.authenticate_as('christopher.david.thompson@blue-moonlight-stream.com');
 SELECT is_empty(
   'update_others',
   'Authenticated user CANNOT update other profiles'

@@ -16,7 +16,7 @@ SELECT policy_cmd_is('profiles', 'profiles_insert', 'insert');
 
 PREPARE insert_profile AS
 SELECT * FROM tests.create_profile(
-'fake-owner@email.com',
+'fake-william.edward.douglas@blue-moonlight-stream.com',
 'John',
 'Fake',
 'company_owner',
@@ -34,7 +34,7 @@ SELECT
   );
 
 -- Test basic user
-SELECT tests.authenticate_as('employee@email.com');
+SELECT tests.authenticate_as('christopher.david.thompson@blue-moonlight-stream.com');
 
 SELECT
   throws_ok(

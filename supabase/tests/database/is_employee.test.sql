@@ -27,11 +27,11 @@ SELECT is(
 
 
 -- test basic user
-SELECT tests.authenticate_as('owner@email.com');
+SELECT tests.authenticate_as('william.edward.douglas@blue-moonlight-stream.com');
 SELECT is(
   is_relay_employee(),
   false,
-  'owner@email.com IS NOT a Relay employee'
+  'william.edward.douglas@blue-moonlight-stream.com IS NOT a Relay employee'
 );
 
 

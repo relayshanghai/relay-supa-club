@@ -18,12 +18,12 @@ SELECT policy_cmd_is('profiles', 'profiles_delete', 'delete');
 
 PREPARE delete_others AS
   DELETE FROM profiles
-  WHERE email = 'owner@email.com'
+  WHERE email = 'william.edward.douglas@blue-moonlight-stream.com'
   RETURNING email;
 
 PREPARE delete_own AS
   DELETE FROM profiles
-  WHERE email = 'employee@email.com'
+  WHERE email = 'christopher.david.thompson@blue-moonlight-stream.com'
   RETURNING email;
 
 PREPARE delete_own_relay AS
@@ -45,7 +45,7 @@ SELECT
 ROLLBACK TO SAVEPOINT p2;
 
 -- Test basic user
-SELECT tests.authenticate_as('employee@email.com');
+SELECT tests.authenticate_as('christopher.david.thompson@blue-moonlight-stream.com');
 
 SELECT
   is_empty(
