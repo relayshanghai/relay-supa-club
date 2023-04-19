@@ -1,36 +1,29 @@
 import { Button } from '../button';
 import { Modal } from './modal';
+import type { ModalProps } from './modal';
 
-export interface ModalProps {
-    visible: boolean;
-    title?: string | JSX.Element;
-    onClose: () => void;
-    children: JSX.Element | JSX.Element[];
+export interface ModalWithButtonProps extends ModalProps {
     closeButtonText?: string;
     okButtonText?: string;
     onOkay?: () => void;
 }
 
-export const ModalWithButtons = (props: ModalProps) => {
-    const { onClose, children, closeButtonText, okButtonText, onOkay } = props;
+export const ModalWithButtons = ({ children, ...props }: ModalWithButtonProps) => {
+    const { onClose, closeButtonText, okButtonText, onOkay } = props;
     return (
         <Modal {...props}>
             {children}
-            <div className="flex flex-row justify-end gap-2">
+            <div className="flex flex-row justify-end gap-x-2 gap-y-4">
                 {okButtonText && (
-                    <div className="mt-4">
-                        <Button type="button" variant="primary" onClick={onOkay}>
-                            {okButtonText}
-                        </Button>
-                    </div>
+                    <Button type="button" variant="primary" onClick={onOkay}>
+                        {okButtonText}
+                    </Button>
                 )}
 
                 {closeButtonText && (
-                    <div className="mt-4">
-                        <Button type="button" variant="secondary" onClick={() => onClose()}>
-                            {closeButtonText}
-                        </Button>
-                    </div>
+                    <Button type="button" variant="secondary" onClick={() => onClose()}>
+                        {closeButtonText}
+                    </Button>
                 )}
             </div>
         </Modal>

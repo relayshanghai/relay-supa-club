@@ -67,7 +67,7 @@ describe('Main pages happy paths', () => {
 
         cy.contains('Channel Stats'); // not sure what else to look for on this page. Seems good enough for a happy path.
     });
-    it('can use account and pricing pages', () => {
+    it.only('can use account and pricing pages', () => {
         cy.loginTestUser();
         cy.contains('Account').click();
         cy.contains('Subscription', { timeout: 10000 }); // loads account page
@@ -75,9 +75,9 @@ describe('Main pages happy paths', () => {
         cy.url().should('include', `/account`);
         // open one of the modals
         cy.contains('button', 'Add more members').click();
-        cy.contains('Invite Members');
-        cy.contains('button', 'Cancel').click();
-        cy.contains('Invite Members').should('not.exist');
+        cy.contains('Invite Members').should('be.visible');
+        cy.contains('button', /^Cancel$/).click(); // needs to be an exact match so that the "Cancel subscription" button isn't clicked instead
+        cy.contains('Invite Members').should('not.be.visible');
 
         // upgrade subscription links to pricing page
         cy.contains('button', 'Upgrade subscription', { timeout: 10000 }).click(); // loads subscription data

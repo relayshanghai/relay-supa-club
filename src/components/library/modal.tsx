@@ -1,13 +1,13 @@
 import type { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 
-type ModalProps = {
+export interface ModalProps {
     visible: boolean;
     onClose: () => void;
     title?: string | ReactNode;
     children: ReactNode;
     className?: string;
-};
+}
 
 export const Modal = ({ visible, onClose, title, className, children }: ModalProps) => {
     const [show, setShow] = useState(false);
