@@ -26,7 +26,8 @@ export const getCampaignWithCompanyCreators = async (companyId: string) => {
     const { data, error } = await supabase
         .from('campaigns')
         .select('*, companies(id, name, cus_id), campaign_creators(*)')
-        .eq('company_id', companyId);
+        .eq('company_id', companyId)
+        .neq('archived', true);
 
     if (error) throw error;
     return data as CampaignWithCompanyCreators[];

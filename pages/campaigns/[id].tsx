@@ -14,11 +14,8 @@ import { Modal } from 'src/components/modal';
 import CommentInput from 'src/components/campaigns/comment-input';
 import CommentCards from 'src/components/campaigns/comment-cards';
 import type { CampaignCreatorDB, CampaignWithCompanyCreators } from 'src/utils/api/db';
-import { imgProxy, nextFetch } from 'src/utils/fetcher';
+import { imgProxy } from 'src/utils/fetcher';
 import { useCompany } from 'src/hooks/use-company';
-import type { CampaignDeleteResponse } from 'pages/api/campaigns/delete';
-import { clientLogger } from 'src/utils/logger-client';
-import type { CampaignDeleteBody } from 'pages/api/campaigns/delete';
 import { Spinner } from 'src/components/icons';
 
 export default function CampaignShow() {
@@ -39,7 +36,7 @@ export default function CampaignShow() {
     const [showNotesModal, setShowNotesModal] = useState(false);
     const [currentCreator, setCurrentCreator] = useState<CampaignCreatorDB | null>(null);
     const { t, i18n } = useTranslation();
-    const [loading, setLoading] = useState(false);
+    const [loading] = useState(false);
 
     const tabs = [t('campaigns.show.activities.influencerOutreach'), t('campaigns.show.activities.campaignInfo')];
 
@@ -63,22 +60,10 @@ export default function CampaignShow() {
 
     const deleteCampaignHandler = async () => {
         if (!currentCampaign) return;
-
-        const body: CampaignDeleteBody = {
-            id: currentCampaign.id,
-        };
-
-        try {
-            await nextFetch<CampaignDeleteResponse>('campaigns/delete', {
-                method: 'delete',
-                body,
-            });
-        } catch (error) {
-            clientLogger(error, 'error');
-        } finally {
-            setLoading(false);
-            router.push('/campaigns');
-        }
+        const { campaign_creators: _filterOut, companies: _filterOut2, ...campaign } = currentCampaign;
+        await updateCampaign({ ...campaign, archived: true });
+        router.push('/campaigns');
+        refreshCampaigns();
     };
 
     useEffect(() => {
