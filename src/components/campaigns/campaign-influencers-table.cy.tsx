@@ -138,14 +138,14 @@ describe('CampaignInfluencersTable', () => {
     it('Should open a modal when i click "Move Influencer" button. The modal should have a title of "Move To Campaign" and subtitle "Move this influencer to an existing campaign". Should include a list of campaigns  When I click on the move button inside a campaign row I get a loading spinner', () => {
         testMount(<CampaignInfluencersTable {...makeProps()} />);
 
-        cy.contains('Move To Campaign').should('not.exist');
+        cy.contains('Move To Campaign').should('not.be.visible');
 
-        cy.contains('Move this influencer to an existing campaign').should('not.exist');
-        cy.get(`#move-influencer-button-${campaign2.id}`).should('not.exist');
+        cy.contains('Move this influencer to an existing campaign').should('not.be.visible');
+        cy.get(`#move-influencer-button-${campaign2.id}`).should('not.be.visible');
 
         cy.get('tr').get('button').contains('Move Influencer').click();
 
-        cy.contains('Move To Campaign');
+        cy.contains('Move To Campaign').should('be.visible');
         cy.contains('Move this influencer to an existing campaign');
         cy.get(`#move-influencer-spinner-${campaign2.id}`).should('not.exist');
 
