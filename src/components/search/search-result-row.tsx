@@ -248,7 +248,7 @@ export const SearchResultRow = ({
                 <button
                     ref={menuButtonRef}
                     className="rounded bg-primary-600 px-4 py-2 text-white lg:hidden"
-                    data-testid={`search-result-row-buttons/\${user_id}`}
+                    data-testid={`search-result-row-buttons/${user_id}`}
                     onClick={toggleMenu}
                 >
                     <DotsHorizontal />
