@@ -6,9 +6,10 @@ type ModalProps = {
     onClose: () => void;
     title?: string | ReactNode;
     children: ReactNode;
+    className?: string;
 };
 
-export const Modal = ({ visible, onClose, title, children }: ModalProps) => {
+export const Modal = ({ visible, onClose, title, className, children }: ModalProps) => {
     const [show, setShow] = useState(false);
 
     useEffect(() => {
@@ -29,7 +30,7 @@ export const Modal = ({ visible, onClose, title, children }: ModalProps) => {
             <div
                 className={`fixed left-1/2 top-1/2 z-50 max-w-md -translate-x-1/2 -translate-y-1/2 transform rounded-lg bg-white p-6 shadow-lg ${
                     show ? 'block' : 'hidden'
-                }`}
+                } ${className}`}
             >
                 <div className="text-xl font-semibold">{title}</div>
 
