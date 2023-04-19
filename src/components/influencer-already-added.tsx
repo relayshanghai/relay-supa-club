@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { ModalWithButtons } from './library/modal-with-buttons';
+import { ModalWithButtons } from './modal-with-buttons';
 
 export const InfluencerAlreadyAddedModal = ({
     show,

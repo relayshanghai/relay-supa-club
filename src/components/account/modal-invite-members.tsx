@@ -7,7 +7,7 @@ import type { InvitesDB } from 'src/utils/api/db';
 import { hasCustomError } from 'src/utils/errors';
 import { Button } from '../button';
 import { Input } from '../input';
-import { Modal } from '../library';
+import { Modal } from '../modal';
 
 export const InviteMembersModal = ({
     showAddMoreMembers,

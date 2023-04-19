@@ -3,7 +3,7 @@ import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { useSubscription } from 'src/hooks/use-subscription';
 import { Button } from '../button';
-import { Modal } from '../library';
+import { Modal } from '../modal';
 
 export const CancelSubscriptionModal = ({ visible, onClose }: { visible: boolean; onClose: () => void }) => {
     const { t } = useTranslation();
