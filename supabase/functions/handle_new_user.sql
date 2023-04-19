@@ -1,8 +1,8 @@
 CREATE OR REPLACE FUNCTION public.handle_new_user()
- RETURNS trigger
- LANGUAGE plpgsql
- SECURITY DEFINER
- SET search_path TO 'public'
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path TO 'public'
 AS $$
   BEGIN
     INSERT INTO public.profiles (id, first_name, last_name, company_id, email)

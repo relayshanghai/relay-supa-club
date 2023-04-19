@@ -42,8 +42,8 @@ SAVEPOINT p1;
 -- Test anonymous
 SELECT tests.clear_authentication();
 SELECT is_empty(
-    'update_others',
-    'Anonymous user CANNOT update other profiles'
+  'update_others',
+  'Anonymous user CANNOT update other profiles'
 );
 
 ROLLBACK TO SAVEPOINT p1;
@@ -51,12 +51,12 @@ ROLLBACK TO SAVEPOINT p1;
 -- Test basic user
 SELECT tests.authenticate_as('employee@email.com');
 SELECT is_empty(
-    'update_others',
-    'Authenticated user CANNOT update other profiles'
+  'update_others',
+  'Authenticated user CANNOT update other profiles'
 );
 SELECT is_empty(
-    'update_own',
-    'Authenticated user CANNOT update own profile'
+  'update_own',
+  'Authenticated user CANNOT update own profile'
 );
 
 ROLLBACK TO SAVEPOINT p1;
@@ -64,12 +64,12 @@ ROLLBACK TO SAVEPOINT p1;
 -- Test staff user
 SELECT tests.authenticate_as('jacob@relay.club');
 SELECT is_empty(
-    'update_others',
-    'Relay employee CANNOT update other profiles'
+  'update_others',
+  'Relay employee CANNOT update other profiles'
 );
 SELECT is_empty(
-    'update_own_relay',
-    'Relay employee CANNOT update own profile'
+  'update_own_relay',
+  'Relay employee CANNOT update own profile'
 );
 
 ROLLBACK TO SAVEPOINT p1;
