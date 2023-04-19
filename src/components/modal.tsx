@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 type ModalProps = {
     visible: boolean;
     onClose: () => void;
-    title: string | ReactNode;
+    title?: string | ReactNode;
     children: ReactNode;
 };
 
