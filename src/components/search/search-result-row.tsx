@@ -1,4 +1,3 @@
-import { Menu } from '@headlessui/react';
 import { PlusCircleIcon } from '@heroicons/react/24/solid';
 import Link from 'next/link';
 import type { CampaignsIndexGetResult } from 'pages/api/campaigns';
@@ -15,6 +14,8 @@ import type { CreatorSearchAccountObject } from 'types';
 import { Badge, Tooltip } from '../library';
 import { SkeletonSearchResultRow } from '../common/skeleton-search-result-row';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { useRef, useState } from 'react';
+import useOnOutsideClick from 'src/hooks/use-on-outside-click';
 
 export interface SearchResultRowProps {
     creator: CreatorSearchAccountObject;
@@ -100,8 +101,16 @@ export const SearchResultRow = ({
         avg_views,
     } = creator.account.user_profile;
     const handle = username || custom_name || fullname || '';
+    const [menuOpen, setMenuOpen] = useState(false);
+    const toggleMenu = () => {
+        setMenuOpen(!menuOpen);
+    };
+    const menuButtonRef = useRef<HTMLButtonElement>(null);
+    const menuRef = useRef<HTMLUListElement>(null);
+    useOnOutsideClick(menuRef, () => setMenuOpen(false), menuButtonRef);
 
     const addToCampaign = () => {
+        setMenuOpen(false);
         if (creator) setSelectedCreator(creator);
 
         const campaignsList: string[] = [];
@@ -129,7 +138,7 @@ export const SearchResultRow = ({
     return (
         <tr className="group hover:bg-primary-100">
             <td className="w-full">
-                <div className="flex w-full flex-row gap-x-2 py-2 px-4">
+                <div className="flex w-full flex-row gap-x-2 px-4 py-2">
                     <img
                         key={picture}
                         src={imgProxy(picture) as string}
@@ -184,69 +193,66 @@ export const SearchResultRow = ({
                     )}
                 </div>
 
-                <div className="flex flex-col items-center justify-center gap-1 lg:hidden">
-                    <Menu as="div" className="relative inline-block text-left">
-                        <Menu.Button as="div" data-testid={`search-result-row-buttons/${user_id}`}>
-                            <Button>
-                                <DotsHorizontal />
-                            </Button>
-                        </Menu.Button>
-
-                        <Menu.Items className="absolute right-0 top-0 mr-16 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                            <div className="px-1 py-1">
-                                <Menu.Item>
-                                    {({ active }) => (
-                                        <button
-                                            className={`${
-                                                active ? 'bg-violet-500 text-white' : 'text-gray-900'
-                                            } group flex w-full items-center justify-center rounded-md px-2 py-2 text-sm`}
-                                            onClick={addToCampaign}
-                                        >
-                                            {t('creators.addToCampaign')}
-                                        </button>
-                                    )}
-                                </Menu.Item>
-
+                {menuOpen && (
+                    <div className="relative inline-block text-left lg:hidden">
+                        <ul
+                            ref={menuRef}
+                            className="absolute right-0 top-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                        >
+                            <li className="px-1 py-1">
+                                {/* active classes? className={`${
+                                                active ? 'bg-primary-500 text-white' : 'text-gray-900'
+                                            }*/}
+                                <button
+                                    className="flex w-full items-center justify-center rounded-md px-2 py-2 text-sm text-gray-900 hover:bg-primary-300 hover:text-white"
+                                    onClick={addToCampaign}
+                                >
+                                    {t('creators.addToCampaign')}
+                                </button>
+                            </li>
+                            <li className="px-1 py-1">
                                 <Link
                                     href={`/influencer/${platform}/${user_id}`}
                                     target="_blank"
                                     data-testid={`analyze-button/${user_id}`}
                                 >
-                                    <Menu.Item>
-                                        {({ active }) => (
-                                            <button
-                                                className={`${
-                                                    active ? 'bg-violet-500 text-white' : 'text-gray-900'
-                                                } group flex w-full items-center justify-center rounded-md px-2 py-2 text-sm`}
-                                                onClick={() =>
-                                                    trackEvent('Opened a report from Search', { platform, user_id })
-                                                }
-                                            >
-                                                {t('creators.analyzeProfile')}
-                                            </button>
-                                        )}
-                                    </Menu.Item>
+                                    <Button
+                                        className="flex w-full items-center justify-center rounded-md px-2 py-2 text-sm text-gray-900 hover:bg-primary-300 hover:text-white"
+                                        onClick={() => {
+                                            setMenuOpen(false);
+                                            trackEvent('Opened a report from Search', { platform, user_id });
+                                        }}
+                                    >
+                                        {t('creators.analyzeProfile')}
+                                    </Button>
                                 </Link>
-
-                                {url && (
-                                    <Link href={url} target="_blank" rel="noopener noreferrer">
-                                        <Menu.Item>
-                                            {({ active }) => (
-                                                <button
-                                                    className={`${
-                                                        active ? 'bg-violet-500 text-white' : 'text-gray-900'
-                                                    } group flex w-full items-center justify-center rounded-md px-2 py-2 text-sm`}
-                                                >
-                                                    <ShareLink className="w-5 fill-current" />
-                                                </button>
-                                            )}
-                                        </Menu.Item>
+                            </li>
+                            {url && (
+                                <li className="px-1 py-1">
+                                    <Link
+                                        href={url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        onClick={() => setMenuOpen(false)}
+                                    >
+                                        <button className="flex w-full items-center justify-center rounded-md px-2 py-2 text-sm text-gray-900 hover:bg-primary-300 hover:text-white">
+                                            <ShareLink className="w-5 fill-current" />
+                                        </button>
                                     </Link>
-                                )}
-                            </div>
-                        </Menu.Items>
-                    </Menu>
-                </div>
+                                </li>
+                            )}
+                        </ul>
+                    </div>
+                )}
+
+                <button
+                    ref={menuButtonRef}
+                    className="rounded bg-primary-600 px-4 py-2 text-white lg:hidden"
+                    data-testid={`search-result-row-buttons/\${user_id}`}
+                    onClick={toggleMenu}
+                >
+                    <DotsHorizontal />
+                </button>
             </td>
         </tr>
     );
