@@ -24,7 +24,7 @@ describe('Main pages happy paths', () => {
         // search for an influencer
         // ensure GRTR is not in the search results
         cy.contains('GRTR').should('not.exist');
-
+        cy.wait(3000);
         cy.getByTestId('creator-search').type('GRTR{enter}');
         // cy.contains will not include the input element in the search, so this shows that the results are in the DOM
         cy.contains('GRTR', { timeout: 30000 });

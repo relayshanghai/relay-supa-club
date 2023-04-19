@@ -74,7 +74,7 @@ const handler: NextApiHandler = async (req, res) => {
             html: formatEmail(name, insertData.id),
         });
     } catch (error) {
-        serverLogger(error, 'error');
+        serverLogger(error, 'error', true);
         return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
     }
     const returnData: CompanyCreateInvitePostResponse = insertData;
