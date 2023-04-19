@@ -33,6 +33,18 @@ export const getCampaignWithCompanyCreators = async (companyId: string) => {
     return data as CampaignWithCompanyCreators[];
 };
 
+export const getArchivedCampaignWithCompanyCreators = async (companyId: string) => {
+    // If this query changes, make sure to update the CampaignWithCompany type
+    const { data, error } = await supabase
+        .from('campaigns')
+        .select('*, companies(id, name, cus_id), campaign_creators(*)')
+        .eq('company_id', companyId)
+        .eq('archived', true);
+
+    if (error) throw error;
+    return data as CampaignWithCompanyCreators[];
+};
+
 export const updateCampaign = async (data: CampaignDBUpdate) =>
     await supabase
         .from('campaigns')

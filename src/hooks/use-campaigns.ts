@@ -51,6 +51,17 @@ export const useCampaigns = ({
             id: companyId ?? '',
         }),
     );
+    const {
+        data: archivedCampaigns,
+        mutate: refreshArchivedCampaigns,
+        isValidating: isArchivedCampaignsValidating,
+        isLoading: isArchivedCampaignsLoading,
+    } = useSWR(companyId ? 'campaigns/get-archived' : null, (path) =>
+        nextFetchWithQueries<CampaignsIndexGetQuery, CampaignsIndexGetResult>(path, {
+            id: companyId ?? '',
+        }),
+    );
+
     const [loading, setLoading] = useState(false);
     const [campaign, setCampaign] = useState<CampaignWithCompanyCreators | null>(null);
     const [campaignCreators, setCampaignCreators] = useState<CampaignWithCompanyCreators['campaign_creators'] | null>(
@@ -172,6 +183,7 @@ export const useCampaigns = ({
 
     return {
         campaigns,
+        archivedCampaigns,
         createCampaign,
         updateCampaign,
         campaign,
@@ -183,5 +195,8 @@ export const useCampaigns = ({
         deleteCreatorInCampaign,
         updateCreatorInCampaign,
         refreshCampaigns,
+        refreshArchivedCampaigns,
+        isArchivedCampaignsValidating,
+        isArchivedCampaignsLoading,
     };
 };

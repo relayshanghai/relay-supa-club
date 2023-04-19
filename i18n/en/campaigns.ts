@@ -6,6 +6,7 @@ const campaigns = {
             notStarted: 'Not Started',
             completed: 'Completed',
             all: 'All',
+            archived: 'Archived Campaigns',
         },
         createCampaign: 'New Campaign',
         noCampaigns: "You don't have any campaigns",

@@ -7,18 +7,19 @@ import { Button } from 'src/components/button';
 import { useCampaigns } from 'src/hooks/use-campaigns';
 import CampaignCardView from 'src/components/campaigns/CampaignCardView';
 import { useTranslation } from 'react-i18next';
+import type { CampaignsIndexGetResult } from 'pages/api/campaigns';
 
 const CampaignsPage = ({ companyId }: { companyId?: string }) => {
     const { t } = useTranslation();
     const [currentTab, setCurrentTab] = useState('');
 
-    const { campaigns, isLoading } = useCampaigns({ companyId });
+    const { campaigns, isLoading, archivedCampaigns, isArchivedCampaignsLoading } = useCampaigns({ companyId });
 
-    const renderCampaigns = () => {
+    const renderCampaigns = (campaigns: CampaignsIndexGetResult | undefined) => {
         if (!campaigns?.length) {
             return (
                 <div className="h-full text-sm text-gray-600">
-                    {t('campaigns.index.noCampaignsAvailable')}
+                    {t('campaigns.index.noCampaignsAvailable') + ' '}
                     <span className="cursor-pointer text-primary-500 duration-300 hover:text-primary-700">
                         <Link href="/campaigns/form" legacyBehavior>
                             {t('campaigns.index.clickCreate')}
@@ -39,10 +40,12 @@ const CampaignsPage = ({ companyId }: { companyId?: string }) => {
                         <Button>{t('campaigns.index.createCampaign')}</Button>
                     </Link>
                 </div>
-                {isLoading ? (
+                {isLoading || isArchivedCampaignsLoading ? (
                     <Spinner className="mx-auto mt-10 h-10 w-10 fill-primary-600 text-white" />
+                ) : currentTab === 'archived' ? (
+                    renderCampaigns(archivedCampaigns)
                 ) : (
-                    renderCampaigns()
+                    renderCampaigns(campaigns)
                 )}
             </div>
         </Layout>
