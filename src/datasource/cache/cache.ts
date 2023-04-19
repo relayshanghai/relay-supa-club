@@ -8,7 +8,7 @@ export class Cache<T extends DataSourceCacheDrivers> implements CacheInterface<T
         this.cache = _cache || Cache.getDefaultDriver();
     }
 
-    static getDefaultDriver(): CacheInterface<Memory> {
+    static getDefaultDriver(): CacheInterface<DataSourceCacheDrivers> {
         return new Memory();
     }
 
