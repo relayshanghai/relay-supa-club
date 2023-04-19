@@ -2,14 +2,7 @@ import type { SVGProps } from 'react';
 
 export default function BoxFilled({ ...props }: SVGProps<SVGSVGElement>) {
     return (
-        <svg
-            width={65}
-            height={65}
-            viewBox="0 0 65 65"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            {...props}
-        >
+        <svg width={65} height={65} viewBox="0 0 65 65" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
             <g>
                 <path
                     opacity={0.35}

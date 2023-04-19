@@ -4,12 +4,12 @@ import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
-
 import { Spinner } from 'src/components/icons';
 import { LoginSignupLayout } from 'src/components/SignupLayout';
 import { APP_URL } from 'src/constants';
 import { createSubscriptionErrors } from 'src/errors/subscription';
 import { useCompany } from 'src/hooks/use-company';
+import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { useSubscription } from 'src/hooks/use-subscription';
 import { useUser } from 'src/hooks/use-user';
 import { buildSubscriptionPortalUrl } from 'src/utils/api/stripe/portal';
@@ -18,10 +18,12 @@ import { clientLogger } from 'src/utils/logger-client';
 
 const PaymentOnboard = () => {
     const { t } = useTranslation();
+    const { trackEvent } = useRudderstack();
     const { company } = useCompany();
     const { subscription, createTrial, paymentMethods } = useSubscription();
     const [submitting, setSubmitting] = useState(false);
     const { logout } = useUser();
+
     useEffect(() => {
         const redirectIfSubscribed = async () => {
             if (subscription?.status === 'trialing' || subscription?.status === 'active')
@@ -37,6 +39,7 @@ const PaymentOnboard = () => {
             if (result.status === 'trialing') {
                 toast.success(t('login.accountActivated'));
                 await router.push('/dashboard');
+                trackEvent('Trial Started');
             } else {
                 throw new Error(JSON.stringify(result));
             }
