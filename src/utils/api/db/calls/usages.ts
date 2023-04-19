@@ -25,8 +25,8 @@ const handleCurrentPeriodExpired = async (companyId: string) => {
             ? 'canceled'
             : null;
     if (!subscription_status) {
-        // as per how `updateCompanySubscriptionStatus` is used, our app should only be using the above statuses, so if we get something else, we should log it
-        serverLogger('Invalid subscription status', 'error');
+        // as per how `updateCompanySubscriptionStatus` is used, our app should only be using the above statuses, so if we get something else, we should log it as suspicious
+        serverLogger('Invalid subscription status: ' + subscription_status, 'error', true);
         return { error: usageErrors.invalidStatus };
     }
     const subscription_current_period_start = unixEpochToISOString(current_period_start);

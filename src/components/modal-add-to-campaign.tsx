@@ -23,7 +23,7 @@ export const AddToCampaignModal = ({
     return (
         <Modal
             title={t('campaigns.modal.addToCampaign') || ''}
-            visible={!!show}
+            visible={show}
             onClose={() => {
                 setShow(false);
             }}

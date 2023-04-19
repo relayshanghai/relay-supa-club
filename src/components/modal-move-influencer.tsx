@@ -25,7 +25,7 @@ export const MoveInfluencerModal = ({
     return (
         <Modal
             title={t('campaigns.modal.moveToCampaign') || ''}
-            visible={!!show}
+            visible={show}
             onClose={() => {
                 setShow(false);
             }}

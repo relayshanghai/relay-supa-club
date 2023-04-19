@@ -57,14 +57,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             const diyTrialPriceId = diyTrialPrice?.id ?? '';
             if (!diyTrialPriceId || !diyTrialPrice) {
-                serverLogger(new Error('Missing DIY trial price'), 'error');
+                serverLogger(new Error('Missing DIY trial price'), 'error', true);
                 return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
             }
 
             const { trial_days, trial_profiles, trial_searches } = diyTrialPrice.product.metadata;
 
             if (!trial_days || !trial_profiles || !trial_searches) {
-                serverLogger(new Error('Missing product metadata'), 'error');
+                serverLogger(new Error('Missing product metadata'), 'error', true);
                 return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
             }
 
@@ -89,7 +89,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             })) as StripePriceWithProductMetadata;
 
             if (!price?.product?.metadata?.profiles || !price.product.metadata.searches) {
-                serverLogger(new Error('Missing metadata'), 'error');
+                serverLogger(new Error('Missing metadata'), 'error', true);
                 return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
             }
 
@@ -116,7 +116,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             return res.status(httpCodes.OK).json(subscription);
         } catch (error) {
-            serverLogger(error, 'error');
+            serverLogger(error, 'error', true);
             return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
         }
     }

@@ -1,7 +1,7 @@
 import { useSessionContext } from '@supabase/auth-helpers-react';
 import type { Session, SupabaseClient, User } from '@supabase/supabase-js';
 import * as Sentry from '@sentry/browser';
-
+import { useRudderstack } from 'src/hooks/use-rudderstack';
 import type { CreateEmployeePostBody, CreateEmployeePostResponse } from 'pages/api/company/create-employee';
 import type { ProfileInsertBody, ProfilePutBody, ProfilePutResponse } from 'pages/api/profiles';
 import type { MutableRefObject, PropsWithChildren } from 'react';
@@ -80,6 +80,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
     const { supabaseClient, getProfileById } = useClientDb();
     const getProfileController = useRef<AbortController | null>();
     const [loading, setLoading] = useState<boolean>(true);
+    const { identifyFromProfile } = useRudderstack();
     useEffect(() => {
         setLoading(isLoading);
     }, [isLoading]);
@@ -93,7 +94,10 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
         if (!session?.user.id) {
             return;
         }
-        const { data: fetchedProfile, error } = await getProfileById(session?.user.id);
+        const { data: fetchedProfile, error } = await getProfileById(
+            session?.user.id,
+            getProfileController.current?.signal,
+        );
         if (error) {
             clientLogger(error, 'error');
             throw new Error(error.message || 'Unknown error');
@@ -109,6 +113,13 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
         }
         return fetchedProfile;
     });
+
+    // identify user with RudderStack on profile change
+    useEffect(() => {
+        if (profile) {
+            identifyFromProfile(profile);
+        }
+    }, [identifyFromProfile, profile]);
 
     const login = async (email: string, password: string) => {
         setLoading(true);
