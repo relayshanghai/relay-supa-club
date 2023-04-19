@@ -27,7 +27,7 @@ export const Modal = ({ visible, onClose, title, children }: ModalProps) => {
                 onClick={handleClose}
             />
             <div
-                className={`fixed left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2 transform rounded-lg bg-white p-6 shadow-lg ${
+                className={`fixed left-1/2 top-1/2 z-50 max-w-md -translate-x-1/2 -translate-y-1/2 transform rounded-lg bg-white p-6 shadow-lg ${
                     show ? 'block' : 'hidden'
                 }`}
             >
