@@ -26,21 +26,21 @@ export const useRudderstack = () => {
         if (!window.rudder) {
             await rudderInitialized();
         }
-        window.rudder.identify(userId, traits);
+        window.rudder?.identify(userId, traits);
     };
 
     const pageView = async (pageName: string, properties?: PageProperties) => {
         if (!window.rudder) {
             await rudderInitialized();
         }
-        window.rudder.page(pageName, properties);
+        window.rudder?.page(pageName, properties);
     };
 
     const trackEvent = async (eventName: string, properties?: apiObject) => {
         if (!window.rudder) {
             await rudderInitialized();
         }
-        window.rudder.track(eventName, properties);
+        window.rudder?.track(eventName, properties);
     };
 
     const identifyFromProfile = (profile: ProfileDB) => {
