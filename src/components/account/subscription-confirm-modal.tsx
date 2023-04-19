@@ -8,7 +8,7 @@ import { hasCustomError } from 'src/utils/errors';
 import type { SubscriptionPeriod } from 'types';
 
 import { Button } from '../button';
-import { Modal } from '../modal';
+import { Modal } from '../library';
 import { nextFetchWithQueries } from 'src/utils/fetcher';
 import type { CouponGetQueries, CouponGetResponse } from 'pages/api/subscriptions/coupon';
 import { clientLogger } from 'src/utils/logger-client';
