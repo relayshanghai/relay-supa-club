@@ -1,4 +1,4 @@
-import { Supabase } from './drivers/supabase';
+import { Memory } from './drivers/memory';
 import type { CacheInterface, DataSourceCacheDrivers } from './types';
 
 export class Cache<T extends DataSourceCacheDrivers> implements CacheInterface<T> {
@@ -8,8 +8,8 @@ export class Cache<T extends DataSourceCacheDrivers> implements CacheInterface<T
         this.cache = _cache || Cache.getDefaultDriver();
     }
 
-    static getDefaultDriver(): CacheInterface<Supabase> {
-        return new Supabase();
+    static getDefaultDriver(): CacheInterface<Memory> {
+        return new Memory();
     }
 
     getCache(): CacheInterface<T> {

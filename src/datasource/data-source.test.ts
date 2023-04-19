@@ -29,7 +29,7 @@ describe('Data Source', () => {
         const cacheItem = await datasource.getCache().get(key);
         const isDeleted = await datasource.getCache().remove(key);
 
-        expect(isDeleted).toBe(1);
+        expect(isDeleted).toBe(true);
         expect(cacheItem).not.toBeNull();
         expect(influencer?.user_profile?.user_id).toBe(searchResults.accounts[0].account.user_profile.user_id);
     });
