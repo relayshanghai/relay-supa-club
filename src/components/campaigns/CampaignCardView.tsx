@@ -13,7 +13,7 @@ export default function CampaignCardView({
             {campaigns.map((campaign, index) => {
                 if (campaign.status === currentTab || currentTab === '' || currentTab === 'archived')
                     return (
-                        <div key={index}>
+                        <div key={index} id={`campaign-card-${campaign.slug}`}>
                             <CampaignCardSquare campaign={campaign} />
                         </div>
                     );
