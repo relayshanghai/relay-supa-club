@@ -1,22 +1,22 @@
 CREATE OR REPLACE FUNCTION tests.log(_data ANYELEMENT)
-    RETURNS void
-    AS $$
+RETURNS VOID
+AS $$
     BEGIN
       RAISE NOTICE E'\n%', _data;
     END;
     $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION tests.logg(_data ANYELEMENT) RETURNS void
-    AS $$
+CREATE OR REPLACE FUNCTION tests.logg(_data ANYELEMENT) RETURNS VOID
+AS $$
     BEGIN
       RAISE NOTICE E'\n\n%\n', _data;
     END;
     $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION tests.set_var(_name TEXT, _data ANYELEMENT)
-    RETURNS void
-    LANGUAGE plpgsql
-    AS $$
+RETURNS VOID
+LANGUAGE plpgsql
+AS $$
         BEGIN
           SET client_min_messages = warning;
           CREATE TEMP TABLE IF NOT EXISTS test_vars (name TEXT, value TEXT);
@@ -26,9 +26,9 @@ CREATE OR REPLACE FUNCTION tests.set_var(_name TEXT, _data ANYELEMENT)
     $$;
 
 CREATE OR REPLACE FUNCTION tests.get_var(_name ANYELEMENT)
-    RETURNS ANYELEMENT
-    LANGUAGE plpgsql
-    AS $$
+RETURNS ANYELEMENT
+LANGUAGE plpgsql
+AS $$
         BEGIN
           SET client_min_messages = warning;
           CREATE TEMP TABLE IF NOT EXISTS test_vars (name TEXT, value TEXT);
@@ -38,9 +38,9 @@ CREATE OR REPLACE FUNCTION tests.get_var(_name ANYELEMENT)
     $$;
 
 CREATE OR REPLACE FUNCTION tests.get_profiles()
-    RETURNS RECORD
-    SECURITY DEFINER
-    AS $$
+RETURNS RECORD
+SECURITY DEFINER
+AS $$
     DECLARE
         _row RECORD;
     BEGIN
@@ -49,9 +49,11 @@ CREATE OR REPLACE FUNCTION tests.get_profiles()
     END;
     $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION tests.create_profile(email TEXT, first_name TEXT, last_name TEXT, _role TEXT, company_id UUID)
-    RETURNS UUID
-    AS $$
+CREATE OR REPLACE FUNCTION tests.create_profile(
+  email TEXT, first_name TEXT, last_name TEXT, _role TEXT, company_id UUID
+)
+RETURNS UUID
+AS $$
     DECLARE
         user_id uuid;
     BEGIN
@@ -63,8 +65,8 @@ CREATE OR REPLACE FUNCTION tests.create_profile(email TEXT, first_name TEXT, las
     $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION tests.create_company(company_name TEXT, website TEXT)
-    RETURNS UUID
-    AS $$
+RETURNS UUID
+AS $$
     DECLARE
         company_id uuid;
     BEGIN
@@ -75,8 +77,8 @@ CREATE OR REPLACE FUNCTION tests.create_company(company_name TEXT, website TEXT)
     $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION tests.create_test_users()
-    RETURNS void
-    AS $$
+RETURNS VOID
+AS $$
     DECLARE
         company_id uuid;
         company2_id uuid;
@@ -167,4 +169,4 @@ SELECT pass('Loading relay test helpers');
 SELECT * FROM finish();
 ROLLBACK;
 
-SELECT diag('>-------------------------------------------------------------------------------- [TESTS START]'::TEXT);
+SELECT diag('>--------------------------------------------------------------- [TESTS START]'::TEXT);
