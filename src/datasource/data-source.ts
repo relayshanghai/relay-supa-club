@@ -14,7 +14,7 @@ export class DataSource<T extends DataSourceDrivers> implements DataSourceInterf
         return new DataSource<TDriver>(driver);
     }
 
-    static getDefaultDriver(): DataSourceInterface<IQDataDriver> {
+    static getDefaultDriver(): DataSourceInterface<DataSourceDrivers> {
         return new IQDataDriver();
     }
 
