@@ -72,7 +72,7 @@ export const useCampaigns = ({
     }, [campaignId, allCampaigns]);
 
     useEffect(() => {
-        if (allCampaigns && allCampaigns?.length > 0) {
+        if (allCampaigns && allCampaigns.length > 0) {
             const unarchivedCampaigns = allCampaigns.filter((campaign) => !campaign.archived);
             const archivedCampaigns = allCampaigns.filter((campaign) => campaign.archived);
             setCampaigns(unarchivedCampaigns);
