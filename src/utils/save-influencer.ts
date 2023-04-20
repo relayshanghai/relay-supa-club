@@ -5,4 +5,6 @@ import { extractInfluencer, extractInfluencerProfile } from './api/iqdata/extrac
 export const saveInfluencer = (data: CreatorReport) => {
     const influencer = insertInfluencer(extractInfluencer(data.user_profile));
     insertInfluencerProfile(extractInfluencerProfile(influencer, data.user_profile));
+
+    return influencer;
 };
