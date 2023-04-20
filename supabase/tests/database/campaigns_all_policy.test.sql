@@ -2,7 +2,7 @@
 -- Policies directory: /tmp/supabase/policies
 
 BEGIN;
-SELECT plan(3);
+SELECT plan(7);
 
 -- start includes
 \include /tmp/supabase/functions/is_company_member.sql
@@ -19,78 +19,49 @@ SELECT tests.clear_authentication();
 
 -- TODO: test when campaigns seed is ready
 
--- SELECT
---     is(
---         (
---             SELECT company_id
---             FROM campaigns
---             WHERE id = tests.get_supabase_uid('owner@email.com')
---         ),
---         null,
---         'Anonymous user CANNOT select other campaigns'
---     );
+SELECT
+  is((
+    SELECT company_id
+    FROM campaigns
+    WHERE id = (SELECT id FROM companies WHERE name = 'Blue Moonlight Stream Enterprises')
+  ),
+  null,
+  'Anonymous user CANNOT select other campaigns'
+  );
 
--- -- test employee
--- SELECT tests.authenticate_as('employee@email.com');
+-- test employee
+SELECT tests.authenticate_as('christopher.david.thompson@blue-moonlight-stream.com');
+SELECT is(
+  (
+    SELECT name
+    FROM campaigns
+    WHERE company_id = (SELECT id FROM companies WHERE name = 'Blue Moonlight Stream Enterprises')
+  ),
+  'Beauty for All Skin Tones',
+  'Employee CAN select own company campaigns'
+);
 
--- SELECT is(
---     is_company_member(),
---     false,
---     'Authenticated user IS NOT a relay employee'
--- );
--- SELECT is(
---     (
---         SELECT company_id
---         FROM campaigns
---         WHERE company_id = tests.get_supabase_uid('employee@email.com')
---     ),
---     'company_teammate',
---     'Employee CAN select own profile'
--- );
--- SELECT is(
---     (
---         SELECT user_role
---         FROM campaigns
---         WHERE id = tests.get_supabase_uid('owner@email.com')
---     ),
---     null,
---     'Employee CANNOT select other campaigns'
--- );
+SELECT is(
+  (
+    SELECT name
+    FROM campaigns
+    WHERE company_id = (SELECT id FROM companies WHERE name = 'Relay Club')
+  ),
+  null,
+  'Employee CANNOT select other company campaigns'
+);
 
--- -- test staff user
--- SELECT tests.authenticate_as('jacob@relay.club');
--- SELECT is(
---     is_relay_employee(),
---     true,
---     'Authenticated user IS a Relay employee'
--- );
--- SELECT is(
---     (
---         SELECT user_role
---         FROM campaigns
---         WHERE id = tests.get_supabase_uid('jacob@relay.club')
---     ),
---     'relay_employee',
---     'Relay employee CAN select own profile'
--- );
--- SELECT is(
---     (
---         SELECT user_role
---         FROM campaigns
---         WHERE id = tests.get_supabase_uid('employee@email.com')
---     ),
---     'company_teammate',
---     'Relay employee CAN select other employee campaigns'
--- );
--- SELECT is(
---     (
---         SELECT user_role
---         FROM campaigns
---         WHERE id = tests.get_supabase_uid('owner@email.com')
---     ),
---     'company_owner',
---     'Relay employee CAN select company owner profile'
--- );
+-- test staff user
+SELECT tests.authenticate_as('jacob@relay.club');
+SELECT is(
+  (
+    SELECT name
+    FROM campaigns
+    WHERE company_id = (SELECT id FROM companies WHERE name = 'Blue Moonlight Stream Enterprises')
+  ),
+  'Beauty for All Skin Tones',
+  'Employee CAN select own company campaigns'
+);
 
 SELECT * FROM finish(); -- end test
 ROLLBACK;
