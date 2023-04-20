@@ -4,18 +4,19 @@ import { createContext, useCallback, useContext } from 'react';
 import type { KeyedMutator } from 'swr';
 import useSWR from 'swr';
 
-import type { CompanyGetResponse, CompanyPutBody, CompanyPutResponse } from 'pages/api/company';
 import type { CompanyCreatePostBody, CompanyCreatePostResponse } from 'pages/api/company/create';
+import type { CompanyPutBody, CompanyPutResponse } from 'pages/api/company';
 import { createCompanyValidationErrors } from 'src/errors/company';
 import { nextFetch } from 'src/utils/fetcher';
 import { useUser } from './use-user';
 import { useClientDb } from 'src/utils/client-db/use-client-db';
+import type { CompanyDB } from 'src/utils/api/db';
 
 export interface CompanyContext {
-    company: CompanyGetResponse | undefined;
+    company: CompanyDB | undefined;
     updateCompany: (input: Omit<CompanyPutBody, 'id'>) => Promise<CompanyPutResponse | null>;
     createCompany: (input: { name: string; website?: string }) => Promise<CompanyCreatePostResponse | null>;
-    refreshCompany: KeyedMutator<CompanyGetResponse> | (() => void);
+    refreshCompany: KeyedMutator<CompanyDB> | (() => void);
 }
 
 const ctx = createContext<CompanyContext>({
