@@ -17,22 +17,20 @@ SELECT policy_cmd_is('profiles', 'profiles_select', 'select');
 SELECT policy_cmd_is('profiles', 'profiles_delete', 'delete');
 
 PREPARE delete_others AS
-  DELETE FROM profiles
-  WHERE email = 'william.edward.douglas@blue-moonlight-stream.com'
-  RETURNING email;
+DELETE FROM profiles
+WHERE email = 'william.edward.douglas@blue-moonlight-stream.com'
+RETURNING email;
 
 PREPARE delete_own AS
-  DELETE FROM profiles
-  WHERE email = 'christopher.david.thompson@blue-moonlight-stream.com'
-  RETURNING email;
+DELETE FROM profiles
+WHERE email = 'christopher.david.thompson@blue-moonlight-stream.com'
+RETURNING email;
 
 PREPARE delete_own_relay AS
-  DELETE FROM profiles
-  WHERE email = 'jacob@relay.club'
-  RETURNING email;
-
+DELETE FROM profiles
+WHERE email = 'jacob@relay.club'
+RETURNING email;
 SAVEPOINT p2;
-
 -- Test anonymous
 SELECT tests.clear_authentication();
 
