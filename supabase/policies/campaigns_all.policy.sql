@@ -6,5 +6,5 @@ DROP POLICY IF EXISTS campaigns_all ON campaigns;
 
 CREATE POLICY campaigns_all ON campaigns FOR ALL
 USING (
-    is_company_member(company_id) OR is_relay_employee()
+  is_company_member(company_id) OR is_relay_employee()
 );
