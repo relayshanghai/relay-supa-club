@@ -3,6 +3,7 @@ import httpCodes from 'src/constants/httpCodes';
 import { recordReportUsage } from 'src/utils/api/db/calls/usages';
 import { fetchReport, fetchReportsMetadata, requestNewReport } from 'src/utils/api/iqdata';
 import { serverLogger } from 'src/utils/logger-server';
+import { saveInfluencer } from 'src/utils/save-influencer';
 import type { CreatorPlatform, CreatorReport } from 'types';
 
 export type CreatorsReportGetQueries = {
@@ -34,6 +35,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 if (recordError) {
                     return res.status(httpCodes.BAD_REQUEST).json({ error: recordError });
                 }
+
+                saveInfluencer(data);
 
                 return res.status(httpCodes.OK).json({ ...data, createdAt });
             } catch (error) {
