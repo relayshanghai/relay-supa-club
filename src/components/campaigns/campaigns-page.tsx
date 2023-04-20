@@ -7,16 +7,18 @@ import { Button } from 'src/components/button';
 import { useCampaigns } from 'src/hooks/use-campaigns';
 import CampaignCardView from 'src/components/campaigns/CampaignCardView';
 import { useTranslation } from 'react-i18next';
-import type { CampaignsIndexGetResult } from 'pages/api/campaigns';
 
 const CampaignsPage = ({ companyId }: { companyId?: string }) => {
     const { t } = useTranslation();
     const [currentTab, setCurrentTab] = useState('');
 
-    const { campaigns, isLoading, archivedCampaigns, isArchivedCampaignsLoading } = useCampaigns({ companyId });
+    const { campaigns, isLoading, archivedCampaigns } = useCampaigns({ companyId });
 
-    const renderCampaigns = (campaigns: CampaignsIndexGetResult | undefined) => {
-        if (!campaigns?.length) {
+    const renderCampaigns = () => {
+        if (
+            (!campaigns?.length && currentTab !== 'archived') ||
+            (!archivedCampaigns?.length && currentTab === 'archived')
+        ) {
             return (
                 <div className="h-full text-sm text-gray-600">
                     {t('campaigns.index.noCampaignsAvailable') + ' '}
@@ -28,7 +30,13 @@ const CampaignsPage = ({ companyId }: { companyId?: string }) => {
                 </div>
             );
         }
-        return <CampaignCardView campaigns={campaigns} currentTab={currentTab} />;
+
+        return (
+            <CampaignCardView
+                campaigns={currentTab === 'archived' ? archivedCampaigns : campaigns}
+                currentTab={currentTab}
+            />
+        );
     };
 
     return (
@@ -40,12 +48,10 @@ const CampaignsPage = ({ companyId }: { companyId?: string }) => {
                         <Button>{t('campaigns.index.createCampaign')}</Button>
                     </Link>
                 </div>
-                {isLoading || isArchivedCampaignsLoading ? (
+                {isLoading ? (
                     <Spinner className="mx-auto mt-10 h-10 w-10 fill-primary-600 text-white" />
-                ) : currentTab === 'archived' ? (
-                    renderCampaigns(archivedCampaigns)
                 ) : (
-                    renderCampaigns(campaigns)
+                    renderCampaigns()
                 )}
             </div>
         </Layout>

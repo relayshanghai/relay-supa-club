@@ -107,6 +107,8 @@ const campaigns = {
             // eslint-disable-next-line quote-props
             completed: 'Completed',
         },
+        archived: 'Campaign archived successfully',
+        unarchived: 'Campaign unarchived successfully',
         submitting: 'Submitting',
         editCampaign: 'Edit Campaign',
         promotionPlatforms: 'Promotion Platforms',

@@ -2,7 +2,7 @@ import { useRouter } from 'next/router';
 import type { ChangeEvent } from 'react';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PencilSquareIcon, TrashIcon } from '@heroicons/react/20/solid';
+import { ArchiveBoxIcon, ArchiveBoxXMarkIcon, PencilSquareIcon } from '@heroicons/react/20/solid';
 import Link from 'next/link';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import Image from 'next/legacy/image';
@@ -17,6 +17,7 @@ import type { CampaignCreatorDB, CampaignWithCompanyCreators } from 'src/utils/a
 import { imgProxy } from 'src/utils/fetcher';
 import { useCompany } from 'src/hooks/use-company';
 import { Spinner } from 'src/components/icons';
+import { toast } from 'react-hot-toast';
 
 export default function CampaignShow() {
     const router = useRouter();
@@ -58,11 +59,21 @@ export default function CampaignShow() {
         refreshCampaigns();
     };
 
-    const deleteCampaignHandler = async () => {
+    const archiveCampaignHandler = async () => {
         if (!currentCampaign) return;
         const { campaign_creators: _filterOut, companies: _filterOut2, ...campaign } = currentCampaign;
         await updateCampaign({ ...campaign, archived: true });
         router.push('/campaigns');
+        toast.success(t('campaigns.show.archived'));
+        refreshCampaigns();
+    };
+
+    const unarchiveCampaignHandler = async () => {
+        if (!currentCampaign) return;
+        const { campaign_creators: _filterOut, companies: _filterOut2, ...campaign } = currentCampaign;
+        await updateCampaign({ ...campaign, archived: false });
+        router.push('/campaigns');
+        toast.success(t('campaigns.show.unarchived'));
         refreshCampaigns();
     };
 
@@ -171,26 +182,46 @@ export default function CampaignShow() {
                         </div>
                     </div>
                 </div>
-                {currentCampaign?.id && (
-                    <div className=" group absolute top-3 right-16 z-10 mr-2 flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg bg-red-50 text-sm font-semibold text-red-500 duration-300 hover:bg-red-100">
+                {currentCampaign?.id && !currentCampaign.archived && (
+                    <div
+                        className=" group absolute top-3 right-24 z-10 mr-2 flex h-8 cursor-pointer items-center justify-center rounded-lg bg-gray-50 text-sm font-semibold duration-300 hover:bg-gray-200"
+                        onClick={archiveCampaignHandler}
+                    >
                         {loading ? (
                             <Spinner className="h-4 w-4 fill-red-600 text-red-200" />
                         ) : (
-                            <TrashIcon
-                                name="delete"
-                                className="h-4 w-4 fill-current text-red-300 duration-300 group-hover:text-red-500"
-                                onClick={deleteCampaignHandler}
-                            />
+                            <span className="flex flex-row items-center gap-1 px-2 text-gray-400 duration-300 group-hover:text-primary-500">
+                                Archive
+                                <ArchiveBoxIcon
+                                    name="delete"
+                                    className="h-4 w-4 fill-current text-gray-400 duration-300 group-hover:text-primary-500"
+                                />
+                            </span>
+                        )}
+                    </div>
+                )}
+                {currentCampaign?.id && currentCampaign.archived && (
+                    <div
+                        className=" group absolute top-3 right-24 z-10 mr-2 flex h-8 cursor-pointer items-center justify-center rounded-lg bg-gray-50 text-sm font-semibold duration-300 hover:bg-gray-200"
+                        onClick={unarchiveCampaignHandler}
+                    >
+                        {loading ? (
+                            <Spinner className="h-4 w-4 fill-red-600 text-red-200" />
+                        ) : (
+                            <span className="flex flex-row items-center gap-1 px-2 text-gray-400 duration-300 group-hover:text-primary-500">
+                                Unarchive
+                                <ArchiveBoxXMarkIcon name="delete" className="h-4 w-4 fill-current" />
+                            </span>
                         )}
                     </div>
                 )}
                 {currentCampaign?.id && (
-                    <div className=" group absolute top-3 right-6 z-10 mr-2 flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg bg-gray-50 text-sm font-semibold text-gray-500 duration-300 hover:bg-gray-100">
+                    <div className=" group absolute top-3 right-6 z-10 mr-2 flex h-8 cursor-pointer items-center justify-center rounded-lg bg-gray-50 text-sm font-semibold duration-300 hover:bg-gray-200">
                         <Link href={`/campaigns/form/${encodeURIComponent(currentCampaign?.id)}`} legacyBehavior>
-                            <PencilSquareIcon
-                                name="edit"
-                                className="h-4 w-4 fill-current text-gray-300 duration-300 group-hover:text-primary-500"
-                            />
+                            <span className="flex flex-row items-center gap-1 px-2 text-gray-400 duration-300 group-hover:text-primary-500">
+                                Edit
+                                <PencilSquareIcon name="edit" className="h-4 w-4 fill-current" />
+                            </span>
                         </Link>
                     </div>
                 )}

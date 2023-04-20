@@ -42,7 +42,7 @@ export const useCampaigns = ({
     const { profile } = useUser();
     const companyId = passedInCompanyId ?? profile?.company_id;
     const {
-        data: campaigns,
+        data: allCampaigns,
         mutate: refreshCampaigns,
         isValidating,
         isLoading,
@@ -51,26 +51,24 @@ export const useCampaigns = ({
             id: companyId ?? '',
         }),
     );
-    const {
-        data: archivedCampaigns,
-        mutate: refreshArchivedCampaigns,
-        isValidating: isArchivedCampaignsValidating,
-        isLoading: isArchivedCampaignsLoading,
-    } = useSWR(companyId ? 'campaigns/get-archived' : null, (path) =>
-        nextFetchWithQueries<CampaignsIndexGetQuery, CampaignsIndexGetResult>(path, {
-            id: companyId ?? '',
-        }),
-    );
-
     const [loading, setLoading] = useState(false);
     const [campaign, setCampaign] = useState<CampaignWithCompanyCreators | null>(null);
     const [campaignCreators, setCampaignCreators] = useState<CampaignWithCompanyCreators['campaign_creators'] | null>(
         [],
     );
+    const [campaigns, setCampaigns] = useState<CampaignWithCompanyCreators[]>([]);
+    const [archivedCampaigns, setArchivedCampaigns] = useState<CampaignWithCompanyCreators[]>([]);
 
     useEffect(() => {
-        if (campaigns && campaigns?.length > 0 && campaignId) {
-            const campaign = campaigns?.find((c) => c.id === campaignId);
+        if (allCampaigns && allCampaigns?.length > 0) {
+            const unarchivedCampaigns = allCampaigns.filter((campaign) => !campaign.archived);
+            const archivedCampaigns = allCampaigns.filter((campaign) => campaign.archived);
+            setCampaigns(unarchivedCampaigns);
+            setArchivedCampaigns(archivedCampaigns);
+        }
+
+        if (allCampaigns && allCampaigns?.length > 0 && campaignId) {
+            const campaign = allCampaigns?.find((c) => c.id === campaignId);
             if (campaign) {
                 setCampaign(campaign);
             }
@@ -78,7 +76,7 @@ export const useCampaigns = ({
                 setCampaignCreators(campaign.campaign_creators);
             }
         }
-    }, [campaignId, campaigns]);
+    }, [campaignId, allCampaigns]);
 
     const createCampaign = useCallback(
         async (input: Omit<CampaignsCreatePostBody, 'company_id'>) => {
@@ -195,8 +193,5 @@ export const useCampaigns = ({
         deleteCreatorInCampaign,
         updateCreatorInCampaign,
         refreshCampaigns,
-        refreshArchivedCampaigns,
-        isArchivedCampaignsValidating,
-        isArchivedCampaignsLoading,
     };
 };
