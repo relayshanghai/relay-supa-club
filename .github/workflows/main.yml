@@ -26,6 +26,7 @@ env:
     TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
     TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
     NEXT_PUBLIC_FEAT_RECOMMENDED: true
+    SENTRY_IGNORE_API_RESOLUTION_ERROR: 1
 
 jobs:
     supabase-test:

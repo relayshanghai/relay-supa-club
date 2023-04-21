@@ -50,12 +50,17 @@ const checkOnboardingStatus = async (
         return res;
     }
     // special case where we require a signed in user to view their profile, but we don't want to redirect them to onboarding cause this happens before they are onboarded
+
     if (req.nextUrl.pathname === '/api/profiles' && req.method === 'GET') {
         // print req queries
         const id = new URL(req.url).searchParams.get('id');
         if (!id || id !== session.user.id) {
             return NextResponse.rewrite(redirectUrl.origin, { status: httpCodes.FORBIDDEN });
         }
+        return res;
+    }
+    if (req.nextUrl.pathname === '/api/profiles' && req.method === 'POST') {
+        // for new user signup. We have checks in the next endpoint
         return res;
     }
     const { subscriptionStatus, subscriptionEndDate } = await getCompanySubscriptionStatus(supabase, session.user.id);
