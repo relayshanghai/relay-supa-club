@@ -1,6 +1,7 @@
 import { Layout } from 'src/components/layout';
 import { useState } from 'react';
 import Link from 'next/link';
+import type { TabLabel } from 'src/components/campaigns/tabs';
 import Tabs from 'src/components/campaigns/tabs';
 import { Spinner } from 'src/components/icons';
 import { Button } from 'src/components/button';
@@ -10,7 +11,7 @@ import { useTranslation } from 'react-i18next';
 
 const CampaignsPage = ({ companyId }: { companyId?: string }) => {
     const { t } = useTranslation();
-    const [currentTab, setCurrentTab] = useState('');
+    const [currentTab, setCurrentTab] = useState<TabLabel['value']>('');
 
     const { campaigns, isLoading, archivedCampaigns } = useCampaigns({ companyId });
 
