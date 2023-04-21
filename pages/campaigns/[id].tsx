@@ -109,10 +109,10 @@ export default function CampaignShow() {
     return (
         <Layout>
             {/* -- Campaign banner starts here -- */}
-            <div className="relative flex w-full items-center justify-center rounded-2xl bg-white py-4 px-4 sm:h-40 sm:py-0 md:justify-between">
+            <div className="relative flex w-full items-center justify-center rounded-2xl bg-white px-4 py-4 sm:h-40 sm:py-0 md:justify-between">
                 <div>
                     <div className="sm:items-left flex flex-col items-center sm:flex-row">
-                        <div className="mb-4 h-32 w-32 flex-shrink-0 sm:mr-4 sm:mb-0">
+                        <div className="mb-4 h-32 w-32 flex-shrink-0 sm:mb-0 sm:mr-4">
                             <Image
                                 src={media?.[0]?.url || '/assets/imgs/image404.png'}
                                 alt="campaign photo"
@@ -172,7 +172,7 @@ export default function CampaignShow() {
                                         currentCampaign?.tag_list.map((tag, index) => (
                                             <div
                                                 key={index}
-                                                className="mr-1 mb-1 rounded-md bg-tertiary-50 px-2 py-1 text-xs text-tertiary-600"
+                                                className="mb-1 mr-1 rounded-md bg-tertiary-50 px-2 py-1 text-xs text-tertiary-600"
                                             >
                                                 {tag}
                                             </div>
@@ -184,14 +184,14 @@ export default function CampaignShow() {
                 </div>
                 {currentCampaign?.id && !currentCampaign.archived && (
                     <div
-                        className=" group absolute top-3 right-24 z-10 mr-2 flex h-8 cursor-pointer items-center justify-center rounded-lg bg-gray-50 text-sm font-semibold duration-300 hover:bg-gray-200"
+                        className=" group absolute right-24 top-3 z-10 mr-2 flex h-8 cursor-pointer items-center justify-center rounded-lg bg-gray-50 text-sm font-semibold duration-300 hover:bg-gray-200"
                         onClick={archiveCampaignHandler}
                     >
                         {loading ? (
                             <Spinner className="h-4 w-4 fill-red-600 text-red-200" />
                         ) : (
                             <span className="flex flex-row items-center gap-1 px-2 text-gray-400 duration-300 group-hover:text-primary-500">
-                                Archive
+                                {t('campaigns.index.archive')}
                                 <ArchiveBoxIcon
                                     name="delete"
                                     className="h-4 w-4 fill-current text-gray-400 duration-300 group-hover:text-primary-500"
@@ -202,24 +202,24 @@ export default function CampaignShow() {
                 )}
                 {currentCampaign?.id && currentCampaign.archived && (
                     <div
-                        className=" group absolute top-3 right-24 z-10 mr-2 flex h-8 cursor-pointer items-center justify-center rounded-lg bg-gray-50 text-sm font-semibold duration-300 hover:bg-gray-200"
+                        className=" group absolute right-24 top-3 z-10 mr-2 flex h-8 cursor-pointer items-center justify-center rounded-lg bg-gray-50 text-sm font-semibold duration-300 hover:bg-gray-200"
                         onClick={unarchiveCampaignHandler}
                     >
                         {loading ? (
                             <Spinner className="h-4 w-4 fill-red-600 text-red-200" />
                         ) : (
                             <span className="flex flex-row items-center gap-1 px-2 text-gray-400 duration-300 group-hover:text-primary-500">
-                                Unarchive
+                                {t('campaigns.index.unarchive')}
                                 <ArchiveBoxXMarkIcon name="delete" className="h-4 w-4 fill-current" />
                             </span>
                         )}
                     </div>
                 )}
                 {currentCampaign?.id && (
-                    <div className=" group absolute top-3 right-6 z-10 mr-2 flex h-8 cursor-pointer items-center justify-center rounded-lg bg-gray-50 text-sm font-semibold duration-300 hover:bg-gray-200">
+                    <div className=" group absolute right-6 top-3 z-10 mr-2 flex h-8 cursor-pointer items-center justify-center rounded-lg bg-gray-50 text-sm font-semibold duration-300 hover:bg-gray-200">
                         <Link href={`/campaigns/form/${encodeURIComponent(currentCampaign?.id)}`} legacyBehavior>
                             <span className="flex flex-row items-center gap-1 px-2 text-gray-400 duration-300 group-hover:text-primary-500">
-                                Edit
+                                {t('campaigns.index.edit')}
                                 <PencilSquareIcon name="edit" className="h-4 w-4 fill-current" />
                             </span>
                         </Link>
@@ -227,7 +227,7 @@ export default function CampaignShow() {
                 )}
             </div>
             {/* -- Campaign outreach details starts --*/}
-            <div className="py-0 px-4 sm:h-40 md:py-6">
+            <div className="px-4 py-0 sm:h-40 md:py-6">
                 <div className="mb-4 flex overflow-x-auto">
                     {tabs.map((tab, index) => (
                         <div

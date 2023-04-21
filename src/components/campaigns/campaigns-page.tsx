@@ -21,7 +21,7 @@ const CampaignsPage = ({ companyId }: { companyId?: string }) => {
         ) {
             return (
                 <div className="h-full text-sm text-gray-600">
-                    {t('campaigns.index.noCampaignsAvailable') + ' '}
+                    {`${t('campaigns.index.noCampaignsAvailable')} `}
                     <span className="cursor-pointer text-primary-500 duration-300 hover:text-primary-700">
                         <Link href="/campaigns/form" legacyBehavior>
                             {t('campaigns.index.clickCreate')}

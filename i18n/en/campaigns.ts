@@ -13,6 +13,9 @@ const campaigns = {
         noCampaignsAvailable: 'Oops! No campaigns available.',
         clickCreate: 'Click here to create a campaign',
         searchPlaceholder: 'Search campaigns...',
+        archive: 'Archive',
+        unarchive: 'Unarchive',
+        edit: 'Edit',
     },
     modal: {
         addToCampaign: 'Add To Campaign',
