@@ -12,7 +12,7 @@ describe('CampaignsPage', () => {
         cy.get('#campaign-card-second').should('exist');
         cy.get('#campaign-card-【test】amy-test-campaign-for-fragrance-kols').should('exist');
 
-        cy.contains('Second');
+        cy.contains('Empty Campaign');
         cy.contains('【test】Amy test campaign for fragrance KOLs');
     });
 
@@ -23,6 +23,6 @@ describe('CampaignsPage', () => {
 
         cy.get('#campaign-card-testcampaign').should('exist');
 
-        cy.contains('TestCampaign');
+        cy.contains('Test Archive Campaign');
     });
 });

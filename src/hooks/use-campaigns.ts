@@ -56,6 +56,7 @@ export const useCampaigns = ({
     const [campaignCreators, setCampaignCreators] = useState<CampaignWithCompanyCreators['campaign_creators'] | null>(
         [],
     );
+
     const [campaigns, setCampaigns] = useState<CampaignWithCompanyCreators[]>([]);
     const [archivedCampaigns, setArchivedCampaigns] = useState<CampaignWithCompanyCreators[]>([]);
 
@@ -182,7 +183,9 @@ export const useCampaigns = ({
     );
 
     return {
+        /** All campaigns that are not archived */
         campaigns,
+        /** All campaigns that are archived */
         archivedCampaigns,
         createCampaign,
         updateCampaign,
