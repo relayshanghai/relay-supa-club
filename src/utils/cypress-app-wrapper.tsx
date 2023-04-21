@@ -10,6 +10,8 @@ import { createBrowserSupabaseClient } from '@supabase/auth-helpers-nextjs';
 import { SessionContextProvider } from '@supabase/auth-helpers-react';
 import { SWRConfig } from 'swr';
 import { Toaster } from 'react-hot-toast';
+import { Provider } from 'jotai';
+import { useHydrateAtoms } from 'jotai/utils';
 i18n.changeLanguage('en');
 
 export interface TestMountOptions {
@@ -78,3 +80,14 @@ export const testMount = (component: React.ReactElement, options?: TestMountOpti
         </AppRouterContext.Provider>,
     );
 };
+
+const HydrateAtoms = ({ initialValues, children }: { initialValues: any; children: any }) => {
+    useHydrateAtoms(initialValues);
+    return children;
+};
+
+export const TestProvider = ({ initialValues, children }: { initialValues: any; children: any }) => (
+    <Provider>
+        <HydrateAtoms initialValues={initialValues}>{children}</HydrateAtoms>
+    </Provider>
+);
