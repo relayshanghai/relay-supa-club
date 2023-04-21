@@ -1,4 +1,4 @@
-import { supabase, supabaseServiceAccount } from 'src/utils/supabase-client';
+import { supabase } from 'src/utils/supabase-client';
 import type { AccountRole } from 'types';
 import type { ProfileDBUpdate, ProfileDBInsert } from '../types';
 
@@ -6,18 +6,18 @@ import type { ProfileDBUpdate, ProfileDBInsert } from '../types';
 export const insertProfile = (insert: ProfileDBInsert) => {
     const { user_role: _filter_out, ...insertData } = insert;
     insertData.updated_at = new Date().toISOString();
-    supabaseServiceAccount.from('profiles').insert(insertData).select().single();
+    return supabase.from('profiles').insert(insertData).select().single();
 };
 
 /** updates profile but does not allow changing of role status, automatically updates `updated_at` field */
 export const updateProfile = (update: ProfileDBUpdate) => {
     const { user_role: _filter_out, ...updateData } = update;
     updateData.updated_at = new Date().toISOString();
-    return supabaseServiceAccount.from('profiles').update(updateData).eq('id', updateData.id).select().single();
+    return supabase.from('profiles').update(updateData).eq('id', updateData.id).select().single();
 };
 
 export const updateUserRole = (userId: string, user_role: AccountRole) =>
-    supabaseServiceAccount.from('profiles').update({ user_role }).eq('id', userId).select().single();
+    supabase.from('profiles').update({ user_role }).eq('id', userId).select().single();
 
 export const getUserRole = (userId: string) => supabase.from('profiles').select('user_role').eq('id', userId).single();
 
