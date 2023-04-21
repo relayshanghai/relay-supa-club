@@ -1,12 +1,12 @@
-begin;
-select plan(1); -- no. of tests in the file
+BEGIN;
+SELECT plan(1); -- no. of tests in the file
 
 SELECT has_column(
-    'auth',
-    'users',
-    'id',
-    'id should exist'
+  'auth',
+  'users',
+  'id',
+  'id should exist'
 );
 
-select * from finish(); -- end test
-rollback;
+SELECT * FROM finish(); -- end test
+ROLLBACK;
