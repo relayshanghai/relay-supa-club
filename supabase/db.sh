@@ -245,6 +245,12 @@ function get_linked_project {
 # Reverse engineered from
 # https://github.com/supabase/cli/blob/main/internal/db/test/test.go#L39
 function test_database {
+    npx supabase status &>/dev/null
+    if [ $? -eq 1 ]; then
+        echo "Local Supabase is not started. Skipping database testing."
+        exit 0
+    fi
+
     # get the `project_id` in the config.toml
     project_id=$(awk -F '[ "=]+' '$1=="project_id" {print $2}' "$script_dir/config.toml")
     container="supabase_db_$project_id"

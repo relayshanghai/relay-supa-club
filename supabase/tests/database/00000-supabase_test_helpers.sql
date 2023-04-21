@@ -1,5 +1,5 @@
 -- Enable pgTAP if it's not already enabled
-create extension if not exists pgtap with schema extensions;
+CREATE EXTENSION IF NOT EXISTS pgtap WITH SCHEMA extensions;
 
 -- We want to store all of this in the tests schema to keep it
 -- separate from any application data
@@ -32,10 +32,12 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA tests GRANT EXECUTE ON FUNCTIONS TO anon, aut
     *   SELECT tests.create_supabase_user('test_member', 'member@test.com', '555-555-5555');
     * ```
  */
-CREATE OR REPLACE FUNCTION tests.create_supabase_user(identifier text, email text default null, phone text default null)
+CREATE OR REPLACE FUNCTION tests.create_supabase_user(
+  identifier text, email text DEFAULT null, phone text DEFAULT null
+)
 RETURNS uuid
-    SECURITY DEFINER
-    SET search_path = auth, pg_temp
+SECURITY DEFINER
+SET search_path = auth, pg_temp
 AS $$
 DECLARE
     user_id uuid;
@@ -100,9 +102,9 @@ $$ LANGUAGE plpgsql;
     * ```
  */
 CREATE OR REPLACE FUNCTION tests.get_supabase_uid(identifier text)
-    RETURNS uuid
-    SECURITY DEFINER
-    SET search_path = auth, pg_temp
+RETURNS uuid
+SECURITY DEFINER
+SET search_path = auth, pg_temp
 AS $$
 DECLARE
     supabase_user uuid;
@@ -131,9 +133,9 @@ $$ LANGUAGE plpgsql;
     *   SELECT tests.authenticate_as('test_owner');
     * ```
  */
-CREATE OR REPLACE FUNCTION tests.authenticate_as (identifier text)
-    RETURNS void
-    AS $$
+CREATE OR REPLACE FUNCTION tests.authenticate_as(identifier text)
+RETURNS void
+AS $$
         DECLARE
                 user_data json;
                 original_auth_data text;
@@ -174,7 +176,7 @@ CREATE OR REPLACE FUNCTION tests.authenticate_as (identifier text)
     * ```
  */
 CREATE OR REPLACE FUNCTION tests.clear_authentication()
-    RETURNS void AS $$
+RETURNS void AS $$
 BEGIN
     perform set_config('role', 'anon', true);
     perform set_config('request.jwt.claims', null, true);
@@ -197,7 +199,7 @@ $$ LANGUAGE plpgsql;
 *   ROLLBACK;
 * ```
 */
-CREATE OR REPLACE FUNCTION tests.rls_enabled (testing_schema text)
+CREATE OR REPLACE FUNCTION tests.rls_enabled(testing_schema text)
 RETURNS text AS $$
     select is(
         (select
@@ -228,8 +230,8 @@ $$ LANGUAGE sql;
 *    ROLLBACK;
 * ```
 */
-CREATE OR REPLACE FUNCTION tests.rls_enabled (testing_schema text, testing_table text)
-RETURNS TEXT AS $$
+CREATE OR REPLACE FUNCTION tests.rls_enabled(testing_schema text, testing_table text)
+RETURNS text AS $$
     select is(
         (select
             count(*)::integer
@@ -247,13 +249,13 @@ $$ LANGUAGE sql;
 -- but we dont' want these functions to always exist on the database.
 BEGIN;
 
-    select plan(7);
-    select function_returns('tests', 'create_supabase_user', Array['text', 'text', 'text'], 'uuid');
-    select function_returns('tests', 'get_supabase_uid', Array['text'], 'uuid');
-    select function_returns('tests', 'get_supabase_user', Array['text'], 'json');
-    select function_returns('tests', 'authenticate_as', Array['text'], 'void');
-    select function_returns('tests', 'clear_authentication', Array[null], 'void');
-    select function_returns('tests', 'rls_enabled', Array['text', 'text'], 'text');
-    select function_returns('tests', 'rls_enabled', Array['text'], 'text');
-    select * from finish();
+SELECT plan(7);
+SELECT function_returns('tests', 'create_supabase_user', ARRAY['text', 'text', 'text'], 'uuid');
+SELECT function_returns('tests', 'get_supabase_uid', ARRAY['text'], 'uuid');
+SELECT function_returns('tests', 'get_supabase_user', ARRAY['text'], 'json');
+SELECT function_returns('tests', 'authenticate_as', ARRAY['text'], 'void');
+SELECT function_returns('tests', 'clear_authentication', ARRAY[null], 'void');
+SELECT function_returns('tests', 'rls_enabled', ARRAY['text', 'text'], 'text');
+SELECT function_returns('tests', 'rls_enabled', ARRAY['text'], 'text');
+SELECT * FROM finish();
 ROLLBACK;
