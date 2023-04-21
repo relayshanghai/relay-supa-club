@@ -6,6 +6,7 @@ const campaigns = {
             notStarted: '未开始',
             completed: '已完成',
             all: '全部',
+            archived: '已存档项目',
         },
         createCampaign: '创建项目',
         noCampaigns: '您没有任何项目',
@@ -100,6 +101,8 @@ const campaigns = {
             // eslint-disable-next-line quote-props
             completed: '已完成',
         },
+        archived: '项目已经成功存档',
+        unarchived: '项目已经成功取消存档',
         submitting: '提交中',
         editCampaign: '编辑项目',
         promotionPlatforms: '推广平台',
