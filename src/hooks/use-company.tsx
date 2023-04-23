@@ -74,7 +74,6 @@ export const CompanyProvider = ({ children }: PropsWithChildren) => {
         },
         [refreshProfile, profile],
     );
-
     return (
         <ctx.Provider
             value={{
