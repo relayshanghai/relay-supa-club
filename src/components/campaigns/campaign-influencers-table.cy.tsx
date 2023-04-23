@@ -38,6 +38,7 @@ const currentCampaign: CampaignDB = {
     date_end_creator_outreach: null,
     requirements: null,
     media_path: null,
+    archived: false,
 };
 const creator1: CampaignCreatorDB = {
     id: 'creator1',

@@ -3,6 +3,8 @@ import { rest, setupWorker } from 'msw';
 import tSeries from './api/creators/report/tSeries.json';
 import jimTestCampaign from './api/campaigns/jimTestCampaign.json';
 import amyTestCampaign from './api/campaigns/amyTestCampaign.json';
+import newEmptyCampaign from './api/campaigns/newEmptyCampaign.json';
+import archivedCampaign from './api/campaigns/archivedCampaign.json';
 import defaultLandingPageInfluencerSearch from './api/influencer-search/indexDefaultSearch.json';
 
 // if in the future we want to use the browser-based msw outside of cypress, we'll need to change this
@@ -17,7 +19,7 @@ const frontendHandlers = [
         if (id === 'jim') {
             return res(ctx.json([jimTestCampaign]));
         } else if (typeof id === 'string') {
-            return res(ctx.json([amyTestCampaign]));
+            return res(ctx.json([amyTestCampaign, newEmptyCampaign, archivedCampaign]));
         }
 
         return res(ctx.json([jimTestCampaign, amyTestCampaign]));

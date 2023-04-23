@@ -138,6 +138,7 @@ export interface Database {
       }
       campaigns: {
         Row: {
+          archived: boolean | null
           budget_cents: number | null
           budget_currency: string | null
           company_id: string
@@ -162,6 +163,7 @@ export interface Database {
           target_locations: string[] | null
         }
         Insert: {
+          archived?: boolean | null
           budget_cents?: number | null
           budget_currency?: string | null
           company_id: string
@@ -186,6 +188,7 @@ export interface Database {
           target_locations?: string[] | null
         }
         Update: {
+          archived?: boolean | null
           budget_cents?: number | null
           budget_currency?: string | null
           company_id?: string
