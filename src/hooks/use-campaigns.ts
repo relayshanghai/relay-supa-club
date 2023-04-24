@@ -42,7 +42,7 @@ export const useCampaigns = ({
     const { profile } = useUser();
     const companyId = passedInCompanyId ?? profile?.company_id;
     const {
-        data: campaigns,
+        data: allCampaigns,
         mutate: refreshCampaigns,
         isValidating,
         isLoading,
@@ -57,9 +57,12 @@ export const useCampaigns = ({
         [],
     );
 
+    const [campaigns, setCampaigns] = useState<CampaignWithCompanyCreators[]>([]);
+    const [archivedCampaigns, setArchivedCampaigns] = useState<CampaignWithCompanyCreators[]>([]);
+
     useEffect(() => {
-        if (campaigns && campaigns?.length > 0 && campaignId) {
-            const campaign = campaigns?.find((c) => c.id === campaignId);
+        if (allCampaigns && allCampaigns?.length > 0 && campaignId) {
+            const campaign = allCampaigns?.find((c) => c.id === campaignId);
             if (campaign) {
                 setCampaign(campaign);
             }
@@ -67,7 +70,16 @@ export const useCampaigns = ({
                 setCampaignCreators(campaign.campaign_creators);
             }
         }
-    }, [campaignId, campaigns]);
+    }, [campaignId, allCampaigns]);
+
+    useEffect(() => {
+        if (allCampaigns && allCampaigns.length > 0) {
+            const unarchivedCampaigns = allCampaigns.filter((campaign) => !campaign.archived);
+            const archivedCampaigns = allCampaigns.filter((campaign) => campaign.archived);
+            setCampaigns(unarchivedCampaigns);
+            setArchivedCampaigns(archivedCampaigns);
+        }
+    }, [allCampaigns]);
 
     const createCampaign = useCallback(
         async (input: Omit<CampaignsCreatePostBody, 'company_id'>) => {
@@ -171,7 +183,10 @@ export const useCampaigns = ({
     );
 
     return {
+        /** All campaigns that are not archived */
         campaigns,
+        /** All campaigns that are archived */
+        archivedCampaigns,
         createCampaign,
         updateCampaign,
         campaign,

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-
+const dotenv = require('dotenv');
 const nextJest = require('next/jest');
+dotenv.config({ path: './.env.local' });
 // @ts-ignore
 const createJestConfig = nextJest({
     // Provide the path to your Next.js app to load next.config.js and .env files in your test environment
@@ -10,15 +11,12 @@ const createJestConfig = nextJest({
 // Add any custom config to be passed to Jest
 /** @type {import('jest').Config} */
 const customJestConfig = {
-    globals: {
-        'ts-jest': {
-            tsconfig: 'tsconfig.jest.json',
-        },
-    },
+    testPathIgnorePatterns: ['<rootDir>/.next/', '<rootDir>/cypress/', '<rootDir>/node_modules/'], // ignore cypress and next.js folders
     preset: 'ts-jest',
     testEnvironment: 'node',
     moduleDirectories: ['node_modules', '<rootDir>'],
     setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+    testMatch: ['**/*.test.ts'], // run only tests with .test.ts extension
 };
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async

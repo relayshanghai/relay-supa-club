@@ -9,8 +9,8 @@ import type { Session } from '@supabase/auth-helpers-react';
 import { SessionContextProvider } from '@supabase/auth-helpers-react';
 import { useEffect, useState } from 'react';
 import { CompanyProvider } from 'src/hooks/use-company';
-import useRudderstack from 'src/hooks/use-rudderstack';
-import { LocalCacheProvider } from 'src/utils/local-cache-swr';
+import { rudderInitialized } from 'src/utils/rudder-initialize';
+import { CacheProvider } from 'src/utils/indexeddb-cache-provider';
 
 function MyApp({
     Component,
@@ -18,7 +18,10 @@ function MyApp({
 }: AppProps<{
     initialSession: Session;
 }>) {
-    useRudderstack(); //enable rudderstack Analytics
+    useEffect(() => {
+        rudderInitialized();
+    }, []); //enable rudderstack Analytics
+
     const [supabaseClient] = useState(() => createBrowserSupabaseClient());
     useEffect(() => {
         //@ts-expect-error
@@ -28,6 +31,7 @@ function MyApp({
         const storedLanguage = localStorage.getItem('language');
         storedLanguage !== null ? i18n.changeLanguage(storedLanguage) : i18n.changeLanguage(); // triggers the language detector
     }, []);
+
     return (
         <>
             <Head>
@@ -50,14 +54,15 @@ function MyApp({
                     content="Looking for a complete solution to manage influencer marketing for your brand? Our platform has millions of influencers &amp; assists in payments, analytics &amp; more!"
                 />
             </Head>
+
             <SessionContextProvider supabaseClient={supabaseClient} initialSession={pageProps.initialSession}>
-                <UserProvider>
-                    <LocalCacheProvider>
+                <CacheProvider>
+                    <UserProvider>
                         <CompanyProvider>
                             <Component {...pageProps} />
                         </CompanyProvider>
-                    </LocalCacheProvider>
-                </UserProvider>
+                    </UserProvider>
+                </CacheProvider>
             </SessionContextProvider>
             <Toaster />
         </>

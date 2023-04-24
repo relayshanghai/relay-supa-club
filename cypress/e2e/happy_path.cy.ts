@@ -1,6 +1,12 @@
+import { deleteDB } from 'idb';
+
 describe('Main pages happy paths', () => {
+    beforeEach(async () => {
+        await deleteDB('app-cache');
+    });
     it('can log in and load search page and switch language', () => {
         cy.visit('/');
+        localStorage.setItem('language', 'zh');
         // starts on signup page. has an h1 that says signup in Chinese: 注册
         cy.get('h1').contains('注册');
 
@@ -18,7 +24,7 @@ describe('Main pages happy paths', () => {
         // search for an influencer
         // ensure GRTR is not in the search results
         cy.contains('GRTR').should('not.exist');
-
+        cy.wait(3000);
         cy.getByTestId('creator-search').type('GRTR{enter}');
         // cy.contains will not include the input element in the search, so this shows that the results are in the DOM
         cy.contains('GRTR', { timeout: 30000 });
@@ -74,11 +80,11 @@ describe('Main pages happy paths', () => {
         cy.contains('Invite Members').should('not.exist');
 
         // upgrade subscription links to pricing page
-        cy.contains('button', 'Upgrade subscription').click();
+        cy.contains('button', 'Upgrade subscription', { timeout: 10000 }).click(); // loads subscription data
         cy.contains('Choose the best plan for you', { timeout: 10000 }); // loads pricing page
         cy.url().should('include', `/pricing`);
         cy.contains('DIY Max');
-        cy.contains('button', 'Buy Now').click();
+        cy.contains('button', 'Buy Now', { timeout: 10000 }).click();
         cy.contains('button', 'Subscribe');
         cy.contains('button', 'Close').click();
         cy.contains('button', 'Subscribe').should('not.exist');

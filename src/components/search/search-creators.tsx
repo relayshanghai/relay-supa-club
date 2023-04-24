@@ -3,24 +3,13 @@ import { useSearch } from 'src/hooks/use-search';
 import { useTranslation } from 'react-i18next';
 import type { CreatorPlatform } from 'types';
 import type { ChangeEvent } from 'react';
+import { debounce } from 'src/utils/debounce';
 
 export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
     const [searchTerm, setSearchTerm] = useState<string | ''>();
     const { t } = useTranslation();
 
     const { setPlatform, setUsername } = useSearch();
-
-    const debounce = (fn: any) => {
-        let timeout: any = null;
-        return (...args: any) => {
-            if (timeout) {
-                clearTimeout(timeout);
-            }
-            timeout = setTimeout(() => {
-                fn(...args);
-            }, 500);
-        };
-    };
 
     // Disabling the exhaustive-deps rule because we need to use the debounce function and we already know the required dependencies.
     // eslint-disable-next-line react-hooks/exhaustive-deps

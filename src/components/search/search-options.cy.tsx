@@ -1,4 +1,5 @@
 /// <reference types="@testing-library/cypress" />
+// @ts-check
 import { worker } from '../../mocks/browser';
 import { testMount } from '../../utils/cypress-app-wrapper';
 import { SearchPage } from './search-page';

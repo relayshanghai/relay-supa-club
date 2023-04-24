@@ -6,18 +6,16 @@ import type { CreatorSearchAccountObject } from 'types';
 import { Button } from '../button';
 import { SkeletonSearchResultRow } from '../common/skeleton-search-result-row';
 import { SearchResultRow } from './search-result-row';
-import { FEAT_RECOMMENDED } from 'src/constants/feature-flags';
-import { isRecommendedInfluencer } from 'src/constants/recommendedInfluencers';
-import { useEffect, useState } from 'react';
+
 export interface SearchResultsTableProps {
     setShowCampaignListModal: (show: boolean) => void;
     setSelectedCreator: (creator: CreatorSearchAccountObject) => void;
     setShowAlreadyAddedModal: (show: boolean) => void;
     campaigns?: CampaignsIndexGetResult;
     setCampaignsWithCreator: (campaigns: string[]) => void;
-    onlyRecommended: boolean;
     results?: CreatorSearchAccountObject[];
     loading: boolean;
+    validating: boolean;
     moreResults?: JSX.Element;
     error: any;
 }
@@ -28,37 +26,17 @@ export const SearchResultsTable = ({
     setShowAlreadyAddedModal,
     campaigns,
     setCampaignsWithCreator,
-    onlyRecommended,
-    results: resultsFull,
-    loading: passedInLoading,
+    results,
+    loading: firstPageLoading,
+    validating,
     moreResults,
     error,
 }: SearchResultsTableProps) => {
     const { t } = useTranslation();
-    const { platform, usageExceeded } = useSearch();
-    const noResults = !resultsFull || resultsFull.length === 0;
+    const { usageExceeded, loading: topSearchLoading } = useSearch();
+    const noResults = !results || results.length === 0;
 
-    const results =
-        FEAT_RECOMMENDED && onlyRecommended
-            ? resultsFull?.filter((creator) => isRecommendedInfluencer(platform, creator.account.user_profile.user_id))
-            : resultsFull;
-
-    // initial wait is how long to wait before showing 'no results found'
-    const [initialWait, setInitialWait] = useState(true);
-
-    // This addresses a bug whereby 'no results found' flashes when SWR is actually loading results from localStorage
-    useEffect(() => {
-        if (initialWait) {
-            const timeout = setTimeout(() => {
-                setInitialWait(false);
-                // wait up to 5 seconds before showing 'no results found'.
-            }, 5000);
-            // clear the timeout on unmount
-            return () => clearTimeout(timeout);
-        }
-    }, [initialWait]);
-    // if we get results before 5 seconds, it will show them immediately
-    const loading = (noResults && initialWait) || passedInLoading;
+    const loading = firstPageLoading || topSearchLoading || (noResults && validating);
 
     return (
         <div className="w-full overflow-x-auto">
@@ -126,6 +104,7 @@ export const SearchResultsTable = ({
                                 <td className="py-4 text-center" colSpan={5}>
                                     {t('creators.noResults')}
                                 </td>
+                                <td />
                             </tr>
                         ))}
                     {error && (
@@ -133,6 +112,7 @@ export const SearchResultsTable = ({
                             <td className="py-4 text-center" colSpan={5}>
                                 {t('creators.searchResultError')}
                             </td>
+                            <td />
                         </tr>
                     )}
                 </tbody>

@@ -23,7 +23,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             await handleCompanyUpdateMessage(req, URL);
             return res.status(httpCodes.OK).json({});
         } catch (error) {
-            serverLogger(error, 'error');
+            serverLogger(error, 'error', true);
             return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
         }
     }

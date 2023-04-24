@@ -24,6 +24,7 @@ export default function Login() {
         email: '',
         password: '',
     });
+
     useEffect(() => {
         if (emailQuery) {
             setFieldValue('email', emailQuery.toString());

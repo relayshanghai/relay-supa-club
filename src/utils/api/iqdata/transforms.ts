@@ -1,3 +1,5 @@
+import { FEAT_RECOMMENDED } from 'src/constants/feature-flags';
+import { recommendedInfluencers } from 'src/constants/recommendedInfluencers';
 import { clientLogger } from 'src/utils/logger-client';
 import type { CreatorPlatform, CreatorAccount, LocationWeighted } from 'types';
 import type { GenderAllCode, InfluencerSearchRequestBody } from 'types/iqdata/influencer-search-request-body';
@@ -18,6 +20,7 @@ export interface FetchCreatorsFilteredParams {
     engagement?: number;
     lastPost?: string;
     contactInfo?: string;
+    only_recommended?: boolean;
 }
 
 const locationTransform = ({ id, weight }: { id: string; weight: number | string }) => ({
@@ -29,7 +32,7 @@ const genderTransform = (gender: string) => {
     const upper = gender.toUpperCase();
     const allowed: GenderAllCode[] = ['FEMALE', 'MALE', 'KNOWN', 'UNKNOWN'];
     if (allowed.includes(upper as GenderAllCode)) return { code: upper as GenderAllCode };
-    clientLogger('bad option for gender: ' + gender, 'error');
+    clientLogger('bad option for gender: ' + gender, 'error', true); // unexpected
     return undefined;
 };
 const viewsTransform = (views: NullStringTuple) => {
@@ -38,6 +41,20 @@ const viewsTransform = (views: NullStringTuple) => {
         left_number: left ? Number(left) ?? undefined : undefined,
         right_number: right ? Number(right) ?? undefined : undefined,
     };
+};
+
+export const isRecommendedTransform = (platform: CreatorPlatform, influencerIdsWithPlatform: string[]) => {
+    // idWithPlatform is a string of the form "platform/id"
+    const recommendedByPlatform = influencerIdsWithPlatform
+        .filter((idWithPlatform) => idWithPlatform.split('/')[0] === platform)
+        .map((idWithPlatform) => idWithPlatform.split('/')[1]);
+    if (recommendedByPlatform.length > 1000) {
+        // TODO: For now we can only handle 1000 influencers per platform, so if we exceed that we will need to reimplement some things: https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/352
+        throw new Error(
+            `Too many recommended influencers for platform ${platform}. Please remove some from the recommendedInfluencers list.`,
+        );
+    }
+    return recommendedByPlatform;
 };
 
 export const prepareFetchCreatorsFiltered = ({
@@ -55,6 +72,7 @@ export const prepareFetchCreatorsFiltered = ({
     engagement,
     lastPost,
     contactInfo,
+    only_recommended,
 }: FetchCreatorsFilteredParams): {
     platform: CreatorPlatform;
     body: InfluencerSearchRequestBody;
@@ -103,6 +121,9 @@ export const prepareFetchCreatorsFiltered = ({
     }
     if (engagement && Number(engagement) >= 0 && Number(engagement / 100)) {
         body.filter.engagement_rate = { value: Number((engagement / 100).toFixed(2)), operator: 'gte' };
+    }
+    if (only_recommended && FEAT_RECOMMENDED) {
+        body.filter.filter_ids = isRecommendedTransform(platform, recommendedInfluencers);
     }
 
     return { platform, body };

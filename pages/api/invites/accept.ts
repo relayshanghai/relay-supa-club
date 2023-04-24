@@ -4,7 +4,7 @@ import httpCodes from 'src/constants/httpCodes';
 import { acceptInviteErrors } from 'src/errors/company';
 import { inviteStatusErrors, loginValidationErrors } from 'src/errors/login';
 import type { InviteStatusError } from 'src/errors/login';
-import { getInviteById, getInviteValidityData, markInviteUsed, updateUserRole } from 'src/utils/api/db';
+import { getInviteById, getInviteValidityData, insertProfile, markInviteUsed, updateUserRole } from 'src/utils/api/db';
 import { serverLogger } from 'src/utils/logger-server';
 import { supabase } from 'src/utils/supabase-client';
 import { validatePassword } from 'src/utils/validation/signup';
@@ -62,13 +62,6 @@ const handlePost: NextApiHandler = async (req, res) => {
         } = await supabase.auth.signUp({
             email: invite.email,
             password,
-            options: {
-                data: {
-                    first_name: firstName,
-                    last_name: lastName,
-                    company_id: invite.company_id,
-                },
-            },
         });
 
         if (userError) {
@@ -79,8 +72,18 @@ const handlePost: NextApiHandler = async (req, res) => {
             serverLogger(userError, 'error');
             return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
         }
-        if (!user) {
+        if (!user?.id) {
             throw new Error('User not found');
+        }
+        const profileBody = {
+            id: user.id,
+            first_name: firstName,
+            last_name: lastName,
+            company_id: invite.company_id,
+        };
+        const { error: profileError } = await insertProfile(profileBody);
+        if (profileError) {
+            throw new Error(profileError.message);
         }
 
         const { error: updateRoleError } = await updateUserRole(
@@ -97,7 +100,7 @@ const handlePost: NextApiHandler = async (req, res) => {
 
         return res.status(httpCodes.OK).json(returnData);
     } catch (error) {
-        serverLogger(error, 'error');
+        serverLogger(error, 'error', true);
         return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
     }
 };

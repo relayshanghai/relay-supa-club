@@ -3,11 +3,9 @@ import { createClient } from '@supabase/supabase-js';
 import type { DatabaseWithCustomTypes } from 'types';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-if (!supabaseUrl) console.log('NEXT_PUBLIC_SUPABASE_URL not set');
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
-if (!supabaseAnonKey) console.log('NEXT_PUBLIC_SUPABASE_ANON_KEY not set');
+if (!supabaseUrl) throw new Error('NEXT_PUBLIC_SUPABASE_URL not set');
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY || '';
+if (!supabaseServiceKey) throw new Error('SUPABASE_SERVICE_KEY not set');
 
-const options: any = {};
-
-/** ***THIS SHOULD ONLY BE USE SERVER-SIDE*** */
-export const supabase = createClient<DatabaseWithCustomTypes>(supabaseUrl, supabaseAnonKey, options);
+/** ***THIS SHOULD ONLY BE USED SERVER-SIDE*** */
+export const supabase = createClient<DatabaseWithCustomTypes>(supabaseUrl, supabaseServiceKey);
