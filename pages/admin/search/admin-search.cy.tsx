@@ -1,13 +1,8 @@
 import AdminSearch from './[id]';
-import { worker } from 'src/mocks/browser';
 import { TestProvider, testMount } from 'src/utils/cypress-app-wrapper';
 import { clientRoleAtom } from 'src/atoms/client-role-atom';
 
 describe('<AdminSearch />', () => {
-    before(async () => {
-        worker.start();
-    });
-
     it('renders admin search panel', () => {
         testMount(<AdminSearch />);
     });
