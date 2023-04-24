@@ -9,7 +9,7 @@ jest.mock('./api/db/calls/influencers', () => ({
 
 jest.mock('./api/iqdata/extract-influencer', () => ({
     extractInfluencer: jest.fn((v) => v),
-    extractInfluencerProfile: jest.fn(),
+    extractInfluencerProfile: jest.fn((_) => jest.fn()),
 }));
 
 describe('Save influencer', () => {

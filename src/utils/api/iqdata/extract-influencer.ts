@@ -9,10 +9,12 @@ export const extractInfluencer = (userProfile: any) => {
     };
 };
 
-export const extractInfluencerProfile = (influencer: any, userProfile: any) => {
-    return {
-        url: userProfile.url,
-        platform: userProfile.platform,
-        influencer: influencer.id,
+export const extractInfluencerProfile = (userProfile: any) => {
+    return (influencer: any) => {
+        return {
+            url: userProfile.url,
+            platform: userProfile.platform,
+            influencer: influencer.id,
+        };
     };
 };
