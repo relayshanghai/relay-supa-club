@@ -4,7 +4,7 @@ BEGIN;
 SELECT plan(4);
 
 -- start includes
-\include /tmp/supabase/functions/is_employee.sql
+\include /tmp/supabase/functions/is_relay_employee.sql
 -- end includes
 
 SELECT has_function('is_relay_employee');

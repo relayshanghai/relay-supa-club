@@ -1,2 +1,1 @@
-alter table "public"."campaigns" add column "archived" boolean default false;
-
+ALTER TABLE "public"."campaigns" ADD COLUMN "archived" boolean DEFAULT false;
