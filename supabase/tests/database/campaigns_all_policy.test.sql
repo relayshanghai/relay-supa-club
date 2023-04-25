@@ -13,11 +13,10 @@ SELECT plan(7);
 SELECT has_function('is_company_member');
 SELECT tests.rls_enabled('public', 'campaigns');
 SELECT policy_cmd_is('campaigns', 'campaigns_all', 'all');
+-- Because we confirm here that the rule applies to all, we only need to test SELECT.
 
 -- Test anonymous
 SELECT tests.clear_authentication();
-
--- TODO: test when campaigns seed is ready
 
 SELECT
   is((
