@@ -15,18 +15,8 @@ const frontendHandlers = [
     rest.get(`${APP_URL_CYPRESS}/api/creators/report`, (req, res, ctx) => {
         return res(ctx.delay(1000), ctx.json(tSeries));
     }),
-    rest.get(`${APP_URL_CYPRESS}/api/campaigns`, (req, res, ctx) => {
-        const id = req.url.searchParams.get('id');
-        if (id === 'jim') {
-            return res(ctx.json([jimTestCampaign]));
-        } else if (typeof id === 'string') {
-            return res(ctx.json([amyTestCampaign, newEmptyCampaign, archivedCampaign]));
-        }
-
-        return res(ctx.json([jimTestCampaign, amyTestCampaign]));
-    }),
     rest.get(`${SUPABASE_URL_CYPRESS}/campaigns`, (req, res, ctx) => {
-        return res(ctx.json([amyTestCampaign, newEmptyCampaign, archivedCampaign]));
+        return res(ctx.json([jimTestCampaign, amyTestCampaign, newEmptyCampaign, archivedCampaign]));
     }),
     rest.post(`${APP_URL_CYPRESS}/api/influencer-search`, (req, res, ctx) => {
         return res(ctx.json(defaultLandingPageInfluencerSearch));

@@ -3,11 +3,13 @@ import { testMount } from 'src/utils/cypress-app-wrapper';
 import CampaignsPage from './campaigns-page';
 
 describe('CampaignsPage', () => {
-    before(() => {
+    before(async () => {
         worker.start();
     });
 
     it('Should render a list of campaign cards', () => {
+        cy.wait(3000);
+
         testMount(<CampaignsPage companyId="8e6e65ca-dd79-4e68-90e4-9c5462991ae4" />);
         cy.get('#campaign-card-second').should('exist');
         cy.get('#campaign-card-【test】amy-test-campaign-for-fragrance-kols').should('exist');
@@ -17,6 +19,8 @@ describe('CampaignsPage', () => {
     });
 
     it('Should render a list of archived campaign cards', () => {
+        cy.wait(3000);
+
         testMount(<CampaignsPage companyId="8e6e65ca-dd79-4e68-90e4-9c5462991ae4" />);
 
         cy.contains('Archived Campaigns').click();
