@@ -3,7 +3,6 @@ import type { PropsWithChildren } from 'react';
 import { createContext, useCallback, useContext } from 'react';
 import type { KeyedMutator } from 'swr';
 import useSWR from 'swr';
-
 import type { CompanyGetQueries, CompanyGetResponse, CompanyPutBody, CompanyPutResponse } from 'pages/api/company';
 import type { CompanyCreatePostBody, CompanyCreatePostResponse } from 'pages/api/company/create';
 import { createCompanyValidationErrors } from 'src/errors/company';
