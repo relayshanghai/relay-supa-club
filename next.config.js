@@ -34,6 +34,11 @@ const nextConfig = {
             },
             {
                 protocol: 'https',
+                hostname: 'image-cache.relay.club',
+                pathname: '**',
+            },
+            {
+                protocol: 'https',
                 hostname: 'quwgcjfxxojrvkenqgmi.supabase.co',
                 pathname: '**',
             },

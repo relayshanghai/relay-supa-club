@@ -1,20 +1,20 @@
 import { useCallback, useEffect, useState } from 'react';
-import { nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';
+import { nextFetch } from 'src/utils/fetcher';
 import useSWR from 'swr';
 
 import type { CampaignUpdatePostBody, CampaignUpdatePostResponse } from 'pages/api/campaigns/update';
 
 import { useUser } from './use-user';
 import type { CampaignCreatorDB, CampaignDBUpdate } from 'src/utils/api/db/types';
-import type { CampaignWithCompanyCreators } from 'src/utils/api/db';
+import type { CampaignWithCompanyCreators } from 'src/utils/client-db/campaigns';
 import type { CampaignsCreatePostBody, CampaignsCreatePostResponse } from 'pages/api/campaigns/create';
 import type {
     CampaignCreatorAddCreatorPostBody,
     CampaignCreatorAddCreatorPostResponse,
 } from 'pages/api/campaigns/add-creator';
-import type { CampaignsIndexGetQuery, CampaignsIndexGetResult } from 'pages/api/campaigns';
 import type { CampaignCreatorsDeleteBody, CampaignCreatorsDeleteResponse } from 'pages/api/campaigns/delete-creator';
 import { clientLogger } from 'src/utils/logger-client';
+import { useClientDb } from 'src/utils/client-db/use-client-db';
 
 //The transform function is not used now, as the image proxy issue is handled directly where calls for the image.But this is left for future refactor. TODO:Ticket V2-181
 // const transformCampaignCreators = (creators: CampaignCreatorDB[]) => {
@@ -40,17 +40,15 @@ export const useCampaigns = ({
     companyId?: string;
 }) => {
     const { profile } = useUser();
+    const { getCampaignsWithCompanyCreators } = useClientDb();
+
     const companyId = passedInCompanyId ?? profile?.company_id;
     const {
         data: allCampaigns,
         mutate: refreshCampaigns,
         isValidating,
         isLoading,
-    } = useSWR(companyId ? 'campaigns' : null, (path) =>
-        nextFetchWithQueries<CampaignsIndexGetQuery, CampaignsIndexGetResult>(path, {
-            id: companyId ?? '',
-        }),
-    );
+    } = useSWR(companyId ? 'campaigns' : null, () => getCampaignsWithCompanyCreators(companyId));
     const [loading, setLoading] = useState(false);
     const [campaign, setCampaign] = useState<CampaignWithCompanyCreators | null>(null);
     const [campaignCreators, setCampaignCreators] = useState<CampaignWithCompanyCreators['campaign_creators'] | null>(

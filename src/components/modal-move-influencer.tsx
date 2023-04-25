@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import type { CampaignsIndexGetResult } from 'pages/api/campaigns';
 import { useTranslation } from 'react-i18next';
 import type { CampaignCreatorDB, CampaignWithCompanyCreators } from 'src/utils/api/db';
 import type { CreatorPlatform } from 'types';
@@ -18,7 +17,7 @@ export const MoveInfluencerModal = ({
     setShow: (show: boolean) => void;
     platform: CreatorPlatform;
     selectedCreator: CampaignCreatorDB;
-    campaigns: CampaignsIndexGetResult;
+    campaigns: CampaignWithCompanyCreators[];
     currentCampaign: CampaignWithCompanyCreators;
 }) => {
     const { t } = useTranslation();
