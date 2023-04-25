@@ -16,6 +16,7 @@ export const SearchTopics = ({
     TagComponent,
 }: any) => {
     const [suggestions, setSuggestions] = useState<any[]>([]);
+    const [loading, setLoading] = useState(false);
     const ref = useRef<any>();
     const inputRef = useRef<any>();
 
@@ -35,6 +36,7 @@ export const SearchTopics = ({
             ref.current = controller;
 
             try {
+                setLoading(true);
                 const res = await nextFetch(path, {
                     method: 'post',
                     signal,
@@ -54,6 +56,8 @@ export const SearchTopics = ({
                 }
                 clientLogger(error, 'error');
             }
+
+            setLoading(false);
         }),
         [platform, path, filter],
     );
@@ -96,6 +100,8 @@ export const SearchTopics = ({
             onAddTag={(item: any) => {
                 addTag(item);
             }}
+            spinnerLoading={loading}
+            setSpinnerLoading={setLoading}
         />
     );
 };

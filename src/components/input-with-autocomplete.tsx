@@ -13,6 +13,8 @@ export interface Props {
     SuggestionComponent?: React.FC<any>;
     TagComponent?: React.FC<any>;
     ref: any;
+    spinnerLoading: boolean;
+    setSpinnerLoading: (value: boolean) => void;
 }
 
 const InputWithAutocomplete = forwardRef<HTMLDivElement, Props>(
@@ -27,6 +29,8 @@ const InputWithAutocomplete = forwardRef<HTMLDivElement, Props>(
             placeholder,
             SuggestionComponent,
             TagComponent,
+            spinnerLoading,
+            setSpinnerLoading,
         },
         ref,
     ) => {
@@ -57,13 +61,19 @@ const InputWithAutocomplete = forwardRef<HTMLDivElement, Props>(
                     onChange={(e: any) => {
                         setValue(e.target.value);
                         onChange(e.target.value);
+                        setSpinnerLoading(true);
+                    }}
+                    onKeyUp={() => {
+                        setSpinnerLoading(false);
                     }}
                     onKeyDown={tagKeyboardInputHandler}
                     TagComponent={TagComponent}
+                    spinnerLoading={spinnerLoading}
+                    setSpinnerLoading={setSpinnerLoading}
                 />
                 <div className="relative">
                     {!!suggestions.length && (
-                        <div className="absolute top-1 left-0 z-10 w-full overflow-hidden rounded-lg bg-white text-sm ring-1 ring-gray-200">
+                        <div className="absolute left-0 top-1 z-10 w-full overflow-hidden rounded-lg bg-white text-sm ring-1 ring-gray-200">
                             {suggestions.map((item: any, i: any) => {
                                 if (SuggestionComponent) {
                                     return (
