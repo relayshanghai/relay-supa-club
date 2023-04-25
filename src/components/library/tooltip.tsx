@@ -6,19 +6,18 @@ interface Props extends DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLS
 export type TooltipProps = PropsWithChildren<Props>;
 
 /** Wrap this around the component that you'd like to have the tooltip appear over when hovered. see `pages/component-previews/library.tsx` for examples*/
-export const Tooltip = ({ children, content, detail, className }: TooltipProps) => {
+export const Tooltip = ({ content, detail, className }: TooltipProps) => {
     return (
-        <div className={`hs-tooltip [--placement:top] ${className}`}>
+        <div className={`${className}`}>
             <span
-                className="hs-tooltip-content invisible absolute z-10 rounded bg-gray-500 py-1 px-2 text-white opacity-0 transition-opacity hs-tooltip-shown:visible hs-tooltip-shown:opacity-100"
+                className={`invisible absolute bottom-[120%] left-0 z-10 w-auto rounded bg-gray-500 text-white opacity-0 transition-opacity group-hover/badge:visible group-hover/badge:opacity-100`}
                 role="tooltip"
             >
-                <div className="flex flex-col [max-width:300px]">
+                <div className="flex w-52 flex-col px-2 py-1">
                     <p className="text-sm">{content}</p>
                     {detail && <p className="text-xs text-gray-50">{detail}</p>}
                 </div>
             </span>
-            <div className="hs-tooltip-toggle cursor-pointer">{children}</div>
         </div>
     );
 };
