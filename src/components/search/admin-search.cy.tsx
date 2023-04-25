@@ -1,4 +1,7 @@
-import AdminSearch from './[id]';
+/// <reference types="@testing-library/cypress" />
+// @ts-check
+
+import AdminSearch from '../../../pages/admin/search/[id]';
 import { TestProvider, testMount } from 'src/utils/cypress-app-wrapper';
 import { clientRoleAtom } from 'src/atoms/client-role-atom';
 
