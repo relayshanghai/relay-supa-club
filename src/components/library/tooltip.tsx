@@ -10,7 +10,7 @@ export const Tooltip = ({ content, detail, className }: TooltipProps) => {
     return (
         <div className={`${className}`}>
             <span
-                className={`invisible absolute bottom-[120%] left-0 z-10 w-auto rounded bg-gray-500 text-white opacity-0 transition-opacity group-hover/badge:visible group-hover/badge:opacity-100`}
+                className={`invisible absolute bottom-[120%] left-0 z-10 w-auto rounded bg-gray-500 text-white opacity-0 transition-opacity group-hover/tooltip:visible group-hover/tooltip:opacity-100`}
                 role="tooltip"
             >
                 <div className="flex w-52 flex-col px-2 py-1">
