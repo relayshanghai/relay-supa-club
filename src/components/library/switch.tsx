@@ -5,11 +5,12 @@ interface SwitchProps extends DetailedHTMLProps<InputHTMLAttributes<HTMLInputEle
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     beforeLabel?: string;
     afterLabel?: string;
+    children?: React.ReactNode;
 }
 
-export const Switch = ({ beforeLabel, afterLabel, className, ...props }: SwitchProps) => {
+export const Switch = ({ beforeLabel, afterLabel, className, children, ...props }: SwitchProps) => {
     return (
-        <div className="flex items-center">
+        <div className="group/tooltip relative flex items-center">
             {beforeLabel && <label className="mr-3 text-sm text-gray-500 dark:text-gray-400">{beforeLabel}</label>}
             <input
                 type="checkbox"
@@ -17,6 +18,7 @@ export const Switch = ({ beforeLabel, afterLabel, className, ...props }: SwitchP
                 {...props}
             />
             {afterLabel && <label className="ml-3 text-sm text-gray-500 dark:text-gray-400">{afterLabel}</label>}
+            {children}
         </div>
     );
 };
