@@ -13,6 +13,7 @@ import type { ProfileDB } from 'src/utils/api/db/types';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
 import type { DatabaseWithCustomTypes } from 'types';
+import { useCompany } from './use-company';
 
 export type SignupData = {
     email: string;
@@ -80,6 +81,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
     const getProfileController = useRef<AbortController | null>();
     const [loading, setLoading] = useState<boolean>(true);
     const { identifyFromProfile } = useRudderstack();
+    const { company } = useCompany();
     useEffect(() => {
         setLoading(isLoading);
     }, [isLoading]);
@@ -116,10 +118,10 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
 
     // identify user with RudderStack on profile change
     useEffect(() => {
-        if (profile) {
-            identifyFromProfile(profile);
+        if (profile && company) {
+            identifyFromProfile(profile, company);
         }
-    }, [identifyFromProfile, profile]);
+    }, [identifyFromProfile, profile, company]);
 
     const login = async (email: string, password: string) => {
         setLoading(true);
