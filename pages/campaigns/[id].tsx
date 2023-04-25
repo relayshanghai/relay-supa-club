@@ -2,7 +2,7 @@ import { useRouter } from 'next/router';
 import type { ChangeEvent } from 'react';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PencilSquareIcon } from '@heroicons/react/20/solid';
+import { ArchiveBoxIcon, ArchiveBoxXMarkIcon, PencilSquareIcon } from '@heroicons/react/20/solid';
 import Link from 'next/link';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import Image from 'next/legacy/image';
@@ -16,6 +16,8 @@ import CommentCards from 'src/components/campaigns/comment-cards';
 import type { CampaignCreatorDB, CampaignWithCompanyCreators } from 'src/utils/api/db';
 import { imgProxy } from 'src/utils/fetcher';
 import { useCompany } from 'src/hooks/use-company';
+import { Spinner } from 'src/components/icons';
+import { toast } from 'react-hot-toast';
 
 export default function CampaignShow() {
     const router = useRouter();
@@ -35,6 +37,7 @@ export default function CampaignShow() {
     const [showNotesModal, setShowNotesModal] = useState(false);
     const [currentCreator, setCurrentCreator] = useState<CampaignCreatorDB | null>(null);
     const { t, i18n } = useTranslation();
+    const [loading] = useState(false);
 
     const tabs = [t('campaigns.show.activities.influencerOutreach'), t('campaigns.show.activities.campaignInfo')];
 
@@ -53,6 +56,24 @@ export default function CampaignShow() {
         const { campaign_creators: _filterOut, companies: _filterOut2, ...campaign } = campaignWithCompanyCreators;
         const status = e.target.value;
         await updateCampaign({ ...campaign, status });
+        refreshCampaigns();
+    };
+
+    const archiveCampaignHandler = async () => {
+        if (!currentCampaign) return;
+        const { campaign_creators: _filterOut, companies: _filterOut2, ...campaign } = currentCampaign;
+        await updateCampaign({ ...campaign, archived: true });
+        router.push('/campaigns');
+        toast.success(t('campaigns.show.archived'));
+        refreshCampaigns();
+    };
+
+    const unarchiveCampaignHandler = async () => {
+        if (!currentCampaign) return;
+        const { campaign_creators: _filterOut, companies: _filterOut2, ...campaign } = currentCampaign;
+        await updateCampaign({ ...campaign, archived: false });
+        router.push('/campaigns');
+        toast.success(t('campaigns.show.unarchived'));
         refreshCampaigns();
     };
 
@@ -88,10 +109,10 @@ export default function CampaignShow() {
     return (
         <Layout>
             {/* -- Campaign banner starts here -- */}
-            <div className="relative flex w-full items-center justify-center rounded-2xl bg-white py-4 px-4 sm:h-40 sm:py-0 md:justify-between">
+            <div className="relative flex w-full items-center justify-center rounded-2xl bg-white px-4 py-4 sm:h-40 sm:py-0 md:justify-between">
                 <div>
                     <div className="sm:items-left flex flex-col items-center sm:flex-row">
-                        <div className="mb-4 h-32 w-32 flex-shrink-0 sm:mr-4 sm:mb-0">
+                        <div className="mb-4 h-32 w-32 flex-shrink-0 sm:mb-0 sm:mr-4">
                             <Image
                                 src={media?.[0]?.url || '/assets/imgs/image404.png'}
                                 alt="campaign photo"
@@ -151,7 +172,7 @@ export default function CampaignShow() {
                                         currentCampaign?.tag_list.map((tag, index) => (
                                             <div
                                                 key={index}
-                                                className="mr-1 mb-1 rounded-md bg-tertiary-50 px-2 py-1 text-xs text-tertiary-600"
+                                                className="mb-1 mr-1 rounded-md bg-tertiary-50 px-2 py-1 text-xs text-tertiary-600"
                                             >
                                                 {tag}
                                             </div>
@@ -161,19 +182,52 @@ export default function CampaignShow() {
                         </div>
                     </div>
                 </div>
+                {currentCampaign?.id && !currentCampaign.archived && (
+                    <div
+                        className=" group absolute right-24 top-3 z-10 mr-2 flex h-8 cursor-pointer items-center justify-center rounded-lg bg-gray-50 text-sm font-semibold duration-300 hover:bg-gray-200"
+                        onClick={archiveCampaignHandler}
+                    >
+                        {loading ? (
+                            <Spinner className="h-4 w-4 fill-red-600 text-red-200" />
+                        ) : (
+                            <span className="flex flex-row items-center gap-1 px-2 text-gray-400 duration-300 group-hover:text-primary-500">
+                                {t('campaigns.index.archive')}
+                                <ArchiveBoxIcon
+                                    name="delete"
+                                    className="h-4 w-4 fill-current text-gray-400 duration-300 group-hover:text-primary-500"
+                                />
+                            </span>
+                        )}
+                    </div>
+                )}
+                {currentCampaign?.id && currentCampaign.archived && (
+                    <div
+                        className=" group absolute right-24 top-3 z-10 mr-2 flex h-8 cursor-pointer items-center justify-center rounded-lg bg-gray-50 text-sm font-semibold duration-300 hover:bg-gray-200"
+                        onClick={unarchiveCampaignHandler}
+                    >
+                        {loading ? (
+                            <Spinner className="h-4 w-4 fill-red-600 text-red-200" />
+                        ) : (
+                            <span className="flex flex-row items-center gap-1 px-2 text-gray-400 duration-300 group-hover:text-primary-500">
+                                {t('campaigns.index.unarchive')}
+                                <ArchiveBoxXMarkIcon name="delete" className="h-4 w-4 fill-current" />
+                            </span>
+                        )}
+                    </div>
+                )}
                 {currentCampaign?.id && (
-                    <div className=" group absolute top-3 right-6 z-10 mr-2 flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg bg-gray-50 text-sm font-semibold text-gray-500 duration-300 hover:bg-gray-100">
+                    <div className=" group absolute right-6 top-3 z-10 mr-2 flex h-8 cursor-pointer items-center justify-center rounded-lg bg-gray-50 text-sm font-semibold duration-300 hover:bg-gray-200">
                         <Link href={`/campaigns/form/${encodeURIComponent(currentCampaign?.id)}`} legacyBehavior>
-                            <PencilSquareIcon
-                                name="edit"
-                                className="h-4 w-4 fill-current text-gray-300 duration-300 group-hover:text-primary-500"
-                            />
+                            <span className="flex flex-row items-center gap-1 px-2 text-gray-400 duration-300 group-hover:text-primary-500">
+                                {t('campaigns.index.edit')}
+                                <PencilSquareIcon name="edit" className="h-4 w-4 fill-current" />
+                            </span>
                         </Link>
                     </div>
                 )}
             </div>
             {/* -- Campaign outreach details starts --*/}
-            <div className="py-0 px-4 sm:h-40 md:py-6">
+            <div className="px-4 py-0 sm:h-40 md:py-6">
                 <div className="mb-4 flex overflow-x-auto">
                     {tabs.map((tab, index) => (
                         <div
