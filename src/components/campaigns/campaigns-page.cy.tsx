@@ -3,7 +3,7 @@ import { testMount } from 'src/utils/cypress-app-wrapper';
 import CampaignsPage from './campaigns-page';
 
 describe('CampaignsPage', () => {
-    before(async () => {
+    before(() => {
         worker.start();
     });
 
