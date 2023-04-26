@@ -12,7 +12,7 @@ export interface Props {
     placeholder: string;
     SuggestionComponent?: React.FC<any>;
     TagComponent?: React.FC<any>;
-    ref: any;
+    ref: React.MutableRefObject<any>;
     spinnerLoading: boolean;
     setSpinnerLoading: (value: boolean) => void;
 }
@@ -61,10 +61,6 @@ const InputWithAutocomplete = forwardRef<HTMLDivElement, Props>(
                     onChange={(e: any) => {
                         setValue(e.target.value);
                         onChange(e.target.value);
-                        setSpinnerLoading(true);
-                    }}
-                    onKeyUp={() => {
-                        setSpinnerLoading(false);
                     }}
                     onKeyDown={tagKeyboardInputHandler}
                     TagComponent={TagComponent}
