@@ -85,3 +85,39 @@ function Counter() {
   )
 }
 ```
+
+## Testing
+
+If the atom is used in a component and you do not need to inject any pre-defined value, you can write your test normally for the component. The useAtom hook will automatically use the default value of the atom defined in the atom file.
+
+However, if you need to inject a pre-defined value to test that value within the component, use the `TestProvider` component.
+
+```jsx
+import { TestProvider, testMount } from 'src/utils/cypress-app-wrapper';
+import { countAtom } from 'src/atoms/counter-atom';
+import Counter from 'src/components/Counter';
+
+describe('<AdminSearch />', () => {
+    it('Renders atom with injected value', () => {
+        testMount(
+            <TestProvider
+                initialValues={[
+                    [
+                        countAtom,
+                        50
+                    ],
+                ]}
+            >
+                <Counter />
+            </TestProvider>,
+        );
+
+        cy.contains('50');
+    });
+});
+```
+
+# References:
+
+- [Jotai Docs](https://jotai.org/docs/)
+- [Jotai Testing](https://jotai.org/docs/guides/testing)
