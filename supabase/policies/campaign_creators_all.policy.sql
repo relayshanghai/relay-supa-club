@@ -1,3 +1,5 @@
+ALTER TABLE campaign_creators ENABLE ROW LEVEL SECURITY;
+
 -- Allow all updates to campaign if user belongs to the campaign's company or is a relay employee
 DROP POLICY IF EXISTS campaign_creators_all ON campaign_creators;
 

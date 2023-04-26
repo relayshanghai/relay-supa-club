@@ -334,6 +334,12 @@ DROP FUNCTION IF EXISTS create_supabase_user(TEXT, TEXT, TEXT);
 
 DROP FUNCTION IF EXISTS create_campaign(UUID, TEXT, TEXT, TEXT, TEXT[]);
 
-DROP FUNCTION IF EXISTS create_campaign_creator(UUID, TEXT, TEXT, TEXT, TEXT[]);
+DROP FUNCTION IF EXISTS create_campaign_creator(
+  UUID,
+  UUID,
+  TEXT,
+  TEXT,
+  TEXT
+);
 
 COMMIT;
