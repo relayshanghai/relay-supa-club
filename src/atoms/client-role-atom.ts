@@ -1,11 +1,11 @@
 import { atom } from 'jotai';
 
 type ClientRoleAtom = {
-    company_name: string;
-    company_id: string;
+    companyName: string;
+    companyId: string;
 };
 
 export const clientRoleAtom = atom<ClientRoleAtom>({
-    company_name: '',
-    company_id: '',
+    companyName: '',
+    companyId: '',
 });

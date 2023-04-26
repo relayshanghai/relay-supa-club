@@ -36,7 +36,7 @@ export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
     return (
         <div className="space-y-4">
             {companyId && (
-                <div className="absolute right-36 top-5 z-50 animate-bounce rounded-md bg-red-400 p-2 text-white">{`You are acting on behalf of company: ${clientRoleData.company_name}`}</div>
+                <div className="absolute right-36 top-5 z-50 animate-bounce rounded-md bg-red-400 p-2 text-white">{`You are acting on behalf of company: ${clientRoleData.companyName}`}</div>
             )}
             <SelectPlatform />
 

@@ -5,7 +5,7 @@ import { useAtomValue } from 'jotai';
 const Campaigns = () => {
     const clientRoleData = useAtomValue(clientRoleAtom);
 
-    return <SearchPage companyId={clientRoleData.company_name} />;
+    return <SearchPage companyId={clientRoleData.companyName} />;
 };
 
 export default Campaigns;
