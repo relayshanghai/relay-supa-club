@@ -10,4 +10,6 @@ BEGIN;
 \include ./supabase/policies/companies_insert.policy.sql
 \include ./supabase/policies/companies_update.policy.sql
 \include ./supabase/policies/campaign_creators_all.policy.sql
+\include ./supabase/policies/deny_all_policies.policy.sql
+
 COMMIT;
