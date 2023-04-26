@@ -11,7 +11,7 @@ import { SessionContextProvider } from '@supabase/auth-helpers-react';
 import { SWRConfig } from 'swr';
 import { Toaster } from 'react-hot-toast';
 import { Provider } from 'jotai';
-import type { WritableAtom , WritableAtom } from 'jotai';
+import type { WritableAtom } from 'jotai';
 import { useHydrateAtoms } from 'jotai/utils';
 i18n.changeLanguage('en');
 
