@@ -33,8 +33,8 @@ const Clients = () => {
     const clientRoleDataHandler = (clientName: string, clientId: string) => {
         if (clientName && clientId) {
             setClientRoleData({
-                company_id: clientId,
-                company_name: clientName,
+                companyId: clientId,
+                companyName: clientName,
             });
         }
     };
