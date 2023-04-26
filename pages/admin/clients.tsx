@@ -1,7 +1,9 @@
+import { useSetAtom } from 'jotai';
 import Link from 'next/link';
 import type { AdminClientsGetResponse } from 'pages/api/admin/clients';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
+import { clientRoleAtom } from 'src/atoms/client-role-atom';
 import { Button } from 'src/components/button';
 import { Spinner } from 'src/components/icons';
 import { Layout } from 'src/components/layout';
@@ -12,6 +14,8 @@ const columnHeaders = ['Account', 'Campaigns', 'Staff', 'Contact', 'Subscription
 const Clients = () => {
     const [data, setData] = useState<AdminClientsGetResponse>([]);
     const [loading, setLoading] = useState<boolean>(false);
+    const setClientRoleData = useSetAtom(clientRoleAtom);
+
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
@@ -25,6 +29,15 @@ const Clients = () => {
         };
         fetchData();
     }, []);
+
+    const clientRoleDataHandler = (clientName: string, clientId: string) => {
+        if (clientName && clientId) {
+            setClientRoleData({
+                companyId: clientId,
+                companyName: clientName,
+            });
+        }
+    };
 
     return (
         <Layout>
@@ -79,14 +92,26 @@ const Clients = () => {
                                                 {columnHeaders[index] === 'Campaigns' ? (
                                                     <div className="flex items-center justify-center">
                                                         <Link href={`/admin/campaigns/${client.id}`}>
-                                                            <Button>{dataPoint}</Button>
+                                                            <Button
+                                                                onClick={() =>
+                                                                    client.name &&
+                                                                    clientRoleDataHandler(client.name, client.id)
+                                                                }
+                                                            >
+                                                                {dataPoint}
+                                                            </Button>
                                                         </Link>
                                                     </div>
                                                 ) : columnHeaders[index] === 'Search' ? (
-                                                    <Link
-                                                        href={`/admin/search/${client.id}?company_name=${client.name}`}
-                                                    >
-                                                        <Button>{dataPoint}</Button>
+                                                    <Link href={`/admin/search/${client.id}`}>
+                                                        <Button
+                                                            onClick={() =>
+                                                                client.name &&
+                                                                clientRoleDataHandler(client.name, client.id)
+                                                            }
+                                                        >
+                                                            {dataPoint}
+                                                        </Button>
                                                     </Link>
                                                 ) : (
                                                     dataPoint
