@@ -124,34 +124,34 @@ export const SearchResultRow = ({
         } else setShowCampaignListModal(true);
     };
 
-    const desktop = useAboveScreenWidth(1400);
+    const desktop = useAboveScreenWidth(500);
 
     return (
         <tr className="group hover:bg-primary-100">
-            <td className="w-full">
-                <div className="relative flex w-full flex-row gap-x-2 px-4 py-2">
+            <td className="flex w-full">
+                <div className="relative flex flex-row gap-x-2 px-4 py-2">
                     <img
                         key={picture}
                         src={imgProxy(picture) as string}
                         className="h-12 w-12 [min-width:3rem]"
                         alt={handle}
                     />
-                    <div className="relative">
-                        <div className="font-bold line-clamp-2">{fullname} </div>
+                    <div className="">
+                        <div className="font-bold">{fullname}</div>
                         <div className="text-sm text-primary-500 line-clamp-1">{handle ? `@${handle}` : null}</div>
-                        <div className="absolute left-[105%] top-0">
-                            {FEAT_RECOMMENDED && isRecommendedInfluencer(platform, user_id) && (
-                                <Badge size={desktop ? 'medium' : 'small'} data-testid="recommended-badge">
-                                    {t('creators.recommended')}
-                                    <Tooltip
-                                        content={t('creators.recommendedTooltip')}
-                                        detail={t('creators.recommendedTooltipDetail')}
-                                        className="flex flex-wrap items-center"
-                                    />
-                                </Badge>
-                            )}
-                        </div>
                     </div>
+                </div>
+                <div className="mt-2">
+                    {FEAT_RECOMMENDED && isRecommendedInfluencer(platform, user_id) && (
+                        <Badge size={desktop ? 'medium' : 'small'} data-testid="recommended-badge">
+                            {t('creators.recommended')}
+                            <Tooltip
+                                content={t('creators.recommendedTooltip')}
+                                detail={t('creators.recommendedTooltipDetail')}
+                                className="flex flex-wrap items-center"
+                            />
+                        </Badge>
+                    )}
                 </div>
             </td>
             <td className="pr-4 text-right text-sm">{numberFormatter(followers) ?? '-'}</td>
