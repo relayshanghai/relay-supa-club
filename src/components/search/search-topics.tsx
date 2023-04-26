@@ -8,7 +8,7 @@ import type { CreatorPlatform, CreatorSearchTag, LocationWeighted } from 'types'
 
 type SearchTopicsProps = {
     onSetTopics: (topics: any[]) => void;
-    topics: CreatorSearchTag[] | LocationWeighted[];
+    topics: CreatorSearchTag[] & LocationWeighted[];
     platform: CreatorPlatform;
     path: string;
     placeholder: string;
@@ -83,9 +83,7 @@ export const SearchTopics = ({
 
     const removeTag = useCallback(
         (item: any) => {
-            const entry = (topics as LocationWeighted[]).find(
-                (tag: CreatorSearchTag | LocationWeighted) => tag === item,
-            );
+            const entry = topics.find((tag) => tag === item);
 
             if (entry) {
                 const clone = topics.slice();
