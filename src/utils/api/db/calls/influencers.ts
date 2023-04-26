@@ -1,9 +1,9 @@
-export const insertInfluencer = (_insert: any) => {
+export const insertInfluencer = async (_insert: any) => {
     // save to data store
     return { id: 0 };
 };
 
-export const insertInfluencerProfile = (_insert: any) => {
+export const insertInfluencerProfile = async (_insert: any) => {
     // save to data store
     return { id: 0 };
 };

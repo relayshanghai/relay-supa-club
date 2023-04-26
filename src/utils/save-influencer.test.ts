@@ -3,7 +3,9 @@ import { extractInfluencer, extractInfluencerProfile } from './api/iqdata/extrac
 import { saveInfluencer } from './save-influencer';
 
 jest.mock('./api/db/calls/influencers', () => ({
-    insertInfluencer: jest.fn(),
+    insertInfluencer: jest.fn((_: any) => {
+        return { ..._, id: 1 };
+    }),
     insertInfluencerProfile: jest.fn(),
 }));
 
@@ -13,13 +15,7 @@ jest.mock('./api/iqdata/extract-influencer', () => ({
 }));
 
 describe('Save influencer', () => {
-    it('Save influencer', () => {
-        const insertInfluencerMocked = (
-            insertInfluencer as jest.MockedFunction<typeof insertInfluencer>
-        ).mockImplementation((_insert: any) => {
-            return { ..._insert, id: 1 };
-        });
-
+    it('Save influencer', async () => {
         const data = {
             user_profile: {
                 fullname: 'John Doe',
@@ -28,9 +24,9 @@ describe('Save influencer', () => {
             },
         };
 
-        const influencer = saveInfluencer(data) as typeof data.user_profile & { id?: number };
+        const influencer = (await saveInfluencer(data)) as typeof data.user_profile & { id?: number };
 
-        expect(insertInfluencerMocked).toHaveBeenCalledTimes(1);
+        expect(insertInfluencer).toHaveBeenCalledTimes(1);
         expect(insertInfluencerProfile).toHaveBeenCalledTimes(1);
 
         expect(extractInfluencer).toHaveBeenCalledTimes(1);
