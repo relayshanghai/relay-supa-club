@@ -136,21 +136,22 @@ export const SearchResultRow = ({
                         className="h-12 w-12 [min-width:3rem]"
                         alt={handle}
                     />
-                    <div >
+                    <div>
                         <div className="font-bold">{fullname}</div>
                         <div className="text-sm text-primary-500 line-clamp-1">{handle ? `@${handle}` : null}</div>
                     </div>
                 </div>
                 <div className="mt-2">
                     {FEAT_RECOMMENDED && isRecommendedInfluencer(platform, user_id) && (
-                        <Badge size={desktop ? 'medium' : 'small'} data-testid="recommended-badge">
-                            {t('creators.recommended')}
-                            <Tooltip
-                                content={t('creators.recommendedTooltip')}
-                                detail={t('creators.recommendedTooltipDetail')}
-                                className="flex flex-wrap items-center"
-                            />
-                        </Badge>
+                        <Tooltip
+                            content={t('creators.recommendedTooltip')}
+                            detail={t('creators.recommendedTooltipDetail')}
+                            className="flex flex-wrap items-center"
+                        >
+                            <Badge size={desktop ? 'medium' : 'small'} data-testid="recommended-badge">
+                                {t('creators.recommended')}
+                            </Badge>
+                        </Tooltip>
                     )}
                 </div>
             </td>

@@ -193,20 +193,20 @@ export const SearchOptions = ({
                     ) : null}
                     {FEAT_RECOMMENDED && (
                         <div className="ml-auto">
-                            <Switch
-                                data-testid="recommended-toggle"
-                                checked={onlyRecommended}
-                                onChange={(e) => {
-                                    setOnlyRecommended(e.target.checked);
-                                }}
-                                beforeLabel="Recommended only"
+                            <Tooltip
+                                content={t('creators.recommendedTooltip')}
+                                detail={t('creators.recommendedTooltipDetail')}
+                                className="flex flex-wrap items-center"
                             >
-                                <Tooltip
-                                    content={t('creators.recommendedTooltip')}
-                                    detail={t('creators.recommendedTooltipDetail')}
-                                    className="flex flex-wrap items-center"
+                                <Switch
+                                    data-testid="recommended-toggle"
+                                    checked={onlyRecommended}
+                                    onChange={(e) => {
+                                        setOnlyRecommended(e.target.checked);
+                                    }}
+                                    beforeLabel="Recommended only"
                                 />
-                            </Switch>
+                            </Tooltip>
                         </div>
                     )}
                 </div>
