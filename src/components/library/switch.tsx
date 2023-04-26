@@ -9,7 +9,7 @@ interface SwitchProps extends DetailedHTMLProps<InputHTMLAttributes<HTMLInputEle
 
 export const Switch = ({ beforeLabel, afterLabel, className, ...props }: SwitchProps) => {
     return (
-        <div className="group/tooltip relative flex items-center">
+        <div className="flex items-center">
             {beforeLabel && <label className="mr-3 text-sm text-gray-500 dark:text-gray-400">{beforeLabel}</label>}
             <input
                 type="checkbox"
