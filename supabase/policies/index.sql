@@ -9,4 +9,5 @@ BEGIN;
 \include ./supabase/policies/companies_delete.policy.sql
 \include ./supabase/policies/companies_insert.policy.sql
 \include ./supabase/policies/companies_update.policy.sql
+\include ./supabase/policies/campaign_creators_all.policy.sql
 COMMIT;

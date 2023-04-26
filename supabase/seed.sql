@@ -1,10 +1,8 @@
 BEGIN;
 
 -- seed helpers
-CREATE OR REPLACE FUNCTION create_supabase_user(email TEXT, _first_name TEXT, _last_name TEXT)
-RETURNS UUID
-SECURITY DEFINER
-AS $$
+CREATE
+OR REPLACE FUNCTION create_supabase_user(email TEXT, _first_name TEXT, _last_name TEXT) RETURNS UUID SECURITY DEFINER AS $$
   DECLARE
     user_id UUID;
   BEGIN
@@ -89,13 +87,14 @@ AS $$
   END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION create_profile(
-  company_id UUID, email TEXT, first_name TEXT, last_name TEXT, _role TEXT
-)
-RETURNS RECORD
-SECURITY DEFINER
-LANGUAGE plpgsql
-AS $$
+CREATE
+OR REPLACE FUNCTION create_profile(
+  company_id UUID,
+  email TEXT,
+  first_name TEXT,
+  last_name TEXT,
+  _role TEXT
+) RETURNS RECORD SECURITY DEFINER LANGUAGE plpgsql AS $$
   DECLARE
     user_id UUID;
     _row RECORD;
@@ -111,11 +110,12 @@ AS $$
   END;
 $$;
 
-CREATE OR REPLACE FUNCTION create_company(company_name TEXT, website TEXT, subscription_status TEXT)
-RETURNS RECORD
-SECURITY DEFINER
-LANGUAGE plpgsql
-AS $$
+CREATE
+OR REPLACE FUNCTION create_company(
+  company_name TEXT,
+  website TEXT,
+  subscription_status TEXT
+) RETURNS RECORD SECURITY DEFINER LANGUAGE plpgsql AS $$
     DECLARE
       _row RECORD;
     BEGIN
@@ -154,13 +154,14 @@ AS $$
     END;
 $$;
 
-CREATE OR REPLACE FUNCTION create_campaign(
-  company_id UUID, campaign_name TEXT, campaign_description TEXT, product_name TEXT, tags TEXT[]
-)
-RETURNS RECORD
-SECURITY DEFINER
-LANGUAGE plpgsql
-AS $$
+CREATE
+OR REPLACE FUNCTION create_campaign(
+  company_id UUID,
+  campaign_name TEXT,
+  campaign_description TEXT,
+  product_name TEXT,
+  tags TEXT[]
+) RETURNS RECORD SECURITY DEFINER LANGUAGE plpgsql AS $$
     DECLARE
       _row RECORD;
     BEGIN
@@ -199,23 +200,80 @@ AS $$
     END;
 $$;
 
+CREATE
+OR REPLACE FUNCTION create_campaign_creator(
+  campaign_id UUID,
+  added_by_id UUID,
+  avatar_url TEXT,
+  creator_id TEXT,
+  fullname TEXT
+) RETURNS RECORD SECURITY DEFINER LANGUAGE plpgsql AS $$
+    DECLARE
+      _row RECORD;
+    BEGIN
+      INSERT INTO campaign_creators
+        (
+          id,
+          avatar_url,
+          creator_id,
+          added_by_id,
+          rate_cents,
+          rate_currency,
+          payment_status,
+          paid_amount_cents,
+          paid_amount_currency,
+          sample_status,
+          platform,
+          status,
+          campaign_id,
+          next_step,
+          fullname
+        )
+      VALUES
+        (
+          uuid_generate_v4(),
+          avatar_url,
+          creator_id,
+          added_by_id, 
+          0,
+          'USD',
+          'unpaid',
+          0,
+          'USD',
+          'unsent',
+          'youtube',
+          'to contact',
+          campaign_id,
+          'Return email',
+          fullname
+        )
+      RETURNING * INTO _row;
+      RETURN _row;
+    END;
+$$;
+
 -- seed data
 DO $$
 DECLARE
   _company_test RECORD;
   _company_relay RECORD;
+  _profile_william RECORD;
+  _profile_christopher RECORD;
+  _campaign_beauty_for_all RECORD;
+  _campaign_gaming RECORD;
+  _profile_relay_employee RECORD;
 BEGIN
   -- Test Company
     _company_test := create_company('Blue Moonlight Stream Enterprises', 'https://blue-moonlight-stream.com', 'trial');
 
-    PERFORM create_profile(
+    _profile_william := create_profile(
       _company_test.id,
       'william.edward.douglas@blue-moonlight-stream.com',
       'William Edward',
       'Douglas',
       'company_owner'
     );
-    PERFORM create_profile(
+    _profile_christopher := create_profile(
       _company_test.id,
       'christopher.david.thompson@blue-moonlight-stream.com',
       'Christopher David',
@@ -223,7 +281,7 @@ BEGIN
       'company_teammate'
     );
 
-    PERFORM create_campaign(
+    _campaign_beauty_for_all := create_campaign(
       _company_test.id,
       'Beauty for All Skin Tones',
       'A campaign promoting inclusivity and diversity in the beauty industry. \
@@ -233,10 +291,18 @@ BEGIN
       ARRAY['beauty','inclusivity','makeup','diversity','confidence']
     );
 
+    PERFORM create_campaign_creator(
+      _campaign_beauty_for_all.id, 
+      _profile_william.id, 
+      'https://yt3.googleusercontent.com/SOkJ3PucBImQs1fZSG7O_LSD98FOEzGGKlaaLzt5Hps_REGV8-Ueuh_qjxtWmrRYWskN2URWiQ=s480-c-k-c0x00ffffff-no-rj',
+      'UCB_CCSAGP_YCuR36_w2bG1w',
+      'Greg Renko'
+    );
+
   -- Relay Club
     _company_relay := create_company('Relay Club', 'https://relay.club', 'active');
 
-    PERFORM create_campaign(
+    _campaign_gaming := create_campaign(
       _company_relay.id,
       'The Future of Gaming is Here',
       'A campaign promoting the latest and greatest in gaming technology. \
@@ -246,14 +312,34 @@ BEGIN
       ARRAY['gaming','technology','highperformance','graphics','sound']
     );
 
-    PERFORM create_profile(_company_relay.id, 'jacob@relay.club', 'Jacob', 'Cool', 'relay_employee');
+    _profile_relay_employee := create_profile(_company_relay.id, 'jacob@relay.club', 'Jacob', 'Cool', 'relay_employee');
+
+    PERFORM create_campaign_creator(
+      _campaign_gaming.id, 
+      _profile_relay_employee.id, 
+      'https://yt3.googleusercontent.com/S3tNLpc5lGK6i3qKb-3pBxcVTp6Fa0TKpJO8lJW-1fgcksYvZn68S3Ha5ebkIQiNFMeskjTxUBA=s480-c-k-c0x00ffffff-no-rj',
+      'UCxo4Q6Wy5Ag4ntlibuyTfIQ',
+      'Yousef Gaming'
+    );
+
 END;
 $$;
 
 -- cleanup
 DROP FUNCTION IF EXISTS create_company(TEXT, TEXT, TEXT);
+
 DROP FUNCTION IF EXISTS create_profile(UUID, TEXT, TEXT, TEXT, TEXT);
+
 DROP FUNCTION IF EXISTS create_supabase_user(TEXT, TEXT, TEXT);
+
 DROP FUNCTION IF EXISTS create_campaign(UUID, TEXT, TEXT, TEXT, TEXT[]);
+
+DROP FUNCTION IF EXISTS create_campaign_creator(
+  UUID,
+  UUID,
+  TEXT,
+  TEXT,
+  TEXT
+);
 
 COMMIT;
