@@ -17,7 +17,7 @@ export const InfluencerAlreadyAddedModal = ({
     return (
         <ModalWithButtons
             title={t('campaigns.modal.addToCampaign') || ''}
-            visible={!!show}
+            visible={show}
             onClose={() => {
                 setShow(false);
             }}

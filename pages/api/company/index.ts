@@ -1,16 +1,11 @@
 import type { NextApiHandler } from 'next';
 import httpCodes from 'src/constants/httpCodes';
-import { getCompanyById, getCompanyByName, getCompanyName, updateCompany } from 'src/utils/api/db/calls/company';
+import { getCompanyByName, getCompanyName, updateCompany } from 'src/utils/api/db/calls/company';
 import type { CompanyDB, CompanyDBUpdate } from 'src/utils/api/db/types';
 import { serverLogger } from 'src/utils/logger-server';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 import { isCompanyOwnerOrRelayEmployee } from 'src/utils/auth';
 import { updateCompanyErrors } from 'src/errors/company';
-
-export type CompanyGetQueries = {
-    id: string;
-};
-export type CompanyGetResponse = CompanyDB;
 
 export interface CompanyPutBody extends CompanyDBUpdate {
     id: string;
@@ -18,27 +13,6 @@ export interface CompanyPutBody extends CompanyDBUpdate {
 export type CompanyPutResponse = CompanyDB;
 
 const handler: NextApiHandler = async (req, res) => {
-    if (req.method === 'GET') {
-        try {
-            const { id: companyId } = req.query as CompanyGetQueries;
-            if (!companyId) {
-                return res.status(httpCodes.BAD_REQUEST).json({ error: 'Missing company id' });
-            }
-
-            const company = await getCompanyById(companyId);
-
-            if (!company) {
-                return res.status(httpCodes.NOT_FOUND).json({ error: 'Company not found' });
-            }
-            const result: CompanyGetResponse = company;
-
-            return res.status(httpCodes.OK).json(result);
-        } catch (error) {
-            serverLogger(error, 'error');
-            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({ error: 'Error finding company' });
-        }
-    }
-
     if (req.method === 'PUT') {
         try {
             const updateData = req.body as CompanyPutBody;

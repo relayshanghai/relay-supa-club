@@ -1,18 +1,20 @@
-import { useSessionContext, useSupabaseClient } from '@supabase/auth-helpers-react';
+import { useSessionContext } from '@supabase/auth-helpers-react';
 import type { Session, SupabaseClient, User } from '@supabase/supabase-js';
 import * as Sentry from '@sentry/browser';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import type { CreateEmployeePostBody, CreateEmployeePostResponse } from 'pages/api/company/create-employee';
-import type { ProfileGetQuery, ProfileGetResponse, ProfilePutBody, ProfilePutResponse } from 'pages/api/profiles';
+import type { ProfileInsertBody, ProfilePutBody, ProfilePutResponse } from 'pages/api/profiles';
 import type { MutableRefObject, PropsWithChildren } from 'react';
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import type { KeyedMutator } from 'swr';
 import useSWR from 'swr';
 
 import type { ProfileDB } from 'src/utils/api/db/types';
-import { nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';
+import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
 import type { DatabaseWithCustomTypes } from 'types';
+import { useClientDb } from 'src/utils/client-db/use-client-db';
+import { useCompany } from './use-company';
 
 export type SignupData = {
     email: string;
@@ -41,7 +43,7 @@ export interface IUserContext {
     createEmployee: (email: string) => Promise<CreateEmployeePostResponse | null>;
     logout: () => void;
     updateProfile: (updates: Omit<ProfilePutBody, 'id'>) => void;
-    refreshProfile: KeyedMutator<ProfileGetResponse> | (() => void);
+    refreshProfile: KeyedMutator<ProfileDB> | (() => void);
     supabaseClient: SupabaseClient<DatabaseWithCustomTypes> | null;
     getProfileController: MutableRefObject<AbortController | null | undefined>;
 }
@@ -76,28 +78,32 @@ export const useUser = () => {
 
 export const UserProvider = ({ children }: PropsWithChildren) => {
     const { isLoading, session } = useSessionContext();
-    const supabaseClient = useSupabaseClient<DatabaseWithCustomTypes>();
+    const { supabaseClient, getProfileById } = useClientDb();
     const getProfileController = useRef<AbortController | null>();
     const [loading, setLoading] = useState<boolean>(true);
     const { identifyFromProfile } = useRudderstack();
+    const { company } = useCompany();
     useEffect(() => {
         setLoading(isLoading);
     }, [isLoading]);
 
-    const { data: profile, mutate: refreshProfile } = useSWR(session?.user.id ? 'profiles' : null, async (path) => {
+    const { data: profile, mutate: refreshProfile } = useSWR(session?.user.id ? 'profiles' : null, async () => {
         if (getProfileController.current) {
             getProfileController.current.abort();
         }
         const controller = new AbortController();
         getProfileController.current = controller;
-
-        const fetchedProfile = await nextFetchWithQueries<ProfileGetQuery, ProfileGetResponse>(
-            path,
-            {
-                id: session?.user.id ?? '',
-            },
-            { signal: controller.signal },
+        if (!session?.user.id) {
+            return;
+        }
+        const { data: fetchedProfile, error } = await getProfileById(
+            session.user.id,
+            getProfileController.current?.signal,
         );
+        if (error) {
+            clientLogger(error, 'error');
+            throw new Error(error.message || 'Unknown error');
+        }
 
         // only set Sentry user if it is the first time we are fetching the profile
         if (fetchedProfile?.email && !profile?.email) {
@@ -112,10 +118,10 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
 
     // identify user with RudderStack on profile change
     useEffect(() => {
-        if (profile) {
-            identifyFromProfile(profile);
+        if (profile && company) {
+            identifyFromProfile(profile, company);
         }
-    }, [identifyFromProfile, profile]);
+    }, [identifyFromProfile, profile, company]);
 
     const login = async (email: string, password: string) => {
         setLoading(true);
@@ -147,11 +153,29 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
         const { error, data: signupResData } = await supabaseClient.auth.signUp({
             email,
             password,
-            options: { data },
         });
 
         if (error) {
             throw new Error(error?.message || 'Unknown error');
+        }
+        const id = signupResData?.user?.id;
+        if (!id) {
+            throw new Error('Error creating profile, no id in response');
+        }
+        const profileBody: ProfileInsertBody = {
+            id,
+            first_name: data.first_name,
+            last_name: data.last_name,
+            email,
+        };
+        const createProfileResponse = await nextFetch<ProfileInsertBody>('profiles', {
+            method: 'POST',
+            body: profileBody,
+        });
+
+        if (!createProfileResponse.id) {
+            clientLogger(createProfileResponse, 'error');
+            throw new Error('Error creating profile');
         }
 
         return signupResData;
