@@ -136,7 +136,7 @@ export const SearchResultRow = ({
                         className="h-12 w-12 [min-width:3rem]"
                         alt={handle}
                     />
-                    <div className="">
+                    <div >
                         <div className="font-bold">{fullname}</div>
                         <div className="text-sm text-primary-500 line-clamp-1">{handle ? `@${handle}` : null}</div>
                     </div>
