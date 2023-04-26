@@ -1,9 +1,11 @@
-import { useRouter } from 'next/router';
 import SearchPage from 'src/components/search/search-page';
+import { clientRoleAtom } from 'src/atoms/client-role-atom';
+import { useAtomValue } from 'jotai';
 
 const Campaigns = () => {
-    const { id } = useRouter().query;
-    return <SearchPage companyId={id?.toString()} />;
+    const clientRoleData = useAtomValue(clientRoleAtom);
+
+    return <SearchPage companyId={clientRoleData.companyName} />;
 };
 
 export default Campaigns;
