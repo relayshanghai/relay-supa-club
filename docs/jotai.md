@@ -121,3 +121,4 @@ describe('<AdminSearch />', () => {
 
 - [Jotai Docs](https://jotai.org/docs/)
 - [Jotai Testing](https://jotai.org/docs/guides/testing)
+- [Jotai Tech Assesment](https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/350)
