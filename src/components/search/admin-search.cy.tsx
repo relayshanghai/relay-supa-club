@@ -7,7 +7,7 @@ describe('<AdminSearch />', () => {
         testMount(<AdminSearch />);
     });
 
-    it('Takes company name from Atom and render it', () => {
+    it('Takes company name from Atom and renders it', () => {
         testMount(
             <TestProvider
                 initialValues={[
