@@ -11,7 +11,7 @@ export const isLocationWeighted = (item: CreatorSearchTag[] | LocationWeighted[]
 };
 
 type SearchTopicsProps = {
-    onSetTopics: (topics: any[]) => void;
+    onSetTopics: (topics: CreatorSearchTag[] | LocationWeighted[]) => void;
     topics: CreatorSearchTag[] | LocationWeighted[];
     platform: CreatorPlatform;
     path: string;
@@ -107,10 +107,10 @@ export const SearchTopics = ({
             onChange={(item: any) => {
                 setTopicSearch(item);
             }}
-            onRemoveTag={(item: any) => {
+            onRemoveTag={(item: CreatorSearchTag | LocationWeighted) => {
                 removeTag(item);
             }}
-            onAddTag={(item: any) => {
+            onAddTag={(item: CreatorSearchTag | LocationWeighted) => {
                 addTag(item);
             }}
         />

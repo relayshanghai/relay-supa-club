@@ -5,7 +5,7 @@ import { isLocationWeighted } from './search/search-topics';
 export interface Props extends DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> {
     disabled?: boolean;
     tags: CreatorSearchTag[] | LocationWeighted[];
-    onTagRemove: (tag: string) => void;
+    onTagRemove: (tag: CreatorSearchTag | LocationWeighted) => void;
     TagComponent?: React.FC<any>;
 }
 export const InputWithTags = ({ disabled, tags = [], onTagRemove, TagComponent, ...rest }: Props) => {

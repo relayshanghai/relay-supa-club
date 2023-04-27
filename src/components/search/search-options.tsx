@@ -8,6 +8,7 @@ import { SearchCreators } from './search-creators';
 import { SearchTopics } from './search-topics';
 import { Switch, Tooltip } from '../library';
 import { FEAT_RECOMMENDED } from 'src/constants/feature-flags';
+import type { CreatorSearchTag, LocationWeighted } from 'types';
 
 const resultsPerPageOptions = [10, 20, 50, 100];
 
@@ -62,8 +63,8 @@ export const SearchOptions = ({
                         placeholder={t('creators.searchTopic')}
                         topics={tags}
                         platform={platform}
-                        onSetTopics={(topics: any) => {
-                            setTopicTags(topics);
+                        onSetTopics={(topics: CreatorSearchTag[] | LocationWeighted[]) => {
+                            setTopicTags(topics as CreatorSearchTag[]);
                         }}
                     />
                 </div>
@@ -78,8 +79,8 @@ export const SearchOptions = ({
                     topics={influencerLocation}
                     platform={platform}
                     filter={filterCountry}
-                    onSetTopics={(topics: any) => {
-                        setInfluencerLocation(topics);
+                    onSetTopics={(topics: CreatorSearchTag[] | LocationWeighted[]) => {
+                        setInfluencerLocation(topics as LocationWeighted[]);
                     }}
                 />
                 <SearchTopics
@@ -88,8 +89,10 @@ export const SearchOptions = ({
                     topics={audienceLocation}
                     platform={platform}
                     filter={filterCountry}
-                    onSetTopics={(topics: any) => {
-                        setAudienceLocation(topics.map((item: any) => ({ weight: 5, ...item })));
+                    onSetTopics={(topics: CreatorSearchTag[] | LocationWeighted[]) => {
+                        setAudienceLocation(
+                            (topics as LocationWeighted[]).map((item: LocationWeighted) => ({ ...item, weight: 5 })),
+                        );
                     }}
                     TagComponent={({ onClick, ...item }: any) => {
                         const selected = audienceLocation.find((country) => country.id === item.id);

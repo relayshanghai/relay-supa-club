@@ -5,8 +5,8 @@ import { isLocationWeighted } from './search/search-topics';
 export interface Props {
     disabled?: boolean;
     onChange: (value: string) => void;
-    onRemoveTag: (tag: any) => void;
-    onAddTag: (tag: any) => void;
+    onRemoveTag: (tag: CreatorSearchTag | LocationWeighted) => void;
+    onAddTag: (tag: CreatorSearchTag | LocationWeighted) => void;
     tags: CreatorSearchTag[] | LocationWeighted[];
     suggestions: CreatorSearchTag[] | LocationWeighted[];
     placeholder: string;
