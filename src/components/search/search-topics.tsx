@@ -4,11 +4,11 @@ import useOnOutsideClick from 'src/hooks/use-on-outside-click';
 import { debounce } from 'src/utils/debounce';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
-import type { CreatorPlatform, CreatorSearchTag, LocationWeighted } from 'types';
+import type { CreatorPlatform } from 'types';
 
 type SearchTopicsProps = {
     onSetTopics: (topics: any[]) => void;
-    topics: CreatorSearchTag[] & LocationWeighted[];
+    topics: any;
     platform: CreatorPlatform;
     path: string;
     placeholder: string;
@@ -83,7 +83,7 @@ export const SearchTopics = ({
 
     const removeTag = useCallback(
         (item: any) => {
-            const entry = topics.find((tag) => tag === item);
+            const entry = topics.find((tag: any) => tag === item);
 
             if (entry) {
                 const clone = topics.slice();
