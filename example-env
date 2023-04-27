@@ -65,3 +65,7 @@ NEXT_PUBLIC_RUDDERSTACK_APP_DATA_PLANE_URL=""
 # silences some errors in the console
 
 SENTRY_IGNORE_API_RESOLUTION_ERROR=1
+
+# Google APIs
+
+GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nMewrgwsgswerg/lsdkjfg==\n-----END PRIVATE KEY-----\n"
