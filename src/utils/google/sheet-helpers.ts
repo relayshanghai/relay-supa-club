@@ -9,22 +9,33 @@ import { serverLogger } from '../logger-server';
 
 export const DEFAULT_SHEET_ID = 'Sheet1';
 
+const credentials = {
+    type: 'service_account',
+    project_id: 'recommended-influencers-sheet',
+    private_key_id: 'da4216555259955a834d5f990e92139f7cbc4658',
+    private_key: '',
+    client_email: 'relay-club-service-account@recommended-influencers-sheet.iam.gserviceaccount.com',
+    client_id: '116281726721191170632',
+    auth_uri: 'https://accounts.google.com/o/oauth2/auth',
+    token_uri: 'https://oauth2.googleapis.com/token',
+    auth_provider_x509_cert_url: 'https://www.googleapis.com/oauth2/v1/certs',
+    client_x509_cert_url:
+        'https://www.googleapis.com/robot/v1/metadata/x509/relay-club-service-account%40recommended-influencers-sheet.iam.gserviceaccount.com',
+    client_secret: '',
+};
+
 // If modifying these scopes, delete token.json.
 export const SCOPES = ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive.file'];
 
 const CREDENTIALS_PATH = path.join(process.cwd(), 'src/utils/google/credentials.json');
 
 const loadSecretIntoCredentialsJson = async () => {
-    const credentialsJsonFile = await fs.readFile(CREDENTIALS_PATH);
-    const credentialsJson = JSON.parse(credentialsJsonFile as any);
-    if (!credentialsJson.private_key) {
-        const clientSecret = process.env.GOOGLE_PRIVATE_KEY;
-        if (!clientSecret) {
-            throw new Error('Missing GOOGLE_PRIVATE_KEY');
-        }
-        credentialsJson.private_key = clientSecret;
-        await fs.writeFile(CREDENTIALS_PATH, JSON.stringify(credentialsJson));
+    const clientSecret = process.env.GOOGLE_PRIVATE_KEY;
+    if (!clientSecret) {
+        throw new Error('Missing GOOGLE_PRIVATE_KEY');
     }
+    credentials.private_key = clientSecret;
+    await fs.writeFile(CREDENTIALS_PATH, JSON.stringify(credentials));
 };
 
 /**
