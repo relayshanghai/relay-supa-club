@@ -4,6 +4,22 @@ import useOnOutsideClick from 'src/hooks/use-on-outside-click';
 import { debounce } from 'src/utils/debounce';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
+import type { CreatorPlatform, CreatorSearchTag, LocationWeighted } from 'types';
+
+export const isLocationWeighted = (item: CreatorSearchTag[] | LocationWeighted[]): item is LocationWeighted[] => {
+    return (item as LocationWeighted[])[0].weight !== undefined;
+};
+
+type SearchTopicsProps = {
+    onSetTopics: (topics: any[]) => void;
+    topics: CreatorSearchTag[] | LocationWeighted[];
+    platform: CreatorPlatform;
+    path: string;
+    placeholder: string;
+    filter?: (items: any[]) => any[];
+    SuggestionComponent?: React.FC<any>;
+    TagComponent?: React.FC<any>;
+};
 
 export const SearchTopics = ({
     onSetTopics,
@@ -14,8 +30,8 @@ export const SearchTopics = ({
     filter,
     SuggestionComponent,
     TagComponent,
-}: any) => {
-    const [suggestions, setSuggestions] = useState<any[]>([]);
+}: SearchTopicsProps) => {
+    const [suggestions, setSuggestions] = useState<CreatorSearchTag[] | LocationWeighted[]>([]);
     const ref = useRef<any>();
     const inputRef = useRef<any>();
 
@@ -68,7 +84,8 @@ export const SearchTopics = ({
 
     const removeTag = useCallback(
         (item: any) => {
-            const entry = topics.find((tag: any) => tag === item);
+            // (topics as any) due to typescript bug:https://github.com/microsoft/TypeScript/issues/44373
+            const entry = (topics as any).find((tag: CreatorSearchTag | LocationWeighted) => tag === item);
 
             if (entry) {
                 const clone = topics.slice();

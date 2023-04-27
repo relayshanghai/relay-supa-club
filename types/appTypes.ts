@@ -3,7 +3,17 @@ import type Stripe from 'stripe';
 import type { Database } from './supabase';
 
 export type LabelValueObject = { label: string; value: string };
-export type LocationWeighted = { id: string; weight: number };
+export type LocationWeighted = {
+    id: string;
+    weight: number;
+    name: string;
+    type: string[];
+    title: string;
+    country: {
+        id: string;
+        code: string;
+    };
+};
 export type CreatorSearchTag = { tag: string; value: string };
 
 export type SubscriptionPeriod = 'monthly' | 'annually' | 'quarterly';
