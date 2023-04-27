@@ -46,10 +46,9 @@ const ActiveLink = ({ href, children }: { href: string; children: React.ReactNod
                 <Compass height={18} width={18} className="mr-4 text-inherit" />
             )}
 
-            {href === '/campaigns' ||
-                (href.includes('/admin/campaigns') && (
-                    <FourSquare height={18} width={18} className="mr-4 stroke-inherit" />
-                ))}
+            {(href === '/campaigns' || href.includes('/admin/campaigns')) && (
+                <FourSquare height={18} width={18} className="mr-4 stroke-inherit" />
+            )}
 
             {href === '/ai-email-generator' && <EmailOutline height={18} width={18} className="mr-4 stroke-inherit" />}
 

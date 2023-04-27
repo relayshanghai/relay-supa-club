@@ -8,6 +8,7 @@ import { Sidebar } from 'src/components/sidebar';
 
 import { useUser } from 'src/hooks/use-user';
 import useOnOutsideClick from 'src/hooks/use-on-outside-click';
+import ClientRoleWarning from './search/client-role-warning';
 
 export const Layout = ({ children }: any) => {
     const { t } = useTranslation();
@@ -84,6 +85,7 @@ export const Layout = ({ children }: any) => {
                 </div>
                 <div className="h-full w-full overflow-auto"> {children}</div>
             </div>
+            <ClientRoleWarning />
         </div>
     );
 };
