@@ -6,6 +6,10 @@ import * as Sentry from '@sentry/nextjs';
 
 const SENTRY_DSN = process.env.SENTRY_DSN || process.env.NEXT_PUBLIC_SENTRY_DSN;
 
+const inDev = () => {
+    return process.env.NODE_ENV === 'development' || window?.location?.hostname === 'localhost';
+};
+
 Sentry.init({
     dsn: SENTRY_DSN || 'https://72058d0ae7d64379b99695eb28fcfdf3@o4504887260676096.ingest.sentry.io/4504887346855936',
     // Adjust this value in production, or use tracesSampler for greater control
@@ -23,13 +27,16 @@ Sentry.init({
     replaysOnErrorSampleRate: 1.0,
 
     integrations: [new Sentry.Replay()],
+    enabled: !inDev(), // turn off in development
 
-    // turn off user report dialog for now. We can turn back on when we've gotten rid of all the background errors that aren't real errors
-    // beforeSend(event) {
-    //     // Check if it is an exception, and if so, show the report dialog
-    //     if (event.exception) {
-    //         Sentry.showReportDialog({ eventId: event.event_id });
-    //     }
-    //     return event;
-    // },
+    beforeSend(event) {
+        if (inDev()) {
+            return null;
+        } // Check if it is an exception, and if so, show the report dialog
+        // if (event.exception) {
+        //     Sentry.showReportDialog({ eventId: event.event_id });
+        // }
+        // turn off user report dialog for now. We can turn back on when we've gotten rid of all the background errors that aren't real errors
+        return event;
+    },
 });

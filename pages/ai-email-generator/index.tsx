@@ -158,10 +158,6 @@ const AIImageGenerator = () => {
         <Layout>
             <div className="flex h-full w-full flex-col items-center p-6">
                 <div className="flex flex-col items-center">
-                    {/* text-[0.65rem] is an exception to our font size rules, when the text-xs looks too big for this icon label, it now only appears in the BETA label */}
-                    <span className="py-1/2 font-base mb-2 w-fit rounded-2xl bg-primary-500 px-2 text-[0.65rem] text-white">
-                        BETA
-                    </span>
                     <h1 className="mb-2 text-2xl font-bold">{t('aiEmailGenerator.index.title') || ''}</h1>
                     <p className="mb-2 text-xs">{t('aiEmailGenerator.index.description') || ''}</p>
                     <p className="text-xs font-semibold text-gray-500">{t('aiEmailGenerator.index.information')}</p>

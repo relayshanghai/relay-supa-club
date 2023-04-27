@@ -13,7 +13,7 @@ import type {
 
 export const useInvites = () => {
     const { profile } = useUser();
-    const { data: invites, mutate: refreshUsages } = useSWR(profile?.company_id ? 'company' : null, (path) =>
+    const { data: invites, mutate: refreshUsages } = useSWR(profile?.company_id ? 'invites' : null, (path) =>
         nextFetchWithQueries<InvitesGetQueries, InvitesGetResponse>(path, {
             id: profile?.company_id ?? '',
         }),

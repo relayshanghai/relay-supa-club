@@ -1,49 +1,18 @@
 import type { NextApiHandler } from 'next';
 import httpCodes from 'src/constants/httpCodes';
-import type { ProfileDB, ProfileDBUpdate } from 'src/utils/api/db';
-import { getProfileById, updateProfile } from 'src/utils/api/db';
+import type { ProfileDB, ProfileDBInsert, ProfileDBUpdate } from 'src/utils/api/db';
+import { insertProfile } from 'src/utils/api/db';
+import { updateProfile } from 'src/utils/api/db';
 import { checkSessionIdMatchesID } from 'src/utils/auth';
 import { serverLogger } from 'src/utils/logger-server';
 
-export type ProfileGetQuery = {
-    /** user id from session */
-    id: string;
-};
-export type ProfileGetResponse = ProfileDB;
-
 export type ProfilePutBody = ProfileDBUpdate & { id: string };
 export type ProfilePutResponse = ProfileDB;
+export type ProfileInsertBody = ProfileDBInsert;
 
 const Handler: NextApiHandler = async (req, res) => {
-    if (req.method === 'GET') {
-        const { id } = req.query as ProfileGetQuery;
-
-        if (!id) {
-            return res.status(httpCodes.BAD_REQUEST).json({ message: 'missing id' });
-        }
-        try {
-            const matchesSession = await checkSessionIdMatchesID(id, req, res);
-            if (!matchesSession) {
-                return res.status(httpCodes.UNAUTHORIZED).json({
-                    error: 'user is unauthorized for this action',
-                });
-            }
-            const { data, error: profileGetError } = await getProfileById(id);
-            if (profileGetError) {
-                serverLogger(profileGetError, 'error');
-                return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
-            }
-            const result: ProfileGetResponse = data;
-            return res.status(httpCodes.OK).json(result);
-        } catch (error) {
-            serverLogger(error, 'error');
-            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
-        }
-    }
-
     if (req.method === 'PUT') {
         const profile = req.body as ProfilePutBody;
-
         try {
             const matchesSession = await checkSessionIdMatchesID(profile.id, req, res);
             if (!matchesSession) {
@@ -62,9 +31,33 @@ const Handler: NextApiHandler = async (req, res) => {
             serverLogger(error, 'error');
             return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
         }
-    }
+    } else if (req.method === 'POST') {
+        const profile = req.body as ProfileInsertBody;
+        if (!profile.id || !profile.first_name || !profile.last_name) {
+            return res.status(httpCodes.BAD_REQUEST).json({ message: 'Missing required profile fields' });
+        }
+        const matchesSession = await checkSessionIdMatchesID(profile.id, req, res);
+        if (!matchesSession) {
+            return res.status(httpCodes.UNAUTHORIZED).json({
+                error: 'user is unauthorized for this action',
+            });
+        }
 
-    return res.status(httpCodes.METHOD_NOT_ALLOWED).json({});
+        try {
+            const { error, data } = await insertProfile(profile);
+            if (error) {
+                serverLogger(error, 'error');
+                return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
+            }
+            const result: ProfilePutResponse = data;
+            return res.status(httpCodes.OK).json(result);
+        } catch (error) {
+            serverLogger(error, 'error');
+            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
+        }
+    } else {
+        return res.status(httpCodes.METHOD_NOT_ALLOWED).json({});
+    }
 };
 
 export default Handler;

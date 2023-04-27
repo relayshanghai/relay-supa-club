@@ -1,4 +1,6 @@
 /// <reference types="@testing-library/cypress" />
+// @ts-check
+
 import type { CampaignCreatorDB } from '../../utils/api/db';
 
 import React from 'react';
@@ -124,12 +126,12 @@ describe('<InfluencerRow />', () => {
             showMoveInfluencerModal: false,
         };
         testMount(<InfluencerRow {...props} />);
-        cy.get('div[data-testid=contacts-skeleton]').should('not.exist');
+        cy.findByTestId('contacts-skeleton').should('not.exist');
         cy.get('a[href="https://www.facebook.com/tseriesmusic"]').should('not.exist');
 
         cy.contains('View Contact Info').click();
         // shows loading spinner
-        cy.get('div[data-testid=contacts-skeleton]').should('exist');
+        cy.findByTestId('contacts-skeleton').should('exist');
         // shows contact info
         cy.get('a[href="https://www.facebook.com/tseriesmusic"]').should('exist');
     });

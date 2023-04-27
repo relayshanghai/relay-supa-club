@@ -44,7 +44,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             return res.status(httpCodes.OK).json(subscription);
         } catch (error) {
-            serverLogger(error, 'error');
+            serverLogger(error, 'error', true);
             return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
         }
     }

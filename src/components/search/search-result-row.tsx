@@ -1,7 +1,7 @@
 import { Menu } from '@headlessui/react';
 import { PlusCircleIcon } from '@heroicons/react/24/solid';
 import Link from 'next/link';
-import type { CampaignsIndexGetResult } from 'pages/api/campaigns';
+import type { CampaignWithCompanyCreators } from 'src/utils/client-db/campaigns';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
 import { DotsHorizontal, ShareLink } from 'src/components/icons';
@@ -14,18 +14,18 @@ import { decimalToPercent, numberFormatter } from 'src/utils/formatter';
 import type { CreatorSearchAccountObject } from 'types';
 import { Badge, Tooltip } from '../library';
 import { SkeletonSearchResultRow } from '../common/skeleton-search-result-row';
+import { useRudderstack } from 'src/hooks/use-rudderstack';
 
 export interface SearchResultRowProps {
     creator: CreatorSearchAccountObject;
     setSelectedCreator: (creator: CreatorSearchAccountObject) => void;
     setShowCampaignListModal: (show: boolean) => void;
     setShowAlreadyAddedModal: (show: boolean) => void;
-    campaigns?: CampaignsIndexGetResult;
+    campaigns?: CampaignWithCompanyCreators[];
     setCampaignsWithCreator: (campaigns: string[]) => void;
 }
 export interface MoreResultsRowsProps extends Omit<SearchResultRowProps, 'creator'> {
     page: number;
-    onlyRecommended: boolean;
 }
 
 export const MoreResultsRows = ({
@@ -35,15 +35,10 @@ export const MoreResultsRows = ({
     setShowAlreadyAddedModal,
     campaigns,
     setCampaignsWithCreator,
-    onlyRecommended,
 }: MoreResultsRowsProps) => {
     const { t } = useTranslation();
-    const { resultsPerPageLimit, platform } = useSearch();
-    const { results: resultsFull, loading, error } = useSearchResults(page);
-    const results =
-        FEAT_RECOMMENDED && onlyRecommended
-            ? resultsFull?.filter((creator) => isRecommendedInfluencer(platform, creator.account.user_profile.user_id))
-            : resultsFull;
+    const { resultsPerPageLimit } = useSearch();
+    const { results, loading, error } = useSearchResults(page);
 
     if (error)
         return (
@@ -91,6 +86,7 @@ export const SearchResultRow = ({
 }: SearchResultRowProps) => {
     const { t } = useTranslation();
     const { platform } = useSearch();
+    const { trackEvent } = useRudderstack();
     const {
         username,
         custom_name,
@@ -164,7 +160,11 @@ export const SearchResultRow = ({
 
             <td className="sticky right-0 lg:relative">
                 <div className="relative hidden flex-row items-center justify-center gap-2 duration-100 group-hover:opacity-100 lg:flex lg:opacity-100">
-                    <Link href={`/influencer/${platform}/${user_id}`} target="_blank">
+                    <Link
+                        href={`/influencer/${platform}/${user_id}`}
+                        target="_blank"
+                        onClick={() => trackEvent('Opened a report from Search', { platform, user_id })}
+                    >
                         <Button className="flex flex-row items-center" variant="secondary">
                             <span className="">{t('creators.analyzeProfile')}</span>
                         </Button>
@@ -218,6 +218,9 @@ export const SearchResultRow = ({
                                                 className={`${
                                                     active ? 'bg-violet-500 text-white' : 'text-gray-900'
                                                 } group flex w-full items-center justify-center rounded-md px-2 py-2 text-sm`}
+                                                onClick={() =>
+                                                    trackEvent('Opened a report from Search', { platform, user_id })
+                                                }
                                             >
                                                 {t('creators.analyzeProfile')}
                                             </button>

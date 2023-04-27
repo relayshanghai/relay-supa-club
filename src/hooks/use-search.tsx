@@ -41,6 +41,8 @@ export interface ISearchContext {
     setUsageExceeded: (exceeded: boolean) => void;
     page: number;
     setPage: (page: number) => void;
+    onlyRecommended: boolean;
+    setOnlyRecommended: (onlyRecommended: boolean) => void;
 }
 
 export const SearchContext = createContext<ISearchContext>({
@@ -75,6 +77,8 @@ export const SearchContext = createContext<ISearchContext>({
     setUsageExceeded: () => null,
     page: 0,
     setPage: () => null,
+    onlyRecommended: false,
+    setOnlyRecommended: () => null,
 });
 
 export const useSearch = () => useContext(SearchContext);
@@ -94,6 +98,7 @@ export const useSearchResults = (page: number) => {
         lastPost,
         contactInfo,
         audienceLocation,
+        onlyRecommended,
         platform,
         resultsPerPageLimit,
         setUsageExceeded,
@@ -115,6 +120,7 @@ export const useSearchResults = (page: number) => {
                   lastPost,
                   contactInfo,
                   audienceLocation,
+                  onlyRecommended,
                   platform,
                   resultsPerPageLimit,
               ]
@@ -132,11 +138,14 @@ export const useSearchResults = (page: number) => {
             lastPost,
             contactInfo,
             audienceLocation,
+            onlyRecommended,
             platform,
             resultsPerPageLimit,
         ]) => {
             try {
-                if (!profile?.company_id || !profile?.id) return;
+                if (!profile?.company_id || !profile?.id) {
+                    throw new Error('No profile');
+                }
                 if (ref.current) {
                     ref.current.abort();
                 }
@@ -159,6 +168,7 @@ export const useSearchResults = (page: number) => {
                     engagement,
                     lastPost,
                     contactInfo,
+                    only_recommended: onlyRecommended,
                     company_id: profile?.company_id,
                     user_id: profile?.id,
                 };
@@ -168,18 +178,17 @@ export const useSearchResults = (page: number) => {
                     signal,
                     body,
                 });
-
+                if (!res?.accounts) {
+                    throw new Error('no accounts in results');
+                }
                 return { results: res?.accounts, resultsTotal: res?.total };
             } catch (error: any) {
-                if (typeof error?.message === 'string' && error.message.toLowerCase().includes('abort')) {
-                    return;
-                }
-                clientLogger(error, 'error');
                 if (hasCustomError(error, usageErrors)) {
                     setUsageExceeded(true);
-                } else {
-                    throw error;
+                } else if (!error?.message?.includes('abort')) {
+                    clientLogger(error, 'error');
                 }
+                throw error;
             } finally {
                 setLoading(false);
             }
@@ -200,7 +209,7 @@ export const useSearchResults = (page: number) => {
         resultsTotal: data?.resultsTotal || 0,
         /** this 'loading' only triggers when this page is loading */
         loading: isLoading,
-        error,
+        error: error?.message?.includes('abort') ? undefined : error,
         isValidating,
         noResults,
         mutate,
@@ -208,6 +217,7 @@ export const useSearchResults = (page: number) => {
 };
 
 export const SearchProvider = ({ children }: PropsWithChildren) => {
+    // this 'loading' triggers when any page is loading
     const [loading, setLoading] = useState(true);
     const [resultsPerPageLimit, setResultsPerPageLimit] = useState(10);
     const [usageExceeded, setUsageExceeded] = useState(false);
@@ -225,6 +235,7 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
     const [contactInfo, setContactInfo] = useState<string>();
     const [audienceLocation, setAudienceLocation] = useState<LocationWeighted[]>([]);
     const [platform, setPlatform] = useState<CreatorPlatform>('youtube');
+    const [onlyRecommended, setOnlyRecommended] = useState(false);
 
     // reset page to 0 when any other search params are changed
     useEffect(() => {
@@ -242,6 +253,7 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
         audienceLocation,
         platform,
         resultsPerPageLimit,
+        onlyRecommended,
     ]);
 
     return (
@@ -277,6 +289,8 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
                 setUsageExceeded,
                 page,
                 setPage,
+                onlyRecommended,
+                setOnlyRecommended,
             }}
         >
             {children}

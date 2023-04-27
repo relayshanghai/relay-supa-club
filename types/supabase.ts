@@ -138,6 +138,7 @@ export interface Database {
       }
       campaigns: {
         Row: {
+          archived: boolean | null
           budget_cents: number | null
           budget_currency: string | null
           company_id: string
@@ -162,6 +163,7 @@ export interface Database {
           target_locations: string[] | null
         }
         Insert: {
+          archived?: boolean | null
           budget_cents?: number | null
           budget_currency?: string | null
           company_id: string
@@ -186,6 +188,7 @@ export interface Database {
           target_locations?: string[] | null
         }
         Update: {
+          archived?: boolean | null
           budget_cents?: number | null
           budget_currency?: string | null
           company_id?: string
@@ -547,6 +550,18 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
+      is_company_member: {
+        Args: {
+          target_company_id: string
+        }
+        Returns: boolean
+      }
+      is_company_member_of_campaign: {
+        Args: {
+          target_campaign_id: string
+        }
+        Returns: boolean
+      }
       is_relay_employee: {
         Args: Record<PropertyKey, never>
         Returns: boolean

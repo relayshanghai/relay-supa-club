@@ -1,6 +1,7 @@
 import { useCallback, useRef, useState } from 'react';
 import InputWithAutocomplete from 'src/components/input-with-autocomplete';
 import useOnOutsideClick from 'src/hooks/use-on-outside-click';
+import { debounce } from 'src/utils/debounce';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
 
@@ -17,13 +18,16 @@ export const SearchTopics = ({
     const [suggestions, setSuggestions] = useState<any[]>([]);
     const ref = useRef<any>();
     const inputRef = useRef<any>();
+
     useOnOutsideClick(inputRef, () => {
         setSuggestions([]);
         setTopicSearch('');
     });
 
+    // Disabling the exhaustive-deps rule because we need to use the debounce function and we already know the required dependencies.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const setTopicSearch = useCallback(
-        async (term: any) => {
+        debounce(async (term: string) => {
             if (ref.current) ref.current.abort();
 
             const controller = new AbortController();
@@ -50,7 +54,7 @@ export const SearchTopics = ({
                 }
                 clientLogger(error, 'error');
             }
-        },
+        }),
         [platform, path, filter],
     );
 

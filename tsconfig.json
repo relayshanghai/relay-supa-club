@@ -21,5 +21,6 @@
     "types": ["node"]
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "pages/_error.js"],
-  "exclude": ["node_modules", "**/*.test.*", "**/*.cy.*", "cypress", "cypress.config.ts"]
+  // Exclude test files because they are not part of the build
+  "exclude": ["node_modules", "**/*.test.ts"]
 }

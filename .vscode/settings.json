@@ -16,6 +16,7 @@
     "nextjs",
     "onboarded",
     "relayclub",
+    "rudderanalytics",
     "RUDDERSTACK",
     "signup",
     "supa",
@@ -26,6 +27,8 @@
     "upsert",
     "wechat"
   ],
+  "sqlfluff.dialect": "postgres",
+  "sqlfluff.executablePath": "sqlfluff",
   "files.associations": {
     "*.css": "tailwindcss"
   },

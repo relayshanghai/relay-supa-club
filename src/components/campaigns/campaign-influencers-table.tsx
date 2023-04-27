@@ -10,13 +10,12 @@ import type { CampaignCreatorDB, CampaignWithCompanyCreators } from 'src/utils/a
 import Fuse from 'fuse.js';
 import InfluencerRow from './influencer-row';
 import { MoveInfluencerModal } from '../modal-move-influencer';
-import type { CampaignsIndexGetResult } from 'pages/api/campaigns';
 
 export interface CreatorsOutreachProps {
     currentCampaign: CampaignWithCompanyCreators;
     setShowNotesModal: (value: boolean) => void;
     setCurrentCreator: (value: CampaignCreatorDB) => void;
-    campaigns?: CampaignsIndexGetResult;
+    campaigns?: CampaignWithCompanyCreators[];
     currentCreator?: CampaignCreatorDB | null;
 }
 
@@ -215,7 +214,7 @@ export default function CampaignInfluencersTable({
                 />
             </div>
             {/* -- Outreach Table -- */}
-            <div className="overflow-x-auto">
+            <div className="min-h-screen overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200 overflow-y-visible">
                     <thead className="sticky top-0 bg-white">
                         <tr>

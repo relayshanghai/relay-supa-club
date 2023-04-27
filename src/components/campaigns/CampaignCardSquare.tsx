@@ -3,14 +3,14 @@ import Image from 'next/legacy/image';
 import { ChartBarIcon, PencilSquareIcon } from '@heroicons/react/20/solid';
 import type { JSXElementConstructor, Key, ReactElement, ReactFragment, ReactNode, ReactPortal } from 'react';
 import { useState, useEffect } from 'react';
-import { supabase } from 'src/utils/supabase-client';
 import type { CampaignWithCompanyCreators } from 'src/utils/api/db';
 import { useTranslation } from 'react-i18next';
+import { useSupabaseClient } from '@supabase/auth-helpers-react';
 
 export default function CampaignCardSquare({ campaign }: { campaign: CampaignWithCompanyCreators }) {
     const { t } = useTranslation();
     const [coverImageUrl, setCoverImageUrl] = useState<string | null>(null);
-
+    const supabase = useSupabaseClient();
     useEffect(() => {
         const getFiles = async () => {
             const getFilePath = (filename: string) => {
@@ -34,7 +34,7 @@ export default function CampaignCardSquare({ campaign }: { campaign: CampaignWit
         if (campaign) {
             getFiles();
         }
-    }, [campaign]);
+    }, [campaign, supabase.storage]);
 
     return (
         <Link href={`/campaigns/${campaign.id}`} passHref>

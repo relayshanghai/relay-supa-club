@@ -5,9 +5,12 @@ import { numFormatter } from 'src/utils/utils';
 import type { CreatorPlatform, SimilarUser } from 'types';
 import { Button } from '../button';
 import { ShareLink } from '../icons';
+import { useRudderstack } from 'src/hooks/use-rudderstack';
 
 export const SimilarCreator = ({ creator, platform }: { creator: SimilarUser; platform: CreatorPlatform }) => {
     const { t } = useTranslation();
+    const { trackEvent } = useRudderstack();
+
     return (
         <div className="group mb-2 flex items-center justify-between rounded-xl bg-white p-4">
             <div className="flex flex-1 items-center justify-between overflow-hidden">
@@ -29,7 +32,16 @@ export const SimilarCreator = ({ creator, platform }: { creator: SimilarUser; pl
                 </div>
             </div>
             <div className="ml-4 flex items-center">
-                <Button variant="secondary" className="px-3 py-1">
+                <Button
+                    variant="secondary"
+                    className="px-3 py-1"
+                    onClick={() => {
+                        trackEvent('Opened a report from Similar Influencer Section', {
+                            platform,
+                            user_id: creator.user_id,
+                        });
+                    }}
+                >
                     <Link href={`/influencer/${platform}/${creator.user_id}`}>{t('creators.analyzeProfile')}</Link>
                 </Button>
                 <Button className="ml-2">

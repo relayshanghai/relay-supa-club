@@ -6,7 +6,7 @@ import type { ProfileDBUpdate, ProfileDBInsert } from '../types';
 export const insertProfile = (insert: ProfileDBInsert) => {
     const { user_role: _filter_out, ...insertData } = insert;
     insertData.updated_at = new Date().toISOString();
-    supabase.from('profiles').insert(insertData).select().single();
+    return supabase.from('profiles').insert(insertData).select().single();
 };
 
 /** updates profile but does not allow changing of role status, automatically updates `updated_at` field */

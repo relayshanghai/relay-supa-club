@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import type { CampaignsIndexGetResult } from 'pages/api/campaigns';
+import type { CampaignWithCompanyCreators } from 'src/utils/client-db/campaigns';
 import { useTranslation } from 'react-i18next';
 import type { CreatorPlatform, CreatorUserProfile } from 'types';
 import CampaignModalCard from './campaigns/campaign-modal-card';
@@ -16,14 +16,14 @@ export const AddToCampaignModal = ({
     setShow: (show: boolean) => void;
     platform: CreatorPlatform;
     selectedCreator: CreatorUserProfile | null;
-    campaigns?: CampaignsIndexGetResult | undefined;
+    campaigns?: CampaignWithCompanyCreators[] | undefined;
 }) => {
     const { t } = useTranslation();
 
     return (
         <Modal
             title={t('campaigns.modal.addToCampaign') || ''}
-            visible={!!show}
+            visible={show}
             onClose={() => {
                 setShow(false);
             }}
