@@ -1,6 +1,6 @@
 # Influencers
 
-This table is the main table in the database and stores all the information related to influencers. It typically includes the influencer's name, email address, phone number, and other personal information. This table can also include information about the influencer's social media accounts, such as their username, followers, and engagement rates.
+This table is the main table in the database and stores all the information related to an influencer across all their social media accounts. It typically includes the influencer's name, email address, phone number, and other personal information.
 
 # Influencer Categories
 

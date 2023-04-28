@@ -280,27 +280,27 @@ export interface Database {
           category: string | null
           created_at: string | null
           id: string
-          influencer: string | null
+          influencer_id: string | null
         }
         Insert: {
           category?: string | null
           created_at?: string | null
           id?: string
-          influencer?: string | null
+          influencer_id?: string | null
         }
         Update: {
           category?: string | null
           created_at?: string | null
           id?: string
-          influencer?: string | null
+          influencer_id?: string | null
         }
       }
       influencer_posts: {
         Row: {
-          campaign: string | null
+          campaign_id: string | null
           created_at: string | null
           id: string
-          influencer: string | null
+          influencer_id: string | null
           is_reusable: boolean | null
           platform: string | null
           publish_date: string | null
@@ -309,10 +309,10 @@ export interface Database {
           url: string | null
         }
         Insert: {
-          campaign?: string | null
+          campaign_id?: string | null
           created_at?: string | null
           id?: string
-          influencer?: string | null
+          influencer_id?: string | null
           is_reusable?: boolean | null
           platform?: string | null
           publish_date?: string | null
@@ -321,10 +321,10 @@ export interface Database {
           url?: string | null
         }
         Update: {
-          campaign?: string | null
+          campaign_id?: string | null
           created_at?: string | null
           id?: string
-          influencer?: string | null
+          influencer_id?: string | null
           is_reusable?: boolean | null
           platform?: string | null
           publish_date?: string | null
@@ -333,25 +333,25 @@ export interface Database {
           url?: string | null
         }
       }
-      influencer_profiles: {
+      influencer_social_profiles: {
         Row: {
           created_at: string | null
           id: string
-          influencer: string | null
+          influencer_id: string | null
           platform: string | null
           url: string | null
         }
         Insert: {
           created_at?: string | null
           id?: string
-          influencer?: string | null
+          influencer_id?: string | null
           platform?: string | null
           url?: string | null
         }
         Update: {
           created_at?: string | null
           id?: string
-          influencer?: string | null
+          influencer_id?: string | null
           platform?: string | null
           url?: string | null
         }
@@ -363,6 +363,7 @@ export interface Database {
           created_at: string | null
           email: string | null
           id: string
+          is_recommended: boolean | null
           name: string | null
         }
         Insert: {
@@ -371,6 +372,7 @@ export interface Database {
           created_at?: string | null
           email?: string | null
           id?: string
+          is_recommended?: boolean | null
           name?: string | null
         }
         Update: {
@@ -379,6 +381,7 @@ export interface Database {
           created_at?: string | null
           email?: string | null
           id?: string
+          is_recommended?: boolean | null
           name?: string | null
         }
       }
