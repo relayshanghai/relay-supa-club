@@ -47,6 +47,7 @@ export const SearchOptions = ({
         setResultsPerPageLimit,
         onlyRecommended,
         setOnlyRecommended,
+        recommendedInfluencers,
     } = useSearch();
 
     const { t } = useTranslation();
@@ -174,7 +175,7 @@ export const SearchOptions = ({
                             </option>
                         ))}
                     </select>
-                    <p className="mr-2 ml-1 text-sm text-gray-500">{t('creators.resultsPerPage')}</p>
+                    <p className="ml-1 mr-2 text-sm text-gray-500">{t('creators.resultsPerPage')}</p>
                     {hasSetViews || hasSetAudience || gender || engagement || lastPost ? (
                         <Button
                             onClick={(e: any) => {
@@ -199,6 +200,7 @@ export const SearchOptions = ({
                                 className="flex flex-wrap items-center"
                             >
                                 <Switch
+                                    disabled={!recommendedInfluencers || recommendedInfluencers.length === 0}
                                     data-testid="recommended-toggle"
                                     checked={onlyRecommended}
                                     onChange={(e) => {

@@ -3,7 +3,7 @@ import httpCodes from 'src/constants/httpCodes';
 import type { CampaignDB, CompanyDB, ProfileDB } from 'src/utils/api/db';
 import { supabase } from 'src/utils/supabase-client';
 
-interface ClientInfo extends CompanyDB {
+export interface ClientInfo extends CompanyDB {
     campaigns: CampaignDB[];
     profiles: ProfileDB[];
 }

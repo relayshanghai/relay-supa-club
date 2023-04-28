@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
 import { DotsHorizontal, ShareLink } from 'src/components/icons';
 import { FEAT_RECOMMENDED } from 'src/constants/feature-flags';
-import { isRecommendedInfluencer } from 'src/constants/recommendedInfluencers';
 import useAboveScreenWidth from 'src/hooks/use-above-screen-width';
 import { useSearch, useSearchResults } from 'src/hooks/use-search';
 import { imgProxy } from 'src/utils/fetcher';
@@ -15,6 +14,7 @@ import type { CreatorSearchAccountObject } from 'types';
 import { Badge, Tooltip } from '../library';
 import { SkeletonSearchResultRow } from '../common/skeleton-search-result-row';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { isRecommendedInfluencer } from 'src/utils/utils';
 
 export interface SearchResultRowProps {
     creator: CreatorSearchAccountObject;
@@ -85,7 +85,7 @@ export const SearchResultRow = ({
     setCampaignsWithCreator,
 }: SearchResultRowProps) => {
     const { t } = useTranslation();
-    const { platform } = useSearch();
+    const { platform, recommendedInfluencers } = useSearch();
     const { trackEvent } = useRudderstack();
     const {
         username,
@@ -124,12 +124,12 @@ export const SearchResultRow = ({
         } else setShowCampaignListModal(true);
     };
 
-    const desktop = useAboveScreenWidth(1400);
+    const desktop = useAboveScreenWidth(500);
 
     return (
         <tr className="group hover:bg-primary-100">
-            <td className="w-full">
-                <div className="flex w-full flex-row gap-x-2 py-2 px-4">
+            <td className="flex w-full">
+                <div className="relative flex flex-row gap-x-2 px-4 py-2">
                     <img
                         key={picture}
                         src={imgProxy(picture) as string}
@@ -137,10 +137,12 @@ export const SearchResultRow = ({
                         alt={handle}
                     />
                     <div>
-                        <div className="font-bold line-clamp-2">{fullname}</div>
+                        <div className="font-bold">{fullname}</div>
                         <div className="text-sm text-primary-500 line-clamp-1">{handle ? `@${handle}` : null}</div>
                     </div>
-                    {FEAT_RECOMMENDED && isRecommendedInfluencer(platform, user_id) && (
+                </div>
+                <div className="mt-2">
+                    {FEAT_RECOMMENDED && isRecommendedInfluencer(recommendedInfluencers, platform, user_id) && (
                         <Tooltip
                             content={t('creators.recommendedTooltip')}
                             detail={t('creators.recommendedTooltipDetail')}

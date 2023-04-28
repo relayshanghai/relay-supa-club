@@ -30,6 +30,7 @@
 import '@testing-library/cypress/add-commands';
 
 import i18n from '../../i18n';
+import { mount } from 'cypress/react18';
 
 declare global {
     // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -38,6 +39,7 @@ declare global {
             getByTestId: typeof getByTestId;
             loginTestUser: typeof loginTestUser;
             switchToEnglish: typeof switchToEnglish;
+            mount: typeof mount;
         }
     }
 }
@@ -71,5 +73,7 @@ function switchToEnglish() {
     i18n.changeLanguage('en');
 }
 Cypress.Commands.add('switchToEnglish', switchToEnglish);
+
+Cypress.Commands.add('mount', mount)
 
 export {};

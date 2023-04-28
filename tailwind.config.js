@@ -1,12 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
     mode: 'jit',
-    content: [
-        './pages/**/*.{js,ts,jsx,tsx}',
-        './src/**/*.{js,ts,jsx,tsx}',
-        './styles/**/*.css',
-        'node_modules/preline/dist/*.js',
-    ],
+    content: ['./pages/**/*.{js,ts,jsx,tsx}', './src/**/*.{js,ts,jsx,tsx}', './styles/**/*.css'],
 
     theme: {
         extend: {
@@ -52,5 +47,5 @@ module.exports = {
             fontFamily: ['hover', 'focus'],
         },
     },
-    plugins: [require('@tailwindcss/line-clamp'), require('preline/plugin')],
+    plugins: [require('@tailwindcss/line-clamp')],
 };
