@@ -21,6 +21,5 @@
     "types": ["node"]
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "pages/_error.js"],
-  // Exclude test files because they are not part of the build
-  "exclude": ["node_modules", "**/*.test.ts"]
+  "exclude": ["node_modules"]
 }
