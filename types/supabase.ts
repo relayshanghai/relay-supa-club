@@ -277,112 +277,112 @@ export interface Database {
       }
       influencer_categories: {
         Row: {
-          category: string | null
+          category: string
           created_at: string | null
           id: string
-          influencer_id: string | null
+          influencer_id: string
         }
         Insert: {
-          category?: string | null
+          category: string
           created_at?: string | null
           id?: string
-          influencer_id?: string | null
+          influencer_id: string
         }
         Update: {
-          category?: string | null
+          category?: string
           created_at?: string | null
           id?: string
-          influencer_id?: string | null
+          influencer_id?: string
         }
       }
       influencer_posts: {
         Row: {
-          campaign_id: string | null
+          campaign_id: string
           created_at: string | null
           id: string
-          influencer_id: string | null
-          is_reusable: boolean | null
-          platform: string | null
+          influencer_id: string
+          is_reusable: boolean
+          platform: string
           publish_date: string | null
-          type: string | null
+          type: string
           updated_at: string | null
-          url: string | null
+          url: string
         }
         Insert: {
-          campaign_id?: string | null
+          campaign_id: string
           created_at?: string | null
           id?: string
-          influencer_id?: string | null
-          is_reusable?: boolean | null
-          platform?: string | null
+          influencer_id: string
+          is_reusable?: boolean
+          platform: string
           publish_date?: string | null
-          type?: string | null
+          type: string
           updated_at?: string | null
-          url?: string | null
+          url: string
         }
         Update: {
-          campaign_id?: string | null
+          campaign_id?: string
           created_at?: string | null
           id?: string
-          influencer_id?: string | null
-          is_reusable?: boolean | null
-          platform?: string | null
+          influencer_id?: string
+          is_reusable?: boolean
+          platform?: string
           publish_date?: string | null
-          type?: string | null
+          type?: string
           updated_at?: string | null
-          url?: string | null
+          url?: string
         }
       }
       influencer_social_profiles: {
         Row: {
           created_at: string | null
           id: string
-          influencer_id: string | null
-          platform: string | null
-          url: string | null
+          influencer_id: string
+          platform: string
+          url: string
         }
         Insert: {
           created_at?: string | null
           id?: string
-          influencer_id?: string | null
-          platform?: string | null
-          url?: string | null
+          influencer_id: string
+          platform: string
+          url: string
         }
         Update: {
           created_at?: string | null
           id?: string
-          influencer_id?: string | null
-          platform?: string | null
-          url?: string | null
+          influencer_id?: string
+          platform?: string
+          url?: string
         }
       }
       influencers: {
         Row: {
           address: string | null
-          avatar_url: string | null
+          avatar_url: string
           created_at: string | null
           email: string | null
           id: string
           is_recommended: boolean | null
-          name: string | null
+          name: string
         }
         Insert: {
           address?: string | null
-          avatar_url?: string | null
+          avatar_url: string
           created_at?: string | null
           email?: string | null
           id?: string
           is_recommended?: boolean | null
-          name?: string | null
+          name: string
         }
         Update: {
           address?: string | null
-          avatar_url?: string | null
+          avatar_url?: string
           created_at?: string | null
           email?: string | null
           id?: string
           is_recommended?: boolean | null
-          name?: string | null
+          name?: string
         }
       }
       invites: {
