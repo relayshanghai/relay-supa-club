@@ -99,3 +99,6 @@ export const isAdmin = (user_role?: AccountRole) => {
 
 /** returns true if any of the values passed in are falsy */
 export const isMissing = (...values: unknown[]) => values.findIndex((value) => !value) > -1;
+
+export const isRecommendedInfluencer = (recommendedInfluencers: string[], platform: string, user_id: string) =>
+    recommendedInfluencers.includes(`${platform}/${user_id}`);

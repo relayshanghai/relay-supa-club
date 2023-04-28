@@ -47,6 +47,7 @@ export const SearchOptions = ({
         setResultsPerPageLimit,
         onlyRecommended,
         setOnlyRecommended,
+        recommendedInfluencers,
     } = useSearch();
 
     const { t } = useTranslation();
@@ -199,6 +200,7 @@ export const SearchOptions = ({
                                 className="flex flex-wrap items-center"
                             >
                                 <Switch
+                                    disabled={!recommendedInfluencers || recommendedInfluencers.length === 0}
                                     data-testid="recommended-toggle"
                                     checked={onlyRecommended}
                                     onChange={(e) => {
