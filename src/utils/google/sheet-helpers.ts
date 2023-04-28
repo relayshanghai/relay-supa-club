@@ -1,5 +1,3 @@
-import { promises as fs } from 'fs';
-import path from 'path';
 import process from 'process';
 
 import type { sheets_v4 } from 'googleapis';
@@ -26,9 +24,7 @@ const credentials = {
 // If modifying these scopes, delete token.json.
 export const SCOPES = ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive.file'];
 
-const CREDENTIALS_PATH = path.join(process.cwd(), 'src/utils/google/credentials.json');
-
-const writeSecretsIntoJson = async () => {
+const prepareCredentials = async () => {
     const privateKey = process.env.GOOGLE_PRIVATE_KEY;
     const privateKeyId = process.env.GOOGLE_PRIVATE_KEY_ID;
     const clientId = process.env.GOOGLE_CLIENT_ID;
@@ -44,19 +40,19 @@ const writeSecretsIntoJson = async () => {
     credentials.private_key_id = privateKeyId;
     credentials.private_key = privateKey;
     credentials.client_id = clientId;
-    await fs.writeFile(CREDENTIALS_PATH, JSON.stringify(credentials));
+    return credentials;
 };
 
 /**
  * Request or authorization to call google APIs.
  */
 export async function authorizeGoogle() {
-    await writeSecretsIntoJson();
+    const credentials = await prepareCredentials();
     serverLogger('Authorizing Google API...');
 
     const client = new google.auth.GoogleAuth({
         scopes: SCOPES,
-        keyFile: CREDENTIALS_PATH,
+        credentials,
     });
     serverLogger('Authorized Google API.');
     return client as GoogleAuth;
