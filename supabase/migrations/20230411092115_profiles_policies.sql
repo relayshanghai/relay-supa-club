@@ -1,41 +1,38 @@
-drop policy "Public profiles are viewable by everyone." on "public"."profiles";
+DROP POLICY "Public profiles are viewable by everyone." ON "public"."profiles";
 
-drop policy "Users can insert their own profile." on "public"."profiles";
+DROP POLICY "Users can insert their own profile." ON "public"."profiles";
 
-drop policy "Users can update own profile." on "public"."profiles";
+DROP POLICY "Users can update own profile." ON "public"."profiles";
 
-alter table "public"."profiles" enable row level security;
+ALTER TABLE "public"."profiles" ENABLE ROW LEVEL SECURITY;
 
-create policy "profiles_delete"
-on "public"."profiles"
-as permissive
-for delete
-to public
-using (false);
-
-
-create policy "profiles_insert"
-on "public"."profiles"
-as permissive
-for insert
-to public
-with check (false);
+CREATE POLICY "profiles_delete"
+ON "public"."profiles"
+AS PERMISSIVE
+FOR DELETE
+TO public
+USING (false);
 
 
-create policy "profiles_select"
-on "public"."profiles"
-as permissive
-for select
-to public
-using (((id = auth.uid()) OR is_relay_employee()));
+CREATE POLICY "profiles_insert"
+ON "public"."profiles"
+AS PERMISSIVE
+FOR INSERT
+TO public
+WITH CHECK (false);
 
 
-create policy "profiles_update"
-on "public"."profiles"
-as permissive
-for update
-to public
-using (false);
+CREATE POLICY "profiles_select"
+ON "public"."profiles"
+AS PERMISSIVE
+FOR SELECT
+TO public
+USING (((id = auth.uid()) OR is_relay_employee()));
 
 
-
+CREATE POLICY "profiles_update"
+ON "public"."profiles"
+AS PERMISSIVE
+FOR UPDATE
+TO public
+USING (false);
