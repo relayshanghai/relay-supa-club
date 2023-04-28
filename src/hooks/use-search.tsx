@@ -81,7 +81,7 @@ export const SearchContext = createContext<ISearchContext>({
     setUsageExceeded: () => null,
     page: 0,
     setPage: () => null,
-    onlyRecommended: false,
+    onlyRecommended: true,
     setOnlyRecommended: () => null,
     recommendedInfluencers: [],
 });
@@ -244,7 +244,7 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
     const [contactInfo, setContactInfo] = useState<string>();
     const [audienceLocation, setAudienceLocation] = useState<LocationWeighted[]>([]);
     const [platform, setPlatform] = useState<CreatorPlatform>('youtube');
-    const [onlyRecommended, setOnlyRecommended] = useState(false);
+    const [onlyRecommended, setOnlyRecommended] = useState(true);
 
     // reset page to 0 when any other search params are changed
     useEffect(() => {
