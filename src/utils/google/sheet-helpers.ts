@@ -81,8 +81,7 @@ export const findExistingFileByName = async (auth: GoogleAuth, name: string) => 
 };
 
 /**
- * Create a folder and prints the folder ID
- * @return{obj} folder Id
+ * Create a folder and returns the folder ID
  * */
 export async function createFolder(auth: GoogleAuth, name: string) {
     const drive = google.drive({ version: 'v3', auth });
@@ -111,37 +110,28 @@ export async function createFolder(auth: GoogleAuth, name: string) {
 
 /**
  * Change the file's modification timestamp.
- * @param{string} fileId Id of the file to move
- * @param{string} folderId Id of the folder to move
- * @return{obj} file status
+ * @param {string} fileId Id of the file to move
+ * @param {string} folderId Id of the folder to move
+ * @return {number} file requst status number e.g. 200
  * */
 export async function moveFileToFolder(auth: GoogleAuth, fileId: string, folderId: string) {
     const service = google.drive({ version: 'v3', auth });
 
-    try {
-        // Retrieve the existing parents to remove
-        const file = await service.files.get({
-            fileId,
-            fields: 'parents',
-        });
-        if (!file.data.parents) throw new Error('no parents found');
-        // Move the file to the new folder
-        const previousParents = file.data.parents
-            .map(function (parent) {
-                //@ts-ignore
-                return parent.id;
-            })
-            .join(',');
-        const files = await service.files.update({
-            fileId: fileId,
-            addParents: folderId,
-            removeParents: previousParents,
-            fields: 'id, parents',
-        });
-        return files.status;
-    } catch (err) {
-        throw err;
-    }
+    // Retrieve the existing parents to remove
+    const file = await service.files.get({
+        fileId,
+        fields: 'parents',
+    });
+    if (!file.data.parents) throw new Error('no parents found');
+    // Move the file to the new folder
+    const previousParents = file.data.parents.join(',');
+    const files = await service.files.update({
+        fileId: fileId,
+        addParents: folderId,
+        removeParents: previousParents,
+        fields: 'id, parents',
+    });
+    return files.status;
 }
 
 /** check if spreadsheet exists by searching google drive for title. If it doesn't, create it and add to the passed in folder name. Returns spreadsheet ID */
