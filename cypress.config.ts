@@ -10,13 +10,13 @@ export default defineConfig({
             config.env = {
                 TEST_USER_EMAIL: process.env.TEST_USER_EMAIL,
                 TEST_USER_PASSWORD: process.env.TEST_USER_PASSWORD,
-                NEXT_PUBLIC_APP_URL: 'http://localhost:3000',
+                NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
             };
             return config;
         },
         viewportWidth: 1536,
         viewportHeight: 960,
-        baseUrl: 'http://localhost:3000',
+        baseUrl: process.env.NEXT_PUBLIC_APP_URL,
     },
 
     component: {
