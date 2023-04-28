@@ -1,7 +1,7 @@
 // Button.stories.ts|tsx
 import type { Meta, StoryObj } from '@storybook/react';
 
-import TextInput from "./text-input";
+import TextInput from '../components/library/forms/text-input';
 import { useForm } from 'react-hook-form';
 
 const meta: Meta<typeof TextInput> = {
