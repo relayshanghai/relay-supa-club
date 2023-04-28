@@ -174,7 +174,7 @@ export const SearchOptions = ({
                             </option>
                         ))}
                     </select>
-                    <p className="mr-2 ml-1 text-sm text-gray-500">{t('creators.resultsPerPage')}</p>
+                    <p className="ml-1 mr-2 text-sm text-gray-500">{t('creators.resultsPerPage')}</p>
                     {hasSetViews || hasSetAudience || gender || engagement || lastPost ? (
                         <Button
                             onClick={(e: any) => {

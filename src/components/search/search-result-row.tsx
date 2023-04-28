@@ -124,12 +124,12 @@ export const SearchResultRow = ({
         } else setShowCampaignListModal(true);
     };
 
-    const desktop = useAboveScreenWidth(1400);
+    const desktop = useAboveScreenWidth(500);
 
     return (
         <tr className="group hover:bg-primary-100">
-            <td className="w-full">
-                <div className="flex w-full flex-row gap-x-2 py-2 px-4">
+            <td className="flex w-full">
+                <div className="relative flex flex-row gap-x-2 px-4 py-2">
                     <img
                         key={picture}
                         src={imgProxy(picture) as string}
@@ -137,9 +137,11 @@ export const SearchResultRow = ({
                         alt={handle}
                     />
                     <div>
-                        <div className="font-bold line-clamp-2">{fullname}</div>
+                        <div className="font-bold">{fullname}</div>
                         <div className="text-sm text-primary-500 line-clamp-1">{handle ? `@${handle}` : null}</div>
                     </div>
+                </div>
+                <div className="mt-2">
                     {FEAT_RECOMMENDED && isRecommendedInfluencer(platform, user_id) && (
                         <Tooltip
                             content={t('creators.recommendedTooltip')}
