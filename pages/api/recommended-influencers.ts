@@ -5,6 +5,7 @@ import { serverLogger } from 'src/utils/logger-server';
 
 export type RecommendedInfluencersGetResponse = string[];
 
+// TODO: add rate limiting or caching https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/329
 const handler: NextApiHandler = async (req, res) => {
     if (req.method !== 'GET') {
         return res.status(httpCodes.METHOD_NOT_ALLOWED).json({});

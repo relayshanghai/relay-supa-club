@@ -7,6 +7,13 @@ const spreadsheetId = '1m2rXucvo_Cder-1iSr0-A24Ef2-3N0Q2yPN4f3-4mcE';
 // the sheet must share access with our service account email for the project
 // relay-club-service-account@recommended-influencers-sheet.iam.gserviceaccount.com
 
+const parseSheetInfluencerIds = (profileLinkColumn: string[]) => {
+    return profileLinkColumn
+        ?.slice(1)
+        .filter((link) => typeof link === 'string' && link.includes('https://app.relay.club/influencer/'))
+        .map((link) => link?.split('https://app.relay.club/influencer/')[1]);
+};
+
 export const getInfluencerIdsFromSheet = async () => {
     const auth = await authorizeGoogle();
     const sheets = google.sheets({ version: 'v4', auth });
@@ -20,16 +27,10 @@ export const getInfluencerIdsFromSheet = async () => {
     const profileLinkColumn = sheetData.data.values?.find(
         (column) => column[0] === 'relay.club profile link',
     ) as string[];
+
     if (!profileLinkColumn || profileLinkColumn.length === 0) {
-        throw new Error('No profile link column found. It must be named "relay.club profile link"');
+        throw new Error('No profile link column found. It must be named "relay.club profile link".');
     }
 
-    const parseSheetInfluencerIds = (profileLinkColumn: string[]) => {
-        return profileLinkColumn
-            ?.slice(1)
-            .filter((link) => typeof link === 'string' && link.includes('https://app.relay.club/influencer/'))
-            .map((link) => link?.split('https://app.relay.club/influencer/')[1]);
-    };
-    const influencerIds = parseSheetInfluencerIds(profileLinkColumn);
-    return influencerIds;
+    return parseSheetInfluencerIds(profileLinkColumn);
 };
