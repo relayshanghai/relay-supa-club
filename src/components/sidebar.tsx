@@ -9,31 +9,13 @@ import { Title } from './title';
 import { useTranslation } from 'react-i18next';
 import { FEAT_PERFORMANCE } from 'src/constants/feature-flags';
 import React from 'react';
-import { useAtomValue } from 'jotai';
-import { clientRoleAtom } from 'src/atoms/client-role-atom';
 
 const ActiveLink = ({ href, children }: { href: string; children: React.ReactNode }) => {
     const router = useRouter();
 
     const pathRoot = router.pathname; // /dashboard/influencers => dashboard
 
-    let isRouteActive = pathRoot === href;
-
-    // influencers page special case
-    // if (pathRoot === 'influencer' && hrefRoot === 'dashboard') {
-    //     isRouteActive = true;
-    // }
-    // if (href === '/admin/clients' && router.pathname === '/admin/clients') {
-    //     isRouteActive = true;
-    // }
-
-    if (href.includes('/admin/campaigns') && router.pathname.includes('/admin/campaigns')) {
-        isRouteActive = true;
-    }
-
-    if (href.includes('/admin/search') && router.pathname.includes('/admin/search')) {
-        isRouteActive = true;
-    }
+    const isRouteActive = pathRoot === href;
 
     return (
         <Link
@@ -42,13 +24,11 @@ const ActiveLink = ({ href, children }: { href: string; children: React.ReactNod
                 isRouteActive ? 'border-l-4 border-primary-500 stroke-primary-500 text-primary-500' : ''
             }`}
         >
-            {(href === '/influencer' || href === '/dashboard' || href.includes('/admin/search')) && (
+            {(href === '/influencer' || href === '/dashboard') && (
                 <Compass height={18} width={18} className="mr-4 text-inherit" />
             )}
 
-            {(href === '/campaigns' || href.includes('/admin/campaigns')) && (
-                <FourSquare height={18} width={18} className="mr-4 stroke-inherit" />
-            )}
+            {href === '/campaigns' && <FourSquare height={18} width={18} className="mr-4 stroke-inherit" />}
 
             {href === '/ai-email-generator' && <EmailOutline height={18} width={18} className="mr-4 stroke-inherit" />}
 
@@ -57,6 +37,7 @@ const ActiveLink = ({ href, children }: { href: string; children: React.ReactNod
             {href === '/admin/clients' && <Team height={18} width={18} className="mr-4 stroke-inherit" />}
 
             {href === '/performance' && <PieChart height={18} width={18} className="mr-4 stroke-inherit" />}
+
             {children}
         </Link>
     );
@@ -64,7 +45,6 @@ const ActiveLink = ({ href, children }: { href: string; children: React.ReactNod
 
 const NavBarInner = ({ loggedIn, isRelayEmployee }: { loggedIn: boolean | null; isRelayEmployee: boolean }) => {
     const { t } = useTranslation();
-    const clientRoleData = useAtomValue(clientRoleAtom);
 
     return (
         <>
@@ -72,22 +52,8 @@ const NavBarInner = ({ loggedIn, isRelayEmployee }: { loggedIn: boolean | null; 
                 <Title />
             </div>
             <div className="mt-8 flex flex-col space-y-4">
-                <ActiveLink
-                    href={
-                        clientRoleData.companyId.length > 0 ? `/admin/search/${clientRoleData.companyId}` : '/dashboard'
-                    }
-                >
-                    {t('navbar.influencers')}
-                </ActiveLink>
-                <ActiveLink
-                    href={
-                        clientRoleData.companyId.length > 0
-                            ? `/admin/campaigns/${clientRoleData.companyId}`
-                            : '/campaigns'
-                    }
-                >
-                    {t('navbar.campaigns')}
-                </ActiveLink>
+                <ActiveLink href={'/dashboard'}>{t('navbar.influencers')}</ActiveLink>
+                <ActiveLink href={'/campaigns'}>{t('navbar.campaigns')}</ActiveLink>
                 <ActiveLink href="/ai-email-generator">{t('navbar.aiEmailGenerator')}</ActiveLink>
                 {FEAT_PERFORMANCE && <ActiveLink href="/performance">{t('navbar.performance')}</ActiveLink>}
                 {loggedIn && <ActiveLink href="/account">{t('navbar.account')}</ActiveLink>}

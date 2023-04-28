@@ -16,6 +16,8 @@ import { useCampaigns } from 'src/hooks/use-campaigns';
 import { InfluencerAlreadyAddedModal } from '../influencer-already-added';
 import { MoreResultsRows } from './search-result-row';
 import ClientRoleWarning from './client-role-warning';
+import { useAtomValue } from 'jotai';
+import { clientRoleAtom } from 'src/atoms/client-role-atom';
 
 export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
     const { t } = useTranslation();
@@ -93,7 +95,9 @@ export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
     );
 };
 
-export const SearchPage = ({ companyId }: { companyId?: string }) => {
+export const SearchPage = () => {
+    const { companyId } = useAtomValue(clientRoleAtom);
+
     return (
         <Layout>
             {IQDATA_MAINTENANCE ? (
@@ -101,7 +105,7 @@ export const SearchPage = ({ companyId }: { companyId?: string }) => {
             ) : (
                 <div className="flex flex-col p-6">
                     <SearchProvider>
-                        <SearchPageInner companyId={companyId} />
+                        <SearchPageInner companyId={companyId !== '' ? companyId : undefined} />
                     </SearchProvider>
                 </div>
             )}
