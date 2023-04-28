@@ -3,18 +3,19 @@ import type { PropsWithChildren } from 'react';
 import { createContext, useCallback, useContext } from 'react';
 import type { KeyedMutator } from 'swr';
 import useSWR from 'swr';
-
-import type { CompanyGetQueries, CompanyGetResponse, CompanyPutBody, CompanyPutResponse } from 'pages/api/company';
+import type { CompanyPutBody, CompanyPutResponse } from 'pages/api/company';
 import type { CompanyCreatePostBody, CompanyCreatePostResponse } from 'pages/api/company/create';
 import { createCompanyValidationErrors } from 'src/errors/company';
-import { nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';
+import { nextFetch } from 'src/utils/fetcher';
 import { useUser } from './use-user';
+import { useClientDb } from 'src/utils/client-db/use-client-db';
+import type { CompanyDB } from 'src/utils/api/db';
 
 export interface CompanyContext {
-    company: CompanyGetResponse | undefined;
+    company: CompanyDB | undefined;
     updateCompany: (input: Omit<CompanyPutBody, 'id'>) => Promise<CompanyPutResponse | null>;
     createCompany: (input: { name: string; website?: string }) => Promise<CompanyCreatePostResponse | null>;
-    refreshCompany: KeyedMutator<CompanyGetResponse> | (() => void);
+    refreshCompany: KeyedMutator<CompanyDB> | (() => void);
 }
 
 const ctx = createContext<CompanyContext>({
@@ -26,10 +27,11 @@ const ctx = createContext<CompanyContext>({
 
 export const CompanyProvider = ({ children }: PropsWithChildren) => {
     const { profile, refreshProfile } = useUser();
-    const { data: company, mutate: refreshCompany } = useSWR(profile?.company_id ? 'company' : null, async (path) => {
-        const fetchedCompany = await nextFetchWithQueries<CompanyGetQueries, CompanyGetResponse>(path, {
-            id: profile?.company_id ?? '',
-        });
+    const { getCompanyById } = useClientDb();
+
+    const { data: company, mutate: refreshCompany } = useSWR(profile?.company_id ? 'company' : null, async () => {
+        if (!profile?.company_id) return;
+        const fetchedCompany = await getCompanyById(profile.company_id);
         if (profile && fetchedCompany?.name && !company?.name) {
             Sentry.setUser({
                 id: profile.id,

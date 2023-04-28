@@ -1,35 +1,17 @@
 //TODO TicketV2-146: Add types naming convention to comment
 import { supabase } from 'src/utils/supabase-client';
 import type {
-    CompanyDB,
-    CampaignCreatorDB,
     CampaignCreatorDBInsert,
     CampaignDBUpdate,
     CampaignCreatorDBUpdate,
-    CampaignDB,
     CampaignNotesInsertDB,
     CampaignNotesDB,
     ProfileDB,
 } from '../types';
-
-export type CampaignWithCompanyCreators = CampaignDB & {
-    companies: Pick<CompanyDB, 'id' | 'name' | 'cus_id'>;
-    campaign_creators: CampaignCreatorDB[];
-};
+export type { CampaignWithCompanyCreators } from 'src/utils/client-db/campaigns';
 
 export type CampaignNotesWithProfiles = CampaignNotesDB & {
     profiles: Pick<ProfileDB, 'id' | 'first_name' | 'last_name'>;
-};
-
-export const getCampaignWithCompanyCreators = async (companyId: string) => {
-    // If this query changes, make sure to update the CampaignWithCompany type
-    const { data, error } = await supabase
-        .from('campaigns')
-        .select('*, companies(id, name, cus_id), campaign_creators(*)')
-        .eq('company_id', companyId);
-
-    if (error) throw error;
-    return data as CampaignWithCompanyCreators[];
 };
 
 export const updateCampaign = async (data: CampaignDBUpdate) =>

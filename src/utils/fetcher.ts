@@ -75,10 +75,8 @@ export const nextFetchWithQueries = async <Q extends Record<string, string>, T =
  * @returns
  * @description this function is used to proxy images to bypass the Chinese firewall. "sptds.icu" is the current instagram profile images domain that does not need the proxy.
  */
-
-// we are considering to setup a new proxy in the future or gain access to the current one. TODO: Ticket V2-44
 export function imgProxy(url: string) {
-    const proxyUrl = 'https://image-cache.brainchild-tech.cn/?link=';
+    const proxyUrl = 'https://image-cache.relay.club/?link=';
     if (!url) return;
 
     if (/sptds.icu/.test(url)) return url;

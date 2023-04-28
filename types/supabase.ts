@@ -550,6 +550,18 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
+      is_company_member: {
+        Args: {
+          target_company_id: string
+        }
+        Returns: boolean
+      }
+      is_company_member_of_campaign: {
+        Args: {
+          target_campaign_id: string
+        }
+        Returns: boolean
+      }
       is_relay_employee: {
         Args: Record<PropertyKey, never>
         Returns: boolean

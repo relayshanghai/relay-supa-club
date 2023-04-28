@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import type { CampaignsIndexGetResult } from 'pages/api/campaigns';
+import type { CampaignWithCompanyCreators } from 'src/utils/client-db/campaigns';
 import { useTranslation } from 'react-i18next';
 import { useSearch } from 'src/hooks/use-search';
 import type { CreatorSearchAccountObject } from 'types';
@@ -11,7 +11,7 @@ export interface SearchResultsTableProps {
     setShowCampaignListModal: (show: boolean) => void;
     setSelectedCreator: (creator: CreatorSearchAccountObject) => void;
     setShowAlreadyAddedModal: (show: boolean) => void;
-    campaigns?: CampaignsIndexGetResult;
+    campaigns?: CampaignWithCompanyCreators[];
     setCampaignsWithCreator: (campaigns: string[]) => void;
     results?: CreatorSearchAccountObject[];
     loading: boolean;
