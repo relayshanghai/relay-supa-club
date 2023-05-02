@@ -9,6 +9,7 @@ import { SearchTopics } from './search-topics';
 import { Switch, Tooltip } from '../library';
 import { FEAT_RECOMMENDED } from 'src/constants/feature-flags';
 import type { CreatorSearchTag, LocationWeighted } from 'types';
+import { SearchLocations } from './search-locations';
 
 const resultsPerPageOptions = [10, 20, 50, 100];
 
@@ -63,8 +64,8 @@ export const SearchOptions = ({
                         placeholder={t('creators.searchTopic')}
                         topics={tags}
                         platform={platform}
-                        onSetTopics={(topics: CreatorSearchTag[] | LocationWeighted[]) => {
-                            setTopicTags(topics as CreatorSearchTag[]);
+                        onSetTopics={(topics: CreatorSearchTag[]) => {
+                            setTopicTags(topics);
                         }}
                     />
                 </div>
@@ -73,23 +74,23 @@ export const SearchOptions = ({
                 </div>
             </div>
             <div className="flex flex-col items-start space-y-2 md:flex-row md:space-x-4 md:space-y-0">
-                <SearchTopics
+                <SearchLocations
                     path="influencer-search/locations"
                     placeholder={t('creators.filter.locationPlaceholder')}
-                    topics={influencerLocation}
+                    locations={influencerLocation}
                     platform={platform}
                     filter={filterCountry}
-                    onSetTopics={(topics: CreatorSearchTag[] | LocationWeighted[]) => {
+                    onSetLocations={(topics: CreatorSearchTag[] | LocationWeighted[]) => {
                         setInfluencerLocation(topics as LocationWeighted[]);
                     }}
                 />
-                <SearchTopics
+                <SearchLocations
                     path="influencer-search/locations"
                     placeholder={t('creators.filter.audienceLocation')}
-                    topics={audienceLocation}
+                    locations={audienceLocation}
                     platform={platform}
                     filter={filterCountry}
-                    onSetTopics={(topics: CreatorSearchTag[] | LocationWeighted[]) => {
+                    onSetLocations={(topics: CreatorSearchTag[] | LocationWeighted[]) => {
                         setAudienceLocation(
                             (topics as LocationWeighted[]).map((item: LocationWeighted) => ({ ...item, weight: 5 })),
                         );

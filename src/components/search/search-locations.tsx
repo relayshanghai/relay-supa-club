@@ -6,27 +6,25 @@ import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
 import type { CreatorPlatform, CreatorSearchTag, LocationWeighted } from 'types';
 
-type SearchTopicsProps = {
-    onSetTopics: (topics: CreatorSearchTag[]) => void;
-    topics: CreatorSearchTag[];
+type SearchLocationsProps = {
+    onSetLocations: (topics: LocationWeighted[]) => void;
+    locations: LocationWeighted[];
     platform: CreatorPlatform;
     path: string;
     placeholder: string;
     filter?: (items: any[]) => any[];
-    SuggestionComponent?: React.FC<any>;
     TagComponent?: React.FC<any>;
 };
 
-export const SearchTopics = ({
-    onSetTopics,
-    topics,
+export const SearchLocations = ({
+    onSetLocations,
+    locations,
     platform,
     path,
     placeholder,
     filter,
-    SuggestionComponent,
     TagComponent,
-}: SearchTopicsProps) => {
+}: SearchLocationsProps) => {
     const [suggestions, setSuggestions] = useState<CreatorSearchTag[] | LocationWeighted[]>([]);
     const ref = useRef<any>();
     const inputRef = useRef<any>();
@@ -72,40 +70,39 @@ export const SearchTopics = ({
 
     const addTag = useCallback(
         (item: any) => {
-            onSetTopics([...topics, item]);
+            onSetLocations([...locations, item]);
             setSuggestions([]);
         },
-        [topics, onSetTopics],
+        [locations, onSetLocations],
     );
 
     const removeTag = useCallback(
         (item: any) => {
-            const entry = topics.find((tag) => tag === item);
+            const entry = locations.find((tag) => tag === item);
 
             if (entry) {
-                const clone = topics.slice();
+                const clone = locations.slice();
                 clone.splice(clone.indexOf(entry), 1);
-                onSetTopics(clone);
+                onSetLocations(clone);
             }
         },
-        [topics, onSetTopics],
+        [locations, onSetLocations],
     );
 
     return (
         <InputWithAutocomplete
-            SuggestionComponent={SuggestionComponent}
             TagComponent={TagComponent}
             placeholder={placeholder}
-            tags={topics}
+            tags={locations}
             suggestions={suggestions}
             ref={inputRef}
             onChange={(item: any) => {
                 setTopicSearch(item);
             }}
-            onRemoveTag={(item: CreatorSearchTag | LocationWeighted) => {
+            onRemoveTag={(item) => {
                 removeTag(item);
             }}
-            onAddTag={(item: CreatorSearchTag | LocationWeighted) => {
+            onAddTag={(item) => {
                 addTag(item);
             }}
         />

@@ -1,7 +1,15 @@
 import { forwardRef, useState } from 'react';
 import { InputWithTags } from 'src/components/input-with-tags';
 import type { CreatorSearchTag, LocationWeighted } from 'types';
-import { isLocationWeighted } from './search/search-topics';
+
+function isCreatorSearchTagArray(tags: any[]): tags is CreatorSearchTag[] {
+    return tags.length > 0 && typeof tags[0].creatorId !== 'undefined';
+}
+
+function isLocationWeightedArray(tags: any[]): tags is LocationWeighted[] {
+    return tags.length > 0 && typeof tags[0].locationId !== 'undefined';
+}
+
 export interface Props {
     disabled?: boolean;
     onChange: (value: string) => void;
@@ -35,14 +43,18 @@ const InputWithAutocomplete = forwardRef<HTMLDivElement, Props>(
         const tagKeyboardInputHandler = (e: React.KeyboardEvent) => {
             if (e.key === 'Backspace' && !value) {
                 e.preventDefault();
-                // Set input value to last tag
                 let lastTag = '';
-                if (tags.length === 0) return;
-                if (isLocationWeighted(tags)) {
+
+                if (isLocationWeightedArray(tags)) {
+                    // Set input value to last tag
+                    if (tags.length === 0) return;
                     lastTag = tags[tags.length - 1].title;
-                } else {
+                } else if (isCreatorSearchTagArray(tags)) {
+                    // Set input value to last tag
+                    if (tags.length === 0) return;
                     lastTag = tags[tags.length - 1].value;
                 }
+
                 setValue(lastTag);
                 // Remove last tag
                 onRemoveTag(tags[tags.length - 1]);
@@ -82,15 +94,12 @@ const InputWithAutocomplete = forwardRef<HTMLDivElement, Props>(
                                     );
                                 }
 
-                                if (isLocationWeighted(tags)) {
-                                }
-
                                 return (
                                     <div
                                         className="cursor-pointer p-2 hover:bg-gray-100"
                                         key={i}
                                         id={`tag-search-result-${
-                                            isLocationWeighted(tags)
+                                            isLocationWeightedArray(tags)
                                                 ? (item as LocationWeighted).title
                                                 : (item as LocationWeighted).title
                                         }`}
