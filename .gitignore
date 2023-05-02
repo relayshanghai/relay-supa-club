@@ -48,3 +48,6 @@ public/mockServiceWorker.js
 
 # Sentry
 .sentryclirc
+
+# Google API Key
+src/utils/google/credentials.json

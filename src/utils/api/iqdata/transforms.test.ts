@@ -6,6 +6,7 @@ const defaultOptions: FetchCreatorsFilteredParams = {
     username: 'test_user',
     audience: [null, null],
     views: [null, null],
+    recommendedInfluencers: ['youtube/1234'],
 };
 
 describe('prepareFetchCreatorsFiltered', () => {
