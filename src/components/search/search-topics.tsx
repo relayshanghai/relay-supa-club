@@ -27,7 +27,7 @@ export const SearchTopics = ({
     SuggestionComponent,
     TagComponent,
 }: SearchTopicsProps) => {
-    const [suggestions, setSuggestions] = useState<CreatorSearchTag[] | LocationWeighted[]>([]);
+    const [suggestions, setSuggestions] = useState<CreatorSearchTag[]>([]);
     const ref = useRef<any>();
     const inputRef = useRef<any>();
 

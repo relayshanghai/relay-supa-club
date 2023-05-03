@@ -2,13 +2,13 @@ import { forwardRef, useState } from 'react';
 import { InputWithTags } from 'src/components/input-with-tags';
 import type { CreatorSearchTag, LocationWeighted } from 'types';
 
-function isCreatorSearchTagArray(tags: any[]): tags is CreatorSearchTag[] {
-    return tags.length > 0 && typeof tags[0].creatorId !== 'undefined';
-}
+const isCreatorSearchTagArray = (tags: any[]): tags is CreatorSearchTag[] => {
+    return tags.length > 0 && typeof (tags[0] as CreatorSearchTag).tag !== 'undefined';
+};
 
-function isLocationWeightedArray(tags: any[]): tags is LocationWeighted[] {
-    return tags.length > 0 && typeof tags[0].locationId !== 'undefined';
-}
+const isLocationWeightedArray = (tags: any[]): tags is LocationWeighted[] => {
+    return tags.length > 0 && typeof (tags[0] as LocationWeighted).title !== 'undefined';
+};
 
 export interface Props {
     disabled?: boolean;
@@ -99,16 +99,14 @@ const InputWithAutocomplete = forwardRef<HTMLDivElement, Props>(
                                         className="cursor-pointer p-2 hover:bg-gray-100"
                                         key={i}
                                         id={`tag-search-result-${
-                                            isLocationWeightedArray(tags)
-                                                ? (item as LocationWeighted).title
-                                                : (item as LocationWeighted).title
+                                            (item as LocationWeighted).title || (item as CreatorSearchTag).value
                                         }`}
                                         onClick={() => {
                                             onAddTag(item);
                                             setValue('');
                                         }}
                                     >
-                                        {(item as LocationWeighted).title || (item as LocationWeighted).title}
+                                        {(item as LocationWeighted).title || (item as CreatorSearchTag).value}
                                     </div>
                                 );
                             })}
