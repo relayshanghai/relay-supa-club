@@ -8,7 +8,7 @@ As far as existing features, we don't have enough time to add granular tests to 
 -   Bug fixes
     -   If we are fixing a bug, we should add a test to make sure that we've actually solved it and the bug doesn't come back.
 -   Page-level components
-    -   e.g. `creator-page.tsx`. We can test a lot of funcitonality on this parent component level that will cover most of the child components.
+    -   e.g. `creator-page.tsx`. We can test a lot of functionality on this parent component level that will cover most of the child components.
 -   Utility functions
     -   e.g. `src/utils/utils.ts` These are functions that are used in many places, and are not specific to a component. We can test these functions in isolation. Unit tests are super valuable here as we can test all sorts of edge cases that are hard to manually test.
 -   API requests - internal and external
@@ -58,3 +58,8 @@ Because Cypress mounts each component individually, you might be missing some co
 `@ts-check`: This is a TypeScript directive that tells the TypeScript compiler to check the file for type errors. This is useful for catching errors in your tests before you run them.
 
 `/// <reference types="@testing-library/cypress" />`: This is a TypeScript directive that tells the TypeScript compiler to load the types for the `@testing-library/cypress` library. This is useful for getting type hints in your tests.
+
+## References
+
+Vitest [docs](https://vitest.dev);
+Cypress [docs](https://docs.cypress.io);
