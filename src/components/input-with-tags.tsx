@@ -1,6 +1,5 @@
 import type { DetailedHTMLProps, InputHTMLAttributes } from 'react';
 import type { CreatorSearchTag, LocationWeighted } from 'types';
-import { isLocationWeighted } from './search/search-topics';
 
 export interface Props extends DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> {
     disabled?: boolean;
@@ -28,9 +27,7 @@ export const InputWithTags = ({ disabled, tags = [], onTagRemove, TagComponent, 
                                       <span
                                           className="ml-2 cursor-pointer whitespace-nowrap text-gray-400"
                                           id={`remove-tag-${
-                                              isLocationWeighted(tags)
-                                                  ? (item as LocationWeighted).title
-                                                  : (item as LocationWeighted).title
+                                              (item as LocationWeighted).title || (item as CreatorSearchTag).value
                                           }`}
                                       >
                                           x
