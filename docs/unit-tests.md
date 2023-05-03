@@ -1,6 +1,6 @@
 # Strategy
 
-We are using jest for testing pure functions and next backend files.
+We are using Vitest for testing pure functions and next backend files.
 We are using cypress for testing components.
 
 As far as existing features, we don't have enough time to add granular tests to everything, but we will try to add tests in this priority:
@@ -18,7 +18,7 @@ As far as existing features, we don't have enough time to add granular tests to 
     -   Can add these as new features come up but don't need to add them for existing features.
     -   Add these whenever we solve a bug.
 
-# Jest
+# Vitest
 
 Make sure your mock service worker is initialized. Run this to make a mockServiceWorker.js file in the root of your project:
 
@@ -28,11 +28,11 @@ npx msw init public
 
 It will be ignored by git.
 
-run jest tests one time through with `npm run test:run-jest-unit`
+run Vitest tests one time through with `npm run test`
 
-run in watch mode with `npm run test`. You cal also pass a test name to run a specific test, e.g. `npm run test creators`
+run in watch mode with `npm run test:watch`. You can also pass a test name to run a specific test, e.g. `npm run test:watch creators`
 
-use the suffix .test. for jest test files
+use the suffix `.test.ts` for Vitest test files
 
 mocks return data from third parties like iqdata and are loaded from `src/mocks/server`
 
