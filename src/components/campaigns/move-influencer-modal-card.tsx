@@ -1,30 +1,39 @@
 import { CheckCircleIcon, ArrowRightCircleIcon } from '@heroicons/react/24/solid';
-import { useCampaigns } from 'src/hooks/use-campaigns';
 import type { CreatorPlatform } from 'types';
 import { useEffect, useState } from 'react';
 import { Spinner } from '../icons';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
-import type { CampaignCreatorDB, CampaignWithCompanyCreators } from 'src/utils/api/db';
+import type { CampaignCreatorDB, CampaignDB } from 'src/utils/api/db';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import { clientLogger } from 'src/utils/logger-client';
 import { useUser } from 'src/hooks/use-user';
 import { isMissing } from 'src/utils/utils';
+import { useCampaignCreators } from 'src/hooks/use-campaign-creators';
 
 export default function MoveInfluencerModalCard({
     targetCampaign,
     creator,
     currentCampaign,
 }: {
-    targetCampaign: CampaignWithCompanyCreators;
+    targetCampaign: CampaignDB;
     creator: CampaignCreatorDB;
     platform: CreatorPlatform;
-    currentCampaign: CampaignWithCompanyCreators;
+    currentCampaign: CampaignDB;
 }) {
     const supabase = useSupabaseClient();
 
-    const { deleteCreatorInCampaign, addCreatorToCampaign, refreshCampaigns, loading } = useCampaigns({
-        campaignId: currentCampaign.id,
+    const {
+        deleteCreatorInCampaign,
+        addCreatorToCampaign,
+        refreshCampaignCreators,
+        loading,
+        campaignCreators: currentCampaignCreators,
+    } = useCampaignCreators({
+        campaign: currentCampaign,
+    });
+    const { campaignCreators: targetCampaignCreators } = useCampaignCreators({
+        campaign: targetCampaign,
     });
 
     const [_, setCurrentHasCreator] = useState<boolean>(false);
@@ -56,7 +65,7 @@ export default function MoveInfluencerModalCard({
             setTargetHasCreator(true);
             setCurrentHasCreator(false);
 
-            refreshCampaigns();
+            refreshCampaignCreators();
 
             toast.success(t('campaigns.modal.movedSuccessfully'));
         } catch (error) {
@@ -91,8 +100,8 @@ export default function MoveInfluencerModalCard({
     }, [targetCampaign, supabase]);
 
     useEffect(() => {
-        if (targetCampaign && creator) {
-            const creatorInCampaign = targetCampaign.campaign_creators.find(
+        if (targetCampaignCreators && creator) {
+            const creatorInCampaign = targetCampaignCreators?.find(
                 (campaignCreator) => campaignCreator.creator_id === creator.creator_id,
             );
             if (creatorInCampaign) {
@@ -101,11 +110,11 @@ export default function MoveInfluencerModalCard({
                 setTargetHasCreator(false);
             }
         }
-    }, [targetCampaign, creator]);
+    }, [targetCampaignCreators, creator]);
 
     useEffect(() => {
-        if (currentCampaign && creator) {
-            const creatorInCampaign = currentCampaign.campaign_creators.find(
+        if (currentCampaignCreators && creator) {
+            const creatorInCampaign = currentCampaignCreators?.find(
                 (campaignCreator) => campaignCreator.creator_id === creator.creator_id,
             );
             if (creatorInCampaign) {
@@ -114,7 +123,7 @@ export default function MoveInfluencerModalCard({
                 setCurrentHasCreator(false);
             }
         }
-    }, [currentCampaign, creator]);
+    }, [currentCampaignCreators, creator]);
 
     return (
         <div className="mb-2 rounded-lg bg-white px-2 py-3.5 text-sm duration-300">

@@ -1,19 +1,34 @@
 import { useTranslation } from 'react-i18next';
 import { ModalWithButtons } from './modal-with-buttons';
+import type { CampaignCreatorDB, CampaignDB } from 'src/utils/api/db';
+import type { CreatorSearchAccountObject } from 'types';
 
 export const InfluencerAlreadyAddedModal = ({
     show,
     setShow,
     setCampaignListModal,
-    campaignsWithCreator,
+    campaigns,
+    allCampaignCreators,
+    selectedCreator,
 }: {
     show: boolean;
     setShow: (show: boolean) => void;
     setCampaignListModal: (show: boolean) => void;
-    campaignsWithCreator: string[];
+    campaigns: CampaignDB[];
+    allCampaignCreators?: CampaignCreatorDB[];
+    selectedCreator: CreatorSearchAccountObject | null;
 }) => {
     const { t } = useTranslation();
-
+    const campaignsWithCreator = campaigns
+        .filter((campaign) => {
+            const campaignCreators = allCampaignCreators?.filter(
+                (campaignCreator) => campaignCreator.campaign_id === campaign.id,
+            );
+            return campaignCreators?.some(
+                (campaignCreator) => campaignCreator.creator_id === selectedCreator?.account.user_profile.user_id,
+            );
+        })
+        .map((campaign) => campaign.name);
     return (
         <ModalWithButtons
             title={t('campaigns.modal.addToCampaign') || ''}

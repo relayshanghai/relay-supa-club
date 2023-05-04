@@ -8,7 +8,6 @@ import type {
     CampaignNotesDB,
     ProfileDB,
 } from '../types';
-export type { CampaignWithCompanyCreators } from 'src/utils/client-db/campaigns';
 
 export type CampaignNotesWithProfiles = CampaignNotesDB & {
     profiles: Pick<ProfileDB, 'id' | 'first_name' | 'last_name'>;

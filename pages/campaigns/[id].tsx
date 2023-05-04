@@ -13,7 +13,7 @@ import { useCampaigns } from 'src/hooks/use-campaigns';
 import { Modal } from 'src/components/modal';
 import CommentInput from 'src/components/campaigns/comment-input';
 import CommentCards from 'src/components/campaigns/comment-cards';
-import type { CampaignCreatorDB, CampaignWithCompanyCreators } from 'src/utils/api/db';
+import type { CampaignCreatorDB, CampaignDB } from 'src/utils/api/db';
 import { imgProxy } from 'src/utils/fetcher';
 import { useCompany } from 'src/hooks/use-company';
 import { Spinner } from 'src/components/icons';
@@ -47,22 +47,18 @@ export default function CampaignShow() {
         { label: t('campaigns.index.status.completed'), value: 'completed' },
     ];
 
-    const handleDropdownSelect = async (
-        e: ChangeEvent<HTMLSelectElement>,
-        campaignWithCompanyCreators: CampaignWithCompanyCreators | null,
-    ) => {
+    const handleDropdownSelect = async (e: ChangeEvent<HTMLSelectElement>, campaign: CampaignDB | null) => {
         e.stopPropagation();
-        if (!campaignWithCompanyCreators) return null;
-        const { campaign_creators: _filterOut, companies: _filterOut2, ...campaign } = campaignWithCompanyCreators;
+        if (!campaign) return null;
+
         const status = e.target.value;
-        await updateCampaign({ ...campaign, status });
+        await updateCampaign({ ...currentCampaign, status });
         refreshCampaigns();
     };
 
     const archiveCampaignHandler = async () => {
         if (!currentCampaign) return;
-        const { campaign_creators: _filterOut, companies: _filterOut2, ...campaign } = currentCampaign;
-        await updateCampaign({ ...campaign, archived: true });
+        await updateCampaign({ ...currentCampaign, archived: true });
         router.push('/campaigns');
         toast.success(t('campaigns.show.archived'));
         refreshCampaigns();
@@ -70,8 +66,7 @@ export default function CampaignShow() {
 
     const unarchiveCampaignHandler = async () => {
         if (!currentCampaign) return;
-        const { campaign_creators: _filterOut, companies: _filterOut2, ...campaign } = currentCampaign;
-        await updateCampaign({ ...campaign, archived: false });
+        await updateCampaign({ ...currentCampaign, archived: false });
         router.push('/campaigns');
         toast.success(t('campaigns.show.unarchived'));
         refreshCampaigns();

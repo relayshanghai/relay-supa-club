@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
-import type { CampaignCreatorDB, CampaignWithCompanyCreators } from 'src/utils/api/db';
+import type { CampaignCreatorDB, CampaignDB } from 'src/utils/api/db';
 import type { CreatorPlatform } from 'types';
 import MoveInfluencerModalCard from './campaigns/move-influencer-modal-card';
 import { Modal } from './modal';
@@ -17,8 +17,8 @@ export const MoveInfluencerModal = ({
     setShow: (show: boolean) => void;
     platform: CreatorPlatform;
     selectedCreator: CampaignCreatorDB;
-    campaigns: CampaignWithCompanyCreators[];
-    currentCampaign: CampaignWithCompanyCreators;
+    campaigns: CampaignDB[];
+    currentCampaign: CampaignDB;
 }) => {
     const { t } = useTranslation();
 

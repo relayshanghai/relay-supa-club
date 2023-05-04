@@ -1,33 +1,37 @@
 import { PlusCircleIcon, CheckCircleIcon } from '@heroicons/react/24/solid';
-import { useCampaigns } from 'src/hooks/use-campaigns';
 import type { CreatorUserProfile, CreatorPlatform } from 'types';
 import { useEffect, useState } from 'react';
 import { Spinner } from '../icons';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
-import type { CampaignWithCompanyCreators } from 'src/utils/api/db';
+import type { CampaignCreatorDB, CampaignDB } from 'src/utils/api/db';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import { clientLogger } from 'src/utils/logger-client';
 import { useUser } from 'src/hooks/use-user';
 import { isMissing } from 'src/utils/utils';
+import { useCampaignCreators } from 'src/hooks/use-campaign-creators';
 
 export default function CampaignModalCard({
     campaign,
     creator,
     platform,
+    campaignCreators,
 }: {
-    campaign: CampaignWithCompanyCreators;
+    campaign: CampaignDB;
     creator: CreatorUserProfile | null;
     platform: CreatorPlatform;
+    campaignCreators: CampaignCreatorDB[];
 }) {
     const supabase = useSupabaseClient();
-    const { addCreatorToCampaign, loading } = useCampaigns({
-        campaignId: campaign?.id,
+    const { addCreatorToCampaign, loading, refreshCampaignCreators } = useCampaignCreators({
+        campaign,
     });
-    const [hasCreator, setHasCreator] = useState<boolean>(false);
     const [coverImageUrl, setCoverImageUrl] = useState('');
     const { profile } = useUser();
     const { t } = useTranslation();
+    const [hasCreator, setHasCreator] = useState<boolean>(
+        campaignCreators?.some((campaignCreator) => campaignCreator.creator_id === creator?.user_id),
+    );
 
     const handleAddCreatorToCampaign = async () => {
         if (!campaign || !creator || !creator.user_id || !profile || !creator.picture)
@@ -45,6 +49,7 @@ export default function CampaignModalCard({
             });
             toast.success(t('campaigns.modal.addedSuccessfully'));
             setHasCreator(true);
+            refreshCampaignCreators();
         } catch (error) {
             clientLogger(error, 'error');
             return toast.error(t('campaigns.form.oopsSomethingWrong'));
@@ -75,17 +80,6 @@ export default function CampaignModalCard({
             getFiles();
         }
     }, [campaign, supabase]);
-
-    useEffect(() => {
-        if (campaign && creator) {
-            const creatorInCampaign = campaign?.campaign_creators?.find(
-                (campaignCreator) => campaignCreator.creator_id === creator?.user_id,
-            );
-            if (creatorInCampaign) {
-                setHasCreator(true);
-            }
-        }
-    }, [campaign, creator]);
 
     return (
         <div className="mb-2 rounded-lg bg-white px-2 py-3.5 text-sm duration-300">

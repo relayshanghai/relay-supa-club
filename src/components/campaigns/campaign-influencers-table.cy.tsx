@@ -6,11 +6,9 @@ import React from 'react'; // turns out we need this or cypress complains
 
 import { testMount } from '../../utils/cypress-app-wrapper';
 import type { CreatorsOutreachProps } from './campaign-influencers-table';
-import type { CampaignCreatorAddCreatorPostBody } from '../../../pages/api/campaigns/add-creator';
-import type { CampaignCreatorsDeleteBody } from '../../../pages/api/campaigns/delete-creator';
 
 import CampaignInfluencersTable from './campaign-influencers-table';
-import type { CampaignCreatorDB, CampaignDB, CampaignWithCompanyCreators } from '../../utils/api/db';
+import type { CampaignCreatorDB, CampaignDB } from '../../utils/api/db';
 import { rest } from 'msw';
 import { APP_URL_CYPRESS, worker } from '../../mocks/browser';
 
@@ -74,39 +72,36 @@ const creator1: CampaignCreatorDB = {
     username: null,
 };
 
-const creator2: CampaignCreatorDB = {
-    ...creator1,
-    id: 'creator2',
-    fullname: 'Creator2 name',
-};
-const creator3: CampaignCreatorDB = {
-    ...creator1,
-    id: 'creator3',
-    fullname: 'Creator3 name',
-};
+// const creator2: CampaignCreatorDB = {
+//     ...creator1,
+//     id: 'creator2',
+//     fullname: 'Creator2 name',
+// };
+// const creator3: CampaignCreatorDB = {
+//     ...creator1,
+//     id: 'creator3',
+//     fullname: 'Creator3 name',
+// };
 
-const campaignCreators: CampaignCreatorDB[] = [creator1, creator2, creator3];
-const company = {
-    id: 'company1',
-    name: 'Company 1',
-    cus_id: 'cus_1',
-};
-const companies: any = [company]; // weird typescript compile bug
-const campaign1: CampaignWithCompanyCreators = {
+// const campaignCreators: CampaignCreatorDB[] = [creator1, creator2, creator3];
+// const company = {
+//     id: 'company1',
+//     name: 'Company 1',
+//     cus_id: 'cus_1',
+// };
+// const companies: any = [company]; // weird typescript compile bug
+const campaign1: CampaignDB = {
     ...currentCampaign,
-    companies,
-    campaign_creators: campaignCreators,
 };
 
 /** Campaign 2 has no influencers */
-const campaign2: CampaignWithCompanyCreators = {
+const campaign2: CampaignDB = {
     ...campaign1,
     id: 'campaign2',
     name: 'Campaign 2',
-    campaign_creators: [],
 };
 
-const campaigns: CampaignWithCompanyCreators[] = [campaign1, campaign2];
+const campaigns: CampaignDB[] = [campaign1, campaign2];
 const makeProps = () => {
     // cy.stub can only be called within a test
     const setShowNotesModal = cy.stub();
@@ -159,7 +154,7 @@ describe('CampaignInfluencersTable', () => {
     it('Check that a network request is called to the api to add the influencer to destination and delete them from source campaign', async () => {
         worker.use(
             rest.post(`${APP_URL_CYPRESS}/api/campaigns/add-creator`, async (req, res, ctx) => {
-                const body = (await req.json()) as CampaignCreatorAddCreatorPostBody;
+                const body = (await req.json()) as any;
 
                 expect(body.campaign_id).to.equal(campaign2.id);
 
@@ -167,7 +162,7 @@ describe('CampaignInfluencersTable', () => {
                 return res(ctx.delay(500), ctx.json({ success: true }));
             }),
             rest.delete(`${APP_URL_CYPRESS}/api/campaigns/delete-creator`, async (req, res, ctx) => {
-                const body = (await req.json()) as CampaignCreatorsDeleteBody;
+                const body = (await req.json()) as any;
 
                 expect(body.campaignId).to.equal(campaign1.id);
                 expect(body.id).to.equal(creator1.id);

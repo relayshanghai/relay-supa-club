@@ -1,9 +1,10 @@
 import Link from 'next/link';
-import type { CampaignWithCompanyCreators } from 'src/utils/client-db/campaigns';
+import type { CampaignDB } from 'src/utils/client-db/campaigns';
 import { useTranslation } from 'react-i18next';
 import type { CreatorPlatform, CreatorUserProfile } from 'types';
 import CampaignModalCard from './campaigns/campaign-modal-card';
 import { Modal } from './modal';
+import type { CampaignCreatorDB } from 'src/utils/api/db';
 
 export const AddToCampaignModal = ({
     show,
@@ -11,12 +12,14 @@ export const AddToCampaignModal = ({
     platform,
     selectedCreator,
     campaigns,
+    allCampaignCreators,
 }: {
     show: boolean;
     setShow: (show: boolean) => void;
     platform: CreatorPlatform;
     selectedCreator: CreatorUserProfile | null;
-    campaigns?: CampaignWithCompanyCreators[] | undefined;
+    campaigns?: CampaignDB[] | undefined;
+    allCampaignCreators?: CampaignCreatorDB[];
 }) => {
     const { t } = useTranslation();
 
@@ -38,6 +41,9 @@ export const AddToCampaignModal = ({
                                 platform={platform}
                                 creator={selectedCreator}
                                 key={index}
+                                campaignCreators={
+                                    allCampaignCreators?.filter((creator) => creator.campaign_id === campaign.id) ?? []
+                                }
                             />
                         ))}
                     </div>

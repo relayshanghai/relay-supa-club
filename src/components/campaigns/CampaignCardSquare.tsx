@@ -3,24 +3,27 @@ import Image from 'next/legacy/image';
 import { ChartBarIcon, PencilSquareIcon } from '@heroicons/react/20/solid';
 import type { JSXElementConstructor, Key, ReactElement, ReactFragment, ReactNode, ReactPortal } from 'react';
 import { useState, useEffect } from 'react';
-import type { CampaignWithCompanyCreators } from 'src/utils/api/db';
+import type { CampaignDB } from 'src/utils/api/db';
 import { useTranslation } from 'react-i18next';
-import { useSupabaseClient } from '@supabase/auth-helpers-react';
 
-export default function CampaignCardSquare({ campaign }: { campaign: CampaignWithCompanyCreators }) {
+import { useCompany } from 'src/hooks/use-company';
+import { useClientDb } from 'src/utils/client-db/use-client-db';
+
+export default function CampaignCardSquare({ campaign }: { campaign: CampaignDB }) {
     const { t } = useTranslation();
     const [coverImageUrl, setCoverImageUrl] = useState<string | null>(null);
-    const supabase = useSupabaseClient();
+    const { company } = useCompany();
+    const { supabaseClient } = useClientDb();
     useEffect(() => {
         const getFiles = async () => {
             const getFilePath = (filename: string) => {
                 const {
                     data: { publicUrl },
-                } = supabase.storage.from('images').getPublicUrl(`campaigns/${campaign?.id}/${filename}`);
+                } = supabaseClient.storage.from('images').getPublicUrl(`campaigns/${campaign?.id}/${filename}`);
                 return publicUrl;
             };
 
-            const { data } = await supabase.storage.from('images').list(`campaigns/${campaign?.id}`, {
+            const { data } = await supabaseClient.storage.from('images').list(`campaigns/${campaign?.id}`, {
                 limit: 100,
                 offset: 0,
                 sortBy: { column: 'name', order: 'asc' },
@@ -34,7 +37,7 @@ export default function CampaignCardSquare({ campaign }: { campaign: CampaignWit
         if (campaign) {
             getFiles();
         }
-    }, [campaign, supabase.storage]);
+    }, [campaign, supabaseClient.storage]);
 
     return (
         <Link href={`/campaigns/${campaign.id}`} passHref>
@@ -69,14 +72,14 @@ export default function CampaignCardSquare({ campaign }: { campaign: CampaignWit
                                 ) => (
                                     <div
                                         key={index}
-                                        className="leading-sm mr-1 mb-1 inline-block flex-shrink-0 items-center rounded-md bg-tertiary-50/60 px-2 py-1 text-xs text-tertiary-600"
+                                        className="leading-sm mb-1 mr-1 inline-block flex-shrink-0 items-center rounded-md bg-tertiary-50/60 px-2 py-1 text-xs text-tertiary-600"
                                     >
                                         {tag}
                                     </div>
                                 ),
                             )}
                     </div>
-                    <div className="absolute top-2 right-2 inline-block rounded-md bg-primary-50/60 px-2 py-1 text-xs text-primary-500">
+                    <div className="absolute right-2 top-2 inline-block rounded-md bg-primary-50/60 px-2 py-1 text-xs text-primary-500">
                         {t(`campaigns.show.status.${campaign?.status}`)}
                     </div>
                 </div>
@@ -84,7 +87,7 @@ export default function CampaignCardSquare({ campaign }: { campaign: CampaignWit
                     {/* -- Campaign Card Text -- */}
                     <div>
                         <div className="text-sm font-semibold text-tertiary-600">{campaign.name}</div>
-                        <div className="mb-2 text-xs text-tertiary-600">{campaign?.companies?.name}</div>
+                        <div className="mb-2 text-xs text-tertiary-600">{company?.name}</div>
                         <div className="flex flex-wrap items-center">
                             {/* TODO: fix the counts and switch tabs on next PR */}
                             {
@@ -93,7 +96,7 @@ export default function CampaignCardSquare({ campaign }: { campaign: CampaignWit
                                     //@ts-ignore
                                     Object.entries(campaign?.status_counts).map((status, index) => (
                                         <Link key={index} href={`/campaigns/${campaign.id}`} legacyBehavior>
-                                            <div className="mr-2 mb-2 flex items-center rounded-md border border-gray-100 bg-primary-100 bg-opacity-60 px-1 py-0.5 text-xs text-gray-600 duration-300 hover:text-primary-500">
+                                            <div className="mb-2 mr-2 flex items-center rounded-md border border-gray-100 bg-primary-100 bg-opacity-60 px-1 py-0.5 text-xs text-gray-600 duration-300 hover:text-primary-500">
                                                 <div className="mr-1">{t('campaigns.show.changeStatus')}</div>
                                                 {/* <div>{status[1]}</div> */}
                                             </div>
