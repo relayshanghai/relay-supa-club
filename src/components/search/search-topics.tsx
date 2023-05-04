@@ -4,11 +4,11 @@ import useOnOutsideClick from 'src/hooks/use-on-outside-click';
 import { debounce } from 'src/utils/debounce';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
-import type { CreatorPlatform } from 'types';
+import type { CreatorPlatform, CreatorSearchTag, LocationWeighted } from 'types';
 
 type SearchTopicsProps = {
-    onSetTopics: (topics: any[]) => void;
-    topics: any;
+    onSetTopics: (topics: CreatorSearchTag[]) => void;
+    topics: CreatorSearchTag[];
     platform: CreatorPlatform;
     path: string;
     placeholder: string;
@@ -27,7 +27,7 @@ export const SearchTopics = ({
     SuggestionComponent,
     TagComponent,
 }: SearchTopicsProps) => {
-    const [suggestions, setSuggestions] = useState<any[]>([]);
+    const [suggestions, setSuggestions] = useState<CreatorSearchTag[]>([]);
     const [loading, setLoading] = useState(false);
     const ref = useRef<any>();
     const inputRef = useRef<any>();
@@ -83,7 +83,7 @@ export const SearchTopics = ({
 
     const removeTag = useCallback(
         (item: any) => {
-            const entry = topics.find((tag: any) => tag === item);
+            const entry = topics.find((tag) => tag === item);
 
             if (entry) {
                 const clone = topics.slice();
@@ -107,10 +107,10 @@ export const SearchTopics = ({
             onChange={(item: any) => {
                 setTopicSearch(item);
             }}
-            onRemoveTag={(item: any) => {
+            onRemoveTag={(item: CreatorSearchTag | LocationWeighted) => {
                 removeTag(item);
             }}
-            onAddTag={(item: any) => {
+            onAddTag={(item: CreatorSearchTag | LocationWeighted) => {
                 addTag(item);
             }}
             spinnerLoading={loading}

@@ -10,16 +10,17 @@ import { SearchResultsTable } from './search-results-table';
 import { SearchFiltersModal } from './search-filters-modal';
 import { SearchOptions } from './search-options';
 import { Layout } from '../layout';
-import { useRouter } from 'next/router';
 import { IQDATA_MAINTENANCE } from 'src/constants';
 import { MaintenanceMessage } from '../maintenance-message';
 import { useCampaigns } from 'src/hooks/use-campaigns';
 import { InfluencerAlreadyAddedModal } from '../influencer-already-added';
 import { MoreResultsRows } from './search-result-row';
+import ClientRoleWarning from './client-role-warning';
+import { useAtomValue } from 'jotai';
+import { clientRoleAtom } from 'src/atoms/client-role-atom';
 
 export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
     const { t } = useTranslation();
-    const { company_name } = useRouter().query;
     const { platform, loading } = useSearch();
     const [filterModalOpen, setShowFiltersModal] = useState(false);
     const [showCampaignListModal, setShowCampaignListModal] = useState(false);
@@ -34,9 +35,7 @@ export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
 
     return (
         <div className="space-y-4">
-            {companyId && (
-                <div className="absolute top-5 right-36 z-50 animate-bounce rounded-md bg-red-400 p-2 text-white">{`You are acting on behalf of company: ${company_name}`}</div>
-            )}
+            <ClientRoleWarning />
             <SelectPlatform />
 
             <SearchOptions setPage={setPage} setShowFiltersModal={setShowFiltersModal} />
@@ -96,7 +95,9 @@ export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
     );
 };
 
-export const SearchPage = ({ companyId }: { companyId?: string }) => {
+export const SearchPage = () => {
+    const { companyId } = useAtomValue(clientRoleAtom);
+
     return (
         <Layout>
             {IQDATA_MAINTENANCE ? (
@@ -104,7 +105,7 @@ export const SearchPage = ({ companyId }: { companyId?: string }) => {
             ) : (
                 <div className="flex flex-col p-6">
                     <SearchProvider>
-                        <SearchPageInner companyId={companyId} />
+                        <SearchPageInner companyId={companyId !== '' ? companyId : undefined} />
                     </SearchProvider>
                 </div>
             )}

@@ -11,6 +11,7 @@ import { useEffect, useState } from 'react';
 import { CompanyProvider } from 'src/hooks/use-company';
 import { rudderInitialized } from 'src/utils/rudder-initialize';
 import { CacheProvider } from 'src/utils/indexeddb-cache-provider';
+import { Provider } from 'jotai';
 
 function MyApp({
     Component,
@@ -23,10 +24,7 @@ function MyApp({
     }, []); //enable rudderstack Analytics
 
     const [supabaseClient] = useState(() => createBrowserSupabaseClient());
-    useEffect(() => {
-        //@ts-expect-error
-        import('preline');
-    }, []);
+
     useEffect(() => {
         const storedLanguage = localStorage.getItem('language');
         storedLanguage !== null ? i18n.changeLanguage(storedLanguage) : i18n.changeLanguage(); // triggers the language detector
@@ -59,7 +57,9 @@ function MyApp({
                 <CacheProvider>
                     <UserProvider>
                         <CompanyProvider>
-                            <Component {...pageProps} />
+                            <Provider>
+                                <Component {...pageProps} />
+                            </Provider>
                         </CompanyProvider>
                     </UserProvider>
                 </CacheProvider>

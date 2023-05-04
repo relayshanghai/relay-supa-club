@@ -20,7 +20,8 @@
     "test:watch": "jest --watch",
     "test:run-cypress-unit": "cypress run --component",
     "cypress": "npx cypress open",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "supabase": "npx supabase start"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.14",
@@ -32,12 +33,13 @@
     "date-fns": "^2.29.3",
     "dotenv": "^16.0.3",
     "fuse.js": "^6.6.2",
+    "googleapis": "^118.0.0",
     "i18next": "^22.4.14",
     "i18next-browser-languagedetector": "^7.0.1",
     "idb": "^7.1.1",
+    "jotai": "^2.0.4",
     "next": "^13.3.0",
     "openai": "^3.2.1",
-    "preline": "^1.8.0",
     "react": "^18.2.0",
     "react-countup": "^6.4.2",
     "react-dom": "^18.2.0",

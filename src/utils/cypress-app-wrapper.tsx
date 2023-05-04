@@ -10,6 +10,9 @@ import { createBrowserSupabaseClient } from '@supabase/auth-helpers-nextjs';
 import { SessionContextProvider } from '@supabase/auth-helpers-react';
 import { SWRConfig } from 'swr';
 import { Toaster } from 'react-hot-toast';
+import { Provider } from 'jotai';
+import type { WritableAtom } from 'jotai';
+import { useHydrateAtoms } from 'jotai/utils';
 i18n.changeLanguage('en');
 
 export interface TestMountOptions {
@@ -19,6 +22,9 @@ export interface TestMountOptions {
     query?: Record<string, string>;
     useLocalStorageCache?: boolean;
 }
+
+export type InitialValues = [WritableAtom<unknown, any[], any>, unknown][];
+
 const mockProfile: IUserContext['profile'] = {
     id: '1',
     user_role: 'company_owner',
@@ -62,8 +68,6 @@ export const testMount = (component: React.ReactElement, options?: TestMountOpti
     });
     // see: https://on.cypress.io/mounting-react
     const supabaseClient = createBrowserSupabaseClient();
-    //@ts-expect-error
-    import('preline');
     mount(
         <AppRouterContext.Provider value={router as any}>
             <SessionContextProvider supabaseClient={supabaseClient} initialSession={{} as any}>
@@ -78,3 +82,20 @@ export const testMount = (component: React.ReactElement, options?: TestMountOpti
         </AppRouterContext.Provider>,
     );
 };
+
+const HydrateAtoms = ({ initialValues, children }: { initialValues: InitialValues; children: React.ReactNode }) => {
+    useHydrateAtoms(initialValues);
+    return <>{children}</>;
+};
+
+export const TestProvider = ({
+    initialValues,
+    children,
+}: {
+    initialValues: InitialValues;
+    children: React.ReactNode;
+}) => (
+    <Provider>
+        <HydrateAtoms initialValues={initialValues}>{children}</HydrateAtoms>
+    </Provider>
+);
