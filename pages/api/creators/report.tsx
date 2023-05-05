@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { recordReportUsage } from 'src/utils/api/db/calls/usages';
 import { fetchReport, fetchReportsMetadata, requestNewReport } from 'src/utils/api/iqdata';
+import { getInfluencerByReferenceId } from 'src/utils/get-influencer';
 import { serverLogger } from 'src/utils/logger-server';
 import { saveInfluencer } from 'src/utils/save-influencer';
 import type { CreatorPlatform, CreatorReport } from 'types';
@@ -36,7 +37,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     return res.status(httpCodes.BAD_REQUEST).json({ error: recordError });
                 }
 
-                saveInfluencer(data);
+                const [influencer] = await getInfluencerByReferenceId([
+                    data.user_profile.username,
+                    data.user_profile.type
+                ])
+
+                if (influencer === null) {
+                    saveInfluencer(data);
+                }
 
                 return res.status(httpCodes.OK).json({ ...data, createdAt });
             } catch (error) {
