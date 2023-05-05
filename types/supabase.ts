@@ -339,21 +339,27 @@ export interface Database {
           id: string
           influencer_id: string
           platform: string
+          reference_id: string
           url: string
+          username: string
         }
         Insert: {
           created_at?: string | null
           id?: string
           influencer_id: string
           platform: string
+          reference_id: string
           url: string
+          username: string
         }
         Update: {
           created_at?: string | null
           id?: string
           influencer_id?: string
           platform?: string
+          reference_id?: string
           url?: string
+          username?: string
         }
       }
       influencers: {
