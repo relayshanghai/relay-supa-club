@@ -27,14 +27,19 @@ describe('Save influencer', () => {
         const extractInfluencerSpy = vi.spyOn(extractInfluencer, 'extractInfluencer');
         const [influencer, socialProfile] = await saveInfluencer(data);
 
+        expect(influencer).not.toBeNull();
+        expect(socialProfile).not.toBeNull();
+
         expect(insertInfluencer).toHaveBeenCalledTimes(1);
         expect(insertInfluencerSocialProfile).toHaveBeenCalledTimes(1);
 
         expect(extractInfluencerSpy).toHaveBeenCalledTimes(1);
         expect(extractInfluencerSocialProfileSpy).toHaveBeenCalledTimes(1);
 
-        expect(influencer.id).toBe(1);
-        expect(influencer.name).toBe('John Doe');
-        expect(socialProfile.influencer_id).toBe(1);
+        if (influencer && socialProfile) {
+            expect(influencer.id).toBe(1);
+            expect(influencer.name).toBe('John Doe');
+            expect(socialProfile.influencer_id).toBe(1);
+        }
     });
 });
