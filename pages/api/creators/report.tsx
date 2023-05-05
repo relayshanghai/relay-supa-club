@@ -37,15 +37,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     return res.status(httpCodes.BAD_REQUEST).json({ error: recordError });
                 }
 
-                const [influencer] = await getInfluencerByReferenceId([
-                    data.user_profile.username,
-                    data.user_profile.type
-                ])
-
-                if (influencer === null) {
-                    saveInfluencer(data);
-                }
-
                 return res.status(httpCodes.OK).json({ ...data, createdAt });
             } catch (error) {
                 const data = await requestNewReport(platform, creator_id);
@@ -55,6 +46,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 if (recordError) {
                     serverLogger(recordError, 'error');
                     res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
+                }
+
+                const [influencer] = await getInfluencerByReferenceId([
+                    data.user_profile.username,
+                    data.user_profile.type
+                ])
+
+                if (influencer === null) {
+                    saveInfluencer(data);
                 }
 
                 return res.status(httpCodes.OK).json(data);
