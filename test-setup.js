@@ -1,5 +1,9 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-const { server } = require('./src/mocks/server'); // we are just mocking backend with jest. for frontend components, use cypress tests and the frontend msw worker.
+import { beforeAll, afterEach, afterAll } from 'vitest';
+import { server } from './src/mocks/server';
+
+import dotenv from 'dotenv';
+dotenv.config({ path: './.env.local' });
+// we are just mocking backend with jest. for frontend components, use cypress tests and the frontend msw worker.
 
 beforeAll(() => {
     // Enable the mocking in tests.

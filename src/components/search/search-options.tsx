@@ -7,7 +7,7 @@ import { Button } from '../button';
 import { SearchCreators } from './search-creators';
 import { SearchTopics } from './search-topics';
 import { Switch, Tooltip } from '../library';
-import { FEAT_RECOMMENDED } from 'src/constants/feature-flags';
+import { featRecommended } from 'src/constants/feature-flags';
 import { SearchLocations } from './search-locations';
 import LocationTag from './location-tag';
 
@@ -160,7 +160,7 @@ export const SearchOptions = ({
                             {t('creators.clearFilter')}
                         </Button>
                     ) : null}
-                    {FEAT_RECOMMENDED && (
+                    {featRecommended() && (
                         <div className="ml-auto">
                             <Tooltip
                                 content={t('creators.recommendedTooltip')}
