@@ -1,11 +1,11 @@
 import { supabase } from 'src/utils/supabase-client';
 import type { Database } from 'types/supabase';
 
-export type influencerInsert = Database['public']['Tables']['influencers']['Insert'];
-export type influencerRow = Database['public']['Tables']['influencers']['Row'];
+export type InfluencerInsert = Database['public']['Tables']['influencers']['Insert'];
+export type InfluencerRow = Database['public']['Tables']['influencers']['Row'];
 
-export type influencerSocialProfileInsert = Database['public']['Tables']['influencer_social_profiles']['Insert'];
-export type influencerSocialProfileRow = Database['public']['Tables']['influencer_social_profiles']['Row'];
+export type InfluencerSocialProfileInsert = Database['public']['Tables']['influencer_social_profiles']['Insert'];
+export type InfluencerSocialProfileRow = Database['public']['Tables']['influencer_social_profiles']['Row'];
 
 const create_url_from_username = (username: string, platform: string) => {
     if (platform === 'youtube') {
@@ -19,7 +19,7 @@ const create_url_from_username = (username: string, platform: string) => {
     }
 };
 
-export const getInfluencerById = async (id: string): Promise<influencerRow | null> => {
+export const getInfluencerById = async (id: string): Promise<InfluencerRow | null> => {
     const influencer = await supabase.from('influencers').select().match({
         id,
     });
@@ -38,7 +38,7 @@ export const getInfluencerById = async (id: string): Promise<influencerRow | nul
 // @todo we need to use the datasource user id instead of relying on the username+platform tuple
 export const getInfluencerSocialProfileByReferenceId = async (
     referenceId: [string, string],
-): Promise<influencerSocialProfileRow | null> => {
+): Promise<InfluencerSocialProfileRow | null> => {
     const [username, platform] = referenceId;
 
     const socialProfile = await supabase
@@ -60,7 +60,7 @@ export const getInfluencerSocialProfileByReferenceId = async (
     return socialProfile.data[0];
 };
 
-export const insertInfluencer = async (data: influencerInsert): Promise<influencerRow> => {
+export const insertInfluencer = async (data: InfluencerInsert): Promise<InfluencerRow> => {
     const influencer = await supabase.from('influencers').insert(data).select();
 
     if (influencer.error) {
@@ -71,8 +71,8 @@ export const insertInfluencer = async (data: influencerInsert): Promise<influenc
 };
 
 export const insertInfluencerSocialProfile = async (
-    data: influencerSocialProfileInsert,
-): Promise<influencerSocialProfileRow> => {
+    data: InfluencerSocialProfileInsert,
+): Promise<InfluencerSocialProfileRow> => {
     const socialProfile = await supabase.from('influencer_social_profiles').insert(data).select();
 
     if (socialProfile.error) {

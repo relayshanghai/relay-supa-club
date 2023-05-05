@@ -10,12 +10,12 @@ describe('Get influencer', () => {
             platform: 'youtube',
             url: 'https://youtube.com/johndoe',
             created_at: null,
-        } as unknown as influencersModule.influencerSocialProfileRow;
+        } as unknown as influencersModule.InfluencerSocialProfileRow;
 
         const influencerData = {
             id: '1',
             name: 'John Doe',
-        } as unknown as influencersModule.influencerRow;
+        } as unknown as influencersModule.InfluencerRow;
 
         const getInfluencerSocialProfileByReferenceIdSpy = vi
             .spyOn(influencersModule, 'getInfluencerSocialProfileByReferenceId')

@@ -1,4 +1,4 @@
-import type { influencerRow, influencerSocialProfileRow } from './api/db/calls/influencers';
+import type { InfluencerRow, InfluencerSocialProfileRow } from './api/db/calls/influencers';
 import { getInfluencerById, getInfluencerSocialProfileByReferenceId } from './api/db/calls/influencers';
 
 /**
@@ -11,7 +11,7 @@ import { getInfluencerById, getInfluencerSocialProfileByReferenceId } from './ap
  */
 export const getInfluencerByReferenceId = async (
     referenceId: [string, string],
-): Promise<[influencerRow, influencerSocialProfileRow] | [null, null]> => {
+): Promise<[InfluencerRow, InfluencerSocialProfileRow] | [null, null]> => {
     const socialProfile = await getInfluencerSocialProfileByReferenceId(referenceId);
 
     if (socialProfile === null) return [null, null];
