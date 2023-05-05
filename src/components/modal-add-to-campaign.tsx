@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import type { CreatorPlatform, CreatorUserProfile } from 'types';
 import CampaignModalCard from './campaigns/campaign-modal-card';
 import { Modal } from './modal';
-import type { CampaignCreatorDB } from 'src/utils/api/db';
+import type { CampaignCreatorBasicInfo } from 'src/utils/client-db/campaignCreators';
 
 export const AddToCampaignModal = ({
     show,
@@ -19,7 +19,7 @@ export const AddToCampaignModal = ({
     platform: CreatorPlatform;
     selectedCreator: CreatorUserProfile | null;
     campaigns?: CampaignDB[] | undefined;
-    allCampaignCreators?: CampaignCreatorDB[];
+    allCampaignCreators?: CampaignCreatorBasicInfo[];
 }) => {
     const { t } = useTranslation();
 

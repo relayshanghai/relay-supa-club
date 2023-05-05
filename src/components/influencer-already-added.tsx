@@ -1,7 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { ModalWithButtons } from './modal-with-buttons';
-import type { CampaignCreatorDB, CampaignDB } from 'src/utils/api/db';
+import type { CampaignDB } from 'src/utils/api/db';
 import type { CreatorSearchAccountObject } from 'types';
+import type { CampaignCreatorBasicInfo } from 'src/utils/client-db/campaignCreators';
 
 export const InfluencerAlreadyAddedModal = ({
     show,
@@ -15,7 +16,7 @@ export const InfluencerAlreadyAddedModal = ({
     setShow: (show: boolean) => void;
     setCampaignListModal: (show: boolean) => void;
     campaigns: CampaignDB[];
-    allCampaignCreators?: CampaignCreatorDB[];
+    allCampaignCreators?: CampaignCreatorBasicInfo[];
     selectedCreator: CreatorSearchAccountObject | null;
 }) => {
     const { t } = useTranslation();

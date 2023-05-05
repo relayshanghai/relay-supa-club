@@ -4,12 +4,13 @@ import { useEffect, useState } from 'react';
 import { Spinner } from '../icons';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
-import type { CampaignCreatorDB, CampaignDB } from 'src/utils/api/db';
+import type { CampaignDB } from 'src/utils/api/db';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import { clientLogger } from 'src/utils/logger-client';
 import { useUser } from 'src/hooks/use-user';
 import { isMissing } from 'src/utils/utils';
 import { useCampaignCreators } from 'src/hooks/use-campaign-creators';
+import type { CampaignCreatorBasicInfo } from 'src/utils/client-db/campaignCreators';
 
 export default function CampaignModalCard({
     campaign,
@@ -20,7 +21,7 @@ export default function CampaignModalCard({
     campaign: CampaignDB;
     creator: CreatorUserProfile | null;
     platform: CreatorPlatform;
-    campaignCreators: CampaignCreatorDB[];
+    campaignCreators: CampaignCreatorBasicInfo[];
 }) {
     const supabase = useSupabaseClient();
     const { addCreatorToCampaign, loading, refreshCampaignCreators } = useCampaignCreators({

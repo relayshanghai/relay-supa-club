@@ -15,14 +15,13 @@ import { SkeletonSearchResultRow } from '../common/skeleton-search-result-row';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { isRecommendedInfluencer } from 'src/utils/utils';
 
-import type { CampaignCreatorDB } from 'src/utils/api/db';
-
+import type { CampaignCreatorBasicInfo } from 'src/utils/client-db/campaignCreators';
 export interface SearchResultRowProps {
     creator: CreatorSearchAccountObject;
     setSelectedCreator: (creator: CreatorSearchAccountObject) => void;
     setShowCampaignListModal: (show: boolean) => void;
     setShowAlreadyAddedModal: (show: boolean) => void;
-    allCampaignCreators?: CampaignCreatorDB[];
+    allCampaignCreators?: CampaignCreatorBasicInfo[];
 }
 export interface MoreResultsRowsProps extends Omit<SearchResultRowProps, 'creator'> {
     page: number;
@@ -105,7 +104,7 @@ export const SearchResultRow = ({
         if (allCampaignCreators) {
             for (const campaignCreator of allCampaignCreators) {
                 if (campaignCreator?.campaign_id && creator.account.user_profile.user_id) {
-                    if (campaignCreator.creator_id === creator?.account.user_profile.user_id) {
+                    if (campaignCreator.creator_id === creator.account.user_profile.user_id) {
                         isAlreadyInCampaign = true;
                         break;
                     }

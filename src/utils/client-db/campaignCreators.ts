@@ -68,15 +68,17 @@ export const deleteCampaignCreatorCall =
         return campaignCreator;
     };
 
+export type CampaignCreatorBasicInfo = Pick<CampaignCreatorDB, 'campaign_id' | 'creator_id'>;
+
 export const getAllCampaignCreatorsCall =
     (supabaseClient: SupabaseClient<DatabaseWithCustomTypes>) =>
-    async (campaignIds: string[]): Promise<CampaignCreatorDB[]> => {
+    async (campaignIds: string[]): Promise<CampaignCreatorBasicInfo[]> => {
         if (!campaignIds || campaignIds.length === 0) {
             return [];
         }
         const { data, error } = await supabaseClient
             .from('campaign_creators')
-            .select('*')
+            .select('campaign_id, creator_id')
             .in('campaign_id', campaignIds);
 
         // note, this is quite large. I had to increase the database's limit above 1000 to get this to work.

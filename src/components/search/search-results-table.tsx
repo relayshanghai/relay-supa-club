@@ -5,13 +5,13 @@ import type { CreatorSearchAccountObject } from 'types';
 import { Button } from '../button';
 import { SkeletonSearchResultRow } from '../common/skeleton-search-result-row';
 import { SearchResultRow } from './search-result-row';
-import type { CampaignCreatorDB } from 'src/utils/api/db';
+import type { CampaignCreatorBasicInfo } from 'src/utils/client-db/campaignCreators';
 
 export interface SearchResultsTableProps {
     setShowCampaignListModal: (show: boolean) => void;
     setSelectedCreator: (creator: CreatorSearchAccountObject) => void;
     setShowAlreadyAddedModal: (show: boolean) => void;
-    allCampaignCreators?: CampaignCreatorDB[];
+    allCampaignCreators?: CampaignCreatorBasicInfo[];
     results?: CreatorSearchAccountObject[];
     loading: boolean;
     validating: boolean;
