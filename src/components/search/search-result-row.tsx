@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
 import { DotsHorizontal, ShareLink } from 'src/components/icons';
-import { FEAT_RECOMMENDED } from 'src/constants/feature-flags';
+import { featRecommended } from 'src/constants/feature-flags';
 import useAboveScreenWidth from 'src/hooks/use-above-screen-width';
 import { useSearch, useSearchResults } from 'src/hooks/use-search';
 import { imgProxy } from 'src/utils/fetcher';
@@ -138,7 +138,7 @@ export const SearchResultRow = ({
                     </div>
                 </div>
                 <div className="mt-2">
-                    {FEAT_RECOMMENDED && isRecommendedInfluencer(recommendedInfluencers, platform, user_id) && (
+                    {featRecommended() && isRecommendedInfluencer(recommendedInfluencers, platform, user_id) && (
                         <Tooltip
                             content={t('creators.recommendedTooltip')}
                             detail={t('creators.recommendedTooltipDetail')}
