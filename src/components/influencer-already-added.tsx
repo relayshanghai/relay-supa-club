@@ -20,16 +20,15 @@ export const InfluencerAlreadyAddedModal = ({
     selectedCreator: CreatorSearchAccountObject | null;
 }) => {
     const { t } = useTranslation();
-    const campaignsWithCreator = campaigns
-        .filter((campaign) => {
-            const campaignCreators = allCampaignCreators?.filter(
-                (campaignCreator) => campaignCreator.campaign_id === campaign.id,
-            );
-            return campaignCreators?.some(
-                (campaignCreator) => campaignCreator.creator_id === selectedCreator?.account.user_profile.user_id,
-            );
-        })
-        .map((campaign) => campaign.name);
+    const filterForSelectedCreator = (campaign: CampaignDB) => {
+        const campaignCreators = allCampaignCreators?.filter(
+            (campaignCreator) => campaignCreator.campaign_id === campaign.id,
+        );
+        return campaignCreators?.some(
+            (campaignCreator) => campaignCreator.creator_id === selectedCreator?.account.user_profile.user_id,
+        );
+    };
+    const campaignsWithCreator = campaigns.filter(filterForSelectedCreator).map((campaign) => campaign.name);
     return (
         <ModalWithButtons
             title={t('campaigns.modal.addToCampaign') || ''}
