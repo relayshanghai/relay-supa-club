@@ -1,17 +1,16 @@
-import { insertInfluencer, insertInfluencerProfile } from './api/db/calls/influencers';
-import { extractInfluencer, extractInfluencerProfile } from './api/iqdata/extract-influencer';
+import { vi, describe, it, expect } from 'vitest';
+import { insertInfluencer, insertInfluencerSocialProfile } from './api/db/calls/influencers';
+import * as extractInfluencer from './api/iqdata/extract-influencer';
+import type { CreatorReport } from 'types';
 import { saveInfluencer } from './save-influencer';
 
-jest.mock('./api/db/calls/influencers', () => ({
-    insertInfluencer: jest.fn((_: any) => {
+vi.mock('./api/db/calls/influencers', () => ({
+    insertInfluencer: vi.fn((_: any) => {
         return { ..._, id: 1 };
     }),
-    insertInfluencerProfile: jest.fn(),
-}));
-
-jest.mock('./api/iqdata/extract-influencer', () => ({
-    extractInfluencer: jest.fn((v) => v),
-    extractInfluencerProfile: jest.fn((_) => jest.fn()),
+    insertInfluencerSocialProfile: vi.fn((_: any) => {
+        return { ..._, id: 2 };
+    }),
 }));
 
 describe('Save influencer', () => {
@@ -22,17 +21,20 @@ describe('Save influencer', () => {
                 contacts: [{ type: 'email', value: 'john.doe@email.com' }],
                 avatar_url: 'https://image.com/john+doe.jpg',
             },
-        };
+        } as unknown as CreatorReport;
 
-        const influencer = (await saveInfluencer(data)) as typeof data.user_profile & { id?: number };
+        const extractInfluencerSocialProfileSpy = vi.spyOn(extractInfluencer, 'extractInfluencerSocialProfile');
+        const extractInfluencerSpy = vi.spyOn(extractInfluencer, 'extractInfluencer');
+        const [influencer, socialProfile] = await saveInfluencer(data);
 
         expect(insertInfluencer).toHaveBeenCalledTimes(1);
-        expect(insertInfluencerProfile).toHaveBeenCalledTimes(1);
+        expect(insertInfluencerSocialProfile).toHaveBeenCalledTimes(1);
 
-        expect(extractInfluencer).toHaveBeenCalledTimes(1);
-        expect(extractInfluencerProfile).toHaveBeenCalledTimes(1);
+        expect(extractInfluencerSpy).toHaveBeenCalledTimes(1);
+        expect(extractInfluencerSocialProfileSpy).toHaveBeenCalledTimes(1);
 
         expect(influencer.id).toBe(1);
-        expect(influencer.fullname).toBe('John Doe');
+        expect(influencer.name).toBe('John Doe');
+        expect(socialProfile.influencer_id).toBe(1);
     });
 });

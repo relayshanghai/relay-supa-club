@@ -1,8 +1,9 @@
+import { vi, describe, it, expect } from 'vitest';
 import { createInfluencerPost as _createInfluencerPost } from './api/db/calls/posts';
 import { createInfluencerPost } from './create-influencer-post';
 
-jest.mock('./api/db/calls/posts', () => ({
-    createInfluencerPost: jest.fn((_) => {
+vi.mock('./api/db/calls/posts', () => ({
+    createInfluencerPost: vi.fn((_) => {
         return { ..._, id: 1 };
     }),
 }));
