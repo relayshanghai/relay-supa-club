@@ -1,10 +1,10 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import InputWithAutocomplete from 'src/components/input-with-autocomplete';
 import useOnOutsideClick from 'src/hooks/use-on-outside-click';
 import { debounce } from 'src/utils/debounce';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
-import type { CreatorPlatform, CreatorSearchTag, LocationWeighted } from 'types';
+import type { CreatorPlatform, LocationWeighted } from 'types';
 
 type SearchLocationsProps = {
     onSetLocations: (topics: LocationWeighted[]) => void;
@@ -25,14 +25,30 @@ export const SearchLocations = ({
     filter,
     TagComponent,
 }: SearchLocationsProps) => {
-    const [suggestions, setSuggestions] = useState<CreatorSearchTag[] | LocationWeighted[]>([]);
+    const [suggestions, setSuggestions] = useState<LocationWeighted[]>([]);
     const ref = useRef<any>();
     const inputRef = useRef<any>();
+
+    const [loading, setLoading] = useState(false);
 
     useOnOutsideClick(inputRef, () => {
         setSuggestions([]);
         setTopicSearch('');
     });
+
+    useEffect(() => {
+        if (!locations && !suggestions) {
+            return;
+        }
+
+        if (locations.length > 0 && suggestions.length > 0) {
+            setLoading(true);
+        } else if (locations.length === 0 && suggestions.length > 0) {
+            setLoading(true);
+        } else {
+            setLoading(false);
+        }
+    }, [suggestions, locations]);
 
     // Disabling the exhaustive-deps rule because we need to use the debounce function and we already know the required dependencies.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -105,6 +121,7 @@ export const SearchLocations = ({
             onAddTag={(item) => {
                 addTag(item);
             }}
+            spinnerLoading={loading}
         />
     );
 };

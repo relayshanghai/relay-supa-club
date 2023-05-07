@@ -8,7 +8,6 @@ export interface Props extends DetailedHTMLProps<InputHTMLAttributes<HTMLInputEl
     onTagRemove: (tag: CreatorSearchTag | LocationWeighted) => void;
     TagComponent?: React.FC<any>;
     spinnerLoading: boolean;
-    setSpinnerLoading: (value: boolean) => void;
 }
 export const InputWithTags = ({ disabled, tags = [], onTagRemove, TagComponent, spinnerLoading, ...rest }: Props) => {
     return (
@@ -18,7 +17,14 @@ export const InputWithTags = ({ disabled, tags = [], onTagRemove, TagComponent, 
                     {tags
                         ? tags.map((item, i) => {
                               if (TagComponent) {
-                                  return <TagComponent key={i} {...item} onClick={() => onTagRemove(item)} />;
+                                  return (
+                                      <>
+                                          {spinnerLoading && (
+                                              <Spinner className="h-5 w-5 fill-primary-600 text-white" />
+                                          )}
+                                          <TagComponent key={i} {...item} onClick={() => onTagRemove(item)} />
+                                      </>
+                                  );
                               }
                               return (
                                   <p

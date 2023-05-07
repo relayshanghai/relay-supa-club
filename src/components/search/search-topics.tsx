@@ -1,10 +1,10 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import InputWithAutocomplete from 'src/components/input-with-autocomplete';
 import useOnOutsideClick from 'src/hooks/use-on-outside-click';
 import { debounce } from 'src/utils/debounce';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
-import type { CreatorPlatform, CreatorSearchTag, LocationWeighted } from 'types';
+import type { CreatorPlatform, CreatorSearchTag } from 'types';
 
 type SearchTopicsProps = {
     onSetTopics: (topics: CreatorSearchTag[]) => void;
@@ -17,7 +17,7 @@ type SearchTopicsProps = {
     TagComponent?: React.FC<any>;
 };
 
-export const SearchTopics = ({
+const SearchTopics = ({
     onSetTopics,
     topics,
     platform,
@@ -36,6 +36,20 @@ export const SearchTopics = ({
         setSuggestions([]);
         setTopicSearch('');
     });
+
+    useEffect(() => {
+        if (!topics && !suggestions) {
+            return;
+        }
+
+        if (topics.length > 0 && suggestions.length > 0) {
+            setLoading(true);
+        } else if (topics.length === 0 && suggestions.length > 0) {
+            setLoading(true);
+        } else {
+            setLoading(false);
+        }
+    }, [suggestions, topics]);
 
     // Disabling the exhaustive-deps rule because we need to use the debounce function and we already know the required dependencies.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -107,14 +121,15 @@ export const SearchTopics = ({
             onChange={(item: any) => {
                 setTopicSearch(item);
             }}
-            onRemoveTag={(item: CreatorSearchTag | LocationWeighted) => {
+            onRemoveTag={(item) => {
                 removeTag(item);
             }}
-            onAddTag={(item: CreatorSearchTag | LocationWeighted) => {
+            onAddTag={(item) => {
                 addTag(item);
             }}
             spinnerLoading={loading}
-            setSpinnerLoading={setLoading}
         />
     );
 };
+
+export default SearchTopics;

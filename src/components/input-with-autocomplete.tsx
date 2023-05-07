@@ -22,7 +22,6 @@ export interface Props {
     TagComponent?: React.FC<any>;
     ref: React.MutableRefObject<any>;
     spinnerLoading: boolean;
-    setSpinnerLoading: (value: boolean) => void;
 }
 
 const InputWithAutocomplete = forwardRef<HTMLDivElement, Props>(
@@ -38,7 +37,6 @@ const InputWithAutocomplete = forwardRef<HTMLDivElement, Props>(
             SuggestionComponent,
             TagComponent,
             spinnerLoading,
-            setSpinnerLoading,
         },
         ref,
     ) => {
@@ -81,7 +79,6 @@ const InputWithAutocomplete = forwardRef<HTMLDivElement, Props>(
                     onKeyDown={tagKeyboardInputHandler}
                     TagComponent={TagComponent}
                     spinnerLoading={spinnerLoading}
-                    setSpinnerLoading={setSpinnerLoading}
                 />
                 <div className="relative">
                     {!!suggestions.length && (
