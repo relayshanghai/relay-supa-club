@@ -145,9 +145,9 @@ OR REPLACE FUNCTION create_company(
           now(),
           '2025-01-01 00:00:00.000000+00',
           now(),
-          '100000000',
-          '100000000',
-          '100000000'
+          100000000,
+          100000000,
+          100000000
         )
       RETURNING * INTO _row;
       RETURN _row;
@@ -264,7 +264,7 @@ DECLARE
   _profile_relay_employee RECORD;
 BEGIN
   -- Test Company
-    _company_test := create_company('Blue Moonlight Stream Enterprises', 'https://blue-moonlight-stream.com', 'trial');
+    _company_test := create_company('Blue Moonlight Stream Enterprises', 'https://blue-moonlight-stream.com', 'active');
 
     _profile_william := create_profile(
       _company_test.id,

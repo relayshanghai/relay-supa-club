@@ -53,14 +53,23 @@ function getByTestId(selector: string, options?: CypressGetOptions) {
 
 Cypress.Commands.add('getByTestId', getByTestId);
 
-function loginTestUser(switchLangToEnglish = true) {
+function loginTestUser(
+    role: 'company_owner' | 'company_teammate' | 'relay_employee' = 'company_owner',
+    switchLangToEnglish = true,
+) {
     if (switchLangToEnglish) {
         switchToEnglish();
     }
-
+    let email = Cypress.env('TEST_USER_EMAIL_COMPANY_OWNER');
+    if (role === 'company_teammate') {
+        email = Cypress.env('TEST_USER_EMAIL_COMPANY_TEAMMATE');
+    } else if (role === 'relay_employee') {
+        email = Cypress.env('TEST_USER_EMAIL_RELAY_EMPLOYEE');
+    }
+    cy.log(email);
     cy.visit('/login');
     cy.contains('Welcome back!'); // wait for login page load
-    cy.get('input[type="email"]').type(Cypress.env('TEST_USER_EMAIL'));
+    cy.get('input[type="email"]').type(email);
     cy.get('input[type="password"]').type(Cypress.env('TEST_USER_PASSWORD'));
     cy.get('form').get('button').contains('Log in').click();
     cy.contains('Successfully logged in', { timeout: 10000 }); // the toast message
@@ -74,6 +83,6 @@ function switchToEnglish() {
 }
 Cypress.Commands.add('switchToEnglish', switchToEnglish);
 
-Cypress.Commands.add('mount', mount)
+Cypress.Commands.add('mount', mount);
 
 export {};
