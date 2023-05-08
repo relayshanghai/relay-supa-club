@@ -124,7 +124,7 @@ const SearchTopics = ({
             onRemoveTag={(item) => {
                 removeTag(item);
             }}
-            onAddTag={(item) => {
+            onAddTag={addTag}
                 addTag(item);
             }}
             spinnerLoading={loading}
