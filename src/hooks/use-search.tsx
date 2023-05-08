@@ -9,7 +9,7 @@ import type { CreatorPlatform, LocationWeighted, CreatorSearchTag } from 'types'
 import { useUser } from './use-user';
 import useSWR from 'swr';
 import type { RecommendedInfluencersGetResponse } from 'pages/api/recommended-influencers';
-import { FEAT_RECOMMENDED } from 'src/constants/feature-flags';
+import { featRecommended } from 'src/constants/feature-flags';
 
 type NullStringTuple = [null | string, null | string];
 
@@ -265,7 +265,7 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
         onlyRecommended,
     ]);
 
-    const { data: recommendedInfluencers } = useSWR(FEAT_RECOMMENDED ? 'recommended-influencers' : null, (path) =>
+    const { data: recommendedInfluencers } = useSWR(featRecommended() ? 'recommended-influencers' : null, (path) =>
         nextFetch<RecommendedInfluencersGetResponse>(path),
     );
 
