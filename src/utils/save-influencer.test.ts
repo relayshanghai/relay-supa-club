@@ -1,7 +1,7 @@
 import { vi, describe, it, expect } from 'vitest';
 import { insertInfluencer, insertInfluencerSocialProfile } from './api/db/calls/influencers';
 import * as extractInfluencer from './api/iqdata/extract-influencer';
-import type { CreatorReport } from 'types';
+import type { CreatorReport } from '../../types';
 import { saveInfluencer } from './save-influencer';
 
 vi.mock('./api/db/calls/influencers', () => ({
@@ -20,9 +20,9 @@ describe('Save influencer', () => {
                 user_id: 'abc123',
                 fullname: 'John Doe',
                 contacts: [{ type: 'email', value: 'john.doe@email.com' }],
-                avatar_url: 'https://image.com/john+doe.jpg',
+                picture: 'https://image.com/john+doe.jpg',
             },
-        } as unknown as CreatorReport;
+        } as CreatorReport;
 
         const extractInfluencerSocialProfileSpy = vi.spyOn(
             extractInfluencer,
