@@ -48,10 +48,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
                 }
 
-                const [influencer] = await getInfluencerByReferenceId([
-                    data.user_profile.username,
-                    data.user_profile.type
-                ])
+                const [influencer] = await getInfluencerByReferenceId(data)
 
                 if (influencer === null) {
                     saveInfluencer(data);

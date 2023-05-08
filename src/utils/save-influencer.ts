@@ -1,20 +1,13 @@
 import type { CreatorReport } from 'types';
-import type { InfluencerRow, InfluencerSocialProfileRow } from './api/db/calls/influencers';
-import { insertInfluencer, insertInfluencerSocialProfile } from './api/db/calls/influencers';
-import { extractInfluencer, extractInfluencerSocialProfile } from './api/iqdata/extract-influencer';
+import { saveInfluencer as iqdataSaveInfluencer } from './api/iqdata/save-influencer';
+import { isCreatorReport } from './api/iqdata/type-guards';
 
-export const saveInfluencer = async (
-    data: CreatorReport,
-): Promise<[InfluencerRow, InfluencerSocialProfileRow] | [null, null]> => {
-    const influencer = await insertInfluencer(extractInfluencer(data.user_profile));
+type SaveInfluencerData = CreatorReport;
 
-    if (influencer === null) return [null, null];
+export const saveInfluencer = async (data: SaveInfluencerData) => {
+    if (isCreatorReport(data)) {
+        return iqdataSaveInfluencer(data);
+    }
 
-    const socialProfile = await insertInfluencerSocialProfile(
-        extractInfluencerSocialProfile(data.user_profile)(influencer),
-    );
-
-    if (socialProfile === null) return [null, null];
-
-    return [influencer, socialProfile];
+    throw new Error('Cannot save influencer data');
 };

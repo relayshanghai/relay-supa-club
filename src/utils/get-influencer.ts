@@ -1,17 +1,20 @@
+import type { CreatorReport } from 'types';
 import type { InfluencerRow, InfluencerSocialProfileRow } from './api/db/calls/influencers';
 import { getInfluencerById, getInfluencerSocialProfileByReferenceId } from './api/db/calls/influencers';
+import { extractInfluencerReferenceId } from './api/iqdata/extract-influencer';
 
 /**
- * Retrieves an influencer and their social profile based on a given reference ID.
+ * Retrieves the influencer and their corresponding social profile by the given reference ID.
  *
- * @param {Array<string>} referenceId - The reference ID to search for.
+ * @param {CreatorReport} data - The data containing the user profile.
  *
- * @returns {Promise<Array<influencerRow, influencerSocialProfileRow> | Array<null, null>>}
- *  - An array containing the influencer and their social profile, or null values if not found.
+ * @returns {Promise<[InfluencerRow, InfluencerSocialProfileRow] | [null, null]>}
+ * - The influencer and social profile, or null if they do not exist.
  */
 export const getInfluencerByReferenceId = async (
-    referenceId: [string, string],
+    data: CreatorReport,
 ): Promise<[InfluencerRow, InfluencerSocialProfileRow] | [null, null]> => {
+    const referenceId = extractInfluencerReferenceId(data.user_profile);
     const socialProfile = await getInfluencerSocialProfileByReferenceId(referenceId);
 
     if (socialProfile === null) return [null, null];

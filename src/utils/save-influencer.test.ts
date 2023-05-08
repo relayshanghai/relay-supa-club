@@ -17,14 +17,18 @@ describe('Save influencer', () => {
     it('Save influencer', async () => {
         const data = {
             user_profile: {
+                user_id: 'abc123',
                 fullname: 'John Doe',
                 contacts: [{ type: 'email', value: 'john.doe@email.com' }],
                 avatar_url: 'https://image.com/john+doe.jpg',
             },
         } as unknown as CreatorReport;
 
-        const extractInfluencerSocialProfileSpy = vi.spyOn(extractInfluencer, 'extractInfluencerSocialProfile');
-        const extractInfluencerSpy = vi.spyOn(extractInfluencer, 'extractInfluencer');
+        const extractInfluencerSocialProfileSpy = vi.spyOn(
+            extractInfluencer,
+            'mapIqdataProfileToInfluencerSocialProfile',
+        );
+        const extractInfluencerSpy = vi.spyOn(extractInfluencer, 'mapIqdataProfileToInfluencer');
         const [influencer, socialProfile] = await saveInfluencer(data);
 
         expect(influencer).not.toBeNull();

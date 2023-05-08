@@ -7,57 +7,39 @@ export type InfluencerRow = Database['public']['Tables']['influencers']['Row'];
 export type InfluencerSocialProfileInsert = Database['public']['Tables']['influencer_social_profiles']['Insert'];
 export type InfluencerSocialProfileRow = Database['public']['Tables']['influencer_social_profiles']['Row'];
 
-const create_url_from_username = (username: string, platform: string) => {
-    if (platform === 'youtube') {
-        return `https://youtube.com/${username}`;
-    }
-    if (platform === 'instagram') {
-        return `https://instagram.com/${username}`;
-    }
-    if (platform === 'tiktok') {
-        return `https://tiktok.com/${username}`;
-    }
-};
-
 export const getInfluencerById = async (id: string): Promise<InfluencerRow | null> => {
-    const influencer = await supabase.from('influencers').select().match({
-        id,
-    });
+    const influencer = await supabase
+        .from('influencers')
+        .select()
+        .match({
+            id,
+        })
+        .maybeSingle();
 
     if (influencer.error) {
         throw influencer.error;
     }
 
-    if (influencer.data.length <= 0) {
-        return null;
-    }
-
-    return influencer.data[0];
+    return influencer.data;
 };
 
 // @todo we need to use the datasource user id instead of relying on the username+platform tuple
 export const getInfluencerSocialProfileByReferenceId = async (
-    referenceId: [string, string],
+    referenceId: string,
 ): Promise<InfluencerSocialProfileRow | null> => {
-    const [username, platform] = referenceId;
-
     const socialProfile = await supabase
         .from('influencer_social_profiles')
         .select()
         .match({
-            platform: platform,
-            url: create_url_from_username(username, platform),
-        });
+            referenceId,
+        })
+        .maybeSingle();
 
     if (socialProfile.error) {
         throw socialProfile.error;
     }
 
-    if (socialProfile.data.length <= 0) {
-        return null;
-    }
-
-    return socialProfile.data[0];
+    return socialProfile.data;
 };
 
 export const insertInfluencer = async (data: InfluencerInsert): Promise<InfluencerRow> => {
