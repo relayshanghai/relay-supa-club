@@ -1,6 +1,6 @@
 import { defineConfig } from 'cypress';
 import dotenv from 'dotenv';
-import { server } from 'src/mocks/server';
+
 dotenv.config({ path: '.env.local' });
 
 export default defineConfig({
@@ -15,7 +15,6 @@ export default defineConfig({
                 TEST_USER_PASSWORD: 'password123!',
                 NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
             };
-            server.listen();
             return config;
         },
         viewportWidth: 1536,
