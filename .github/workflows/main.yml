@@ -119,5 +119,6 @@ jobs:
               with:
                   browser: chrome
                   start: npm run dev
-                  wait-on: http://localhost:3000, http://localhost:54321
+                  # http://localhost:54323/ is the supabase dashboard
+                  wait-on: http://localhost:3000, http://localhost:54323
                   wait-on-timeout: 180
