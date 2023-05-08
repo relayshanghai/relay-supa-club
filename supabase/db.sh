@@ -226,6 +226,18 @@ function generate_database_types {
     npx supabase gen types typescript --local --schema=public > $script_dir/../types/supabase.ts
 }
 
+function create_migration {
+    file_name=$1
+
+    if [ -z "$file_name" ] ; then
+        echo "$script_name create_migration <file_name>"
+        exit 1
+    fi
+
+    npx supabase db diff --file="$1"
+    generate_database_types
+}
+
 function get_linked_project {
     if [ -f "$script_dir/.temp/project-ref" ]; then
         project_ref=$(cat $script_dir/.temp/project-ref)
@@ -328,6 +340,9 @@ function help {
     Create policy:
         ./$script_name create_policy <policy_name> <table_name>
 
+    Create migration and updates supabase types:
+        ./$script_name create_migration <file_name>
+
     List policies:
         ./$script_name list_policies
 
@@ -380,6 +395,9 @@ case $fn in
     ;;
   "create_test")
     create_test $@
+    ;;
+  "create_migration")
+    create_migration $@
     ;;
   "create_policy")
     create_policy $@
