@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import InputWithAutocomplete from 'src/components/input-with-autocomplete';
 import useOnOutsideClick from 'src/hooks/use-on-outside-click';
 import { debounce } from 'src/utils/debounce';
@@ -29,7 +29,6 @@ const SearchTopics = ({
 }: SearchTopicsProps) => {
     const [suggestions, setSuggestions] = useState<CreatorSearchTag[]>([]);
     const [loading, setLoading] = useState(false);
-    const ref = useRef<any>();
     const inputRef = useRef<any>();
 
     useOnOutsideClick(inputRef, () => {
@@ -37,29 +36,12 @@ const SearchTopics = ({
         setTopicSearch('');
     });
 
-    useEffect(() => {
-        if (!topics && !suggestions) {
-            return;
-        }
-
-        if (topics.length > 0 && suggestions.length > 0) {
-            setLoading(true);
-        } else if (topics.length === 0 && suggestions.length > 0) {
-            setLoading(true);
-        } else {
-            setLoading(false);
-        }
-    }, [suggestions, topics]);
-
     // Disabling the exhaustive-deps rule because we need to use the debounce function and we already know the required dependencies.
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const setTopicSearch = useCallback(
         debounce(async (term: string) => {
-            if (ref.current) ref.current.abort();
-
-            const controller = new AbortController();
-            const signal = controller.signal;
-            ref.current = controller;
+            const abortController = new AbortController();
+            const signal = abortController.signal;
 
             try {
                 setLoading(true);
@@ -82,6 +64,12 @@ const SearchTopics = ({
                 }
                 clientLogger(error, 'error');
             }
+            setLoading(false);
+
+            // Abort fetch request after 5 seconds
+            setTimeout(() => {
+                abortController.abort();
+            }, 5000);
         }),
         [platform, path, filter],
     );
@@ -117,8 +105,7 @@ const SearchTopics = ({
             placeholder={placeholder}
             tags={topics}
             suggestions={suggestions}
-            ref={inputRef}
-            onChange={(item: any) => {
+            onChange={(item) => {
                 setTopicSearch(item);
             }}
             onRemoveTag={(item) => {
