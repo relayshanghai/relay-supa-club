@@ -21,5 +21,11 @@ if ! command -v sqlfluff >/dev/null 2>&1; then
     fi
 fi
 
+# verify formatting
 npx lint-staged --verbose --shell "/bin/bash"
+
+# verify tests
 npm test
+
+# verify types
+npm run type-check:app
