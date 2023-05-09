@@ -33,8 +33,8 @@ describe('<SearchPage />', () => {
 
         cy.contains(
             'Are those which have worked with relay.club brands in the past and are known to be open to cooperation',
-        ).should('not.be.visible');
-        cy.findByTestId('recommended-toggle').click();
+        ).should('not.exist');
+        cy.findByTestId('recommended-toggle').click({ force: true });
         cy.contains(
             'Are those which have worked with relay.club brands in the past and are known to be open to cooperation',
         );

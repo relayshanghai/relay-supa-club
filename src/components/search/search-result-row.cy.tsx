@@ -54,7 +54,9 @@ describe('<CreatorPage />', () => {
     it('shows recommended tag ', () => {
         // Note that we will need to rewrite this when we update the list of recommended creators. right now we have set the instagram platform account to be recommended
         testMount(
-            <SearchContext.Provider value={{ platform: 'instagram' } as any}>
+            <SearchContext.Provider
+                value={{ platform: 'instagram', recommendedInfluencers: ['instagram/25025320'] } as any}
+            >
                 <SearchResultRow {...setupProps()} />
             </SearchContext.Provider>,
         );
@@ -65,7 +67,9 @@ describe('<CreatorPage />', () => {
         const props = setupProps();
         props.creator.account.user_profile.user_id = 'notinstagram';
         testMount(
-            <SearchContext.Provider value={{ platform: 'instagram' } as any}>
+            <SearchContext.Provider
+                value={{ platform: 'instagram', recommendedInfluencers: ['instagram/25025320'] } as any}
+            >
                 <SearchResultRow {...props} />
             </SearchContext.Provider>,
         );
@@ -76,17 +80,18 @@ describe('<CreatorPage />', () => {
         props.creator.account.user_profile.user_id = '25025320';
         testMount(
             // needs some room to show the tooltip
-            <div className="pt-5">
-                <SearchContext.Provider value={{ platform: 'instagram' } as any}>
+            <div className="m-10 p-10">
+                <SearchContext.Provider
+                    value={{ platform: 'instagram', recommendedInfluencers: ['instagram/25025320'] } as any}
+                >
                     <SearchResultRow {...props} />
                 </SearchContext.Provider>
             </div>,
         );
-        cy.contains('Recommended');
-
         cy.contains(
             'Are those which have worked with relay.club brands in the past and are known to be open to cooperation',
-        ).should('not.be.visible');
+        ).should('not.exist');
+        cy.contains('Recommended');
         // .trigger('mouseenter') should work but it doesn't
         cy.get('[data-testid=recommended-badge').click();
         cy.contains(

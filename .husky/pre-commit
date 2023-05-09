@@ -2,8 +2,7 @@
 . "$(dirname -- "$0")/_/husky.sh"
 
 # exit early if nothing is staged
-if git diff --cached --quiet
-then
+if git diff --cached --quiet; then
     echo "No staged files"
     exit
 fi
