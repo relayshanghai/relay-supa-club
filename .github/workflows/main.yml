@@ -118,6 +118,9 @@ jobs:
             - name: Start Supabase local development setup
               run: supabase start
 
+            - name: Make sure seed is loaded
+              run: supabase db reset
+
             - name: Cypress run
               uses: cypress-io/github-action@v5
               with:
