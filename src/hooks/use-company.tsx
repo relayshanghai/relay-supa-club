@@ -33,9 +33,9 @@ export const CompanyProvider = ({ children }: PropsWithChildren) => {
     const clientRoleData = useAtomValue(clientRoleAtom);
 
     const { data: company, mutate: refreshCompany } = useSWR(profile?.company_id ? 'company' : null, async () => {
-        if (!profile?.company_id || clientRoleData.companyId === '') return;
+        if (profile && !profile?.company_id && clientRoleData.companyId === '') return;
         const fetchedCompany = await getCompanyById(
-            clientRoleData.companyId === '' ? profile.company_id : clientRoleData.companyId,
+            clientRoleData.companyId === '' ? profile?.company_id : clientRoleData.companyId,
         );
         if (profile && fetchedCompany?.name && !company?.name) {
             Sentry.setUser({
@@ -51,10 +51,11 @@ export const CompanyProvider = ({ children }: PropsWithChildren) => {
 
     const updateCompany = useCallback(
         async (input: Omit<CompanyPutBody, 'id'>) => {
-            if (!company?.id || clientRoleData.companyId === '') throw new Error('No company found');
+            if (!company?.id) throw new Error('No company found');
+            if (!company?.id && clientRoleData.companyId === '') throw new Error('No company found');
             const body: CompanyPutBody = {
                 ...input,
-                id: clientRoleData.companyId === '' ? company.id : clientRoleData.companyId,
+                id: clientRoleData.companyId === '' ? company?.id : clientRoleData.companyId,
             };
             return await nextFetch<CompanyPutResponse>(`company`, {
                 method: 'PUT',
