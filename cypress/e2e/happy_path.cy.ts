@@ -68,12 +68,18 @@ describe('Main pages happy paths', () => {
 
         cy.contains('Channel Stats'); // not sure what else to look for on this page. Seems good enough for a happy path.
     });
-    it('can use account and pricing pages', () => {
+    it.only('can use account and pricing pages', () => {
         cy.loginTestUser();
         cy.contains('Account').click();
         cy.contains('Subscription', { timeout: 10000 }); // loads account page
 
         cy.url().should('include', `/account`);
+        // user info
+        cy.contains('First name');
+        cy.contains('William Edward');
+        cy.contains('Company name');
+        cy.contains('Blue Moonlight Stream Enterprises');
+
         // open one of the modals
         cy.contains('button', 'Add more members').click();
         cy.contains('Invite Members');
@@ -102,9 +108,9 @@ describe('Main pages happy paths', () => {
         cy.url().should('include', `/ai-email-generator`);
         // pre-populates the brand name. can interact with form.
         cy.get(`input[placeholder="Your Brand's Name"]`)
-            .should('have.value', 'Test Company')
+            .should('have.value', 'Blue Moonlight Stream Enterprises')
             .type('123')
-            .should('have.value', 'Test Company123');
+            .should('have.value', 'Blue Moonlight Stream Enterprises123');
     });
     it('can open campaigns page', () => {
         cy.loginTestUser();
