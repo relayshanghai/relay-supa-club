@@ -7,6 +7,9 @@ export type RecommendedInfluencersGetResponse = string[];
 
 // TODO: add rate limiting or caching https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/329
 const handler: NextApiHandler = async (req, res) => {
+    if (process.env.NEXT_PUBLIC_CI === 'true') {
+        return res.status(httpCodes.OK).json([]);
+    }
     if (req.method !== 'GET') {
         return res.status(httpCodes.METHOD_NOT_ALLOWED).json({});
     }
