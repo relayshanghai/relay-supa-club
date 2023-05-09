@@ -7,7 +7,9 @@ import { Button } from '../button';
 import { SearchCreators } from './search-creators';
 import { SearchTopics } from './search-topics';
 import { Switch, Tooltip } from '../library';
-import { FEAT_RECOMMENDED } from 'src/constants/feature-flags';
+import { featRecommended } from 'src/constants/feature-flags';
+import { SearchLocations } from './search-locations';
+import LocationTag from './location-tag';
 
 const resultsPerPageOptions = [10, 20, 50, 100];
 
@@ -47,6 +49,7 @@ export const SearchOptions = ({
         setResultsPerPageLimit,
         onlyRecommended,
         setOnlyRecommended,
+        recommendedInfluencers,
     } = useSearch();
 
     const { t } = useTranslation();
@@ -62,7 +65,7 @@ export const SearchOptions = ({
                         placeholder={t('creators.searchTopic')}
                         topics={tags}
                         platform={platform}
-                        onSetTopics={(topics: any) => {
+                        onSetTopics={(topics) => {
                             setTopicTags(topics);
                         }}
                     />
@@ -72,60 +75,26 @@ export const SearchOptions = ({
                 </div>
             </div>
             <div className="flex flex-col items-start space-y-2 md:flex-row md:space-x-4 md:space-y-0">
-                <SearchTopics
+                <SearchLocations
                     path="influencer-search/locations"
                     placeholder={t('creators.filter.locationPlaceholder')}
-                    topics={influencerLocation}
+                    locations={influencerLocation}
                     platform={platform}
                     filter={filterCountry}
-                    onSetTopics={(topics: any) => {
+                    onSetLocations={(topics) => {
                         setInfluencerLocation(topics);
                     }}
                 />
-                <SearchTopics
+                <SearchLocations
                     path="influencer-search/locations"
                     placeholder={t('creators.filter.audienceLocation')}
-                    topics={audienceLocation}
+                    locations={audienceLocation}
                     platform={platform}
                     filter={filterCountry}
-                    onSetTopics={(topics: any) => {
-                        setAudienceLocation(topics.map((item: any) => ({ weight: 5, ...item })));
+                    onSetLocations={(topics) => {
+                        setAudienceLocation(topics.map((item) => ({ ...item, weight: 5 })));
                     }}
-                    TagComponent={({ onClick, ...item }: any) => {
-                        const selected = audienceLocation.find((country) => country.id === item.id);
-                        if (!selected) return null;
-                        return (
-                            <div
-                                className="flex cursor-pointer flex-row items-center whitespace-nowrap rounded bg-gray-100 pl-2 pr-1 text-gray-900 hover:bg-gray-200"
-                                key={item.id}
-                                onClick={onClick}
-                            >
-                                {item.value || item.title}
-                                <select
-                                    value={selected.weight}
-                                    className="ml-2 rounded-md bg-primary-200"
-                                    onClick={(e: any) => {
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                    }}
-                                    onChange={(e: any) => {
-                                        const clone = audienceLocation.slice();
-                                        const index = audienceLocation.indexOf(selected);
-
-                                        if (index !== -1) {
-                                            clone[index] = { ...selected, weight: e.target.value };
-                                            setAudienceLocation(clone);
-                                        }
-                                    }}
-                                >
-                                    {Array.from(Array(11)).map((_, i) => {
-                                        const val = i === 0 ? 1 : i * 5;
-                                        return <option value={val} key={val}>{`>${val}%`}</option>;
-                                    })}
-                                </select>
-                            </div>
-                        );
-                    }}
+                    TagComponent={LocationTag}
                 />
             </div>
             <div>
@@ -174,7 +143,7 @@ export const SearchOptions = ({
                             </option>
                         ))}
                     </select>
-                    <p className="mr-2 ml-1 text-sm text-gray-500">{t('creators.resultsPerPage')}</p>
+                    <p className="ml-1 mr-2 text-sm text-gray-500">{t('creators.resultsPerPage')}</p>
                     {hasSetViews || hasSetAudience || gender || engagement || lastPost ? (
                         <Button
                             onClick={(e: any) => {
@@ -191,7 +160,7 @@ export const SearchOptions = ({
                             {t('creators.clearFilter')}
                         </Button>
                     ) : null}
-                    {FEAT_RECOMMENDED && (
+                    {featRecommended() && (
                         <div className="ml-auto">
                             <Tooltip
                                 content={t('creators.recommendedTooltip')}
@@ -199,6 +168,7 @@ export const SearchOptions = ({
                                 className="flex flex-wrap items-center"
                             >
                                 <Switch
+                                    disabled={!recommendedInfluencers || recommendedInfluencers.length === 0}
                                     data-testid="recommended-toggle"
                                     checked={onlyRecommended}
                                     onChange={(e) => {

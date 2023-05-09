@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 import { numberFormatter, decimalToPercent } from './formatter';
 
 describe('numberFormatter', () => {

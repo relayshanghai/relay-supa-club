@@ -8,6 +8,9 @@ import { clientLogger } from 'src/utils/logger-client';
 import type { CreatorPlatform, LocationWeighted, CreatorSearchTag } from 'types';
 import { useUser } from './use-user';
 import useSWR from 'swr';
+import type { RecommendedInfluencersGetResponse } from 'pages/api/recommended-influencers';
+import { featRecommended } from 'src/constants/feature-flags';
+
 type NullStringTuple = [null | string, null | string];
 
 export interface ISearchContext {
@@ -43,6 +46,7 @@ export interface ISearchContext {
     setPage: (page: number) => void;
     onlyRecommended: boolean;
     setOnlyRecommended: (onlyRecommended: boolean) => void;
+    recommendedInfluencers: string[];
 }
 
 export const SearchContext = createContext<ISearchContext>({
@@ -77,8 +81,9 @@ export const SearchContext = createContext<ISearchContext>({
     setUsageExceeded: () => null,
     page: 0,
     setPage: () => null,
-    onlyRecommended: false,
+    onlyRecommended: true,
     setOnlyRecommended: () => null,
+    recommendedInfluencers: [],
 });
 
 export const useSearch = () => useContext(SearchContext);
@@ -103,6 +108,7 @@ export const useSearchResults = (page: number) => {
         resultsPerPageLimit,
         setUsageExceeded,
         setLoading,
+        recommendedInfluencers,
     } = useSearch();
 
     const { data, isLoading, mutate, isValidating, error } = useSWR(
@@ -123,6 +129,7 @@ export const useSearchResults = (page: number) => {
                   onlyRecommended,
                   platform,
                   resultsPerPageLimit,
+                  recommendedInfluencers,
               ]
             : null,
         async ([
@@ -141,6 +148,7 @@ export const useSearchResults = (page: number) => {
             onlyRecommended,
             platform,
             resultsPerPageLimit,
+            recommendedInfluencers,
         ]) => {
             try {
                 if (!profile?.company_id || !profile?.id) {
@@ -171,6 +179,7 @@ export const useSearchResults = (page: number) => {
                     only_recommended: onlyRecommended,
                     company_id: profile?.company_id,
                     user_id: profile?.id,
+                    recommendedInfluencers,
                 };
 
                 const res = await nextFetch<InfluencerPostResponse>(path, {
@@ -235,7 +244,7 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
     const [contactInfo, setContactInfo] = useState<string>();
     const [audienceLocation, setAudienceLocation] = useState<LocationWeighted[]>([]);
     const [platform, setPlatform] = useState<CreatorPlatform>('youtube');
-    const [onlyRecommended, setOnlyRecommended] = useState(false);
+    const [onlyRecommended, setOnlyRecommended] = useState(true);
 
     // reset page to 0 when any other search params are changed
     useEffect(() => {
@@ -255,6 +264,10 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
         resultsPerPageLimit,
         onlyRecommended,
     ]);
+
+    const { data: recommendedInfluencers } = useSWR(featRecommended() ? 'recommended-influencers' : null, (path) =>
+        nextFetch<RecommendedInfluencersGetResponse>(path),
+    );
 
     return (
         <SearchContext.Provider
@@ -291,6 +304,7 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
                 setPage,
                 onlyRecommended,
                 setOnlyRecommended,
+                recommendedInfluencers: recommendedInfluencers ?? [],
             }}
         >
             {children}

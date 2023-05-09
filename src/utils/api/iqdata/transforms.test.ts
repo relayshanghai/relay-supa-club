@@ -1,3 +1,5 @@
+import { describe, expect, it } from 'vitest';
+
 import type { FetchCreatorsFilteredParams } from './transforms';
 import { isRecommendedTransform, prepareFetchCreatorsFiltered } from './transforms';
 
@@ -6,6 +8,7 @@ const defaultOptions: FetchCreatorsFilteredParams = {
     username: 'test_user',
     audience: [null, null],
     views: [null, null],
+    recommendedInfluencers: ['youtube/1234'],
 };
 
 describe('prepareFetchCreatorsFiltered', () => {
@@ -84,15 +87,23 @@ describe('prepareFetchCreatorsFiltered', () => {
         expect(() => isRecommendedTransform('youtube', recommendedInfluencers2)).toThrow();
     });
     it('includes recommendedInfluencers transform', () => {
+        const recommendedInfluencers = [
+            'youtube/UCh_ugKacslKhsGGdXP0cRRA',
+            'youtube/UCwyXamwtzfDIvRjEFcqNmSw',
+            'instagram/25025320',
+            'instagram/208560325',
+            'youtube/UCbCmjCuTUZos6Inko4u57UQ',
+        ];
         const options: FetchCreatorsFilteredParams = {
             ...defaultOptions,
             only_recommended: true,
+            recommendedInfluencers,
         };
         const { body } = prepareFetchCreatorsFiltered(options);
         expect(body.filter.filter_ids?.length).toBeGreaterThan(0);
-
         const options2: FetchCreatorsFilteredParams = {
             ...defaultOptions,
+            recommendedInfluencers,
             only_recommended: false,
         };
         const { body: body2 } = prepareFetchCreatorsFiltered(options2);
