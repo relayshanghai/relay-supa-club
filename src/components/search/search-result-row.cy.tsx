@@ -75,7 +75,7 @@ describe('<CreatorPage />', () => {
         );
         cy.contains('Recommended').should('not.exist');
     });
-    it.only('shows tooltip on badge hover', () => {
+    it('shows tooltip on badge hover', () => {
         const props = setupProps();
         props.creator.account.user_profile.user_id = '25025320';
         testMount(
