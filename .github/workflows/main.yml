@@ -75,7 +75,7 @@ jobs:
             matrix:
                 node-version: [18.14.0]
         env:
-            - NEXT_PUBLIC_SUPABASE_URL: http://localhost:54321
+            NEXT_PUBLIC_SUPABASE_URL: http://localhost:54321
         steps:
             - uses: actions/checkout@v3
 
