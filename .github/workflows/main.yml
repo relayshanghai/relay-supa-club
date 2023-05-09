@@ -72,7 +72,7 @@ jobs:
         environment: preview
         env:
             # unit tests don't need the real keys, but they load some functions that check for them on init.
-            NEXT_PUBLIC_SUPABASE_URL: https://dummy-url.com
+            SUPABASE_SERVICE_KEY: dummy key
             NEXT_PUBLIC_SUPABASE_ANON_KEY: dummy key
 
         strategy:
