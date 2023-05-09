@@ -16,9 +16,7 @@ env:
     DATA_PASS: ${{ secrets.DATA_PASS }}
     DATA_USER: ${{ secrets.DATA_USER }}
     DATA_KEY: ${{ secrets.DATA_KEY }}
-    NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
     NEXT_PUBLIC_SUPABASE_URL: http://localhost:54321
-    SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
     SIB_API_KEY: ${{ secrets.SIB_API_KEY }}
     NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL }}
     OPENAI_API_ORG: ${{ secrets.OPENAI_API_ORG }}
@@ -117,6 +115,10 @@ jobs:
 
             - name: Start Supabase local development setup
               run: supabase start
+
+            - name: Export Supabase keys
+              # Uses supabase status to print the anon key and service key to the terminal and populates the environment variables
+              run: bash supabase/export_supabase_keys.sh
 
             - name: Make sure seed is loaded
               run: supabase db reset
