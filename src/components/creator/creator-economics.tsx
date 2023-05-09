@@ -24,13 +24,13 @@ const formatCreatorEconomics = (userProfile: CreatorReport['user_profile']) => {
     if (geo && geo?.country)
         stats.push({
             label: 'cpm',
-            icon: <Money />,
+            icon: <Money className="fill-emerald-400" />,
             data: `$${getCpm(geo?.country?.name).lowerBound} - $${getCpm(geo?.country?.name).upperBound}`,
         });
     if (avg_views && geo?.country?.name)
         stats.push({
             label: 'estFee',
-            icon: <Money />,
+            icon: <Money className="fill-emerald-400" />,
             data: getEstFee(avg_views, geo.country.name),
         });
     return stats;
@@ -48,7 +48,7 @@ const CreatorEconomics = ({ userProfile }: { userProfile: CreatorReport['user_pr
                 {economicsData.map((stat, index) => (
                     <div
                         key={index}
-                        className="mr-2 mb-2 box-border flex w-36 flex-1 flex-col self-stretch rounded-md bg-white p-2.5"
+                        className="mb-2 mr-2 box-border flex w-36 flex-1 flex-col self-stretch rounded-md bg-white p-2.5"
                     >
                         <div className="h-6 w-6">{stat.icon}</div>
                         <p className="f36 my-2 font-semibold text-tertiary-600">{stat.data}</p>

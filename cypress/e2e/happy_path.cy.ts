@@ -17,9 +17,9 @@ describe('Main pages happy paths', () => {
     });
     it('can search for an influencer', () => {
         cy.loginTestUser();
-
+        cy.get('input[type="checkbox').uncheck({ force: true }); // turn off the Recommended Only
         // wait for search results
-        cy.contains('T-Series', { timeout: 20000 }); // the first influencer search result
+        cy.contains('T-Series'); // the first influencer search result
 
         // search for an influencer
         // ensure GRTR is not in the search results
@@ -31,6 +31,7 @@ describe('Main pages happy paths', () => {
     });
     it('can search for a topic', () => {
         cy.loginTestUser();
+        cy.get('input[type="checkbox').uncheck({ force: true }); // turn off the Recommended Only
 
         // // wait for search results
         // cy.contains('T-Series', { timeout: 20000 }); // the first influencer search result
@@ -73,6 +74,12 @@ describe('Main pages happy paths', () => {
         cy.contains('Subscription', { timeout: 10000 }); // loads account page
 
         cy.url().should('include', `/account`);
+        // user info
+        cy.contains('First name');
+        cy.contains('William Edward');
+        cy.contains('Company name');
+        cy.contains('Blue Moonlight Stream Enterprises');
+
         // open one of the modals
         cy.contains('button', 'Add more members').click();
         cy.contains('Invite Members');
@@ -84,10 +91,12 @@ describe('Main pages happy paths', () => {
         cy.contains('Choose the best plan for you', { timeout: 10000 }); // loads pricing page
         cy.url().should('include', `/pricing`);
         cy.contains('DIY Max');
-        cy.contains('button', 'Buy Now', { timeout: 10000 }).click();
-        cy.contains('button', 'Subscribe');
-        cy.contains('button', 'Close').click();
-        cy.contains('button', 'Subscribe').should('not.exist');
+        // this doesn't work anymore because we aren't using a live account anymore, so stripe sends back 'can't find subscription' and the button is disabled.
+        // TODO: fix this when we implement msw mocks, mock the stripe call/response.
+        // cy.contains('button', 'Buy Now', { timeout: 10000 }).click();
+        // cy.contains('button', 'Subscribe');
+        // cy.contains('button', 'Close').click();
+        // cy.contains('button', 'Subscribe').should('not.exist');
     });
     it('can open ai email generator', () => {
         // not actually testing functionality of the email generator. Just making sure the page opens.
@@ -99,9 +108,9 @@ describe('Main pages happy paths', () => {
         cy.url().should('include', `/ai-email-generator`);
         // pre-populates the brand name. can interact with form.
         cy.get(`input[placeholder="Your Brand's Name"]`)
-            .should('have.value', 'Test Company')
+            .should('have.value', 'Blue Moonlight Stream Enterprises')
             .type('123')
-            .should('have.value', 'Test Company123');
+            .should('have.value', 'Blue Moonlight Stream Enterprises123');
     });
     it('can open campaigns page', () => {
         cy.loginTestUser();
@@ -116,11 +125,11 @@ describe('Main pages happy paths', () => {
         cy.loginTestUser();
         cy.getByTestId('layout-account-menu').click();
         cy.contains('Log Out').click();
-        cy.contains('Log In', { timeout: 30000 }); // loads login page
+        cy.contains('Log in', { timeout: 30000 }); // loads login page
         cy.url().should('include', `/login`);
 
         // pre-populates email with original email
-        cy.get('input[type="email"]').type(Cypress.env('TEST_USER_EMAIL'));
+        cy.get('input[type="email"]').should('have.value', Cypress.env('TEST_USER_EMAIL_COMPANY_OWNER'));
     });
 });
 

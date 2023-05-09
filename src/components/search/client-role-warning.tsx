@@ -11,7 +11,7 @@ const ClientRoleWarning = () => {
     return (
         <div
             className={`absolute right-36 top-5 z-50 flex animate-pulse gap-2 break-all rounded-md bg-red-400 p-2 text-white ${
-                clientRoleData.companyId.length === 0 && 'hidden'
+                clientRoleData.companyId?.length === 0 && 'hidden'
             }`}
         >
             You are acting on behalf of company: {clientRoleData.companyName}
