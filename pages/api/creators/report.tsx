@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { recordReportUsage } from 'src/utils/api/db/calls/usages';
 import { fetchReport, fetchReportsMetadata, requestNewReport } from 'src/utils/api/iqdata';
-import { getInfluencerByReferenceId } from 'src/utils/get-influencer';
+import { getInfluencer } from 'src/utils/get-influencer';
 import { serverLogger } from 'src/utils/logger-server';
 import { saveInfluencer } from 'src/utils/save-influencer';
 import type { CreatorPlatform, CreatorReport } from 'types';
@@ -48,7 +48,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
                 }
 
-                const [influencer] = await getInfluencerByReferenceId(data)
+                const [influencer] = await getInfluencer(data)
 
                 if (influencer === null) {
                     saveInfluencer(data);

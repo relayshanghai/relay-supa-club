@@ -1,6 +1,6 @@
 import { vi, describe, it, expect } from 'vitest';
 import * as influencersModule from './api/db/calls/influencers';
-import { getInfluencerByReferenceId } from './get-influencer';
+import { getInfluencer } from './get-influencer';
 import type { CreatorReport } from '../../types';
 
 describe('Get influencer', () => {
@@ -30,8 +30,7 @@ describe('Get influencer', () => {
             .mockResolvedValue(socialProfileData);
 
         const getInfluencerByIdSpy = vi.spyOn(influencersModule, 'getInfluencerById').mockResolvedValue(influencerData);
-
-        const [influencer, socialProfile] = await getInfluencerByReferenceId(report);
+        const [influencer, socialProfile] = await getInfluencer(report);
 
         expect(influencer).not.toBeNull();
         expect(socialProfile).not.toBeNull();
@@ -59,7 +58,7 @@ describe('Get influencer', () => {
 
         const getInfluencerByIdSpy = vi.spyOn(influencersModule, 'getInfluencerById').mockResolvedValue(null);
 
-        const [influencer, socialProfile] = await getInfluencerByReferenceId(report);
+        const [influencer, socialProfile] = await getInfluencer(report);
 
         expect(getInfluencerSocialProfileByReferenceIdSpy).toHaveBeenCalledTimes(1);
         expect(getInfluencerByIdSpy).toHaveBeenCalledTimes(0);

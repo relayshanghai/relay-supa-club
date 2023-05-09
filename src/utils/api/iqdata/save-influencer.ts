@@ -14,7 +14,9 @@ const addInfluencerToSocialProfile = (influencer: InfluencerRow) => {
 };
 
 const insertSocialProfileFromIqdataProfile = (user_profile: CreatorReport['user_profile']) => {
-    return async (influencer: InfluencerRow): Promise<[InfluencerRow, InfluencerSocialProfileRow]> => {
+    return async (getInfluencer: Promise<InfluencerRow>): Promise<[InfluencerRow, InfluencerSocialProfileRow]> => {
+        const influencer = await getInfluencer;
+
         const insertInfluencerSocialProfileToDbFromIqdataProfile = compose(
             insertInfluencerSocialProfileToDb,
             addInfluencerToSocialProfile(influencer),
@@ -24,13 +26,6 @@ const insertSocialProfileFromIqdataProfile = (user_profile: CreatorReport['user_
         return [influencer, socialProfile];
     };
 };
-
-const insertInfluencerFromIqdataProfile = (user_profile: CreatorReport['user_profile']) =>
-    compose(
-        insertSocialProfileFromIqdataProfile(user_profile),
-        insertInfluencerToDb,
-        mapIqdataProfileToInfluencer,
-    )(user_profile);
 
 /**
  * Saves an influencer to the database.
@@ -43,6 +38,11 @@ const insertInfluencerFromIqdataProfile = (user_profile: CreatorReport['user_pro
 export const saveInfluencer = async (
     data: CreatorReport,
 ): Promise<[InfluencerRow, InfluencerSocialProfileRow] | [null, null]> => {
+    const insertInfluencerFromIqdataProfile = compose(
+        insertSocialProfileFromIqdataProfile(data.user_profile),
+        insertInfluencerToDb,
+        mapIqdataProfileToInfluencer,
+    );
     const [influencer, socialProfile] = await insertInfluencerFromIqdataProfile(data.user_profile);
 
     if (influencer === null) return [null, null];

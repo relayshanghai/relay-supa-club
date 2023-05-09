@@ -31,7 +31,7 @@ export const getInfluencerSocialProfileByReferenceId = async (
         .from('influencer_social_profiles')
         .select()
         .match({
-            referenceId,
+            reference_id: referenceId,
         })
         .maybeSingle();
 

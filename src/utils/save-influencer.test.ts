@@ -5,10 +5,10 @@ import type { CreatorReport } from '../../types';
 import { saveInfluencer } from './save-influencer';
 
 vi.mock('./api/db/calls/influencers', () => ({
-    insertInfluencer: vi.fn((_: any) => {
+    insertInfluencer: vi.fn(async (_: any) => {
         return { ..._, id: 1 };
     }),
-    insertInfluencerSocialProfile: vi.fn((_: any) => {
+    insertInfluencerSocialProfile: vi.fn(async (_: any) => {
         return { ..._, id: 2 };
     }),
 }));
