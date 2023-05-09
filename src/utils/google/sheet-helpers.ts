@@ -25,7 +25,7 @@ const credentials = {
 export const SCOPES = ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive.file'];
 
 const prepareCredentials = async () => {
-    const privateKey = process.env.GOOGLE_PRIVATE_KEY;
+    const privateKey = process.env.GOOGLE_PRIVATE_KEY?.split(String.raw`\n`).join('\n');
     const privateKeyId = process.env.GOOGLE_PRIVATE_KEY_ID;
     const clientId = process.env.GOOGLE_CLIENT_ID;
     if (!privateKey) {
