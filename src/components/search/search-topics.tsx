@@ -4,7 +4,7 @@ import useOnOutsideClick from 'src/hooks/use-on-outside-click';
 import { debounce } from 'src/utils/debounce';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
-import type { CreatorPlatform, CreatorSearchTag, LocationWeighted } from 'types';
+import type { CreatorPlatform, CreatorSearchTag } from 'types';
 
 type SearchTopicsProps = {
     onSetTopics: (topics: CreatorSearchTag[]) => void;
@@ -17,7 +17,7 @@ type SearchTopicsProps = {
     TagComponent?: React.FC<any>;
 };
 
-export const SearchTopics = ({
+const SearchTopics = ({
     onSetTopics,
     topics,
     platform,
@@ -28,7 +28,7 @@ export const SearchTopics = ({
     TagComponent,
 }: SearchTopicsProps) => {
     const [suggestions, setSuggestions] = useState<CreatorSearchTag[]>([]);
-    const ref = useRef<any>();
+    const [loading, setLoading] = useState(false);
     const inputRef = useRef<any>();
 
     useOnOutsideClick(inputRef, () => {
@@ -40,13 +40,11 @@ export const SearchTopics = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const setTopicSearch = useCallback(
         debounce(async (term: string) => {
-            if (ref.current) ref.current.abort();
-
-            const controller = new AbortController();
-            const signal = controller.signal;
-            ref.current = controller;
+            const abortController = new AbortController();
+            const signal = abortController.signal;
 
             try {
+                setLoading(true);
                 const res = await nextFetch(path, {
                     method: 'post',
                     signal,
@@ -66,6 +64,12 @@ export const SearchTopics = ({
                 }
                 clientLogger(error, 'error');
             }
+            setLoading(false);
+
+            // Abort fetch request after 5 seconds
+            setTimeout(() => {
+                abortController.abort();
+            }, 5000);
         }),
         [platform, path, filter],
     );
@@ -74,6 +78,7 @@ export const SearchTopics = ({
         (item: any) => {
             onSetTopics([...topics, item]);
             setSuggestions([]);
+            setLoading(false);
         },
         [topics, onSetTopics],
     );
@@ -87,6 +92,8 @@ export const SearchTopics = ({
                 clone.splice(clone.indexOf(entry), 1);
                 onSetTopics(clone);
             }
+
+            setLoading(false);
         },
         [topics, onSetTopics],
     );
@@ -98,16 +105,18 @@ export const SearchTopics = ({
             placeholder={placeholder}
             tags={topics}
             suggestions={suggestions}
-            ref={inputRef}
-            onChange={(item: any) => {
+            onChange={(item) => {
                 setTopicSearch(item);
             }}
-            onRemoveTag={(item: CreatorSearchTag | LocationWeighted) => {
+            onRemoveTag={(item) => {
                 removeTag(item);
             }}
-            onAddTag={(item: CreatorSearchTag | LocationWeighted) => {
+            onAddTag={(item) => {
                 addTag(item);
             }}
+            spinnerLoading={loading}
         />
     );
 };
+
+export default SearchTopics;
