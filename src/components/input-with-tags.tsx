@@ -1,4 +1,5 @@
 import type { DetailedHTMLProps, InputHTMLAttributes } from 'react';
+import { Spinner } from './icons';
 import type { CreatorSearchTag, LocationWeighted } from 'types';
 
 export interface Props extends DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> {
@@ -6,8 +7,9 @@ export interface Props extends DetailedHTMLProps<InputHTMLAttributes<HTMLInputEl
     tags: CreatorSearchTag[] | LocationWeighted[];
     onTagRemove: (tag: CreatorSearchTag | LocationWeighted) => void;
     TagComponent?: React.FC<any>;
+    spinnerLoading: boolean;
 }
-export const InputWithTags = ({ disabled, tags = [], onTagRemove, TagComponent, ...rest }: Props) => {
+export const InputWithTags = ({ disabled, tags = [], onTagRemove, TagComponent, spinnerLoading, ...rest }: Props) => {
     return (
         <label className="flex w-full flex-col text-xs font-medium text-gray-500">
             <div className="flex w-full flex-row items-center rounded-md border border-gray-200 bg-white px-2 text-gray-900 ring-1 ring-gray-900 ring-opacity-5 focus:border-primary-500 focus:outline-none focus:ring-primary-500 sm:text-sm">
@@ -15,7 +17,14 @@ export const InputWithTags = ({ disabled, tags = [], onTagRemove, TagComponent, 
                     {tags
                         ? tags.map((item, i) => {
                               if (TagComponent) {
-                                  return <TagComponent key={i} {...item} onClick={() => onTagRemove(item)} />;
+                                  return (
+                                      <>
+                                          {spinnerLoading && (
+                                              <Spinner className="h-5 w-5 fill-primary-600 text-white" />
+                                          )}
+                                          <TagComponent key={i} {...item} onClick={() => onTagRemove(item)} />
+                                      </>
+                                  );
                               }
                               return (
                                   <p
@@ -42,6 +51,7 @@ export const InputWithTags = ({ disabled, tags = [], onTagRemove, TagComponent, 
                     className="w-full appearance-none border border-transparent bg-white px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-transparent focus:outline-none focus:ring-0 sm:text-sm"
                     {...rest}
                 />
+                {spinnerLoading && <Spinner className="h-5 w-5 fill-primary-600 text-white" />}
             </div>
         </label>
     );
