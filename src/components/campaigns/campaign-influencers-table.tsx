@@ -23,7 +23,6 @@ export default function CampaignInfluencersTable({
     currentCampaign,
     setShowNotesModal,
     setCurrentCreator,
-
     campaigns,
     currentCreator,
 }: CreatorsOutreachProps) {

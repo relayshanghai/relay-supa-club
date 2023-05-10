@@ -101,27 +101,19 @@ export default function MoveInfluencerModalCard({
 
     useEffect(() => {
         if (targetCampaignCreators && creator) {
-            const creatorInCampaign = targetCampaignCreators?.find(
+            const creatorInCampaign = targetCampaignCreators?.some(
                 (campaignCreator) => campaignCreator.creator_id === creator.creator_id,
             );
-            if (creatorInCampaign) {
-                setTargetHasCreator(true);
-            } else {
-                setTargetHasCreator(false);
-            }
+            setTargetHasCreator(creatorInCampaign);
         }
     }, [targetCampaignCreators, creator]);
 
     useEffect(() => {
         if (currentCampaignCreators && creator) {
-            const creatorInCampaign = currentCampaignCreators?.find(
+            const creatorInCampaign = currentCampaignCreators?.some(
                 (campaignCreator) => campaignCreator.creator_id === creator.creator_id,
             );
-            if (creatorInCampaign) {
-                setCurrentHasCreator(true);
-            } else {
-                setCurrentHasCreator(false);
-            }
+            setCurrentHasCreator(creatorInCampaign);
         }
     }, [currentCampaignCreators, creator]);
 

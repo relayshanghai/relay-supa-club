@@ -10,108 +10,30 @@ import type { CreatorsOutreachProps } from './campaign-influencers-table';
 import CampaignInfluencersTable from './campaign-influencers-table';
 import type { CampaignCreatorDB, CampaignDB } from '../../utils/api/db';
 import { rest } from 'msw';
-import { APP_URL_CYPRESS, worker } from '../../mocks/browser';
+import { SUPABASE_URL_CYPRESS, worker } from '../../mocks/browser';
+import jimTestCampaign from '../../mocks/supabase/campaigns/jimTestCampaign.json';
+import amyTestCampaign from '../../mocks/supabase/campaigns/amyTestCampaign.json';
+import newEmptyCampaign from '../../mocks/supabase/campaigns/newEmptyCampaign.json';
+import archivedCampaign from '../../mocks/supabase/campaigns/archivedCampaign.json';
 
-const currentCampaign: CampaignDB = {
-    id: 'campaign1',
-    created_at: '2023-02-12T02:52:44.285648+00:00',
-    name: 'Campaign 1',
-    description: 'test campaign 1.',
-    company_id: 'company1',
-    product_link:
-        'https://www.amazon.com/Triplett-USB-Bug-Tester-Masker-Black/dp/B07J5PD4KF/ref=sr_1_1?crid=28004DEESA8QR&keywords=bug+tester&qid=1676170167&sprefix=b%2Caps%2C1274&sr=8-1',
-    status: 'not started',
-    budget_cents: 15000,
-    budget_currency: 'USD',
-    date_start_campaign: '2023-02-20T00:00:00+00:00',
-    date_end_campaign: '2023-02-24T00:00:00+00:00',
-    slug: 'jim-test-campaign-february-2023',
-    product_name: "JIm's Bug Tester",
-    tag_list: ['pets'],
-    promo_types: ['Dedicated Video', 'Integrated Video'],
-    target_locations: ['United States of America'],
-    media: [{}],
-    purge_media: [],
-    creator_count: null,
-    date_end_creator_outreach: null,
-    requirements: null,
-    media_path: null,
-    archived: false,
-};
-const creator1: CampaignCreatorDB = {
-    id: 'creator1',
-    created_at: '2023-02-12T03:01:51.468377+00:00',
-    status: 'to contact',
-    campaign_id: 'campaign1',
-    rate_cents: 0,
-    rate_currency: 'USD',
-    payment_status: "'unpaid'::text",
-    paid_amount_cents: 0,
-    paid_amount_currency: 'USD',
-    sample_status: "'unsent'::text",
-    fullname: 'Creator1 name',
-    link_url: 'https://www.youtube.com/channel/UCJQjhL019_F0nckUU88JAJA',
-    creator_id: 'UCJQjhL019_F0nckUU88JAJA',
-    platform: 'youtube',
-    added_by_id: '9bfbc685-2881-47ac-b75a-c7e210f187f2',
-    updated_at: null,
-    payment_details: null,
-    relay_creator_id: null,
-    creator_model: null,
-    creator_token: null,
-    interested: null,
-    email_sent: null,
-    publication_date: null,
-    address: null,
-    tracking_details: null,
-    reject_message: null,
-    brief_opened_by_creator: null,
-    need_support: null,
-    next_step: null,
-    avatar_url: '',
-    username: null,
-};
+import campaignCreatorsJim from '../../mocks/supabase/campaign_creators/campaignCreatorsJimCampaign.json';
 
-// const creator2: CampaignCreatorDB = {
-//     ...creator1,
-//     id: 'creator2',
-//     fullname: 'Creator2 name',
-// };
-// const creator3: CampaignCreatorDB = {
-//     ...creator1,
-//     id: 'creator3',
-//     fullname: 'Creator3 name',
-// };
+const campaigns: CampaignDB[] = [jimTestCampaign, amyTestCampaign, newEmptyCampaign, archivedCampaign];
 
-// const campaignCreators: CampaignCreatorDB[] = [creator1, creator2, creator3];
-// const company = {
-//     id: 'company1',
-//     name: 'Company 1',
-//     cus_id: 'cus_1',
-// };
-// const companies: any = [company]; // weird typescript compile bug
-const campaign1: CampaignDB = {
-    ...currentCampaign,
-};
+const currentCampaign = jimTestCampaign;
+const currentCreator = campaignCreatorsJim[0] as CampaignCreatorDB;
 
-/** Campaign 2 has no influencers */
-const campaign2: CampaignDB = {
-    ...campaign1,
-    id: 'campaign2',
-    name: 'Campaign 2',
-};
-
-const campaigns: CampaignDB[] = [campaign1, campaign2];
+const campaign2 = amyTestCampaign;
 const makeProps = () => {
     // cy.stub can only be called within a test
     const setShowNotesModal = cy.stub();
     const setCurrentCreator = cy.stub();
     const props: CreatorsOutreachProps = {
-        currentCampaign: campaign1,
+        currentCampaign,
         setShowNotesModal,
         setCurrentCreator,
         campaigns,
-        currentCreator: creator1,
+        currentCreator,
     };
     return props;
 };
@@ -123,9 +45,8 @@ describe('CampaignInfluencersTable', () => {
 
     it('Should render table of influencers', () => {
         testMount(<CampaignInfluencersTable {...makeProps()} />);
-        cy.get('tr').contains('Creator1 name');
-        cy.contains('Creator2 name');
-        cy.contains('Creator3 name');
+        cy.get('tr').contains(campaignCreatorsJim[0].fullname);
+        cy.contains(campaignCreatorsJim[2].fullname);
     });
     it('Should display an influencer table row where I can see a button called "Move Influencer"', () => {
         testMount(<CampaignInfluencersTable {...makeProps()} />);
@@ -151,38 +72,24 @@ describe('CampaignInfluencersTable', () => {
         cy.get(`#move-influencer-spinner-${campaign2.id}`);
     });
 
-    it('Check that a network request is called to the api to add the influencer to destination and delete them from source campaign', async () => {
+    it.only('Check that a network request is called to the api to add the influencer to destination and delete them from source campaign', async () => {
         worker.use(
-            rest.post(`${APP_URL_CYPRESS}/api/campaigns/add-creator`, async (req, res, ctx) => {
+            rest.delete(`${SUPABASE_URL_CYPRESS}campaign_creators`, async (req, res, ctx) => {
                 const body = (await req.json()) as any;
-
-                expect(body.campaign_id).to.equal(campaign2.id);
-
-                // add a bit of delay to get the loading spinner to show
-                return res(ctx.delay(500), ctx.json({ success: true }));
-            }),
-            rest.delete(`${APP_URL_CYPRESS}/api/campaigns/delete-creator`, async (req, res, ctx) => {
-                const body = (await req.json()) as any;
-
-                expect(body.campaignId).to.equal(campaign1.id);
-                expect(body.id).to.equal(creator1.id);
+                cy.log('body', body);
+                expect(body.campaignId).to.equal(currentCampaign.id);
+                expect(body.id).to.equal(currentCreator.id);
 
                 return res(ctx.delay(500), ctx.json({ success: true }));
-            }),
-            // for the default msw handlers, we'll use more realistic data. For individual component tests we can pass in specific mocks with names like 'campaign1' instead of a real one. This makes the tests more readable and makes it easy to test different scenarios.
-            rest.get(`${APP_URL_CYPRESS}/api/campaigns`, (req, res, ctx) => {
-                // we might want to investigate where in the children components this is being queried from, because this should just match the campaigns prop
-                // I think it is because `useCampaigns` is in `MoveInfluencerModalCard`
-                return res(ctx.json(campaigns));
             }),
         );
         // Capture the network request to the api for the next test
         testMount(<CampaignInfluencersTable {...makeProps()} />);
         cy.get('tr').get('button').contains('Move Influencer').click();
         // when this button is clicked, it is not sending the request, cause of a filing nullcheck
-        cy.get(`#move-influencer-button-${campaign2.id}`).click();
+        cy.get(`#move-influencer-button-${campaign2.id}`).should('exist').click();
         // when request is done it should have the checkmark icon
-        cy.get(`#move-influencer-checkmark-${campaign2.id}`);
+        cy.get(`#move-influencer-checkmark-${campaign2.id}`).should('exist');
     });
 
     // 7. In the target campaign, I see the influencer with all the details preserved from the source campaign. -- this is hard to test in these kind of unit tests because to replicate this we would have to change the list of `campaigns` in the props, and then re-render the component. Basically just testing that the component is re-rendering when the props change. We can test this in an integration test if need be.

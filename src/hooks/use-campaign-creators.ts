@@ -40,7 +40,10 @@ export const useCampaignCreators = ({
         mutate: refreshCampaignCreators,
         isValidating,
         isLoading,
-    } = useSWR(companyId && campaign?.id ? 'campaign-creators' : null, () => getCampaignCreators(campaign?.id ?? ''));
+        // need to add the campaign id to the key so that the cache is invalidated when the campaign id changes
+    } = useSWR(companyId && campaign?.id ? 'campaign-creators' + campaign.id : null, () =>
+        getCampaignCreators(campaign?.id ?? ''),
+    );
 
     const [loading, setLoading] = useState(false);
 
