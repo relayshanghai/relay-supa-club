@@ -8,13 +8,13 @@ describe('CampaignsPage', () => {
     });
 
     it('Should render a list of campaign cards', () => {
-        testMount(<CampaignsPage companyId="8e6e65ca-dd79-4e68-90e4-9c5462991ae4" />);
+        testMount(<CampaignsPage />);
         cy.contains('Empty Campaign');
         cy.contains('【test】Amy test campaign for fragrance KOLs');
     });
 
     it('Should render a list of archived campaign cards', () => {
-        testMount(<CampaignsPage companyId="8e6e65ca-dd79-4e68-90e4-9c5462991ae4" />);
+        testMount(<CampaignsPage />);
         cy.contains('Test Archive Campaign').should('not.exist');
         cy.contains('Archived Campaigns').click();
         cy.contains('Test Archive Campaign');

@@ -34,16 +34,14 @@ export const CompanyProvider = ({ children }: PropsWithChildren) => {
 
     const { data: company, mutate: refreshCompany } = useSWR(profile?.company_id ? 'company' : null, async () => {
         if (profile && !profile?.company_id && clientRoleData.companyId === '') return;
-        const fetchedCompany = await getCompanyById(
-            clientRoleData.companyId === '' ? profile?.company_id : clientRoleData.companyId,
-        );
+        const fetchedCompany = await getCompanyById(clientRoleData.companyId || profile?.company_id);
         if (profile && fetchedCompany?.name && !company?.name) {
             Sentry.setUser({
                 id: profile.id,
                 email: profile.email ?? '',
                 name: `${profile.first_name} ${profile.last_name}`,
-                company_name: clientRoleData.companyName === '' ? fetchedCompany.name : clientRoleData.companyName,
-                company_id: clientRoleData.companyId === '' ? fetchedCompany.id : clientRoleData.companyId,
+                company_name: clientRoleData.companyName || fetchedCompany.name,
+                company_id: clientRoleData.companyId || fetchedCompany.id,
             });
         }
         return fetchedCompany;
@@ -55,7 +53,7 @@ export const CompanyProvider = ({ children }: PropsWithChildren) => {
             if (!company?.id && clientRoleData.companyId === '') throw new Error('No company found');
             const body: CompanyPutBody = {
                 ...input,
-                id: clientRoleData.companyId === '' ? company?.id : clientRoleData.companyId,
+                id: clientRoleData.companyId || company?.id,
             };
             return await nextFetch<CompanyPutResponse>(`company`, {
                 method: 'PUT',
