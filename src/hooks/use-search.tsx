@@ -165,7 +165,7 @@ export const useSearchResults = (page: number) => {
                 const body: InfluencerPostRequest = {
                     tags,
                     platform,
-                    username,
+                    text: username,
                     influencerLocation,
                     audienceLocation,
                     resultsPerPageLimit,

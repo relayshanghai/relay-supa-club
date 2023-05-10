@@ -9,6 +9,8 @@ import type { CreatorSearchResult } from 'types';
 export type InfluencerPostRequest = FetchCreatorsFilteredParams & {
     company_id: string;
     user_id: string;
+    text?: string;
+    keywords?: string[];
 };
 export type InfluencerPostResponse = CreatorSearchResult;
 
