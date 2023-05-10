@@ -15,6 +15,7 @@ import type {
 import type { CampaignCreatorsDeleteBody, CampaignCreatorsDeleteResponse } from 'pages/api/campaigns/delete-creator';
 import { clientLogger } from 'src/utils/logger-client';
 import { useClientDb } from 'src/utils/client-db/use-client-db';
+import { useCompany } from './use-company';
 
 //The transform function is not used now, as the image proxy issue is handled directly where calls for the image.But this is left for future refactor. TODO:Ticket V2-181
 // const transformCampaignCreators = (creators: CampaignCreatorDB[]) => {
@@ -32,17 +33,12 @@ import { useClientDb } from 'src/utils/client-db/use-client-db';
  * @param companyId The company id to fetch campaigns for. Only use this when you want to enable admins to view/edit other companies' campaigns. currently only used in the admin dashboard pages
  * @returns
  */
-export const useCampaigns = ({
-    campaignId,
-    companyId: passedInCompanyId,
-}: {
-    campaignId?: string;
-    companyId?: string;
-}) => {
+export const useCampaigns = ({ campaignId }: { campaignId?: string }) => {
     const { profile } = useUser();
     const { getCampaignsWithCompanyCreators } = useClientDb();
+    const { company } = useCompany();
 
-    const companyId = passedInCompanyId ?? profile?.company_id;
+    const companyId = company?.id;
     const {
         data: allCampaigns,
         mutate: refreshCampaigns,

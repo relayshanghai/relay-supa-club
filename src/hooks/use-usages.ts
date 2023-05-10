@@ -1,13 +1,13 @@
 import type { UsagesGetQueries, UsagesGetResponse } from 'pages/api/usages';
 import { nextFetchWithQueries } from 'src/utils/fetcher';
 import useSWR from 'swr';
-import { useUser } from './use-user';
+import { useCompany } from './use-company';
 
 export const useUsages = () => {
-    const { profile } = useUser();
-    const { data: usages, mutate: refreshUsages } = useSWR(profile?.company_id ? 'usages' : null, (path) =>
+    const { company } = useCompany();
+    const { data: usages, mutate: refreshUsages } = useSWR(company?.id ? 'usages' : null, (path) =>
         nextFetchWithQueries<UsagesGetQueries, UsagesGetResponse>(path, {
-            id: profile?.company_id ?? '',
+            id: company?.id ?? '',
         }),
     );
 

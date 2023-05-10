@@ -16,16 +16,14 @@ import { useCampaigns } from 'src/hooks/use-campaigns';
 import { InfluencerAlreadyAddedModal } from '../influencer-already-added';
 import { MoreResultsRows } from './search-result-row';
 import ClientRoleWarning from './client-role-warning';
-import { useAtomValue } from 'jotai';
-import { clientRoleAtom } from 'src/atoms/client-role-atom';
 
-export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
+export const SearchPageInner = () => {
     const { t } = useTranslation();
     const { platform, loading } = useSearch();
     const [filterModalOpen, setShowFiltersModal] = useState(false);
     const [showCampaignListModal, setShowCampaignListModal] = useState(false);
     const [selectedCreator, setSelectedCreator] = useState<CreatorSearchAccountObject | null>(null);
-    const { campaigns } = useCampaigns({ companyId });
+    const { campaigns } = useCampaigns({});
 
     const [page, setPage] = useState(0);
     const { results: firstPageSearchResults, resultsTotal, noResults, error, isValidating } = useSearchResults(0);
@@ -96,8 +94,6 @@ export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
 };
 
 export const SearchPage = () => {
-    const { companyId } = useAtomValue(clientRoleAtom);
-
     return (
         <Layout>
             {IQDATA_MAINTENANCE ? (
@@ -105,7 +101,7 @@ export const SearchPage = () => {
             ) : (
                 <div className="flex flex-col p-6">
                     <SearchProvider>
-                        <SearchPageInner companyId={companyId !== '' ? companyId : undefined} />
+                        <SearchPageInner />
                     </SearchProvider>
                 </div>
             )}

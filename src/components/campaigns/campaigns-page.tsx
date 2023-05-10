@@ -9,11 +9,11 @@ import { useCampaigns } from 'src/hooks/use-campaigns';
 import CampaignCardView from 'src/components/campaigns/CampaignCardView';
 import { useTranslation } from 'react-i18next';
 
-const CampaignsPage = ({ companyId }: { companyId?: string }) => {
+const CampaignsPage = () => {
     const { t } = useTranslation();
     const [currentTab, setCurrentTab] = useState<TabLabel['value']>('');
 
-    const { campaigns, isLoading, archivedCampaigns } = useCampaigns({ companyId });
+    const { campaigns, isLoading, archivedCampaigns } = useCampaigns({});
 
     const renderCampaigns = () => {
         if (

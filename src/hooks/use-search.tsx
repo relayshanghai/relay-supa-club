@@ -10,6 +10,7 @@ import { useUser } from './use-user';
 import useSWR from 'swr';
 import type { RecommendedInfluencersGetResponse } from 'pages/api/recommended-influencers';
 import { featRecommended } from 'src/constants/feature-flags';
+import { useCompany } from './use-company';
 
 type NullStringTuple = [null | string, null | string];
 
@@ -90,6 +91,7 @@ export const useSearch = () => useContext(SearchContext);
 
 export const useSearchResults = (page: number) => {
     const { profile } = useUser();
+    const { company } = useCompany();
     const ref = useRef<any>();
 
     const {
@@ -151,7 +153,7 @@ export const useSearchResults = (page: number) => {
             recommendedInfluencers,
         ]) => {
             try {
-                if (!profile?.company_id || !profile?.id) {
+                if (!company?.id || !profile?.id) {
                     throw new Error('No profile');
                 }
                 if (ref.current) {
@@ -177,7 +179,7 @@ export const useSearchResults = (page: number) => {
                     lastPost,
                     contactInfo,
                     only_recommended: onlyRecommended,
-                    company_id: profile?.company_id,
+                    company_id: company?.id,
                     user_id: profile?.id,
                     recommendedInfluencers,
                 };
