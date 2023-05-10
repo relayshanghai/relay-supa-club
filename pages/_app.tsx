@@ -56,11 +56,11 @@ function MyApp({
             <SessionContextProvider supabaseClient={supabaseClient} initialSession={pageProps.initialSession}>
                 <CacheProvider>
                     <UserProvider>
-                        <CompanyProvider>
-                            <Provider>
+                        <Provider>
+                            <CompanyProvider>
                                 <Component {...pageProps} />
-                            </Provider>
-                        </CompanyProvider>
+                            </CompanyProvider>
+                        </Provider>
                     </UserProvider>
                 </CacheProvider>
             </SessionContextProvider>
