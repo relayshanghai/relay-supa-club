@@ -7,26 +7,14 @@ import { clientLogger } from 'src/utils/logger-client';
 import type { CreatorPlatform, CreatorSearchTag, LocationWeighted } from 'types';
 
 type SearchTopicsProps = {
-    onSetTopics: (topics: CreatorSearchTag[]) => void;
-    topics: CreatorSearchTag[];
-    platform: CreatorPlatform;
     path: string;
     placeholder: string;
-    filter?: (items: any[]) => any[];
-    SuggestionComponent?: React.FC<any>;
-    TagComponent?: React.FC<any>;
+    topics: CreatorSearchTag[];
+    platform: CreatorPlatform;
+    onSetTopics: (topics: CreatorSearchTag[]) => void;
 };
 
-export const SearchTopics = ({
-    onSetTopics,
-    topics,
-    platform,
-    path,
-    placeholder,
-    filter,
-    SuggestionComponent,
-    TagComponent,
-}: SearchTopicsProps) => {
+export const SearchTopics = ({ onSetTopics, topics, platform, path, placeholder }: SearchTopicsProps) => {
     const [suggestions, setSuggestions] = useState<CreatorSearchTag[]>([]);
     const ref = useRef<any>();
     const inputRef = useRef<any>();
@@ -58,7 +46,7 @@ export const SearchTopics = ({
 
                 if (res && (res.success || Array.isArray(res))) {
                     const data = res.data || res;
-                    setSuggestions(filter ? filter(data) : data);
+                    setSuggestions(data);
                 }
             } catch (error: any) {
                 if (typeof error?.message === 'string' && error.message.toLowerCase().includes('abort')) {
@@ -67,7 +55,7 @@ export const SearchTopics = ({
                 clientLogger(error, 'error');
             }
         }),
-        [platform, path, filter],
+        [platform, path],
     );
 
     const addTag = useCallback(
@@ -93,8 +81,6 @@ export const SearchTopics = ({
 
     return (
         <InputWithAutocomplete
-            SuggestionComponent={SuggestionComponent}
-            TagComponent={TagComponent}
             placeholder={placeholder}
             tags={topics}
             suggestions={suggestions}
