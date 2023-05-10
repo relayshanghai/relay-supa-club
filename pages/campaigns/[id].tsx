@@ -13,7 +13,7 @@ import { useCampaigns } from 'src/hooks/use-campaigns';
 import { Modal } from 'src/components/modal';
 import CommentInput from 'src/components/campaigns/comment-input';
 import CommentCards from 'src/components/campaigns/comment-cards';
-import type { CampaignCreatorDB, CampaignDB } from 'src/utils/api/db';
+import type { CampaignCreatorDB } from 'src/utils/api/db';
 import { imgProxy } from 'src/utils/fetcher';
 import { useCompany } from 'src/hooks/use-company';
 import { Spinner } from 'src/components/icons';
@@ -47,9 +47,9 @@ export default function CampaignShow() {
         { label: t('campaigns.index.status.completed'), value: 'completed' },
     ];
 
-    const handleDropdownSelect = async (e: ChangeEvent<HTMLSelectElement>, campaign: CampaignDB | null) => {
+    const handleDropdownSelect = async (e: ChangeEvent<HTMLSelectElement>) => {
         e.stopPropagation();
-        if (!campaign) return null;
+        if (!currentCampaign) return null;
 
         const status = e.target.value;
         await updateCampaign({ ...currentCampaign, status });
@@ -122,7 +122,7 @@ export default function CampaignShow() {
                                     {currentCampaign?.name}
                                 </div>
                                 <select
-                                    onChange={(e) => handleDropdownSelect(e, currentCampaign)}
+                                    onChange={handleDropdownSelect}
                                     value={currentCampaign?.status as string}
                                     className="cursor-pointer rounded-md bg-primary-100 px-2 py-1 text-xs text-primary-500 duration-300 hover:bg-primary-200"
                                 >
