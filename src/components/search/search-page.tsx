@@ -18,6 +18,7 @@ import { MoreResultsRows } from './search-result-row';
 import ClientRoleWarning from './client-role-warning';
 import { useAtomValue } from 'jotai';
 import { clientRoleAtom } from 'src/atoms/client-role-atom';
+import { useRudderstack } from 'src/hooks/use-rudderstack';
 
 export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
     const { t } = useTranslation();
@@ -26,6 +27,7 @@ export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
     const [showCampaignListModal, setShowCampaignListModal] = useState(false);
     const [selectedCreator, setSelectedCreator] = useState<CreatorSearchAccountObject | null>(null);
     const { campaigns } = useCampaigns({ companyId });
+    const { trackEvent } = useRudderstack();
 
     const [page, setPage] = useState(0);
     const { results: firstPageSearchResults, resultsTotal, noResults, error, isValidating } = useSearchResults(0);
@@ -71,7 +73,16 @@ export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
                 }
             />
 
-            {!noResults && <Button onClick={async () => setPage(page + 1)}>{t('creators.loadMore')}</Button>}
+            {!noResults && (
+                <Button
+                    onClick={async () => {
+                        setPage(page + 1);
+                        trackEvent('load more');
+                    }}
+                >
+                    {t('creators.loadMore')}
+                </Button>
+            )}
 
             <AddToCampaignModal
                 show={showCampaignListModal}

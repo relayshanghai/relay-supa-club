@@ -10,6 +10,7 @@ import { Switch, Tooltip } from '../library';
 import { featRecommended } from 'src/constants/feature-flags';
 import { SearchLocations } from './search-locations';
 import LocationTag from './location-tag';
+import { useRudderstack } from 'src/hooks/use-rudderstack';
 
 const resultsPerPageOptions = [10, 20, 50, 100];
 
@@ -55,6 +56,7 @@ export const SearchOptions = ({
     const { t } = useTranslation();
     const hasSetViews = views[0] || views[1];
     const hasSetAudience = audience[0] || audience[1];
+    const { trackEvent } = useRudderstack();
 
     return (
         <>
@@ -83,6 +85,7 @@ export const SearchOptions = ({
                     filter={filterCountry}
                     onSetLocations={(topics) => {
                         setInfluencerLocation(topics);
+                        trackEvent('search influencer location', { location: topics });
                     }}
                 />
                 <SearchLocations
@@ -93,6 +96,7 @@ export const SearchOptions = ({
                     filter={filterCountry}
                     onSetLocations={(topics) => {
                         setAudienceLocation(topics.map((item) => ({ ...item, weight: 5 })));
+                        trackEvent('search audience location', { location: topics });
                     }}
                     TagComponent={LocationTag}
                 />
@@ -100,7 +104,10 @@ export const SearchOptions = ({
             <div>
                 <div className="flex flex-row items-center">
                     <button
-                        onClick={() => setShowFiltersModal(true)}
+                        onClick={() => {
+                            setShowFiltersModal(true);
+                            trackEvent('open search filters modal');
+                        }}
                         className={`group flex flex-row items-center rounded-md border border-transparent bg-white px-2 py-1 text-gray-900 shadow ring-1 ring-gray-900 ring-opacity-5 focus:border-primary-500 focus:outline-none focus:ring-primary-500 sm:text-sm`}
                     >
                         <AdjustmentsVerticalIcon
@@ -135,6 +142,7 @@ export const SearchOptions = ({
                         onChange={(e) => {
                             setPage(0);
                             setResultsPerPageLimit(Number(e.target.value));
+                            trackEvent('change search results per page', { resultsPerPage: e.target.value });
                         }}
                     >
                         {resultsPerPageOptions.map((option) => (
@@ -154,6 +162,7 @@ export const SearchOptions = ({
                                 setEngagement(undefined);
                                 setLastPost(undefined);
                                 setContactInfo(undefined);
+                                trackEvent('clear search filters');
                             }}
                             variant="secondary"
                         >

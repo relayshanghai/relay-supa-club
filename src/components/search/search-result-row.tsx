@@ -122,6 +122,7 @@ export const SearchResultRow = ({
             setCampaignsWithCreator(campaignsList);
             setShowAlreadyAddedModal(true);
         } else setShowCampaignListModal(true);
+        trackEvent('clicked add to campaign', { platform, user_id });
     };
 
     const desktop = useAboveScreenWidth(500);
@@ -179,7 +180,7 @@ export const SearchResultRow = ({
 
                     {url && (
                         <Link href={url} target="_blank" rel="noopener noreferrer">
-                            <Button>
+                            <Button onClick={() => trackEvent('open influencer social link', { url })}>
                                 <ShareLink className="w-5 fill-current text-white" />
                             </Button>
                         </Link>

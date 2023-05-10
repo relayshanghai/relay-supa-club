@@ -5,6 +5,7 @@ import { debounce } from 'src/utils/debounce';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
 import type { CreatorPlatform, CreatorSearchTag, LocationWeighted } from 'types';
+import { useRudderstack } from 'src/hooks/use-rudderstack';
 
 type SearchTopicsProps = {
     onSetTopics: (topics: CreatorSearchTag[]) => void;
@@ -30,6 +31,7 @@ export const SearchTopics = ({
     const [suggestions, setSuggestions] = useState<CreatorSearchTag[]>([]);
     const ref = useRef<any>();
     const inputRef = useRef<any>();
+    const { trackEvent } = useRudderstack();
 
     useOnOutsideClick(inputRef, () => {
         setSuggestions([]);
@@ -55,7 +57,6 @@ export const SearchTopics = ({
                         platform,
                     },
                 });
-
                 if (res && (res.success || Array.isArray(res))) {
                     const data = res.data || res;
                     setSuggestions(filter ? filter(data) : data);
@@ -104,9 +105,12 @@ export const SearchTopics = ({
             }}
             onRemoveTag={(item: CreatorSearchTag | LocationWeighted) => {
                 removeTag(item);
+                trackEvent('remove a tag in search topic', { tag: item });
             }}
             onAddTag={(item: CreatorSearchTag | LocationWeighted) => {
                 addTag(item);
+                trackEvent('add a tag in search topic', { tag: item });
+                trackEvent('search for a topic', { topic: item });
             }}
         />
     );
