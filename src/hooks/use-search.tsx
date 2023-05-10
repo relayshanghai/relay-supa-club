@@ -18,6 +18,8 @@ export interface ISearchContext {
     setLoading: (loading: boolean) => void;
     tags: CreatorSearchTag[];
     setTopicTags: (tags: CreatorSearchTag[]) => void;
+    text: string;
+    setText: (text: string) => void;
     username: string;
     setUsername: (username: string) => void;
     influencerLocation: LocationWeighted[];
@@ -55,6 +57,8 @@ export const SearchContext = createContext<ISearchContext>({
     setLoading: () => null,
     tags: [],
     setTopicTags: () => null,
+    text: '',
+    setText: () => null,
     username: '',
     setUsername: () => null,
     influencerLocation: [],
@@ -94,6 +98,7 @@ export const useSearchResults = (page: number) => {
 
     const {
         tags,
+        text,
         username,
         influencerLocation,
         views,
@@ -117,6 +122,7 @@ export const useSearchResults = (page: number) => {
                   'influencer-search',
                   page,
                   tags,
+                  text,
                   username,
                   influencerLocation,
                   views,
@@ -136,6 +142,7 @@ export const useSearchResults = (page: number) => {
             path,
             page,
             tags,
+            text,
             username,
             influencerLocation,
             views,
@@ -165,7 +172,8 @@ export const useSearchResults = (page: number) => {
                 const body: InfluencerPostRequest = {
                     tags,
                     platform,
-                    text: username,
+                    text,
+                    username,
                     influencerLocation,
                     audienceLocation,
                     resultsPerPageLimit,
@@ -234,6 +242,7 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
 
     // search options
     const [tags, setTopicTags] = useState<CreatorSearchTag[]>([]);
+    const [text, setText] = useState<string>('');
     const [username, setUsername] = useState<string>('');
     const [influencerLocation, setInfluencerLocation] = useState<LocationWeighted[]>([]);
     const [views, setViews] = useState<NullStringTuple>([null, null]);
@@ -278,6 +287,8 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
                 setPlatform,
                 tags,
                 setTopicTags,
+                text,
+                setText,
                 username,
                 setUsername,
                 influencerLocation,

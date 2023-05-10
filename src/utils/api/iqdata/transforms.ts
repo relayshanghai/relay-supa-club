@@ -8,7 +8,8 @@ export interface FetchCreatorsFilteredParams {
     platform?: CreatorPlatform;
     tags?: { tag: string }[];
     lookalike?: CreatorAccount[];
-    username: string;
+    text?: string;
+    username?: string;
     influencerLocation?: LocationWeighted[];
     audienceLocation?: LocationWeighted[];
     resultsPerPageLimit?: number;
@@ -65,6 +66,7 @@ export const prepareFetchCreatorsFiltered = ({
     audienceLocation = [],
     resultsPerPageLimit = 10,
     page = 0,
+    text,
     username,
     audience,
     views,
@@ -98,6 +100,9 @@ export const prepareFetchCreatorsFiltered = ({
 
     if (gender) {
         body.filter.gender = genderTransform(gender);
+    }
+    if (text) {
+        body.filter.text = text;
     }
     if (username) {
         body.filter.username = { value: username };

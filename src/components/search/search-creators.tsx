@@ -11,28 +11,35 @@ export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
     const [spinnerLoading, setSpinnerLoading] = useState(false);
     const { t } = useTranslation();
 
-    const { setPlatform, setUsername } = useSearch();
+    const { setPlatform, setUsername, setText } = useSearch();
 
     // Disabling the exhaustive-deps rule because we need to use the debounce function and we already know the required dependencies.
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const searchInfluencer = useCallback(
         debounce((term: any) => {
             setPlatform(platform);
-            setUsername(term);
+
+            if (term.includes(' ')) {
+                setText(term);
+                setUsername('');
+            } else {
+                setUsername(term);
+                setText('');
+            }
             setSpinnerLoading(false);
         }),
         [platform],
     );
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-        setSearchTerm(e.target.value.trim());
+        setSearchTerm(e.target.value);
         setSpinnerLoading(true);
 
         if (e.target.value.trim() === '') {
             setUsername('');
         }
 
-        searchInfluencer(e.target.value.trim());
+        searchInfluencer(e.target.value);
     };
 
     return (
