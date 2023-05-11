@@ -59,6 +59,10 @@ export default function CampaignInfluencersTable({
     ];
 
     useEffect(() => {
+        refreshCampaignCreators();
+    }, [refreshCampaignCreators]);
+
+    useEffect(() => {
         if (campaignCreators) {
             setInfluencersList(campaignCreators);
         }

@@ -162,7 +162,7 @@ describe('Main pages happy paths', () => {
         cy.contains('Beauty for All Skin Tones').click();
 
         // move influencer to new campaign
-        cy.contains('tr', 'The Ahern Family').contains('Move Influencer').click();
+        cy.contains('tr', 'The Ahern Family', { timeout: 60000 }).contains('Move Influencer').click(); // can take a while to refresh
         cy.get('button[data-testid="move-influencer-button:My Campaign"]').click();
         cy.contains('Campaign Launch Date').click({ force: true }); // click out of modal
         cy.contains('The Ahern Family').should('not.exist', { timeout: 10000 });
@@ -176,7 +176,7 @@ describe('Main pages happy paths', () => {
         cy.contains('The Ahern Family').should('not.exist');
 
         // archive a campaign
-        cy.contains('button', 'Archive').click();
+        cy.contains('span', 'Archive').click();
         cy.contains('Campaigns').click();
         cy.contains('My Campaign').should('not.exist');
         cy.contains('Archived Campaigns').click();
