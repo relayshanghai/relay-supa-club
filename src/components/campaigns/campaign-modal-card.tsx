@@ -10,6 +10,7 @@ import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import { clientLogger } from 'src/utils/logger-client';
 import { useUser } from 'src/hooks/use-user';
 import { isMissing } from 'src/utils/utils';
+import { useRudderstack } from 'src/hooks/use-rudderstack';
 
 export default function CampaignModalCard({
     campaign,
@@ -28,6 +29,7 @@ export default function CampaignModalCard({
     const [coverImageUrl, setCoverImageUrl] = useState('');
     const { profile } = useUser();
     const { t } = useTranslation();
+    const { trackEvent } = useRudderstack();
 
     const handleAddCreatorToCampaign = async () => {
         if (!campaign || !creator || !creator.user_id || !profile || !creator.picture)
@@ -44,6 +46,10 @@ export default function CampaignModalCard({
                 added_by_id: profile.id,
             });
             toast.success(t('campaigns.modal.addedSuccessfully'));
+            trackEvent('Campaign Modal Card, added creator to campaign', {
+                creator: creator?.username || creator?.fullname || creator?.user_id,
+                campaign: campaign?.id,
+            });
             setHasCreator(true);
         } catch (error) {
             clientLogger(error, 'error');

@@ -129,7 +129,7 @@ export default function CampaignForm() {
                 }
                 toast(t('campaigns.form.successCreateMsg'));
                 setSubmitting(false);
-                trackEvent('New Campaign Created');
+                trackEvent('Campaign Form, create new campaign');
                 router.push(`/campaigns/${encodeURIComponent(result.id)}`);
             } catch (error: any) {
                 clientLogger(error, 'error');
