@@ -105,12 +105,12 @@ export const SearchTopics = ({
             }}
             onRemoveTag={(item: CreatorSearchTag | LocationWeighted) => {
                 removeTag(item);
-                trackEvent('remove a tag in search topic', { tag: item });
+                trackEvent('Search Topics Input, remove a tag', { tag: item });
             }}
             onAddTag={(item: CreatorSearchTag | LocationWeighted) => {
                 addTag(item);
-                trackEvent('add a tag in search topic', { tag: item });
-                trackEvent('search for a topic', { topic: item });
+                trackEvent('Search Topics Input, add a tag', { tag: item });
+                trackEvent('Search Options, search topics', { topic: item });
             }}
         />
     );

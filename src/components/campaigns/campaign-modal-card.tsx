@@ -46,7 +46,7 @@ export default function CampaignModalCard({
                 added_by_id: profile.id,
             });
             toast.success(t('campaigns.modal.addedSuccessfully'));
-            trackEvent('Added Creator to Campaign', {
+            trackEvent('Campaign Modal Card, added creator to campaign', {
                 creator: creator.username || creator.fullname,
                 campaign: campaign.id,
             });

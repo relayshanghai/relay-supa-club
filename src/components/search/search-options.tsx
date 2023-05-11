@@ -85,7 +85,7 @@ export const SearchOptions = ({
                     filter={filterCountry}
                     onSetLocations={(topics) => {
                         setInfluencerLocation(topics);
-                        trackEvent('search influencer location', { location: topics });
+                        trackEvent('Search Options, search influencer location', { location: topics });
                     }}
                 />
                 <SearchLocations
@@ -96,7 +96,7 @@ export const SearchOptions = ({
                     filter={filterCountry}
                     onSetLocations={(topics) => {
                         setAudienceLocation(topics.map((item) => ({ ...item, weight: 5 })));
-                        trackEvent('search audience location', { location: topics });
+                        trackEvent('Search Options, search audience location', { location: topics });
                     }}
                     TagComponent={LocationTag}
                 />
@@ -106,7 +106,7 @@ export const SearchOptions = ({
                     <button
                         onClick={() => {
                             setShowFiltersModal(true);
-                            trackEvent('open search filters modal');
+                            trackEvent('Search Filters Modal, open modal');
                         }}
                         className={`group flex flex-row items-center rounded-md border border-transparent bg-white px-2 py-1 text-gray-900 shadow ring-1 ring-gray-900 ring-opacity-5 focus:border-primary-500 focus:outline-none focus:ring-primary-500 sm:text-sm`}
                     >
@@ -142,7 +142,9 @@ export const SearchOptions = ({
                         onChange={(e) => {
                             setPage(0);
                             setResultsPerPageLimit(Number(e.target.value));
-                            trackEvent('change search results per page', { resultsPerPage: e.target.value });
+                            trackEvent('Search Filters Modal, change search results per page', {
+                                resultsPerPage: e.target.value,
+                            });
                         }}
                     >
                         {resultsPerPageOptions.map((option) => (
@@ -162,7 +164,7 @@ export const SearchOptions = ({
                                 setEngagement(undefined);
                                 setLastPost(undefined);
                                 setContactInfo(undefined);
-                                trackEvent('clear search filters');
+                                trackEvent('Search Filters Modal, clear search filters');
                             }}
                             variant="secondary"
                         >

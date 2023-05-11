@@ -19,7 +19,7 @@ export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
         debounce((term: any) => {
             setPlatform(platform);
             setUsername(term);
-            trackEvent('search for an influencer', { influencer: term, platform });
+            trackEvent('Search Options, search for an influencer', { influencer: term, platform });
         }),
         [platform],
     );

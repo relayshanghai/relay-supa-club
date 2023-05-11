@@ -77,7 +77,7 @@ export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
                 <Button
                     onClick={async () => {
                         setPage(page + 1);
-                        trackEvent('load more');
+                        trackEvent('Search Result, load more');
                     }}
                 >
                     {t('creators.loadMore')}
