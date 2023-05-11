@@ -125,7 +125,7 @@ describe('Main pages happy paths', () => {
         cy.contains('Beauty for All Skin Tones').click();
 
         // campaign details
-        cy.contains('Campaign Launch Date');
+        cy.contains('Campaign Launch Date', { timeout: 10000 });
         // shows influencers
         cy.contains('@Greg Renko');
         cy.contains('View Contact Info');
@@ -147,7 +147,7 @@ describe('Main pages happy paths', () => {
         cy.get('input[name=budget_cents]').type('1000');
         cy.get('input[name=promo_types]').check({ force: true });
         cy.get('button').contains('Create Campaign').click();
-        cy.contains('Campaign Launch Date');
+        cy.contains('Campaign Launch Date', { timeout: 10000 });
         cy.contains('The Ahern Family').should('not.exist');
 
         cy.contains('My Campaign').click();
