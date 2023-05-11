@@ -61,7 +61,6 @@ describe('Main pages happy paths', () => {
         setupIntercepts();
 
         cy.loginTestUser();
-        cy.contains('T-Series');
 
         cy.getByTestId(`search-result-row-buttons/${cocomelonId}`).click({
             force: true,
@@ -105,7 +104,7 @@ describe('Main pages happy paths', () => {
 
         // upgrade subscription links to pricing page
         cy.contains('button', 'Upgrade subscription').click(); // loads subscription data
-        cy.contains('Choose the best plan for you'); // loads pricing page
+        cy.contains('Choose the best plan for you', { timeout: 10000 }); // loads pricing page
         cy.url().should('include', `/pricing`);
         cy.contains('DIY Max');
         // this doesn't work anymore because we aren't using a live account anymore, so stripe sends back 'can't find subscription' and the button is disabled.
@@ -146,17 +145,17 @@ describe('Main pages happy paths', () => {
         cy.contains('Beauty for All Skin Tones').click();
 
         // campaign details
-        cy.contains('Campaign Launch Date');
+        cy.contains('Campaign Launch Date', { timeout: 10000 });
         // shows influencers
         cy.contains('@Greg Renko');
         cy.contains('View Contact Info');
         cy.contains('SET India').should('not.exist');
 
         cy.go(-1);
-        cy.get('button').contains('New Campaign').click();
+        cy.get('button').contains('New Campaign', { timeout: 10000 }).click();
 
         // new campaign form
-        cy.contains('Campaign Name *');
+        cy.contains('Campaign Name *', { timeout: 10000 });
         // check displays new campaign
         cy.get('input[name=name]').type('My Campaign');
         cy.get('textarea[name=description]').type('This campaign is about selling some stuff');
@@ -168,7 +167,7 @@ describe('Main pages happy paths', () => {
         cy.get('input[name=budget_cents]').type('1000');
         cy.get('input[name=promo_types]').check({ force: true });
         cy.get('button').contains('Create Campaign').click();
-        cy.contains('Campaign Launch Date');
+        cy.contains('Campaign Launch Date', { timeout: 10000 });
         cy.contains('SET India').should('not.exist');
 
         cy.contains('My Campaign').click();

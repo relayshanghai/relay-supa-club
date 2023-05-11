@@ -2,6 +2,7 @@ import cocomelon from '../../src/mocks/api/creators/report/cocomelon.json';
 import defaultLandingPageInfluencerSearch from '../../src/mocks/api/influencer-search/indexDefaultSearch.json';
 import influencerSearch from '../../src/mocks/api/influencer-search/searchByInfluencerGRTR.json';
 import keywordSearch from '../../src/mocks/api/influencer-search/keywordSearchAlligators.json';
+export { cocomelon, defaultLandingPageInfluencerSearch };
 export const cocomelonId = cocomelon.user_profile.user_id;
 export const setupIntercepts = () => {
     // IQData intercepts
