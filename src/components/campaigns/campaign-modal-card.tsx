@@ -47,8 +47,8 @@ export default function CampaignModalCard({
             });
             toast.success(t('campaigns.modal.addedSuccessfully'));
             trackEvent('Campaign Modal Card, added creator to campaign', {
-                creator: creator.username || creator.fullname,
-                campaign: campaign.id,
+                creator: creator?.username || creator?.fullname || creator?.user_id,
+                campaign: campaign?.id,
             });
             setHasCreator(true);
         } catch (error) {
