@@ -72,7 +72,7 @@ describe('CampaignInfluencersTable', () => {
         cy.get(`#move-influencer-spinner-${campaign2.id}`);
     });
 
-    it.only('Check that a network request is called to the api to add the influencer to destination and delete them from source campaign', async () => {
+    it('Check that a network request is called to the api to add the influencer to destination and delete them from source campaign', async () => {
         worker.use(
             rest.delete(`${SUPABASE_URL_CYPRESS}campaign_creators`, async (req, res, ctx) => {
                 const body = (await req.json()) as any;
