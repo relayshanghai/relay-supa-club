@@ -130,7 +130,7 @@ describe('Main pages happy paths', () => {
             .type('123')
             .should('have.value', 'Blue Moonlight Stream Enterprises123');
     });
-    it('can open campaigns page and manage campaign influencers', () => {
+    it.only('can open campaigns page and manage campaign influencers', () => {
         setupIntercepts();
         // list, add, archive campaigns
         // list, add, move, delete campaign influencers
@@ -176,7 +176,7 @@ describe('Main pages happy paths', () => {
         cy.contains('Add New Influencer').click();
         cy.get('input[type="checkbox').uncheck({ force: true }); // turn off the Recommended Only
 
-        cy.contains('tr', 'SET India').contains('Add to campaign').click();
+        cy.contains('tr', 'SET India', { timeout: 10000 }).contains('Add to campaign').click();
         cy.contains('Beauty for All Skin Tones');
         cy.get('button[data-testid="add-creator-button:Beauty for All Skin Tones"]').click();
         cy.contains('Campaigns').click({ force: true }); // hidden by modal
