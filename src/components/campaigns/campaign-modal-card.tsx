@@ -11,6 +11,7 @@ import { useUser } from 'src/hooks/use-user';
 import { isMissing } from 'src/utils/utils';
 import { useCampaignCreators } from 'src/hooks/use-campaign-creators';
 import type { CampaignCreatorBasicInfo } from 'src/utils/client-db/campaignCreators';
+import { useRudderstack } from 'src/hooks/use-rudderstack';
 
 export default function CampaignModalCard({
     campaign,
@@ -33,6 +34,7 @@ export default function CampaignModalCard({
     const [hasCreator, setHasCreator] = useState<boolean>(
         campaignCreators?.some((campaignCreator) => campaignCreator.creator_id === creator?.user_id),
     );
+    const { trackEvent } = useRudderstack();
 
     const handleAddCreatorToCampaign = async () => {
         if (!campaign || !creator || !creator.user_id || !profile || !creator.picture)
@@ -49,6 +51,10 @@ export default function CampaignModalCard({
                 added_by_id: profile.id,
             });
             toast.success(t('campaigns.modal.addedSuccessfully'));
+            trackEvent('Campaign Modal Card, added creator to campaign', {
+                creator: creator?.username || creator?.fullname || creator?.user_id,
+                campaign: campaign?.id,
+            });
             setHasCreator(true);
             refreshCampaignCreators();
         } catch (error) {

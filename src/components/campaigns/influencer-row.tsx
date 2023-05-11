@@ -93,7 +93,7 @@ const InfluencerRow = ({
                         <div
                             className="ml-4"
                             onClick={() =>
-                                trackEvent('Opened a report from Campaign Page', {
+                                trackEvent('Campaign Influencer Row, open report', {
                                     platform: creator.platform,
                                     user_id: creator.creator_id,
                                 })
