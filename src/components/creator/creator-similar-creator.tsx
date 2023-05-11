@@ -36,7 +36,7 @@ export const SimilarCreator = ({ creator, platform }: { creator: SimilarUser; pl
                     variant="secondary"
                     className="px-3 py-1"
                     onClick={() => {
-                        trackEvent('Opened a report from Similar Influencer Section', {
+                        trackEvent('Similar Influencer Section, open report', {
                             platform,
                             user_id: creator.user_id,
                         });

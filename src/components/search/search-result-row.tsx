@@ -117,6 +117,7 @@ export const SearchResultRow = ({
         } else {
             setShowCampaignListModal(true);
         }
+        trackEvent('Search Result Row, add to campaign', { platform, user_id });
     };
 
     const desktop = useAboveScreenWidth(500);
@@ -160,7 +161,7 @@ export const SearchResultRow = ({
                     <Link
                         href={`/influencer/${platform}/${user_id}`}
                         target="_blank"
-                        onClick={() => trackEvent('Opened a report from Search', { platform, user_id })}
+                        onClick={() => trackEvent('Search Result Row, open report', { platform, user_id })}
                     >
                         <Button className="flex flex-row items-center" variant="secondary">
                             <span className="">{t('creators.analyzeProfile')}</span>
@@ -174,7 +175,7 @@ export const SearchResultRow = ({
 
                     {url && (
                         <Link href={url} target="_blank" rel="noopener noreferrer">
-                            <Button>
+                            <Button onClick={() => trackEvent('Search Result Row, open social link', { url })}>
                                 <ShareLink className="w-5 fill-current text-white" />
                             </Button>
                         </Link>
@@ -216,7 +217,7 @@ export const SearchResultRow = ({
                                                     active ? 'bg-violet-500 text-white' : 'text-gray-900'
                                                 } group flex w-full items-center justify-center rounded-md px-2 py-2 text-sm`}
                                                 onClick={() =>
-                                                    trackEvent('Opened a report from Search', { platform, user_id })
+                                                    trackEvent('Search Result Row, open report', { platform, user_id })
                                                 }
                                             >
                                                 {t('creators.analyzeProfile')}
@@ -230,6 +231,9 @@ export const SearchResultRow = ({
                                         <Menu.Item>
                                             {({ active }) => (
                                                 <button
+                                                    onClick={() =>
+                                                        trackEvent('Search Result Row, open social link', { url })
+                                                    }
                                                     className={`${
                                                         active ? 'bg-violet-500 text-white' : 'text-gray-900'
                                                     } group flex w-full items-center justify-center rounded-md px-2 py-2 text-sm`}

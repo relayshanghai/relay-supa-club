@@ -2,8 +2,9 @@ import { useTranslation } from 'react-i18next';
 import { useSearch } from 'src/hooks/use-search';
 import { numberFormatter } from 'src/utils/formatter';
 import { Modal } from '../modal';
+import { useRudderstack } from 'src/hooks/use-rudderstack';
 
-/** Search Filter - Subscribers and Avg view filter options: 1k, 5k, 10k, 15k, 25k, 50k, 100k, 250k, 500k, 1m */
+/** Search Filter Modal, Subscribers and Avg view filter options: 1k, 5k, 10k, 15k, 25k, 50k, 100k, 250k, 500k, 1m */
 const options = [1e3, 5e3, 1e4, 15e3, 25e3, 50e3, 1e5, 25e4, 50e4, 1e6];
 
 export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: (open: boolean) => void }) => {
@@ -23,6 +24,8 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
     } = useSearch();
 
     const { t } = useTranslation();
+    const { trackEvent } = useRudderstack();
+
     return (
         <Modal visible={show} onClose={() => setShow(false)} title={t('creators.filter.title') || ''}>
             <div className="space-y-5 p-8">
@@ -41,6 +44,9 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                                             e.target.value === 'any' ? null : e.target.value,
                                             audiencePrevious[1],
                                         ]);
+                                        trackEvent('Search Filter Modal, change subscribers from', {
+                                            subscribers: e.target.value,
+                                        });
                                     }}
                                 >
                                     <option value="any">{'0'}</option>
@@ -65,6 +71,9 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                                             audiencePrevious[0],
                                             e.target.value === 'any' ? null : e.target.value,
                                         ]);
+                                        trackEvent('Search Filter Modal, change subscribers to', {
+                                            subscribers: e.target.value,
+                                        });
                                     }}
                                 >
                                     {options.map((option) => (
@@ -95,6 +104,9 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                                             e.target.value === 'any' ? null : e.target.value,
                                             viewsPrevious[1],
                                         ]);
+                                        trackEvent('Search Filter Modal, change average views from', {
+                                            views: e.target.value,
+                                        });
                                     }}
                                 >
                                     <option value="any">{'0'}</option>
@@ -117,6 +129,9 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                                             viewsPrevious[0],
                                             e.target.value === 'any' ? null : e.target.value,
                                         ]);
+                                        trackEvent('Search Filter Modal, change average views to', {
+                                            views: e.target.value,
+                                        });
                                     }}
                                 >
                                     {options.map((option) => (
@@ -146,6 +161,9 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                                 } else {
                                     setGender(e.target.value);
                                 }
+                                trackEvent('Search Filter Modal, change gender', {
+                                    gender: e.target.value,
+                                });
                             }}
                         >
                             <option value="any">{t('creators.filter.any')}</option>
@@ -166,6 +184,9 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                                 } else {
                                     setEngagement(Number(e.target.value));
                                 }
+                                trackEvent('Search Filter Modal, change engagement rate', {
+                                    engagement_rate: `>` + Number(e.target.value) + `%`,
+                                });
                             }}
                         >
                             <option value="any">{t('creators.filter.any')}</option>
@@ -192,6 +213,9 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                                 } else {
                                     setLastPost(e.target.value);
                                 }
+                                trackEvent('Search Filter Modal, change last post', {
+                                    last_post: e.target.value + ` days`,
+                                });
                             }}
                         >
                             <option value={'any'}>{t('creators.filter.any')}</option>
@@ -213,6 +237,9 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                                 } else {
                                     setContactInfo(e.target.value);
                                 }
+                                trackEvent('Search Filter Modal, change contact information', {
+                                    has_contact_information: e.target.value,
+                                });
                             }}
                         >
                             <option value="any">{t('creators.filter.any')}</option>

@@ -4,7 +4,9 @@ import useOnOutsideClick from 'src/hooks/use-on-outside-click';
 import { debounce } from 'src/utils/debounce';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
+import { useRudderstack } from 'src/hooks/use-rudderstack';
 import type { CreatorPlatform, CreatorSearchTag } from 'types';
+
 
 type SearchTopicsProps = {
     path: string;
@@ -18,6 +20,7 @@ export const SearchTopics = ({ onSetTopics, topics, platform, path, placeholder 
     const [suggestions, setSuggestions] = useState<CreatorSearchTag[]>([]);
     const [loading, setLoading] = useState(false);
     const inputRef = useRef<any>();
+    const { trackEvent } = useRudderstack();
 
     useOnOutsideClick(inputRef, () => {
         setSuggestions([]);
@@ -41,7 +44,6 @@ export const SearchTopics = ({ onSetTopics, topics, platform, path, placeholder 
                         platform,
                     },
                 });
-
                 if (res && (res.success || Array.isArray(res))) {
                     const data = res.data || res;
                     setSuggestions(data);
@@ -96,9 +98,12 @@ export const SearchTopics = ({ onSetTopics, topics, platform, path, placeholder 
             }}
             onRemoveTag={(item) => {
                 removeTag(item);
+                trackEvent('Search Topics Input, remove a tag', { tag: item });
             }}
             onAddTag={(item) => {
                 addTag(item);
+                trackEvent('Search Topics Input, add a tag', { tag: item });
+                trackEvent('Search Options, search topics', { topic: item });
             }}
             spinnerLoading={loading}
         />
