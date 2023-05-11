@@ -29,7 +29,7 @@ describe('Main pages happy paths', () => {
         // cy.contains will not include the input element in the search, so this shows that the results are in the DOM
         cy.contains('GRTR', { timeout: 30000 });
     });
-    it.only('can search for a topic', () => {
+    it('can search for a topic', () => {
         cy.loginTestUser();
         cy.get('input[type="checkbox').uncheck({ force: true }); // turn off the Recommended Only
 
