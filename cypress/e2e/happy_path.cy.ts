@@ -129,7 +129,7 @@ describe('Main pages happy paths', () => {
         // shows influencers
         cy.contains('@Greg Renko');
         cy.contains('View Contact Info');
-        cy.contains('The Ahern Family').should('not.exist');
+        cy.contains('SET India').should('not.exist');
 
         cy.go(-1);
         cy.get('button').contains('New Campaign').click();
@@ -148,13 +148,15 @@ describe('Main pages happy paths', () => {
         cy.get('input[name=promo_types]').check({ force: true });
         cy.get('button').contains('Create Campaign').click();
         cy.contains('Campaign Launch Date', { timeout: 10000 });
-        cy.contains('The Ahern Family').should('not.exist');
+        cy.contains('SET India').should('not.exist');
 
         cy.contains('My Campaign').click();
 
         // go to search and add an influencer to campaign
         cy.contains('Add New Influencer').click();
-        cy.contains('tr', 'The Ahern Family', { timeout: 30000 }).contains('Add to campaign').click();
+        cy.get('input[type="checkbox').uncheck({ force: true }); // turn off the Recommended Only
+
+        cy.contains('tr', 'SET India', { timeout: 60000 }).contains('Add to campaign').click();
         cy.contains('Beauty for All Skin Tones');
         cy.get('button[data-testid="add-creator-button:Beauty for All Skin Tones"]').click();
         cy.contains('Campaigns').click({ force: true }); // hidden by modal
@@ -162,18 +164,18 @@ describe('Main pages happy paths', () => {
         cy.contains('Beauty for All Skin Tones').click();
 
         // move influencer to new campaign
-        cy.contains('tr', 'The Ahern Family', { timeout: 60000 }).contains('Move Influencer').click(); // can take a while to refresh
+        cy.contains('tr', 'SET India', { timeout: 60000 }).contains('Move Influencer').click(); // can take a while to refresh
         cy.get('button[data-testid="move-influencer-button:My Campaign"]').click();
         cy.contains('Campaign Launch Date').click({ force: true }); // click out of modal
-        cy.contains('The Ahern Family').should('not.exist', { timeout: 10000 });
+        cy.contains('SET India').should('not.exist', { timeout: 10000 });
         cy.contains('Campaigns').click();
         cy.contains('My Campaign').click();
-        cy.contains('The Ahern Family');
+        cy.contains('SET India');
 
         // delete an influencer
         cy.get('button[data-testid="delete-creator"]').click();
         cy.contains('influencer was deleted.');
-        cy.contains('The Ahern Family').should('not.exist');
+        cy.contains('SET India').should('not.exist');
 
         // archive a campaign
         cy.contains('span', 'Archive').click();
