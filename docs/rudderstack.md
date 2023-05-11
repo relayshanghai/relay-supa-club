@@ -10,7 +10,7 @@ We currently use Rudderstack to track the onboarding process and major feature u
 
 Currently we are using the following naming convention for events:
 
-`trackEvent('[component name, action]'[, { additional properties }])`
+`trackEvent('[component name, action]', { additional properties })`
 
 Some examples:
 
