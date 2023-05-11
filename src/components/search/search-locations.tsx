@@ -4,7 +4,7 @@ import useOnOutsideClick from 'src/hooks/use-on-outside-click';
 import { debounce } from 'src/utils/debounce';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
-import type { CreatorPlatform, CreatorSearchTag, LocationWeighted } from 'types';
+import type { CreatorPlatform, LocationWeighted } from 'types';
 
 type SearchLocationsProps = {
     onSetLocations: (topics: LocationWeighted[]) => void;
@@ -25,9 +25,10 @@ export const SearchLocations = ({
     filter,
     TagComponent,
 }: SearchLocationsProps) => {
-    const [suggestions, setSuggestions] = useState<CreatorSearchTag[] | LocationWeighted[]>([]);
-    const ref = useRef<any>();
+    const [suggestions, setSuggestions] = useState<LocationWeighted[]>([]);
     const inputRef = useRef<any>();
+
+    const [loading, setLoading] = useState(false);
 
     useOnOutsideClick(inputRef, () => {
         setSuggestions([]);
@@ -38,13 +39,11 @@ export const SearchLocations = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const setTopicSearch = useCallback(
         debounce(async (term: string) => {
-            if (ref.current) ref.current.abort();
-
-            const controller = new AbortController();
-            const signal = controller.signal;
-            ref.current = controller;
+            const abortController = new AbortController();
+            const signal = abortController.signal;
 
             try {
+                setLoading(true);
                 const res = await nextFetch(path, {
                     method: 'post',
                     signal,
@@ -64,6 +63,13 @@ export const SearchLocations = ({
                 }
                 clientLogger(error, 'error');
             }
+
+            setLoading(false);
+
+            // Abort fetch request after 5 seconds
+            setTimeout(() => {
+                abortController.abort();
+            }, 5000);
         }),
         [platform, path, filter],
     );
@@ -95,7 +101,6 @@ export const SearchLocations = ({
             placeholder={placeholder}
             tags={locations}
             suggestions={suggestions}
-            ref={inputRef}
             onChange={(item: any) => {
                 setTopicSearch(item);
             }}
@@ -105,6 +110,7 @@ export const SearchLocations = ({
             onAddTag={(item) => {
                 addTag(item);
             }}
+            spinnerLoading={loading}
         />
     );
 };
