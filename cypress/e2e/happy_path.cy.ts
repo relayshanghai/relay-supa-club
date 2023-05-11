@@ -39,8 +39,13 @@ describe('Main pages happy paths', () => {
         cy.getByTestId('search-topics').within(() => {
             cy.get('input').type('alligators');
         });
+
+        cy.getByTestId('search-spinner').should('exist'); // wait for spinner to appear
+
         // cy.contains will not include the input element text in the search, so this shows that the result options are in the DOM
         cy.contains('alligators', { timeout: 30000 }).click();
+
+        cy.getByTestId('search-spinner').should('not.exist'); // wait for spinner to disappear
 
         cy.contains('Brave Wilderness', { timeout: 30000 }); // the first influencer search result for alligators
     });
