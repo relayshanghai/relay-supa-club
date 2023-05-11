@@ -105,6 +105,7 @@ export default function CampaignModalCard({
                         onClick={handleAddCreatorToCampaign}
                         disabled={loading || hasCreator || isMissing(campaign, creator, creator?.user_id)}
                         className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md bg-gray-100 text-gray-600 duration-300 hover:shadow-md disabled:cursor-not-allowed  disabled:text-gray-400"
+                        data-testid={`add-creator-button:${campaign.name}`}
                     >
                         {!loading && <PlusCircleIcon className="h-4 w-4 fill-current text-current" />}
                         {loading && <Spinner className=" h-4 w-4 fill-primary-600 text-white" />}

@@ -112,13 +112,75 @@ describe('Main pages happy paths', () => {
             .type('123')
             .should('have.value', 'Blue Moonlight Stream Enterprises123');
     });
-    it('can open campaigns page', () => {
+    it.only('can open campaigns page and manage campaign influencers', () => {
+        // list, add, archive campaigns
+        // list, add, move, delete campaign influencers
         cy.loginTestUser();
         cy.contains('Campaigns').click();
         cy.contains('button', 'New Campaign', { timeout: 10000 }); // loads campaigns page
         cy.url().should('include', `/campaigns`);
 
-        // TODO: After we have delete campaign function, test adding and editing/viewing campaigns. work item: https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/245
+        // campaigns listed
+        cy.contains('My Campaign').should('not.exist');
+        cy.contains('Beauty for All Skin Tones').click();
+
+        // campaign details
+        cy.contains('Campaign Launch Date');
+        // shows influencers
+        cy.contains('@Greg Renko');
+        cy.contains('View Contact Info');
+        cy.contains('The Ahern Family').should('not.exist');
+
+        cy.go(-1);
+        cy.get('button').contains('New Campaign').click();
+
+        // new campaign form
+        cy.contains('Campaign Name *', { timeout: 10000 });
+        // check displays new campaign
+        cy.get('input[name=name]').type('My Campaign');
+        cy.get('textarea[name=description]').type('This campaign is about selling some stuff');
+        cy.get('input[name=product_name]').type('Gadget');
+        cy.get('input[id=react-select-3-input]').click();
+        cy.contains('Books').click();
+        cy.get('input[id=react-select-5-input]').click();
+        cy.contains('Albania').click();
+        cy.get('input[name=budget_cents]').type('1000');
+        cy.get('input[name=promo_types]').check({ force: true });
+        cy.get('button').contains('Create Campaign').click();
+        cy.contains('Campaign Launch Date');
+        cy.contains('The Ahern Family').should('not.exist');
+
+        cy.contains('My Campaign').click();
+
+        // go to search and add an influencer to campaign
+        cy.contains('Add New Influencer').click();
+        cy.contains('tr', 'The Ahern Family', { timeout: 30000 }).contains('Add to campaign').click();
+        cy.contains('Beauty for All Skin Tones');
+        cy.get('button[data-testid="add-creator-button:Beauty for All Skin Tones"]').click();
+        cy.contains('Campaigns').click({ force: true }); // hidden by modal
+        cy.get('button').contains('New Campaign');
+        cy.contains('Beauty for All Skin Tones').click();
+
+        // move influencer to new campaign
+        cy.contains('tr', 'The Ahern Family').contains('Move Influencer').click();
+        cy.get('button[data-testid="move-influencer-button:My Campaign"]').click();
+        cy.contains('Campaign Launch Date').click({ force: true }); // click out of modal
+        cy.contains('The Ahern Family').should('not.exist', { timeout: 10000 });
+        cy.contains('Campaigns').click();
+        cy.contains('My Campaign').click();
+        cy.contains('The Ahern Family');
+
+        // delete an influencer
+        cy.get('button[data-testid="delete-creator"]').click();
+        cy.contains('influencer was deleted.');
+        cy.contains('The Ahern Family').should('not.exist');
+
+        // archive a campaign
+        cy.contains('button', 'Archive').click();
+        cy.contains('Campaigns').click();
+        cy.contains('My Campaign').should('not.exist');
+        cy.contains('Archived Campaigns').click();
+        cy.contains('My Campaign');
     });
     /** works on local... 🤷‍♂️ */
     it.skip('can log out', () => {

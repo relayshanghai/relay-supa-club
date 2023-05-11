@@ -80,7 +80,7 @@ const InfluencerRow = ({
                 <div className="flex items-center">
                     <div className="relative h-10 w-10 flex-shrink-0 rounded-full bg-gray-300">
                         <img className="h-10 w-10 rounded-full" src={imgProxy(creator.avatar_url)} alt="" />
-                        <div className="absolute right-0 bottom-0 ">
+                        <div className="absolute bottom-0 right-0 ">
                             <SocialMediaIcon
                                 platform={creator.platform as SocialMediaPlatform}
                                 width={16}
@@ -339,6 +339,7 @@ const InfluencerRow = ({
                         {t('campaigns.show.notes')}
                     </button>
                     <button
+                        data-testid="delete-creator"
                         onClick={(e) => deleteCampaignCreator(e, creator)}
                         className="cursor-pointer appearance-none rounded-md  border border-gray-200 bg-gray-50 p-2 text-center text-gray-600 outline-none duration-300 hover:bg-gray-100"
                     >

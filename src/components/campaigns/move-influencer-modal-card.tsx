@@ -146,6 +146,7 @@ export default function MoveInfluencerModalCard({
                             loading || targetHasCreator || isMissing(targetCampaign, creator, creator?.creator_id)
                         }
                         className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md bg-gray-100 text-gray-600 duration-300 hover:shadow-md disabled:cursor-not-allowed disabled:text-gray-400"
+                        data-testid={`move-influencer-button:${targetCampaign.name}`}
                     >
                         {!loading && <ArrowRightCircleIcon className="h-4 w-4 fill-current text-current" />}
                         {loading && (
