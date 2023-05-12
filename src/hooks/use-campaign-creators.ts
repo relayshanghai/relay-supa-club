@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 import useSWR from 'swr';
 
 import { useUser } from './use-user';
-import type { CampaignCreatorDB, CampaignDB } from 'src/utils/api/db/types';
+import type { CampaignCreatorDBUpdate, CampaignDB } from 'src/utils/api/db/types';
 
 import { clientLogger } from 'src/utils/logger-client';
 import { useClientDb } from 'src/utils/client-db/use-client-db';
@@ -64,15 +64,16 @@ export const useCampaignCreators = ({
                 insertCampaignCreator(body);
             } catch (error) {
                 clientLogger(error, 'error');
+                throw error;
+            } finally {
+                setLoading(false);
             }
-
-            setLoading(false);
         },
         [insertCampaignCreator, profile?.id],
     );
 
     const updateCreatorInCampaign = useCallback(
-        async (input: CampaignCreatorDB) => {
+        async (input: CampaignCreatorDBUpdate) => {
             setLoading(true);
             try {
                 if (!campaign?.id) throw new Error('No campaign found');
@@ -82,8 +83,10 @@ export const useCampaignCreators = ({
                 });
             } catch (error) {
                 clientLogger(error, 'error');
+                throw error;
+            } finally {
+                setLoading(false);
             }
-            setLoading(false);
         },
         [campaign?.id, updateCampaignCreator],
     );
@@ -99,6 +102,7 @@ export const useCampaignCreators = ({
                 });
             } catch (error) {
                 clientLogger(error, 'error');
+                throw error;
             } finally {
                 setLoading(false);
             }

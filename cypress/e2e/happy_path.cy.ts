@@ -130,14 +130,14 @@ describe('Main pages happy paths', () => {
             .type('123')
             .should('have.value', 'Blue Moonlight Stream Enterprises123');
     });
-    it.only('can open campaigns page and manage campaign influencers', () => {
+    it('can open campaigns page and manage campaign influencers', () => {
         setupIntercepts();
         // list, add, archive campaigns
         // list, add, move, delete campaign influencers
 
         cy.loginTestUser();
         cy.contains('Campaigns').click();
-        cy.contains('button', 'New Campaign', { timeout: 10000 }); // loads campaigns page
+        cy.contains('button', 'New Campaign', { timeout: 20000 }); // loads campaigns page
         cy.url().should('include', `/campaigns`);
 
         // campaigns listed
@@ -178,22 +178,28 @@ describe('Main pages happy paths', () => {
 
         cy.contains('tr', 'SET India', { timeout: 30000 }).contains('Add to campaign').click(); // not sure why this is still slow
         cy.contains('Beauty for All Skin Tones');
-        cy.get('button[data-testid="add-creator-button:Beauty for All Skin Tones"]').click();
+        cy.getByTestId('add-creator-button:Beauty for All Skin Tones').click();
         cy.contains('Campaigns').click({ force: true }); // hidden by modal
         cy.get('button').contains('New Campaign');
         cy.contains('Beauty for All Skin Tones').click();
 
         // move influencer to new campaign
-        cy.contains('tr', 'SET India').contains('Move Influencer').click(); // can take a while to refresh
-        cy.get('button[data-testid="move-influencer-button:My Campaign"]').click();
+        cy.contains('tr', 'SET India', { timeout: 60000 }).contains('Move Influencer').click(); // can take a while to refresh
+        cy.getByTestId('move-influencer-button:My Campaign').click();
         cy.contains('Campaign Launch Date').click({ force: true }); // click out of modal
         cy.contains('SET India').should('not.exist');
         cy.contains('Campaigns').click();
         cy.contains('My Campaign').click();
         cy.contains('SET India');
 
+        // change influencer status, and change status tabs
+        cy.getByTestId('status-dropdown').select('Contacted', { force: true });
+        cy.contains('Influencer Information Updated', { timeout: 10000 });
+        cy.contains('SET India').should('not.exist');
+        cy.contains('Contacted 1').click();
+        cy.contains('SET India');
         // delete an influencer
-        cy.get('button[data-testid="delete-creator"]').click();
+        cy.getByTestId('delete-creator').click();
         cy.contains('influencer was deleted.');
         cy.contains('SET India').should('not.exist');
 

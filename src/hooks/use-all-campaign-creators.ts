@@ -3,7 +3,7 @@ import useSWR from 'swr';
 import type { CampaignDB } from 'src/utils/api/db';
 
 export const useAllCampaignCreators = (campaigns: CampaignDB[]) => {
-    const { getAllCampaignCreators } = useClientDb();
+    const { getAllCampaignCreatorsByCampaignIds } = useClientDb();
 
     const {
         data: allCampaignCreators,
@@ -11,7 +11,7 @@ export const useAllCampaignCreators = (campaigns: CampaignDB[]) => {
         isValidating,
         isLoading,
     } = useSWR(campaigns.length > 0 ? 'all-campaign-creators' : null, () =>
-        getAllCampaignCreators(campaigns.map((campaign) => campaign.id)),
+        getAllCampaignCreatorsByCampaignIds(campaigns.map((campaign) => campaign.id)),
     );
 
     return {

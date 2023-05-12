@@ -1,5 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { CampaignDB, CampaignCreatorDB, CampaignCreatorDBInsert } from '../api/db';
+import type { CampaignDB, CampaignCreatorDB, CampaignCreatorDBInsert, CampaignCreatorDBUpdate } from '../api/db';
 import type { CreatorPlatform, DatabaseWithCustomTypes } from 'types';
 
 export type CampaignWithCreators = CampaignDB & {
@@ -44,11 +44,12 @@ export const insertCampaignCreatorCall =
 
 export const updateCampaignCreatorCall =
     (supabaseClient: SupabaseClient<DatabaseWithCustomTypes>) =>
-    async (data: CampaignCreatorDB): Promise<CampaignCreatorDB> => {
+    async (data: CampaignCreatorDBUpdate): Promise<CampaignCreatorDBUpdate> => {
+        const { id, ...rest } = data;
         const { data: campaignCreator, error } = await supabaseClient
             .from('campaign_creators')
-            .update(data)
-            .eq('campaign_id', data.campaign_id)
+            .update(rest)
+            .eq('id', id)
             .select()
             .single();
         if (error) throw error;
@@ -70,7 +71,7 @@ export const deleteCampaignCreatorCall =
 
 export type CampaignCreatorBasicInfo = Pick<CampaignCreatorDB, 'campaign_id' | 'creator_id'>;
 
-export const getAllCampaignCreatorsCall =
+export const getAllCampaignCreatorsByCampaignIdsCall =
     (supabaseClient: SupabaseClient<DatabaseWithCustomTypes>) =>
     async (campaignIds: string[]): Promise<CampaignCreatorBasicInfo[]> => {
         if (!campaignIds || campaignIds.length === 0) {
