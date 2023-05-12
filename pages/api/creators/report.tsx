@@ -18,6 +18,14 @@ export type CreatorsReportGetResponse = CreatorReport & { createdAt: string };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'GET') {
+        const catchInfluencer = async (data: CreatorReport) => {
+            const [influencer] = await getInfluencer(data)
+
+            if (influencer === null) {
+                await saveInfluencer(data);
+            }
+        }
+
         try {
             const { platform, creator_id, company_id, user_id } = req.query as CreatorsReportGetQueries;
             if (!platform || !creator_id || !company_id || !user_id)
@@ -37,6 +45,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     return res.status(httpCodes.BAD_REQUEST).json({ error: recordError });
                 }
 
+                await catchInfluencer(data);
+
                 return res.status(httpCodes.OK).json({ ...data, createdAt });
             } catch (error) {
                 const data = await requestNewReport(platform, creator_id);
@@ -48,11 +58,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
                 }
 
-                const [influencer] = await getInfluencer(data)
-
-                if (influencer === null) {
-                    saveInfluencer(data);
-                }
+                await catchInfluencer(data);
 
                 return res.status(httpCodes.OK).json(data);
             }
