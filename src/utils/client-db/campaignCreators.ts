@@ -45,11 +45,11 @@ export const insertCampaignCreatorCall =
 export const updateCampaignCreatorCall =
     (supabaseClient: SupabaseClient<DatabaseWithCustomTypes>) =>
     async (data: CampaignCreatorDBUpdate): Promise<CampaignCreatorDBUpdate> => {
-        const { id: _filter_out, ...rest } = data;
+        const { id, ...rest } = data;
         const { data: campaignCreator, error } = await supabaseClient
             .from('campaign_creators')
             .update(rest)
-            .eq('campaign_id', data.campaign_id)
+            .eq('id', id)
             .select()
             .single();
         if (error) throw error;

@@ -64,9 +64,10 @@ export const useCampaignCreators = ({
                 insertCampaignCreator(body);
             } catch (error) {
                 clientLogger(error, 'error');
+                throw error;
+            } finally {
+                setLoading(false);
             }
-
-            setLoading(false);
         },
         [insertCampaignCreator, profile?.id],
     );
@@ -82,8 +83,10 @@ export const useCampaignCreators = ({
                 });
             } catch (error) {
                 clientLogger(error, 'error');
+                throw error;
+            } finally {
+                setLoading(false);
             }
-            setLoading(false);
         },
         [campaign?.id, updateCampaignCreator],
     );
@@ -99,6 +102,7 @@ export const useCampaignCreators = ({
                 });
             } catch (error) {
                 clientLogger(error, 'error');
+                throw error;
             } finally {
                 setLoading(false);
             }
