@@ -1,5 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { CampaignDB, CampaignCreatorDB, CampaignCreatorDBInsert } from '../api/db';
+import type { CampaignDB, CampaignCreatorDB, CampaignCreatorDBInsert, CampaignCreatorDBUpdate } from '../api/db';
 import type { CreatorPlatform, DatabaseWithCustomTypes } from 'types';
 
 export type CampaignWithCreators = CampaignDB & {
@@ -44,10 +44,11 @@ export const insertCampaignCreatorCall =
 
 export const updateCampaignCreatorCall =
     (supabaseClient: SupabaseClient<DatabaseWithCustomTypes>) =>
-    async (data: CampaignCreatorDB): Promise<CampaignCreatorDB> => {
+    async (data: CampaignCreatorDBUpdate): Promise<CampaignCreatorDBUpdate> => {
+        const { id: _filter_out, ...rest } = data;
         const { data: campaignCreator, error } = await supabaseClient
             .from('campaign_creators')
-            .update(data)
+            .update(rest)
             .eq('campaign_id', data.campaign_id)
             .select()
             .single();

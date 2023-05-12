@@ -47,13 +47,14 @@ export const createCampaignCall =
 export const updateCampaignCall =
     (supabaseClient: SupabaseClient<DatabaseWithCustomTypes>) =>
     async (input: CampaignDBUpdate): Promise<CampaignDB> => {
+        const { id: _filter_out, ...rest } = input;
         if (!input.company_id) {
             throw new Error('No company ID found');
         }
         const { data: campaign, error } = await supabaseClient
             .from('campaigns')
             .update({
-                ...input,
+                ...rest,
             })
             .eq('id', input.id)
             .select()
