@@ -19,7 +19,7 @@ export const mapIqdataProfileToInfluencerSocialProfile = (
 ): Pick<InfluencerSocialProfileInsert, 'url' | 'username' | 'platform' | 'reference_id'> => {
     return {
         url: userProfile.url,
-        username: userProfile.username,
+        username: userProfile.username || userProfile.handle || userProfile.custom_name || '',
         platform: userProfile.type,
         reference_id: `iqdata:${userProfile.user_id}`,
     };
