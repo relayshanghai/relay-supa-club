@@ -28,10 +28,6 @@ describe('prepareFetchCreatorsFiltered', () => {
                         action: 'should',
                     },
                     {
-                        filter: 'keywords',
-                        action: 'should',
-                    },
-                    {
                         filter: 'text',
                         action: 'should',
                     },

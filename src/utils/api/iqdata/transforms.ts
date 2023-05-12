@@ -119,10 +119,6 @@ export const prepareFetchCreatorsFiltered = ({
             action: 'should',
         });
         body.filter.actions.push({
-            filter: 'keywords',
-            action: 'should',
-        });
-        body.filter.actions.push({
             filter: 'text',
             action: 'should',
         });
