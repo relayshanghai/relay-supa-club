@@ -103,6 +103,14 @@ export const prepareFetchCreatorsFiltered = ({
     }
     if (text) {
         body.filter.text = text;
+        body.filter.actions.push({
+            filter: "text",
+            action: "should"
+        })
+                body.filter.actions.push({
+            filter: "username",
+            action: "should"
+        })
     }
     if (username) {
         body.filter.username = { value: username };
