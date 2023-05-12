@@ -18,14 +18,8 @@ export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
     const searchInfluencer = useCallback(
         debounce((term: any) => {
             setPlatform(platform);
-
-            if (term.includes(' ')) {
-                setText(term);
-                setUsername('');
-            } else {
-                setUsername(term);
-                setText('');
-            }
+            setUsername(term);
+            setText(term);
             setSpinnerLoading(false);
         }),
         [platform],
@@ -37,6 +31,7 @@ export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
 
         if (e.target.value.trim() === '') {
             setUsername('');
+            setText('');
         }
 
         searchInfluencer(e.target.value);

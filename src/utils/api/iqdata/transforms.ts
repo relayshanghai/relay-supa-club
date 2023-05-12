@@ -10,6 +10,7 @@ export interface FetchCreatorsFilteredParams {
     lookalike?: CreatorAccount[];
     text?: string;
     username?: string;
+    keywords?: string;
     influencerLocation?: LocationWeighted[];
     audienceLocation?: LocationWeighted[];
     resultsPerPageLimit?: number;
@@ -68,6 +69,7 @@ export const prepareFetchCreatorsFiltered = ({
     page = 0,
     text,
     username,
+    keywords,
     audience,
     views,
     gender,
@@ -103,17 +105,27 @@ export const prepareFetchCreatorsFiltered = ({
     }
     if (text) {
         body.filter.text = text;
-        body.filter.actions.push({
-            filter: "text",
-            action: "should"
-        })
-                body.filter.actions.push({
-            filter: "username",
-            action: "should"
-        })
+    }
+    if (keywords) {
+        body.filter.keywords = keywords;
     }
     if (username) {
         body.filter.username = { value: username };
+
+        if (!body.filter.actions) body.filter.actions = [];
+
+        body.filter.actions.push({
+            filter: 'username',
+            action: 'should',
+        });
+        body.filter.actions.push({
+            filter: 'keywords',
+            action: 'should',
+        });
+        body.filter.actions.push({
+            filter: 'text',
+            action: 'should',
+        });
     }
     if (views) {
         body.filter.views = viewsTransform(views);

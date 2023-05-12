@@ -29,6 +29,24 @@ describe('prepareFetchCreatorsFiltered', () => {
                 followers: { left_number: undefined, right_number: undefined },
                 audience_geo: [],
                 geo: [],
+                actions: [
+                    {
+                        filter: 'relevance',
+                        action: 'must',
+                    },
+                    {
+                        filter: 'username',
+                        action: 'should',
+                    },
+                    {
+                        filter: 'keywords',
+                        action: 'should',
+                    },
+                    {
+                        filter: 'text',
+                        action: 'should',
+                    },
+                ],
             },
             sort: { field: 'followers', direction: 'desc' },
             audience_source: 'any',
