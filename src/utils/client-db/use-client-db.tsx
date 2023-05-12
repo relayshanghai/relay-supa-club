@@ -5,7 +5,7 @@ import { getProfileByIdCall } from './profiles';
 import { getCompanyByIdCall } from './companies';
 import {
     deleteCampaignCreatorCall,
-    getAllCampaignCreatorsCall,
+    getAllCampaignCreatorsByCampaignIdsCall,
     getCampaignCreatorsCall,
     insertCampaignCreatorCall,
     updateCampaignCreatorCall,
@@ -28,7 +28,7 @@ export const useClientDb = () => {
         insertCampaignCreator: insertCampaignCreatorCall(supabaseClient),
         updateCampaignCreator: updateCampaignCreatorCall(supabaseClient),
         deleteCampaignCreator: deleteCampaignCreatorCall(supabaseClient),
-        getAllCampaignCreators: getAllCampaignCreatorsCall(supabaseClient),
+        getAllCampaignCreatorsByCampaignIds: getAllCampaignCreatorsByCampaignIdsCall(supabaseClient),
 
         // companies
         getCompanyById: getCompanyByIdCall(supabaseClient),

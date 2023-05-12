@@ -71,7 +71,7 @@ export const deleteCampaignCreatorCall =
 
 export type CampaignCreatorBasicInfo = Pick<CampaignCreatorDB, 'campaign_id' | 'creator_id'>;
 
-export const getAllCampaignCreatorsCall =
+export const getAllCampaignCreatorsByCampaignIdsCall =
     (supabaseClient: SupabaseClient<DatabaseWithCustomTypes>) =>
     async (campaignIds: string[]): Promise<CampaignCreatorBasicInfo[]> => {
         if (!campaignIds || campaignIds.length === 0) {
