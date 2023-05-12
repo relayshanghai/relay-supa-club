@@ -1,42 +1,60 @@
 import { deleteDB } from 'idb';
+import { cocomelon, cocomelonId, defaultLandingPageInfluencerSearch, setupIntercepts } from './intercepts';
 
 describe('Caches SWR requests', () => {
     beforeEach(async () => {
         await deleteDB('app-cache');
     });
     it('caches reports from `use-report`', () => {
+        setupIntercepts(); // some will be overriden
         cy.loginTestUser();
 
         cy.contains('Campaigns', { timeout: 10000 });
-        const tSeriesID = 'UCq-Fj5jknLsUf-MWSy4_brA';
 
-        cy.getByTestId(`search-result-row-buttons/${tSeriesID}`, { timeout: 10000 }).click({
+        cy.getByTestId(`search-result-row-buttons/${cocomelonId}`).click({
             force: true,
         });
-
-        cy.getByTestId(`analyze-button/${tSeriesID}`)
+        cy.getByTestId(`analyze-button/${cocomelonId}`)
             .should('have.attr', 'target', '_blank')
-            .invoke('removeAttr', 'target') // remove target attribute so we can click it and stay on the same page
-            .click({ force: true }); // force click because the button is hidden because of our weird hover UI
+            .should('have.attr', 'href', `/influencer/youtube/${cocomelonId}`);
 
-        cy.contains("T-Series is India's largest Music Label", { timeout: 2500 }).should('not.exist'); // report is not loaded yet
+        cy.intercept('/api/creators/report*', (req) => {
+            req.reply({ body: cocomelon, delay: 3000 });
+        });
+        cy.visit(`influencer/youtube/${cocomelonId}`);
 
-        cy.contains('Generating influencer Report. Please wait', { timeout: 30000 }); // loading analyze page
-        cy.contains("T-Series is India's largest Music Label", { timeout: 30000 }); // loads analyze page
+        cy.contains('Cocomelon - Nursery Rhymes').should('not.exist', { timeout: 2500 }); // report is not loaded yet
 
+        cy.contains('Generating influencer Report. Please wait'); // loading analyze page
+        cy.contains('Cocomelon - Nursery Rhymes'); // loads analyze page
+
+        cy.intercept('/api/creators/report*', (req) => {
+            req.reply({ body: cocomelon, delay: 10000 });
+        });
         cy.reload();
-
         cy.contains('Campaigns', { timeout: 10000 }); // sidebar has loaded
 
-        cy.contains("T-Series is India's largest Music Label", { timeout: 2500 }); // loads report faster than it did before
+        cy.contains('Cocomelon - Nursery Rhymes', { timeout: 2500 }); // loads report faster than it did before even though timeout is longer
     });
     it('caches searches on the dashboard', () => {
+        setupIntercepts(); // some will be overriden
         cy.loginTestUser();
-
-        cy.contains('T-Series', { timeout: 5000 }).should('not.exist');
-        cy.contains('T-Series', { timeout: 300000 }).should('exist');
+        cy.intercept('/api/influencer-search*', (req) => {
+            req.reply({
+                body: defaultLandingPageInfluencerSearch,
+                delay: 1000,
+            });
+        });
+        cy.contains('Cocomelon - Nursery Rhymes', { timeout: 1000 }).should('not.exist');
+        cy.contains('Cocomelon - Nursery Rhymes', { timeout: 300000 }).should('exist');
+        cy.intercept('/api/influencer-search*', (req) => {
+            req.reply({
+                body: defaultLandingPageInfluencerSearch,
+                delay: 10000,
+            });
+        });
         cy.reload();
-        cy.contains('T-Series', { timeout: 5000 }).should('exist');
+        cy.contains('Cocomelon - Nursery Rhymes', { timeout: 1000 }).should('exist'); // even though the delay is 10 seconds, the search is cached
     });
 });
 
