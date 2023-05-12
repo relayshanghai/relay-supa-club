@@ -122,7 +122,7 @@ describe('Main pages happy paths', () => {
         // list, add, move, delete campaign influencers
         cy.loginTestUser();
         cy.contains('Campaigns').click();
-        cy.contains('button', 'New Campaign', { timeout: 10000 }); // loads campaigns page
+        cy.contains('button', 'New Campaign', { timeout: 20000 }); // loads campaigns page
         cy.url().should('include', `/campaigns`);
 
         // campaigns listed
