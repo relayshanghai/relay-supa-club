@@ -32,17 +32,12 @@ describe('Get influencer', () => {
         const getInfluencerByIdSpy = vi.spyOn(influencersModule, 'getInfluencerById').mockResolvedValue(influencerData);
         const [influencer, socialProfile] = await getInfluencer(report);
 
-        expect(influencer).not.toBeNull();
-        expect(socialProfile).not.toBeNull();
-
         expect(getInfluencerSocialProfileByReferenceIdSpy).toHaveBeenCalledTimes(1);
         expect(getInfluencerByIdSpy).toHaveBeenCalledTimes(1);
 
-        if (influencer && socialProfile) {
-            expect(influencer.name).toBe('John Doe');
-            expect(socialProfile.influencer_id).toBe('1');
-            expect(socialProfile.id).toBe('2');
-        }
+        expect(influencer?.name).toBe('John Doe');
+        expect(socialProfile?.influencer_id).toBe('1');
+        expect(socialProfile?.id).toBe('2');
     });
 
     it('Get no influencer', async () => {
