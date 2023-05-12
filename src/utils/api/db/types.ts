@@ -35,7 +35,7 @@ export type CompanyDBUpdate = CompanyTable['Update'];
 export type CompanyDBInsert = CompanyTable['Insert'];
 
 export type CampaignDB = Database['public']['Tables']['campaigns']['Row'];
-export type CampaignDBUpdate = Database['public']['Tables']['campaigns']['Update'];
+export type CampaignDBUpdate = Exclude<Database['public']['Tables']['campaigns']['Update'], 'id'>;
 export type CampaignDBInsert = Database['public']['Tables']['campaigns']['Insert'];
 
 export type CampaignCreatorsTable = Database['public']['Tables']['campaign_creators'] & {

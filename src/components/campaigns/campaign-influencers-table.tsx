@@ -5,17 +5,17 @@ import type { ChangeEvent, MouseEvent } from 'react';
 import { useRef, useState } from 'react';
 import Link from 'next/link';
 import { toast } from 'react-hot-toast';
-import { useCampaigns } from 'src/hooks/use-campaigns';
-import type { CampaignCreatorDB, CampaignWithCompanyCreators } from 'src/utils/api/db';
+import type { CampaignCreatorDB, CampaignDB } from 'src/utils/api/db';
 import Fuse from 'fuse.js';
 import InfluencerRow from './influencer-row';
 import { MoveInfluencerModal } from '../modal-move-influencer';
+import { useCampaignCreators } from 'src/hooks/use-campaign-creators';
 
 export interface CreatorsOutreachProps {
-    currentCampaign: CampaignWithCompanyCreators;
+    currentCampaign: CampaignDB;
     setShowNotesModal: (value: boolean) => void;
     setCurrentCreator: (value: CampaignCreatorDB) => void;
-    campaigns?: CampaignWithCompanyCreators[];
+    campaigns?: CampaignDB[];
     currentCreator?: CampaignCreatorDB | null;
 }
 
@@ -23,7 +23,6 @@ export default function CampaignInfluencersTable({
     currentCampaign,
     setShowNotesModal,
     setCurrentCreator,
-
     campaigns,
     currentCreator,
 }: CreatorsOutreachProps) {
@@ -40,10 +39,10 @@ export default function CampaignInfluencersTable({
 
     const [showMoveInfluencerModal, setShowMoveInfluencerModal] = useState(false);
 
-    const { deleteCreatorInCampaign, updateCreatorInCampaign, refreshCampaigns } = useCampaigns({
-        campaignId: currentCampaign?.id,
-    });
-
+    const { campaignCreators, deleteCreatorInCampaign, updateCreatorInCampaign, refreshCampaignCreators } =
+        useCampaignCreators({
+            campaign: currentCampaign,
+        });
     const columnLabels = [
         'account',
         'contact',
@@ -60,24 +59,31 @@ export default function CampaignInfluencersTable({
     ];
 
     useEffect(() => {
-        if (currentCampaign) {
-            setInfluencersList(currentCampaign.campaign_creators);
-        }
-    }, [currentCampaign]);
+        refreshCampaignCreators();
+    }, [refreshCampaignCreators]);
 
     useEffect(() => {
-        const fuse = new Fuse(currentCampaign?.campaign_creators, {
+        if (campaignCreators) {
+            setInfluencersList(campaignCreators);
+        }
+    }, [campaignCreators]);
+
+    useEffect(() => {
+        if (!campaignCreators) {
+            return;
+        }
+        const fuse = new Fuse(campaignCreators, {
             minMatchCharLength: 1,
             keys: ['fullname'],
         });
 
         if (searchTerm.length === 0) {
-            setInfluencersList(currentCampaign?.campaign_creators);
+            setInfluencersList(campaignCreators);
             return;
         }
 
         setInfluencersList(fuse.search(searchTerm).map((result) => result.item));
-    }, [searchTerm, currentCampaign]);
+    }, [searchTerm, campaignCreators]);
 
     const handleTabChange = (value: string) => {
         router.push({ pathname, query: { ...query, curTab: value } });
@@ -96,7 +102,7 @@ export default function CampaignInfluencersTable({
         e.stopPropagation();
         creator = { ...creator, [objKey]: e.target.value };
         await updateCreatorInCampaign(creator);
-        refreshCampaigns();
+        refreshCampaignCreators();
         toast.success(t('campaigns.creatorModal.influencerUpdated'));
     };
 
@@ -128,20 +134,20 @@ export default function CampaignInfluencersTable({
         const c = confirm(t('campaigns.modal.deleteConfirmation') as string);
         if (!c) return;
         await deleteCreatorInCampaign({ creatorId: creator.id, campaignId: currentCampaign.id });
-        refreshCampaigns();
+        refreshCampaignCreators();
         toast.success(t('campaigns.modal.deletedSuccessfully'));
     };
 
     const updateCampaignCreator = async (creator: CampaignCreatorDB) => {
         await updateCreatorInCampaign(creator);
         setToEdit(null);
-        refreshCampaigns();
+        refreshCampaignCreators();
         toast.success(t('campaigns.creatorModal.influencerUpdated'));
     };
 
     // get the number of creators in each status
     const creatorsCount = (status: string) => {
-        return currentCampaign?.campaign_creators.filter((c) => c.status === status).length;
+        return campaignCreators?.filter((c) => c.status === status).length ?? 0;
     };
 
     const editingModeTrue = (index: number, key: string) => index === toEdit?.index && key === toEdit?.key;

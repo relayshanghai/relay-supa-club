@@ -1,24 +1,36 @@
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import type { DatabaseWithCustomTypes } from 'types';
-import { getCampaignsWithCompanyCreatorsCall } from './campaigns';
+import { getCampaignsCall, createCampaignCall, updateCampaignCall } from './campaigns';
 import { getProfileByIdCall } from './profiles';
 import { getCompanyByIdCall } from './companies';
+import {
+    deleteCampaignCreatorCall,
+    getAllCampaignCreatorsByCampaignIdsCall,
+    getCampaignCreatorsCall,
+    insertCampaignCreatorCall,
+    updateCampaignCreatorCall,
+} from './campaignCreators';
+
 export const useClientDb = () => {
     const supabaseClient = useSupabaseClient<DatabaseWithCustomTypes>();
-
-    // profiles
-    const getProfileById = getProfileByIdCall(supabaseClient);
-
-    // campaigns
-    const getCampaignsWithCompanyCreators = getCampaignsWithCompanyCreatorsCall(supabaseClient);
-
-    // companies
-    const getCompanyById = getCompanyByIdCall(supabaseClient);
-
     return {
         supabaseClient,
-        getProfileById,
-        getCampaignsWithCompanyCreators,
-        getCompanyById,
+        // profiles
+        getProfileById: getProfileByIdCall(supabaseClient),
+
+        // campaigns
+        getCampaigns: getCampaignsCall(supabaseClient),
+        createCampaign: createCampaignCall(supabaseClient),
+        updateCampaign: updateCampaignCall(supabaseClient),
+
+        // campaignCreators
+        getCampaignCreators: getCampaignCreatorsCall(supabaseClient),
+        insertCampaignCreator: insertCampaignCreatorCall(supabaseClient),
+        updateCampaignCreator: updateCampaignCreatorCall(supabaseClient),
+        deleteCampaignCreator: deleteCampaignCreatorCall(supabaseClient),
+        getAllCampaignCreatorsByCampaignIds: getAllCampaignCreatorsByCampaignIdsCall(supabaseClient),
+
+        // companies
+        getCompanyById: getCompanyByIdCall(supabaseClient),
     };
 };

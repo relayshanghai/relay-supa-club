@@ -4,8 +4,8 @@ import React from 'react';
 import { testMount } from '../../utils/cypress-app-wrapper';
 import { SearchContext } from '../../hooks/use-search';
 import type { CreatorSearchAccountObject } from '../../../types';
-import jimTestCampaign from '../../mocks/api/campaigns/jimTestCampaign.json';
-import amyTestCampaign from '../../mocks/api/campaigns/amyTestCampaign.json';
+import jimTestCampaign from '../../mocks/supabase/campaigns/jimTestCampaign.json';
+import amyTestCampaign from '../../mocks/supabase/campaigns/amyTestCampaign.json';
 
 const creator: CreatorSearchAccountObject = {
     account: {

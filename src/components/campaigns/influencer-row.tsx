@@ -117,6 +117,7 @@ const InfluencerRow = ({
             </td>
             <td className="whitespace-nowrap px-6 py-4">
                 <select
+                    data-testid="status-dropdown"
                     onChange={(e) => handleDropdownSelect(e, creator, 'status')}
                     value={creator.status || ''}
                     className="-ml-1 mr-2.5 cursor-pointer appearance-none rounded-md border border-gray-200 bg-primary-50 px-4 py-2 text-center text-xs font-semibold text-primary-500 outline-none duration-300 hover:bg-primary-100"
@@ -339,6 +340,7 @@ const InfluencerRow = ({
                         {t('campaigns.show.notes')}
                     </button>
                     <button
+                        data-testid="delete-creator"
                         onClick={(e) => deleteCampaignCreator(e, creator)}
                         className="cursor-pointer appearance-none rounded-md  border border-gray-200 bg-gray-50 p-2 text-center text-gray-600 outline-none duration-300 hover:bg-gray-100"
                     >

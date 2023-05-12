@@ -1,12 +1,12 @@
 import { useTranslation } from 'react-i18next';
-import type { CampaignWithCompanyCreators } from 'src/utils/api/db';
+import type { CampaignDB } from 'src/utils/api/db';
 import { toCurrency } from 'src/utils/utils';
 
 export default function CampaignDetails({
     currentCampaign,
     media,
 }: {
-    currentCampaign: CampaignWithCompanyCreators;
+    currentCampaign: CampaignDB;
     media: { url: string; name: string }[];
 }) {
     const { t } = useTranslation();
@@ -15,7 +15,7 @@ export default function CampaignDetails({
 
     return (
         <div className="sm:flex">
-            <div className="mb-4 sm:mr-4 sm:mb-0 sm:w-3/5">
+            <div className="mb-4 sm:mb-0 sm:mr-4 sm:w-3/5">
                 <div className="mb-4 w-full rounded-lg bg-white p-4 text-sm text-tertiary-600">
                     <h3 className="mb-2 font-semibold">{t('campaigns.show.activities.info.projectDescription')}</h3>
                     <p>{currentCampaign.description}</p>
@@ -26,7 +26,7 @@ export default function CampaignDetails({
                     {currentCampaign && media ? (
                         <div className="mb-6 flex flex-wrap">
                             {media.map((photo, index) => (
-                                <div key={index} className="mr-3 mb-3 box-border h-20 w-20 flex-shrink-0 rounded-md">
+                                <div key={index} className="mb-3 mr-3 box-border h-20 w-20 flex-shrink-0 rounded-md">
                                     <img src={photo?.url} alt="" className="h-full w-full rounded-md object-cover" />
                                 </div>
                             ))}
@@ -46,7 +46,7 @@ export default function CampaignDetails({
                                 targetLocations.map((tag, index) => (
                                     <p
                                         key={index}
-                                        className="mr-1 mb-1 rounded-md bg-tertiary-100 px-2 py-1 text-xs text-tertiary-600"
+                                        className="mb-1 mr-1 rounded-md bg-tertiary-100 px-2 py-1 text-xs text-tertiary-600"
                                     >
                                         {tag}
                                     </p>
@@ -60,7 +60,7 @@ export default function CampaignDetails({
                                 promoTypes.map((promoType, index) => (
                                     <p
                                         key={index}
-                                        className="mr-1 mb-1 rounded-md bg-tertiary-100 px-2 py-1 text-xs text-tertiary-600"
+                                        className="mb-1 mr-1 rounded-md bg-tertiary-100 px-2 py-1 text-xs text-tertiary-600"
                                     >
                                         {promoType}
                                     </p>
