@@ -20,7 +20,10 @@ export const InputWithTags = ({ disabled, tags = [], onTagRemove, TagComponent, 
                                   return (
                                       <>
                                           {spinnerLoading && (
-                                              <Spinner className="h-5 w-5 fill-primary-600 text-white" />
+                                              <Spinner
+                                                  data-testid="search-spinner"
+                                                  className="h-5 w-5 fill-primary-600 text-white"
+                                              />
                                           )}
                                           <TagComponent key={i} {...item} onClick={() => onTagRemove(item)} />
                                       </>
@@ -51,7 +54,9 @@ export const InputWithTags = ({ disabled, tags = [], onTagRemove, TagComponent, 
                     className="w-full appearance-none border border-transparent bg-white px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-transparent focus:outline-none focus:ring-0 sm:text-sm"
                     {...rest}
                 />
-                {spinnerLoading && <Spinner className="h-5 w-5 fill-primary-600 text-white" />}
+                {spinnerLoading && (
+                    <Spinner data-testid="search-spinner" className="h-5 w-5 fill-primary-600 text-white" />
+                )}
             </div>
         </label>
     );

@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { ModalWithButtons } from './modal-with-buttons';
+import { useRudderstack } from 'src/hooks/use-rudderstack';
 
 export const InfluencerAlreadyAddedModal = ({
     show,
@@ -13,6 +14,7 @@ export const InfluencerAlreadyAddedModal = ({
     campaignsWithCreator: string[];
 }) => {
     const { t } = useTranslation();
+    const { trackEvent } = useRudderstack();
 
     return (
         <ModalWithButtons
@@ -20,12 +22,14 @@ export const InfluencerAlreadyAddedModal = ({
             visible={show}
             onClose={() => {
                 setShow(false);
+                trackEvent('Already Added Modal - click do not add');
             }}
             closeButtonText={t('campaigns.modal.doNotAdd') || ''}
             okButtonText={t('campaigns.modal.addAnyway') || ''}
             onOkay={() => {
                 setShow(false);
                 setCampaignListModal(true);
+                trackEvent('Already Added Modal - click add anyway');
             }}
         >
             <div className="flex flex-col gap-2">

@@ -80,7 +80,7 @@ const InfluencerRow = ({
                 <div className="flex items-center">
                     <div className="relative h-10 w-10 flex-shrink-0 rounded-full bg-gray-300">
                         <img className="h-10 w-10 rounded-full" src={imgProxy(creator.avatar_url)} alt="" />
-                        <div className="absolute right-0 bottom-0 ">
+                        <div className="absolute bottom-0 right-0 ">
                             <SocialMediaIcon
                                 platform={creator.platform as SocialMediaPlatform}
                                 width={16}
@@ -93,7 +93,7 @@ const InfluencerRow = ({
                         <div
                             className="ml-4"
                             onClick={() =>
-                                trackEvent('Opened a report from Campaign Page', {
+                                trackEvent('Campaign Influencer Row, open report', {
                                     platform: creator.platform,
                                     user_id: creator.creator_id,
                                 })
