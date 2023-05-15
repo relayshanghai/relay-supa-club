@@ -65,3 +65,8 @@ export const fetchReport = async (reportId: string) => await iqDataFetch<Creator
 //** omit id to get all previously generated reports of that platform */
 export const fetchReportsMetadata = async (platform: CreatorPlatform, creator_id?: string) =>
     await iqDataFetch<CreatorReportsMetadata>(`reports?platform=${platform}${creator_id ? `&url=${creator_id}` : ''}`);
+
+export const fetchYoutubeVideoInfo = async (videoUrl: string) =>
+    await iqDataFetch(`raw/yt/video?${new URLSearchParams({ url: videoUrl })}`);
+export const fetchTiktokVideoInfo = async (videoUrl: string) =>
+    await iqDataFetch(`raw/tt/user/media?${new URLSearchParams({ url: videoUrl })}`);
