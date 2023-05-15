@@ -29,15 +29,15 @@ const PerformancePage = () => {
             // eslint-disable-next-line no-console
             console.log({ data });
         };
-        const getTikTokData = async () => {
-            const data = await nextFetchWithQueries('posts/scrape', {
-                platform: 'tiktok',
-                url: 'https://www.tiktok.com/@graceofearth/video/7230816093755936043?_r=1&_t=8c9DNKVO2Tm&social_sharing=v2',
-            });
-            // eslint-disable-next-line no-console
-            console.log({ data });
-        };
-        getTikTokData();
+        // const getTikTokData = async () => {
+        //     const data = await nextFetchWithQueries('posts/scrape', {
+        //         platform: 'tiktok',
+        //         url: 'https://www.tiktok.com/@graceofearth/video/7230816093755936043?_r=1&_t=8c9DNKVO2Tm&social_sharing=v2',
+        //     });
+        //     // eslint-disable-next-line no-console
+        //     console.log({ data });
+        // };
+        // getTikTokData();
         getYoutubeData();
     }, []);
     const { t } = useTranslation();

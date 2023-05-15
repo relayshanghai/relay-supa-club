@@ -4,6 +4,7 @@ import type { CreatorPlatform, CreatorReport, CreatorSearchResult } from 'types'
 import type { CreatorReportsMetadata } from 'types/iqdata/creator-reports-metadata';
 import type { FetchCreatorsFilteredParams } from './transforms';
 import { prepareFetchCreatorsFiltered } from './transforms';
+import type { TikTokVideoDataRaw } from 'types/iqdata/tiktok-video-info';
 
 export const IQDATA_URL = 'https://socapi.icu/v2.0/api/';
 
@@ -66,7 +67,9 @@ export const fetchReport = async (reportId: string) => await iqDataFetch<Creator
 export const fetchReportsMetadata = async (platform: CreatorPlatform, creator_id?: string) =>
     await iqDataFetch<CreatorReportsMetadata>(`reports?platform=${platform}${creator_id ? `&url=${creator_id}` : ''}`);
 
-export const fetchYoutubeVideoInfo = async (videoUrl: string) =>
-    await iqDataFetch(`raw/yt/video?${new URLSearchParams({ url: videoUrl })}`);
+// NOT WORKING - contacted IQData
+// export const fetchYoutubeVideoInfo = async (videoUrl: string) =>
+//     await iqDataFetch(`raw/yt/video?${new URLSearchParams({ url: videoUrl })}`);
+
 export const fetchTiktokVideoInfo = async (videoUrl: string) =>
-    await iqDataFetch(`raw/tt/user/media?${new URLSearchParams({ url: videoUrl })}`);
+    await iqDataFetch<TikTokVideoDataRaw>(`raw/tt/user/media?${new URLSearchParams({ url: videoUrl })}`);
