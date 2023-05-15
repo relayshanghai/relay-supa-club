@@ -20,15 +20,23 @@ export interface PerformanceData {
 
 const PerformancePage = () => {
     useEffect(() => {
-        const getYoutubeData = async () => {
+        const getInstagramData = async () => {
             const data = await nextFetchWithQueries('posts/scrape', {
-                platform: 'youtube',
-                url: 'https://www.youtube.com/watch?v=y3Umo_jd5AA',
+                platform: 'instagram',
+                url: 'https://www.instagram.com/p/Cr3aeZ7NXW3/',
             });
-
             // eslint-disable-next-line no-console
             console.log({ data });
         };
+        // const getYoutubeData = async () => {
+        //     const data = await nextFetchWithQueries('posts/scrape', {
+        //         platform: 'youtube',
+        //         url: 'https://www.youtube.com/watch?v=y3Umo_jd5AA',
+        //     });
+
+        //     // eslint-disable-next-line no-console
+        //     console.log({ data });
+        // };
         // const getTikTokData = async () => {
         //     const data = await nextFetchWithQueries('posts/scrape', {
         //         platform: 'tiktok',
@@ -38,7 +46,8 @@ const PerformancePage = () => {
         //     console.log({ data });
         // };
         // getTikTokData();
-        getYoutubeData();
+        // getYoutubeData();
+        getInstagramData();
     }, []);
     const { t } = useTranslation();
     const [performanceData, setPerformanceData] = useState<PerformanceData | null>(null);

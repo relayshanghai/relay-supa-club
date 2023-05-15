@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
-import { fetchYoutubeVideoInfo } from 'src/utils/api/apify';
+import { fetchInstagramPostInfo, fetchYoutubeVideoInfo } from 'src/utils/api/apify';
 import { fetchTiktokVideoInfo } from 'src/utils/api/iqdata';
 import { serverLogger } from 'src/utils/logger-server';
 import type { CreatorPlatform } from 'types';
@@ -13,7 +13,6 @@ export type PostScrapeGetQuery = {
 export type PostScrapeGetResponse = {
     likeCount?: number;
     commentCount?: number;
-    shareCount?: number;
     viewCount?: number;
 };
 
@@ -44,12 +43,23 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             const result: PostScrapeGetResponse = {
                 likeCount: stats.diggCount,
                 commentCount: stats.commentCount,
-                shareCount: stats.shareCount,
                 viewCount: stats.playCount,
             };
             return res.status(httpCodes.OK).json(result);
+        } else if (platform === 'instagram') {
+            const raw = await fetchInstagramPostInfo(url);
+            const stats = raw[0];
+            if (!stats) {
+                throw new Error('unable to fetch instagram post info');
+            }
+            const result: PostScrapeGetResponse = {
+                likeCount: stats.likesCount,
+                commentCount: stats.commentsCount,
+                viewCount: stats.videoPlayCount,
+            };
+            return res.status(httpCodes.OK).json(result);
         }
-        return res.status(httpCodes.BAD_REQUEST).json({ error: 'Invalid request' });
+        return res.status(httpCodes.BAD_REQUEST).json({ error: 'Invalid platform' });
     } catch (error) {
         serverLogger(error);
         return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({ error });

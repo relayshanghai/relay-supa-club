@@ -1,4 +1,5 @@
 import { handleResError } from 'src/utils/fetcher';
+import type { InstagramPostScrape } from 'types/apify/instagram-post-scrape';
 import type { YoutubeVideoScrapeRaw } from 'types/apify/youtube-video-scrape';
 
 const APIFY_TOKEN = process.env.APIFY_TOKEN;
@@ -43,4 +44,23 @@ export const fetchYoutubeVideoInfo = async (url: string) =>
     apifyFetch<YoutubeVideoScrapeRaw>(youtubeSraperEndpoint, {
         method: 'post',
         body: JSON.stringify(prepareYoutubeScrapeParams(url)),
+    });
+
+const instagramPostScraperEndpoint = 'acts/apify~instagram-scraper/run-sync-get-dataset-items';
+
+const prepareInstagramPostScrapeParams = (url: string) => ({
+    directUrls: [url],
+    proxy: {
+        useApifyProxy: true,
+        apifyProxyGroups: ['RESIDENTIAL'],
+    },
+    resultsType: 'details',
+    resultsLimit: 1,
+    maxRequestRetries: 3,
+});
+
+export const fetchInstagramPostInfo = async (url: string) =>
+    apifyFetch<InstagramPostScrape>(instagramPostScraperEndpoint, {
+        method: 'post',
+        body: JSON.stringify(prepareInstagramPostScrapeParams(url)),
     });
