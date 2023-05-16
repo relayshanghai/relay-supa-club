@@ -42,6 +42,7 @@ export default function CampaignModalCard({
         try {
             await addCreatorToCampaign({
                 campaign_id: campaign.id,
+                status: 'to contact',
                 creator_id: creator.user_id,
                 avatar_url: creator.picture,
                 username: creator.username,
