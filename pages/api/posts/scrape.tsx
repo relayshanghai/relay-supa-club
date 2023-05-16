@@ -2,12 +2,14 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { fetchInstagramPostInfo, fetchYoutubeVideoInfo } from 'src/utils/api/apify';
 import { fetchTiktokVideoInfo } from 'src/utils/api/iqdata';
+import { checkSessionIdMatchesID } from 'src/utils/auth';
 import { serverLogger } from 'src/utils/logger-server';
 import type { CreatorPlatform } from 'types';
 
 export type PostScrapeGetQuery = {
     platform: CreatorPlatform;
     url: string;
+    profileId: string;
 };
 
 export type PostScrapeGetResponse = {
@@ -22,8 +24,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     try {
-        const { platform, url } = req.query as PostScrapeGetQuery;
-        if (!platform || !url) return res.status(400).json({ error: 'Invalid request' });
+        const { platform, url, profileId } = req.query as PostScrapeGetQuery;
+        if (!platform || !url || !profileId) return res.status(400).json({ error: 'Invalid request' });
+
+        const matchesSession = await checkSessionIdMatchesID(profileId, req, res);
+        if (!matchesSession) {
+            return res.status(httpCodes.UNAUTHORIZED).json({
+                error: 'user is unauthorized for this action',
+            });
+        }
 
         if (platform === 'youtube') {
             const raw = await fetchYoutubeVideoInfo(url);

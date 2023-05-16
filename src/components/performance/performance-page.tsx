@@ -7,7 +7,6 @@ import { ChatBubbleTextOutline } from '../icons';
 import SalesBarChart from './sales-bar-chart';
 import demoData from '../../mocks/demo.json';
 import { toCurrency, numFormatter } from 'src/utils/utils';
-import { nextFetchWithQueries } from 'src/utils/fetcher';
 export interface PerformanceData {
     company_id: string;
     company_name: string;
@@ -19,36 +18,6 @@ export interface PerformanceData {
 }
 
 const PerformancePage = () => {
-    useEffect(() => {
-        const getInstagramData = async () => {
-            const data = await nextFetchWithQueries('posts/scrape', {
-                platform: 'instagram',
-                url: 'https://www.instagram.com/p/Cr3aeZ7NXW3/',
-            });
-            // eslint-disable-next-line no-console
-            console.log({ data });
-        };
-        // const getYoutubeData = async () => {
-        //     const data = await nextFetchWithQueries('posts/scrape', {
-        //         platform: 'youtube',
-        //         url: 'https://www.youtube.com/watch?v=y3Umo_jd5AA',
-        //     });
-
-        //     // eslint-disable-next-line no-console
-        //     console.log({ data });
-        // };
-        // const getTikTokData = async () => {
-        //     const data = await nextFetchWithQueries('posts/scrape', {
-        //         platform: 'tiktok',
-        //         url: 'https://www.tiktok.com/@graceofearth/video/7230816093755936043?_r=1&_t=8c9DNKVO2Tm&social_sharing=v2',
-        //     });
-        //     // eslint-disable-next-line no-console
-        //     console.log({ data });
-        // };
-        // getTikTokData();
-        // getYoutubeData();
-        getInstagramData();
-    }, []);
     const { t } = useTranslation();
     const [performanceData, setPerformanceData] = useState<PerformanceData | null>(null);
     //a function to get the data, currently using a demo json file, in next iteration will be replaced with a fetch request to supabase db
