@@ -25,7 +25,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     try {
         const { platform, url, profileId } = req.query as PostScrapeGetQuery;
-        if (!platform || !url || !profileId) return res.status(400).json({ error: 'Invalid request' });
+        if (!platform || !url || !profileId)
+            return res
+                .status(400)
+                .json({ error: 'Invalid request. Body must contain "platform", "url" and "profileId" properties.' });
 
         const matchesSession = await checkSessionIdMatchesID(profileId, req, res);
         if (!matchesSession) {

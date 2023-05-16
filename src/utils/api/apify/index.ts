@@ -31,7 +31,7 @@ export const apifyFetch = async <T = any>(path: string, options: RequestInit = {
     return json as T;
 };
 
-const youtubeSraperEndpoint = 'acts/bernardo~youtube-scraper/run-sync-get-dataset-items';
+const youtubeScraperEndpoint = 'acts/bernardo~youtube-scraper/run-sync-get-dataset-items';
 
 /** url should be  a full youtube link like https://www.youtube.com/watch?v=y3Umo_jd5AA&feature=youtu.be */
 const prepareYoutubeScrapeParams = (url: string) => ({
@@ -41,7 +41,7 @@ const prepareYoutubeScrapeParams = (url: string) => ({
 });
 
 export const fetchYoutubeVideoInfo = async (url: string) =>
-    apifyFetch<YoutubeVideoScrapeRaw>(youtubeSraperEndpoint, {
+    apifyFetch<YoutubeVideoScrapeRaw>(youtubeScraperEndpoint, {
         method: 'post',
         body: JSON.stringify(prepareYoutubeScrapeParams(url)),
     });
