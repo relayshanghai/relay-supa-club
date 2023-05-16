@@ -163,6 +163,7 @@ const campaigns = {
                 contacted: 'Contacted',
                 inProgress: 'In Progress',
                 confirmed: 'Confirmed',
+                posted: 'Posted',
                 rejected: 'Rejected',
                 ignored: 'Ignored',
                 status: {

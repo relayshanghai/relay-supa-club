@@ -157,6 +157,7 @@ const campaigns = {
                 contacted: '已联系',
                 inProgress: '联系中',
                 confirmed: '已确认',
+                posted: '已发布',
                 rejected: '已拒绝',
                 ignored: '未回复',
                 status: {
