@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
-import { fetchInstagramPostInfo, fetchYoutubeVideoInfo } from 'src/utils/api/apify';
-import { fetchTiktokVideoInfo } from 'src/utils/api/iqdata';
+import { fetchInstagramPostInfo, fetchYoutubeVideoInfo as apifyFetchYoutubeVideoInfo } from 'src/utils/api/apify';
+import { fetchTiktokVideoInfo, fetchYoutubeVideoInfo } from 'src/utils/api/iqdata';
 import { checkSessionIdMatchesID } from 'src/utils/auth';
 import { serverLogger } from 'src/utils/logger-server';
 import type { CreatorPlatform } from 'types';
@@ -16,6 +16,61 @@ export type PostScrapeGetResponse = {
     likeCount?: number;
     commentCount?: number;
     viewCount?: number;
+};
+
+const getPostScrapedData = async (platform: CreatorPlatform, url: string): Promise<PostScrapeGetResponse> => {
+    if (platform === 'youtube') {
+        // try to get from iqdata, if it fails, use apify
+        try {
+            const raw = await fetchYoutubeVideoInfo(url);
+            if (!raw.success || !raw.video_info.likes) {
+                throw new Error('unable to fetch youtube video info');
+            }
+            const { likes, comments, views } = raw.video_info;
+            return {
+                likeCount: likes,
+                commentCount: comments,
+                viewCount: views,
+            };
+        } catch (error) {
+            serverLogger('error fetching youtube video info from iqdata, trying apify. url: ' + url, 'error');
+            serverLogger(error, 'error');
+        }
+
+        const raw = await apifyFetchYoutubeVideoInfo(url);
+        if (!raw[0]) {
+            throw new Error('unable to fetch youtube video info');
+        }
+        const { likes, commentsCount, viewCount } = raw[0];
+        return {
+            likeCount: likes,
+            commentCount: commentsCount,
+            viewCount: viewCount,
+        };
+    } else if (platform === 'tiktok') {
+        const raw = await fetchTiktokVideoInfo(url);
+        if (!raw.media.itemInfo.itemStruct.stats) {
+            throw new Error('unable to fetch tiktok video info');
+        }
+        const { diggCount, commentCount, playCount } = raw.media.itemInfo.itemStruct.stats;
+        return {
+            likeCount: diggCount,
+            commentCount,
+            viewCount: playCount,
+        };
+    } else if (platform === 'instagram') {
+        const raw = await fetchInstagramPostInfo(url);
+        if (!raw[0]) {
+            throw new Error('unable to fetch instagram post info');
+        }
+        const { likesCount, commentsCount, videoPlayCount } = raw[0];
+        return {
+            likeCount: likesCount,
+            commentCount: commentsCount,
+            viewCount: videoPlayCount,
+        };
+    }
+    throw new Error('Invalid platform');
 };
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -36,42 +91,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                 error: 'user is unauthorized for this action',
             });
         }
-
-        if (platform === 'youtube') {
-            const raw = await fetchYoutubeVideoInfo(url);
-            const stats = raw[0];
-            if (!stats) {
-                throw new Error('unable to fetch youtube video info');
-            }
-            const result: PostScrapeGetResponse = {
-                likeCount: stats.likes,
-                commentCount: stats.commentsCount,
-                viewCount: stats.viewCount,
-            };
-            return res.status(httpCodes.OK).json(result);
-        } else if (platform === 'tiktok') {
-            const raw = await fetchTiktokVideoInfo(url);
-            const stats = raw.media.itemInfo.itemStruct.stats;
-            const result: PostScrapeGetResponse = {
-                likeCount: stats.diggCount,
-                commentCount: stats.commentCount,
-                viewCount: stats.playCount,
-            };
-            return res.status(httpCodes.OK).json(result);
-        } else if (platform === 'instagram') {
-            const raw = await fetchInstagramPostInfo(url);
-            const stats = raw[0];
-            if (!stats) {
-                throw new Error('unable to fetch instagram post info');
-            }
-            const result: PostScrapeGetResponse = {
-                likeCount: stats.likesCount,
-                commentCount: stats.commentsCount,
-                viewCount: stats.videoPlayCount,
-            };
-            return res.status(httpCodes.OK).json(result);
-        }
-        return res.status(httpCodes.BAD_REQUEST).json({ error: 'Invalid platform' });
+        const result = await getPostScrapedData(platform, url);
+        return res.status(httpCodes.OK).json(result);
     } catch (error) {
         serverLogger(error);
         return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({ error });
