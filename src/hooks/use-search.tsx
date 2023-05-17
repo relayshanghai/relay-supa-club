@@ -75,7 +75,7 @@ export const SearchContext = createContext<ISearchContext>({
     setAudienceLocation: () => null,
     platform: 'youtube',
     setPlatform: () => null,
-    resultsPerPageLimit: 20,
+    resultsPerPageLimit: 10,
     setResultsPerPageLimit: () => null,
     usageExceeded: false,
     setUsageExceeded: () => null,
@@ -228,7 +228,7 @@ export const useSearchResults = (page: number) => {
 export const SearchProvider = ({ children }: PropsWithChildren) => {
     // this 'loading' triggers when any page is loading
     const [loading, setLoading] = useState(true);
-    const [resultsPerPageLimit, setResultsPerPageLimit] = useState(20);
+    const [resultsPerPageLimit, setResultsPerPageLimit] = useState(10);
     const [usageExceeded, setUsageExceeded] = useState(false);
     const [page, setPage] = useState(0);
 

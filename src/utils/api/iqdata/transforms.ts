@@ -63,7 +63,7 @@ export const prepareFetchCreatorsFiltered = ({
     lookalike = [],
     influencerLocation = [],
     audienceLocation = [],
-    resultsPerPageLimit = 20,
+    resultsPerPageLimit = 10,
     page = 0,
     username,
     audience,
