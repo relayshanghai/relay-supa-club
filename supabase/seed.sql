@@ -252,6 +252,25 @@ OR REPLACE FUNCTION create_campaign_creator(
     END;
 $$;
 
+CREATE
+OR REPLACE FUNCTION create_usage(
+  company_id UUID,
+  user_id UUID,
+  type TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+) RETURNS RECORD SECURITY DEFINER LANGUAGE plpgsql AS $$
+  DECLARE
+    _row RECORD;
+  BEGIN
+    INSERT INTO usages
+      (id, company_id, user_id, type, created_at)
+    VALUES
+      (uuid_generate_v4(), company_id,user_id, type, created_at)
+    RETURNING * INTO _row;
+    RETURN _row;
+  END;
+$$;
+
 -- seed data
 DO $$
 DECLARE
@@ -298,6 +317,15 @@ BEGIN
       'UCB_CCSAGP_YCuR36_w2bG1w',
       'Greg Renko'
     );
+    
+    -- 1 new, 2 old
+    PERFORM create_usage(_company_test.id, _profile_william.id, 'search');
+    PERFORM create_usage(_company_test.id, _profile_william.id, 'search', '2023-01-02 00:00:00.000000+00');
+    PERFORM create_usage(_company_test.id, _profile_william.id, 'search', '2023-01-01 00:00:00.000000+00');
+    -- 1 old, 2 new
+    PERFORM create_usage(_company_test.id, _profile_william.id, 'profile',);
+    PERFORM create_usage(_company_test.id, _profile_william.id, 'profile',);
+    PERFORM create_usage(_company_test.id, _profile_william.id, 'profile', '2023-01-01 00:00:00.000000+00');
 
   -- Relay Club
     _company_relay := create_company('Relay Club', 'https://relay.club', 'active');
