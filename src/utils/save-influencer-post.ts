@@ -1,4 +1,6 @@
+import type { SupabaseClient } from '@supabase/supabase-js';
 import { insertInfluencerPost } from './api/db/calls/influencer-post';
+import type { DatabaseWithCustomTypes } from 'types';
 
 export type SaveInfluencerPostData = {
     type: string;
@@ -17,8 +19,9 @@ export const extractPlatformFromURL = (url: string): string | null => {
     }
 };
 
-export const saveInfluencerPost = async (data: SaveInfluencerPostData) => {
-    const platform = extractPlatformFromURL(data.url) || '';
+export const saveInfluencerPost =
+    (db: SupabaseClient<DatabaseWithCustomTypes>) => async (data: SaveInfluencerPostData) => {
+        const platform = extractPlatformFromURL(data.url) || '';
 
-    return await insertInfluencerPost()({ ...data, platform });
-};
+        return await insertInfluencerPost(db)({ ...data, platform });
+    };
