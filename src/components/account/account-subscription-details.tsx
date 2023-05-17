@@ -7,17 +7,38 @@ import { useUsages } from 'src/hooks/use-usages';
 import { useUser } from 'src/hooks/use-user';
 import { buildSubscriptionPortalUrl } from 'src/utils/api/stripe/portal';
 import { clientLogger } from 'src/utils/logger-client';
-import type { SimpleUsage } from 'src/utils/usagesHelpers';
-import { getCurrentMonthPeriod, getPeriodUsages } from 'src/utils/usagesHelpers';
+import { getCurrentMonthPeriod } from 'src/utils/usagesHelpers';
 import { unixEpochToISOString } from 'src/utils/utils';
 
 import { Button } from '../button';
 import { Spinner } from '../icons';
 import { CancelSubscriptionModal } from './modal-cancel-subscription';
+import type { CompanyDB } from 'src/utils/api/db';
+
+const checkStripeAndDatabaseMatch = (
+    company?: CompanyDB,
+    thisMonthStartDate?: Date | null,
+    thisMonthEndDate?: Date | null,
+) => {
+    // company?.subscription_current_period_start and end are updated when we detect current period has ended (in utils/api/db/usages), we query stripe and update the company
+    if (company?.subscription_current_period_start && thisMonthStartDate && thisMonthEndDate) {
+        // a debug, just to warn a developer if these aren't matching, maybe there is something wrong with the data
+        const { thisMonthStartDate: companyThisMonthStartDate, thisMonthEndDate: companyThisMonthEndDate } =
+            getCurrentMonthPeriod(new Date(company?.subscription_current_period_start));
+        if (
+            companyThisMonthStartDate.toISOString() !== thisMonthStartDate.toISOString() ||
+            companyThisMonthEndDate.toISOString() !== thisMonthEndDate.toISOString()
+        ) {
+            clientLogger(
+                `Company subscription this month period start/end does not match subscription this month period start/end. companyPeriodStart ${companyThisMonthStartDate.toISOString()} periodStart ${thisMonthStartDate.toISOString()}companyPeriodEnd ${companyThisMonthEndDate.toISOString()} periodEnd ${thisMonthEndDate.toISOString()}`,
+                'warn',
+            );
+        }
+    }
+};
 
 export const SubscriptionDetails = () => {
     const { subscription } = useSubscription();
-    const { usages } = useUsages();
     const { company } = useCompany();
     const { loading: userDataLoading } = useUser();
     const { t, i18n } = useTranslation();
@@ -26,39 +47,27 @@ export const SubscriptionDetails = () => {
     const handleCancelSubscription = async () => setShowCancelModal(true);
 
     // these we get from stripe directly
+    // This is just the billing period, not the monthly 'usage' period
     const periodStart = unixEpochToISOString(subscription?.current_period_start);
     const periodEnd = unixEpochToISOString(subscription?.current_period_end);
 
-    // these are updated when we detect current period has ended (in utils/api/db/usages), we query stripe and update the company
-    const companyPeriodStart = company?.subscription_current_period_start
-        ? new Date(company?.subscription_current_period_start).toISOString()
-        : null;
-    const companyPeriodEnd = company?.subscription_current_period_end
-        ? new Date(company?.subscription_current_period_end).toISOString()
-        : null;
-    if (companyPeriodStart && companyPeriodEnd && periodEnd && periodStart) {
-        // a debug, just to warn a developer if these aren't matching, maybe there is something wrong with the data
-        if (companyPeriodStart !== periodStart || companyPeriodEnd !== periodEnd) {
-            clientLogger(
-                `Company subscription period start/end does not match subscription period start/end. companyPeriodStart ${companyPeriodStart} periodStart ${periodStart}companyPeriodEnd ${companyPeriodEnd} periodEnd ${periodEnd}`,
-                'warn',
-            );
-        }
-    }
+    const currentMonth = periodStart
+        ? getCurrentMonthPeriod(new Date(periodStart))
+        : { thisMonthStartDate: undefined, thisMonthEndDate: undefined };
 
-    const profileViewUsages = usages?.filter(({ type }) => type === 'profile');
-    const searchUsages = usages?.filter(({ type }) => type === 'search');
-    const aiEmailUsages = usages?.filter(({ type }) => type === 'ai_email');
+    const thisMonthStartDate = currentMonth.thisMonthStartDate;
+    const thisMonthEndDate = currentMonth.thisMonthEndDate;
 
-    let usagesThisMonth: SimpleUsage[] = [];
-    if (usages && periodStart && periodEnd) {
-        const { thisMonthStartDate, thisMonthEndDate } = getCurrentMonthPeriod(new Date(periodStart));
-        usagesThisMonth = getPeriodUsages(usages, thisMonthStartDate, thisMonthEndDate);
-    }
+    const { usages: currentMonthUsages } = useUsages(
+        true,
+        thisMonthStartDate ? thisMonthStartDate.toISOString() : undefined,
+        thisMonthEndDate ? thisMonthEndDate.toISOString() : undefined,
+    );
+    checkStripeAndDatabaseMatch(company, thisMonthStartDate, thisMonthEndDate);
 
-    const profileViewUsagesThisPeriod = usagesThisMonth?.filter(({ type }) => type === 'profile');
-    const searchUsagesThisPeriod = usagesThisMonth?.filter(({ type }) => type === 'search');
-    const aiEmailUsagesThisPeriod = usagesThisMonth?.filter(({ type }) => type === 'ai_email');
+    const profileViewUsagesThisMonth = currentMonthUsages?.filter(({ type }) => type === 'profile');
+    const searchUsagesThisMonth = currentMonthUsages?.filter(({ type }) => type === 'search');
+    const aiEmailUsagesThisMonth = currentMonthUsages?.filter(({ type }) => type === 'ai_email');
 
     return (
         <div className="flex w-full flex-col items-start space-y-4 rounded-lg bg-white p-4 shadow-lg shadow-gray-200 lg:max-w-2xl">
@@ -73,7 +82,7 @@ export const SubscriptionDetails = () => {
                     )}
                 </div>
             </div>
-            {company && searchUsages && profileViewUsages && aiEmailUsages ? (
+            {company && profileViewUsagesThisMonth ? (
                 <>
                     <div className={`flex flex-row space-x-4 ${userDataLoading ? 'opacity-50' : ''}`}>
                         <div className="flex flex-col space-y-2 ">
@@ -116,10 +125,7 @@ export const SubscriptionDetails = () => {
                                             {t('account.subscription.usageLimits')}
                                         </th>
                                         <th className="px-4 text-right font-medium">
-                                            {t('account.subscription.used')}
-                                        </th>
-                                        <th className="px-4 text-right font-medium">
-                                            {t('account.subscription.usedThisPeriod')}
+                                            {t('account.subscription.usedThisMonth')}
                                         </th>
                                         <th className="px-4 text-right font-medium">
                                             {t('account.subscription.monthlyLimit')}
@@ -131,9 +137,8 @@ export const SubscriptionDetails = () => {
                                         <td className="border px-4 py-2">
                                             {t('account.subscription.profilesUnlocked')}
                                         </td>
-                                        <td className="border px-4 py-2 text-right">{profileViewUsages.length}</td>
                                         <td className="border px-4 py-2 text-right">
-                                            {profileViewUsagesThisPeriod.length}
+                                            {profileViewUsagesThisMonth?.length}
                                         </td>
                                         <td className="border px-4 py-2 text-right">
                                             {company.subscription_status === 'trial'
@@ -143,8 +148,7 @@ export const SubscriptionDetails = () => {
                                     </tr>
                                     <tr>
                                         <td className="border px-4 py-2">{t('account.subscription.searches')}</td>
-                                        <td className="border px-4 py-2 text-right">{searchUsages.length}</td>
-                                        <td className="border px-4 py-2 text-right">{searchUsagesThisPeriod.length}</td>
+                                        <td className="border px-4 py-2 text-right">{searchUsagesThisMonth?.length}</td>
                                         <td className="border px-4 py-2 text-right">
                                             {company.subscription_status === 'trial'
                                                 ? company.trial_searches_limit
@@ -155,9 +159,8 @@ export const SubscriptionDetails = () => {
                                         <td className="border px-4 py-2">
                                             {t('account.subscription.aiEmailGeneration')}
                                         </td>
-                                        <td className="border px-4 py-2 text-right">{aiEmailUsages.length}</td>
                                         <td className="border px-4 py-2 text-right">
-                                            {aiEmailUsagesThisPeriod.length}
+                                            {aiEmailUsagesThisMonth?.length}
                                         </td>
                                         <td className="border px-4 py-2 text-right">
                                             {company.subscription_status === 'trial'

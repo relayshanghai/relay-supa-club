@@ -84,8 +84,8 @@ const recordUsage = async ({
         .select('item_id')
         .eq('company_id', company_id)
         .eq('type', type)
-        .gte('created_at', thisMonthStartDate)
-        .lt('created_at', thisMonthEndDate);
+        .gte('created_at', thisMonthStartDate.toISOString())
+        .lt('created_at', thisMonthEndDate.toISOString());
 
     // We only charge once per creator, not report
     if (type === 'profile' && creator_id) {
@@ -218,8 +218,21 @@ export const recordAiEmailGeneratorUsage = async (company_id: string, user_id: s
     });
 };
 
-export const getUsagesByCompany = async (companyId: string) => {
-    const { data, error } = await supabase.from('usages').select('type, created_at').eq('company_id', companyId);
+export const getUsagesByCompany = async (companyId: string, startDate?: string, endDate?: string) => {
+    if (!startDate || !endDate) {
+        const { data, error } = await supabase.from('usages').select('type, created_at').eq('company_id', companyId);
+        if (error) {
+            throw new Error(error.message);
+        }
+        return data;
+    }
+
+    const { data, error } = await supabase
+        .from('usages')
+        .select('type, created_at')
+        .eq('company_id', companyId)
+        .gte('created_at', startDate)
+        .lte('created_at', endDate);
     if (error) {
         throw new Error(error.message);
     }
