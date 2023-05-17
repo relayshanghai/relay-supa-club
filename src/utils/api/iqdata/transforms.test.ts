@@ -15,7 +15,7 @@ describe('prepareFetchCreatorsFiltered', () => {
     it('generates the correct search request body', () => {
         const { body } = prepareFetchCreatorsFiltered(defaultOptions);
         expect(body).toEqual({
-            paging: { limit: 10, skip: undefined },
+            paging: { limit: 20, skip: undefined },
             filter: {
                 relevance: { value: '' },
                 actions: [
