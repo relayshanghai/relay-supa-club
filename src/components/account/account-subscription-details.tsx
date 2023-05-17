@@ -7,7 +7,8 @@ import { useUsages } from 'src/hooks/use-usages';
 import { useUser } from 'src/hooks/use-user';
 import { buildSubscriptionPortalUrl } from 'src/utils/api/stripe/portal';
 import { clientLogger } from 'src/utils/logger-client';
-import { getCurrentPeriodUsages } from 'src/utils/usagesHelpers';
+import type { SimpleUsage } from 'src/utils/usagesHelpers';
+import { getCurrentMonthPeriod, getPeriodUsages } from 'src/utils/usagesHelpers';
 import { unixEpochToISOString } from 'src/utils/utils';
 
 import { Button } from '../button';
@@ -49,14 +50,15 @@ export const SubscriptionDetails = () => {
     const searchUsages = usages?.filter(({ type }) => type === 'search');
     const aiEmailUsages = usages?.filter(({ type }) => type === 'ai_email');
 
-    const usagesThisPeriod =
-        usages && periodStart && periodEnd
-            ? getCurrentPeriodUsages(usages, new Date(periodStart), new Date(periodEnd))
-            : [];
+    let usagesThisMonth: SimpleUsage[] = [];
+    if (usages && periodStart && periodEnd) {
+        const { thisMonthStartDate, thisMonthEndDate } = getCurrentMonthPeriod(new Date(periodStart));
+        usagesThisMonth = getPeriodUsages(usages, thisMonthStartDate, thisMonthEndDate);
+    }
 
-    const profileViewUsagesThisPeriod = usagesThisPeriod?.filter(({ type }) => type === 'profile');
-    const searchUsagesThisPeriod = usagesThisPeriod?.filter(({ type }) => type === 'search');
-    const aiEmailUsagesThisPeriod = usagesThisPeriod?.filter(({ type }) => type === 'ai_email');
+    const profileViewUsagesThisPeriod = usagesThisMonth?.filter(({ type }) => type === 'profile');
+    const searchUsagesThisPeriod = usagesThisMonth?.filter(({ type }) => type === 'search');
+    const aiEmailUsagesThisPeriod = usagesThisMonth?.filter(({ type }) => type === 'ai_email');
 
     return (
         <div className="flex w-full flex-col items-start space-y-4 rounded-lg bg-white p-4 shadow-lg shadow-gray-200 lg:max-w-2xl">

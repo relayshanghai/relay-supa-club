@@ -6,6 +6,7 @@ import type { UsageType } from 'types';
 import { getSubscription } from '../../stripe/helpers';
 import type { UsagesDBInsert } from '../types';
 import { updateCompanySubscriptionStatus } from './company';
+import { getCurrentMonthPeriod } from 'src/utils/usagesHelpers';
 
 const handleCurrentPeriodExpired = async (companyId: string) => {
     const subscription = await getSubscription(companyId);
@@ -65,8 +66,7 @@ const recordUsage = async ({
 
     const now = new Date();
 
-    let startDateToUse = startDate.toISOString();
-    let endDateToUse = endDate.toISOString();
+    let subscriptionStartDate = startDate.toISOString();
 
     // if end date is in the past, we need to query stripe for latest subscription info and update the subscription current period end date
     if (endDate < now) {
@@ -74,17 +74,18 @@ const recordUsage = async ({
         if (result.error || !result.subscription_current_period_start || !result.subscription_current_period_end) {
             return { error: result.error };
         }
-        startDateToUse = result.subscription_current_period_start;
-        endDateToUse = result.subscription_current_period_end;
+        subscriptionStartDate = result.subscription_current_period_start;
     }
+
+    const { thisMonthStartDate, thisMonthEndDate } = getCurrentMonthPeriod(new Date(subscriptionStartDate));
 
     const { data: usagesData, error: usagesError } = await supabase
         .from('usages')
         .select('item_id')
         .eq('company_id', company_id)
         .eq('type', type)
-        .gte('created_at', startDateToUse)
-        .lt('created_at', endDateToUse);
+        .gte('created_at', thisMonthStartDate)
+        .lt('created_at', thisMonthEndDate);
 
     // We only charge once per creator, not report
     if (type === 'profile' && creator_id) {
