@@ -60,6 +60,7 @@ export default function CommentInput({ currentCreator }: { currentCreator: Campa
                     onKeyDown={(e) => enterComment(e)}
                 />
                 <button
+                    data-testid="submit-comment-button"
                     className="group ml-2 cursor-pointer appearance-none rounded-md  border border-gray-200 bg-gray-50 p-2 text-center text-gray-600 outline-none duration-300 hover:bg-gray-100"
                     onClick={() => handleComment(comment)}
                 >
