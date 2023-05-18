@@ -38,7 +38,7 @@ const account = {
         paymentCycle: '付款周期',
         usageLimits: '使用限制',
         used: '已使用',
-        usedThisPeriod: '本期已使用',
+        usedThisMonth: '本月已使用',
         monthlyLimit: '每月限制',
         profilesUnlocked: '解锁的KOL资料',
         searches: 'KOL搜索',
