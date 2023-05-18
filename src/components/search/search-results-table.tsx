@@ -1,18 +1,17 @@
 import Link from 'next/link';
-import type { CampaignWithCompanyCreators } from 'src/utils/client-db/campaigns';
 import { useTranslation } from 'react-i18next';
 import { useSearch } from 'src/hooks/use-search';
 import type { CreatorSearchAccountObject } from 'types';
 import { Button } from '../button';
 import { SkeletonSearchResultRow } from '../common/skeleton-search-result-row';
 import { SearchResultRow } from './search-result-row';
+import type { CampaignCreatorBasicInfo } from 'src/utils/client-db/campaignCreators';
 
 export interface SearchResultsTableProps {
     setShowCampaignListModal: (show: boolean) => void;
     setSelectedCreator: (creator: CreatorSearchAccountObject) => void;
     setShowAlreadyAddedModal: (show: boolean) => void;
-    campaigns?: CampaignWithCompanyCreators[];
-    setCampaignsWithCreator: (campaigns: string[]) => void;
+    allCampaignCreators?: CampaignCreatorBasicInfo[];
     results?: CreatorSearchAccountObject[];
     loading: boolean;
     validating: boolean;
@@ -24,8 +23,7 @@ export const SearchResultsTable = ({
     setShowCampaignListModal,
     setSelectedCreator,
     setShowAlreadyAddedModal,
-    campaigns,
-    setCampaignsWithCreator,
+    allCampaignCreators,
     results,
     loading: firstPageLoading,
     validating,
@@ -86,8 +84,7 @@ export const SearchResultsTable = ({
                                     setShowCampaignListModal={setShowCampaignListModal}
                                     setSelectedCreator={setSelectedCreator}
                                     setShowAlreadyAddedModal={setShowAlreadyAddedModal}
-                                    campaigns={campaigns}
-                                    setCampaignsWithCreator={setCampaignsWithCreator}
+                                    allCampaignCreators={allCampaignCreators}
                                 />
                             ))}
                             {moreResults}

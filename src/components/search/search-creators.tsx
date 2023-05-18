@@ -4,12 +4,16 @@ import { useTranslation } from 'react-i18next';
 import type { CreatorPlatform } from 'types';
 import type { ChangeEvent } from 'react';
 import { debounce } from 'src/utils/debounce';
+import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { Spinner } from '../icons';
 
 export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
     const [searchTerm, setSearchTerm] = useState<string | ''>();
+    const [spinnerLoading, setSpinnerLoading] = useState(false);
     const { t } = useTranslation();
 
     const { setPlatform, setUsername } = useSearch();
+    const { trackEvent } = useRudderstack();
 
     // Disabling the exhaustive-deps rule because we need to use the debounce function and we already know the required dependencies.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -17,12 +21,15 @@ export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
         debounce((term: any) => {
             setPlatform(platform);
             setUsername(term);
+            trackEvent('Search Options, search for an influencer', { influencer: term, platform });
+            setSpinnerLoading(false);
         }),
         [platform],
     );
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(e.target.value.trim());
+        setSpinnerLoading(true);
 
         if (e.target.value.trim() === '') {
             setUsername('');
@@ -41,6 +48,7 @@ export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
                 value={searchTerm}
                 onChange={handleChange}
             />
+            {spinnerLoading && <Spinner className="absolute right-2 top-3 h-5 w-5 fill-primary-600 text-white" />}
         </div>
     );
 };

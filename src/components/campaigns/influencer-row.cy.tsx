@@ -114,7 +114,7 @@ describe('<InfluencerRow />', () => {
         cy.contains('To Contact');
         cy.contains('Notes');
     });
-    it.only('only shows creator contact info after clicking a "View Contact Info" button', () => {
+    it('only shows creator contact info after clicking a "View Contact Info" button', () => {
         const props: InfluencerRowProps = {
             index: 1,
             ...makeStubs(),

@@ -1,5 +1,4 @@
-import { FEAT_RECOMMENDED } from 'src/constants/feature-flags';
-import { recommendedInfluencers } from 'src/constants/recommendedInfluencers';
+import { featRecommended } from 'src/constants/feature-flags';
 import { clientLogger } from 'src/utils/logger-client';
 import type { CreatorPlatform, CreatorAccount, LocationWeighted } from 'types';
 import type { GenderAllCode, InfluencerSearchRequestBody } from 'types/iqdata/influencer-search-request-body';
@@ -21,6 +20,7 @@ export interface FetchCreatorsFilteredParams {
     lastPost?: string;
     contactInfo?: string;
     only_recommended?: boolean;
+    recommendedInfluencers?: string[];
 }
 
 const locationTransform = ({ id, weight }: { id: string; weight: number | string }) => ({
@@ -73,6 +73,7 @@ export const prepareFetchCreatorsFiltered = ({
     lastPost,
     contactInfo,
     only_recommended,
+    recommendedInfluencers,
 }: FetchCreatorsFilteredParams): {
     platform: CreatorPlatform;
     body: InfluencerSearchRequestBody;
@@ -122,7 +123,8 @@ export const prepareFetchCreatorsFiltered = ({
     if (engagement && Number(engagement) >= 0 && Number(engagement / 100)) {
         body.filter.engagement_rate = { value: Number((engagement / 100).toFixed(2)), operator: 'gte' };
     }
-    if (only_recommended && FEAT_RECOMMENDED) {
+
+    if (only_recommended && recommendedInfluencers && featRecommended()) {
         body.filter.filter_ids = isRecommendedTransform(platform, recommendedInfluencers);
     }
 

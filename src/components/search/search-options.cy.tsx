@@ -1,28 +1,50 @@
 /// <reference types="@testing-library/cypress" />
 // @ts-check
+import { clientRoleAtom } from 'src/atoms/client-role-atom';
 import { worker } from '../../mocks/browser';
-import { testMount } from '../../utils/cypress-app-wrapper';
+import type { InitialValues } from '../../utils/cypress-app-wrapper';
+import { TestProvider, testMount } from '../../utils/cypress-app-wrapper';
 import { SearchPage } from './search-page';
 
-const companyId = 'ad942d94-41bb-441a-a4e6-66169854b865';
+const initialValues: InitialValues = [
+    [
+        clientRoleAtom,
+        {
+            company_name: 'Test Company Name',
+            company_id: 'ad942d94-41bb-441a-a4e6-66169854b865',
+        },
+    ],
+];
 
 describe('SearchOptions', () => {
     before(() => {
         worker.start();
     });
     it('Should render search page', () => {
-        testMount(<SearchPage companyId={companyId} />);
+        testMount(
+            <TestProvider initialValues={initialValues}>
+                <SearchPage />
+            </TestProvider>,
+        );
 
         cy.contains('Results per page');
     });
 
     it('Should show top default influencers', () => {
-        testMount(<SearchPage companyId={companyId} />);
+        testMount(
+            <TestProvider initialValues={initialValues}>
+                <SearchPage />
+            </TestProvider>,
+        );
         cy.get('[href="/influencer/youtube/UCq-Fj5jknLsUf-MWSy4_brA"]').should('exist');
     });
 
     it('should be empty when we remove topic tags', () => {
-        testMount(<SearchPage companyId={companyId} />);
+        testMount(
+            <TestProvider initialValues={initialValues}>
+                <SearchPage />
+            </TestProvider>,
+        );
 
         cy.findByTestId('search-topics').within(() => {
             cy.get('input').type('alligators');
@@ -41,7 +63,11 @@ describe('SearchOptions', () => {
     });
 
     it('Should remove and edit the topic tags when pressing backspace', () => {
-        testMount(<SearchPage companyId={companyId} />);
+        testMount(
+            <TestProvider initialValues={initialValues}>
+                <SearchPage />
+            </TestProvider>,
+        );
 
         cy.findByTestId('search-topics').within(() => {
             cy.get('input').type('alligators');

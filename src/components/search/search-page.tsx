@@ -15,8 +15,11 @@ import { MaintenanceMessage } from '../maintenance-message';
 import { useCampaigns } from 'src/hooks/use-campaigns';
 import { InfluencerAlreadyAddedModal } from '../influencer-already-added';
 import { MoreResultsRows } from './search-result-row';
+import ClientRoleWarning from './client-role-warning';
 import { useAtomValue } from 'jotai';
 import { clientRoleAtom } from 'src/atoms/client-role-atom';
+import { useAllCampaignCreators } from 'src/hooks/use-all-campaign-creators';
+import { useRudderstack } from 'src/hooks/use-rudderstack';
 
 export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
     const { t } = useTranslation();
@@ -25,19 +28,17 @@ export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
     const [showCampaignListModal, setShowCampaignListModal] = useState(false);
     const [selectedCreator, setSelectedCreator] = useState<CreatorSearchAccountObject | null>(null);
     const { campaigns } = useCampaigns({ companyId });
+    const { allCampaignCreators } = useAllCampaignCreators(campaigns);
+    const { trackEvent } = useRudderstack();
 
     const [page, setPage] = useState(0);
     const { results: firstPageSearchResults, resultsTotal, noResults, error, isValidating } = useSearchResults(0);
 
     const [showAlreadyAddedModal, setShowAlreadyAddedModal] = useState(false);
-    const [campaignsWithCreator, setCampaignsWithCreator] = useState<string[]>([]);
-    const clientRoleData = useAtomValue(clientRoleAtom);
 
     return (
         <div className="space-y-4">
-            {companyId && (
-                <div className="absolute right-36 top-5 z-50 animate-bounce rounded-md bg-red-400 p-2 text-white">{`You are acting on behalf of company: ${clientRoleData.companyName}`}</div>
-            )}
+            <ClientRoleWarning />
             <SelectPlatform />
 
             <SearchOptions setPage={setPage} setShowFiltersModal={setShowFiltersModal} />
@@ -50,8 +51,7 @@ export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
                 setSelectedCreator={setSelectedCreator}
                 setShowCampaignListModal={setShowCampaignListModal}
                 setShowAlreadyAddedModal={setShowAlreadyAddedModal}
-                campaigns={campaigns}
-                setCampaignsWithCreator={setCampaignsWithCreator}
+                allCampaignCreators={allCampaignCreators}
                 loading={loading}
                 validating={isValidating}
                 results={firstPageSearchResults}
@@ -65,15 +65,23 @@ export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
                                 setSelectedCreator={setSelectedCreator}
                                 setShowCampaignListModal={setShowCampaignListModal}
                                 setShowAlreadyAddedModal={setShowAlreadyAddedModal}
-                                campaigns={campaigns}
-                                setCampaignsWithCreator={setCampaignsWithCreator}
+                                allCampaignCreators={allCampaignCreators}
                             />
                         ))}
                     </>
                 }
             />
 
-            {!noResults && <Button onClick={async () => setPage(page + 1)}>{t('creators.loadMore')}</Button>}
+            {!noResults && (
+                <Button
+                    onClick={async () => {
+                        setPage(page + 1);
+                        trackEvent('Search Result, load more');
+                    }}
+                >
+                    {t('creators.loadMore')}
+                </Button>
+            )}
 
             <AddToCampaignModal
                 show={showCampaignListModal}
@@ -83,13 +91,16 @@ export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
                     ...selectedCreator?.account.user_profile,
                 }}
                 campaigns={campaigns}
+                allCampaignCreators={allCampaignCreators}
             />
 
             <InfluencerAlreadyAddedModal
                 show={showAlreadyAddedModal}
                 setCampaignListModal={setShowCampaignListModal}
                 setShow={setShowAlreadyAddedModal}
-                campaignsWithCreator={campaignsWithCreator}
+                selectedCreator={selectedCreator}
+                campaigns={campaigns}
+                allCampaignCreators={allCampaignCreators}
             />
 
             <SearchFiltersModal show={filterModalOpen} setShow={setShowFiltersModal} />
@@ -97,7 +108,9 @@ export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
     );
 };
 
-export const SearchPage = ({ companyId }: { companyId?: string }) => {
+export const SearchPage = () => {
+    const { companyId } = useAtomValue(clientRoleAtom);
+
     return (
         <Layout>
             {IQDATA_MAINTENANCE ? (
@@ -105,7 +118,7 @@ export const SearchPage = ({ companyId }: { companyId?: string }) => {
             ) : (
                 <div className="flex flex-col p-6">
                     <SearchProvider>
-                        <SearchPageInner companyId={companyId} />
+                        <SearchPageInner companyId={companyId !== '' ? companyId : undefined} />
                     </SearchProvider>
                 </div>
             )}

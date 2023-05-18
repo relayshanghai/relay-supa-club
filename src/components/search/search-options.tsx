@@ -5,9 +5,12 @@ import { useSearch } from 'src/hooks/use-search';
 import { numberFormatter } from 'src/utils/formatter';
 import { Button } from '../button';
 import { SearchCreators } from './search-creators';
-import { SearchTopics } from './search-topics';
+import SearchTopics from './search-topics';
 import { Switch, Tooltip } from '../library';
-import { FEAT_RECOMMENDED } from 'src/constants/feature-flags';
+import { featRecommended } from 'src/constants/feature-flags';
+import { SearchLocations } from './search-locations';
+import LocationTag from './location-tag';
+import { useRudderstack } from 'src/hooks/use-rudderstack';
 
 const resultsPerPageOptions = [10, 20, 50, 100];
 
@@ -47,11 +50,13 @@ export const SearchOptions = ({
         setResultsPerPageLimit,
         onlyRecommended,
         setOnlyRecommended,
+        recommendedInfluencers,
     } = useSearch();
 
     const { t } = useTranslation();
     const hasSetViews = views[0] || views[1];
     const hasSetAudience = audience[0] || audience[1];
+    const { trackEvent } = useRudderstack();
 
     return (
         <>
@@ -62,7 +67,7 @@ export const SearchOptions = ({
                         placeholder={t('creators.searchTopic')}
                         topics={tags}
                         platform={platform}
-                        onSetTopics={(topics: any) => {
+                        onSetTopics={(topics) => {
                             setTopicTags(topics);
                         }}
                     />
@@ -72,66 +77,37 @@ export const SearchOptions = ({
                 </div>
             </div>
             <div className="flex flex-col items-start space-y-2 md:flex-row md:space-x-4 md:space-y-0">
-                <SearchTopics
+                <SearchLocations
                     path="influencer-search/locations"
                     placeholder={t('creators.filter.locationPlaceholder')}
-                    topics={influencerLocation}
+                    locations={influencerLocation}
                     platform={platform}
                     filter={filterCountry}
-                    onSetTopics={(topics: any) => {
+                    onSetLocations={(topics) => {
                         setInfluencerLocation(topics);
+                        trackEvent('Search Options, search influencer location', { location: topics });
                     }}
                 />
-                <SearchTopics
+                <SearchLocations
                     path="influencer-search/locations"
                     placeholder={t('creators.filter.audienceLocation')}
-                    topics={audienceLocation}
+                    locations={audienceLocation}
                     platform={platform}
                     filter={filterCountry}
-                    onSetTopics={(topics: any) => {
-                        setAudienceLocation(topics.map((item: any) => ({ weight: 5, ...item })));
+                    onSetLocations={(topics) => {
+                        setAudienceLocation(topics.map((item) => ({ ...item, weight: 5 })));
+                        trackEvent('Search Options, search audience location', { location: topics });
                     }}
-                    TagComponent={({ onClick, ...item }: any) => {
-                        const selected = audienceLocation.find((country) => country.id === item.id);
-                        if (!selected) return null;
-                        return (
-                            <div
-                                className="flex cursor-pointer flex-row items-center whitespace-nowrap rounded bg-gray-100 pl-2 pr-1 text-gray-900 hover:bg-gray-200"
-                                key={item.id}
-                                onClick={onClick}
-                            >
-                                {item.value || item.title}
-                                <select
-                                    value={selected.weight}
-                                    className="ml-2 rounded-md bg-primary-200"
-                                    onClick={(e: any) => {
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                    }}
-                                    onChange={(e: any) => {
-                                        const clone = audienceLocation.slice();
-                                        const index = audienceLocation.indexOf(selected);
-
-                                        if (index !== -1) {
-                                            clone[index] = { ...selected, weight: e.target.value };
-                                            setAudienceLocation(clone);
-                                        }
-                                    }}
-                                >
-                                    {Array.from(Array(11)).map((_, i) => {
-                                        const val = i === 0 ? 1 : i * 5;
-                                        return <option value={val} key={val}>{`>${val}%`}</option>;
-                                    })}
-                                </select>
-                            </div>
-                        );
-                    }}
+                    TagComponent={LocationTag}
                 />
             </div>
             <div>
                 <div className="flex flex-row items-center">
                     <button
-                        onClick={() => setShowFiltersModal(true)}
+                        onClick={() => {
+                            setShowFiltersModal(true);
+                            trackEvent('Search Filters Modal, open modal');
+                        }}
                         className={`group flex flex-row items-center rounded-md border border-transparent bg-white px-2 py-1 text-gray-900 shadow ring-1 ring-gray-900 ring-opacity-5 focus:border-primary-500 focus:outline-none focus:ring-primary-500 sm:text-sm`}
                     >
                         <AdjustmentsVerticalIcon
@@ -166,6 +142,9 @@ export const SearchOptions = ({
                         onChange={(e) => {
                             setPage(0);
                             setResultsPerPageLimit(Number(e.target.value));
+                            trackEvent('Search Filters Modal, change search results per page', {
+                                resultsPerPage: e.target.value,
+                            });
                         }}
                     >
                         {resultsPerPageOptions.map((option) => (
@@ -174,7 +153,7 @@ export const SearchOptions = ({
                             </option>
                         ))}
                     </select>
-                    <p className="mr-2 ml-1 text-sm text-gray-500">{t('creators.resultsPerPage')}</p>
+                    <p className="ml-1 mr-2 text-sm text-gray-500">{t('creators.resultsPerPage')}</p>
                     {hasSetViews || hasSetAudience || gender || engagement || lastPost ? (
                         <Button
                             onClick={(e: any) => {
@@ -185,13 +164,14 @@ export const SearchOptions = ({
                                 setEngagement(undefined);
                                 setLastPost(undefined);
                                 setContactInfo(undefined);
+                                trackEvent('Search Filters Modal, clear search filters');
                             }}
                             variant="secondary"
                         >
                             {t('creators.clearFilter')}
                         </Button>
                     ) : null}
-                    {FEAT_RECOMMENDED && (
+                    {featRecommended() && (
                         <div className="ml-auto">
                             <Tooltip
                                 content={t('creators.recommendedTooltip')}
@@ -199,6 +179,7 @@ export const SearchOptions = ({
                                 className="flex flex-wrap items-center"
                             >
                                 <Switch
+                                    disabled={!recommendedInfluencers || recommendedInfluencers.length === 0}
                                     data-testid="recommended-toggle"
                                     checked={onlyRecommended}
                                     onChange={(e) => {

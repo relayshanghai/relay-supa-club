@@ -1,5 +1,6 @@
 import { defineConfig } from 'cypress';
 import dotenv from 'dotenv';
+
 dotenv.config({ path: '.env.local' });
 
 export default defineConfig({
@@ -8,15 +9,17 @@ export default defineConfig({
         setupNodeEvents(_on, config) {
             // implement node event listeners here
             config.env = {
-                TEST_USER_EMAIL: process.env.TEST_USER_EMAIL,
-                TEST_USER_PASSWORD: process.env.TEST_USER_PASSWORD,
-                NEXT_PUBLIC_APP_URL: 'http://localhost:3000',
+                TEST_USER_EMAIL_COMPANY_OWNER: 'william.edward.douglas@blue-moonlight-stream.com',
+                TEST_USER_EMAIL_COMPANY_TEAMMATE: 'william.edward.douglas@blue-moonlight-stream.com',
+                TEST_USER_EMAIL_RELAY_EMPLOYEE: 'jacob@relay.club',
+                TEST_USER_PASSWORD: 'password123!',
+                NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
             };
             return config;
         },
         viewportWidth: 1536,
         viewportHeight: 960,
-        baseUrl: 'http://localhost:3000',
+        baseUrl: process.env.NEXT_PUBLIC_APP_URL,
     },
 
     component: {

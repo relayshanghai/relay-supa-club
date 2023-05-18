@@ -1,3 +1,4 @@
+import { describe, expect, test } from 'vitest';
 import { emailErrors } from '../../../errors/ai-email-generate';
 import { hasCustomError } from '../../errors';
 import { generateEmailPrompt, MAX_CHARACTER_LENGTH } from './email';

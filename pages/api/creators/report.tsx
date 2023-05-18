@@ -2,7 +2,9 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { recordReportUsage } from 'src/utils/api/db/calls/usages';
 import { fetchReport, fetchReportsMetadata, requestNewReport } from 'src/utils/api/iqdata';
+import { getInfluencer } from 'src/utils/get-influencer';
 import { serverLogger } from 'src/utils/logger-server';
+import { saveInfluencer } from 'src/utils/save-influencer';
 import type { CreatorPlatform, CreatorReport } from 'types';
 
 export type CreatorsReportGetQueries = {
@@ -16,6 +18,14 @@ export type CreatorsReportGetResponse = CreatorReport & { createdAt: string };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'GET') {
+        const catchInfluencer = async (data: CreatorReport) => {
+            const [influencer] = await getInfluencer(data)
+
+            if (influencer === null) {
+                await saveInfluencer(data);
+            }
+        }
+
         try {
             const { platform, creator_id, company_id, user_id } = req.query as CreatorsReportGetQueries;
             if (!platform || !creator_id || !company_id || !user_id)
@@ -35,6 +45,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     return res.status(httpCodes.BAD_REQUEST).json({ error: recordError });
                 }
 
+                await catchInfluencer(data);
+
                 return res.status(httpCodes.OK).json({ ...data, createdAt });
             } catch (error) {
                 const data = await requestNewReport(platform, creator_id);
@@ -45,6 +57,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     serverLogger(recordError, 'error');
                     res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
                 }
+
+                await catchInfluencer(data);
 
                 return res.status(httpCodes.OK).json(data);
             }

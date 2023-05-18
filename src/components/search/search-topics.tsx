@@ -4,20 +4,23 @@ import useOnOutsideClick from 'src/hooks/use-on-outside-click';
 import { debounce } from 'src/utils/debounce';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
+import { useRudderstack } from 'src/hooks/use-rudderstack';
+import type { CreatorPlatform, CreatorSearchTag } from 'types';
 
-export const SearchTopics = ({
-    onSetTopics,
-    topics,
-    platform,
-    path,
-    placeholder,
-    filter,
-    SuggestionComponent,
-    TagComponent,
-}: any) => {
-    const [suggestions, setSuggestions] = useState<any[]>([]);
-    const ref = useRef<any>();
+
+type SearchTopicsProps = {
+    path: string;
+    placeholder: string;
+    topics: CreatorSearchTag[];
+    platform: CreatorPlatform;
+    onSetTopics: (topics: CreatorSearchTag[]) => void;
+};
+
+export const SearchTopics = ({ onSetTopics, topics, platform, path, placeholder }: SearchTopicsProps) => {
+    const [suggestions, setSuggestions] = useState<CreatorSearchTag[]>([]);
+    const [loading, setLoading] = useState(false);
     const inputRef = useRef<any>();
+    const { trackEvent } = useRudderstack();
 
     useOnOutsideClick(inputRef, () => {
         setSuggestions([]);
@@ -28,13 +31,11 @@ export const SearchTopics = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const setTopicSearch = useCallback(
         debounce(async (term: string) => {
-            if (ref.current) ref.current.abort();
-
-            const controller = new AbortController();
-            const signal = controller.signal;
-            ref.current = controller;
+            const abortController = new AbortController();
+            const signal = abortController.signal;
 
             try {
+                setLoading(true);
                 const res = await nextFetch(path, {
                     method: 'post',
                     signal,
@@ -43,10 +44,9 @@ export const SearchTopics = ({
                         platform,
                     },
                 });
-
                 if (res && (res.success || Array.isArray(res))) {
                     const data = res.data || res;
-                    setSuggestions(filter ? filter(data) : data);
+                    setSuggestions(data);
                 }
             } catch (error: any) {
                 if (typeof error?.message === 'string' && error.message.toLowerCase().includes('abort')) {
@@ -54,48 +54,60 @@ export const SearchTopics = ({
                 }
                 clientLogger(error, 'error');
             }
+            setLoading(false);
+
+            // Abort fetch request after 5 seconds
+            setTimeout(() => {
+                abortController.abort();
+            }, 5000);
         }),
-        [platform, path, filter],
+        [platform, path],
     );
 
     const addTag = useCallback(
         (item: any) => {
             onSetTopics([...topics, item]);
             setSuggestions([]);
+            setLoading(false);
         },
         [topics, onSetTopics],
     );
 
     const removeTag = useCallback(
         (item: any) => {
-            const entry = topics.find((tag: any) => tag === item);
+            const entry = topics.find((tag) => tag === item);
 
             if (entry) {
                 const clone = topics.slice();
                 clone.splice(clone.indexOf(entry), 1);
                 onSetTopics(clone);
             }
+
+            setLoading(false);
         },
         [topics, onSetTopics],
     );
 
     return (
         <InputWithAutocomplete
-            SuggestionComponent={SuggestionComponent}
-            TagComponent={TagComponent}
             placeholder={placeholder}
             tags={topics}
             suggestions={suggestions}
-            ref={inputRef}
-            onChange={(item: any) => {
+            onChange={(item) => {
                 setTopicSearch(item);
             }}
-            onRemoveTag={(item: any) => {
+            onRemoveTag={(item) => {
                 removeTag(item);
+                trackEvent('Search Topics Input, remove a tag', { tag: item });
             }}
-            onAddTag={(item: any) => {
+            onAddTag={(item) => {
                 addTag(item);
+                trackEvent('Search Topics Input, add a tag', { tag: item });
+                trackEvent('Search Options, search topics', { topic: item });
             }}
+            spinnerLoading={loading}
         />
     );
 };
+
+export default SearchTopics;
