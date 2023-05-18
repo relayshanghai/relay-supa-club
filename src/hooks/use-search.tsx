@@ -10,7 +10,6 @@ import { useUser } from './use-user';
 import useSWR from 'swr';
 import type { RecommendedInfluencersGetResponse } from 'pages/api/recommended-influencers';
 import { featRecommended } from 'src/constants/feature-flags';
-
 type NullStringTuple = [null | string, null | string];
 
 export interface ISearchContext {
@@ -116,38 +115,38 @@ export const useSearchResults = (page: number) => {
             ? [
                   'influencer-search',
                   page,
-                  tags,
-                  username,
-                  influencerLocation,
-                  views,
-                  audience,
-                  gender,
-                  engagement,
-                  lastPost,
-                  contactInfo,
-                  audienceLocation,
-                  onlyRecommended,
+                  // tags,
+                  // username,
+                  // influencerLocation,
+                  // views,
+                  // audience,
+                  // gender,
+                  // engagement,
+                  // lastPost,
+                  // contactInfo,
+                  // audienceLocation,
+                  // onlyRecommended,
                   platform,
-                  resultsPerPageLimit,
+                  // resultsPerPageLimit,
                   recommendedInfluencers,
               ]
             : null,
         async ([
             path,
             page,
-            tags,
-            username,
-            influencerLocation,
-            views,
-            audience,
-            gender,
-            engagement,
-            lastPost,
-            contactInfo,
-            audienceLocation,
-            onlyRecommended,
+            // tags,
+            // username,
+            // influencerLocation,
+            // views,
+            // audience,
+            // gender,
+            // engagement,
+            // lastPost,
+            // contactInfo,
+            // audienceLocation,
+            // onlyRecommended,
             platform,
-            resultsPerPageLimit,
+            // resultsPerPageLimit,
             recommendedInfluencers,
         ]) => {
             try {
@@ -187,6 +186,7 @@ export const useSearchResults = (page: number) => {
                     signal,
                     body,
                 });
+
                 if (!res?.accounts) {
                     throw new Error('no accounts in results');
                 }
@@ -245,25 +245,6 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
     const [audienceLocation, setAudienceLocation] = useState<LocationWeighted[]>([]);
     const [platform, setPlatform] = useState<CreatorPlatform>('youtube');
     const [onlyRecommended, setOnlyRecommended] = useState(true);
-
-    // reset page to 0 when any other search params are changed
-    useEffect(() => {
-        setPage(0);
-    }, [
-        tags,
-        username,
-        influencerLocation,
-        views,
-        audience,
-        gender,
-        engagement,
-        lastPost,
-        contactInfo,
-        audienceLocation,
-        platform,
-        resultsPerPageLimit,
-        onlyRecommended,
-    ]);
 
     const { data: recommendedInfluencers } = useSWR(featRecommended() ? 'recommended-influencers' : null, (path) =>
         nextFetch<RecommendedInfluencersGetResponse>(path),

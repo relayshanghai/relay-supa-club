@@ -20,7 +20,7 @@ const filterCountry = (items: any[]) => {
 };
 
 export const SearchOptions = ({
-    // setPage,
+    setPage,
     setShowFiltersModal,
 }: {
     setPage: (page: number) => void;
@@ -50,12 +50,20 @@ export const SearchOptions = ({
         onlyRecommended,
         setOnlyRecommended,
         recommendedInfluencers,
+        setLoading,
     } = useSearch();
 
     const { t } = useTranslation();
     const hasSetViews = views[0] || views[1];
     const hasSetAudience = audience[0] || audience[1];
     const { trackEvent } = useRudderstack();
+    const handleSearch = () => {
+        // console.log(searchParams);//TODO: remove
+        // console.log('search!!');
+        setPage(0);
+        setLoading(true);
+        // trackEvent('Search Options, search');
+    };
 
     return (
         <>
@@ -135,7 +143,9 @@ export const SearchOptions = ({
                             )}
                         </div>
                     </button>
-                    <Button className="ml-2">Search</Button>
+                    <Button className="mx-2" onClick={handleSearch}>
+                        Search
+                    </Button>
                     {/* Hide Select Option of results per page, default now set to 10 */}
                     {/* <select
                         className="ml-4 mr-2 flex cursor-pointer flex-row items-center rounded-md border border-transparent bg-white p-1 text-gray-900 shadow ring-1 ring-gray-900 ring-opacity-5 hover:text-opacity-80 focus:border-primary-500 focus:outline-none focus:ring-primary-500 sm:text-sm"

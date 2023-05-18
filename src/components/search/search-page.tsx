@@ -32,7 +32,7 @@ export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
     const { trackEvent } = useRudderstack();
 
     const [page, setPage] = useState(0);
-    const { results: firstPageSearchResults, resultsTotal, noResults, error, isValidating } = useSearchResults(0);
+    const { results: firstPageSearchResults, resultsTotal, noResults, error, isValidating } = useSearchResults(page);
 
     const [showAlreadyAddedModal, setShowAlreadyAddedModal] = useState(false);
 
