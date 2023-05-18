@@ -163,18 +163,9 @@ const campaigns = {
                 contacted: 'Contacted',
                 inProgress: 'In Progress',
                 confirmed: 'Confirmed',
+                posted: 'Posted',
                 rejected: 'Rejected',
                 ignored: 'Ignored',
-                status: {
-                    changeStatus: 'Change Status',
-                    'to contact': 'To Contact',
-                    contacted: 'Contacted',
-                    'in progress': 'In Progress',
-                    confirmed: 'Confirmed',
-                    rejected: 'Rejected',
-                    // eslint-disable-next-line quote-props
-                    ignored: 'Ignored',
-                },
                 noInfluencers: 'No influencers found',
             },
             info: {

@@ -157,18 +157,9 @@ const campaigns = {
                 contacted: '已联系',
                 inProgress: '联系中',
                 confirmed: '已确认',
+                posted: '已发布',
                 rejected: '已拒绝',
                 ignored: '未回复',
-                status: {
-                    changeStatus: '修改状态',
-                    'to contact': '待联系',
-                    contacted: '已联系',
-                    'in progress': '联系中',
-                    confirmed: '已确认',
-                    rejected: '已拒绝',
-                    // eslint-disable-next-line quote-props
-                    ignored: '未回复',
-                },
                 noInfluencers: '无KOL：搜索无结果',
             },
             info: {

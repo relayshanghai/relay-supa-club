@@ -157,6 +157,7 @@ export default function CampaignInfluencersTable({
         { label: 'contacted', value: 'contacted' },
         { label: 'inProgress', value: 'in progress' },
         { label: 'confirmed', value: 'confirmed' },
+        { label: 'posted', value: 'posted' },
         { label: 'rejected', value: 'rejected' },
         { label: 'ignored', value: 'ignored' },
     ];
