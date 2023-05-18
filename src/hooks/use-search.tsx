@@ -8,7 +8,7 @@ import { clientLogger } from 'src/utils/logger-client';
 import type { CreatorPlatform, LocationWeighted, CreatorSearchTag } from 'types';
 import { useUser } from './use-user';
 import useSWR from 'swr';
-import useSWRImmutable from 'swr/immutable';
+// import useSWRImmutable from 'swr/immutable';
 import type { RecommendedInfluencersGetResponse } from 'pages/api/recommended-influencers';
 import { featRecommended } from 'src/constants/feature-flags';
 type NullStringTuple = [null | string, null | string];
@@ -47,6 +47,8 @@ export interface ISearchContext {
     onlyRecommended: boolean;
     setOnlyRecommended: (onlyRecommended: boolean) => void;
     recommendedInfluencers: string[];
+    activeSearch: boolean;
+    setActiveSearch: (activeSearch: boolean) => void;
 }
 
 export const SearchContext = createContext<ISearchContext>({
@@ -84,6 +86,8 @@ export const SearchContext = createContext<ISearchContext>({
     onlyRecommended: true,
     setOnlyRecommended: () => null,
     recommendedInfluencers: [],
+    activeSearch: false,
+    setActiveSearch: () => null,
 });
 
 export const useSearch = () => useContext(SearchContext);
@@ -109,9 +113,11 @@ export const useSearchResults = (page: number) => {
         setUsageExceeded,
         setLoading,
         recommendedInfluencers,
+        // activeSearch,
+        setActiveSearch,
     } = useSearch();
 
-    const { data, isLoading, mutate, isValidating, error } = useSWRImmutable(
+    const { data, isLoading, mutate, isValidating, error } = useSWR(
         profile?.id
             ? [
                   'influencer-search',
@@ -201,6 +207,7 @@ export const useSearchResults = (page: number) => {
                 throw error;
             } finally {
                 setLoading(false);
+                setActiveSearch(false);
             }
         },
     );
@@ -246,6 +253,7 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
     const [audienceLocation, setAudienceLocation] = useState<LocationWeighted[]>([]);
     const [platform, setPlatform] = useState<CreatorPlatform>('youtube');
     const [onlyRecommended, setOnlyRecommended] = useState(true);
+    const [activeSearch, setActiveSearch] = useState(false);
 
     const { data: recommendedInfluencers } = useSWR(featRecommended() ? 'recommended-influencers' : null, (path) =>
         nextFetch<RecommendedInfluencersGetResponse>(path),
@@ -287,6 +295,8 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
                 onlyRecommended,
                 setOnlyRecommended,
                 recommendedInfluencers: recommendedInfluencers ?? [],
+                activeSearch,
+                setActiveSearch,
             }}
         >
             {children}

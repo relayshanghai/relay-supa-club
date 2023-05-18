@@ -56,7 +56,7 @@ export const MoreResultsRows = ({
             </>
         );
     }
-    if (results && !loading) {
+    if (results) {
         return (
             <>
                 {results?.map((creator, i) => (

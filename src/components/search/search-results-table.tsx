@@ -34,7 +34,7 @@ export const SearchResultsTable = ({
     const { usageExceeded, loading: topSearchLoading } = useSearch();
     const noResults = !results || results.length === 0;
 
-    const loading = resultsLoading || topSearchLoading || validating;
+    const loading = resultsLoading || topSearchLoading || (noResults && validating);
 
     return (
         <div className="w-full overflow-x-auto">
@@ -76,6 +76,7 @@ export const SearchResultsTable = ({
                     )}
                     {!error &&
                         !usageExceeded &&
+                        noResults &&
                         loading &&
                         [...Array(10)].map((_, i) => <SkeletonSearchResultRow key={i} delay={i * 200} />)}
 

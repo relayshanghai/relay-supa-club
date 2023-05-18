@@ -51,6 +51,7 @@ export const SearchOptions = ({
         setOnlyRecommended,
         recommendedInfluencers,
         setLoading,
+        setActiveSearch,
     } = useSearch();
 
     const { t } = useTranslation();
@@ -60,6 +61,7 @@ export const SearchOptions = ({
 
     const handleSearch = () => {
         setPage(0);
+        setActiveSearch(true);
         setLoading(true);
         // trackEvent('Search Options, search');
     };
