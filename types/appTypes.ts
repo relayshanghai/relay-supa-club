@@ -63,6 +63,15 @@ export type UsageType = 'profile' | 'search' | 'ai_email';
 export type CreatorPlatform = 'instagram' | 'youtube' | 'tiktok';
 export type SocialMediaPlatform = CreatorPlatform | 'email' | 'twitter' | 'facebook' | 'wechat';
 
+export type InfluencerOutreachStatus =
+    | 'to contact'
+    | 'contacted'
+    | 'in progress'
+    | 'confirmed'
+    | 'posted'
+    | 'rejected'
+    | 'ignored';
+
 /**
  * relay expert is a relay employee assigned to the company to act on their behalf. Their usages are counted against the company's usages.
  * relay_employee is an admin super user who can see all of the campaigns and companies.
