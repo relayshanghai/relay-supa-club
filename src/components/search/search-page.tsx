@@ -23,7 +23,7 @@ import { useRudderstack } from 'src/hooks/use-rudderstack';
 
 export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
     const { t } = useTranslation();
-    const { platform, loading } = useSearch();
+    const { platform } = useSearch();
     const [filterModalOpen, setShowFiltersModal] = useState(false);
     const [showCampaignListModal, setShowCampaignListModal] = useState(false);
     const [selectedCreator, setSelectedCreator] = useState<CreatorSearchAccountObject | null>(null);
@@ -32,7 +32,14 @@ export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
     const { trackEvent } = useRudderstack();
 
     const [page, setPage] = useState(0);
-    const { results: firstPageSearchResults, resultsTotal, noResults, error, isValidating } = useSearchResults(page);
+    const {
+        results: firstPageSearchResults,
+        resultsTotal,
+        noResults,
+        error,
+        isValidating,
+        loading: resultsLoading,
+    } = useSearchResults(page);
 
     const [showAlreadyAddedModal, setShowAlreadyAddedModal] = useState(false);
 
@@ -43,8 +50,9 @@ export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
 
             <SearchOptions setPage={setPage} setShowFiltersModal={setShowFiltersModal} />
 
-            <div className="flex items-center">
+            <div className="flex items-center justify-between">
                 <div className="text-sm font-bold">{`${t('creators.results')}: ${numberFormatter(resultsTotal)}`}</div>
+                <div>pagination here</div>
             </div>
 
             <SearchResultsTable
@@ -52,7 +60,7 @@ export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
                 setShowCampaignListModal={setShowCampaignListModal}
                 setShowAlreadyAddedModal={setShowAlreadyAddedModal}
                 allCampaignCreators={allCampaignCreators}
-                loading={loading}
+                loading={resultsLoading}
                 validating={isValidating}
                 results={firstPageSearchResults}
                 error={error}

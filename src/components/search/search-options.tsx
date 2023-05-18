@@ -57,9 +57,9 @@ export const SearchOptions = ({
     const hasSetViews = views[0] || views[1];
     const hasSetAudience = audience[0] || audience[1];
     const { trackEvent } = useRudderstack();
+
     const handleSearch = () => {
-        // console.log(searchParams);//TODO: remove
-        // console.log('search!!');
+        // console.log('search!!'); //TODO: remove
         setPage(0);
         setLoading(true);
         // trackEvent('Search Options, search');

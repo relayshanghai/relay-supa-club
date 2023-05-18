@@ -25,16 +25,16 @@ export const SearchResultsTable = ({
     setShowAlreadyAddedModal,
     allCampaignCreators,
     results,
-    loading: firstPageLoading,
+    loading: resultsLoading,
     validating,
-    moreResults,
+    // moreResults,
     error,
 }: SearchResultsTableProps) => {
     const { t } = useTranslation();
     const { usageExceeded, loading: topSearchLoading } = useSearch();
     const noResults = !results || results.length === 0;
 
-    const loading = firstPageLoading || topSearchLoading || (noResults && validating);
+    const loading = resultsLoading || topSearchLoading || validating;
 
     return (
         <div className="w-full overflow-x-auto">
@@ -74,7 +74,19 @@ export const SearchResultsTable = ({
                             </td>
                         </tr>
                     )}
+                    {!error &&
+                        !usageExceeded &&
+                        loading &&
+                        [...Array(10)].map((_, i) => <SkeletonSearchResultRow key={i} delay={i * 200} />)}
 
+                    {!error && !usageExceeded && noResults && (
+                        <tr>
+                            <td className="py-4 text-center" colSpan={5}>
+                                {t('creators.noResults')}
+                            </td>
+                            <td />
+                        </tr>
+                    )}
                     {!error && !usageExceeded && !noResults && results && (
                         <>
                             {results.map((creator, i) => (
@@ -87,23 +99,10 @@ export const SearchResultsTable = ({
                                     allCampaignCreators={allCampaignCreators}
                                 />
                             ))}
-                            {moreResults}
+                            {/* {moreResults} */}
                         </>
                     )}
 
-                    {!error &&
-                        !usageExceeded &&
-                        noResults &&
-                        (loading ? (
-                            [...Array(10)].map((_, i) => <SkeletonSearchResultRow key={i} delay={i * 200} />)
-                        ) : (
-                            <tr>
-                                <td className="py-4 text-center" colSpan={5}>
-                                    {t('creators.noResults')}
-                                </td>
-                                <td />
-                            </tr>
-                        ))}
                     {error && (
                         <tr>
                             <td className="py-4 text-center" colSpan={5}>
