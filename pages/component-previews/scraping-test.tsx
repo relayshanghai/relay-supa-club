@@ -1,6 +1,7 @@
-import type { PostScrapeGetQuery, PostScrapeGetResponse } from 'pages/api/posts/scrape';
+import type { PostScrapeGetQuery, PostScrapeGetResponse } from 'pages/api/post-performance';
 import { useEffect, useState } from 'react';
 import { featPerformance } from 'src/constants/feature-flags';
+import { useCampaigns } from 'src/hooks/use-campaigns';
 import { useUser } from 'src/hooks/use-user';
 import { nextFetchWithQueries } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
@@ -9,6 +10,7 @@ import { clientLogger } from 'src/utils/logger-client';
 
 export default function ScrapingTest() {
     const { profile } = useUser();
+    const { campaigns } = useCampaigns({});
     const [youtubeData, setYoutubeData] = useState<PostScrapeGetResponse | string>();
     const [instagramData, setInstagramData] = useState<PostScrapeGetResponse | string>();
     const [tiktokData, setTiktokData] = useState<PostScrapeGetResponse | string>();
@@ -17,12 +19,12 @@ export default function ScrapingTest() {
         // we can basically turn this into a `usePostData` hook
         if (!featPerformance()) return;
         if (!profile?.id) return;
+        if (!campaigns || !campaigns[0]) return;
 
         const getInstagramData = async () => {
             try {
                 const data = await nextFetchWithQueries<PostScrapeGetQuery, PostScrapeGetResponse>('posts/scrape', {
-                    platform: 'instagram',
-                    url: 'https://www.instagram.com/p/Cr3aeZ7NXW3/',
+                    campaignId: campaigns[0].id,
                     profileId: profile?.id || '',
                 });
                 setInstagramData(data);
@@ -34,8 +36,7 @@ export default function ScrapingTest() {
         const getYoutubeData = async () => {
             try {
                 const data = await nextFetchWithQueries<PostScrapeGetQuery, PostScrapeGetResponse>('posts/scrape', {
-                    platform: 'youtube',
-                    url: 'https://www.youtube.com/watch?v=y3Umo_jd5AA',
+                    campaignId: campaigns[0].id,
                     profileId: profile?.id || '',
                 });
                 setYoutubeData(data);
@@ -47,8 +48,7 @@ export default function ScrapingTest() {
         const getTikTokData = async () => {
             try {
                 const data = await nextFetchWithQueries<PostScrapeGetQuery, PostScrapeGetResponse>('posts/scrape', {
-                    platform: 'tiktok',
-                    url: 'https://www.tiktok.com/@graceofearth/video/7230816093755936043?_r=1&_t=8c9DNKVO2Tm&social_sharing=v2',
+                    campaignId: campaigns[0].id,
                     profileId: profile?.id || '',
                 });
                 setTiktokData(data);
@@ -60,7 +60,7 @@ export default function ScrapingTest() {
         getTikTokData();
         getYoutubeData();
         getInstagramData();
-    }, [profile?.id]);
+    }, [profile?.id, campaigns]);
     if (!featPerformance()) return null;
 
     return (

@@ -87,3 +87,17 @@ export type LogsTable = Database['public']['Tables']['logs'] & {
 };
 export type LogsDB = LogsTable['Row'];
 export type LogsInsertDB = LogsTable['Insert'];
+
+export type PostsPerformanceTable = Database['public']['Tables']['posts_performance'] & {
+    Row: Database['public']['Tables']['posts_performance']['Row'] & {
+        influencer_posts: {
+            platform: CreatorPlatform;
+            url: string;
+        }[];
+    };
+    Insert: Database['public']['Tables']['posts_performance']['Insert'];
+    Update: Database['public']['Tables']['posts_performance']['Update'];
+};
+export type PostsPerformance = PostsPerformanceTable['Row'];
+export type PostsPerformanceInsert = PostsPerformanceTable['Insert'];
+export type PostsPerformanceUpdate = PostsPerformanceTable['Update'];
