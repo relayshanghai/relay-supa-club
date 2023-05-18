@@ -7,7 +7,6 @@ import { ChatBubbleTextOutline } from '../icons';
 import SalesBarChart from './sales-bar-chart';
 import demoData from '../../mocks/demo.json';
 import { toCurrency, numFormatter } from 'src/utils/utils';
-
 export interface PerformanceData {
     company_id: string;
     company_name: string;
