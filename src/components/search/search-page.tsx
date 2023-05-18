@@ -39,7 +39,7 @@ export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
         error,
         isValidating,
         loading: resultsLoading,
-    } = useSearchResults(page);
+    } = useSearchResults(0);
 
     const [showAlreadyAddedModal, setShowAlreadyAddedModal] = useState(false);
 
@@ -51,8 +51,9 @@ export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
             <SearchOptions setPage={setPage} setShowFiltersModal={setShowFiltersModal} />
 
             <div className="flex items-center justify-between">
-                <div className="text-sm font-bold">{`${t('creators.results')}: ${numberFormatter(resultsTotal)}`}</div>
-                <div>pagination here</div>
+                <div className="text-sm font-medium">{`${t('creators.results')}: ${numberFormatter(
+                    resultsTotal,
+                )}`}</div>
             </div>
 
             <SearchResultsTable

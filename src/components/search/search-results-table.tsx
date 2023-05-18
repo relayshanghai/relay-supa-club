@@ -27,7 +27,7 @@ export const SearchResultsTable = ({
     results,
     loading: resultsLoading,
     validating,
-    // moreResults,
+    moreResults,
     error,
 }: SearchResultsTableProps) => {
     const { t } = useTranslation();
@@ -99,7 +99,7 @@ export const SearchResultsTable = ({
                                     allCampaignCreators={allCampaignCreators}
                                 />
                             ))}
-                            {/* {moreResults} */}
+                            {moreResults}
                         </>
                     )}
 

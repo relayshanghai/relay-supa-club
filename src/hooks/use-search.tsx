@@ -8,6 +8,7 @@ import { clientLogger } from 'src/utils/logger-client';
 import type { CreatorPlatform, LocationWeighted, CreatorSearchTag } from 'types';
 import { useUser } from './use-user';
 import useSWR from 'swr';
+import useSWRImmutable from 'swr/immutable';
 import type { RecommendedInfluencersGetResponse } from 'pages/api/recommended-influencers';
 import { featRecommended } from 'src/constants/feature-flags';
 type NullStringTuple = [null | string, null | string];
@@ -110,7 +111,7 @@ export const useSearchResults = (page: number) => {
         recommendedInfluencers,
     } = useSearch();
 
-    const { data, isLoading, mutate, isValidating, error } = useSWR(
+    const { data, isLoading, mutate, isValidating, error } = useSWRImmutable(
         profile?.id
             ? [
                   'influencer-search',
@@ -125,7 +126,7 @@ export const useSearchResults = (page: number) => {
                   // lastPost,
                   // contactInfo,
                   // audienceLocation,
-                  // onlyRecommended,
+                  onlyRecommended,
                   platform,
                   // resultsPerPageLimit,
                   recommendedInfluencers,
@@ -144,7 +145,7 @@ export const useSearchResults = (page: number) => {
             // lastPost,
             // contactInfo,
             // audienceLocation,
-            // onlyRecommended,
+            onlyRecommended,
             platform,
             // resultsPerPageLimit,
             recommendedInfluencers,

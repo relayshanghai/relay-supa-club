@@ -59,7 +59,6 @@ export const SearchOptions = ({
     const { trackEvent } = useRudderstack();
 
     const handleSearch = () => {
-        // console.log('search!!'); //TODO: remove
         setPage(0);
         setLoading(true);
         // trackEvent('Search Options, search');

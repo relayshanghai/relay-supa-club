@@ -56,23 +56,25 @@ export const MoreResultsRows = ({
             </>
         );
     }
-    return results ? (
-        <>
-            {results?.map((creator, i) => (
-                <SearchResultRow
-                    key={i}
-                    creator={creator}
-                    setShowCampaignListModal={setShowCampaignListModal}
-                    setSelectedCreator={setSelectedCreator}
-                    setShowAlreadyAddedModal={setShowAlreadyAddedModal}
-                    allCampaignCreators={allCampaignCreators}
-                />
-            ))}
-        </>
-    ) : (
-        <></>
-    );
+    if (results && !loading) {
+        return (
+            <>
+                {results?.map((creator, i) => (
+                    <SearchResultRow
+                        key={i}
+                        creator={creator}
+                        setShowCampaignListModal={setShowCampaignListModal}
+                        setSelectedCreator={setSelectedCreator}
+                        setShowAlreadyAddedModal={setShowAlreadyAddedModal}
+                        allCampaignCreators={allCampaignCreators}
+                    />
+                ))}
+            </>
+        );
+    }
+    return null;
 };
+
 export const SearchResultRow = ({
     creator,
     setShowCampaignListModal,
