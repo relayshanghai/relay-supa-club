@@ -23,7 +23,7 @@ export const validatePassword = (password: string) => {
 
     return null;
 };
-export type SignupInputTypes = 'firstName' | 'lastName' | 'email' | 'password' | 'confirmPassword';
+export type SignupInputTypes = 'firstName' | 'lastName' | 'email' | 'password' | 'confirmPassword' | 'phoneNumber';
 
 export const validateSignupInput = (type: SignupInputTypes, value: string, password: string) => {
     switch (type) {
@@ -32,11 +32,17 @@ export const validateSignupInput = (type: SignupInputTypes, value: string, passw
         case 'lastName':
             return !value ? loginValidationErrors.lastNameRequired : null;
         case 'email':
+            // TODO: use library https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/176
             return !emailRegex.test(value) ? loginValidationErrors.emailInvalid : null;
         case 'password':
             return validatePassword(value);
         case 'confirmPassword':
             return value !== password ? loginValidationErrors.passwordsDoNotMatch : null;
+        case 'phoneNumber':
+            // TODO: use library https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/176
+            const onlyNumbersDashesPLusSignParensRegex = /^[\d\-\+\(\)]+$/;
+            return !onlyNumbersDashesPLusSignParensRegex.test(value) ? loginValidationErrors.phoneNumberInvalid : null;
+
         default:
             return null;
     }

@@ -65,5 +65,7 @@ const login = {
     updateAndLogIn: '更新并登录',
     passwordUpdated: '密码已更新',
     passwordRequirements: '密码必须至少包含10个字符，其中至少1个特殊字符，1个数字',
+    phoneNumberInvalid: '电话号码无效',
+    phoneNumber: '电话号码',
 };
 export default login;

@@ -68,5 +68,7 @@ const login = {
     passwordUpdated: 'Password updated',
     passwordRequirements:
         'Must be at least 10 characters long and contain at least one number and one special character',
+    phoneNumberInvalid: 'Invalid phone number',
+    phoneNumber: 'Phone number',
 };
 export default login;

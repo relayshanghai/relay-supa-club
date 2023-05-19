@@ -29,7 +29,7 @@ export default function Register() {
 
     const router = useRouter();
     const {
-        values: { password, confirmPassword, firstName, lastName, email },
+        values: { password, confirmPassword, firstName, lastName, email, phoneNumber },
         setFieldValue,
     } = useFields({
         firstName: '',
@@ -37,6 +37,7 @@ export default function Register() {
         password: '',
         confirmPassword: '',
         email: '',
+        phoneNumber: '',
     });
     const token = router.query.token as string;
     const [registering, setRegistering] = useState(false);
@@ -47,6 +48,7 @@ export default function Register() {
         email: '',
         password: '',
         confirmPassword: '',
+        phoneNumber: '',
     });
     const { getInviteStatus, acceptInvite } = useInvites();
 
@@ -123,8 +125,11 @@ export default function Register() {
         );
 
     const setAndValidate = (type: SignupInputTypes, value: string) => {
-        setFieldValue(type, value);
-        const validationError = validateSignupInput(type, value, password);
+        const trimmedValue = value.trim();
+        const cleanedValue = type === 'phoneNumber' ? (value = trimmedValue.replace(' ', '')) : trimmedValue;
+
+        setFieldValue(type, cleanedValue);
+        const validationError = validateSignupInput(type, cleanedValue, password);
         if (validationError) {
             setValidationErrors({ ...validationErrors, [type]: t(validationError) });
         } else {
@@ -146,7 +151,6 @@ export default function Register() {
                         <h3 className="mb-8 text-sm text-gray-600">{t('login.someoneInvitedYouToJoinRelayClub')}</h3>
                     </div>
                     <Input label={t('login.email')} value={email} disabled />
-
                     <Input
                         error={validationErrors.firstName}
                         label={t('login.firstName')}
@@ -181,6 +185,14 @@ export default function Register() {
                         placeholder={t('login.passwordPlaceholder')}
                         value={confirmPassword}
                         onChange={(e) => setAndValidate('confirmPassword', e.target.value)}
+                    />
+                    <Input
+                        error={validationErrors.phoneNumber}
+                        label={t('login.phoneNumber')}
+                        type="phoneNumber"
+                        placeholder="139-999-9999"
+                        value={phoneNumber}
+                        onChange={(e) => setAndValidate('phoneNumber', e.target.value)}
                     />
                     <Button disabled={submitDisabled} type="button" onClick={handleSubmit}>
                         {t('login.signUp')}

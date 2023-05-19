@@ -7,6 +7,7 @@ export const loginValidationErrors = {
     emailInvalid: 'login.emailInvalid',
     passwordsDoNotMatch: 'login.passwordsDoNotMatch',
     missingRequiredFields: 'login.missingRequiredFields',
+    phoneNumberInvalid: 'login.phoneNumberInvalid',
 };
 
 export type InviteStatusError =

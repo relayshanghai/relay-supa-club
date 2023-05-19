@@ -21,7 +21,7 @@ export default function Register() {
 
     const router = useRouter();
     const {
-        values: { firstName, lastName, email, password, confirmPassword },
+        values: { firstName, lastName, email, password, confirmPassword, phoneNumber },
         setFieldValue,
     } = useFields({
         firstName: '',
@@ -29,6 +29,7 @@ export default function Register() {
         email: '',
         password: '',
         confirmPassword: '',
+        phoneNumber: '',
     });
     const { signup, profile, createEmployee } = useUser();
     const [loading, setLoading] = useState(false);
@@ -39,6 +40,7 @@ export default function Register() {
         email: '',
         password: '',
         confirmPassword: '',
+        phoneNumber: '',
     });
 
     useEffect(() => {
@@ -60,6 +62,7 @@ export default function Register() {
                 data: {
                     first_name: firstName,
                     last_name: lastName,
+                    phone: phoneNumber,
                 },
             });
             if (signupRes?.session?.user.id) {
@@ -92,8 +95,11 @@ export default function Register() {
     };
 
     const setAndValidate = (type: SignupInputTypes, value: string) => {
-        setFieldValue(type, value);
-        const validationError = validateSignupInput(type, value, password);
+        const trimmedValue = value.trim();
+        const cleanedValue = type === 'phoneNumber' ? (value = trimmedValue.replace(' ', '')) : trimmedValue;
+
+        setFieldValue(type, cleanedValue);
+        const validationError = validateSignupInput(type, cleanedValue, password);
         if (validationError) {
             setValidationErrors({ ...validationErrors, [type]: t(validationError) });
         } else {
@@ -114,7 +120,6 @@ export default function Register() {
 
     return (
         <LoginSignupLayout>
-            {' '}
             <form className="mx-auto flex w-full max-w-xs flex-grow flex-col items-center justify-center space-y-2">
                 <div className="w-full text-left">
                     <h1 className="mb-2 text-4xl font-bold">{t('login.signUp')}</h1>
@@ -123,7 +128,7 @@ export default function Register() {
                 <p className="text-md inline pb-4 text-gray-500">
                     {t('login.alreadyHaveAnAccount')}
                     <Link href="/login" className="inline cursor-pointer text-primary-700 hover:text-primary-600">
-                        <Button variant="secondary" className="ml-2 px-1 pt-1 pb-1 text-xs">
+                        <Button variant="secondary" className="ml-2 px-1 pb-1 pt-1 text-xs">
                             {t('login.logIn')}
                         </Button>
                     </Link>
@@ -154,6 +159,14 @@ export default function Register() {
                     value={email}
                     required
                     onChange={(e) => setAndValidate('email', e.target.value)}
+                />
+                <Input
+                    error={validationErrors.phoneNumber}
+                    label={t('login.phoneNumber')}
+                    type="phoneNumber"
+                    placeholder="139-999-9999"
+                    value={phoneNumber}
+                    onChange={(e) => setAndValidate('phoneNumber', e.target.value)}
                 />
                 <Input
                     error={validationErrors.password}
