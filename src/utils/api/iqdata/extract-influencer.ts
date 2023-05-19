@@ -8,7 +8,7 @@ export const mapIqdataProfileToInfluencer = (
     const email = contacts.find((v: any) => v.type === 'email') || { value: null };
 
     return {
-        name: userProfile.fullname,
+        name: userProfile.fullname || '',
         email: email.value,
         avatar_url: userProfile.picture,
         // address: "",
