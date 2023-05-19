@@ -617,58 +617,14 @@ END;
 $$;
 
 -- cleanup
-DROP FUNCTION IF EXISTS create_company(TEXT, TEXT, TEXT);
-
-DROP FUNCTION IF EXISTS create_profile(UUID, TEXT, TEXT, TEXT, TEXT);
-
-DROP FUNCTION IF EXISTS create_supabase_user(TEXT, TEXT, TEXT);
-
-DROP FUNCTION IF EXISTS create_campaign(UUID, TEXT, TEXT, TEXT, TEXT[]);
-
-DROP FUNCTION IF EXISTS create_campaign_creator(
-  UUID,
-  UUID,
-  TEXT,
-  TEXT,
-  TEXT
-);
-
-DROP FUNCTION IF EXISTS create_influencer(
-  TEXT,
-  TEXT,
-  TEXT,
-  TEXT,
-  BOOLEAN
-);
-
-DROP FUNCTION IF EXISTS create_influencer_social_profile(
-  TEXT,
-  TEXT,
-  UUID,
-  TEXT,
-  TEXT
-);
-
-DROP FUNCTION IF EXISTS create_influencer_post(
-  TEXT,
-  UUID,
-  UUID,
-  TEXT,
-  TEXT,
-  BOOLEAN
-);
-
-DROP FUNCTION IF EXISTS create_posts_performance(
-  UUID,
-  UUID,
-  UUID,
-  TIMESTAMP,
-  NUMERIC,
-  NUMERIC,
-  NUMERIC,
-  NUMERIC,
-  NUMERIC,
-  NUMERIC
-);
+DROP FUNCTION IF EXISTS create_company;
+DROP FUNCTION IF EXISTS create_profile;
+DROP FUNCTION IF EXISTS create_supabase_user;
+DROP FUNCTION IF EXISTS create_campaign;
+DROP FUNCTION IF EXISTS create_campaign_creator;
+DROP FUNCTION IF EXISTS create_influencer;
+DROP FUNCTION IF EXISTS create_influencer_social_profile;
+DROP FUNCTION IF EXISTS create_influencer_post;
+DROP FUNCTION IF EXISTS create_posts_performance;
 
 COMMIT;
