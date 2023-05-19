@@ -35,8 +35,9 @@ const genderTransform = (gender: string) => {
     clientLogger('bad option for gender: ' + gender, 'error', true); // unexpected
     return undefined;
 };
-const viewsTransform = (views: NullStringTuple) => {
-    const [left, right] = views;
+
+const leftRightNumberTransform = (tuple: NullStringTuple) => {
+    const [left, right] = tuple;
     return {
         left_number: left ? Number(left) ?? undefined : undefined,
         right_number: right ? Number(right) ?? undefined : undefined,
@@ -102,11 +103,14 @@ export const prepareFetchCreatorsFiltered = ({
     if (username) {
         body.filter.username = { value: username };
     }
-    if (views) {
-        body.filter.views = viewsTransform(views);
+    if (views && platform !== 'instagram') {
+        body.filter.views = leftRightNumberTransform(views);
+    }
+    if (views && platform === 'instagram') {
+        body.filter.reels_plays = leftRightNumberTransform(views);
     }
     if (audience) {
-        body.filter.followers = viewsTransform(audience);
+        body.filter.followers = leftRightNumberTransform(audience);
     }
     if (audienceLocation) {
         body.filter.audience_geo = audienceLocation.map(locationTransform) || [];
