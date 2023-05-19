@@ -29,8 +29,20 @@ const pollForFreshData = async ({
     oneDayAgo: Date;
     setPerformanceData: (value: SetStateAction<PostPerformanceByCampaign | null>) => void;
 }) => {
+    let tries = 0;
     const interval = setInterval(async () => {
         try {
+            tries++;
+            if (tries > 20) {
+                clearInterval(interval);
+                return;
+            }
+            // also quit out if not on the performance page anymore
+            if (window?.location?.pathname !== '/performance') {
+                clearInterval(interval);
+                return;
+            }
+
             const updatedData = await nextFetchWithQueries<
                 PostsPerformanceByPostGetQuery,
                 PostsPerformanceByPostGetResponse
