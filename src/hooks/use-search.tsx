@@ -100,27 +100,7 @@ export const useSearchResults = (page: number) => {
     const { profile } = useUser();
     const ref = useRef<any>();
 
-    const {
-        // tags,
-        // username,
-        // influencerLocation,
-        // views,
-        // audience,
-        // gender,
-        // engagement,
-        // lastPost,
-        // contactInfo,
-        // audienceLocation,
-        // onlyRecommended,
-        // platform,
-        // resultsPerPageLimit,
-        // recommendedInfluencers,
-        // activeSearch,
-        setUsageExceeded,
-        setLoading,
-        setActiveSearch,
-        searchParams,
-    } = useSearch();
+    const { setUsageExceeded, setLoading, setActiveSearch, searchParams } = useSearch();
 
     const { data, isLoading, mutate, isValidating, error } = useSWR(
         profile?.id && searchParams ? ['influencer-search', searchParams, page] : null,

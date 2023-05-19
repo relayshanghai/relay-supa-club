@@ -185,7 +185,7 @@ export const SearchOptions = ({
                         </div>
                     </button>
                     <Button className="mx-2" onClick={(e) => handleSearch(e)}>
-                        Search
+                        {t('campaigns.index.search')}
                     </Button>
                     {/* Hide Select Option of results per page, default now set to 10 */}
                     {/* <select
