@@ -1,12 +1,34 @@
 import { supabase } from 'src/utils/supabase-client';
 import { getProfileById } from './profiles';
 import type { PostsPerformanceUpdate } from '../types';
+import type { CreatorPlatform } from 'types';
 
 export type PostPerformanceAndPost = PostsPerformanceUpdate & {
-    influencer_posts: {
-        platform: string;
+    platform: CreatorPlatform;
+    url: string;
+};
+
+export const getPostsPerformance = async (id: string) => {
+    const { data, error } = await supabase
+        .from('posts_performance')
+        .select('*, influencer_posts(platform, url)')
+        .eq('id', id);
+    if (!data || !data[0]) {
+        throw new Error('Post performance not found');
+    }
+    const { influencer_posts, ...postPerformance } = data[0];
+    const influencerPost = influencer_posts as unknown as {
+        platform: CreatorPlatform;
         url: string;
-    }[];
+    };
+
+    const merged: PostPerformanceAndPost = {
+        ...postPerformance,
+        ...influencerPost,
+    };
+
+    if (error) throw error;
+    return merged;
 };
 
 export const getPostsPerformancesByCampaign = async (
@@ -24,9 +46,23 @@ export const getPostsPerformancesByCampaign = async (
         .from('posts_performance')
         .select('*, influencer_posts(platform, url)')
         .eq('campaign_id', campaignId);
+    const posts: PostPerformanceAndPost[] = [];
+    data?.forEach(({ influencer_posts, ...postPerformance }) => {
+        const influencerPost = influencer_posts as unknown as {
+            platform: CreatorPlatform;
+            url: string;
+        };
+        if (!influencerPost || !influencerPost.url || !influencerPost.platform) {
+            throw new Error('Invalid post data. Post performance does not have linked post');
+        }
+        posts.push({
+            ...postPerformance,
+            ...influencerPost,
+        });
+    });
 
     if (error) throw error;
-    return data as PostPerformanceAndPost[];
+    return posts;
 };
 
 export const updatePostPerformance = async (data: PostsPerformanceUpdate) => {

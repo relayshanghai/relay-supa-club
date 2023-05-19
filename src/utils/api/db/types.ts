@@ -92,12 +92,7 @@ export type LogsDB = LogsTable['Row'];
 export type LogsInsertDB = LogsTable['Insert'];
 
 export type PostsPerformanceTable = Database['public']['Tables']['posts_performance'] & {
-    Row: Database['public']['Tables']['posts_performance']['Row'] & {
-        influencer_posts: {
-            platform: CreatorPlatform;
-            url: string;
-        }[];
-    };
+    Row: Database['public']['Tables']['posts_performance']['Row'];
     Insert: Database['public']['Tables']['posts_performance']['Insert'];
     Update: Database['public']['Tables']['posts_performance']['Update'];
 };

@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import type { SetStateAction } from 'react';
 import { useEffect, useState } from 'react';
 import { Layout } from 'src/components/layout';
 import { ArrowRight, BoxFilled, Spinner, ThumbUpOutline } from '../icons';
@@ -7,13 +8,60 @@ import { ChatBubbleTextOutline } from '../icons';
 import SalesBarChart from './sales-bar-chart';
 import { toCurrency, numFormatter } from 'src/utils/utils';
 import { useCampaigns } from 'src/hooks/use-campaigns';
-import type { CampaignDB } from 'src/utils/api/db';
+import type { CampaignDB, ProfileDB } from 'src/utils/api/db';
 import { nextFetchWithQueries } from 'src/utils/fetcher';
-import type { PostScrapeGetResponse, PostsPerformanceGetQuery } from 'pages/api/post-performance';
+import type {
+    PostsPerformanceByCampaignGetResponse,
+    PostsPerformanceByCampaignGetQuery,
+} from 'pages/api/post-performance/by-campaign';
 import { useUser } from 'src/hooks/use-user';
 import { clientLogger } from 'src/utils/logger-client';
+import type {
+    PostsPerformanceByPostGetQuery,
+    PostsPerformanceByPostGetResponse,
+} from 'pages/api/post-performance/by-post';
 
-type PostPerformanceByCampaign = { [campaignId: string]: PostScrapeGetResponse };
+type PostPerformanceByCampaign = { [campaignId: string]: PostsPerformanceByCampaignGetResponse };
+
+const pollForFreshData = async ({
+    post,
+    profile,
+    campaign,
+    oneDayAgo,
+    setPerformanceData,
+}: {
+    post: PostsPerformanceByPostGetResponse;
+    campaign: CampaignDB;
+    profile: ProfileDB;
+    oneDayAgo: Date;
+    setPerformanceData: (value: SetStateAction<PostPerformanceByCampaign | null>) => void;
+}) => {
+    const interval = setInterval(async () => {
+        try {
+            const updatedData = await nextFetchWithQueries<
+                PostsPerformanceByPostGetQuery,
+                PostsPerformanceByPostGetResponse
+            >('post-performance/by-post', {
+                id: post.id,
+                profileId: profile.id,
+            });
+
+            if (new Date(updatedData.updatedAt) > oneDayAgo) {
+                setPerformanceData((prev) => {
+                    if (!prev) return prev;
+                    const updated = prev[campaign.id].map((prevPost) => {
+                        if (prevPost.url === post.url) return updatedData;
+                        return prevPost;
+                    });
+                    return { ...prev, [campaign.id]: updated };
+                });
+                clearInterval(interval);
+            }
+        } catch (error) {
+            clientLogger(error, 'error');
+        }
+    }, 10000);
+};
 
 const PerformancePage = () => {
     const { t } = useTranslation();
@@ -58,18 +106,34 @@ const PerformancePage = () => {
         const getPerformanceData = async (campaigns: CampaignDB[]) => {
             if (!profile?.id) return;
             if (!campaigns || campaigns.length === 0) return;
+
             try {
                 setFetching(true);
                 const result: PostPerformanceByCampaign = {};
                 for (const campaign of campaigns) {
-                    const data = await nextFetchWithQueries<PostsPerformanceGetQuery, PostScrapeGetResponse>(
-                        'post-performance',
-                        {
-                            campaignId: campaign.id,
-                            profileId: profile.id,
-                        },
-                    );
+                    const data = await nextFetchWithQueries<
+                        PostsPerformanceByCampaignGetQuery,
+                        PostsPerformanceByCampaignGetResponse
+                    >('post-performance/by-campaign', {
+                        campaignId: campaign.id,
+                        profileId: profile.id,
+                    });
                     result[campaign.id] = data;
+                    // if data is stale (older than 1 day), set up a 10s poll to check for the new data. remove the poll when the data is updated
+                    const now = new Date();
+                    const oneDay = 1000 * 60 * 60 * 24;
+                    const oneDayAgo = new Date(now.getTime() - oneDay);
+                    for (const post of data) {
+                        // console.log({
+                        //     stale: new Date(post.updatedAt) > oneDayAgo,
+                        //     updated_at: new Date(post.updatedAt),
+                        //     oneDayAgo,
+                        //     url: post.url,
+                        // });
+                        if (new Date(post.updatedAt) < oneDayAgo) {
+                            pollForFreshData({ post, campaign, profile, oneDayAgo, setPerformanceData });
+                        }
+                    }
                 }
                 setPerformanceData(result);
                 setSelectedCampaign(campaigns[0]);
@@ -79,7 +143,7 @@ const PerformancePage = () => {
             setFetching(false);
         };
         getPerformanceData(campaigns);
-    }, [campaigns, profile?.id]);
+    }, [campaigns, profile]);
 
     return (
         <Layout>
