@@ -191,7 +191,7 @@ export default function Register() {
                 <Button disabled={submitDisabled} type="button" onClick={handleSubmit}>
                     {t('login.signUp')}
                 </Button>
-                <p className="pt-8 text-xs text-gray-500">{t('login.disclaimer')}</p>
+                <p className="py-8 text-xs text-gray-500">{t('login.disclaimer')}</p>
             </form>
         </LoginSignupLayout>
     );
