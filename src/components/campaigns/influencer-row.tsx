@@ -89,11 +89,12 @@ const InfluencerRow = ({
                             />
                         </div>
                     </div>
-                    <Link href={`/influencer/${creator.platform}/${creator.creator_id}`} target="_blank">
+
+                    <Link href={creator.link_url || ''} target="_blank">
                         <div
                             className="ml-4"
                             onClick={() =>
-                                trackEvent('Campaign Influencer Row, open report', {
+                                trackEvent('Campaign Influencer Row, open social link', {
                                     platform: creator.platform,
                                     user_id: creator.creator_id,
                                 })
