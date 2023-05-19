@@ -70,5 +70,7 @@ const login = {
         'Must be at least 10 characters long and contain at least one number and one special character',
     phoneNumberInvalid: 'Invalid phone number',
     phoneNumber: 'Phone number',
+    disclaimer:
+        'At relay.club, we prioritize your data privacy. We guarantee that your email and mobile phone will never be disclosed or sold to any third parties, and we will solely utilize your email and mobile phone number to reach out for the purpose of arranging a product demonstration.',
 };
 export default login;

@@ -67,5 +67,7 @@ const login = {
     passwordRequirements: '密码必须至少包含10个字符，其中至少1个特殊字符，1个数字',
     phoneNumberInvalid: '电话号码无效',
     phoneNumber: '电话号码',
+    disclaimer:
+        '在relay.club，我们非常注重保护您的数据隐私。我们承诺不会向任何第三方透露或出售您的邮箱和手机号码。我们可能会使用您的邮箱和手机号码联系您，以便安排产品演示，为您提供更好的使用体验。',
 };
 export default login;

@@ -163,7 +163,7 @@ export default function Register() {
                 <Input
                     error={validationErrors.phoneNumber}
                     label={t('login.phoneNumber')}
-                    type="phoneNumber"
+                    type="tel"
                     placeholder="139-999-9999"
                     value={phoneNumber}
                     onChange={(e) => setAndValidate('phoneNumber', e.target.value)}
@@ -191,6 +191,7 @@ export default function Register() {
                 <Button disabled={submitDisabled} type="button" onClick={handleSubmit}>
                     {t('login.signUp')}
                 </Button>
+                <p className="pt-8 text-xs text-gray-500">{t('login.disclaimer')}</p>
             </form>
         </LoginSignupLayout>
     );
