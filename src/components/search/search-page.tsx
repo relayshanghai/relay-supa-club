@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from 'src/components/button';
 import { SearchProvider, useSearch, useSearchResults } from 'src/hooks/use-search';
 import { numberFormatter } from 'src/utils/formatter';
@@ -23,7 +23,7 @@ import { useRudderstack } from 'src/hooks/use-rudderstack';
 
 export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
     const { t } = useTranslation();
-    const { platform } = useSearch();
+    const { platform, setSearchParams } = useSearch();
     const [filterModalOpen, setShowFiltersModal] = useState(false);
     const [showCampaignListModal, setShowCampaignListModal] = useState(false);
     const [selectedCreator, setSelectedCreator] = useState<CreatorSearchAccountObject | null>(null);
@@ -42,6 +42,18 @@ export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
     } = useSearchResults(0);
 
     const [showAlreadyAddedModal, setShowAlreadyAddedModal] = useState(false);
+
+    useEffect(() => {
+        //TODO: if recommended feature is enabled, set only_recommended to true and add recommendedInfluencers here in initial search load
+        setSearchParams({
+            page: 0,
+            platform: 'youtube',
+            username: '',
+            views: [null, null],
+            audience: [null, null],
+            only_recommended: false,
+        });
+    }, [setSearchParams]);
 
     return (
         <div className="space-y-4">

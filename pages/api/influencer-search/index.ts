@@ -21,7 +21,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             if (recordError) {
                 res.status(httpCodes.BAD_REQUEST).json({ error: recordError });
             }
-            // console.log(searchParams);//TODO: remove
             const results = await fetchCreatorsFiltered(searchParams);
             return res.status(httpCodes.OK).json(results);
         } catch (error) {

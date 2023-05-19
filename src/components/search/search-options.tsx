@@ -11,6 +11,7 @@ import { featRecommended } from 'src/constants/feature-flags';
 import { SearchLocations } from './search-locations';
 import LocationTag from './location-tag';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { useEffect } from 'react';
 // const resultsPerPageOptions = [10, 20, 50, 100];
 
 const filterCountry = (items: any[]) => {
@@ -45,13 +46,16 @@ export const SearchOptions = ({
         lastPost,
         setLastPost,
         setContactInfo,
+        username,
+        contactInfo,
         // resultsPerPageLimit,
         // setResultsPerPageLimit,
         onlyRecommended,
         setOnlyRecommended,
         recommendedInfluencers,
-        setLoading,
+        activeSearch,
         setActiveSearch,
+        setSearchParams,
     } = useSearch();
 
     const { t } = useTranslation();
@@ -59,12 +63,48 @@ export const SearchOptions = ({
     const hasSetAudience = audience[0] || audience[1];
     const { trackEvent } = useRudderstack();
 
-    const handleSearch = () => {
-        setPage(0);
+    const handleSearch = (e: any) => {
+        e.preventDefault();
         setActiveSearch(true);
-        setLoading(true);
+        setPage(0);
         // trackEvent('Search Options, search');
     };
+
+    useEffect(() => {
+        if (activeSearch) {
+            setSearchParams({
+                platform,
+                tags,
+                username,
+                influencerLocation,
+                views,
+                audience,
+                gender,
+                engagement,
+                lastPost,
+                contactInfo,
+                audienceLocation,
+                only_recommended: onlyRecommended,
+                recommendedInfluencers,
+            });
+        }
+    }, [
+        activeSearch,
+        platform,
+        onlyRecommended,
+        setSearchParams,
+        tags,
+        username,
+        influencerLocation,
+        views,
+        audience,
+        gender,
+        engagement,
+        lastPost,
+        contactInfo,
+        audienceLocation,
+        recommendedInfluencers,
+    ]);
 
     return (
         <>
@@ -144,7 +184,7 @@ export const SearchOptions = ({
                             )}
                         </div>
                     </button>
-                    <Button className="mx-2" onClick={handleSearch}>
+                    <Button className="mx-2" onClick={(e) => handleSearch(e)}>
                         Search
                     </Button>
                     {/* Hide Select Option of results per page, default now set to 10 */}

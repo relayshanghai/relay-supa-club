@@ -8,10 +8,10 @@ import { clientLogger } from 'src/utils/logger-client';
 import type { CreatorPlatform, LocationWeighted, CreatorSearchTag } from 'types';
 import { useUser } from './use-user';
 import useSWR from 'swr';
-// import useSWRImmutable from 'swr/immutable';
 import type { RecommendedInfluencersGetResponse } from 'pages/api/recommended-influencers';
 import { featRecommended } from 'src/constants/feature-flags';
 type NullStringTuple = [null | string, null | string];
+import type { FetchCreatorsFilteredParams } from 'src/utils/api/iqdata/transforms';
 
 export interface ISearchContext {
     loading: boolean;
@@ -49,6 +49,8 @@ export interface ISearchContext {
     recommendedInfluencers: string[];
     activeSearch: boolean;
     setActiveSearch: (activeSearch: boolean) => void;
+    searchParams: FetchCreatorsFilteredParams | undefined;
+    setSearchParams: (searchParams: FetchCreatorsFilteredParams | undefined) => void;
 }
 
 export const SearchContext = createContext<ISearchContext>({
@@ -83,11 +85,13 @@ export const SearchContext = createContext<ISearchContext>({
     setUsageExceeded: () => null,
     page: 0,
     setPage: () => null,
-    onlyRecommended: true,
+    onlyRecommended: false,
     setOnlyRecommended: () => null,
     recommendedInfluencers: [],
     activeSearch: false,
     setActiveSearch: () => null,
+    searchParams: undefined,
+    setSearchParams: () => null,
 });
 
 export const useSearch = () => useContext(SearchContext);
@@ -97,65 +101,30 @@ export const useSearchResults = (page: number) => {
     const ref = useRef<any>();
 
     const {
-        tags,
-        username,
-        influencerLocation,
-        views,
-        audience,
-        gender,
-        engagement,
-        lastPost,
-        contactInfo,
-        audienceLocation,
-        onlyRecommended,
-        platform,
-        resultsPerPageLimit,
+        // tags,
+        // username,
+        // influencerLocation,
+        // views,
+        // audience,
+        // gender,
+        // engagement,
+        // lastPost,
+        // contactInfo,
+        // audienceLocation,
+        // onlyRecommended,
+        // platform,
+        // resultsPerPageLimit,
+        // recommendedInfluencers,
+        // activeSearch,
         setUsageExceeded,
         setLoading,
-        recommendedInfluencers,
-        // activeSearch,
         setActiveSearch,
+        searchParams,
     } = useSearch();
 
     const { data, isLoading, mutate, isValidating, error } = useSWR(
-        profile?.id
-            ? [
-                  'influencer-search',
-                  page,
-                  // tags,
-                  // username,
-                  // influencerLocation,
-                  // views,
-                  // audience,
-                  // gender,
-                  // engagement,
-                  // lastPost,
-                  // contactInfo,
-                  // audienceLocation,
-                  onlyRecommended,
-                  platform,
-                  // resultsPerPageLimit,
-                  recommendedInfluencers,
-              ]
-            : null,
-        async ([
-            path,
-            page,
-            // tags,
-            // username,
-            // influencerLocation,
-            // views,
-            // audience,
-            // gender,
-            // engagement,
-            // lastPost,
-            // contactInfo,
-            // audienceLocation,
-            onlyRecommended,
-            platform,
-            // resultsPerPageLimit,
-            recommendedInfluencers,
-        ]) => {
+        profile?.id && searchParams ? ['influencer-search', searchParams, page] : null,
+        async ([path, searchParams, page]) => {
             try {
                 if (!profile?.company_id || !profile?.id) {
                     throw new Error('No profile');
@@ -167,6 +136,23 @@ export const useSearchResults = (page: number) => {
                 const controller = new AbortController();
                 const signal = controller.signal;
                 ref.current = controller;
+
+                const {
+                    tags,
+                    platform,
+                    username,
+                    influencerLocation,
+                    audienceLocation,
+                    resultsPerPageLimit,
+                    audience,
+                    views,
+                    gender,
+                    engagement,
+                    lastPost,
+                    contactInfo,
+                    only_recommended: onlyRecommended,
+                    recommendedInfluencers,
+                } = searchParams;
 
                 const body: InfluencerPostRequest = {
                     tags,
@@ -187,7 +173,6 @@ export const useSearchResults = (page: number) => {
                     user_id: profile?.id,
                     recommendedInfluencers,
                 };
-
                 const res = await nextFetch<InfluencerPostResponse>(path, {
                     method: 'post',
                     signal,
@@ -210,6 +195,7 @@ export const useSearchResults = (page: number) => {
                 setActiveSearch(false);
             }
         },
+        { refreshInterval: 0 },
     );
 
     useEffect(() => {
@@ -239,6 +225,7 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
     const [resultsPerPageLimit, setResultsPerPageLimit] = useState(10);
     const [usageExceeded, setUsageExceeded] = useState(false);
     const [page, setPage] = useState(0);
+    const [searchParams, setSearchParams] = useState<FetchCreatorsFilteredParams>();
 
     // search options
     const [tags, setTopicTags] = useState<CreatorSearchTag[]>([]);
@@ -297,6 +284,8 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
                 recommendedInfluencers: recommendedInfluencers ?? [],
                 activeSearch,
                 setActiveSearch,
+                searchParams,
+                setSearchParams,
             }}
         >
             {children}
