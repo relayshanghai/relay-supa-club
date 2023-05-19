@@ -27,7 +27,6 @@ export const insertCampaignCreator = async (data: CampaignCreatorDBInsert) =>
     await supabase
         .from('campaign_creators')
         .insert({
-            status: 'to contact',
             ...data,
         })
         .eq('campaign_id', data.campaign_id)
