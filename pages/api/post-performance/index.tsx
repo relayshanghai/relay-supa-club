@@ -8,7 +8,7 @@ import { checkSessionIdMatchesID } from 'src/utils/auth';
 import { serverLogger } from 'src/utils/logger-server';
 import type { CreatorPlatform } from 'types';
 
-export type PostScrapeGetQuery = {
+export type PostsPerformanceGetQuery = {
     campaignId: string;
     profileId: string;
 };
@@ -18,6 +18,7 @@ export type PostPerformanceData = {
     commentCount?: number;
     viewCount?: number;
     updatedAt: string;
+    sales?: number;
 };
 export type PostScrapeGetResponse = PostPerformanceData[];
 
@@ -89,6 +90,7 @@ const transformPostPerformanceData = (raw: PostPerformanceAndPost): PostPerforma
         commentCount: raw.comments_total ?? undefined,
         viewCount: raw.views_total ?? undefined,
         updatedAt: raw.updated_at,
+        sales: raw.sales_total ?? undefined,
     };
 };
 
@@ -134,7 +136,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     try {
-        const { campaignId, profileId } = req.query as PostScrapeGetQuery;
+        const { campaignId, profileId } = req.query as PostsPerformanceGetQuery;
         if (!profileId) {
             return res.status(400).json({ error: 'Invalid request. Body must contain "profileId" property.' });
         }
