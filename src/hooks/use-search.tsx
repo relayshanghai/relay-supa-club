@@ -175,7 +175,11 @@ export const useSearchResults = (page: number) => {
                 setActiveSearch(false);
             }
         },
-        { refreshInterval: 0 },
+        {
+            revalidateIfStale: false,
+            revalidateOnFocus: false,
+            revalidateOnReconnect: false,
+        },
     );
 
     useEffect(() => {
