@@ -1,5 +1,4 @@
 import { AdjustmentsVerticalIcon } from '@heroicons/react/24/solid';
-
 import { useTranslation } from 'react-i18next';
 import { useSearch } from 'src/hooks/use-search';
 import { numberFormatter } from 'src/utils/formatter';
@@ -12,7 +11,6 @@ import { SearchLocations } from './search-locations';
 import LocationTag from './location-tag';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { useEffect } from 'react';
-// const resultsPerPageOptions = [10, 20, 50, 100];
 
 const filterCountry = (items: any[]) => {
     return items.filter((item: any) => {
@@ -48,8 +46,6 @@ export const SearchOptions = ({
         setContactInfo,
         username,
         contactInfo,
-        // resultsPerPageLimit,
-        // setResultsPerPageLimit,
         onlyRecommended,
         setOnlyRecommended,
         recommendedInfluencers,
@@ -67,7 +63,7 @@ export const SearchOptions = ({
         e.preventDefault();
         setActiveSearch(true);
         setPage(0);
-        // trackEvent('Search Options, search');
+        trackEvent('Search Options, search');
     };
 
     useEffect(() => {

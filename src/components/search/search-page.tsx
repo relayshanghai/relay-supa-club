@@ -20,10 +20,11 @@ import { useAtomValue } from 'jotai';
 import { clientRoleAtom } from 'src/atoms/client-role-atom';
 import { useAllCampaignCreators } from 'src/hooks/use-all-campaign-creators';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { featRecommended } from 'src/constants/feature-flags';
 
 export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
     const { t } = useTranslation();
-    const { platform, setSearchParams } = useSearch();
+    const { platform, setSearchParams, recommendedInfluencers } = useSearch();
     const [filterModalOpen, setShowFiltersModal] = useState(false);
     const [showCampaignListModal, setShowCampaignListModal] = useState(false);
     const [selectedCreator, setSelectedCreator] = useState<CreatorSearchAccountObject | null>(null);
@@ -44,16 +45,16 @@ export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
     const [showAlreadyAddedModal, setShowAlreadyAddedModal] = useState(false);
 
     useEffect(() => {
-        //TODO: if recommended feature is enabled, set only_recommended to true and add recommendedInfluencers here in initial search load
         setSearchParams({
             page: 0,
             platform: 'youtube',
             username: '',
             views: [null, null],
             audience: [null, null],
-            only_recommended: false,
+            recommendedInfluencers: featRecommended() ? recommendedInfluencers : [],
+            only_recommended: featRecommended() ? true : false,
         });
-    }, [setSearchParams]);
+    }, [recommendedInfluencers, setSearchParams]);
 
     return (
         <div className="space-y-4">
