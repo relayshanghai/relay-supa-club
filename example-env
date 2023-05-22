@@ -71,3 +71,7 @@ SENTRY_IGNORE_API_RESOLUTION_ERROR=1
 GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\asdfasdf...asdfasdf==\n-----END PRIVATE KEY-----\n"
 GOOGLE_PRIVATE_KEY_ID=asdfasdf....asdfasdf
 GOOGLE_CLIENT_ID=123123
+
+# Apify
+
+APIFY_TOKEN=asdfasdf

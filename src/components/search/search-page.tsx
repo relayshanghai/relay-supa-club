@@ -18,6 +18,7 @@ import { MoreResultsRows } from './search-result-row';
 import ClientRoleWarning from './client-role-warning';
 import { useAtomValue } from 'jotai';
 import { clientRoleAtom } from 'src/atoms/client-role-atom';
+import { useAllCampaignCreators } from 'src/hooks/use-all-campaign-creators';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 
 export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
@@ -27,13 +28,13 @@ export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
     const [showCampaignListModal, setShowCampaignListModal] = useState(false);
     const [selectedCreator, setSelectedCreator] = useState<CreatorSearchAccountObject | null>(null);
     const { campaigns } = useCampaigns({ companyId });
+    const { allCampaignCreators } = useAllCampaignCreators(campaigns);
     const { trackEvent } = useRudderstack();
 
     const [page, setPage] = useState(0);
     const { results: firstPageSearchResults, resultsTotal, noResults, error, isValidating } = useSearchResults(0);
 
     const [showAlreadyAddedModal, setShowAlreadyAddedModal] = useState(false);
-    const [campaignsWithCreator, setCampaignsWithCreator] = useState<string[]>([]);
 
     return (
         <div className="space-y-4">
@@ -50,8 +51,7 @@ export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
                 setSelectedCreator={setSelectedCreator}
                 setShowCampaignListModal={setShowCampaignListModal}
                 setShowAlreadyAddedModal={setShowAlreadyAddedModal}
-                campaigns={campaigns}
-                setCampaignsWithCreator={setCampaignsWithCreator}
+                allCampaignCreators={allCampaignCreators}
                 loading={loading}
                 validating={isValidating}
                 results={firstPageSearchResults}
@@ -65,8 +65,7 @@ export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
                                 setSelectedCreator={setSelectedCreator}
                                 setShowCampaignListModal={setShowCampaignListModal}
                                 setShowAlreadyAddedModal={setShowAlreadyAddedModal}
-                                campaigns={campaigns}
-                                setCampaignsWithCreator={setCampaignsWithCreator}
+                                allCampaignCreators={allCampaignCreators}
                             />
                         ))}
                     </>
@@ -92,13 +91,16 @@ export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
                     ...selectedCreator?.account.user_profile,
                 }}
                 campaigns={campaigns}
+                allCampaignCreators={allCampaignCreators}
             />
 
             <InfluencerAlreadyAddedModal
                 show={showAlreadyAddedModal}
                 setCampaignListModal={setShowCampaignListModal}
                 setShow={setShowAlreadyAddedModal}
-                campaignsWithCreator={campaignsWithCreator}
+                selectedCreator={selectedCreator}
+                campaigns={campaigns}
+                allCampaignCreators={allCampaignCreators}
             />
 
             <SearchFiltersModal show={filterModalOpen} setShow={setShowFiltersModal} />
