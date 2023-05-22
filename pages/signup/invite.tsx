@@ -29,7 +29,7 @@ export default function Register() {
 
     const router = useRouter();
     const {
-        values: { password, confirmPassword, firstName, lastName, email },
+        values: { password, confirmPassword, firstName, lastName, email, phoneNumber },
         setFieldValue,
     } = useFields({
         firstName: '',
@@ -37,6 +37,7 @@ export default function Register() {
         password: '',
         confirmPassword: '',
         email: '',
+        phoneNumber: '',
     });
     const token = router.query.token as string;
     const [registering, setRegistering] = useState(false);
@@ -47,6 +48,7 @@ export default function Register() {
         email: '',
         password: '',
         confirmPassword: '',
+        phoneNumber: '',
     });
     const { getInviteStatus, acceptInvite } = useInvites();
 
@@ -131,7 +133,10 @@ export default function Register() {
             setValidationErrors({ ...validationErrors, [type]: '' });
         }
     };
-    const hasValidationErrors = Object.values(validationErrors).some((error) => error !== '');
+    const hasValidationErrors = Object.entries(validationErrors).some(
+        // ignore validation numbers for not required fields
+        ([key, error]) => key !== 'phoneNumber' && error !== '',
+    );
 
     const invalidFormInput =
         isMissing(token, firstName, lastName, email, password, confirmPassword) || hasValidationErrors;
@@ -146,7 +151,6 @@ export default function Register() {
                         <h3 className="mb-8 text-sm text-gray-600">{t('login.someoneInvitedYouToJoinRelayClub')}</h3>
                     </div>
                     <Input label={t('login.email')} value={email} disabled />
-
                     <Input
                         error={validationErrors.firstName}
                         label={t('login.firstName')}
@@ -172,6 +176,7 @@ export default function Register() {
                         type="password"
                         placeholder={t('login.passwordPlaceholder')}
                         value={password}
+                        required
                         onChange={(e) => setAndValidate('password', e.target.value)}
                     />
                     <Input
@@ -180,11 +185,21 @@ export default function Register() {
                         type="password"
                         placeholder={t('login.passwordPlaceholder')}
                         value={confirmPassword}
+                        required
                         onChange={(e) => setAndValidate('confirmPassword', e.target.value)}
+                    />
+                    <Input
+                        error={validationErrors.phoneNumber}
+                        label={t('login.phoneNumber')}
+                        type="tel"
+                        placeholder="139-999-9999"
+                        value={phoneNumber}
+                        onChange={(e) => setAndValidate('phoneNumber', e.target.value)}
                     />
                     <Button disabled={submitDisabled} type="button" onClick={handleSubmit}>
                         {t('login.signUp')}
                     </Button>
+                    <p className="pt-8 text-xs text-gray-500">{t('login.disclaimer')}</p>
                 </form>
             ) : inviteStatus === 'pending' ? (
                 <div className="mx-auto flex h-full flex-col items-center justify-center space-y-6">
