@@ -134,7 +134,12 @@ export const SearchResultRow = ({
                     />
                     <div>
                         <div className="font-bold">{fullname}</div>
-                        <Link href={url || ''} target="_blank" className="text-sm text-primary-500 line-clamp-1">
+                        <Link
+                            href={url || ''}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-sm text-primary-500 line-clamp-1"
+                        >
                             {handle ? `@${handle}` : null}
                         </Link>
                     </div>
