@@ -183,25 +183,6 @@ export const SearchOptions = ({
                     <Button className="mx-2" onClick={(e) => handleSearch(e)}>
                         {t('campaigns.index.search')}
                     </Button>
-                    {/* Hide Select Option of results per page, default now set to 10 */}
-                    {/* <select
-                        className="ml-4 mr-2 flex cursor-pointer flex-row items-center rounded-md border border-transparent bg-white p-1 text-gray-900 shadow ring-1 ring-gray-900 ring-opacity-5 hover:text-opacity-80 focus:border-primary-500 focus:outline-none focus:ring-primary-500 sm:text-sm"
-                        value={resultsPerPageLimit}
-                        onChange={(e) => {
-                            setPage(0);
-                            setResultsPerPageLimit(Number(e.target.value));
-                            trackEvent('Search Filters Modal, change search results per page', {
-                                resultsPerPage: e.target.value,
-                            });
-                        }}
-                    >
-                        {resultsPerPageOptions.map((option) => (
-                            <option value={option} key={option}>
-                                {numberFormatter(option)}
-                            </option>
-                        ))}
-                    </select> */}
-                    {/* <p className="mx-2 text-xs text-gray-500"> 10 {t('creators.resultsPerPage')}</p> */}
                     {hasSetViews || hasSetAudience || gender || engagement || lastPost ? (
                         <Button
                             onClick={(e: any) => {

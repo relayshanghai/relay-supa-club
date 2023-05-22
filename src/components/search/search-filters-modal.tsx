@@ -153,7 +153,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                     <label className="text-sm">
                         <div className="mb-1 text-base font-medium">{t('creators.filter.gender')}</div>
                         <select
-                            className=" rounded-lg bg-white p-1 text-sm ring-1 ring-gray-200"
+                            className="rounded-lg bg-white p-1 text-sm ring-1 ring-gray-200"
                             value={gender}
                             onChange={(e) => {
                                 if (e.target.value === 'any') {
