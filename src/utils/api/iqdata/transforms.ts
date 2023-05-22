@@ -69,7 +69,6 @@ export const prepareFetchCreatorsFiltered = ({
     page = 0,
     text,
     username,
-    keywords,
     audience,
     views,
     gender,
@@ -106,14 +105,12 @@ export const prepareFetchCreatorsFiltered = ({
     if (text) {
         body.filter.text = text;
     }
-    if (keywords) {
-        body.filter.keywords = keywords;
-    }
     if (username) {
         body.filter.username = { value: username };
 
         if (!body.filter.actions) body.filter.actions = [];
 
+        // Since username will always be provided, we can add filter actions for text and username here
         body.filter.actions.push({
             filter: 'username',
             action: 'should',
