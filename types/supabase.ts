@@ -339,21 +339,27 @@ export interface Database {
           id: string
           influencer_id: string
           platform: string
+          reference_id: string
           url: string
+          username: string
         }
         Insert: {
           created_at?: string | null
           id?: string
           influencer_id: string
           platform: string
+          reference_id: string
           url: string
+          username: string
         }
         Update: {
           created_at?: string | null
           id?: string
           influencer_id?: string
           platform?: string
+          reference_id?: string
           url?: string
+          username?: string
         }
       }
       influencers: {
@@ -445,7 +451,7 @@ export interface Database {
           campaign_id: string
           comments_total: number | null
           created_at: string | null
-          id: number
+          id: string
           influencer_id: string
           likes_total: number | null
           orders_total: number | null
@@ -459,7 +465,7 @@ export interface Database {
           campaign_id: string
           comments_total?: number | null
           created_at?: string | null
-          id?: number
+          id?: string
           influencer_id: string
           likes_total?: number | null
           orders_total?: number | null
@@ -473,7 +479,7 @@ export interface Database {
           campaign_id?: string
           comments_total?: number | null
           created_at?: string | null
-          id?: number
+          id?: string
           influencer_id?: string
           likes_total?: number | null
           orders_total?: number | null

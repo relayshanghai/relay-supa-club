@@ -14,6 +14,30 @@ env:
     SUPABASE_SCANNER_BUFFER_SIZE: 5mb
 
 jobs:
+    pre-deploy-test:
+        runs-on: ubuntu-22.04
+        environment: preview
+        env:
+            NEXT_PUBLIC_FEAT_RECOMMENDED: true
+            NEXT_PUBLIC_SUPABASE_URL: http://localhost:54321
+
+        strategy:
+            matrix:
+                node-version: [18.14.0]
+        steps:
+            - uses: actions/checkout@v3
+
+            - name: Use Node.js ${{ matrix.node-version }}
+              uses: actions/setup-node@v3
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  cache: 'npm'
+
+            - run: npm ci --no-audit --no-fund
+            - run: npm run type-check-all
+            - run: npm run lint
+            - run: npm run test
+
     deploy:
         runs-on: ubuntu-22.04
         environment: production

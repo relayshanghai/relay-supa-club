@@ -50,8 +50,9 @@ export const Layout = ({ children }: any) => {
                                         data-testid="layout-account-menu"
                                         onClick={() => setAccountMenuOpen(!accountMenuOpen)}
                                         ref={accountMenuButtonRef}
+                                        className="flex justify-center rounded-full bg-primary-50 p-2 align-middle"
                                     >
-                                        <p className="h-9 w-9 rounded-full bg-primary-50 p-2 text-xs font-bold text-primary-600">
+                                        <p className="text-xs font-bold text-primary-600">
                                             {profile?.first_name ? profile.first_name[0] : ''}
                                             {profile?.last_name ? profile.last_name[0] : ''}
                                         </p>

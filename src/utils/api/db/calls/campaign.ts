@@ -8,7 +8,6 @@ import type {
     CampaignNotesDB,
     ProfileDB,
 } from '../types';
-export type { CampaignWithCompanyCreators } from 'src/utils/client-db/campaigns';
 
 export type CampaignNotesWithProfiles = CampaignNotesDB & {
     profiles: Pick<ProfileDB, 'id' | 'first_name' | 'last_name'>;
@@ -28,7 +27,6 @@ export const insertCampaignCreator = async (data: CampaignCreatorDBInsert) =>
     await supabase
         .from('campaign_creators')
         .insert({
-            status: 'to contact',
             ...data,
         })
         .eq('campaign_id', data.campaign_id)

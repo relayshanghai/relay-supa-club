@@ -13,7 +13,7 @@ const CampaignsPage = () => {
     const { t } = useTranslation();
     const [currentTab, setCurrentTab] = useState<TabLabel['value']>('');
 
-    const { campaigns, isLoading, archivedCampaigns } = useCampaigns({});
+    const { campaigns, loading, archivedCampaigns } = useCampaigns({});
 
     const renderCampaigns = () => {
         if (
@@ -49,7 +49,7 @@ const CampaignsPage = () => {
                         <Button>{t('campaigns.index.createCampaign')}</Button>
                     </Link>
                 </div>
-                {isLoading ? (
+                {loading ? (
                     <Spinner className="mx-auto mt-10 h-10 w-10 fill-primary-600 text-white" />
                 ) : (
                     renderCampaigns()

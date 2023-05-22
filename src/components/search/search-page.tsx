@@ -16,6 +16,8 @@ import { useCampaigns } from 'src/hooks/use-campaigns';
 import { InfluencerAlreadyAddedModal } from '../influencer-already-added';
 import { MoreResultsRows } from './search-result-row';
 import ClientRoleWarning from './client-role-warning';
+import { useAllCampaignCreators } from 'src/hooks/use-all-campaign-creators';
+import { useRudderstack } from 'src/hooks/use-rudderstack';
 
 export const SearchPageInner = () => {
     const { t } = useTranslation();
@@ -24,12 +26,13 @@ export const SearchPageInner = () => {
     const [showCampaignListModal, setShowCampaignListModal] = useState(false);
     const [selectedCreator, setSelectedCreator] = useState<CreatorSearchAccountObject | null>(null);
     const { campaigns } = useCampaigns({});
+    const { allCampaignCreators } = useAllCampaignCreators(campaigns);
+    const { trackEvent } = useRudderstack();
 
     const [page, setPage] = useState(0);
     const { results: firstPageSearchResults, resultsTotal, noResults, error, isValidating } = useSearchResults(0);
 
     const [showAlreadyAddedModal, setShowAlreadyAddedModal] = useState(false);
-    const [campaignsWithCreator, setCampaignsWithCreator] = useState<string[]>([]);
 
     return (
         <div className="space-y-4">
@@ -46,8 +49,7 @@ export const SearchPageInner = () => {
                 setSelectedCreator={setSelectedCreator}
                 setShowCampaignListModal={setShowCampaignListModal}
                 setShowAlreadyAddedModal={setShowAlreadyAddedModal}
-                campaigns={campaigns}
-                setCampaignsWithCreator={setCampaignsWithCreator}
+                allCampaignCreators={allCampaignCreators}
                 loading={loading}
                 validating={isValidating}
                 results={firstPageSearchResults}
@@ -61,15 +63,23 @@ export const SearchPageInner = () => {
                                 setSelectedCreator={setSelectedCreator}
                                 setShowCampaignListModal={setShowCampaignListModal}
                                 setShowAlreadyAddedModal={setShowAlreadyAddedModal}
-                                campaigns={campaigns}
-                                setCampaignsWithCreator={setCampaignsWithCreator}
+                                allCampaignCreators={allCampaignCreators}
                             />
                         ))}
                     </>
                 }
             />
 
-            {!noResults && <Button onClick={async () => setPage(page + 1)}>{t('creators.loadMore')}</Button>}
+            {!noResults && (
+                <Button
+                    onClick={async () => {
+                        setPage(page + 1);
+                        trackEvent('Search Result, load more');
+                    }}
+                >
+                    {t('creators.loadMore')}
+                </Button>
+            )}
 
             <AddToCampaignModal
                 show={showCampaignListModal}
@@ -79,13 +89,16 @@ export const SearchPageInner = () => {
                     ...selectedCreator?.account.user_profile,
                 }}
                 campaigns={campaigns}
+                allCampaignCreators={allCampaignCreators}
             />
 
             <InfluencerAlreadyAddedModal
                 show={showAlreadyAddedModal}
                 setCampaignListModal={setShowCampaignListModal}
                 setShow={setShowAlreadyAddedModal}
-                campaignsWithCreator={campaignsWithCreator}
+                selectedCreator={selectedCreator}
+                campaigns={campaigns}
+                allCampaignCreators={allCampaignCreators}
             />
 
             <SearchFiltersModal show={filterModalOpen} setShow={setShowFiltersModal} />

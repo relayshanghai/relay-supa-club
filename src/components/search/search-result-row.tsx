@@ -1,7 +1,6 @@
 import { Menu } from '@headlessui/react';
 import { PlusCircleIcon } from '@heroicons/react/24/solid';
 import Link from 'next/link';
-import type { CampaignWithCompanyCreators } from 'src/utils/client-db/campaigns';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
 import { DotsHorizontal, ShareLink } from 'src/components/icons';
@@ -16,13 +15,13 @@ import { SkeletonSearchResultRow } from '../common/skeleton-search-result-row';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { isRecommendedInfluencer } from 'src/utils/utils';
 
+import type { CampaignCreatorBasicInfo } from 'src/utils/client-db/campaignCreators';
 export interface SearchResultRowProps {
     creator: CreatorSearchAccountObject;
     setSelectedCreator: (creator: CreatorSearchAccountObject) => void;
     setShowCampaignListModal: (show: boolean) => void;
     setShowAlreadyAddedModal: (show: boolean) => void;
-    campaigns?: CampaignWithCompanyCreators[];
-    setCampaignsWithCreator: (campaigns: string[]) => void;
+    allCampaignCreators?: CampaignCreatorBasicInfo[];
 }
 export interface MoreResultsRowsProps extends Omit<SearchResultRowProps, 'creator'> {
     page: number;
@@ -33,8 +32,7 @@ export const MoreResultsRows = ({
     setShowCampaignListModal,
     setSelectedCreator,
     setShowAlreadyAddedModal,
-    campaigns,
-    setCampaignsWithCreator,
+    allCampaignCreators,
 }: MoreResultsRowsProps) => {
     const { t } = useTranslation();
     const { resultsPerPageLimit } = useSearch();
@@ -67,8 +65,7 @@ export const MoreResultsRows = ({
                     setShowCampaignListModal={setShowCampaignListModal}
                     setSelectedCreator={setSelectedCreator}
                     setShowAlreadyAddedModal={setShowAlreadyAddedModal}
-                    campaigns={campaigns}
-                    setCampaignsWithCreator={setCampaignsWithCreator}
+                    allCampaignCreators={allCampaignCreators}
                 />
             ))}
         </>
@@ -80,9 +77,8 @@ export const SearchResultRow = ({
     creator,
     setShowCampaignListModal,
     setSelectedCreator,
-    campaigns,
+    allCampaignCreators,
     setShowAlreadyAddedModal,
-    setCampaignsWithCreator,
 }: SearchResultRowProps) => {
     const { t } = useTranslation();
     const { platform, recommendedInfluencers } = useSearch();
@@ -101,27 +97,27 @@ export const SearchResultRow = ({
     } = creator.account.user_profile;
     const handle = username || custom_name || fullname || '';
 
-    const addToCampaign = () => {
-        if (creator) setSelectedCreator(creator);
+    const addToCampaign = async () => {
+        setSelectedCreator(creator);
+        let isAlreadyInCampaign = false;
 
-        const campaignsList: string[] = [];
-
-        campaigns?.forEach((campaign) => {
-            if (campaign && creator.account.user_profile.user_id) {
-                const creatorInCampaign = campaign?.campaign_creators?.find(
-                    (campaignCreator) => campaignCreator.creator_id === creator?.account.user_profile.user_id,
-                );
-
-                if (creatorInCampaign) {
-                    campaignsList.push(campaign.name);
+        if (allCampaignCreators) {
+            for (const campaignCreator of allCampaignCreators) {
+                if (campaignCreator?.campaign_id && creator.account.user_profile.user_id) {
+                    if (campaignCreator.creator_id === creator.account.user_profile.user_id) {
+                        isAlreadyInCampaign = true;
+                        break;
+                    }
                 }
             }
-        });
+        }
 
-        if (campaignsList.length > 0) {
-            setCampaignsWithCreator(campaignsList);
+        if (isAlreadyInCampaign) {
             setShowAlreadyAddedModal(true);
-        } else setShowCampaignListModal(true);
+        } else {
+            setShowCampaignListModal(true);
+        }
+        trackEvent('Search Result Row, add to campaign', { platform, user_id });
     };
 
     const desktop = useAboveScreenWidth(500);
@@ -138,7 +134,14 @@ export const SearchResultRow = ({
                     />
                     <div>
                         <div className="font-bold">{fullname}</div>
-                        <div className="text-sm text-primary-500 line-clamp-1">{handle ? `@${handle}` : null}</div>
+                        <Link
+                            href={url || ''}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-sm text-primary-500 line-clamp-1"
+                        >
+                            {handle ? `@${handle}` : null}
+                        </Link>
                     </div>
                 </div>
                 <div className="mt-2">
@@ -165,7 +168,7 @@ export const SearchResultRow = ({
                     <Link
                         href={`/influencer/${platform}/${user_id}`}
                         target="_blank"
-                        onClick={() => trackEvent('Opened a report from Search', { platform, user_id })}
+                        onClick={() => trackEvent('Search Result Row, open report', { platform, user_id })}
                     >
                         <Button className="flex flex-row items-center" variant="secondary">
                             <span className="">{t('creators.analyzeProfile')}</span>
@@ -179,7 +182,7 @@ export const SearchResultRow = ({
 
                     {url && (
                         <Link href={url} target="_blank" rel="noopener noreferrer">
-                            <Button>
+                            <Button onClick={() => trackEvent('Search Result Row, open social link', { url })}>
                                 <ShareLink className="w-5 fill-current text-white" />
                             </Button>
                         </Link>
@@ -221,7 +224,7 @@ export const SearchResultRow = ({
                                                     active ? 'bg-violet-500 text-white' : 'text-gray-900'
                                                 } group flex w-full items-center justify-center rounded-md px-2 py-2 text-sm`}
                                                 onClick={() =>
-                                                    trackEvent('Opened a report from Search', { platform, user_id })
+                                                    trackEvent('Search Result Row, open report', { platform, user_id })
                                                 }
                                             >
                                                 {t('creators.analyzeProfile')}
@@ -235,6 +238,9 @@ export const SearchResultRow = ({
                                         <Menu.Item>
                                             {({ active }) => (
                                                 <button
+                                                    onClick={() =>
+                                                        trackEvent('Search Result Row, open social link', { url })
+                                                    }
                                                     className={`${
                                                         active ? 'bg-violet-500 text-white' : 'text-gray-900'
                                                     } group flex w-full items-center justify-center rounded-md px-2 py-2 text-sm`}

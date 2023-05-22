@@ -17,10 +17,10 @@ import { questions } from 'src/components/campaigns/helper';
 import { useCampaigns } from 'src/hooks/use-campaigns';
 import { useCallback } from 'react';
 import { Spinner } from 'src/components/icons';
-import type { CampaignWithCompanyCreators } from 'src/utils/api/db';
 import { clientLogger } from 'src/utils/logger-client';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
+import type { CampaignDB } from 'src/utils/api/db';
 
 const TimelineInput = ({
     q,
@@ -129,7 +129,7 @@ export default function CampaignForm() {
                 }
                 toast(t('campaigns.form.successCreateMsg'));
                 setSubmitting(false);
-                trackEvent('New Campaign Created');
+                trackEvent('Campaign Form, create new campaign');
                 router.push(`/campaigns/${encodeURIComponent(result.id)}`);
             } catch (error: any) {
                 clientLogger(error, 'error');
@@ -141,9 +141,8 @@ export default function CampaignForm() {
     );
 
     const updateHandler = useCallback(
-        async (campaignWithCompanyCreators: CampaignWithCompanyCreators | null) => {
-            if (!campaignWithCompanyCreators) return null;
-            const { campaign_creators: _unused1, companies: _unused2, ...campaign } = campaignWithCompanyCreators;
+        async (campaign: CampaignDB | null) => {
+            if (!campaign) return null;
             setSubmitting(true);
             try {
                 const result = await updateCampaign(campaign);

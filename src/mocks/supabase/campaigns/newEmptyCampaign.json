@@ -21,11 +21,5 @@
   "media": [],
   "purge_media": [],
   "media_path": null,
-  "archived": false,
-  "companies": {
-    "id": "8e6e65ca-dd79-4e68-90e4-9c5462991ae4",
-    "name": "relay",
-    "cus_id": "cus_Nk44RPNy8MrSgs"
-  },
-  "campaign_creators": []
+  "archived": false
 }
