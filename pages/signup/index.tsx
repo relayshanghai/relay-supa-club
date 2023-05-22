@@ -103,9 +103,12 @@ export default function Register() {
             setValidationErrors({ ...validationErrors, [type]: '' });
         }
     };
-    const hasValidationErrors = Object.values(validationErrors).some((error) => error !== '');
+    const hasValidationErrors = Object.entries(validationErrors).some(
+        // ignore validation numbers for not required fields
+        ([key, error]) => key !== 'phoneNumber' && error !== '',
+    );
 
-    const invalidFormInput = isMissing(firstName, lastName, email, password) || hasValidationErrors;
+    const invalidFormInput = isMissing(firstName, lastName, email, password, confirmPassword) || hasValidationErrors;
     const submitDisabled = invalidFormInput || loading;
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {

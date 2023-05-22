@@ -133,7 +133,10 @@ export default function Register() {
             setValidationErrors({ ...validationErrors, [type]: '' });
         }
     };
-    const hasValidationErrors = Object.values(validationErrors).some((error) => error !== '');
+    const hasValidationErrors = Object.entries(validationErrors).some(
+        // ignore validation numbers for not required fields
+        ([key, error]) => key !== 'phoneNumber' && error !== '',
+    );
 
     const invalidFormInput =
         isMissing(token, firstName, lastName, email, password, confirmPassword) || hasValidationErrors;
@@ -173,6 +176,7 @@ export default function Register() {
                         type="password"
                         placeholder={t('login.passwordPlaceholder')}
                         value={password}
+                        required
                         onChange={(e) => setAndValidate('password', e.target.value)}
                     />
                     <Input
@@ -181,6 +185,7 @@ export default function Register() {
                         type="password"
                         placeholder={t('login.passwordPlaceholder')}
                         value={confirmPassword}
+                        required
                         onChange={(e) => setAndValidate('confirmPassword', e.target.value)}
                     />
                     <Input
