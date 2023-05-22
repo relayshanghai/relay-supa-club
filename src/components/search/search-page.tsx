@@ -24,7 +24,7 @@ import { featRecommended } from 'src/constants/feature-flags';
 
 export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
     const { t } = useTranslation();
-    const { platform, setSearchParams, recommendedInfluencers } = useSearch();
+    const { platform, setSearchParams, recommendedInfluencers, onlyRecommended } = useSearch();
     const [filterModalOpen, setShowFiltersModal] = useState(false);
     const [showCampaignListModal, setShowCampaignListModal] = useState(false);
     const [selectedCreator, setSelectedCreator] = useState<CreatorSearchAccountObject | null>(null);
@@ -47,14 +47,14 @@ export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
     useEffect(() => {
         setSearchParams({
             page: 0,
-            platform: 'youtube',
+            platform,
             username: '',
             views: [null, null],
             audience: [null, null],
             recommendedInfluencers: featRecommended() ? recommendedInfluencers : [],
-            only_recommended: featRecommended() ? true : false,
+            only_recommended: featRecommended() ? onlyRecommended : false,
         });
-    }, [recommendedInfluencers, setSearchParams]);
+    }, [platform, recommendedInfluencers, setSearchParams, onlyRecommended]);
 
     return (
         <div className="space-y-4">
