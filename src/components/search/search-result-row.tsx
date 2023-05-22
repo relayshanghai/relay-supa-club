@@ -59,9 +59,9 @@ export const MoreResultsRows = ({
     if (results) {
         return (
             <>
-                {results?.map((creator, i) => (
+                {results?.map((creator) => (
                     <SearchResultRow
-                        key={i}
+                        key={creator.account.user_profile.user_id}
                         creator={creator}
                         setShowCampaignListModal={setShowCampaignListModal}
                         setSelectedCreator={setSelectedCreator}
