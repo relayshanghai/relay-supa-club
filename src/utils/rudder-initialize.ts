@@ -13,7 +13,19 @@ export async function rudderInitialized() {
     const rudder = (window.rudder = window.rudder || []);
 
     rudder.load(WRITE_KEY, DATA_PLANE_URL, {
+        sendAdblockPage: true,
+        sendAdblockPageOptions: {
+            integrations: {
+                All: false,
+                Mixpanel: true,
+            },
+        },
         integrations: { All: true }, // load call options
+    });
+
+    rudder.page('RudderJS-Initiated', 'ad-block page request', {
+        path: '/ad-blocked',
+        title: 'error in script loading:: src::  http://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js id:: ad-block',
     });
 
     // rudder.ready(() => {
