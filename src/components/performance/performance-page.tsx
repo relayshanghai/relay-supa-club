@@ -99,10 +99,10 @@ const PerformancePage = () => {
                                     <SalesBarChart />
                                 </div>
                             </div>
-                            {Object.values(totals).map((total, index) => (
+                            {Object.values(totals).map((total) => (
                                 <div
                                     className="group flex min-w-[168px] flex-col space-y-6 rounded-2xl bg-white p-6 shadow transition duration-500 ease-in-out hover:scale-105 hover:cursor-default hover:stroke-primary-500 hover:text-primary-500 hover:shadow-md"
-                                    key={index}
+                                    key={total.label}
                                 >
                                     <total.Icon className=" stroke-gray-700 group-hover:stroke-primary-500" />
                                     <div>
