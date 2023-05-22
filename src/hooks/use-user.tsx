@@ -22,6 +22,7 @@ export type SignupData = {
     data: {
         first_name: string;
         last_name: string;
+        phone?: string;
     };
 };
 
@@ -164,9 +165,8 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
         }
         const profileBody: ProfileInsertBody = {
             id,
-            first_name: data.first_name,
-            last_name: data.last_name,
             email,
+            ...data,
         };
         const createProfileResponse = await nextFetch<ProfileInsertBody>('profiles', {
             method: 'POST',
