@@ -24,7 +24,21 @@ import { featRecommended } from 'src/constants/feature-flags';
 
 export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
     const { t } = useTranslation();
-    const { platform, setSearchParams, recommendedInfluencers, onlyRecommended } = useSearch();
+    const {
+        platform,
+        setSearchParams,
+        recommendedInfluencers,
+        onlyRecommended,
+        setAudience,
+        setViews,
+        setGender,
+        setEngagement,
+        setLastPost,
+        setContactInfo,
+        setTopicTags,
+        setInfluencerLocation,
+        setAudienceLocation,
+    } = useSearch();
     const [filterModalOpen, setShowFiltersModal] = useState(false);
     const [showCampaignListModal, setShowCampaignListModal] = useState(false);
     const [selectedCreator, setSelectedCreator] = useState<CreatorSearchAccountObject | null>(null);
@@ -55,6 +69,30 @@ export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
             only_recommended: featRecommended() ? onlyRecommended : false,
         });
     }, [platform, recommendedInfluencers, setSearchParams, onlyRecommended]);
+
+    useEffect(() => {
+        setAudience([null, null]);
+        setViews([null, null]);
+        setGender(undefined);
+        setEngagement(undefined);
+        setLastPost(undefined);
+        setContactInfo(undefined);
+        setTopicTags([]);
+        setInfluencerLocation([]);
+        setAudienceLocation([]);
+        setPage(0);
+    }, [
+        platform,
+        setAudience,
+        setAudienceLocation,
+        setContactInfo,
+        setEngagement,
+        setGender,
+        setInfluencerLocation,
+        setLastPost,
+        setTopicTags,
+        setViews,
+    ]);
 
     return (
         <div className="space-y-4">
