@@ -42,6 +42,8 @@ describe('validateSignupInput', () => {
         const lastName = '';
         const result2 = validateSignupInput('lastName', lastName, '');
         expect(result2).toEqual(loginValidationErrors.lastNameRequired);
+
+        // accepts valid
         expect(validateSignupInput('lastName', 'Dole', '')).toBeNull();
     });
     it('returns the correct error if email is invalid', () => {
@@ -56,6 +58,7 @@ describe('validateSignupInput', () => {
         const result = validateSignupInput('phoneNumber', number, '');
         expect(result).toEqual(loginValidationErrors.phoneNumberInvalid);
 
+        // accepts valid
         expect(validateSignupInput('phoneNumber', '412-1231-123', '')).toBeNull();
     });
     it('compares passwords', () => {
@@ -64,6 +67,14 @@ describe('validateSignupInput', () => {
         const result = validateSignupInput('confirmPassword', passwordConfirm, password);
         expect(result).toEqual(loginValidationErrors.passwordsDoNotMatch);
 
+        // accepts valid
         expect(validateSignupInput('confirmPassword', 'asdf123asdf!', 'asdf123asdf!')).toBeNull();
+    });
+    it('does not accept spaces for email and phone number', () => {
+        const error = loginValidationErrors.noSpacesAllowed;
+        expect(validateSignupInput('email', 'me@example.com ', '')).toEqual(error);
+
+        // accepts valid
+        expect(validateSignupInput('phoneNumber', '123- 123-1231', '')).toEqual(error);
     });
 });
