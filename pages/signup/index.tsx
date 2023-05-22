@@ -95,11 +95,8 @@ export default function Register() {
     };
 
     const setAndValidate = (type: SignupInputTypes, value: string) => {
-        const trimmedValue = value.trim();
-        const cleanedValue = type === 'phoneNumber' ? (value = trimmedValue.replace(' ', '')) : trimmedValue;
-
-        setFieldValue(type, cleanedValue);
-        const validationError = validateSignupInput(type, cleanedValue, password);
+        setFieldValue(type, value);
+        const validationError = validateSignupInput(type, value, password);
         if (validationError) {
             setValidationErrors({ ...validationErrors, [type]: t(validationError) });
         } else {

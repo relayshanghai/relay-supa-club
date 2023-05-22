@@ -8,6 +8,7 @@ export const loginValidationErrors = {
     passwordsDoNotMatch: 'login.passwordsDoNotMatch',
     missingRequiredFields: 'login.missingRequiredFields',
     phoneNumberInvalid: 'login.phoneNumberInvalid',
+    noSpacesAllowed: 'login.noSpacesAllowed',
 };
 
 export type InviteStatusError =
