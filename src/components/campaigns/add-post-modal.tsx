@@ -58,7 +58,7 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
             return '';
         }
         if (!urlRegex.test(url)) {
-            // return t('campaigns.post.invalidUrl');
+            return t('campaigns.post.invalidUrl');
         }
         if (Object.values(_urls).filter((u) => u === url).length > 1) {
             return t('campaigns.post.duplicateUrl');
