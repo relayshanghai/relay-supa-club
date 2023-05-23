@@ -15,10 +15,10 @@ import { useCompany } from 'src/hooks/use-company';
 import { useUser } from 'src/hooks/use-user';
 
 export const CompanyDetails = () => {
-    const { company, updateCompany } = useCompany();
+    const { company, updateCompany, refreshCompany } = useCompany();
     const { loading: userDataLoading, profile } = useUser();
     const { invites, createInvite } = useInvites();
-    const { teammates } = useTeammates();
+    const { teammates, refreshTeammates } = useTeammates();
 
     const [showAddMoreMembers, setShowAddMoreMembers] = useState(false);
     const {
@@ -37,7 +37,9 @@ export const CompanyDetails = () => {
         if (company) {
             resetCompanyValues({ name: company.name || '', website: company.website || '' });
         }
-    }, [company, resetCompanyValues]);
+        refreshTeammates();
+        refreshCompany();
+    }, [company, resetCompanyValues, refreshTeammates, refreshCompany]);
 
     const { t } = useTranslation();
 
@@ -120,7 +122,7 @@ export const CompanyDetails = () => {
                         </div>
                     ) : (
                         <Button
-                            className={`absolute top-4 right-4 px-3 py-1 disabled:bg-white ${
+                            className={`absolute right-4 top-4 px-3 py-1 disabled:bg-white ${
                                 userDataLoading || updating ? 'opacity-75' : ''
                             }`}
                             disabled={userDataLoading || updating}
@@ -162,12 +164,12 @@ export const CompanyDetails = () => {
 
                 {invites && Array.isArray(invites) && invites.length > 0 && (
                     <>
-                        <p className="pt-8 pb-2 font-bold">{t('account.company.pendingInvitations')}</p>
+                        <p className="pb-2 pt-8 font-bold">{t('account.company.pendingInvitations')}</p>
                         {invites.map((invites) => {
                             return (
                                 <div
                                     key={invites.id}
-                                    className="border-grey-200 flex w-full flex-row items-center space-x-8 border-t border-b py-2"
+                                    className="border-grey-200 flex w-full flex-row items-center space-x-8 border-b border-t py-2"
                                 >
                                     <div>
                                         <p className="text-xs text-gray-500">{t('account.company.email')}</p>
