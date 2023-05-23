@@ -16,6 +16,7 @@ const campaigns = {
         archive: '存档',
         unarchive: '取消存档',
         edit: '修改',
+        search: '搜索',
     },
     modal: {
         addToCampaign: '添加到项目',

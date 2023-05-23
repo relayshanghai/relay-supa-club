@@ -16,6 +16,7 @@ const campaigns = {
         archive: 'Archive',
         unarchive: 'Unarchive',
         edit: 'Edit',
+        search: 'Search',
     },
     modal: {
         addToCampaign: 'Add To Campaign',
