@@ -70,8 +70,8 @@ export const SubscriptionDetails = () => {
     const aiEmailUsagesThisMonth = currentMonthUsages?.filter(({ type }) => type === 'ai_email');
 
     useEffect(() => {
-        refreshUsages();
         refreshCompany();
+        refreshUsages();
     }, [refreshCompany, refreshUsages]);
 
     return (

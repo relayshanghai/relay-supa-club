@@ -1,21 +1,22 @@
 import type { UsagesGetQueries, UsagesGetResponse } from 'pages/api/usages';
 import { nextFetchWithQueries } from 'src/utils/fetcher';
-import { useUser } from './use-user';
+import { clientRoleAtom } from 'src/atoms/client-role-atom';
+import { useAtomValue } from 'jotai';
 import useSWR from 'swr';
 
 export const useUsages = (useRange?: boolean, startDate?: string, endDate?: string) => {
-    const { profile } = useUser();
+    const clientRoleData = useAtomValue(clientRoleAtom);
 
     const { data: usages, mutate: refreshUsages } = useSWR(
-        profile?.company_id ? ['usages', startDate, endDate] : null,
+        clientRoleData?.companyId ? ['usages', startDate, endDate] : null,
         async ([path, startDate, endDate]) => {
-            if (!profile?.company_id) {
+            if (!clientRoleData?.companyId) {
                 return;
             }
             if (useRange && (!startDate || !endDate)) {
                 return;
             }
-            const body = { startDate, endDate, id: profile.company_id };
+            const body = { startDate, endDate, id: clientRoleData.companyId };
             return await nextFetchWithQueries<UsagesGetQueries, UsagesGetResponse>(path, body);
         },
     );
