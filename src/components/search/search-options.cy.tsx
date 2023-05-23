@@ -20,14 +20,14 @@ describe('SearchOptions', () => {
     before(() => {
         worker.start();
     });
-    it('Show search button', () => {
+    it('Shows search button', () => {
         testMount(
             <TestProvider initialValues={initialValues}>
                 <SearchPage />
             </TestProvider>,
         );
 
-        cy.contains('Search');
+        cy.contains('Search', 'Button');
     });
 
     it('Should show top default influencers', () => {
