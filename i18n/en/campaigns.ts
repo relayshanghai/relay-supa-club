@@ -246,6 +246,11 @@ const campaigns = {
     },
     post: {
         title: 'Manage Posts',
+        addPostUrl: 'Add Post URL',
+        addAnotherPost: 'Add Another Post',
+        submit: 'Submit',
+        invalidUrl: 'Invalid URL',
+        duplicateUrl: 'Duplicate URL',
     },
 };
 export default campaigns;

@@ -39,12 +39,18 @@ const blankCreatorArgs: CampaignCreatorDB = {
     relay_creator_id: 0,
 };
 
+const creator: CampaignCreatorDB = {
+    ...blankCreatorArgs,
+    fullname: 'T-Series',
+    username: 'tseries',
+};
+
 const Component = () => {
     const [visible, setVisible] = useState(true);
     return (
         <div>
             <Button onClick={() => setVisible(true)}>Show Modal</Button>
-            <AddPostModal creator={blankCreatorArgs} visible={visible} onClose={() => setVisible(false)} />
+            <AddPostModal creator={creator} visible={visible} onClose={() => setVisible(false)} />
         </div>
     );
 };
