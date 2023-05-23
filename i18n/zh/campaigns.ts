@@ -147,6 +147,9 @@ const campaigns = {
         important: '重要',
         importantMessages: '重要消息',
         moveInfluencer: '移动KOL',
+        influencerFee: 'KOL费用',
+        Links: '帖子链接',
+        Sales: '销售',
         activities: {
             influencerOutreach: 'KOL 招募',
             campaignInfo: '项目信息',
