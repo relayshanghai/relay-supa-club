@@ -27,7 +27,7 @@ describe('SearchOptions', () => {
             </TestProvider>,
         );
 
-        cy.contains('Search', 'Button');
+        cy.contains('Search', 'button');
     });
 
     it('Should show top default influencers', () => {
