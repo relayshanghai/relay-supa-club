@@ -225,6 +225,9 @@ describe('Main pages happy paths', () => {
         setupIntercepts();
 
         cy.loginAdmin();
+        cy.contains('Account').click();
+        cy.wait(300);
+        cy.contains('Relay Club');
         cy.contains('Clients').click();
         cy.contains('Manage', { timeout: 1000 }).click();
         cy.getByTestId('manage-client-56bcd4c5-f16e-419f-a77f-4218e9531ccc').click();
@@ -232,6 +235,7 @@ describe('Main pages happy paths', () => {
         cy.contains('Campaigns').click();
         cy.contains('The Future of Gaming');
         cy.contains('Account').click();
+        cy.contains('Blue Moonlight Stream Enterprises');
     });
     /** works on local... 🤷‍♂️ */
     it.skip('can log out', () => {
