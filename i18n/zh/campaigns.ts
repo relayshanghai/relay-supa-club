@@ -233,5 +233,8 @@ const campaigns = {
         integratedVideo: '植入广告',
         oopsSomethingWrong: '哎呀，出错了！',
     },
+    post: {
+        title: 'Manage Posts',
+    },
 };
 export default campaigns;

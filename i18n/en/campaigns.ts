@@ -244,5 +244,8 @@ const campaigns = {
         integratedVideo: 'Integrated Video',
         oopsSomethingWrong: 'Oops, something went wrong. Please try again.',
     },
+    post: {
+        title: 'Manage Posts',
+    },
 };
 export default campaigns;
