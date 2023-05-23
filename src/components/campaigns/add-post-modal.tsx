@@ -36,7 +36,13 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
     const { t, i18n } = useTranslation();
     const handle = creator.username || creator.fullname || '';
     const [urls, setUrls] = useState<{ [key: string]: string }>({ 'url-0': '' });
-    const [addedUrls, setAddedUrls] = useState<PostInfo[]>([]);
+    const [addedUrls, setAddedUrls] = useState<PostInfo[]>([
+        {
+            title: 'title',
+            postedDate: new Date().toISOString(),
+            id: '123',
+        },
+    ]);
 
     const handleAddAnotherPost = () => {
         setUrls((prev) => {
@@ -108,7 +114,6 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
     return (
         <Modal {...props}>
             <>
-                {' '}
                 <div className="mb-10 flex justify-between">
                     <h2 className="text-xl font-semibold text-gray-700">{t('campaigns.post.title')}</h2>
                     <div className="flex items-center">
@@ -175,13 +180,13 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
                 </form>
                 {addedUrls.length > 0 && (
                     <>
-                        <h3>{t('campaigns.post.currentPosts')}</h3>
+                        <h3 className="mt-10 font-bold">{t('campaigns.post.currentPosts')}</h3>
                         <div className="px-3">
                             {addedUrls.map((post, index) => (
-                                <div key={`post-${index}`} className="flex justify-between">
+                                <div key={`post-${index}`} className="my-3 flex justify-between">
                                     <div className="gap-x-3">
-                                        <h4>{post.title}</h4>
-                                        <caption>
+                                        <h4 className="text-sm">{post.title}</h4>
+                                        <p className="text-sm font-light text-gray-400">
                                             {new Intl.DateTimeFormat(i18n.language, {
                                                 weekday: 'short',
                                                 year: 'numeric',
@@ -191,12 +196,12 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
                                                 minute: '2-digit',
                                                 timeZone: 'UTC',
                                             }).format(new Date(post.postedDate))}
-                                        </caption>
+                                        </p>
                                     </div>
                                     <button
                                         data-testid="delete-creator"
                                         onClick={() => handleRemovePost(post.id)}
-                                        className="rounded-md  border border-gray-200 bg-gray-50 p-2 text-center text-gray-600 outline-none duration-300 hover:bg-gray-100"
+                                        className="rounded-md border border-gray-200 bg-gray-100 p-2 text-center text-gray-800 outline-none hover:bg-gray-200"
                                     >
                                         <Trashcan className="h-4 w-4 fill-tertiary-600 hover:fill-primary-600" />
                                     </button>
