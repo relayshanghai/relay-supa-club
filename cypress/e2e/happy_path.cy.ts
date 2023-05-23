@@ -10,7 +10,7 @@ describe('Main pages happy paths', () => {
         setupIntercepts();
         cy.visit('/');
 
-        localStorage.setItem('language', 'zh');
+        localStorage.setItem('language', '-CN');
         // starts on signup page. has an h1 that says signup in Chinese: 注册
         cy.get('h1').contains('注册');
 

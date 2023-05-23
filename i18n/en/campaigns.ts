@@ -251,6 +251,9 @@ const campaigns = {
         submit: 'Submit',
         invalidUrl: 'Invalid URL',
         duplicateUrl: 'Duplicate URL',
+        success: 'Post added successfully',
+        failed: 'Failed to get post data for {{amount}} urls',
+        currentPosts: 'Current posts',
     },
 };
 export default campaigns;

@@ -17,5 +17,5 @@ const config: StorybookConfig = {
 };
 
 import i18n from '../i18n';
-i18n.changeLanguage('en');
+i18n.changeLanguage('en-US');
 export default config;

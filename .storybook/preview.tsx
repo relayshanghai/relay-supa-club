@@ -3,7 +3,6 @@ import React, { Suspense, useEffect } from 'react';
 import { I18nextProvider } from 'react-i18next';
 import i18n from '../i18n';
 import 'styles/globals.css';
-import { LanguageToggle } from '../src/components/common/language-toggle';
 
 const preview: Preview = {
     parameters: {
@@ -24,8 +23,8 @@ export const globalTypes = {
         toolbar: {
             icon: 'globe',
             items: [
-                { value: 'en', title: 'English' },
-                { value: 'de', title: 'Deutsch' },
+                { value: 'en-US', title: 'English' },
+                { value: 'zh-CN', title: 'Chinese' },
             ],
             showName: true,
         },
@@ -44,12 +43,7 @@ const WithI18next = (Story, context) => {
         // Alternative: set useSuspense to false on i18next.options.react when initializing i18next
         <Suspense fallback={<div>loading translations...</div>}>
             <I18nextProvider i18n={i18n}>
-                <div className="fixed right-2 top-2 z-50">
-                    <LanguageToggle />
-                </div>
-                <div className="p-10">
-                    <Story />
-                </div>
+                <Story />
             </I18nextProvider>
         </Suspense>
     );
