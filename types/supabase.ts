@@ -299,11 +299,14 @@ export interface Database {
         Row: {
           campaign_id: string
           created_at: string | null
+          description: string | null
           id: string
           influencer_id: string
           is_reusable: boolean
           platform: string
+          preview_url: string | null
           publish_date: string | null
+          title: string | null
           type: string
           updated_at: string | null
           url: string
@@ -311,11 +314,14 @@ export interface Database {
         Insert: {
           campaign_id: string
           created_at?: string | null
+          description?: string | null
           id?: string
           influencer_id: string
           is_reusable?: boolean
           platform: string
+          preview_url?: string | null
           publish_date?: string | null
+          title?: string | null
           type: string
           updated_at?: string | null
           url: string
@@ -323,11 +329,14 @@ export interface Database {
         Update: {
           campaign_id?: string
           created_at?: string | null
+          description?: string | null
           id?: string
           influencer_id?: string
           is_reusable?: boolean
           platform?: string
+          preview_url?: string | null
           publish_date?: string | null
+          title?: string | null
           type?: string
           updated_at?: string | null
           url?: string
