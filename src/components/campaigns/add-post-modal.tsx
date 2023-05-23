@@ -10,6 +10,7 @@ import { SocialMediaIcon } from '../common/social-media-icon';
 import { useState } from 'react';
 
 import { Button } from '../button';
+import { toast } from 'react-hot-toast';
 
 export interface AddPostModalProps extends Omit<ModalProps, 'children'> {
     creator: CampaignCreatorDB;
@@ -35,7 +36,6 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
     const handle = creator.username || creator.fullname || '';
     const [urls, setUrls] = useState<{ [key: string]: string }>({ 'url-0': '' });
     const [_addedUrls, setAddedUrls] = useState<PostInfo[]>([]);
-    const [submitError, setSubmitError] = useState<string | null>(null);
 
     const handleAddAnotherPost = () => {
         setUrls((prev) => {
@@ -87,10 +87,14 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
     };
 
     const handleSubmit = async (_urls: typeof urls) => {
-        setSubmitError('');
         const { successful, failed } = await scrapeByUrl(_urls);
         setAddedUrls((prev) => [...prev, ...successful]);
         setUrls(failed); // will set the form to 0 if no errors, or keep the failed urls in the form if there are errors
+        if (Object.keys.length === 0) {
+            toast.success(t('campaigns.post.success'));
+        } else {
+            toast.error(t('campaigns.post.error', { amount: Object.keys(failed).length }));
+        }
     };
 
     const hasError = Object.values(urls).some((url) => validateUrl(url, urls) !== '');
@@ -161,7 +165,6 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
                         {t('campaigns.post.submit')}
                     </Button>
                 </div>
-                <p className="text-xs text-red-400">{submitError}</p>
             </form>
         </Modal>
     );
