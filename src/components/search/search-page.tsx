@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from 'src/components/button';
 import { SearchProvider, useSearch, useSearchResults } from 'src/hooks/use-search';
 import { numberFormatter } from 'src/utils/formatter';
@@ -18,10 +18,25 @@ import { MoreResultsRows } from './search-result-row';
 import ClientRoleWarning from './client-role-warning';
 import { useAllCampaignCreators } from 'src/hooks/use-all-campaign-creators';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { featRecommended } from 'src/constants/feature-flags';
 
 export const SearchPageInner = () => {
     const { t } = useTranslation();
-    const { platform, loading } = useSearch();
+    const {
+        platform,
+        setSearchParams,
+        recommendedInfluencers,
+        onlyRecommended,
+        setAudience,
+        setViews,
+        setGender,
+        setEngagement,
+        setLastPost,
+        setContactInfo,
+        setTopicTags,
+        setInfluencerLocation,
+        setAudienceLocation,
+    } = useSearch();
     const [filterModalOpen, setShowFiltersModal] = useState(false);
     const [showCampaignListModal, setShowCampaignListModal] = useState(false);
     const [selectedCreator, setSelectedCreator] = useState<CreatorSearchAccountObject | null>(null);
@@ -30,9 +45,52 @@ export const SearchPageInner = () => {
     const { trackEvent } = useRudderstack();
 
     const [page, setPage] = useState(0);
-    const { results: firstPageSearchResults, resultsTotal, noResults, error, isValidating } = useSearchResults(0);
+    const {
+        results: firstPageSearchResults,
+        resultsTotal,
+        noResults,
+        error,
+        isValidating,
+        loading: resultsLoading,
+    } = useSearchResults(0);
 
     const [showAlreadyAddedModal, setShowAlreadyAddedModal] = useState(false);
+
+    useEffect(() => {
+        setSearchParams({
+            page: 0,
+            platform,
+            username: '',
+            views: [null, null],
+            audience: [null, null],
+            recommendedInfluencers: featRecommended() ? recommendedInfluencers : [],
+            only_recommended: featRecommended() ? onlyRecommended : false,
+        });
+    }, [platform, recommendedInfluencers, setSearchParams, onlyRecommended]);
+
+    useEffect(() => {
+        setAudience([null, null]);
+        setViews([null, null]);
+        setGender(undefined);
+        setEngagement(undefined);
+        setLastPost(undefined);
+        setContactInfo(undefined);
+        setTopicTags([]);
+        setInfluencerLocation([]);
+        setAudienceLocation([]);
+        setPage(0);
+    }, [
+        platform,
+        setAudience,
+        setAudienceLocation,
+        setContactInfo,
+        setEngagement,
+        setGender,
+        setInfluencerLocation,
+        setLastPost,
+        setTopicTags,
+        setViews,
+    ]);
 
     return (
         <div className="space-y-4">
@@ -41,8 +99,10 @@ export const SearchPageInner = () => {
 
             <SearchOptions setPage={setPage} setShowFiltersModal={setShowFiltersModal} />
 
-            <div className="flex items-center">
-                <div className="text-sm font-bold">{`${t('creators.results')}: ${numberFormatter(resultsTotal)}`}</div>
+            <div className="flex items-center justify-between">
+                <div className="text-sm font-medium">{`${t('creators.results')}: ${numberFormatter(
+                    resultsTotal,
+                )}`}</div>
             </div>
 
             <SearchResultsTable
@@ -50,7 +110,7 @@ export const SearchPageInner = () => {
                 setShowCampaignListModal={setShowCampaignListModal}
                 setShowAlreadyAddedModal={setShowAlreadyAddedModal}
                 allCampaignCreators={allCampaignCreators}
-                loading={loading}
+                loading={resultsLoading}
                 validating={isValidating}
                 results={firstPageSearchResults}
                 error={error}
