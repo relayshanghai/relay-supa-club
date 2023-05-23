@@ -4,7 +4,7 @@ import type { InsertCompanyPayload, InsertProfilePayload, UpdateCompanyPayload }
 //Send a message to the slack channel when a new customer signs up
 export const handleNewProfileMessage = async (req: NextApiRequest, URL: string) => {
     const data = req.body as InsertProfilePayload;
-    const { first_name: firstName, last_name: lastName, email } = data.record;
+    const { first_name: firstName, last_name: lastName, phone, email } = data.record;
     if (data.table === 'profiles' && data.type === 'INSERT') {
         //For how to format Slack message body, see more at https://api.slack.com/messaging/composing/layouts
         const reqBody = {
@@ -27,6 +27,10 @@ export const handleNewProfileMessage = async (req: NextApiRequest, URL: string) 
                         {
                             type: 'mrkdwn',
                             text: `*Email:*\n${email}`,
+                        },
+                        {
+                            type: 'mrkdwn',
+                            text: `*Phone:*\n${phone}`,
                         },
                     ],
                 },

@@ -1,6 +1,6 @@
 const performance = {
     title: 'Performance',
-    allCampaignsFor: 'All campaigns for',
+    allCampaigns: 'All campaigns',
     stats: {
         posts: 'Posts',
         sales: 'Sales',
