@@ -7,6 +7,9 @@ export type SaveInfluencerPostData = {
     campaign_id: string;
     influencer_id: string;
     url: string;
+    title?: string;
+    description?: string;
+    preview_url?: string;
 };
 
 export const extractPlatformFromURL = (url: string): string | null => {
