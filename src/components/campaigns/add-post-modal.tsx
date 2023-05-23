@@ -7,14 +7,18 @@ import type { CampaignCreatorDB } from 'src/utils/api/db';
 import type { SocialMediaPlatform } from 'types';
 
 import { SocialMediaIcon } from '../common/social-media-icon';
-import { useCallback, useState } from 'react';
-import { clientLogger } from 'src/utils/logger-client';
+import { useState } from 'react';
+
 import { Button } from '../button';
 
 export interface AddPostModalProps extends Omit<ModalProps, 'children'> {
     creator: CampaignCreatorDB;
 }
-
+type PostInfo = {
+    title: string;
+    description: string;
+    postedDate: string;
+};
 // expected url patterns:
 // Instagram https://www.instagram.com/relay.club/?hl=en
 // YouTube https://www.youtube.com/channel/UClf-gnZdtIffbPPhOq3CelA
@@ -30,6 +34,8 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
     const { t } = useTranslation();
     const handle = creator.username || creator.fullname || '';
     const [urls, setUrls] = useState<{ [key: string]: string }>({ 'url-0': '' });
+    const [_addedUrls, setAddedUrls] = useState<PostInfo[]>([]);
+    const [submitError, setSubmitError] = useState<string | null>(null);
 
     const handleAddAnotherPost = () => {
         setUrls((prev) => {
@@ -45,7 +51,7 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
             return '';
         }
         if (!urlRegex.test(url)) {
-            return t('campaigns.post.invalidUrl');
+            // return t('campaigns.post.invalidUrl');
         }
         if (Object.values(_urls).filter((u) => u === url).length > 1) {
             return t('campaigns.post.duplicateUrl');
@@ -53,16 +59,45 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
         return '';
     };
 
-    const handleSubmit = useCallback(async () => {
-        // todo: send to backend
-        clientLogger({ urls });
-    }, [urls]);
+    const backendCallStub = async (_url: string): Promise<PostInfo> => {
+        return {
+            title: 'title',
+            description: 'description',
+            postedDate: new Date().toISOString(),
+        };
+    };
+    const scrapeByUrl = async (_urls: typeof urls) => {
+        const successful: PostInfo[] = [];
+        const failed: typeof urls = {};
+        for (const [key, url] of Object.entries(_urls)) {
+            if (validateUrl(url, _urls) !== '') {
+                failed[key] = _urls[key];
+                continue;
+            }
+            try {
+                const postInfo = await backendCallStub(url);
+                if (postInfo) {
+                    successful.push(postInfo);
+                }
+            } catch (error) {
+                failed[key] = _urls[key];
+            }
+        }
+        return { successful, failed };
+    };
+
+    const handleSubmit = async (_urls: typeof urls) => {
+        setSubmitError('');
+        const { successful, failed } = await scrapeByUrl(_urls);
+        setAddedUrls((prev) => [...prev, ...successful]);
+        setUrls(failed); // will set the form to 0 if no errors, or keep the failed urls in the form if there are errors
+    };
 
     const hasError = Object.values(urls).some((url) => validateUrl(url, urls) !== '');
     const submitDisabled = hasError;
     return (
         <Modal {...props}>
-            <div className="flex justify-between">
+            <div className="mb-10 flex justify-between">
                 <h2 className="text-xl font-semibold text-gray-700">{t('campaigns.post.title')}</h2>
                 <div className="flex items-center">
                     <div className="relative h-10 w-10 flex-shrink-0 rounded-full bg-gray-300">
@@ -85,31 +120,34 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
                     </Link>
                 </div>
             </div>
-            <div>
-                <h3>{t('campaigns.post.addPostUrl')}</h3>
-                <form
-                    onSubmit={(e) => {
-                        e.preventDefault();
-                        handleSubmit();
-                    }}
-                >
-                    {Object.values(urls).map((url, index) => {
-                        const error = validateUrl(url, urls);
-                        return (
-                            <div key={`url-${index}`}>
-                                <input
-                                    onChange={(e) => {
-                                        setUrls((prev) => ({
-                                            ...prev,
-                                            [`url-${index}`]: e.target.value,
-                                        }));
-                                    }}
-                                />
-                                <p className="text-xs text-red-400">{error}</p>
-                            </div>
-                        );
-                    })}
 
+            <form
+                className="flex flex-col gap-y-3"
+                onSubmit={(e) => {
+                    e.preventDefault();
+                    handleSubmit(urls);
+                }}
+            >
+                <h3>{t('campaigns.post.addPostUrl')}</h3>
+                {Object.values(urls).map((url, index) => {
+                    const error = validateUrl(url, urls);
+                    return (
+                        <div key={`url-${index}`}>
+                            <input
+                                className="my-2 block w-full appearance-none rounded-md border border-transparent bg-white px-3 py-2 placeholder-gray-400 shadow ring-1 ring-opacity-5 focus:border-primary-500 focus:outline-none focus:ring-primary-500 sm:text-xs"
+                                onChange={(e) => {
+                                    setUrls((prev) => ({
+                                        ...prev,
+                                        [`url-${index}`]: e.target.value,
+                                    }));
+                                }}
+                            />
+                            <p className="text-xs text-red-400">{error}</p>
+                        </div>
+                    );
+                })}
+
+                <div className="ml-auto flex gap-x-3">
                     <Button
                         variant="secondary"
                         onClick={(e) => {
@@ -122,8 +160,9 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
                     <Button disabled={submitDisabled} type="submit">
                         {t('campaigns.post.submit')}
                     </Button>
-                </form>
-            </div>
+                </div>
+                <p className="text-xs text-red-400">{submitError}</p>
+            </form>
         </Modal>
     );
 };
