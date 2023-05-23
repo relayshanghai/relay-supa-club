@@ -52,6 +52,15 @@ describe('prepareFetchCreatorsFiltered', () => {
         const { body } = prepareFetchCreatorsFiltered(options);
         expect(body.filter.views).toEqual({ left_number: 50000, right_number: undefined });
     });
+    it('uses reels_plays for instagram', () => {
+        const options: FetchCreatorsFilteredParams = {
+            ...defaultOptions,
+            views: ['50001', null],
+            platform: 'instagram',
+        };
+        const { body } = prepareFetchCreatorsFiltered(options);
+        expect(body.filter.reels_plays).toEqual({ left_number: 50001, right_number: undefined });
+    });
 
     it('adds the audience and influencer location filter', () => {
         const options: FetchCreatorsFilteredParams = {

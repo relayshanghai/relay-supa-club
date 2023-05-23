@@ -56,23 +56,25 @@ export const MoreResultsRows = ({
             </>
         );
     }
-    return results ? (
-        <>
-            {results?.map((creator, i) => (
-                <SearchResultRow
-                    key={i}
-                    creator={creator}
-                    setShowCampaignListModal={setShowCampaignListModal}
-                    setSelectedCreator={setSelectedCreator}
-                    setShowAlreadyAddedModal={setShowAlreadyAddedModal}
-                    allCampaignCreators={allCampaignCreators}
-                />
-            ))}
-        </>
-    ) : (
-        <></>
-    );
+    if (results) {
+        return (
+            <>
+                {results?.map((creator) => (
+                    <SearchResultRow
+                        key={creator.account.user_profile.user_id}
+                        creator={creator}
+                        setShowCampaignListModal={setShowCampaignListModal}
+                        setSelectedCreator={setSelectedCreator}
+                        setShowAlreadyAddedModal={setShowAlreadyAddedModal}
+                        allCampaignCreators={allCampaignCreators}
+                    />
+                ))}
+            </>
+        );
+    }
+    return null;
 };
+
 export const SearchResultRow = ({
     creator,
     setShowCampaignListModal,
@@ -134,7 +136,14 @@ export const SearchResultRow = ({
                     />
                     <div>
                         <div className="font-bold">{fullname}</div>
-                        <div className="text-sm text-primary-500 line-clamp-1">{handle ? `@${handle}` : null}</div>
+                        <Link
+                            href={url || ''}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-sm text-primary-500 line-clamp-1"
+                        >
+                            {handle ? `@${handle}` : null}
+                        </Link>
                     </div>
                 </div>
                 <div className="mt-2">

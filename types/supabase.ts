@@ -460,7 +460,7 @@ export interface Database {
           campaign_id: string
           comments_total: number | null
           created_at: string | null
-          id: number
+          id: string
           influencer_id: string
           likes_total: number | null
           orders_total: number | null
@@ -474,7 +474,7 @@ export interface Database {
           campaign_id: string
           comments_total?: number | null
           created_at?: string | null
-          id?: number
+          id?: string
           influencer_id: string
           likes_total?: number | null
           orders_total?: number | null
@@ -488,7 +488,7 @@ export interface Database {
           campaign_id?: string
           comments_total?: number | null
           created_at?: string | null
-          id?: number
+          id?: string
           influencer_id?: string
           likes_total?: number | null
           orders_total?: number | null

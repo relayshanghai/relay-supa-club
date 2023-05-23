@@ -4,3 +4,4 @@ export * from './usages';
 export * from './profiles';
 export * from './invites';
 export * from './logs';
+export * from './post-performance';

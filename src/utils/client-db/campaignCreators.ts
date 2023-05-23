@@ -32,7 +32,6 @@ export const insertCampaignCreatorCall =
         const { data: campaignCreator, error } = await supabaseClient
             .from('campaign_creators')
             .insert({
-                status: 'to contact',
                 ...data,
             })
             .eq('campaign_id', data.campaign_id)

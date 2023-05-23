@@ -1,6 +1,6 @@
 const performance = {
     title: '数据中心',
-    allCampaignsFor: '所有项目来源于',
+    allCampaigns: '所有项目',
     stats: {
         posts: '帖子',
         sales: '销售',

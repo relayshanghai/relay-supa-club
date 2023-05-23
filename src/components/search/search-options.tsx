@@ -1,5 +1,4 @@
 import { AdjustmentsVerticalIcon } from '@heroicons/react/24/solid';
-
 import { useTranslation } from 'react-i18next';
 import { useSearch } from 'src/hooks/use-search';
 import { numberFormatter } from 'src/utils/formatter';
@@ -11,8 +10,7 @@ import { featRecommended } from 'src/constants/feature-flags';
 import { SearchLocations } from './search-locations';
 import LocationTag from './location-tag';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
-
-const resultsPerPageOptions = [10, 20, 50, 100];
+import { useEffect } from 'react';
 
 const filterCountry = (items: any[]) => {
     return items.filter((item: any) => {
@@ -46,17 +44,63 @@ export const SearchOptions = ({
         lastPost,
         setLastPost,
         setContactInfo,
-        resultsPerPageLimit,
-        setResultsPerPageLimit,
+        username,
+        contactInfo,
         onlyRecommended,
         setOnlyRecommended,
         recommendedInfluencers,
+        activeSearch,
+        setActiveSearch,
+        setSearchParams,
     } = useSearch();
 
     const { t } = useTranslation();
     const hasSetViews = views[0] || views[1];
     const hasSetAudience = audience[0] || audience[1];
     const { trackEvent } = useRudderstack();
+
+    const handleSearch = (e: any) => {
+        e.preventDefault();
+        setActiveSearch(true);
+        setPage(0);
+        trackEvent('Search Options, search');
+    };
+
+    useEffect(() => {
+        if (activeSearch) {
+            setSearchParams({
+                platform,
+                tags,
+                username,
+                influencerLocation,
+                views,
+                audience,
+                gender,
+                engagement,
+                lastPost,
+                contactInfo,
+                audienceLocation,
+                only_recommended: onlyRecommended,
+                recommendedInfluencers,
+            });
+        }
+    }, [
+        activeSearch,
+        platform,
+        onlyRecommended,
+        setSearchParams,
+        tags,
+        username,
+        influencerLocation,
+        views,
+        audience,
+        gender,
+        engagement,
+        lastPost,
+        contactInfo,
+        audienceLocation,
+        recommendedInfluencers,
+    ]);
 
     return (
         <>
@@ -136,24 +180,9 @@ export const SearchOptions = ({
                             )}
                         </div>
                     </button>
-                    <select
-                        className="ml-4 mr-2 flex cursor-pointer flex-row items-center rounded-md border border-transparent bg-white p-1 text-gray-900 shadow ring-1 ring-gray-900 ring-opacity-5 hover:text-opacity-80 focus:border-primary-500 focus:outline-none focus:ring-primary-500 sm:text-sm"
-                        value={resultsPerPageLimit}
-                        onChange={(e) => {
-                            setPage(0);
-                            setResultsPerPageLimit(Number(e.target.value));
-                            trackEvent('Search Filters Modal, change search results per page', {
-                                resultsPerPage: e.target.value,
-                            });
-                        }}
-                    >
-                        {resultsPerPageOptions.map((option) => (
-                            <option value={option} key={option}>
-                                {numberFormatter(option)}
-                            </option>
-                        ))}
-                    </select>
-                    <p className="ml-1 mr-2 text-sm text-gray-500">{t('creators.resultsPerPage')}</p>
+                    <Button className="mx-2" onClick={(e) => handleSearch(e)}>
+                        {t('campaigns.index.search')}
+                    </Button>
                     {hasSetViews || hasSetAudience || gender || engagement || lastPost ? (
                         <Button
                             onClick={(e: any) => {

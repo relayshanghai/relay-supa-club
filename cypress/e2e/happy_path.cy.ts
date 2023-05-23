@@ -130,7 +130,7 @@ describe('Main pages happy paths', () => {
             .type('123')
             .should('have.value', 'Blue Moonlight Stream Enterprises123');
     });
-    it('can open campaigns page and manage campaign influencers', () => {
+    it.only('can open campaigns page and manage campaign influencers', () => {
         setupIntercepts();
         // list, add, archive campaigns
         // list, add, move, delete campaign influencers
@@ -198,6 +198,17 @@ describe('Main pages happy paths', () => {
         cy.contains('SET India').should('not.exist');
         cy.contains('Contacted 1').click();
         cy.contains('SET India');
+
+        // add notes
+        cy.contains('Notes').click();
+        cy.contains('Internal Comments');
+        cy.get('textarea').type('This influencer is great');
+        cy.contains('William Edward').should('not.exist'); // user name doesn't show
+
+        cy.getByTestId('submit-comment-button').click();
+        cy.contains('William Edward', { timeout: 10000 }); // user name shows
+        cy.contains('This influencer is great');
+        cy.contains('My Campaign').click({ force: true }); // hidden by modal
         // delete an influencer
         cy.getByTestId('delete-creator').click();
         cy.contains('influencer was deleted.');

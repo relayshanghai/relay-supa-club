@@ -4,10 +4,11 @@ import type { InfluencerInsert, InfluencerSocialProfileInsert } from '../db/call
 export const mapIqdataProfileToInfluencer = (
     userProfile: CreatorReport['user_profile'],
 ): Pick<InfluencerInsert, 'name' | 'email' | 'avatar_url'> => {
-    const email = userProfile.contacts.find((v: any) => v.type === 'email') || { value: null };
+    const contacts = userProfile.contacts || [];
+    const email = contacts.find((v: any) => v.type === 'email') || { value: null };
 
     return {
-        name: userProfile.fullname,
+        name: userProfile.fullname || '',
         email: email.value,
         avatar_url: userProfile.picture,
         // address: "",

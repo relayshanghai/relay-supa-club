@@ -1,4 +1,4 @@
-import type { AccountRole, CreatorPlatform, SubscriptionStatus, UsageType } from 'types';
+import type { AccountRole, CreatorPlatform, InfluencerOutreachStatus, SubscriptionStatus, UsageType } from 'types';
 import type { Database } from 'types/supabase';
 import type { SupabaseLogType } from './calls/';
 
@@ -41,12 +41,15 @@ export type CampaignDBInsert = Database['public']['Tables']['campaigns']['Insert
 export type CampaignCreatorsTable = Database['public']['Tables']['campaign_creators'] & {
     Row: Database['public']['Tables']['campaign_creators']['Row'] & {
         platform: CreatorPlatform;
+        status: InfluencerOutreachStatus;
     };
     Insert: Database['public']['Tables']['campaign_creators']['Insert'] & {
         platform: CreatorPlatform;
+        status: InfluencerOutreachStatus;
     };
     Update: Database['public']['Tables']['campaign_creators']['Update'] & {
         platform: CreatorPlatform;
+        status: InfluencerOutreachStatus;
     };
 };
 
@@ -87,3 +90,12 @@ export type LogsTable = Database['public']['Tables']['logs'] & {
 };
 export type LogsDB = LogsTable['Row'];
 export type LogsInsertDB = LogsTable['Insert'];
+
+export type PostsPerformanceTable = Database['public']['Tables']['posts_performance'] & {
+    Row: Database['public']['Tables']['posts_performance']['Row'];
+    Insert: Database['public']['Tables']['posts_performance']['Insert'];
+    Update: Database['public']['Tables']['posts_performance']['Update'];
+};
+export type PostsPerformance = PostsPerformanceTable['Row'];
+export type PostsPerformanceInsert = PostsPerformanceTable['Insert'];
+export type PostsPerformanceUpdate = PostsPerformanceTable['Update'];
