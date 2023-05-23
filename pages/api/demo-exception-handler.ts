@@ -36,7 +36,7 @@ const ApiExceptionHandler = (fn: NextApiHandler) => {
         } catch (error) {
             const e = {
                 httpCode: httpCodes.INTERNAL_SERVER_ERROR,
-                message: 'Unknown Error',
+                message: (error as Error).message,
             };
 
             if (isRelayError(error)) {
