@@ -130,7 +130,7 @@ describe('Main pages happy paths', () => {
             .type('123')
             .should('have.value', 'Blue Moonlight Stream Enterprises123');
     });
-    it.only('can open campaigns page and manage campaign influencers', () => {
+    it('can open campaigns page and manage campaign influencers', () => {
         setupIntercepts();
         // list, add, archive campaigns
         // list, add, move, delete campaign influencers
@@ -220,6 +220,18 @@ describe('Main pages happy paths', () => {
         cy.contains('My Campaign').should('not.exist');
         cy.contains('Archived Campaigns').click();
         cy.contains('My Campaign');
+    });
+    it.only('can manage clients as a company owner', () => {
+        setupIntercepts();
+
+        cy.loginAdmin();
+        cy.contains('Clients').click();
+        cy.contains('Manage', { timeout: 1000 }).click();
+        cy.getByTestId('manage-client-56bcd4c5-f16e-419f-a77f-4218e9531ccc').click();
+        cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises');
+        cy.contains('Campaigns').click();
+        cy.contains('The Future of Gaming');
+        cy.contains('Account').click();
     });
     /** works on local... 🤷‍♂️ */
     it.skip('can log out', () => {
