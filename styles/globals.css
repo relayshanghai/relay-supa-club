@@ -38,7 +38,7 @@ body,
     }
 
     .btn-with-icon-gray {
-        @apply row-between cursor-pointer rounded-lg bg-white py-2 px-4 duration-300 hover:bg-primary-100;
+        @apply row-between cursor-pointer rounded-lg bg-white px-4 py-2 duration-300 hover:bg-primary-100;
     }
 
     .btn-fileupload {
@@ -82,7 +82,7 @@ body,
     }
 
     .textarea-field {
-        @apply w-full resize-none rounded-md border border-gray-200 bg-white py-1 px-2 text-sm text-gray-600 placeholder-gray-300 outline-none duration-300 focus-within:border-primary-500;
+        @apply w-full resize-none rounded-md border border-gray-200 bg-white px-2 py-1 text-sm text-gray-600 placeholder-gray-300 outline-none duration-300 focus-within:border-primary-500;
     }
 
     .checkbox {
@@ -90,7 +90,7 @@ body,
     }
 
     .file-uploader {
-        @apply block w-full cursor-pointer text-sm text-gray-500 duration-300 file:mr-4 file:rounded-xl file:border-0 file:bg-primary-100 file:py-2 file:px-4 file:text-sm file:font-semibold file:text-primary-700 hover:file:bg-primary-100;
+        @apply block w-full cursor-pointer text-sm text-gray-500 duration-300 file:mr-4 file:rounded-xl file:border-0 file:bg-primary-100 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-primary-700 hover:file:bg-primary-100;
     }
 
     .radio-button {
