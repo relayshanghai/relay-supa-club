@@ -96,9 +96,10 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
     const handleSubmit = async (_urls: typeof urls) => {
         const { successful, failed } = await scrapeByUrl(_urls);
         setAddedUrls((prev) => [...prev, ...successful]);
-        setUrls(failed); // will set the form to 0 if no errors, or keep the failed urls in the form if there are errors
-        if (Object.keys.length === 0) {
-            toast.success(t('campaigns.post.success'));
+        const failedUrls = Object.keys(failed).length;
+        setUrls(failedUrls > 0 ? failed : { 'url-0': '' }); // will set the form to 0 if no errors, or keep the failed urls in the form if there are errors
+        if (failedUrls === 0) {
+            toast.success(t('campaigns.post.success', { amount: successful.length }));
         } else {
             toast.error(t('campaigns.post.error', { amount: Object.keys(failed).length }));
         }
