@@ -172,14 +172,14 @@ const Pricing = () => {
             <main className="flex-grow pt-20">
                 <div className="container mx-auto flex flex-col items-center">
                     <div className="mx-auto mb-16 max-w-3xl text-center">
-                        <h2 className="font-heading mt-4 mb-6 text-3xl font-bold md:text-4xl">
+                        <h2 className="font-heading mb-6 mt-4 text-3xl font-bold md:text-4xl">
                             {t('pricing.chooseA')}
                             <span className="text-primary-500"> {t('pricing.plan')}</span>
                             {t('pricing.thatWorksBest')}
                         </h2>
                         <p className="leading-wide text-tertiary-600">{t('pricing.subTitle')}</p>
                     </div>
-                    <div className="mx-auto mb-12 flex w-fit rounded-md border-y-2 border-x border-primary-500">
+                    <div className="mx-auto mb-12 flex w-fit rounded-md border-x border-y-2 border-primary-500">
                         <div
                             onClick={() => setPeriod('monthly')}
                             className={period === 'monthly' ? selectedTabClasses : unselectedTabClasses}
@@ -273,7 +273,7 @@ const Pricing = () => {
                                                         />
                                                     </svg>
 
-                                                    <p className="absolute right-0 bottom-full z-50 hidden w-40 rounded-md bg-white p-5 text-xs shadow-lg duration-300 group-hover:flex">
+                                                    <p className="absolute bottom-full right-0 z-50 hidden w-40 rounded-md bg-white p-5 text-xs shadow-lg duration-300 group-hover:flex">
                                                         {t('pricing.' + info)}
                                                     </p>
                                                 </div>
@@ -375,7 +375,7 @@ const Pricing = () => {
                                                     />
                                                 </svg>
 
-                                                <p className="absolute right-0 bottom-full z-50 hidden w-40 rounded-md bg-white p-5 text-xs shadow-lg duration-300 group-hover:flex">
+                                                <p className="absolute bottom-full right-0 z-50 hidden w-40 rounded-md bg-white p-5 text-xs shadow-lg duration-300 group-hover:flex">
                                                     {t('pricing.' + info)}
                                                 </p>
                                             </div>
@@ -471,7 +471,7 @@ const Pricing = () => {
                                                     />
                                                 </svg>
 
-                                                <p className="absolute right-0 bottom-full z-50 hidden w-40 rounded-md bg-white p-5 text-xs shadow-lg duration-300 group-hover:flex">
+                                                <p className="absolute bottom-full right-0 z-50 hidden w-40 rounded-md bg-white p-5 text-xs shadow-lg duration-300 group-hover:flex">
                                                     {t('pricing.' + info)}
                                                 </p>
                                             </div>
