@@ -1,5 +1,6 @@
-import { describe, expect, test } from 'vitest';
-import { getCurrentMonthPeriod, getPeriodUsages } from './usagesHelpers';
+import { describe, expect, test, it } from 'vitest';
+import { getCurrentMonthPeriod, getPeriodUsages, hasCustomSearchParams } from './usagesHelpers';
+import type { FetchCreatorsFilteredParams } from './api/iqdata/transforms';
 
 describe('getPeriodUsages', () => {
     const now = new Date();
@@ -83,5 +84,67 @@ describe('getCurrentMonthPeriod', () => {
 
         expect(thisMonthStartDate.toISOString()).toEqual(expectedStartDate.toISOString());
         expect(thisMonthEndDate.toISOString()).toEqual(expectedEndDate.toISOString());
+    });
+});
+
+describe('hasCustomSearchParams', () => {
+    it('should return false if using defaults', () => {
+        const params: FetchCreatorsFilteredParams = {
+            tags: [],
+            username: '',
+            influencerLocation: [],
+            audienceLocation: [],
+            resultsPerPageLimit: 10,
+            page: 0,
+            audience: [null, null],
+            views: [null, null],
+        };
+        expect(hasCustomSearchParams(params)).toEqual(false);
+    });
+    it('should return true if any params have been changed', () => {
+        const params: FetchCreatorsFilteredParams = {
+            tags: [],
+            username: '',
+            influencerLocation: [],
+            audienceLocation: [],
+            resultsPerPageLimit: 10,
+            page: 0,
+            audience: [null, null],
+            views: [null, null],
+        };
+        params.tags = [{ tag: 'test' }];
+        expect(hasCustomSearchParams(params)).toEqual(true);
+        params.tags = [];
+
+        params.username = 'test';
+        expect(hasCustomSearchParams(params)).toEqual(true);
+        params.username = '';
+
+        params.influencerLocation = [{ location: 'test' }];
+        expect(hasCustomSearchParams(params)).toEqual(true);
+        params.influencerLocation = [];
+
+        // make sure reset works
+        expect(hasCustomSearchParams(params)).toEqual(false);
+
+        params.audienceLocation = [{ location: 'test' }];
+        expect(hasCustomSearchParams(params)).toEqual(true);
+        params.audienceLocation = [];
+
+        params.resultsPerPageLimit = 20;
+        expect(hasCustomSearchParams(params)).toEqual(true);
+        params.resultsPerPageLimit = 10;
+
+        params.page = 1;
+        expect(hasCustomSearchParams(params)).toEqual(true);
+        params.page = 0;
+
+        params.audience = ['1', '2'];
+        expect(hasCustomSearchParams(params)).toEqual(true);
+        params.audience = [null, null];
+
+        params.views = ['1', '2'];
+        expect(hasCustomSearchParams(params)).toEqual(true);
+        params.views = [null, null];
     });
 });
