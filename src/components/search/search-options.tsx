@@ -65,7 +65,7 @@ export const SearchOptions = ({
         setPage(0);
         trackEvent('Search Options, search');
     };
-
+    // TODO:comment out the related codes when feat recommended is ready
     useEffect(() => {
         if (activeSearch) {
             setSearchParams({
@@ -80,14 +80,14 @@ export const SearchOptions = ({
                 lastPost,
                 contactInfo,
                 audienceLocation,
-                only_recommended: onlyRecommended,
-                recommendedInfluencers,
+                // recommendedInfluencers: featRecommended() ? recommendedInfluencers : [],
+                // only_recommended: featRecommended() ? onlyRecommended : false,
             });
         }
     }, [
         activeSearch,
         platform,
-        onlyRecommended,
+        // onlyRecommended,
         setSearchParams,
         tags,
         username,
@@ -99,7 +99,7 @@ export const SearchOptions = ({
         lastPost,
         contactInfo,
         audienceLocation,
-        recommendedInfluencers,
+        // recommendedInfluencers,
     ]);
 
     return (

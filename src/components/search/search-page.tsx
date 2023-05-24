@@ -20,15 +20,15 @@ import { useAtomValue } from 'jotai';
 import { clientRoleAtom } from 'src/atoms/client-role-atom';
 import { useAllCampaignCreators } from 'src/hooks/use-all-campaign-creators';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
-import { featRecommended } from 'src/constants/feature-flags';
+// import { featRecommended } from 'src/constants/feature-flags';
 
 export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
     const { t } = useTranslation();
     const {
         platform,
         setSearchParams,
-        recommendedInfluencers,
-        onlyRecommended,
+        // recommendedInfluencers,
+        // onlyRecommended,
         setAudience,
         setViews,
         setGender,
@@ -58,6 +58,7 @@ export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
 
     const [showAlreadyAddedModal, setShowAlreadyAddedModal] = useState(false);
 
+    // TODO:comment out the related codes when feat recommended is ready
     useEffect(() => {
         setSearchParams({
             page: 0,
@@ -65,10 +66,10 @@ export const SearchPageInner = ({ companyId }: { companyId?: string }) => {
             username: '',
             views: [null, null],
             audience: [null, null],
-            recommendedInfluencers: featRecommended() ? recommendedInfluencers : [],
-            only_recommended: featRecommended() ? onlyRecommended : false,
+            // recommendedInfluencers: featRecommended() ? recommendedInfluencers : [],
+            // only_recommended: featRecommended() ? onlyRecommended : false,
         });
-    }, [platform, recommendedInfluencers, setSearchParams, onlyRecommended]);
+    }, [platform, setSearchParams]);
 
     useEffect(() => {
         setAudience([null, null]);
