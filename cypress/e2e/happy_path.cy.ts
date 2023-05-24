@@ -223,29 +223,40 @@ describe('Main pages happy paths', () => {
     });
     it.only('can manage clients as a company owner', () => {
         setupIntercepts();
-
         cy.loginAdmin();
+
         cy.contains('Account').click();
         cy.wait(300);
         cy.contains('Relay Club');
-
+        // Get the value of the total search usage and save it in a value
         let totalSearchUsage: string;
         cy.get('tbody > :nth-child(2) > :nth-child(2)').then((value) => {
             totalSearchUsage = value.text();
         });
+
         cy.contains('Clients').click();
+        cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises').should('not.exist');
+
         cy.contains('Manage', { timeout: 1000 }).click();
         cy.getByTestId('manage-client-c026f75c-8ed8-4b23-9a63-0c4905c15673').click();
         cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises');
+
         cy.contains('Campaigns').click();
         cy.contains('The Future of Gaming');
+        cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises');
+
         cy.contains('Account').click();
         cy.wait(300);
         cy.contains('Blue Moonlight Stream Enterprises');
-
+        cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises');
         cy.get('tbody > :nth-child(2) > :nth-child(2)').then((value) => {
             expect(parseInt(totalSearchUsage)).to.be.not.equal(value.text());
         });
+
+        cy.contains('Clients').click();
+        cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises');
+        cy.contains('Close', { timeout: 1000 }).click();
+        cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises').should('not.exist');
     });
     /** works on local... 🤷‍♂️ */
     it.skip('can log out', () => {
