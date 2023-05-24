@@ -12,6 +12,7 @@ import { CompanyProvider } from 'src/hooks/use-company';
 import { rudderInitialized } from 'src/utils/rudder-initialize';
 import { CacheProvider } from 'src/utils/indexeddb-cache-provider';
 import { Provider } from 'jotai';
+import ChatwootProvider, { chatwootWebsiteToken } from 'src/components/chatwoot/chatwoot-provider';
 
 function MyApp({
     Component,
@@ -56,11 +57,13 @@ function MyApp({
             <SessionContextProvider supabaseClient={supabaseClient} initialSession={pageProps.initialSession}>
                 <CacheProvider>
                     <UserProvider>
-                        <CompanyProvider>
-                            <Provider>
-                                <Component {...pageProps} />
-                            </Provider>
-                        </CompanyProvider>
+                        <ChatwootProvider websiteToken={chatwootWebsiteToken()}>
+                            <CompanyProvider>
+                                <Provider>
+                                    <Component {...pageProps} />
+                                </Provider>
+                            </CompanyProvider>
+                        </ChatwootProvider>
                     </UserProvider>
                 </CacheProvider>
             </SessionContextProvider>
