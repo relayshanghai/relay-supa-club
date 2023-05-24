@@ -59,7 +59,7 @@ export const CreatorOverview = ({ report }: { report: CreatorReport }) => {
 
                     <div className="flex flex-wrap">
                         {creatorOverviewStats.map((stat, index) => (
-                            <div key={index} className="relative mr-2 mb-2 w-36 rounded-md bg-white p-2.5">
+                            <div key={index} className="relative mb-2 mr-2 w-36 rounded-md bg-white p-2.5">
                                 <div className="h-6 w-6">{stat.icon}</div>
                                 <p className="mb-1 font-semibold text-tertiary-600">{stat.data}</p>
                                 <p className="text-sm text-tertiary-600">{t(`creators.show.${stat.label}`)}</p>

@@ -1,4 +1,5 @@
 import type { UsageType } from 'types';
+import type { FetchCreatorsFilteredParams } from './api/iqdata/transforms';
 
 export type SimpleUsage = {
     type: UsageType;
@@ -41,3 +42,26 @@ export function getCurrentMonthPeriod(
 
     return { thisMonthStartDate, thisMonthEndDate };
 }
+
+const defaultSearchParams: FetchCreatorsFilteredParams = {
+    tags: [],
+    username: '',
+    influencerLocation: [],
+    audienceLocation: [],
+    resultsPerPageLimit: 10,
+    page: 0,
+    audience: [null, null],
+    views: [null, null],
+};
+
+export const hasCustomSearchParams = (params: FetchCreatorsFilteredParams) => {
+    // check if any search filters have been set so we don't record usages for default search
+    for (const key of Object.keys(defaultSearchParams)) {
+        const typedKey = key as keyof FetchCreatorsFilteredParams;
+        if (JSON.stringify(params[typedKey]) !== JSON.stringify(defaultSearchParams[typedKey])) {
+            return true;
+            break;
+        }
+    }
+    return false;
+};

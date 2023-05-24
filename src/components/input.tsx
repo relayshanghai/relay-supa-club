@@ -35,7 +35,7 @@ export const Input = ({ label, error, note, placeholder, type = 'text', ...rest 
                     type={isPasswordVisible ? 'text' : type}
                 />
                 {type === 'password' && (
-                    <div className="absolute top-1/2 right-2 -translate-y-1/2 cursor-pointer">
+                    <div className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer">
                         {isPasswordVisible ? (
                             <EyeSlashIcon className="h-5 w-5" onClick={togglePasswordVisibility} />
                         ) : (
