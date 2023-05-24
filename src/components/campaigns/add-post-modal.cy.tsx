@@ -58,4 +58,23 @@ describe('AddPostModal', () => {
         cy.contains('h2', 'Manage Posts');
         cy.contains('h3', 'Add Post URL');
     });
+    it('Should accept valid link that contains instagram youtube or tiktok links and show error otherwise', () => {
+        testMount(<AddPostModal {...props} />);
+        cy.contains('Invalid URL').should('not.exist');
+
+        cy.get('input').type('https://www.instagram.com/relay.club/?hl=en');
+        cy.get('button').contains('Submit').should('not.be.disabled');
+        cy.contains('Invalid URL').should('not.exist');
+        cy.get('input').clear().type('https://www.youtube.com/channel/UClf-gnZdtIffbPPhOq3CelA');
+        cy.get('button').contains('Submit').should('not.be.disabled');
+        cy.get('input').clear().type('https://youtu.be/channel/UClf-gnZdtIffbPPhOq3CelA');
+        cy.get('button').contains('Submit').should('not.be.disabled');
+        cy.get('input').clear().type('https://vm.tiktok.com/ZSd2GkJrM/');
+        cy.get('button').contains('Submit').should('not.be.disabled');
+
+        cy.get('input').clear().type('https://www.elsewhere.com/asdf');
+        cy.get('button').contains('Submit').should('be.disabled');
+        cy.contains('Invalid URL');
+    });
+    it('should ');
 });
