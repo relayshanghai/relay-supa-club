@@ -1,4 +1,4 @@
-import type { DetailedHTMLProps, HTMLAttributes, PropsWithChildren} from 'react';
+import type { DetailedHTMLProps, HTMLAttributes, PropsWithChildren } from 'react';
 import { useState } from 'react';
 interface Props extends DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLSpanElement> {
     content: string;
