@@ -7,9 +7,9 @@ import Link from 'next/link';
 import { toast } from 'react-hot-toast';
 import type { CampaignCreatorDB, CampaignDB } from 'src/utils/api/db';
 import Fuse from 'fuse.js';
-import InfluencerRow from './influencer-row';
 import { MoveInfluencerModal } from '../modal-move-influencer';
 import { useCampaignCreators } from 'src/hooks/use-campaign-creators';
+import InfluencerRowV2 from './influencer-row-v2';
 
 export interface CreatorsOutreachProps {
     currentCampaign: CampaignDB;
@@ -72,32 +72,24 @@ export default function CampaignInfluencersTableV2({
         { header: 'influencerFee', accessor: (row: any) => row.influencerFee },
         { header: 'Links', accessor: (row: any) => row.Links },
         { header: 'Sales', accessor: (row: any) => row.Sales },
-        { header: 'Actions', accessor: (row: any) => row.Actions },
     ];
 
     function getVisibleColumns(tabStatus: string | string[]) {
         switch (tabStatus) {
             case 'to contact':
-                return [tableColumns[0], tableColumns[1], tableColumns[2], tableColumns[7]];
+                return [tableColumns[0], tableColumns[1], tableColumns[2]];
             case 'contacted':
-                return [tableColumns[0], tableColumns[2], tableColumns[7]];
+                return [tableColumns[0], tableColumns[2]];
             case 'in progress':
-                return [tableColumns[0], tableColumns[2], tableColumns[3], tableColumns[4], tableColumns[7]];
+                return [tableColumns[0], tableColumns[2], tableColumns[3], tableColumns[4]];
             case 'confirmed':
-                return [tableColumns[0], tableColumns[2], tableColumns[3], tableColumns[4], tableColumns[7]];
+                return [tableColumns[0], tableColumns[2], tableColumns[3], tableColumns[4]];
             case 'posted':
-                return [
-                    tableColumns[0],
-                    tableColumns[2],
-                    tableColumns[4],
-                    tableColumns[5],
-                    tableColumns[6],
-                    tableColumns[7],
-                ];
+                return [tableColumns[0], tableColumns[2], tableColumns[4], tableColumns[5], tableColumns[6]];
             case 'rejected':
-                return [tableColumns[0], tableColumns[2], tableColumns[7]];
+                return [tableColumns[0], tableColumns[2]];
             case 'ignored':
-                return [tableColumns[0], tableColumns[2], tableColumns[7]];
+                return [tableColumns[0], tableColumns[2]];
             default:
                 return [];
         }
@@ -256,7 +248,7 @@ export default function CampaignInfluencersTableV2({
                 />
             </div>
             {/* -- Outreach Table -- */}
-            <div className="min-h-screen overflow-x-auto">
+            <div className="min-h-screen w-full overflow-auto">
                 <table className="w-full table-auto divide-y divide-gray-200 overflow-y-visible">
                     <thead>
                         <tr>
@@ -264,11 +256,7 @@ export default function CampaignInfluencersTableV2({
                                 <th
                                     key={column.header}
                                     className={`  bg-white px-6 py-3 text-left text-xs font-normal tracking-wider text-gray-500 ${
-                                        index === 0
-                                            ? ' sticky z-10 flex justify-start'
-                                            : index === -1
-                                            ? ' sticky z-20 flex justify-end'
-                                            : ''
+                                        index === 0 ? ' sticky left-0 z-10' : index === -1 ? ' sticky right-0 z-20' : ''
                                     }`}
                                 >
                                     {t(`campaigns.show.${column.header}`)}
@@ -291,7 +279,7 @@ export default function CampaignInfluencersTableV2({
                         {influencersList.map((creator, index) => {
                             if (creator.status === tabStatus)
                                 return (
-                                    <InfluencerRow
+                                    <InfluencerRowV2
                                         key={index}
                                         creator={creator}
                                         index={index}
