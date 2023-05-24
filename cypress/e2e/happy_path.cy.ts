@@ -228,14 +228,24 @@ describe('Main pages happy paths', () => {
         cy.contains('Account').click();
         cy.wait(300);
         cy.contains('Relay Club');
+
+        let totalSearchUsage: string;
+        cy.get('tbody > :nth-child(2) > :nth-child(2)').then((value) => {
+            totalSearchUsage = value.text();
+        });
         cy.contains('Clients').click();
         cy.contains('Manage', { timeout: 1000 }).click();
-        cy.getByTestId('manage-client-56bcd4c5-f16e-419f-a77f-4218e9531ccc').click();
+        cy.getByTestId('manage-client-c026f75c-8ed8-4b23-9a63-0c4905c15673').click();
         cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises');
         cy.contains('Campaigns').click();
         cy.contains('The Future of Gaming');
         cy.contains('Account').click();
+        cy.wait(300);
         cy.contains('Blue Moonlight Stream Enterprises');
+
+        cy.get('tbody > :nth-child(2) > :nth-child(2)').then((value) => {
+            expect(parseInt(totalSearchUsage)).to.be.not.equal(value.text());
+        });
     });
     /** works on local... 🤷‍♂️ */
     it.skip('can log out', () => {
