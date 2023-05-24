@@ -123,6 +123,7 @@ describe('AddPostModal', () => {
         cy.contains('a', mockPostData.title).should('have.attr', 'target', '_blank');
         cy.contains('a', mockPostData.title).should('have.attr', 'rel', 'noopener noreferrer');
     });
+    // TODO: test after hooking up to backend https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/406
     it.skip(
         'Sends a request to the backend to add posts, shows a toast on success, displays the new urls, and removes them from the inputs',
     );
