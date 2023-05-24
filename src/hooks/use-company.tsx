@@ -49,18 +49,17 @@ export const CompanyProvider = ({ children }: PropsWithChildren) => {
 
     const updateCompany = useCallback(
         async (input: Omit<CompanyPutBody, 'id'>) => {
-            if (!company?.id) throw new Error('No company found');
-            if (!company?.id && clientRoleData.companyId === '') throw new Error('No company found');
+            if (!companyId) throw new Error('No company found');
             const body: CompanyPutBody = {
                 ...input,
-                id: company?.id,
+                id: companyId,
             };
             return await nextFetch<CompanyPutResponse>(`company`, {
                 method: 'PUT',
                 body: JSON.stringify(body),
             });
         },
-        [company?.id, clientRoleData.companyId],
+        [companyId],
     );
 
     const createCompany = useCallback(
