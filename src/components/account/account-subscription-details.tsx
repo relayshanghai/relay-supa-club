@@ -66,13 +66,14 @@ export const SubscriptionDetails = () => {
     checkStripeAndDatabaseMatch(company, thisMonthStartDate, thisMonthEndDate);
 
     const profileViewUsagesThisMonth = currentMonthUsages?.filter(({ type }) => type === 'profile');
+
     const searchUsagesThisMonth = currentMonthUsages?.filter(({ type }) => type === 'search');
     const aiEmailUsagesThisMonth = currentMonthUsages?.filter(({ type }) => type === 'ai_email');
 
     useEffect(() => {
         refreshCompany();
         refreshUsages();
-    }, [refreshCompany, refreshUsages]);
+    }, [company, refreshCompany, refreshUsages]);
 
     return (
         <div className="flex w-full flex-col items-start space-y-4 rounded-lg bg-white p-4 shadow-lg shadow-gray-200 lg:max-w-2xl">
