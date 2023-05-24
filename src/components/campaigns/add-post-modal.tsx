@@ -2,12 +2,12 @@ import { useTranslation } from 'react-i18next';
 import type { ModalProps } from '../modal';
 import { Modal } from '../modal';
 import Link from 'next/link';
-import { imgProxy } from 'src/utils/fetcher';
+import { imgProxy, nextFetch } from 'src/utils/fetcher';
 import type { CampaignCreatorDB } from 'src/utils/api/db';
 import type { SocialMediaPlatform } from 'types';
 
 import { SocialMediaIcon } from '../common/social-media-icon';
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { Button } from '../button';
 import { toast } from 'react-hot-toast';
@@ -16,10 +16,11 @@ import { Trashcan } from '../icons';
 export interface AddPostModalProps extends Omit<ModalProps, 'children'> {
     creator: CampaignCreatorDB;
 }
-type PostInfo = {
+export type PostInfo = {
     title: string;
     postedDate: string;
     id: string;
+    url: string;
 };
 // expected url patterns:
 // Instagram https://www.instagram.com/relay.club/?hl=en
@@ -36,13 +37,16 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
     const { t, i18n } = useTranslation();
     const handle = creator.username || creator.fullname || '';
     const [urls, setUrls] = useState<{ [key: string]: string }>({ 'url-0': '' });
-    const [addedUrls, setAddedUrls] = useState<PostInfo[]>([
-        {
-            title: 'title',
-            postedDate: new Date().toISOString(),
-            id: '123',
-        },
-    ]);
+    const [addedUrls, setAddedUrls] = useState<PostInfo[]>([]);
+
+    const getAddedUrls = useCallback(async () => {
+        const urls = await nextFetch<PostInfo[]>(`posts/${creator.id}`);
+        setAddedUrls(urls);
+    }, [creator.id]);
+
+    useEffect(() => {
+        getAddedUrls();
+    }, [getAddedUrls]);
 
     const handleAddAnotherPost = () => {
         setUrls((prev) => {
@@ -53,6 +57,7 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
             };
         });
     };
+
     const validateUrl = (url: string, _urls: typeof urls) => {
         if (!url) {
             return '';
@@ -71,6 +76,7 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
             title: 'title',
             postedDate: new Date().toISOString(),
             id: '123',
+            url: _url,
         };
     };
     const scrapeByUrl = async (_urls: typeof urls) => {
@@ -185,7 +191,7 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
                         <div className="px-3">
                             {addedUrls.map((post, index) => (
                                 <div key={`post-${index}`} className="my-3 flex justify-between">
-                                    <div className="gap-x-3">
+                                    <Link className="gap-x-3" href={post.url} target="_blank" rel="noopener noreferrer">
                                         <h4 className="text-sm">{post.title}</h4>
                                         <p className="text-sm font-light text-gray-400">
                                             {new Intl.DateTimeFormat(i18n.language, {
@@ -198,7 +204,7 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
                                                 timeZone: 'UTC',
                                             }).format(new Date(post.postedDate))}
                                         </p>
-                                    </div>
+                                    </Link>
                                     <button
                                         data-testid="delete-creator"
                                         onClick={() => handleRemovePost(post.id)}

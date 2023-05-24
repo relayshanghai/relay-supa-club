@@ -253,7 +253,7 @@ const campaigns = {
         duplicateUrl: 'Duplicate URL',
         success: 'Successfully added {{amount}} urls',
         failed: 'Failed to get post data for {{amount}} urls',
-        currentPosts: 'Current posts',
+        currentPosts: 'Current Posts',
     },
 };
 export default campaigns;
