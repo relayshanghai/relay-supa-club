@@ -156,6 +156,7 @@ const campaigns = {
         influencerFee: 'Influencer Fee',
         Links: 'Links',
         Sales: 'Sales',
+        Actions: 'Actions',
         activities: {
             influencerOutreach: 'Influencer Outreach',
             campaignInfo: 'Campaign Info',

@@ -150,6 +150,7 @@ const campaigns = {
         influencerFee: 'KOL费用',
         Links: '帖子链接',
         Sales: '销售',
+        Actions: '操作',
         activities: {
             influencerOutreach: 'KOL 招募',
             campaignInfo: '项目信息',
