@@ -182,13 +182,17 @@ const InfluencerRowV2 = ({
                         onClick={(e) => {
                             openMoveInfluencerModal(e, creator);
                         }}
-                        className="group/move mr-2 h-8 w-8 cursor-pointer appearance-none  rounded-md border border-gray-200 bg-gray-50 p-2 text-center font-medium text-gray-600 outline-none duration-300 hover:bg-gray-100"
+                        className={`group/move mr-2 h-8 w-8 cursor-pointer appearance-none  rounded-md border border-gray-200 bg-gray-50 p-2 text-center font-medium text-gray-600 outline-none duration-300 hover:bg-gray-100 ${
+                            tabStatus === 'to contact' || tabStatus === 'contacted' ? '' : 'hidden'
+                        }  `}
                     >
                         <ArrowRightOnRectangle className="h-4 w-4 stroke-tertiary-600 group-hover/move:stroke-primary-600" />
                     </button>
                     <button
                         onClick={(e) => openNotes(e, creator)}
-                        className="mr-2 cursor-pointer appearance-none  rounded-md border border-gray-200 bg-gray-50 p-2 text-center font-medium text-gray-600 outline-none duration-300 hover:bg-gray-100 hover:text-primary-500"
+                        className={`mr-2 cursor-pointer appearance-none  rounded-md border border-gray-200 bg-gray-50 p-2 text-center font-medium text-gray-600 outline-none duration-300 hover:bg-gray-100 hover:text-primary-500 ${
+                            tabStatus === 'in progress' || tabStatus === 'confirmed' ? '' : 'hidden'
+                        }`}
                     >
                         {t('campaigns.show.notes')}
                     </button>
