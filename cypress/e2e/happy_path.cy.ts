@@ -241,7 +241,7 @@ describe('Main pages happy paths', () => {
         cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises');
 
         cy.contains('Campaigns').click();
-        cy.contains('The Future of Gaming');
+        cy.contains('Beauty for All Skin Tones');
         cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises');
 
         cy.contains('Account').click();
