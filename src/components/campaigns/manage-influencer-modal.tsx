@@ -27,10 +27,9 @@ const validateNumberInput = (fee: string) => {
         return 'Must be a number';
     }
 };
+
 const inputClass =
     'block w-full max-w-full appearance-none rounded-md border border-transparent bg-white px-3 py-2 placeholder-gray-400 shadow ring-1 ring-gray-300 ring-opacity-5 focus:border-primary-500 focus:outline-none focus:ring-primary-500 sm:max-w-xs sm:text-xs';
-const smallButtonClass =
-    'rounded-md border border-gray-200 bg-gray-100 p-1 text-xs font-medium text-gray-600 hover:bg-gray-200';
 
 const FormSection = ({ creator, ...props }: ManageInfluencerModalProps) => {
     const { t } = useTranslation();
@@ -152,6 +151,10 @@ const HeaderSection = ({ creator }: { creator: CampaignCreatorDB }) => {
         </div>
     );
 };
+
+const smallButtonClass =
+    'rounded-md border border-gray-200 bg-gray-100 p-1 text-xs font-medium text-gray-600 hover:bg-gray-200';
+
 const SmallButtonsSection = ({
     creator,
     openNotes,
@@ -190,6 +193,7 @@ const SmallButtonsSection = ({
         </div>
     );
 };
+
 export const ManageInfluencerModal = (props: ManageInfluencerModalProps) => {
     return (
         <Modal {...props} maxWidth="max-w-[900px]">
