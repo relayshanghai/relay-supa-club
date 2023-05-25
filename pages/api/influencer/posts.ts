@@ -1,9 +1,8 @@
 import type { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
+import { ApiHandler } from 'src/utils/api-handler';
 import { saveInfluencerPost as saveInfluencerPostQuery } from 'src/utils/save-influencer-post';
 import { db } from 'src/utils/supabase-client';
-
-export type RecommendedInfluencersGetResponse = string[];
 
 type PostRequest = {
     campaign_id: string;
@@ -27,13 +26,7 @@ type PostResponse =
           error: string;
       };
 
-const handler: NextApiHandler = async (req: NextApiRequest, res: NextApiResponse<PostResponse>) => {
-    if (req.method !== 'POST') {
-        return res.status(httpCodes.METHOD_NOT_ALLOWED).json({
-            error: 'method not allowed',
-        });
-    }
-
+const postHandler: NextApiHandler = async (req: NextApiRequest, res: NextApiResponse<PostResponse>) => {
     const data: PostResponse = {
         successful: [],
         failed: [],
@@ -62,4 +55,6 @@ const handler: NextApiHandler = async (req: NextApiRequest, res: NextApiResponse
     res.status(httpCodes.OK).json(data);
 };
 
-export default handler;
+export default ApiHandler({
+    postHandler,
+});

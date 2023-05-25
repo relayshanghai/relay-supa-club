@@ -8,11 +8,30 @@ export type InfluencerPostRow = Database['public']['Tables']['influencer_posts']
 export const insertInfluencerPost =
     (db: SupabaseClient<DatabaseWithCustomTypes>) =>
     async (data: InfluencerPostInsert): Promise<InfluencerPostRow> => {
-        const influencerPost = await db.from('influencer_posts').insert(data).select();
+        const influencerPost = await db.from('influencer_posts').insert(data).select().single();
 
         if (influencerPost.error) {
             throw influencerPost.error;
         }
 
-        return influencerPost.data[0];
+        return influencerPost.data;
+    };
+
+export const deleteInfluencerPost =
+    (db: SupabaseClient<DatabaseWithCustomTypes>) =>
+    async (id: string): Promise<InfluencerPostRow | null> => {
+        const influencerPost = await db
+            .from('influencer_posts')
+            .update({
+                deleted_at: new Date().toISOString(),
+            })
+            .eq('id', id)
+            .select()
+            .maybeSingle();
+
+        if (influencerPost.error) {
+            throw influencerPost.error;
+        }
+
+        return influencerPost.data;
     };
