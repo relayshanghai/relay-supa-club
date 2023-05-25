@@ -114,7 +114,6 @@ const FormSection = ({ creator, ...props }: ManageInfluencerModalProps) => {
                         {t('campaigns.manageInfluencer.cancel')}
                     </Button>
                     <Button disabled={submitDisabled} type="submit">
-                        {' '}
                         {t('campaigns.manageInfluencer.save')}
                     </Button>
                 </div>
@@ -123,64 +122,81 @@ const FormSection = ({ creator, ...props }: ManageInfluencerModalProps) => {
     );
 };
 
-export const ManageInfluencerModal = ({ creator, ...props }: ManageInfluencerModalProps) => {
+const HeaderSection = ({ creator }: { creator: CampaignCreatorDB }) => {
     const { t } = useTranslation();
     const handle = creator.username || creator.fullname || '';
 
     return (
+        <div className="mb-10 flex justify-between">
+            <h2 className="text-xl font-semibold text-gray-700">{t('campaigns.manageInfluencer.title')}</h2>
+            <div className="flex items-center">
+                <div className="relative h-10 w-10 flex-shrink-0 rounded-full bg-gray-300">
+                    <img className="h-10 w-10 rounded-full" src={imgProxy(creator.avatar_url)} alt="" />
+                    <div className="absolute bottom-0 right-0 ">
+                        <SocialMediaIcon
+                            platform={creator.platform as SocialMediaPlatform}
+                            width={16}
+                            height={16}
+                            className="opacity-80"
+                        />
+                    </div>
+                </div>
+
+                <Link href={creator.link_url || ''} target="_blank">
+                    <div className="ml-4">
+                        <div className="truncate text-xs font-medium text-gray-900">{creator.fullname}</div>
+                        <div className="inline-block truncate text-xs text-primary-500">@{handle}</div>
+                    </div>
+                </Link>
+            </div>
+        </div>
+    );
+};
+const SmallButtonsSection = ({
+    creator,
+    openNotes,
+    openMoveInfluencerModal,
+    deleteCampaignCreator,
+}: ManageInfluencerModalProps) => {
+    const { t } = useTranslation();
+
+    return (
+        <div>
+            <div className="flex justify-end gap-x-2">
+                <button
+                    data-testid="show-influencer-notes"
+                    onClick={(e) => openNotes(e, creator)}
+                    className={smallButtonClass}
+                >
+                    {t('campaigns.show.notes')}
+                </button>
+
+                <button
+                    data-testid="show-move-influencer"
+                    onClick={(e) => openMoveInfluencerModal(e, creator)}
+                    className={smallButtonClass}
+                >
+                    <ArrowRightOnRectangle className="h-4 w-4 stroke-tertiary-600 " />
+                </button>
+
+                <button
+                    data-testid="delete-influencer"
+                    onClick={(e) => deleteCampaignCreator(e, creator)}
+                    className={smallButtonClass}
+                >
+                    <Trashcan className="h-4 w-4 fill-tertiary-600" />
+                </button>
+            </div>
+        </div>
+    );
+};
+export const ManageInfluencerModal = (props: ManageInfluencerModalProps) => {
+    return (
         <Modal {...props} maxWidth="max-w-[900px]">
             <>
-                <div className="mb-10 flex justify-between">
-                    <h2 className="text-xl font-semibold text-gray-700">{t('campaigns.manageInfluencer.title')}</h2>
-                    <div className="flex items-center">
-                        <div className="relative h-10 w-10 flex-shrink-0 rounded-full bg-gray-300">
-                            <img className="h-10 w-10 rounded-full" src={imgProxy(creator.avatar_url)} alt="" />
-                            <div className="absolute bottom-0 right-0 ">
-                                <SocialMediaIcon
-                                    platform={creator.platform as SocialMediaPlatform}
-                                    width={16}
-                                    height={16}
-                                    className="opacity-80"
-                                />
-                            </div>
-                        </div>
-
-                        <Link href={creator.link_url || ''} target="_blank">
-                            <div className="ml-4">
-                                <div className="truncate text-xs font-medium text-gray-900">{creator.fullname}</div>
-                                <div className="inline-block truncate text-xs text-primary-500">@{handle}</div>
-                            </div>
-                        </Link>
-                    </div>
-                </div>
-                <div>
-                    <div className="flex justify-end gap-x-2">
-                        <button
-                            data-testid="show-influencer-notes"
-                            onClick={(e) => props.openNotes(e, creator)}
-                            className={smallButtonClass}
-                        >
-                            {t('campaigns.show.notes')}
-                        </button>
-
-                        <button
-                            data-testid="show-move-influencer"
-                            onClick={(e) => props.openMoveInfluencerModal(e, creator)}
-                            className={smallButtonClass}
-                        >
-                            <ArrowRightOnRectangle className="h-4 w-4 stroke-tertiary-600 " />
-                        </button>
-
-                        <button
-                            data-testid="delete-influencer"
-                            onClick={(e) => props.deleteCampaignCreator(e, creator)}
-                            className={smallButtonClass}
-                        >
-                            <Trashcan className="h-4 w-4 fill-tertiary-600" />
-                        </button>
-                    </div>
-                </div>
-                <FormSection creator={creator} {...props} />
+                <HeaderSection {...props} />
+                <SmallButtonsSection {...props} />
+                <FormSection {...props} />
             </>
         </Modal>
     );
