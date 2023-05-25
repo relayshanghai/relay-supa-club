@@ -155,16 +155,24 @@ export const ManageInfluencerModal = ({ creator, ...props }: ManageInfluencerMod
                 </div>
                 <div>
                     <div className="flex justify-end gap-x-2">
-                        <button onClick={(e) => props.openNotes(e, creator)} className={smallButtonClass}>
+                        <button
+                            data-testid="show-influencer-notes"
+                            onClick={(e) => props.openNotes(e, creator)}
+                            className={smallButtonClass}
+                        >
                             {t('campaigns.show.notes')}
                         </button>
 
-                        <button onClick={(e) => props.openMoveInfluencerModal(e, creator)} className={smallButtonClass}>
+                        <button
+                            data-testid="show-move-influencer"
+                            onClick={(e) => props.openMoveInfluencerModal(e, creator)}
+                            className={smallButtonClass}
+                        >
                             <ArrowRightOnRectangle className="h-4 w-4 stroke-tertiary-600 " />
                         </button>
 
                         <button
-                            data-testid="delete-creator"
+                            data-testid="delete-influencer"
                             onClick={(e) => props.deleteCampaignCreator(e, creator)}
                             className={smallButtonClass}
                         >

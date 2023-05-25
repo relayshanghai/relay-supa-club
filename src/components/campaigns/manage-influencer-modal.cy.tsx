@@ -65,7 +65,20 @@ describe('Add', () => {
         cy.contains('h2', 'Manage Influencer');
         cy.contains('T-Series');
     });
-    it.skip('Should display a row of small buttons to move, delete, and add notes to the influencer');
+    it('Should display a row of small buttons to move, delete, and add notes to the influencer', () => {
+        const stubbedProps = { ...props };
+        stubbedProps.deleteCampaignCreator = cy.stub().as('deleteCampaignCreator');
+        stubbedProps.openMoveInfluencerModal = cy.stub().as('openMoveInfluencerModal');
+        stubbedProps.openNotes = cy.stub().as('openNotes');
+
+        testMount(<ManageInfluencerModal {...stubbedProps} />);
+        cy.getByTestId('delete-influencer').click();
+        cy.get('@deleteCampaignCreator').should('be.calledOnce');
+        cy.getByTestId('show-move-influencer').click();
+        cy.get('@openMoveInfluencerModal').should('be.calledOnce');
+        cy.getByTestId('show-influencer-notes').click();
+        cy.get('@openNotes').should('be.calledOnce');
+    });
     it.skip('Should have buttons for view contact info, change status, save, and cancel');
     it.skip('When save is clicked, sends a request to the server to update the influencer');
 });
