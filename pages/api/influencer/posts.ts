@@ -7,7 +7,7 @@ export type RecommendedInfluencersGetResponse = string[];
 
 type PostRequest = {
     campaign_id: string;
-    influencer_id: string;
+    influencer_social_profile_id: string;
     urls: string[];
 };
 
@@ -47,7 +47,7 @@ const handler: NextApiHandler = async (req: NextApiRequest, res: NextApiResponse
         const post = await saveInfluencerPost({
             type: '',
             campaign_id: body.campaign_id,
-            influencer_id: body.influencer_id,
+            influencer_social_profile_id: body.influencer_social_profile_id,
             url: url,
         });
 

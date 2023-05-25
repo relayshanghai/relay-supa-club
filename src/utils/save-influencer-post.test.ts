@@ -10,13 +10,13 @@ describe('Save influencer post', () => {
         const data = {
             type: '',
             campaign_id: '3',
-            influencer_id: '2',
+            influencer_social_profile_id: '2',
             url: 'https://youtube.com/watch?v=123abc',
         } as SaveInfluencerPostData;
 
         const post = {
             id: '1',
-            influencer_id: '2',
+            influencer_social_profile_id: '2',
             campaign_id: '3',
             platform: 'youtube',
             url: 'https://youtube.com/watch?v=123abc',

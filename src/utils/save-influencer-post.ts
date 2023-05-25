@@ -5,7 +5,7 @@ import type { DatabaseWithCustomTypes } from 'types';
 export type SaveInfluencerPostData = {
     type: string;
     campaign_id: string;
-    influencer_id: string;
+    influencer_social_profile_id: string;
     url: string;
     title?: string;
     description?: string;
