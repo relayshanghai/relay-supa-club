@@ -34,7 +34,7 @@ export interface InfluencerRowProps {
         e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
         creator: CampaignCreatorDB,
     ) => Promise<void>;
-    openNotes: any;
+    openNotes: (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, creator: CampaignCreatorDB) => void;
     openMoveInfluencerModal: (
         e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
         creator: CampaignCreatorDB,
@@ -115,7 +115,7 @@ const InfluencerRowV2 = ({
                             data-testid="status-dropdown"
                             onChange={(e) => handleDropdownSelect(e, creator, 'status')}
                             value={creator.status || ''}
-                            className="-ml-1 mr-2.5 cursor-pointer appearance-none rounded-md border border-gray-200 bg-primary-50 px-4 py-2 text-center text-xs font-semibold text-primary-500 outline-none duration-300 hover:bg-primary-100"
+                            className="-ml-1 mr-2.5 cursor-pointer appearance-none rounded-md border border-gray-200 bg-primary-50 px-4 py-2 text-center text-xs font-semibold text-primary-500 outline-none hover:bg-primary-100"
                         >
                             {tabs.map((tab, index) => (
                                 <option value={tab.value} key={index}>
@@ -127,12 +127,12 @@ const InfluencerRowV2 = ({
 
                     {column.type === 'inputText' && (
                         <button
-                            className="relative cursor-pointer text-xs text-gray-900 duration-300 hover:text-primary-500"
+                            className="relative cursor-pointer text-xs text-gray-900 hover:text-primary-500"
                             onClick={(e) => setInlineEdit(e, index, 'next_step')}
                         >
                             <div className={`${editingModeTrue(index, 'next_step') ? 'hidden' : ''}`}>
                                 {creator.next_step || (
-                                    <div className="cursor-pointer text-primary-500 duration-300 hover:text-primary-700">
+                                    <div className="cursor-pointer text-primary-500 hover:text-primary-700">
                                         {t('campaigns.show.addActionPoint')}
                                     </div>
                                 )}
@@ -154,7 +154,7 @@ const InfluencerRowV2 = ({
 
                     {column.type === 'inputNumber' && (
                         <button
-                            className="relative cursor-pointer pr-2 text-left text-xs text-gray-900 duration-300 hover:text-primary-500"
+                            className="relative cursor-pointer pr-2 text-left text-xs text-gray-900  hover:text-primary-500"
                             onClick={(e) => setInlineEdit(e, index, 'paid_amount_cents')}
                         >
                             {creator.paid_amount_cents?.toLocaleString() || '-'} {creator.paid_amount_currency}
@@ -182,7 +182,7 @@ const InfluencerRowV2 = ({
                         onClick={(e) => {
                             openMoveInfluencerModal(e, creator);
                         }}
-                        className={`group/move mr-2 h-8 w-8 cursor-pointer appearance-none  rounded-md border border-gray-200 bg-gray-50 p-2 text-center font-medium text-gray-600 outline-none duration-300 hover:bg-gray-100 ${
+                        className={`group/move mr-2 h-8 w-8 cursor-pointer  rounded-md border border-gray-200 bg-gray-50 p-2 text-center font-medium text-gray-600  hover:bg-gray-100 ${
                             tabStatus === 'to contact' || tabStatus === 'contacted' ? '' : 'hidden'
                         }  `}
                     >
@@ -190,20 +190,20 @@ const InfluencerRowV2 = ({
                     </button>
                     <button
                         onClick={(e) => openNotes(e, creator)}
-                        className={`mr-2 cursor-pointer appearance-none  rounded-md border border-gray-200 bg-gray-50 p-2 text-center font-medium text-gray-600 outline-none duration-300 hover:bg-gray-100 hover:text-primary-500 ${
+                        className={`mr-2 cursor-pointer  rounded-md border border-gray-200 bg-gray-50 p-2 text-center font-medium text-gray-600  hover:bg-gray-100 hover:text-primary-500 ${
                             tabStatus === 'in progress' || tabStatus === 'confirmed' ? '' : 'hidden'
                         }`}
                     >
                         {t('campaigns.show.notes')}
                     </button>
                     {/* TODO: add manage modal here when its ready */}
-                    <button className="group/manage mr-2 h-8 w-8 cursor-pointer appearance-none  rounded-md border border-gray-200 bg-gray-50 p-2 text-center font-medium text-gray-600 outline-none duration-300 hover:bg-gray-100">
+                    <button className="group/manage mr-2 h-8 w-8 cursor-pointer  rounded-md border border-gray-200 bg-gray-50 p-2 text-center font-medium text-gray-600 hover:bg-gray-100">
                         <SquarePlus className="h-4 w-4 stroke-tertiary-600 group-hover/manage:stroke-primary-600" />
                     </button>
                     <button
                         data-testid="delete-creator"
                         onClick={(e) => deleteCampaignCreator(e, creator)}
-                        className="group/delete h-8 w-8 cursor-pointer appearance-none rounded-md border border-gray-200 bg-gray-50 p-2 text-center text-gray-600 duration-300 hover:bg-gray-100"
+                        className="group/delete h-8 w-8 cursor-pointer rounded-md border border-gray-200 bg-gray-50 p-2 text-center text-gray-600 hover:bg-gray-100"
                     >
                         <Trashcan className="h-4 w-4 fill-tertiary-600 group-hover/delete:fill-primary-600" />
                     </button>
