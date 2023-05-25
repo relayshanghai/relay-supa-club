@@ -134,7 +134,7 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
                     {urls.map((url, index) => {
                         const error = validateUrl(url, urls);
                         return (
-                            <div key={`${url}-${index}`}>
+                            <div key={`add-posts-modal-url-input-${index}`}>
                                 <input
                                     className="my-2 block w-full appearance-none rounded-md border border-transparent bg-white px-3 py-2 placeholder-gray-400 shadow ring-1 ring-opacity-5 focus:border-primary-500 focus:outline-none focus:ring-primary-500 sm:text-xs"
                                     onChange={(e) => {
