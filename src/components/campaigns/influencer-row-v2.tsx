@@ -30,10 +30,7 @@ export interface InfluencerRowProps {
     inputRef: RefObject<HTMLInputElement>;
     updateCampaignCreator: (creator: CampaignCreatorDB) => void;
     setToEdit: Dispatch<SetStateAction<null | { index: number; key: string }>>;
-    deleteCampaignCreator: (
-        e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
-        creator: CampaignCreatorDB,
-    ) => Promise<void>;
+    deleteCampaignCreator: (e: MouseEvent<HTMLButtonElement>, creator: CampaignCreatorDB) => Promise<void>;
     openNotes: (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, creator: CampaignCreatorDB) => void;
     openMoveInfluencerModal: (
         e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
