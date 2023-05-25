@@ -243,7 +243,7 @@ export default function CampaignInfluencersTableV2({
             </div>
             {/* -- Outreach Table -- */}
             <div className="min-h-screen w-full overflow-auto">
-                <table className="w-full table-auto divide-y divide-gray-200 overflow-y-visible">
+                <table className="w-full table-auto divide-y divide-gray-200 overflow-y-visible bg-white">
                     <thead>
                         <tr>
                             {getVisibleColumns(tabStatus).map((column, index) => (
