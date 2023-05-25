@@ -8,6 +8,7 @@ import type { SocialMediaPlatform } from 'types';
 
 import { SocialMediaIcon } from '../common/social-media-icon';
 import { useState } from 'react';
+import { Button } from '../button';
 
 export interface ManageInfluencerModalProps extends Omit<ModalProps, 'children'> {
     creator: CampaignCreatorDB;
@@ -25,13 +26,26 @@ const validateNumberInput = (fee: string) => {
 const inputClass =
     'block w-full max-w-full appearance-none rounded-md border border-transparent bg-white px-3 py-2 placeholder-gray-400 shadow ring-1 ring-gray-300 ring-opacity-5 focus:border-primary-500 focus:outline-none focus:ring-primary-500 sm:max-w-xs sm:text-xs';
 
-const FormSection = () => {
+const FormSection = ({ creator, ...props }: ManageInfluencerModalProps) => {
     const { t } = useTranslation();
+    const { onClose } = props;
 
-    const [influencerFee, setInfluencerFee] = useState('');
+    const handleUpdateCampaignInfluencer = async () => {
+        //
+    };
+
+    const [influencerFee, setInfluencerFee] = useState(creator.rate_cents?.toLocaleString());
+
+    const submitDisabled = [influencerFee].some((field) => validateNumberInput(field));
 
     return (
-        <form className="flex w-full flex-wrap gap-y-3">
+        <form
+            className="flex w-full flex-wrap gap-y-3"
+            onSubmit={(e) => {
+                e.preventDefault();
+                handleUpdateCampaignInfluencer();
+            }}
+        >
             <div className="flex w-full flex-col gap-y-3 px-3 sm:w-1/2">
                 <div className="flex flex-col gap-y-3">
                     <label htmlFor="influencer-fee-input" className="text-sm font-bold">
@@ -83,6 +97,21 @@ const FormSection = () => {
                     />
                     <p className="text-xs text-red-400">{validateNumberInput(influencerFee)}</p>
                 </div>
+                <div className="ml-auto flex gap-x-3">
+                    <Button
+                        variant="secondary"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            onClose(false);
+                        }}
+                    >
+                        {t('campaigns.manageInfluencer.cancel')}
+                    </Button>
+                    <Button disabled={submitDisabled} type="submit">
+                        {' '}
+                        {t('campaigns.manageInfluencer.save')}
+                    </Button>
+                </div>
             </div>
         </form>
     );
@@ -118,7 +147,7 @@ export const ManageInfluencerModal = ({ creator, ...props }: ManageInfluencerMod
                         </Link>
                     </div>
                 </div>
-                <FormSection />
+                <FormSection creator={creator} {...props} />
             </>
         </Modal>
     );
