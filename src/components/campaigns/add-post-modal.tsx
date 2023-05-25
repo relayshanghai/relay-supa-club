@@ -4,7 +4,6 @@ import { Modal } from '../modal';
 import Link from 'next/link';
 import { imgProxy, nextFetch } from 'src/utils/fetcher';
 import type { CampaignCreatorDB } from 'src/utils/api/db';
-import type { SocialMediaPlatform } from 'types';
 
 import { SocialMediaIcon } from '../common/social-media-icon';
 import { useCallback, useEffect, useState } from 'react';
@@ -36,10 +35,12 @@ const urlRegex =
 export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
     const { t, i18n } = useTranslation();
     const handle = creator.username || creator.fullname || '';
-    const [urls, setUrls] = useState<{ [key: string]: string }>({ 'url-0': '' });
+    const [urls, setUrls] = useState<string[]>(['']);
     const [addedUrls, setAddedUrls] = useState<PostInfo[]>([]);
+    const [resetForm, setResetForm] = useState(0);
 
     const getAddedUrls = useCallback(async () => {
+        // TODO https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/309
         const urls = await nextFetch<PostInfo[]>(`posts/${creator.id}`);
         setAddedUrls(urls);
     }, [creator.id]);
@@ -50,11 +51,7 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
 
     const handleAddAnotherPost = () => {
         setUrls((prev) => {
-            const length = Object.keys(prev).length;
-            return {
-                ...prev,
-                [`url-${length}`]: '',
-            };
+            return [...prev, ''];
         });
     };
 
@@ -65,57 +62,38 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
         if (!urlRegex.test(url)) {
             return t('campaigns.post.invalidUrl');
         }
-        if (Object.values(_urls).filter((u) => u === url).length > 1) {
+        if (_urls.filter((u) => u === url).length > 1) {
             return t('campaigns.post.duplicateUrl');
         }
         return '';
     };
 
-    const backendCallStub = async (_url: string): Promise<PostInfo> => {
-        return {
-            title: 'title',
-            postedDate: new Date().toISOString(),
-            id: '123',
-            url: _url,
-        };
-    };
-    const scrapeByUrl = async (_urls: typeof urls) => {
+    const scrapeByUrls = async (_urls: typeof urls): Promise<{ successful: PostInfo[]; failed: string[] }> => {
         const successful: PostInfo[] = [];
-        const failed: typeof urls = {};
-        for (const [key, url] of Object.entries(_urls)) {
-            if (validateUrl(url, _urls) !== '') {
-                failed[key] = _urls[key];
-                continue;
-            }
-            try {
-                const postInfo = await backendCallStub(url);
-                if (postInfo) {
-                    successful.push(postInfo);
-                }
-            } catch (error) {
-                failed[key] = _urls[key];
-            }
-        }
+        const failed: string[] = [];
+        // TODO https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/309
         return { successful, failed };
     };
 
     const handleSubmit = async (_urls: typeof urls) => {
-        const { successful, failed } = await scrapeByUrl(_urls);
+        const { successful, failed } = await scrapeByUrls(_urls);
         setAddedUrls((prev) => [...prev, ...successful]);
-        const failedUrls = Object.keys(failed).length;
-        setUrls(failedUrls > 0 ? failed : { 'url-0': '' }); // will set the form to 0 if no errors, or keep the failed urls in the form if there are errors
-        if (failedUrls === 0) {
+
+        setUrls(failed.length > 0 ? failed : ['']); // will set the form to 0 if no errors, or keep the failed urls in the form if there are errors
+        // Because we don't have a unique key for each of the input components, if we remove an input, React might still render an old input, therefore we need to reset the form to force React to re-render all the inputs
+        setResetForm((prev) => prev + 1);
+        if (failed.length === 0) {
             toast.success(t('campaigns.post.success', { amount: successful.length }));
         } else {
-            toast.error(t('campaigns.post.error', { amount: Object.keys(failed).length }));
+            toast.error(t('campaigns.post.error', { amount: failed.length }));
         }
     };
 
     const handleRemovePost = async (_postId: string) => {
-        // Todo: handle remove post from backend
+        // Todo https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/309
     };
 
-    const hasError = Object.values(urls).some((url) => validateUrl(url, urls) !== '');
+    const hasError = urls.some((url) => validateUrl(url, urls) !== '');
     const submitDisabled = hasError;
 
     return (
@@ -125,10 +103,14 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
                     <h2 className="text-xl font-semibold text-gray-700">{t('campaigns.post.title')}</h2>
                     <div className="flex items-center">
                         <div className="relative h-10 w-10 flex-shrink-0 rounded-full bg-gray-300">
-                            <img className="h-10 w-10 rounded-full" src={imgProxy(creator.avatar_url)} alt="" />
+                            <img
+                                className="h-10 w-10 rounded-full"
+                                src={imgProxy(creator.avatar_url)}
+                                alt="campaign-influencer-avatar"
+                            />
                             <div className="absolute bottom-0 right-0 ">
                                 <SocialMediaIcon
-                                    platform={creator.platform as SocialMediaPlatform}
+                                    platform={creator.platform}
                                     width={16}
                                     height={16}
                                     className="opacity-80"
@@ -150,19 +132,20 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
                         e.preventDefault();
                         handleSubmit(urls);
                     }}
+                    key={resetForm}
                 >
                     <h3>{t('campaigns.post.addPostUrl')}</h3>
-                    {Object.values(urls).map((url, index) => {
+                    {urls.map((url, index) => {
                         const error = validateUrl(url, urls);
                         return (
-                            <div key={`url-${index}`}>
+                            // Using an 'unsafe' index as key here, but it's fine because we reset the form when we remove an input
+                            <div key={`add-posts-modal-url-input-${index}`}>
                                 <input
                                     className="my-2 block w-full appearance-none rounded-md border border-transparent bg-white px-3 py-2 placeholder-gray-400 shadow ring-1 ring-opacity-5 focus:border-primary-500 focus:outline-none focus:ring-primary-500 sm:text-xs"
                                     onChange={(e) => {
-                                        setUrls((prev) => ({
-                                            ...prev,
-                                            [`url-${index}`]: e.target.value,
-                                        }));
+                                        const newUrls = [...urls];
+                                        newUrls[index] = e.target.value;
+                                        setUrls(newUrls);
                                     }}
                                 />
                                 <p className="text-xs text-red-400">{error}</p>
@@ -189,8 +172,8 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
                     <>
                         <h3 className="mt-10 font-bold">{t('campaigns.post.currentPosts')}</h3>
                         <div className="px-3">
-                            {addedUrls.map((post, index) => (
-                                <div key={`post-${index}`} className="my-3 flex justify-between">
+                            {addedUrls.map((post) => (
+                                <div key={post.id} className="my-3 flex justify-between">
                                     <Link className="gap-x-3" href={post.url} target="_blank" rel="noopener noreferrer">
                                         <h4 className="text-sm">{post.title}</h4>
                                         <p className="text-sm font-light text-gray-400">

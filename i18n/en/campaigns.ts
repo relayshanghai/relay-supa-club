@@ -251,8 +251,8 @@ const campaigns = {
         submit: 'Submit',
         invalidUrl: 'Invalid URL',
         duplicateUrl: 'Duplicate URL',
-        success: 'Successfully added {{amount}} urls',
-        failed: 'Failed to get post data for {{amount}} urls',
+        success: 'Successfully added {{amount}} URLs',
+        failed: 'Failed to get post data for {{amount}} URLs',
         currentPosts: 'Current Posts',
     },
     manageInfluencer: {

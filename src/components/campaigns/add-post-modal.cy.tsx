@@ -69,7 +69,7 @@ describe('AddPostModal', () => {
         cy.contains('h2', 'Manage Posts');
         cy.contains('h3', 'Add Post URL');
     });
-    it('Should accept valid link that contains instagram youtube or tiktok links and show error otherwise', () => {
+    it('Should accept valid link that contains Instagram Youtube or Tiktok links and show error otherwise', () => {
         testMount(<AddPostModal {...props} />);
         cy.contains('Invalid URL').should('not.exist');
 
@@ -125,7 +125,7 @@ describe('AddPostModal', () => {
     });
     // TODO: test after hooking up to backend https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/406
     it.skip(
-        'Sends a request to the backend to add posts, shows a toast on success, displays the new urls, and removes them from the inputs',
+        'Sends a request to the backend to add posts, shows a toast on success, displays the new URL, and removes them from the inputs',
     );
     it.skip('Shows a failure toast if the request fails, and keeps the URLs in the list of inputs');
     it.skip('handles remove post (delete button)');
