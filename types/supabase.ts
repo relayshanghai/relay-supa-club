@@ -301,7 +301,7 @@ export interface Database {
           created_at: string | null
           description: string | null
           id: string
-          influencer_id: string
+          influencer_social_profile_id: string | null
           is_reusable: boolean
           platform: string
           posted_date: string | null
@@ -317,7 +317,7 @@ export interface Database {
           created_at?: string | null
           description?: string | null
           id?: string
-          influencer_id: string
+          influencer_social_profile_id?: string | null
           is_reusable?: boolean
           platform: string
           posted_date?: string | null
@@ -333,7 +333,7 @@ export interface Database {
           created_at?: string | null
           description?: string | null
           id?: string
-          influencer_id?: string
+          influencer_social_profile_id?: string | null
           is_reusable?: boolean
           platform?: string
           posted_date?: string | null
