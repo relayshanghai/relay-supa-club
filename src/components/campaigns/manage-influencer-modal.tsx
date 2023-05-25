@@ -7,10 +7,86 @@ import type { CampaignCreatorDB } from 'src/utils/api/db';
 import type { SocialMediaPlatform } from 'types';
 
 import { SocialMediaIcon } from '../common/social-media-icon';
+import { useState } from 'react';
 
 export interface ManageInfluencerModalProps extends Omit<ModalProps, 'children'> {
     creator: CampaignCreatorDB;
 }
+
+const validateNumberInput = (fee: string) => {
+    // must be a number
+    if (!fee) {
+        return '';
+    }
+    if (isNaN(Number(fee))) {
+        return 'Must be a number';
+    }
+};
+const inputClass =
+    'block w-full max-w-full appearance-none rounded-md border border-transparent bg-white px-3 py-2 placeholder-gray-400 shadow ring-1 ring-gray-300 ring-opacity-5 focus:border-primary-500 focus:outline-none focus:ring-primary-500 sm:max-w-xs sm:text-xs';
+
+const FormSection = () => {
+    const { t } = useTranslation();
+
+    const [influencerFee, setInfluencerFee] = useState('');
+
+    return (
+        <form className="flex w-full flex-wrap gap-y-3">
+            <div className="flex w-full flex-col gap-y-3 px-3 sm:w-1/2">
+                <div className="flex flex-col gap-y-3">
+                    <label htmlFor="influencer-fee-input" className="text-sm font-bold">
+                        {t('campaigns.manageInfluencer.influencerFee')}
+                    </label>
+                    <input
+                        id="influencer-fee-input"
+                        className={inputClass}
+                        onChange={(e) => setInfluencerFee(e.target.value)}
+                        value={influencerFee}
+                    />
+                    <p className="text-xs text-red-400">{validateNumberInput(influencerFee)}</p>
+                </div>
+                <div className="flex flex-col gap-y-3">
+                    <label htmlFor="influencer-fee-input" className="text-sm font-bold">
+                        {t('campaigns.manageInfluencer.influencerFee')}
+                    </label>
+                    <input
+                        id="influencer-fee-input"
+                        className={inputClass}
+                        onChange={(e) => setInfluencerFee(e.target.value)}
+                        value={influencerFee}
+                    />
+                    <p className="text-xs text-red-400">{validateNumberInput(influencerFee)}</p>
+                </div>
+            </div>
+            <div className="flex w-full flex-col gap-y-3 px-3 sm:w-1/2">
+                <div className="flex flex-col gap-y-3">
+                    <label htmlFor="influencer-fee-input" className="text-sm font-bold">
+                        {t('campaigns.manageInfluencer.sales')}
+                    </label>
+                    <input
+                        id="influencer-fee-input"
+                        className={inputClass}
+                        onChange={(e) => setInfluencerFee(e.target.value)}
+                        value={influencerFee}
+                    />
+                    <p className="text-xs text-red-400">{validateNumberInput(influencerFee)}</p>
+                </div>
+                <div className="flex flex-col gap-y-3">
+                    <label htmlFor="influencer-fee-input" className="text-sm font-bold">
+                        {t('campaigns.manageInfluencer.influencerFee')}
+                    </label>
+                    <input
+                        id="influencer-fee-input"
+                        className={inputClass}
+                        onChange={(e) => setInfluencerFee(e.target.value)}
+                        value={influencerFee}
+                    />
+                    <p className="text-xs text-red-400">{validateNumberInput(influencerFee)}</p>
+                </div>
+            </div>
+        </form>
+    );
+};
 
 export const ManageInfluencerModal = ({ creator, ...props }: ManageInfluencerModalProps) => {
     const { t } = useTranslation();
@@ -42,6 +118,7 @@ export const ManageInfluencerModal = ({ creator, ...props }: ManageInfluencerMod
                         </Link>
                     </div>
                 </div>
+                <FormSection />
             </>
         </Modal>
     );

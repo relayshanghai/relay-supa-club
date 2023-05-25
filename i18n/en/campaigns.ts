@@ -257,6 +257,8 @@ const campaigns = {
     },
     manageInfluencer: {
         title: 'Manage Influencer',
+        influencerFee: 'Influencer Fee',
+        sales: 'Sales',
     },
 };
 export default campaigns;

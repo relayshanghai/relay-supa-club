@@ -139,9 +139,9 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
                         const error = validateUrl(url, urls);
                         return (
                             // Using an 'unsafe' index as key here, but it's fine because we reset the form when we remove an input
-                            <div key={`add-posts-modal-url-input-${index}`}>
+                            <div key={`add-posts-modal-url-input-${index}`} className="my-2 flex flex-col gap-y-2">
                                 <input
-                                    className="my-2 block w-full appearance-none rounded-md border border-transparent bg-white px-3 py-2 placeholder-gray-400 shadow ring-1 ring-opacity-5 focus:border-primary-500 focus:outline-none focus:ring-primary-500 sm:text-xs"
+                                    className="block w-full appearance-none rounded-md border border-transparent bg-white px-3 py-2 placeholder-gray-400 shadow ring-1 ring-gray-300 ring-opacity-5 focus:border-primary-500 focus:outline-none focus:ring-primary-500 sm:text-xs"
                                     onChange={(e) => {
                                         const newUrls = [...urls];
                                         newUrls[index] = e.target.value;
