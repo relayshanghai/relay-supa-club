@@ -46,6 +46,12 @@ export const useCampaigns = ({
     useEffect(() => {
         if (allCampaigns && allCampaigns.length > 0) {
             const activeCampaigns = allCampaigns.filter((campaign) => !campaign.archived);
+            activeCampaigns.sort((a, b) => {
+                if (a.updated_at && b.updated_at) {
+                    return new Date(a.updated_at) < new Date(b.updated_at) ? 1 : -1;
+                }
+                return 0;
+            });
             const archivedCampaigns = allCampaigns.filter((campaign) => campaign.archived);
             setCampaigns(activeCampaigns);
             setArchivedCampaigns(archivedCampaigns);
