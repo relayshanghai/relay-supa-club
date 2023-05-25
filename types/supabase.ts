@@ -304,6 +304,7 @@ export interface Database {
           influencer_id: string
           is_reusable: boolean
           platform: string
+          posted_date: string | null
           preview_url: string | null
           publish_date: string | null
           title: string | null
@@ -319,6 +320,7 @@ export interface Database {
           influencer_id: string
           is_reusable?: boolean
           platform: string
+          posted_date?: string | null
           preview_url?: string | null
           publish_date?: string | null
           title?: string | null
@@ -334,6 +336,7 @@ export interface Database {
           influencer_id?: string
           is_reusable?: boolean
           platform?: string
+          posted_date?: string | null
           preview_url?: string | null
           publish_date?: string | null
           title?: string | null
