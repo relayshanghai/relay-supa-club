@@ -191,9 +191,9 @@ const InfluencerRowV2 = ({
                         onClick={(e) => openNotes(e, creator)}
                         className="mr-2 cursor-pointer appearance-none  rounded-md border border-gray-200 bg-gray-50 p-2 text-center font-medium text-gray-600 outline-none duration-300 hover:bg-gray-100 hover:text-primary-500"
                     >
-                        {/* TODO: notes ticket V2-139 */}
                         {t('campaigns.show.notes')}
                     </button>
+                    {/* TODO: add manage modal here when its ready */}
                     <button className="group/manage mr-2 h-8 w-8 cursor-pointer appearance-none  rounded-md border border-gray-200 bg-gray-50 p-2 text-center font-medium text-gray-600 outline-none duration-300 hover:bg-gray-100">
                         <SquarePlus className="h-4 w-4 stroke-tertiary-600 group-hover/manage:stroke-primary-600" />
                     </button>
