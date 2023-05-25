@@ -6,9 +6,11 @@ export interface ModalProps {
     title?: string | JSX.Element;
     onClose: (value: boolean) => void;
     children: JSX.Element | JSX.Element[];
+    /** a tailwind max-w class e.g. max-w-lg */
+    maxWidth?: string;
 }
 
-export const Modal: React.FC<ModalProps> = ({ children, visible, onClose, title }) => {
+export const Modal: React.FC<ModalProps> = ({ children, visible, onClose, title, maxWidth = 'max-w-md' }) => {
     return (
         <Transition appear show={visible} as={Fragment}>
             <Dialog open={visible} as="div" className="relative z-10" onClose={onClose}>
@@ -35,7 +37,9 @@ export const Modal: React.FC<ModalProps> = ({ children, visible, onClose, title 
                             leaveFrom="opacity-100 scale-100"
                             leaveTo="opacity-0 scale-95"
                         >
-                            <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-gray-50 p-6 text-left align-middle shadow-xl transition-all">
+                            <Dialog.Panel
+                                className={`w-full ${maxWidth} transform overflow-hidden rounded-2xl bg-gray-50 p-6 text-left align-middle shadow-xl transition-all`}
+                            >
                                 <Dialog.Title
                                     as="h3"
                                     className="mb-4 text-xl font-semibold leading-6 text-tertiary-600"

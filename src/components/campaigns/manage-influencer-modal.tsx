@@ -17,7 +17,7 @@ export const ManageInfluencerModal = ({ creator, ...props }: ManageInfluencerMod
     const handle = creator.username || creator.fullname || '';
 
     return (
-        <Modal {...props}>
+        <Modal {...props} maxWidth="max-w-[900px]">
             <>
                 <div className="mb-10 flex justify-between">
                     <h2 className="text-xl font-semibold text-gray-700">{t('campaigns.manageInfluencer.title')}</h2>
