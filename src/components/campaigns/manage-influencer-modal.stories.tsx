@@ -53,6 +53,7 @@ const props: ManageInfluencerModalProps = {
     openMoveInfluencerModal: () => undefined,
     openNotes: () => undefined,
     deleteCampaignCreator: async () => undefined,
+    updateCampaignCreator: async () => undefined,
 };
 
 const Component = () => {

@@ -4,18 +4,30 @@ import { Modal } from '../modal';
 import Link from 'next/link';
 import { imgProxy } from 'src/utils/fetcher';
 import type { CampaignCreatorDB } from 'src/utils/api/db';
-import type { SocialMediaPlatform } from 'types';
+import type { InfluencerOutreachStatus, SocialMediaPlatform } from 'types';
 import { ArrowRightOnRectangle, Trashcan } from '../icons';
 import { SocialMediaIcon } from '../common/social-media-icon';
 import type { MouseEvent } from 'react';
+import { useCallback } from 'react';
 import { useState } from 'react';
 import { Button } from '../button';
+
+const statusOptions: { label: string; value: InfluencerOutreachStatus }[] = [
+    { label: 'toContact', value: 'to contact' },
+    { label: 'contacted', value: 'contacted' },
+    { label: 'inProgress', value: 'in progress' },
+    { label: 'confirmed', value: 'confirmed' },
+    { label: 'posted', value: 'posted' },
+    { label: 'rejected', value: 'rejected' },
+    { label: 'ignored', value: 'ignored' },
+];
 
 export interface ManageInfluencerModalProps extends Omit<ModalProps, 'children'> {
     creator: CampaignCreatorDB;
     openMoveInfluencerModal: (e: MouseEvent<HTMLButtonElement>, creator: CampaignCreatorDB) => void;
     openNotes: (e: MouseEvent<HTMLButtonElement>, creator: CampaignCreatorDB) => void;
     deleteCampaignCreator: (e: MouseEvent<HTMLButtonElement>, creator: CampaignCreatorDB) => Promise<void>;
+    updateCampaignCreator: (creator: CampaignCreatorDB) => Promise<void>;
 }
 
 const validateNumberInput = (fee: string) => {
@@ -31,12 +43,16 @@ const validateNumberInput = (fee: string) => {
 const inputClass =
     'block w-full max-w-full appearance-none rounded-md border border-transparent bg-white px-3 py-2 placeholder-gray-400 shadow ring-1 ring-gray-300 ring-opacity-5 focus:border-primary-500 focus:outline-none focus:ring-primary-500 sm:max-w-xs sm:text-xs';
 
-const FormSection = ({ creator, ...props }: ManageInfluencerModalProps) => {
+const FormSection = ({ creator: initialCreator, onClose, updateCampaignCreator }: ManageInfluencerModalProps) => {
     const { t } = useTranslation();
-    const { onClose } = props;
+    const [creator, setCreator] = useState(initialCreator);
 
-    const handleUpdateCampaignInfluencer = async () => {
-        //
+    const handleUpdateCampaignInfluencer = useCallback(async () => {
+        await updateCampaignCreator(creator);
+    }, [creator, updateCampaignCreator]);
+
+    const handleStatusSelect = (status: InfluencerOutreachStatus) => {
+        setCreator({ ...creator, status });
     };
 
     const [influencerFee, setInfluencerFee] = useState(creator.rate_cents?.toLocaleString());
@@ -78,6 +94,24 @@ const FormSection = ({ creator, ...props }: ManageInfluencerModalProps) => {
                 </div>
             </div>
             <div className="flex w-full flex-col gap-y-3 px-3 sm:w-1/2">
+                <div className="flex flex-col gap-y-3">
+                    <label htmlFor="status-dropdown" className="text-sm font-bold">
+                        {t('campaigns.show.creatorStatus')}
+                    </label>
+                    <select
+                        id="status-dropdown"
+                        data-testid="status-dropdown"
+                        onChange={(e) => handleStatusSelect(e.target.value as InfluencerOutreachStatus)}
+                        value={creator.status || ''}
+                        className="-ml-1 mr-2.5 w-fit cursor-pointer appearance-none rounded-md border border-gray-200 bg-primary-50 px-4 py-2 text-center text-xs font-semibold text-primary-500 outline-none duration-300 hover:bg-primary-100"
+                    >
+                        {statusOptions.map((tab, index) => (
+                            <option value={tab.value} key={index}>
+                                {t(`campaigns.show.activities.outreach.${tab.label}`)}
+                            </option>
+                        ))}
+                    </select>
+                </div>
                 <div className="flex flex-col gap-y-3">
                     <label htmlFor="influencer-fee-input" className="text-sm font-bold">
                         {t('campaigns.manageInfluencer.sales')}
@@ -164,7 +198,7 @@ const SmallButtonsSection = ({
     const { t } = useTranslation();
 
     return (
-        <div>
+        <div className="pb-5">
             <div className="flex justify-end gap-x-2">
                 <button
                     data-testid="show-influencer-notes"

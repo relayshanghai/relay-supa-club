@@ -54,6 +54,7 @@ const props: ManageInfluencerModalProps = {
     openMoveInfluencerModal: () => undefined,
     openNotes: () => undefined,
     deleteCampaignCreator: async () => undefined,
+    updateCampaignCreator: async () => undefined,
 };
 
 describe('Add', () => {
@@ -79,6 +80,12 @@ describe('Add', () => {
         cy.getByTestId('show-influencer-notes').click();
         cy.get('@openNotes').should('be.calledOnce');
     });
-    it.skip('Should have buttons for view contact info, change status, save, and cancel');
+    it('Should have button to change the status of the influencer', () => {
+        testMount(<ManageInfluencerModal {...props} />);
+        cy.contains('Status');
+        cy.contains('select', 'To Contact').select('Contacted');
+        cy.contains('select', 'Contacted').select('Posted');
+        cy.contains('select', 'Posted').select('To Contact');
+    });
     it.skip('When save is clicked, sends a request to the server to update the influencer');
 });
