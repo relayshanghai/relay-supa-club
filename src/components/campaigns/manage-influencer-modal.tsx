@@ -11,6 +11,7 @@ import type { MouseEvent } from 'react';
 import { useCallback } from 'react';
 import { useState } from 'react';
 import { Button } from '../button';
+import { CreatorContacts } from './creator-contacts';
 
 const statusOptions: { label: string; value: InfluencerOutreachStatus }[] = [
     { label: 'toContact', value: 'to contact' },
@@ -47,6 +48,8 @@ const FormSection = ({ creator: initialCreator, onClose, updateCampaignCreator }
     const { t } = useTranslation();
     const [creator, setCreator] = useState(initialCreator);
 
+    const [showContactInfo, setShowContactInfo] = useState(false);
+
     const handleUpdateCampaignInfluencer = useCallback(async () => {
         await updateCampaignCreator(creator);
     }, [creator, updateCampaignCreator]);
@@ -69,16 +72,21 @@ const FormSection = ({ creator: initialCreator, onClose, updateCampaignCreator }
         >
             <div className="flex w-full flex-col gap-y-3 px-3 sm:w-1/2">
                 <div className="flex flex-col gap-y-3">
-                    <label htmlFor="influencer-fee-input" className="text-sm font-bold">
-                        {t('campaigns.manageInfluencer.influencerFee')}
+                    <label htmlFor="show-contact-info" className="text-sm font-bold">
+                        {t('campaigns.manageInfluencer.contactInfo')}
                     </label>
-                    <input
-                        id="influencer-fee-input"
-                        className={inputClass}
-                        onChange={(e) => setInfluencerFee(e.target.value)}
-                        value={influencerFee}
-                    />
-                    <p className="text-xs text-red-400">{validateNumberInput(influencerFee)}</p>
+                    {showContactInfo ? (
+                        <CreatorContacts {...creator} />
+                    ) : (
+                        <Button
+                            id="show-contact-info"
+                            variant="secondary"
+                            className="w-fit"
+                            onClick={() => setShowContactInfo(true)}
+                        >
+                            {t('campaigns.show.viewContactInfo')}
+                        </Button>
+                    )}
                 </div>
                 <div className="flex flex-col gap-y-3">
                     <label htmlFor="influencer-fee-input" className="text-sm font-bold">

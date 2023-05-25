@@ -261,6 +261,7 @@ const campaigns = {
         sales: 'Sales',
         cancel: 'Cancel',
         save: 'Save',
+        contactInfo: 'Contact Info',
     },
 };
 export default campaigns;

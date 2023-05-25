@@ -87,5 +87,9 @@ describe('Add', () => {
         cy.contains('select', 'Contacted').select('Posted');
         cy.contains('select', 'Posted').select('To Contact');
     });
+    it('Should have View Contact Info button', () => {
+        testMount(<ManageInfluencerModal {...props} />);
+        cy.contains('button', 'View Contact Info');
+    });
     it.skip('When save is clicked, sends a request to the server to update the influencer');
 });
