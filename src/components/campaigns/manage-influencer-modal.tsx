@@ -5,13 +5,17 @@ import Link from 'next/link';
 import { imgProxy } from 'src/utils/fetcher';
 import type { CampaignCreatorDB } from 'src/utils/api/db';
 import type { SocialMediaPlatform } from 'types';
-
+import { ArrowRightOnRectangle, Trashcan } from '../icons';
 import { SocialMediaIcon } from '../common/social-media-icon';
+import type { MouseEvent } from 'react';
 import { useState } from 'react';
 import { Button } from '../button';
 
 export interface ManageInfluencerModalProps extends Omit<ModalProps, 'children'> {
     creator: CampaignCreatorDB;
+    openMoveInfluencerModal: (e: MouseEvent<HTMLButtonElement>, creator: CampaignCreatorDB) => void;
+    openNotes: (e: MouseEvent<HTMLButtonElement>, creator: CampaignCreatorDB) => void;
+    deleteCampaignCreator: (e: MouseEvent<HTMLButtonElement>, creator: CampaignCreatorDB) => Promise<void>;
 }
 
 const validateNumberInput = (fee: string) => {
@@ -25,6 +29,8 @@ const validateNumberInput = (fee: string) => {
 };
 const inputClass =
     'block w-full max-w-full appearance-none rounded-md border border-transparent bg-white px-3 py-2 placeholder-gray-400 shadow ring-1 ring-gray-300 ring-opacity-5 focus:border-primary-500 focus:outline-none focus:ring-primary-500 sm:max-w-xs sm:text-xs';
+const smallButtonClass =
+    'rounded-md border border-gray-200 bg-gray-100 p-1 text-xs font-medium text-gray-600 hover:bg-gray-200';
 
 const FormSection = ({ creator, ...props }: ManageInfluencerModalProps) => {
     const { t } = useTranslation();
@@ -145,6 +151,25 @@ export const ManageInfluencerModal = ({ creator, ...props }: ManageInfluencerMod
                                 <div className="inline-block truncate text-xs text-primary-500">@{handle}</div>
                             </div>
                         </Link>
+                    </div>
+                </div>
+                <div>
+                    <div className="flex justify-end gap-x-2">
+                        <button onClick={(e) => props.openNotes(e, creator)} className={smallButtonClass}>
+                            {t('campaigns.show.notes')}
+                        </button>
+
+                        <button onClick={(e) => props.openMoveInfluencerModal(e, creator)} className={smallButtonClass}>
+                            <ArrowRightOnRectangle className="h-4 w-4 stroke-tertiary-600 " />
+                        </button>
+
+                        <button
+                            data-testid="delete-creator"
+                            onClick={(e) => props.deleteCampaignCreator(e, creator)}
+                            className={smallButtonClass}
+                        >
+                            <Trashcan className="h-4 w-4 fill-tertiary-600" />
+                        </button>
                     </div>
                 </div>
                 <FormSection creator={creator} {...props} />

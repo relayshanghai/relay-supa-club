@@ -1,5 +1,6 @@
 // Button.stories.ts|tsx
 import type { Meta } from '@storybook/react';
+import type { ManageInfluencerModalProps } from './manage-influencer-modal';
 import { ManageInfluencerModal } from './manage-influencer-modal';
 import type { CampaignCreatorDB } from 'src/utils/api/db';
 import { useState } from 'react';
@@ -45,12 +46,21 @@ const creator: CampaignCreatorDB = {
     username: 'tseries',
 };
 
+const props: ManageInfluencerModalProps = {
+    creator,
+    visible: true,
+    onClose: () => undefined,
+    openMoveInfluencerModal: () => undefined,
+    openNotes: () => undefined,
+    deleteCampaignCreator: async () => undefined,
+};
+
 const Component = () => {
     const [visible, setVisible] = useState(true);
     return (
         <div>
             <Button onClick={() => setVisible(true)}>Show Modal</Button>
-            <ManageInfluencerModal creator={creator} visible={visible} onClose={() => setVisible(false)} />
+            <ManageInfluencerModal {...props} visible={visible} onClose={() => setVisible(false)} />
         </div>
     );
 };

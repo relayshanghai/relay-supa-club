@@ -50,9 +50,10 @@ const creator: CampaignCreatorDB = {
 const props: ManageInfluencerModalProps = {
     creator,
     visible: true,
-    onClose: () => {
-        //
-    },
+    onClose: () => undefined,
+    openMoveInfluencerModal: () => undefined,
+    openNotes: () => undefined,
+    deleteCampaignCreator: async () => undefined,
 };
 
 describe('Add', () => {
