@@ -299,6 +299,7 @@ export interface Database {
         Row: {
           campaign_id: string
           created_at: string | null
+          deleted_at: string | null
           description: string | null
           id: string
           influencer_social_profile_id: string | null
@@ -315,6 +316,7 @@ export interface Database {
         Insert: {
           campaign_id: string
           created_at?: string | null
+          deleted_at?: string | null
           description?: string | null
           id?: string
           influencer_social_profile_id?: string | null
@@ -331,6 +333,7 @@ export interface Database {
         Update: {
           campaign_id?: string
           created_at?: string | null
+          deleted_at?: string | null
           description?: string | null
           id?: string
           influencer_social_profile_id?: string | null
