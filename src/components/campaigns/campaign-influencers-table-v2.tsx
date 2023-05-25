@@ -49,8 +49,6 @@ export default function CampaignInfluencersTableV2({
             campaign: currentCampaign,
         });
 
-    // 1. actions buttons should also show on condition
-
     const tabs = [
         { label: 'toContact', value: 'to contact' },
         { label: 'contacted', value: 'contacted' },
@@ -66,7 +64,7 @@ export default function CampaignInfluencersTableV2({
         { header: 'contact', type: 'contact', name: 'contact' },
         { header: 'creatorStatus', type: 'select', name: 'status' },
         { header: 'nextPoint', type: 'inputText', name: 'next_point' },
-        { header: 'influencerFee', type: 'inputNumber', name: 'rate_cents' },
+        { header: 'influencerFee', type: 'inputNumber', name: 'paid_amount_cents' }, //In the Figma design feedback, Sophia changed Payment Amount to Influencer Fee as the column name.
         { header: 'links', type: 'modal', name: 'contents' },
     ];
 
