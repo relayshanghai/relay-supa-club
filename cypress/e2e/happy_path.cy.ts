@@ -238,7 +238,7 @@ describe('Main pages happy paths', () => {
         cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises').should('not.exist');
 
         cy.contains('Manage', { timeout: 1000 }).click();
-        cy.getByTestId('manage-client-c026f75c-8ed8-4b23-9a63-0c4905c15673').click();
+        cy.getByTestId('manage-client-Blue Moonlight Stream Enterprises').click();
         cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises');
 
         cy.contains('Campaigns').click();
