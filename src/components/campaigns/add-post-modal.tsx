@@ -37,6 +37,7 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
     const handle = creator.username || creator.fullname || '';
     const [urls, setUrls] = useState<string[]>(['']);
     const [addedUrls, setAddedUrls] = useState<PostInfo[]>([]);
+    const [resetForm, setResetForm] = useState(0);
 
     const getAddedUrls = useCallback(async () => {
         // TODO https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/309
@@ -79,6 +80,8 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
         setAddedUrls((prev) => [...prev, ...successful]);
 
         setUrls(failed.length > 0 ? failed : ['']); // will set the form to 0 if no errors, or keep the failed urls in the form if there are errors
+        // Because we don't have a unique key for each of the input components, if we remove an input, React might still render an old input, therefore we need to reset the form to force React to re-render all the inputs
+        setResetForm((prev) => prev + 1);
         if (failed.length === 0) {
             toast.success(t('campaigns.post.success', { amount: successful.length }));
         } else {
@@ -129,11 +132,13 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
                         e.preventDefault();
                         handleSubmit(urls);
                     }}
+                    key={resetForm}
                 >
                     <h3>{t('campaigns.post.addPostUrl')}</h3>
                     {urls.map((url, index) => {
                         const error = validateUrl(url, urls);
                         return (
+                            // Using an 'unsafe' index as key here, but it's fine because we reset the form when we remove an input
                             <div key={`add-posts-modal-url-input-${index}`}>
                                 <input
                                     className="my-2 block w-full appearance-none rounded-md border border-transparent bg-white px-3 py-2 placeholder-gray-400 shadow ring-1 ring-opacity-5 focus:border-primary-500 focus:outline-none focus:ring-primary-500 sm:text-xs"
