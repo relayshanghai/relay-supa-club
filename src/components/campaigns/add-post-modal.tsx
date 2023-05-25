@@ -40,6 +40,7 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
     const [addedUrls, setAddedUrls] = useState<PostInfo[]>([]);
 
     const getAddedUrls = useCallback(async () => {
+        // TODO https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/309
         const urls = await nextFetch<PostInfo[]>(`posts/${creator.id}`);
         setAddedUrls(urls);
     }, [creator.id]);
@@ -71,40 +72,23 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
         return '';
     };
 
-    const backendCallStub = async (_url: string): Promise<PostInfo> => {
-        return {
-            title: 'title',
-            postedDate: new Date().toISOString(),
-            id: '123',
-            url: _url,
-        };
-    };
-    const scrapeByUrl = async (_urls: typeof urls) => {
+    const scrapeByUrls = async (_urls: typeof urls): Promise<{ successful: PostInfo[]; failed: string[] }> => {
         const successful: PostInfo[] = [];
-        const failed: typeof urls = {};
-        for (const [key, url] of Object.entries(_urls)) {
-            if (validateUrl(url, _urls) !== '') {
-                failed[key] = _urls[key];
-                continue;
-            }
-            try {
-                const postInfo = await backendCallStub(url);
-                if (postInfo) {
-                    successful.push(postInfo);
-                }
-            } catch (error) {
-                failed[key] = _urls[key];
-            }
-        }
+        const failed: string[] = [];
+        // TODO https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/309
         return { successful, failed };
     };
 
     const handleSubmit = async (_urls: typeof urls) => {
-        const { successful, failed } = await scrapeByUrl(_urls);
+        const { successful, failed } = await scrapeByUrls(_urls);
         setAddedUrls((prev) => [...prev, ...successful]);
-        const failedUrls = Object.keys(failed).length;
-        setUrls(failedUrls > 0 ? failed : { 'url-0': '' }); // will set the form to 0 if no errors, or keep the failed urls in the form if there are errors
-        if (failedUrls === 0) {
+        const failedObject: typeof urls = {};
+        failed.forEach((url, index) => {
+            failedObject[`url-${index}`] = url;
+        });
+
+        setUrls(failed.length > 0 ? failedObject : { 'url-0': '' }); // will set the form to 0 if no errors, or keep the failed urls in the form if there are errors
+        if (failed.length === 0) {
             toast.success(t('campaigns.post.success', { amount: successful.length }));
         } else {
             toast.error(t('campaigns.post.error', { amount: Object.keys(failed).length }));
@@ -112,7 +96,7 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
     };
 
     const handleRemovePost = async (_postId: string) => {
-        // Todo: handle remove post from backend
+        // Todo https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/309
     };
 
     const hasError = Object.values(urls).some((url) => validateUrl(url, urls) !== '');
