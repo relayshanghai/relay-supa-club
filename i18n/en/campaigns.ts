@@ -154,9 +154,10 @@ const campaigns = {
         importantMessages: 'Important Messages',
         moveInfluencer: 'Move Influencer',
         influencerFee: 'Influencer Fee',
-        Links: 'Links',
-        Sales: 'Sales',
-        Actions: 'Actions',
+        links: 'Links',
+        sales: 'Sales',
+        actions: 'Actions',
+        content: 'Content',
         activities: {
             influencerOutreach: 'Influencer Outreach',
             campaignInfo: 'Campaign Info',

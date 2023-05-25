@@ -18,6 +18,11 @@ export interface CreatorsOutreachProps {
     campaigns?: CampaignDB[];
     currentCreator?: CampaignCreatorDB | null;
 }
+export interface TableColumns {
+    header: string;
+    type: 'account' | 'contact' | 'select' | 'inputText' | 'inputNumber' | 'modal';
+    name: string;
+}
 
 export default function CampaignInfluencersTableV2({
     currentCampaign,
@@ -44,15 +49,8 @@ export default function CampaignInfluencersTableV2({
             campaign: currentCampaign,
         });
 
-    // const columnLabels = [
-    //     { header: 'account', status: 'all' },
-    //     { header: 'contact', status: 'to contact' },
-    //     { header: 'creatorStatus', status: 'all' },
-    //     { header: 'nextPoint', status: 'in progress' },
-    //     { header: 'influencerFee', status: 'confirmed' },
-    //     { header: 'Links', status: 'posted' },
-    //     { header: 'Sales', status: 'posted' },
-    // ];
+    // 1. actions buttons should also show on condition
+    // 2. add sales column in CampaignCreatosDB
 
     const tabs = [
         { label: 'toContact', value: 'to contact' },
@@ -64,14 +62,14 @@ export default function CampaignInfluencersTableV2({
         { label: 'ignored', value: 'ignored' },
     ];
 
-    const tableColumns = [
-        { header: 'account', accessor: (row: any) => row.account },
-        { header: 'contact', accessor: (row: any) => row.contact },
-        { header: 'creatorStatus', accessor: (row: any) => row.creatorStatus },
-        { header: 'nextPoint', accessor: (row: any) => row.nextPoint },
-        { header: 'influencerFee', accessor: (row: any) => row.influencerFee },
-        { header: 'Links', accessor: (row: any) => row.Links },
-        { header: 'Sales', accessor: (row: any) => row.Sales },
+    const tableColumns: TableColumns[] = [
+        { header: 'account', type: 'account', name: 'account' },
+        { header: 'contact', type: 'contact', name: 'contact' },
+        { header: 'creatorStatus', type: 'select', name: 'status' },
+        { header: 'nextPoint', type: 'inputText', name: 'next_point' },
+        { header: 'influencerFee', type: 'inputNumber', name: 'rate_cents' },
+        { header: 'links', type: 'modal', name: 'contents' },
+        { header: 'sales', type: 'inputNumber', name: 'sales' }, //TODO: add sales column in CampaignCreatosDB
     ];
 
     function getVisibleColumns(tabStatus: string | string[]) {
@@ -295,66 +293,12 @@ export default function CampaignInfluencersTableV2({
                                         openMoveInfluencerModal={openMoveInfluencerModal}
                                         showMoveInfluencerModal={showMoveInfluencerModal}
                                         setShowMoveInfluencerModal={setShowMoveInfluencerModal}
+                                        getVisibleColumns={getVisibleColumns}
+                                        tabStatus={tabStatus}
                                     />
                                 );
                         })}
                     </tbody>
-                    {/* <thead className="sticky top-0 bg-white">
-                        <tr>
-                            {columnLabels.map((label, index) => (
-                                <th
-                                    key={index}
-                                    scope="col"
-                                    className={`sticky left-0 min-w-fit bg-white px-6 py-3 text-left text-xs font-normal tracking-wider text-gray-500 ${
-                                        index === 0 ? 'sticky left-0 z-10' : ''
-                                    }`}
-                                >
-                                    {(label.status === 'all' || label.status === tabStatus) &&
-                                        t(`campaigns.show.${label.header}`)}
-                                </th>
-                            ))}
-                            <th className=" sticky right-0 z-30 min-w-[280px] max-w-[280px] bg-white px-3 py-3 text-left text-xs  font-normal tracking-wider text-gray-500">
-                                {''}
-                            </th>
-                        </tr>
-                    </thead> */}
-
-                    {/* <tbody className="divide-y divide-gray-200 bg-white">
-                        {influencersList.length === 0 && (
-                            <tr>
-                                <td colSpan={columnLabels.length + 1} className="px-6 py-4">
-                                    <div className="flex justify-center">
-                                        <p className="text-sm text-gray-500">
-                                            {t('campaigns.show.activities.outreach.noInfluencers')}
-                                        </p>
-                                    </div>
-                                </td>
-                            </tr>
-                        )}
-
-                        {influencersList.map((creator, index) => {
-                            if (creator.status === tabStatus)
-                                return (
-                                    <InfluencerRow
-                                        key={index}
-                                        creator={creator}
-                                        index={index}
-                                        updateCampaignCreator={updateCampaignCreator}
-                                        editingModeTrue={editingModeTrue}
-                                        setToEdit={setToEdit}
-                                        handleDropdownSelect={handleDropdownSelect}
-                                        inputRef={inputRef}
-                                        setInlineEdit={setInlineEdit}
-                                        tabs={tabs}
-                                        openNotes={openNotes}
-                                        deleteCampaignCreator={deleteCampaignCreator}
-                                        openMoveInfluencerModal={openMoveInfluencerModal}
-                                        showMoveInfluencerModal={showMoveInfluencerModal}
-                                        setShowMoveInfluencerModal={setShowMoveInfluencerModal}
-                                    />
-                                );
-                        })}
-                    </tbody> */}
                 </table>
             </div>
 
