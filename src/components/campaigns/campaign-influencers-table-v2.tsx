@@ -50,7 +50,6 @@ export default function CampaignInfluencersTableV2({
         });
 
     // 1. actions buttons should also show on condition
-    // 2. add sales column in CampaignCreatosDB
 
     const tabs = [
         { label: 'toContact', value: 'to contact' },
@@ -69,7 +68,6 @@ export default function CampaignInfluencersTableV2({
         { header: 'nextPoint', type: 'inputText', name: 'next_point' },
         { header: 'influencerFee', type: 'inputNumber', name: 'rate_cents' },
         { header: 'links', type: 'modal', name: 'contents' },
-        { header: 'sales', type: 'inputNumber', name: 'sales' }, //TODO: add sales column in CampaignCreatosDB
     ];
 
     function getVisibleColumns(tabStatus: string | string[]) {
@@ -83,7 +81,7 @@ export default function CampaignInfluencersTableV2({
             case 'confirmed':
                 return [tableColumns[0], tableColumns[2], tableColumns[3], tableColumns[4]];
             case 'posted':
-                return [tableColumns[0], tableColumns[2], tableColumns[4], tableColumns[5], tableColumns[6]];
+                return [tableColumns[0], tableColumns[2], tableColumns[4], tableColumns[5]];
             case 'rejected':
                 return [tableColumns[0], tableColumns[2]];
             case 'ignored':

@@ -155,16 +155,15 @@ const InfluencerRowV2 = ({
                     {column.type === 'inputNumber' && (
                         <button
                             className="relative cursor-pointer pr-2 text-left text-xs text-gray-900 duration-300 hover:text-primary-500"
-                            onClick={(e) => setInlineEdit(e, index, column.name)}
+                            onClick={(e) => setInlineEdit(e, index, 'rate_cents')}
                         >
-                            {/* TODO: replace rate_cents with {column.name} after the sales column is added to CampaignCreators DB */}
                             {creator.rate_cents?.toLocaleString() || '-'} {creator.rate_currency}
-                            {editingModeTrue(index, column.name) && (
+                            {editingModeTrue(index, 'rate_cents') && (
                                 <TableInput
                                     value={creator.rate_cents.toLocaleString()}
                                     type="number"
                                     creator={creator}
-                                    objKey={column.name}
+                                    objKey="rate_cents"
                                     ref={inputRef}
                                     updateCampaignCreator={updateCampaignCreator}
                                     closeModal={() => setToEdit(null)}
