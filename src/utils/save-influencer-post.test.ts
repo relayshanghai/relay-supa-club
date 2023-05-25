@@ -6,7 +6,7 @@ import { saveInfluencerPost } from './save-influencer-post';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
 describe('Save influencer post', () => {
-    it('Save influencer post', async () => {
+    it('Save influencer post calls insertInfluencerPost', async () => {
         const data = {
             type: '',
             campaign_id: '3',

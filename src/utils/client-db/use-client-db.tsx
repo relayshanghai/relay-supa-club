@@ -11,15 +11,14 @@ import {
     insertCampaignCreatorCall,
     updateCampaignCreatorCall,
 } from './campaignCreators';
+import type { DBQuery } from '../types';
 
-export type DBQuery<T extends (db: SupabaseClient<DatabaseWithCustomTypes>) => any> = (db: SupabaseClient<DatabaseWithCustomTypes>) => (...args: Parameters<ReturnType<T>>) => ReturnType<ReturnType<T>>
-
-export const useSupabase = () => useSupabaseClient<DatabaseWithCustomTypes>()
+export const useSupabase = () => useSupabaseClient<DatabaseWithCustomTypes>();
 
 export const useDB = <T extends (db: SupabaseClient<DatabaseWithCustomTypes>) => any>(query: DBQuery<T>) => {
     const supabase = useSupabase();
-    return (...args: Parameters<ReturnType<T>>) => query(supabase)(...args)
-}
+    return (...args: Parameters<ReturnType<T>>) => query(supabase)(...args);
+};
 
 export const useClientDb = () => {
     const supabaseClient = useSupabaseClient<DatabaseWithCustomTypes>();
