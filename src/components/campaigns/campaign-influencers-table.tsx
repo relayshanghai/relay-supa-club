@@ -43,15 +43,19 @@ export default function CampaignInfluencersTable({
         useCampaignCreators({
             campaign: currentCampaign,
         });
-
     const columnLabels = [
-        { header: 'account', status: 'all' },
-        { header: 'contact', status: 'to contact' },
-        { header: 'creatorStatus', status: 'all' },
-        { header: 'nextPoint', status: 'in progress' },
-        { header: 'influencerFee', status: 'confirmed' },
-        { header: 'Links', status: 'posted' },
-        { header: 'Sales', status: 'posted' },
+        'account',
+        'contact',
+        'creatorStatus',
+        // 'addedBy',
+        'nextPoint',
+        'publicationDate',
+        'paymentAmount',
+        'paidAmount',
+        'paymentInformation',
+        'paymentStatus',
+        'influencerAddress',
+        'sampleStatus',
     ];
 
     useEffect(() => {
@@ -229,8 +233,7 @@ export default function CampaignInfluencersTable({
                                         index === 0 ? 'sticky left-0 z-10' : ''
                                     }`}
                                 >
-                                    {(label.status === 'all' || label.status === tabStatus) &&
-                                        t(`campaigns.show.${label.header}`)}
+                                    {t(`campaigns.show.${label}`)}
                                 </th>
                             ))}
                             {/*-- placeholder table header space for notes and delete section --*/}

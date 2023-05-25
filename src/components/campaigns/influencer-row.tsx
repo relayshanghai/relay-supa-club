@@ -8,22 +8,22 @@ import type { SocialMediaPlatform } from 'types';
 import { SocialMediaIcon } from '../common/social-media-icon';
 import { CreatorContacts } from './creator-contacts';
 import TableInput from './campaign-table-input';
-// import dateFormat from 'src/utils/dateFormat';
+import dateFormat from 'src/utils/dateFormat';
 import { Trashcan } from '../icons';
 import { Button } from '../button';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 
-// const paymentStatus = [
-//     { id: 1, label: 'unpaid', value: 'unpaid' },
-//     { id: 2, label: 'partiallypaid', value: 'partial_paid' },
-//     { id: 3, label: 'fullypaid', value: 'full_paid' },
-// ];
+const paymentStatus = [
+    { id: 1, label: 'unpaid', value: 'unpaid' },
+    { id: 2, label: 'partiallypaid', value: 'partial_paid' },
+    { id: 3, label: 'fullypaid', value: 'full_paid' },
+];
 
-// const sampleStatus = [
-//     { id: 1, label: 'unsent', value: 'unsent' },
-//     { id: 2, label: 'sent', value: 'sent' },
-//     { id: 3, label: 'delivered', value: 'delivered' },
-// ];
+const sampleStatus = [
+    { id: 1, label: 'unsent', value: 'unsent' },
+    { id: 2, label: 'sent', value: 'sent' },
+    { id: 3, label: 'delivered', value: 'delivered' },
+];
 
 export interface InfluencerRowProps {
     index: number;
@@ -107,17 +107,15 @@ const InfluencerRow = ({
                 </div>
             </td>
             {/* -- Contact Column -- */}
-            {creator.status === 'to contact' && (
-                <td className="min-w-[150px] whitespace-nowrap px-6 py-4">
-                    {showContactInfo ? (
-                        <CreatorContacts {...creator} />
-                    ) : (
-                        <Button variant="secondary" onClick={() => setShowContactInfo(true)}>
-                            {t('campaigns.show.viewContactInfo')}
-                        </Button>
-                    )}
-                </td>
-            )}
+            <td className="min-w-[150px] whitespace-nowrap px-6 py-4">
+                {showContactInfo ? (
+                    <CreatorContacts {...creator} />
+                ) : (
+                    <Button variant="secondary" onClick={() => setShowContactInfo(true)}>
+                        {t('campaigns.show.viewContactInfo')}
+                    </Button>
+                )}
+            </td>
             <td className="whitespace-nowrap px-6 py-4">
                 <select
                     data-testid="status-dropdown"
@@ -150,36 +148,34 @@ const InfluencerRow = ({
                                             )}
                                         </td> */}
             {/* -- Action Point Column -- */}
-            {(creator.status === 'in progress' || 'confirmed') && (
-                <td className="min-w-[150px] max-w-[200px] whitespace-normal px-6 py-4">
-                    <button
-                        className="relative cursor-pointer text-xs text-gray-900 duration-300 hover:text-primary-500"
-                        onClick={(e) => setInlineEdit(e, index, 'next_step')}
-                    >
-                        <div className={`${editingModeTrue(index, 'next_step') ? 'hidden' : ''}`}>
-                            {creator.next_step || (
-                                <div className="cursor-pointer text-primary-500 duration-300 hover:text-primary-700">
-                                    {t('campaigns.show.addActionPoint')}
-                                </div>
-                            )}
-                        </div>
-
-                        {editingModeTrue(index, 'next_step') && (
-                            <TableInput
-                                value={creator.next_step || ''}
-                                type="text"
-                                creator={creator}
-                                objKey="next_step"
-                                ref={inputRef}
-                                updateCampaignCreator={updateCampaignCreator}
-                                closeModal={() => setToEdit(null)}
-                            />
+            <td className="min-w-[150px] max-w-[200px] whitespace-normal px-6 py-4">
+                <button
+                    className="relative cursor-pointer text-xs text-gray-900 duration-300 hover:text-primary-500"
+                    onClick={(e) => setInlineEdit(e, index, 'next_step')}
+                >
+                    <div className={`${editingModeTrue(index, 'next_step') ? 'hidden' : ''}`}>
+                        {creator.next_step || (
+                            <div className="cursor-pointer text-primary-500 duration-300 hover:text-primary-700">
+                                {t('campaigns.show.addActionPoint')}
+                            </div>
                         )}
-                    </button>
-                </td>
-            )}
+                    </div>
+
+                    {editingModeTrue(index, 'next_step') && (
+                        <TableInput
+                            value={creator.next_step || ''}
+                            type="text"
+                            creator={creator}
+                            objKey="next_step"
+                            ref={inputRef}
+                            updateCampaignCreator={updateCampaignCreator}
+                            closeModal={() => setToEdit(null)}
+                        />
+                    )}
+                </button>
+            </td>
             {/* -- Publication Date Column -- */}
-            {/* <td className="min-w-[0px] max-w-[200px] whitespace-nowrap px-6 py-4">
+            <td className="min-w-[0px] max-w-[200px] whitespace-nowrap px-6 py-4">
                 <button
                     className="relative cursor-pointer text-xs text-gray-900 duration-300 hover:text-primary-500"
                     onClick={(e) => setInlineEdit(e, index, 'publication_date')}
@@ -204,9 +200,9 @@ const InfluencerRow = ({
                         />
                     )}
                 </button>
-            </td> */}
-            {/* -- Rate Column -- */}
-            {/* <td className="whitespace-nowrap px-6 py-4">
+            </td>
+
+            <td className="whitespace-nowrap px-6 py-4">
                 <button
                     className="relative cursor-pointer pr-2 text-left text-xs text-gray-900 duration-300 hover:text-primary-500"
                     onClick={(e) => setInlineEdit(e, index, 'rate_cents')}
@@ -224,9 +220,8 @@ const InfluencerRow = ({
                         />
                     )}
                 </button>
-            </td> */}
-            {/* -- Paid Amount Column -- */}
-            {/* <td className="whitespace-nowrap px-6 py-4">
+            </td>
+            <td className="whitespace-nowrap px-6 py-4">
                 <button
                     className="relative cursor-pointer pr-2 text-left text-xs text-gray-900 duration-300 hover:text-primary-500"
                     onClick={(e) => setInlineEdit(e, index, 'paid_amount_cents')}
@@ -244,9 +239,9 @@ const InfluencerRow = ({
                         />
                     )}
                 </button>
-            </td> */}
+            </td>
             {/* -- Payment Info Column -- */}
-            {/* <td className="min-w-[150px] max-w-[200px] whitespace-normal px-6 py-4">
+            <td className="min-w-[150px] max-w-[200px] whitespace-normal px-6 py-4">
                 <button
                     className="relative cursor-pointer text-xs text-gray-900 duration-300 hover:text-primary-500"
                     onClick={(e) => setInlineEdit(e, index, 'payment_details')}
@@ -270,9 +265,8 @@ const InfluencerRow = ({
                         />
                     )}
                 </button>
-            </td> */}
-            {/* -- Payment Status Column -- */}
-            {/* <td className="whitespace-nowrap px-6 py-4">
+            </td>
+            <td className="whitespace-nowrap px-6 py-4">
                 <select
                     onClick={(e) => e.stopPropagation()}
                     onChange={(e) => handleDropdownSelect(e, creator, 'payment_status')}
@@ -285,9 +279,9 @@ const InfluencerRow = ({
                         </option>
                     ))}
                 </select>
-            </td> */}
+            </td>
             {/* -- Influencer Address Column -- */}
-            {/* <td className="py-4whitespace-normal min-w-[150px] max-w-[200px] px-6">
+            <td className="py-4whitespace-normal min-w-[150px] max-w-[200px] px-6">
                 <button
                     className="relative cursor-pointer text-xs text-gray-900 duration-300 hover:text-primary-500"
                     onClick={(e) => setInlineEdit(e, index, 'address')}
@@ -311,9 +305,9 @@ const InfluencerRow = ({
                         />
                     )}
                 </button>
-            </td> */}
+            </td>
             {/* -- Sample Status Column -- */}
-            {/* <td className="whitespace-nowrap px-6 py-4">
+            <td className="whitespace-nowrap px-6 py-4">
                 <select
                     onClick={(e) => e.stopPropagation()}
                     onChange={(e) => handleDropdownSelect(e, creator, 'sample_status')}
@@ -326,7 +320,7 @@ const InfluencerRow = ({
                         </option>
                     ))}
                 </select>
-            </td> */}
+            </td>
 
             <td className="right-0 z-50 whitespace-nowrap bg-white px-6 py-4 group-hover:bg-primary-50 sm:sticky ">
                 <div className="flex justify-end">
