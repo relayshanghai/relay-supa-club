@@ -36,7 +36,7 @@ const urlRegex =
 export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
     const { t, i18n } = useTranslation();
     const handle = creator.username || creator.fullname || '';
-    const [urls, setUrls] = useState<{ [key: string]: string }>({ 'url-0': '' });
+    const [urls, setUrls] = useState<string[]>(['']);
     const [addedUrls, setAddedUrls] = useState<PostInfo[]>([]);
 
     const getAddedUrls = useCallback(async () => {
@@ -51,11 +51,7 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
 
     const handleAddAnotherPost = () => {
         setUrls((prev) => {
-            const length = Object.keys(prev).length;
-            return {
-                ...prev,
-                [`url-${length}`]: '',
-            };
+            return [...prev, ''];
         });
     };
 
@@ -66,7 +62,7 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
         if (!urlRegex.test(url)) {
             return t('campaigns.post.invalidUrl');
         }
-        if (Object.values(_urls).filter((u) => u === url).length > 1) {
+        if (_urls.filter((u) => u === url).length > 1) {
             return t('campaigns.post.duplicateUrl');
         }
         return '';
@@ -82,16 +78,12 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
     const handleSubmit = async (_urls: typeof urls) => {
         const { successful, failed } = await scrapeByUrls(_urls);
         setAddedUrls((prev) => [...prev, ...successful]);
-        const failedObject: typeof urls = {};
-        failed.forEach((url, index) => {
-            failedObject[`url-${index}`] = url;
-        });
 
-        setUrls(failed.length > 0 ? failedObject : { 'url-0': '' }); // will set the form to 0 if no errors, or keep the failed urls in the form if there are errors
+        setUrls(failed.length > 0 ? failed : ['']); // will set the form to 0 if no errors, or keep the failed urls in the form if there are errors
         if (failed.length === 0) {
             toast.success(t('campaigns.post.success', { amount: successful.length }));
         } else {
-            toast.error(t('campaigns.post.error', { amount: Object.keys(failed).length }));
+            toast.error(t('campaigns.post.error', { amount: failed.length }));
         }
     };
 
@@ -99,7 +91,7 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
         // Todo https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/309
     };
 
-    const hasError = Object.values(urls).some((url) => validateUrl(url, urls) !== '');
+    const hasError = urls.some((url) => validateUrl(url, urls) !== '');
     const submitDisabled = hasError;
 
     return (
@@ -136,17 +128,16 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
                     }}
                 >
                     <h3>{t('campaigns.post.addPostUrl')}</h3>
-                    {Object.values(urls).map((url, index) => {
+                    {urls.map((url, index) => {
                         const error = validateUrl(url, urls);
                         return (
-                            <div key={`url-${index}`}>
+                            <div key={`${url}-${index}`}>
                                 <input
                                     className="my-2 block w-full appearance-none rounded-md border border-transparent bg-white px-3 py-2 placeholder-gray-400 shadow ring-1 ring-opacity-5 focus:border-primary-500 focus:outline-none focus:ring-primary-500 sm:text-xs"
                                     onChange={(e) => {
-                                        setUrls((prev) => ({
-                                            ...prev,
-                                            [`url-${index}`]: e.target.value,
-                                        }));
+                                        const newUrls = [...urls];
+                                        newUrls[index] = e.target.value;
+                                        setUrls(newUrls);
                                     }}
                                 />
                                 <p className="text-xs text-red-400">{error}</p>
@@ -173,8 +164,8 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
                     <>
                         <h3 className="mt-10 font-bold">{t('campaigns.post.currentPosts')}</h3>
                         <div className="px-3">
-                            {addedUrls.map((post, index) => (
-                                <div key={`post-${index}`} className="my-3 flex justify-between">
+                            {addedUrls.map((post) => (
+                                <div key={post.id} className="my-3 flex justify-between">
                                     <Link className="gap-x-3" href={post.url} target="_blank" rel="noopener noreferrer">
                                         <h4 className="text-sm">{post.title}</h4>
                                         <p className="text-sm font-light text-gray-400">
