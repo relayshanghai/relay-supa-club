@@ -45,9 +45,9 @@ export const useCampaigns = ({
 
     useEffect(() => {
         if (allCampaigns && allCampaigns.length > 0) {
-            const unarchivedCampaigns = allCampaigns.filter((campaign) => !campaign.archived);
+            const activeCampaigns = allCampaigns.filter((campaign) => !campaign.archived);
             const archivedCampaigns = allCampaigns.filter((campaign) => campaign.archived);
-            setCampaigns(unarchivedCampaigns);
+            setCampaigns(activeCampaigns);
             setArchivedCampaigns(archivedCampaigns);
         }
     }, [allCampaigns]);
@@ -58,7 +58,7 @@ export const useCampaigns = ({
     );
 
     return {
-        /** All campaigns that are not archived */
+        /** All campaigns that are not archived and are active */
         campaigns,
         /** All campaigns that are archived */
         archivedCampaigns,
