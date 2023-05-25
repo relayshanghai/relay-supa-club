@@ -4,7 +4,6 @@ import { Modal } from '../modal';
 import Link from 'next/link';
 import { imgProxy, nextFetch } from 'src/utils/fetcher';
 import type { CampaignCreatorDB } from 'src/utils/api/db';
-import type { SocialMediaPlatform } from 'types';
 
 import { SocialMediaIcon } from '../common/social-media-icon';
 import { useCallback, useEffect, useState } from 'react';
@@ -101,10 +100,14 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
                     <h2 className="text-xl font-semibold text-gray-700">{t('campaigns.post.title')}</h2>
                     <div className="flex items-center">
                         <div className="relative h-10 w-10 flex-shrink-0 rounded-full bg-gray-300">
-                            <img className="h-10 w-10 rounded-full" src={imgProxy(creator.avatar_url)} alt="" />
+                            <img
+                                className="h-10 w-10 rounded-full"
+                                src={imgProxy(creator.avatar_url)}
+                                alt="campaign-influencer-avatar"
+                            />
                             <div className="absolute bottom-0 right-0 ">
                                 <SocialMediaIcon
-                                    platform={creator.platform as SocialMediaPlatform}
+                                    platform={creator.platform}
                                     width={16}
                                     height={16}
                                     className="opacity-80"
