@@ -1,7 +1,7 @@
 import { t } from 'i18next';
 import Link from 'next/link';
 import { useState } from 'react';
-import type { ChangeEvent, MouseEvent, Dispatch, RefObject, SetStateAction } from 'react';
+import type { Dispatch, RefObject, SetStateAction } from 'react';
 import type { CampaignCreatorDB } from 'src/utils/api/db';
 import { imgProxy } from 'src/utils/fetcher';
 import type { SocialMediaPlatform } from 'types';
@@ -20,23 +20,17 @@ export interface InfluencerRowProps {
         label: string;
         value: string;
     }[];
-    handleDropdownSelect: (
-        e: ChangeEvent<HTMLSelectElement>,
-        creator: CampaignCreatorDB,
-        objKey: string,
-    ) => Promise<void>;
-    setInlineEdit: (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, index: number, key: string) => void;
+    handleDropdownSelect: (value: string, creator: CampaignCreatorDB, objKey: string) => Promise<void>;
+    setInlineEdit: (index: number, key: string) => void;
     editingModeTrue: (index: number, key: string) => boolean;
     inputRef: RefObject<HTMLInputElement>;
     updateCampaignCreator: (creator: CampaignCreatorDB) => void;
     setToEdit: Dispatch<SetStateAction<null | { index: number; key: string }>>;
-    deleteCampaignCreator: (e: MouseEvent<HTMLButtonElement>, creator: CampaignCreatorDB) => Promise<void>;
-    openNotes: (e: MouseEvent<HTMLButtonElement>, creator: CampaignCreatorDB) => void;
-    openMoveInfluencerModal: (
-        e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
-        creator: CampaignCreatorDB,
-    ) => void;
+    deleteCampaignCreator: (creator: CampaignCreatorDB) => Promise<void>;
+    openNotes: (creator: CampaignCreatorDB) => void;
+    openMoveInfluencerModal: (creator: CampaignCreatorDB) => void;
     showMoveInfluencerModal: boolean;
+    openManageInfluencerModal: (creator: CampaignCreatorDB) => void;
     setShowMoveInfluencerModal: Dispatch<SetStateAction<boolean>>;
     getVisibleColumns: (tabStatus: string | string[]) => TableColumns[];
     tabStatus: string | string[];
@@ -55,6 +49,7 @@ const InfluencerRow = ({
     deleteCampaignCreator,
     openNotes,
     openMoveInfluencerModal,
+    openManageInfluencerModal,
     getVisibleColumns,
     tabStatus,
 }: InfluencerRowProps) => {
@@ -110,7 +105,7 @@ const InfluencerRow = ({
                     {column.type === 'select' && (
                         <select
                             data-testid="status-dropdown"
-                            onChange={(e) => handleDropdownSelect(e, creator, 'status')}
+                            onChange={(e) => handleDropdownSelect(e.target.value, creator, 'status')}
                             value={creator.status || ''}
                             className="-ml-1 mr-2.5 cursor-pointer appearance-none rounded-md border border-gray-200 bg-primary-50 px-4 py-2 text-center text-xs font-semibold text-primary-500 outline-none hover:bg-primary-100"
                         >
@@ -125,7 +120,7 @@ const InfluencerRow = ({
                     {column.type === 'inputText' && (
                         <button
                             className="relative cursor-pointer text-xs text-gray-900 hover:text-primary-500"
-                            onClick={(e) => setInlineEdit(e, index, 'next_step')}
+                            onClick={() => setInlineEdit(index, 'next_step')}
                         >
                             <div className={`${editingModeTrue(index, 'next_step') ? 'hidden' : ''}`}>
                                 {creator.next_step || (
@@ -152,7 +147,7 @@ const InfluencerRow = ({
                     {column.type === 'inputNumber' && (
                         <button
                             className="relative cursor-pointer pr-2 text-left text-xs text-gray-900  hover:text-primary-500"
-                            onClick={(e) => setInlineEdit(e, index, 'paid_amount_cents')}
+                            onClick={() => setInlineEdit(index, 'paid_amount_cents')}
                         >
                             {creator.paid_amount_cents?.toLocaleString() || '-'} {creator.paid_amount_currency}
                             {editingModeTrue(index, 'paid_amount_cents') && (
@@ -176,8 +171,8 @@ const InfluencerRow = ({
             <td className="right-0 z-50 bg-white px-6 py-4 group-hover:bg-primary-50 sm:sticky">
                 <div className="flex justify-end">
                     <button
-                        onClick={(e) => {
-                            openMoveInfluencerModal(e, creator);
+                        onClick={() => {
+                            openMoveInfluencerModal(creator);
                         }}
                         className={`group/move mr-2 h-8 w-8 cursor-pointer  rounded-md border border-gray-200 bg-gray-50 p-2 text-center font-medium text-gray-600 hover:bg-gray-100 ${
                             tabStatus === 'to contact' || tabStatus === 'contacted' ? '' : 'hidden'
@@ -186,20 +181,22 @@ const InfluencerRow = ({
                         <ArrowRightOnRectangle className="h-4 w-4 stroke-tertiary-600 group-hover/move:stroke-primary-600" />
                     </button>
                     <button
-                        onClick={(e) => openNotes(e, creator)}
+                        onClick={() => openNotes(creator)}
                         className={`mr-2 cursor-pointer rounded-md border border-gray-200 bg-gray-50 p-2 text-center font-medium text-gray-600  hover:bg-gray-100 hover:text-primary-500 ${
                             tabStatus === 'in progress' || tabStatus === 'confirmed' ? '' : 'hidden'
                         }`}
                     >
                         {t('campaigns.show.notes')}
                     </button>
-                    {/* TODO: add manage modal here when its ready */}
-                    <button className="group/manage mr-2 h-8 w-8 cursor-pointer  rounded-md border border-gray-200 bg-gray-50 p-2 text-center font-medium text-gray-600 hover:bg-gray-100">
+                    <button
+                        onClick={() => openManageInfluencerModal(creator)}
+                        className="group/manage mr-2 h-8 w-8 cursor-pointer  rounded-md border border-gray-200 bg-gray-50 p-2 text-center font-medium text-gray-600 hover:bg-gray-100"
+                    >
                         <SquarePlus className="h-4 w-4 stroke-tertiary-600 group-hover/manage:stroke-primary-600" />
                     </button>
                     <button
                         data-testid="delete-creator"
-                        onClick={(e) => deleteCampaignCreator(e, creator)}
+                        onClick={() => deleteCampaignCreator(creator)}
                         className="group/delete h-8 w-8 cursor-pointer rounded-md border border-gray-200 bg-gray-50 p-2 text-center text-gray-600 hover:bg-gray-100"
                     >
                         <Trashcan className="h-4 w-4 fill-tertiary-600 group-hover/delete:fill-primary-600" />

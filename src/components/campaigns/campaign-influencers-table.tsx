@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-import type { ChangeEvent, MouseEvent } from 'react';
+import type { ChangeEvent } from 'react';
 import { useRef, useState } from 'react';
 import Link from 'next/link';
 import { toast } from 'react-hot-toast';
@@ -43,6 +43,7 @@ export default function CampaignInfluencersTable({
     const [influencersList, setInfluencersList] = useState<CampaignCreatorDB[]>([]);
 
     const [showMoveInfluencerModal, setShowMoveInfluencerModal] = useState(false);
+    const [_showManageInfluencerModal, setShowManageInfluencerModal] = useState(false);
 
     const { campaignCreators, deleteCreatorInCampaign, updateCreatorInCampaign, refreshCampaignCreators } =
         useCampaignCreators({
@@ -132,38 +133,33 @@ export default function CampaignInfluencersTable({
         setSearchTerm(e.target.value);
     };
 
-    const handleDropdownSelect = async (
-        e: ChangeEvent<HTMLSelectElement>,
-        creator: CampaignCreatorDB,
-        objKey: string,
-    ) => {
-        creator = { ...creator, [objKey]: e.target.value };
+    const handleDropdownSelect = async (value: string, creator: CampaignCreatorDB, objKey: string) => {
+        creator = { ...creator, [objKey]: value };
         await updateCreatorInCampaign(creator);
         refreshCampaignCreators();
         toast.success(t('campaigns.creatorModal.influencerUpdated'));
     };
 
-    const setInlineEdit = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, index: number, key: string) => {
+    const setInlineEdit = (index: number, key: string) => {
         setToEdit({ index, key });
     };
 
-    const openNotes = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, creator: CampaignCreatorDB) => {
+    const openNotes = (creator: CampaignCreatorDB) => {
         setCurrentCreator(creator);
         setShowNotesModal(true);
     };
 
-    const openMoveInfluencerModal = (
-        e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
-        creator: CampaignCreatorDB,
-    ) => {
+    const openMoveInfluencerModal = (creator: CampaignCreatorDB) => {
         setCurrentCreator(creator);
         setShowMoveInfluencerModal(true);
     };
 
-    const deleteCampaignCreator = async (
-        e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
-        creator: CampaignCreatorDB,
-    ) => {
+    const openManageInfluencerModal = (creator: CampaignCreatorDB) => {
+        setCurrentCreator(creator);
+        setShowManageInfluencerModal(true);
+    };
+
+    const deleteCampaignCreator = async (creator: CampaignCreatorDB) => {
         const c = confirm(t('campaigns.modal.deleteConfirmation') as string);
         if (!c) return;
         await deleteCreatorInCampaign({ creatorId: creator.id, campaignId: currentCampaign.id });
@@ -288,6 +284,7 @@ export default function CampaignInfluencersTable({
                                         openNotes={openNotes}
                                         deleteCampaignCreator={deleteCampaignCreator}
                                         openMoveInfluencerModal={openMoveInfluencerModal}
+                                        openManageInfluencerModal={openManageInfluencerModal}
                                         showMoveInfluencerModal={showMoveInfluencerModal}
                                         setShowMoveInfluencerModal={setShowMoveInfluencerModal}
                                         getVisibleColumns={getVisibleColumns}
