@@ -1,9 +1,9 @@
 import { vi, describe, it, expect } from 'vitest';
 import * as influencerPostModule from './api/db/calls/influencer-post';
-import type { InfluencerPostRow } from './api/db/calls/influencer-post';
 import type { SaveInfluencerPostData } from './save-influencer-post';
 import { saveInfluencerPost } from './save-influencer-post';
 import type { SupabaseClient } from '@supabase/supabase-js';
+import type { InfluencerPostRow } from './api/db/types';
 
 describe('Save influencer post', () => {
     it('Save influencer post calls insertInfluencerPost', async () => {

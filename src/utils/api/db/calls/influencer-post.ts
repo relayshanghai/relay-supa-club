@@ -1,9 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { DatabaseWithCustomTypes } from 'types';
-import type { Database } from 'types/supabase';
-
-export type InfluencerPostInsert = Database['public']['Tables']['influencer_posts']['Insert'];
-export type InfluencerPostRow = Database['public']['Tables']['influencer_posts']['Row'];
+import type { InfluencerPostInsert, InfluencerPostRow } from '../types';
 
 export const insertInfluencerPost =
     (db: SupabaseClient<DatabaseWithCustomTypes>) =>
