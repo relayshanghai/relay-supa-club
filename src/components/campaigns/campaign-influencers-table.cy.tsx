@@ -132,4 +132,18 @@ describe('CampaignInfluencersTable', () => {
     });
 
     // 7. In the target campaign, I see the influencer with all the details preserved from the source campaign. -- this is hard to test in these kind of unit tests because to replicate this we would have to change the list of `campaigns` in the props, and then re-render the component. Basically just testing that the component is re-rendering when the props change. We can test this in an integration test if need be.
+
+    it('shows the manage influencer modal when the manage button is clicked', () => {
+        testMount(<CampaignInfluencersTable {...makeProps()} />);
+        cy.contains('Manage Influencer').should('not.exist');
+        cy.get('tr').get('[data-testid="manage-button"]').click();
+        cy.contains('Manage Influencer');
+    });
+    it('shows the add posts modal when the "Content" button is clicked', () => {
+        testMount(<CampaignInfluencersTable {...makeProps()} />);
+        cy.contains('Manage Posts').should('not.exist');
+        cy.contains('Posted 1').click();
+        cy.contains('button', 'Content').click();
+        cy.contains('Manage Posts');
+    });
 });
