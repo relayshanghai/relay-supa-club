@@ -31,7 +31,7 @@ export interface InfluencerRowProps {
     updateCampaignCreator: (creator: CampaignCreatorDB) => void;
     setToEdit: Dispatch<SetStateAction<null | { index: number; key: string }>>;
     deleteCampaignCreator: (e: MouseEvent<HTMLButtonElement>, creator: CampaignCreatorDB) => Promise<void>;
-    openNotes: (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, creator: CampaignCreatorDB) => void;
+    openNotes: (e: MouseEvent<HTMLButtonElement>, creator: CampaignCreatorDB) => void;
     openMoveInfluencerModal: (
         e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
         creator: CampaignCreatorDB,
@@ -83,7 +83,7 @@ const InfluencerRowV2 = ({
                                 </div>
                             </div>
 
-                            <Link href={creator.link_url || ''} target="_blank">
+                            <Link href={creator.link_url || ''} target="_blank" rel="noopener noreferrer">
                                 <div
                                     className="ml-4"
                                     onClick={() =>
@@ -114,8 +114,8 @@ const InfluencerRowV2 = ({
                             value={creator.status || ''}
                             className="-ml-1 mr-2.5 cursor-pointer appearance-none rounded-md border border-gray-200 bg-primary-50 px-4 py-2 text-center text-xs font-semibold text-primary-500 outline-none hover:bg-primary-100"
                         >
-                            {tabs.map((tab, index) => (
-                                <option value={tab.value} key={index}>
+                            {tabs.map((tab) => (
+                                <option value={tab.value} key={tab.label}>
                                     {t(`campaigns.show.activities.outreach.${tab.label}`)}
                                 </option>
                             ))}
@@ -179,7 +179,7 @@ const InfluencerRowV2 = ({
                         onClick={(e) => {
                             openMoveInfluencerModal(e, creator);
                         }}
-                        className={`group/move mr-2 h-8 w-8 cursor-pointer  rounded-md border border-gray-200 bg-gray-50 p-2 text-center font-medium text-gray-600  hover:bg-gray-100 ${
+                        className={`group/move mr-2 h-8 w-8 cursor-pointer  rounded-md border border-gray-200 bg-gray-50 p-2 text-center font-medium text-gray-600 hover:bg-gray-100 ${
                             tabStatus === 'to contact' || tabStatus === 'contacted' ? '' : 'hidden'
                         }  `}
                     >

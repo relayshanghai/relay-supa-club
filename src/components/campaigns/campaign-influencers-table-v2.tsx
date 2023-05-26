@@ -64,7 +64,7 @@ export default function CampaignInfluencersTableV2({
         { header: 'contact', type: 'contact', name: 'contact' },
         { header: 'creatorStatus', type: 'select', name: 'status' },
         { header: 'nextPoint', type: 'inputText', name: 'next_point' },
-        { header: 'influencerFee', type: 'inputNumber', name: 'paid_amount_cents' }, //In the Figma design feedback, Sophia changed Payment Amount to Influencer Fee as the column name.
+        { header: 'influencerFee', type: 'inputNumber', name: 'paid_amount_cents' }, // In the Figma design feedback, Sophia changed Payment Amount to Influencer Fee as the column name.
         { header: 'links', type: 'modal', name: 'contents' },
     ];
 
@@ -274,7 +274,6 @@ export default function CampaignInfluencersTableV2({
                             if (creator.status === tabStatus)
                                 return (
                                     <InfluencerRowV2
-                                        key={index}
                                         creator={creator}
                                         index={index}
                                         updateCampaignCreator={updateCampaignCreator}
