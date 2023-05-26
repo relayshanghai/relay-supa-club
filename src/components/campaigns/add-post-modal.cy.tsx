@@ -69,7 +69,7 @@ describe('AddPostModal', () => {
         cy.contains('h2', 'Manage Posts');
         cy.contains('h3', 'Add Post URL');
     });
-    it('Should accept valid link that contains Instagram Youtube or Tiktok links and show error otherwise', () => {
+    it('Should accept valid link that contains Instagram YouTube or TikTok links and show error otherwise', () => {
         testMount(<AddPostModal {...props} />);
         cy.contains('Invalid URL').should('not.exist');
 
