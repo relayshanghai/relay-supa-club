@@ -1,12 +1,13 @@
 import type { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { ApiHandler } from 'src/utils/api-handler';
+import { serverLogger } from 'src/utils/logger-server';
 import { saveInfluencerPost } from 'src/utils/save-influencer-post';
 import { savePostPerformance } from 'src/utils/save-post-performance';
 import { scrapeInfluencerPost } from 'src/utils/scrape-influencer-post';
 import { db } from 'src/utils/supabase-client';
 
-type PostRequest = {
+export type InfluencerPostRequestBody = {
     campaign_id: string;
     urls: string[];
 };
@@ -19,7 +20,7 @@ type PostInfo = {
     performance: any;
 };
 
-type PostResponse =
+export type InfluencerPostResponse =
     | {
           successful: PostInfo[];
           failed: string[];
@@ -57,18 +58,18 @@ const processURL = async (url: string, campaign_id: string) => {
     return { post, performance };
 };
 
-const postHandler: NextApiHandler = async (req: NextApiRequest, res: NextApiResponse<PostResponse>) => {
-    const data: PostResponse = {
+const postHandler: NextApiHandler = async (req: NextApiRequest, res: NextApiResponse<InfluencerPostResponse>) => {
+    const data: InfluencerPostResponse = {
         successful: [],
         failed: [],
     };
 
-    const body = req.body as PostRequest;
-
+    const body = req.body as InfluencerPostRequestBody;
+    // console.log({ body });
     for (const url of body.urls) {
         try {
             const result = await processURL(url, body.campaign_id);
-
+            // console.log({ result });
             data.successful.push({
                 title: result.post.title || '',
                 postedDate: result.post.posted_date || '',
@@ -77,6 +78,7 @@ const postHandler: NextApiHandler = async (req: NextApiRequest, res: NextApiResp
                 performance: result.performance,
             });
         } catch (error) {
+            serverLogger(error);
             data.failed.push(url);
         }
     }

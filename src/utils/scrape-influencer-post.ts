@@ -16,7 +16,7 @@ export const scrapeInfluencerPost = async (url: string): Promise<ScrapeDataWithI
     }
 
     const result = (await fetchPostPerformanceData(platform, url)) as ScrapeDataWithInfluencer;
-
+    // console.log({ result });
     // @todo refactor querys that are not (db: SupabaseClient) => async () => Promise<any>
     const getInfluencer = db((db: SupabaseClient<DatabaseWithCustomTypes>) => async (referenceId) => {
         const { data, error } = await db

@@ -10,7 +10,9 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { Button } from '../button';
 import { toast } from 'react-hot-toast';
-import { Trashcan } from '../icons';
+import { Spinner, Trashcan } from '../icons';
+import type { InfluencerPostRequestBody, InfluencerPostResponse } from 'pages/api/influencer/posts';
+import { clientLogger } from 'src/utils/logger-client';
 
 export interface AddPostModalProps extends Omit<ModalProps, 'children'> {
     creator: CampaignCreatorDB;
@@ -22,10 +24,9 @@ export type PostInfo = {
     url: string;
 };
 // expected url patterns:
-// Instagram https://www.instagram.com/relay.club/?hl=en
-// YouTube https://www.youtube.com/channel/UClf-gnZdtIffbPPhOq3CelA
-// YouTube https://youtu.be/channel/UClf-gnZdtIffbPPhOq3CelA
-// TikTok https://vm.tiktok.com/ZSd2GkJrM/
+// Instagram https://www.instagram.com/p/Cr3aeZ7NXW3/
+// YouTube https://www.youtube.com/watch?v=UzL-0vZ5-wk
+// TikTok https://www.tiktok.com/@graceofearth/video/7230816093755936043?_r=1&_t=8c9DNKVO2Tm&social_sharing=v2
 
 // regex must be a valid url starting with http:///https://
 // must include instagram.com, youtube.com, youtu.be, or tiktok.com
@@ -37,8 +38,8 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
     const handle = creator.username || creator.fullname || '';
     const [urls, setUrls] = useState<string[]>(['']);
     const [addedUrls, setAddedUrls] = useState<PostInfo[]>([]);
-    const [resetForm, setResetForm] = useState(0);
-
+    // const [resetForm, setResetForm] = useState(0);
+    const [submitting, setSubmitting] = useState(false);
     const getAddedUrls = useCallback(async () => {
         // TODO https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/309
         const urls = await nextFetch<PostInfo[]>(`posts/${creator.id}`);
@@ -55,7 +56,7 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
         });
     };
 
-    const validateUrl = (url: string, _urls: typeof urls) => {
+    const validateUrl = (url: string, _urls: string[]) => {
         if (!url) {
             return '';
         }
@@ -68,25 +69,53 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
         return '';
     };
 
-    const scrapeByUrls = async (_urls: typeof urls): Promise<{ successful: PostInfo[]; failed: string[] }> => {
+    const scrapeByUrls = async (_urls: string[]): Promise<{ successful: PostInfo[]; failed: string[] }> => {
         const successful: PostInfo[] = [];
-        const failed: string[] = [];
-        // TODO https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/309
+        let failed: string[] = _urls;
+        if (!creator.campaign_id) {
+            return { successful, failed };
+        }
+        try {
+            const body: InfluencerPostRequestBody = {
+                campaign_id: creator.campaign_id,
+                urls: _urls,
+            };
+            const res = await nextFetch<InfluencerPostResponse>('influencer/posts', {
+                method: 'POST',
+                body,
+            });
+            if (!res) {
+                return { successful, failed };
+            }
+            if ('error' in res) {
+                return { successful, failed };
+            }
+            successful.push(...res.successful);
+            failed = res.failed;
+        } catch (e) {
+            clientLogger(e, 'error');
+        }
         return { successful, failed };
     };
 
-    const handleSubmit = async (_urls: typeof urls) => {
+    const handleSubmit = async (_urls: string[]) => {
+        setSubmitting(true);
         const { successful, failed } = await scrapeByUrls(_urls);
+
         setAddedUrls((prev) => [...prev, ...successful]);
 
-        setUrls(failed.length > 0 ? failed : ['']); // will set the form to 0 if no errors, or keep the failed urls in the form if there are errors
-        // Because we don't have a unique key for each of the input components, if we remove an input, React might still render an old input, therefore we need to reset the form to force React to re-render all the inputs
-        setResetForm((prev) => prev + 1);
+        // will set the form to 0 if no errors, or keep the failed urls in the form if there are errors
         if (failed.length === 0) {
             toast.success(t('campaigns.post.success', { amount: successful.length }));
+            setUrls(['']);
         } else {
-            toast.error(t('campaigns.post.error', { amount: failed.length }));
+            toast.error(t('campaigns.post.failed', { amount: failed.length }));
+            setUrls(failed);
         }
+        // TODO: Fix this indexing issue. It really could cause a bug if a url gets deleted from the list but there are two left, it might not be the ones react ends up rendering.
+        // Because we don't have a unique key for each of the input components, if we remove an input, React might still render an old input, therefore we need to reset the form to force React to re-render all the inputs
+        // setResetForm((prev) => prev + 1); // this doesn't seem to be working as expected, instead all the errored urls end up blank.
+        setSubmitting(false);
     };
 
     const handleRemovePost = async (_postId: string) => {
@@ -94,7 +123,7 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
     };
 
     const hasError = urls.some((url) => validateUrl(url, urls) !== '');
-    const submitDisabled = hasError;
+    const submitDisabled = hasError || submitting;
 
     return (
         <Modal {...props}>
@@ -132,7 +161,7 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
                         e.preventDefault();
                         handleSubmit(urls);
                     }}
-                    key={resetForm}
+                    // key={resetForm}
                 >
                     <h3>{t('campaigns.post.addPostUrl')}</h3>
                     {urls.map((url, index) => {
@@ -164,7 +193,11 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
                             {t('campaigns.post.addAnotherPost')}
                         </Button>
                         <Button disabled={submitDisabled} type="submit">
-                            {t('campaigns.post.submit')}
+                            {submitting ? (
+                                <Spinner className="h-5 w-5 fill-primary-600 text-white" />
+                            ) : (
+                                t('campaigns.post.submit')
+                            )}
                         </Button>
                     </div>
                 </form>
