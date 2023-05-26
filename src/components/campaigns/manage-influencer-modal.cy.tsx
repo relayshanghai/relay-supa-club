@@ -177,4 +177,16 @@ describe('Add', () => {
         cy.contains('button', 'Cancel').click();
         cy.contains('Manage Influencer').should('not.exist');
     });
+
+    it('Disables save button if there are validation errors', () => {
+        testMount(<ManageInfluencerModal {...props} />);
+        cy.contains('Must be a number').should('not.exist');
+
+        cy.contains('div', 'Influencer Fee ()').within(() => {
+            cy.get('input').should('have.value', '0').clear().type('asdf').should('have.value', 'asdf');
+        });
+        cy.contains('Must be a number').should('exist');
+
+        cy.contains('button', 'Save').should('be.disabled');
+    });
 });

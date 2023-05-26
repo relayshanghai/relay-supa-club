@@ -76,7 +76,9 @@ const FormSection = ({ creator: initialCreator, onClose, updateCampaignCreator }
     const [address, setAddress] = useState(creator.address || '');
     const [sampleStatus, setSampleStatus] = useState(creator.sample_status || '');
 
-    const submitDisabled = [influencerFee].some((field) => validateNumberInput(field));
+    const submitDisabled =
+        [influencerFee, paymentAmount].some((field) => validateNumberInput(field)) ||
+        [publicationDate].some((field) => validateDate(field));
 
     return (
         <form
