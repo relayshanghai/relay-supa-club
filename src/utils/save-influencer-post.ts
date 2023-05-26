@@ -11,6 +11,7 @@ export type SaveInfluencerPostData = {
     title?: string;
     description?: string;
     preview_url?: string;
+    posted_date: string;
 };
 
 export const saveInfluencerPost =
