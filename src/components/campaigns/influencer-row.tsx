@@ -173,12 +173,13 @@ const InfluencerRow = ({
                 </td>
             ))}
             {/* -- Actions Column -- */}
-            <td className="right-0 z-50 bg-white px-6 py-4 group-hover:bg-primary-50 sm:sticky">
+            <td className="right-0 z-10 bg-white px-6 py-4 group-hover:bg-primary-50 sm:sticky">
                 <div className="flex justify-end">
                     <button
                         onClick={(e) => {
                             openMoveInfluencerModal(e, creator);
                         }}
+                        data-testid="move-influencer-button"
                         className={`group/move mr-2 h-8 w-8 cursor-pointer  rounded-md border border-gray-200 bg-gray-50 p-2 text-center font-medium text-gray-600 hover:bg-gray-100 ${
                             tabStatus === 'to contact' || tabStatus === 'contacted' ? '' : 'hidden'
                         }  `}
@@ -186,6 +187,7 @@ const InfluencerRow = ({
                         <ArrowRightOnRectangle className="h-4 w-4 stroke-tertiary-600 group-hover/move:stroke-primary-600" />
                     </button>
                     <button
+                        data-testid="open-notes-button"
                         onClick={(e) => openNotes(e, creator)}
                         className={`mr-2 cursor-pointer rounded-md border border-gray-200 bg-gray-50 p-2 text-center font-medium text-gray-600  hover:bg-gray-100 hover:text-primary-500 ${
                             tabStatus === 'in progress' || tabStatus === 'confirmed' ? '' : 'hidden'
