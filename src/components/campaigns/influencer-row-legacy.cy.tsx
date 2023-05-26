@@ -2,14 +2,14 @@
 // @ts-check
 
 import type { CampaignCreatorDB } from '../../utils/api/db';
+
 import React from 'react';
-import type { InfluencerRowProps } from './influencer-row';
+import type { InfluencerRowProps } from './influencer-row-legacy';
 import { testMount } from '../../utils/cypress-app-wrapper';
 import { worker } from '../../mocks/browser';
-import InfluencerRow from './influencer-row';
-import type { TableColumns } from './campaign-influencers-table';
-
+import InfluencerRowLegacy from './influencer-row-legacy';
 const creator: CampaignCreatorDB = {
+    influencer_social_profiles_id: '',
     id: '175c7699-f53d-4c0c-bf04-e11deea7899e',
     created_at: '2023-03-29T12:08:42.10964+00:00',
     status: 'to contact',
@@ -42,37 +42,34 @@ const creator: CampaignCreatorDB = {
     creator_id: 'UCq-Fj5jknLsUf-MWSy4_brA',
     platform: 'youtube',
     added_by_id: '2d6c17e7-7aae-4122-a3d2-2e0e22841581',
-    influencer_social_profiles_id: null,
 };
 
-const testColumns: TableColumns[] = [
-    {
-        header: 'account',
-        type: 'account',
-        name: 'account',
-    },
-    {
-        header: 'contact',
-        type: 'contact',
-        name: 'contact',
-    },
-    {
-        header: 'creatorStatus',
-        type: 'select',
-        name: 'status',
-    },
-];
-
 const tabs = [
-    { label: 'toContact', value: 'to contact' },
-    { label: 'contacted', value: 'contacted' },
-    { label: 'inProgress', value: 'in progress' },
-    { label: 'confirmed', value: 'confirmed' },
-    { label: 'posted', value: 'posted' },
-    { label: 'rejected', value: 'rejected' },
-    { label: 'ignored', value: 'ignored' },
+    {
+        label: 'toContact',
+        value: 'to contact',
+    },
+    {
+        label: 'contacted',
+        value: 'contacted',
+    },
+    {
+        label: 'inProgress',
+        value: 'in progress',
+    },
+    {
+        label: 'confirmed',
+        value: 'confirmed',
+    },
+    {
+        label: 'rejected',
+        value: 'rejected',
+    },
+    {
+        label: 'ignored',
+        value: 'ignored',
+    },
 ];
-
 const makeStubs = () => {
     const handleDropdownSelect = cy.stub();
     const setInlineEdit = cy.stub();
@@ -96,7 +93,7 @@ const makeStubs = () => {
     };
 };
 
-describe('<InfluencerRow />', () => {
+describe('<InfluencerRowLegacy />', () => {
     before(() => {
         worker.start();
     });
@@ -110,15 +107,14 @@ describe('<InfluencerRow />', () => {
             creator,
             tabs,
             showMoveInfluencerModal: false,
-            tabStatus: creator.status,
-            visibleColumns: testColumns,
         };
-
-        testMount(<InfluencerRow {...props} />);
+        testMount(<InfluencerRowLegacy {...props} />);
+        cy.contains('T-Series');
         cy.contains('@tseries');
+        cy.contains('Add Action Point');
         cy.contains('To Contact');
+        cy.contains('Notes');
     });
-
     it('only shows creator contact info after clicking a "View Contact Info" button', () => {
         const props: InfluencerRowProps = {
             index: 1,
@@ -129,10 +125,8 @@ describe('<InfluencerRow />', () => {
             creator,
             tabs,
             showMoveInfluencerModal: false,
-            tabStatus: creator.status,
-            visibleColumns: testColumns,
         };
-        testMount(<InfluencerRow {...props} />);
+        testMount(<InfluencerRowLegacy {...props} />);
         cy.findByTestId('contacts-skeleton').should('not.exist');
         cy.get('a[href="https://www.facebook.com/tseriesmusic"]').should('not.exist');
 
@@ -141,26 +135,6 @@ describe('<InfluencerRow />', () => {
         cy.findByTestId('contacts-skeleton').should('exist');
         // shows contact info
         cy.get('a[href="https://www.facebook.com/tseriesmusic"]').should('exist');
-    });
-
-    it('shows only three action buttons - move influencer, manage, delete, when status is inContact from the test dat', () => {
-        const props: InfluencerRowProps = {
-            index: 1,
-            ...makeStubs(),
-            inputRef: {
-                current: null,
-            } as any,
-            creator,
-            tabs,
-            showMoveInfluencerModal: false,
-            tabStatus: creator.status,
-            visibleColumns: testColumns,
-        };
-        testMount(<InfluencerRow {...props} />);
-        cy.get('[data-testid="move-influencer-button"]').should('exist');
-        cy.get('[data-testid="manage-button"]').should('exist');
-        cy.get('[data-testid="delete-creator"]').should('exist');
-        cy.get('[data-testid="open-notes-button"]').should('have.class', 'hidden');
     });
 });
 

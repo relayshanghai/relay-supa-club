@@ -13,7 +13,7 @@ import campaignCreatorsJim from './supabase/campaign_creators/campaignCreatorsJi
 import amyCampaignCreators from './supabase/campaign_creators/campaignCreatorsAmyCampaign.json';
 // if in the future we want to use the browser-based msw outside of cypress, we'll need to change this
 export const APP_URL_CYPRESS = 'http://localhost:8080';
-export const SUPABASE_URL_CYPRESS = 'http://localhost:54321/rest/v1';
+export const SUPABASE_URL_CYPRESS = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1`;
 const campaigns = [jimTestCampaign, amyTestCampaign, newEmptyCampaign, archivedCampaign];
 const frontendHandlers = [
     rest.get(`${APP_URL_CYPRESS}/api/creators/report`, (req, res, ctx) => {

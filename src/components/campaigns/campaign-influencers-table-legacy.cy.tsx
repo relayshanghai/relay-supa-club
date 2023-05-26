@@ -1,9 +1,12 @@
 /// <reference types="@testing-library/cypress" />
 // @ts-check
 
-import React from 'react';
+import React from 'react'; // turns out we need this or cypress complains
+// 1. on a campaign page, I get a list of influencers. -> campaigns/[id].tsx
+
 import { testMount } from '../../utils/cypress-app-wrapper';
 import type { CreatorsOutreachProps } from './campaign-influencers-table';
+
 import type { CampaignCreatorDB, CampaignDB } from '../../utils/api/db';
 import { rest } from 'msw';
 import { SUPABASE_URL_CYPRESS, worker } from '../../mocks/browser';
@@ -12,7 +15,7 @@ import amyTestCampaign from '../../mocks/supabase/campaigns/amyTestCampaign.json
 import newEmptyCampaign from '../../mocks/supabase/campaigns/newEmptyCampaign.json';
 import archivedCampaign from '../../mocks/supabase/campaigns/archivedCampaign.json';
 import campaignCreatorsJim from '../../mocks/supabase/campaign_creators/campaignCreatorsJimCampaign.json';
-import CampaignInfluencersTable from './campaign-influencers-table';
+import CampaignInfluencersTableLegacy from './campaign-influencers-table-legacy';
 
 const campaigns: CampaignDB[] = [jimTestCampaign, amyTestCampaign, newEmptyCampaign, archivedCampaign];
 
@@ -34,73 +37,30 @@ const makeProps = () => {
     return props;
 };
 
-describe('CampaignInfluencersTable', () => {
+describe('CampaignInfluencersTableLegacy', () => {
     before(async () => {
         worker.start();
     });
 
     it('Should render table of influencers', () => {
-        testMount(<CampaignInfluencersTable {...makeProps()} />);
+        testMount(<CampaignInfluencersTableLegacy {...makeProps()} />);
         cy.get('tr').contains(campaignCreatorsJim[0].fullname);
         cy.contains(campaignCreatorsJim[2].fullname);
     });
-    it('should default toContact tab that shows contact and status column', () => {
-        testMount(<CampaignInfluencersTable {...makeProps()} />);
-        cy.get('div').contains('To Contact').should('have.class', 'text-primary-500');
-        cy.contains('Contact');
-        cy.contains('Status');
+    it('Should display an influencer table row where I can see a button called "Move Influencer"', () => {
+        testMount(<CampaignInfluencersTableLegacy {...makeProps()} />);
+        cy.get('tr').get('button').contains('Move Influencer');
     });
-
-    it('should show status column when switched to Contacted tab', () => {
-        testMount(<CampaignInfluencersTable {...makeProps()} />);
-        cy.contains('Contacted').click();
-        cy.get('div').contains('Contacted').should('have.class', 'text-primary-500');
-        cy.contains('Status');
-        cy.contains('View Contact Info').should('not.exist'); // prevent falsy truth, should not show contact column
-    });
-
-    it('should show status, next action and influencer fee columns when switched to inProgress tab', () => {
-        testMount(<CampaignInfluencersTable {...makeProps()} />);
-        cy.contains('In Progress').click();
-        cy.get('div').contains('In Progress').should('have.class', 'text-primary-500');
-        cy.contains('Status');
-        cy.contains('Next Action Point');
-        cy.contains('Influencer Fee');
-    });
-
-    it('should show status, next action and influencer fee columns when switched to Confirmed tab', () => {
-        testMount(<CampaignInfluencersTable {...makeProps()} />);
-        cy.contains('Confirmed').click();
-        cy.get('div').contains('Confirmed').should('have.class', 'text-primary-500');
-        cy.contains('Status');
-        cy.contains('Next Action Point');
-        cy.contains('Influencer Fee');
-    });
-
-    it('should show status, next action, influencer fee and links columns when switched Posted tab', () => {
-        testMount(<CampaignInfluencersTable {...makeProps()} />);
-        cy.contains('Posted').click();
-        cy.get('div').contains('Posted').should('have.class', 'text-primary-500');
-        cy.contains('Status');
-        cy.contains('Next Action Point');
-        cy.contains('Influencer Fee');
-        cy.contains('Links');
-    });
-
-    it('Should display an influencer table row where I can see a button for "Move Influencer"', () => {
-        testMount(<CampaignInfluencersTable {...makeProps()} />);
-        cy.get('[data-testid="move-influencer-button"]').should('exist');
-    });
-
     it('Should open a modal when i click "Move Influencer" button. The modal should have a title of "Move To Campaign" and subtitle "Move this influencer to an existing campaign". Should include a list of campaigns  When I click on the move button inside a campaign row I get a loading spinner', () => {
-        testMount(<CampaignInfluencersTable {...makeProps()} />);
+        testMount(<CampaignInfluencersTableLegacy {...makeProps()} />);
 
         cy.contains('Move To Campaign').should('not.exist');
 
         cy.contains('Move this influencer to an existing campaign').should('not.exist');
         cy.get(`#move-influencer-button-${campaign2.id}`).should('not.exist');
 
-        cy.get('[data-testid="move-influencer-button"]').eq(0).click(); //click the move icon on the first row
+        cy.get('tr').get('button').contains('Move Influencer').click();
+
         cy.contains('Move To Campaign');
         cy.contains('Move this influencer to an existing campaign');
         cy.get(`#move-influencer-spinner-${campaign2.id}`).should('not.exist');
@@ -123,8 +83,8 @@ describe('CampaignInfluencersTable', () => {
             }),
         );
         // Capture the network request to the api for the next test
-        testMount(<CampaignInfluencersTable {...makeProps()} />);
-        cy.get('tr').get('[data-testid="move-influencer-button"]').click();
+        testMount(<CampaignInfluencersTableLegacy {...makeProps()} />);
+        cy.get('tr').get('button').contains('Move Influencer').click();
         // when this button is clicked, it is not sending the request, cause of a filing nullcheck
         cy.get(`#move-influencer-button-${campaign2.id}`).should('exist').click();
         // when request is done it should have the checkmark icon
