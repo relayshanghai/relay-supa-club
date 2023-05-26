@@ -250,7 +250,7 @@ const campaigns = {
         sales: '销售',
         cancel: '取消',
         save: '保存',
-        contactInfo: '联系信息',
+        contactInfo: '联系方式',
     },
 };
 export default campaigns;
