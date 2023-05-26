@@ -5,6 +5,8 @@ import type { ScrapeData } from './scraper/types';
 import { db } from './supabase-client';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { InfluencerSocialProfileRow } from './api/db';
+import { fetchReport } from './api/iqdata/fetch-report';
+import { saveInfluencer } from './save-influencer';
 
 type ScrapeDataWithInfluencer = Omit<ScrapeData, 'influencer'> & { influencer: InfluencerSocialProfileRow };
 
@@ -15,7 +17,9 @@ export const scrapeInfluencerPost = async (url: string): Promise<ScrapeDataWithI
         throw new Error(`Cannot determine platform from given URL: ${url}`);
     }
 
-    const result = (await fetchPostPerformanceData(platform, url)) as ScrapeDataWithInfluencer;
+    const scrape = (await fetchPostPerformanceData(platform, url)) as ScrapeData;
+
+    const { influencer: influencer_platform_id, ...result } = scrape;
 
     // @todo refactor querys that are not (db: SupabaseClient) => async () => Promise<any>
     const getInfluencer = db((db: SupabaseClient<DatabaseWithCustomTypes>) => async (referenceId) => {
@@ -32,13 +36,23 @@ export const scrapeInfluencerPost = async (url: string): Promise<ScrapeDataWithI
         return !error ? data : null;
     });
 
-    const influencer: InfluencerSocialProfileRow | null = await getInfluencer(result.influencer);
+    const socialProfile: InfluencerSocialProfileRow | null = await getInfluencer(influencer_platform_id);
 
-    if (!influencer) {
-        throw new Error(`Cannot determine influencer from given URL: ${url}`);
+    if (socialProfile === null) {
+        const report = await fetchReport(influencer_platform_id, platform);
+
+        if (!report) {
+            throw new Error(`Cannot fetch report for influencer: ${influencer_platform_id}, ${platform}`);
+        }
+
+        const [_, socialProfile] = await saveInfluencer(report);
+
+        if (socialProfile === null) {
+            throw new Error(`Cannot determine influencer from given URL: ${url}`);
+        }
+
+        return { ...result, influencer: socialProfile };
     }
 
-    result.influencer = influencer;
-
-    return result;
+    return { ...result, influencer: socialProfile };
 };
