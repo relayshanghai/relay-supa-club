@@ -1,11 +1,10 @@
 import { supabase } from 'src/utils/supabase-client';
-import type { Database } from 'types/supabase';
-
-export type InfluencerInsert = Database['public']['Tables']['influencers']['Insert'];
-export type InfluencerRow = Database['public']['Tables']['influencers']['Row'];
-
-export type InfluencerSocialProfileInsert = Database['public']['Tables']['influencer_social_profiles']['Insert'];
-export type InfluencerSocialProfileRow = Database['public']['Tables']['influencer_social_profiles']['Row'];
+import type {
+    InfluencerRow,
+    InfluencerSocialProfileRow,
+    InfluencerInsert,
+    InfluencerSocialProfileInsert,
+} from '../types';
 
 export const getInfluencerById = async (id: string): Promise<InfluencerRow | null> => {
     const influencer = await supabase
