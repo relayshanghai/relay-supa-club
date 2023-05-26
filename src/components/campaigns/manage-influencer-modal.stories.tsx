@@ -38,6 +38,7 @@ const blankCreatorArgs: CampaignCreatorDB = {
     tracking_details: null,
     updated_at: null,
     relay_creator_id: 0,
+    influencer_social_profiles_id: '',
 };
 
 const creator: CampaignCreatorDB = {
