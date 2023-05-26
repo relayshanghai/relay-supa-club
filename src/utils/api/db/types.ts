@@ -108,3 +108,19 @@ export type InfluencerRow = Database['public']['Tables']['influencers']['Row'];
 
 export type InfluencerSocialProfileInsert = Database['public']['Tables']['influencer_social_profiles']['Insert'];
 export type InfluencerSocialProfileRow = Database['public']['Tables']['influencer_social_profiles']['Row'];
+
+export type InfluencerSocialProfileReferenceId = string;
+
+export type InfluencerSocialProfilesTable = Database['public']['Tables']['influencer_social_profiles'] & {
+    Row: Database['public']['Tables']['influencer_social_profiles']['Row'] & {
+        /**
+         * Identifier from the data source
+         *
+         *  Example: `datasource:123abc`
+         *
+         *  Take note that this is the ID in that datasource not the platform (iqdata uses the platform's id)
+         *  We can use this to "refer" to the social profile in that datasource
+         */
+        reference_id: InfluencerSocialProfileReferenceId;
+    };
+};
