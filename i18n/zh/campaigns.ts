@@ -244,5 +244,13 @@ const campaigns = {
         failed: '无法获取 {{amount}} 个网址的帖子数据',
         currentPosts: '当前帖子',
     },
+    manageInfluencer: {
+        title: '管理KOL',
+        influencerFee: 'KOL费用',
+        sales: '销售',
+        cancel: '取消',
+        save: '保存',
+        contactInfo: '联系方式',
+    },
 };
 export default campaigns;
