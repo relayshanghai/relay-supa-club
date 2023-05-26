@@ -47,3 +47,5 @@ export { default as ThumbUpOutline } from './ThumbUpOutline';
 export { default as EmailOutline } from './EmailOutline';
 export { default as ArrowRight } from './ArrowRight';
 export { default as BoxFilled } from './BoxFilled';
+export { default as SquarePlus } from './SquarePlus';
+export { default as ArrowRightOnRectangle } from './ArrowRightOnRectangle';
