@@ -1,6 +1,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { insertInfluencerPost } from './api/db/calls/influencer-post';
 import type { DatabaseWithCustomTypes } from 'types';
+import { extractPlatformFromURL } from './extract-platform-from-url';
 
 export type SaveInfluencerPostData = {
     type: string;
@@ -10,16 +11,6 @@ export type SaveInfluencerPostData = {
     title?: string;
     description?: string;
     preview_url?: string;
-};
-
-export const extractPlatformFromURL = (url: string): string | null => {
-    try {
-        const tokens = new URL(url).hostname.split('.');
-        const platforms = ['youtube', 'instagram', 'tiktok'];
-        return platforms.find((v: string) => tokens.indexOf(v) !== -1) || null;
-    } catch {
-        return null;
-    }
 };
 
 export const saveInfluencerPost =
