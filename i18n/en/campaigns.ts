@@ -255,5 +255,13 @@ const campaigns = {
         failed: 'Failed to get post data for {{amount}} URLs',
         currentPosts: 'Current Posts',
     },
+    manageInfluencer: {
+        title: 'Manage Influencer',
+        influencerFee: 'Influencer Fee',
+        sales: 'Sales',
+        cancel: 'Cancel',
+        save: 'Save',
+        contactInfo: 'Contact Info',
+    },
 };
 export default campaigns;
