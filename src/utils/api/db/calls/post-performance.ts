@@ -1,7 +1,8 @@
 import { supabase } from 'src/utils/supabase-client';
 import { getProfileById } from './profiles';
-import type { PostsPerformanceUpdate } from '../types';
-import type { CreatorPlatform } from 'types';
+import type { PostsPerformance, PostsPerformanceInsert, PostsPerformanceUpdate } from '../types';
+import type { CreatorPlatform, DatabaseWithCustomTypes } from 'types';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 export type PostPerformanceAndPost = PostsPerformanceUpdate & {
     platform: CreatorPlatform;
@@ -72,3 +73,17 @@ export const updatePostPerformance = async (data: PostsPerformanceUpdate) => {
     if (error) throw error;
     return data;
 };
+
+export const insertPostPerformance =
+    (db: SupabaseClient<DatabaseWithCustomTypes>) =>
+    async (data: PostsPerformanceInsert): Promise<PostsPerformance> => {
+        data.created_at = new Date().toISOString();
+
+        const response = await db.from('posts_performance').insert(data).select().single();
+
+        if (response.error) {
+            throw response.error;
+        }
+
+        return response.data;
+    };
