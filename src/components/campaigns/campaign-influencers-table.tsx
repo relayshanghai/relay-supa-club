@@ -137,7 +137,6 @@ export default function CampaignInfluencersTable({
         creator: CampaignCreatorDB,
         objKey: string,
     ) => {
-        e.stopPropagation();
         creator = { ...creator, [objKey]: e.target.value };
         await updateCreatorInCampaign(creator);
         refreshCampaignCreators();
@@ -145,12 +144,10 @@ export default function CampaignInfluencersTable({
     };
 
     const setInlineEdit = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, index: number, key: string) => {
-        e.stopPropagation();
         setToEdit({ index, key });
     };
 
     const openNotes = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, creator: CampaignCreatorDB) => {
-        e.stopPropagation();
         setCurrentCreator(creator);
         setShowNotesModal(true);
     };
@@ -159,7 +156,6 @@ export default function CampaignInfluencersTable({
         e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
         creator: CampaignCreatorDB,
     ) => {
-        e.stopPropagation();
         setCurrentCreator(creator);
         setShowMoveInfluencerModal(true);
     };
@@ -168,7 +164,6 @@ export default function CampaignInfluencersTable({
         e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
         creator: CampaignCreatorDB,
     ) => {
-        e.stopPropagation();
         const c = confirm(t('campaigns.modal.deleteConfirmation') as string);
         if (!c) return;
         await deleteCreatorInCampaign({ creatorId: creator.id, campaignId: currentCampaign.id });
