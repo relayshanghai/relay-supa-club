@@ -110,7 +110,7 @@ describe('<InfluencerRow />', () => {
             creator,
             tabs,
             showMoveInfluencerModal: false,
-            tabStatus: '',
+            tabStatus: creator.status,
             visibleColumns: testColumns,
         };
 
@@ -129,7 +129,7 @@ describe('<InfluencerRow />', () => {
             creator,
             tabs,
             showMoveInfluencerModal: false,
-            tabStatus: '',
+            tabStatus: creator.status,
             visibleColumns: testColumns,
         };
         testMount(<InfluencerRow {...props} />);
