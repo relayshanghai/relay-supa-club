@@ -9,6 +9,8 @@ import { testMount } from '../../utils/cypress-app-wrapper';
 import { worker } from '../../mocks/browser';
 import InfluencerRowLegacy from './influencer-row-legacy';
 const creator: CampaignCreatorDB = {
+    influencer_social_profiles_id: '',
+
     id: '175c7699-f53d-4c0c-bf04-e11deea7899e',
     created_at: '2023-03-29T12:08:42.10964+00:00',
     status: 'to contact',

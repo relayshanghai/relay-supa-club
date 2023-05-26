@@ -31,6 +31,7 @@ export interface InfluencerRowProps {
     openMoveInfluencerModal: (creator: CampaignCreatorDB) => void;
     showMoveInfluencerModal: boolean;
     openManageInfluencerModal: (creator: CampaignCreatorDB) => void;
+    openAddPostModal: (creator: CampaignCreatorDB) => void;
     setShowMoveInfluencerModal: Dispatch<SetStateAction<boolean>>;
     getVisibleColumns: (tabStatus: string | string[]) => TableColumns[];
     tabStatus: string | string[];
@@ -50,6 +51,7 @@ const InfluencerRow = ({
     openNotes,
     openMoveInfluencerModal,
     openManageInfluencerModal,
+    openAddPostModal,
     getVisibleColumns,
     tabStatus,
 }: InfluencerRowProps) => {
@@ -163,8 +165,11 @@ const InfluencerRow = ({
                             )}
                         </button>
                     )}
-                    {/* TODO: add the posts modal after this PR is merged https://github.com/relayshanghai/relay-supa-club/pull/307  */}
-                    {column.type === 'modal' && <Button variant="secondary">{t('campaigns.show.content')}</Button>}
+                    {column.type === 'modal' && (
+                        <Button onClick={() => openAddPostModal(creator)} variant="secondary">
+                            {t('campaigns.show.content')}
+                        </Button>
+                    )}
                 </td>
             ))}
             {/* -- Actions Column -- */}

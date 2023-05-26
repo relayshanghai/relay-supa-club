@@ -10,6 +10,8 @@ import Fuse from 'fuse.js';
 import { MoveInfluencerModal } from '../modal-move-influencer';
 import { useCampaignCreators } from 'src/hooks/use-campaign-creators';
 import InfluencerRow from './influencer-row';
+import { ManageInfluencerModal } from './manage-influencer-modal';
+import { AddPostModal } from './add-post-modal';
 
 export interface CreatorsOutreachProps {
     currentCampaign: CampaignDB;
@@ -43,7 +45,8 @@ export default function CampaignInfluencersTable({
     const [influencersList, setInfluencersList] = useState<CampaignCreatorDB[]>([]);
 
     const [showMoveInfluencerModal, setShowMoveInfluencerModal] = useState(false);
-    const [_showManageInfluencerModal, setShowManageInfluencerModal] = useState(false);
+    const [showManageInfluencerModal, setShowManageInfluencerModal] = useState(false);
+    const [showAddPostModal, setShowAddPostModal] = useState(false);
 
     const { campaignCreators, deleteCreatorInCampaign, updateCreatorInCampaign, refreshCampaignCreators } =
         useCampaignCreators({
@@ -157,6 +160,10 @@ export default function CampaignInfluencersTable({
     const openManageInfluencerModal = (creator: CampaignCreatorDB) => {
         setCurrentCreator(creator);
         setShowManageInfluencerModal(true);
+    };
+    const openAddPostModal = (creator: CampaignCreatorDB) => {
+        setCurrentCreator(creator);
+        setShowAddPostModal(true);
     };
 
     const deleteCampaignCreator = async (creator: CampaignCreatorDB) => {
@@ -285,6 +292,7 @@ export default function CampaignInfluencersTable({
                                         deleteCampaignCreator={deleteCampaignCreator}
                                         openMoveInfluencerModal={openMoveInfluencerModal}
                                         openManageInfluencerModal={openManageInfluencerModal}
+                                        openAddPostModal={openAddPostModal}
                                         showMoveInfluencerModal={showMoveInfluencerModal}
                                         setShowMoveInfluencerModal={setShowMoveInfluencerModal}
                                         getVisibleColumns={getVisibleColumns}
@@ -295,7 +303,24 @@ export default function CampaignInfluencersTable({
                     </tbody>
                 </table>
             </div>
-
+            {currentCampaign && currentCreator && (
+                <AddPostModal
+                    creator={currentCreator}
+                    visible={showAddPostModal}
+                    onClose={() => setShowAddPostModal(false)}
+                />
+            )}{' '}
+            {currentCreator && currentCampaign && (
+                <ManageInfluencerModal
+                    visible={showManageInfluencerModal}
+                    onClose={() => setShowManageInfluencerModal(false)}
+                    creator={currentCreator}
+                    openMoveInfluencerModal={openMoveInfluencerModal}
+                    openNotes={openNotes}
+                    updateCampaignCreator={updateCampaignCreator}
+                    deleteCampaignCreator={deleteCampaignCreator}
+                />
+            )}
             {campaigns && currentCampaign && currentCreator && (
                 <MoveInfluencerModal
                     platform={currentCreator.platform}
