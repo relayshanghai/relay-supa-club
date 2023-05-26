@@ -8,7 +8,6 @@ import { db } from 'src/utils/supabase-client';
 
 type PostRequest = {
     campaign_id: string;
-    influencer_social_profile_id: string;
     urls: string[];
 };
 
@@ -29,7 +28,7 @@ type PostResponse =
           error: string;
       };
 
-const processURL = async (url: string, campaign_id: string, influencer_social_profile_id: string) => {
+const processURL = async (url: string, campaign_id: string) => {
     const scrape = await scrapeInfluencerPost(url);
 
     const _savePostPerformance = db<typeof savePostPerformance>(savePostPerformance);
@@ -38,13 +37,17 @@ const processURL = async (url: string, campaign_id: string, influencer_social_pr
     const post = await _saveInfluencerPost({
         type: '',
         campaign_id: campaign_id,
-        influencer_social_profile_id: influencer_social_profile_id,
+        influencer_social_profile_id: scrape.influencer.id,
         url: url,
+        posted_date: scrape.postedAt,
+        title: scrape.title,
+        preview_url: scrape.preview_url,
+        description: scrape.description,
     });
 
     const performance = await _savePostPerformance({
         campaign_id: campaign_id,
-        influencer_social_profile_id: influencer_social_profile_id,
+        influencer_social_profile_id: scrape.influencer.id,
         post_id: post.id,
         likes_total: scrape.likeCount,
         comments_total: scrape.commentCount,
@@ -64,7 +67,7 @@ const postHandler: NextApiHandler = async (req: NextApiRequest, res: NextApiResp
 
     for (const url of body.urls) {
         try {
-            const result = await processURL(url, body.campaign_id, body.influencer_social_profile_id);
+            const result = await processURL(url, body.campaign_id);
 
             data.successful.push({
                 title: result.post.title || '',

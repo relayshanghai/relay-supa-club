@@ -1,9 +1,10 @@
 // This is really both IQData and Apify but because it mixes them together let's just put it here.
-import { fetchInstagramPostInfo, fetchYoutubeVideoInfo as apifyFetchYoutubeVideoInfo } from 'src/utils/api/apify';
 import type { PostPerformanceAndPost, PostsPerformanceUpdate } from 'src/utils/api/db';
 import { getPostsPerformancesByCampaign, updatePostPerformance } from 'src/utils/api/db';
-import { fetchTiktokVideoInfo, fetchYoutubeVideoInfo } from 'src/utils/api/iqdata';
 import { serverLogger } from 'src/utils/logger-server';
+import { scrapeInstagramUrl } from 'src/utils/scraper/scrape-instagram-url';
+import { scrapeTiktokUrl } from 'src/utils/scraper/scrape-tiktok-url';
+import { scrapeYoutubeUrl } from 'src/utils/scraper/scrape-youtube-url';
 import type { CreatorPlatform } from 'types';
 
 export type PostPerformanceData = {
@@ -24,69 +25,19 @@ export const fetchPostPerformanceData = async (
     if (!url) {
         throw new Error('Invalid url');
     }
-    if (platform === 'youtube') {
-        // try to get from iqdata, if it fails, use apify
-        try {
-            const raw = await fetchYoutubeVideoInfo(url);
-            if (!raw.success || !raw.video_info.likes) {
-                throw new Error('unable to fetch youtube video info');
-            }
-            const { likes, comments, views } = raw.video_info;
-            return {
-                likeCount: likes,
-                commentCount: comments,
-                viewCount: views,
-                updatedAt: new Date().toISOString(),
-                platform,
-                url,
-            };
-        } catch (error) {
-            serverLogger('error fetching youtube video info from iqdata, trying apify. url: ' + url, 'error');
-            serverLogger(error, 'error');
-        }
 
-        const raw = await apifyFetchYoutubeVideoInfo(url);
-        if (!raw[0]) {
-            throw new Error('unable to fetch youtube video info');
-        }
-        const { likes, commentsCount, viewCount } = raw[0];
-        return {
-            likeCount: likes,
-            commentCount: commentsCount,
-            viewCount: viewCount,
-            updatedAt: new Date().toISOString(),
-            platform,
-            url,
-        };
-    } else if (platform === 'tiktok') {
-        const raw = await fetchTiktokVideoInfo(url);
-        if (!raw.media.itemInfo.itemStruct.stats) {
-            throw new Error('unable to fetch tiktok video info');
-        }
-        const { diggCount, commentCount, playCount } = raw.media.itemInfo.itemStruct.stats;
-        return {
-            likeCount: diggCount,
-            commentCount,
-            viewCount: playCount,
-            updatedAt: new Date().toISOString(),
-            platform,
-            url,
-        };
-    } else if (platform === 'instagram') {
-        const raw = await fetchInstagramPostInfo(url);
-        if (!raw[0]) {
-            throw new Error('unable to fetch instagram post info');
-        }
-        const { likesCount, commentsCount, videoPlayCount } = raw[0];
-        return {
-            likeCount: likesCount,
-            commentCount: commentsCount,
-            viewCount: videoPlayCount,
-            updatedAt: new Date().toISOString(),
-            platform,
-            url,
-        };
+    if (platform === 'youtube') {
+        return await scrapeYoutubeUrl(url);
     }
+
+    if (platform === 'tiktok') {
+        return await scrapeTiktokUrl(url);
+    }
+
+    if (platform === 'instagram') {
+        return await scrapeInstagramUrl(url);
+    }
+
     throw new Error('Invalid platform');
 };
 
