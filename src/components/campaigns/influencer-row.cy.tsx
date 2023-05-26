@@ -81,6 +81,8 @@ const makeStubs = () => {
     const setToEdit = cy.stub();
     const deleteCampaignCreator = cy.stub();
     const openMoveInfluencerModal = cy.stub();
+    const openManageInfluencerModal = cy.stub();
+    const openAddPostModal = cy.stub();
     const openNotes = cy.stub();
     const setShowMoveInfluencerModal = cy.stub();
     return {
@@ -93,6 +95,8 @@ const makeStubs = () => {
         openMoveInfluencerModal,
         openNotes,
         setShowMoveInfluencerModal,
+        openManageInfluencerModal,
+        openAddPostModal,
     };
 };
 
