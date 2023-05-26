@@ -38,7 +38,7 @@ export interface InfluencerRowProps {
     ) => void;
     showMoveInfluencerModal: boolean;
     setShowMoveInfluencerModal: Dispatch<SetStateAction<boolean>>;
-    getVisibleColumns: (tabStatus: string | string[]) => TableColumns[];
+    visibleColumns: TableColumns[];
     tabStatus: string | string[];
 }
 
@@ -55,8 +55,8 @@ const InfluencerRow = ({
     deleteCampaignCreator,
     openNotes,
     openMoveInfluencerModal,
-    getVisibleColumns,
     tabStatus,
+    visibleColumns,
 }: InfluencerRowProps) => {
     const handle = creator.username || creator.fullname || '';
     const [showContactInfo, setShowContactInfo] = useState(false);
@@ -64,7 +64,7 @@ const InfluencerRow = ({
 
     return (
         <tr key={creator.id} className="group text-xs hover:relative hover:bg-primary-50">
-            {getVisibleColumns(tabStatus).map((column) => (
+            {visibleColumns.map((column) => (
                 <td
                     key={column.header}
                     className="w-[200px] whitespace-nowrap bg-white px-6 py-4 group-hover:bg-primary-50"

@@ -96,6 +96,8 @@ export default function CampaignInfluencersTable({
         return tableColumns.filter((column) => filterNames.includes(column.header));
     }
 
+    const visibleColumns: TableColumns[] = getVisibleColumns(tabStatus);
+
     useEffect(() => {
         refreshCampaignCreators();
     }, [refreshCampaignCreators]);
@@ -248,7 +250,7 @@ export default function CampaignInfluencersTable({
                 <table className="w-full table-auto divide-y divide-gray-200 overflow-y-visible bg-white">
                     <thead>
                         <tr>
-                            {getVisibleColumns(tabStatus).map((column, index) => (
+                            {visibleColumns.map((column, index) => (
                                 <th
                                     key={column.header}
                                     className={`  bg-white px-6 py-3 text-left text-xs font-normal tracking-wider text-gray-500 ${
@@ -290,7 +292,7 @@ export default function CampaignInfluencersTable({
                                         openMoveInfluencerModal={openMoveInfluencerModal}
                                         showMoveInfluencerModal={showMoveInfluencerModal}
                                         setShowMoveInfluencerModal={setShowMoveInfluencerModal}
-                                        getVisibleColumns={getVisibleColumns}
+                                        visibleColumns={visibleColumns}
                                         tabStatus={tabStatus}
                                     />
                                 );
