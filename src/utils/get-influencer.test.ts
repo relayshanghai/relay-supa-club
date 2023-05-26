@@ -2,6 +2,7 @@ import { vi, describe, it, expect } from 'vitest';
 import * as influencersModule from './api/db/calls/influencers';
 import { getInfluencer } from './get-influencer';
 import type { CreatorReport } from '../../types';
+import type { InfluencerSocialProfileRow, InfluencerRow } from './api/db';
 
 describe('Get influencer', () => {
     it('Get influencer', async () => {
@@ -12,12 +13,12 @@ describe('Get influencer', () => {
             url: 'https://youtube.com/johndoe',
             reference_id: 'iqdata:abc123',
             created_at: null,
-        } as influencersModule.InfluencerSocialProfileRow;
+        } as InfluencerSocialProfileRow;
 
         const influencerData = {
             id: '1',
             name: 'John Doe',
-        } as influencersModule.InfluencerRow;
+        } as InfluencerRow;
 
         const report = {
             user_profile: {

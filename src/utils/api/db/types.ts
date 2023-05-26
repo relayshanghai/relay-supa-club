@@ -102,3 +102,9 @@ export type PostsPerformanceUpdate = PostsPerformanceTable['Update'];
 
 export type InfluencerPostInsert = Database['public']['Tables']['influencer_posts']['Insert'];
 export type InfluencerPostRow = Database['public']['Tables']['influencer_posts']['Row'];
+
+export type InfluencerInsert = Database['public']['Tables']['influencers']['Insert'];
+export type InfluencerRow = Database['public']['Tables']['influencers']['Row'];
+
+export type InfluencerSocialProfileInsert = Database['public']['Tables']['influencer_social_profiles']['Insert'];
+export type InfluencerSocialProfileRow = Database['public']['Tables']['influencer_social_profiles']['Row'];

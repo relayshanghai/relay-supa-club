@@ -4,7 +4,7 @@ import { extractPlatformFromURL } from './extract-platform-from-url';
 import type { ScrapeData } from './scraper/types';
 import { db } from './supabase-client';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { InfluencerSocialProfileRow } from './api/db/calls/influencers';
+import type { InfluencerSocialProfileRow } from './api/db';
 
 type ScrapeDataWithInfluencer = Omit<ScrapeData, 'influencer'> & { influencer: InfluencerSocialProfileRow };
 

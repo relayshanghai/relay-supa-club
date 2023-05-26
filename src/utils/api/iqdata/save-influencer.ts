@@ -1,11 +1,11 @@
 import type { CreatorReport } from 'types';
-import type { InfluencerRow, InfluencerSocialProfileRow } from '../db/calls/influencers';
 import {
     insertInfluencer as insertInfluencerToDb,
     insertInfluencerSocialProfile as insertInfluencerSocialProfileToDb,
 } from '../db/calls/influencers';
 import { mapIqdataProfileToInfluencer, mapIqdataProfileToInfluencerSocialProfile } from './extract-influencer';
 import { compose } from '../../compose';
+import type { InfluencerRow, InfluencerSocialProfileRow } from '../db';
 
 const addInfluencerToSocialProfile = (influencer: InfluencerRow) => {
     return (user_profile: CreatorReport['user_profile']) => {
