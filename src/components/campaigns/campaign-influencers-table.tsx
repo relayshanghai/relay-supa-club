@@ -69,24 +69,31 @@ export default function CampaignInfluencersTable({
     ];
 
     function getVisibleColumns(tabStatus: string | string[]) {
+        let filterNames: TableColumns['header'][] = [];
         switch (tabStatus) {
             case 'to contact':
-                return [tableColumns[0], tableColumns[1], tableColumns[2]];
+                filterNames = ['account', 'contact', 'creatorStatus'];
+                break;
             case 'contacted':
-                return [tableColumns[0], tableColumns[2]];
+                filterNames = ['account', 'creatorStatus'];
+                break;
             case 'in progress':
-                return [tableColumns[0], tableColumns[2], tableColumns[3], tableColumns[4]];
+                filterNames = ['account', 'creatorStatus', 'nextPoint', 'influencerFee'];
+                break;
             case 'confirmed':
-                return [tableColumns[0], tableColumns[2], tableColumns[3], tableColumns[4]];
+                filterNames = ['account', 'creatorStatus', 'nextPoint', 'influencerFee'];
+                break;
             case 'posted':
-                return [tableColumns[0], tableColumns[2], tableColumns[4], tableColumns[5]];
+                filterNames = ['account', 'creatorStatus', 'nextPoint', 'influencerFee', 'links'];
+                break;
             case 'rejected':
-                return [tableColumns[0], tableColumns[2]];
+                filterNames = ['account', 'creatorStatus'];
+                break;
             case 'ignored':
-                return [tableColumns[0], tableColumns[2]];
-            default:
-                return [];
+                filterNames = ['account', 'creatorStatus'];
+                break;
         }
+        return tableColumns.filter((column) => filterNames.includes(column.header));
     }
 
     useEffect(() => {
