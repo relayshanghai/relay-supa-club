@@ -43,7 +43,7 @@ export default function CreatorSkeleton({
             {loading && (
                 <>
                     <div className="mb-2 flex flex-col items-center lg:flex-row">
-                        <Skeleton className="mb-6 h-32 w-32 !rounded-full sm:mr-6 sm:mb-0" />
+                        <Skeleton className="mb-6 h-32 w-32 !rounded-full sm:mb-0 sm:mr-6" />
                         <div className="text-center sm:text-left">
                             <Skeleton className="h-8 w-64" />
                             <Skeleton className="h-5 w-24" />

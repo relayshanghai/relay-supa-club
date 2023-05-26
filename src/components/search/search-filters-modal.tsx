@@ -29,15 +29,15 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
     return (
         <Modal visible={show} onClose={() => setShow(false)} title={t('creators.filter.title') || ''}>
             <div className="space-y-5 p-8">
-                <h3>{t('creators.filter.intro')}</h3>
+                <p className="text-sm">{t('creators.filter.intro')}</p>
 
                 <div>
                     <label className="text-sm">
-                        <h4 className="text-lg font-bold">{t('creators.filter.subscribers')}</h4>
+                        <h4 className="mb-1 text-base font-medium">{t('creators.filter.subscribers')}</h4>
                         <div className="flex flex-row space-x-4">
                             <div className="flex items-center">
                                 <select
-                                    className="mt-1 rounded-md bg-primary-200 p-1"
+                                    className="rounded-lg bg-white p-1 text-sm ring-1 ring-gray-200"
                                     value={audience[0] ?? 'any'}
                                     onChange={(e) => {
                                         setAudience((audiencePrevious) => [
@@ -61,10 +61,10 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                                     ))}
                                 </select>
 
-                                <p className="mx-2 font-bold">-</p>
+                                <p className="mx-2 font-medium">-</p>
 
                                 <select
-                                    className="mt-1 rounded-md bg-primary-200 p-1"
+                                    className=" rounded-lg bg-white p-1 text-sm ring-1 ring-gray-200"
                                     value={audience[1] ?? 'any'}
                                     onChange={(e) => {
                                         setAudience((audiencePrevious) => [
@@ -93,11 +93,11 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                 </div>
                 <div>
                     <label className="text-sm">
-                        <div className="text-lg font-bold">{t('creators.filter.averageViews')}</div>
+                        <div className="mb-1 text-base font-medium">{t('creators.filter.averageViews')}</div>
                         <div className="flex flex-row space-x-4">
                             <div className="flex items-center">
                                 <select
-                                    className="mt-1 rounded-md bg-primary-200 p-1"
+                                    className=" rounded-lg bg-white p-1 text-sm ring-1 ring-gray-200"
                                     value={views[0] ?? 'any'}
                                     onChange={(e) => {
                                         setViews((viewsPrevious) => [
@@ -120,9 +120,9 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                                         </option>
                                     ))}
                                 </select>
-                                <p className="mx-2 font-bold">-</p>
+                                <p className="mx-2 font-medium">-</p>
                                 <select
-                                    className="mt-1 rounded-md bg-primary-200 p-1"
+                                    className=" rounded-lg bg-white p-1 text-sm ring-1 ring-gray-200"
                                     value={views[1] ?? 'any'}
                                     onChange={(e) => {
                                         setViews((viewsPrevious) => [
@@ -151,9 +151,9 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                 </div>
                 <div>
                     <label className="text-sm">
-                        <div className="text-lg font-bold">{t('creators.filter.gender')}</div>
+                        <div className="mb-1 text-base font-medium">{t('creators.filter.gender')}</div>
                         <select
-                            className="mt-1 rounded-md bg-primary-200 p-1"
+                            className="rounded-lg bg-white p-1 text-sm ring-1 ring-gray-200"
                             value={gender}
                             onChange={(e) => {
                                 if (e.target.value === 'any') {
@@ -174,9 +174,9 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                 </div>
                 <div>
                     <label className="text-sm">
-                        <div className="text-lg font-bold">{t('creators.filter.engagementRate')}</div>
+                        <div className="mb-1 text-base font-medium">{t('creators.filter.engagementRate')}</div>
                         <select
-                            className="mt-1 rounded-md bg-primary-200 p-1"
+                            className=" rounded-lg bg-white p-1 text-sm ring-1 ring-gray-200"
                             value={engagement}
                             onChange={(e) => {
                                 if (e.target.value === 'any' || Number(e.target.value) === 0) {
@@ -203,9 +203,9 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                 </div>
                 <div>
                     <label className="text-sm">
-                        <div className="text-lg font-bold">{t('creators.filter.lastPost')}</div>
+                        <div className="mb-1 text-base font-medium">{t('creators.filter.lastPost')}</div>
                         <select
-                            className="mt-1 rounded-md bg-primary-200 p-1"
+                            className=" rounded-lg bg-white p-1 text-sm ring-1 ring-gray-200"
                             value={lastPost}
                             onChange={(e) => {
                                 if (e.target.value === 'any') {
@@ -227,9 +227,9 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                 </div>
                 <div>
                     <label className="text-sm">
-                        <div className="text-lg font-bold">{t('creators.filter.contactInformation')}</div>
+                        <div className="mb-1 text-base font-medium">{t('creators.filter.contactInformation')}</div>
                         <select
-                            className="mt-1 rounded-md bg-primary-200 p-1"
+                            className=" rounded-lg bg-white p-1 text-sm ring-1 ring-gray-200"
                             value={contactInfo}
                             onChange={(e) => {
                                 if (e.target.value === 'any') {

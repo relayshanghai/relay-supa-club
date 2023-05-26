@@ -7,7 +7,6 @@ import { clientLogger } from 'src/utils/logger-client';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import type { CreatorPlatform, CreatorSearchTag } from 'types';
 
-
 type SearchTopicsProps = {
     path: string;
     placeholder: string;

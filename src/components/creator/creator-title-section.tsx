@@ -23,7 +23,7 @@ export const TitleSection = ({
                         alt={`${user_profile.user_id}-profile-pic`}
                         className="rounded-full"
                     />
-                    <div className="absolute right-0 bottom-0">
+                    <div className="absolute bottom-0 right-0">
                         <SocialMediaIcon platform={platform} width={28} height={28} />
                     </div>
                 </div>

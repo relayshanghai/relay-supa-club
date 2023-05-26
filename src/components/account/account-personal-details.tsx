@@ -176,7 +176,7 @@ export const PersonalDetails = () => {
 
             {!editMode && (
                 <Button
-                    className={`absolute top-4 right-4 px-3 py-1 disabled:bg-white ${
+                    className={`absolute right-4 top-4 px-3 py-1 disabled:bg-white ${
                         userDataLoading ? 'opacity-75' : ''
                     }`}
                     disabled={userDataLoading}

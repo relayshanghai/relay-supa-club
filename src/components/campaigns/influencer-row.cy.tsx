@@ -41,6 +41,7 @@ const creator: CampaignCreatorDB = {
     creator_id: 'UCq-Fj5jknLsUf-MWSy4_brA',
     platform: 'youtube',
     added_by_id: '2d6c17e7-7aae-4122-a3d2-2e0e22841581',
+    influencer_social_profiles_id: null,
 };
 
 const tabs = [
