@@ -99,3 +99,6 @@ export type PostsPerformanceTable = Database['public']['Tables']['posts_performa
 export type PostsPerformance = PostsPerformanceTable['Row'];
 export type PostsPerformanceInsert = PostsPerformanceTable['Insert'];
 export type PostsPerformanceUpdate = PostsPerformanceTable['Update'];
+
+export type InfluencerPostInsert = Database['public']['Tables']['influencer_posts']['Insert'];
+export type InfluencerPostRow = Database['public']['Tables']['influencer_posts']['Row'];
