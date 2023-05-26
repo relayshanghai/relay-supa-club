@@ -32,3 +32,19 @@ export const deleteInfluencerPost =
 
         return influencerPost.data;
     };
+
+export const getInfluencerPostsBySocialProfile =
+    (db: SupabaseClient<DatabaseWithCustomTypes>) =>
+    async (influencer_social_profile_id: string): Promise<InfluencerPostRow[]> => {
+        const influencerPost = await db
+            .from('influencer_posts')
+            .select()
+            .eq('influencer_social_profile_id', influencer_social_profile_id)
+            .is('deleted_at', null);
+
+        if (influencerPost.error) {
+            throw influencerPost.error;
+        }
+
+        return influencerPost.data;
+    };
