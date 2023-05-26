@@ -23,6 +23,7 @@ export interface Database {
           email_sent: boolean | null
           fullname: string | null
           id: string
+          influencer_social_profiles_id: string | null
           interested: boolean | null
           link_url: string | null
           need_support: boolean | null
@@ -56,6 +57,7 @@ export interface Database {
           email_sent?: boolean | null
           fullname?: string | null
           id?: string
+          influencer_social_profiles_id?: string | null
           interested?: boolean | null
           link_url?: string | null
           need_support?: boolean | null
@@ -89,6 +91,7 @@ export interface Database {
           email_sent?: boolean | null
           fullname?: string | null
           id?: string
+          influencer_social_profiles_id?: string | null
           interested?: boolean | null
           link_url?: string | null
           need_support?: boolean | null
