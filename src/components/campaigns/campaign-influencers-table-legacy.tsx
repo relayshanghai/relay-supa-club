@@ -9,7 +9,7 @@ import type { CampaignCreatorDB, CampaignDB } from 'src/utils/api/db';
 import Fuse from 'fuse.js';
 import { MoveInfluencerModal } from '../modal-move-influencer';
 import { useCampaignCreators } from 'src/hooks/use-campaign-creators';
-import InfluencerRowV2 from './influencer-row-v2';
+import InfluencerRowLegacy from './influencer-row-legacy';
 
 export interface CreatorsOutreachProps {
     currentCampaign: CampaignDB;
@@ -18,13 +18,8 @@ export interface CreatorsOutreachProps {
     campaigns?: CampaignDB[];
     currentCreator?: CampaignCreatorDB | null;
 }
-export interface TableColumns {
-    header: string;
-    type: 'account' | 'contact' | 'select' | 'inputText' | 'inputNumber' | 'modal';
-    name: string;
-}
 
-export default function CampaignInfluencersTableV2({
+export default function CampaignInfluencersTableLegacy({
     currentCampaign,
     setShowNotesModal,
     setCurrentCreator,
@@ -48,46 +43,20 @@ export default function CampaignInfluencersTableV2({
         useCampaignCreators({
             campaign: currentCampaign,
         });
-
-    const tabs = [
-        { label: 'toContact', value: 'to contact' },
-        { label: 'contacted', value: 'contacted' },
-        { label: 'inProgress', value: 'in progress' },
-        { label: 'confirmed', value: 'confirmed' },
-        { label: 'posted', value: 'posted' },
-        { label: 'rejected', value: 'rejected' },
-        { label: 'ignored', value: 'ignored' },
+    const columnLabels = [
+        'account',
+        'contact',
+        'creatorStatus',
+        // 'addedBy',
+        'nextPoint',
+        'publicationDate',
+        'paymentAmount',
+        'paidAmount',
+        'paymentInformation',
+        'paymentStatus',
+        'influencerAddress',
+        'sampleStatus',
     ];
-
-    const tableColumns: TableColumns[] = [
-        { header: 'account', type: 'account', name: 'account' },
-        { header: 'contact', type: 'contact', name: 'contact' },
-        { header: 'creatorStatus', type: 'select', name: 'status' },
-        { header: 'nextPoint', type: 'inputText', name: 'next_point' },
-        { header: 'influencerFee', type: 'inputNumber', name: 'paid_amount_cents' }, // In the Figma design feedback, Sophia changed Payment Amount to Influencer Fee as the column name.
-        { header: 'links', type: 'modal', name: 'contents' },
-    ];
-
-    function getVisibleColumns(tabStatus: string | string[]) {
-        switch (tabStatus) {
-            case 'to contact':
-                return [tableColumns[0], tableColumns[1], tableColumns[2]];
-            case 'contacted':
-                return [tableColumns[0], tableColumns[2]];
-            case 'in progress':
-                return [tableColumns[0], tableColumns[2], tableColumns[3], tableColumns[4]];
-            case 'confirmed':
-                return [tableColumns[0], tableColumns[2], tableColumns[3], tableColumns[4]];
-            case 'posted':
-                return [tableColumns[0], tableColumns[2], tableColumns[4], tableColumns[5]];
-            case 'rejected':
-                return [tableColumns[0], tableColumns[2]];
-            case 'ignored':
-                return [tableColumns[0], tableColumns[2]];
-            default:
-                return [];
-        }
-    }
 
     useEffect(() => {
         refreshCampaignCreators();
@@ -183,6 +152,16 @@ export default function CampaignInfluencersTableV2({
 
     const editingModeTrue = (index: number, key: string) => index === toEdit?.index && key === toEdit?.key;
 
+    const tabs = [
+        { label: 'toContact', value: 'to contact' },
+        { label: 'contacted', value: 'contacted' },
+        { label: 'inProgress', value: 'in progress' },
+        { label: 'confirmed', value: 'confirmed' },
+        { label: 'posted', value: 'posted' },
+        { label: 'rejected', value: 'rejected' },
+        { label: 'ignored', value: 'ignored' },
+    ];
+
     return (
         <div>
             {/* Outreach Tabs */}
@@ -242,26 +221,31 @@ export default function CampaignInfluencersTableV2({
                 />
             </div>
             {/* -- Outreach Table -- */}
-            <div className="min-h-screen w-full overflow-auto">
-                <table className="w-full table-auto divide-y divide-gray-200 overflow-y-visible bg-white">
-                    <thead>
+            <div className="min-h-screen overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200 overflow-y-visible">
+                    <thead className="sticky top-0 bg-white">
                         <tr>
-                            {getVisibleColumns(tabStatus).map((column, index) => (
+                            {columnLabels.map((label, index) => (
                                 <th
-                                    key={column.header}
-                                    className={`  bg-white px-6 py-3 text-left text-xs font-normal tracking-wider text-gray-500 ${
-                                        index === 0 ? ' sticky left-0 z-10' : index === -1 ? ' sticky right-0 z-20' : ''
+                                    key={index}
+                                    scope="col"
+                                    className={`sticky left-0 min-w-fit bg-white px-6 py-3 text-left text-xs font-normal tracking-wider text-gray-500 ${
+                                        index === 0 ? 'sticky left-0 z-10' : ''
                                     }`}
                                 >
-                                    {t(`campaigns.show.${column.header}`)}
+                                    {t(`campaigns.show.${label}`)}
                                 </th>
                             ))}
+                            {/*-- placeholder table header space for notes and delete section --*/}
+                            <th className=" sticky right-0 z-30 min-w-[280px] max-w-[280px] bg-white px-3 py-3 text-left text-xs  font-normal tracking-wider text-gray-500">
+                                {''}
+                            </th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200 bg-white">
                         {influencersList.length === 0 && (
                             <tr>
-                                <td colSpan={tableColumns.length + 1} className="px-6 py-4">
+                                <td colSpan={columnLabels.length + 1} className="px-6 py-4">
                                     <div className="flex justify-center">
                                         <p className="text-sm text-gray-500">
                                             {t('campaigns.show.activities.outreach.noInfluencers')}
@@ -270,10 +254,12 @@ export default function CampaignInfluencersTableV2({
                                 </td>
                             </tr>
                         )}
+
                         {influencersList.map((creator, index) => {
                             if (creator.status === tabStatus)
                                 return (
-                                    <InfluencerRowV2
+                                    <InfluencerRowLegacy
+                                        key={index}
                                         creator={creator}
                                         index={index}
                                         updateCampaignCreator={updateCampaignCreator}
@@ -288,8 +274,6 @@ export default function CampaignInfluencersTableV2({
                                         openMoveInfluencerModal={openMoveInfluencerModal}
                                         showMoveInfluencerModal={showMoveInfluencerModal}
                                         setShowMoveInfluencerModal={setShowMoveInfluencerModal}
-                                        getVisibleColumns={getVisibleColumns}
-                                        tabStatus={tabStatus}
                                     />
                                 );
                         })}

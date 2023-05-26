@@ -19,7 +19,7 @@ import { useCompany } from 'src/hooks/use-company';
 import { Spinner } from 'src/components/icons';
 import { toast } from 'react-hot-toast';
 import { featPerformance } from 'src/constants/feature-flags';
-import CampaignInfluencersTableV2 from 'src/components/campaigns/campaign-influencers-table-v2';
+import CampaignInfluencersTableLegacy from 'src/components/campaigns/campaign-influencers-table-legacy';
 
 export default function CampaignShow() {
     const router = useRouter();
@@ -240,7 +240,7 @@ export default function CampaignShow() {
                 {currentTab === 0 &&
                     currentCampaign &&
                     (featPerformance() ? (
-                        <CampaignInfluencersTableV2
+                        <CampaignInfluencersTable
                             currentCampaign={currentCampaign}
                             setShowNotesModal={setShowNotesModal}
                             setCurrentCreator={setCurrentCreator}
@@ -248,7 +248,7 @@ export default function CampaignShow() {
                             currentCreator={currentCreator}
                         />
                     ) : (
-                        <CampaignInfluencersTable
+                        <CampaignInfluencersTableLegacy
                             currentCampaign={currentCampaign}
                             setShowNotesModal={setShowNotesModal}
                             setCurrentCreator={setCurrentCreator}

@@ -7,7 +7,6 @@ import React from 'react'; // turns out we need this or cypress complains
 import { testMount } from '../../utils/cypress-app-wrapper';
 import type { CreatorsOutreachProps } from './campaign-influencers-table';
 
-import CampaignInfluencersTable from './campaign-influencers-table';
 import type { CampaignCreatorDB, CampaignDB } from '../../utils/api/db';
 import { rest } from 'msw';
 import { SUPABASE_URL_CYPRESS, worker } from '../../mocks/browser';
@@ -15,8 +14,8 @@ import jimTestCampaign from '../../mocks/supabase/campaigns/jimTestCampaign.json
 import amyTestCampaign from '../../mocks/supabase/campaigns/amyTestCampaign.json';
 import newEmptyCampaign from '../../mocks/supabase/campaigns/newEmptyCampaign.json';
 import archivedCampaign from '../../mocks/supabase/campaigns/archivedCampaign.json';
-
 import campaignCreatorsJim from '../../mocks/supabase/campaign_creators/campaignCreatorsJimCampaign.json';
+import CampaignInfluencersTableLegacy from './campaign-influencers-table-legacy';
 
 const campaigns: CampaignDB[] = [jimTestCampaign, amyTestCampaign, newEmptyCampaign, archivedCampaign];
 
@@ -38,22 +37,22 @@ const makeProps = () => {
     return props;
 };
 
-describe('CampaignInfluencersTable', () => {
+describe('CampaignInfluencersTableLegacy', () => {
     before(async () => {
         worker.start();
     });
 
     it('Should render table of influencers', () => {
-        testMount(<CampaignInfluencersTable {...makeProps()} />);
+        testMount(<CampaignInfluencersTableLegacy {...makeProps()} />);
         cy.get('tr').contains(campaignCreatorsJim[0].fullname);
         cy.contains(campaignCreatorsJim[2].fullname);
     });
     it('Should display an influencer table row where I can see a button called "Move Influencer"', () => {
-        testMount(<CampaignInfluencersTable {...makeProps()} />);
+        testMount(<CampaignInfluencersTableLegacy {...makeProps()} />);
         cy.get('tr').get('button').contains('Move Influencer');
     });
     it('Should open a modal when i click "Move Influencer" button. The modal should have a title of "Move To Campaign" and subtitle "Move this influencer to an existing campaign". Should include a list of campaigns  When I click on the move button inside a campaign row I get a loading spinner', () => {
-        testMount(<CampaignInfluencersTable {...makeProps()} />);
+        testMount(<CampaignInfluencersTableLegacy {...makeProps()} />);
 
         cy.contains('Move To Campaign').should('not.exist');
 
@@ -84,7 +83,7 @@ describe('CampaignInfluencersTable', () => {
             }),
         );
         // Capture the network request to the api for the next test
-        testMount(<CampaignInfluencersTable {...makeProps()} />);
+        testMount(<CampaignInfluencersTableLegacy {...makeProps()} />);
         cy.get('tr').get('button').contains('Move Influencer').click();
         // when this button is clicked, it is not sending the request, cause of a filing nullcheck
         cy.get(`#move-influencer-button-${campaign2.id}`).should('exist').click();

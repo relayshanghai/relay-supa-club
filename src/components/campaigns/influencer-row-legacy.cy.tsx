@@ -4,10 +4,10 @@
 import type { CampaignCreatorDB } from '../../utils/api/db';
 
 import React from 'react';
-import type { InfluencerRowProps } from './influencer-row';
-import InfluencerRow from './influencer-row';
+import type { InfluencerRowProps } from './influencer-row-legacy';
 import { testMount } from '../../utils/cypress-app-wrapper';
 import { worker } from '../../mocks/browser';
+import InfluencerRowLegacy from './influencer-row-legacy';
 const creator: CampaignCreatorDB = {
     id: '175c7699-f53d-4c0c-bf04-e11deea7899e',
     created_at: '2023-03-29T12:08:42.10964+00:00',
@@ -92,7 +92,7 @@ const makeStubs = () => {
     };
 };
 
-describe('<InfluencerRow />', () => {
+describe('<InfluencerRowLegacy />', () => {
     before(() => {
         worker.start();
     });
@@ -107,7 +107,7 @@ describe('<InfluencerRow />', () => {
             tabs,
             showMoveInfluencerModal: false,
         };
-        testMount(<InfluencerRow {...props} />);
+        testMount(<InfluencerRowLegacy {...props} />);
         cy.contains('T-Series');
         cy.contains('@tseries');
         cy.contains('Add Action Point');
@@ -125,7 +125,7 @@ describe('<InfluencerRow />', () => {
             tabs,
             showMoveInfluencerModal: false,
         };
-        testMount(<InfluencerRow {...props} />);
+        testMount(<InfluencerRowLegacy {...props} />);
         cy.findByTestId('contacts-skeleton').should('not.exist');
         cy.get('a[href="https://www.facebook.com/tseriesmusic"]').should('not.exist');
 
