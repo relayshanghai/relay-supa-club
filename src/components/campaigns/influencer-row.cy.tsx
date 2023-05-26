@@ -2,12 +2,13 @@
 // @ts-check
 
 import type { CampaignCreatorDB } from '../../utils/api/db';
-
 import React from 'react';
-import type { InfluencerRowProps } from './influencer-row-legacy';
+import type { InfluencerRowProps } from './influencer-row';
 import { testMount } from '../../utils/cypress-app-wrapper';
 import { worker } from '../../mocks/browser';
-import InfluencerRowLegacy from './influencer-row-legacy';
+import InfluencerRow from './influencer-row';
+import type { TableColumns } from './campaign-influencers-table';
+
 const creator: CampaignCreatorDB = {
     id: '175c7699-f53d-4c0c-bf04-e11deea7899e',
     created_at: '2023-03-29T12:08:42.10964+00:00',
@@ -44,32 +45,34 @@ const creator: CampaignCreatorDB = {
     influencer_social_profiles_id: null,
 };
 
-const tabs = [
+const testColumns: TableColumns[] = [
     {
-        label: 'toContact',
-        value: 'to contact',
+        header: 'account',
+        type: 'account',
+        name: 'account',
     },
     {
-        label: 'contacted',
-        value: 'contacted',
+        header: 'contact',
+        type: 'contact',
+        name: 'contact',
     },
     {
-        label: 'inProgress',
-        value: 'in progress',
-    },
-    {
-        label: 'confirmed',
-        value: 'confirmed',
-    },
-    {
-        label: 'rejected',
-        value: 'rejected',
-    },
-    {
-        label: 'ignored',
-        value: 'ignored',
+        header: 'creatorStatus',
+        type: 'select',
+        name: 'status',
     },
 ];
+
+const tabs = [
+    { label: 'toContact', value: 'to contact' },
+    { label: 'contacted', value: 'contacted' },
+    { label: 'inProgress', value: 'in progress' },
+    { label: 'confirmed', value: 'confirmed' },
+    { label: 'posted', value: 'posted' },
+    { label: 'rejected', value: 'rejected' },
+    { label: 'ignored', value: 'ignored' },
+];
+
 const makeStubs = () => {
     const handleDropdownSelect = cy.stub();
     const setInlineEdit = cy.stub();
@@ -78,6 +81,8 @@ const makeStubs = () => {
     const setToEdit = cy.stub();
     const deleteCampaignCreator = cy.stub();
     const openMoveInfluencerModal = cy.stub();
+    const openManageInfluencerModal = cy.stub();
+    const openAddPostModal = cy.stub();
     const openNotes = cy.stub();
     const setShowMoveInfluencerModal = cy.stub();
     return {
@@ -90,10 +95,12 @@ const makeStubs = () => {
         openMoveInfluencerModal,
         openNotes,
         setShowMoveInfluencerModal,
+        openManageInfluencerModal,
+        openAddPostModal,
     };
 };
 
-describe('<InfluencerRowLegacy />', () => {
+describe('<InfluencerRow />', () => {
     before(() => {
         worker.start();
     });
@@ -107,14 +114,15 @@ describe('<InfluencerRowLegacy />', () => {
             creator,
             tabs,
             showMoveInfluencerModal: false,
+            tabStatus: creator.status,
+            visibleColumns: testColumns,
         };
-        testMount(<InfluencerRowLegacy {...props} />);
-        cy.contains('T-Series');
+
+        testMount(<InfluencerRow {...props} />);
         cy.contains('@tseries');
-        cy.contains('Add Action Point');
         cy.contains('To Contact');
-        cy.contains('Notes');
     });
+
     it('only shows creator contact info after clicking a "View Contact Info" button', () => {
         const props: InfluencerRowProps = {
             index: 1,
@@ -125,8 +133,10 @@ describe('<InfluencerRowLegacy />', () => {
             creator,
             tabs,
             showMoveInfluencerModal: false,
+            tabStatus: creator.status,
+            visibleColumns: testColumns,
         };
-        testMount(<InfluencerRowLegacy {...props} />);
+        testMount(<InfluencerRow {...props} />);
         cy.findByTestId('contacts-skeleton').should('not.exist');
         cy.get('a[href="https://www.facebook.com/tseriesmusic"]').should('not.exist');
 
@@ -135,6 +145,26 @@ describe('<InfluencerRowLegacy />', () => {
         cy.findByTestId('contacts-skeleton').should('exist');
         // shows contact info
         cy.get('a[href="https://www.facebook.com/tseriesmusic"]').should('exist');
+    });
+
+    it('shows only three action buttons - move influencer, manage, delete, when status is inContact from the test dat', () => {
+        const props: InfluencerRowProps = {
+            index: 1,
+            ...makeStubs(),
+            inputRef: {
+                current: null,
+            } as any,
+            creator,
+            tabs,
+            showMoveInfluencerModal: false,
+            tabStatus: creator.status,
+            visibleColumns: testColumns,
+        };
+        testMount(<InfluencerRow {...props} />);
+        cy.get('[data-testid="move-influencer-button"]').should('exist');
+        cy.get('[data-testid="manage-button"]').should('exist');
+        cy.get('[data-testid="delete-creator"]').should('exist');
+        cy.get('[data-testid="open-notes-button"]').should('have.class', 'hidden');
     });
 });
 
