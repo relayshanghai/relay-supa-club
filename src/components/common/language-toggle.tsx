@@ -34,8 +34,8 @@ export const LanguageToggle = () => {
                         className="border-gray absolute z-10 mr-20 mt-9 flex w-28 flex-col overflow-hidden rounded-md border border-opacity-40 bg-white shadow-lg"
                     >
                         <button
-                            onClick={() => toggleLanguage('zh')}
-                            id="zh"
+                            onClick={() => toggleLanguage('zh-CN')}
+                            id="zh-CN"
                             className="px-4 py-2 text-left text-sm hover:bg-gray-100 active:bg-gray-200"
                         >
                             中文

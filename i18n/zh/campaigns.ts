@@ -233,5 +233,16 @@ const campaigns = {
         integratedVideo: '植入广告',
         oopsSomethingWrong: '哎呀，出错了！',
     },
+    post: {
+        title: '管理帖子',
+        addPostUrl: '添加帖子网址',
+        addAnotherPost: '添加另一个帖子',
+        submit: '提交',
+        invalidUrl: '无效的网址',
+        duplicateUrl: '重复的网址',
+        success: '成功添加 {{amount}} 个网址的帖子数据',
+        failed: '无法获取 {{amount}} 个网址的帖子数据',
+        currentPosts: '当前帖子',
+    },
 };
 export default campaigns;

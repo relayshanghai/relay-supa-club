@@ -244,5 +244,16 @@ const campaigns = {
         integratedVideo: 'Integrated Video',
         oopsSomethingWrong: 'Oops, something went wrong. Please try again.',
     },
+    post: {
+        title: 'Manage Posts',
+        addPostUrl: 'Add Post URL',
+        addAnotherPost: 'Add Another Post',
+        submit: 'Submit',
+        invalidUrl: 'Invalid URL',
+        duplicateUrl: 'Duplicate URL',
+        success: 'Successfully added {{amount}} URLs',
+        failed: 'Failed to get post data for {{amount}} URLs',
+        currentPosts: 'Current Posts',
+    },
 };
 export default campaigns;
