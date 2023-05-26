@@ -196,7 +196,10 @@ const InfluencerRow = ({
                         {t('campaigns.show.notes')}
                     </button>
                     {/* TODO: add manage modal here when its ready */}
-                    <button className="group/manage mr-2 h-8 w-8 cursor-pointer  rounded-md border border-gray-200 bg-gray-50 p-2 text-center font-medium text-gray-600 hover:bg-gray-100">
+                    <button
+                        data-testid="manage-button"
+                        className="group/manage mr-2 h-8 w-8 cursor-pointer  rounded-md border border-gray-200 bg-gray-50 p-2 text-center font-medium text-gray-600 hover:bg-gray-100"
+                    >
                         <SquarePlus className="h-4 w-4 stroke-tertiary-600 group-hover/manage:stroke-primary-600" />
                     </button>
                     <button
