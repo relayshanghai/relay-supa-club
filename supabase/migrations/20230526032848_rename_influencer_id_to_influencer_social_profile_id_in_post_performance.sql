@@ -1,11 +1,9 @@
-alter table "public"."posts_performance" drop constraint "posts_performance_influencer_id_fkey";
+ALTER TABLE "public"."posts_performance" DROP CONSTRAINT "posts_performance_influencer_id_fkey";
 
-alter table "public"."posts_performance" drop column "influencer_id";
+ALTER TABLE "public"."posts_performance" DROP COLUMN "influencer_id";
 
-alter table "public"."posts_performance" add column "influencer_social_profile_id" uuid;
+ALTER TABLE "public"."posts_performance" ADD COLUMN "influencer_social_profile_id" uuid;
 
-alter table "public"."posts_performance" add constraint "posts_performance_influencer_social_profile_id_fkey" FOREIGN KEY (influencer_social_profile_id) REFERENCES influencer_social_profiles(id) ON DELETE SET NULL not valid;
+ALTER TABLE "public"."posts_performance" ADD CONSTRAINT "posts_performance_influencer_social_profile_id_fkey" FOREIGN KEY (influencer_social_profile_id) REFERENCES influencer_social_profiles (id) ON DELETE SET NULL NOT VALID;
 
-alter table "public"."posts_performance" validate constraint "posts_performance_influencer_social_profile_id_fkey";
-
-
+ALTER TABLE "public"."posts_performance" VALIDATE CONSTRAINT "posts_performance_influencer_social_profile_id_fkey";
