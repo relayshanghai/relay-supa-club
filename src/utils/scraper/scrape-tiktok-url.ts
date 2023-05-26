@@ -8,8 +8,9 @@ export const scrapeTiktokUrl = async (url: string): Promise<ScrapeData> => {
         throw new Error('unable to fetch tiktok video info');
     }
 
-    const { createTime } = result.media.itemInfo.itemStruct;
+    const { desc, createTime } = result.media.itemInfo.itemStruct;
     const { id } = result.media.itemInfo.itemStruct.author;
+    const { cover } = result.media.itemInfo.itemStruct.video;
     const { diggCount, commentCount, playCount } = result.media.itemInfo.itemStruct.stats;
 
     return {
@@ -21,6 +22,8 @@ export const scrapeTiktokUrl = async (url: string): Promise<ScrapeData> => {
         platform: 'tiktok',
         url,
         influencer: id,
+        title: desc,
+        preview_url: cover,
         __raw: result,
     };
 };

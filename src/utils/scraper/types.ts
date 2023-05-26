@@ -9,5 +9,8 @@ export type ScrapeData = {
     platform: CreatorPlatform;
     url: string;
     influencer: string;
+    title: string;
+    preview_url: string;
+    description?: string;
     __raw?: any;
 };

@@ -8,7 +8,7 @@ export const scrapeYoutubeUrl = async (url: string): Promise<ScrapeData> => {
         throw new Error('unable to fetch youtube video info');
     }
 
-    const { likes, comments, views, channel_id, published_at } = result.video_info;
+    const { likes, comments, views, channel_id, published_at, title, thumbnail, description } = result.video_info;
 
     return {
         likeCount: likes,
@@ -19,6 +19,9 @@ export const scrapeYoutubeUrl = async (url: string): Promise<ScrapeData> => {
         platform: 'youtube',
         url,
         influencer: channel_id,
+        title,
+        preview_url: thumbnail,
+        description,
         __raw: result,
     };
 };

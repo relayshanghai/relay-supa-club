@@ -8,7 +8,7 @@ export const scrapeInstagramUrl = async (url: string): Promise<ScrapeData> => {
         throw new Error('unable to fetch instagram post info');
     }
 
-    const { likesCount, commentsCount, videoPlayCount, ownerId, timestamp } = result[0];
+    const { caption, displayUrl, likesCount, commentsCount, videoPlayCount, ownerId, timestamp } = result[0];
 
     return {
         likeCount: likesCount,
@@ -19,6 +19,8 @@ export const scrapeInstagramUrl = async (url: string): Promise<ScrapeData> => {
         platform: 'instagram',
         url,
         influencer: ownerId,
+        title: caption,
+        preview_url: displayUrl,
         __raw: result,
     };
 };

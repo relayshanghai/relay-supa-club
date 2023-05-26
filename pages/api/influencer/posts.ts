@@ -40,6 +40,9 @@ const processURL = async (url: string, campaign_id: string) => {
         influencer_social_profile_id: scrape.influencer.id,
         url: url,
         posted_date: scrape.postedAt,
+        title: scrape.title,
+        preview_url: scrape.preview_url,
+        description: scrape.description,
     });
 
     const performance = await _savePostPerformance({
