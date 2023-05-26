@@ -32,7 +32,8 @@ export const useCampaignCreators = ({
     companyId?: string;
 }) => {
     const { profile } = useUser();
-    const { getCampaignCreators, insertCampaignCreator, updateCampaignCreator, deleteCampaignCreator } = useClientDb();
+    const { supabaseClient, getCampaignCreators, insertCampaignCreator, updateCampaignCreator, deleteCampaignCreator } =
+        useClientDb();
 
     const companyId = passedInCompanyId ?? profile?.company_id;
     const {
@@ -50,13 +51,31 @@ export const useCampaignCreators = ({
     const addCreatorToCampaign = useCallback(
         async (input: CampaignCreatorInsert) => {
             setLoading(true);
+
+            // @todo: refactor db call to fit dependency injection
+            const getInfluencerSocialByReference = async (referenceId: string) => {
+                const { data, error } = await supabaseClient
+                    .from('influencer_social_profiles')
+                    .select()
+                    .match({
+                        reference_id: `iqdata:${referenceId}`,
+                    })
+                    .maybeSingle();
+
+                return !error ? data : null;
+            };
+
             try {
                 if (!input.campaign_id) throw new Error('No campaign_id found');
                 if (!profile?.id) {
                     throw new Error('No profile.id found');
                 }
+
+                const influencer = await getInfluencerSocialByReference(input.creator_id);
+
                 const body: CampaignCreatorInsert = {
                     ...input,
+                    influencer_social_profiles_id: influencer ? influencer.id : null,
                     added_by_id: profile?.id,
                     id: undefined, // force undefined so that the backend can generate a new id
                     campaign_id: input.campaign_id,
@@ -69,7 +88,7 @@ export const useCampaignCreators = ({
                 setLoading(false);
             }
         },
-        [insertCampaignCreator, profile?.id],
+        [insertCampaignCreator, profile?.id, supabaseClient],
     );
 
     const updateCreatorInCampaign = useCallback(
