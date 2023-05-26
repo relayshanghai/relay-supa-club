@@ -470,7 +470,7 @@ export interface Database {
           comments_total: number | null
           created_at: string | null
           id: string
-          influencer_id: string
+          influencer_social_profile_id: string | null
           likes_total: number | null
           orders_total: number | null
           post_id: string
@@ -484,7 +484,7 @@ export interface Database {
           comments_total?: number | null
           created_at?: string | null
           id?: string
-          influencer_id: string
+          influencer_social_profile_id?: string | null
           likes_total?: number | null
           orders_total?: number | null
           post_id: string
@@ -498,7 +498,7 @@ export interface Database {
           comments_total?: number | null
           created_at?: string | null
           id?: string
-          influencer_id?: string
+          influencer_social_profile_id?: string | null
           likes_total?: number | null
           orders_total?: number | null
           post_id?: string

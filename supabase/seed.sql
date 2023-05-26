@@ -362,7 +362,7 @@ $$;
 
 CREATE OR REPLACE FUNCTION create_posts_performance(
   _campaign_id UUID,
-  _influencer_id UUID,
+  _influencer_social_profile_id UUID,
   _post_id UUID,
   _updated_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
   _likes_total NUMERIC DEFAULT 0,
@@ -378,7 +378,7 @@ BEGIN
   INSERT INTO posts_performance (
     id,
     campaign_id,
-    influencer_id,
+    influencer_social_profile_id,
     post_id,
     created_at,
     updated_at,
@@ -392,7 +392,7 @@ BEGIN
   VALUES (
     uuid_generate_v4(),
     _campaign_id,
-    _influencer_id,
+    _influencer_social_profile_id,
     _post_id,
     now(),
     _updated_at,
@@ -540,7 +540,7 @@ BEGIN
   );
   PERFORM create_posts_performance(
     _campaign_beauty_for_all.id,
-    _influencer_alice.id,
+    _influencer_social_profile_alice_1.id,
     _influencer_post_alice_1.id,
     now(),
     123,
@@ -552,7 +552,7 @@ BEGIN
   );
   PERFORM create_posts_performance(
     _campaign_beauty_for_all.id,
-    _influencer_alice.id,
+    _influencer_social_profile_alice_1.id,
     _influencer_post_alice_2.id,
     '2023-01-01 00:00:00.000000+00',
     1230,
@@ -564,13 +564,13 @@ BEGIN
   );
   PERFORM create_posts_performance(
     _campaign_beauty_for_all.id,
-    _influencer_alice.id,
+    _influencer_social_profile_alice_1.id,
     _influencer_post_alice_3.id,
     '2023-01-02 00:00:00.000000+00'
   );
   PERFORM create_posts_performance(
     _campaign_beauty_for_all.id,
-    _influencer_bob.id,
+    _influencer_social_profile_bob_1.id,
     _influencer_post_bob_1.id,
     '2023-01-03 00:00:00.000000+00',
     12300,
@@ -582,7 +582,7 @@ BEGIN
   );
   PERFORM create_posts_performance(
     _campaign_beauty_for_all.id,
-    _influencer_bob.id,
+    _influencer_social_profile_bob_2.id,
     _influencer_post_bob_2.id,
     '2023-01-04 00:00:00.000000+00',
     12301,
