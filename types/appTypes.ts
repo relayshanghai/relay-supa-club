@@ -1,4 +1,10 @@
-import type { CampaignCreatorsTable, CompanyTable, ProfilesTable, UsagesTable } from 'src/utils/api/db';
+import type {
+    CampaignCreatorsTable,
+    CompanyTable,
+    InfluencerSocialProfilesTable,
+    ProfilesTable,
+    UsagesTable,
+} from 'src/utils/api/db';
 import type Stripe from 'stripe';
 import type { Database } from './supabase';
 
@@ -85,6 +91,7 @@ export interface DatabaseWithCustomTypes extends Database {
             usages: UsagesTable;
             campaign_creators: CampaignCreatorsTable;
             profiles: ProfilesTable;
+            influencer_social_profiles: InfluencerSocialProfilesTable;
         };
     };
 }

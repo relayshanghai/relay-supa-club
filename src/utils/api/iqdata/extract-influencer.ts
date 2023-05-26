@@ -1,5 +1,5 @@
 import type { CreatorReport } from 'types';
-import type { InfluencerInsert, InfluencerSocialProfileInsert } from '../db/calls/influencers';
+import type { InfluencerInsert, InfluencerSocialProfileInsert } from '../db';
 
 export const mapIqdataProfileToInfluencer = (
     userProfile: CreatorReport['user_profile'],
