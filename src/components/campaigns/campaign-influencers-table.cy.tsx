@@ -136,7 +136,7 @@ describe('CampaignInfluencersTable', () => {
     it('shows the manage influencer modal when the manage button is clicked', () => {
         testMount(<CampaignInfluencersTable {...makeProps()} />);
         cy.contains('Manage Influencer').should('not.exist');
-        cy.get('tr').get('[data-testid="manage-button"]').click();
+        cy.get('tr').get('[data-testid="manage-button"]').first().click();
         cy.contains('Manage Influencer');
     });
     it('shows the add posts modal when the "Content" button is clicked', () => {
