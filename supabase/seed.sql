@@ -322,7 +322,7 @@ $$;
 CREATE OR REPLACE FUNCTION create_influencer_post(
   _url TEXT,
   _campaign_id UUID,
-  _influencer_id UUID,
+  _influencer_social_profile_id UUID,
   _platform TEXT,
   _type TEXT DEFAULT 'video',
   _is_reusable BOOLEAN DEFAULT false
@@ -334,7 +334,7 @@ BEGIN
     id,
     url,
     campaign_id,
-    influencer_id,
+    influencer_social_profile_id,
     platform,
     type,
     is_reusable,
@@ -346,7 +346,7 @@ BEGIN
     uuid_generate_v4(),
     _url,
     _campaign_id,
-    _influencer_id,
+    _influencer_social_profile_id,
     _platform,
     _type,
     _is_reusable,
@@ -362,7 +362,7 @@ $$;
 
 CREATE OR REPLACE FUNCTION create_posts_performance(
   _campaign_id UUID,
-  _influencer_id UUID,
+  _influencer_social_profile_id UUID,
   _post_id UUID,
   _updated_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
   _likes_total NUMERIC DEFAULT 0,
@@ -378,7 +378,7 @@ BEGIN
   INSERT INTO posts_performance (
     id,
     campaign_id,
-    influencer_id,
+    influencer_social_profile_id,
     post_id,
     created_at,
     updated_at,
@@ -392,7 +392,7 @@ BEGIN
   VALUES (
     uuid_generate_v4(),
     _campaign_id,
-    _influencer_id,
+    _influencer_social_profile_id,
     _post_id,
     now(),
     _updated_at,
@@ -421,6 +421,9 @@ DECLARE
   _influencer_alice RECORD;
   _influencer_bob RECORD;
   _influencer_charlie RECORD;
+  _influencer_social_profile_alice_1 RECORD;
+  _influencer_social_profile_bob_1 RECORD;
+  _influencer_social_profile_bob_2 RECORD;
   _influencer_post_alice_1 RECORD;
   _influencer_post_alice_2 RECORD;
   _influencer_post_alice_3 RECORD;
@@ -482,21 +485,21 @@ BEGIN
     '780 Elm Street',
     'https://example.com/avatar3'
   );  
-  PERFORM create_influencer_social_profile(
+  _influencer_social_profile_alice_1 := create_influencer_social_profile(
     'https://instagram.com/alice1',
     'instagram',
     _influencer_alice.id,
     'iqdata_1',
     'alice1'
   );
-  PERFORM create_influencer_social_profile(
+  _influencer_social_profile_bob_1 := create_influencer_social_profile(
     'https://instagram.com/bob1',
     'instagram',
     _influencer_bob.id,
     'iqdata_2',    
     'bob1'
   );
-  PERFORM create_influencer_social_profile(
+  _influencer_social_profile_bob_2 := create_influencer_social_profile(
     'https://youtube.com/bob2',
     'youtube',
     _influencer_bob.id,
@@ -508,36 +511,36 @@ BEGIN
   _influencer_post_alice_1 := create_influencer_post(
     'https://instagram.com/alice/posts/1',
     _campaign_beauty_for_all.id,
-    _influencer_alice.id,
+    _influencer_social_profile_alice_1.id,
     'instagram'
   );
   _influencer_post_alice_2 := create_influencer_post(
     'https://instagram.com/alice/posts/2',
     _campaign_beauty_for_all.id,
-    _influencer_alice.id,
+    _influencer_social_profile_alice_1.id,
     'instagram'
   );
   _influencer_post_alice_3 := create_influencer_post(
     'https://instagram.com/alice/posts/3',
     _campaign_beauty_for_all.id,
-    _influencer_alice.id,
+    _influencer_social_profile_alice_1.id,
     'instagram'
   );
   _influencer_post_bob_1 := create_influencer_post(
     'https://instagram.com/bob/posts/1',
     _campaign_beauty_for_all.id,
-    _influencer_bob.id,
+    _influencer_social_profile_bob_1.id,
     'instagram'
   );
   _influencer_post_bob_2 := create_influencer_post(
     'https://youtube.com/bob/posts/1',
     _campaign_beauty_for_all.id,
-    _influencer_bob.id,
+    _influencer_social_profile_bob_2.id,
     'youtube'
   );
   PERFORM create_posts_performance(
     _campaign_beauty_for_all.id,
-    _influencer_alice.id,
+    _influencer_social_profile_alice_1.id,
     _influencer_post_alice_1.id,
     now(),
     123,
@@ -549,7 +552,7 @@ BEGIN
   );
   PERFORM create_posts_performance(
     _campaign_beauty_for_all.id,
-    _influencer_alice.id,
+    _influencer_social_profile_alice_1.id,
     _influencer_post_alice_2.id,
     '2023-01-01 00:00:00.000000+00',
     1230,
@@ -561,13 +564,13 @@ BEGIN
   );
   PERFORM create_posts_performance(
     _campaign_beauty_for_all.id,
-    _influencer_alice.id,
+    _influencer_social_profile_alice_1.id,
     _influencer_post_alice_3.id,
     '2023-01-02 00:00:00.000000+00'
   );
   PERFORM create_posts_performance(
     _campaign_beauty_for_all.id,
-    _influencer_bob.id,
+    _influencer_social_profile_bob_1.id,
     _influencer_post_bob_1.id,
     '2023-01-03 00:00:00.000000+00',
     12300,
@@ -579,7 +582,7 @@ BEGIN
   );
   PERFORM create_posts_performance(
     _campaign_beauty_for_all.id,
-    _influencer_bob.id,
+    _influencer_social_profile_bob_2.id,
     _influencer_post_bob_2.id,
     '2023-01-04 00:00:00.000000+00',
     12301,
