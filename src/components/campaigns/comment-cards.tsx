@@ -24,11 +24,11 @@ export default function CommentCards({ currentCreator }: { currentCreator: Campa
             return (
                 <div className="sticky top-0 z-20 mb-2 w-full bg-gray-100 p-1">
                     <div
-                        className=" relative w-fit rounded-lg border border-primary-200 bg-primary-100 py-1 px-4 text-primary-500 hover:cursor-pointer"
+                        className=" relative w-fit rounded-lg border border-primary-200 bg-primary-100 px-4 py-1 text-primary-500 hover:cursor-pointer"
                         onClick={() => setFilterImportant(!filterImportant)}
                     >
                         {t('campaigns.show.importantMessages')}
-                        <div className="absolute -top-1 -right-2 z-40 h-4 w-4 rounded-full bg-red-500 text-center text-white">
+                        <div className="absolute -right-2 -top-1 z-40 h-4 w-4 rounded-full bg-red-500 text-center text-white">
                             {pinnedMessages.length}
                         </div>
                     </div>

@@ -36,7 +36,7 @@ function TableInput({
         <div
             ref={ref}
             onClick={(e) => e.stopPropagation()}
-            className="group absolute top-1/2 -left-4 z-[10] h-14 w-fit min-w-[200px] max-w-[360px] -translate-y-1/2 p-2 will-change-transform"
+            className="group absolute -left-4 top-1/2 z-[10] h-14 w-fit min-w-[200px] max-w-[360px] -translate-y-1/2 p-2 will-change-transform"
         >
             <form className="flex h-full min-h-0 items-center" onSubmit={(e) => handleFormSubmit(e)}>
                 <input

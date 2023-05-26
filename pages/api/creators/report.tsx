@@ -19,12 +19,12 @@ export type CreatorsReportGetResponse = CreatorReport & { createdAt: string };
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'GET') {
         const catchInfluencer = async (data: CreatorReport) => {
-            const [influencer] = await getInfluencer(data)
+            const [influencer] = await getInfluencer(data);
 
             if (influencer === null) {
                 await saveInfluencer(data);
             }
-        }
+        };
 
         try {
             const { platform, creator_id, company_id, user_id } = req.query as CreatorsReportGetQueries;

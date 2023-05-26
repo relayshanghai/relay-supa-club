@@ -28,7 +28,7 @@ function PostImage({ post }: { post: Post }) {
                 href={post?.video || post?.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="absolute right-2 bottom-2 cursor-pointer rounded-md bg-gray-200 px-2 py-1 text-xs text-gray-600 duration-300 hover:bg-gray-300"
+                className="absolute bottom-2 right-2 cursor-pointer rounded-md bg-gray-200 px-2 py-1 text-xs text-gray-600 duration-300 hover:bg-gray-300"
             >
                 {t('creators.show.openLink')}
             </a>

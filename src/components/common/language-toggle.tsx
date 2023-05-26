@@ -31,7 +31,7 @@ export const LanguageToggle = () => {
                 {displayOptions && (
                     <div
                         ref={optionsRef}
-                        className="border-gray absolute z-10 mt-9 mr-20 flex w-28 flex-col overflow-hidden rounded-md border border-opacity-40 bg-white shadow-lg"
+                        className="border-gray absolute z-10 mr-20 mt-9 flex w-28 flex-col overflow-hidden rounded-md border border-opacity-40 bg-white shadow-lg"
                     >
                         <button
                             onClick={() => toggleLanguage('zh')}
