@@ -92,5 +92,48 @@ describe('Add', () => {
         testMount(<ManageInfluencerModal {...props} />);
         cy.contains('button', 'View Contact Info');
     });
+    it.only('Should have input fields for Influencer Fee, Next Action Point, Payment Info, Sales, Payment Amount, Address, Publication Date, and Sample Status. These should be prefilled with the influencer data', () => {
+        const stubbedProps = { ...props };
+        stubbedProps.creator = {
+            ...creator,
+            id: 'test-creator-id',
+            paid_amount_currency: 'USD',
+            rate_cents: 100.3,
+            payment_details: 'Paypal',
+            paid_amount_cents: 200.5,
+            publication_date: '2021-01-01',
+            next_step: 'Send email',
+            address: '123 Main St',
+            sample_status: 'Sent',
+        };
+        testMount(<ManageInfluencerModal {...stubbedProps} />);
+
+        cy.contains('div', 'Influencer Fee (USD)').within(() => {
+            cy.get('input').should('have.value', '100.3').clear().type('2.4').should('have.value', '2.4');
+        });
+
+        cy.contains('div', 'Payment Info').within(() => {
+            cy.get('input').should('have.value', 'Paypal').clear().type('Venmo').should('have.value', 'Venmo');
+        });
+        cy.contains('div', 'Paid Amount (USD)').within(() => {
+            cy.get('input').should('have.value', '200.5').clear().type('2.2').should('have.value', '2.2');
+        });
+
+        cy.contains('div', 'Next Action Point').within(() => {
+            cy.get('input')
+
+                .should('have.value', 'Send email')
+                .clear()
+                .type('Send invoice')
+                .should('have.value', 'Send invoice');
+        });
+        cy.contains('div', 'Address').within(() => {
+            cy.get('input')
+                .should('have.value', '123 Main St')
+                .clear()
+                .type('456 Main St')
+                .should('have.value', '456 Main St');
+        });
+    });
     it.skip('When save is clicked, sends a request to the server to update the influencer');
 });

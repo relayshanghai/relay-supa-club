@@ -41,6 +41,15 @@ const validateNumberInput = (fee: string) => {
     }
 };
 
+const validateDate = (date: string) => {
+    if (!date) {
+        return '';
+    }
+    if (isNaN(Date.parse(date))) {
+        return 'Must be a valid date';
+    }
+};
+
 const inputClass =
     'block w-full max-w-full appearance-none rounded-md border border-transparent bg-white px-3 py-2 placeholder-gray-400 shadow ring-1 ring-gray-300 ring-opacity-5 focus:border-primary-500 focus:outline-none focus:ring-primary-500 sm:max-w-xs sm:text-xs';
 
@@ -58,106 +67,173 @@ const FormSection = ({ creator: initialCreator, onClose, updateCampaignCreator }
         setCreator({ ...creator, status });
     };
 
-    const [influencerFee, setInfluencerFee] = useState(creator.rate_cents?.toLocaleString());
+    const [influencerFee, setInfluencerFee] = useState(creator.rate_cents?.toString());
+    const [paymentDetails, setPaymentDetails] = useState(creator.payment_details || '');
+    const [paymentAmount, setPaymentAmount] = useState(creator.paid_amount_cents?.toString());
+    const [publicationDate, setPublicationDate] = useState(creator.publication_date?.toString() || '');
+    const [nextPoint, setNextPoint] = useState(creator.next_step?.toString() || '');
+    // const [sales, setSales] = useState(creator.sales?.toString() || '');
+    const [address, setAddress] = useState(creator.address || '');
+    const [sampleStatus, setSampleStatus] = useState(creator.sample_status || '');
 
     const submitDisabled = [influencerFee].some((field) => validateNumberInput(field));
 
     return (
         <form
-            className="flex w-full flex-wrap gap-y-3"
+            className="flex w-full flex-col gap-y-6"
             onSubmit={(e) => {
                 e.preventDefault();
                 handleUpdateCampaignInfluencer();
             }}
         >
-            <div className="flex w-full flex-col gap-y-3 px-3 sm:w-1/2">
-                <div className="flex flex-col gap-y-3">
-                    <label htmlFor="show-contact-info" className="text-sm font-bold">
-                        {t('campaigns.manageInfluencer.contactInfo')}
-                    </label>
-                    {showContactInfo ? (
-                        <CreatorContacts {...creator} />
-                    ) : (
-                        <Button
-                            id="show-contact-info"
-                            variant="secondary"
-                            className="w-fit"
-                            onClick={() => setShowContactInfo(true)}
-                        >
-                            {t('campaigns.show.viewContactInfo')}
-                        </Button>
-                    )}
+            <div className="flex w-full flex-wrap gap-y-3">
+                <div className="flex w-full flex-col gap-y-3 px-3 sm:w-1/2">
+                    <div className="flex flex-col gap-y-3">
+                        <label htmlFor="show-contact-info" className="text-sm font-bold">
+                            {t('campaigns.manageInfluencer.contactInfo')}
+                        </label>
+                        {showContactInfo ? (
+                            <CreatorContacts {...creator} />
+                        ) : (
+                            <Button
+                                id="show-contact-info"
+                                variant="secondary"
+                                className="w-fit"
+                                onClick={() => setShowContactInfo(true)}
+                            >
+                                {t('campaigns.show.viewContactInfo')}
+                            </Button>
+                        )}
+                    </div>
+
+                    <div className="flex flex-col gap-y-3">
+                        <label htmlFor="influencer-fee-input" className="text-sm font-bold">
+                            {`${t('campaigns.manageInfluencer.influencerFee')} (${creator.paid_amount_currency})`}
+                        </label>
+                        <input
+                            id="influencer-fee-input"
+                            className={inputClass}
+                            onChange={(e) => setInfluencerFee(e.target.value)}
+                            value={influencerFee}
+                        />
+                        <p className="text-xs text-red-400">{validateNumberInput(influencerFee)}</p>
+                    </div>
+                    <div className="flex flex-col gap-y-3">
+                        <label htmlFor="influencer-payment-info-input" className="text-sm font-bold">
+                            {t('campaigns.show.paymentInformation')}
+                        </label>
+                        <input
+                            id="influencer-payment-info-input"
+                            className={inputClass}
+                            onChange={(e) => setPaymentDetails(e.target.value)}
+                            value={paymentDetails}
+                        />
+                    </div>
+                    <div className="flex flex-col gap-y-3">
+                        <label htmlFor="influencer-paid-amount-input" className="text-sm font-bold">
+                            {`${t('campaigns.show.paidAmount')} (${creator.paid_amount_currency})`}
+                        </label>
+                        <input
+                            id="influencer-paid-amount-input"
+                            className={inputClass}
+                            onChange={(e) => setPaymentAmount(e.target.value)}
+                            value={paymentAmount}
+                        />
+                        <p className="text-xs text-red-400">{validateNumberInput(paymentAmount)}</p>
+                    </div>
+                    <div className="flex flex-col gap-y-3">
+                        <label htmlFor="influencer-publication-date-input" className="text-sm font-bold">
+                            {t('campaigns.show.publicationDate')}
+                        </label>
+                        <input
+                            id="influencer-publication-date-input"
+                            className={inputClass}
+                            onChange={(e) => setPublicationDate(e.target.value)}
+                            value={publicationDate}
+                            type="date"
+                        />
+                        <p className="text-xs text-red-400">{validateDate(publicationDate)}</p>
+                    </div>
                 </div>
-                <div className="flex flex-col gap-y-3">
-                    <label htmlFor="influencer-fee-input" className="text-sm font-bold">
-                        {t('campaigns.manageInfluencer.influencerFee')}
-                    </label>
-                    <input
-                        id="influencer-fee-input"
-                        className={inputClass}
-                        onChange={(e) => setInfluencerFee(e.target.value)}
-                        value={influencerFee}
-                    />
-                    <p className="text-xs text-red-400">{validateNumberInput(influencerFee)}</p>
+                <div className="flex w-full flex-col gap-y-3 px-3 sm:w-1/2">
+                    <div className="flex flex-col gap-y-3">
+                        <label htmlFor="status-dropdown" className="text-sm font-bold">
+                            {t('campaigns.show.creatorStatus')}
+                        </label>
+                        <select
+                            id="status-dropdown"
+                            data-testid="status-dropdown"
+                            onChange={(e) => handleStatusSelect(e.target.value as InfluencerOutreachStatus)}
+                            value={creator.status || ''}
+                            className="w-fit cursor-pointer appearance-none rounded-md border border-gray-200 bg-primary-50 px-4 py-2 text-center text-sm font-semibold text-primary-500 outline-none duration-300 hover:bg-primary-100"
+                        >
+                            {statusOptions.map((tab, index) => (
+                                <option value={tab.value} key={index}>
+                                    {t(`campaigns.show.activities.outreach.${tab.label}`)}
+                                </option>
+                            ))}
+                        </select>
+                        <div className="flex flex-col gap-y-3">
+                            <label htmlFor="influencer-next-action-input" className="text-sm font-bold">
+                                {t('campaigns.show.nextPoint')}
+                            </label>
+                            <input
+                                id="influencer-next-action-input"
+                                className={inputClass}
+                                onChange={(e) => setNextPoint(e.target.value)}
+                                value={nextPoint}
+                            />
+                        </div>
+                        {/* TODO: Sales */}
+                        {/* <div className="flex flex-col gap-y-3">
+                            <label htmlFor="influencer-sales-input" className="text-sm font-bold">
+                                {t('campaigns.show.nextPoint')}
+                            </label>
+                            <input
+                                id="influencer-sales-input"
+                                className={inputClass}
+                                onChange={(e) => setSales(e.target.value)}
+                                value={sales}
+                            />
+                        </div> */}
+                        <div className="flex flex-col gap-y-3">
+                            <label htmlFor="influencer-address-input" className="text-sm font-bold">
+                                {t('campaigns.show.influencerAddress')}
+                            </label>
+                            <input
+                                id="influencer-address-input"
+                                className={inputClass}
+                                onChange={(e) => setAddress(e.target.value)}
+                                value={address}
+                            />
+                        </div>
+                        <div className="flex flex-col gap-y-3">
+                            <label htmlFor="influencer-sample-status-input" className="text-sm font-bold">
+                                {t('campaigns.show.sampleStatus')}
+                            </label>
+                            <input
+                                id="influencer-sample-status-input"
+                                className={inputClass}
+                                onChange={(e) => setSampleStatus(e.target.value)}
+                                value={sampleStatus}
+                            />
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div className="flex w-full flex-col gap-y-3 px-3 sm:w-1/2">
-                <div className="flex flex-col gap-y-3">
-                    <label htmlFor="status-dropdown" className="text-sm font-bold">
-                        {t('campaigns.show.creatorStatus')}
-                    </label>
-                    <select
-                        id="status-dropdown"
-                        data-testid="status-dropdown"
-                        onChange={(e) => handleStatusSelect(e.target.value as InfluencerOutreachStatus)}
-                        value={creator.status || ''}
-                        className="-ml-1 mr-2.5 w-fit cursor-pointer appearance-none rounded-md border border-gray-200 bg-primary-50 px-4 py-2 text-center text-xs font-semibold text-primary-500 outline-none duration-300 hover:bg-primary-100"
-                    >
-                        {statusOptions.map((tab, index) => (
-                            <option value={tab.value} key={index}>
-                                {t(`campaigns.show.activities.outreach.${tab.label}`)}
-                            </option>
-                        ))}
-                    </select>
-                </div>
-                <div className="flex flex-col gap-y-3">
-                    <label htmlFor="influencer-fee-input" className="text-sm font-bold">
-                        {t('campaigns.manageInfluencer.sales')}
-                    </label>
-                    <input
-                        id="influencer-fee-input"
-                        className={inputClass}
-                        onChange={(e) => setInfluencerFee(e.target.value)}
-                        value={influencerFee}
-                    />
-                    <p className="text-xs text-red-400">{validateNumberInput(influencerFee)}</p>
-                </div>
-                <div className="flex flex-col gap-y-3">
-                    <label htmlFor="influencer-fee-input" className="text-sm font-bold">
-                        {t('campaigns.manageInfluencer.influencerFee')}
-                    </label>
-                    <input
-                        id="influencer-fee-input"
-                        className={inputClass}
-                        onChange={(e) => setInfluencerFee(e.target.value)}
-                        value={influencerFee}
-                    />
-                    <p className="text-xs text-red-400">{validateNumberInput(influencerFee)}</p>
-                </div>
-                <div className="ml-auto flex gap-x-3">
-                    <Button
-                        variant="secondary"
-                        onClick={(e) => {
-                            e.preventDefault();
-                            onClose(false);
-                        }}
-                    >
-                        {t('campaigns.manageInfluencer.cancel')}
-                    </Button>
-                    <Button disabled={submitDisabled} type="submit">
-                        {t('campaigns.manageInfluencer.save')}
-                    </Button>
-                </div>
+            <div className="ml-auto flex gap-x-3">
+                <Button
+                    variant="secondary"
+                    onClick={(e) => {
+                        e.preventDefault();
+                        onClose(false);
+                    }}
+                >
+                    {t('campaigns.manageInfluencer.cancel')}
+                </Button>
+                <Button disabled={submitDisabled} type="submit">
+                    {t('campaigns.manageInfluencer.save')}
+                </Button>
             </div>
         </form>
     );

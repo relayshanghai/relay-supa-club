@@ -45,6 +45,14 @@ const creator: CampaignCreatorDB = {
     ...blankCreatorArgs,
     fullname: 'T-Series',
     username: 'tseries',
+    paid_amount_currency: 'USD',
+    rate_cents: 100.3,
+    payment_details: 'Paypal',
+    paid_amount_cents: 200.5,
+    publication_date: '2021-01-01',
+    next_step: 'Send email',
+    address: '123 Main St',
+    sample_status: 'Sent',
 };
 
 const props: ManageInfluencerModalProps = {
