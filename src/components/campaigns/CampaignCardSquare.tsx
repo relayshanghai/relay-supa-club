@@ -8,12 +8,23 @@ import { useTranslation } from 'react-i18next';
 
 import { useCompany } from 'src/hooks/use-company';
 import { useClientDb } from 'src/utils/client-db/use-client-db';
+import { useCampaignCreators } from 'src/hooks/use-campaign-creators';
 
 export default function CampaignCardSquare({ campaign }: { campaign: CampaignDB }) {
     const { t } = useTranslation();
     const [coverImageUrl, setCoverImageUrl] = useState<string | null>(null);
     const { company } = useCompany();
     const { supabaseClient } = useClientDb();
+
+    const { campaignCreators } = useCampaignCreators({
+        campaign,
+    });
+
+    // get the number of creators in each status
+    const creatorsCount = (status: string) => {
+        return campaignCreators?.filter((c) => c.status === status).length ?? 0;
+    };
+
     useEffect(() => {
         const getFiles = async () => {
             const getFilePath = (filename: string) => {
@@ -104,6 +115,15 @@ export default function CampaignCardSquare({ campaign }: { campaign: CampaignDB 
                                     ))
                             }
                         </div>
+                    </div>
+                    <div className="text-xs text-gray-400">
+                        {creatorsCount('to contact') > 0 && <p>To Contact: {creatorsCount('to contact')}</p>}
+
+                        {creatorsCount('contacted') > 0 && <p>Contacted: {creatorsCount('contacted')}</p>}
+
+                        {creatorsCount('confirmed') > 0 && <p>Confirmed: {creatorsCount('confirmed')}</p>}
+
+                        {creatorsCount('posted') > 0 && <p>Posted: {creatorsCount('posted')}</p>}
                     </div>
                     {/* -- Campaign Card Icons -- */}
                     <div className="absolute bottom-2 right-0 flex items-center">
