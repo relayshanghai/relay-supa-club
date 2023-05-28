@@ -7,9 +7,9 @@ import Link from 'next/link';
 import { toast } from 'react-hot-toast';
 import type { CampaignCreatorDB, CampaignDB } from 'src/utils/api/db';
 import Fuse from 'fuse.js';
-import InfluencerRow from './influencer-row';
 import { MoveInfluencerModal } from '../modal-move-influencer';
 import { useCampaignCreators } from 'src/hooks/use-campaign-creators';
+import InfluencerRow from './influencer-row';
 
 export interface CreatorsOutreachProps {
     currentCampaign: CampaignDB;
@@ -17,6 +17,11 @@ export interface CreatorsOutreachProps {
     setCurrentCreator: (value: CampaignCreatorDB) => void;
     campaigns?: CampaignDB[];
     currentCreator?: CampaignCreatorDB | null;
+}
+export interface TableColumns {
+    header: string;
+    type: 'account' | 'contact' | 'select' | 'inputText' | 'inputNumber' | 'modal';
+    name: string;
 }
 
 export default function CampaignInfluencersTable({
@@ -43,20 +48,55 @@ export default function CampaignInfluencersTable({
         useCampaignCreators({
             campaign: currentCampaign,
         });
-    const columnLabels = [
-        'account',
-        'contact',
-        'creatorStatus',
-        // 'addedBy',
-        'nextPoint',
-        'publicationDate',
-        'paymentAmount',
-        'paidAmount',
-        'paymentInformation',
-        'paymentStatus',
-        'influencerAddress',
-        'sampleStatus',
+
+    const tabs = [
+        { label: 'toContact', value: 'to contact' },
+        { label: 'contacted', value: 'contacted' },
+        { label: 'inProgress', value: 'in progress' },
+        { label: 'confirmed', value: 'confirmed' },
+        { label: 'posted', value: 'posted' },
+        { label: 'rejected', value: 'rejected' },
+        { label: 'ignored', value: 'ignored' },
     ];
+
+    const tableColumns: TableColumns[] = [
+        { header: 'account', type: 'account', name: 'account' },
+        { header: 'contact', type: 'contact', name: 'contact' },
+        { header: 'creatorStatus', type: 'select', name: 'status' },
+        { header: 'nextPoint', type: 'inputText', name: 'next_point' },
+        { header: 'influencerFee', type: 'inputNumber', name: 'paid_amount_cents' }, // In the Figma design feedback, Sophia changed Payment Amount to Influencer Fee as the column name.
+        { header: 'links', type: 'modal', name: 'contents' },
+    ];
+
+    function getVisibleColumns(tabStatus: string | string[]) {
+        let filterNames: TableColumns['header'][] = [];
+        switch (tabStatus) {
+            case 'to contact':
+                filterNames = ['account', 'contact', 'creatorStatus'];
+                break;
+            case 'contacted':
+                filterNames = ['account', 'creatorStatus'];
+                break;
+            case 'in progress':
+                filterNames = ['account', 'creatorStatus', 'nextPoint', 'influencerFee'];
+                break;
+            case 'confirmed':
+                filterNames = ['account', 'creatorStatus', 'nextPoint', 'influencerFee'];
+                break;
+            case 'posted':
+                filterNames = ['account', 'creatorStatus', 'nextPoint', 'influencerFee', 'links'];
+                break;
+            case 'rejected':
+                filterNames = ['account', 'creatorStatus'];
+                break;
+            case 'ignored':
+                filterNames = ['account', 'creatorStatus'];
+                break;
+        }
+        return tableColumns.filter((column) => filterNames.includes(column.header));
+    }
+
+    const visibleColumns: TableColumns[] = getVisibleColumns(tabStatus);
 
     useEffect(() => {
         refreshCampaignCreators();
@@ -99,7 +139,6 @@ export default function CampaignInfluencersTable({
         creator: CampaignCreatorDB,
         objKey: string,
     ) => {
-        e.stopPropagation();
         creator = { ...creator, [objKey]: e.target.value };
         await updateCreatorInCampaign(creator);
         refreshCampaignCreators();
@@ -107,12 +146,10 @@ export default function CampaignInfluencersTable({
     };
 
     const setInlineEdit = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, index: number, key: string) => {
-        e.stopPropagation();
         setToEdit({ index, key });
     };
 
     const openNotes = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, creator: CampaignCreatorDB) => {
-        e.stopPropagation();
         setCurrentCreator(creator);
         setShowNotesModal(true);
     };
@@ -121,7 +158,6 @@ export default function CampaignInfluencersTable({
         e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
         creator: CampaignCreatorDB,
     ) => {
-        e.stopPropagation();
         setCurrentCreator(creator);
         setShowMoveInfluencerModal(true);
     };
@@ -130,7 +166,6 @@ export default function CampaignInfluencersTable({
         e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
         creator: CampaignCreatorDB,
     ) => {
-        e.stopPropagation();
         const c = confirm(t('campaigns.modal.deleteConfirmation') as string);
         if (!c) return;
         await deleteCreatorInCampaign({ creatorId: creator.id, campaignId: currentCampaign.id });
@@ -151,16 +186,6 @@ export default function CampaignInfluencersTable({
     };
 
     const editingModeTrue = (index: number, key: string) => index === toEdit?.index && key === toEdit?.key;
-
-    const tabs = [
-        { label: 'toContact', value: 'to contact' },
-        { label: 'contacted', value: 'contacted' },
-        { label: 'inProgress', value: 'in progress' },
-        { label: 'confirmed', value: 'confirmed' },
-        { label: 'posted', value: 'posted' },
-        { label: 'rejected', value: 'rejected' },
-        { label: 'ignored', value: 'ignored' },
-    ];
 
     return (
         <div>
@@ -221,31 +246,26 @@ export default function CampaignInfluencersTable({
                 />
             </div>
             {/* -- Outreach Table -- */}
-            <div className="min-h-screen overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200 overflow-y-visible">
-                    <thead className="sticky top-0 bg-white">
+            <div className="min-h-screen w-full overflow-auto">
+                <table className="w-full table-auto divide-y divide-gray-200 overflow-y-visible bg-white">
+                    <thead>
                         <tr>
-                            {columnLabels.map((label, index) => (
+                            {visibleColumns.map((column, index) => (
                                 <th
-                                    key={index}
-                                    scope="col"
-                                    className={`sticky left-0 min-w-fit bg-white px-6 py-3 text-left text-xs font-normal tracking-wider text-gray-500 ${
-                                        index === 0 ? 'sticky left-0 z-10' : ''
+                                    key={column.header}
+                                    className={`  bg-white px-6 py-3 text-left text-xs font-normal tracking-wider text-gray-500 ${
+                                        index === 0 ? ' sticky left-0 z-10' : index === -1 ? ' sticky right-0 z-20' : ''
                                     }`}
                                 >
-                                    {t(`campaigns.show.${label}`)}
+                                    {t(`campaigns.show.${column.header}`)}
                                 </th>
                             ))}
-                            {/*-- placeholder table header space for notes and delete section --*/}
-                            <th className=" sticky right-0 z-30 min-w-[280px] max-w-[280px] bg-white px-3 py-3 text-left text-xs  font-normal tracking-wider text-gray-500">
-                                {''}
-                            </th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200 bg-white">
                         {influencersList.length === 0 && (
                             <tr>
-                                <td colSpan={columnLabels.length + 1} className="px-6 py-4">
+                                <td colSpan={tableColumns.length + 1} className="px-6 py-4">
                                     <div className="flex justify-center">
                                         <p className="text-sm text-gray-500">
                                             {t('campaigns.show.activities.outreach.noInfluencers')}
@@ -254,12 +274,10 @@ export default function CampaignInfluencersTable({
                                 </td>
                             </tr>
                         )}
-
                         {influencersList.map((creator, index) => {
                             if (creator.status === tabStatus)
                                 return (
                                     <InfluencerRow
-                                        key={index}
                                         creator={creator}
                                         index={index}
                                         updateCampaignCreator={updateCampaignCreator}
@@ -274,6 +292,8 @@ export default function CampaignInfluencersTable({
                                         openMoveInfluencerModal={openMoveInfluencerModal}
                                         showMoveInfluencerModal={showMoveInfluencerModal}
                                         setShowMoveInfluencerModal={setShowMoveInfluencerModal}
+                                        visibleColumns={visibleColumns}
+                                        tabStatus={tabStatus}
                                     />
                                 );
                         })}
