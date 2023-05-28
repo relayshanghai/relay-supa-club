@@ -1,7 +1,9 @@
 import { defineConfig } from 'vitest/config';
 import { resolve } from 'path';
-
+import dotenv from 'dotenv';
 import react from '@vitejs/plugin-react';
+
+dotenv.config({ path: './.env.local' });
 
 export default defineConfig({
     plugins: [react()], // need this to be able to test hooks which are jsx/tsx files
