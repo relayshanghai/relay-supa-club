@@ -27,6 +27,7 @@ export type PostInfo = {
 // Instagram https://www.instagram.com/p/Cr3aeZ7NXW3/
 // YouTube https://www.youtube.com/watch?v=UzL-0vZ5-wk
 // YouTube shortened https://youtu.be/UzL-0vZ5-wk
+// YouTube Shorts https://www.youtube.com/shorts/QellRKinR0o
 // TikTok https://www.tiktok.com/@graceofearth/video/7230816093755936043?_r=1&_t=8c9DNKVO2Tm&social_sharing=v2
 
 // regex must be a valid url starting with http:///https://
@@ -51,17 +52,17 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
     const handle = creator.username || creator.fullname || '';
     const [urls, setUrls] = useState<string[]>(['']);
     const [addedUrls, setAddedUrls] = useState<PostInfo[]>([]);
-    // const [resetForm, setResetForm] = useState(0);
+    const [resetForm, setResetForm] = useState(0);
     const [submitting, setSubmitting] = useState(false);
     const getAddedUrls = useCallback(async () => {
-        // TODO https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/309
         const urls = await nextFetch<PostInfo[]>(`influencer/${creator.id}/posts`);
         setAddedUrls(urls);
     }, [creator.id]);
 
     useEffect(() => {
         getAddedUrls();
-    }, [getAddedUrls]);
+        setUrls(['']);
+    }, [getAddedUrls, props.visible]);
 
     const handleAddAnotherPost = () => {
         setUrls((prev) => {
@@ -77,6 +78,10 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
             return t('campaigns.post.invalidUrl');
         }
         if (_urls.filter((u) => u === url).length > 1) {
+            return t('campaigns.post.duplicateUrl');
+        }
+        //check for duplicates in the already added ones as well
+        if (addedUrls.filter((u) => u.url === url).length > 0) {
             return t('campaigns.post.duplicateUrl');
         }
         return '';
@@ -128,12 +133,11 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
         }
         // TODO: Fix this indexing issue. It really could cause a bug if a url gets deleted from the list but there are two left, it might not be the ones react ends up rendering.
         // Because we don't have a unique key for each of the input components, if we remove an input, React might still render an old input, therefore we need to reset the form to force React to re-render all the inputs
-        // setResetForm((prev) => prev + 1); // this doesn't seem to be working as expected, instead all the errored urls end up blank.
+        setResetForm((prev) => prev + 1); // this doesn't seem to be working as expected, instead all the errored urls end up blank.
         setSubmitting(false);
     };
 
     const handleRemovePost = async (postId: string) => {
-        // Todo https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/309
         await nextFetch<PostInfo[]>(`influencer/posts/${postId}`, { method: 'DELETE' });
         setAddedUrls(() => addedUrls.filter((url) => url.id !== postId));
     };
@@ -177,7 +181,7 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
                         e.preventDefault();
                         handleSubmit(urls);
                     }}
-                    // key={resetForm}
+                    key={resetForm}
                 >
                     <h3>{t('campaigns.post.addPostUrl')}</h3>
                     {urls.map((url, index) => {
