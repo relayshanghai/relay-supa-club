@@ -305,6 +305,7 @@ export default function CampaignInfluencersTable({
             </div>
             {currentCampaign && currentCreator && (
                 <AddPostModal
+                    key={currentCreator.id}
                     creator={currentCreator}
                     visible={showAddPostModal}
                     onClose={() => setShowAddPostModal(false)}
