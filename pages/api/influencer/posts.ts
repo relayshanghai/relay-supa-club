@@ -82,7 +82,7 @@ const postHandler: NextApiHandler = async (req: NextApiRequest, res: NextApiResp
     };
 
     const body = req.body as InfluencerPostRequestBody;
-    // console.log({ body });
+
     for (const url of body.urls) {
         try {
             const result = await processURL(url, body.campaign_id, body.creator_id);
