@@ -14,7 +14,7 @@ export type InfluencerPostRequestBody = {
     creator_id: string;
 };
 
-type PostInfo = {
+export type PostInfo = {
     title: string;
     postedDate: string;
     id: string;

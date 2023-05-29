@@ -42,7 +42,7 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
     const [submitting, setSubmitting] = useState(false);
     const getAddedUrls = useCallback(async () => {
         // TODO https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/309
-        const urls = await nextFetch<PostInfo[]>(`posts/${creator.id}`);
+        const urls = await nextFetch<PostInfo[]>(`influencer/${creator.id}/posts`);
         setAddedUrls(urls);
     }, [creator.id]);
 
@@ -119,8 +119,10 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
         setSubmitting(false);
     };
 
-    const handleRemovePost = async (_postId: string) => {
+    const handleRemovePost = async (postId: string) => {
         // Todo https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/309
+        await nextFetch<PostInfo[]>(`influencer/posts/${postId}`, { method: 'DELETE' });
+        setAddedUrls(() => addedUrls.filter((url) => url.id !== postId));
     };
 
     const hasError = urls.some((url) => validateUrl(url, urls) !== '');
