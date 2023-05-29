@@ -1,17 +1,16 @@
 export const extractPlatformFromURL = (url: string): string | null => {
     const hostname = new URL(url).hostname.toLowerCase();
 
-    // @todo refactor to use regex
-    const platforms = {
-        youtube: ['www.youtube.com', 'youtube.com', 'youtu.be'],
-        instagram: ['www.instagram.com', 'instagram.com'],
-        tiktok: ['vt.tiktok.com', 'www.tiktok.com', 'tiktok.com', 'vm.tiktok.com'],
-    };
+    const youtubeRegex = /^(www\.)?youtu(\.be|be\.com)$/;
+    const instagramRegex = /^(www\.)?instagram\.com$/;
+    const tiktokRegex = /^(www\.)?(vt\.|vm\.)?tiktok\.com$/;
 
-    for (const [platform, hostnames] of Object.entries(platforms)) {
-        if (hostnames.indexOf(hostname) !== -1) {
-            return platform;
-        }
+    if (youtubeRegex.test(hostname)) {
+        return 'youtube';
+    } else if (instagramRegex.test(hostname)) {
+        return 'instagram';
+    } else if (tiktokRegex.test(hostname)) {
+        return 'tiktok';
     }
 
     return null;
