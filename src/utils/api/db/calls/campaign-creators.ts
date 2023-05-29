@@ -14,7 +14,7 @@ export const getCampaignCreator = (db: SupabaseClient) => async (id: string) => 
 };
 
 export const updateCampaignCreator = (db: SupabaseClient) => async (id: string, data: CampaignCreatorUpdate) => {
-    const response = await db.from('campaign_creators').update(data).eq('id', id).single();
+    const response = await db.from('campaign_creators').update(data).eq('id', id).select().single();
 
     if (response.error) {
         throw response.error;
