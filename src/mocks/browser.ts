@@ -44,6 +44,11 @@ const frontendHandlers = [
     rest.get(`${SUPABASE_URL_CYPRESS}/storage/v1/object/list/images`, (_req, res, ctx) => {
         return res(ctx.json([]));
     }),
+    rest.get(`${APP_URL_CYPRESS}/api/posts/*`, (_req, res, ctx) => {
+        // TODO https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/309
+        // Replace with real endpoint (or supabase call)
+        return res(ctx.json([]));
+    }),
 ];
 /** for use in the browser */
 export const worker = setupWorker(...frontendHandlers);
