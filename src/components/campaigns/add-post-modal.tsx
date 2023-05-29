@@ -79,6 +79,7 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
             const body: InfluencerPostRequestBody = {
                 campaign_id: creator.campaign_id,
                 urls: _urls,
+                creator_id: creator.id,
             };
             const res = await nextFetch<InfluencerPostResponse>('influencer/posts', {
                 method: 'POST',

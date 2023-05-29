@@ -1,6 +1,7 @@
 import type { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { ApiHandler } from 'src/utils/api-handler';
+import { updateCampaignCreator } from 'src/utils/api/db/calls/campaign-creators';
 import { serverLogger } from 'src/utils/logger-server';
 import { saveInfluencerPost } from 'src/utils/save-influencer-post';
 import { savePostPerformance } from 'src/utils/save-post-performance';
@@ -10,6 +11,7 @@ import { db } from 'src/utils/supabase-client';
 export type InfluencerPostRequestBody = {
     campaign_id: string;
     urls: string[];
+    creator_id: string;
 };
 
 type PostInfo = {
@@ -29,11 +31,18 @@ export type InfluencerPostResponse =
           error: string;
       };
 
-const processURL = async (url: string, campaign_id: string) => {
+const processURL = async (url: string, campaign_id: string, creator_id: string) => {
     const scrape = await scrapeInfluencerPost(url);
 
     const _savePostPerformance = db<typeof savePostPerformance>(savePostPerformance);
     const _saveInfluencerPost = db<typeof saveInfluencerPost>(saveInfluencerPost);
+    const _updateCampaignCreator = db<typeof updateCampaignCreator>(updateCampaignCreator);
+
+    // @note: link campaign_creators to influencer_social_profiles
+    //        https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/416
+    const creator = await _updateCampaignCreator(creator_id, {
+        influencer_social_profiles_id: scrape.influencer.id,
+    });
 
     const post = await _saveInfluencerPost({
         type: '',
@@ -55,7 +64,7 @@ const processURL = async (url: string, campaign_id: string) => {
         views_total: scrape.viewCount,
     });
 
-    return { post, performance };
+    return { post, performance, creator };
 };
 
 const postHandler: NextApiHandler = async (req: NextApiRequest, res: NextApiResponse<InfluencerPostResponse>) => {
@@ -68,8 +77,8 @@ const postHandler: NextApiHandler = async (req: NextApiRequest, res: NextApiResp
     // console.log({ body });
     for (const url of body.urls) {
         try {
-            const result = await processURL(url, body.campaign_id);
-            // console.log({ result });
+            const result = await processURL(url, body.campaign_id, body.creator_id);
+
             data.successful.push({
                 title: result.post.title || '',
                 postedDate: result.post.posted_date || '',
