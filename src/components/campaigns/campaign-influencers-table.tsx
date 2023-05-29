@@ -107,7 +107,12 @@ export default function CampaignInfluencersTable({
 
     useEffect(() => {
         if (campaignCreators) {
-            setInfluencersList(campaignCreators);
+            setInfluencersList(
+                campaignCreators.sort((a: CampaignCreatorDB, b: CampaignCreatorDB) => {
+                    if (!a.updated_at || !b.updated_at) return 0;
+                    return a.updated_at > b.updated_at ? 1 : -1;
+                }),
+            );
         }
     }, [campaignCreators]);
 
