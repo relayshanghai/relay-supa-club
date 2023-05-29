@@ -56,11 +56,11 @@ const props: AddPostModalProps = {
     },
 };
 
-const youtubeLink = 'https://www.youtube.com/channel/UClf-gnZdtIffbPPhOq3CelA';
-const youtubeLink2 = 'https://youtu.be/channel/UClf-gnZdtIffbPPhOq3CelA';
-const instagramLink = 'https://www.instagram.com/relay.club/?hl=en';
-const tiktokLink = 'https://vm.tiktok.com/ZSd2GkJrM/';
-
+const youtubeLink = 'https://www.youtube.com/watch?v=UzL-0vZ5-wk';
+const youtubeLink2 = 'https://youtu.be/UzL-0vZ5-wk';
+const instagramLink = 'https://www.instagram.com/p/Cr3aeZ7NXW3/';
+const tiktokLink =
+    'https://www.tiktok.com/@graceofearth/video/7230816093755936043?_r=1&_t=8c9DNKVO2Tm&social_sharing=v2';
 describe('AddPostModal', () => {
     before(async () => {
         await worker.start();

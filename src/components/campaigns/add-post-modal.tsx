@@ -28,7 +28,6 @@ export type PostInfo = {
 // Instagram https://www.instagram.com/p/Cr3aeZ7NXW3/
 // YouTube https://www.youtube.com/watch?v=UzL-0vZ5-wk
 // YouTube shortened https://youtu.be/UzL-0vZ5-wk
-// YouTube Shorts https://www.youtube.com/shorts/QellRKinR0o
 // TikTok https://www.tiktok.com/@graceofearth/video/7230816093755936043?_r=1&_t=8c9DNKVO2Tm&social_sharing=v2
 
 // regex must be a valid url starting with http:///https://
