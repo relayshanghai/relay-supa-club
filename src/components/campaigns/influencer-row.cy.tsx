@@ -108,9 +108,6 @@ describe('<InfluencerRow />', () => {
         const props: InfluencerRowProps = {
             index: 1,
             ...makeStubs(),
-            inputRef: {
-                current: null,
-            } as any,
             creator,
             tabs,
             showMoveInfluencerModal: false,
@@ -127,9 +124,6 @@ describe('<InfluencerRow />', () => {
         const props: InfluencerRowProps = {
             index: 1,
             ...makeStubs(),
-            inputRef: {
-                current: null,
-            } as any,
             creator,
             tabs,
             showMoveInfluencerModal: false,
@@ -151,9 +145,6 @@ describe('<InfluencerRow />', () => {
         const props: InfluencerRowProps = {
             index: 1,
             ...makeStubs(),
-            inputRef: {
-                current: null,
-            } as any,
             creator,
             tabs,
             showMoveInfluencerModal: false,
