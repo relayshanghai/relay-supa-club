@@ -29,17 +29,20 @@ export type PostInfo = {
 // YouTube https://www.youtube.com/watch?v=UzL-0vZ5-wk
 // YouTube shortened https://youtu.be/UzL-0vZ5-wk
 // TikTok https://www.tiktok.com/@graceofearth/video/7230816093755936043?_r=1&_t=8c9DNKVO2Tm&social_sharing=v2
+// TikTok M https://vm.tiktok.com/@graceofearth/video/7230816093755936043?_r=1&_t=8c9DNKVO2Tm&social_sharing=v2
+// TikTok T https://vt.tiktok.com/@graceofearth/video/7230816093755936043?_r=1&_t=8c9DNKVO2Tm&social_sharing=v2
 
 // regex must be a valid url starting with http:///https://
 // must include instagram.com, youtube.com, youtu.be, or tiktok.com
 function isValidUrl(url: string): boolean {
     let regex: RegExp;
-    if (url.includes('instagram.com')) {
+    if (url.includes('instagram')) {
         regex = /^(https?:\/\/)(www\.)?instagram\.com\/p\/[\w\-]+\/?/;
-    } else if (url.includes('youtube.com') || url.includes('youtu.be')) {
+    } else if (url.includes('youtube') || url.includes('youtu.be')) {
         regex = /^(https?:\/\/)(www\.)?(youtu\.be\/[\w\-]+|youtube\.com\/watch\?v=[\w\-]+)\/?/;
-    } else if (url.includes('tiktok.com') || url.includes('vm.tiktok.com')) {
-        regex = /^(https?:\/\/)(www\.)?(tiktok\.com|vm\.tiktok\.com)\/(@[\w\-]+\/video\/[\w\-]+\?[\w=&-]+)$/;
+    } else if (url.includes('tiktok')) {
+        regex =
+            /^(https?:\/\/)(www\.)?(tiktok\.com|vm\.tiktok\.com|vt\.tiktok\.com)\/(@[\w\-]+\/video\/[\w\-]+\?[\w=&-]+)$/;
     } else if (url.includes('twitter.com')) {
         regex = /^(https?:\/\/)(www\.)?twitter\.com\/[\w]+\/status\/[\d]+\/?/;
     } else {
@@ -139,6 +142,7 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
             toast.success(t('campaigns.post.removedPost'));
             await nextFetch<PostInfo[]>(`influencer/posts/${postId}`, { method: 'DELETE' });
         } catch (error) {
+            clientLogger(error, 'error');
             toast.error(t('campaigns.post.errorRemovingPost'));
         }
         setAddedUrls(() => addedUrls.filter((url) => url.id !== postId));

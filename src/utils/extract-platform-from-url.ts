@@ -5,7 +5,7 @@ export const extractPlatformFromURL = (url: string): string | null => {
     const platforms = {
         youtube: ['www.youtube.com', 'youtube.com', 'youtu.be'],
         instagram: ['www.instagram.com', 'instagram.com'],
-        tiktok: ['vt.tiktok.com', 'www.tiktok.com', 'tiktok.com'],
+        tiktok: ['vt.tiktok.com', 'www.tiktok.com', 'tiktok.com', 'vm.tiktok.com'],
     };
 
     for (const [platform, hostnames] of Object.entries(platforms)) {

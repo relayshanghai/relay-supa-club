@@ -61,6 +61,9 @@ const youtubeLink2 = 'https://youtu.be/UzL-0vZ5-wk';
 const instagramLink = 'https://www.instagram.com/p/Cr3aeZ7NXW3/';
 const tiktokLink =
     'https://www.tiktok.com/@graceofearth/video/7230816093755936043?_r=1&_t=8c9DNKVO2Tm&social_sharing=v2';
+const tiktokM = 'https://vm.tiktok.com/@graceofearth/video/7230816093755936043?_r=1&_t=8c9DNKVO2Tm&social_sharing=v2';
+const tiktokT = 'https://vt.tiktok.com/@graceofearth/video/7230816093755936043?_r=1&_t=8c9DNKVO2Tm&social_sharing=v2';
+
 describe('AddPostModal', () => {
     before(async () => {
         await worker.start();
@@ -82,6 +85,10 @@ describe('AddPostModal', () => {
         cy.get('input').clear().type(instagramLink);
         cy.get('button').contains('Submit').should('not.be.disabled');
         cy.get('input').clear().type(tiktokLink);
+        cy.get('button').contains('Submit').should('not.be.disabled');
+        cy.get('input').clear().type(tiktokM);
+        cy.get('button').contains('Submit').should('not.be.disabled');
+        cy.get('input').clear().type(tiktokT);
         cy.get('button').contains('Submit').should('not.be.disabled');
 
         cy.get('input').clear().type('https://www.elsewhere.com/asdf');
