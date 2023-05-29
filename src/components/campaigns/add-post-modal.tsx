@@ -189,7 +189,7 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
                                     className="block w-full appearance-none rounded-md border border-transparent bg-white px-3 py-2 placeholder-gray-400 shadow ring-1 ring-gray-300 ring-opacity-5 focus:border-primary-500 focus:outline-none focus:ring-primary-500 sm:text-xs"
                                     onChange={(e) => {
                                         const newUrls = [...urls];
-                                        newUrls[index] = e.target.value;
+                                        newUrls[index] = e.target.value.trim();
                                         setUrls(newUrls);
                                     }}
                                 />
