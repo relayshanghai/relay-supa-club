@@ -41,6 +41,9 @@ const frontendHandlers = [
     rest.post(`${APP_URL_CYPRESS}/api/influencer-search/locations`, async (req, res, ctx) => {
         return res(ctx.json([]));
     }),
+    rest.get(`${SUPABASE_URL_CYPRESS}/storage/v1/object/list/images`, (_req, res, ctx) => {
+        return res(ctx.json([]));
+    }),
 ];
 /** for use in the browser */
 export const worker = setupWorker(...frontendHandlers);
