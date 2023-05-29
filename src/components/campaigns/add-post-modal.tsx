@@ -26,13 +26,26 @@ export type PostInfo = {
 // expected url patterns:
 // Instagram https://www.instagram.com/p/Cr3aeZ7NXW3/
 // YouTube https://www.youtube.com/watch?v=UzL-0vZ5-wk
+// YouTube shortened https://youtu.be/UzL-0vZ5-wk
 // TikTok https://www.tiktok.com/@graceofearth/video/7230816093755936043?_r=1&_t=8c9DNKVO2Tm&social_sharing=v2
 
 // regex must be a valid url starting with http:///https://
 // must include instagram.com, youtube.com, youtu.be, or tiktok.com
-const urlRegex =
-    /^(https?:\/\/)(www\.)?(instagram\.com|youtube\.com|youtu\.be|tiktok\.com|vm.tiktok.com)(\/[\w\-]{3,})+/;
-
+function isValidUrl(url: string): boolean {
+    let regex: RegExp;
+    if (url.includes('instagram.com')) {
+        regex = /^(https?:\/\/)(www\.)?instagram\.com\/p\/[\w\-]+\/?/;
+    } else if (url.includes('youtube.com') || url.includes('youtu.be')) {
+        regex = /^(https?:\/\/)(www\.)?(youtu\.be\/[\w\-]+|youtube\.com\/watch\?v=[\w\-]+)\/?/;
+    } else if (url.includes('tiktok.com') || url.includes('vm.tiktok.com')) {
+        regex = /^(https?:\/\/)(www\.)?(tiktok\.com|vm\.tiktok\.com)\/(@[\w\-]+\/video\/[\w\-]+\?[\w=&-]+)$/;
+    } else if (url.includes('twitter.com')) {
+        regex = /^(https?:\/\/)(www\.)?twitter\.com\/[\w]+\/status\/[\d]+\/?/;
+    } else {
+        return false;
+    }
+    return regex.test(url);
+}
 export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
     const { t, i18n } = useTranslation();
     const handle = creator.username || creator.fullname || '';
@@ -60,7 +73,7 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
         if (!url) {
             return '';
         }
-        if (!urlRegex.test(url)) {
+        if (!isValidUrl(url)) {
             return t('campaigns.post.invalidUrl');
         }
         if (_urls.filter((u) => u === url).length > 1) {
@@ -210,8 +223,13 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
                         <div className="px-3">
                             {addedUrls.map((post) => (
                                 <div key={post.id} className="my-3 flex justify-between">
-                                    <Link className="gap-x-3" href={post.url} target="_blank" rel="noopener noreferrer">
-                                        <h4 className="text-sm">{post.title}</h4>
+                                    <Link
+                                        className="w-fit gap-x-3"
+                                        href={post.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        <h4 className="text-sm line-clamp-1">{post.title}</h4>
                                         <p className="text-sm font-light text-gray-400">
                                             {new Intl.DateTimeFormat(i18n.language, {
                                                 weekday: 'short',
