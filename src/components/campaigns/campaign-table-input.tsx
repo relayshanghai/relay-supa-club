@@ -1,25 +1,26 @@
-import type { MutableRefObject } from 'react';
+import type { ForwardedRef } from 'react';
 import { forwardRef, useEffect, useState } from 'react';
 import type { CampaignCreatorDB } from 'src/utils/api/db';
 import { Confirm, Cross } from '../icons';
 
-function TableInput({
-    objKey,
-    value,
-    type,
-    closeModal,
-    creator,
-    updateCampaignCreator,
-    ref,
-}: {
-    objKey: string;
-    value: string;
-    type: string;
-    closeModal: () => void;
-    updateCampaignCreator: (creator: CampaignCreatorDB) => void;
-    creator: CampaignCreatorDB;
-    ref: MutableRefObject<null>;
-}) {
+function TableInput(
+    {
+        objKey,
+        value,
+        type,
+        closeModal,
+        creator,
+        updateCampaignCreator,
+    }: {
+        objKey: string;
+        value: string;
+        type: string;
+        closeModal: () => void;
+        updateCampaignCreator: (creator: CampaignCreatorDB) => void;
+        creator: CampaignCreatorDB;
+    },
+    ref: ForwardedRef<any>,
+) {
     const [inputValue, setInputValue] = useState<string>('');
 
     const handleFormSubmit = (e: any) => {

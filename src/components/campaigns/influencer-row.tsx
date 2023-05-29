@@ -1,7 +1,7 @@
 import { t } from 'i18next';
 import Link from 'next/link';
-import { useState } from 'react';
-import type { Dispatch, RefObject, SetStateAction } from 'react';
+import { useRef, useState } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
 import type { CampaignCreatorDB } from 'src/utils/api/db';
 import { imgProxy } from 'src/utils/fetcher';
 import type { SocialMediaPlatform } from 'types';
@@ -23,7 +23,6 @@ export interface InfluencerRowProps {
     handleDropdownSelect: (value: string, creator: CampaignCreatorDB, objKey: string) => Promise<void>;
     setInlineEdit: (index: number, key: string) => void;
     editingModeTrue: (index: number, key: string) => boolean;
-    inputRef: RefObject<HTMLInputElement>;
     updateCampaignCreator: (creator: CampaignCreatorDB) => void;
     setToEdit: Dispatch<SetStateAction<null | { index: number; key: string }>>;
     deleteCampaignCreator: (creator: CampaignCreatorDB) => Promise<void>;
@@ -44,7 +43,6 @@ const InfluencerRow = ({
     handleDropdownSelect,
     setInlineEdit,
     editingModeTrue,
-    inputRef,
     updateCampaignCreator,
     setToEdit,
     deleteCampaignCreator,
@@ -58,12 +56,13 @@ const InfluencerRow = ({
     const handle = creator.username || creator.fullname || '';
     const [showContactInfo, setShowContactInfo] = useState(false);
     const { trackEvent } = useRudderstack();
+    const inputRef = useRef(null);
 
     return (
         <tr key={creator.id} className="group text-xs hover:relative hover:bg-primary-50">
             {visibleColumns.map((column) => (
                 <td
-                    key={column.header}
+                    key={column.header + creator.id}
                     className="w-[200px] whitespace-nowrap bg-white px-6 py-4 group-hover:bg-primary-50"
                 >
                     {column.type === 'account' && (

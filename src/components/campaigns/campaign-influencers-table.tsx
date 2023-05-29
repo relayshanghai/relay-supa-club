@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import type { ChangeEvent } from 'react';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { toast } from 'react-hot-toast';
 import type { CampaignCreatorDB, CampaignDB } from 'src/utils/api/db';
@@ -34,7 +34,6 @@ export default function CampaignInfluencersTable({
     currentCreator,
 }: CreatorsOutreachProps) {
     const { t } = useTranslation();
-    const inputRef = useRef(null);
 
     const router = useRouter();
     const { pathname, query } = router;
@@ -201,9 +200,9 @@ export default function CampaignInfluencersTable({
                 </Link>
                 {/* TODO: make Tabs component reusable */}
                 <div className="hidden items-center sm:flex">
-                    {tabs.map((tab, index) => (
+                    {tabs.map((tab) => (
                         <div
-                            key={index}
+                            key={tab.label}
                             onClick={() => handleTabChange(tab.value)}
                             className={`mr-4 flex-shrink-0 cursor-pointer rounded-lg px-4 py-2 text-xs font-semibold duration-300 hover:bg-primary-500 hover:bg-opacity-20 hover:text-primary-500 focus:bg-primary-500 focus:bg-opacity-20 focus:text-primary-500 ${
                                 tabStatus === tab.value
@@ -226,7 +225,7 @@ export default function CampaignInfluencersTable({
                         <option
                             key={index}
                             value={tab.value}
-                            selected={tabStatus === tab.value}
+                            defaultValue={tab.value}
                             className={`mr-4 flex-shrink-0 cursor-pointer rounded-lg bg-gray-100 px-4 py-2 text-xs font-semibold text-gray-400 duration-300 hover:bg-primary-500 hover:bg-opacity-20 hover:text-primary-500 ${
                                 tabStatus === tab.value && 'bg-primary-500 bg-opacity-20 text-purple-500'
                             }`}
@@ -277,31 +276,30 @@ export default function CampaignInfluencersTable({
                                 </td>
                             </tr>
                         )}
-                        {influencersList.map((creator, index) => {
-                            if (creator.status === tabStatus)
-                                return (
-                                    <InfluencerRow
-                                        creator={creator}
-                                        index={index}
-                                        updateCampaignCreator={updateCampaignCreator}
-                                        editingModeTrue={editingModeTrue}
-                                        setToEdit={setToEdit}
-                                        handleDropdownSelect={handleDropdownSelect}
-                                        inputRef={inputRef}
-                                        setInlineEdit={setInlineEdit}
-                                        tabs={tabs}
-                                        openNotes={openNotes}
-                                        deleteCampaignCreator={deleteCampaignCreator}
-                                        openMoveInfluencerModal={openMoveInfluencerModal}
-                                        openManageInfluencerModal={openManageInfluencerModal}
-                                        openAddPostModal={openAddPostModal}
-                                        showMoveInfluencerModal={showMoveInfluencerModal}
-                                        setShowMoveInfluencerModal={setShowMoveInfluencerModal}
-                                        visibleColumns={visibleColumns}
-                                        tabStatus={tabStatus}
-                                    />
-                                );
-                        })}
+                        {influencersList.map((creator, index) =>
+                            creator.status === tabStatus ? (
+                                <InfluencerRow
+                                    key={creator.id}
+                                    creator={creator}
+                                    index={index}
+                                    updateCampaignCreator={updateCampaignCreator}
+                                    editingModeTrue={editingModeTrue}
+                                    setToEdit={setToEdit}
+                                    handleDropdownSelect={handleDropdownSelect}
+                                    setInlineEdit={setInlineEdit}
+                                    tabs={tabs}
+                                    openNotes={openNotes}
+                                    deleteCampaignCreator={deleteCampaignCreator}
+                                    openMoveInfluencerModal={openMoveInfluencerModal}
+                                    openManageInfluencerModal={openManageInfluencerModal}
+                                    openAddPostModal={openAddPostModal}
+                                    showMoveInfluencerModal={showMoveInfluencerModal}
+                                    setShowMoveInfluencerModal={setShowMoveInfluencerModal}
+                                    visibleColumns={visibleColumns}
+                                    tabStatus={tabStatus}
+                                />
+                            ) : null,
+                        )}
                     </tbody>
                 </table>
             </div>
