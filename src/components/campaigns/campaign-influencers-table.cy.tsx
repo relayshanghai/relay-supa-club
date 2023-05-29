@@ -36,7 +36,7 @@ const makeProps = () => {
 
 describe('CampaignInfluencersTable', () => {
     before(async () => {
-        worker.start();
+        await worker.start();
     });
 
     it('Should render table of influencers', () => {
@@ -113,18 +113,22 @@ describe('CampaignInfluencersTable', () => {
 
     it('Check that a network request is called to the api to add the influencer to destination and delete them from source campaign', async () => {
         worker.use(
-            rest.delete(`${SUPABASE_URL_CYPRESS}campaign_creators`, async (req, res, ctx) => {
-                const body = (await req.json()) as any;
-                cy.log('body', body);
-                expect(body.campaignId).to.equal(currentCampaign.id);
-                expect(body.id).to.equal(currentCreator.id);
+            rest.delete(`${SUPABASE_URL_CYPRESS}/campaign_creators`, async (req, res, ctx) => {
+                const queries = req.url.searchParams;
+                const campaignId = queries.get('campaign_id')?.split('eq.')[1];
+                const influencerId = queries.get('id')?.split('eq.')[1];
+                expect(campaignId).to.equal(currentCampaign.id);
+                expect(influencerId).to.equal(currentCreator.id);
 
                 return res(ctx.delay(500), ctx.json({ success: true }));
+            }),
+            rest.post(`${SUPABASE_URL_CYPRESS}/campaign_creators`, (_req, res, ctx) => {
+                return res(ctx.delay(500), ctx.json(currentCreator));
             }),
         );
         // Capture the network request to the api for the next test
         testMount(<CampaignInfluencersTable {...makeProps()} />);
-        cy.get('tr').get('[data-testid="move-influencer-button"]').click();
+        cy.contains('tr', currentCreator.fullname ?? '').within(() => cy.getByTestId('move-influencer-button').click());
         // when this button is clicked, it is not sending the request, cause of a filing nullcheck
         cy.get(`#move-influencer-button-${campaign2.id}`).should('exist').click();
         // when request is done it should have the checkmark icon

@@ -41,12 +41,7 @@ const frontendHandlers = [
     rest.post(`${APP_URL_CYPRESS}/api/influencer-search/locations`, async (req, res, ctx) => {
         return res(ctx.json([]));
     }),
-    rest.get(`${SUPABASE_URL_CYPRESS}/storage/v1/object/list/images`, (_req, res, ctx) => {
-        return res(ctx.json([]));
-    }),
-    rest.get(`${APP_URL_CYPRESS}/api/posts/*`, (_req, res, ctx) => {
-        // TODO https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/309
-        // Replace with real endpoint (or supabase call)
+    rest.post(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/list/images`, (_req, res, ctx) => {
         return res(ctx.json([]));
     }),
 ];
