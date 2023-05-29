@@ -1,6 +1,7 @@
 import type { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { ApiHandler } from 'src/utils/api-handler';
+import { getCampaignCreator } from 'src/utils/api/db/calls/campaign-creators';
 import { updateCampaignCreator } from 'src/utils/api/db/calls/campaign-creators';
 import { serverLogger } from 'src/utils/logger-server';
 import { saveInfluencerPost } from 'src/utils/save-influencer-post';
@@ -37,10 +38,17 @@ const processURL = async (url: string, campaign_id: string, creator_id: string) 
     const _savePostPerformance = db<typeof savePostPerformance>(savePostPerformance);
     const _saveInfluencerPost = db<typeof saveInfluencerPost>(saveInfluencerPost);
     const _updateCampaignCreator = db<typeof updateCampaignCreator>(updateCampaignCreator);
+    const _getCampaignCreator = db<typeof getCampaignCreator>(getCampaignCreator);
+
+    const creator = await _getCampaignCreator(creator_id);
+
+    if (scrape.influencer_platform_id !== creator.creator_id) {
+        throw new Error('URL influencer and provided influencer did not match');
+    }
 
     // @note: link campaign_creators to influencer_social_profiles
     //        https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/416
-    const creator = await _updateCampaignCreator(creator_id, {
+    const updatedCreator = await _updateCampaignCreator(creator_id, {
         influencer_social_profiles_id: scrape.influencer.id,
     });
 
@@ -64,7 +72,7 @@ const processURL = async (url: string, campaign_id: string, creator_id: string) 
         views_total: scrape.viewCount,
     });
 
-    return { post, performance, creator };
+    return { post, performance, creator: updatedCreator };
 };
 
 const postHandler: NextApiHandler = async (req: NextApiRequest, res: NextApiResponse<InfluencerPostResponse>) => {
