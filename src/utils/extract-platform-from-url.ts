@@ -1,9 +1,18 @@
 export const extractPlatformFromURL = (url: string): string | null => {
-    try {
-        const tokens = new URL(url).hostname.toLowerCase().split('.');
-        const platforms = ['youtube', 'instagram', 'tiktok'];
-        return platforms.find((v: string) => tokens.indexOf(v) !== -1) || null;
-    } catch {
-        return null;
+    const hostname = new URL(url).hostname.toLowerCase();
+
+    // @todo refactor to use regex
+    const platforms = {
+        youtube: ['www.youtube.com', 'youtube.com', 'youtu.be'],
+        instagram: ['www.instagram.com', 'instagram.com'],
+        tiktok: ['vt.tiktok.com', 'www.tiktok.com', 'tiktok.com'],
+    };
+
+    for (const [platform, hostnames] of Object.entries(platforms)) {
+        if (hostnames.indexOf(hostname) !== -1) {
+            return platform;
+        }
     }
+
+    return null;
 };
