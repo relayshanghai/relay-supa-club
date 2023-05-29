@@ -13,6 +13,7 @@ import { toast } from 'react-hot-toast';
 import { Spinner, Trashcan } from '../icons';
 import type { InfluencerPostRequestBody, InfluencerPostResponse } from 'pages/api/influencer/posts';
 import { clientLogger } from 'src/utils/logger-client';
+import { ulid } from 'ulid';
 
 export interface AddPostModalProps extends Omit<ModalProps, 'children'> {
     creator: CampaignCreatorDB;
@@ -50,9 +51,8 @@ function isValidUrl(url: string): boolean {
 export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
     const { t, i18n } = useTranslation();
     const handle = creator.username || creator.fullname || '';
-    const [urls, setUrls] = useState<string[]>(['']);
+    const [urls, setUrls] = useState<{ [key: string]: string }>({ [ulid()]: '' });
     const [addedUrls, setAddedUrls] = useState<PostInfo[]>([]);
-    const [resetForm, setResetForm] = useState(0);
     const [submitting, setSubmitting] = useState(false);
     const getAddedUrls = useCallback(async () => {
         const urls = await nextFetch<PostInfo[]>(`influencer/${creator.id}/posts`);
@@ -61,23 +61,23 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
 
     useEffect(() => {
         getAddedUrls();
-        setUrls(['']);
+        setUrls({ [ulid()]: '' });
     }, [getAddedUrls, props.visible]);
 
     const handleAddAnotherPost = () => {
         setUrls((prev) => {
-            return [...prev, ''];
+            return { ...prev, [ulid()]: '' };
         });
     };
 
-    const validateUrl = (url: string, _urls: string[]) => {
+    const validateUrl = (url: string, _urls: typeof urls) => {
         if (!url) {
             return '';
         }
         if (!isValidUrl(url)) {
             return t('campaigns.post.invalidUrl');
         }
-        if (_urls.filter((u) => u === url).length > 1) {
+        if (Object.values(_urls).filter((u) => u === url).length > 1) {
             return t('campaigns.post.duplicateUrl');
         }
         //check for duplicates in the already added ones as well
@@ -87,16 +87,16 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
         return '';
     };
 
-    const scrapeByUrls = async (_urls: string[]): Promise<{ successful: PostInfo[]; failed: string[] }> => {
+    const scrapeByUrls = async (_urls: typeof urls): Promise<{ successful: PostInfo[]; failed: typeof urls }> => {
         const successful: PostInfo[] = [];
-        let failed: string[] = _urls;
+        let failed: typeof urls = _urls;
         if (!creator.campaign_id) {
             return { successful, failed };
         }
         try {
             const body: InfluencerPostRequestBody = {
                 campaign_id: creator.campaign_id,
-                urls: _urls,
+                urls: Object.values(_urls),
                 creator_id: creator.id,
             };
             const res = await nextFetch<InfluencerPostResponse>('influencer/posts', {
@@ -110,39 +110,42 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
                 return { successful, failed };
             }
             successful.push(...res.successful);
-            failed = res.failed;
+            const failedObject = Object.fromEntries(res.failed.map((failUrl) => [ulid(), failUrl]));
+            failed = failedObject;
         } catch (e) {
             clientLogger(e, 'error');
         }
         return { successful, failed };
     };
 
-    const handleSubmit = async (_urls: string[]) => {
+    const handleSubmit = async (_urls: typeof urls) => {
         setSubmitting(true);
         const { successful, failed } = await scrapeByUrls(_urls);
 
         setAddedUrls((prev) => [...prev, ...successful]);
 
         // will set the form to 0 if no errors, or keep the failed urls in the form if there are errors
-        if (failed.length === 0) {
+        if (Object.keys(failed).length === 0) {
             toast.success(t('campaigns.post.success', { amount: successful.length }));
-            setUrls(['']);
+            setUrls({ [ulid()]: '' });
         } else {
-            toast.error(t('campaigns.post.failed', { amount: failed.length }));
+            toast.error(t('campaigns.post.failed', { amount: Object.keys(failed).length }));
             setUrls(failed);
         }
-        // TODO: Fix this indexing issue. It really could cause a bug if a url gets deleted from the list but there are two left, it might not be the ones react ends up rendering.
-        // Because we don't have a unique key for each of the input components, if we remove an input, React might still render an old input, therefore we need to reset the form to force React to re-render all the inputs
-        setResetForm((prev) => prev + 1); // this doesn't seem to be working as expected, instead all the errored urls end up blank.
         setSubmitting(false);
     };
 
     const handleRemovePost = async (postId: string) => {
-        await nextFetch<PostInfo[]>(`influencer/posts/${postId}`, { method: 'DELETE' });
+        try {
+            toast.success(t('campaigns.post.removedPost'));
+            await nextFetch<PostInfo[]>(`influencer/posts/${postId}`, { method: 'DELETE' });
+        } catch (error) {
+            toast.error(t('campaigns.post.errorRemovingPost'));
+        }
         setAddedUrls(() => addedUrls.filter((url) => url.id !== postId));
     };
 
-    const hasError = urls.some((url) => validateUrl(url, urls) !== '');
+    const hasError = Object.values(urls).some((url) => validateUrl(url, urls) !== '');
     const submitDisabled = hasError || submitting;
 
     return (
@@ -181,21 +184,21 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
                         e.preventDefault();
                         handleSubmit(urls);
                     }}
-                    key={resetForm}
                 >
                     <h3>{t('campaigns.post.addPostUrl')}</h3>
-                    {urls.map((url, index) => {
+                    {Object.entries(urls).map(([key, url]) => {
                         const error = validateUrl(url, urls);
                         return (
                             // Using an 'unsafe' index as key here, but it's fine because we reset the form when we remove an input
-                            <div key={`add-posts-modal-url-input-${index}`} className="my-2 flex flex-col gap-y-2">
+                            <div key={key} className="my-2 flex flex-col gap-y-2">
                                 <input
                                     className="block w-full appearance-none rounded-md border border-transparent bg-white px-3 py-2 placeholder-gray-400 shadow ring-1 ring-gray-300 ring-opacity-5 focus:border-primary-500 focus:outline-none focus:ring-primary-500 sm:text-xs"
                                     onChange={(e) => {
-                                        const newUrls = [...urls];
-                                        newUrls[index] = e.target.value.trim();
+                                        const newUrls = { ...urls };
+                                        newUrls[key] = e.target.value.trim();
                                         setUrls(newUrls);
                                     }}
+                                    value={url}
                                 />
                                 <p className="text-xs text-red-400">{error}</p>
                             </div>

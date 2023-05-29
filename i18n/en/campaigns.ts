@@ -259,6 +259,8 @@ const campaigns = {
         success: 'Successfully added {{amount}} URLs',
         failed: 'Failed to get post data for {{amount}} URLs',
         currentPosts: 'Current Posts',
+        removedPost: 'Removed Post',
+        errorRemovingPost: 'Error removing post',
     },
     manageInfluencer: {
         title: 'Manage Influencer',
