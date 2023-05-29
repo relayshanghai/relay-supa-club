@@ -112,7 +112,7 @@ describe('AddPostModal', () => {
             url: 'https://www.youtube.com/watch?v=123',
         };
         worker.use(
-            rest.get(`${APP_URL_CYPRESS}/api/posts/${creator.id}`, (req, res, ctx) => {
+            rest.get(`${APP_URL_CYPRESS}/api/influencer/${creator.id}/posts`, (req, res, ctx) => {
                 return res(ctx.json([mockPostData]));
             }),
         );
