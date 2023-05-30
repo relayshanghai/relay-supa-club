@@ -45,7 +45,7 @@ export const scrapeInfluencerPost = async (url: string): Promise<ScrapeDataWithI
             throw new Error(`Cannot fetch report for influencer: ${influencer_platform_id}, ${platform}`);
         }
 
-        const [_, socialProfile] = await saveInfluencer(report);
+        const [_, socialProfile] = await db<typeof saveInfluencer>(saveInfluencer)(report);
 
         if (socialProfile === null) {
             throw new Error(`Cannot determine influencer from given URL: ${url}`);
