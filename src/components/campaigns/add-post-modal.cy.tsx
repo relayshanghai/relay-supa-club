@@ -61,7 +61,7 @@ const youtubeLink2 = 'https://youtu.be/UzL-0vZ5-wk';
 const instagramLink = 'https://www.instagram.com/p/Cr3aeZ7NXW3/';
 const tiktokLink =
     'https://www.tiktok.com/@graceofearth/video/7230816093755936043?_r=1&_t=8c9DNKVO2Tm&social_sharing=v2';
-const tiktokM = 'https://vm.tiktok.com/@graceofearth/video/7230816093755936043?';
+const tiktokM = 'https://vm.tiktok.com/@graceofearth/video/7230816093755936043';
 const tiktokT =
     'https://vt.tiktok.com/@graceofearth/video/7230816093755936043?is_from_webapp=1&sender_device=pc&web_id=7214153327838512682';
 
