@@ -53,9 +53,17 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
     const [urls, setUrls] = useState<{ [key: string]: string }>({ [ulid()]: '' });
     const [addedUrls, setAddedUrls] = useState<PostInfo[]>([]);
     const [submitting, setSubmitting] = useState(false);
+    const [checkingAddedUrls, setCheckingAddedUrls] = useState(false);
     const getAddedUrls = useCallback(async () => {
-        const urls = await nextFetch<PostInfo[]>(`influencer/${encodeURIComponent(creator.id)}/posts`);
-        setAddedUrls(urls);
+        try {
+            setCheckingAddedUrls(true);
+            const urls = await nextFetch<PostInfo[]>(`influencer/${encodeURIComponent(creator.id)}/posts`);
+            setAddedUrls(urls);
+        } catch (error) {
+            clientLogger(error, 'error');
+        } finally {
+            setCheckingAddedUrls(false);
+        }
     }, [creator.id]);
 
     useEffect(() => {
@@ -223,10 +231,11 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
                         </Button>
                     </div>
                 </form>
-                {addedUrls.length > 0 && (
-                    <>
-                        <h3 className="mt-10 font-bold">{t('campaigns.post.currentPosts')}</h3>
-                        <div className="px-3">
+
+                <h3 className="mt-10 font-bold">{t('campaigns.post.currentPosts')}</h3>
+                <div className="px-3">
+                    {addedUrls.length > 0 ? (
+                        <>
                             {addedUrls.map((post) => (
                                 <div key={post.id} className="my-3 flex justify-between">
                                     <Link
@@ -257,9 +266,11 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
                                     </button>
                                 </div>
                             ))}
-                        </div>
-                    </>
-                )}
+                        </>
+                    ) : checkingAddedUrls ? (
+                        <Spinner className="h-5 w-5 fill-primary-600 text-white" />
+                    ) : null}
+                </div>
             </>
         </Modal>
     );
