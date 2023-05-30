@@ -15,6 +15,7 @@ export const useCampaigns = ({ campaignId }: { campaignId?: string }) => {
     const { getCampaigns, createCampaign: createCampaignCall, updateCampaign } = useClientDb();
 
     const companyId = company?.id;
+
     const {
         data: allCampaigns,
         mutate: refreshCampaigns,

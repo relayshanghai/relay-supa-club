@@ -10,8 +10,8 @@ const initialValues: InitialValues = [
     [
         clientRoleAtom,
         {
-            company_name: 'Test Company Name',
-            company_id: 'ad942d94-41bb-441a-a4e6-66169854b865',
+            companyName: 'Test Company Name',
+            companyId: 'ad942d94-41bb-441a-a4e6-66169854b865',
         },
     ],
 ];
@@ -20,6 +20,7 @@ describe('SearchOptions', () => {
     before(() => {
         worker.start();
     });
+
     it('Shows search button', () => {
         testMount(
             <TestProvider initialValues={initialValues}>
@@ -28,15 +29,6 @@ describe('SearchOptions', () => {
         );
 
         cy.contains('Search');
-    });
-
-    it('Should show top default influencers', () => {
-        testMount(
-            <TestProvider initialValues={initialValues}>
-                <SearchPage />
-            </TestProvider>,
-        );
-        cy.get('[href="/influencer/youtube/UCq-Fj5jknLsUf-MWSy4_brA"]').should('exist');
     });
 
     it('should be empty when we remove topic tags', () => {

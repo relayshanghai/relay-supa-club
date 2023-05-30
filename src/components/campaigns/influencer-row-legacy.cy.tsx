@@ -8,6 +8,7 @@ import type { InfluencerRowProps } from './influencer-row-legacy';
 import { testMount } from '../../utils/cypress-app-wrapper';
 import { worker } from '../../mocks/browser';
 import InfluencerRowLegacy from './influencer-row-legacy';
+import { CompanyProvider } from 'src/hooks/use-company';
 const creator: CampaignCreatorDB = {
     influencer_social_profiles_id: '',
     id: '175c7699-f53d-4c0c-bf04-e11deea7899e',
@@ -108,7 +109,11 @@ describe('<InfluencerRowLegacy />', () => {
             tabs,
             showMoveInfluencerModal: false,
         };
-        testMount(<InfluencerRowLegacy {...props} />);
+        testMount(
+            <CompanyProvider>
+                <InfluencerRowLegacy {...props} />
+            </CompanyProvider>,
+        );
         cy.contains('T-Series');
         cy.contains('@tseries');
         cy.contains('Add Action Point');
@@ -126,7 +131,11 @@ describe('<InfluencerRowLegacy />', () => {
             tabs,
             showMoveInfluencerModal: false,
         };
-        testMount(<InfluencerRowLegacy {...props} />);
+        testMount(
+            <CompanyProvider>
+                <InfluencerRowLegacy {...props} />
+            </CompanyProvider>,
+        );
         cy.findByTestId('contacts-skeleton').should('not.exist');
         cy.get('a[href="https://www.facebook.com/tseriesmusic"]').should('not.exist');
 

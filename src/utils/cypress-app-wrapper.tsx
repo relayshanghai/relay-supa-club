@@ -28,7 +28,7 @@ export type InitialValues = [WritableAtom<unknown, any[], any>, unknown][];
 const mockProfile: IUserContext['profile'] = {
     id: '1',
     user_role: 'company_owner',
-    company_id: '1',
+    company_id: '8e6e65ca-dd79-4e68-90e4-9c5462991ae4',
     avatar_url: null,
     email: 'mock@example.com',
     first_name: 'mock-first',

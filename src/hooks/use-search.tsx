@@ -109,9 +109,10 @@ export const useSearchResults = (page: number) => {
         profile?.id && searchParams ? ['influencer-search', searchParams, page] : null,
         async ([path, searchParams, page]) => {
             try {
-                if (!company?.id || !profile?.id) {
+                if (!profile?.id) {
                     throw new Error('No profile');
                 }
+
                 if (ref.current) {
                     ref.current.abort();
                 }
@@ -137,6 +138,11 @@ export const useSearchResults = (page: number) => {
                     recommendedInfluencers,
                 } = searchParams;
 
+                const companyId = company?.id || profile.company_id;
+                if (!companyId) {
+                    throw new Error('No company');
+                }
+
                 const body: InfluencerPostRequest = {
                     tags,
                     platform,
@@ -152,7 +158,7 @@ export const useSearchResults = (page: number) => {
                     lastPost,
                     contactInfo,
                     only_recommended: onlyRecommended,
-                    company_id: company?.id,
+                    company_id: companyId,
                     user_id: profile?.id,
                     recommendedInfluencers,
                 };

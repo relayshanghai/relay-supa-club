@@ -12,6 +12,7 @@ import { useClientDb } from 'src/utils/client-db/use-client-db';
 import type { CompanyDB } from 'src/utils/api/db';
 import { useAtomValue } from 'jotai';
 import { clientRoleAtom } from 'src/atoms/client-role-atom';
+import { clientLogger } from 'src/utils/logger-client';
 
 export interface CompanyContext {
     company: CompanyDB | undefined;
@@ -96,7 +97,8 @@ export const CompanyProvider = ({ children }: PropsWithChildren) => {
 
 export const useCompany = () => {
     const context = useContext(ctx);
-    if (context === null) {
+    if (!context) {
+        clientLogger('useCompany must be used within a CompanyProvider');
         throw new Error('useCompany must be used within a CompanyProvider');
     }
     return context;
