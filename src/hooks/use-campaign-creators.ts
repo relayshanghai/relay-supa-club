@@ -9,7 +9,7 @@ import { useClientDb } from 'src/utils/client-db/use-client-db';
 import type { CampaignCreatorInsert } from 'src/utils/client-db/campaignCreators';
 import { fetchReport } from 'src/utils/api/iqdata/fetch-report';
 import type { CreatorPlatform, DatabaseWithCustomTypes } from 'types';
-import { saveInfluencer } from 'src/utils/save-influencer';
+import { saveInfluencer } from 'src/utils/api/iqdata/save-influencer';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
 //The transform function is not used now, as the image proxy issue is handled directly where calls for the image.But this is left for future refactor. TODO:Ticket V2-181
