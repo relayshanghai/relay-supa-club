@@ -7,6 +7,10 @@ import type { CampaignCreatorDBUpdate, CampaignDB } from 'src/utils/api/db/types
 import { clientLogger } from 'src/utils/logger-client';
 import { useClientDb } from 'src/utils/client-db/use-client-db';
 import type { CampaignCreatorInsert } from 'src/utils/client-db/campaignCreators';
+import { fetchReport } from 'src/utils/api/iqdata/fetch-report';
+import type { CreatorPlatform, DatabaseWithCustomTypes } from 'types';
+import { saveInfluencer } from 'src/utils/save-influencer';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 //The transform function is not used now, as the image proxy issue is handled directly where calls for the image.But this is left for future refactor. TODO:Ticket V2-181
 // const transformCampaignCreators = (creators: CampaignCreatorDB[]) => {
@@ -17,6 +21,45 @@ import type { CampaignCreatorInsert } from 'src/utils/client-db/campaignCreators
 //         };
 //     });
 // };
+
+const getInfluencerSocialProfile = async (
+    db: SupabaseClient<DatabaseWithCustomTypes>,
+    platform_id: string,
+    platform: CreatorPlatform,
+) => {
+    // @todo: refactor db call to fit dependency injection
+    const getInfluencerSocialByReference = async (platform_id: string) => {
+        const { data, error } = await db
+            .from('influencer_social_profiles')
+            .select()
+            .match({
+                reference_id: `iqdata:${platform_id}`,
+            })
+            .maybeSingle();
+
+        return !error ? data : null;
+    };
+
+    const socialProfile = await getInfluencerSocialByReference(platform_id);
+
+    if (socialProfile) {
+        return socialProfile;
+    }
+
+    const report = await fetchReport(platform_id, platform);
+
+    if (!report) {
+        throw new Error(`Cannot fetch report for influencer: ${platform_id}, ${platform}`);
+    }
+
+    const [_, newSocialProfile] = await saveInfluencer(report);
+
+    if (newSocialProfile === null) {
+        throw new Error(`Cannot save influencer: ${platform_id}, ${platform}`);
+    }
+
+    return newSocialProfile;
+};
 
 /**
  * Hook to fetch campaigns and create/update campaigns
@@ -52,26 +95,20 @@ export const useCampaignCreators = ({
         async (input: CampaignCreatorInsert) => {
             setLoading(true);
 
-            // @todo: refactor db call to fit dependency injection
-            const getInfluencerSocialByReference = async (referenceId: string) => {
-                const { data, error } = await supabaseClient
-                    .from('influencer_social_profiles')
-                    .select()
-                    .match({
-                        reference_id: `iqdata:${referenceId}`,
-                    })
-                    .maybeSingle();
-
-                return !error ? data : null;
-            };
-
             try {
                 if (!input.campaign_id) throw new Error('No campaign_id found');
                 if (!profile?.id) {
                     throw new Error('No profile.id found');
                 }
 
-                const influencer = await getInfluencerSocialByReference(input.creator_id);
+                let influencer = null;
+
+                // @note: wrap in try..catch to observe which influencers will cause problems
+                try {
+                    influencer = await getInfluencerSocialProfile(supabaseClient, input.creator_id, input.platform);
+                } catch (error) {
+                    clientLogger(error, 'error', true);
+                }
 
                 const body: CampaignCreatorInsert = {
                     ...input,
