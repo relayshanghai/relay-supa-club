@@ -15,7 +15,7 @@ describe('CampaignCardSquare', () => {
         testMount(<CampaignCardSquare campaign={jimTestCampaign} />);
         cy.contains('To Contact: 4');
         cy.contains('Contacted: 1');
-        cy.contains('Confirmed: 1');
+        cy.contains('Confirmed: 2');
         cy.contains('Posted').should('not.exist');
     });
 
