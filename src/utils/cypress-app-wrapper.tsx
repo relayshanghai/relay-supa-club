@@ -13,7 +13,7 @@ import { Toaster } from 'react-hot-toast';
 import { Provider } from 'jotai';
 import type { WritableAtom } from 'jotai';
 import { useHydrateAtoms } from 'jotai/utils';
-i18n.changeLanguage('en');
+i18n.changeLanguage('en-US');
 
 export interface TestMountOptions {
     /** The pathname that it will tell the router the app is currently visiting */
