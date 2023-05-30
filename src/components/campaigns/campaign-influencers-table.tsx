@@ -149,6 +149,7 @@ export default function CampaignInfluencersTable({
 
     const setInlineEdit = (index: number, key: string) => {
         setToEdit({ index, key });
+        trackEvent('Influencers Table, inline edit clicked', { key });
     };
 
     const openNotes = (creator: CampaignCreatorDB) => {

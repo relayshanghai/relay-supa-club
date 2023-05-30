@@ -136,8 +136,8 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
         // will set the form to 0 if no errors, or keep the failed urls in the form if there are errors
         if (Object.keys(failed).length === 0) {
             toast.success(t('campaigns.post.success', { amount: successful.length }));
+            trackEvent('Manage Posts Modal, submit', { amount: successful.length });
             setUrls({ [ulid()]: '' });
-            trackEvent('Manage Posts Modal, submit');
         } else {
             toast.error(t('campaigns.post.failed', { amount: Object.keys(failed).length }));
             setUrls(failed);
@@ -149,6 +149,7 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
         try {
             toast.success(t('campaigns.post.removedPost'));
             await nextFetch<PostInfo[]>(`influencer/posts/${encodeURIComponent(postId)}`, { method: 'DELETE' });
+            trackEvent('Manage Posts Modal, remove post');
         } catch (error) {
             clientLogger(error, 'error');
             toast.error(t('campaigns.post.errorRemovingPost'));
