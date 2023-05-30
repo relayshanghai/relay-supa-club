@@ -57,7 +57,7 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
     const [addedUrls, setAddedUrls] = useState<PostInfo[]>([]);
     const [submitting, setSubmitting] = useState(false);
     const getAddedUrls = useCallback(async () => {
-        const urls = await nextFetch<PostInfo[]>(`influencer/${creator.id}/posts`);
+        const urls = await nextFetch<PostInfo[]>(`influencer/${encodeURIComponent(creator.id)}/posts`);
         setAddedUrls(urls);
     }, [creator.id]);
 
@@ -112,8 +112,7 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
                 return { successful, failed };
             }
             successful.push(...res.successful);
-            const failedObject = Object.fromEntries(res.failed.map((failUrl) => [ulid(), failUrl]));
-            failed = failedObject;
+            failed = Object.fromEntries(res.failed.map((failUrl) => [ulid(), failUrl]));
         } catch (e) {
             clientLogger(e, 'error');
         }
@@ -140,7 +139,7 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
     const handleRemovePost = async (postId: string) => {
         try {
             toast.success(t('campaigns.post.removedPost'));
-            await nextFetch<PostInfo[]>(`influencer/posts/${postId}`, { method: 'DELETE' });
+            await nextFetch<PostInfo[]>(`influencer/posts/${encodeURIComponent(postId)}`, { method: 'DELETE' });
         } catch (error) {
             clientLogger(error, 'error');
             toast.error(t('campaigns.post.errorRemovingPost'));
