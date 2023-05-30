@@ -1,7 +1,7 @@
 import { t } from 'i18next';
 import Link from 'next/link';
 import { useState } from 'react';
-import type { ChangeEvent, MouseEvent, Dispatch, RefObject, SetStateAction } from 'react';
+import type { ChangeEvent, MouseEvent, Dispatch, SetStateAction, ForwardedRef } from 'react';
 import type { CampaignCreatorDB } from 'src/utils/api/db';
 import { imgProxy } from 'src/utils/fetcher';
 import type { SocialMediaPlatform } from 'types';
@@ -39,7 +39,7 @@ export interface InfluencerRowProps {
     ) => Promise<void>;
     setInlineEdit: (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, index: number, key: string) => void;
     editingModeTrue: (index: number, key: string) => boolean;
-    inputRef: RefObject<HTMLInputElement>;
+    inputRef: ForwardedRef<HTMLInputElement>;
     updateCampaignCreator: (creator: CampaignCreatorDB) => void;
     setToEdit: Dispatch<SetStateAction<null | { index: number; key: string }>>;
     deleteCampaignCreator: (
