@@ -1,5 +1,5 @@
 import type { apiObject } from 'rudder-sdk-js';
-import type { CompanyDB, ProfileDB } from 'src/utils/api/db';
+import type { ProfileDB } from 'src/utils/api/db';
 import { rudderInitialized } from 'src/utils/rudder-initialize';
 
 //There are more traits properties, but we only need these for now. Ref: https://www.rudderstack.com/docs/event-spec/standard-events/identify/#identify-traits
@@ -50,10 +50,9 @@ export const useRudderstack = () => {
         window.rudder?.track(groupId, traits);
     };
 
-    const identifyFromProfile = (profile: ProfileDB, company: CompanyDB) => {
+    const identifyFromProfile = (profile: ProfileDB) => {
         if (profile) {
             const { id, email, first_name, last_name, company_id, user_role } = profile;
-            const { name: companyName } = company;
 
             identifyUser(id, {
                 email: email || '',
@@ -62,7 +61,6 @@ export const useRudderstack = () => {
                 userRole: user_role || '',
                 company: {
                     id: company_id || '',
-                    name: companyName || '',
                 },
             });
         }

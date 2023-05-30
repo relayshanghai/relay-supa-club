@@ -14,7 +14,6 @@ import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
 import type { DatabaseWithCustomTypes } from 'types';
 import { useClientDb } from 'src/utils/client-db/use-client-db';
-import { useCompany } from './use-company';
 
 export type SignupData = {
     email: string;
@@ -83,7 +82,6 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
     const getProfileController = useRef<AbortController | null>();
     const [loading, setLoading] = useState<boolean>(true);
     const { identifyFromProfile, trackEvent } = useRudderstack();
-    const { company } = useCompany();
     useEffect(() => {
         setLoading(isLoading);
     }, [isLoading]);
@@ -119,10 +117,10 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
 
     // identify user with RudderStack on profile change
     useEffect(() => {
-        if (profile && company) {
-            identifyFromProfile(profile, company);
+        if (profile) {
+            identifyFromProfile(profile);
         }
-    }, [identifyFromProfile, profile, company]);
+    }, [identifyFromProfile, profile]);
 
     const login = async (email: string, password: string) => {
         setLoading(true);
