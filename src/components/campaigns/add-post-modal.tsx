@@ -67,8 +67,9 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
     }, [creator.id]);
 
     useEffect(() => {
-        getAddedUrls();
+        setAddedUrls([]); // reset on reopen
         setUrls({ [ulid()]: '' });
+        getAddedUrls();
     }, [getAddedUrls, props.visible]);
 
     const handleAddAnotherPost = () => {
