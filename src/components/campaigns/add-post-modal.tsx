@@ -270,8 +270,10 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
                             ))}
                         </>
                     ) : checkingAddedUrls ? (
-                        <Spinner className="h-5 w-5 fill-primary-600 text-white" />
-                    ) : null}
+                        <Spinner className="mx-auto my-5 h-5 w-5 fill-gray-600 text-white" />
+                    ) : (
+                        <div className="my-5 h-5" />
+                    )}
                 </div>
             </>
         </Modal>
