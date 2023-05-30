@@ -41,7 +41,8 @@ function isValidUrl(url: string): boolean {
     } else if (url.includes('youtube') || url.includes('youtu.be')) {
         regex = /^(https?:\/\/)(www\.)?(youtu\.be\/[\w\-]+|youtube\.com\/watch\?v=[\w\-]+)\/?/;
     } else if (url.includes('tiktok')) {
-        regex = /^(https?:\/\/)(www\.)?(tiktok\.com|vm\.tiktok\.com|vt\.tiktok\.com)\/(@[\w\-]+\/video\/[\w\-]+)(\/|$)/;
+        regex =
+            /^(https?:\/\/)(www\.)?(tiktok\.com|vm\.tiktok\.com|vt\.tiktok\.com)\/(@[\w\-]+\/video\/[\w\-]+)(\/|\?.*)?$/;
     } else {
         return false;
     }
