@@ -4,13 +4,12 @@ import { Modal } from '../modal';
 import Link from 'next/link';
 import { imgProxy, nextFetch } from 'src/utils/fetcher';
 import type { CampaignCreatorDB } from 'src/utils/api/db';
-
 import { SocialMediaIcon } from '../common/social-media-icon';
 import { useCallback, useEffect, useState } from 'react';
-
 import { Button } from '../button';
 import { toast } from 'react-hot-toast';
 import { Trashcan } from '../icons';
+import { useRudderstack } from 'src/hooks/use-rudderstack';
 
 export interface AddPostModalProps extends Omit<ModalProps, 'children'> {
     creator: CampaignCreatorDB;
@@ -38,6 +37,7 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
     const [urls, setUrls] = useState<string[]>(['']);
     const [addedUrls, setAddedUrls] = useState<PostInfo[]>([]);
     const [resetForm, setResetForm] = useState(0);
+    const { trackEvent } = useRudderstack();
 
     const getAddedUrls = useCallback(async () => {
         // TODO https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/309
@@ -53,6 +53,7 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
         setUrls((prev) => {
             return [...prev, ''];
         });
+        trackEvent('Manage Posts Modal, add another post', { urls });
     };
 
     const validateUrl = (url: string, _urls: typeof urls) => {
@@ -84,6 +85,7 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
         setResetForm((prev) => prev + 1);
         if (failed.length === 0) {
             toast.success(t('campaigns.post.success', { amount: successful.length }));
+            trackEvent('Manage Posts Modal, submit');
         } else {
             toast.error(t('campaigns.post.error', { amount: failed.length }));
         }
