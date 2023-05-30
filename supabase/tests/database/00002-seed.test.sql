@@ -63,15 +63,15 @@ SELECT results_eq($$ SELECT url from influencer_social_profiles where influencer
 --     'instagram'
 --   );
 
-SELECT results_eq($$ SELECT platform from influencer_posts where influencer_id = (SELECT id FROM influencers WHERE email = 'alice.anderson@example.com') AND url = 'https://instagram.com/alice/posts/1'; $$, $$ SELECT 'instagram'; $$, 'Has Alice Anderson instagram post');
+SELECT results_eq($$ SELECT platform from influencer_posts where url = 'https://instagram.com/alice/posts/1'; $$, $$ SELECT 'instagram'; $$, 'Has Alice Anderson instagram post');
 
-SELECT results_eq($$ SELECT platform from influencer_posts where influencer_id = (SELECT id FROM influencers WHERE email = 'alice.anderson@example.com') AND url = 'https://instagram.com/alice/posts/2'; $$, $$ SELECT 'instagram'; $$, 'Has Alice Anderson instagram post 2');
+SELECT results_eq($$ SELECT platform from influencer_posts where url = 'https://instagram.com/alice/posts/2'; $$, $$ SELECT 'instagram'; $$, 'Has Alice Anderson instagram post 2');
 
-SELECT results_eq($$ SELECT platform from influencer_posts where influencer_id = (SELECT id FROM influencers WHERE email = 'alice.anderson@example.com') AND url = 'https://instagram.com/alice/posts/3'; $$, $$ SELECT 'instagram'; $$, 'Has Alice Anderson instagram post 3');
+SELECT results_eq($$ SELECT platform from influencer_posts where url = 'https://instagram.com/alice/posts/3'; $$, $$ SELECT 'instagram'; $$, 'Has Alice Anderson instagram post 3');
 
-SELECT results_eq($$ SELECT platform from influencer_posts where influencer_id = (SELECT id FROM influencers WHERE email = 'bob.brown@example.com') AND url = 'https://instagram.com/bob/posts/1'; $$, $$ SELECT 'instagram'; $$, 'Has Bob Brown instagram post 1');
+SELECT results_eq($$ SELECT platform from influencer_posts where url = 'https://instagram.com/bob/posts/1'; $$, $$ SELECT 'instagram'; $$, 'Has Bob Brown instagram post 1');
 
-SELECT results_eq($$ SELECT platform from influencer_posts where influencer_id = (SELECT id FROM influencers WHERE email = 'bob.brown@example.com') AND url = 'https://instagram.com/bob/posts/1'; $$, $$ SELECT 'instagram'; $$, 'Has Bob Brown youtube post 1');
+SELECT results_eq($$ SELECT platform from influencer_posts where url = 'https://instagram.com/bob/posts/1'; $$, $$ SELECT 'instagram'; $$, 'Has Bob Brown youtube post 1');
 
 SELECT results_eq($$ SELECT likes_total from posts_performance where post_id = (SELECT id FROM influencer_posts WHERE url = 'https://instagram.com/alice/posts/1'); $$, $$ SELECT CAST(123 AS NUMERIC); $$, 'Has Alice Anderson instagram post 1 likes');
 

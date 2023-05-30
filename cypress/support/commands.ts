@@ -103,8 +103,8 @@ function loginAdmin(
 Cypress.Commands.add('loginAdmin', loginAdmin);
 
 function switchToEnglish() {
-    localStorage.setItem('language', 'en');
-    i18n.changeLanguage('en');
+    localStorage.setItem('language', 'en-US');
+    i18n.changeLanguage('en-US');
 }
 Cypress.Commands.add('switchToEnglish', switchToEnglish);
 
