@@ -8,7 +8,9 @@ export interface FetchCreatorsFilteredParams {
     platform?: CreatorPlatform;
     tags?: { tag: string }[];
     lookalike?: CreatorAccount[];
-    username: string;
+    text?: string;
+    username?: string;
+    keywords?: string;
     influencerLocation?: LocationWeighted[];
     audienceLocation?: LocationWeighted[];
     resultsPerPageLimit?: number;
@@ -66,6 +68,7 @@ export const prepareFetchCreatorsFiltered = ({
     audienceLocation = [],
     resultsPerPageLimit = 10,
     page = 0,
+    text,
     username,
     audience,
     views,
@@ -100,8 +103,23 @@ export const prepareFetchCreatorsFiltered = ({
     if (gender) {
         body.filter.gender = genderTransform(gender);
     }
+    if (text) {
+        body.filter.text = text;
+    }
     if (username) {
         body.filter.username = { value: username };
+
+        if (!body.filter.actions) body.filter.actions = [];
+
+        // Since username will always be provided, we can add filter actions for text and username here
+        body.filter.actions.push({
+            filter: 'username',
+            action: 'should',
+        });
+        body.filter.actions.push({
+            filter: 'text',
+            action: 'should',
+        });
     }
     if (views && platform !== 'instagram') {
         body.filter.views = leftRightNumberTransform(views);
