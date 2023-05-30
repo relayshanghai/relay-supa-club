@@ -7,7 +7,7 @@ import type { CampaignCreatorDB } from 'src/utils/api/db';
 import type { InfluencerOutreachStatus, SocialMediaPlatform } from 'types';
 import { ArrowRightOnRectangle, Trashcan } from '../icons';
 import { SocialMediaIcon } from '../common/social-media-icon';
-import type { MouseEvent } from 'react';
+
 import { useCallback } from 'react';
 import { useState } from 'react';
 import { Button } from '../button';
@@ -25,9 +25,9 @@ const statusOptions: { label: string; value: InfluencerOutreachStatus }[] = [
 
 export interface ManageInfluencerModalProps extends Omit<ModalProps, 'children'> {
     creator: CampaignCreatorDB;
-    openMoveInfluencerModal: (e: MouseEvent<HTMLButtonElement>, creator: CampaignCreatorDB) => void;
-    openNotes: (e: MouseEvent<HTMLButtonElement>, creator: CampaignCreatorDB) => void;
-    deleteCampaignCreator: (e: MouseEvent<HTMLButtonElement>, creator: CampaignCreatorDB) => Promise<void>;
+    openMoveInfluencerModal: (creator: CampaignCreatorDB) => void;
+    openNotes: (creator: CampaignCreatorDB) => void;
+    deleteCampaignCreator: (creator: CampaignCreatorDB) => Promise<void>;
     updateCampaignCreator: (creator: CampaignCreatorDB) => Promise<void>;
 }
 
@@ -288,7 +288,7 @@ const SmallButtonsSection = ({
             <div className="flex justify-end gap-x-2">
                 <button
                     data-testid="show-influencer-notes"
-                    onClick={(e) => openNotes(e, creator)}
+                    onClick={() => openNotes(creator)}
                     className={smallButtonClass}
                 >
                     {t('campaigns.show.notes')}
@@ -296,7 +296,7 @@ const SmallButtonsSection = ({
 
                 <button
                     data-testid="show-move-influencer"
-                    onClick={(e) => openMoveInfluencerModal(e, creator)}
+                    onClick={() => openMoveInfluencerModal(creator)}
                     className={smallButtonClass}
                 >
                     <ArrowRightOnRectangle className="h-4 w-4 stroke-tertiary-600 " />
@@ -304,7 +304,7 @@ const SmallButtonsSection = ({
 
                 <button
                     data-testid="delete-influencer"
-                    onClick={(e) => deleteCampaignCreator(e, creator)}
+                    onClick={() => deleteCampaignCreator(creator)}
                     className={smallButtonClass}
                 >
                     <Trashcan className="h-4 w-4 fill-tertiary-600" />
