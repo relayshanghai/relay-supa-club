@@ -1,17 +1,21 @@
 import type { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { ApiHandler } from 'src/utils/api-handler';
+import { getCampaignCreator } from 'src/utils/api/db/calls/campaign-creators';
+import { updateCampaignCreator } from 'src/utils/api/db/calls/campaign-creators';
+import { serverLogger } from 'src/utils/logger-server';
 import { saveInfluencerPost } from 'src/utils/save-influencer-post';
 import { savePostPerformance } from 'src/utils/save-post-performance';
 import { scrapeInfluencerPost } from 'src/utils/scrape-influencer-post';
 import { db } from 'src/utils/supabase-client';
 
-type PostRequest = {
+export type InfluencerPostRequestBody = {
     campaign_id: string;
     urls: string[];
+    creator_id: string;
 };
 
-type PostInfo = {
+export type PostInfo = {
     title: string;
     postedDate: string;
     id: string;
@@ -19,7 +23,7 @@ type PostInfo = {
     performance: any;
 };
 
-type PostResponse =
+export type InfluencerPostResponse =
     | {
           successful: PostInfo[];
           failed: string[];
@@ -28,11 +32,25 @@ type PostResponse =
           error: string;
       };
 
-const processURL = async (url: string, campaign_id: string) => {
+const processURL = async (url: string, campaign_id: string, creator_id: string) => {
     const scrape = await scrapeInfluencerPost(url);
 
     const _savePostPerformance = db<typeof savePostPerformance>(savePostPerformance);
     const _saveInfluencerPost = db<typeof saveInfluencerPost>(saveInfluencerPost);
+    const _updateCampaignCreator = db<typeof updateCampaignCreator>(updateCampaignCreator);
+    const _getCampaignCreator = db<typeof getCampaignCreator>(getCampaignCreator);
+
+    const creator = await _getCampaignCreator(creator_id);
+
+    if (scrape.influencer_platform_id !== creator.creator_id) {
+        throw new Error('URL influencer and provided influencer did not match');
+    }
+
+    // @note: link campaign_creators to influencer_social_profiles
+    //        https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/416
+    const updatedCreator = await _updateCampaignCreator(creator_id, {
+        influencer_social_profiles_id: scrape.influencer.id,
+    });
 
     const post = await _saveInfluencerPost({
         type: '',
@@ -54,20 +72,20 @@ const processURL = async (url: string, campaign_id: string) => {
         views_total: scrape.viewCount,
     });
 
-    return { post, performance };
+    return { post, performance, creator: updatedCreator };
 };
 
-const postHandler: NextApiHandler = async (req: NextApiRequest, res: NextApiResponse<PostResponse>) => {
-    const data: PostResponse = {
+const postHandler: NextApiHandler = async (req: NextApiRequest, res: NextApiResponse<InfluencerPostResponse>) => {
+    const data: InfluencerPostResponse = {
         successful: [],
         failed: [],
     };
 
-    const body = req.body as PostRequest;
+    const body = req.body as InfluencerPostRequestBody;
 
     for (const url of body.urls) {
         try {
-            const result = await processURL(url, body.campaign_id);
+            const result = await processURL(url, body.campaign_id, body.creator_id);
 
             data.successful.push({
                 title: result.post.title || '',
@@ -77,6 +95,7 @@ const postHandler: NextApiHandler = async (req: NextApiRequest, res: NextApiResp
                 performance: result.performance,
             });
         } catch (error) {
+            serverLogger(error);
             data.failed.push(url);
         }
     }

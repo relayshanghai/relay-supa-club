@@ -8,7 +8,10 @@ import type { InfluencerSocialProfileRow } from './api/db';
 import { fetchReport } from './api/iqdata/fetch-report';
 import { saveInfluencer } from './save-influencer';
 
-type ScrapeDataWithInfluencer = Omit<ScrapeData, 'influencer'> & { influencer: InfluencerSocialProfileRow };
+type ScrapeDataWithInfluencer = Omit<ScrapeData, 'influencer'> & {
+    influencer: InfluencerSocialProfileRow;
+    influencer_platform_id: string;
+};
 
 export const scrapeInfluencerPost = async (url: string): Promise<ScrapeDataWithInfluencer> => {
     const platform = extractPlatformFromURL(url) as CreatorPlatform;
@@ -51,8 +54,8 @@ export const scrapeInfluencerPost = async (url: string): Promise<ScrapeDataWithI
             throw new Error(`Cannot determine influencer from given URL: ${url}`);
         }
 
-        return { ...result, influencer: socialProfile };
+        return { ...result, influencer: socialProfile, influencer_platform_id };
     }
 
-    return { ...result, influencer: socialProfile };
+    return { ...result, influencer: socialProfile, influencer_platform_id };
 };
