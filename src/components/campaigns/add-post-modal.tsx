@@ -42,8 +42,6 @@ function isValidUrl(url: string): boolean {
         regex = /^(https?:\/\/)(www\.)?(youtu\.be\/[\w\-]+|youtube\.com\/watch\?v=[\w\-]+)\/?/;
     } else if (url.includes('tiktok')) {
         regex = /^(https?:\/\/)(www\.)?(tiktok\.com|vm\.tiktok\.com|vt\.tiktok\.com)\/(@[\w\-]+\/video\/[\w\-]+)(\/|$)/;
-    } else if (url.includes('twitter.com')) {
-        regex = /^(https?:\/\/)(www\.)?twitter\.com\/[\w]+\/status\/[\d]+\/?/;
     } else {
         return false;
     }
