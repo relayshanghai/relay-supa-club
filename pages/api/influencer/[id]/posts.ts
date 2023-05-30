@@ -30,7 +30,7 @@ const patchCampaignCreatorWithoutInfluencerSocial = async (
         throw new Error(`Cannot fetch report for influencer: ${creator.creator_id}, ${creator.platform}`);
     }
 
-    const [_, socialProfile] = await saveInfluencer(report);
+    const [_, socialProfile] = await db<typeof saveInfluencer>(saveInfluencer)(report);
 
     if (socialProfile === null) {
         throw new Error(`Cannot save influencer: ${creator.creator_id}, ${creator.platform}`);
