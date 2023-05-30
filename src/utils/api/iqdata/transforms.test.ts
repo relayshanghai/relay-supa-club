@@ -23,6 +23,14 @@ describe('prepareFetchCreatorsFiltered', () => {
                         action: 'must',
                         filter: 'relevance',
                     },
+                    {
+                        filter: 'username',
+                        action: 'should',
+                    },
+                    {
+                        filter: 'text',
+                        action: 'should',
+                    },
                 ],
                 username: { value: 'test_user' },
                 views: { left_number: undefined, right_number: undefined },

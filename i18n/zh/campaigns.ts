@@ -248,6 +248,8 @@ const campaigns = {
         success: '成功添加 {{amount}} 个网址的帖子数据',
         failed: '无法获取 {{amount}} 个网址的帖子数据',
         currentPosts: '当前帖子',
+        removedPost: '已删除帖子',
+        errorRemovingPost: '删除帖子时出错',
     },
     manageInfluencer: {
         title: '管理KOL',

@@ -12,7 +12,7 @@ export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
     const [spinnerLoading, setSpinnerLoading] = useState(false);
     const { t } = useTranslation();
 
-    const { setPlatform, setUsername } = useSearch();
+    const { setPlatform, setUsername, setText, setKeywords } = useSearch();
     const { trackEvent } = useRudderstack();
 
     // Disabling the exhaustive-deps rule because we need to use the debounce function and we already know the required dependencies.
@@ -21,6 +21,8 @@ export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
         debounce((term: any) => {
             setPlatform(platform);
             setUsername(term);
+            setText(term);
+            setKeywords(term);
             trackEvent('Search Options, search for an influencer', { influencer: term, platform });
             setSpinnerLoading(false);
         }),
@@ -28,14 +30,16 @@ export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
     );
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-        setSearchTerm(e.target.value.trim());
+        setSearchTerm(e.target.value);
         setSpinnerLoading(true);
 
         if (e.target.value.trim() === '') {
             setUsername('');
+            setText('');
+            setKeywords('');
         }
 
-        searchInfluencer(e.target.value.trim());
+        searchInfluencer(e.target.value);
     };
 
     return (
