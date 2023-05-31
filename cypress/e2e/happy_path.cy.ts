@@ -2,6 +2,11 @@ import { deleteDB } from 'idb';
 import { cocomelonId, setupIntercepts } from './intercepts';
 
 describe('Main pages happy paths', () => {
+    let featRecommended = false;
+    before(() => {
+        featRecommended = Cypress.env('NEXT_PUBLIC_FEAT_RECOMMENDED') === 'true';
+    });
+
     beforeEach(async () => {
         await deleteDB('app-cache');
     });
@@ -179,12 +184,20 @@ describe('Main pages happy paths', () => {
         cy.contains('tr', 'SET India', { timeout: 30000 }).contains('Add to campaign').click(); // not sure why this is still slow
         cy.contains('Beauty for All Skin Tones');
         cy.getByTestId('add-creator-button:Beauty for All Skin Tones').click();
+
         cy.contains('Campaigns').click({ force: true }); // hidden by modal
+        cy.contains('Influencer added successfully.', { timeout: 60000 });
         cy.get('button').contains('New Campaign');
         cy.contains('Beauty for All Skin Tones').click();
 
         // move influencer to new campaign
-        cy.contains('tr', 'SET India', { timeout: 60000 }).contains('Move Influencer').click(); // can take a while to refresh
+        if (featRecommended) {
+            cy.contains('tr', 'SET India', { timeout: 60000 }).within(() =>
+                cy.getByTestId('move-influencer-button').click(),
+            ); // can take
+        } else {
+            cy.contains('tr', 'SET India', { timeout: 60000 }).contains('Move Influencer').click(); // can take a while to refresh
+        }
         cy.getByTestId('move-influencer-button:My Campaign').click();
         cy.contains('Campaign Launch Date').click({ force: true }); // click out of modal
         cy.contains('SET India').should('not.exist');
@@ -200,7 +213,14 @@ describe('Main pages happy paths', () => {
         cy.contains('SET India');
 
         // add notes
-        cy.contains('Notes').click();
+        if (featRecommended) {
+            cy.getByTestId('manage-button').click();
+            cy.contains('Notes');
+            cy.getByTestId('show-influencer-notes').click();
+        } else {
+            cy.contains('Notes').click();
+        }
+
         cy.contains('Internal Comments');
         cy.get('textarea').type('This influencer is great');
         cy.contains('William Edward').should('not.exist'); // user name doesn't show
@@ -211,7 +231,7 @@ describe('Main pages happy paths', () => {
         cy.contains('My Campaign').click({ force: true }); // hidden by modal
         // delete an influencer
         cy.getByTestId('delete-creator').click();
-        cy.contains('influencer was deleted.');
+        cy.contains('Influencer was deleted.');
         cy.contains('SET India').should('not.exist');
 
         // archive a campaign
@@ -233,6 +253,11 @@ describe('Main pages happy paths', () => {
 
         // pre-populates email with original email
         cy.get('input[type="email"]').should('have.value', Cypress.env('TEST_USER_EMAIL_COMPANY_OWNER'));
+    });
+    it.only('Can add post URLs to campaign influencers and see their posts performance updated on the performance page', () => {
+        // check 'before' performance page totals
+        cy.loginTestUser();
+        cy.contains('Performance').click();
     });
 });
 
