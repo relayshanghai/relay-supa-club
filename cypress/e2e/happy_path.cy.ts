@@ -257,7 +257,7 @@ describe('Main pages happy paths', () => {
         // pre-populates email with original email
         cy.get('input[type="email"]').should('have.value', Cypress.env('TEST_USER_EMAIL_COMPANY_OWNER'));
     });
-    it.only('Can add post URLs to campaign influencers and see their posts performance updated on the performance page', () => {
+    it('Can add post URLs to campaign influencers and see their posts performance updated on the performance page', () => {
         if (!featPerformance) {
             return;
         }
