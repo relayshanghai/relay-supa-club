@@ -2,9 +2,9 @@ import { deleteDB } from 'idb';
 import { cocomelonId, setupIntercepts } from './intercepts';
 
 describe('Main pages happy paths', () => {
-    let featRecommended = false;
+    let featPerformance = false;
     before(() => {
-        featRecommended = Cypress.env('NEXT_PUBLIC_FEAT_RECOMMENDED') === 'true';
+        featPerformance = Cypress.env('NEXT_PUBLIC_FEAT_PERFORMANCE') === 'true';
     });
 
     beforeEach(async () => {
@@ -135,7 +135,7 @@ describe('Main pages happy paths', () => {
             .type('123')
             .should('have.value', 'Blue Moonlight Stream Enterprises123');
     });
-    it.only('can open campaigns page and manage campaign influencers', () => {
+    it('can open campaigns page and manage campaign influencers', () => {
         setupIntercepts();
         // list, add, archive campaigns
         // list, add, move, delete campaign influencers
@@ -191,7 +191,7 @@ describe('Main pages happy paths', () => {
         cy.contains('Beauty for All Skin Tones').click();
 
         // move influencer to new campaign
-        if (featRecommended) {
+        if (featPerformance) {
             cy.contains('tr', 'SET India', { timeout: 60000 }).within(() =>
                 cy.getByTestId('move-influencer-button').click(),
             ); // can take
@@ -213,7 +213,7 @@ describe('Main pages happy paths', () => {
         cy.contains('SET India');
 
         // add notes
-        if (featRecommended) {
+        if (featPerformance) {
             cy.getByTestId('manage-button').click();
             cy.contains('Notes');
             cy.getByTestId('show-influencer-notes').click();
@@ -254,7 +254,10 @@ describe('Main pages happy paths', () => {
         // pre-populates email with original email
         cy.get('input[type="email"]').should('have.value', Cypress.env('TEST_USER_EMAIL_COMPANY_OWNER'));
     });
-    it.only('Can add post URLs to campaign influencers and see their posts performance updated on the performance page', () => {
+    it('Can add post URLs to campaign influencers and see their posts performance updated on the performance page', () => {
+        if (!featPerformance) {
+            return;
+        }
         // check 'before' performance page totals
         cy.loginTestUser();
         cy.contains('Performance').click();
