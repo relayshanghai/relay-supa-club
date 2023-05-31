@@ -1,5 +1,5 @@
 import { deleteDB } from 'idb';
-import { cocomelonId, setupIntercepts } from './intercepts';
+import { addPostIntercept, cocomelonId, setupIntercepts } from './intercepts';
 
 describe('Main pages happy paths', () => {
     let featPerformance = false;
@@ -257,10 +257,11 @@ describe('Main pages happy paths', () => {
         // pre-populates email with original email
         cy.get('input[type="email"]').should('have.value', Cypress.env('TEST_USER_EMAIL_COMPANY_OWNER'));
     });
-    it('Can add post URLs to campaign influencers and see their posts performance updated on the performance page', () => {
+    it.only('Can add post URLs to campaign influencers and see their posts performance updated on the performance page', () => {
         if (!featPerformance) {
             return;
         }
+        addPostIntercept();
         // check 'before' performance page totals
         cy.loginTestUser();
         cy.contains('Performance').click();
@@ -275,6 +276,37 @@ describe('Main pages happy paths', () => {
         });
         cy.contains('div', 'Views').within(() => {
             cy.contains('96.2K');
+        });
+
+        cy.contains('Campaigns').click();
+        cy.contains('Beauty for All Skin Tones').click();
+        cy.getByTestId('status-dropdown').select('Posted', { force: true });
+        cy.contains('Posted 1').click();
+        cy.contains('Content').click();
+        cy.contains('h2', 'Manage Posts');
+
+        const youtubeLink = 'https://www.youtube.com/watch?v=UzL-0vZ5-wk';
+        cy.contains('form', 'Add Post URL').within(() => {
+            cy.get('input').type(youtubeLink);
+            cy.get('button').contains('Submit').should('not.be.disabled').click();
+        });
+
+        cy.contains('Successfully added 1 URLs');
+        cy.getByTestId('status-dropdown').select('To Contact', { force: true });
+
+        // check 'after' performance page totals
+        cy.contains('Performance').click();
+        cy.contains('All campaigns', { timeout: 20000 });
+        cy.contains('div', 'Likes').within(() => {
+            cy.contains('166.5K').should('not.exist');
+            cy.contains('27.0K');
+        });
+        cy.contains('div', 'Comments').within(() => {
+            cy.contains('2.8K').should('not.exist');
+            cy.contains('167.5K');
+        });
+        cy.contains('div', 'Views').within(() => {
+            cy.contains('97.2K');
         });
     });
 });
