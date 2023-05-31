@@ -10,7 +10,7 @@ DROP INDEX IF EXISTS "public"."posts_performance_pkey";
 
 DROP TABLE "public"."posts_performance";
 
-CREATE TABLE "public"."posts_performance"(
+CREATE TABLE "public"."posts_performance" (
   "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
   "created_at" timestamp with time zone DEFAULT (now() AT TIME ZONE 'utc'::text),
   "campaign_id" uuid NOT NULL,

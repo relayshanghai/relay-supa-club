@@ -18,6 +18,10 @@ export interface ISearchContext {
     setLoading: (loading: boolean) => void;
     tags: CreatorSearchTag[];
     setTopicTags: (tags: CreatorSearchTag[]) => void;
+    text: string;
+    setText: (text: string) => void;
+    keywords: string;
+    setKeywords: (keywords: string) => void;
     username: string;
     setUsername: (username: string) => void;
     influencerLocation: LocationWeighted[];
@@ -59,6 +63,10 @@ export const SearchContext = createContext<ISearchContext>({
     setLoading: () => null,
     tags: [],
     setTopicTags: () => null,
+    text: '',
+    setText: () => null,
+    keywords: '',
+    setKeywords: () => null,
     username: '',
     setUsername: () => null,
     influencerLocation: [],
@@ -121,6 +129,8 @@ export const useSearchResults = (page: number) => {
                     tags,
                     platform,
                     username,
+                    text,
+                    keywords,
                     influencerLocation,
                     audienceLocation,
                     resultsPerPageLimit,
@@ -137,6 +147,8 @@ export const useSearchResults = (page: number) => {
                 const body: InfluencerPostRequest = {
                     tags,
                     platform,
+                    text,
+                    keywords,
                     username,
                     influencerLocation,
                     audienceLocation,
@@ -213,6 +225,8 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
 
     // search options
     const [tags, setTopicTags] = useState<CreatorSearchTag[]>([]);
+    const [text, setText] = useState<string>('');
+    const [keywords, setKeywords] = useState<string>('');
     const [username, setUsername] = useState<string>('');
     const [influencerLocation, setInfluencerLocation] = useState<LocationWeighted[]>([]);
     const [views, setViews] = useState<NullStringTuple>([null, null]);
@@ -239,6 +253,10 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
                 setPlatform,
                 tags,
                 setTopicTags,
+                text,
+                setText,
+                keywords,
+                setKeywords,
                 username,
                 setUsername,
                 influencerLocation,

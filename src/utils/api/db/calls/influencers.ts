@@ -1,10 +1,5 @@
 import { supabase } from 'src/utils/supabase-client';
-import type {
-    InfluencerRow,
-    InfluencerSocialProfileRow,
-    InfluencerInsert,
-    InfluencerSocialProfileInsert,
-} from '../types';
+import type { InfluencerRow, InfluencerSocialProfileRow } from '../types';
 
 export const getInfluencerById = async (id: string): Promise<InfluencerRow | null> => {
     const influencer = await supabase
@@ -39,26 +34,4 @@ export const getInfluencerSocialProfileByReferenceId = async (
     }
 
     return socialProfile.data;
-};
-
-export const insertInfluencer = async (data: InfluencerInsert): Promise<InfluencerRow> => {
-    const influencer = await supabase.from('influencers').insert(data).select();
-
-    if (influencer.error) {
-        throw influencer.error;
-    }
-
-    return influencer.data[0];
-};
-
-export const insertInfluencerSocialProfile = async (
-    data: InfluencerSocialProfileInsert,
-): Promise<InfluencerSocialProfileRow> => {
-    const socialProfile = await supabase.from('influencer_social_profiles').insert(data).select();
-
-    if (socialProfile.error) {
-        throw socialProfile.error;
-    }
-
-    return socialProfile.data[0];
 };
