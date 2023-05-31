@@ -23,7 +23,7 @@ export type PostInfo = {
     performance: any;
 };
 
-export type InfluencerPostResponse =
+export type InfluencerPostPostResponse =
     | {
           successful: PostInfo[];
           failed: string[];
@@ -75,8 +75,8 @@ const processURL = async (url: string, campaign_id: string, creator_id: string) 
     return { post, performance, creator: updatedCreator };
 };
 
-const postHandler: NextApiHandler = async (req: NextApiRequest, res: NextApiResponse<InfluencerPostResponse>) => {
-    const data: InfluencerPostResponse = {
+const postHandler: NextApiHandler = async (req: NextApiRequest, res: NextApiResponse<InfluencerPostPostResponse>) => {
+    const data: InfluencerPostPostResponse = {
         successful: [],
         failed: [],
     };
