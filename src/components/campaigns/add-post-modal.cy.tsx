@@ -56,10 +56,14 @@ const props: AddPostModalProps = {
     },
 };
 
-const youtubeLink = 'https://www.youtube.com/channel/UClf-gnZdtIffbPPhOq3CelA';
-const youtubeLink2 = 'https://youtu.be/channel/UClf-gnZdtIffbPPhOq3CelA';
-const instagramLink = 'https://www.instagram.com/relay.club/?hl=en';
-const tiktokLink = 'https://vm.tiktok.com/ZSd2GkJrM/';
+const youtubeLink = 'https://www.youtube.com/watch?v=UzL-0vZ5-wk';
+const youtubeLink2 = 'https://youtu.be/UzL-0vZ5-wk';
+const instagramLink = 'https://www.instagram.com/p/Cr3aeZ7NXW3/';
+const tiktokLink =
+    'https://www.tiktok.com/@graceofearth/video/7230816093755936043?_r=1&_t=8c9DNKVO2Tm&social_sharing=v2';
+const tiktokM = 'https://vm.tiktok.com/@graceofearth/video/7230816093755936043';
+const tiktokT =
+    'https://vt.tiktok.com/@graceofearth/video/7230816093755936043?is_from_webapp=1&sender_device=pc&web_id=7214153327838512682';
 
 describe('AddPostModal', () => {
     before(async () => {
@@ -82,6 +86,10 @@ describe('AddPostModal', () => {
         cy.get('input').clear().type(instagramLink);
         cy.get('button').contains('Submit').should('not.be.disabled');
         cy.get('input').clear().type(tiktokLink);
+        cy.get('button').contains('Submit').should('not.be.disabled');
+        cy.get('input').clear().type(tiktokM);
+        cy.get('button').contains('Submit').should('not.be.disabled');
+        cy.get('input').clear().type(tiktokT);
         cy.get('button').contains('Submit').should('not.be.disabled');
 
         cy.get('input').clear().type('https://www.elsewhere.com/asdf');
@@ -112,7 +120,7 @@ describe('AddPostModal', () => {
             url: 'https://www.youtube.com/watch?v=123',
         };
         worker.use(
-            rest.get(`${APP_URL_CYPRESS}/api/posts/${creator.id}`, (req, res, ctx) => {
+            rest.get(`${APP_URL_CYPRESS}/api/influencer/${creator.id}/posts`, (req, res, ctx) => {
                 return res(ctx.json([mockPostData]));
             }),
         );
