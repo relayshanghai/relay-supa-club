@@ -200,7 +200,7 @@
   {
     "id": "e5362b98-88dd-4b13-9d9c-9168f3ce5bee",
     "created_at": "2023-04-19T03:21:05.563283+00:00",
-    "status": "confirmed",
+    "status": "posted",
     "campaign_id": "2fefe314-b457-4812-95a5-9d9d73e2eb0d",
     "updated_at": null,
     "relay_creator_id": null,

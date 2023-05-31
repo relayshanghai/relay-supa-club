@@ -15,16 +15,16 @@ describe('CampaignCardSquare', () => {
         testMount(<CampaignCardSquare campaign={jimTestCampaign} />);
         cy.contains('To Contact: 4');
         cy.contains('Contacted: 1');
-        cy.contains('Confirmed: 2');
-        cy.contains('Posted').should('not.exist');
+        cy.contains('Confirmed: 1');
+        cy.contains('Posted: 1');
     });
 
     it('Should render Amy Test Campaign card', () => {
         testMount(<CampaignCardSquare campaign={amyTestCampaign} />);
-        cy.contains('To Contact: 5');
+        cy.contains('To Contact: 6');
         cy.contains('Contacted: 1');
         cy.contains('Confirmed: 2');
-        cy.contains('Posted: 1');
+        cy.contains('Posted').should('not.exist');
     });
 
     it('Should render New Empty Campaign card', () => {
