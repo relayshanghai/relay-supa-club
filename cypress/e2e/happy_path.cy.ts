@@ -2,11 +2,6 @@ import { deleteDB } from 'idb';
 import { addPostIntercept, cocomelonId, setupIntercepts } from './intercepts';
 
 describe('Main pages happy paths', () => {
-    let featPerformance = false;
-    before(() => {
-        featPerformance = Cypress.env('NEXT_PUBLIC_FEAT_PERFORMANCE') === 'true';
-    });
-
     beforeEach(async () => {
         await deleteDB('app-cache');
     });
@@ -194,13 +189,11 @@ describe('Main pages happy paths', () => {
         cy.contains('Beauty for All Skin Tones').click();
 
         // move influencer to new campaign
-        if (featPerformance) {
-            cy.contains('tr', 'SET India', { timeout: 60000 }).within(() =>
-                cy.getByTestId('move-influencer-button').click(),
-            ); // can take
-        } else {
-            cy.contains('tr', 'SET India', { timeout: 60000 }).contains('Move Influencer').click(); // can take a while to refresh
-        }
+
+        cy.contains('tr', 'SET India', { timeout: 60000 }).within(() =>
+            cy.getByTestId('move-influencer-button').click(),
+        ); // can take
+
         cy.getByTestId('move-influencer-button:My Campaign').click();
         cy.contains('Campaign Launch Date').click({ force: true }); // click out of modal
         cy.contains('SET India').should('not.exist');
@@ -216,13 +209,10 @@ describe('Main pages happy paths', () => {
         cy.contains('SET India');
 
         // add notes
-        if (featPerformance) {
-            cy.getByTestId('manage-button').click();
-            cy.contains('Notes');
-            cy.getByTestId('show-influencer-notes').click();
-        } else {
-            cy.contains('Notes').click();
-        }
+
+        cy.getByTestId('manage-button').click();
+        cy.contains('Notes');
+        cy.getByTestId('show-influencer-notes').click();
 
         cy.contains('Internal Comments');
         cy.get('textarea').type('This influencer is great');
@@ -258,9 +248,6 @@ describe('Main pages happy paths', () => {
         cy.get('input[type="email"]').should('have.value', Cypress.env('TEST_USER_EMAIL_COMPANY_OWNER'));
     });
     it('Can add post URLs to campaign influencers and see their posts performance updated on the performance page', () => {
-        if (!featPerformance) {
-            return;
-        }
         addPostIntercept();
         // check 'before' performance page totals
         cy.loginTestUser();
