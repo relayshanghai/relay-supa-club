@@ -4,10 +4,10 @@ import { rudderInitialized } from 'src/utils/rudder-initialize';
 
 //There are more traits properties, but we only need these for now. Ref: https://www.rudderstack.com/docs/event-spec/standard-events/identify/#identify-traits
 export interface IdentityTraits extends apiObject {
-    email: string;
-    firstName: string;
-    lastName: string;
-    company: {
+    email?: string;
+    firstName?: string;
+    lastName?: string;
+    company?: {
         id?: string;
         name?: string;
     };
@@ -26,34 +26,33 @@ export const useRudderstack = () => {
         if (!window.rudder) {
             await rudderInitialized();
         }
-        window.rudder?.identify(userId, traits);
+        window.rudder.identify(userId, traits);
     };
 
     const pageView = async (pageName: string, properties?: PageProperties) => {
         if (!window.rudder) {
             await rudderInitialized();
         }
-        window.rudder?.page(pageName, properties);
+        window.rudder.page(pageName, properties);
     };
 
     const trackEvent = async (eventName: string, properties?: apiObject) => {
         if (!window.rudder) {
             await rudderInitialized();
         }
-        window.rudder?.track(eventName, properties);
+        window.rudder.track(eventName, properties);
     };
 
     const group = async (groupId: string, traits?: apiObject) => {
         if (!window.rudder) {
             await rudderInitialized();
         }
-        window.rudder?.track(groupId, traits);
+        window.rudder.track(groupId, traits);
     };
 
     const identifyFromProfile = (profile: ProfileDB) => {
         if (profile) {
             const { id, email, first_name, last_name, company_id, user_role } = profile;
-
             identifyUser(id, {
                 email: email || '',
                 firstName: first_name,
