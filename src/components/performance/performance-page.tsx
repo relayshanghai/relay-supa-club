@@ -3,8 +3,11 @@ import { Layout } from 'src/components/layout';
 import { ArrowRight, BoxFilled, Spinner, ThumbUpOutline } from '../icons';
 import { EyeOutline } from '../icons';
 import { ChatBubbleTextOutline } from '../icons';
-import SalesBarChart from './sales-bar-chart';
-import { toCurrency, numFormatter } from 'src/utils/utils';
+// import SalesBarChart from './sales-bar-chart';
+import {
+    //  toCurrency,
+    numFormatter,
+} from 'src/utils/utils';
 import { useCampaigns } from 'src/hooks/use-campaigns';
 import type { PostPerformanceByCampaign } from 'src/hooks/use-post-performance';
 import usePostPerformance from 'src/hooks/use-post-performance';
@@ -33,7 +36,7 @@ const PerformancePage = () => {
 
     const viewsTotal = selectedStats?.reduce((acc, curr) => (curr.viewCount ? acc + curr.viewCount : acc), 0);
 
-    const salesTotal = selectedStats?.reduce((acc, curr) => (curr.sales ? acc + curr.sales : acc), 0);
+    // const salesTotal = selectedStats?.reduce((acc, curr) => (curr.sales ? acc + curr.sales : acc), 0);
 
     const postsTotal = selectedStats?.length;
 
@@ -58,14 +61,15 @@ const PerformancePage = () => {
         <Layout>
             <section className="mx-auto flex w-11/12 max-w-screen-xl flex-col items-center justify-center bg-gray-50 md:h-full">
                 {
-                    <div className="flex h-full flex-col items-start justify-center p-8 text-gray-700 md:w-full">
+                    <div className="flex h-full w-full flex-col items-start justify-center p-8 text-gray-700">
                         <div className="mb-9 flex min-h-fit flex-col items-start justify-start space-y-2">
                             <h2 className="text-2xl font-medium ">{t('performance.title')}</h2>
                             <p className="text-xs leading-none ">
                                 {selectedCampaign ? selectedCampaign?.name : t('performance.allCampaigns')}
                             </p>
                         </div>
-                        <div className="lg:grid-row-2 flex w-full flex-col gap-5 lg:grid lg:grid-cols-4 ">
+                        {/* TODO: for sales, make grid-cols-4 */}
+                        <div className="lg:grid-row-2 flex w-full flex-col gap-5 lg:grid lg:grid-cols-3 ">
                             {/* min width 168px is from figma design, it also gives the card a reasonable width for large digits */}
                             <div className="group row-span-2 flex min-w-fit flex-col justify-between space-y-6 rounded-2xl bg-white p-6 text-center shadow transition duration-500 ease-in-out hover:scale-105 hover:cursor-default hover:stroke-primary-500 hover:text-primary-500 hover:shadow-md">
                                 <div className="flex flex-col items-start space-y-6 md:items-center ">
@@ -86,7 +90,8 @@ const PerformancePage = () => {
                                     </div>
                                 </div>
                             </div>
-                            <div className="hover:scale-10 group col-span-3  flex min-w-fit space-y-6 rounded-lg bg-white p-6 shadow transition duration-500 ease-in-out hover:scale-105 hover:cursor-default hover:stroke-primary-500 hover:text-primary-500 hover:shadow-md">
+                            {/* TODO: Turn on Sales */}
+                            {/* <div className="hover:scale-10 group col-span-3  flex min-w-fit space-y-6 rounded-lg bg-white p-6 shadow transition duration-500 ease-in-out hover:scale-105 hover:cursor-default hover:stroke-primary-500 hover:text-primary-500 hover:shadow-md">
                                 <div className="flex w-1/2 flex-col space-y-6 transition duration-500 ease-in-out group-hover:text-primary-500 ">
                                     <h4 className="text-base">{t('performance.stats.sales')}</h4>
 
@@ -98,7 +103,7 @@ const PerformancePage = () => {
                                 <div className="invisible w-1/2 md:visible">
                                     <SalesBarChart />
                                 </div>
-                            </div>
+                            </div> */}
                             {Object.values(totals).map((total) => (
                                 <div
                                     className="group flex min-w-[168px] flex-col space-y-6 rounded-2xl bg-white p-6 shadow transition duration-500 ease-in-out hover:scale-105 hover:cursor-default hover:stroke-primary-500 hover:text-primary-500 hover:shadow-md"
