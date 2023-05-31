@@ -1,8 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-import type { ChangeEvent, MouseEvent } from 'react';
-import { useRef, useState } from 'react';
+import type { ChangeEvent } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { toast } from 'react-hot-toast';
 import type { CampaignCreatorDB, CampaignDB } from 'src/utils/api/db';
@@ -10,6 +10,8 @@ import Fuse from 'fuse.js';
 import { MoveInfluencerModal } from '../modal-move-influencer';
 import { useCampaignCreators } from 'src/hooks/use-campaign-creators';
 import InfluencerRow from './influencer-row';
+import { ManageInfluencerModal } from './manage-influencer-modal';
+import { AddPostModal } from './add-post-modal';
 
 export interface CreatorsOutreachProps {
     currentCampaign: CampaignDB;
@@ -32,7 +34,6 @@ export default function CampaignInfluencersTable({
     currentCreator,
 }: CreatorsOutreachProps) {
     const { t } = useTranslation();
-    const inputRef = useRef(null);
 
     const router = useRouter();
     const { pathname, query } = router;
@@ -43,6 +44,8 @@ export default function CampaignInfluencersTable({
     const [influencersList, setInfluencersList] = useState<CampaignCreatorDB[]>([]);
 
     const [showMoveInfluencerModal, setShowMoveInfluencerModal] = useState(false);
+    const [showManageInfluencerModal, setShowManageInfluencerModal] = useState(false);
+    const [showAddPostModal, setShowAddPostModal] = useState(false);
 
     const { campaignCreators, deleteCreatorInCampaign, updateCreatorInCampaign, refreshCampaignCreators } =
         useCampaignCreators({
@@ -134,38 +137,37 @@ export default function CampaignInfluencersTable({
         setSearchTerm(e.target.value);
     };
 
-    const handleDropdownSelect = async (
-        e: ChangeEvent<HTMLSelectElement>,
-        creator: CampaignCreatorDB,
-        objKey: string,
-    ) => {
-        creator = { ...creator, [objKey]: e.target.value };
+    const handleDropdownSelect = async (value: string, creator: CampaignCreatorDB, objKey: string) => {
+        creator = { ...creator, [objKey]: value };
         await updateCreatorInCampaign(creator);
         refreshCampaignCreators();
         toast.success(t('campaigns.creatorModal.influencerUpdated'));
     };
 
-    const setInlineEdit = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, index: number, key: string) => {
+    const setInlineEdit = (index: number, key: string) => {
         setToEdit({ index, key });
     };
 
-    const openNotes = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, creator: CampaignCreatorDB) => {
+    const openNotes = (creator: CampaignCreatorDB) => {
         setCurrentCreator(creator);
         setShowNotesModal(true);
     };
 
-    const openMoveInfluencerModal = (
-        e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
-        creator: CampaignCreatorDB,
-    ) => {
+    const openMoveInfluencerModal = (creator: CampaignCreatorDB) => {
         setCurrentCreator(creator);
         setShowMoveInfluencerModal(true);
     };
 
-    const deleteCampaignCreator = async (
-        e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
-        creator: CampaignCreatorDB,
-    ) => {
+    const openManageInfluencerModal = (creator: CampaignCreatorDB) => {
+        setCurrentCreator(creator);
+        setShowManageInfluencerModal(true);
+    };
+    const openAddPostModal = (creator: CampaignCreatorDB) => {
+        setCurrentCreator(creator);
+        setShowAddPostModal(true);
+    };
+
+    const deleteCampaignCreator = async (creator: CampaignCreatorDB) => {
         const c = confirm(t('campaigns.modal.deleteConfirmation') as string);
         if (!c) return;
         await deleteCreatorInCampaign({ creatorId: creator.id, campaignId: currentCampaign.id });
@@ -198,9 +200,9 @@ export default function CampaignInfluencersTable({
                 </Link>
                 {/* TODO: make Tabs component reusable */}
                 <div className="hidden items-center sm:flex">
-                    {tabs.map((tab, index) => (
+                    {tabs.map((tab) => (
                         <div
-                            key={index}
+                            key={tab.label}
                             onClick={() => handleTabChange(tab.value)}
                             className={`mr-4 flex-shrink-0 cursor-pointer rounded-lg px-4 py-2 text-xs font-semibold duration-300 hover:bg-primary-500 hover:bg-opacity-20 hover:text-primary-500 focus:bg-primary-500 focus:bg-opacity-20 focus:text-primary-500 ${
                                 tabStatus === tab.value
@@ -223,7 +225,7 @@ export default function CampaignInfluencersTable({
                         <option
                             key={index}
                             value={tab.value}
-                            selected={tabStatus === tab.value}
+                            defaultValue={tab.value}
                             className={`mr-4 flex-shrink-0 cursor-pointer rounded-lg bg-gray-100 px-4 py-2 text-xs font-semibold text-gray-400 duration-300 hover:bg-primary-500 hover:bg-opacity-20 hover:text-primary-500 ${
                                 tabStatus === tab.value && 'bg-primary-500 bg-opacity-20 text-purple-500'
                             }`}
@@ -274,33 +276,52 @@ export default function CampaignInfluencersTable({
                                 </td>
                             </tr>
                         )}
-                        {influencersList.map((creator, index) => {
-                            if (creator.status === tabStatus)
-                                return (
-                                    <InfluencerRow
-                                        creator={creator}
-                                        index={index}
-                                        updateCampaignCreator={updateCampaignCreator}
-                                        editingModeTrue={editingModeTrue}
-                                        setToEdit={setToEdit}
-                                        handleDropdownSelect={handleDropdownSelect}
-                                        inputRef={inputRef}
-                                        setInlineEdit={setInlineEdit}
-                                        tabs={tabs}
-                                        openNotes={openNotes}
-                                        deleteCampaignCreator={deleteCampaignCreator}
-                                        openMoveInfluencerModal={openMoveInfluencerModal}
-                                        showMoveInfluencerModal={showMoveInfluencerModal}
-                                        setShowMoveInfluencerModal={setShowMoveInfluencerModal}
-                                        visibleColumns={visibleColumns}
-                                        tabStatus={tabStatus}
-                                    />
-                                );
-                        })}
+                        {influencersList.map((creator, index) =>
+                            creator.status === tabStatus ? (
+                                <InfluencerRow
+                                    key={creator.id}
+                                    creator={creator}
+                                    index={index}
+                                    updateCampaignCreator={updateCampaignCreator}
+                                    editingModeTrue={editingModeTrue}
+                                    setToEdit={setToEdit}
+                                    handleDropdownSelect={handleDropdownSelect}
+                                    setInlineEdit={setInlineEdit}
+                                    tabs={tabs}
+                                    openNotes={openNotes}
+                                    deleteCampaignCreator={deleteCampaignCreator}
+                                    openMoveInfluencerModal={openMoveInfluencerModal}
+                                    openManageInfluencerModal={openManageInfluencerModal}
+                                    openAddPostModal={openAddPostModal}
+                                    showMoveInfluencerModal={showMoveInfluencerModal}
+                                    setShowMoveInfluencerModal={setShowMoveInfluencerModal}
+                                    visibleColumns={visibleColumns}
+                                    tabStatus={tabStatus}
+                                />
+                            ) : null,
+                        )}
                     </tbody>
                 </table>
             </div>
-
+            {currentCampaign && currentCreator && (
+                <AddPostModal
+                    key={currentCreator.id}
+                    creator={currentCreator}
+                    visible={showAddPostModal}
+                    onClose={() => setShowAddPostModal(false)}
+                />
+            )}{' '}
+            {currentCreator && currentCampaign && (
+                <ManageInfluencerModal
+                    visible={showManageInfluencerModal}
+                    onClose={() => setShowManageInfluencerModal(false)}
+                    creator={currentCreator}
+                    openMoveInfluencerModal={openMoveInfluencerModal}
+                    openNotes={openNotes}
+                    updateCampaignCreator={updateCampaignCreator}
+                    deleteCampaignCreator={deleteCampaignCreator}
+                />
+            )}
             {campaigns && currentCampaign && currentCreator && (
                 <MoveInfluencerModal
                     platform={currentCreator.platform}
