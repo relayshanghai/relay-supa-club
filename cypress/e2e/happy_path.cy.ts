@@ -32,9 +32,9 @@ describe('Main pages happy paths', () => {
         cy.contains('GRTR').should('not.exist');
 
         cy.getByTestId('creator-search').type('GRTR{enter}');
-        cy.contains('button', 'Search').click();
-        cy.contains('button', 'Search').click(); // click twice due to some funky rerendering, so button click doesn't work the first time
-        // cy.contains will not include the input element in the search, so this shows that the results are in the DOM
+        cy.wait(2000); // due to some funky rerendering, so button click doesn't work immediately
+
+        cy.contains('button', 'Search').click(); // click twice
         cy.contains('GRTR');
     });
     it('can search for a topic', () => {
