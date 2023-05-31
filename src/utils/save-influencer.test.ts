@@ -1,14 +1,15 @@
 import { vi, describe, it, expect } from 'vitest';
-import { insertInfluencer, insertInfluencerSocialProfile } from './api/db/calls/influencers';
+import { insertInfluencer, insertInfluencerSocialProfile } from './api/db/calls/influencers-insert';
 import * as extractInfluencer from './api/iqdata/extract-influencer';
 import type { CreatorReport } from '../../types';
 import { saveInfluencer } from './save-influencer';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
-vi.mock('./api/db/calls/influencers', () => ({
-    insertInfluencer: vi.fn(async (_: any) => {
+vi.mock('./api/db/calls/influencers-insert', () => ({
+    insertInfluencer: vi.fn(() => async (_: any) => {
         return { ..._, id: 1 };
     }),
-    insertInfluencerSocialProfile: vi.fn(async (_: any) => {
+    insertInfluencerSocialProfile: vi.fn(() => async (_: any) => {
         return { ..._, id: 2 };
     }),
 }));
@@ -24,12 +25,14 @@ describe('Save influencer', () => {
             },
         } as CreatorReport;
 
+        const db = vi.fn() as unknown as SupabaseClient;
+
         const extractInfluencerSocialProfileSpy = vi.spyOn(
             extractInfluencer,
             'mapIqdataProfileToInfluencerSocialProfile',
         );
         const extractInfluencerSpy = vi.spyOn(extractInfluencer, 'mapIqdataProfileToInfluencer');
-        const [influencer, socialProfile] = await saveInfluencer(data);
+        const [influencer, socialProfile] = await saveInfluencer(db)(data);
 
         expect(influencer).not.toBeNull();
         expect(socialProfile).not.toBeNull();
