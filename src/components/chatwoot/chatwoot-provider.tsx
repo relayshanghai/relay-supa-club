@@ -15,6 +15,8 @@ export type ChatwootSettings = {
     showPopoutButton?: boolean;
 };
 
+export type ChatwootConfig = ChatwootSettings & ChatwootSDKParams;
+
 export type Chatwoot = {
     baseUrl: string;
     hasLoaded: boolean;
@@ -64,14 +66,6 @@ const ChatWootContext = createContext<Chatwoot | null>(null);
 export const useChatwoot = () => useContext(ChatWootContext);
 
 type ChatwootProviderProps = PropsWithChildren<ChatwootSettings & ChatwootSDKParams>;
-
-export const chatwootWebsiteToken = () => {
-    if (!process.env.NEXT_PUBLIC_CHATWOOT_WEBSITE_TOKEN) {
-        throw new Error('Invalid chatwoot token');
-    }
-
-    return process.env.NEXT_PUBLIC_CHATWOOT_WEBSITE_TOKEN;
-};
 
 export default function ChatwootProvider({ children, ...chatwootOptions }: ChatwootProviderProps) {
     const { baseUrl, websiteToken, ...settings } = chatwootOptions;
