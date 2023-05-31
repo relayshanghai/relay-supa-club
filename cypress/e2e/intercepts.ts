@@ -2,7 +2,10 @@ import cocomelon from '../../src/mocks/api/creators/report/cocomelon.json';
 import defaultLandingPageInfluencerSearch from '../../src/mocks/api/influencer-search/indexDefaultSearch.json';
 import influencerSearch from '../../src/mocks/api/influencer-search/searchByInfluencerGRTR.json';
 import keywordSearch from '../../src/mocks/api/influencer-search/keywordSearchAlligators.json';
+import { createClient } from '@supabase/supabase-js';
+import type { DatabaseWithCustomTypes } from 'types';
 export { cocomelon, defaultLandingPageInfluencerSearch };
+
 export const cocomelonId = cocomelon.user_profile.user_id;
 export const setupIntercepts = () => {
     // IQData intercepts
@@ -87,5 +90,62 @@ export const setupIntercepts = () => {
                 type: 'card',
             },
         ],
+    });
+};
+
+export const addPostIntercept = () => {
+    const mockPostData = {
+        title: 'initial post title',
+        postedDate: new Date('2021-09-01').toISOString(),
+        id: 'a4bfe75f-91d3-42d6-af9e-93d0265b7c34',
+        url: 'https://www.youtube.com/watch?v=123',
+    };
+    const supabaseUrl = Cypress.env('NEXT_PUBLIC_SUPABASE_URL') || '';
+    if (!supabaseUrl) throw new Error('NEXT_PUBLIC_SUPABASE_URL not set');
+    const supabaseServiceKey = Cypress.env('SUPABASE_SERVICE_KEY') || '';
+    if (!supabaseServiceKey) throw new Error('SUPABASE_SERVICE_KEY not set');
+
+    const supabase = createClient<DatabaseWithCustomTypes>(supabaseUrl, supabaseServiceKey);
+
+    cy.intercept('POST', '/api/influencer/posts', async (req) => {
+        const { data: campaign } = await supabase
+            .from('campaigns')
+            .select('*')
+            .eq('name', 'Beauty for All Skin Tones')
+            .single();
+        const campaign_id = campaign?.id || '';
+        const postData = {
+            campaign_id,
+            created_at: null,
+            deleted_at: null,
+            description: null,
+            id: 'a4bfe75f-91d3-42d6-af9e-93d0265b7c34',
+            influencer_social_profile_id: null,
+            is_reusable: false,
+            platform: 'youtube',
+            posted_date: null,
+            preview_url: null,
+            publish_date: null,
+            title: null,
+            type: 'video',
+            updated_at: null,
+            url: mockPostData.url,
+        };
+
+        const updateData = {
+            id: mockPostData.id,
+            likes_total: 1000,
+            comments_total: 1000,
+            views_total: 1000,
+            updated_at: new Date().toISOString(),
+            campaign_id,
+            post_id: postData.id,
+        };
+
+        await supabase.from('influencer_posts').insert(postData).single();
+
+        await supabase.from('posts_performance').insert(updateData).eq('id', updateData.id).single();
+
+        req.reply({ body: { successful: [mockPostData], failed: [] } });
     });
 };

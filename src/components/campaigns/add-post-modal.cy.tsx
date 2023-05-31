@@ -8,6 +8,8 @@ import type { AddPostModalProps, PostInfo } from './add-post-modal';
 import type { CampaignCreatorDB } from 'src/utils/api/db';
 import { rest } from 'msw';
 import { APP_URL_CYPRESS, worker } from '../../mocks/browser';
+import type { InfluencerPostPostResponse } from 'pages/api/influencer/posts';
+
 const blankCreatorArgs: CampaignCreatorDB = {
     platform: 'youtube',
     status: 'to contact',
@@ -47,6 +49,7 @@ const creator: CampaignCreatorDB = {
     fullname: 'T-Series',
     username: 'tseries',
     id: 'test-creator-id',
+    campaign_id: 'test-campaign-id',
 };
 const props: AddPostModalProps = {
     creator,
@@ -120,7 +123,7 @@ describe('AddPostModal', () => {
             url: 'https://www.youtube.com/watch?v=123',
         };
         worker.use(
-            rest.get(`${APP_URL_CYPRESS}/api/influencer/${creator.id}/posts`, (req, res, ctx) => {
+            rest.get(`${APP_URL_CYPRESS}/api/influencer/${creator.id}/posts`, (_req, res, ctx) => {
                 return res(ctx.json([mockPostData]));
             }),
         );
@@ -132,10 +135,95 @@ describe('AddPostModal', () => {
         cy.contains('a', mockPostData.title).should('have.attr', 'target', '_blank');
         cy.contains('a', mockPostData.title).should('have.attr', 'rel', 'noopener noreferrer');
     });
-    // TODO: test after hooking up to backend https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/406
-    it.skip(
-        'Sends a request to the backend to add posts, shows a toast on success, displays the new URL, and removes them from the inputs',
-    );
-    it.skip('Shows a failure toast if the request fails, and keeps the URLs in the list of inputs');
-    it.skip('handles remove post (delete button)');
+    it('Sends a request to the backend to add posts, shows a toast on success, displays the new URL, and removes them from the inputs', () => {
+        const mockPostData: PostInfo = {
+            title: 'initial post title',
+            postedDate: new Date('2021-09-01').toISOString(),
+            id: 'initial-post-id',
+            url: 'https://www.youtube.com/watch?v=123',
+        };
+        const successRes: InfluencerPostPostResponse = {
+            successful: [
+                {
+                    title: 'test post title',
+                    postedDate: new Date('2021-09-01').toISOString(),
+                    id: 'test-post-id',
+                    url: 'https://www.youtube.com/watch?v=456',
+                    performance: null,
+                },
+            ],
+            failed: [],
+        };
+        worker.use(
+            rest.get(`${APP_URL_CYPRESS}/api/influencer/${creator.id}/posts`, (_req, res, ctx) => {
+                return res(ctx.json([mockPostData]));
+            }),
+            rest.post(`${APP_URL_CYPRESS}/api/influencer/posts`, (_req, res, ctx) => {
+                return res(ctx.delay(500), ctx.json(successRes));
+            }),
+        );
+        testMount(<AddPostModal {...props} />);
+        cy.get('input').type(youtubeLink);
+        cy.get('button').contains('Submit').click();
+        cy.contains(/successfully added 1 URL/i);
+        cy.contains('a', 'test post title').should('have.attr', 'href', 'https://www.youtube.com/watch?v=456');
+    });
+    it('Shows a failure toast if the request fails, and keeps the URLs in the list of inputs', () => {
+        const mockPostData: PostInfo = {
+            title: 'initial post title',
+            postedDate: new Date('2021-09-01').toISOString(),
+            id: 'initial-post-id',
+            url: 'https://www.youtube.com/watch?v=123',
+        };
+        const successRes: InfluencerPostPostResponse = {
+            successful: [],
+            failed: ['https://www.youtube.com/watch?v=456'],
+        };
+        worker.use(
+            rest.get(`${APP_URL_CYPRESS}/api/influencer/${creator.id}/posts`, (_req, res, ctx) => {
+                return res(ctx.json([mockPostData]));
+            }),
+            rest.post(`${APP_URL_CYPRESS}/api/influencer/posts`, (_req, res, ctx) => {
+                return res(ctx.delay(100), ctx.json(successRes));
+            }),
+        );
+        testMount(<AddPostModal {...props} />);
+        cy.get('input').type('https://www.youtube.com/watch?v=456');
+        cy.get('button').contains('Submit').click();
+        cy.contains(/Failed to get post data for 1 URL/i);
+        cy.get('input').should('have.length', 1);
+        cy.get('input').should('have.value', 'https://www.youtube.com/watch?v=456');
+    });
+    it('handles remove post (delete button)', () => {
+        const mockPostData: PostInfo = {
+            title: 'initial post title',
+            postedDate: new Date('2021-09-01').toISOString(),
+            id: 'initial-post-id',
+            url: 'https://www.youtube.com/watch?v=123',
+        };
+        const mockPostData2: PostInfo = {
+            title: 'initial post title2',
+            postedDate: new Date('2021-09-01').toISOString(),
+            id: 'initial-post-id2',
+            url: 'https://www.youtube.com/watch?v=1232',
+        };
+        worker.use(
+            rest.get(`${APP_URL_CYPRESS}/api/influencer/${creator.id}/posts`, (_req, res, ctx) => {
+                return res(ctx.json([mockPostData, mockPostData2]));
+            }),
+            rest.delete(`${APP_URL_CYPRESS}/api/influencer/posts/${mockPostData2.id}`, (_req, res, ctx) => {
+                return res(ctx.delay(100), ctx.json(mockPostData2));
+            }),
+        );
+
+        testMount(<AddPostModal {...props} />);
+        cy.findAllByRole('link').should('have.length', 3); // 2 posts and the influencer handle link
+        cy.contains('h4', mockPostData.title);
+        cy.contains('h4', mockPostData2.title);
+
+        cy.getByTestId('delete-creator').eq(1).click();
+        cy.findAllByRole('link').should('have.length', 2);
+        cy.contains('h4', mockPostData.title);
+        cy.contains('h4', mockPostData2.title).should('not.exist');
+    });
 });
