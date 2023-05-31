@@ -130,7 +130,7 @@ describe('Main pages happy paths', () => {
             .type('123')
             .should('have.value', 'Blue Moonlight Stream Enterprises123');
     });
-    it.only('can open campaigns page and manage campaign influencers', () => {
+    it('can open campaigns page and manage campaign influencers', () => {
         setupIntercepts();
         // list, add, archive campaigns
         // list, add, move, delete campaign influencers
@@ -221,6 +221,30 @@ describe('Main pages happy paths', () => {
         cy.contains('Archived Campaigns').click();
         cy.contains('My Campaign');
     });
+    it.only('can add influencers to campaign', () => {
+        setupIntercepts();
+
+        cy.loginTestUser();
+        cy.visit('/');
+        cy.contains('Add to campaign').click();
+        cy.get('[data-testid="add-creator-button:Beauty for All Skin Tones"]').click();
+        cy.visit('/campaigns');
+        cy.contains('Beauty for All Skin Tones').click();
+        cy.wait(1000);
+        cy.get('table tr td').should(($cells) => {
+            const cellTexts = $cells.toArray().map((cell) => cell.innerText);
+            const isSorted = cellTexts.every((value, index, array) => {
+                if (index === 0 && value !== 'T-Series\n@tseries') {
+                    return false;
+                }
+
+                return true;
+            });
+
+            expect(isSorted).to.be.true;
+        });
+    });
+
     /** works on local... 🤷‍♂️ */
     it.skip('can log out', () => {
         setupIntercepts();
