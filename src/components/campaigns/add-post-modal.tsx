@@ -11,7 +11,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Button } from '../button';
 import { toast } from 'react-hot-toast';
 import { Spinner, Trashcan } from '../icons';
-import type { InfluencerPostRequestBody, InfluencerPostResponse } from 'pages/api/influencer/posts';
+import type { InfluencerPostRequestBody, InfluencerPostPostResponse } from 'pages/api/influencer/posts';
 import { clientLogger } from 'src/utils/logger-client';
 import { ulid } from 'ulid';
 
@@ -108,7 +108,7 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
                 urls: Object.values(_urls),
                 creator_id: creator.id,
             };
-            const res = await nextFetch<InfluencerPostResponse>('influencer/posts', {
+            const res = await nextFetch<InfluencerPostPostResponse>('influencer/posts', {
                 method: 'POST',
                 body,
             });
