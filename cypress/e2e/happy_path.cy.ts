@@ -37,6 +37,8 @@ describe('Main pages happy paths', () => {
         cy.contains('GRTR').should('not.exist');
 
         cy.getByTestId('creator-search').type('GRTR{enter}');
+        cy.contains('button', 'Search').click();
+        cy.contains('button', 'Search').click(); // click twice due to some funky rerendering, so button click doesn't work the first time
         // cy.contains will not include the input element in the search, so this shows that the results are in the DOM
         cy.contains('GRTR');
     });
@@ -59,6 +61,7 @@ describe('Main pages happy paths', () => {
         cy.contains('alligators').click();
 
         cy.getByTestId('search-spinner').should('not.exist'); // wait for spinner to disappear
+        cy.contains('button', 'Search').click();
 
         cy.contains('Brave Wilderness'); // the first influencer search result for alligators
     });
@@ -261,6 +264,18 @@ describe('Main pages happy paths', () => {
         // check 'before' performance page totals
         cy.loginTestUser();
         cy.contains('Performance').click();
+        cy.contains('All campaigns', { timeout: 20000 });
+        cy.contains('div', 'Likes').within(() => {
+            cy.contains('166.5K').should('not.exist');
+            cy.contains('26.0K');
+        });
+        cy.contains('div', 'Comments').within(() => {
+            cy.contains('2.8K').should('not.exist');
+            cy.contains('166.5K');
+        });
+        cy.contains('div', 'Views').within(() => {
+            cy.contains('96.2K');
+        });
     });
 });
 
