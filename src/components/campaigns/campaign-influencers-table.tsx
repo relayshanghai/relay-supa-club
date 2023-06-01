@@ -12,6 +12,7 @@ import { useCampaignCreators } from 'src/hooks/use-campaign-creators';
 import InfluencerRow from './influencer-row';
 import { ManageInfluencerModal } from './manage-influencer-modal';
 import { AddPostModal } from './add-post-modal';
+import { useRudderstack } from 'src/hooks/use-rudderstack';
 
 export interface CreatorsOutreachProps {
     currentCampaign: CampaignDB;
@@ -37,7 +38,7 @@ export default function CampaignInfluencersTable({
 
     const router = useRouter();
     const { pathname, query } = router;
-
+    const { trackEvent } = useRudderstack();
     const [tabStatus, setTabStatus] = useState<string | string[]>(query.curTab || 'to contact');
     const [toEdit, setToEdit] = useState<{ index: number; key: string } | null>(null);
     const [searchTerm, setSearchTerm] = useState<string | ''>('');
@@ -131,6 +132,7 @@ export default function CampaignInfluencersTable({
     const handleTabChange = (value: string) => {
         router.push({ pathname, query: { ...query, curTab: value } });
         setTabStatus(value);
+        trackEvent('Influencers Table, tab status changed', { tab: value });
     };
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -142,29 +144,35 @@ export default function CampaignInfluencersTable({
         await updateCreatorInCampaign(creator);
         refreshCampaignCreators();
         toast.success(t('campaigns.creatorModal.influencerUpdated'));
+        trackEvent('Influencers Table, influencer status changed', { status: value });
     };
 
     const setInlineEdit = (index: number, key: string) => {
         setToEdit({ index, key });
+        trackEvent('Influencers Table, inline edit clicked', { key });
     };
 
     const openNotes = (creator: CampaignCreatorDB) => {
         setCurrentCreator(creator);
         setShowNotesModal(true);
+        trackEvent('Influencers Table, notes opened');
     };
 
     const openMoveInfluencerModal = (creator: CampaignCreatorDB) => {
         setCurrentCreator(creator);
         setShowMoveInfluencerModal(true);
+        trackEvent('Influencers Table, move influencer modal opened');
     };
 
     const openManageInfluencerModal = (creator: CampaignCreatorDB) => {
         setCurrentCreator(creator);
         setShowManageInfluencerModal(true);
+        trackEvent('Influencers Table, manage influencer modal opened');
     };
     const openAddPostModal = (creator: CampaignCreatorDB) => {
         setCurrentCreator(creator);
         setShowAddPostModal(true);
+        trackEvent('Influencers Table, add post modal opened');
     };
 
     const deleteCampaignCreator = async (creator: CampaignCreatorDB) => {
@@ -173,6 +181,7 @@ export default function CampaignInfluencersTable({
         await deleteCreatorInCampaign({ creatorId: creator.id, campaignId: currentCampaign.id });
         refreshCampaignCreators();
         toast.success(t('campaigns.modal.deletedSuccessfully'));
+        trackEvent('Influencers Table, influencer deleted');
     };
 
     const updateCampaignCreator = async (creator: CampaignCreatorDB) => {
