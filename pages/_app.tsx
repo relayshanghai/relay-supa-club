@@ -11,7 +11,7 @@ import { useEffect, useState } from 'react';
 import { CompanyProvider } from 'src/hooks/use-company';
 import { rudderInitialized } from 'src/utils/rudder-initialize';
 import { CacheProvider } from 'src/utils/indexeddb-cache-provider';
-import { Provider } from 'jotai';
+import { Provider as JotaiProvider } from 'jotai';
 
 function MyApp({
     Component,
@@ -56,11 +56,11 @@ function MyApp({
             <SessionContextProvider supabaseClient={supabaseClient} initialSession={pageProps.initialSession}>
                 <CacheProvider>
                     <UserProvider>
-                        <Provider>
+                        <JotaiProvider>
                             <CompanyProvider>
                                 <Component {...pageProps} />
                             </CompanyProvider>
-                        </Provider>
+                        </JotaiProvider>
                     </UserProvider>
                 </CacheProvider>
             </SessionContextProvider>

@@ -7,7 +7,6 @@ import { SearchProvider } from '../../hooks/use-search';
 import { APP_URL_CYPRESS, worker } from '../../mocks/browser';
 import { rest } from 'msw';
 import { deleteDB } from 'idb';
-import { CompanyProvider } from 'src/hooks/use-company';
 
 describe('<SearchPage />', () => {
     before(async () => {
@@ -17,9 +16,7 @@ describe('<SearchPage />', () => {
     it.only('renders default landing page results from mocks', () => {
         testMount(
             <SearchProvider>
-                <CompanyProvider>
-                    <SearchPageInner />
-                </CompanyProvider>
+                <SearchPageInner />
             </SearchProvider>,
         );
         cy.contains('Total Results: 8.43M');
@@ -28,9 +25,7 @@ describe('<SearchPage />', () => {
     it('can filter results by recommended or not. toggle has a hover message like in search-result-row', () => {
         testMount(
             <SearchProvider>
-                <CompanyProvider>
-                    <SearchPageInner />
-                </CompanyProvider>
+                <SearchPageInner />
             </SearchProvider>,
         );
         cy.contains('Total Results: 8.43M');
@@ -56,9 +51,7 @@ describe('<SearchPage />', () => {
 
         testMount(
             <SearchProvider>
-                <CompanyProvider>
-                    <SearchPageInner />
-                </CompanyProvider>
+                <SearchPageInner />
             </SearchProvider>,
         );
         cy.contains('Total Results');
@@ -70,11 +63,7 @@ describe('<SearchPage />', () => {
         await deleteDB('app-cache');
         worker.use(rest.post(`${APP_URL_CYPRESS}/api/influencer-search`, (_, res, ctx) => res(ctx.status(500))));
 
-        testMount(
-            <CompanyProvider>
-                <SearchPageInner />
-            </CompanyProvider>,
-        );
+        testMount(<SearchPageInner />);
         cy.contains('Total Results');
         cy.contains('Failed to fetch search results');
     });

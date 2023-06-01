@@ -3,7 +3,7 @@
 import { clientRoleAtom } from 'src/atoms/client-role-atom';
 import { worker } from '../../mocks/browser';
 import type { InitialValues } from '../../utils/cypress-app-wrapper';
-import { TestProvider, testMount } from '../../utils/cypress-app-wrapper';
+import { testMount } from '../../utils/cypress-app-wrapper';
 import { SearchPage } from './search-page';
 
 const initialValues: InitialValues = [
@@ -22,21 +22,13 @@ describe('SearchOptions', () => {
     });
 
     it('Shows search button', () => {
-        testMount(
-            <TestProvider initialValues={initialValues}>
-                <SearchPage />
-            </TestProvider>,
-        );
+        testMount(<SearchPage />, { jotaiInitialValues: initialValues });
 
         cy.contains('Search');
     });
 
     it('should be empty when we remove topic tags', () => {
-        testMount(
-            <TestProvider initialValues={initialValues}>
-                <SearchPage />
-            </TestProvider>,
-        );
+        testMount(<SearchPage />, { jotaiInitialValues: initialValues });
 
         cy.findByTestId('search-topics').within(() => {
             cy.get('input').type('alligators');
@@ -55,11 +47,7 @@ describe('SearchOptions', () => {
     });
 
     it('Should remove and edit the topic tags when pressing backspace', () => {
-        testMount(
-            <TestProvider initialValues={initialValues}>
-                <SearchPage />
-            </TestProvider>,
-        );
+        testMount(<SearchPage />, { jotaiInitialValues: initialValues });
 
         cy.findByTestId('search-topics').within(() => {
             cy.get('input').type('alligators');

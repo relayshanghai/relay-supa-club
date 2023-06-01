@@ -7,7 +7,6 @@ import { CreatorPage } from './creator-page';
 import { testMount } from '../../utils/cypress-app-wrapper';
 import { rest } from 'msw';
 import { APP_URL_CYPRESS, worker } from '../../mocks/browser';
-import { CompanyProvider } from 'src/hooks/use-company';
 
 describe('<CreatorPage />', () => {
     before(async () => {
@@ -15,18 +14,10 @@ describe('<CreatorPage />', () => {
     });
 
     it('renders', () => {
-        testMount(
-            <CompanyProvider>
-                <CreatorPage creator_id="abc-creator" platform="youtube" />
-            </CompanyProvider>,
-        );
+        testMount(<CreatorPage creator_id="abc-creator" platform="youtube" />);
     });
     it('shows loading state, then shows report', () => {
-        testMount(
-            <CompanyProvider>
-                <CreatorPage creator_id="abc-creator" platform="youtube" />
-            </CompanyProvider>,
-        );
+        testMount(<CreatorPage creator_id="abc-creator" platform="youtube" />);
         cy.contains('Generating influencer Report. Please wait');
         cy.contains('T-Series');
     });
@@ -37,11 +28,7 @@ describe('<CreatorPage />', () => {
                 return res(ctx.json({ error: 'error' }));
             }),
         );
-        testMount(
-            <CompanyProvider>
-                <CreatorPage creator_id="abc-creator" platform="youtube" />
-            </CompanyProvider>,
-        );
+        testMount(<CreatorPage creator_id="abc-creator" platform="youtube" />);
         cy.contains('Failed to fetch report');
     });
 });
