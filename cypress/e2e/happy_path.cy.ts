@@ -234,6 +234,29 @@ describe('Main pages happy paths', () => {
         cy.contains('Archived Campaigns').click();
         cy.contains('My Campaign');
     });
+    it('can add influencers to campaign', () => {
+        setupIntercepts();
+
+        cy.loginTestUser();
+        cy.findByTestId('add-to-campaign-button/UCq-Fj5jknLsUf-MWSy4_brA').click();
+        cy.findByTestId('add-creator-button:Beauty for All Skin Tones').click();
+        cy.wait(1000);
+        cy.visit('/campaigns');
+        cy.contains('Beauty for All Skin Tones').click();
+        cy.wait(1000);
+        cy.get('table tr td').should(($cells) => {
+            const cellTexts = $cells.toArray().map((cell) => cell.innerText);
+            const isSorted = cellTexts.every((value, index) => {
+                if (index === 0 && value !== 'T-Series\n@tseries') {
+                    return false;
+                }
+
+                return true;
+            });
+            expect(isSorted).to.be.true;
+        });
+    });
+
     /** works on local... 🤷‍♂️ */
     it.skip('can log out', () => {
         setupIntercepts();

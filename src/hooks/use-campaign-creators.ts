@@ -73,6 +73,7 @@ export const useCampaignCreators = ({
                     added_by_id: profile?.id,
                     id: undefined, // force undefined so that the backend can generate a new id
                     campaign_id: input.campaign_id,
+                    updated_at: new Date().toISOString(),
                 };
                 insertCampaignCreator(body);
             } catch (error) {
@@ -93,6 +94,7 @@ export const useCampaignCreators = ({
                 await updateCampaignCreator({
                     ...input,
                     campaign_id: campaign.id,
+                    updated_at: new Date().toISOString(),
                 });
             } catch (error) {
                 clientLogger(error, 'error');
