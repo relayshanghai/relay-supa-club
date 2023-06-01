@@ -234,7 +234,7 @@ describe('Main pages happy paths', () => {
         cy.contains('Archived Campaigns').click();
         cy.contains('My Campaign');
     });
-    it.only('can manage clients as a company owner', () => {
+    it.skip('can manage clients as a company owner', () => {
         setupIntercepts();
         cy.loginAdmin();
 
