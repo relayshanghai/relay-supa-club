@@ -257,7 +257,7 @@ export default function CampaignInfluencersTable({
                 />
             </div>
             {/* -- Outreach Table -- */}
-            <div className="min-h-screen w-full overflow-auto">
+            <div className=" w-full overflow-auto">
                 <table className="w-full table-auto divide-y divide-gray-200 overflow-y-visible bg-white">
                     <thead>
                         <tr>
