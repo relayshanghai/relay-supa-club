@@ -7,8 +7,6 @@ import type { CampaignDB, CampaignDBInsert } from 'src/utils/api/db/types';
 /**
  * Hook to fetch campaigns and create/update campaigns
  * @param campaignId The campaign id to fetch
- * @param companyId The company id to fetch campaigns for. Only use this when you want to enable admins to view/edit other companies' campaigns. currently only used in the admin dashboard pages
- * @returns
  */
 export const useCampaigns = ({ campaignId }: { campaignId?: string }) => {
     const { company } = useCompany();

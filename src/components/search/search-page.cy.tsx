@@ -13,7 +13,7 @@ describe('<SearchPage />', () => {
         worker.start();
     });
 
-    it.only('renders default landing page results from mocks', () => {
+    it('renders default landing page results from mocks', () => {
         testMount(
             <SearchProvider>
                 <SearchPageInner />
