@@ -13,7 +13,7 @@ export default defineConfig({
                 TEST_USER_EMAIL_COMPANY_TEAMMATE: 'william.edward.douglas@blue-moonlight-stream.com',
                 TEST_USER_EMAIL_RELAY_EMPLOYEE: 'jacob@relay.club',
                 TEST_USER_PASSWORD: 'password123!',
-                NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+                ...process.env,
             };
             return config;
         },

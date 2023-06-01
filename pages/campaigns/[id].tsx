@@ -17,8 +17,6 @@ import type { CampaignCreatorDB } from 'src/utils/api/db';
 import { imgProxy } from 'src/utils/fetcher';
 import { Spinner } from 'src/components/icons';
 import { toast } from 'react-hot-toast';
-import { featPerformance } from 'src/constants/feature-flags';
-import CampaignInfluencersTableLegacy from 'src/components/campaigns/campaign-influencers-table-legacy';
 
 export default function CampaignShow() {
     const router = useRouter();
@@ -232,25 +230,15 @@ export default function CampaignShow() {
                         </div>
                     ))}
                 </div>
-                {currentTab === 0 &&
-                    currentCampaign &&
-                    (featPerformance() ? (
-                        <CampaignInfluencersTable
-                            currentCampaign={currentCampaign}
-                            setShowNotesModal={setShowNotesModal}
-                            setCurrentCreator={setCurrentCreator}
-                            campaigns={campaigns}
-                            currentCreator={currentCreator}
-                        />
-                    ) : (
-                        <CampaignInfluencersTableLegacy
-                            currentCampaign={currentCampaign}
-                            setShowNotesModal={setShowNotesModal}
-                            setCurrentCreator={setCurrentCreator}
-                            campaigns={campaigns}
-                            currentCreator={currentCreator}
-                        />
-                    ))}
+                {currentTab === 0 && currentCampaign && (
+                    <CampaignInfluencersTable
+                        currentCampaign={currentCampaign}
+                        setShowNotesModal={setShowNotesModal}
+                        setCurrentCreator={setCurrentCreator}
+                        campaigns={campaigns}
+                        currentCreator={currentCreator}
+                    />
+                )}
                 {currentTab === 1 && currentCampaign && (
                     <CampaignDetails currentCampaign={currentCampaign} media={media} />
                 )}
