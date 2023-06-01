@@ -234,41 +234,101 @@ describe('Main pages happy paths', () => {
         cy.contains('Archived Campaigns').click();
         cy.contains('My Campaign');
     });
-    it.skip('can manage clients as a company owner', () => {
+    it('can record search usages, can manage clients as a company owner', () => {
         setupIntercepts();
         cy.loginAdmin();
 
         cy.contains('Account').click();
-        cy.wait(300);
-        cy.contains('Relay Club');
-        // Get the value of the total search usage and save it in a value
-        let totalSearchUsage: string;
-        cy.get('tbody > :nth-child(2) > :nth-child(2)').then((value) => {
-            totalSearchUsage = value.text();
+        cy.contains('https://relay.club', { timeout: 20000 });
+        cy.contains('https://blue-moonlight-stream.com').should('not.exist');
+        cy.contains('tr', 'Searches').within(() => {
+            cy.contains('td', '0');
         });
 
-        cy.contains('Clients').click();
-        cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises').should('not.exist');
+        cy.contains('Influencers').click();
+        cy.contains('button', 'Search');
 
-        cy.getByTestId('manage-client-Blue Moonlight Stream Enterprises').click();
-        cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises');
+        // rack up 2 searches
+        cy.getByTestId('search-topics').within(() => {
+            cy.get('input').type('alligators');
+        });
+        cy.contains('alligators').click();
+        cy.getByTestId('search-spinner').should('not.exist');
+        cy.contains('button', 'Search').click();
 
-        cy.contains('Campaigns').click();
-        cy.contains('Beauty for All Skin Tones');
-        cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises');
+        cy.getByTestId('search-topics').within(() => {
+            cy.get('input').type('monkeys');
+        });
+        cy.contains('monkeys').click();
+        cy.getByTestId('search-spinner').should('not.exist');
+        cy.contains('button', 'Search').click();
 
         cy.contains('Account').click();
-        cy.wait(300);
-        cy.contains('Blue Moonlight Stream Enterprises');
-        cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises');
-        cy.get('tbody > :nth-child(2) > :nth-child(2)').then((value) => {
-            expect(parseInt(totalSearchUsage)).to.be.not.equal(value.text());
+        cy.contains('https://relay.club');
+
+        // searches should have increased by 2
+        cy.contains('td', '2'); // wait for count to update
+        cy.contains('tr', 'Searches').within(() => {
+            cy.contains('td', '2');
         });
 
+        cy.contains('Campaigns').click();
+        cy.contains('The Future of Gaming is Here'); // the relay company campaign
+        cy.contains('Beauty for All Skin Tones').should('not.exist'); // the user's company campaign
+
+        cy.contains('Clients').click();
+
+        // check warning message
+        cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises').should('not.exist');
+        cy.contains('tr', 'Blue Moonlight Stream Enterprises').within(() => {
+            cy.contains('Manage').click();
+        });
+        cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises');
+
+        // can see client's campaigns
+        cy.contains('Campaigns').click();
+        cy.contains('button', 'New Campaign');
+        cy.contains('Beauty for All Skin Tones', { timeout: 30000 }); // wait for campaigns to load
+        cy.contains('The Future of Gaming is Here').should('not.exist');
+        cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises'); // check that warning persists
+
+        // can see client's search totals
+        cy.contains('Account').click();
+        cy.contains('https://blue-moonlight-stream.com', { timeout: 20000 });
+        cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises'); // check that warning persists
+        cy.contains('tr', 'Searches').within(() => {
+            cy.contains('td', '0'); // wait for count to update
+        });
+
+        // rack up 1 search
+        cy.contains('Influencers').click();
+        cy.contains('button', 'Search');
+        cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises'); // check that warning persists
+        cy.getByTestId('search-topics').within(() => {
+            cy.get('input').type('alligators');
+        });
+        cy.contains('alligators').click();
+        cy.getByTestId('search-spinner').should('not.exist');
+        cy.contains('button', 'Search').click();
+
+        // Check that search total increased
+        cy.contains('Account').click();
+        cy.contains('https://blue-moonlight-stream.com');
+        cy.contains('td', '1'); // wait for count to update
+        cy.contains('tr', 'Searches').within(() => {
+            cy.contains('td', '1');
+        });
+        cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises'); // check that warning persists
+
+        // can cancel out of manage mode
         cy.contains('Clients').click();
         cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises');
         cy.contains('Close', { timeout: 1000 }).click();
         cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises').should('not.exist');
+
+        cy.contains('Account').click();
+        cy.contains('https://blue-moonlight-stream.com').should('not.exist');
+        cy.contains('https://relay.club');
     });
     /** works on local... 🤷‍♂️ */
     it.skip('can log out', () => {

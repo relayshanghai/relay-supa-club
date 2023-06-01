@@ -63,7 +63,6 @@ const ClientsRow = ({ data, columnHeaders, clientRoleDataHandler, resetClientRol
                                                 ? '/admin/clients'
                                                 : '/dashboard'
                                         }
-                                        data-testid={`manage-client-${client.name}`}
                                     >
                                         <Button onClick={() => onManageClick(client)}>{dataPoint}</Button>
                                     </Link>

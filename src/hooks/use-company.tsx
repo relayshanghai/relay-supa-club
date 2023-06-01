@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/browser';
 import type { PropsWithChildren } from 'react';
-import { createContext, useCallback, useContext } from 'react';
+import { createContext, useCallback, useContext, useEffect } from 'react';
 import type { KeyedMutator } from 'swr';
 import useSWR from 'swr';
 import type { CompanyPutBody, CompanyPutResponse } from 'pages/api/company';
@@ -47,6 +47,10 @@ export const CompanyProvider = ({ children }: PropsWithChildren) => {
         }
         return fetchedCompany;
     });
+
+    useEffect(() => {
+        refreshCompany();
+    }, [clientRoleData.companyId, refreshCompany]);
 
     const updateCompany = useCallback(
         async (input: Omit<CompanyPutBody, 'id'>) => {

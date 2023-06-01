@@ -12,14 +12,17 @@ export const useCampaigns = ({ campaignId }: { campaignId?: string }) => {
     const { company } = useCompany();
     const { getCampaigns, createCampaign: createCampaignCall, updateCampaign } = useClientDb();
 
-    const companyId = company?.id;
-
     const {
         data: allCampaigns,
         mutate: refreshCampaigns,
         isValidating,
         isLoading: loading,
-    } = useSWR(companyId ? 'campaigns' : null, () => getCampaigns(companyId));
+    } = useSWR(company?.id ? ['campaigns', company?.id] : null, ([_path, companyId]) => getCampaigns(companyId));
+
+    useEffect(() => {
+        refreshCampaigns();
+    }, [company?.id, refreshCampaigns]);
+
     const [campaign, setCampaign] = useState<CampaignDB | null>(null);
 
     const [campaigns, setCampaigns] = useState<CampaignDB[]>([]);
@@ -44,8 +47,8 @@ export const useCampaigns = ({ campaignId }: { campaignId?: string }) => {
     }, [allCampaigns]);
 
     const createCampaign = useCallback(
-        (input: CampaignDBInsert) => createCampaignCall(input, companyId),
-        [createCampaignCall, companyId],
+        (input: CampaignDBInsert) => createCampaignCall(input, company?.id),
+        [createCampaignCall, company?.id],
     );
 
     return {
