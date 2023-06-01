@@ -13,12 +13,14 @@ import { useInvites } from 'src/hooks/use-invites';
 import { useTeammates } from 'src/hooks/use-teammates';
 import { useCompany } from 'src/hooks/use-company';
 import { useUser } from 'src/hooks/use-user';
+import { useRudderstack } from 'src/hooks/use-rudderstack';
 
 export const CompanyDetails = () => {
     const { company, updateCompany } = useCompany();
     const { loading: userDataLoading, profile } = useUser();
     const { invites, createInvite } = useInvites();
     const { teammates } = useTeammates();
+    const { trackEvent } = useRudderstack();
 
     const [showAddMoreMembers, setShowAddMoreMembers] = useState(false);
     const {
@@ -50,6 +52,7 @@ export const CompanyDetails = () => {
             });
             toast.success(t('account.company.companyProfileUpdated'));
             setEditMode(false);
+            trackEvent('Account, CompanyDetails, update company');
         } catch (e: any) {
             if (hasCustomError(e, updateCompanyErrors)) {
                 // right now we only have the companyWithSameNameExists error that's also used in login
@@ -124,7 +127,10 @@ export const CompanyDetails = () => {
                                 userDataLoading || updating ? 'opacity-75' : ''
                             }`}
                             disabled={userDataLoading || updating}
-                            onClick={() => setEditMode(true)}
+                            onClick={() => {
+                                setEditMode(true);
+                                trackEvent('Account, CompanyDetails, click on Edit');
+                            }}
                             variant="secondary"
                         >
                             <Edit className="h-4 w-4 text-primary-500" />
@@ -180,7 +186,13 @@ export const CompanyDetails = () => {
                 )}
                 {isAdmin(profile?.user_role) && (
                     <div className="pt-4">
-                        <Button variant="secondary" onClick={() => setShowAddMoreMembers(true)}>
+                        <Button
+                            variant="secondary"
+                            onClick={() => {
+                                setShowAddMoreMembers(true);
+                                trackEvent('Account, CompanyDetails, open addMoreMembers modal');
+                            }}
+                        >
                             {t('account.company.addMoreMembers')}
                         </Button>
                     </div>
