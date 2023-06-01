@@ -256,7 +256,7 @@ describe('Main pages happy paths', () => {
             expect(isSorted).to.be.true;
         });
     });
-    it.only('can sort campaigns by last edited', () => {
+    it('can sort campaigns by last edited', () => {
         setupIntercepts();
 
         cy.loginTestUser();
