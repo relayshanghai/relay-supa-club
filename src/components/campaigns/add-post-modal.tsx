@@ -4,16 +4,15 @@ import { Modal } from '../modal';
 import Link from 'next/link';
 import { imgProxy, nextFetch } from 'src/utils/fetcher';
 import type { CampaignCreatorDB } from 'src/utils/api/db';
-
 import { SocialMediaIcon } from '../common/social-media-icon';
 import { useCallback, useEffect, useState } from 'react';
-
 import { Button } from '../button';
 import { toast } from 'react-hot-toast';
 import { Spinner, Trashcan } from '../icons';
 import type { InfluencerPostRequestBody, InfluencerPostPostResponse } from 'pages/api/influencer/posts';
 import { clientLogger } from 'src/utils/logger-client';
 import { ulid } from 'ulid';
+import { useRudderstack } from 'src/hooks/use-rudderstack';
 
 export interface AddPostModalProps extends Omit<ModalProps, 'children'> {
     creator: CampaignCreatorDB;
@@ -55,6 +54,7 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
     const [addedUrls, setAddedUrls] = useState<PostInfo[]>([]);
     const [submitting, setSubmitting] = useState(false);
     const [checkingAddedUrls, setCheckingAddedUrls] = useState(false);
+    const { trackEvent } = useRudderstack();
     const getAddedUrls = useCallback(async () => {
         try {
             setCheckingAddedUrls(true);
@@ -77,6 +77,7 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
         setUrls((prev) => {
             return { ...prev, [ulid()]: '' };
         });
+        trackEvent('Manage Posts Modal, add another post', { urls });
     };
 
     const validateUrl = (url: string, _urls: typeof urls) => {
@@ -135,6 +136,7 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
         // will set the form to 0 if no errors, or keep the failed urls in the form if there are errors
         if (Object.keys(failed).length === 0) {
             toast.success(t('campaigns.post.success', { amount: successful.length }));
+            trackEvent('Manage Posts Modal, submit', { amount: successful.length });
             setUrls({ [ulid()]: '' });
         } else {
             toast.error(t('campaigns.post.failed', { amount: Object.keys(failed).length }));
@@ -147,6 +149,7 @@ export const AddPostModal = ({ creator, ...props }: AddPostModalProps) => {
         try {
             toast.success(t('campaigns.post.removedPost'));
             await nextFetch<PostInfo[]>(`influencer/posts/${encodeURIComponent(postId)}`, { method: 'DELETE' });
+            trackEvent('Manage Posts Modal, remove post');
         } catch (error) {
             clientLogger(error, 'error');
             toast.error(t('campaigns.post.errorRemovingPost'));

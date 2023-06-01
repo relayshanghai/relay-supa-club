@@ -25,6 +25,9 @@ const frontendHandlers = [
         if (campaign_id && campaign_id === amyTestCampaign.id) {
             return res(ctx.json(amyCampaignCreators));
         }
+        if (campaign_id && campaign_id === newEmptyCampaign.id) {
+            return res(ctx.json([]));
+        }
         return res(ctx.json(campaignCreatorsJim));
     }),
     rest.get(`${SUPABASE_URL_CYPRESS}/companies?select=*&id=${newEmptyCampaign.company_id}`, (_, res, ctx) => {
