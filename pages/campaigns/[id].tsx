@@ -244,25 +244,15 @@ export default function CampaignShow() {
                         </div>
                     ))}
                 </div>
-                {currentTab === 0 &&
-                    currentCampaign &&
-                    (featPerformance() ? (
-                        <CampaignInfluencersTable
-                            currentCampaign={currentCampaign}
-                            setShowNotesModal={setShowNotesModal}
-                            setCurrentCreator={setCurrentCreator}
-                            campaigns={campaigns}
-                            currentCreator={currentCreator}
-                        />
-                    ) : (
-                        <CampaignInfluencersTableLegacy
-                            currentCampaign={currentCampaign}
-                            setShowNotesModal={setShowNotesModal}
-                            setCurrentCreator={setCurrentCreator}
-                            campaigns={campaigns}
-                            currentCreator={currentCreator}
-                        />
-                    ))}
+                {currentTab === 0 && currentCampaign && (
+                    <CampaignInfluencersTable
+                        currentCampaign={currentCampaign}
+                        setShowNotesModal={setShowNotesModal}
+                        setCurrentCreator={setCurrentCreator}
+                        campaigns={campaigns}
+                        currentCreator={currentCreator}
+                    />
+                )}
                 {currentTab === 1 && currentCampaign && (
                     <CampaignDetails currentCampaign={currentCampaign} media={media} />
                 )}

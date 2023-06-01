@@ -19,6 +19,7 @@ import { isMissing } from 'src/utils/utils';
 import type { AIEmailGeneratorPostBody } from 'src/utils/api/ai-generate/email';
 import type { AIEmailSubjectGeneratorPostBody } from 'src/utils/api/ai-generate/subject';
 import { emailErrors, subjectErrors } from 'src/errors/ai-email-generate';
+import { useRudderstack } from 'src/hooks/use-rudderstack';
 
 const MAX_CHARACTER_LENGTH = 600;
 
@@ -31,6 +32,7 @@ const AIImageGenerator = () => {
 
     const { profile } = useUser();
     const { company } = useCompany();
+    const { trackEvent } = useRudderstack();
 
     const [brandName, setBrandName] = useState('');
     const [influencerName, setInfluencerName] = useState('');
@@ -117,11 +119,14 @@ const AIImageGenerator = () => {
         try {
             if (type === 'email') {
                 await generateEmail();
+                trackEvent('AI Email Generator, regenerate email');
             } else if (type === 'subject') {
                 await generateSubject();
+                trackEvent('AI Email Generator, regenerate subject');
             } else {
                 await generateEmail();
                 await generateSubject();
+                trackEvent('AI Email Generator, generate email and subject');
             }
             toast.dismiss(loadingToast);
             toast.success(t('aiEmailGenerator.index.status.generatedSuccessfully') || '');
@@ -256,7 +261,10 @@ const AIImageGenerator = () => {
 
                             <div className="flex flex-col gap-2 md:flex-row md:gap-5">
                                 <Button
-                                    onClick={() => copyToClipboard(generatedSubject)}
+                                    onClick={() => {
+                                        copyToClipboard(generatedSubject);
+                                        trackEvent('AI Email Generator, copy subject line');
+                                    }}
                                     disabled={loadingEmail || loadingSubject}
                                     className="flex items-center gap-2"
                                 >
@@ -288,7 +296,10 @@ const AIImageGenerator = () => {
                             </label>
                             <div className="mb-2 flex flex-col gap-2 md:flex-row md:gap-5">
                                 <Button
-                                    onClick={() => copyToClipboard(generatedEmail)}
+                                    onClick={() => {
+                                        copyToClipboard(generatedEmail);
+                                        trackEvent('AI Email Generator, copy email');
+                                    }}
                                     className="flex items-center gap-2"
                                     disabled={loadingEmail || loadingSubject}
                                 >
