@@ -171,12 +171,9 @@ export const SearchResultRow = ({
                         href={`/influencer/${platform}/${user_id}`}
                         target="_blank"
                         onClick={() => trackEvent('Search Result Row, open report', { platform, user_id })}
+                        data-testid={`analyze-button/${user_id}`}
                     >
-                        <Button
-                            className="flex flex-row items-center"
-                            variant="secondary"
-                            data-testid={`analyze-button/${user_id}`}
-                        >
+                        <Button className="flex flex-row items-center" variant="secondary">
                             <span className="">{t('creators.analyzeProfile')}</span>
                         </Button>
                     </Link>
