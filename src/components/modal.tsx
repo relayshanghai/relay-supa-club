@@ -23,7 +23,7 @@ export const Modal: React.FC<ModalProps> = ({ children, visible, onClose, title,
                     leaveFrom="opacity-100"
                     leaveTo="opacity-0"
                 >
-                    <div className="fixed inset-0 bg-black bg-opacity-25" data-testid="modal-bg" />
+                    <div className="fixed inset-0 bg-black bg-opacity-25" />
                 </Transition.Child>
 
                 <div className="fixed inset-0 overflow-y-auto">
