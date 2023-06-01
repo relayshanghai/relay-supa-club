@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import type { ReactNode } from 'react';
 import { useEffect } from 'react';
 import useAboveScreenWidth from 'src/hooks/use-above-screen-width';
 import EmailOutline from './icons/EmailOutline';
@@ -7,10 +8,8 @@ import { useUser } from 'src/hooks/use-user';
 import { Compass, FourSquare, Account, Team, PieChart } from './icons';
 import { Title } from './title';
 import { useTranslation } from 'react-i18next';
-import { featPerformance } from 'src/constants/feature-flags';
-import React from 'react';
 
-const ActiveLink = ({ href, children }: { href: string; children: React.ReactNode }) => {
+const ActiveLink = ({ href, children }: { href: string; children: ReactNode }) => {
     const router = useRouter();
 
     const pathRoot = router.pathname; // /dashboard/influencers => dashboard
@@ -55,7 +54,7 @@ const NavBarInner = ({ loggedIn, isRelayEmployee }: { loggedIn: boolean | null; 
                 <ActiveLink href={'/dashboard'}>{t('navbar.influencers')}</ActiveLink>
                 <ActiveLink href={'/campaigns'}>{t('navbar.campaigns')}</ActiveLink>
                 <ActiveLink href="/ai-email-generator">{t('navbar.aiEmailGenerator')}</ActiveLink>
-                {featPerformance() && <ActiveLink href="/performance">{t('navbar.performance')}</ActiveLink>}
+                <ActiveLink href="/performance">{t('navbar.performance')}</ActiveLink>
                 {loggedIn && <ActiveLink href="/account">{t('navbar.account')}</ActiveLink>}
             </div>
             {isRelayEmployee && (
