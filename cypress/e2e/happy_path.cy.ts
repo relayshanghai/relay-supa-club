@@ -234,7 +234,7 @@ describe('Main pages happy paths', () => {
         cy.contains('Archived Campaigns').click();
         cy.contains('My Campaign');
     });
-    it.only('can add influencers to campaign', () => {
+    it('can add influencers to campaign', () => {
         setupIntercepts();
 
         cy.loginTestUser();
