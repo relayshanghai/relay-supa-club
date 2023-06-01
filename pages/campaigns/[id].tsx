@@ -18,8 +18,6 @@ import { imgProxy } from 'src/utils/fetcher';
 import { useCompany } from 'src/hooks/use-company';
 import { Spinner } from 'src/components/icons';
 import { toast } from 'react-hot-toast';
-import { featPerformance } from 'src/constants/feature-flags';
-import CampaignInfluencersTableLegacy from 'src/components/campaigns/campaign-influencers-table-legacy';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 
 export default function CampaignShow() {
