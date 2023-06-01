@@ -41,6 +41,7 @@ function TextInput({
                 id={fieldName}
                 placeholder={placeHolder}
                 type={type}
+                data-testid={fieldName}
                 {...register(fieldName, {
                     required: { value: isRequired, message: t('website.requiredField') },
                     maxLength: maximLength

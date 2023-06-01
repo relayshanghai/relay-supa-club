@@ -256,6 +256,82 @@ describe('Main pages happy paths', () => {
             expect(isSorted).to.be.true;
         });
     });
+    it.only('can sort campaigns by last edited', () => {
+        setupIntercepts();
+
+        cy.loginTestUser();
+
+        cy.contains('Campaigns').click();
+        cy.contains('Beauty for All Skin Tones').click();
+        cy.contains('button', 'New Campaign', { timeout: 20000 }); // loads campaigns page
+        cy.url().should('include', `/campaigns`);
+        // campaigns listed
+        cy.contains('Campaign Test').should('not.exist');
+        cy.contains('Campaign Second Test').should('not.exist');
+        cy.contains('Beauty for All Skin Tones').click();
+        // campaign details
+        cy.contains('Campaign Launch Date', { timeout: 10000 });
+        // shows influencers
+        cy.contains('@Greg Renko');
+        cy.contains('View Contact Info');
+        cy.contains('SET India').should('not.exist');
+        cy.go(-1);
+
+        // CREATE NEW CAMPAIGN
+        cy.get('button').contains('New Campaign', { timeout: 10000 }).click();
+        // new campaign form
+        cy.contains('Campaign Name *', { timeout: 10000 });
+        // check displays new campaign
+        cy.get('input[name=name]').type('Campaign Test');
+        cy.get('textarea[name=description]').type('This campaign is about selling some stuff');
+        cy.get('input[name=product_name]').type('Gadget');
+        cy.get('input[id=react-select-3-input]').click();
+        cy.contains('Books').click();
+        cy.get('input[id=react-select-5-input]').click();
+        cy.contains('Albania').click();
+        cy.get('input[name=budget_cents]').type('1000');
+        cy.get('input[name=promo_types]').check({ force: true });
+        cy.get('button').contains('Create Campaign').click();
+        cy.contains('Campaign Launch Date', { timeout: 10000 });
+        cy.contains('SET India').should('not.exist');
+
+        cy.go(-1);
+
+        // new campaign form
+        cy.contains('Campaign Name *', { timeout: 10000 });
+        // check displays new campaign
+        cy.get('input[name=name]').type('Campaign Second Test');
+        cy.get('textarea[name=description]').type('This campaign is about buying some stuff');
+        cy.get('input[name=product_name]').type('ABC');
+        cy.getByTestId('tag_list').click();
+        cy.contains('Books').click();
+        cy.getByTestId('target_locations').click();
+        cy.contains('Austria').click();
+        cy.get('input[name=budget_cents]').type('1000');
+        cy.get('input[name=promo_types]').check({ force: true });
+        cy.get('button').contains('Create Campaign').click();
+        cy.contains('Campaign Launch Date', { timeout: 10000 });
+        cy.contains('SET India').should('not.exist');
+
+        cy.contains('Campaigns').click();
+
+        const divs = cy.get('.grid > div');
+        divs.then(($divs) => {
+            const divArray = [...$divs];
+            const isSorted = divArray.every((div, index) => {
+                const id = div.id;
+                if (index === 0 && id !== 'campaign-card-campaign-second-test') {
+                    return false;
+                }
+                if (index === 1 && id !== 'campaign-card-campaign-test') {
+                    return false;
+                }
+                return true;
+            });
+
+            expect(isSorted).to.be.true;
+        });
+    });
 
     /** works on local... 🤷‍♂️ */
     it.skip('can log out', () => {

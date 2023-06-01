@@ -51,7 +51,7 @@ export default function CampaignCardSquare({ campaign }: { campaign: CampaignDB 
     }, [campaign, supabaseClient.storage]);
 
     return (
-        <Link href={`/campaigns/${campaign.id}`} passHref>
+        <Link href={`/campaigns/${campaign.id}`} passHref data-testid={`campaign-card-${campaign.slug}`}>
             <div className="relative h-80 cursor-pointer rounded-lg bg-white duration-300 sm:hover:shadow-lg">
                 {/* -- Campaign Card Image -- */}
                 <div className="relative mb-2 h-48 w-full rounded-lg">
