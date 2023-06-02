@@ -48,7 +48,7 @@ export const useRudderstack = () => {
         if (!window.rudder) {
             await rudderInitialized();
         }
-        window.rudder.track(groupId, traits);
+        window.rudder.group(groupId, traits);
     }, []);
 
     const identifyFromProfile = useCallback(
