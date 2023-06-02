@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/browser';
 import type { PropsWithChildren } from 'react';
-import { createContext, useCallback, useContext } from 'react';
+import { createContext, useCallback, useContext, useEffect } from 'react';
 import type { KeyedMutator } from 'swr';
 import useSWR from 'swr';
 import type { CompanyPutBody, CompanyPutResponse } from 'pages/api/company';
@@ -10,6 +10,9 @@ import { nextFetch } from 'src/utils/fetcher';
 import { useUser } from './use-user';
 import { useClientDb } from 'src/utils/client-db/use-client-db';
 import type { CompanyDB } from 'src/utils/api/db';
+import { useAtomValue } from 'jotai';
+import { clientRoleAtom } from 'src/atoms/client-role-atom';
+import { clientLogger } from 'src/utils/logger-client';
 
 export interface CompanyContext {
     company: CompanyDB | undefined;
@@ -28,35 +31,40 @@ const ctx = createContext<CompanyContext>({
 export const CompanyProvider = ({ children }: PropsWithChildren) => {
     const { profile, refreshProfile } = useUser();
     const { getCompanyById } = useClientDb();
+    const clientRoleData = useAtomValue(clientRoleAtom);
+    const companyId = clientRoleData.companyId || profile?.company_id;
 
-    const { data: company, mutate: refreshCompany } = useSWR(profile?.company_id ? 'company' : null, async () => {
-        if (!profile?.company_id) return;
-        const fetchedCompany = await getCompanyById(profile.company_id);
+    const { data: company, mutate: refreshCompany } = useSWR(profile && companyId ? 'company' : null, async () => {
+        const fetchedCompany = await getCompanyById(companyId);
         if (profile && fetchedCompany?.name && !company?.name) {
             Sentry.setUser({
                 id: profile.id,
                 email: profile.email ?? '',
                 name: `${profile.first_name} ${profile.last_name}`,
-                company_name: fetchedCompany.name,
-                company_id: fetchedCompany.id,
+                company_name: clientRoleData.companyName || fetchedCompany.name,
+                company_id: companyId,
             });
         }
         return fetchedCompany;
     });
 
+    useEffect(() => {
+        refreshCompany();
+    }, [clientRoleData.companyId, refreshCompany]);
+
     const updateCompany = useCallback(
         async (input: Omit<CompanyPutBody, 'id'>) => {
-            if (!company?.id) throw new Error('No company found');
+            if (!companyId) throw new Error('No company found');
             const body: CompanyPutBody = {
                 ...input,
-                id: company.id,
+                id: companyId,
             };
             return await nextFetch<CompanyPutResponse>(`company`, {
                 method: 'PUT',
                 body: JSON.stringify(body),
             });
         },
-        [company?.id],
+        [companyId],
     );
 
     const createCompany = useCallback(
@@ -93,7 +101,8 @@ export const CompanyProvider = ({ children }: PropsWithChildren) => {
 
 export const useCompany = () => {
     const context = useContext(ctx);
-    if (context === null) {
+    if (!context) {
+        clientLogger('useCompany must be used within a CompanyProvider');
         throw new Error('useCompany must be used within a CompanyProvider');
     }
     return context;

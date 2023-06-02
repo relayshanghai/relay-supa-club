@@ -140,7 +140,7 @@ OR REPLACE FUNCTION create_company(
           company_name,
           website,
           subscription_status,
-          'cus_0000000000',
+          'cus_NKXV4aQYAU7GXG',
           '2025-01-01 00:00:00.000000+00',
           now(),
           '2025-01-01 00:00:00.000000+00',

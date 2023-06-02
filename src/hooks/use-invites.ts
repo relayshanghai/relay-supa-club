@@ -10,21 +10,24 @@ import type {
     CompanyAcceptInvitePostBody,
     CompanyAcceptInvitePostResponse,
 } from 'pages/api/invites/accept';
+import { useCompany } from './use-company';
 
 export const useInvites = () => {
     const { profile } = useUser();
-    const { data: invites, mutate: refreshUsages } = useSWR(profile?.company_id ? 'invites' : null, (path) =>
+    const { company } = useCompany();
+    const { data: invites, mutate: refreshUsages } = useSWR(company?.id ? 'invites' : null, (path) =>
         nextFetchWithQueries<InvitesGetQueries, InvitesGetResponse>(path, {
-            id: profile?.company_id ?? '',
+            id: company?.id ?? '',
         }),
     );
 
     const createInvite = useCallback(
         async (email: string, companyOwner: boolean) => {
-            if (!profile?.company_id) throw new Error('No profile found');
+            if (!profile?.id) throw new Error('No profile found');
+            if (!company?.id) throw new Error('No company found');
             const body: CompanyCreateInvitePostBody = {
                 email: email,
-                company_id: profile.company_id,
+                company_id: company?.id,
                 name: `${profile.first_name} ${profile.last_name}`,
                 companyOwner,
             };
@@ -33,7 +36,7 @@ export const useInvites = () => {
                 body,
             });
         },
-        [profile],
+        [profile, company],
     );
 
     const getInviteStatus = useCallback(async (token: string) => {
