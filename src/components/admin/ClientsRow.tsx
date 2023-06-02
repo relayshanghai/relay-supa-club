@@ -15,12 +15,15 @@ type ClientsRowProps = {
 const ClientsRow = ({ data, columnHeaders, clientRoleDataHandler, resetClientRoleData }: ClientsRowProps) => {
     const { companyId } = useAtomValue(clientRoleAtom);
 
-    const onManageClick = (client: ClientInfo) => {
+    const onManageClick = async (client: ClientInfo) => {
         if (companyId !== '' && companyId === client.id) {
             client.name && resetClientRoleData();
         } else {
             client.name && clientRoleDataHandler(client.name, client.id);
         }
+        // reset cache
+        const { deleteDB } = await import('idb');
+        await deleteDB('app-cache');
     };
 
     return (

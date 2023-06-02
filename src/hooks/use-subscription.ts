@@ -13,29 +13,29 @@ import type { PaymentMethodGetQueries, PaymentMethodGetResponse } from 'pages/ap
 import { useCallback } from 'react';
 import { nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';
 import useSWR from 'swr';
-import { useUser } from './use-user';
+import { useCompany } from './use-company';
 
 export const useSubscription = () => {
-    const { profile } = useUser();
+    const { company } = useCompany();
     const { data: subscription, mutate } = useSWR(
-        profile?.company_id ? 'subscriptions' : null,
+        company?.id ? 'subscriptions' : null,
         async (path) =>
             await nextFetchWithQueries<SubscriptionGetQueries, SubscriptionGetResponse>(path, {
-                id: profile?.company_id ?? '',
+                id: company?.id ?? '',
             }),
     );
     const { data: paymentMethods, mutate: refreshPaymentMethods } = useSWR(
-        profile?.company_id ? 'subscriptions/payment-method' : null,
+        company?.id ? 'subscriptions/payment-method' : null,
         async (path) =>
             await nextFetchWithQueries<PaymentMethodGetQueries, PaymentMethodGetResponse>(path, {
-                id: profile?.company_id ?? '',
+                id: company?.id ?? '',
             }),
     );
 
     const createTrial = useCallback(async () => {
-        if (!profile?.company_id) throw new Error('No profile found');
+        if (!company?.id) throw new Error('No company found');
         const body: SubscriptionCreateTrialPostBody = {
-            company_id: profile?.company_id,
+            company_id: company?.id,
         };
         const res = await nextFetch<SubscriptionCreateTrialResponse>('subscriptions/create-trial', {
             method: 'post',
@@ -43,14 +43,14 @@ export const useSubscription = () => {
         });
         mutate();
         return res;
-    }, [profile, mutate]);
+    }, [company?.id, mutate]);
 
     const createSubscription = useCallback(
         async (priceId: string, couponId?: string) => {
-            if (!profile?.company_id) throw new Error('No profile found');
+            if (!company?.id) throw new Error('No company found');
             const body: SubscriptionCreatePostBody = {
                 price_id: priceId,
-                company_id: profile?.company_id,
+                company_id: company?.id,
                 coupon_id: couponId,
             };
             const res = await nextFetch<SubscriptionCreatePostResponse>('subscriptions/create', {
@@ -60,13 +60,13 @@ export const useSubscription = () => {
             mutate();
             return res;
         },
-        [profile, mutate],
+        [company?.id, mutate],
     );
 
     const createDiscountRenew = useCallback(async () => {
-        if (!profile?.company_id) throw new Error('No profile found');
+        if (!company?.id) throw new Error('No company found');
         const body: SubscriptionDiscountRenewPostBody = {
-            company_id: profile?.company_id,
+            company_id: company?.id,
         };
         const res = await nextFetch<SubscriptionDiscountRenewPostResponse>('subscriptions/discount-renew', {
             method: 'post',
@@ -74,12 +74,12 @@ export const useSubscription = () => {
         });
         mutate();
         return res;
-    }, [profile, mutate]);
+    }, [company?.id, mutate]);
 
     const cancelSubscription = useCallback(async () => {
-        if (!profile?.company_id) throw new Error('No profile found');
+        if (!company?.id) throw new Error('No company found');
         const body: SubscriptionCancelPostBody = {
-            company_id: profile?.company_id,
+            company_id: company?.id,
         };
         const res = await nextFetch<SubscriptionCancelPostResponse>('subscriptions/cancel', {
             method: 'post',
@@ -87,7 +87,7 @@ export const useSubscription = () => {
         });
         mutate();
         return res;
-    }, [profile, mutate]);
+    }, [company?.id, mutate]);
 
     return {
         subscription,
