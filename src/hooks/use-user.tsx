@@ -112,13 +112,11 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
                 name: `${fetchedProfile.first_name} ${fetchedProfile.last_name}`,
             });
         }
-
         return fetchedProfile;
     });
 
     useEffect(() => {
-        // console.log({ profile, identifyFromProfile });
-        if (profile && profile.id && identifyFromProfile) {
+        if (profile && identifyFromProfile) {
             identifyFromProfile(profile);
         }
     }, [identifyFromProfile, profile]);

@@ -14,11 +14,9 @@ import { useCallback } from 'react';
 import { nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';
 import useSWR from 'swr';
 import { useUser } from './use-user';
-import { useRudderstack } from './use-rudderstack';
 
 export const useSubscription = () => {
     const { profile } = useUser();
-    const { identifyFromProfile } = useRudderstack();
     const { data: subscription, mutate } = useSWR(
         profile?.company_id ? 'subscriptions' : null,
         async (path) =>
@@ -43,11 +41,9 @@ export const useSubscription = () => {
             method: 'post',
             body: JSON.stringify(body),
         });
-        //identify a user when they successfully create an account and started trail
-        identifyFromProfile(profile);
         mutate();
         return res;
-    }, [profile, identifyFromProfile, mutate]);
+    }, [profile, mutate]);
 
     const createSubscription = useCallback(
         async (priceId: string, couponId?: string) => {
