@@ -28,6 +28,7 @@ env:
     GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
     NEXT_PUBLIC_CI: true
     NEXT_PUBLIC_CHATWOOT_WEBSITE_TOKEN: ${{ vars.NEXT_PUBLIC_CHATWOOT_WEBSITE_TOKEN }}
+    APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
 
 jobs:
     supabase-test:
