@@ -75,7 +75,7 @@
     "@typescript-eslint/parser": "^5.59.0",
     "@vitejs/plugin-react": "^4.0.0",
     "autoprefixer": "^10.4.14",
-    "cypress": "^12.10.0",
+    "cypress": "^12.13.0",
     "eslint": "8.38.0",
     "eslint-config-next": "^13.3.0",
     "eslint-config-prettier": "^8.8.0",
@@ -102,7 +102,7 @@
       "supabase/db.sh db_test"
     ],
     "(pages|src|styles|types|i18n|docs)/**/!(*supabase).{ts,tsx}": [
-      "prettier --no-error-on-unmatched-pattern --write"
+      "prettier --no-error-on-unmatched-pattern --write --editorconfig"
     ],
     "(pages|src|styles|types|i18n|docs)/**/*.{js,jsx,ts,tsx}": [
       "eslint --ext=.js,.jsx,.ts,.tsx --max-warnings=0 --fix"

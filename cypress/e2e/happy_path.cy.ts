@@ -225,7 +225,9 @@ describe('Main pages happy paths', () => {
         cy.contains('SET India');
 
         // change influencer status, and change status tabs
-        cy.getByTestId('status-dropdown').select('Contacted', { force: true });
+        cy.contains('tr', 'SET India').within(() =>
+            cy.getByTestId('status-dropdown').select('Contacted', { force: true }),
+        );
         cy.contains('Influencer Information Updated', { timeout: 10000 });
         cy.contains('SET India').should('not.exist');
         cy.contains('Contacted 1').click();
@@ -463,7 +465,10 @@ describe('Main pages happy paths', () => {
 
         cy.contains('Campaigns').click();
         cy.contains('Beauty for All Skin Tones').click();
-        cy.getByTestId('status-dropdown').select('Posted', { force: true });
+        cy.contains('tr', 'SET India').within(() =>
+            cy.getByTestId('status-dropdown').select('Posted', { force: true }),
+        );
+
         cy.contains('Posted 1').click();
         cy.contains('Content').click();
         cy.contains('h2', 'Manage Posts');
@@ -475,7 +480,9 @@ describe('Main pages happy paths', () => {
         });
 
         cy.contains('Successfully added 1 URLs');
-        cy.getByTestId('status-dropdown').select('To Contact', { force: true });
+        cy.contains('tr', 'SET India').within(() =>
+            cy.getByTestId('status-dropdown').select('To Contact', { force: true }),
+        );
 
         // check 'after' performance page totals
         cy.contains('Performance').click();

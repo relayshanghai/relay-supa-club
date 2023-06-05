@@ -7,17 +7,15 @@ import { db } from 'src/utils/supabase-client';
 import type { PostInfo } from '../posts';
 import { fetchReport } from 'src/utils/api/iqdata/fetch-report';
 import { saveInfluencer } from 'src/utils/save-influencer';
-import type { CampaignCreatorInsert } from 'src/utils/client-db/campaignCreators';
-import type { Database } from 'types/supabase';
+import type { CampaignCreatorDB, CampaignCreatorDBInsert } from 'src/utils/api/db';
 
 export type InfluencerPostResponse = PostInfo[] | { error: string };
-type CampaignCreatorRow = Database['public']['Tables']['campaign_creators']['Row'];
 
 // @note: link campaign_creators to influencer_social_profiles
 //        https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/416
 const patchCampaignCreatorWithoutInfluencerSocial = async (
-    creator: CampaignCreatorInsert,
-): Promise<CampaignCreatorRow> => {
+    creator: CampaignCreatorDBInsert,
+): Promise<CampaignCreatorDB> => {
     const _updateCampaignCreator = db<typeof updateCampaignCreator>(updateCampaignCreator);
 
     if (!creator.id) {

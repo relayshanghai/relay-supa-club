@@ -1,0 +1,12 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# verify tests
+npm test
+
+# verify types
+npm run type-check:app
+
+# run cypress tests
+unset ELECTRON_RUN_AS_NODE
+npm run test-cypress-unit
