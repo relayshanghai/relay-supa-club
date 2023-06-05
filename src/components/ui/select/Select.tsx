@@ -41,7 +41,7 @@ function MultiSelect({
     const [optionsSelected, setOptionsSelected] = useState<LabelValueObject[]>([]);
 
     return (
-        <div data-testid={fieldName}>
+        <div>
             <Controller
                 control={control}
                 name={fieldName}

@@ -23,6 +23,10 @@ export const getCampaignCreatorsCall =
             .eq('campaign_id', campaignId);
 
         if (error) throw error;
+
+        // async update the campaign updated_at
+        supabaseClient.from('campaigns').update({ updated_at: new Date().toISOString() }).eq('id', campaignId);
+
         return data;
     };
 
@@ -40,6 +44,10 @@ export const insertCampaignCreatorCall =
             .select()
             .single();
         if (error) throw error;
+
+        // async update the campaign updated_at
+        supabaseClient.from('campaigns').update({ updated_at: new Date().toISOString() }).eq('id', data.campaign_id);
+
         return campaignCreator;
     };
 
@@ -55,6 +63,10 @@ export const updateCampaignCreatorCall =
             .select()
             .single();
         if (error) throw error;
+
+        // async update the campaign updated_at
+        supabaseClient.from('campaigns').update({ updated_at: new Date().toISOString() }).eq('id', data.campaign_id);
+
         return campaignCreator;
     };
 
@@ -68,6 +80,10 @@ export const deleteCampaignCreatorCall =
             .eq('campaign_id', campaignId);
 
         if (error) throw error;
+
+        // async update the campaign updated_at
+        supabaseClient.from('campaigns').update({ updated_at: new Date().toISOString() }).eq('id', campaignId);
+
         return campaignCreator;
     };
 

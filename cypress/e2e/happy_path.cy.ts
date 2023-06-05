@@ -173,6 +173,10 @@ describe('Main pages happy paths', () => {
         cy.contains('Campaign Launch Date', { timeout: 10000 });
         cy.contains('SET India').should('not.exist');
 
+        // campaigns are listed in order of most recently added/edited.
+        cy.getByTestId('campaign-cards-container').children().first().contains('My Campaign');
+        cy.getByTestId('campaign-cards-container').children().first().next().contains('Beauty for All Skin Tones');
+
         cy.contains('My Campaign').click();
 
         // go to search and add an influencer to campaign
@@ -191,6 +195,11 @@ describe('Main pages happy paths', () => {
         cy.contains('Campaigns').click({ force: true }); // hidden by modal
         cy.contains('Influencer added successfully.', { timeout: 60000 });
         cy.get('button').contains('New Campaign');
+
+        // Beauty for All Skin Tones should now be listed first, since we added an influencer to it
+        cy.getByTestId('campaign-cards-container').children().first().contains('Beauty for All Skin Tones');
+        cy.getByTestId('campaign-cards-container').children().first().next().contains('My Campaign');
+
         cy.contains('Beauty for All Skin Tones').click();
 
         cy.contains('tr', 'PewDiePie', { timeout: 60000 });
@@ -258,82 +267,6 @@ describe('Main pages happy paths', () => {
         cy.contains('My Campaign').should('not.exist');
         cy.contains('Archived Campaigns').click();
         cy.contains('My Campaign');
-    });
-    it('can sort campaigns by last edited', () => {
-        setupIntercepts();
-
-        cy.loginTestUser();
-
-        cy.contains('Campaigns').click();
-        cy.contains('Beauty for All Skin Tones').click();
-        cy.contains('button', 'New Campaign', { timeout: 20000 }); // loads campaigns page
-        cy.url().should('include', `/campaigns`);
-        // campaigns listed
-        cy.contains('Campaign Test').should('not.exist');
-        cy.contains('Campaign Second Test').should('not.exist');
-        cy.contains('Beauty for All Skin Tones').click();
-        // campaign details
-        cy.contains('Campaign Launch Date', { timeout: 10000 });
-        // shows influencers
-        cy.contains('@Greg Renko');
-        cy.contains('View Contact Info');
-        cy.contains('SET India').should('not.exist');
-        cy.go(-1);
-
-        // CREATE NEW CAMPAIGN
-        cy.get('button').contains('New Campaign', { timeout: 10000 }).click();
-        // new campaign form
-        cy.contains('Campaign Name *', { timeout: 10000 });
-        // check displays new campaign
-        cy.get('input[name=name]').type('Campaign Test');
-        cy.get('textarea[name=description]').type('This campaign is about selling some stuff');
-        cy.get('input[name=product_name]').type('Gadget');
-        cy.get('input[id=react-select-3-input]').click();
-        cy.contains('Books').click();
-        cy.get('input[id=react-select-5-input]').click();
-        cy.contains('Albania').click();
-        cy.get('input[name=budget_cents]').type('1000');
-        cy.get('input[name=promo_types]').check({ force: true });
-        cy.get('button').contains('Create Campaign').click();
-        cy.contains('Campaign Launch Date', { timeout: 10000 });
-        cy.contains('SET India').should('not.exist');
-
-        cy.go(-1);
-
-        // new campaign form
-        cy.contains('Campaign Name *', { timeout: 10000 });
-        // check displays new campaign
-        cy.get('input[name=name]').type('Campaign Second Test');
-        cy.get('textarea[name=description]').type('This campaign is about buying some stuff');
-        cy.get('input[name=product_name]').type('ABC');
-        cy.getByTestId('tag_list').click();
-        cy.contains('Books').click();
-        cy.getByTestId('target_locations').click();
-        cy.contains('Austria').click();
-        cy.get('input[name=budget_cents]').type('1000');
-        cy.get('input[name=promo_types]').check({ force: true });
-        cy.get('button').contains('Create Campaign').click();
-        cy.contains('Campaign Launch Date', { timeout: 10000 });
-        cy.contains('SET India').should('not.exist');
-
-        cy.contains('Campaigns').click();
-
-        const divs = cy.get('.grid > div');
-        divs.then(($divs) => {
-            const divArray = [...$divs];
-            const isSorted = divArray.every((div, index) => {
-                const id = div.id;
-                if (index === 0 && id !== 'campaign-card-campaign-second-test') {
-                    return false;
-                }
-                if (index === 1 && id !== 'campaign-card-campaign-test') {
-                    return false;
-                }
-                return true;
-            });
-
-            expect(isSorted).to.be.true;
-        });
     });
 
     it('can record search usages, can manage clients as a company owner', () => {
