@@ -59,6 +59,7 @@
   },
   "devDependencies": {
     "@esbuild/darwin-arm64": "^0.17.19",
+    "@esbuild/linux-x64": "^0.17.19",
     "@storybook/addon-essentials": "^7.0.7",
     "@storybook/addon-interactions": "^7.0.7",
     "@storybook/addon-links": "^7.0.7",
