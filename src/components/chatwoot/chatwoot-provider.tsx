@@ -67,19 +67,40 @@ export const useChatwoot = () => useContext(ChatWootContext);
 
 type ChatwootProviderProps = PropsWithChildren<ChatwootSettings & ChatwootSDKParams>;
 
+const mapLangCode = (lang: string) => {
+    const codes: { [k: string]: string } = {
+        'zh-CN': 'zh_CN',
+        'en-US': 'en',
+    };
+
+    if (lang in codes) {
+        return codes[lang];
+    }
+
+    return lang;
+};
+
 export default function ChatwootProvider({ children, ...chatwootOptions }: ChatwootProviderProps) {
     const { baseUrl, websiteToken, ...settings } = chatwootOptions;
 
     const [chatwoot, setChatwoot] = useState<Chatwoot | null>(null);
 
     useEffect(() => {
+        if (!chatwoot) return;
+
+        if (settings.locale) {
+            chatwoot.setLocale(mapLangCode(settings.locale));
+        }
+    }, [chatwoot, settings.locale]);
+
+    useEffect(() => {
         if (chatwoot !== null) return;
 
         (window as WindowChatwoot).chatwootSettings = settings || {};
 
-        const $baseUrl = baseUrl || 'https://app.chatwoot.com';
+        const _baseUrl = baseUrl || 'https://app.chatwoot.com';
         const element = document.createElement('script');
-        element.src = $baseUrl + '/packs/js/sdk.js';
+        element.src = _baseUrl + '/packs/js/sdk.js';
         element.async = true;
         element.onload = () => {
             if ((window as WindowChatwoot).$chatwoot) return;
@@ -90,7 +111,7 @@ export default function ChatwootProvider({ children, ...chatwootOptions }: Chatw
 
             (window as WindowChatwoot).chatwootSDK.run({
                 websiteToken: websiteToken,
-                baseUrl: $baseUrl,
+                baseUrl: _baseUrl,
             });
         };
 
