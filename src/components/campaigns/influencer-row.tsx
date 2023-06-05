@@ -188,7 +188,7 @@ const InfluencerRow = ({
                     <button
                         data-testid="open-notes-button"
                         onClick={() => openNotes(creator)}
-                        className={`mr-2 cursor-pointer rounded-md border border-gray-200 bg-gray-50 p-2 text-center font-medium text-gray-600  hover:bg-gray-100 hover:text-primary-500 ${
+                        className={`mr-2 cursor-pointer whitespace-nowrap rounded-md border border-gray-200 bg-gray-50 p-2 text-center font-medium text-gray-600  hover:bg-gray-100 hover:text-primary-500 ${
                             tabStatus === 'in progress' || tabStatus === 'confirmed' ? '' : 'hidden'
                         }`}
                     >
