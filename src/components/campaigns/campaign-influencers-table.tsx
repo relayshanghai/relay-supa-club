@@ -257,14 +257,14 @@ export default function CampaignInfluencersTable({
                 />
             </div>
             {/* -- Outreach Table -- */}
-            <div className=" w-full overflow-auto">
-                <table className="w-full table-auto divide-y divide-gray-200 overflow-y-visible bg-white">
+            <div className="overflow-auto">
+                <table className="w-full table-auto divide-y divide-gray-200 overflow-y-visible bg-white ">
                     <thead>
                         <tr>
                             {visibleColumns.map((column, index) => (
                                 <th
                                     key={column.header}
-                                    className={`  bg-white px-6 py-3 text-left text-xs font-normal tracking-wider text-gray-500 ${
+                                    className={`  whitespace-nowrap bg-white px-6 py-3 text-left text-xs font-normal tracking-wider text-gray-500 ${
                                         index === 0 ? ' sticky left-0 z-10' : index === -1 ? ' sticky right-0 z-20' : ''
                                     }`}
                                 >
