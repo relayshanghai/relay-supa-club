@@ -111,11 +111,10 @@ describe('Main pages happy paths', () => {
         cy.url().should('include', `/pricing`);
         cy.contains('DIY Max');
         // this doesn't work anymore because we aren't using a live account anymore, so stripe sends back 'can't find subscription' and the button is disabled.
-        // TODO: fix this when we implement msw mocks, mock the stripe call/response.
-        // cy.contains('button', 'Buy Now').click();
-        // cy.contains('button', 'Subscribe');
-        // cy.contains('button', 'Close').click();
-        // cy.contains('button', 'Subscribe').should('not.exist');
+        cy.contains('button', 'Buy Now').click();
+        cy.contains('button', 'Subscribe');
+        cy.contains('button', 'Close').click();
+        cy.contains('button', 'Subscribe').should('not.exist');
     });
     it('can open ai email generator', () => {
         setupIntercepts();
@@ -245,7 +244,6 @@ describe('Main pages happy paths', () => {
         cy.contains('SET India');
 
         // add notes
-
         cy.getByTestId('manage-button').click();
         cy.contains('Notes');
         cy.getByTestId('show-influencer-notes').click();
@@ -258,6 +256,7 @@ describe('Main pages happy paths', () => {
         cy.contains('William Edward', { timeout: 10000 }); // user name shows
         cy.contains('This influencer is great');
         cy.contains('My Campaign').click({ force: true }); // hidden by modal
+
         // delete an influencer
         cy.getByTestId('delete-creator').click();
         cy.contains('Influencer was deleted.');
@@ -400,7 +399,7 @@ describe('Main pages happy paths', () => {
 
         cy.contains('Campaigns').click();
         cy.contains('Beauty for All Skin Tones').click();
-        cy.contains('tr', 'SET India').within(() =>
+        cy.contains('tr', 'Greg Renko').within(() =>
             cy.getByTestId('status-dropdown').select('Posted', { force: true }),
         );
 
@@ -415,7 +414,7 @@ describe('Main pages happy paths', () => {
         });
 
         cy.contains('Successfully added 1 URLs');
-        cy.contains('tr', 'SET India').within(() =>
+        cy.contains('tr', 'Greg Renko').within(() =>
             cy.getByTestId('status-dropdown').select('To Contact', { force: true }),
         );
 
