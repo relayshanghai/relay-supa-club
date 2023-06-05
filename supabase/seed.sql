@@ -140,7 +140,7 @@ OR REPLACE FUNCTION create_company(
           company_name,
           website,
           subscription_status,
-          'cus_0000000000',
+          'cus_NKXV4aQYAU7GXG',
           '2025-01-01 00:00:00.000000+00',
           now(),
           '2025-01-01 00:00:00.000000+00',
@@ -234,7 +234,7 @@ OR REPLACE FUNCTION create_campaign_creator(
           uuid_generate_v4(),
           avatar_url,
           creator_id,
-          added_by_id, 
+          added_by_id,
           0,
           'USD',
           'unpaid',
@@ -459,8 +459,8 @@ BEGIN
   );
 
   PERFORM create_campaign_creator(
-    _campaign_beauty_for_all.id, 
-    _profile_william.id, 
+    _campaign_beauty_for_all.id,
+    _profile_william.id,
     'https://yt3.googleusercontent.com/SOkJ3PucBImQs1fZSG7O_LSD98FOEzGGKlaaLzt5Hps_REGV8-Ueuh_qjxtWmrRYWskN2URWiQ=s480-c-k-c0x00ffffff-no-rj',
     'UCB_CCSAGP_YCuR36_w2bG1w',
     'Greg Renko'
@@ -484,7 +484,7 @@ BEGIN
     'charlie.charles@example.com',
     '780 Elm Street',
     'https://example.com/avatar3'
-  );  
+  );
   _influencer_social_profile_alice_1 := create_influencer_social_profile(
     'https://instagram.com/alice1',
     'instagram',
@@ -496,18 +496,18 @@ BEGIN
     'https://instagram.com/bob1',
     'instagram',
     _influencer_bob.id,
-    'iqdata_2',    
+    'iqdata_2',
     'bob1'
   );
   _influencer_social_profile_bob_2 := create_influencer_social_profile(
     'https://youtube.com/bob2',
     'youtube',
     _influencer_bob.id,
-    'iqdata_3',    
+    'iqdata_3',
     'bob2'
   );
   -- Influencer 3 will have no social profiles so we can handle this edge case
-  
+
   _influencer_post_alice_1 := create_influencer_post(
     'https://instagram.com/alice/posts/1',
     _campaign_beauty_for_all.id,
@@ -609,8 +609,8 @@ BEGIN
   _profile_relay_employee := create_profile(_company_relay.id, 'jacob@relay.club', 'Jacob', 'Cool', 'relay_employee');
 
   PERFORM create_campaign_creator(
-    _campaign_gaming.id, 
-    _profile_relay_employee.id, 
+    _campaign_gaming.id,
+    _profile_relay_employee.id,
     'https://yt3.googleusercontent.com/S3tNLpc5lGK6i3qKb-3pBxcVTp6Fa0TKpJO8lJW-1fgcksYvZn68S3Ha5ebkIQiNFMeskjTxUBA=s480-c-k-c0x00ffffff-no-rj',
     'UCxo4Q6Wy5Ag4ntlibuyTfIQ',
     'Yousef Gaming'

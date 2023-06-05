@@ -15,10 +15,10 @@ import { useCompany } from 'src/hooks/use-company';
 import { useUser } from 'src/hooks/use-user';
 
 export const CompanyDetails = () => {
-    const { company, updateCompany } = useCompany();
+    const { company, updateCompany, refreshCompany } = useCompany();
     const { loading: userDataLoading, profile } = useUser();
     const { invites, createInvite } = useInvites();
-    const { teammates } = useTeammates();
+    const { teammates, refreshTeammates } = useTeammates();
 
     const [showAddMoreMembers, setShowAddMoreMembers] = useState(false);
     const {
@@ -37,7 +37,9 @@ export const CompanyDetails = () => {
         if (company) {
             resetCompanyValues({ name: company.name || '', website: company.website || '' });
         }
-    }, [company, resetCompanyValues]);
+        refreshTeammates();
+        refreshCompany();
+    }, [company, resetCompanyValues, refreshTeammates, refreshCompany]);
 
     const { t } = useTranslation();
 

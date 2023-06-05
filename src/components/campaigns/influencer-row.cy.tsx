@@ -152,6 +152,7 @@ describe('<InfluencerRow />', () => {
             visibleColumns: testColumns,
         };
         testMount(<InfluencerRow {...props} />);
+
         cy.get('[data-testid="move-influencer-button"]').should('exist');
         cy.get('[data-testid="manage-button"]').should('exist');
         cy.get('[data-testid="delete-creator"]').should('exist');

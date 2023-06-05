@@ -8,6 +8,7 @@ import { clientLogger } from 'src/utils/logger-client';
 import type { CreatorPlatform, CreatorReport } from 'types';
 import { useUser } from './use-user';
 import useSWR from 'swr';
+import { useCompany } from './use-company';
 
 //The transform function is not used now, as the image proxy issue is handled directly where calls for the image.But this is left for future refactor. TODO:Ticket V2-181
 // const transformReport = (report: CreatorReport, platform: string) => {
@@ -43,10 +44,11 @@ export const useReport: UseReport = ({ platform, creator_id }: { platform: Creat
     const [usageExceeded, setUsageExceeded] = useState(false);
     const { t } = useTranslation();
     const { profile } = useUser();
+    const { company } = useCompany();
 
     const { data, isLoading, mutate } = useSWR(
-        platform && creator_id && profile?.company_id && profile?.id
-            ? ['creators/report', platform, creator_id, profile?.company_id, profile?.id]
+        platform && creator_id && company?.id && profile?.id
+            ? ['creators/report', platform, creator_id, company?.id, profile?.id]
             : null,
         async ([path, platform, creator_id, company_id, user_id]) => {
             try {
