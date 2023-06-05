@@ -389,7 +389,7 @@ describe('Main pages happy paths', () => {
 
         cy.contains('Campaigns').click();
         cy.contains('Beauty for All Skin Tones').click();
-        cy.contains('tr', 'SET India').within(() =>
+        cy.contains('tr', 'Greg Renko').within(() =>
             cy.getByTestId('status-dropdown').select('Posted', { force: true }),
         );
 
@@ -404,7 +404,7 @@ describe('Main pages happy paths', () => {
         });
 
         cy.contains('Successfully added 1 URLs');
-        cy.contains('tr', 'SET India').within(() =>
+        cy.contains('tr', 'Greg Renko').within(() =>
             cy.getByTestId('status-dropdown').select('To Contact', { force: true }),
         );
 
