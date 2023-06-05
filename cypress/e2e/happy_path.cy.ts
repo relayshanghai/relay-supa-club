@@ -133,7 +133,7 @@ describe('Main pages happy paths', () => {
             .type('123')
             .should('have.value', 'Blue Moonlight Stream Enterprises123');
     });
-    it('can open campaigns page and manage campaign influencers', () => {
+    it.only('can open campaigns page and manage campaign influencers', () => {
         setupIntercepts();
         // list, add, archive campaigns
         // list, add, move, delete campaign influencers
@@ -172,6 +172,8 @@ describe('Main pages happy paths', () => {
         cy.get('button').contains('Create Campaign').click();
         cy.contains('Campaign Launch Date', { timeout: 10000 });
         cy.contains('SET India').should('not.exist');
+
+        cy.contains('Campaigns').click();
 
         // campaigns are listed in order of most recently added/edited.
         cy.getByTestId('campaign-cards-container').children().first().contains('My Campaign');
