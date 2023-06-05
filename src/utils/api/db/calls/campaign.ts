@@ -44,7 +44,7 @@ export const getCampaignNotes = async (campaignCreatorId: string) => {
         .order('created_at', { ascending: true });
     if (error) throw error;
 
-    return data as CampaignNotesWithProfiles[];
+    return data as unknown as CampaignNotesWithProfiles[];
 };
 
 export const insertCampaignNote = async (note: CampaignNotesInsertDB) =>

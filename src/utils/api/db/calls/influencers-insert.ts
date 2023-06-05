@@ -8,9 +8,10 @@ import type {
     InfluencerInsert,
     InfluencerSocialProfileInsert,
 } from '../types';
+import type { Database } from 'types/supabase';
 
 export const insertInfluencer =
-    (db: SupabaseClient) =>
+    (db: SupabaseClient<Database>) =>
     async (data: InfluencerInsert): Promise<InfluencerRow> => {
         const influencer = await db.from('influencers').insert(data).select();
 
@@ -22,7 +23,7 @@ export const insertInfluencer =
     };
 
 export const insertInfluencerSocialProfile =
-    (db: SupabaseClient) =>
+    (db: SupabaseClient<Database>) =>
     async (data: InfluencerSocialProfileInsert): Promise<InfluencerSocialProfileRow> => {
         const socialProfile = await db.from('influencer_social_profiles').insert(data).select();
 
