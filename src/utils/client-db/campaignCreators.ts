@@ -29,6 +29,8 @@ export const getCampaignCreatorsCall =
 export const insertCampaignCreatorCall =
     (supabaseClient: SupabaseClient<DatabaseWithCustomTypes>) =>
     async (data: CampaignCreatorInsert): Promise<CampaignCreatorDB> => {
+        data.updated_at = new Date().toISOString();
+        data.created_at = new Date().toISOString();
         const { data: campaignCreator, error } = await supabaseClient
             .from('campaign_creators')
             .insert({
@@ -45,6 +47,7 @@ export const updateCampaignCreatorCall =
     (supabaseClient: SupabaseClient<DatabaseWithCustomTypes>) =>
     async (data: CampaignCreatorDBUpdate): Promise<CampaignCreatorDBUpdate> => {
         const { id, ...rest } = data;
+        rest.updated_at = new Date().toISOString();
         const { data: campaignCreator, error } = await supabaseClient
             .from('campaign_creators')
             .update(rest)
