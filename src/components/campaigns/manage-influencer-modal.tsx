@@ -67,9 +67,9 @@ const FormSection = ({ creator: initialCreator, onClose, updateCampaignCreator }
         setCreator({ ...creator, status });
     };
 
-    const [influencerFee, setInfluencerFee] = useState(creator.rate_cents?.toString());
+    const [influencerFee, setInfluencerFee] = useState(creator.payment_rate?.toString());
     const [paymentDetails, setPaymentDetails] = useState(creator.payment_details || '');
-    const [paymentAmount, setPaymentAmount] = useState(creator.paid_amount_cents?.toString());
+    const [paymentAmount, setPaymentAmount] = useState(creator.paid_amount?.toString());
     const [publicationDate, setPublicationDate] = useState(creator.publication_date?.toString() || '');
     const [nextPoint, setNextPoint] = useState(creator.next_step?.toString() || '');
     // const [sales, setSales] = useState(creator.sales?.toString() || '');
@@ -110,7 +110,7 @@ const FormSection = ({ creator: initialCreator, onClose, updateCampaignCreator }
 
                     <div className="flex flex-col gap-y-3">
                         <label htmlFor="influencer-fee-input" className="text-sm font-bold">
-                            {`${t('campaigns.manageInfluencer.influencerFee')} (${creator.paid_amount_currency})`}
+                            {`${t('campaigns.manageInfluencer.influencerFee')} (${creator.payment_currency})`}
                         </label>
                         <input
                             id="influencer-fee-input"
@@ -133,7 +133,7 @@ const FormSection = ({ creator: initialCreator, onClose, updateCampaignCreator }
                     </div>
                     <div className="flex flex-col gap-y-3">
                         <label htmlFor="influencer-paid-amount-input" className="text-sm font-bold">
-                            {`${t('campaigns.show.paidAmount')} (${creator.paid_amount_currency})`}
+                            {`${t('campaigns.show.paidAmount')} (${creator.payment_currency})`}
                         </label>
                         <input
                             id="influencer-paid-amount-input"

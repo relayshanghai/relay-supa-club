@@ -28,13 +28,13 @@ export interface Database {
           link_url: string | null
           need_support: boolean | null
           next_step: string | null
-          paid_amount_cents: number
-          paid_amount_currency: string
+          paid_amount: number
+          payment_currency: string
           payment_details: string | null
+          payment_rate: number
           payment_status: string
           platform: string
           publication_date: string | null
-          rate_cents: number
           rate_currency: string
           reject_message: string | null
           relay_creator_id: number | null
@@ -62,13 +62,13 @@ export interface Database {
           link_url?: string | null
           need_support?: boolean | null
           next_step?: string | null
-          paid_amount_cents?: number
-          paid_amount_currency?: string
+          paid_amount?: number
+          payment_currency?: string
           payment_details?: string | null
+          payment_rate?: number
           payment_status?: string
           platform?: string
           publication_date?: string | null
-          rate_cents?: number
           rate_currency?: string
           reject_message?: string | null
           relay_creator_id?: number | null
@@ -96,13 +96,13 @@ export interface Database {
           link_url?: string | null
           need_support?: boolean | null
           next_step?: string | null
-          paid_amount_cents?: number
-          paid_amount_currency?: string
+          paid_amount?: number
+          payment_currency?: string
           payment_details?: string | null
+          payment_rate?: number
           payment_status?: string
           platform?: string
           publication_date?: string | null
-          rate_cents?: number
           rate_currency?: string
           reject_message?: string | null
           relay_creator_id?: number | null
