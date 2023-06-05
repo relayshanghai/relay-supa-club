@@ -11,7 +11,7 @@ import { useEffect, useState } from 'react';
 import { CompanyProvider } from 'src/hooks/use-company';
 import { rudderInitialized } from 'src/utils/rudder-initialize';
 import { CacheProvider } from 'src/utils/indexeddb-cache-provider';
-import { Provider } from 'jotai';
+import { Provider as JotaiProvider } from 'jotai';
 import ChatwootProvider from 'src/components/chatwoot/chatwoot-provider';
 import chatwootConfig from 'chatwoot.config';
 import { useTranslation } from 'react-i18next';
@@ -71,11 +71,11 @@ function MyApp({
                 <CacheProvider>
                     <UserProvider>
                         <ChatwootProvider {...chatwootConfig} locale={lang}>
-                            <CompanyProvider>
-                                <Provider>
+                            <JotaiProvider>
+                                <CompanyProvider>
                                     <Component {...pageProps} />
-                                </Provider>
-                            </CompanyProvider>
+                                </CompanyProvider>
+                            </JotaiProvider>
                         </ChatwootProvider>
                     </UserProvider>
                 </CacheProvider>

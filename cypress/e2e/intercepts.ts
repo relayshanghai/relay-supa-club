@@ -2,24 +2,61 @@ import cocomelon from '../../src/mocks/api/creators/report/cocomelon.json';
 import defaultLandingPageInfluencerSearch from '../../src/mocks/api/influencer-search/indexDefaultSearch.json';
 import influencerSearch from '../../src/mocks/api/influencer-search/searchByInfluencerGRTR.json';
 import keywordSearch from '../../src/mocks/api/influencer-search/keywordSearchAlligators.json';
+import keywordSearchMonkeys from '../../src/mocks/api/influencer-search/keywordSearchMonkeys.json';
+
+import type { SupabaseClient } from '@supabase/supabase-js';
 import { createClient } from '@supabase/supabase-js';
 import type { DatabaseWithCustomTypes } from 'types';
+import type { InfluencerPostRequest } from 'pages/api/influencer-search';
+import type { UsagesDBInsert } from 'src/utils/api/db';
+import { ulid } from 'ulid';
 export { cocomelon, defaultLandingPageInfluencerSearch };
 
 export const cocomelonId = cocomelon.user_profile.user_id;
+
+const now = new Date();
+const twoMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 2, now.getDate());
+const oneMonthFromNow = new Date(now.getFullYear(), now.getMonth() + 1, now.getDate());
+
+const resetUsages = async (supabase: SupabaseClient<DatabaseWithCustomTypes>) => {
+    await supabase.from('usages').delete().neq('created_at', new Date(0).toISOString());
+};
+
 export const setupIntercepts = () => {
+    const supabaseUrl = Cypress.env('NEXT_PUBLIC_SUPABASE_URL') || '';
+    if (!supabaseUrl) throw new Error('NEXT_PUBLIC_SUPABASE_URL not set');
+    const supabaseServiceKey = Cypress.env('SUPABASE_SERVICE_KEY') || '';
+    if (!supabaseServiceKey) throw new Error('SUPABASE_SERVICE_KEY not set');
+
+    const supabase = createClient<DatabaseWithCustomTypes>(supabaseUrl, supabaseServiceKey);
+    resetUsages(supabase);
     // IQData intercepts
     cy.intercept('/api/creators/report*', (req) => {
         req.reply({ body: cocomelon });
     });
-    cy.intercept('/api/influencer-search*', (req) => {
-        if (req.body.username === 'GRTR') {
+    cy.intercept('/api/influencer-search*', async (req) => {
+        const body: InfluencerPostRequest = req.body;
+        const usage: UsagesDBInsert = {
+            company_id: body.company_id,
+            user_id: body.user_id,
+            type: 'search',
+            item_id: ulid(),
+            created_at: new Date().toISOString(),
+        };
+        if (body.username === 'GRTR') {
+            await supabase.from('usages').insert(usage);
             req.reply({
                 body: influencerSearch,
             });
-        } else if (req.body.tags && req.body.tags[0]?.value === 'alligators') {
+        } else if (body.tags && body.tags[0]?.tag === 'alligators') {
+            await supabase.from('usages').insert(usage);
             req.reply({
                 body: keywordSearch,
+            });
+        } else if (body.tags && body.tags[0]?.tag === 'monkeys') {
+            await supabase.from('usages').insert(usage);
+            req.reply({
+                body: keywordSearchMonkeys,
             });
         } else {
             req.reply({
@@ -27,15 +64,40 @@ export const setupIntercepts = () => {
             });
         }
     });
-    cy.intercept('/api/influencer-search/topics*', {
-        body: {
-            success: true,
-            data: [
-                { tag: 'alligator', value: 'alligator' },
-                { tag: 'alligators', value: 'alligators' },
-                { tag: 'alligator_attack', value: 'alligator attack' },
-            ],
-        },
+    cy.intercept('/api/influencer-search/topics*', (req) => {
+        const body = req.body;
+        if (body.term === 'alligators') {
+            req.reply({
+                body: {
+                    success: true,
+                    data: [
+                        { tag: 'alligator', value: 'alligator' },
+                        { tag: 'alligators', value: 'alligators' },
+                        { tag: 'alligator_attack', value: 'alligator attack' },
+                    ],
+                },
+            });
+        } else if (body.term === 'monkeys') {
+            req.reply({
+                body: {
+                    data: [
+                        { tag: 'monkeys', value: 'monkeys' },
+                        { tag: 'arctic_monkeys', value: 'arctic monkeys' },
+                        { tag: 'five_little_monkeys', value: 'five little monkeys' },
+                        { tag: 'funny_monkeys', value: 'funny monkeys' },
+                        { tag: 'monkeys_jumping_on_the_bed', value: 'monkeys jumping on the bed' },
+                    ],
+                    success: true,
+                },
+            });
+        } else {
+            req.reply({
+                body: {
+                    success: true,
+                    data: [],
+                },
+            });
+        }
     });
     cy.intercept('/api/influencer-search/locations*', {
         body: [],
@@ -51,8 +113,8 @@ export const setupIntercepts = () => {
             body: {
                 name: 'DIY',
                 interval: 'annually',
-                current_period_end: 1713325331,
-                current_period_start: 1681702931,
+                current_period_end: oneMonthFromNow.getTime() / 1000,
+                current_period_start: twoMonthsAgo.getTime() / 1000,
                 status: 'active',
             },
         });
@@ -94,18 +156,18 @@ export const setupIntercepts = () => {
 };
 
 export const addPostIntercept = () => {
-    const mockPostData = {
-        title: 'initial post title',
-        postedDate: new Date('2021-09-01').toISOString(),
-        id: 'a4bfe75f-91d3-42d6-af9e-93d0265b7c34',
-        url: 'https://www.youtube.com/watch?v=123',
-    };
     const supabaseUrl = Cypress.env('NEXT_PUBLIC_SUPABASE_URL') || '';
     if (!supabaseUrl) throw new Error('NEXT_PUBLIC_SUPABASE_URL not set');
     const supabaseServiceKey = Cypress.env('SUPABASE_SERVICE_KEY') || '';
     if (!supabaseServiceKey) throw new Error('SUPABASE_SERVICE_KEY not set');
 
     const supabase = createClient<DatabaseWithCustomTypes>(supabaseUrl, supabaseServiceKey);
+    const mockPostData = {
+        title: 'initial post title',
+        postedDate: new Date('2021-09-01').toISOString(),
+        id: 'a4bfe75f-91d3-42d6-af9e-93d0265b7c34',
+        url: 'https://www.youtube.com/watch?v=123',
+    };
 
     cy.intercept('POST', '/api/influencer/posts', async (req) => {
         const { data: campaign } = await supabase

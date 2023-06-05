@@ -150,10 +150,10 @@ const InfluencerRow = ({
                             className="relative cursor-pointer pr-2 text-left text-xs text-gray-900  hover:text-primary-500"
                             onClick={() => setInlineEdit(index, 'paid_amount_cents')}
                         >
-                            {creator.paid_amount_cents?.toLocaleString() || '-'} {creator.paid_amount_currency}
+                            {creator.paid_amount?.toLocaleString() || '-'} {creator.payment_currency}
                             {editingModeTrue(index, 'paid_amount_cents') && (
                                 <TableInput
-                                    value={creator.paid_amount_cents.toLocaleString()}
+                                    value={creator.paid_amount.toLocaleString()}
                                     type="number"
                                     creator={creator}
                                     objKey="paid_amount_cents"
@@ -188,7 +188,7 @@ const InfluencerRow = ({
                     <button
                         data-testid="open-notes-button"
                         onClick={() => openNotes(creator)}
-                        className={`mr-2 cursor-pointer rounded-md border border-gray-200 bg-gray-50 p-2 text-center font-medium text-gray-600  hover:bg-gray-100 hover:text-primary-500 ${
+                        className={`mr-2 cursor-pointer whitespace-nowrap rounded-md border border-gray-200 bg-gray-50 p-2 text-center font-medium text-gray-600  hover:bg-gray-100 hover:text-primary-500 ${
                             tabStatus === 'in progress' || tabStatus === 'confirmed' ? '' : 'hidden'
                         }`}
                     >

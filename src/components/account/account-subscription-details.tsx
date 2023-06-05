@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCompany } from 'src/hooks/use-company';
 import { useSubscription } from 'src/hooks/use-subscription';
@@ -39,7 +39,7 @@ const checkStripeAndDatabaseMatch = (
 
 export const SubscriptionDetails = () => {
     const { subscription } = useSubscription();
-    const { company } = useCompany();
+    const { company, refreshCompany } = useCompany();
     const { loading: userDataLoading } = useUser();
     const { t, i18n } = useTranslation();
 
@@ -58,7 +58,7 @@ export const SubscriptionDetails = () => {
     const thisMonthStartDate = currentMonth.thisMonthStartDate;
     const thisMonthEndDate = currentMonth.thisMonthEndDate;
 
-    const { usages: currentMonthUsages } = useUsages(
+    const { usages: currentMonthUsages, refreshUsages } = useUsages(
         true,
         thisMonthStartDate ? thisMonthStartDate.toISOString() : undefined,
         thisMonthEndDate ? thisMonthEndDate.toISOString() : undefined,
@@ -66,8 +66,14 @@ export const SubscriptionDetails = () => {
     checkStripeAndDatabaseMatch(company, thisMonthStartDate, thisMonthEndDate);
 
     const profileViewUsagesThisMonth = currentMonthUsages?.filter(({ type }) => type === 'profile');
+
     const searchUsagesThisMonth = currentMonthUsages?.filter(({ type }) => type === 'search');
     const aiEmailUsagesThisMonth = currentMonthUsages?.filter(({ type }) => type === 'ai_email');
+
+    useEffect(() => {
+        refreshCompany();
+        refreshUsages();
+    }, [company, refreshCompany, refreshUsages]);
 
     return (
         <div className="flex w-full flex-col items-start space-y-4 rounded-lg bg-white p-4 shadow-lg shadow-gray-200 lg:max-w-2xl">
