@@ -182,17 +182,40 @@ describe('Main pages happy paths', () => {
         cy.contains('tr', 'SET India', { timeout: 30000 }).contains('Add to campaign').click(); // not sure why this is still slow
         cy.contains('Beauty for All Skin Tones');
         cy.getByTestId('add-creator-button:Beauty for All Skin Tones').click();
+        cy.contains('Influencer added successfully.', { timeout: 60000 });
+        cy.contains('Followers').click({ force: true }); // click out of modal
+        cy.contains('tr', 'PewDiePie').contains('Add to campaign').click();
+        cy.contains('Beauty for All Skin Tones');
+        cy.getByTestId('add-creator-button:Beauty for All Skin Tones').click();
 
         cy.contains('Campaigns').click({ force: true }); // hidden by modal
         cy.contains('Influencer added successfully.', { timeout: 60000 });
         cy.get('button').contains('New Campaign');
         cy.contains('Beauty for All Skin Tones').click();
 
-        // move influencer to new campaign
+        cy.contains('tr', 'PewDiePie', { timeout: 60000 });
+        cy.contains('tr', 'SET India', { timeout: 60000 });
+        cy.contains('tr', '@Greg Renko', { timeout: 60000 });
 
-        cy.contains('tr', 'SET India', { timeout: 60000 }).within(() =>
-            cy.getByTestId('move-influencer-button').click(),
-        ); // can take
+        // influencers should be presented in order of last added/edited
+        cy.get('tr').eq(1).contains('PewDiePie'); //starts at 1 cause table head is a tr as well
+        cy.get('tr').eq(2).contains('SET India');
+        cy.get('tr').eq(3).contains('@Greg Renko');
+
+        cy.contains('tr', 'SET India').within(() => {
+            cy.getByTestId('manage-button').click();
+        });
+        cy.contains('Manage Influencer');
+        cy.get('input[id="influencer-address-input"]').type('123 Main St');
+        cy.contains('button', 'Save').click();
+        cy.contains('Beauty for All Skin Tones').click({ force: true }); // click out of modal
+
+        cy.get('tr').eq(1).contains('SET India');
+        cy.get('tr').eq(2).contains('PewDiePie');
+        cy.get('tr').eq(3).contains('@Greg Renko');
+
+        // move influencer to new campaign
+        cy.contains('tr', 'SET India').within(() => cy.getByTestId('move-influencer-button').click()); // can take
 
         cy.getByTestId('move-influencer-button:My Campaign').click();
         cy.contains('Campaign Launch Date').click({ force: true }); // click out of modal
@@ -233,28 +256,6 @@ describe('Main pages happy paths', () => {
         cy.contains('My Campaign').should('not.exist');
         cy.contains('Archived Campaigns').click();
         cy.contains('My Campaign');
-    });
-    it('can add influencers to campaign', () => {
-        setupIntercepts();
-
-        cy.loginTestUser();
-        cy.findByTestId('add-to-campaign-button/UCq-Fj5jknLsUf-MWSy4_brA').click();
-        cy.findByTestId('add-creator-button:Beauty for All Skin Tones').click();
-        cy.wait(1000);
-        cy.visit('/campaigns');
-        cy.contains('Beauty for All Skin Tones').click();
-        cy.wait(1000);
-        cy.get('table tr td').should(($cells) => {
-            const cellTexts = $cells.toArray().map((cell) => cell.innerText);
-            const isSorted = cellTexts.every((value, index) => {
-                if (index === 0 && value !== 'T-Series\n@tseries') {
-                    return false;
-                }
-
-                return true;
-            });
-            expect(isSorted).to.be.true;
-        });
     });
     it('can sort campaigns by last edited', () => {
         setupIntercepts();
