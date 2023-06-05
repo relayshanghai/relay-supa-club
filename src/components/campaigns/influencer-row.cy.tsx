@@ -21,12 +21,12 @@ const creator: CampaignCreatorDB = {
     interested: null,
     email_sent: null,
     publication_date: null,
-    rate_cents: 0,
+    payment_rate: 0,
     rate_currency: 'USD',
     payment_details: null,
     payment_status: "'unpaid'::text",
-    paid_amount_cents: 0,
-    paid_amount_currency: 'USD',
+    paid_amount: 0,
+    payment_currency: 'USD',
     address: null,
     sample_status: "'unsent'::text",
     tracking_details: null,
@@ -152,6 +152,7 @@ describe('<InfluencerRow />', () => {
             visibleColumns: testColumns,
         };
         testMount(<InfluencerRow {...props} />);
+
         cy.get('[data-testid="move-influencer-button"]').should('exist');
         cy.get('[data-testid="manage-button"]').should('exist');
         cy.get('[data-testid="delete-creator"]').should('exist');

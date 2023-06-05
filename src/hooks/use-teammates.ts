@@ -2,15 +2,15 @@ import type { CompanyTeammatesGetQueries, CompanyTeammatesGetResponse } from 'pa
 import { nextFetchWithQueries } from 'src/utils/fetcher';
 import useSWR from 'swr';
 
-import { useUser } from './use-user';
+import { useCompany } from './use-company';
 
 export const useTeammates = () => {
-    const { profile } = useUser();
+    const { company } = useCompany();
     const { data: teammates, mutate: refreshTeammates } = useSWR(
-        profile?.company_id ? 'company/teammates' : null,
+        company?.id ? 'company/teammates' : null,
         async (path) => {
             const result = await nextFetchWithQueries<CompanyTeammatesGetQueries, CompanyTeammatesGetResponse>(path, {
-                id: profile?.company_id ?? '',
+                id: company?.id ?? '',
             });
             result.sort((a, b) => a.first_name.toLowerCase().localeCompare(b.first_name.toLowerCase()));
 

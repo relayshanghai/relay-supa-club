@@ -15,7 +15,6 @@ import CommentInput from 'src/components/campaigns/comment-input';
 import CommentCards from 'src/components/campaigns/comment-cards';
 import type { CampaignCreatorDB } from 'src/utils/api/db';
 import { imgProxy } from 'src/utils/fetcher';
-import { useCompany } from 'src/hooks/use-company';
 import { Spinner } from 'src/components/icons';
 import { toast } from 'react-hot-toast';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
@@ -27,11 +26,7 @@ export default function CampaignShow() {
     });
     const supabase = useSupabaseClient();
     const { trackEvent } = useRudderstack();
-    const { company } = useCompany();
-
-    const { campaigns, refreshCampaigns } = useCampaigns({
-        companyId: company?.id,
-    });
+    const { campaigns, refreshCampaigns } = useCampaigns({});
 
     const [media, setMedia] = useState<{ url: string; name: string }[]>([]);
     const [currentTab, setCurrentTab] = useState(0);
