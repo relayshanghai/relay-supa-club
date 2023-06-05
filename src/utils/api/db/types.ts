@@ -48,8 +48,8 @@ export type CampaignCreatorsTable = Database['public']['Tables']['campaign_creat
         status: InfluencerOutreachStatus;
     };
     Update: Database['public']['Tables']['campaign_creators']['Update'] & {
-        platform: CreatorPlatform;
-        status: InfluencerOutreachStatus;
+        platform?: CreatorPlatform;
+        status?: InfluencerOutreachStatus;
     };
 };
 

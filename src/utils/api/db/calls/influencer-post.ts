@@ -35,7 +35,7 @@ export const deleteInfluencerPost =
 
 export const getInfluencerPostsBySocialProfile =
     (db: SupabaseClient<DatabaseWithCustomTypes>) =>
-    async (influencer_social_profile_id: string): Promise<InfluencerPostRow[]> => {
+    async (influencer_social_profile_id: string | null): Promise<InfluencerPostRow[]> => {
         const influencerPost = await db
             .from('influencer_posts')
             .select()
