@@ -225,7 +225,9 @@ describe('Main pages happy paths', () => {
         cy.contains('SET India');
 
         // change influencer status, and change status tabs
-        cy.getByTestId('status-dropdown').select('Contacted', { force: true });
+        cy.contains('tr', 'SET India').within(() =>
+            cy.getByTestId('status-dropdown').select('Contacted', { force: true }),
+        );
         cy.contains('Influencer Information Updated', { timeout: 10000 });
         cy.contains('SET India').should('not.exist');
         cy.contains('Contacted 1').click();
