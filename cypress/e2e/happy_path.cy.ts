@@ -197,15 +197,18 @@ describe('Main pages happy paths', () => {
         cy.contains('Influencer added successfully.', { timeout: 60000 });
         cy.get('button').contains('New Campaign');
 
-        // Beauty for All Skin Tones should now be listed first, since we added an influencer to it
-        cy.getByTestId('campaign-cards-container').children().first().contains('Beauty for All Skin Tones');
-        cy.getByTestId('campaign-cards-container').children().first().next().contains('My Campaign');
-
         cy.contains('Beauty for All Skin Tones').click();
 
         cy.contains('tr', 'PewDiePie', { timeout: 60000 });
         cy.contains('tr', 'SET India', { timeout: 60000 });
-        cy.contains('tr', '@Greg Renko', { timeout: 60000 });
+        cy.contains('tr', '@Greg Renko');
+
+        cy.contains('Campaigns').click(); // We're sure new influencers have been added, now go back and check order of campaigns
+
+        // Beauty for All Skin Tones should now be listed first, since we added an influencer to it
+        cy.getByTestId('campaign-cards-container').children().first().contains('Beauty for All Skin Tones');
+        cy.getByTestId('campaign-cards-container').children().first().next().contains('My Campaign');
+        cy.contains('Beauty for All Skin Tones').click();
 
         // influencers should be presented in order of last added/edited
         cy.get('tr').eq(1).contains('PewDiePie'); //starts at 1 cause table head is a tr as well
