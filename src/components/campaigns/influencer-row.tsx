@@ -173,12 +173,12 @@ const InfluencerRow = ({
                 </td>
             ))}
             {/* -- Actions Column -- */}
-            <td className="right-0 z-10 bg-white px-6 py-4 group-hover:bg-primary-50 sm:sticky">
+            <td className="right-0 bg-white px-6 py-4 group-hover:bg-primary-50 sm:sticky">
                 <div className="flex justify-end">
                     <Tooltip
                         content={t('campaigns.show.moveInfluencer')}
                         detail={t('campaigns.show.moveInfluencerDescr')}
-                        className="z-30"
+                        position="left"
                     >
                         <button
                             onClick={() => {
@@ -204,7 +204,7 @@ const InfluencerRow = ({
                     <Tooltip
                         content={t('campaigns.show.manageInfluencer')}
                         detail={t('campaigns.show.manageInfluencerDescr')}
-                        className="z-30"
+                        position="left"
                     >
                         <button
                             data-testid="manage-button"

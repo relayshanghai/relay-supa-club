@@ -21,13 +21,13 @@ export const Tooltip = ({ children, content, detail, className, position }: Tool
                 <div
                     className={`absolute  ${
                         position === 'top'
-                            ? 'bottom-[110%] left-0'
+                            ? 'bottom-[120%] left-0'
                             : position === 'bottom'
                             ? 'left-0 top-[120%]'
                             : position === 'left'
-                            ? 'right-[105%] top-0'
-                            : 'left-[105%] top-0'
-                    } z-10 w-auto rounded bg-gray-500 text-white opacity-100 transition-opacity`}
+                            ? 'bottom-0 right-[110%]'
+                            : 'bottom-0 left-[110%]'
+                    } z-30 w-auto rounded bg-gray-500 text-white opacity-100 transition-opacity`}
                     role="tooltip"
                 >
                     <div className="flex w-52 flex-col px-2 py-1">
