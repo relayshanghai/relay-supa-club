@@ -7,6 +7,7 @@ export async function rudderInitialized() {
 
     if (!WRITE_KEY || !DATA_PLANE_URL) {
         clientLogger('RudderStack keys not set');
+        throw new Error('RudderStack keys not set');
         return;
     }
     window.rudder = await import('rudder-sdk-js');
