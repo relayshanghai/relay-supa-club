@@ -171,20 +171,28 @@ export const SearchResultRow = ({
                         href={`/influencer/${platform}/${user_id}`}
                         target="_blank"
                         onClick={() => trackEvent('Search Result Row, open report', { platform, user_id })}
+                        data-testid={`analyze-button/${user_id}`}
                     >
                         <Button className="flex flex-row items-center" variant="secondary">
                             <span className="">{t('creators.analyzeProfile')}</span>
                         </Button>
                     </Link>
 
-                    <Button onClick={addToCampaign} className="flex items-center gap-1">
+                    <Button
+                        onClick={addToCampaign}
+                        className="flex items-center gap-1"
+                        data-testid={`add-to-campaign-button/${user_id}`}
+                    >
                         <PlusCircleIcon className="w-5" />
                         <span className="">{t('creators.addToCampaign')}</span>
                     </Button>
 
                     {url && (
                         <Link href={url} target="_blank" rel="noopener noreferrer">
-                            <Button onClick={() => trackEvent('Search Result Row, open social link', { url })}>
+                            <Button
+                                onClick={() => trackEvent('Search Result Row, open social link', { url })}
+                                data-testid={`open-influencer-link-button/${user_id}`}
+                            >
                                 <ShareLink className="w-5 fill-current text-white" />
                             </Button>
                         </Link>

@@ -111,11 +111,10 @@ describe('Main pages happy paths', () => {
         cy.url().should('include', `/pricing`);
         cy.contains('DIY Max');
         // this doesn't work anymore because we aren't using a live account anymore, so stripe sends back 'can't find subscription' and the button is disabled.
-        // TODO: fix this when we implement msw mocks, mock the stripe call/response.
-        // cy.contains('button', 'Buy Now').click();
-        // cy.contains('button', 'Subscribe');
-        // cy.contains('button', 'Close').click();
-        // cy.contains('button', 'Subscribe').should('not.exist');
+        cy.contains('button', 'Buy Now').click();
+        cy.contains('button', 'Subscribe');
+        cy.contains('button', 'Close').click();
+        cy.contains('button', 'Subscribe').should('not.exist');
     });
     it('can open ai email generator', () => {
         setupIntercepts();
@@ -182,17 +181,40 @@ describe('Main pages happy paths', () => {
         cy.contains('tr', 'SET India', { timeout: 30000 }).contains('Add to campaign').click(); // not sure why this is still slow
         cy.contains('Beauty for All Skin Tones');
         cy.getByTestId('add-creator-button:Beauty for All Skin Tones').click();
+        cy.contains('Influencer added successfully.', { timeout: 60000 });
+        cy.contains('Followers').click({ force: true }); // click out of modal
+        cy.contains('tr', 'PewDiePie').contains('Add to campaign').click();
+        cy.contains('Beauty for All Skin Tones');
+        cy.getByTestId('add-creator-button:Beauty for All Skin Tones').click();
 
         cy.contains('Campaigns').click({ force: true }); // hidden by modal
         cy.contains('Influencer added successfully.', { timeout: 60000 });
         cy.get('button').contains('New Campaign');
         cy.contains('Beauty for All Skin Tones').click();
 
-        // move influencer to new campaign
+        cy.contains('tr', 'PewDiePie', { timeout: 60000 });
+        cy.contains('tr', 'SET India', { timeout: 60000 });
+        cy.contains('tr', '@Greg Renko', { timeout: 60000 });
 
-        cy.contains('tr', 'SET India', { timeout: 60000 }).within(() =>
-            cy.getByTestId('move-influencer-button').click(),
-        ); // can take
+        // influencers should be presented in order of last added/edited
+        cy.get('tr').eq(1).contains('PewDiePie'); //starts at 1 cause table head is a tr as well
+        cy.get('tr').eq(2).contains('SET India');
+        cy.get('tr').eq(3).contains('@Greg Renko');
+
+        cy.contains('tr', 'SET India').within(() => {
+            cy.getByTestId('manage-button').click();
+        });
+        cy.contains('Manage Influencer');
+        cy.get('input[id="influencer-address-input"]').type('123 Main St');
+        cy.contains('button', 'Save').click();
+        cy.contains('Beauty for All Skin Tones').click({ force: true }); // click out of modal
+
+        cy.get('tr').eq(1).contains('SET India');
+        cy.get('tr').eq(2).contains('PewDiePie');
+        cy.get('tr').eq(3).contains('@Greg Renko');
+
+        // move influencer to new campaign
+        cy.contains('tr', 'SET India').within(() => cy.getByTestId('move-influencer-button').click()); // can take
 
         cy.getByTestId('move-influencer-button:My Campaign').click();
         cy.contains('Campaign Launch Date').click({ force: true }); // click out of modal
@@ -202,14 +224,15 @@ describe('Main pages happy paths', () => {
         cy.contains('SET India');
 
         // change influencer status, and change status tabs
-        cy.getByTestId('status-dropdown').select('Contacted', { force: true });
+        cy.contains('tr', 'SET India').within(() =>
+            cy.getByTestId('status-dropdown').select('Contacted', { force: true }),
+        );
         cy.contains('Influencer Information Updated', { timeout: 10000 });
         cy.contains('SET India').should('not.exist');
         cy.contains('Contacted 1').click();
         cy.contains('SET India');
 
         // add notes
-
         cy.getByTestId('manage-button').click();
         cy.contains('Notes');
         cy.getByTestId('show-influencer-notes').click();
@@ -222,6 +245,7 @@ describe('Main pages happy paths', () => {
         cy.contains('William Edward', { timeout: 10000 }); // user name shows
         cy.contains('This influencer is great');
         cy.contains('My Campaign').click({ force: true }); // hidden by modal
+
         // delete an influencer
         cy.getByTestId('delete-creator').click();
         cy.contains('Influencer was deleted.');
@@ -234,6 +258,7 @@ describe('Main pages happy paths', () => {
         cy.contains('Archived Campaigns').click();
         cy.contains('My Campaign');
     });
+
     it('can record search usages, can manage clients as a company owner', () => {
         setupIntercepts();
         cy.loginAdmin();
@@ -363,7 +388,10 @@ describe('Main pages happy paths', () => {
 
         cy.contains('Campaigns').click();
         cy.contains('Beauty for All Skin Tones').click();
-        cy.getByTestId('status-dropdown').select('Posted', { force: true });
+        cy.contains('tr', 'Greg Renko').within(() =>
+            cy.getByTestId('status-dropdown').select('Posted', { force: true }),
+        );
+
         cy.contains('Posted 1').click();
         cy.contains('Content').click();
         cy.contains('h2', 'Manage Posts');
@@ -375,7 +403,9 @@ describe('Main pages happy paths', () => {
         });
 
         cy.contains('Successfully added 1 URLs');
-        cy.getByTestId('status-dropdown').select('To Contact', { force: true });
+        cy.contains('tr', 'Greg Renko').within(() =>
+            cy.getByTestId('status-dropdown').select('To Contact', { force: true }),
+        );
 
         // check 'after' performance page totals
         cy.contains('Performance').click();

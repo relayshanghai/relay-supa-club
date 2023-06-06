@@ -153,6 +153,40 @@ export const setupIntercepts = () => {
             },
         ],
     });
+    cy.intercept('/api/subscriptions/prices', {
+        body: {
+            diy: {
+                currency: 'usd',
+                prices: {
+                    monthly: '150.00',
+                    quarterly: '297.00',
+                    annually: '1068.00',
+                },
+                profiles: '200',
+                searches: '2500',
+                priceIds: {
+                    monthly: 'price_1LwffoF5PN4woVWob7yJToHj',
+                    quarterly: 'price_1LwffoF5PN4woVWoyRKbIMNh',
+                    annually: 'price_1LwffoF5PN4woVWoduBnXnJ8',
+                },
+            },
+            diyMax: {
+                currency: 'usd',
+                prices: {
+                    monthly: '270.00',
+                    quarterly: '660.00',
+                    annually: '2388.00',
+                },
+                profiles: '450',
+                searches: '5000',
+                priceIds: {
+                    monthly: 'price_1LwfcmF5PN4woVWoDElUtab4',
+                    quarterly: 'price_1LwfcnF5PN4woVWoHVSSEvWJ',
+                    annually: 'price_1LwfcnF5PN4woVWolz3tTxzc',
+                },
+            },
+        },
+    });
 };
 
 export const addPostIntercept = () => {
