@@ -12,6 +12,7 @@ import { ArrowRightOnRectangle, SquarePlus, Trashcan } from '../icons';
 import { Button } from '../button';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import type { TableColumns } from './campaign-influencers-table';
+import { Tooltip } from '../library';
 
 export interface InfluencerRowProps {
     index: number;
@@ -174,17 +175,23 @@ const InfluencerRow = ({
             {/* -- Actions Column -- */}
             <td className="right-0 z-10 bg-white px-6 py-4 group-hover:bg-primary-50 sm:sticky">
                 <div className="flex justify-end">
-                    <button
-                        onClick={() => {
-                            openMoveInfluencerModal(creator);
-                        }}
-                        data-testid="move-influencer-button"
-                        className={`group/move mr-2 h-8 w-8 cursor-pointer  rounded-md border border-gray-200 bg-gray-50 p-2 text-center font-medium text-gray-600 hover:bg-gray-100 ${
-                            tabStatus === 'to contact' || tabStatus === 'contacted' ? '' : 'hidden'
-                        }  `}
+                    <Tooltip
+                        content={t('campaigns.show.moveInfluencer')}
+                        detail={t('campaigns.show.moveInfluencerDescr')}
+                        className="z-30"
                     >
-                        <ArrowRightOnRectangle className="h-4 w-4 stroke-tertiary-600 group-hover/move:stroke-primary-600" />
-                    </button>
+                        <button
+                            onClick={() => {
+                                openMoveInfluencerModal(creator);
+                            }}
+                            data-testid="move-influencer-button"
+                            className={`group/move mr-2 h-8 w-8 cursor-pointer  rounded-md border border-gray-200 bg-gray-50 p-2 text-center font-medium text-gray-600 hover:bg-gray-100 ${
+                                tabStatus === 'to contact' || tabStatus === 'contacted' ? '' : 'hidden'
+                            }  `}
+                        >
+                            <ArrowRightOnRectangle className="h-4 w-4 stroke-tertiary-600 group-hover/move:stroke-primary-600" />
+                        </button>
+                    </Tooltip>
                     <button
                         data-testid="open-notes-button"
                         onClick={() => openNotes(creator)}
@@ -194,13 +201,19 @@ const InfluencerRow = ({
                     >
                         {t('campaigns.show.notes')}
                     </button>
-                    <button
-                        data-testid="manage-button"
-                        onClick={() => openManageInfluencerModal(creator)}
-                        className="group/manage mr-2 h-8 w-8 cursor-pointer  rounded-md border border-gray-200 bg-gray-50 p-2 text-center font-medium text-gray-600 hover:bg-gray-100"
+                    <Tooltip
+                        content={t('campaigns.show.manageInfluencer')}
+                        detail={t('campaigns.show.manageInfluencerDescr')}
+                        className="z-30"
                     >
-                        <SquarePlus className="h-4 w-4 stroke-tertiary-600 group-hover/manage:stroke-primary-600" />
-                    </button>
+                        <button
+                            data-testid="manage-button"
+                            onClick={() => openManageInfluencerModal(creator)}
+                            className="group/manage mr-2 h-8 w-8 cursor-pointer  rounded-md border border-gray-200 bg-gray-50 p-2 text-center font-medium text-gray-600 hover:bg-gray-100"
+                        >
+                            <SquarePlus className="h-4 w-4 stroke-tertiary-600 group-hover/manage:stroke-primary-600" />
+                        </button>
+                    </Tooltip>
                     <button
                         data-testid="delete-creator"
                         onClick={() => deleteCampaignCreator(creator)}
