@@ -206,7 +206,7 @@ export const SearchOptions = ({
                                 content={t('creators.recommendedTooltip')}
                                 detail={t('creators.recommendedTooltipDetail')}
                                 className="flex flex-wrap items-center"
-                                position="top"
+                                position="top-left"
                             >
                                 <Switch
                                     disabled={!recommendedInfluencers || recommendedInfluencers.length === 0}
