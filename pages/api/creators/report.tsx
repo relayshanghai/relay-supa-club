@@ -6,6 +6,7 @@ import { getInfluencer } from 'src/utils/get-influencer';
 import { serverLogger } from 'src/utils/logger-server';
 import { saveInfluencer } from 'src/utils/save-influencer';
 import type { CreatorPlatform, CreatorReport } from 'types';
+import { db } from 'src/utils/supabase-client';
 
 export type CreatorsReportGetQueries = {
     platform: CreatorPlatform;
@@ -19,12 +20,12 @@ export type CreatorsReportGetResponse = CreatorReport & { createdAt: string };
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'GET') {
         const catchInfluencer = async (data: CreatorReport) => {
-            const [influencer] = await getInfluencer(data)
+            const [influencer] = await getInfluencer(data);
 
             if (influencer === null) {
-                await saveInfluencer(data);
+                await db<typeof saveInfluencer>(saveInfluencer)(data);
             }
-        }
+        };
 
         try {
             const { platform, creator_id, company_id, user_id } = req.query as CreatorsReportGetQueries;

@@ -1,34 +1,28 @@
 import { useCallback, useEffect, useState } from 'react';
 import useSWR from 'swr';
-
-import { useUser } from './use-user';
-import type { CampaignDB, CampaignDBInsert } from 'src/utils/api/db/types';
-
 import { useClientDb } from 'src/utils/client-db/use-client-db';
+import { useCompany } from './use-company';
+import type { CampaignDB, CampaignDBInsert } from 'src/utils/api/db/types';
 
 /**
  * Hook to fetch campaigns and create/update campaigns
  * @param campaignId The campaign id to fetch
- * @param companyId The company id to fetch campaigns for. Only use this when you want to enable admins to view/edit other companies' campaigns. currently only used in the admin dashboard pages
- * @returns
  */
-export const useCampaigns = ({
-    campaignId,
-    companyId: passedInCompanyId,
-}: {
-    campaignId?: string;
-    companyId?: string;
-}) => {
-    const { profile } = useUser();
+export const useCampaigns = ({ campaignId }: { campaignId?: string }) => {
+    const { company } = useCompany();
     const { getCampaigns, createCampaign: createCampaignCall, updateCampaign } = useClientDb();
 
-    const companyId = passedInCompanyId ?? profile?.company_id;
     const {
         data: allCampaigns,
         mutate: refreshCampaigns,
         isValidating,
         isLoading: loading,
-    } = useSWR(companyId ? 'campaigns' : null, () => getCampaigns(companyId));
+    } = useSWR(company?.id ? ['campaigns', company?.id] : null, ([_path, companyId]) => getCampaigns(companyId));
+
+    useEffect(() => {
+        refreshCampaigns();
+    }, [company?.id, refreshCampaigns]);
+
     const [campaign, setCampaign] = useState<CampaignDB | null>(null);
 
     const [campaigns, setCampaigns] = useState<CampaignDB[]>([]);
@@ -53,8 +47,8 @@ export const useCampaigns = ({
     }, [allCampaigns]);
 
     const createCampaign = useCallback(
-        (input: CampaignDBInsert) => createCampaignCall(input, companyId),
-        [createCampaignCall, companyId],
+        (input: CampaignDBInsert) => createCampaignCall(input, company?.id),
+        [createCampaignCall, company?.id],
     );
 
     return {

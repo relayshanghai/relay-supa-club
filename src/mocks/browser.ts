@@ -13,7 +13,7 @@ import campaignCreatorsJim from './supabase/campaign_creators/campaignCreatorsJi
 import amyCampaignCreators from './supabase/campaign_creators/campaignCreatorsAmyCampaign.json';
 // if in the future we want to use the browser-based msw outside of cypress, we'll need to change this
 export const APP_URL_CYPRESS = 'http://localhost:8080';
-export const SUPABASE_URL_CYPRESS = 'http://localhost:54321/rest/v1';
+export const SUPABASE_URL_CYPRESS = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1`;
 const campaigns = [jimTestCampaign, amyTestCampaign, newEmptyCampaign, archivedCampaign];
 const frontendHandlers = [
     rest.get(`${APP_URL_CYPRESS}/api/creators/report`, (req, res, ctx) => {
@@ -25,7 +25,34 @@ const frontendHandlers = [
         if (campaign_id && campaign_id === amyTestCampaign.id) {
             return res(ctx.json(amyCampaignCreators));
         }
+        if (campaign_id && campaign_id === newEmptyCampaign.id) {
+            return res(ctx.json([]));
+        }
         return res(ctx.json(campaignCreatorsJim));
+    }),
+    rest.get(`${SUPABASE_URL_CYPRESS}/companies?select=*&id=${newEmptyCampaign.company_id}`, (_, res, ctx) => {
+        return res(
+            ctx.json({
+                id: '4f3ddadc-29dc-4cf4-977c-32597566c2d1',
+                created_at: '2023-05-30T04:10:10.171802+00:00',
+                name: 'Relay Club',
+                website: 'https://relay.club',
+                avatar_url: null,
+                updated_at: null,
+                cus_id: 'cus_NKXV4aQYAU7GXG',
+                searches_limit: '100000000',
+                profiles_limit: '100000000',
+                subscription_status: 'active',
+                trial_searches_limit: '99999',
+                trial_profiles_limit: '99999',
+                subscription_start_date: '2023-05-30T04:10:10.171802+00:00',
+                subscription_end_date: '2025-01-01 00:00:00.000000+00',
+                subscription_current_period_end: '2025-01-01T00:00:00+00:00',
+                subscription_current_period_start: '2023-05-30T04:10:10.171802+00:00',
+                ai_email_generator_limit: '100000000',
+                trial_ai_email_generator_limit: '10',
+            }),
+        );
     }),
     rest.get(`${SUPABASE_URL_CYPRESS}/campaigns`, (req, res, ctx) => {
         return res(ctx.json(campaigns));
@@ -39,6 +66,9 @@ const frontendHandlers = [
         return res(ctx.json({ success: true, data: [{ tag: term, value: term }] }));
     }),
     rest.post(`${APP_URL_CYPRESS}/api/influencer-search/locations`, async (req, res, ctx) => {
+        return res(ctx.json([]));
+    }),
+    rest.post(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/list/images`, (_req, res, ctx) => {
         return res(ctx.json([]));
     }),
 ];

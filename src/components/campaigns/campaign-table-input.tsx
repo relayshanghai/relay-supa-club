@@ -1,25 +1,26 @@
-import type { MutableRefObject } from 'react';
+import type { ForwardedRef } from 'react';
 import { forwardRef, useEffect, useState } from 'react';
 import type { CampaignCreatorDB } from 'src/utils/api/db';
 import { Confirm, Cross } from '../icons';
 
-function TableInput({
-    objKey,
-    value,
-    type,
-    closeModal,
-    creator,
-    updateCampaignCreator,
-    ref,
-}: {
-    objKey: string;
-    value: string;
-    type: string;
-    closeModal: () => void;
-    updateCampaignCreator: (creator: CampaignCreatorDB) => void;
-    creator: CampaignCreatorDB;
-    ref: MutableRefObject<null>;
-}) {
+function TableInput(
+    {
+        objKey,
+        value,
+        type,
+        closeModal,
+        creator,
+        updateCampaignCreator,
+    }: {
+        objKey: string;
+        value: string;
+        type: string;
+        closeModal: () => void;
+        updateCampaignCreator: (creator: CampaignCreatorDB) => void;
+        creator: CampaignCreatorDB;
+    },
+    ref: ForwardedRef<any>,
+) {
     const [inputValue, setInputValue] = useState<string>('');
 
     const handleFormSubmit = (e: any) => {
@@ -36,7 +37,7 @@ function TableInput({
         <div
             ref={ref}
             onClick={(e) => e.stopPropagation()}
-            className="group absolute top-1/2 -left-4 z-[10] h-14 w-fit min-w-[200px] max-w-[360px] -translate-y-1/2 p-2 will-change-transform"
+            className="group absolute -left-4 top-1/2 z-[10] h-14 w-fit min-w-[200px] max-w-[360px] -translate-y-1/2 p-2 will-change-transform"
         >
             <form className="flex h-full min-h-0 items-center" onSubmit={(e) => handleFormSubmit(e)}>
                 <input

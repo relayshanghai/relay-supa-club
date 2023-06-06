@@ -1,5 +1,5 @@
 import type { CreatorReport } from 'types';
-import type { InfluencerInsert, InfluencerSocialProfileInsert } from '../db/calls/influencers';
+import type { InfluencerInsert, InfluencerSocialProfileInsert } from '../db';
 
 export const mapIqdataProfileToInfluencer = (
     userProfile: CreatorReport['user_profile'],
@@ -8,7 +8,7 @@ export const mapIqdataProfileToInfluencer = (
     const email = contacts.find((v: any) => v.type === 'email') || { value: null };
 
     return {
-        name: userProfile.fullname || '',
+        name: userProfile.fullname || userProfile.username || userProfile.handle || userProfile.custom_name || '',
         email: email.value,
         avatar_url: userProfile.picture,
         // address: "",

@@ -8,7 +8,7 @@ export default function CommentCardsSkeleton() {
                 <Skeleton className="mx-3 h-2 w-8 bg-gray-500" />
                 <Skeleton className="h-2 w-16 bg-gray-200" />
             </div>
-            <div className="mt-2 ml-10">
+            <div className="ml-10 mt-2">
                 <Skeleton className="h-3 w-full" />
                 <Skeleton className="h-3 w-2/3" />
             </div>
@@ -22,7 +22,7 @@ export default function CommentCardsSkeleton() {
                 <Skeleton className="mx-3 h-2 w-8  bg-gray-500" />
                 <Skeleton className="h-2 w-16 bg-gray-200" />
             </div>
-            <div className="mt-2 ml-10">
+            <div className="ml-10 mt-2">
                 <Skeleton className="h-3 w-full" />
                 <Skeleton className="h-3 w-2/3" />
             </div>

@@ -10,10 +10,11 @@ import { createBrowserSupabaseClient } from '@supabase/auth-helpers-nextjs';
 import { SessionContextProvider } from '@supabase/auth-helpers-react';
 import { SWRConfig } from 'swr';
 import { Toaster } from 'react-hot-toast';
-import { Provider } from 'jotai';
+import { Provider as JotaiProvider } from 'jotai';
 import type { WritableAtom } from 'jotai';
 import { useHydrateAtoms } from 'jotai/utils';
-i18n.changeLanguage('en');
+import { CompanyProvider } from 'src/hooks/use-company';
+i18n.changeLanguage('en-US');
 
 export interface TestMountOptions {
     /** The pathname that it will tell the router the app is currently visiting */
@@ -21,6 +22,7 @@ export interface TestMountOptions {
     pushStub?: Cypress.Agent<any>;
     query?: Record<string, string>;
     useLocalStorageCache?: boolean;
+    jotaiInitialValues?: InitialValues;
 }
 
 export type InitialValues = [WritableAtom<unknown, any[], any>, unknown][];
@@ -28,7 +30,7 @@ export type InitialValues = [WritableAtom<unknown, any[], any>, unknown][];
 const mockProfile: IUserContext['profile'] = {
     id: '1',
     user_role: 'company_owner',
-    company_id: '1',
+    company_id: '8e6e65ca-dd79-4e68-90e4-9c5462991ae4',
     avatar_url: null,
     email: 'mock@example.com',
     first_name: 'mock-first',
@@ -58,6 +60,23 @@ const mockUserContext: IUserContext = {
     getProfileController: { current: null },
 };
 
+const HydrateAtoms = ({ initialValues, children }: { initialValues: InitialValues; children: React.ReactNode }) => {
+    useHydrateAtoms(initialValues);
+    return <>{children}</>;
+};
+
+export const JotaiTestProvider = ({
+    initialValues,
+    children,
+}: {
+    initialValues: InitialValues;
+    children: React.ReactNode;
+}) => (
+    <JotaiProvider>
+        <HydrateAtoms initialValues={initialValues}>{children}</HydrateAtoms>
+    </JotaiProvider>
+);
+
 export const testMount = (component: React.ReactElement, options?: TestMountOptions) => {
     const push = options?.pushStub ?? cy.stub();
     const router = cy.stub(NextRouter, 'default');
@@ -69,33 +88,21 @@ export const testMount = (component: React.ReactElement, options?: TestMountOpti
     // see: https://on.cypress.io/mounting-react
     const supabaseClient = createBrowserSupabaseClient();
     mount(
+        // Try to match the order of the real app as much as possible from _app.tsx
         <AppRouterContext.Provider value={router as any}>
-            <SessionContextProvider supabaseClient={supabaseClient} initialSession={{} as any}>
-                <I18nextProvider i18n={i18n}>
-                    <UserContext.Provider value={mockUserContext}>
-                        {/* gets rid of the localStorage cache in tests */}
-                        <SWRConfig value={{ provider: () => new Map() }}>{component}</SWRConfig>
-                    </UserContext.Provider>
-                </I18nextProvider>
-            </SessionContextProvider>
+            <I18nextProvider i18n={i18n}>
+                <SessionContextProvider supabaseClient={supabaseClient} initialSession={{} as any}>
+                    {/* gets rid of the localStorage cache in tests */}
+                    <SWRConfig value={{ provider: () => new Map() }}>
+                        <UserContext.Provider value={mockUserContext}>
+                            <JotaiTestProvider initialValues={options?.jotaiInitialValues ?? []}>
+                                <CompanyProvider>{component}</CompanyProvider>
+                            </JotaiTestProvider>
+                        </UserContext.Provider>
+                    </SWRConfig>
+                </SessionContextProvider>
+            </I18nextProvider>
             <Toaster />
         </AppRouterContext.Provider>,
     );
 };
-
-const HydrateAtoms = ({ initialValues, children }: { initialValues: InitialValues; children: React.ReactNode }) => {
-    useHydrateAtoms(initialValues);
-    return <>{children}</>;
-};
-
-export const TestProvider = ({
-    initialValues,
-    children,
-}: {
-    initialValues: InitialValues;
-    children: React.ReactNode;
-}) => (
-    <Provider>
-        <HydrateAtoms initialValues={initialValues}>{children}</HydrateAtoms>
-    </Provider>
-);

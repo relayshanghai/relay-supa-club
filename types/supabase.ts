@@ -23,17 +23,18 @@ export interface Database {
           email_sent: boolean | null
           fullname: string | null
           id: string
+          influencer_social_profiles_id: string | null
           interested: boolean | null
           link_url: string | null
           need_support: boolean | null
           next_step: string | null
-          paid_amount_cents: number
-          paid_amount_currency: string
+          paid_amount: number
+          payment_currency: string
           payment_details: string | null
+          payment_rate: number
           payment_status: string
           platform: string
           publication_date: string | null
-          rate_cents: number
           rate_currency: string
           reject_message: string | null
           relay_creator_id: number | null
@@ -56,17 +57,18 @@ export interface Database {
           email_sent?: boolean | null
           fullname?: string | null
           id?: string
+          influencer_social_profiles_id?: string | null
           interested?: boolean | null
           link_url?: string | null
           need_support?: boolean | null
           next_step?: string | null
-          paid_amount_cents?: number
-          paid_amount_currency?: string
+          paid_amount?: number
+          payment_currency?: string
           payment_details?: string | null
+          payment_rate?: number
           payment_status?: string
           platform?: string
           publication_date?: string | null
-          rate_cents?: number
           rate_currency?: string
           reject_message?: string | null
           relay_creator_id?: number | null
@@ -89,17 +91,18 @@ export interface Database {
           email_sent?: boolean | null
           fullname?: string | null
           id?: string
+          influencer_social_profiles_id?: string | null
           interested?: boolean | null
           link_url?: string | null
           need_support?: boolean | null
           next_step?: string | null
-          paid_amount_cents?: number
-          paid_amount_currency?: string
+          paid_amount?: number
+          payment_currency?: string
           payment_details?: string | null
+          payment_rate?: number
           payment_status?: string
           platform?: string
           publication_date?: string | null
-          rate_cents?: number
           rate_currency?: string
           reject_message?: string | null
           relay_creator_id?: number | null
@@ -299,11 +302,16 @@ export interface Database {
         Row: {
           campaign_id: string
           created_at: string | null
+          deleted_at: string | null
+          description: string | null
           id: string
-          influencer_id: string
+          influencer_social_profile_id: string | null
           is_reusable: boolean
           platform: string
+          posted_date: string | null
+          preview_url: string | null
           publish_date: string | null
+          title: string | null
           type: string
           updated_at: string | null
           url: string
@@ -311,11 +319,16 @@ export interface Database {
         Insert: {
           campaign_id: string
           created_at?: string | null
+          deleted_at?: string | null
+          description?: string | null
           id?: string
-          influencer_id: string
+          influencer_social_profile_id?: string | null
           is_reusable?: boolean
           platform: string
+          posted_date?: string | null
+          preview_url?: string | null
           publish_date?: string | null
+          title?: string | null
           type: string
           updated_at?: string | null
           url: string
@@ -323,11 +336,16 @@ export interface Database {
         Update: {
           campaign_id?: string
           created_at?: string | null
+          deleted_at?: string | null
+          description?: string | null
           id?: string
-          influencer_id?: string
+          influencer_social_profile_id?: string | null
           is_reusable?: boolean
           platform?: string
+          posted_date?: string | null
+          preview_url?: string | null
           publish_date?: string | null
+          title?: string | null
           type?: string
           updated_at?: string | null
           url?: string
@@ -452,7 +470,7 @@ export interface Database {
           comments_total: number | null
           created_at: string | null
           id: string
-          influencer_id: string
+          influencer_social_profile_id: string | null
           likes_total: number | null
           orders_total: number | null
           post_id: string
@@ -466,7 +484,7 @@ export interface Database {
           comments_total?: number | null
           created_at?: string | null
           id?: string
-          influencer_id: string
+          influencer_social_profile_id?: string | null
           likes_total?: number | null
           orders_total?: number | null
           post_id: string
@@ -480,7 +498,7 @@ export interface Database {
           comments_total?: number | null
           created_at?: string | null
           id?: string
-          influencer_id?: string
+          influencer_social_profile_id?: string | null
           likes_total?: number | null
           orders_total?: number | null
           post_id?: string

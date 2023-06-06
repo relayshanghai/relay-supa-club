@@ -140,7 +140,7 @@ OR REPLACE FUNCTION create_company(
           company_name,
           website,
           subscription_status,
-          'cus_0000000000',
+          'cus_NKXV4aQYAU7GXG',
           '2025-01-01 00:00:00.000000+00',
           now(),
           '2025-01-01 00:00:00.000000+00',
@@ -217,11 +217,11 @@ OR REPLACE FUNCTION create_campaign_creator(
           avatar_url,
           creator_id,
           added_by_id,
-          rate_cents,
+          payment_rate,
           rate_currency,
           payment_status,
-          paid_amount_cents,
-          paid_amount_currency,
+          paid_amount,
+          payment_currency,
           sample_status,
           platform,
           status,
@@ -234,7 +234,7 @@ OR REPLACE FUNCTION create_campaign_creator(
           uuid_generate_v4(),
           avatar_url,
           creator_id,
-          added_by_id, 
+          added_by_id,
           0,
           'USD',
           'unpaid',
@@ -322,7 +322,7 @@ $$;
 CREATE OR REPLACE FUNCTION create_influencer_post(
   _url TEXT,
   _campaign_id UUID,
-  _influencer_id UUID,
+  _influencer_social_profile_id UUID,
   _platform TEXT,
   _type TEXT DEFAULT 'video',
   _is_reusable BOOLEAN DEFAULT false
@@ -334,7 +334,7 @@ BEGIN
     id,
     url,
     campaign_id,
-    influencer_id,
+    influencer_social_profile_id,
     platform,
     type,
     is_reusable,
@@ -346,7 +346,7 @@ BEGIN
     uuid_generate_v4(),
     _url,
     _campaign_id,
-    _influencer_id,
+    _influencer_social_profile_id,
     _platform,
     _type,
     _is_reusable,
@@ -362,7 +362,7 @@ $$;
 
 CREATE OR REPLACE FUNCTION create_posts_performance(
   _campaign_id UUID,
-  _influencer_id UUID,
+  _influencer_social_profile_id UUID,
   _post_id UUID,
   _updated_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
   _likes_total NUMERIC DEFAULT 0,
@@ -378,7 +378,7 @@ BEGIN
   INSERT INTO posts_performance (
     id,
     campaign_id,
-    influencer_id,
+    influencer_social_profile_id,
     post_id,
     created_at,
     updated_at,
@@ -392,7 +392,7 @@ BEGIN
   VALUES (
     uuid_generate_v4(),
     _campaign_id,
-    _influencer_id,
+    _influencer_social_profile_id,
     _post_id,
     now(),
     _updated_at,
@@ -421,6 +421,9 @@ DECLARE
   _influencer_alice RECORD;
   _influencer_bob RECORD;
   _influencer_charlie RECORD;
+  _influencer_social_profile_alice_1 RECORD;
+  _influencer_social_profile_bob_1 RECORD;
+  _influencer_social_profile_bob_2 RECORD;
   _influencer_post_alice_1 RECORD;
   _influencer_post_alice_2 RECORD;
   _influencer_post_alice_3 RECORD;
@@ -456,8 +459,8 @@ BEGIN
   );
 
   PERFORM create_campaign_creator(
-    _campaign_beauty_for_all.id, 
-    _profile_william.id, 
+    _campaign_beauty_for_all.id,
+    _profile_william.id,
     'https://yt3.googleusercontent.com/SOkJ3PucBImQs1fZSG7O_LSD98FOEzGGKlaaLzt5Hps_REGV8-Ueuh_qjxtWmrRYWskN2URWiQ=s480-c-k-c0x00ffffff-no-rj',
     'UCB_CCSAGP_YCuR36_w2bG1w',
     'Greg Renko'
@@ -481,63 +484,63 @@ BEGIN
     'charlie.charles@example.com',
     '780 Elm Street',
     'https://example.com/avatar3'
-  );  
-  PERFORM create_influencer_social_profile(
+  );
+  _influencer_social_profile_alice_1 := create_influencer_social_profile(
     'https://instagram.com/alice1',
     'instagram',
     _influencer_alice.id,
     'iqdata_1',
     'alice1'
   );
-  PERFORM create_influencer_social_profile(
+  _influencer_social_profile_bob_1 := create_influencer_social_profile(
     'https://instagram.com/bob1',
     'instagram',
     _influencer_bob.id,
-    'iqdata_2',    
+    'iqdata_2',
     'bob1'
   );
-  PERFORM create_influencer_social_profile(
+  _influencer_social_profile_bob_2 := create_influencer_social_profile(
     'https://youtube.com/bob2',
     'youtube',
     _influencer_bob.id,
-    'iqdata_3',    
+    'iqdata_3',
     'bob2'
   );
   -- Influencer 3 will have no social profiles so we can handle this edge case
-  
+
   _influencer_post_alice_1 := create_influencer_post(
     'https://instagram.com/alice/posts/1',
     _campaign_beauty_for_all.id,
-    _influencer_alice.id,
+    _influencer_social_profile_alice_1.id,
     'instagram'
   );
   _influencer_post_alice_2 := create_influencer_post(
     'https://instagram.com/alice/posts/2',
     _campaign_beauty_for_all.id,
-    _influencer_alice.id,
+    _influencer_social_profile_alice_1.id,
     'instagram'
   );
   _influencer_post_alice_3 := create_influencer_post(
     'https://instagram.com/alice/posts/3',
     _campaign_beauty_for_all.id,
-    _influencer_alice.id,
+    _influencer_social_profile_alice_1.id,
     'instagram'
   );
   _influencer_post_bob_1 := create_influencer_post(
     'https://instagram.com/bob/posts/1',
     _campaign_beauty_for_all.id,
-    _influencer_bob.id,
+    _influencer_social_profile_bob_1.id,
     'instagram'
   );
   _influencer_post_bob_2 := create_influencer_post(
     'https://youtube.com/bob/posts/1',
     _campaign_beauty_for_all.id,
-    _influencer_bob.id,
+    _influencer_social_profile_bob_2.id,
     'youtube'
   );
   PERFORM create_posts_performance(
     _campaign_beauty_for_all.id,
-    _influencer_alice.id,
+    _influencer_social_profile_alice_1.id,
     _influencer_post_alice_1.id,
     now(),
     123,
@@ -549,7 +552,7 @@ BEGIN
   );
   PERFORM create_posts_performance(
     _campaign_beauty_for_all.id,
-    _influencer_alice.id,
+    _influencer_social_profile_alice_1.id,
     _influencer_post_alice_2.id,
     '2023-01-01 00:00:00.000000+00',
     1230,
@@ -561,13 +564,13 @@ BEGIN
   );
   PERFORM create_posts_performance(
     _campaign_beauty_for_all.id,
-    _influencer_alice.id,
+    _influencer_social_profile_alice_1.id,
     _influencer_post_alice_3.id,
     '2023-01-02 00:00:00.000000+00'
   );
   PERFORM create_posts_performance(
     _campaign_beauty_for_all.id,
-    _influencer_bob.id,
+    _influencer_social_profile_bob_1.id,
     _influencer_post_bob_1.id,
     '2023-01-03 00:00:00.000000+00',
     12300,
@@ -579,7 +582,7 @@ BEGIN
   );
   PERFORM create_posts_performance(
     _campaign_beauty_for_all.id,
-    _influencer_bob.id,
+    _influencer_social_profile_bob_2.id,
     _influencer_post_bob_2.id,
     '2023-01-04 00:00:00.000000+00',
     12301,
@@ -606,8 +609,8 @@ BEGIN
   _profile_relay_employee := create_profile(_company_relay.id, 'jacob@relay.club', 'Jacob', 'Cool', 'relay_employee');
 
   PERFORM create_campaign_creator(
-    _campaign_gaming.id, 
-    _profile_relay_employee.id, 
+    _campaign_gaming.id,
+    _profile_relay_employee.id,
     'https://yt3.googleusercontent.com/S3tNLpc5lGK6i3qKb-3pBxcVTp6Fa0TKpJO8lJW-1fgcksYvZn68S3Ha5ebkIQiNFMeskjTxUBA=s480-c-k-c0x00ffffff-no-rj',
     'UCxo4Q6Wy5Ag4ntlibuyTfIQ',
     'Yousef Gaming'

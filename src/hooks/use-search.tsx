@@ -10,6 +10,8 @@ import { useUser } from './use-user';
 import useSWR from 'swr';
 import type { RecommendedInfluencersGetResponse } from 'pages/api/recommended-influencers';
 import { featRecommended } from 'src/constants/feature-flags';
+import { useCompany } from './use-company';
+
 type NullStringTuple = [null | string, null | string];
 import type { FetchCreatorsFilteredParams } from 'src/utils/api/iqdata/transforms';
 
@@ -18,6 +20,10 @@ export interface ISearchContext {
     setLoading: (loading: boolean) => void;
     tags: CreatorSearchTag[];
     setTopicTags: (tags: CreatorSearchTag[]) => void;
+    text: string;
+    setText: (text: string) => void;
+    keywords: string;
+    setKeywords: (keywords: string) => void;
     username: string;
     setUsername: (username: string) => void;
     influencerLocation: LocationWeighted[];
@@ -59,6 +65,10 @@ export const SearchContext = createContext<ISearchContext>({
     setLoading: () => null,
     tags: [],
     setTopicTags: () => null,
+    text: '',
+    setText: () => null,
+    keywords: '',
+    setKeywords: () => null,
     username: '',
     setUsername: () => null,
     influencerLocation: [],
@@ -98,6 +108,7 @@ export const useSearch = () => useContext(SearchContext);
 
 export const useSearchResults = (page: number) => {
     const { profile } = useUser();
+    const { company } = useCompany();
     const ref = useRef<any>();
 
     const { setUsageExceeded, setLoading, setActiveSearch, searchParams } = useSearch();
@@ -106,9 +117,10 @@ export const useSearchResults = (page: number) => {
         profile?.id && searchParams ? ['influencer-search', searchParams, page] : null,
         async ([path, searchParams, page]) => {
             try {
-                if (!profile?.company_id || !profile?.id) {
+                if (!profile?.id) {
                     throw new Error('No profile');
                 }
+
                 if (ref.current) {
                     ref.current.abort();
                 }
@@ -121,6 +133,8 @@ export const useSearchResults = (page: number) => {
                     tags,
                     platform,
                     username,
+                    text,
+                    keywords,
                     influencerLocation,
                     audienceLocation,
                     resultsPerPageLimit,
@@ -134,9 +148,16 @@ export const useSearchResults = (page: number) => {
                     recommendedInfluencers,
                 } = searchParams;
 
+                const companyId = company?.id || profile.company_id;
+                if (!companyId) {
+                    throw new Error('No company');
+                }
+
                 const body: InfluencerPostRequest = {
                     tags,
                     platform,
+                    text,
+                    keywords,
                     username,
                     influencerLocation,
                     audienceLocation,
@@ -149,7 +170,7 @@ export const useSearchResults = (page: number) => {
                     lastPost,
                     contactInfo,
                     only_recommended: onlyRecommended,
-                    company_id: profile?.company_id,
+                    company_id: companyId,
                     user_id: profile?.id,
                     recommendedInfluencers,
                 };
@@ -213,6 +234,8 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
 
     // search options
     const [tags, setTopicTags] = useState<CreatorSearchTag[]>([]);
+    const [text, setText] = useState<string>('');
+    const [keywords, setKeywords] = useState<string>('');
     const [username, setUsername] = useState<string>('');
     const [influencerLocation, setInfluencerLocation] = useState<LocationWeighted[]>([]);
     const [views, setViews] = useState<NullStringTuple>([null, null]);
@@ -239,6 +262,10 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
                 setPlatform,
                 tags,
                 setTopicTags,
+                text,
+                setText,
+                keywords,
+                setKeywords,
                 username,
                 setUsername,
                 influencerLocation,

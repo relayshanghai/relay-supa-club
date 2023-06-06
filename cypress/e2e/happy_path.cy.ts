@@ -1,5 +1,5 @@
 import { deleteDB } from 'idb';
-import { cocomelonId, setupIntercepts } from './intercepts';
+import { addPostIntercept, cocomelonId, setupIntercepts } from './intercepts';
 
 describe('Main pages happy paths', () => {
     beforeEach(async () => {
@@ -10,7 +10,7 @@ describe('Main pages happy paths', () => {
         setupIntercepts();
         cy.visit('/');
 
-        localStorage.setItem('language', 'zh');
+        localStorage.setItem('language', 'zh-CN');
         // starts on signup page. has an h1 that says signup in Chinese: 注册
         cy.get('h1').contains('注册');
 
@@ -32,7 +32,9 @@ describe('Main pages happy paths', () => {
         cy.contains('GRTR').should('not.exist');
 
         cy.getByTestId('creator-search').type('GRTR{enter}');
-        // cy.contains will not include the input element in the search, so this shows that the results are in the DOM
+        cy.wait(2000); // due to some funky rerendering, so button click doesn't work immediately
+
+        cy.contains('button', 'Search').click(); // click twice
         cy.contains('GRTR');
     });
     it('can search for a topic', () => {
@@ -54,6 +56,7 @@ describe('Main pages happy paths', () => {
         cy.contains('alligators').click();
 
         cy.getByTestId('search-spinner').should('not.exist'); // wait for spinner to disappear
+        cy.contains('button', 'Search').click();
 
         cy.contains('Brave Wilderness'); // the first influencer search result for alligators
     });
@@ -130,7 +133,7 @@ describe('Main pages happy paths', () => {
             .type('123')
             .should('have.value', 'Blue Moonlight Stream Enterprises123');
     });
-    it.only('can open campaigns page and manage campaign influencers', () => {
+    it('can open campaigns page and manage campaign influencers', () => {
         setupIntercepts();
         // list, add, archive campaigns
         // list, add, move, delete campaign influencers
@@ -179,12 +182,18 @@ describe('Main pages happy paths', () => {
         cy.contains('tr', 'SET India', { timeout: 30000 }).contains('Add to campaign').click(); // not sure why this is still slow
         cy.contains('Beauty for All Skin Tones');
         cy.getByTestId('add-creator-button:Beauty for All Skin Tones').click();
+
         cy.contains('Campaigns').click({ force: true }); // hidden by modal
+        cy.contains('Influencer added successfully.', { timeout: 60000 });
         cy.get('button').contains('New Campaign');
         cy.contains('Beauty for All Skin Tones').click();
 
         // move influencer to new campaign
-        cy.contains('tr', 'SET India', { timeout: 60000 }).contains('Move Influencer').click(); // can take a while to refresh
+
+        cy.contains('tr', 'SET India', { timeout: 60000 }).within(() =>
+            cy.getByTestId('move-influencer-button').click(),
+        ); // can take
+
         cy.getByTestId('move-influencer-button:My Campaign').click();
         cy.contains('Campaign Launch Date').click({ force: true }); // click out of modal
         cy.contains('SET India').should('not.exist');
@@ -200,7 +209,11 @@ describe('Main pages happy paths', () => {
         cy.contains('SET India');
 
         // add notes
-        cy.contains('Notes').click();
+
+        cy.getByTestId('manage-button').click();
+        cy.contains('Notes');
+        cy.getByTestId('show-influencer-notes').click();
+
         cy.contains('Internal Comments');
         cy.get('textarea').type('This influencer is great');
         cy.contains('William Edward').should('not.exist'); // user name doesn't show
@@ -211,7 +224,7 @@ describe('Main pages happy paths', () => {
         cy.contains('My Campaign').click({ force: true }); // hidden by modal
         // delete an influencer
         cy.getByTestId('delete-creator').click();
-        cy.contains('influencer was deleted.');
+        cy.contains('Influencer was deleted.');
         cy.contains('SET India').should('not.exist');
 
         // archive a campaign
@@ -220,6 +233,102 @@ describe('Main pages happy paths', () => {
         cy.contains('My Campaign').should('not.exist');
         cy.contains('Archived Campaigns').click();
         cy.contains('My Campaign');
+    });
+    it('can record search usages, can manage clients as a company owner', () => {
+        setupIntercepts();
+        cy.loginAdmin();
+
+        cy.contains('Account').click();
+        cy.contains('https://relay.club', { timeout: 20000 });
+        cy.contains('https://blue-moonlight-stream.com').should('not.exist');
+        cy.contains('tr', 'Searches').within(() => {
+            cy.contains('td', '0');
+        });
+
+        cy.contains('Influencers').click();
+        cy.contains('button', 'Search');
+
+        // rack up 2 searches
+        cy.getByTestId('search-topics').within(() => {
+            cy.get('input').type('alligators');
+        });
+        cy.contains('alligators').click();
+        cy.getByTestId('search-spinner').should('not.exist');
+        cy.contains('button', 'Search').click();
+
+        cy.getByTestId('search-topics').within(() => {
+            cy.get('input').type('monkeys');
+        });
+        cy.contains('monkeys').click();
+        cy.getByTestId('search-spinner').should('not.exist');
+        cy.contains('button', 'Search').click();
+
+        cy.contains('Account').click();
+        cy.contains('https://relay.club');
+
+        // searches should have increased by 2
+        cy.contains('td', '2'); // wait for count to update
+        cy.contains('tr', 'Searches').within(() => {
+            cy.contains('td', '2');
+        });
+
+        cy.contains('Campaigns').click();
+        cy.contains('The Future of Gaming is Here'); // the relay company campaign
+        cy.contains('Beauty for All Skin Tones').should('not.exist'); // the user's company campaign
+
+        cy.contains('Clients').click();
+
+        // check warning message
+        cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises').should('not.exist');
+        cy.contains('tr', 'Blue Moonlight Stream Enterprises').within(() => {
+            cy.contains('Manage').click();
+        });
+        cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises');
+
+        // can see client's campaigns
+        cy.contains('Campaigns').click();
+        cy.contains('button', 'New Campaign');
+        cy.contains('Beauty for All Skin Tones', { timeout: 30000 }); // wait for campaigns to load
+        cy.contains('The Future of Gaming is Here').should('not.exist');
+        cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises'); // check that warning persists
+
+        // can see client's search totals
+        cy.contains('Account').click();
+        cy.contains('https://blue-moonlight-stream.com', { timeout: 20000 });
+        cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises'); // check that warning persists
+        cy.contains('tr', 'Searches').within(() => {
+            cy.contains('td', '0'); // wait for count to update
+        });
+
+        // rack up 1 search
+        cy.contains('Influencers').click();
+        cy.contains('button', 'Search');
+        cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises'); // check that warning persists
+        cy.getByTestId('search-topics').within(() => {
+            cy.get('input').type('alligators');
+        });
+        cy.contains('alligators').click();
+        cy.getByTestId('search-spinner').should('not.exist');
+        cy.contains('button', 'Search').click();
+
+        // Check that search total increased
+        cy.contains('Account').click();
+        cy.contains('https://blue-moonlight-stream.com');
+        cy.contains('td', '1'); // wait for count to update
+        cy.contains('tr', 'Searches').within(() => {
+            cy.contains('td', '1');
+        });
+        cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises'); // check that warning persists
+
+        // can cancel out of manage mode
+        cy.contains('Clients').click();
+        cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises');
+        cy.contains('Close', { timeout: 1000 }).click();
+        cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises').should('not.exist');
+
+        cy.contains('Account').click();
+        cy.contains('https://blue-moonlight-stream.com').should('not.exist');
+        cy.contains('https://relay.club');
     });
     /** works on local... 🤷‍♂️ */
     it.skip('can log out', () => {
@@ -233,6 +342,55 @@ describe('Main pages happy paths', () => {
 
         // pre-populates email with original email
         cy.get('input[type="email"]').should('have.value', Cypress.env('TEST_USER_EMAIL_COMPANY_OWNER'));
+    });
+    it('Can add post URLs to campaign influencers and see their posts performance updated on the performance page', () => {
+        addPostIntercept();
+        // check 'before' performance page totals
+        cy.loginTestUser();
+        cy.contains('Performance').click();
+        cy.contains('All campaigns', { timeout: 20000 });
+        cy.contains('div', 'Likes').within(() => {
+            cy.contains('166.5K').should('not.exist');
+            cy.contains('26.0K');
+        });
+        cy.contains('div', 'Comments').within(() => {
+            cy.contains('2.8K').should('not.exist');
+            cy.contains('166.5K');
+        });
+        cy.contains('div', 'Views').within(() => {
+            cy.contains('96.2K');
+        });
+
+        cy.contains('Campaigns').click();
+        cy.contains('Beauty for All Skin Tones').click();
+        cy.getByTestId('status-dropdown').select('Posted', { force: true });
+        cy.contains('Posted 1').click();
+        cy.contains('Content').click();
+        cy.contains('h2', 'Manage Posts');
+
+        const youtubeLink = 'https://www.youtube.com/watch?v=UzL-0vZ5-wk';
+        cy.contains('form', 'Add Post URL').within(() => {
+            cy.get('input').type(youtubeLink);
+            cy.get('button').contains('Submit').should('not.be.disabled').click();
+        });
+
+        cy.contains('Successfully added 1 URLs');
+        cy.getByTestId('status-dropdown').select('To Contact', { force: true });
+
+        // check 'after' performance page totals
+        cy.contains('Performance').click();
+        cy.contains('All campaigns', { timeout: 20000 });
+        cy.contains('div', 'Likes').within(() => {
+            cy.contains('166.5K').should('not.exist');
+            cy.contains('27.0K');
+        });
+        cy.contains('div', 'Comments').within(() => {
+            cy.contains('2.8K').should('not.exist');
+            cy.contains('167.5K');
+        });
+        cy.contains('div', 'Views').within(() => {
+            cy.contains('97.2K');
+        });
     });
 });
 
