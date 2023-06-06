@@ -109,6 +109,10 @@ export default function ChatwootProvider({ children, ...chatwootOptions }: Chatw
                 setChatwoot((window as WindowChatwoot).$chatwoot);
             });
 
+            window.addEventListener('chatwoot:error', function (error) {
+                clientLogger(error, 'error', true);
+            });
+
             (window as WindowChatwoot).chatwootSDK.run({
                 websiteToken: websiteToken,
                 baseUrl: _baseUrl,
