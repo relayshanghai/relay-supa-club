@@ -1,24 +1,29 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from 'types/supabase';
+import type { DatabaseWithCustomTypes } from 'types';
+import type { CampaignCreatorDB } from '../types';
 
-type CampaignCreatorUpdate = Database['public']['Tables']['campaign_creators']['Update'];
+type CampaignCreatorUpdate = DatabaseWithCustomTypes['public']['Tables']['campaign_creators']['Update'];
 
-export const getCampaignCreator = (db: SupabaseClient) => async (id: string) => {
-    const response = await db.from('campaign_creators').select().eq('id', id).single();
+export const getCampaignCreator =
+    (db: SupabaseClient<DatabaseWithCustomTypes>) =>
+    async (id: string): Promise<CampaignCreatorDB> => {
+        const response = await db.from('campaign_creators').select().eq('id', id).single();
 
-    if (response.error) {
-        throw response.error;
-    }
+        if (response.error) {
+            throw response.error;
+        }
 
-    return response.data;
-};
+        return response.data;
+    };
 
-export const updateCampaignCreator = (db: SupabaseClient) => async (id: string, data: CampaignCreatorUpdate) => {
-    const response = await db.from('campaign_creators').update(data).eq('id', id).select().single();
+export const updateCampaignCreator =
+    (db: SupabaseClient<DatabaseWithCustomTypes>) =>
+    async (id: string, data: CampaignCreatorUpdate): Promise<CampaignCreatorDB> => {
+        const response = await db.from('campaign_creators').update(data).eq('id', id).select().single();
 
-    if (response.error) {
-        throw response.error;
-    }
+        if (response.error) {
+            throw response.error;
+        }
 
-    return response.data;
-};
+        return response.data;
+    };
