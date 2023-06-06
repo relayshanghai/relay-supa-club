@@ -206,7 +206,8 @@ OR REPLACE FUNCTION create_campaign_creator(
   added_by_id UUID,
   avatar_url TEXT,
   creator_id TEXT,
-  fullname TEXT
+  fullname TEXT,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()
 ) RETURNS RECORD SECURITY DEFINER LANGUAGE plpgsql AS $$
     DECLARE
       _row RECORD;
@@ -227,7 +228,8 @@ OR REPLACE FUNCTION create_campaign_creator(
           status,
           campaign_id,
           next_step,
-          fullname
+          fullname,
+          updated_at
         )
       VALUES
         (
@@ -245,7 +247,8 @@ OR REPLACE FUNCTION create_campaign_creator(
           'to contact',
           campaign_id,
           'Return email',
-          fullname
+          fullname,
+          updated_at
         )
       RETURNING * INTO _row;
       RETURN _row;
