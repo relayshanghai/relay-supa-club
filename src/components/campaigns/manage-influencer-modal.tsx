@@ -297,7 +297,7 @@ const SmallButtonsSection = ({
                 <Tooltip
                     content={t('campaigns.show.moveInfluencer')}
                     detail={t('campaigns.show.moveInfluencerDescr')}
-                    position="left"
+                    position="bottom-left"
                 >
                     <button
                         data-testid="show-move-influencer"

@@ -24,20 +24,23 @@ const Tooltips = () => (
         <h2 className="text-lg font-bold"> Tooltips</h2>
         <p>default, with content</p>
         <div className="m-5 flex space-x-3 bg-slate-100 p-5">
-            <library.Tooltip content="explaining this and that" position="top">
-                <library.Badge>{`Hover Me (position top)`}</library.Badge>
+            <library.Tooltip content="explaining this and that" position="top-right">
+                <library.Badge>{`Hover Me (top-right)`}</library.Badge>
             </library.Tooltip>
 
             <library.Tooltip
                 content="explaining this"
                 detail="and also another thing. Perhaps a few more things. While we are at it one more thing. "
-                position="top"
+                position="top-left"
             >
-                <library.Badge>{`With Details (position top)`}</library.Badge>
+                <library.Badge>{`With Details (top-left)`}</library.Badge>
             </library.Tooltip>
 
-            <library.Tooltip content="explaining this" position="bottom">
-                <library.Badge>Hover position bottom</library.Badge>
+            <library.Tooltip content="explaining this" position="bottom-left">
+                <library.Badge>Hover bottom left</library.Badge>
+            </library.Tooltip>
+            <library.Tooltip content="explaining this" position="bottom-right">
+                <library.Badge>Hover bottom right</library.Badge>
             </library.Tooltip>
 
             <library.Tooltip content="explaining this" position="right">

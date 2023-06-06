@@ -4,7 +4,7 @@ interface Props extends DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLS
     content: string;
     detail?: string | null;
     children: React.ReactNode;
-    position?: 'top' | 'bottom' | 'left' | 'right';
+    position?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'left' | 'right';
 }
 export type TooltipProps = PropsWithChildren<Props>;
 
@@ -20,10 +20,14 @@ export const Tooltip = ({ children, content, detail, className, position }: Tool
             {isHovered && (
                 <div
                     className={`absolute  ${
-                        position === 'top'
+                        position === 'top-right'
                             ? 'bottom-[120%] left-0'
-                            : position === 'bottom'
+                            : position === 'top-left'
+                            ? 'bottom-[120%] right-0'
+                            : position === 'bottom-right'
                             ? 'left-0 top-[120%]'
+                            : position === 'bottom-left'
+                            ? 'right-0 top-[120%]'
                             : position === 'left'
                             ? 'bottom-0 right-[110%]'
                             : 'bottom-0 left-[110%]'
