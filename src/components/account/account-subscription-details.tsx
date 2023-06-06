@@ -14,6 +14,7 @@ import { Button } from '../button';
 import { Spinner } from '../icons';
 import { CancelSubscriptionModal } from './modal-cancel-subscription';
 import type { CompanyDB } from 'src/utils/api/db';
+import { useRudderstack } from 'src/hooks/use-rudderstack';
 
 const checkStripeAndDatabaseMatch = (
     company?: CompanyDB,
@@ -42,9 +43,13 @@ export const SubscriptionDetails = () => {
     const { company, refreshCompany } = useCompany();
     const { loading: userDataLoading } = useUser();
     const { t, i18n } = useTranslation();
+    const { trackEvent } = useRudderstack();
 
     const [showCancelModal, setShowCancelModal] = useState(false);
-    const handleCancelSubscription = async () => setShowCancelModal(true);
+    const handleCancelSubscription = async () => {
+        setShowCancelModal(true);
+        trackEvent('Account, Subscription, open cancel subscription modal');
+    };
 
     // these we get from stripe directly
     // This is just the billing period, not the monthly 'usage' period
@@ -83,7 +88,12 @@ export const SubscriptionDetails = () => {
                 <div className="flex flex-row justify-end">
                     {company?.id && (
                         <Link href={buildSubscriptionPortalUrl({ id: company.id })}>
-                            <Button variant="secondary">{t('account.subscription.viewBillingPortal')}</Button>
+                            <Button
+                                variant="secondary"
+                                onClick={() => trackEvent('Account, Subscription, View billing portal')}
+                            >
+                                {t('account.subscription.viewBillingPortal')}
+                            </Button>
                         </Link>
                     )}
                 </div>
@@ -183,7 +193,15 @@ export const SubscriptionDetails = () => {
                             {t('account.subscription.cancelSubscription')}
                         </Button>
                         <Link href="/pricing">
-                            <Button>{t('account.subscription.upgradeSubscription')}</Button>
+                            <Button
+                                onClick={() =>
+                                    trackEvent(
+                                        'Account, Subscription, click upgrade subscription and go to pricing page',
+                                    )
+                                }
+                            >
+                                {t('account.subscription.upgradeSubscription')}
+                            </Button>
                         </Link>
                     </div>
                 </>

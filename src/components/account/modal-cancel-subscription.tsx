@@ -4,10 +4,13 @@ import { useTranslation } from 'react-i18next';
 import { useSubscription } from 'src/hooks/use-subscription';
 import { Button } from '../button';
 import { Modal } from '../modal';
+import { useRudderstack } from 'src/hooks/use-rudderstack';
 
 export const CancelSubscriptionModal = ({ visible, onClose }: { visible: boolean; onClose: () => void }) => {
     const { t } = useTranslation();
     const { createDiscountRenew, cancelSubscription } = useSubscription();
+    const { trackEvent } = useRudderstack();
+
     const [submitting, setSubmitting] = useState(false);
     const handleCancel = async () => {
         setSubmitting(true);
@@ -15,6 +18,7 @@ export const CancelSubscriptionModal = ({ visible, onClose }: { visible: boolean
         try {
             const result = await cancelSubscription();
             if (result?.status) toast.success(t('account.cancelModal.subscriptionCancelled'), { id });
+            trackEvent('CancelSubscriptionModal, canceled subscription');
         } catch (e) {
             toast.error(t('account.subscription.modal.wentWrong'), {
                 id,
@@ -30,6 +34,7 @@ export const CancelSubscriptionModal = ({ visible, onClose }: { visible: boolean
             const result = await createDiscountRenew();
             if (result?.status === 'active')
                 toast.success(t('account.subscription.modal.subscriptionPurchased'), { id });
+            trackEvent('CancelSubscriptionModal, renewed subscription');
         } catch (e) {
             toast.error(t('account.subscription.modal.wentWrong'), {
                 id,

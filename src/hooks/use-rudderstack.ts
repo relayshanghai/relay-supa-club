@@ -1,13 +1,14 @@
 import type { apiObject } from 'rudder-sdk-js';
-import type { CompanyDB, ProfileDB } from 'src/utils/api/db';
+import type { ProfileDB } from 'src/utils/api/db';
 import { rudderInitialized } from 'src/utils/rudder-initialize';
+import { useCallback } from 'react';
 
 //There are more traits properties, but we only need these for now. Ref: https://www.rudderstack.com/docs/event-spec/standard-events/identify/#identify-traits
 export interface IdentityTraits extends apiObject {
-    email: string;
-    firstName: string;
-    lastName: string;
-    company: {
+    email?: string;
+    firstName?: string;
+    lastName?: string;
+    company?: {
         id?: string;
         name?: string;
     };
@@ -22,51 +23,51 @@ export interface PageProperties extends apiObject {
 }
 
 export const useRudderstack = () => {
-    const identifyUser = async (userId: string, traits: IdentityTraits) => {
+    const identifyUser = useCallback(async (userId: string, traits: IdentityTraits) => {
         if (!window.rudder) {
             await rudderInitialized();
         }
-        window.rudder?.identify(userId, traits);
-    };
+        window.rudder.identify(userId, traits);
+    }, []);
 
-    const pageView = async (pageName: string, properties?: PageProperties) => {
+    const pageView = useCallback(async (pageName: string, properties?: PageProperties) => {
         if (!window.rudder) {
             await rudderInitialized();
         }
-        window.rudder?.page(pageName, properties);
-    };
+        window.rudder.page(pageName, properties);
+    }, []);
 
-    const trackEvent = async (eventName: string, properties?: apiObject) => {
+    const trackEvent = useCallback(async (eventName: string, properties?: apiObject) => {
         if (!window.rudder) {
             await rudderInitialized();
         }
-        window.rudder?.track(eventName, properties);
-    };
+        window.rudder.track(eventName, properties);
+    }, []);
 
-    const group = async (groupId: string, traits?: apiObject) => {
+    const group = useCallback(async (groupId: string, traits?: apiObject) => {
         if (!window.rudder) {
             await rudderInitialized();
         }
-        window.rudder?.track(groupId, traits);
-    };
+        window.rudder.group(groupId, traits);
+    }, []);
 
-    const identifyFromProfile = (profile: ProfileDB, company: CompanyDB) => {
-        if (profile) {
-            const { id, email, first_name, last_name, company_id, user_role } = profile;
-            const { name: companyName } = company;
-
-            identifyUser(id, {
-                email: email || '',
-                firstName: first_name,
-                lastName: last_name,
-                userRole: user_role || '',
-                company: {
-                    id: company_id || '',
-                    name: companyName || '',
-                },
-            });
-        }
-    };
+    const identifyFromProfile = useCallback(
+        (profile: ProfileDB) => {
+            if (profile) {
+                const { id, email, first_name, last_name, company_id, user_role } = profile;
+                identifyUser(id, {
+                    email: email || '',
+                    firstName: first_name,
+                    lastName: last_name,
+                    userRole: user_role || '',
+                    company: {
+                        id: company_id || '',
+                    },
+                });
+            }
+        },
+        [identifyUser],
+    );
 
     return {
         identifyFromProfile,
