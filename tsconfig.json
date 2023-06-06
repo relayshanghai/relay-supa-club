@@ -18,7 +18,6 @@
     "paths": {
       "src/*": ["src/*"]
     },
-    "downlevelIteration": true,
     "types": ["node"]
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "pages/_error.js"],

@@ -24,8 +24,6 @@ export const getCampaignCreatorsCall =
 
         if (error) throw error;
 
-        await supabaseClient.from('campaigns').update({ updated_at: new Date().toISOString() }).eq('id', campaignId);
-
         return data;
     };
 
