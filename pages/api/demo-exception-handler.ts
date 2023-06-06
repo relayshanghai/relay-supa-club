@@ -4,16 +4,19 @@ import { serverLogger } from 'src/utils/logger-server';
 
 type RelayErrorOptions = {
     shouldLog?: boolean;
+    sendToSentry?: boolean;
 };
 
 class RelayError extends Error {
-    private _httpCode: number;
-    private _shouldLog: boolean;
+    readonly _httpCode: number;
+    readonly _shouldLog: boolean;
+    readonly _sendToSentry: boolean;
 
-    constructor(msg: string, httpCode: number = httpCodes.INTERNAL_SERVER_ERROR, options?: RelayErrorOptions) {
+    constructor(msg: string, httpCode = httpCodes.INTERNAL_SERVER_ERROR, options?: RelayErrorOptions) {
         super(msg);
         this._httpCode = httpCode;
         this._shouldLog = options?.shouldLog || true; // log to server by default
+        this._sendToSentry = options?.sendToSentry || process.env.NODE_ENV === 'development';
     }
 
     get httpCode() {
@@ -23,27 +26,40 @@ class RelayError extends Error {
     get shouldLog() {
         return this._shouldLog;
     }
+
+    get sendToSentry() {
+        return this._sendToSentry;
+    }
 }
 
-export function isRelayError(o: any): o is RelayError {
-    return (o as RelayError).message !== undefined && (o as RelayError).httpCode !== undefined;
-}
-
-const ApiExceptionHandler = (fn: NextApiHandler) => {
-    return async (req: NextApiRequest, res: NextApiResponse) => {
+const ApiExceptionHandler = <T = any>(fn: NextApiHandler<T>) => {
+    return async (req: NextApiRequest, res: NextApiResponse<T | { error: string }>) => {
         try {
             await fn(req, res);
         } catch (error) {
             const e = {
                 httpCode: httpCodes.INTERNAL_SERVER_ERROR,
-                message: (error as Error).message,
+                message: 'Unknown Error',
             };
 
-            if (isRelayError(error)) {
+            if (error instanceof Error) {
+                e.message = error.message;
+            }
+
+            if (error instanceof RelayError) {
                 e.httpCode = error.httpCode;
                 e.message = error.message;
 
-                if (error.shouldLog) serverLogger(error);
+                if (error.shouldLog) serverLogger(error, 'error', error.sendToSentry);
+            }
+
+            if (typeof error === 'string') {
+                e.message = error;
+            }
+
+            // Hide server errors if not in development
+            if (e.httpCode >= 500 && process.env.NODE_ENV !== 'development') {
+                e.message = 'Error occurred';
             }
 
             return res.status(e.httpCode).json({ error: e.message });
