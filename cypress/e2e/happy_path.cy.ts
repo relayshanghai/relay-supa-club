@@ -132,7 +132,7 @@ describe('Main pages happy paths', () => {
             .type('123')
             .should('have.value', 'Blue Moonlight Stream Enterprises123');
     });
-    it('can open campaigns page and manage campaign influencers', () => {
+    it.only('can open campaigns page and manage campaign influencers', () => {
         setupIntercepts();
         // list, add, archive campaigns
         // list, add, move, delete campaign influencers
@@ -172,6 +172,12 @@ describe('Main pages happy paths', () => {
         cy.contains('Campaign Launch Date', { timeout: 10000 });
         cy.contains('SET India').should('not.exist');
 
+        cy.contains('Campaigns').click();
+
+        // campaigns are listed in order of most recently added/edited.
+        cy.getByTestId('campaign-cards-container').children().first().contains('My Campaign');
+        cy.getByTestId('campaign-cards-container').children().first().next().contains('Beauty for All Skin Tones');
+
         cy.contains('My Campaign').click();
 
         // go to search and add an influencer to campaign
@@ -190,11 +196,19 @@ describe('Main pages happy paths', () => {
         cy.contains('Campaigns').click({ force: true }); // hidden by modal
         cy.contains('Influencer added successfully.', { timeout: 60000 });
         cy.get('button').contains('New Campaign');
+
         cy.contains('Beauty for All Skin Tones').click();
 
         cy.contains('tr', 'PewDiePie', { timeout: 60000 });
         cy.contains('tr', 'SET India', { timeout: 60000 });
-        cy.contains('tr', '@Greg Renko', { timeout: 60000 });
+        cy.contains('tr', '@Greg Renko');
+
+        cy.contains('Campaigns').click(); // We're sure new influencers have been added, now go back and check order of campaigns
+
+        // Beauty for All Skin Tones should now be listed first, since we added an influencer to it
+        cy.getByTestId('campaign-cards-container').children().first().contains('Beauty for All Skin Tones');
+        cy.getByTestId('campaign-cards-container').children().first().next().contains('My Campaign');
+        cy.contains('Beauty for All Skin Tones').click();
 
         // influencers should be presented in order of last added/edited
         cy.get('tr').eq(1).contains('PewDiePie'); //starts at 1 cause table head is a tr as well

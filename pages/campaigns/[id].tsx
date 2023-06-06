@@ -17,6 +17,7 @@ import type { CampaignCreatorDB } from 'src/utils/api/db';
 import { imgProxy } from 'src/utils/fetcher';
 import { Spinner } from 'src/components/icons';
 import { toast } from 'react-hot-toast';
+import { useRudderstack } from 'src/hooks/use-rudderstack';
 
 export default function CampaignShow() {
     const router = useRouter();
@@ -24,7 +25,7 @@ export default function CampaignShow() {
         campaignId: router.query.id as string,
     });
     const supabase = useSupabaseClient();
-
+    const { trackEvent } = useRudderstack();
     const { campaigns, refreshCampaigns } = useCampaigns({});
 
     const [media, setMedia] = useState<{ url: string; name: string }[]>([]);
@@ -49,6 +50,7 @@ export default function CampaignShow() {
         const status = e.target.value;
         await updateCampaign({ ...currentCampaign, status });
         refreshCampaigns();
+        trackEvent('Campaign Banner, change status');
     };
 
     const archiveCampaignHandler = async () => {
@@ -57,6 +59,7 @@ export default function CampaignShow() {
         router.push('/campaigns');
         toast.success(t('campaigns.show.archived'));
         refreshCampaigns();
+        trackEvent('Campaign Banner, archive campaign');
     };
 
     const unarchiveCampaignHandler = async () => {
@@ -65,6 +68,7 @@ export default function CampaignShow() {
         router.push('/campaigns');
         toast.success(t('campaigns.show.unarchived'));
         refreshCampaigns();
+        trackEvent('Campaign Banner, unarchive campaign');
     };
 
     useEffect(() => {
@@ -208,7 +212,10 @@ export default function CampaignShow() {
                 {currentCampaign?.id && (
                     <div className=" group absolute right-6 top-3 z-10 mr-2 flex h-8 cursor-pointer items-center justify-center rounded-lg bg-gray-50 text-sm font-semibold duration-300 hover:bg-gray-200">
                         <Link href={`/campaigns/form/${encodeURIComponent(currentCampaign?.id)}`} legacyBehavior>
-                            <span className="flex flex-row items-center gap-1 px-2 text-gray-400 duration-300 group-hover:text-primary-500">
+                            <span
+                                className="flex flex-row items-center gap-1 px-2 text-gray-400 duration-300 group-hover:text-primary-500"
+                                onClick={() => trackEvent('Campaign Banner, edit campaign')}
+                            >
                                 {t('campaigns.index.edit')}
                                 <PencilSquareIcon name="edit" className="h-4 w-4 fill-current" />
                             </span>

@@ -83,7 +83,7 @@ const SingleSelect = ({
     const { t } = useTranslation();
 
     return (
-        <div className={className}>
+        <div className={className} data-testid={fieldName}>
             <Controller
                 control={control}
                 defaultValue={defaultValue}
@@ -91,6 +91,7 @@ const SingleSelect = ({
                 rules={{ required: { value: isRequired, message: t('website.requiredField') } }}
                 render={({ field: { value, onChange, ref } }) => (
                     <Select
+                        data-testid={fieldName}
                         ref={ref}
                         styles={CustomStyles}
                         value={options.find((c) => c.value === value)}
