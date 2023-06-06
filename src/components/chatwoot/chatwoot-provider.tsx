@@ -1,7 +1,7 @@
 import type { PropsWithChildren } from 'react';
 import { useEffect, useState, useContext } from 'react';
 import React, { createContext } from 'react';
-import type { Chatwoot, ChatwootSettings, ChatwootSDKParams } from 'src/utils/chatwoot/types';
+import type { Chatwoot, ChatwootSettings, ChatwootSDKParams, WindowChatwoot } from 'src/utils/chatwoot/types';
 import { clientLogger } from 'src/utils/logger-client';
 
 const ChatWootContext = createContext<Chatwoot | null>(null);
