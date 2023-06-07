@@ -96,7 +96,7 @@ export const prepareFetchCreatorsFiltered = ({
             },
             actions: [{ filter: 'relevance', action: 'must' }],
         },
-        sort: { field: 'followers', direction: 'desc' },
+        sort: { field: 'relevance', direction: 'desc' },
         audience_source: 'any',
     };
 

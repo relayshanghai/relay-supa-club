@@ -38,7 +38,7 @@ describe('prepareFetchCreatorsFiltered', () => {
                 audience_geo: [],
                 geo: [],
             },
-            sort: { field: 'followers', direction: 'desc' },
+            sort: { field: 'relevance', direction: 'desc' },
             audience_source: 'any',
         });
     });
