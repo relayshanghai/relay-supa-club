@@ -17,6 +17,7 @@ import { clientLogger } from 'src/utils/logger-client';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import type { CampaignDB } from 'src/utils/api/db';
+import { Modal } from 'src/components/modal';
 // interface ExistingFile {
 //     name: string; // use to delete
 //     url: string; // use to display
@@ -186,46 +187,48 @@ export default function CampaignForm() {
     return (
         <Layout>
             <div className="container mx-auto max-w-5xl p-6">
-                <FormProvider {...methods}>
-                    <form onSubmit={handleSubmit(onSubmit)} className="mt-4">
-                        {questions.map((q) => {
-                            return (
-                                <FormWrapper
-                                    key={q.fieldName}
-                                    isRequired={q.isRequired}
-                                    title={t(q.title)}
-                                    desc={t(q.desc)}
-                                >
-                                    {q.type === 'textInput' && (
-                                        <TextInput
-                                            fieldName={q.fieldName}
-                                            register={register}
-                                            errors={errors}
-                                            isRequired={q.isRequired}
-                                        />
-                                    )}
+                <Modal maxWidth="max-w-lg" visible={true} onClose={() => null}>
+                    <FormProvider {...methods}>
+                        <form onSubmit={handleSubmit(onSubmit)} className="mt-4">
+                            {questions.map((q) => {
+                                return (
+                                    <FormWrapper
+                                        key={q.fieldName}
+                                        isRequired={q.isRequired}
+                                        title={t(q.title)}
+                                        desc={t(q.desc)}
+                                    >
+                                        {q.type === 'textInput' && (
+                                            <TextInput
+                                                fieldName={q.fieldName}
+                                                register={register}
+                                                errors={errors}
+                                                isRequired={q.isRequired}
+                                            />
+                                        )}
 
-                                    {q.type === 'media' && (
-                                        <MediaUploader
-                                            media={media}
-                                            setMedia={setMedia}
-                                            previousMedia={previousMedia}
-                                            setPreviousMedia={setPreviousMedia}
-                                            setPurgedMedia={setPurgedMedia}
-                                        />
-                                    )}
-                                </FormWrapper>
-                            );
-                        })}
+                                        {q.type === 'media' && (
+                                            <MediaUploader
+                                                media={media}
+                                                setMedia={setMedia}
+                                                previousMedia={previousMedia}
+                                                setPreviousMedia={setPreviousMedia}
+                                                setPurgedMedia={setPurgedMedia}
+                                            />
+                                        )}
+                                    </FormWrapper>
+                                );
+                            })}
 
-                        <div className="buttons mt-8 flex justify-end border-t border-gray-100 pt-6">
-                            <div onClick={goBack} className="btn btn-secondary ">
-                                {t('campaigns.form.cancel')}
+                            <div className="buttons mt-8 flex justify-end border-t border-gray-100 pt-6">
+                                <div onClick={goBack} className="btn btn-secondary ">
+                                    {t('campaigns.form.cancel')}
+                                </div>
+                                {renderButton}
                             </div>
-                            {renderButton}
-                        </div>
-                    </form>
-                </FormProvider>
+                        </form>
+                    </FormProvider>
+                </Modal>
             </div>
         </Layout>
     );
