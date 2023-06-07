@@ -33,7 +33,7 @@ export const CreatorPage = ({ creator_id, platform }: { creator_id: string; plat
 
         if (allCampaignCreators) {
             for (const campaignCreator of allCampaignCreators) {
-                if (campaignCreator?.campaign_id && selectedCreatorUserId) {
+                if (campaignCreator.campaign_id) {
                     if (campaignCreator.creator_id === selectedCreatorUserId) {
                         isAlreadyInCampaign = true;
                         break;
