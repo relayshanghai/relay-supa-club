@@ -43,10 +43,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
                 const { error: recordError } = await recordReportUsage(company_id, user_id, creator_id);
                 if (recordError) {
+                    serverLogger(recordError, 'error');
                     return res.status(httpCodes.BAD_REQUEST).json({ error: recordError });
                 }
 
-                await catchInfluencer(data);
+                try {
+                    await catchInfluencer(data);
+                } catch (error) {
+                    serverLogger(error, 'error');
+                }
 
                 return res.status(httpCodes.OK).json({ ...data, createdAt });
             } catch (error) {
