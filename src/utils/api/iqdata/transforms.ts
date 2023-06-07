@@ -96,9 +96,13 @@ export const prepareFetchCreatorsFiltered = ({
             },
             actions: [{ filter: 'relevance', action: 'must' }],
         },
-        sort: { field: 'relevance', direction: 'desc' },
+        sort: { field: 'followers', direction: 'desc' },
         audience_source: 'any',
     };
+
+    if (tagsValue.length > 0) {
+        body.sort.field = 'relevance';
+    }
 
     if (gender) {
         body.filter.gender = genderTransform(gender);
