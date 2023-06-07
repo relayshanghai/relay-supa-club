@@ -1,18 +1,14 @@
 /* eslint-disable no-console */
 import { Layout } from 'src/components/layout';
 import { useTranslation } from 'react-i18next';
-import type { FieldErrorsImpl, Control, FieldValues } from 'react-hook-form';
 import { useForm, FormProvider } from 'react-hook-form';
 import FormWrapper from 'src/components/common/Form/FormWrapper/FormWrapper';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 
-// import dateFormat from 'src/utils//dateFormat';
 import MediaUploader from 'src/components/campaigns/MediaUploader';
-import CurrencyInput from 'src/components/campaigns/CurrencyInput';
 import toast from 'react-hot-toast';
-import { MultiSelect, DatePicker, Checkbox, TextInput, TextareaInput as TextArea } from 'src/components/ui';
-import type { Question, TimelineQuestion } from 'src/components/campaigns/helper';
+import { TextInput } from 'src/components/ui';
 import { questions } from 'src/components/campaigns/helper';
 import { useCampaigns } from 'src/hooks/use-campaigns';
 import { useCallback } from 'react';
@@ -21,43 +17,6 @@ import { clientLogger } from 'src/utils/logger-client';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import type { CampaignDB } from 'src/utils/api/db';
-
-const TimelineInput = ({
-    q,
-    errors,
-    control,
-}: {
-    q: Question;
-    errors: Partial<
-        FieldErrorsImpl<{
-            [x: string]: any;
-        }>
-    >;
-    control: Control<FieldValues>;
-}) => {
-    const { t } = useTranslation();
-
-    const timeline = q as unknown as TimelineQuestion;
-    return (
-        <div className="flex flex-col">
-            <DatePicker
-                fieldName={timeline.fieldName_start}
-                errors={errors}
-                control={control}
-                label={t(timeline.label_start)}
-                isRequired={q.isRequired}
-            />
-            <DatePicker
-                fieldName={timeline.fieldName_end}
-                errors={errors}
-                control={control}
-                label={t(timeline.label_end)}
-                isRequired={q.isRequired}
-            />
-        </div>
-    );
-};
-
 // interface ExistingFile {
 //     name: string; // use to delete
 //     url: string; // use to display
@@ -76,9 +35,9 @@ export default function CampaignForm() {
     const {
         register,
         handleSubmit,
-        control,
+
         reset,
-        setValue,
+
         formState: { errors },
     } = useForm();
     const methods = useForm();
@@ -245,15 +204,7 @@ export default function CampaignForm() {
                                             isRequired={q.isRequired}
                                         />
                                     )}
-                                    {q.type === 'textArea' && (
-                                        <TextArea
-                                            fieldName={q.fieldName}
-                                            register={register}
-                                            errors={errors}
-                                            isRequired={q.isRequired}
-                                            placeHolder={q.placeholder}
-                                        />
-                                    )}
+
                                     {q.type === 'media' && (
                                         <MediaUploader
                                             media={media}
@@ -261,39 +212,6 @@ export default function CampaignForm() {
                                             previousMedia={previousMedia}
                                             setPreviousMedia={setPreviousMedia}
                                             setPurgedMedia={setPurgedMedia}
-                                        />
-                                    )}
-
-                                    {q.type === 'multiSelect' && (
-                                        <MultiSelect
-                                            fieldName={q.fieldName}
-                                            errors={errors}
-                                            isRequired
-                                            control={control}
-                                            options={q.options || []}
-                                            placeholder={t(q.placeholder ?? '') || ''}
-                                            defaultValue={undefined}
-                                            setValue={setValue}
-                                        />
-                                    )}
-                                    {q.type === 'currencyInput' && (
-                                        <CurrencyInput
-                                            register={register}
-                                            errors={errors}
-                                            isRequired
-                                            control={control}
-                                            setValue={setValue}
-                                            defaultValue="USD"
-                                        />
-                                    )}
-                                    {q.type === 'timeline' && <TimelineInput q={q} errors={errors} control={control} />}
-                                    {q.type === 'checkbox' && (
-                                        <Checkbox
-                                            fieldName={q.fieldName}
-                                            register={register}
-                                            errors={errors}
-                                            isRequired
-                                            options={q.options || []}
                                         />
                                     )}
                                 </FormWrapper>
