@@ -77,11 +77,26 @@ const Switches = () => {
     );
 };
 
+const ProgressBars = () => {
+    return (
+        <div className="m-5">
+            <h2 className="text-lg font-bold"> Progress Bars</h2>
+            <p>default, labeled, height options, </p>
+            <div className="m-5 flex flex-col space-y-3 bg-slate-100 p-5">
+                <library.Progress height="small" percentage={20} />
+                <library.Progress height="medium" percentage={30} label="30%" />
+                <library.Progress height="large" percentage={50} label="50%" />
+            </div>
+        </div>
+    );
+};
+
 const LibraryPage = () => (
     <>
         <Badges />
         <Tooltips />
         <Switches />
+        <ProgressBars />
     </>
 );
 
