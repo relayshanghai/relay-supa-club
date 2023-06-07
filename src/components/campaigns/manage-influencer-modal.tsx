@@ -12,6 +12,7 @@ import { useCallback } from 'react';
 import { useState } from 'react';
 import { Button } from '../button';
 import { CreatorContacts } from './creator-contacts';
+import { Tooltip } from '../library';
 
 const statusOptions: { label: string; value: InfluencerOutreachStatus }[] = [
     { label: 'toContact', value: 'to contact' },
@@ -293,14 +294,19 @@ const SmallButtonsSection = ({
                 >
                     {t('campaigns.show.notes')}
                 </button>
-
-                <button
-                    data-testid="show-move-influencer"
-                    onClick={() => openMoveInfluencerModal(creator)}
-                    className={smallButtonClass}
+                <Tooltip
+                    content={t('campaigns.show.moveInfluencer')}
+                    detail={t('campaigns.show.moveInfluencerDescr')}
+                    position="bottom-left"
                 >
-                    <ArrowRightOnRectangle className="h-4 w-4 stroke-tertiary-600 " />
-                </button>
+                    <button
+                        data-testid="show-move-influencer"
+                        onClick={() => openMoveInfluencerModal(creator)}
+                        className={smallButtonClass}
+                    >
+                        <ArrowRightOnRectangle className="h-4 w-4 stroke-tertiary-600 " />
+                    </button>
+                </Tooltip>
 
                 <button
                     data-testid="delete-influencer"
