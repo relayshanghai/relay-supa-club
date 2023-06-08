@@ -1,24 +1,13 @@
 import type { UsageType } from 'types';
 import type { FetchCreatorsFilteredParams } from './api/iqdata/transforms';
+import type { CompanyDB } from 'src/utils/api/db';
+import type { SubscriptionGetResponse } from 'pages/api/subscriptions';
+import { unixEpochToISOString } from './utils';
+import { clientLogger } from './logger-client';
 
 export type SimpleUsage = {
     type: UsageType;
     created_at: string | null;
-};
-
-/** gets all usages between the start and end date */
-export const getPeriodUsages = (usages: SimpleUsage[], periodStart: Date, periodEnd: Date) => {
-    if (!usages) {
-        return [];
-    }
-    const currentPeriodUsages = usages.filter(({ created_at }) => {
-        if (!created_at) {
-            return false;
-        }
-        const createdAt = new Date(created_at);
-        return createdAt >= periodStart && createdAt <= periodEnd;
-    });
-    return currentPeriodUsages;
 };
 
 export function getCurrentMonthPeriod(
@@ -30,15 +19,19 @@ export function getCurrentMonthPeriod(
 } {
     const now = currentDate ?? new Date();
 
-    const monthsPassed =
-        (now.getFullYear() - subscriptionStartDate.getFullYear()) * 12 +
-        (now.getMonth() - subscriptionStartDate.getMonth());
+    const monthsPassed = now.getUTCMonth() - subscriptionStartDate.getUTCMonth();
+    const yearsPassed = now.getUTCFullYear() - subscriptionStartDate.getUTCFullYear();
 
     const thisMonthStartDate = new Date(subscriptionStartDate);
-    thisMonthStartDate.setMonth(thisMonthStartDate.getMonth() + monthsPassed);
+    thisMonthStartDate.setFullYear(subscriptionStartDate.getUTCFullYear() + yearsPassed);
+    thisMonthStartDate.setMonth(subscriptionStartDate.getUTCMonth() + monthsPassed);
+    // if we are already past the day(date) the subscription started, we need to start the period from the previous month
+    if (subscriptionStartDate.getDate() >= now.getDate()) {
+        thisMonthStartDate.setMonth(thisMonthStartDate.getUTCMonth() - 1);
+    }
 
     const thisMonthEndDate = new Date(thisMonthStartDate);
-    thisMonthEndDate.setMonth(thisMonthEndDate.getMonth() + 1);
+    thisMonthEndDate.setMonth(thisMonthEndDate.getUTCMonth() + 1);
 
     return { thisMonthStartDate, thisMonthEndDate };
 }
@@ -64,4 +57,29 @@ export const hasCustomSearchParams = (params: FetchCreatorsFilteredParams) => {
         }
     }
     return false;
+};
+
+export const checkStripeAndDatabaseMatch = (company?: CompanyDB, subscription?: SubscriptionGetResponse) => {
+    const periodStart = unixEpochToISOString(subscription?.current_period_start);
+
+    const currentMonth = periodStart
+        ? getCurrentMonthPeriod(new Date(periodStart))
+        : { thisMonthStartDate: undefined, thisMonthEndDate: undefined };
+    const thisMonthStartDate = currentMonth.thisMonthStartDate;
+    const thisMonthEndDate = currentMonth.thisMonthEndDate;
+    // company?.subscription_current_period_start and end are updated when we detect current period has ended (in utils/api/db/usages), we query stripe and update the company
+    if (company?.subscription_current_period_start && thisMonthStartDate && thisMonthEndDate) {
+        // a debug, just to warn a developer if these aren't matching, maybe there is something wrong with the data
+        const { thisMonthStartDate: companyThisMonthStartDate, thisMonthEndDate: companyThisMonthEndDate } =
+            getCurrentMonthPeriod(new Date(company?.subscription_current_period_start));
+        if (
+            companyThisMonthStartDate.toISOString() !== thisMonthStartDate.toISOString() ||
+            companyThisMonthEndDate.toISOString() !== thisMonthEndDate.toISOString()
+        ) {
+            clientLogger(
+                `Company subscription this month period start/end does not match subscription this month period start/end. companyPeriodStart ${companyThisMonthStartDate.toISOString()} periodStart ${thisMonthStartDate.toISOString()}companyPeriodEnd ${companyThisMonthEndDate.toISOString()} periodEnd ${thisMonthEndDate.toISOString()}`,
+                'warn',
+            );
+        }
+    }
 };

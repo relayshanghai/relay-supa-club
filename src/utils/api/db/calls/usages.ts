@@ -231,7 +231,7 @@ export const getUsagesByCompany = async (companyId: string, startDate?: string, 
         .from('usages')
         .select('type, created_at')
         .eq('company_id', companyId)
-        .gte('created_at', startDate)
+        .gt('created_at', startDate)
         .lte('created_at', endDate);
     if (error) {
         throw new Error(error.message);
