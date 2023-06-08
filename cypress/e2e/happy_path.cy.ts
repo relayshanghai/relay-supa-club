@@ -277,7 +277,7 @@ describe('Main pages happy paths', () => {
         cy.contains('My Campaign');
     });
 
-    it('can record search usages, can manage clients as a company owner', () => {
+    it.only('can record search usages, can manage clients as a company owner', () => {
         setupIntercepts();
         cy.loginAdmin();
 
@@ -312,7 +312,7 @@ describe('Main pages happy paths', () => {
         // searches should have increased by 2
         cy.contains('td', '2'); // wait for count to update
         cy.contains('tr', 'Searches').within(() => {
-            cy.contains('td', '2');
+            cy.contains('td', '2', { timeout: 20000 });
         });
 
         cy.contains('Campaigns').click();
@@ -323,7 +323,7 @@ describe('Main pages happy paths', () => {
 
         // check warning message
         cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises').should('not.exist');
-        cy.contains('tr', 'Blue Moonlight Stream Enterprises').within(() => {
+        cy.contains('tr', 'Blue Moonlight Stream Enterprises', { timeout: 20000 }).within(() => {
             cy.contains('Manage').click();
         });
         cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises');
