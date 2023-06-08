@@ -34,32 +34,46 @@ export const setupIntercepts = () => {
     cy.intercept('/api/creators/report*', (req) => {
         req.reply({ body: cocomelon });
     });
-    cy.intercept('/api/influencer-search*', async (req) => {
+    cy.intercept('/api/influencer-search*', (req) => {
         const body: InfluencerPostRequest = req.body;
+        const justNow = new Date();
+        justNow.setTime(now.getTime() - 1000);
         const usage: UsagesDBInsert = {
             company_id: body.company_id,
             user_id: body.user_id,
             type: 'search',
             item_id: ulid(),
-            created_at: new Date().toISOString(),
+            created_at: justNow.toISOString(),
         };
         if (body.username === 'GRTR') {
-            await supabase.from('usages').insert(usage);
-            req.reply({
-                body: influencerSearch,
-            });
+            return supabase
+                .from('usages')
+                .insert(usage)
+                .then(() => {
+                    req.reply({
+                        body: influencerSearch,
+                    });
+                });
         } else if (body.tags && body.tags[0]?.tag === 'alligators') {
-            await supabase.from('usages').insert(usage);
-            req.reply({
-                body: keywordSearch,
-            });
+            return supabase
+                .from('usages')
+                .insert(usage)
+                .then(() => {
+                    req.reply({
+                        body: keywordSearch,
+                    });
+                });
         } else if (body.tags && body.tags[0]?.tag === 'monkeys') {
-            await supabase.from('usages').insert(usage);
-            req.reply({
-                body: keywordSearchMonkeys,
-            });
+            return supabase
+                .from('usages')
+                .insert(usage)
+                .then(() => {
+                    req.reply({
+                        body: keywordSearchMonkeys,
+                    });
+                });
         } else {
-            req.reply({
+            return req.reply({
                 body: defaultLandingPageInfluencerSearch,
             });
         }
