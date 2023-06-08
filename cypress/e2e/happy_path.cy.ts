@@ -310,9 +310,9 @@ describe('Main pages happy paths', () => {
         cy.contains('https://relay.club');
 
         // searches should have increased by 2
-        cy.contains('td', '2'); // wait for count to update
+        cy.contains('td', '2', { timeout: 20000 }); // wait for count to update
         cy.contains('tr', 'Searches').within(() => {
-            cy.contains('td', '2', { timeout: 20000 });
+            cy.contains('td', '2');
         });
 
         cy.contains('Campaigns').click();
