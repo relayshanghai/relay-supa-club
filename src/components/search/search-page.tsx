@@ -157,7 +157,7 @@ export const SearchPageInner = () => {
                 show={showAlreadyAddedModal}
                 setCampaignListModal={setShowCampaignListModal}
                 setShow={setShowAlreadyAddedModal}
-                selectedCreator={selectedCreator}
+                selectedCreatorUserId={selectedCreator?.account.user_profile.user_id}
                 campaigns={campaigns}
                 allCampaignCreators={allCampaignCreators}
             />
