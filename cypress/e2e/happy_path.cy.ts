@@ -89,7 +89,7 @@ describe('Main pages happy paths', () => {
         setupIntercepts();
 
         cy.loginTestUser();
-        cy.contains('Account').click();
+        cy.contains('My Account').click();
         cy.contains('Subscription', { timeout: 10000 }); // loads account page
 
         cy.url().should('include', `/account`);
@@ -277,14 +277,14 @@ describe('Main pages happy paths', () => {
         setupIntercepts();
         cy.loginAdmin();
 
-        cy.contains('Account').click();
+        cy.contains('My Account').click();
         cy.contains('https://relay.club', { timeout: 20000 });
         cy.contains('https://blue-moonlight-stream.com').should('not.exist');
         cy.contains('tr', 'Searches').within(() => {
             cy.contains('td', '0');
         });
 
-        cy.contains('Influencers').click();
+        cy.contains('Discover').click();
         cy.contains('button', 'Search');
 
         // rack up 2 searches
@@ -302,7 +302,7 @@ describe('Main pages happy paths', () => {
         cy.getByTestId('search-spinner').should('not.exist');
         cy.contains('button', 'Search').click();
 
-        cy.contains('Account').click();
+        cy.contains('My Account').click();
         cy.contains('https://relay.club');
 
         // searches should have increased by 2
@@ -332,7 +332,7 @@ describe('Main pages happy paths', () => {
         cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises'); // check that warning persists
 
         // can see client's search totals
-        cy.contains('Account').click();
+        cy.contains('My Account').click();
         cy.contains('https://blue-moonlight-stream.com', { timeout: 20000 });
         cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises'); // check that warning persists
         cy.contains('tr', 'Searches').within(() => {
@@ -340,7 +340,7 @@ describe('Main pages happy paths', () => {
         });
 
         // rack up 1 search
-        cy.contains('Influencers').click();
+        cy.contains('Discover').click();
         cy.contains('button', 'Search');
         cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises'); // check that warning persists
         cy.getByTestId('search-topics').within(() => {
@@ -351,7 +351,7 @@ describe('Main pages happy paths', () => {
         cy.contains('button', 'Search').click();
 
         // Check that search total increased
-        cy.contains('Account').click();
+        cy.contains('My Account').click();
         cy.contains('https://blue-moonlight-stream.com');
         cy.contains('td', '1'); // wait for count to update
         cy.contains('tr', 'Searches').within(() => {
@@ -365,7 +365,7 @@ describe('Main pages happy paths', () => {
         cy.contains('Close', { timeout: 1000 }).click();
         cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises').should('not.exist');
 
-        cy.contains('Account').click();
+        cy.contains('My Account').click();
         cy.contains('https://blue-moonlight-stream.com').should('not.exist');
         cy.contains('https://relay.club');
     });
@@ -439,4 +439,4 @@ describe('Main pages happy paths', () => {
 });
 
 // Need to export an empty object to keep typescript happy. Otherwise, it will complain that the file is a module, but it has no imports or exports.
-export {};
+export { };
