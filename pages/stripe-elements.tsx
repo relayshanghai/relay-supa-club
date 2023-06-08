@@ -164,8 +164,11 @@ const CheckoutForm = () => {
                 </div>
                 <form onSubmit={handleSubmit}>
                     <PaymentElement />
-                    <Button disabled={loading || !prices.quarterly.diyMax || !stripe || !elements}>
-                        {loading ? <Spinner className="h-5 w-5 fill-primary-600 text-white" /> : 'Submit Payment'}
+                    <Button
+                        disabled={loading || !prices.quarterly.diyMax || !stripe || !elements}
+                        className="mt-10 w-full"
+                    >
+                        {loading ? <Spinner className="h-5 w-5 fill-primary-600 text-white" /> : 'Activate Trial'}
                     </Button>
                     {errorMessage && <div>{errorMessage}</div>}
                 </form>
