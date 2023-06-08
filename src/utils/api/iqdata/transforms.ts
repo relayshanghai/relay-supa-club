@@ -100,6 +100,10 @@ export const prepareFetchCreatorsFiltered = ({
         audience_source: 'any',
     };
 
+    if (tagsValue.length > 0) {
+        body.sort.field = 'relevance';
+    }
+
     if (gender) {
         body.filter.gender = genderTransform(gender);
     }
