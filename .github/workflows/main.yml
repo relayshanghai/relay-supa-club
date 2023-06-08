@@ -36,7 +36,8 @@ jobs:
         env:
             SUPABASE_SCANNER_BUFFER_SIZE: 5mb
 
-        runs-on: ubuntu-22.04
+        runs-on:
+            group: large-runner
         steps:
             - uses: actions/checkout@v3
 
