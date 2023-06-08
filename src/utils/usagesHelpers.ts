@@ -20,23 +20,23 @@ export function getCurrentMonthPeriod(
     const now = currentDate ?? new Date();
 
     const yearsPassed = now.getUTCFullYear() - subscriptionStartDate.getUTCFullYear();
-    const monthsPassed = yearsPassed * 12 + now.getUTCMonth() - subscriptionStartDate.getUTCMonth();
+    const monthsPassed = now.getUTCMonth() - subscriptionStartDate.getUTCMonth();
 
     const thisMonthStartDate = new Date(subscriptionStartDate);
 
-    now.getFullYear() - subscriptionStartDate.getFullYear();
+    now.getUTCFullYear() - subscriptionStartDate.getUTCFullYear();
     thisMonthStartDate.setUTCFullYear(subscriptionStartDate.getUTCFullYear() + yearsPassed);
     thisMonthStartDate.setUTCMonth(subscriptionStartDate.getUTCMonth() + monthsPassed);
-    // set the date time to midnight of that day
-    thisMonthStartDate.setUTCHours(0, 0, 0, 0);
     // if we are already past the day(date) the subscription started, we need to start the period from the previous month
     if (subscriptionStartDate.getUTCDate() >= now.getUTCDate()) {
         thisMonthStartDate.setUTCMonth(thisMonthStartDate.getUTCMonth() - 1);
     }
+    // set the date time to midnight of that day
+    thisMonthStartDate.setUTCHours(0, 0, 0, 0);
 
     const thisMonthEndDate = new Date(thisMonthStartDate);
     thisMonthEndDate.setUTCMonth(thisMonthEndDate.getUTCMonth() + 1);
-
+    thisMonthEndDate.setUTCHours(0, 0, 0, 0);
     return { thisMonthStartDate, thisMonthEndDate };
 }
 
