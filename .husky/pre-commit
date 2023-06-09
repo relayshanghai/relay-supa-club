@@ -22,4 +22,4 @@ if ! command -v sqlfluff >/dev/null 2>&1; then
 fi
 
 # verify formatting
-npx lint-staged --verbose --shell "/bin/bash"
+npx lint-staged --verbose
