@@ -6,8 +6,8 @@ type CampaignCreatorUpdate = DatabaseWithCustomTypes['public']['Tables']['campai
 
 export const getCampaignCreator =
     (db: SupabaseClient<DatabaseWithCustomTypes>) =>
-    async (id: string): Promise<CampaignCreatorDB> => {
-        const response = await db.from('campaign_creators').select().eq('id', id).single();
+    async (id: string): Promise<CampaignCreatorDB | null> => {
+        const response = await db.from('campaign_creators').select().eq('id', id).maybeSingle();
 
         if (response.error) {
             throw response.error;
