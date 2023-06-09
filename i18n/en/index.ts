@@ -8,6 +8,7 @@ import pricing from './pricing';
 import aiEmailGenerator from './ai-email-generator';
 import usages from './usages';
 import performance from './performance';
+import signup from './signup';
 
 const translations = {
     translation: {
@@ -21,6 +22,7 @@ const translations = {
         aiEmailGenerator,
         usages,
         performance,
+        signup,
     },
 };
 export default translations;

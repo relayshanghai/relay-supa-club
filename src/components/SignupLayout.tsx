@@ -9,14 +9,14 @@ interface LayoutProps {
 
 export const LoginSignupLayout = (props: LayoutProps) => {
     return (
-        <div className="container flex h-screen">
-            <div className=" invisible bg-primary-500 md:visible md:flex-1">{props.left}</div>
-            <div className="flex flex-1 flex-col">
-                <div className="mb-20 flex items-center justify-between">
+        <div className="flex h-screen">
+            <div className="h-full w-0 bg-primary-500 md:w-1/2">{props.left}</div>
+            <div className="flex h-full w-full flex-col md:w-1/2">
+                <div className="mb-20 flex items-center justify-between p-5">
                     <Title />
                     <LanguageToggle />
                 </div>
-                <div>{props.right}</div>
+                <div className="flex flex-col items-center justify-center">{props.right}</div>
             </div>
         </div>
     );
