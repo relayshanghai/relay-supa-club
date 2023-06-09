@@ -15,11 +15,11 @@ export { cocomelon, defaultLandingPageInfluencerSearch };
 export const cocomelonId = cocomelon.user_profile.user_id;
 
 const now = new Date();
-const twoMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 2, now.getDate());
-const oneMonthFromNow = new Date(now.getFullYear(), now.getMonth() + 1, now.getDate());
+const twoMonthsAgo = new Date(now.getUTCFullYear(), now.getUTCMonth() - 2, now.getUTCDate());
+const oneMonthFromNow = new Date(now.getUTCFullYear(), now.getUTCMonth() + 1, now.getUTCDate());
 
-const resetUsages = async (supabase: SupabaseClient<DatabaseWithCustomTypes>) => {
-    await supabase.from('usages').delete().neq('created_at', new Date(0).toISOString());
+const resetUsages = (supabase: SupabaseClient<DatabaseWithCustomTypes>) => {
+    supabase.from('usages').delete().neq('created_at', new Date(0).toISOString());
 };
 
 export const setupIntercepts = () => {
@@ -34,32 +34,47 @@ export const setupIntercepts = () => {
     cy.intercept('/api/creators/report*', (req) => {
         req.reply({ body: cocomelon });
     });
-    cy.intercept('/api/influencer-search*', async (req) => {
+    cy.intercept('/api/influencer-search*', (req) => {
         const body: InfluencerPostRequest = req.body;
+        const justNow = new Date(); // lets do 18 hours ago to be safe if the test is running in another timezone
+        const eighteenHours = 18 * 60 * 60 * 1000;
+        justNow.setTime(now.getTime() - eighteenHours);
         const usage: UsagesDBInsert = {
             company_id: body.company_id,
             user_id: body.user_id,
             type: 'search',
             item_id: ulid(),
-            created_at: new Date().toISOString(),
+            created_at: justNow.toISOString(),
         };
         if (body.username === 'GRTR') {
-            await supabase.from('usages').insert(usage);
-            req.reply({
-                body: influencerSearch,
-            });
+            return supabase
+                .from('usages')
+                .insert(usage)
+                .then(() => {
+                    req.reply({
+                        body: influencerSearch,
+                    });
+                });
         } else if (body.tags && body.tags[0]?.tag === 'alligators') {
-            await supabase.from('usages').insert(usage);
-            req.reply({
-                body: keywordSearch,
-            });
+            return supabase
+                .from('usages')
+                .insert(usage)
+                .then(() => {
+                    req.reply({
+                        body: keywordSearch,
+                    });
+                });
         } else if (body.tags && body.tags[0]?.tag === 'monkeys') {
-            await supabase.from('usages').insert(usage);
-            req.reply({
-                body: keywordSearchMonkeys,
-            });
+            return supabase
+                .from('usages')
+                .insert(usage)
+                .then(() => {
+                    req.reply({
+                        body: keywordSearchMonkeys,
+                    });
+                });
         } else {
-            req.reply({
+            return req.reply({
                 body: defaultLandingPageInfluencerSearch,
             });
         }
@@ -152,6 +167,40 @@ export const setupIntercepts = () => {
                 type: 'card',
             },
         ],
+    });
+    cy.intercept('/api/subscriptions/prices', {
+        body: {
+            diy: {
+                currency: 'usd',
+                prices: {
+                    monthly: '150.00',
+                    quarterly: '297.00',
+                    annually: '1068.00',
+                },
+                profiles: '200',
+                searches: '2500',
+                priceIds: {
+                    monthly: 'price_1LwffoF5PN4woVWob7yJToHj',
+                    quarterly: 'price_1LwffoF5PN4woVWoyRKbIMNh',
+                    annually: 'price_1LwffoF5PN4woVWoduBnXnJ8',
+                },
+            },
+            diyMax: {
+                currency: 'usd',
+                prices: {
+                    monthly: '270.00',
+                    quarterly: '660.00',
+                    annually: '2388.00',
+                },
+                profiles: '450',
+                searches: '5000',
+                priceIds: {
+                    monthly: 'price_1LwfcmF5PN4woVWoDElUtab4',
+                    quarterly: 'price_1LwfcnF5PN4woVWoHVSSEvWJ',
+                    annually: 'price_1LwfcnF5PN4woVWolz3tTxzc',
+                },
+            },
+        },
     });
 };
 

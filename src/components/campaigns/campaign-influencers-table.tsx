@@ -108,7 +108,12 @@ export default function CampaignInfluencersTable({
 
     useEffect(() => {
         if (campaignCreators) {
-            setInfluencersList(campaignCreators);
+            setInfluencersList(
+                campaignCreators.sort((a: CampaignCreatorDB, b: CampaignCreatorDB) => {
+                    if (!a.updated_at || !b.updated_at) return 0;
+                    return a.updated_at < b.updated_at ? 1 : -1;
+                }),
+            );
         }
     }, [campaignCreators]);
 
@@ -203,7 +208,10 @@ export default function CampaignInfluencersTable({
             {/* Outreach Tabs */}
             <div className="mb-4 flex overflow-x-auto">
                 <Link href="/dashboard" legacyBehavior>
-                    <div className="mr-4 flex-shrink-0 cursor-pointer rounded-md bg-gray-100 px-4 py-2 text-xs text-gray-600 duration-300 hover:bg-primary-500 hover:text-white">
+                    <div
+                        onClick={() => trackEvent('Campaign Management, click on add new influencer')}
+                        className="mr-4 flex-shrink-0 cursor-pointer rounded-md bg-gray-100 px-4 py-2 text-xs text-gray-600 duration-300 hover:bg-primary-500 hover:text-white"
+                    >
                         <a>{t('campaigns.show.activities.outreach.addNewInfluencer')}</a>
                     </div>
                 </Link>
@@ -261,12 +269,10 @@ export default function CampaignInfluencersTable({
                 <table className="w-full table-auto divide-y divide-gray-200 overflow-y-visible bg-white ">
                     <thead>
                         <tr>
-                            {visibleColumns.map((column, index) => (
+                            {visibleColumns.map((column) => (
                                 <th
                                     key={column.header}
-                                    className={`  whitespace-nowrap bg-white px-6 py-3 text-left text-xs font-normal tracking-wider text-gray-500 ${
-                                        index === 0 ? ' sticky left-0 z-10' : index === -1 ? ' sticky right-0 z-20' : ''
-                                    }`}
+                                    className="whitespace-nowrap bg-white px-6 py-3 text-left text-xs font-normal tracking-wider text-gray-500"
                                 >
                                     {t(`campaigns.show.${column.header}`)}
                                 </th>

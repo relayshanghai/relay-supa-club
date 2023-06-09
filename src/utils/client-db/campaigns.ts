@@ -34,7 +34,9 @@ export const createCampaignCall =
                 company_id: companyId,
                 ...input,
                 status: 'not started',
+                description: input.description || '', // is not-null in db
                 slug: input.name.toLowerCase().replace(/ /g, '-'),
+                updated_at: new Date().toISOString(),
             })
             .eq('company_id', companyId)
             .select()
@@ -55,6 +57,7 @@ export const updateCampaignCall =
             .from('campaigns')
             .update({
                 ...rest,
+                updated_at: new Date().toISOString(),
             })
             .eq('id', input.id)
             .select()

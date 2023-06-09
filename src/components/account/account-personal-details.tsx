@@ -9,6 +9,7 @@ import { clientLogger } from 'src/utils/logger-client';
 import { Button } from '../button';
 import { Edit } from '../icons';
 import { Input } from '../input';
+import { useRudderstack } from 'src/hooks/use-rudderstack';
 
 export const PersonalDetails = () => {
     const {
@@ -22,6 +23,7 @@ export const PersonalDetails = () => {
     });
     const { refreshCompany } = useCompany();
     const { loading: userDataLoading, profile, user, supabaseClient, updateProfile, refreshProfile } = useUser();
+    const { trackEvent } = useRudderstack();
 
     const [editMode, setEditMode] = useState(false);
     const [generatingResetEmail, setGeneratingResetEmail] = useState(false);
@@ -40,6 +42,7 @@ export const PersonalDetails = () => {
             });
             if (error) throw error;
             toast.success(t('login.resetPasswordEmailSent'));
+            trackEvent('Account, PersonalDetails, click on change password');
         } catch (error: any) {
             toast.error(error.message || t('login.oopsSomethingWentWrong'));
         }
@@ -68,6 +71,7 @@ export const PersonalDetails = () => {
             refreshCompany();
             toast.success(t('account.personal.profileUpdated'));
             setEditMode(false);
+            trackEvent('Account, PersonalDetails, update profile name');
         } catch (e) {
             clientLogger(e, 'error');
             toast.error(t('account.personal.oopsWentWrong'));
@@ -92,6 +96,7 @@ export const PersonalDetails = () => {
             );
             if (error) throw error;
             toast.success(t('account.personal.confirmationEmailSentToNewAddress'));
+            trackEvent('Account, PersonalDetails, update email');
         } catch (error: any) {
             clientLogger(error, 'error');
             toast.error(error?.message || t('account.personal.oopsWentWrong'));
@@ -180,7 +185,10 @@ export const PersonalDetails = () => {
                         userDataLoading ? 'opacity-75' : ''
                     }`}
                     disabled={userDataLoading}
-                    onClick={() => setEditMode(true)}
+                    onClick={() => {
+                        setEditMode(true);
+                        trackEvent('Account, PersonalDetails, click on Edit');
+                    }}
                     variant="secondary"
                 >
                     <Edit className="h-4 w-4 text-primary-500" />

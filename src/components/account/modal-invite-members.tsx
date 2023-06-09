@@ -8,6 +8,7 @@ import { hasCustomError } from 'src/utils/errors';
 import { Button } from '../button';
 import { Input } from '../input';
 import { Modal } from '../modal';
+import { useRudderstack } from 'src/hooks/use-rudderstack';
 
 export const InviteMembersModal = ({
     showAddMoreMembers,
@@ -19,10 +20,12 @@ export const InviteMembersModal = ({
     createInvite: (email: string, companyOwner: boolean) => Promise<InvitesDB>;
 }) => {
     const { refreshCompany } = useCompany();
+    const { t } = useTranslation();
+    const { trackEvent } = useRudderstack();
+
     const [companyOwner, setCompanyOwner] = useState(false);
     const [inviteEmail, setInviteEmail] = useState('');
     const [submitting, setSubmitting] = useState(false);
-    const { t } = useTranslation();
     const handleSendInvite = async () => {
         try {
             setSubmitting(true);
@@ -31,6 +34,7 @@ export const InviteMembersModal = ({
             setShowAddMoreMembers(false);
             toast.success('Invite sent');
             refreshCompany();
+            trackEvent('Account, CompanyDetails, send invite');
         } catch (error: any) {
             if (hasCustomError(error, createInviteErrors)) {
                 toast.error(t(`login.${error.message}`));
@@ -61,7 +65,10 @@ export const InviteMembersModal = ({
                 <input
                     type="checkbox"
                     id="companyOwner"
-                    onChange={() => setCompanyOwner(!companyOwner)}
+                    onChange={() => {
+                        setCompanyOwner(!companyOwner);
+                        trackEvent('Account, CompanyDetails, mark an invited email as admin');
+                    }}
                     checked={companyOwner}
                 />
                 <label htmlFor="companyOwner" className="ml-2 text-sm">

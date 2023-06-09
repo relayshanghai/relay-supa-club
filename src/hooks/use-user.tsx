@@ -14,7 +14,6 @@ import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
 import type { DatabaseWithCustomTypes } from 'types';
 import { useClientDb } from 'src/utils/client-db/use-client-db';
-import { useCompany } from './use-company';
 
 export type SignupData = {
     email: string;
@@ -82,8 +81,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
     const { supabaseClient, getProfileById } = useClientDb();
     const getProfileController = useRef<AbortController | null>();
     const [loading, setLoading] = useState<boolean>(true);
-    const { identifyFromProfile } = useRudderstack();
-    const { company } = useCompany();
+    const { trackEvent, identifyFromProfile } = useRudderstack();
     useEffect(() => {
         setLoading(isLoading);
     }, [isLoading]);
@@ -117,12 +115,11 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
         return fetchedProfile;
     });
 
-    // identify user with RudderStack on profile change
     useEffect(() => {
-        if (profile && company) {
-            identifyFromProfile(profile, company);
+        if (profile && identifyFromProfile) {
+            identifyFromProfile(profile);
         }
-    }, [identifyFromProfile, profile, company]);
+    }, [identifyFromProfile, profile]);
 
     const login = async (email: string, password: string) => {
         setLoading(true);
@@ -133,6 +130,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
             });
 
             if (error) throw new Error(error.message || 'Unknown error');
+            trackEvent('Logged in', { email });
             return data;
         } catch (e: unknown) {
             clientLogger(e, 'error');
@@ -220,6 +218,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
         // cannot use router.push() here because it won't cancel in-flight requests which wil re-set the cookie
 
         window.location.href = email ? `/logout?${new URLSearchParams({ email })}` : '/logout';
+        trackEvent('Logged out', { email });
     };
 
     useEffect(() => {

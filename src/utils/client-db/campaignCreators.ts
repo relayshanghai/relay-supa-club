@@ -23,12 +23,15 @@ export const getCampaignCreatorsCall =
             .eq('campaign_id', campaignId);
 
         if (error) throw error;
+
         return data;
     };
 
 export const insertCampaignCreatorCall =
     (supabaseClient: SupabaseClient<DatabaseWithCustomTypes>) =>
     async (data: CampaignCreatorInsert): Promise<CampaignCreatorDB> => {
+        data.updated_at = new Date().toISOString();
+        data.created_at = new Date().toISOString();
         const { data: campaignCreator, error } = await supabaseClient
             .from('campaign_creators')
             .insert({
@@ -38,6 +41,12 @@ export const insertCampaignCreatorCall =
             .select()
             .single();
         if (error) throw error;
+
+        await supabaseClient
+            .from('campaigns')
+            .update({ updated_at: new Date().toISOString() })
+            .eq('id', data.campaign_id);
+
         return campaignCreator;
     };
 
@@ -45,6 +54,7 @@ export const updateCampaignCreatorCall =
     (supabaseClient: SupabaseClient<DatabaseWithCustomTypes>) =>
     async (data: CampaignCreatorDBUpdate): Promise<CampaignCreatorDBUpdate> => {
         const { id, ...rest } = data;
+        rest.updated_at = new Date().toISOString();
         const { data: campaignCreator, error } = await supabaseClient
             .from('campaign_creators')
             .update(rest)
@@ -52,6 +62,12 @@ export const updateCampaignCreatorCall =
             .select()
             .single();
         if (error) throw error;
+
+        await supabaseClient
+            .from('campaigns')
+            .update({ updated_at: new Date().toISOString() })
+            .eq('id', data.campaign_id);
+
         return campaignCreator;
     };
 
@@ -65,6 +81,9 @@ export const deleteCampaignCreatorCall =
             .eq('campaign_id', campaignId);
 
         if (error) throw error;
+
+        await supabaseClient.from('campaigns').update({ updated_at: new Date().toISOString() }).eq('id', campaignId);
+
         return campaignCreator;
     };
 

@@ -9,6 +9,7 @@ import { Sidebar } from 'src/components/sidebar';
 import { useUser } from 'src/hooks/use-user';
 import useOnOutsideClick from 'src/hooks/use-on-outside-click';
 import ClientRoleWarning from './search/client-role-warning';
+import { useRudderstack } from 'src/hooks/use-rudderstack';
 
 export const Layout = ({ children }: any) => {
     const { t } = useTranslation();
@@ -23,7 +24,7 @@ export const Layout = ({ children }: any) => {
     const accountMenuRef = useRef(null);
     const accountMenuButtonRef = useRef(null);
     useOnOutsideClick(accountMenuRef, () => setAccountMenuOpen(false), accountMenuButtonRef);
-
+    const { trackEvent } = useRudderstack();
     const [sideBarOpen, setSideBarOpen] = useState(true);
 
     return (
@@ -32,7 +33,10 @@ export const Layout = ({ children }: any) => {
             <div className="flex w-full max-w-full flex-col overflow-auto">
                 <div className="z-30 flex items-center justify-between bg-white shadow-sm shadow-gray-200">
                     <Button
-                        onClick={() => setSideBarOpen(!sideBarOpen)}
+                        onClick={() => {
+                            setSideBarOpen(!sideBarOpen);
+                            trackEvent('NavBar, Hamburger Menu Clicked');
+                        }}
                         variant="neutral"
                         className="flex items-center p-4 hover:text-primary-500"
                     >

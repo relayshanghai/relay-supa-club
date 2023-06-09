@@ -10,7 +10,7 @@ export const TitleSection = ({
     platform,
 }: {
     user_profile: CreatorReport['user_profile'];
-    onAddToCampaign: () => void;
+    onAddToCampaign: (selectedCreatorUserId: string) => void;
     platform: CreatorPlatform;
 }) => {
     const { t } = useTranslation();
@@ -41,7 +41,7 @@ export const TitleSection = ({
                     </a>
                 </div>
             </div>
-            <Button onClick={onAddToCampaign} className="my-6" variant="secondary">
+            <Button onClick={() => onAddToCampaign(user_profile.user_id)} className="my-6" variant="secondary">
                 {t('creators.show.addToCampaign')}
             </Button>
         </div>

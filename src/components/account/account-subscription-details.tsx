@@ -6,64 +6,38 @@ import { useSubscription } from 'src/hooks/use-subscription';
 import { useUsages } from 'src/hooks/use-usages';
 import { useUser } from 'src/hooks/use-user';
 import { buildSubscriptionPortalUrl } from 'src/utils/api/stripe/portal';
-import { clientLogger } from 'src/utils/logger-client';
-import { getCurrentMonthPeriod } from 'src/utils/usagesHelpers';
+import { getCurrentMonthPeriod, checkStripeAndDatabaseMatch } from 'src/utils/usagesHelpers';
 import { unixEpochToISOString } from 'src/utils/utils';
 
 import { Button } from '../button';
 import { Spinner } from '../icons';
 import { CancelSubscriptionModal } from './modal-cancel-subscription';
-import type { CompanyDB } from 'src/utils/api/db';
-
-const checkStripeAndDatabaseMatch = (
-    company?: CompanyDB,
-    thisMonthStartDate?: Date | null,
-    thisMonthEndDate?: Date | null,
-) => {
-    // company?.subscription_current_period_start and end are updated when we detect current period has ended (in utils/api/db/usages), we query stripe and update the company
-    if (company?.subscription_current_period_start && thisMonthStartDate && thisMonthEndDate) {
-        // a debug, just to warn a developer if these aren't matching, maybe there is something wrong with the data
-        const { thisMonthStartDate: companyThisMonthStartDate, thisMonthEndDate: companyThisMonthEndDate } =
-            getCurrentMonthPeriod(new Date(company?.subscription_current_period_start));
-        if (
-            companyThisMonthStartDate.toISOString() !== thisMonthStartDate.toISOString() ||
-            companyThisMonthEndDate.toISOString() !== thisMonthEndDate.toISOString()
-        ) {
-            clientLogger(
-                `Company subscription this month period start/end does not match subscription this month period start/end. companyPeriodStart ${companyThisMonthStartDate.toISOString()} periodStart ${thisMonthStartDate.toISOString()}companyPeriodEnd ${companyThisMonthEndDate.toISOString()} periodEnd ${thisMonthEndDate.toISOString()}`,
-                'warn',
-            );
-        }
-    }
-};
+import { useRudderstack } from 'src/hooks/use-rudderstack';
 
 export const SubscriptionDetails = () => {
     const { subscription } = useSubscription();
     const { company, refreshCompany } = useCompany();
     const { loading: userDataLoading } = useUser();
     const { t, i18n } = useTranslation();
+    const { trackEvent } = useRudderstack();
 
     const [showCancelModal, setShowCancelModal] = useState(false);
-    const handleCancelSubscription = async () => setShowCancelModal(true);
+    const handleCancelSubscription = async () => {
+        setShowCancelModal(true);
+        trackEvent('Account, Subscription, open cancel subscription modal');
+    };
+
+    checkStripeAndDatabaseMatch(company, subscription);
 
     // these we get from stripe directly
     // This is just the billing period, not the monthly 'usage' period
     const periodStart = unixEpochToISOString(subscription?.current_period_start);
     const periodEnd = unixEpochToISOString(subscription?.current_period_end);
 
-    const currentMonth = periodStart
-        ? getCurrentMonthPeriod(new Date(periodStart))
-        : { thisMonthStartDate: undefined, thisMonthEndDate: undefined };
-
-    const thisMonthStartDate = currentMonth.thisMonthStartDate;
-    const thisMonthEndDate = currentMonth.thisMonthEndDate;
-
     const { usages: currentMonthUsages, refreshUsages } = useUsages(
         true,
-        thisMonthStartDate ? thisMonthStartDate.toISOString() : undefined,
-        thisMonthEndDate ? thisMonthEndDate.toISOString() : undefined,
+        periodStart ? getCurrentMonthPeriod(new Date(periodStart)) : undefined,
     );
-    checkStripeAndDatabaseMatch(company, thisMonthStartDate, thisMonthEndDate);
 
     const profileViewUsagesThisMonth = currentMonthUsages?.filter(({ type }) => type === 'profile');
 
@@ -83,7 +57,12 @@ export const SubscriptionDetails = () => {
                 <div className="flex flex-row justify-end">
                     {company?.id && (
                         <Link href={buildSubscriptionPortalUrl({ id: company.id })}>
-                            <Button variant="secondary">{t('account.subscription.viewBillingPortal')}</Button>
+                            <Button
+                                variant="secondary"
+                                onClick={() => trackEvent('Account, Subscription, View billing portal')}
+                            >
+                                {t('account.subscription.viewBillingPortal')}
+                            </Button>
                         </Link>
                     )}
                 </div>
@@ -183,7 +162,15 @@ export const SubscriptionDetails = () => {
                             {t('account.subscription.cancelSubscription')}
                         </Button>
                         <Link href="/pricing">
-                            <Button>{t('account.subscription.upgradeSubscription')}</Button>
+                            <Button
+                                onClick={() =>
+                                    trackEvent(
+                                        'Account, Subscription, click upgrade subscription and go to pricing page',
+                                    )
+                                }
+                            >
+                                {t('account.subscription.upgradeSubscription')}
+                            </Button>
                         </Link>
                     </div>
                 </>
