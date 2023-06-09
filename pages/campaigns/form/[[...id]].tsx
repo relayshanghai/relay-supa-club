@@ -234,7 +234,7 @@ export default function CampaignForm() {
     return (
         <Layout>
             <div className="container mx-auto max-w-5xl p-6">
-                <Modal visible={true} onClose={() => router.back()} maxWidth={`max-w-${isAddMode ? 'xl' : '[58rem]'}`}>
+                <Modal visible={true} onClose={() => router.back()} maxWidth={`max-w-${isAddMode ? 'xl' : '3xl'}`}>
                     <FormProvider {...methods}>
                         <form onSubmit={handleSubmit(onSubmit)} className="mt-4">
                             {filterQuestionsForNewCampaignMode(questions).map((q) => {
