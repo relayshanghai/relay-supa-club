@@ -3,6 +3,8 @@
 We are using Vitest for testing pure functions and next backend files.
 We are using cypress for testing components.
 
+All new features should have tests that prove the feature works, and handles edge cases. Whether this needs to be a unit/component/e2e test is up to you.
+
 As far as existing features, we don't have enough time to add granular tests to everything, but we will try to add tests in this priority:
 
 -   Bug fixes
@@ -36,7 +38,7 @@ use the suffix `.test.ts` for Vitest test files
 
 mocks return data from third parties like iqdata and are loaded from `src/mocks/server`
 
-# Cypress unit tests
+# Cypress unit (component) tests
 
 To get 'watch' mode working while you are developing you can run `npx cypress open` and also run `npm run tailwind:watch`, which will watch for changes in the code and rebuild the css.
 
