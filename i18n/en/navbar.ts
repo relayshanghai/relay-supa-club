@@ -1,10 +1,11 @@
 const navbar = {
     campaigns: 'Campaigns',
-    discover: 'Discover',
+    influencers: 'Influencers',
     aiEmailGenerator: 'AI Email Generator',
-    account: 'My Account',
+    account: 'Account',
     logout: 'Log Out',
     performance: 'Performance',
+    guide: 'Guide',
 };
 
 export default navbar;
