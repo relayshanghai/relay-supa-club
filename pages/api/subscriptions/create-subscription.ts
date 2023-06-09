@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
+import { serverLogger } from 'src/utils/logger-server';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method !== 'POST')
@@ -38,6 +39,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             clientSecret: subscription.latest_invoice.payment_intent.client_secret,
         });
     } catch (error: any) {
-        return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({ error: { message: error.message } });
+        serverLogger(error, 'error');
+        return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
     }
 }
