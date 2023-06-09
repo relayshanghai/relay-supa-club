@@ -63,7 +63,7 @@ export const Layout = ({ children }: any) => {
                                     </button>
                                     {accountMenuOpen && (
                                         <div
-                                            className="border-gray absolute right-8 z-10 mt-2 flex w-28 origin-top-right flex-col overflow-hidden rounded-md border border-opacity-40 bg-white shadow-lg"
+                                            className="border-gray absolute right-8 z-10 mt-2 flex w-fit origin-top-right flex-col overflow-hidden rounded-md border border-opacity-40 bg-white shadow-lg"
                                             ref={accountMenuRef}
                                         >
                                             <Link
