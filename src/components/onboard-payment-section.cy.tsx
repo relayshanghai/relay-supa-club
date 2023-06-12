@@ -33,7 +33,7 @@ describe('<OnboardPaymentSection />', () => {
     });
     it('Handles payment request', () => {
         worker.use(
-            rest.post(`${APP_URL_CYPRESS}/api/subscriptions/create-subscription`, (req, res, ctx) => {
+            rest.post(`${APP_URL_CYPRESS}/api/subscriptions/create-trial`, (req, res, ctx) => {
                 return res(ctx.status(500), ctx.json({ error: 'custom error' }));
             }),
         );
@@ -52,7 +52,7 @@ describe('<OnboardPaymentSection />', () => {
     it('Handles success', () => {
         // note that we can't test the real payment success because stripe will need a 'clientSecret' sent from the backend, so in this test we can just make sure that tne backend returns the right data and the stripe call is triggered
         worker.use(
-            rest.post(`${APP_URL_CYPRESS}/api/subscriptions/create-subscription`, (req, res, ctx) => {
+            rest.post(`${APP_URL_CYPRESS}/api/subscriptions/create-trial`, (req, res, ctx) => {
                 return res(ctx.status(200), ctx.json({ clientSecret: '123' }));
             }),
         );
