@@ -13,11 +13,13 @@ export interface SubscriptionCreatePostBody {
 const postHandler: NextApiHandler = async (req, res) => {
     const { customerId, priceId: price } = req.body as SubscriptionCreatePostBody;
 
-    if (!customerId) return res.status(httpCodes.BAD_REQUEST).json({ error: { message: 'Missing customer ID' } });
-    if (!price) return res.status(httpCodes.BAD_REQUEST).json({ error: { message: 'Missing price ID' } });
-    // Create the subscription. Note we're expanding the Subscription's
-    // latest invoice and that invoice's payment_intent
-    // so we can pass the client_secret from it to the front end to confirm the payment
+    if (!customerId) {
+        throw new RelayError('Missing customer ID', httpCodes.BAD_REQUEST);
+    }
+    if (!price) {
+        throw new RelayError('Missing price ID', httpCodes.BAD_REQUEST);
+    }
+
     const priceInfo = (await stripeClient.prices.retrieve(price, {
         expand: ['data.product'],
     })) as Stripe.Response<StripePriceWithProductMetadata>;
@@ -28,7 +30,7 @@ const postHandler: NextApiHandler = async (req, res) => {
     const { trial_days } = priceInfo.product.metadata;
 
     if (!trial_days) {
-        throw new RelayError('Missing product metadata', undefined, { sendToSentry: true });
+        throw new RelayError('Missing product metadata', httpCodes.INTERNAL_SERVER_ERROR, { sendToSentry: true });
     }
 
     const createParams: Stripe.SubscriptionCreateParams = {
@@ -40,6 +42,8 @@ const postHandler: NextApiHandler = async (req, res) => {
         proration_behavior: 'create_prorations',
         trial_period_days: Number(trial_days),
     };
+    // This doesn't actually create an active subscription, just the invoice/intent.
+    // We can pass the client_secret from it to the front end to confirm the payment
     const subscription = await stripeClient.subscriptions.create(createParams);
 
     if (
