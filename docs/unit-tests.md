@@ -61,6 +61,18 @@ Because Cypress mounts each component individually, you might be missing some co
 
 `/// <reference types="@testing-library/cypress" />`: This is a TypeScript directive that tells the TypeScript compiler to load the types for the `@testing-library/cypress` library. This is useful for getting type hints in your tests.
 
+## Tips
+
+-   Describe the feature in simple language.
+-   Look back at the ticket and user story to see if you missed anything
+-   Think about how you can turn that description into a set of testable assertions. For example “As a user I can click a button and open the confirm modal”. The assertion would be `test(‘the confirm modal opens when the action button is clicked)`
+-   If you are testing nested components, what is the appropriate level to test? How many children or sibling components need to be involved? Ask yourself ‘what does this component do?’ And ‘how can I prove it does it?’. Do those proofs cover the assertions we listed above? Make test files next to the appropriate level files.
+-   Try to consider edge cases and reverse cases to really prove it works as intended.
+-   Mount the component and see if you are missing any `Contexts` or dependencies. Mock those if needed.
+-   Think about what data context we need to prove the different scenarios and edge cases. If needed, set up some data mocks like different users or a null user.
+-   Start writing the tests. Run them in watch mode only on that one file and with `test.only` so you don’t get some junk console logs and they run fast
+-   Make sure you’ve covered edge cases and reverse cases and aren’t writing false positives or false negatives.
+
 ## References
 
 Vitest [docs](https://vitest.dev);
