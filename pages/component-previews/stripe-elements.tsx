@@ -1,10 +1,12 @@
+// TODO: remove this preview page https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/454 V2-454ae
+
 import { Modal } from 'src/components/modal';
 import { useCompany } from 'src/hooks/use-company';
 import { useTranslation } from 'react-i18next';
 import { useState, useEffect } from 'react';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
-import type { SubscriptionPricesGetResponse } from './api/subscriptions/prices';
+import type { SubscriptionPricesGetResponse } from '../api/subscriptions/prices';
 
 import { OnboardPaymentSection } from 'src/components/onboard-payment-section';
 
