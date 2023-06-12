@@ -10,6 +10,7 @@ import { nextFetch } from 'src/utils/fetcher';
 import { Spinner } from 'src/components/icons';
 import { Button } from 'src/components/button';
 import { useRouter } from 'next/router';
+import { useSubscription } from 'src/hooks/use-subscription';
 
 const STRIPE_PUBLIC_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
 const stripePromise = loadStripe(STRIPE_PUBLIC_KEY || '');
@@ -21,6 +22,7 @@ const OnboardPaymentSectionInner = ({ priceId }: OnboardPaymentSectionProps) => 
 
     const router = useRouter();
     const { company } = useCompany();
+    const { subscription, refreshSubscription } = useSubscription();
     const elements = useElements();
     const stripe = useStripe();
 
@@ -32,6 +34,25 @@ const OnboardPaymentSectionInner = ({ priceId }: OnboardPaymentSectionProps) => 
     const handleError = (error: any) => {
         setLoading(false);
         setErrorMessage(error?.message || t('login.oopsSomethingWentWrong'));
+    };
+
+    const handleSuccess = () => {
+        setSuccess(true);
+        setLoading(false);
+        setTimeout(() => {
+            router.push('/account');
+        }, 1500);
+    };
+
+    const pollForSubscriptionStatusUpdate = () => {
+        if (subscription?.status === 'trialing' || subscription?.status === 'active') {
+            return handleSuccess();
+        } else {
+            setTimeout(() => {
+                refreshSubscription();
+                pollForSubscriptionStatusUpdate();
+            }, 1000);
+        }
     };
 
     const handleSubmit = async (event: any) => {
@@ -67,15 +88,9 @@ const OnboardPaymentSectionInner = ({ priceId }: OnboardPaymentSectionProps) => 
             if (error) {
                 throw new Error(error.message);
             }
-
-            setSuccess(true);
-            setTimeout(() => {
-                router.push('/account');
-            }, 1500);
+            pollForSubscriptionStatusUpdate();
         } catch (error) {
             handleError(error);
-        } finally {
-            setLoading(false);
         }
     };
     const buttonDisabled = loading || !formReady || !company?.cus_id || !priceId || !stripe || !elements;

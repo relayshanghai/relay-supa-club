@@ -51,6 +51,7 @@ const postHandler: NextApiHandler = async (req, res) => {
     ) {
         throw new RelayError('Failed to create subscription');
     }
+    // Because this doesn't actually start the subscription, we'll need to rely on the webhook to update the subscription status
     return res.json({
         clientSecret: subscription.latest_invoice.payment_intent.client_secret,
     });
