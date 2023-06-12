@@ -4,5 +4,16 @@ const signup = {
     step3title: 'What category of product do you sell?',
     step4title: 'Tell us about your Company',
     step5title: 'We won’t charge your card until the free trial ends!',
+    next: 'Next',
+    back: 'Back',
+    submit: 'Submit',
+    firstName: 'First Name',
+    lastName: 'Last Name',
+    phoneNumber: 'Phone Number',
+    email: 'Email',
+    password: 'Password',
+    confirmPassword: 'Confirm Password',
+    company: 'Company',
+    website: 'Website',
 };
 export default signup;
