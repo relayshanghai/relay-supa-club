@@ -1,8 +1,8 @@
 const navbar = {
     campaigns: 'Campaigns',
-    influencers: 'Influencers',
+    discover: 'Discover',
     aiEmailGenerator: 'AI Email Generator',
-    account: 'Account',
+    account: 'My Account',
     logout: 'Log Out',
     performance: 'Performance',
     guide: 'Guide',
