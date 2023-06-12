@@ -27,6 +27,7 @@ const OnboardPaymentSectionInner = ({ priceId }: OnboardPaymentSectionProps) => 
     const [errorMessage, setErrorMessage] = useState();
     const [success, setSuccess] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [formReady, setFormReady] = useState(false);
 
     const handleError = (error: any) => {
         setLoading(false);
@@ -75,11 +76,15 @@ const OnboardPaymentSectionInner = ({ priceId }: OnboardPaymentSectionProps) => 
             handleError(error);
         }
     };
-    const buttonDisabled = loading || !company?.cus_id || !priceId || !stripe || !elements;
+    const buttonDisabled = loading || !formReady || !company?.cus_id || !priceId || !stripe || !elements;
 
     return (
         <form onSubmit={handleSubmit}>
-            <PaymentElement />
+            <PaymentElement
+                onChange={(e) => {
+                    setFormReady(e.complete);
+                }}
+            />
             <Button
                 disabled={buttonDisabled}
                 className={`mt-10 w-full ${success ? 'border-green-600 bg-green-600' : ''}`}

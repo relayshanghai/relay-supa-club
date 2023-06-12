@@ -44,7 +44,7 @@ const login = {
     createCompany: 'Create company',
     addPaymentMethod: 'Add payment method',
     andActivateTrial: 'And activate your 30 day free trial.',
-    activateTrial: 'Activate Trial',
+    activateTrial: 'Start Free Trial',
     userAlreadyRegistered: 'User already registered',
     signupTerms:
         'In order to activate this 30-day free trial, you must sign up with your payment details and agree to relay.club terms and services. You will be charged for a monthly DIY subscription after 30 days unless you deactivate payment before the end of the trial period.',
