@@ -28,6 +28,7 @@
 
 // https://testing-library.com/docs/cypress-testing-library/intro/#examples
 import '@testing-library/cypress/add-commands';
+import 'cypress-iframe';
 
 import i18n from '../../i18n';
 import { mount } from 'cypress/react18';

@@ -21,7 +21,7 @@ export interface CompanyContext {
     refreshCompany: KeyedMutator<CompanyDB> | (() => void);
 }
 
-const ctx = createContext<CompanyContext>({
+export const companyContext = createContext<CompanyContext>({
     company: undefined,
     updateCompany: async () => null,
     createCompany: async () => null,
@@ -47,7 +47,6 @@ export const CompanyProvider = ({ children }: PropsWithChildren) => {
         }
         return fetchedCompany;
     });
-
     useEffect(() => {
         refreshCompany();
     }, [clientRoleData.companyId, refreshCompany]);
@@ -86,7 +85,7 @@ export const CompanyProvider = ({ children }: PropsWithChildren) => {
         [refreshProfile, profile],
     );
     return (
-        <ctx.Provider
+        <companyContext.Provider
             value={{
                 company,
                 updateCompany,
@@ -95,12 +94,12 @@ export const CompanyProvider = ({ children }: PropsWithChildren) => {
             }}
         >
             {children}
-        </ctx.Provider>
+        </companyContext.Provider>
     );
 };
 
 export const useCompany = () => {
-    const context = useContext(ctx);
+    const context = useContext(companyContext);
     if (!context) {
         clientLogger('useCompany must be used within a CompanyProvider');
         throw new Error('useCompany must be used within a CompanyProvider');

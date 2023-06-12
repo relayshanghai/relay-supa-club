@@ -29,5 +29,6 @@ export default defineConfig({
         },
         viewportWidth: 1536,
         viewportHeight: 960,
+        chromeWebSecurity: false,
     },
 });
