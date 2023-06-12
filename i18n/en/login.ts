@@ -73,6 +73,6 @@ const login = {
     disclaimer:
         '* At relay.club, we prioritize your data privacy. We guarantee that your email and mobile phone will never be disclosed or sold to any third parties, and we will solely utilize your email and mobile phone number to reach out for the purpose of arranging a product demonstration.',
     noSpacesAllowed: 'Must not include spaces',
-    activateSuccess: 'Success!',
+    activateSuccess: 'Success',
 };
 export default login;

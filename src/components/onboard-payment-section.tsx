@@ -71,9 +71,11 @@ const OnboardPaymentSectionInner = ({ priceId }: OnboardPaymentSectionProps) => 
             setSuccess(true);
             setTimeout(() => {
                 router.push('/account');
-            }, 1000);
+            }, 1500);
         } catch (error) {
             handleError(error);
+        } finally {
+            setLoading(false);
         }
     };
     const buttonDisabled = loading || !formReady || !company?.cus_id || !priceId || !stripe || !elements;
@@ -87,7 +89,7 @@ const OnboardPaymentSectionInner = ({ priceId }: OnboardPaymentSectionProps) => 
             />
             <Button
                 disabled={buttonDisabled}
-                className={`mt-10 w-full ${success ? 'border-green-600 bg-green-600' : ''}`}
+                className={`mt-10 w-full ${success ? '!border-green-500 !bg-green-500' : ''}`}
             >
                 {success ? (
                     t('login.activateSuccess')
