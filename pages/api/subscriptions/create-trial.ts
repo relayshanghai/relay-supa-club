@@ -1,125 +1,59 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiHandler } from 'next';
 import httpCodes from 'src/constants/httpCodes';
-import { AI_EMAIL_SUBSCRIPTION_USAGE_LIMIT, AI_EMAIL_TRIAL_USAGE_LIMIT } from 'src/constants/openai';
-import { createSubscriptionErrors } from 'src/errors/subscription';
-import { getCompanyCusId, updateCompanySubscriptionStatus, updateCompanyUsageLimits } from 'src/utils/api/db';
-import { STRIPE_PRICE_MONTHLY_DIY, STRIPE_PRODUCT_ID_DIY } from 'src/utils/api/stripe/constants';
+import { ApiHandler, RelayError } from 'src/utils/api-handler';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
-import { isCompanyOwnerOrRelayEmployee } from 'src/utils/auth';
-import { serverLogger } from 'src/utils/logger-server';
-import { unixEpochToISOString } from 'src/utils/utils';
 import type Stripe from 'stripe';
 import type { StripePriceWithProductMetadata } from 'types';
 
-export type SubscriptionCreateTrialPostBody = {
-    company_id: string;
-};
+export interface SubscriptionCreatePostBody {
+    customerId: string;
+    priceId: string;
+}
 
-export type SubscriptionCreateTrialResponse = Stripe.Response<Stripe.Subscription>;
+const postHandler: NextApiHandler = async (req, res) => {
+    const { customerId, priceId: price } = req.body as SubscriptionCreatePostBody;
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    if (req.method === 'POST') {
-        try {
-            const { company_id } = req.body as SubscriptionCreateTrialPostBody;
+    if (!customerId) return res.status(httpCodes.BAD_REQUEST).json({ error: { message: 'Missing customer ID' } });
+    if (!price) return res.status(httpCodes.BAD_REQUEST).json({ error: { message: 'Missing price ID' } });
+    // Create the subscription. Note we're expanding the Subscription's
+    // latest invoice and that invoice's payment_intent
+    // so we can pass the client_secret from it to the front end to confirm the payment
+    const priceInfo = (await stripeClient.prices.retrieve(price, {
+        expand: ['data.product'],
+    })) as Stripe.Response<StripePriceWithProductMetadata>;
 
-            if (!company_id || typeof company_id !== 'string') {
-                return res.status(httpCodes.BAD_REQUEST).json({ error: createSubscriptionErrors.missingCompanyData });
-            }
-            if (!(await isCompanyOwnerOrRelayEmployee(req, res))) {
-                return res
-                    .status(httpCodes.UNAUTHORIZED)
-                    .json({ error: createSubscriptionErrors.actionLimitedToAdmins });
-            }
-            const { data, error } = await getCompanyCusId(company_id);
-            const cusId = data?.cus_id;
-            if (error) throw error;
-            if (!cusId) throw new Error('No data');
+    if (!priceInfo) {
+        throw new RelayError('Failed to retrieve price');
+    }
+    const { trial_days } = priceInfo.product.metadata;
 
-            const paymentMethods = await stripeClient.customers.listPaymentMethods(cusId);
-            if (paymentMethods?.data?.length === 0) {
-                return res.status(httpCodes.BAD_REQUEST).json({ error: 'Missing payment method' });
-            }
-
-            const subscriptions = await stripeClient.subscriptions.list({
-                customer: cusId,
-                status: 'active',
-            });
-            const activeSubscription = subscriptions.data[0];
-            if (activeSubscription) {
-                return res.status(httpCodes.BAD_REQUEST).json({ error: createSubscriptionErrors.alreadySubscribed });
-            }
-            const diyPrices = (await stripeClient.prices.list({
-                active: true,
-                expand: ['data.product'],
-                product: STRIPE_PRODUCT_ID_DIY,
-            })) as Stripe.ApiList<StripePriceWithProductMetadata>;
-            const diyTrialPrice = diyPrices.data.find(({ id }) => id === STRIPE_PRICE_MONTHLY_DIY);
-
-            const diyTrialPriceId = diyTrialPrice?.id ?? '';
-            if (!diyTrialPriceId || !diyTrialPrice) {
-                serverLogger(new Error('Missing DIY trial price'), 'error', true);
-                return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
-            }
-
-            const { trial_days, trial_profiles, trial_searches } = diyTrialPrice.product.metadata;
-
-            if (!trial_days || !trial_profiles || !trial_searches) {
-                serverLogger(new Error('Missing product metadata'), 'error', true);
-                return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
-            }
-
-            const createParams: Stripe.SubscriptionCreateParams = {
-                customer: cusId,
-                items: [{ price: diyTrialPriceId }],
-                proration_behavior: 'create_prorations',
-                trial_period_days: Number(trial_days),
-            };
-
-            const subscription: SubscriptionCreateTrialResponse = await stripeClient.subscriptions.create(createParams);
-
-            if (!subscription || subscription.status !== 'trialing') {
-                return res
-                    .status(httpCodes.BAD_REQUEST)
-                    .json({ error: createSubscriptionErrors.unableToActivateSubscription });
-            }
-
-            // free trial follows DIY prices
-            const price = (await stripeClient.prices.retrieve(diyTrialPriceId, {
-                expand: ['product'],
-            })) as StripePriceWithProductMetadata;
-
-            if (!price?.product?.metadata?.profiles || !price.product.metadata.searches) {
-                serverLogger(new Error('Missing metadata'), 'error', true);
-                return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
-            }
-
-            await updateCompanyUsageLimits({
-                profiles_limit: price.product.metadata.profiles,
-                searches_limit: price.product.metadata.searches,
-                ai_email_generator_limit: AI_EMAIL_SUBSCRIPTION_USAGE_LIMIT,
-                trial_profiles_limit: trial_profiles,
-                trial_searches_limit: trial_searches,
-                trial_ai_email_generator_limit: AI_EMAIL_TRIAL_USAGE_LIMIT,
-                id: company_id,
-            });
-
-            const subscription_start_date = unixEpochToISOString(subscription.trial_start, subscription.start_date);
-            if (!subscription_start_date) throw new Error('Missing subscription start date');
-
-            await updateCompanySubscriptionStatus({
-                subscription_status: 'trial',
-                subscription_start_date,
-                subscription_current_period_start: unixEpochToISOString(subscription.current_period_start),
-                subscription_current_period_end: unixEpochToISOString(subscription.current_period_end),
-                id: company_id,
-            });
-
-            return res.status(httpCodes.OK).json(subscription);
-        } catch (error) {
-            serverLogger(error, 'error', true);
-            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
-        }
+    if (!trial_days) {
+        throw new RelayError('Missing product metadata', undefined, { sendToSentry: true });
     }
 
-    return res.status(httpCodes.METHOD_NOT_ALLOWED).json({});
-}
+    const createParams: Stripe.SubscriptionCreateParams = {
+        customer: customerId,
+        items: [{ price }],
+        payment_behavior: 'default_incomplete',
+        payment_settings: { save_default_payment_method: 'on_subscription' },
+        expand: ['latest_invoice.payment_intent'],
+        proration_behavior: 'create_prorations',
+        trial_period_days: Number(trial_days),
+    };
+    const subscription = await stripeClient.subscriptions.create(createParams);
+
+    if (
+        !subscription?.latest_invoice ||
+        typeof subscription.latest_invoice === 'string' ||
+        !subscription.latest_invoice.payment_intent ||
+        typeof subscription.latest_invoice.payment_intent === 'string' ||
+        !subscription.latest_invoice.payment_intent.client_secret
+    ) {
+        throw new RelayError('Failed to create subscription');
+    }
+    return res.json({
+        clientSecret: subscription.latest_invoice.payment_intent.client_secret,
+    });
+};
+
+export default ApiHandler({ postHandler });
