@@ -1,35 +1,64 @@
 /// <reference types="@testing-library/cypress" />
 // @ts-check
 
-import { GuideComponent } from './index';
+import { GuideCards, GuideComponent } from './index';
 import guidePage from 'i18n/en/guide';
 
 describe('GuideComponent', () => {
-    beforeEach(() => {
-        cy.mount(<GuideComponent />);
+    Object.keys(guidePage.modalInfo).forEach((section) => {
+        const cardDetails = guidePage.cards[section as keyof typeof guidePage.cards];
+        beforeEach(() => {
+            cy.mount(<GuideComponent />);
+        });
+        it('should render', () => {
+            cy.contains('Welcome to relay.club');
+            cy.contains(guidePage.welcomeDescription);
+        });
+        it('should have Discover Section', () => {
+            cy.contains(cardDetails.title);
+            cy.contains(cardDetails.description);
+        });
+        it('should have Discover Section', () => {
+            cy.contains(cardDetails.title);
+            cy.contains(cardDetails.description);
+        });
+        it('should have Campaigns Section', () => {
+            cy.contains(cardDetails.title);
+            cy.contains(cardDetails.description);
+        });
+        it('should have Performance Section', () => {
+            cy.contains(cardDetails.title);
+            cy.contains(cardDetails.description);
+        });
+        it('should have My Account Section', () => {
+            cy.contains(cardDetails.title);
+            cy.contains(cardDetails.description);
+        });
+        it('should have AI Email Section', () => {
+            cy.contains(cardDetails.title);
+            cy.contains(cardDetails.description);
+        });
     });
-    it('should render', () => {
-        cy.contains('Welcome to relay.club');
-        cy.contains(guidePage.welcomeDescription);
-    });
-    it('should have Discover Section', () => {
-        cy.contains(guidePage.cards.discover.title);
-        cy.contains(guidePage.cards.discover.description);
-    });
-    it('should have Campaigns Section', () => {
-        cy.contains(guidePage.cards.campaigns.title);
-        cy.contains(guidePage.cards.campaigns.description);
-    });
-    it('should have Performance Section', () => {
-        cy.contains(guidePage.cards.performance.title);
-        cy.contains(guidePage.cards.performance.description);
-    });
-    it('should have My Account Section', () => {
-        cy.contains(guidePage.cards.account.title);
-        cy.contains(guidePage.cards.account.description);
-    });
-    it('should have AI Email Section', () => {
-        cy.contains(guidePage.cards.aiEmailGenerator.title);
-        cy.contains(guidePage.cards.aiEmailGenerator.description);
+});
+
+describe('GuideCards', () => {
+    Object.keys(guidePage.modalInfo).forEach((section) => {
+        const sectionDetails = guidePage.modalInfo[section as keyof typeof guidePage.modalInfo];
+        const cardDetails = guidePage.cards[section as keyof typeof guidePage.cards];
+        it('should render', () => {
+            cy.mount(<GuideCards cardName={`${section}`} />);
+            cy.contains(cardDetails.title);
+            cy.contains(cardDetails.description);
+            cy.contains('Learn more');
+        });
+        it('should open modal and close it', () => {
+            cy.mount(<GuideCards cardName={`${section}`} />);
+            cy.contains('Learn more').click();
+            cy.contains(sectionDetails.subtitle);
+            cy.contains(sectionDetails.description);
+            cy.contains(guidePage.goBack).click();
+            cy.contains(sectionDetails.subtitle).should('not.exist');
+            cy.contains(sectionDetails.description).should('not.exist');
+        });
     });
 });

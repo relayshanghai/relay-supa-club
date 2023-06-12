@@ -6,7 +6,7 @@ import { Button } from '../button';
 import { GuideModal } from './guideModal';
 import { useState } from 'react';
 
-const GuideCards = ({ cardName }: { cardName: string }) => {
+export const GuideCards = ({ cardName }: { cardName: string }) => {
     const { t } = useTranslation();
     const [guideShow, setGuideShow] = useState<boolean>(false);
 
