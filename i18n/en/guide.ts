@@ -170,7 +170,7 @@ const guidePage = {
             title: 'AI Email',
             subtitle: 'Find the perfect influencer',
             description: 'Learn how to utilize our discover tool',
-            goto: 'Go to Ai Email',
+            goto: 'Go to AI Email',
             url: '/ai-email-generator',
             sections: [
                 {

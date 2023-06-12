@@ -34,7 +34,7 @@ export const GuideCards = ({ cardName }: { cardName: string }) => {
             </div>
             <p className="break-words">{t(`guidePage.cards.${cardName}.title`)}</p>
             <p className="break-words">{t(`guidePage.cards.${cardName}.description`)}</p>
-            <Button className="flex flex-row gap-3" onClick={handleGuideModal}>
+            <Button data-testid={`guide-modal-${cardName}`} className="flex flex-row gap-3" onClick={handleGuideModal}>
                 Learn more <ArrowRight className="stroke-white" height={18} width={18} />
             </Button>
             <GuideModal section={cardName} show={guideShow} setShow={setGuideShow} />
