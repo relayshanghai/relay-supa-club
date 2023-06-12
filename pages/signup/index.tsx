@@ -17,6 +17,7 @@ import { isMissing } from 'src/utils/utils';
 import type { SignupInputTypes } from 'src/utils/validation/signup';
 import { validateSignupInput } from 'src/utils/validation/signup';
 import { LoginSignupLayout } from 'src/components/SignupLayout';
+import { ScreenshotsCarousel } from 'src/components/signup/screenshots-carousel';
 
 export default function Register() {
     const { t } = useTranslation();
@@ -120,11 +121,11 @@ export default function Register() {
             handleSubmit();
         }
     };
-    const LeftPage = <div className="text-white">placeholder {t('login.firstName')}</div>;
+
     return (
         <>
             {featSignupV2() ? (
-                <LoginSignupLayout right={<SignUpPage />} left={LeftPage} />
+                <LoginSignupLayout right={<SignUpPage />} left={<ScreenshotsCarousel />} />
             ) : (
                 <LegacyLoginSignupLayout>
                     <form className="mx-auto flex w-full max-w-xs flex-grow flex-col items-center justify-center space-y-2">
