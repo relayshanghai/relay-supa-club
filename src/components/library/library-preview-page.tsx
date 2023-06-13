@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import * as library from './index';
+import { Input } from '../input';
 
 const Badges = () => (
     <div className="m-5">
@@ -23,16 +24,32 @@ const Tooltips = () => (
     <div className="m-5">
         <h2 className="text-lg font-bold"> Tooltips</h2>
         <p>default, with content</p>
-        <div className="m-5 flex flex-wrap space-x-3 bg-slate-100 p-5">
-            <library.Tooltip content="explaining this and that">
-                <library.Badge>Hover Me</library.Badge>
+        <div className="m-5 flex space-x-3 bg-slate-100 p-5">
+            <library.Tooltip content="explaining this and that" position="top-right">
+                <library.Badge>{`Hover Me (top-right)`}</library.Badge>
             </library.Tooltip>
 
             <library.Tooltip
                 content="explaining this"
                 detail="and also another thing. Perhaps a few more things. While we are at it one more thing. "
+                position="top-left"
             >
-                <library.Badge>With Details</library.Badge>
+                <library.Badge>{`With Details (top-left)`}</library.Badge>
+            </library.Tooltip>
+
+            <library.Tooltip content="explaining this" position="bottom-left">
+                <library.Badge>Hover bottom left</library.Badge>
+            </library.Tooltip>
+            <library.Tooltip content="explaining this" position="bottom-right">
+                <library.Badge>Hover bottom right</library.Badge>
+            </library.Tooltip>
+
+            <library.Tooltip content="explaining this" position="right">
+                <library.Badge>Hover position right</library.Badge>
+            </library.Tooltip>
+
+            <library.Tooltip content="explaining this" position="left">
+                <library.Badge>Hover position left</library.Badge>
             </library.Tooltip>
         </div>
     </div>
@@ -61,11 +78,54 @@ const Switches = () => {
     );
 };
 
+const ProgressBars = () => {
+    return (
+        <div className="m-5">
+            <h2 className="text-lg font-bold"> Progress Bars</h2>
+            <p>default, labeled, height options, </p>
+            <div className="m-5 flex flex-col space-y-3 bg-slate-100 p-5">
+                <library.Progress height="small" percentage={20} />
+                <library.Progress height="medium" percentage={30} label="30%" />
+                <library.Progress height="large" percentage={50} label="50%" />
+            </div>
+        </div>
+    );
+};
+
+const Inputs = () => {
+    return (
+        <div className="m-5">
+            <h2 className="text-lg font-bold"> Inputs</h2>
+            <p>default(type: text), required, error message, password input </p>
+            <div className="m-5 flex flex-wrap space-x-8 bg-slate-100 p-5">
+                <div className="w-48">
+                    <Input label="Text" type="text" placeholder="placeholder" value="" />
+                </div>
+                <div className="w-48">
+                    <Input
+                        error="required with error message"
+                        label="Email"
+                        type="email"
+                        placeholder="hello@relay.club"
+                        value=""
+                        required
+                    />
+                </div>
+                <div className="w-48">
+                    <Input label="label" type="password" placeholder="password" value="" />
+                </div>
+            </div>
+        </div>
+    );
+};
+
 const LibraryPage = () => (
     <>
         <Badges />
         <Tooltips />
         <Switches />
+        <ProgressBars />
+        <Inputs />
     </>
 );
 

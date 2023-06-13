@@ -13,18 +13,42 @@ import { useTranslation } from 'react-i18next';
 import { IQDATA_MAINTENANCE, RELAY_DOMAIN } from 'src/constants';
 import { MaintenanceMessage } from '../maintenance-message';
 import { useCampaigns } from 'src/hooks/use-campaigns';
+import { useAllCampaignCreators } from 'src/hooks/use-all-campaign-creators';
+import { InfluencerAlreadyAddedModal } from '../influencer-already-added';
+import { useRudderstack } from 'src/hooks/use-rudderstack';
 
 export const CreatorPage = ({ creator_id, platform }: { creator_id: string; platform: CreatorPlatform }) => {
     const { loading, report, reportCreatedAt, errorMessage } = useReport({ platform, creator_id });
 
     const [showCampaignListModal, setShowCampaignListModal] = useState(false);
+    const [showAlreadyAddedModal, setShowAlreadyAddedModal] = useState(false);
+
     const { t } = useTranslation();
-
-    const onAddToCampaign = () => {
-        setShowCampaignListModal(true);
-    };
-
     const { campaigns } = useCampaigns({});
+    const { allCampaignCreators } = useAllCampaignCreators(campaigns);
+    const { trackEvent } = useRudderstack();
+
+    const addToCampaign = async (selectedCreatorUserId: string) => {
+        let isAlreadyInCampaign = false;
+
+        if (allCampaignCreators) {
+            for (const campaignCreator of allCampaignCreators) {
+                if (campaignCreator.campaign_id) {
+                    if (campaignCreator.creator_id === selectedCreatorUserId) {
+                        isAlreadyInCampaign = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (isAlreadyInCampaign) {
+            setShowAlreadyAddedModal(true);
+        } else {
+            setShowCampaignListModal(true);
+        }
+        trackEvent('Analyze Page, add to campaign', { platform, user_id: selectedCreatorUserId });
+    };
 
     if (IQDATA_MAINTENANCE) {
         return <MaintenanceMessage />;
@@ -40,6 +64,15 @@ export const CreatorPage = ({ creator_id, platform }: { creator_id: string; plat
                     ...report?.user_profile,
                 }}
                 campaigns={campaigns}
+                allCampaignCreators={allCampaignCreators}
+            />
+            <InfluencerAlreadyAddedModal
+                show={showAlreadyAddedModal}
+                setCampaignListModal={setShowCampaignListModal}
+                setShow={setShowAlreadyAddedModal}
+                selectedCreatorUserId={report?.user_profile.user_id}
+                campaigns={campaigns}
+                allCampaignCreators={allCampaignCreators}
             />
             <Head>
                 <title>{report?.user_profile.fullname || RELAY_DOMAIN}</title>
@@ -52,7 +85,7 @@ export const CreatorPage = ({ creator_id, platform }: { creator_id: string; plat
                         <TitleSection
                             user_profile={report.user_profile}
                             platform={platform}
-                            onAddToCampaign={onAddToCampaign}
+                            onAddToCampaign={addToCampaign}
                         />
                         <CreatorOverview report={report} />
                         <MetricsSection report={report} />

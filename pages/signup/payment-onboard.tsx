@@ -5,7 +5,7 @@ import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
 import { Spinner } from 'src/components/icons';
-import { LoginSignupLayout } from 'src/components/SignupLayout';
+import { LegacyLoginSignupLayout } from 'src/components/LegacySignupLayout';
 import { APP_URL } from 'src/constants';
 import { createSubscriptionErrors } from 'src/errors/subscription';
 import { useCompany } from 'src/hooks/use-company';
@@ -20,7 +20,7 @@ const PaymentOnboard = () => {
     const { t } = useTranslation();
     const { trackEvent } = useRudderstack();
     const { company } = useCompany();
-    const { subscription, createTrial, paymentMethods } = useSubscription();
+    const { subscription, createTrialLegacy, paymentMethods } = useSubscription();
     const [submitting, setSubmitting] = useState(false);
     const { logout } = useUser();
 
@@ -35,7 +35,7 @@ const PaymentOnboard = () => {
     const handleSubmit = async () => {
         try {
             setSubmitting(true);
-            const result = await createTrial();
+            const result = await createTrialLegacy();
             if (result.status === 'trialing') {
                 toast.success(t('login.accountActivated'));
                 await router.push('/dashboard');
@@ -58,7 +58,7 @@ const PaymentOnboard = () => {
     };
 
     return (
-        <LoginSignupLayout>
+        <LegacyLoginSignupLayout>
             <form className="mx-auto flex w-full max-w-xs flex-grow flex-col items-center justify-center space-y-2">
                 <div className="w-full text-left">
                     <h1 className="mb-2 text-4xl font-bold">{t('login.addPaymentMethod')}</h1>
@@ -97,7 +97,7 @@ const PaymentOnboard = () => {
                     </button>
                 </div>
             </form>
-        </LoginSignupLayout>
+        </LegacyLoginSignupLayout>
     );
 };
 

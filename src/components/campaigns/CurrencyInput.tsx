@@ -35,7 +35,7 @@ export default function CurrencyInput({
                     defaultValue={defaultValue}
                     setValue={setValue}
                     valueName="budget_currency"
-                    className="mr-2 w-1/4"
+                    className="mr-2 w-1/3"
                 />
                 <input
                     className="input-field"

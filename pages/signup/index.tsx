@@ -5,8 +5,10 @@ import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
 import { Input } from 'src/components/input';
-import { LoginSignupLayout } from 'src/components/SignupLayout';
+import SignUpPage from 'src/components/signup/signup-page';
+import { LegacyLoginSignupLayout } from 'src/components/LegacySignupLayout';
 import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
+import { featSignupV2 } from 'src/constants/feature-flags';
 import { useFields } from 'src/hooks/use-fields';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { useUser } from 'src/hooks/use-user';
@@ -14,6 +16,7 @@ import { clientLogger } from 'src/utils/logger-client';
 import { isMissing } from 'src/utils/utils';
 import type { SignupInputTypes } from 'src/utils/validation/signup';
 import { validateSignupInput } from 'src/utils/validation/signup';
+import { LoginSignupLayout } from 'src/components/SignupLayout';
 
 export default function Register() {
     const { t } = useTranslation();
@@ -118,81 +121,97 @@ export default function Register() {
         }
     };
 
+    // TODO: add carousel component V2-497 and replace this leftPage component
+    const leftPage = (
+        <div className="invisible flex h-full items-center justify-center text-white md:visible">
+            Placeholder for Carousel
+        </div>
+    );
+
     return (
-        <LoginSignupLayout>
-            <form className="mx-auto flex w-full max-w-xs flex-grow flex-col items-center justify-center space-y-2">
-                <div className="w-full text-left">
-                    <h1 className="mb-2 text-4xl font-bold">{t('login.signUp')}</h1>
-                    <h3 className="mb-8 text-sm text-gray-600">{t('login.signupSubtitle')}</h3>
-                </div>
-                <p className="text-md inline pb-4 text-gray-500">
-                    {t('login.alreadyHaveAnAccount')}
-                    <Link href="/login" className="inline cursor-pointer text-primary-700 hover:text-primary-600">
-                        <Button variant="secondary" className="ml-2 px-1 pb-1 pt-1 text-xs">
-                            {t('login.logIn')}
+        <>
+            {featSignupV2() ? (
+                <LoginSignupLayout right={<SignUpPage />} left={leftPage} />
+            ) : (
+                <LegacyLoginSignupLayout>
+                    <form className="mx-auto flex w-full max-w-xs flex-grow flex-col items-center justify-center space-y-2">
+                        <div className="w-full text-left">
+                            <h1 className="mb-2 text-4xl font-bold">{t('login.signUp')}</h1>
+                            <h3 className="mb-8 text-sm text-gray-600">{t('login.signupSubtitle')}</h3>
+                        </div>
+                        <p className="text-md inline pb-4 text-gray-500">
+                            {t('login.alreadyHaveAnAccount')}
+                            <Link
+                                href="/login"
+                                className="inline cursor-pointer text-primary-700 hover:text-primary-600"
+                            >
+                                <Button variant="secondary" className="ml-2 px-1 pb-1 pt-1 text-xs">
+                                    {t('login.logIn')}
+                                </Button>
+                            </Link>
+                        </p>
+                        <Input
+                            error={validationErrors.firstName}
+                            label={t('login.firstName')}
+                            type="first_name"
+                            placeholder={t('login.firstNamePlaceholder')}
+                            value={firstName}
+                            required
+                            onChange={(e) => setAndValidate('firstName', e.target.value)}
+                        />
+                        <Input
+                            error={validationErrors.lastName}
+                            label={t('login.lastName')}
+                            type="last_name"
+                            placeholder={t('login.lastNamePlaceholder')}
+                            value={lastName}
+                            required
+                            onChange={(e) => setAndValidate('lastName', e.target.value)}
+                        />
+                        <Input
+                            error={validationErrors.email}
+                            label={t('login.email')}
+                            type="email"
+                            placeholder="hello@relay.club"
+                            value={email}
+                            required
+                            onChange={(e) => setAndValidate('email', e.target.value)}
+                        />
+                        <Input
+                            error={validationErrors.phoneNumber}
+                            label={t('login.phoneNumber')}
+                            type="tel"
+                            placeholder="139-999-9999"
+                            value={phoneNumber}
+                            onChange={(e) => setAndValidate('phoneNumber', e.target.value)}
+                        />
+                        <Input
+                            error={validationErrors.password}
+                            note={t('login.passwordRequirements')}
+                            label={t('login.password')}
+                            type="password"
+                            placeholder={t('login.passwordPlaceholder')}
+                            value={password}
+                            required
+                            onChange={(e) => setAndValidate('password', e.target.value)}
+                        />
+                        <Input
+                            error={validationErrors.confirmPassword}
+                            label={t('login.confirmPassword')}
+                            type="password"
+                            placeholder={t('login.passwordPlaceholder')}
+                            value={confirmPassword}
+                            required
+                            onChange={(e) => setAndValidate('confirmPassword', e.target.value)}
+                            onKeyDown={(e) => handleKeyDown(e)}
+                        />
+                        <Button disabled={submitDisabled} type="button" onClick={handleSubmit}>
+                            {t('login.signUp')}
                         </Button>
-                    </Link>
-                </p>
-                <Input
-                    error={validationErrors.firstName}
-                    label={t('login.firstName')}
-                    type="first_name"
-                    placeholder={t('login.firstNamePlaceholder')}
-                    value={firstName}
-                    required
-                    onChange={(e) => setAndValidate('firstName', e.target.value)}
-                />
-                <Input
-                    error={validationErrors.lastName}
-                    label={t('login.lastName')}
-                    type="last_name"
-                    placeholder={t('login.lastNamePlaceholder')}
-                    value={lastName}
-                    required
-                    onChange={(e) => setAndValidate('lastName', e.target.value)}
-                />
-                <Input
-                    error={validationErrors.email}
-                    label={t('login.email')}
-                    type="email"
-                    placeholder="hello@relay.club"
-                    value={email}
-                    required
-                    onChange={(e) => setAndValidate('email', e.target.value)}
-                />
-                <Input
-                    error={validationErrors.phoneNumber}
-                    label={t('login.phoneNumber')}
-                    type="tel"
-                    placeholder="139-999-9999"
-                    value={phoneNumber}
-                    onChange={(e) => setAndValidate('phoneNumber', e.target.value)}
-                />
-                <Input
-                    error={validationErrors.password}
-                    note={t('login.passwordRequirements')}
-                    label={t('login.password')}
-                    type="password"
-                    placeholder={t('login.passwordPlaceholder')}
-                    value={password}
-                    required
-                    onChange={(e) => setAndValidate('password', e.target.value)}
-                />
-                <Input
-                    error={validationErrors.confirmPassword}
-                    label={t('login.confirmPassword')}
-                    type="password"
-                    placeholder={t('login.passwordPlaceholder')}
-                    value={confirmPassword}
-                    required
-                    onChange={(e) => setAndValidate('confirmPassword', e.target.value)}
-                    onKeyDown={(e) => handleKeyDown(e)}
-                />
-                <Button disabled={submitDisabled} type="button" onClick={handleSubmit}>
-                    {t('login.signUp')}
-                </Button>
-                <p className="py-8 text-xs text-gray-500">{t('login.disclaimer')}</p>
-            </form>
-        </LoginSignupLayout>
+                        <p className="py-8 text-xs text-gray-500">{t('login.disclaimer')}</p>
+                    </form>
+                </LegacyLoginSignupLayout>
+            )}
+        </>
     );
 }

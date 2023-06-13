@@ -21,6 +21,7 @@ import { clientLogger } from 'src/utils/logger-client';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import type { CampaignDB } from 'src/utils/api/db';
+import { Modal } from 'src/components/modal';
 
 const TimelineInput = ({
     q,
@@ -223,91 +224,101 @@ export default function CampaignForm() {
             <Spinner className="h-5 w-5 fill-primary-600 text-white" />
         </div>
     );
+    const filterQuestionsForNewCampaignMode = (questions: Question[]) => {
+        if (isAddMode) {
+            return questions.filter((q) => q.fieldName === 'name' || q.fieldName === 'media_gallery');
+        }
+        return questions;
+    };
 
     return (
         <Layout>
             <div className="container mx-auto max-w-5xl p-6">
-                <FormProvider {...methods}>
-                    <form onSubmit={handleSubmit(onSubmit)} className="mt-4">
-                        {questions.map((q) => {
-                            return (
-                                <FormWrapper
-                                    key={q.fieldName}
-                                    isRequired={q.isRequired}
-                                    title={t(q.title)}
-                                    desc={t(q.desc)}
-                                >
-                                    {q.type === 'textInput' && (
-                                        <TextInput
-                                            fieldName={q.fieldName}
-                                            register={register}
-                                            errors={errors}
-                                            isRequired={q.isRequired}
-                                        />
-                                    )}
-                                    {q.type === 'textArea' && (
-                                        <TextArea
-                                            fieldName={q.fieldName}
-                                            register={register}
-                                            errors={errors}
-                                            isRequired={q.isRequired}
-                                            placeHolder={q.placeholder}
-                                        />
-                                    )}
-                                    {q.type === 'media' && (
-                                        <MediaUploader
-                                            media={media}
-                                            setMedia={setMedia}
-                                            previousMedia={previousMedia}
-                                            setPreviousMedia={setPreviousMedia}
-                                            setPurgedMedia={setPurgedMedia}
-                                        />
-                                    )}
+                <Modal visible={true} onClose={() => router.back()} maxWidth={`max-w-${isAddMode ? 'xl' : '3xl'}`}>
+                    <FormProvider {...methods}>
+                        <form onSubmit={handleSubmit(onSubmit)} className="mt-4">
+                            {filterQuestionsForNewCampaignMode(questions).map((q) => {
+                                return (
+                                    <FormWrapper
+                                        key={q.fieldName}
+                                        isRequired={q.isRequired}
+                                        title={t(q.title)}
+                                        desc={t(q.desc)}
+                                    >
+                                        {q.type === 'textInput' && (
+                                            <TextInput
+                                                fieldName={q.fieldName}
+                                                register={register}
+                                                errors={errors}
+                                                isRequired={q.isRequired}
+                                            />
+                                        )}
+                                        {q.type === 'textArea' && (
+                                            <TextArea
+                                                fieldName={q.fieldName}
+                                                register={register}
+                                                errors={errors}
+                                                isRequired={q.isRequired}
+                                                placeHolder={q.placeholder}
+                                            />
+                                        )}
+                                        {q.type === 'media' && (
+                                            <MediaUploader
+                                                media={media}
+                                                setMedia={setMedia}
+                                                previousMedia={previousMedia}
+                                                setPreviousMedia={setPreviousMedia}
+                                                setPurgedMedia={setPurgedMedia}
+                                            />
+                                        )}
 
-                                    {q.type === 'multiSelect' && (
-                                        <MultiSelect
-                                            fieldName={q.fieldName}
-                                            errors={errors}
-                                            isRequired
-                                            control={control}
-                                            options={q.options || []}
-                                            placeholder={t(q.placeholder ?? '') || ''}
-                                            defaultValue={undefined}
-                                            setValue={setValue}
-                                        />
-                                    )}
-                                    {q.type === 'currencyInput' && (
-                                        <CurrencyInput
-                                            register={register}
-                                            errors={errors}
-                                            isRequired
-                                            control={control}
-                                            setValue={setValue}
-                                            defaultValue="USD"
-                                        />
-                                    )}
-                                    {q.type === 'timeline' && <TimelineInput q={q} errors={errors} control={control} />}
-                                    {q.type === 'checkbox' && (
-                                        <Checkbox
-                                            fieldName={q.fieldName}
-                                            register={register}
-                                            errors={errors}
-                                            isRequired
-                                            options={q.options || []}
-                                        />
-                                    )}
-                                </FormWrapper>
-                            );
-                        })}
+                                        {q.type === 'multiSelect' && (
+                                            <MultiSelect
+                                                fieldName={q.fieldName}
+                                                errors={errors}
+                                                isRequired
+                                                control={control}
+                                                options={q.options || []}
+                                                placeholder={t(q.placeholder ?? '') || ''}
+                                                defaultValue={undefined}
+                                                setValue={setValue}
+                                            />
+                                        )}
+                                        {q.type === 'currencyInput' && (
+                                            <CurrencyInput
+                                                register={register}
+                                                errors={errors}
+                                                isRequired
+                                                control={control}
+                                                setValue={setValue}
+                                                defaultValue="USD"
+                                            />
+                                        )}
+                                        {q.type === 'timeline' && (
+                                            <TimelineInput q={q} errors={errors} control={control} />
+                                        )}
+                                        {q.type === 'checkbox' && (
+                                            <Checkbox
+                                                fieldName={q.fieldName}
+                                                register={register}
+                                                errors={errors}
+                                                isRequired
+                                                options={q.options || []}
+                                            />
+                                        )}
+                                    </FormWrapper>
+                                );
+                            })}
 
-                        <div className="buttons mt-8 flex justify-end border-t border-gray-100 pt-6">
-                            <div onClick={goBack} className="btn btn-secondary ">
-                                {t('campaigns.form.cancel')}
+                            <div className="buttons mt-8 flex justify-end border-t border-gray-100 pt-6">
+                                <div onClick={goBack} className="btn btn-secondary ">
+                                    {t('campaigns.form.cancel')}
+                                </div>
+                                {renderButton}
                             </div>
-                            {renderButton}
-                        </div>
-                    </form>
-                </FormProvider>
+                        </form>
+                    </FormProvider>
+                </Modal>
             </div>
         </Layout>
     );

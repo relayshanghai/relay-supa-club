@@ -164,6 +164,7 @@ export interface Database {
           status: string | null
           tag_list: string[] | null
           target_locations: string[] | null
+          updated_at: string | null
         }
         Insert: {
           archived?: boolean | null
@@ -189,6 +190,7 @@ export interface Database {
           status?: string | null
           tag_list?: string[] | null
           target_locations?: string[] | null
+          updated_at?: string | null
         }
         Update: {
           archived?: boolean | null
@@ -214,6 +216,7 @@ export interface Database {
           status?: string | null
           tag_list?: string[] | null
           target_locations?: string[] | null
+          updated_at?: string | null
         }
       }
       companies: {

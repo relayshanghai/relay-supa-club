@@ -2,6 +2,7 @@
 
 STRIPE_WEBHOOK_SECRET=asdf
 STRIPE_API_KEY=asdf
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=asdf
 
 # Stripe product IDs (Do not set in development to connect to test mode account)
 

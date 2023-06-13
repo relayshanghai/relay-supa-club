@@ -39,9 +39,15 @@ export const useCampaigns = ({ campaignId }: { campaignId?: string }) => {
 
     useEffect(() => {
         if (allCampaigns && allCampaigns.length > 0) {
-            const unarchivedCampaigns = allCampaigns.filter((campaign) => !campaign.archived);
+            const activeCampaigns = allCampaigns.filter((campaign) => !campaign.archived);
+            activeCampaigns.sort((a, b) => {
+                if (a.updated_at && b.updated_at) {
+                    return new Date(a.updated_at) < new Date(b.updated_at) ? 1 : -1;
+                }
+                return 0;
+            });
             const archivedCampaigns = allCampaigns.filter((campaign) => campaign.archived);
-            setCampaigns(unarchivedCampaigns);
+            setCampaigns(activeCampaigns);
             setArchivedCampaigns(archivedCampaigns);
         }
     }, [allCampaigns]);
@@ -52,7 +58,7 @@ export const useCampaigns = ({ campaignId }: { campaignId?: string }) => {
     );
 
     return {
-        /** All campaigns that are not archived */
+        /** All campaigns that are not archived and are active */
         campaigns,
         /** All campaigns that are archived */
         archivedCampaigns,
