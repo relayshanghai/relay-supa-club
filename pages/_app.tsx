@@ -12,6 +12,9 @@ import { CompanyProvider } from 'src/hooks/use-company';
 import { rudderInitialized } from 'src/utils/rudder-initialize';
 import { CacheProvider } from 'src/utils/indexeddb-cache-provider';
 import { Provider as JotaiProvider } from 'jotai';
+import ChatwootProvider from 'src/components/chatwoot/chatwoot-provider';
+import chatwootConfig from 'chatwoot.config';
+import { useTranslation } from 'react-i18next';
 
 function MyApp({
     Component,
@@ -19,16 +22,27 @@ function MyApp({
 }: AppProps<{
     initialSession: Session;
 }>) {
+    const [lang, setLang] = useState(i18n.language);
+
     useEffect(() => {
         rudderInitialized();
     }, []); //enable rudderstack Analytics
 
     const [supabaseClient] = useState(() => createBrowserSupabaseClient());
+    const { i18n: _i18n } = useTranslation();
 
     useEffect(() => {
         const storedLanguage = localStorage.getItem('language');
         storedLanguage !== null ? i18n.changeLanguage(storedLanguage) : i18n.changeLanguage(); // triggers the language detector
     }, []);
+
+    useEffect(() => {
+        _i18n.on('languageChanged', (l) => {
+            setLang(l);
+        });
+
+        return () => _i18n.on('languageChanged', () => null);
+    }, [_i18n]);
 
     return (
         <>
@@ -56,11 +70,13 @@ function MyApp({
             <SessionContextProvider supabaseClient={supabaseClient} initialSession={pageProps.initialSession}>
                 <CacheProvider>
                     <UserProvider>
-                        <JotaiProvider>
-                            <CompanyProvider>
-                                <Component {...pageProps} />
-                            </CompanyProvider>
-                        </JotaiProvider>
+                        <ChatwootProvider {...chatwootConfig} locale={lang}>
+                            <JotaiProvider>
+                                <CompanyProvider>
+                                    <Component {...pageProps} />
+                                </CompanyProvider>
+                            </JotaiProvider>
+                        </ChatwootProvider>
                     </UserProvider>
                 </CacheProvider>
             </SessionContextProvider>
