@@ -25,16 +25,16 @@ export default function Carousel({ slides, autoSlide = false, autoSlideInterval 
     });
 
     return (
-        <>
+        <div className="">
             {slides.map(
                 (slide, i) =>
                     curr === i && (
                         <div
                             key={i}
-                            className="flex max-w-2xl flex-col items-center justify-center  transition-transform duration-500 ease-out"
+                            className="flex max-w-sm flex-col items-center justify-center transition-transform duration-500 ease-in-out lg:max-w-full"
                         >
-                            <h2 className="mb-12 text-4xl font-semibold">{slide.title}</h2>
-                            <div className="relative mb-8 overflow-hidden">
+                            <h2 className="mb-8 text-2xl font-semibold lg:text-4xl">{slide.title}</h2>
+                            <div className="relative mb-8  overflow-hidden ">
                                 <div className="flex">
                                     <Image
                                         src={slide.url}
@@ -73,10 +73,10 @@ export default function Carousel({ slides, autoSlide = false, autoSlideInterval 
                                     </div>
                                 </div>
                             </div>
-                            <p className="text-lg">{slide.description}</p>
+                            <p className="text-wrap text-base lg:text-lg">{slide.description}</p>
                         </div>
                     ),
             )}
-        </>
+        </div>
     );
 }

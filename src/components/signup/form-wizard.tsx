@@ -24,7 +24,7 @@ export const FormWizard = ({
     const { t } = useTranslation();
 
     return (
-        <div className="w-80">
+        <div className="w-96">
             <Progress height="small" percentage={((currentStep - 1) / steps.length) * 100} className="mb-2" />
             <div className="flex flex-col rounded shadow-sm">
                 <div className="border-b-gray-100 bg-gray-100 p-5 font-semibold text-gray-500">{title}</div>

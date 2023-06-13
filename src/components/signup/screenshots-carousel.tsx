@@ -17,7 +17,7 @@ export const ScreenshotsCarousel = () => {
     ];
 
     return (
-        <div className="flex h-screen w-full flex-col items-center justify-center text-white">
+        <div className="invisible flex h-screen flex-col items-center justify-center text-white md:visible">
             <Carousel slides={screenshots} autoSlide={false} />
         </div>
     );
