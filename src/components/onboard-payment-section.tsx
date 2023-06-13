@@ -5,12 +5,19 @@ import { PaymentElement } from '@stripe/react-stripe-js';
 
 import { useCompany } from 'src/hooks/use-company';
 import { useTranslation } from 'react-i18next';
-import { useState } from 'react';
-import { nextFetch } from 'src/utils/fetcher';
+import { useCallback, useEffect, useState } from 'react';
+import { nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';
 import { Spinner } from 'src/components/icons';
 import { Button } from 'src/components/button';
 import { useRouter } from 'next/router';
 import { useSubscription } from 'src/hooks/use-subscription';
+import type {
+    GetSetupIntentQueries,
+    GetSetupIntentResponse,
+    SubscriptionCreateTrialPostBody,
+    SubscriptionCreateTrialPostResponse,
+} from 'pages/api/subscriptions/create-trial';
+import { clientLogger } from 'src/utils/logger-client';
 
 const STRIPE_PUBLIC_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
 const stripePromise = loadStripe(STRIPE_PUBLIC_KEY || '');
@@ -36,15 +43,15 @@ const OnboardPaymentSectionInner = ({ priceId }: OnboardPaymentSectionProps) => 
         setErrorMessage(error?.message || t('login.oopsSomethingWentWrong'));
     };
 
-    const handleSuccess = () => {
+    const handleSuccess = useCallback(() => {
         setSuccess(true);
         setLoading(false);
         setTimeout(() => {
             router.push('/account');
         }, 1500);
-    };
+    }, [router]);
 
-    const pollForSubscriptionStatusUpdate = () => {
+    const pollForSubscriptionStatusUpdate = useCallback(() => {
         if (subscription?.status === 'trialing' || subscription?.status === 'active') {
             return handleSuccess();
         } else {
@@ -53,40 +60,50 @@ const OnboardPaymentSectionInner = ({ priceId }: OnboardPaymentSectionProps) => 
                 pollForSubscriptionStatusUpdate();
             }, 1000);
         }
-    };
+    }, [handleSuccess, refreshSubscription, subscription?.status]);
+
+    useEffect(() => {
+        // pollForSubscriptionStatusUpdate();
+    }, [pollForSubscriptionStatusUpdate]);
 
     const handleSubmit = async (event: any) => {
         event.preventDefault();
-        if (!stripe || !elements || !company?.cus_id) return;
+        if (!stripe || !elements || !company?.cus_id || !company.id) return;
         setLoading(true);
         try {
-            // Trigger form validation and wallet collection
-            const { error: submitError } = await elements.submit();
-            if (submitError) {
-                handleError(submitError);
-                return;
-            }
-
-            // Create the Subscription
-            const { clientSecret } = await nextFetch('subscriptions/create-trial', {
-                method: 'POST',
-                body: {
-                    customerId: company?.cus_id,
-                    priceId: priceId,
-                },
-            });
-
-            const { error } = await stripe.confirmPayment({
+            const { error, setupIntent } = await stripe.confirmSetup({
                 elements,
-                clientSecret,
                 confirmParams: {
-                    return_url: '/account', // won't redirect unless the payment requires an extra step
+                    return_url: window.location.href,
                 },
                 redirect: 'if_required',
+                // TODO: set up the wizard to detect the return url params, and then set current step to this one, and trigger the `subscriptions/create-trial` POST call.
             });
-
             if (error) {
-                throw new Error(error.message);
+                return handleError(error);
+            }
+            if (!setupIntent || setupIntent.status !== 'succeeded') {
+                clientLogger(setupIntent, 'error');
+                return handleError('Something went wrong with the payment');
+            }
+            const body: SubscriptionCreateTrialPostBody = {
+                customerId: company.cus_id,
+                companyId: company.id,
+                priceId: priceId,
+                paymentMethodId:
+                    typeof setupIntent?.payment_method === 'string'
+                        ? setupIntent.payment_method
+                        : setupIntent?.payment_method?.id,
+            };
+            const { subscription } = await nextFetch<SubscriptionCreateTrialPostResponse>(
+                'subscriptions/create-trial',
+                {
+                    method: 'POST',
+                    body,
+                },
+            );
+            if (subscription?.status !== 'trialing') {
+                return handleError('Something went wrong activating your subscription');
             }
             pollForSubscriptionStatusUpdate();
         } catch (error) {
@@ -120,17 +137,49 @@ const OnboardPaymentSectionInner = ({ priceId }: OnboardPaymentSectionProps) => 
 };
 
 export const OnboardPaymentSection = (props: OnboardPaymentSectionProps) => {
+    const { company } = useCompany();
     const { i18n } = useTranslation();
+    const [clientSecret, setClientSecret] = useState<string>();
+    const [clientSecretError, setClientSecretError] = useState<string>();
+
     const options: StripeElementsOptions = {
-        mode: 'subscription',
-        amount: 0,
-        currency: 'usd',
         locale: i18n.language.includes('en') ? 'en' : 'zh',
+        clientSecret,
     };
 
-    return (
+    const fetchClientSecret = useCallback(async () => {
+        setClientSecretError(undefined);
+        const { clientSecret } = await nextFetchWithQueries<GetSetupIntentQueries, GetSetupIntentResponse>(
+            'subscriptions/create-trial',
+            {
+                customerId: company?.cus_id || '',
+            },
+        );
+        if (clientSecret) {
+            setClientSecret(clientSecret);
+            setClientSecretError(undefined);
+        } else {
+            setClientSecretError('Something went wrong fetching the client secret');
+        }
+    }, [company?.cus_id]);
+
+    useEffect(() => {
+        if (company?.cus_id) {
+            fetchClientSecret();
+        }
+    }, [company?.cus_id, fetchClientSecret]);
+
+    return clientSecret ? (
         <StripeElementsProvider stripe={stripePromise} options={options}>
             <OnboardPaymentSectionInner {...props} />
         </StripeElementsProvider>
+    ) : (
+        <div className="min-w-[15rem]">
+            {clientSecretError ? (
+                <p className="mt-2 text-red-600">{clientSecretError}</p>
+            ) : (
+                <Spinner className="m-auto h-5 w-5 fill-primary-600 text-white" />
+            )}
+        </div>
     );
 };

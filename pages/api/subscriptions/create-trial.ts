@@ -1,64 +1,111 @@
 import type { NextApiHandler } from 'next';
 import httpCodes from 'src/constants/httpCodes';
+import { AI_EMAIL_SUBSCRIPTION_USAGE_LIMIT, AI_EMAIL_TRIAL_USAGE_LIMIT } from 'src/constants/openai';
+import { createSubscriptionErrors } from 'src/errors/subscription';
 import { ApiHandler, RelayError } from 'src/utils/api-handler';
+import { updateCompanyUsageLimits, updateCompanySubscriptionStatus } from 'src/utils/api/db';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
+import { serverLogger } from 'src/utils/logger-server';
+import { unixEpochToISOString } from 'src/utils/utils';
 import type Stripe from 'stripe';
 import type { StripePriceWithProductMetadata } from 'types';
 
-export interface SubscriptionCreatePostBody {
+export interface SubscriptionCreateTrialPostBody {
     customerId: string;
     priceId: string;
+    paymentMethodId?: string | null;
+    companyId: string;
+}
+export interface SubscriptionCreateTrialPostResponse {
+    subscription: Stripe.Subscription;
 }
 
-const postHandler: NextApiHandler = async (req, res) => {
-    const { customerId, priceId: price } = req.body as SubscriptionCreatePostBody;
+export type GetSetupIntentQueries = {
+    customerId: string;
+};
+export type GetSetupIntentResponse = {
+    clientSecret?: string;
+};
 
+const getHandler: NextApiHandler = async (req, res) => {
+    const { customerId } = req.query as GetSetupIntentQueries;
+    const intent = await stripeClient.setupIntents.create({
+        customer: customerId,
+        // automatic_payment_methods: { enabled: true }, // by default it is just 'card'. We can enable this to try to allow other payment methods.
+    });
+    return res.status(httpCodes.OK).json({ clientSecret: intent.client_secret });
+};
+
+const postHandler: NextApiHandler = async (req, res) => {
+    const { customerId, priceId, companyId, paymentMethodId } = req.body as SubscriptionCreateTrialPostBody;
     if (!customerId) {
         throw new RelayError('Missing customer ID', httpCodes.BAD_REQUEST);
     }
-    if (!price) {
+    if (!priceId) {
         throw new RelayError('Missing price ID', httpCodes.BAD_REQUEST);
     }
+    if (!companyId) {
+        throw new RelayError('Missing company ID', httpCodes.BAD_REQUEST);
+    }
 
-    const priceInfo = (await stripeClient.prices.retrieve(price, {
-        expand: ['data.product'],
+    const price = (await stripeClient.prices.retrieve(priceId, {
+        expand: ['product'],
     })) as Stripe.Response<StripePriceWithProductMetadata>;
-
-    if (!priceInfo) {
+    if (!price) {
         throw new RelayError('Failed to retrieve price');
     }
-    const { trial_days } = priceInfo.product.metadata;
+    const { trial_days, trial_profiles, trial_searches } = price.product.metadata;
 
-    if (!trial_days) {
+    if (!trial_days || !trial_profiles || !trial_searches) {
         throw new RelayError('Missing product metadata', httpCodes.INTERNAL_SERVER_ERROR, { sendToSentry: true });
     }
 
     const createParams: Stripe.SubscriptionCreateParams = {
         customer: customerId,
-        items: [{ price }],
+        items: [{ price: priceId }],
         payment_behavior: 'default_incomplete',
         payment_settings: { save_default_payment_method: 'on_subscription' },
-        expand: ['latest_invoice.payment_intent'],
+        default_payment_method: paymentMethodId || undefined,
         proration_behavior: 'create_prorations',
         trial_period_days: Number(trial_days),
     };
     // This doesn't actually create an active subscription, just the invoice/intent.
     // We can pass the client_secret from it to the front end to confirm the payment
     const subscription = await stripeClient.subscriptions.create(createParams);
-
-    if (
-        !subscription?.latest_invoice ||
-        typeof subscription.latest_invoice === 'string' ||
-        !subscription.latest_invoice.payment_intent ||
-        typeof subscription.latest_invoice.payment_intent === 'string' ||
-        !subscription.latest_invoice.payment_intent.client_secret
-    ) {
-        throw new RelayError('Failed to create subscription');
+    if (!subscription || subscription.status !== 'trialing') {
+        return res.status(httpCodes.BAD_REQUEST).json({ error: createSubscriptionErrors.unableToActivateSubscription });
     }
-    // Because this doesn't actually start the subscription, we'll need to rely on the webhook to update the subscription status
-    return res.json({
-        clientSecret: subscription.latest_invoice.payment_intent.client_secret,
+
+    if (!price?.product?.metadata?.profiles || !price.product.metadata.searches) {
+        serverLogger(new Error('Missing metadata'), 'error', true);
+        return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
+    }
+
+    await updateCompanyUsageLimits({
+        profiles_limit: price.product.metadata.profiles,
+        searches_limit: price.product.metadata.searches,
+        ai_email_generator_limit: AI_EMAIL_SUBSCRIPTION_USAGE_LIMIT,
+        trial_profiles_limit: trial_profiles,
+        trial_searches_limit: trial_searches,
+        trial_ai_email_generator_limit: AI_EMAIL_TRIAL_USAGE_LIMIT,
+        id: companyId,
     });
+
+    const subscription_start_date = unixEpochToISOString(subscription.trial_start, subscription.start_date);
+    if (!subscription_start_date) throw new Error('Missing subscription start date');
+
+    await updateCompanySubscriptionStatus({
+        subscription_status: 'trial',
+        subscription_start_date,
+        subscription_current_period_start: unixEpochToISOString(subscription.current_period_start),
+        subscription_current_period_end: unixEpochToISOString(subscription.current_period_end),
+        id: companyId,
+    });
+    const response: SubscriptionCreateTrialPostResponse = {
+        subscription,
+    };
+    // Because this doesn't actually start the subscription, we'll need to rely on the webhook to update the subscription status
+    return res.status(httpCodes.OK).json(response);
 };
 
-export default ApiHandler({ postHandler });
+export default ApiHandler({ postHandler, getHandler });

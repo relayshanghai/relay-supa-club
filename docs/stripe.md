@@ -4,6 +4,13 @@
 
 To test Stripe Webhooks locally, you can use [Stripe CLI](https://stripe.com/docs/stripe-cli).
 
+You'll probably want to be using the TEST_MODE account, so check your `.env.local` file that you are using
+
+```
+STRIPE_API_KEY=sk_test_.... # starts with sk_test_
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_.... # starts with pk_test_
+```
+
 ```
 stripe login
 
