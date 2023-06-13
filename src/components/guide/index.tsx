@@ -14,7 +14,7 @@ export const GuideCards = ({ cardName }: { cardName: string }) => {
         setGuideShow((prev) => !prev);
     };
     return (
-        <div className="m-1 my-6 flex basis-1/4 flex-col items-center gap-5 text-center">
+        <div className="m-1 my-6 flex w-screen basis-1/2 flex-col items-center gap-5 text-center md:w-auto lg:basis-1/3 2xl:basis-1/4">
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary-50">
                 <div className="flex h-11 w-11 items-center justify-center rounded-full bg-primary-100">
                     {cardName === 'discover' && <Compass height={24} width={24} className="stroke-primary-500" />}
@@ -53,7 +53,7 @@ export const GuideComponent = () => {
                 </p>
                 <p className="text-base text-gray-500">{t('guidePage.welcomeDescription')}</p>
             </div>
-            <div className="w-1/2 rounded-3xl shadow-lg">
+            <div className="rounded-3xl shadow-lg sm:w-11/12 md:w-5/6 lg:w-1/2">
                 <Image
                     src="/assets/imgs/placeholders/dashboard-current.png"
                     alt="Description of the image"
@@ -62,7 +62,7 @@ export const GuideComponent = () => {
                     height={800}
                 />
             </div>
-            <div className="flex flex-row flex-wrap justify-evenly">
+            <div className="flex w-screen flex-row flex-wrap justify-center">
                 {Object.keys(guidePage.cards).map((name: string, index: number) => {
                     return <GuideCards key={index} cardName={name} />;
                 })}
