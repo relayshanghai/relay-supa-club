@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { SearchInfluencersPayload } from './search-influencers-payload';
 
 describe('Test SearchInfluencersPayload', () => {
-    it('Should succeeed parsing ', async () => {
+    it('Should succeed parsing ', async () => {
         const result = SearchInfluencersPayload.safeParse({});
 
         expect(result.success).toBe(true);
@@ -10,7 +10,9 @@ describe('Test SearchInfluencersPayload', () => {
 
     it('Should fail parsing', async () => {
         const result = SearchInfluencersPayload.safeParse({
-            sort: {},
+            body: {
+                sort: {},
+            },
         });
 
         expect(result.success).toBe(false);
