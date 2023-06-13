@@ -5,6 +5,7 @@ import { FormWizard } from './form-wizard';
 import { Input } from '../input';
 import { SingleSelect } from '../ui';
 import { companyCategories } from './company-categories';
+import { Radio } from '../ui/radio';
 
 const SignUpPage = () => {
     const { t } = useTranslation();
@@ -37,6 +38,12 @@ const SignUpPage = () => {
             title: t('signup.step5title'),
             num: 5,
         },
+    ];
+
+    const companySizeOptions = [
+        { label: '1-10', value: '1-10' },
+        { label: '11-50', value: '11-50' },
+        { label: '50 +', value: '50+' },
     ];
 
     return (
@@ -88,6 +95,7 @@ const SignUpPage = () => {
                                 <>
                                     <Input label={t('signup.company')} type="text" placeholder="Company" value="" />
                                     <Input label={t('signup.website')} type="text" placeholder="www.site.com" />
+                                    <Radio label={t('signup.companySize')} options={companySizeOptions} />
                                 </>
                             )}
                             {/* TODO:Task for later PR: Link with stripe payment component */}

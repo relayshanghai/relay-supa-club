@@ -15,5 +15,6 @@ const signup = {
     confirmPassword: 'Confirm Password',
     company: 'Company',
     website: 'Website',
+    companySize: 'Company Size',
 };
 export default signup;

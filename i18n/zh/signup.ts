@@ -15,5 +15,6 @@ const signup = {
     confirmPassword: '确认密码',
     company: '公司名称',
     website: '网站',
+    companySize: '公司规模',
 };
 export default signup;
