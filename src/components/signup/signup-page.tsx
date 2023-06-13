@@ -6,6 +6,8 @@ import { Input } from '../input';
 import { SingleSelect } from '../ui';
 import { companyCategories } from './company-categories';
 import { Radio } from '../ui/radio';
+import { OnboardPaymentSection } from './onboard-payment-section';
+import { STRIPE_PRICE_MONTHLY_DIY } from 'src/utils/api/stripe/constants';
 
 const SignUpPage = () => {
     const { t } = useTranslation();
@@ -16,6 +18,7 @@ const SignUpPage = () => {
     } = useForm();
 
     const [currentStep, setCurrentStep] = useState(1);
+    const [selectedPriceId, _setSelectedPriceId] = useState(STRIPE_PRICE_MONTHLY_DIY);
 
     const steps = [
         {
@@ -98,12 +101,7 @@ const SignUpPage = () => {
                                     <Radio label={t('signup.companySize')} options={companySizeOptions} />
                                 </>
                             )}
-                            {/* TODO:Task for later PR: Link with stripe payment component */}
-                            {currentStep === 5 && (
-                                <>
-                                    <p>Placeholder to link the stripe payment elements</p>
-                                </>
-                            )}
+                            {currentStep === 5 && <OnboardPaymentSection priceId={selectedPriceId} />}
                         </FormWizard>
                     ),
             )}
