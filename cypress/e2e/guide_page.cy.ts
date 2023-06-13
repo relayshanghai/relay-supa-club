@@ -5,7 +5,7 @@ import guidePage from 'i18n/en/guide';
 describe('checks restricted to guide page', () => {
     it('check if guide page opens', async () => {
         await deleteDB('app-cache');
-        setupIntercepts(); // some will be overriden
+        setupIntercepts();
         cy.visit('/');
         cy.loginTestUser();
         cy.contains('Guide').click();
@@ -18,7 +18,7 @@ describe('checks restricted to guide page', () => {
         await deleteDB('app-cache');
     });
     it('check modal functioning for every separate guide', () => {
-        setupIntercepts(); // some will be overriden
+        setupIntercepts();
         cy.loginTestUser();
         Object.keys(guidePage.modalInfo).forEach((section) => {
             cy.visit('/guide');
@@ -33,7 +33,7 @@ describe('checks restricted to guide page', () => {
         })
     });
     it('check modal for every separate guide but go back', () => {
-        setupIntercepts(); // some will be overriden
+        setupIntercepts();
         cy.loginTestUser();
         cy.visit('/guide');
         Object.keys(guidePage.modalInfo).forEach((section) => {
