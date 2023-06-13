@@ -47,7 +47,7 @@ const OnboardPaymentSectionInner = ({ priceId }: OnboardPaymentSectionProps) => 
             }
 
             // Create the Subscription
-            const { clientSecret } = await nextFetch('subscriptions/create-subscription', {
+            const { clientSecret } = await nextFetch('subscriptions/create-trial', {
                 method: 'POST',
                 body: {
                     customerId: company?.cus_id,

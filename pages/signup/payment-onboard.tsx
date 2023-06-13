@@ -20,7 +20,7 @@ const PaymentOnboard = () => {
     const { t } = useTranslation();
     const { trackEvent } = useRudderstack();
     const { company } = useCompany();
-    const { subscription, createTrial, paymentMethods } = useSubscription();
+    const { subscription, createTrialLegacy, paymentMethods } = useSubscription();
     const [submitting, setSubmitting] = useState(false);
     const { logout } = useUser();
 
@@ -35,7 +35,7 @@ const PaymentOnboard = () => {
     const handleSubmit = async () => {
         try {
             setSubmitting(true);
-            const result = await createTrial();
+            const result = await createTrialLegacy();
             if (result.status === 'trialing') {
                 toast.success(t('login.accountActivated'));
                 await router.push('/dashboard');
