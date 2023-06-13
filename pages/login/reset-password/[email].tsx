@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
 import { Spinner } from 'src/components/icons';
 import { Input } from 'src/components/input';
-import { LoginSignupLayout } from 'src/components/SignupLayout';
+import { LegacyLoginSignupLayout } from 'src/components/LegacySignupLayout';
 
 import { useFields } from 'src/hooks/use-fields';
 import { useUser } from 'src/hooks/use-user';
@@ -97,7 +97,7 @@ const ResetPassword = () => {
     const submitDisabled = invalidFormInput || submitting;
 
     return (
-        <LoginSignupLayout>
+        <LegacyLoginSignupLayout>
             {error_description ? (
                 <h1>{error_description}</h1>
             ) : resetDetected ? (
@@ -137,7 +137,7 @@ const ResetPassword = () => {
             ) : (
                 <Spinner className="mx-auto mt-10 h-10 w-10 fill-primary-600 text-white" />
             )}
-        </LoginSignupLayout>
+        </LegacyLoginSignupLayout>
     );
 };
 
