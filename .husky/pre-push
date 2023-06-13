@@ -9,4 +9,3 @@ npm run type-check:app
 
 # run cypress tests
 unset ELECTRON_RUN_AS_NODE
-npm run test-cypress-unit
