@@ -19,7 +19,7 @@ export const Radio = ({ label, options }: RadioProps) => (
                             id="radio-button"
                             value={option.value}
                         />
-                        <span className="ml-3 text-sm text-gray-500 ">{option.label}</span>
+                        <span className="ml-3 text-sm font-medium text-gray-500">{option.label}</span>
                     </label>
                 </div>
             ))}
