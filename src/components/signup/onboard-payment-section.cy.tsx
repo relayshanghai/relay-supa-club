@@ -3,9 +3,9 @@
 // @ts-check
 import { OnboardPaymentSection } from './onboard-payment-section';
 import React from 'react';
-import { testMount } from '../utils/cypress-app-wrapper';
+import { testMount } from '../../utils/cypress-app-wrapper';
 import { rest } from 'msw';
-import { APP_URL_CYPRESS, worker } from '../mocks/browser';
+import { APP_URL_CYPRESS, worker } from '../../mocks/browser';
 
 describe('<OnboardPaymentSection />', () => {
     before(async () => {
