@@ -10,11 +10,16 @@ const signup = {
     firstName: '名字',
     lastName: '姓氏',
     phoneNumber: '电话号码',
+    firstNamePlaceholder: '三',
+    lastNamePlaceholder: '张',
     email: '电子邮件',
     password: '密码',
     confirmPassword: '确认密码',
     company: '公司名称',
     website: '网站',
     companySize: '公司规模',
+    passwordPlaceholder: '输入您的密码',
+    confirmPasswordPlaceholder: '确认您的密码',
+    companyPlaceholder: '输入您的公司名称',
 };
 export default signup;

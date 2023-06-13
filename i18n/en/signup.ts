@@ -10,11 +10,16 @@ const signup = {
     firstName: 'First Name',
     lastName: 'Last Name',
     phoneNumber: 'Phone Number',
+    firstNamePlaceholder: 'Jane',
+    lastNamePlaceholder: 'Doe',
     email: 'Email',
     password: 'Password',
     confirmPassword: 'Confirm Password',
     company: 'Company',
     website: 'Website',
     companySize: 'Size',
+    passwordPlaceholder: 'Enter your password',
+    confirmPasswordPlaceholder: 'Confirm your password',
+    companyPlaceholder: 'Enter your company name',
 };
 export default signup;
