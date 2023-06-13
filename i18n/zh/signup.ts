@@ -21,5 +21,13 @@ const signup = {
     passwordPlaceholder: '输入您的密码',
     confirmPasswordPlaceholder: '确认您的密码',
     companyPlaceholder: '输入您的公司名称',
+    carousel: {
+        title1: '发现 KOL',
+        description1: '帮助你轻松找到合适的 KOL',
+        title2: '项目管理',
+        description2: '终于！不再使用电子表格',
+        title3: '数据中心',
+        description3: '清楚地看到效果',
+    },
 };
 export default signup;

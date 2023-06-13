@@ -21,5 +21,13 @@ const signup = {
     passwordPlaceholder: 'Enter your password',
     confirmPasswordPlaceholder: 'Confirm your password',
     companyPlaceholder: 'Enter your company name',
+    carousel: {
+        title1: 'Discover',
+        description1: 'Find the perfect influencer without all the hassle',
+        title2: 'Project Management',
+        description2: 'Finally! No more spreadsheets',
+        title3: 'Data Center',
+        description3: 'See your results clearly',
+    },
 };
 export default signup;

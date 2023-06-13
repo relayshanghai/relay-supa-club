@@ -31,18 +31,17 @@ export default function Carousel({ slides, autoSlide = false, autoSlideInterval 
                     curr === i && (
                         <div
                             key={i}
-                            className="flex max-w-sm flex-col items-center justify-center transition-transform duration-500 ease-in-out lg:max-w-full"
+                            className="flex max-w-sm flex-col items-center justify-center space-y-8 lg:max-w-full"
                         >
-                            <h2 className="mb-8 text-2xl font-semibold lg:text-4xl">{slide.title}</h2>
-                            <div className="relative mb-8  overflow-hidden ">
-                                <div className="flex">
+                            <h2 className="text-3xl font-semibold lg:text-5xl">{slide.title}</h2>
+                            <div className="relative overflow-hidden ">
+                                <div className="flex transition-transform duration-500 ease-out">
                                     <Image
                                         src={slide.url}
                                         width={500}
                                         height={500}
                                         alt={slide.title}
                                         className="rounded-3xl"
-                                        // style={{ transform: `translateX(-${curr * 100}%)` }}
                                     />
                                 </div>
 
@@ -60,20 +59,20 @@ export default function Carousel({ slides, autoSlide = false, autoSlideInterval 
                                         <ChevronRight className="h-6 w-6 stroke-gray-400" />
                                     </button>
                                 </div>
-                                <div className="absolute bottom-4 left-0 right-0">
-                                    <div className="flex items-center justify-center gap-2">
-                                        {slides.map((_, i) => (
-                                            <div
-                                                key={i}
-                                                className={`h-3 w-3 rounded-full bg-white transition-all ${
-                                                    curr === i ? 'p-2' : 'bg-opacity-50'
-                                                }`}
-                                            />
-                                        ))}
-                                    </div>
+                            </div>
+                            <p className="text-wrap text-md lg:text-xl">{slide.description}</p>
+                            <div className="flex space-x-2">
+                                <div className="flex items-center justify-center gap-2">
+                                    {slides.map((_, i) => (
+                                        <div
+                                            key={i}
+                                            className={`h-2.5 w-2.5 rounded-full bg-white transition-all ${
+                                                curr === i ? ' bg-primary-900 p-1.5' : 'bg-opacity-70'
+                                            }`}
+                                        />
+                                    ))}
                                 </div>
                             </div>
-                            <p className="text-wrap text-base lg:text-lg">{slide.description}</p>
                         </div>
                     ),
             )}
