@@ -60,11 +60,13 @@ const OnboardPaymentSectionInner = ({ priceId }: OnboardPaymentSectionProps) => 
                 pollForSubscriptionStatusUpdate();
             }, 1000);
         }
-    }, [handleSuccess, refreshSubscription, subscription?.status]);
+    }, [handleSuccess, refreshSubscription, subscription]);
 
     useEffect(() => {
-        pollForSubscriptionStatusUpdate();
-    }, [pollForSubscriptionStatusUpdate]);
+        if (subscription?.status === 'trialing' || subscription?.status === 'active') {
+            return handleSuccess();
+        }
+    }, [subscription?.status, handleSuccess]);
 
     const handleSubmit = async (event: any) => {
         event.preventDefault();
@@ -106,7 +108,6 @@ const OnboardPaymentSectionInner = ({ priceId }: OnboardPaymentSectionProps) => 
             if (subscription?.status !== 'trialing') {
                 return handleError('Something went wrong activating your subscription');
             }
-            pollForSubscriptionStatusUpdate();
         } catch (error) {
             handleError(error);
         }
