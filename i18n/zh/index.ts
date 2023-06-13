@@ -9,6 +9,7 @@ import aiEmailGenerator from './ai-email-generator';
 import usages from './usages';
 import performance from './performance';
 import guidePage from './guide';
+import signup from './signup';
 
 const translations = {
     translation: {
@@ -23,6 +24,7 @@ const translations = {
         usages,
         performance,
         guidePage,
+        signup,
     },
 };
 export default translations;
