@@ -7,9 +7,8 @@ import { SingleSelect } from '../ui';
 import { companyCategories } from './company-categories';
 import { Radio } from '../ui/radio';
 import { OnboardPaymentSection } from './onboard-payment-section';
-import { STRIPE_PRICE_MONTHLY_DIY } from 'src/utils/api/stripe/constants';
 
-const SignUpPage = () => {
+const SignUpPage = ({ selectedPriceId }: { selectedPriceId: string }) => {
     const { t } = useTranslation();
     const {
         control,
@@ -18,7 +17,6 @@ const SignUpPage = () => {
     } = useForm();
 
     const [currentStep, setCurrentStep] = useState(1);
-    const [selectedPriceId, _setSelectedPriceId] = useState(STRIPE_PRICE_MONTHLY_DIY);
 
     const steps = [
         {

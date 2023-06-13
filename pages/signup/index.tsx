@@ -17,6 +17,7 @@ import { isMissing } from 'src/utils/utils';
 import type { SignupInputTypes } from 'src/utils/validation/signup';
 import { validateSignupInput } from 'src/utils/validation/signup';
 import { LoginSignupLayout } from 'src/components/SignupLayout';
+import { STRIPE_PRICE_MONTHLY_DIY } from 'src/utils/api/stripe/constants';
 
 export default function Register() {
     const { t } = useTranslation();
@@ -120,8 +121,10 @@ export default function Register() {
             handleSubmit();
         }
     };
+    const [selectedPriceId, _setSelectedPriceId] = useState(STRIPE_PRICE_MONTHLY_DIY);
 
     // TODO: add carousel component V2-497 and replace this leftPage component
+    // Will need to select the price from the left side component
     const leftPage = (
         <div className="invisible flex h-full items-center justify-center text-white md:visible">
             Placeholder for Carousel
@@ -131,7 +134,7 @@ export default function Register() {
     return (
         <>
             {featSignupV2() ? (
-                <LoginSignupLayout right={<SignUpPage />} left={leftPage} />
+                <LoginSignupLayout right={<SignUpPage selectedPriceId={selectedPriceId} />} left={leftPage} />
             ) : (
                 <LegacyLoginSignupLayout>
                     <form className="mx-auto flex w-full max-w-xs flex-grow flex-col items-center justify-center space-y-2">
