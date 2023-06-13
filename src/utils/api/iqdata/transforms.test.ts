@@ -15,7 +15,7 @@ describe('prepareFetchCreatorsFiltered', () => {
     it('generates the correct search request body', () => {
         const { body } = prepareFetchCreatorsFiltered(defaultOptions);
         expect(body).toEqual({
-            paging: { limit: 10, skip: undefined },
+            paging: { limit: 10, skip: 0 },
             filter: {
                 relevance: { value: '' },
                 actions: [
@@ -35,8 +35,6 @@ describe('prepareFetchCreatorsFiltered', () => {
                 username: { value: 'test_user' },
                 views: { left_number: undefined, right_number: undefined },
                 followers: { left_number: undefined, right_number: undefined },
-                audience_geo: [],
-                geo: [],
             },
             sort: { field: 'followers', direction: 'desc' },
             audience_source: 'any',
