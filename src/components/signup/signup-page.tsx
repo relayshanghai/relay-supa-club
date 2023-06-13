@@ -59,7 +59,6 @@ const SignUpPage = () => {
                                         label={t('signup.phoneNumber')}
                                         type="text"
                                         placeholder="+1 (000) 000-0000"
-                                        value=""
                                     />
                                 </>
                             )}
@@ -67,18 +66,8 @@ const SignUpPage = () => {
                             {currentStep === 2 && (
                                 <>
                                     <Input label={t('signup.email')} type="email" placeholder="you@site.com" value="" />
-                                    <Input
-                                        label={t('signup.password')}
-                                        type="password"
-                                        placeholder="password"
-                                        value=""
-                                    />
-                                    <Input
-                                        label={t('signup.confirmPassword')}
-                                        type="password"
-                                        placeholder="password"
-                                        value=""
-                                    />
+                                    <Input label={t('signup.password')} type="password" placeholder="password" />
+                                    <Input label={t('signup.confirmPassword')} type="password" placeholder="password" />
                                 </>
                             )}
 
@@ -90,9 +79,7 @@ const SignUpPage = () => {
                                         isRequired
                                         control={control}
                                         options={companyCategories}
-                                        defaultValue=""
                                         setValue={setValue}
-                                        className=""
                                     />
                                 </>
                             )}
@@ -100,12 +87,7 @@ const SignUpPage = () => {
                             {currentStep === 4 && (
                                 <>
                                     <Input label={t('signup.company')} type="text" placeholder="Company" value="" />
-                                    <Input
-                                        label={t('signup.website')}
-                                        type="text"
-                                        placeholder="www.site.com"
-                                        value=""
-                                    />
+                                    <Input label={t('signup.website')} type="text" placeholder="www.site.com" />
                                 </>
                             )}
                             {/* TODO:Task for later PR: Link with stripe payment component */}
