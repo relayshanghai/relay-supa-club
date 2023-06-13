@@ -140,7 +140,7 @@ export const SearchResultRow = ({
                             href={url || ''}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-sm text-primary-500 line-clamp-1"
+                            className="line-clamp-1 text-sm text-primary-500"
                         >
                             {handle ? `@${handle}` : null}
                         </Link>

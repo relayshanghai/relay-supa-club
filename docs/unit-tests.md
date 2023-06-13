@@ -3,6 +3,8 @@
 We are using Vitest for testing pure functions and next backend files.
 We are using cypress for testing components.
 
+All new features should have tests that prove the feature works, and handles edge cases. Whether this needs to be a unit/component/e2e test is up to you.
+
 As far as existing features, we don't have enough time to add granular tests to everything, but we will try to add tests in this priority:
 
 -   Bug fixes
@@ -36,7 +38,7 @@ use the suffix `.test.ts` for Vitest test files
 
 mocks return data from third parties like iqdata and are loaded from `src/mocks/server`
 
-# Cypress unit tests
+# Cypress unit (component) tests
 
 To get 'watch' mode working while you are developing you can run `npx cypress open` and also run `npm run tailwind:watch`, which will watch for changes in the code and rebuild the css.
 
@@ -58,6 +60,18 @@ Because Cypress mounts each component individually, you might be missing some co
 `@ts-check`: This is a TypeScript directive that tells the TypeScript compiler to check the file for type errors. This is useful for catching errors in your tests before you run them.
 
 `/// <reference types="@testing-library/cypress" />`: This is a TypeScript directive that tells the TypeScript compiler to load the types for the `@testing-library/cypress` library. This is useful for getting type hints in your tests.
+
+## Tips
+
+-   Describe the feature in simple language.
+-   Look back at the ticket and user story to see if you missed anything
+-   Think about how you can turn that description into a set of testable assertions. For example “As a user I can click a button and open the confirm modal”. The assertion would be `test(‘the confirm modal opens when the action button is clicked)`
+-   If you are testing nested components, what is the appropriate level to test? How many children or sibling components need to be involved? Ask yourself ‘what does this component do?’ And ‘how can I prove it does it?’. Do those proofs cover the assertions we listed above? Make test files next to the appropriate level files.
+-   Try to consider edge cases and reverse cases to really prove it works as intended.
+-   Mount the component and see if you are missing any `Contexts` or dependencies. Mock those if needed.
+-   Think about what data context we need to prove the different scenarios and edge cases. If needed, set up some data mocks like different users or a null user.
+-   Start writing the tests. Run them in watch mode only on that one file and with `test.only` so you don’t get some junk console logs and they run fast
+-   Make sure you’ve covered edge cases and reverse cases and aren’t writing false positives or false negatives.
 
 ## References
 

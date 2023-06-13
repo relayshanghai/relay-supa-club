@@ -57,6 +57,28 @@ describe('getCurrentMonthPeriod', () => {
         expect(thisMonthStartDate.toISOString()).toEqual(expectedStartDate.toISOString());
         expect(thisMonthEndDate.toISOString()).toEqual(expectedEndDate.toISOString());
     });
+    test('should return correct start and end dates for the current month period crosses a year', () => {
+        const subscriptionStartDate = new Date('2022-10-20');
+        const now = new Date('2023-1-15');
+        const { thisMonthStartDate, thisMonthEndDate } = getCurrentMonthPeriod(subscriptionStartDate, now);
+
+        const expectedStartDate = new Date('2022-12-20');
+        const expectedEndDate = new Date('2023-01-20T00:00:00.000Z'); // not sure why, but not including the UTC time here threw it off
+
+        expect(thisMonthStartDate.toISOString()).toEqual(expectedStartDate.toISOString());
+        expect(thisMonthEndDate.toISOString()).toEqual(expectedEndDate.toISOString());
+    });
+    test('should return correct start and end dates for the current month period is after the subscription day and crosses a year', () => {
+        const subscriptionStartDate = new Date('2022-10-20');
+        const now = new Date('2022-12-25');
+        const { thisMonthStartDate, thisMonthEndDate } = getCurrentMonthPeriod(subscriptionStartDate, now);
+
+        const expectedStartDate = new Date('2022-12-20');
+        const expectedEndDate = new Date('2023-01-20T00:00:00.000Z');
+
+        expect(thisMonthStartDate.toISOString()).toEqual(expectedStartDate.toISOString());
+        expect(thisMonthEndDate.toISOString()).toEqual(expectedEndDate.toISOString());
+    });
 });
 
 describe('hasCustomSearchParams', () => {

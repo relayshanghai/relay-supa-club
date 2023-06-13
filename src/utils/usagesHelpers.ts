@@ -19,20 +19,24 @@ export function getCurrentMonthPeriod(
 } {
     const now = currentDate ?? new Date();
 
-    const monthsPassed = now.getUTCMonth() - subscriptionStartDate.getUTCMonth();
     const yearsPassed = now.getUTCFullYear() - subscriptionStartDate.getUTCFullYear();
+    const monthsPassed = now.getUTCMonth() - subscriptionStartDate.getUTCMonth();
 
     const thisMonthStartDate = new Date(subscriptionStartDate);
-    thisMonthStartDate.setFullYear(subscriptionStartDate.getUTCFullYear() + yearsPassed);
-    thisMonthStartDate.setMonth(subscriptionStartDate.getUTCMonth() + monthsPassed);
+
+    now.getUTCFullYear() - subscriptionStartDate.getUTCFullYear();
+    thisMonthStartDate.setUTCFullYear(subscriptionStartDate.getUTCFullYear() + yearsPassed);
+    thisMonthStartDate.setUTCMonth(subscriptionStartDate.getUTCMonth() + monthsPassed);
     // if we are already past the day(date) the subscription started, we need to start the period from the previous month
-    if (subscriptionStartDate.getDate() >= now.getDate()) {
-        thisMonthStartDate.setMonth(thisMonthStartDate.getUTCMonth() - 1);
+    if (subscriptionStartDate.getUTCDate() >= now.getUTCDate()) {
+        thisMonthStartDate.setUTCMonth(thisMonthStartDate.getUTCMonth() - 1);
     }
+    // set the date time to midnight of that day
+    thisMonthStartDate.setUTCHours(0, 0, 0, 0);
 
     const thisMonthEndDate = new Date(thisMonthStartDate);
-    thisMonthEndDate.setMonth(thisMonthEndDate.getUTCMonth() + 1);
-
+    thisMonthEndDate.setUTCMonth(thisMonthEndDate.getUTCMonth() + 1);
+    thisMonthEndDate.setUTCHours(0, 0, 0, 0);
     return { thisMonthStartDate, thisMonthEndDate };
 }
 

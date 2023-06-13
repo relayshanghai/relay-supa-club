@@ -13,6 +13,7 @@ on:
 
 env:
     STRIPE_API_KEY: ${{ secrets.STRIPE_API_KEY }}
+    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY }}
     DATA_PASS: ${{ secrets.DATA_PASS }}
     DATA_USER: ${{ secrets.DATA_USER }}
     DATA_KEY: ${{ secrets.DATA_KEY }}
@@ -36,7 +37,8 @@ jobs:
         env:
             SUPABASE_SCANNER_BUFFER_SIZE: 5mb
 
-        runs-on: ubuntu-22.04
+        runs-on:
+            group: large-runner
         steps:
             - uses: actions/checkout@v3
 
@@ -71,7 +73,8 @@ jobs:
                   ./supabase/db.sh db_test
 
     build-and-unit-test:
-        runs-on: ubuntu-latest
+        runs-on:
+            group: large-runner
         environment: preview
         env:
             # unit tests don't need the real keys, but they load some functions that check for them on init.
@@ -95,7 +98,8 @@ jobs:
             - run: npm run test-cypress-unit
 
     cypress-e2e:
-        runs-on: ubuntu-22.04
+        runs-on:
+            group: large-runner
         environment: preview
 
         strategy:
@@ -108,7 +112,6 @@ jobs:
               uses: actions/setup-node@v1
               with:
                   node-version: ${{ matrix.node-version }}
-                  cache: 'npm'
 
             - uses: supabase/setup-cli@v1
               with:

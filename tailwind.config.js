@@ -47,5 +47,5 @@ module.exports = {
             fontFamily: ['hover', 'focus'],
         },
     },
-    plugins: [require('@tailwindcss/line-clamp')],
+    plugins: [],
 };
