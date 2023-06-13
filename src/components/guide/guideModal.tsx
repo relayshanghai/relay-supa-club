@@ -27,7 +27,7 @@ export const GuideModal = ({
                         <div key={index} className="mt-4 flex flex-col gap-2">
                             <p className="text-base font-semibold text-gray-700">
                                 {t(
-                                    `guidePage.modalInfo.${section}.sections.${guideSection}.title` as keyof typeof guidePage,
+                                    `guidePage.modalInfo.${section}.sections.${guideSection}.title`
                                 )}
                             </p>
                             <p className="font-regular text-sm text-gray-500">
