@@ -122,7 +122,11 @@ export default function Register() {
     };
 
     // TODO: add carousel component V2-497 and replace this leftPage component
-    const leftPage = <div>Placeholder for Carousel</div>;
+    const leftPage = (
+        <div className="invisible flex h-full items-center justify-center text-white md:visible">
+            Placeholder for Carousel
+        </div>
+    );
 
     return (
         <>
