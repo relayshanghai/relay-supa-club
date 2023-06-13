@@ -16,7 +16,6 @@ describe('checks restricted to guide page', () => {
 describe('checks restricted to guide page', () => {
     beforeEach(async () => {
         await deleteDB('app-cache');
-        
     });
     it('check modal functioning for every separate guide', () => {
         setupIntercepts(); // some will be overriden

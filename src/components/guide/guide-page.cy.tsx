@@ -14,27 +14,7 @@ describe('GuideComponent', () => {
             cy.contains('Welcome to relay.club');
             cy.contains(guidePage.welcomeDescription);
         });
-        it('should have Discover Section', () => {
-            cy.contains(cardDetails.title);
-            cy.contains(cardDetails.description);
-        });
-        it('should have Discover Section', () => {
-            cy.contains(cardDetails.title);
-            cy.contains(cardDetails.description);
-        });
-        it('should have Campaigns Section', () => {
-            cy.contains(cardDetails.title);
-            cy.contains(cardDetails.description);
-        });
-        it('should have Performance Section', () => {
-            cy.contains(cardDetails.title);
-            cy.contains(cardDetails.description);
-        });
-        it('should have My Account Section', () => {
-            cy.contains(cardDetails.title);
-            cy.contains(cardDetails.description);
-        });
-        it('should have AI Email Section', () => {
+        it('should show section title and description', () => {
             cy.contains(cardDetails.title);
             cy.contains(cardDetails.description);
         });
