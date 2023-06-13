@@ -2,9 +2,9 @@
 // @ts-check
 import { clientRoleAtom } from 'src/atoms/client-role-atom';
 import { worker } from '../../mocks/browser';
-import type { InitialValues } from '../../utils/cypress-app-wrapper';
 import { testMount } from '../../utils/cypress-app-wrapper';
 import { SearchPage } from './search-page';
+import type { InitialValues } from 'src/utils/user-test-wrapper';
 
 const initialValues: InitialValues = [
     [

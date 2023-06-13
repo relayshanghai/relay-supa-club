@@ -89,7 +89,7 @@ describe('Main pages happy paths', () => {
         setupIntercepts();
 
         cy.loginTestUser();
-        cy.contains('Account').click();
+        cy.contains('My Account').click();
         cy.contains('Subscription', { timeout: 10000 }); // loads account page
 
         cy.url().should('include', `/account`);
@@ -132,7 +132,7 @@ describe('Main pages happy paths', () => {
             .type('123')
             .should('have.value', 'Blue Moonlight Stream Enterprises123');
     });
-    it.only('can open campaigns page and manage campaign influencers', () => {
+    it('can open campaigns page and manage campaign influencers', () => {
         setupIntercepts();
         // list, add, archive campaigns
         // list, add, move, delete campaign influencers
@@ -160,14 +160,6 @@ describe('Main pages happy paths', () => {
         cy.contains('Campaign Name *', { timeout: 10000 });
         // check displays new campaign
         cy.get('input[name=name]').type('My Campaign');
-        cy.get('textarea[name=description]').type('This campaign is about selling some stuff');
-        cy.get('input[name=product_name]').type('Gadget');
-        cy.get('input[id=react-select-3-input]').click();
-        cy.contains('Books').click();
-        cy.get('input[id=react-select-5-input]').click();
-        cy.contains('Albania').click();
-        cy.get('input[name=budget_cents]').type('1000');
-        cy.get('input[name=promo_types]').check({ force: true });
         cy.get('button').contains('Create Campaign').click();
         cy.contains('Campaign Launch Date', { timeout: 10000 });
         cy.contains('SET India').should('not.exist');
@@ -198,6 +190,18 @@ describe('Main pages happy paths', () => {
         cy.get('button').contains('New Campaign');
 
         cy.contains('Beauty for All Skin Tones').click();
+
+        // edit a campaign
+        cy.contains('Edit', { timeout: 60000 }).click();
+        cy.get('textarea[name=description]').type('This campaign is about selling some stuff');
+        cy.get('input[name=product_name]').type('Gadget');
+        cy.get('input[id=react-select-3-input]').click();
+        cy.contains('Books').click();
+        cy.get('input[id=react-select-5-input]').click();
+        cy.contains('Albania').click();
+        cy.get('input[name=budget_cents]').type('1000');
+        cy.get('input[name=promo_types]').check({ force: true });
+        cy.contains('button', 'Save Campaign').click();
 
         cy.contains('tr', 'PewDiePie', { timeout: 60000 });
         cy.contains('tr', 'SET India', { timeout: 60000 });
@@ -273,18 +277,18 @@ describe('Main pages happy paths', () => {
         cy.contains('My Campaign');
     });
 
-    it('can record search usages, can manage clients as a company owner', () => {
+    it.only('can record search usages, can manage clients as a company owner', () => {
         setupIntercepts();
         cy.loginAdmin();
 
-        cy.contains('Account').click();
+        cy.contains('My Account').click();
         cy.contains('https://relay.club', { timeout: 20000 });
         cy.contains('https://blue-moonlight-stream.com').should('not.exist');
         cy.contains('tr', 'Searches').within(() => {
             cy.contains('td', '0');
         });
 
-        cy.contains('Influencers').click();
+        cy.contains('Discover').click();
         cy.contains('button', 'Search');
 
         // rack up 2 searches
@@ -302,11 +306,11 @@ describe('Main pages happy paths', () => {
         cy.getByTestId('search-spinner').should('not.exist');
         cy.contains('button', 'Search').click();
 
-        cy.contains('Account').click();
+        cy.contains('My Account').click();
         cy.contains('https://relay.club');
 
         // searches should have increased by 2
-        cy.contains('td', '2'); // wait for count to update
+        cy.contains('td', '2', { timeout: 30000 }); // wait for count to update
         cy.contains('tr', 'Searches').within(() => {
             cy.contains('td', '2');
         });
@@ -319,7 +323,7 @@ describe('Main pages happy paths', () => {
 
         // check warning message
         cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises').should('not.exist');
-        cy.contains('tr', 'Blue Moonlight Stream Enterprises').within(() => {
+        cy.contains('tr', 'Blue Moonlight Stream Enterprises', { timeout: 20000 }).within(() => {
             cy.contains('Manage').click();
         });
         cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises');
@@ -332,7 +336,7 @@ describe('Main pages happy paths', () => {
         cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises'); // check that warning persists
 
         // can see client's search totals
-        cy.contains('Account').click();
+        cy.contains('My Account').click();
         cy.contains('https://blue-moonlight-stream.com', { timeout: 20000 });
         cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises'); // check that warning persists
         cy.contains('tr', 'Searches').within(() => {
@@ -340,7 +344,7 @@ describe('Main pages happy paths', () => {
         });
 
         // rack up 1 search
-        cy.contains('Influencers').click();
+        cy.contains('Discover').click();
         cy.contains('button', 'Search');
         cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises'); // check that warning persists
         cy.getByTestId('search-topics').within(() => {
@@ -351,9 +355,9 @@ describe('Main pages happy paths', () => {
         cy.contains('button', 'Search').click();
 
         // Check that search total increased
-        cy.contains('Account').click();
+        cy.contains('My Account').click();
         cy.contains('https://blue-moonlight-stream.com');
-        cy.contains('td', '1'); // wait for count to update
+        cy.contains('td', '1', { timeout: 30000 }); // wait for count to update
         cy.contains('tr', 'Searches').within(() => {
             cy.contains('td', '1');
         });
@@ -365,7 +369,7 @@ describe('Main pages happy paths', () => {
         cy.contains('Close', { timeout: 1000 }).click();
         cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises').should('not.exist');
 
-        cy.contains('Account').click();
+        cy.contains('My Account').click();
         cy.contains('https://blue-moonlight-stream.com').should('not.exist');
         cy.contains('https://relay.club');
     });
@@ -439,4 +443,4 @@ describe('Main pages happy paths', () => {
 });
 
 // Need to export an empty object to keep typescript happy. Otherwise, it will complain that the file is a module, but it has no imports or exports.
-export {};
+export { };

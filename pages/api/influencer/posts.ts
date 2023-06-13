@@ -42,6 +42,10 @@ const processURL = async (url: string, campaign_id: string, creator_id: string) 
 
     const creator = await _getCampaignCreator(creator_id);
 
+    if (!creator) {
+        throw new Error('Creator not found');
+    }
+
     if (scrape.influencer_platform_id !== creator.creator_id) {
         throw new Error('URL influencer and provided influencer did not match');
     }
