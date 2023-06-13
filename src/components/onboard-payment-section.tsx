@@ -78,6 +78,7 @@ const OnboardPaymentSectionInner = ({ priceId }: OnboardPaymentSectionProps) => 
                 },
                 redirect: 'if_required',
                 // TODO: set up the wizard to detect the return url params, and then set current step to this one, and trigger the `subscriptions/create-trial` POST call.
+                // Right now this shouldn't be a problem because we are just accepting cards, and cards should all just resolve in one step.
             });
             if (error) {
                 return handleError(error);

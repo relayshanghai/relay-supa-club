@@ -69,8 +69,6 @@ const postHandler: NextApiHandler = async (req, res) => {
         proration_behavior: 'create_prorations',
         trial_period_days: Number(trial_days),
     };
-    // This doesn't actually create an active subscription, just the invoice/intent.
-    // We can pass the client_secret from it to the front end to confirm the payment
     const subscription = await stripeClient.subscriptions.create(createParams);
     if (!subscription || subscription.status !== 'trialing') {
         return res.status(httpCodes.BAD_REQUEST).json({ error: createSubscriptionErrors.unableToActivateSubscription });
@@ -104,7 +102,6 @@ const postHandler: NextApiHandler = async (req, res) => {
     const response: SubscriptionCreateTrialPostResponse = {
         subscription,
     };
-    // Because this doesn't actually start the subscription, we'll need to rely on the webhook to update the subscription status
     return res.status(httpCodes.OK).json(response);
 };
 
