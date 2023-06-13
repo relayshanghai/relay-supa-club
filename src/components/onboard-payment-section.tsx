@@ -63,7 +63,7 @@ const OnboardPaymentSectionInner = ({ priceId }: OnboardPaymentSectionProps) => 
     }, [handleSuccess, refreshSubscription, subscription?.status]);
 
     useEffect(() => {
-        // pollForSubscriptionStatusUpdate();
+        pollForSubscriptionStatusUpdate();
     }, [pollForSubscriptionStatusUpdate]);
 
     const handleSubmit = async (event: any) => {
