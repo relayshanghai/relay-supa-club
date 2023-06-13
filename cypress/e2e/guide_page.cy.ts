@@ -20,7 +20,6 @@ describe('checks restricted to guide page', () => {
     });
     it('check modal functioning for every separate guide', () => {
         setupIntercepts(); // some will be overriden
-        cy.visit('/login');
         cy.loginTestUser();
         Object.keys(guidePage.modalInfo).forEach((section) => {
             cy.visit('/guide');
@@ -36,7 +35,6 @@ describe('checks restricted to guide page', () => {
     });
     it('check modal for every separate guide but go back', () => {
         setupIntercepts(); // some will be overriden
-        cy.visit('/login');
         cy.loginTestUser();
         cy.visit('/guide');
         Object.keys(guidePage.modalInfo).forEach((section) => {
