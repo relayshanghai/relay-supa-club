@@ -64,13 +64,11 @@ const SignUpPage = () => {
                                         label={t('signup.firstName')}
                                         type="text"
                                         placeholder={t('signup.firstNamePlaceholder')}
-                                        value=""
                                     />
                                     <Input
                                         label={t('signup.lastName')}
                                         type="text"
                                         placeholder={t('signup.lastNamePlaceholder')}
-                                        value=""
                                     />
                                     <Input
                                         label={t('signup.phoneNumber')}
@@ -115,7 +113,6 @@ const SignUpPage = () => {
                                         label={t('signup.company')}
                                         type="text"
                                         placeholder={t('signup.companyPlaceholder')}
-                                        value=""
                                     />
                                     <Input label={t('signup.website')} type="text" placeholder="www.site.com" />
                                     <Radio label={t('signup.companySize')} options={companySizeOptions} />

@@ -5,8 +5,8 @@ import Image from 'next/image';
 interface CarouselProps {
     slides: Array<{
         url: string;
-        title: string;
-        description: string;
+        title?: string;
+        description?: string;
         index: number;
     }>;
     autoSlide: boolean;
@@ -37,7 +37,7 @@ export default function Carousel({ slides, autoSlide = false, autoSlideInterval 
                         src={slides[currIndex].url}
                         width={600}
                         height={400}
-                        alt={slides[currIndex].title}
+                        alt={slides[currIndex].title || ''}
                         className="rounded-3xl bg-cover bg-center"
                     />
                 </div>
@@ -65,7 +65,7 @@ export default function Carousel({ slides, autoSlide = false, autoSlideInterval 
                         <div
                             key={i}
                             onClick={() => setCurrIndex(i)}
-                            className={`h-2 w-2 rounded-full bg-white transition-all duration-300 ease-in-out hover:cursor-pointer ${
+                            className={`h-2 w-2 rounded-full bg-white transition-all duration-500 ease-in-out hover:cursor-pointer ${
                                 currIndex === i ? 'bg-primary-900 p-1' : 'bg-opacity-80'
                             }`}
                         />

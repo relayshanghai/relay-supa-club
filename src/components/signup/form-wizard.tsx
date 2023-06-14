@@ -30,17 +30,25 @@ export const FormWizard = ({
             <div className="flex flex-col rounded shadow-md">
                 <div className="border-b-gray-100 bg-gray-100 p-5 text-base font-semibold text-gray-500">{title}</div>
                 <div className="p-5">{children}</div>
-                <div className="m-4 flex justify-between">
+                <div className="m-5 flex justify-between">
                     {currentStep === 1 ? (
-                        <></>
-                    ) : (
-                        <Button variant="secondary" className="w-44" onClick={() => setCurrentStep(currentStep - 1)}>
-                            {t('signup.back')}
+                        <Button className="w-full" onClick={() => setCurrentStep(currentStep + 1)}>
+                            {t('signup.next')}
                         </Button>
+                    ) : (
+                        <>
+                            <Button
+                                variant="secondary"
+                                className="w-32 lg:w-44"
+                                onClick={() => setCurrentStep(currentStep - 1)}
+                            >
+                                {t('signup.back')}
+                            </Button>
+                            <Button className="w-32 lg:w-44" onClick={() => setCurrentStep(currentStep + 1)}>
+                                {currentStep === steps.length ? t('signup.submit') : t('signup.next')}
+                            </Button>
+                        </>
                     )}
-                    <Button className="w-44" onClick={() => setCurrentStep(currentStep + 1)}>
-                        {currentStep === steps.length ? t('signup.submit') : t('signup.next')}
-                    </Button>
                 </div>
             </div>
         </div>
