@@ -57,7 +57,7 @@ const postHandler: NextApiHandler = async (req, res) => {
     }
     const { trial_days, trial_profiles, trial_searches } = price.product.metadata;
 
-    if (!trial_days || isNaN(parseInt(trial_days)) || !trial_profiles || !trial_searches) {
+    if (!trial_days || Number.isNaN(Number.parseInt(trial_days)) || !trial_profiles || !trial_searches) {
         throw new RelayError('Missing product metadata', httpCodes.INTERNAL_SERVER_ERROR, { sendToSentry: true });
     }
 

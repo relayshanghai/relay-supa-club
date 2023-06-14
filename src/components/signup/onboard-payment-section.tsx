@@ -37,6 +37,7 @@ const OnboardPaymentSectionInner = ({ priceId }: OnboardPaymentSectionProps) => 
     const [success, setSuccess] = useState(false);
     const [loading, setLoading] = useState(false);
     const [formReady, setFormReady] = useState(false);
+    const [redirect, setRedirect] = useState(false);
 
     const handleError = (error: any) => {
         setLoading(false);
@@ -46,12 +47,24 @@ const OnboardPaymentSectionInner = ({ priceId }: OnboardPaymentSectionProps) => 
     const handleSuccess = useCallback(() => {
         setSuccess(true);
         setLoading(false);
+        setRedirect(true);
         // Set success, and then wait for a second before redirecting to account page.
         // This can allow some time for the button to show the success state.
-        setTimeout(() => {
-            router.push('/account');
-        }, 1500);
-    }, [router]);
+    }, []);
+
+    useEffect(() => {
+        let timer: any;
+        if (redirect) {
+            timer = setTimeout(() => {
+                router.push('/account');
+            }, 1500);
+        }
+        return () => {
+            if (timer) {
+                clearTimeout(timer);
+            }
+        };
+    }, [redirect, router]);
 
     const pollForSubscriptionStatusUpdate = useCallback(() => {
         if (subscription?.status === 'trialing' || subscription?.status === 'active') {
