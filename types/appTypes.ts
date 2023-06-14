@@ -95,3 +95,5 @@ export interface DatabaseWithCustomTypes extends Database {
         };
     };
 }
+
+export type CompanySize = 'small' | 'medium' | 'large';

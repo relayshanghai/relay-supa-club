@@ -9,11 +9,13 @@ import { createCompany, updateCompany, updateProfile, updateUserRole } from 'src
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 import { serverLogger } from 'src/utils/logger-server';
 import { db } from 'src/utils/supabase-client';
+import type { CompanySize } from 'types';
 
 export type CompanyCreatePostBody = {
     user_id: string;
     name: string;
     website?: string;
+    company_size: CompanySize;
 };
 export type CompanyCreatePostResponse = CompanyDB;
 
