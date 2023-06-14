@@ -29,7 +29,7 @@ const OnboardPaymentSectionInner = ({ priceId }: OnboardPaymentSectionProps) => 
 
     const router = useRouter();
     const { company } = useCompany();
-    const { subscription, refreshSubscription } = useSubscription();
+    const { subscription } = useSubscription();
     const elements = useElements();
     const stripe = useStripe();
 
@@ -65,17 +65,6 @@ const OnboardPaymentSectionInner = ({ priceId }: OnboardPaymentSectionProps) => 
             }
         };
     }, [redirect, router]);
-
-    const pollForSubscriptionStatusUpdate = useCallback(() => {
-        if (subscription?.status === 'trialing' || subscription?.status === 'active') {
-            return handleSuccess();
-        } else {
-            setTimeout(() => {
-                refreshSubscription();
-                pollForSubscriptionStatusUpdate();
-            }, 1000);
-        }
-    }, [handleSuccess, refreshSubscription, subscription]);
 
     useEffect(() => {
         if (subscription?.status === 'trialing' || subscription?.status === 'active') {
