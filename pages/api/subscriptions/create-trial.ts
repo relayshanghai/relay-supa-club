@@ -1,125 +1,109 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiHandler } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { AI_EMAIL_SUBSCRIPTION_USAGE_LIMIT, AI_EMAIL_TRIAL_USAGE_LIMIT } from 'src/constants/openai';
 import { createSubscriptionErrors } from 'src/errors/subscription';
-import { getCompanyCusId, updateCompanySubscriptionStatus, updateCompanyUsageLimits } from 'src/utils/api/db';
-import { STRIPE_PRICE_MONTHLY_DIY, STRIPE_PRODUCT_ID_DIY } from 'src/utils/api/stripe/constants';
+import { ApiHandler, RelayError } from 'src/utils/api-handler';
+import { updateCompanyUsageLimits, updateCompanySubscriptionStatus } from 'src/utils/api/db';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
-import { isCompanyOwnerOrRelayEmployee } from 'src/utils/auth';
 import { serverLogger } from 'src/utils/logger-server';
 import { unixEpochToISOString } from 'src/utils/utils';
 import type Stripe from 'stripe';
 import type { StripePriceWithProductMetadata } from 'types';
 
-export type SubscriptionCreateTrialPostBody = {
-    company_id: string;
+export interface SubscriptionCreateTrialPostBody {
+    customerId: string;
+    priceId: string;
+    paymentMethodId?: string | null;
+    companyId: string;
+}
+export interface SubscriptionCreateTrialPostResponse {
+    subscription: Stripe.Subscription;
+}
+
+export type GetSetupIntentQueries = {
+    customerId: string;
+};
+export type GetSetupIntentResponse = {
+    clientSecret?: string;
 };
 
-export type SubscriptionCreateTrialResponse = Stripe.Response<Stripe.Subscription>;
+const getHandler: NextApiHandler = async (req, res) => {
+    const { customerId } = req.query as GetSetupIntentQueries;
+    const intent = await stripeClient.setupIntents.create({
+        customer: customerId,
+        // automatic_payment_methods: { enabled: true }, // by default it is just 'card'. We can enable this to try to allow other payment methods.
+        // TODO enable more payment options: https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/501
+    });
+    return res.status(httpCodes.OK).json({ clientSecret: intent.client_secret });
+};
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    if (req.method === 'POST') {
-        try {
-            const { company_id } = req.body as SubscriptionCreateTrialPostBody;
-
-            if (!company_id || typeof company_id !== 'string') {
-                return res.status(httpCodes.BAD_REQUEST).json({ error: createSubscriptionErrors.missingCompanyData });
-            }
-            if (!(await isCompanyOwnerOrRelayEmployee(req, res))) {
-                return res
-                    .status(httpCodes.UNAUTHORIZED)
-                    .json({ error: createSubscriptionErrors.actionLimitedToAdmins });
-            }
-            const { data, error } = await getCompanyCusId(company_id);
-            const cusId = data?.cus_id;
-            if (error) throw error;
-            if (!cusId) throw new Error('No data');
-
-            const paymentMethods = await stripeClient.customers.listPaymentMethods(cusId);
-            if (paymentMethods?.data?.length === 0) {
-                return res.status(httpCodes.BAD_REQUEST).json({ error: 'Missing payment method' });
-            }
-
-            const subscriptions = await stripeClient.subscriptions.list({
-                customer: cusId,
-                status: 'active',
-            });
-            const activeSubscription = subscriptions.data[0];
-            if (activeSubscription) {
-                return res.status(httpCodes.BAD_REQUEST).json({ error: createSubscriptionErrors.alreadySubscribed });
-            }
-            const diyPrices = (await stripeClient.prices.list({
-                active: true,
-                expand: ['data.product'],
-                product: STRIPE_PRODUCT_ID_DIY,
-            })) as Stripe.ApiList<StripePriceWithProductMetadata>;
-            const diyTrialPrice = diyPrices.data.find(({ id }) => id === STRIPE_PRICE_MONTHLY_DIY);
-
-            const diyTrialPriceId = diyTrialPrice?.id ?? '';
-            if (!diyTrialPriceId || !diyTrialPrice) {
-                serverLogger(new Error('Missing DIY trial price'), 'error', true);
-                return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
-            }
-
-            const { trial_days, trial_profiles, trial_searches } = diyTrialPrice.product.metadata;
-
-            if (!trial_days || !trial_profiles || !trial_searches) {
-                serverLogger(new Error('Missing product metadata'), 'error', true);
-                return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
-            }
-
-            const createParams: Stripe.SubscriptionCreateParams = {
-                customer: cusId,
-                items: [{ price: diyTrialPriceId }],
-                proration_behavior: 'create_prorations',
-                trial_period_days: Number(trial_days),
-            };
-
-            const subscription: SubscriptionCreateTrialResponse = await stripeClient.subscriptions.create(createParams);
-
-            if (!subscription || subscription.status !== 'trialing') {
-                return res
-                    .status(httpCodes.BAD_REQUEST)
-                    .json({ error: createSubscriptionErrors.unableToActivateSubscription });
-            }
-
-            // free trial follows DIY prices
-            const price = (await stripeClient.prices.retrieve(diyTrialPriceId, {
-                expand: ['product'],
-            })) as StripePriceWithProductMetadata;
-
-            if (!price?.product?.metadata?.profiles || !price.product.metadata.searches) {
-                serverLogger(new Error('Missing metadata'), 'error', true);
-                return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
-            }
-
-            await updateCompanyUsageLimits({
-                profiles_limit: price.product.metadata.profiles,
-                searches_limit: price.product.metadata.searches,
-                ai_email_generator_limit: AI_EMAIL_SUBSCRIPTION_USAGE_LIMIT,
-                trial_profiles_limit: trial_profiles,
-                trial_searches_limit: trial_searches,
-                trial_ai_email_generator_limit: AI_EMAIL_TRIAL_USAGE_LIMIT,
-                id: company_id,
-            });
-
-            const subscription_start_date = unixEpochToISOString(subscription.trial_start, subscription.start_date);
-            if (!subscription_start_date) throw new Error('Missing subscription start date');
-
-            await updateCompanySubscriptionStatus({
-                subscription_status: 'trial',
-                subscription_start_date,
-                subscription_current_period_start: unixEpochToISOString(subscription.current_period_start),
-                subscription_current_period_end: unixEpochToISOString(subscription.current_period_end),
-                id: company_id,
-            });
-
-            return res.status(httpCodes.OK).json(subscription);
-        } catch (error) {
-            serverLogger(error, 'error', true);
-            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
-        }
+const postHandler: NextApiHandler = async (req, res) => {
+    const { customerId, priceId, companyId, paymentMethodId } = req.body as SubscriptionCreateTrialPostBody;
+    if (!customerId) {
+        throw new RelayError('Missing customer ID', httpCodes.BAD_REQUEST);
+    }
+    if (!priceId) {
+        throw new RelayError('Missing price ID', httpCodes.BAD_REQUEST);
+    }
+    if (!companyId) {
+        throw new RelayError('Missing company ID', httpCodes.BAD_REQUEST);
     }
 
-    return res.status(httpCodes.METHOD_NOT_ALLOWED).json({});
-}
+    const price = (await stripeClient.prices.retrieve(priceId, {
+        expand: ['product'],
+    })) as Stripe.Response<StripePriceWithProductMetadata>;
+    if (!price) {
+        throw new RelayError('Failed to retrieve price');
+    }
+    const { trial_days, trial_profiles, trial_searches } = price.product.metadata;
+
+    if (!trial_days || Number.isNaN(Number.parseInt(trial_days)) || !trial_profiles || !trial_searches) {
+        throw new RelayError('Missing product metadata', httpCodes.INTERNAL_SERVER_ERROR, { sendToSentry: true });
+    }
+
+    const createParams: Stripe.SubscriptionCreateParams = {
+        customer: customerId,
+        items: [{ price: priceId }],
+        payment_behavior: 'default_incomplete',
+        payment_settings: { save_default_payment_method: 'on_subscription' },
+        default_payment_method: paymentMethodId || undefined,
+        proration_behavior: 'create_prorations',
+        trial_period_days: Number(trial_days),
+    };
+    const subscription = await stripeClient.subscriptions.create(createParams);
+    if (!subscription || subscription.status !== 'trialing') {
+        return res.status(httpCodes.BAD_REQUEST).json({ error: createSubscriptionErrors.unableToActivateSubscription });
+    }
+
+    if (!price?.product?.metadata?.profiles || !price.product.metadata.searches) {
+        serverLogger(new Error('Missing metadata'), 'error', true);
+        return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
+    }
+
+    await updateCompanyUsageLimits({
+        profiles_limit: price.product.metadata.profiles,
+        searches_limit: price.product.metadata.searches,
+        ai_email_generator_limit: AI_EMAIL_SUBSCRIPTION_USAGE_LIMIT,
+        trial_profiles_limit: trial_profiles,
+        trial_searches_limit: trial_searches,
+        trial_ai_email_generator_limit: AI_EMAIL_TRIAL_USAGE_LIMIT,
+        id: companyId,
+    });
+
+    const subscription_start_date = unixEpochToISOString(subscription.trial_start, subscription.start_date);
+    if (!subscription_start_date) throw new Error('Missing subscription start date');
+
+    await updateCompanySubscriptionStatus({
+        subscription_status: 'trial',
+        subscription_start_date,
+        subscription_current_period_start: unixEpochToISOString(subscription.current_period_start),
+        subscription_current_period_end: unixEpochToISOString(subscription.current_period_end),
+        id: companyId,
+    });
+    const response: SubscriptionCreateTrialPostResponse = {
+        subscription,
+    };
+    return res.status(httpCodes.OK).json(response);
+};
+
+export default ApiHandler({ postHandler, getHandler });

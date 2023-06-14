@@ -17,6 +17,7 @@ import { isMissing } from 'src/utils/utils';
 import type { SignupInputTypes } from 'src/utils/validation/signup';
 import { validateSignupInput } from 'src/utils/validation/signup';
 import { LoginSignupLayout } from 'src/components/SignupLayout';
+import { STRIPE_PRICE_MONTHLY_DIY } from 'src/utils/api/stripe/constants';
 import { ScreenshotsCarousel } from 'src/components/signup/screenshots-carousel';
 
 export default function Register() {
@@ -121,11 +122,12 @@ export default function Register() {
             handleSubmit();
         }
     };
+    const [selectedPriceId, _setSelectedPriceId] = useState(STRIPE_PRICE_MONTHLY_DIY);
 
     return (
         <>
             {featSignupV2() ? (
-                <LoginSignupLayout left={<ScreenshotsCarousel />} right={<SignUpPage />} />
+                <LoginSignupLayout left={<ScreenshotsCarousel />} right={<SignUpPage selectedPriceId={selectedPriceId} />} />
             ) : (
                 <LegacyLoginSignupLayout>
                     <form className="mx-auto flex w-full max-w-xs flex-grow flex-col items-center justify-center space-y-2">

@@ -6,8 +6,9 @@ import { Input } from '../input';
 import { SingleSelect } from '../ui';
 import { companyCategories } from './company-categories';
 import { Radio } from '../ui/radio';
+import { OnboardPaymentSection } from './onboard-payment-section';
 
-const SignUpPage = () => {
+const SignUpPage = ({ selectedPriceId }: { selectedPriceId: string }) => {
     const { t } = useTranslation();
     const {
         control,
@@ -118,12 +119,7 @@ const SignUpPage = () => {
                                     <Radio label={t('signup.companySize')} options={companySizeOptions} />
                                 </>
                             )}
-                            {/* TODO:Task for later PR: Link with stripe payment component */}
-                            {currentStep === 5 && (
-                                <>
-                                    <p>Placeholder to link the stripe payment elements</p>
-                                </>
-                            )}
+                            {currentStep === 5 && <OnboardPaymentSection priceId={selectedPriceId} />}
                         </FormWizard>
                     ),
             )}
