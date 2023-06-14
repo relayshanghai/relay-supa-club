@@ -18,7 +18,12 @@ import type { CompanySize } from 'types';
 export interface CompanyContext {
     company: CompanyDB | undefined;
     updateCompany: (input: Omit<CompanyPutBody, 'id'>) => Promise<CompanyPutResponse | null>;
-    createCompany: (input: { name: string; website?: string }) => Promise<CompanyCreatePostResponse | null>;
+    createCompany: (input: {
+        name: string;
+        website?: string;
+        size: CompanySize;
+        category: string;
+    }) => Promise<CompanyCreatePostResponse | null>;
     refreshCompany: KeyedMutator<CompanyDB> | (() => void);
 }
 
