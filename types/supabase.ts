@@ -112,6 +112,26 @@ export interface Database {
           updated_at?: string | null
           username?: string | null
         }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_creators_added_by_id_fkey"
+            columns: ["added_by_id"]
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "campaign_creators_campaign_id_fkey"
+            columns: ["campaign_id"]
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "campaign_creators_influencer_social_profiles_id_fkey"
+            columns: ["influencer_social_profiles_id"]
+            referencedRelation: "influencer_social_profiles"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       campaign_notes: {
         Row: {
@@ -138,6 +158,20 @@ export interface Database {
           important?: boolean
           user_id?: string
         }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_notes_campaign_creator_id_fkey"
+            columns: ["campaign_creator_id"]
+            referencedRelation: "campaign_creators"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "campaign_notes_user_id_fkey"
+            columns: ["user_id"]
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       campaigns: {
         Row: {
@@ -218,6 +252,14 @@ export interface Database {
           target_locations?: string[] | null
           updated_at?: string | null
         }
+        Relationships: [
+          {
+            foreignKeyName: "campaigns_company_id_fkey"
+            columns: ["company_id"]
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       companies: {
         Row: {
@@ -280,6 +322,7 @@ export interface Database {
           updated_at?: string | null
           website?: string | null
         }
+        Relationships: []
       }
       influencer_categories: {
         Row: {
@@ -300,6 +343,14 @@ export interface Database {
           id?: string
           influencer_id?: string
         }
+        Relationships: [
+          {
+            foreignKeyName: "influencer_categories_influencer_id_fkey"
+            columns: ["influencer_id"]
+            referencedRelation: "influencers"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       influencer_posts: {
         Row: {
@@ -353,6 +404,20 @@ export interface Database {
           updated_at?: string | null
           url?: string
         }
+        Relationships: [
+          {
+            foreignKeyName: "influencer_posts_campaign_id_fkey"
+            columns: ["campaign_id"]
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "influencer_posts_influencer_social_profile_id_fkey"
+            columns: ["influencer_social_profile_id"]
+            referencedRelation: "influencer_social_profiles"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       influencer_social_profiles: {
         Row: {
@@ -382,6 +447,14 @@ export interface Database {
           url?: string
           username?: string
         }
+        Relationships: [
+          {
+            foreignKeyName: "influencer_social_profiles_influencer_id_fkey"
+            columns: ["influencer_id"]
+            referencedRelation: "influencers"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       influencers: {
         Row: {
@@ -411,6 +484,7 @@ export interface Database {
           is_recommended?: boolean | null
           name?: string
         }
+        Relationships: []
       }
       invites: {
         Row: {
@@ -443,6 +517,14 @@ export interface Database {
           updated_at?: string | null
           used?: boolean
         }
+        Relationships: [
+          {
+            foreignKeyName: "invites_company_id_fkey"
+            columns: ["company_id"]
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       logs: {
         Row: {
@@ -466,6 +548,7 @@ export interface Database {
           message?: string | null
           type?: string
         }
+        Relationships: []
       }
       posts_performance: {
         Row: {
@@ -510,6 +593,26 @@ export interface Database {
           updated_at?: string | null
           views_total?: number | null
         }
+        Relationships: [
+          {
+            foreignKeyName: "posts_performance_campaign_id_fkey"
+            columns: ["campaign_id"]
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "posts_performance_influencer_social_profile_id_fkey"
+            columns: ["influencer_social_profile_id"]
+            referencedRelation: "influencer_social_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "posts_performance_post_id_fkey"
+            columns: ["post_id"]
+            referencedRelation: "influencer_posts"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       profiles: {
         Row: {
@@ -548,6 +651,20 @@ export interface Database {
           updated_at?: string | null
           user_role?: string | null
         }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_company_id_fkey"
+            columns: ["company_id"]
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profiles_id_fkey"
+            columns: ["id"]
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       usages: {
         Row: {
@@ -574,6 +691,20 @@ export interface Database {
           type?: string
           user_id?: string
         }
+        Relationships: [
+          {
+            foreignKeyName: "usages_company_id_fkey"
+            columns: ["company_id"]
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "usages_user_id_fkey"
+            columns: ["user_id"]
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
       }
     }
     Views: {
