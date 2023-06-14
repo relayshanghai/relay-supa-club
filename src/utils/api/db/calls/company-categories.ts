@@ -1,5 +1,5 @@
 import type { DatabaseWithCustomTypes } from 'types';
-import type { CompanyDB } from '../../types';
+import type { CompanyDB } from '../types';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
 export const addCompanyCategory =
