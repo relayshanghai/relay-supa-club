@@ -11,6 +11,7 @@ import { serverLogger } from 'src/utils/logger-server';
 import { db } from 'src/utils/supabase-client';
 import { CompanySize } from 'types';
 import { z } from 'zod';
+import { addCompanyCategory } from 'src/utils/api/db/calls/company-categories';
 
 const CompanyCreatePostBody = z.object({
     user_id: z.string(),
@@ -31,7 +32,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         return res.status(httpCodes.BAD_REQUEST).json(result.error.format());
     }
 
-    const { user_id, name: untrimmedName, website } = req.body as CompanyCreatePostBody;
+    const { user_id, name: untrimmedName, website, ...body } = req.body as CompanyCreatePostBody;
     const name = untrimmedName.trim();
 
     // Do not allow users to create a company with our reserved name for internal employees
@@ -45,12 +46,14 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         throw new RelayError(createCompanyErrors.companyWithSameNameExists, httpCodes.BAD_REQUEST);
     }
 
-    const { data: company, error } = await createCompany({ name, website });
+    const { data: company, error } = await createCompany({ name, website, size: body.size });
 
     if (error || !company?.id) {
         serverLogger(error, 'error');
         return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
     }
+
+    await db<typeof addCompanyCategory>(addCompanyCategory)(company, body.category || 'small');
 
     const { error: profileError, data: profile } = await updateProfile({
         id: user_id,
