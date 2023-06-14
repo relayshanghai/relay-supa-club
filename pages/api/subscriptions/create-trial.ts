@@ -32,6 +32,7 @@ const getHandler: NextApiHandler = async (req, res) => {
     const intent = await stripeClient.setupIntents.create({
         customer: customerId,
         // automatic_payment_methods: { enabled: true }, // by default it is just 'card'. We can enable this to try to allow other payment methods.
+        // TODO enable more payment options: https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/501
     });
     return res.status(httpCodes.OK).json({ clientSecret: intent.client_secret });
 };
@@ -56,7 +57,7 @@ const postHandler: NextApiHandler = async (req, res) => {
     }
     const { trial_days, trial_profiles, trial_searches } = price.product.metadata;
 
-    if (!trial_days || !trial_profiles || !trial_searches) {
+    if (!trial_days || isNaN(parseInt(trial_days)) || !trial_profiles || !trial_searches) {
         throw new RelayError('Missing product metadata', httpCodes.INTERNAL_SERVER_ERROR, { sendToSentry: true });
     }
 

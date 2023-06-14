@@ -46,6 +46,8 @@ const OnboardPaymentSectionInner = ({ priceId }: OnboardPaymentSectionProps) => 
     const handleSuccess = useCallback(() => {
         setSuccess(true);
         setLoading(false);
+        // Set success, and then wait for a second before redirecting to account page.
+        // This can allow some time for the button to show the success state.
         setTimeout(() => {
             router.push('/account');
         }, 1500);
@@ -68,8 +70,7 @@ const OnboardPaymentSectionInner = ({ priceId }: OnboardPaymentSectionProps) => 
         }
     }, [subscription?.status, handleSuccess]);
 
-    const handleSubmit = async (event: any) => {
-        event.preventDefault();
+    const handleSubmit = async () => {
         if (!stripe || !elements || !company?.cus_id || !company.id) return;
         setLoading(true);
         try {
@@ -80,6 +81,7 @@ const OnboardPaymentSectionInner = ({ priceId }: OnboardPaymentSectionProps) => 
                 },
                 redirect: 'if_required',
                 // TODO: set up the wizard to detect the return url params, and then set current step to this one, and trigger the `subscriptions/create-trial` POST call.
+                // https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/501
                 // Right now this shouldn't be a problem because we are just accepting cards, and cards should all just resolve in one step.
             });
             if (error) {
@@ -115,7 +117,12 @@ const OnboardPaymentSectionInner = ({ priceId }: OnboardPaymentSectionProps) => 
     const buttonDisabled = loading || !formReady || !company?.cus_id || !priceId || !stripe || !elements;
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form
+            onSubmit={(e) => {
+                e.preventDefault();
+                handleSubmit();
+            }}
+        >
             <PaymentElement
                 onChange={(e) => {
                     setFormReady(e.complete);
