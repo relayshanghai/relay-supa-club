@@ -229,6 +229,7 @@ export interface Database {
           name: string | null
           profiles_limit: string
           searches_limit: string
+          size: string | null
           subscription_current_period_end: string | null
           subscription_current_period_start: string | null
           subscription_end_date: string | null
@@ -249,6 +250,7 @@ export interface Database {
           name?: string | null
           profiles_limit?: string
           searches_limit?: string
+          size?: string | null
           subscription_current_period_end?: string | null
           subscription_current_period_start?: string | null
           subscription_end_date?: string | null
@@ -269,6 +271,7 @@ export interface Database {
           name?: string | null
           profiles_limit?: string
           searches_limit?: string
+          size?: string | null
           subscription_current_period_end?: string | null
           subscription_current_period_start?: string | null
           subscription_end_date?: string | null
@@ -280,6 +283,7 @@ export interface Database {
           updated_at?: string | null
           website?: string | null
         }
+        Relationships: []
       }
       influencer_categories: {
         Row: {
