@@ -1,33 +1,41 @@
 import { useTranslation } from 'react-i18next';
-import screenShot1 from '/public/assets/imgs/screenshots/app-screenshot-1.png';
-import screenShot2 from '/public/assets/imgs/screenshots/app-screenshot-2.png';
-import screenShot3 from '/public/assets/imgs/screenshots/app-screenshot-3.png';
 import Carousel from '../ui/carousel';
+import { screenshots } from 'public/assets/imgs/screenshots';
 
 export const ScreenshotsCarousel = () => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const {
+        campaignsPageCn,
+        campaignsPageEn,
+        discoverPageCn,
+        discoverPageEn,
+        filtersPageCn,
+        filtersPageEn,
+        performancePageCn,
+        performancePageEn,
+    } = screenshots;
 
-    const screenshots = [
+    const slides = [
         {
-            url: screenShot1.src,
+            url: i18n.language.includes('en') ? discoverPageEn : discoverPageCn,
             title: t('signup.carousel.title1'),
             description: t('signup.carousel.description1'),
             index: 0,
         },
         {
-            url: screenShot2.src,
+            url: i18n.language.includes('en') ? filtersPageEn : filtersPageCn,
             title: t('signup.carousel.title2'),
             description: t('signup.carousel.description2'),
             index: 1,
         },
         {
-            url: screenShot3.src,
+            url: i18n.language.includes('en') ? campaignsPageEn : campaignsPageCn,
             title: t('signup.carousel.title3'),
             description: t('signup.carousel.description3'),
             index: 2,
         },
         {
-            url: screenShot3.src,
+            url: i18n.language.includes('en') ? performancePageEn : performancePageCn,
             title: t('signup.carousel.title4'),
             description: t('signup.carousel.description4'),
             index: 3,
@@ -36,7 +44,7 @@ export const ScreenshotsCarousel = () => {
 
     return (
         <div className="invisible flex h-screen max-h-[870px] flex-col items-center justify-center text-white md:visible">
-            <Carousel slides={screenshots} autoSlide={true} />
+            <Carousel slides={slides} autoSlide={true} />
         </div>
     );
 };

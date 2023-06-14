@@ -13,7 +13,7 @@ interface CarouselProps {
     autoSlideInterval?: number;
 }
 
-export default function Carousel({ slides, autoSlide = false, autoSlideInterval = 3000 }: CarouselProps) {
+export default function Carousel({ slides, autoSlide = false, autoSlideInterval = 5000 }: CarouselProps) {
     const [currIndex, setCurrIndex] = useState(0);
 
     const prevSlide = () => setCurrIndex((currIndex) => (currIndex === 0 ? slides?.length - 1 : currIndex - 1));
@@ -29,14 +29,14 @@ export default function Carousel({ slides, autoSlide = false, autoSlideInterval 
     }, [autoSlide, autoSlideInterval, nextSlide]);
 
     return (
-        <div className="flex h-full w-full max-w-sm flex-col items-center justify-center space-y-8 transition-transform duration-300 ease-in-out lg:max-w-lg xl:max-w-xl 2xl:max-w-3xl">
+        <div className="flex h-full w-full max-w-sm flex-col items-center justify-center space-y-8 transition-transform duration-500 ease-in-out lg:max-w-lg xl:max-w-xl 2xl:max-w-3xl">
             <h2 className="text-3xl font-semibold lg:text-5xl">{slides[currIndex].title}</h2>
             <div className="group relative overflow-hidden">
                 <div className="">
                     <Image
                         src={slides[currIndex].url}
-                        width={570}
-                        height={320}
+                        width={600}
+                        height={400}
                         alt={slides[currIndex].title}
                         className="rounded-3xl bg-cover bg-center"
                     />
