@@ -16,8 +16,8 @@ const CompanyCreatePostBody = z.object({
     user_id: z.string(),
     name: z.string(),
     website: z.string().optional(),
-    size: CompanySize,
-    category: z.string(),
+    size: CompanySize.optional(),
+    category: z.string().optional(),
 });
 
 export type CompanyCreatePostBody = z.infer<typeof CompanyCreatePostBody>;

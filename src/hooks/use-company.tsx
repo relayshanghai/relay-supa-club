@@ -21,8 +21,8 @@ export interface CompanyContext {
     createCompany: (input: {
         name: string;
         website?: string;
-        size: CompanySize;
-        category: string;
+        size?: CompanySize;
+        category?: string;
     }) => Promise<CompanyCreatePostResponse | null>;
     refreshCompany: KeyedMutator<CompanyDB> | (() => void);
 }
@@ -73,7 +73,7 @@ export const CompanyProvider = ({ children }: PropsWithChildren) => {
     );
 
     const createCompany = useCallback(
-        async (input: { name: string; website?: string; size: CompanySize; category: string }) => {
+        async (input: { name: string; website?: string; size?: CompanySize; category?: string }) => {
             if (!profile?.id) throw new Error(createCompanyValidationErrors.noLoggedInUserFound);
             if (!input.name) throw new Error(createCompanyValidationErrors.noCompanyNameFound);
             const body: CompanyCreatePostBody = {

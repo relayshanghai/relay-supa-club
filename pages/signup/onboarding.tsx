@@ -30,8 +30,6 @@ export default function Register() {
     const { values, setFieldValue } = useFields({
         name: '',
         website: '',
-        size: 'small',
-        category: '',
     });
     const [submitting, setSubmitting] = useState(false);
     const handleSubmit = useCallback(async () => {
