@@ -24,10 +24,12 @@ const signup = {
     carousel: {
         title1: 'Discover',
         description1: 'Find the perfect influencer without all the hassle',
-        title2: 'Project Management',
-        description2: 'Finally! No more spreadsheets',
-        title3: 'Data Center',
-        description3: 'See your results clearly',
+        title2: 'Discover',
+        description2: 'Our filters let you target your niche audience',
+        title3: 'Project Management',
+        description3: 'Finally! No more spreadsheets',
+        title4: 'Data Center',
+        description4: 'See the impact of your campaigns',
     },
 };
 export default signup;

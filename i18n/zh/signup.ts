@@ -23,11 +23,13 @@ const signup = {
     companyPlaceholder: '输入您的公司名称',
     carousel: {
         title1: '发现 KOL',
-        description1: '帮助你轻松找到合适的 KOL',
-        title2: '项目管理',
-        description2: '终于！不再使用电子表格',
-        title3: '数据中心',
-        description3: '清楚地看到效果',
+        description1: '帮助你轻松找到完美的 KOL',
+        title2: '发现 KOL',
+        description2: '筛选你的目标用户群体',
+        title3: '项目管理',
+        description3: '终于！不再需要电子表格了',
+        title4: '数据中心',
+        description4: 'KOL 数据一目了然',
     },
 };
 export default signup;

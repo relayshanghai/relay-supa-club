@@ -7,6 +7,7 @@ interface CarouselProps {
         url: string;
         title: string;
         description: string;
+        index: number;
     }>;
     autoSlide: boolean;
     autoSlideInterval?: number;
@@ -28,7 +29,7 @@ export default function Carousel({ slides, autoSlide = false, autoSlideInterval 
     }, [autoSlide, autoSlideInterval, nextSlide]);
 
     return (
-        <div className="flex h-full w-full max-w-sm flex-col items-center justify-center space-y-8 lg:max-w-lg 2xl:max-w-2xl">
+        <div className="flex h-full w-full max-w-sm flex-col items-center justify-center space-y-8 transition-transform duration-300 ease-in-out lg:max-w-lg xl:max-w-xl 2xl:max-w-3xl">
             <h2 className="text-3xl font-semibold lg:text-5xl">{slides[currIndex].title}</h2>
             <div className="group relative overflow-hidden">
                 <div className="">
@@ -56,7 +57,7 @@ export default function Carousel({ slides, autoSlide = false, autoSlideInterval 
                     </button>
                 </div>
             </div>
-            <p className="text-wrap text-md lg:text-xl">{slides[currIndex].description}</p>
+            <p className="text-wrap text-md font-medium lg:text-xl">{slides[currIndex].description}</p>
 
             <div className="flex space-x-2">
                 <div className="flex items-center justify-center gap-2">
@@ -64,8 +65,8 @@ export default function Carousel({ slides, autoSlide = false, autoSlideInterval 
                         <div
                             key={i}
                             onClick={() => setCurrIndex(i)}
-                            className={`h-2 w-2 rounded-full bg-white transition-all hover:cursor-pointer ${
-                                currIndex === i ? 'bg-primary-800 p-1' : 'bg-opacity-80'
+                            className={`h-2 w-2 rounded-full bg-white transition-all duration-300 ease-in-out hover:cursor-pointer ${
+                                currIndex === i ? 'bg-primary-900 p-1' : 'bg-opacity-80'
                             }`}
                         />
                     ))}

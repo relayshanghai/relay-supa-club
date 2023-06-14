@@ -12,22 +12,31 @@ export const ScreenshotsCarousel = () => {
             url: screenShot1.src,
             title: t('signup.carousel.title1'),
             description: t('signup.carousel.description1'),
+            index: 0,
         },
         {
             url: screenShot2.src,
             title: t('signup.carousel.title2'),
             description: t('signup.carousel.description2'),
+            index: 1,
         },
         {
             url: screenShot3.src,
             title: t('signup.carousel.title3'),
             description: t('signup.carousel.description3'),
+            index: 2,
+        },
+        {
+            url: screenShot3.src,
+            title: t('signup.carousel.title4'),
+            description: t('signup.carousel.description4'),
+            index: 3,
         },
     ];
 
     return (
         <div className="invisible flex h-screen max-h-[870px] flex-col items-center justify-center text-white md:visible">
-            <Carousel slides={screenshots} autoSlide={false} />
+            <Carousel slides={screenshots} autoSlide={true} />
         </div>
     );
 };
