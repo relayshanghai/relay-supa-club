@@ -9,30 +9,37 @@ import { createCompany, updateCompany, updateProfile, updateUserRole } from 'src
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 import { serverLogger } from 'src/utils/logger-server';
 import { db } from 'src/utils/supabase-client';
-import type { CompanySize } from 'types';
+import { CompanySize } from 'types';
+import { z } from 'zod';
 
-export type CompanyCreatePostBody = {
-    user_id: string;
-    name: string;
-    website?: string;
-    company_size: CompanySize;
-};
+const CompanyCreatePostBody = z.object({
+    user_id: z.string(),
+    name: z.string(),
+    website: z.string().optional(),
+    size: CompanySize,
+    category: z.string(),
+});
+
+type CompanyCreatePostBody = z.infer<typeof CompanyCreatePostBody>;
+
 export type CompanyCreatePostResponse = CompanyDB;
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
+    const result = CompanyCreatePostBody.safeParse(req.body);
+
+    if (!result.success) {
+        return res.status(httpCodes.BAD_REQUEST).json(result.error.format());
+    }
+
     const { user_id, name: untrimmedName, website } = req.body as CompanyCreatePostBody;
     const name = untrimmedName.trim();
-
-    if (!user_id || !name) {
-        return res.status(httpCodes.BAD_REQUEST).json({});
-    }
 
     // Do not allow users to create a company with our reserved name for internal employees
     if (name.toLowerCase() === RELAY_DOMAIN.toLowerCase()) {
         return res.status(httpCodes.BAD_REQUEST).json({});
     }
 
-    const companies = await db<typeof findCompaniesByNames>(findCompaniesByNames)(name);
+    const companies = await db<typeof findCompaniesByNames>(findCompaniesByNames)(name.toLowerCase());
 
     if (companies.length > 0) {
         throw new RelayError(createCompanyErrors.companyWithSameNameExists, httpCodes.BAD_REQUEST);
