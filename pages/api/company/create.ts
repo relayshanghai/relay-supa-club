@@ -20,7 +20,7 @@ const CompanyCreatePostBody = z.object({
     category: z.string(),
 });
 
-type CompanyCreatePostBody = z.infer<typeof CompanyCreatePostBody>;
+export type CompanyCreatePostBody = z.infer<typeof CompanyCreatePostBody>;
 
 export type CompanyCreatePostResponse = CompanyDB;
 
