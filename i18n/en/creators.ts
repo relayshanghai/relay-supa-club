@@ -18,7 +18,8 @@ const creators = {
     analyzeProfile: 'Analyze',
     similarInfluencer: 'Find Similar',
     account: 'Account',
-    searchTopic: 'Search for a topic',
+    searchTopic: 'Search for a topic, or click on the TopicCloud',
+    searchKeyword: 'Add a keyword or #hashtags to broaden results',
     addToFavorites: 'Add to favorites',
     removeFromFavorites: 'Remove from favorites',
     openLink: 'Open Social Link',
@@ -74,7 +75,7 @@ const creators = {
     },
     show: {
         lastUpdate: 'The report was last updated on',
-        searchInfluencerPlaceholder: 'Search for an influencer',
+        searchInfluencerPlaceholder: '  Search for influencer by name or handle',
         noSearchResults: 'No results found, please try another keyword',
         pressEnterToSearch: 'Press enter to search',
         editProfile: 'Edit Profile',

@@ -45,7 +45,7 @@ export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
     return (
         <div className="group relative flex w-full flex-col font-medium">
             <input
-                className="block w-full appearance-none rounded-md border border-gray-200 bg-white px-5 py-2 text-gray-600 placeholder-gray-400 ring-1 ring-gray-900 ring-opacity-5 placeholder:text-sm focus:outline-none"
+                className="block w-full appearance-none rounded-full border border-gray-200 bg-white px-5 py-2 text-gray-600 placeholder-gray-400 ring-1 ring-gray-900 ring-opacity-5 placeholder:text-sm focus:outline-none"
                 placeholder={t('creators.show.searchInfluencerPlaceholder') as string}
                 data-testid="creator-search"
                 id="creator-search"
