@@ -76,7 +76,10 @@ export const CompanyProvider = ({ children }: PropsWithChildren) => {
         async (input: { name: string; website?: string; size?: CompanySize; category?: string }) => {
             if (!profile?.id) throw new Error(createCompanyValidationErrors.noLoggedInUserFound);
             if (!input.name) throw new Error(createCompanyValidationErrors.noCompanyNameFound);
+            if (!input.size) input.size = 'small';
+
             const body: CompanyCreatePostBody = {
+                size: 'small',
                 ...input,
                 user_id: profile?.id,
             };
