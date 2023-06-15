@@ -20,6 +20,7 @@ export const FormWizard = ({
     steps,
     currentStep,
     setCurrentStep,
+    handleSubmit,
     formData,
 }: {
     title: string;
@@ -35,8 +36,30 @@ export const FormWizard = ({
     const { signup, createEmployee, profile } = useUser();
 
     const [signupSuccess, setSignupSuccess] = useState(false);
+    const [selectedCategory, setSelectedCategory] = useState<string>('');
     const [loading, setLoading] = useState(false);
 
+    const handleNext = (data: FieldValues) => {
+        setSelectedCategory(data.companyCategory);
+        // console.log('test:', selectedCategory);
+        if (currentStep === steps.length) {
+            return;
+        }
+        setCurrentStep(currentStep + 1);
+        if (currentStep === 2) {
+            handleProfileCreate(formData);
+        }
+        if (currentStep === 4) {
+            handleCompanyCreate(formData);
+        }
+    };
+
+    const handleBack = () => {
+        if (currentStep === 1) {
+            return;
+        }
+        setCurrentStep(currentStep - 1);
+    };
     const handleProfileCreate = async (formData: FieldValues) => {
         const { firstName, lastName, phoneNumber, email, password } = formData;
         const data = {
@@ -68,6 +91,7 @@ export const FormWizard = ({
             // this is a supabase provided error so we don't have our custom error handling
             if (error?.message === 'User already registered') {
                 toast.error(t('login.userAlreadyRegistered'));
+                //TODO: this route is not right in v2, if an profile is created (email and password), but it does not have a company name, need to redirect to step 3
                 router.push(`/login?email=${encodeURIComponent(email)}`);
             } else {
                 toast.error(t('login.oopsSomethingWentWrong'));
@@ -77,36 +101,15 @@ export const FormWizard = ({
     };
 
     const handleCompanyCreate = async (formData: FieldValues) => {
-        const { companyName, companyWebsite, companyCategories, companySize } = formData;
+        const { companyName, companyWebsite, companySize } = formData;
         const data = {
             name: companyName,
             website: companyWebsite,
-            categories: companyCategories,
+            categories: selectedCategory,
             size: companySize,
         };
         //eslint-disable-next-line
         console.log('Create Company!', data);
-    };
-
-    const handleNext = () => {
-        if (currentStep === steps.length) {
-            return;
-        }
-        setCurrentStep(currentStep + 1);
-        // console.log(formData);
-        if (currentStep === 2) {
-            handleProfileCreate(formData);
-        }
-        if (currentStep === 4) {
-            handleCompanyCreate(formData);
-        }
-    };
-
-    const handleBack = () => {
-        if (currentStep === 1) {
-            return;
-        }
-        setCurrentStep(currentStep - 1);
     };
 
     useEffect(() => {
@@ -122,29 +125,37 @@ export const FormWizard = ({
         <div className="w-80 lg:w-[28rem]">
             <Progress height="small" percentage={((currentStep - 1) / steps.length) * 100} className="mb-2" />
             <div className="flex flex-col rounded shadow-md">
-                <div className="border-b-gray-100 bg-gray-100 p-5 text-base font-semibold text-gray-500">{title}</div>
-                <div className="p-5">{children}</div>
-                <div className="m-5 flex justify-between">
-                    {currentStep === 1 ? (
-                        <Button disabled={loading} className="w-full" onClick={() => setCurrentStep(currentStep + 1)}>
-                            {t('signup.next')}
-                        </Button>
-                    ) : (
-                        <>
-                            <Button variant="secondary" className="w-32 lg:w-44" onClick={() => handleBack()}>
-                                {t('signup.back')}
-                            </Button>
+                <form>
+                    <div className="border-b-gray-100 bg-gray-100 p-5 text-base font-semibold text-gray-500">
+                        {title}
+                    </div>
+                    <div className="p-5">{children}</div>
+                    <div className="m-5 flex justify-between">
+                        {currentStep === 1 ? (
                             <Button
                                 disabled={loading}
-                                type="submit"
-                                className="w-32 lg:w-44"
-                                onClick={() => handleNext()}
+                                className="w-full"
+                                onClick={() => setCurrentStep(currentStep + 1)}
                             >
-                                {currentStep === steps.length ? t('signup.submit') : t('signup.next')}
+                                {t('signup.next')}
                             </Button>
-                        </>
-                    )}
-                </div>
+                        ) : (
+                            <>
+                                <Button variant="secondary" className="w-32 lg:w-44" onClick={() => handleBack()}>
+                                    {t('signup.back')}
+                                </Button>
+                                <Button
+                                    disabled={loading}
+                                    type="submit"
+                                    className="w-32 lg:w-44"
+                                    onClick={handleSubmit(handleNext)}
+                                >
+                                    {currentStep === steps.length ? t('signup.submit') : t('signup.next')}
+                                </Button>
+                            </>
+                        )}
+                    </div>
+                </form>
             </div>
         </div>
     );

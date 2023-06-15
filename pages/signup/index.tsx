@@ -127,7 +127,10 @@ export default function Register() {
     return (
         <>
             {featSignupV2() ? (
-                <LoginSignupLayout left={<ScreenshotsCarousel />} right={<SignUpPage selectedPriceId={selectedPriceId} />} />
+                <LoginSignupLayout
+                    left={<ScreenshotsCarousel />}
+                    right={<SignUpPage selectedPriceId={selectedPriceId} />}
+                />
             ) : (
                 <LegacyLoginSignupLayout>
                     <form className="mx-auto flex w-full max-w-xs flex-grow flex-col items-center justify-center space-y-2">

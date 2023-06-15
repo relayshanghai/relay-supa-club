@@ -19,7 +19,7 @@ export const Progress = ({ label, className, height, percentage }: ProgressProps
     return (
         <div className={`flex ${heightClass} w-full overflow-hidden rounded-full bg-gray-200 ${className}`}>
             <div
-                className="flex flex-col justify-center overflow-hidden bg-primary-500 text-center text-xs text-white"
+                className="flex flex-col justify-center overflow-hidden bg-primary-500 text-center text-xs text-white "
                 style={{ width: `${percentage}%` }}
             >
                 {label && label}
