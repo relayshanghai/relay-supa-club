@@ -59,6 +59,7 @@ const pricing = {
         title: 'Free Trial',
         subTitle: 'Check out what we can offer',
     },
+    save15Percent: 'Save 15%',
 };
 
 export default pricing;

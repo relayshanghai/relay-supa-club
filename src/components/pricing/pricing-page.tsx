@@ -57,7 +57,9 @@ export const PricingPage = ({ page = 'upgrade' }: { page?: 'upgrade' | 'landing'
                         beforeLabel={t('pricing.monthly') || 'Monthly'}
                         afterLabel={t('pricing.quarterly') || 'Quarterly'}
                     />
-                    <p className="-right-15 -top-15 absolute">Save 15%</p>
+                    <p className="absolute -right-16 -top-1 text-sm font-semibold text-pink-500">
+                        {t('pricing.save15Percent')}
+                    </p>
                 </div>
                 <div
                     className={`container m-auto flex ${
