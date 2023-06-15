@@ -12,6 +12,7 @@ const signup = {
     phoneNumber: 'Phone Number',
     firstNamePlaceholder: 'Jane',
     lastNamePlaceholder: 'Doe',
+    phoneNumberPlaceholder: '+1 (000) 000-0000',
     email: 'Email',
     password: 'Password',
     confirmPassword: 'Confirm Password',

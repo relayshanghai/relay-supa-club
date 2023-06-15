@@ -7,16 +7,66 @@ import { SingleSelect } from '../ui';
 import { companyCategories } from './company-categories';
 import { Radio } from '../ui/radio';
 import { OnboardPaymentSection } from './onboard-payment-section';
+import { validateSignupInput } from 'src/utils/validation/signup';
+import { useFields } from 'src/hooks/use-fields';
+import type { SignupInputTypes } from 'src/utils/validation/signup';
 
 const SignUpPage = ({ selectedPriceId }: { selectedPriceId: string }) => {
     const { t } = useTranslation();
     const {
         control,
+        handleSubmit,
         setValue,
         formState: { errors },
     } = useForm();
+    const {
+        values: {
+            firstName,
+            lastName,
+            email,
+            password,
+            confirmPassword,
+            phoneNumber,
+            companyName,
+            companySize,
+            companyWebsite,
+            companyCategory,
+        },
+        setFieldValue,
+    } = useFields({
+        firstName: '',
+        lastName: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+        phoneNumber: '',
+        companyName: '',
+        companySize: '',
+        companyWebsite: '',
+        companyCategory: '',
+    });
+    const formData = {
+        firstName,
+        lastName,
+        email,
+        password,
+        confirmPassword,
+        phoneNumber,
+        companyName,
+        companySize,
+        companyWebsite,
+        companyCategory,
+    };
 
     const [currentStep, setCurrentStep] = useState(1);
+    const [validationErrors, setValidationErrors] = useState({
+        firstName: '',
+        lastName: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+        phoneNumber: '',
+    });
 
     const steps = [
         {
@@ -46,6 +96,15 @@ const SignUpPage = ({ selectedPriceId }: { selectedPriceId: string }) => {
         { label: '11-50', value: '11-50' },
         { label: '50 +', value: '50+' },
     ];
+    const setAndValidate = (type: SignupInputTypes, value: string) => {
+        setFieldValue(type, value);
+        const validationError = validateSignupInput(type, value, password);
+        if (validationError) {
+            setValidationErrors({ ...validationErrors, [type]: t(validationError) });
+        } else {
+            setValidationErrors({ ...validationErrors, [type]: '' });
+        }
+    };
 
     return (
         <div>
@@ -58,68 +117,109 @@ const SignUpPage = ({ selectedPriceId }: { selectedPriceId: string }) => {
                             steps={steps}
                             currentStep={currentStep}
                             setCurrentStep={setCurrentStep}
+                            handleSubmit={handleSubmit}
+                            formData={formData}
                         >
-                            {currentStep === 1 && (
-                                <>
-                                    <Input
-                                        label={t('signup.firstName')}
-                                        type="text"
-                                        placeholder={t('signup.firstNamePlaceholder')}
-                                    />
-                                    <Input
-                                        label={t('signup.lastName')}
-                                        type="text"
-                                        placeholder={t('signup.lastNamePlaceholder')}
-                                    />
-                                    <Input
-                                        label={t('signup.phoneNumber')}
-                                        type="text"
-                                        placeholder="+1 (000) 000-0000"
-                                    />
-                                </>
-                            )}
+                            <form>
+                                {currentStep === 1 && (
+                                    <>
+                                        <Input
+                                            error={validationErrors.firstName}
+                                            label={t('signup.firstName')}
+                                            value={firstName}
+                                            placeholder={t('signup.firstNamePlaceholder')}
+                                            required
+                                            onChange={(e) => setAndValidate('firstName', e.target.value)}
+                                        />
+                                        <Input
+                                            error={validationErrors.lastName}
+                                            label={t('signup.lastName')}
+                                            placeholder={t('signup.lastNamePlaceholder')}
+                                            value={lastName}
+                                            required
+                                            onChange={(e) => setAndValidate('lastName', e.target.value)}
+                                        />
+                                        <Input
+                                            error={validationErrors.phoneNumber}
+                                            label={t('signup.phoneNumber')}
+                                            placeholder={t('signup.phoneNumberPlaceholder')}
+                                            value={phoneNumber}
+                                            onChange={(e) => setAndValidate('phoneNumber', e.target.value)}
+                                        />
+                                    </>
+                                )}
 
-                            {currentStep === 2 && (
-                                <>
-                                    <Input label={t('signup.email')} type="email" placeholder="you@site.com" value="" />
-                                    <Input
-                                        label={t('signup.password')}
-                                        type="password"
-                                        placeholder={t('signup.passwordPlaceholder')}
-                                    />
-                                    <Input
-                                        label={t('signup.confirmPassword')}
-                                        type="password"
-                                        placeholder={t('signup.confirmPasswordPlaceholder')}
-                                    />
-                                </>
-                            )}
+                                {currentStep === 2 && (
+                                    <>
+                                        <Input
+                                            error={validationErrors.email}
+                                            label={t('signup.email')}
+                                            type="email"
+                                            placeholder="you@site.com"
+                                            value={email}
+                                            required
+                                            onChange={(e) => setAndValidate('email', e.target.value)}
+                                        />
+                                        <Input
+                                            error={validationErrors.password}
+                                            label={t('signup.password')}
+                                            type="password"
+                                            placeholder={t('signup.passwordPlaceholder')}
+                                            value={password}
+                                            required
+                                            onChange={(e) => setAndValidate('password', e.target.value)}
+                                        />
+                                        <Input
+                                            label={t('signup.confirmPassword')}
+                                            type="password"
+                                            placeholder={t('signup.confirmPasswordPlaceholder')}
+                                            value={confirmPassword}
+                                            required
+                                            onChange={(e) => setAndValidate('confirmPassword', e.target.value)}
+                                        />
+                                    </>
+                                )}
 
-                            {currentStep === 3 && (
-                                <>
-                                    <SingleSelect
-                                        fieldName="company_category"
-                                        errors={errors}
-                                        isRequired
-                                        control={control}
-                                        options={companyCategories}
-                                        setValue={setValue}
-                                    />
-                                </>
-                            )}
+                                {currentStep === 3 && (
+                                    <>
+                                        <SingleSelect
+                                            fieldName="companyCategory"
+                                            errors={errors}
+                                            isRequired
+                                            control={control}
+                                            options={companyCategories}
+                                            valueName="companyCategory"
+                                            setValue={setValue}
+                                        />
+                                    </>
+                                )}
 
-                            {currentStep === 4 && (
-                                <>
-                                    <Input
-                                        label={t('signup.company')}
-                                        type="text"
-                                        placeholder={t('signup.companyPlaceholder')}
-                                    />
-                                    <Input label={t('signup.website')} type="text" placeholder="www.site.com" />
-                                    <Radio label={t('signup.companySize')} options={companySizeOptions} />
-                                </>
-                            )}
-                            {currentStep === 5 && <OnboardPaymentSection priceId={selectedPriceId} />}
+                                {currentStep === 4 && (
+                                    <>
+                                        <Input
+                                            label={t('signup.company')}
+                                            value={companyName}
+                                            placeholder={t('signup.companyPlaceholder')}
+                                            required
+                                            onChange={(e) => setFieldValue('companyName', e.target.value)}
+                                        />
+                                        <Input
+                                            label={t('signup.website')}
+                                            value={companyWebsite}
+                                            placeholder="www.site.com"
+                                            onChange={(e) => setFieldValue('companyWebsite', e.target.value)}
+                                        />
+
+                                        <Radio
+                                            label={t('signup.companySize')}
+                                            options={companySizeOptions}
+                                            value={companySize}
+                                            onChange={(e) => setFieldValue('companySize', e.target.value)}
+                                        />
+                                    </>
+                                )}
+                                {currentStep === 5 && <OnboardPaymentSection priceId={selectedPriceId} />}
+                            </form>
                         </FormWizard>
                     ),
             )}

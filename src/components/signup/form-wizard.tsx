@@ -2,6 +2,8 @@ import { useTranslation } from 'react-i18next';
 import type { ReactNode } from 'react';
 import { Progress } from '../library';
 import { Button } from '../button';
+import type { FieldValues, UseFormHandleSubmit } from 'react-hook-form';
+// import { useUser } from 'src/hooks/use-user';
 
 interface stepsType {
     title: string;
@@ -14,14 +16,71 @@ export const FormWizard = ({
     steps,
     currentStep,
     setCurrentStep,
+    formData,
 }: {
     title: string;
     children: ReactNode;
     currentStep: number;
     steps: stepsType[];
     setCurrentStep: (step: number) => void;
+    handleSubmit: UseFormHandleSubmit<FieldValues, undefined>;
+    formData: FieldValues;
 }) => {
     const { t } = useTranslation();
+    // const { signup } = useUser();
+
+    const handleProfileCreate = async (formData: FieldValues) => {
+        const { firstName, lastName, phoneNumber, email, password } = formData;
+        const data = {
+            email,
+            password,
+            data: {
+                first_name: firstName,
+                last_name: lastName,
+                phone: phoneNumber,
+            },
+        };
+        //eslint-disable-next-line
+        console.log('Create Profile', data);
+        // try {
+        //     const signUpProfileRes = await signup(data);
+        //     console.log('signup!!', signUpProfileRes);
+        // } catch (error) {
+        //     clientLogger(error, 'error');
+        // }
+    };
+
+    const handleCompanyCreate = async (formData: FieldValues) => {
+        const { companyName, companyWebsite, companyCategories } = formData;
+        const data = {
+            name: companyName,
+            website: companyWebsite,
+            categories: companyCategories,
+        };
+        //eslint-disable-next-line
+        console.log('Create Company!', data);
+    };
+
+    const handleNext = () => {
+        if (currentStep === steps.length) {
+            return;
+        }
+        setCurrentStep(currentStep + 1);
+        // console.log(formData);
+        if (currentStep === 2) {
+            handleProfileCreate(formData);
+        }
+        if (currentStep === 4) {
+            handleCompanyCreate(formData);
+        }
+    };
+
+    const handleBack = () => {
+        if (currentStep === 1) {
+            return;
+        }
+        setCurrentStep(currentStep - 1);
+    };
 
     return (
         // The width is to match the exact design on Figma
@@ -37,14 +96,10 @@ export const FormWizard = ({
                         </Button>
                     ) : (
                         <>
-                            <Button
-                                variant="secondary"
-                                className="w-32 lg:w-44"
-                                onClick={() => setCurrentStep(currentStep - 1)}
-                            >
+                            <Button variant="secondary" className="w-32 lg:w-44" onClick={() => handleBack()}>
                                 {t('signup.back')}
                             </Button>
-                            <Button className="w-32 lg:w-44" onClick={() => setCurrentStep(currentStep + 1)}>
+                            <Button type="submit" className="w-32 lg:w-44" onClick={() => handleNext()}>
                                 {currentStep === steps.length ? t('signup.submit') : t('signup.next')}
                             </Button>
                         </>
