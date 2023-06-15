@@ -7,10 +7,8 @@ const pricing = {
     monthly: 'Monthly',
     quarterly: 'Quarterly',
     annually: 'Annually',
-    diy: 'DIY',
-    diyMax: 'DIY Max',
-    VIP: 'VIP',
     perMonth: '/ month',
+    usdPerMonth: 'USD / Month',
     startFreeTrial: 'Start Free Trial',
     contactNow: 'Contact Now',
     checkOutOur: 'Check out our ',
@@ -43,8 +41,24 @@ const pricing = {
     getStartedWithYourFreeTrial: 'Get started with your free trial',
     justGettingStartedOrScalingUp: 'Just getting started, or scaling up.',
     relayClubCanHelp: 'relay.club can help.',
-    free: 'Free',
-    freeTrial: 'Free trial',
+    freePrice: 'Free',
+    diy: {
+        title: 'DIY',
+        subTitle: 'For teams just getting started',
+    },
+    diyMax: {
+        title: 'DIY Max',
+        subTitle: 'For teams looking to grow',
+    },
+
+    vip: {
+        title: 'VIP',
+        subTitle: 'For teams who want personalized service',
+    },
+    free: {
+        title: 'Free Trial',
+        subTitle: 'Check out what we can offer',
+    },
 };
 
 export default pricing;

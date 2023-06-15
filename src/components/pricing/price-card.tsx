@@ -48,13 +48,20 @@ export const PriceCard = ({
 
     return (
         <div className="w-full p-4 transition-all ease-in-out hover:-translate-y-3 md:w-1/2 lg:w-1/3">
-            <div className="relative flex h-full flex-col overflow-hidden rounded-lg border-2 border-gray-300 p-6">
-                <h2 className="title-font mb-1 text-sm font-medium tracking-widest">{t('pricing.' + priceTier)}</h2>
-                <h1 className="mb-4 flex items-center border-b border-gray-200 pb-4 text-4xl leading-none text-gray-900">
-                    <span data-plan="diy" className="price">
-                        {freeTier ? t('pricing.freeTrial') : prices[period][priceTier]}
-                    </span>
-                    <span className="ml-1 text-lg font-normal text-gray-500">{t('pricing.perMonth')}</span>
+            <div
+                className={`relative flex ${
+                    !landingPage ? 'h-full' : ''
+                } flex-col overflow-hidden rounded-lg border-2 border-gray-300 p-6`}
+            >
+                <h1 className="text-4xl font-semibold text-gray-800">{t(`pricing.${priceTier}.title`)}</h1>
+                <h4 className="text-xs text-gray-500">{t(`pricing.${priceTier}.subTitle`)}</h4>
+
+                <h1 className="mb-4 mt-4 flex items-center pb-4 text-4xl text-gray-800" data-plan="diy">
+                    {prices[period][priceTier]}
+
+                    {!freeTier && (
+                        <span className="ml-1 text-sm font-semibold text-gray-500">{t('pricing.usdPerMonth')}</span>
+                    )}
                 </h1>
                 <PriceDetailsCard priceTier={priceTier} />
 
@@ -67,17 +74,6 @@ export const PriceCard = ({
                         {isCurrentPlan(priceTier, period, subscription)
                             ? t('pricing.yourCurrentPlan')
                             : t('pricing.buyNow')}
-                        <svg
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            className="ml-auto h-4 w-4"
-                            viewBox="0 0 24 24"
-                        >
-                            <path d="M5 12h14M12 5l7 7-7 7" />
-                        </svg>
                     </Button>
                 )}
             </div>

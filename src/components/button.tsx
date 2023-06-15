@@ -19,11 +19,12 @@ const neutralClasses = 'text-left';
 export const Button = ({ children, variant, className, ...rest }: ButtonProps) => {
     return (
         <button
-            className={
-                variant === 'neutral'
-                    ? `${neutralClasses} ${className}`
-                    : `${defaultClasses} ${variant === 'secondary' ? secondaryClasses : primaryClasses} ${className}`
-            }
+            className={`
+                ${
+                    variant === 'neutral'
+                        ? `${neutralClasses}`
+                        : `${defaultClasses} ${variant === 'secondary' ? secondaryClasses : primaryClasses}`
+                }  ${className}`}
             {...rest}
         >
             {children}

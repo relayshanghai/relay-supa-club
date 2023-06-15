@@ -119,7 +119,7 @@ const Pricing = () => {
                         <div className="w-full p-4 transition-all ease-in-out hover:-translate-y-3 md:w-1/2 lg:w-1/3">
                             <div className="relative flex h-full flex-col overflow-hidden rounded-lg border-2 border-gray-300 p-6">
                                 <h2 className="title-font mb-1 text-sm font-medium tracking-widest">
-                                    {t('pricing.diy')}
+                                    {t('pricing.diy.title')}
                                 </h2>
                                 <h1 className="mb-4 flex items-center border-b border-gray-200 pb-4 text-4xl leading-none text-gray-900">
                                     <span data-plan="diy" className="price">
@@ -224,7 +224,7 @@ const Pricing = () => {
                                     {t('pricing.popular')}
                                 </span>
                                 <h2 className="title-font mb-1 text-sm font-medium tracking-widest">
-                                    {t('pricing.diyMax')}
+                                    {t('pricing.diyMax.title')}
                                 </h2>
                                 <h1 className="mb-4 flex items-center border-b border-gray-200 pb-4 text-4xl leading-none text-gray-900">
                                     <span data-plan="diyMax" className="price">

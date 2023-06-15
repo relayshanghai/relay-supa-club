@@ -54,7 +54,7 @@ export const PricingSection = ({ setPriceId }: { setPriceId: (priceId: string) =
                     </h3>
                     <div>
                         <h4 className="inline text-gray-500">
-                            {period === 'monthly' ? t('pricing.billedMonthly') : t(`pricing.billedQuarterly`)}{' '}
+                            {period === 'monthly' ? t('pricing.billedMonthly') : t(`pricing.billedQuarterly`)}
                             <h3 className="inline underline">after</h3>
                         </h4>
                         <h3 className="text-primary-600">{t('pricing.thirtyDayFreeTrial')}</h3>

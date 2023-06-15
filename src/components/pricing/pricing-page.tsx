@@ -7,6 +7,7 @@ import type { SubscriptionConfirmModalData } from '../account/subscription-confi
 import { SubscriptionConfirmModal } from '../account/subscription-confirm-modal';
 import { Switch } from '../library';
 import { PriceCard } from './price-card';
+import { Button } from '../button';
 
 export const PricingPage = ({ page = 'upgrade' }: { page: 'upgrade' | 'landing' }) => {
     const landingPage = page === 'landing';
@@ -23,7 +24,7 @@ export const PricingPage = ({ page = 'upgrade' }: { page: 'upgrade' | 'landing' 
     const options = ['free', 'diy', 'diyMax'] as ActiveSubscriptionTier[];
 
     return (
-        <main className="flex-grow pt-20">
+        <main className="flex-grow pt-10">
             <SubscriptionConfirmModal
                 confirmModalData={confirmModalData}
                 setConfirmModalData={setConfirmModalData}
@@ -31,13 +32,16 @@ export const PricingPage = ({ page = 'upgrade' }: { page: 'upgrade' | 'landing' 
             />
 
             <div className="container mx-auto flex flex-col items-center">
-                <div className="mx-auto mb-16 max-w-3xl text-center">
+                <div className="mx-auto mb-14 max-w-3xl text-center">
                     <h2 className="font-heading mb-6 mt-4 text-3xl font-semibold text-gray-800 md:text-4xl">
                         {t('pricing.justGettingStartedOrScalingUp')}
                     </h2>
-                    <p className="text-3xl font-semibold text-primary-700">{t('pricing.relayClubCanHelp')}</p>
+                    <p className="text-3xl font-semibold text-primary-700 md:text-4xl">
+                        {t('pricing.relayClubCanHelp')}
+                    </p>
                 </div>
                 <Switch
+                    wrapperClassName="mb-2"
                     checked={period === 'quarterly'}
                     onChange={(e) => {
                         setPeriod(e.target.checked ? 'quarterly' : 'monthly');
@@ -45,7 +49,11 @@ export const PricingPage = ({ page = 'upgrade' }: { page: 'upgrade' | 'landing' 
                     beforeLabel={t('pricing.monthly') || 'Monthly'}
                     afterLabel={t('pricing.quarterly') || 'Quarterly'}
                 />
-                <div className="container m-auto flex min-h-[32rem] w-full max-w-screen-xl flex-wrap justify-center">
+                <div
+                    className={`container m-auto flex ${
+                        !landingPage ? 'min-h-[32rem]' : 'min-h-[20rem]'
+                    } w-full max-w-screen-xl flex-wrap justify-center`}
+                >
                     {options.map((option) => (
                         <PriceCard
                             key={option}
@@ -56,6 +64,7 @@ export const PricingPage = ({ page = 'upgrade' }: { page: 'upgrade' | 'landing' 
                         />
                     ))}
                 </div>
+                {landingPage && <Button className="mt-2 !text-lg">{t('pricing.startFreeTrial')}</Button>}
             </div>
         </main>
     );
