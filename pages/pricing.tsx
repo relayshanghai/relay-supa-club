@@ -66,7 +66,7 @@ const Pricing = () => {
     const prices = usePrices();
 
     const openConfirmModal = (plan: 'diy' | 'diyMax', period: ActiveSubscriptionPeriod, priceId: string) => {
-        setConfirmModalData({ plan, period, priceId, price: prices[period][plan] });
+        setConfirmModalData({ priceTier: plan, period, priceId, price: prices[period][plan] });
     };
 
     const isCurrentPlan = (plan: 'diy' | 'diyMax') => {
