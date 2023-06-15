@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { SubscriptionConfirmModalData } from 'src/components/account/subscription-confirm-modal';
 import { SubscriptionConfirmModal } from 'src/components/account/subscription-confirm-modal';
@@ -6,10 +6,8 @@ import { Button } from 'src/components/button';
 import { SALES_REP_EMAIL } from 'src/constants/employeeContacts';
 import { useSubscription } from 'src/hooks/use-subscription';
 import { Layout } from 'src/components/layout';
-import { nextFetch } from 'src/utils/fetcher';
-import { clientLogger } from 'src/utils/logger-client';
 import type { SubscriptionPeriod } from 'types';
-import type { SubscriptionPricesGetResponse } from './api/subscriptions/prices';
+import { PRICE_IDS, usePrices } from 'src/hooks/use-prices';
 const details = {
     diy: [
         { title: 'twoHundredNewInfluencerProfilesPerMonth', icon: 'check' },
@@ -57,95 +55,18 @@ const VIPEmailLink = `mailto:${SALES_REP_EMAIL}?${query}`;
 const unselectedTabClasses = 'py-1 px-4 border-x border-primary-500 cursor-pointer';
 const selectedTabClasses = 'py-1 px-4 border-x border-primary-500 bg-primary-500 text-white';
 
-type PriceTiers = {
-    diy: string;
-    diyMax: string;
-    VIP: string;
-};
-type Prices = {
-    monthly: PriceTiers;
-    quarterly: PriceTiers;
-    annually: PriceTiers;
-};
-
-const formatPrice = (price: string, currency: string, period: 'monthly' | 'annually' | 'quarterly') => {
-    const pricePerMonth =
-        period === 'annually' ? Number(price) / 12 : period === 'quarterly' ? Number(price) / 3 : Number(price);
-    /** I think rounding to the dollar is OK for now, but if need be we can add cents */
-    const roundedPrice = Math.round(pricePerMonth);
-    if (currency === 'usd')
-        return new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD',
-        }).format(roundedPrice);
-    // not sure what other currencies we will handle and if we can pass them directly to Intl.NumberFormat so this is a placeholder until we know
-    return `${roundedPrice} ${currency}`;
-};
-
 /** Note: This file doesn't share a lot of the conventions we have elsewhere across the app, because this file is migrated from the marketing site, trying to make minimal changes in case we need to update both at the same time. */
 const Pricing = () => {
     const { t } = useTranslation();
     const { subscription, createSubscription } = useSubscription();
-    const [period, setPeriod] = useState<SubscriptionPeriod>('annually');
+    const [period, setPeriod] = useState<SubscriptionPeriod>('quarterly');
     const [confirmModalData, setConfirmModalData] = useState<SubscriptionConfirmModalData | null>(null);
-    const [priceIds, setPriceIds] = useState<{
-        diy: { monthly: string; quarterly: string; annually: string };
-        diyMax: { monthly: string; quarterly: string; annually: string };
-    } | null>(null);
+
+    const prices = usePrices();
 
     const openConfirmModal = (plan: 'diy' | 'diyMax', period: SubscriptionPeriod, priceId: string) => {
         setConfirmModalData({ plan, period, priceId, price: prices[period][plan] });
     };
-
-    const [prices, setPrices] = useState<Prices>({
-        monthly: {
-            diy: '--',
-            diyMax: '--',
-            VIP: t('pricing.contactUs'),
-        },
-        quarterly: {
-            diy: '--',
-            diyMax: '--',
-            VIP: t('pricing.contactUs'),
-        },
-        annually: {
-            diy: '--',
-            diyMax: '--',
-            VIP: t('pricing.contactUs'),
-        },
-    });
-
-    useEffect(() => {
-        const fetchPrices = async () => {
-            try {
-                const res = await nextFetch<SubscriptionPricesGetResponse>('subscriptions/prices');
-                const { diy, diyMax } = res;
-
-                const monthly = {
-                    diy: formatPrice(diy.prices.monthly, diy.currency, 'monthly'),
-                    diyMax: formatPrice(diyMax.prices.monthly, diyMax.currency, 'monthly'),
-                    VIP: t('pricing.contactUs'),
-                };
-                const quarterly = {
-                    diy: formatPrice(diy.prices.quarterly, diy.currency, 'quarterly'),
-                    diyMax: formatPrice(diyMax.prices.quarterly, diyMax.currency, 'quarterly'),
-                    VIP: t('pricing.contactUs'),
-                };
-                const annually = {
-                    diy: formatPrice(diy.prices.annually, diy.currency, 'annually'),
-                    diyMax: formatPrice(diyMax.prices.annually, diyMax.currency, 'annually'),
-                    VIP: t('pricing.contactUs'),
-                };
-
-                setPrices({ monthly, quarterly, annually });
-                setPriceIds({ diy: diy.priceIds, diyMax: diyMax.priceIds });
-            } catch (error) {
-                clientLogger(error, 'error', true); // send to sentry cause there's something wrong with the pricing endpoint
-            }
-        };
-
-        fetchPrices();
-    }, [t]);
 
     const isCurrentPlan = (plan: 'diy' | 'diyMax') => {
         const planName = plan === 'diyMax' ? 'DIY Max' : 'DIY';
@@ -153,7 +74,7 @@ const Pricing = () => {
     };
 
     const disableButton = (plan: 'diy' | 'diyMax') => {
-        if (!priceIds || !subscription?.name || !subscription.interval || !subscription.status) {
+        if (!subscription?.name || !subscription.interval || !subscription.status) {
             return true;
         }
         if (isCurrentPlan(plan)) {
@@ -191,12 +112,6 @@ const Pricing = () => {
                             className={period === 'quarterly' ? selectedTabClasses : unselectedTabClasses}
                         >
                             {t('pricing.quarterly')}
-                        </div>
-                        <div
-                            onClick={() => setPeriod('annually')}
-                            className={period === 'annually' ? selectedTabClasses : unselectedTabClasses}
-                        >
-                            {t('pricing.annually')}
                         </div>
                     </div>
                     <div className="container m-auto flex min-h-[32rem] w-full max-w-screen-xl flex-wrap justify-center">
@@ -283,9 +198,7 @@ const Pricing = () => {
                                 })}
 
                                 <Button
-                                    onClick={() =>
-                                        openConfirmModal('diy', period, priceIds ? priceIds['diy'][period] : '')
-                                    }
+                                    onClick={() => openConfirmModal('diy', period, PRICE_IDS[period]['diy'])}
                                     disabled={disableButton('diy')}
                                     className="flex"
                                 >
@@ -384,9 +297,7 @@ const Pricing = () => {
                                 ))}
 
                                 <Button
-                                    onClick={() =>
-                                        openConfirmModal('diyMax', period, priceIds ? priceIds['diyMax'][period] : '')
-                                    }
+                                    onClick={() => openConfirmModal('diyMax', period, PRICE_IDS[period]['diyMax'])}
                                     disabled={disableButton('diyMax')}
                                     className="flex"
                                 >

@@ -11,12 +11,14 @@ import archivedCampaign from './supabase/campaigns/archivedCampaign.json';
 
 import campaignCreatorsJim from './supabase/campaign_creators/campaignCreatorsJimCampaign.json';
 import amyCampaignCreators from './supabase/campaign_creators/campaignCreatorsAmyCampaign.json';
+import prices from './api/subscription/prices/prices.json';
+
 // if in the future we want to use the browser-based msw outside of cypress, we'll need to change this
 export const APP_URL_CYPRESS = 'http://localhost:8080';
 export const SUPABASE_URL_CYPRESS = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1`;
 const campaigns = [jimTestCampaign, amyTestCampaign, newEmptyCampaign, archivedCampaign];
 const frontendHandlers = [
-    rest.get(`${APP_URL_CYPRESS}/api/creators/report`, (req, res, ctx) => {
+    rest.get(`${APP_URL_CYPRESS}/api/creators/report`, (_req, res, ctx) => {
         return res(ctx.delay(1000), ctx.json(tSeries));
     }),
     rest.get(`${SUPABASE_URL_CYPRESS}/campaign_creators`, (req, res, ctx) => {
@@ -54,7 +56,7 @@ const frontendHandlers = [
             }),
         );
     }),
-    rest.get(`${SUPABASE_URL_CYPRESS}/campaigns`, (req, res, ctx) => {
+    rest.get(`${SUPABASE_URL_CYPRESS}/campaigns`, (_req, res, ctx) => {
         return res(ctx.json(campaigns));
     }),
     rest.post(`${APP_URL_CYPRESS}/api/influencer-search`, (req, res, ctx) => {
@@ -65,11 +67,14 @@ const frontendHandlers = [
 
         return res(ctx.json({ success: true, data: [{ tag: term, value: term }] }));
     }),
-    rest.post(`${APP_URL_CYPRESS}/api/influencer-search/locations`, async (req, res, ctx) => {
+    rest.post(`${APP_URL_CYPRESS}/api/influencer-search/locations`, async (_req, res, ctx) => {
         return res(ctx.json([]));
     }),
     rest.post(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/list/images`, (_req, res, ctx) => {
         return res(ctx.json([]));
+    }),
+    rest.get(`${process.env.APP_URL_CYPRESS}/api/subscriptions/prices`, (_req, res, ctx) => {
+        return res(ctx.json(prices));
     }),
 ];
 /** for use in the browser */

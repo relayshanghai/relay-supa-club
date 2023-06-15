@@ -1,19 +1,63 @@
 import { t } from 'i18next';
 import type { SubscriptionPricesGetResponse } from 'pages/api/subscriptions/prices';
+import {
+    STRIPE_PRICE_MONTHLY_DIY,
+    STRIPE_PRICE_MONTHLY_DIY_MAX,
+    STRIPE_PRICE_QUARTERLY_DIY,
+    STRIPE_PRICE_QUARTERLY_DIY_MAX,
+} from 'src/utils/api/stripe/constants';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
 import useSWR from 'swr';
+import type { SubscriptionPeriod, SubscriptionTier } from 'types';
 export type PriceTiers = {
-    diy: string;
-    diyMax: string;
-    VIP: string;
+    [key in SubscriptionTier]: string;
 };
 export type Prices = {
-    monthly: PriceTiers;
-    quarterly: PriceTiers;
-    annually: PriceTiers;
+    [key in SubscriptionPeriod]: PriceTiers;
 };
 
+export const PRICE_IDS: Prices = {
+    monthly: {
+        diy: STRIPE_PRICE_MONTHLY_DIY,
+        diyMax: STRIPE_PRICE_MONTHLY_DIY_MAX,
+    },
+    quarterly: {
+        diy: STRIPE_PRICE_QUARTERLY_DIY,
+        diyMax: STRIPE_PRICE_QUARTERLY_DIY_MAX,
+    },
+};
+export type PriceDetails = {
+    [key in SubscriptionTier]: { title: string; icon: string; info?: string }[];
+};
+
+export const priceDetails: PriceDetails = {
+    diy: [
+        { title: 'twoHundredNewInfluencerProfilesPerMonth', icon: 'check' },
+        { title: 'search264MillionInfluencers', icon: 'check' },
+        { title: 'unlimitedCampaigns', icon: 'check' },
+        { title: 'unlimitedUserAccountsPerCompany', icon: 'check' },
+        {
+            title: 'clubbyStarterPack',
+            icon: 'check',
+            info: 'includesCustomEmailTemplates',
+        },
+        { title: 'influencerOutreachExpertWorkingOnYourCampaigns', icon: 'cross' },
+    ],
+    diyMax: [
+        { title: 'fourHundredFiftyNewInfluencerProfilesPerMonth', icon: 'check' },
+        { title: 'search264MillionInfluencers', icon: 'check' },
+        { title: 'unlimitedCampaigns', icon: 'check' },
+        { title: 'unlimitedUserAccountsPerCompany', icon: 'check' },
+        {
+            title: 'clubbyStarterPack',
+            icon: 'check',
+            info: 'includesCustomEmailTemplates',
+        },
+        { title: 'influencerOutreachExpertWorkingOnYourCampaigns', icon: 'cross' },
+    ],
+};
+/** Takes the total period price (say a full quarter) price and formats into a monthly average price */
 export const formatPrice = (price: string, currency: string, period: 'monthly' | 'annually' | 'quarterly') => {
     const pricePerMonth =
         period === 'annually' ? Number(price) / 12 : period === 'quarterly' ? Number(price) / 3 : Number(price);
@@ -28,6 +72,10 @@ export const formatPrice = (price: string, currency: string, period: 'monthly' |
     return `${roundedPrice} ${currency}`;
 };
 export const usePrices = () => {
+    const pricesBlank: Prices = {
+        monthly: { diy: '', diyMax: '' },
+        quarterly: { diy: '', diyMax: '' },
+    };
     const { data: prices } = useSWR('prices', async () => {
         try {
             const res = await nextFetch<SubscriptionPricesGetResponse>('subscriptions/prices');
@@ -43,23 +91,15 @@ export const usePrices = () => {
                 diyMax: formatPrice(diyMax.prices.quarterly, diyMax.currency, 'quarterly'),
                 VIP: t('pricing.contactUs'),
             };
-            const annually = {
-                diy: formatPrice(diy.prices.annually, diy.currency, 'annually'),
-                diyMax: formatPrice(diyMax.prices.annually, diyMax.currency, 'annually'),
-                VIP: t('pricing.contactUs'),
+            const result: Prices = {
+                monthly,
+                quarterly,
             };
-            const prices: Prices = { monthly, quarterly, annually };
-            return { prices };
+            return result;
         } catch (error) {
             clientLogger(error, 'error', true); // send to sentry cause there's something wrong with the pricing endpoint
-            return {
-                prices: {
-                    monthly: { diy: '', diyMax: '', VIP: '' },
-                    quarterly: { diy: '', diyMax: '', VIP: '' },
-                    annually: { diy: '', diyMax: '', VIP: '' },
-                },
-            };
+            return pricesBlank;
         }
     });
-    return { prices };
+    return prices ? prices : pricesBlank;
 };
