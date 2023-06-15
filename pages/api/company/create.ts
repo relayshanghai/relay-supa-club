@@ -17,7 +17,7 @@ const CompanyCreatePostBody = z.object({
     user_id: z.string(),
     name: z.string(),
     website: z.string().optional(),
-    size: CompanySize.optional().default('small'),
+    size: CompanySize.default('small').optional(),
     category: z.string().optional(),
 });
 
