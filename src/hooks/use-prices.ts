@@ -67,14 +67,15 @@ export const formatPrice = (price: string, currency: string, period: 'monthly' |
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
             currency: 'USD',
+            maximumFractionDigits: 0,
         }).format(roundedPrice);
     // not sure what other currencies we will handle and if we can pass them directly to Intl.NumberFormat so this is a placeholder until we know
     return `${roundedPrice} ${currency}`;
 };
 export const usePrices = () => {
     const pricesBlank: Prices = {
-        monthly: { diy: '', diyMax: '' },
-        quarterly: { diy: '', diyMax: '' },
+        monthly: { diy: '$--', diyMax: '$--' },
+        quarterly: { diy: '$--', diyMax: '$--' },
     };
     const { data: prices } = useSWR('prices', async () => {
         try {
