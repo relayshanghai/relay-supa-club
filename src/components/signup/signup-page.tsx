@@ -6,8 +6,9 @@ import { Input } from '../input';
 import { SingleSelect } from '../ui';
 import { companyCategories } from './company-categories';
 import { Radio } from '../ui/radio';
+import { OnboardPaymentSection } from './onboard-payment-section';
 
-const SignUpPage = () => {
+const SignUpPage = ({ selectedPriceId }: { selectedPriceId: string }) => {
     const { t } = useTranslation();
     const {
         control,
@@ -60,8 +61,16 @@ const SignUpPage = () => {
                         >
                             {currentStep === 1 && (
                                 <>
-                                    <Input label={t('signup.firstName')} type="text" placeholder="First" value="" />
-                                    <Input label={t('signup.lastName')} type="text" placeholder="Last" value="" />
+                                    <Input
+                                        label={t('signup.firstName')}
+                                        type="text"
+                                        placeholder={t('signup.firstNamePlaceholder')}
+                                    />
+                                    <Input
+                                        label={t('signup.lastName')}
+                                        type="text"
+                                        placeholder={t('signup.lastNamePlaceholder')}
+                                    />
                                     <Input
                                         label={t('signup.phoneNumber')}
                                         type="text"
@@ -73,8 +82,16 @@ const SignUpPage = () => {
                             {currentStep === 2 && (
                                 <>
                                     <Input label={t('signup.email')} type="email" placeholder="you@site.com" value="" />
-                                    <Input label={t('signup.password')} type="password" placeholder="password" />
-                                    <Input label={t('signup.confirmPassword')} type="password" placeholder="password" />
+                                    <Input
+                                        label={t('signup.password')}
+                                        type="password"
+                                        placeholder={t('signup.passwordPlaceholder')}
+                                    />
+                                    <Input
+                                        label={t('signup.confirmPassword')}
+                                        type="password"
+                                        placeholder={t('signup.confirmPasswordPlaceholder')}
+                                    />
                                 </>
                             )}
 
@@ -93,17 +110,16 @@ const SignUpPage = () => {
 
                             {currentStep === 4 && (
                                 <>
-                                    <Input label={t('signup.company')} type="text" placeholder="Company" value="" />
+                                    <Input
+                                        label={t('signup.company')}
+                                        type="text"
+                                        placeholder={t('signup.companyPlaceholder')}
+                                    />
                                     <Input label={t('signup.website')} type="text" placeholder="www.site.com" />
                                     <Radio label={t('signup.companySize')} options={companySizeOptions} />
                                 </>
                             )}
-                            {/* TODO:Task for later PR: Link with stripe payment component */}
-                            {currentStep === 5 && (
-                                <>
-                                    <p>Placeholder to link the stripe payment elements</p>
-                                </>
-                            )}
+                            {currentStep === 5 && <OnboardPaymentSection priceId={selectedPriceId} />}
                         </FormWizard>
                     ),
             )}

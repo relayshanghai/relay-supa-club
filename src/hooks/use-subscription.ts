@@ -93,6 +93,7 @@ export const useSubscription = () => {
         subscription,
         paymentMethods,
         refreshPaymentMethods,
+        refreshSubscription: mutate,
         createSubscription,
         createTrialLegacy,
         createDiscountRenew,
