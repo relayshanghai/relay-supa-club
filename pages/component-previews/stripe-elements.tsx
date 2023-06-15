@@ -8,7 +8,8 @@ import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
 import type { SubscriptionPricesGetResponse } from '../api/subscriptions/prices';
 
-import { OnboardPaymentSection } from 'src/components/onboard-payment-section';
+import { OnboardPaymentSection } from 'src/components/signup/onboard-payment-section';
+import { STRIPE_PRICE_MONTHLY_DIY } from 'src/utils/api/stripe/constants';
 
 const formatPrice = (price: string, currency: string, period: 'monthly' | 'annually' | 'quarterly') => {
     const pricePerMonth =
@@ -103,7 +104,7 @@ const CheckoutForm = () => {
                     <div>Monthly: {prices.monthly.diyMax}</div>
                     <div>Quarterly: {prices.quarterly.diyMax}</div>
                 </div>
-                <OnboardPaymentSection priceId="123" />
+                <OnboardPaymentSection priceId={STRIPE_PRICE_MONTHLY_DIY} />
             </div>
         </Modal>
     );

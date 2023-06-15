@@ -1,6 +1,7 @@
 import type { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { serverLogger } from 'src/utils/logger-server';
+import { ZodError } from 'zod';
 
 export type ApiHandlerParams = {
     getHandler?: NextApiHandler;
@@ -22,7 +23,7 @@ export class RelayError extends Error {
         super(msg);
         this._httpCode = httpCode;
         this._shouldLog = options?.shouldLog || true; // log to server by default
-        this._sendToSentry = options?.sendToSentry || process.env.NODE_ENV === 'development';
+        this._sendToSentry = !!options?.sendToSentry && process.env.NODE_ENV !== 'development'; // Don’t send to sentry unless explicitly set in options, and only in production
     }
 
     get httpCode() {
@@ -39,11 +40,14 @@ export class RelayError extends Error {
 }
 
 export const exceptionHandler = <T = any>(fn: NextApiHandler<T>) => {
-    return async (req: NextApiRequest, res: NextApiResponse<T | { error: string }>) => {
+    return async (req: NextApiRequest, res: NextApiResponse<T | { error: any }>) => {
         try {
             await fn(req, res);
         } catch (error) {
-            const e = {
+            const e: {
+                httpCode: number;
+                message: any;
+            } = {
                 httpCode: httpCodes.INTERNAL_SERVER_ERROR,
                 message: 'Unknown Error',
             };
@@ -52,10 +56,15 @@ export const exceptionHandler = <T = any>(fn: NextApiHandler<T>) => {
                 e.message = error.message;
             }
 
+            if (error instanceof ZodError) {
+                e.message = error.issues;
+            }
+
             if (error instanceof RelayError) {
                 e.httpCode = error.httpCode;
                 e.message = error.message;
 
+                // if it's a RelayError, allow silencing the log
                 if (error.shouldLog) serverLogger(error, 'error', error.sendToSentry);
             }
 
@@ -63,13 +72,23 @@ export const exceptionHandler = <T = any>(fn: NextApiHandler<T>) => {
                 e.message = error;
             }
 
-            if (error !== null && typeof error === 'object' && error.constructor.name === 'Object') {
+            if (
+                !(error instanceof Error) &&
+                error !== null &&
+                typeof error === 'object' &&
+                error.constructor.name === 'Object'
+            ) {
                 e.message = JSON.stringify(error);
             }
 
             // Hide server errors if not in development
             if (e.httpCode >= 500 && process.env.NODE_ENV !== 'development') {
                 e.message = 'Error occurred';
+            }
+
+            // if it's not a RelayError, log it by default
+            if (!(error instanceof RelayError)) {
+                serverLogger(error, 'error');
             }
 
             return res.status(e.httpCode).json({ error: e.message });
@@ -82,7 +101,6 @@ export const ApiHandler =
     async (req: NextApiRequest, res: NextApiResponse) => {
         if (req.method === 'GET' && params.getHandler !== undefined) {
             return await exceptionHandler<T>(params.getHandler)(req, res);
-            // return await params.getHandler(req, res);
         }
 
         if (req.method === 'POST' && params.postHandler !== undefined) {
