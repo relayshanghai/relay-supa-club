@@ -10,8 +10,7 @@ import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
 import useSWR from 'swr';
 import type { SubscriptionPeriod, SubscriptionTier } from 'types';
-// We are not promoting VIP and annually now, but we still need them for legacy support elsewhere
-export type ActiveSubscriptionTier = Exclude<SubscriptionTier, 'VIP'>;
+export type ActiveSubscriptionTier = SubscriptionTier | 'free';
 export type ActiveSubscriptionPeriod = Exclude<SubscriptionPeriod, 'annually'>;
 export type PriceTiers = {
     [key in ActiveSubscriptionTier]: string;
@@ -24,10 +23,14 @@ export const PRICE_IDS: Prices = {
     monthly: {
         diy: STRIPE_PRICE_MONTHLY_DIY,
         diyMax: STRIPE_PRICE_MONTHLY_DIY_MAX,
+        VIP: '',
+        free: '',
     },
     quarterly: {
         diy: STRIPE_PRICE_QUARTERLY_DIY,
         diyMax: STRIPE_PRICE_QUARTERLY_DIY_MAX,
+        VIP: '',
+        free: '',
     },
 };
 export type PriceDetails = {
@@ -59,6 +62,30 @@ export const priceDetails: PriceDetails = {
         },
         { title: 'influencerOutreachExpertWorkingOnYourCampaigns', icon: 'cross' },
     ],
+    VIP: [
+        { title: 'moreInfluencerProfiles', icon: 'check' },
+        { title: 'search264MillionInfluencers', icon: 'check' },
+        { title: 'unlimitedCampaigns', icon: 'check' },
+        { title: 'unlimitedUserAccountsPerCompany', icon: 'check' },
+        {
+            title: 'clubbyStarterPack',
+            icon: 'check',
+            info: 'includesCustomEmailTemplates',
+        },
+        { title: 'influencerOutreachExpertWorkingOnYourCampaigns', icon: 'check' },
+    ],
+    free: [
+        { title: 'moreInfluencerProfiles', icon: 'check' },
+        { title: 'search264MillionInfluencers', icon: 'check' },
+        { title: 'unlimitedCampaigns', icon: 'check' },
+        { title: 'unlimitedUserAccountsPerCompany', icon: 'check' },
+        {
+            title: 'clubbyStarterPack',
+            icon: 'check',
+            info: 'includesCustomEmailTemplates',
+        },
+        { title: 'influencerOutreachExpertWorkingOnYourCampaigns', icon: 'check' },
+    ],
 };
 /** Takes the total period price (say a full quarter) price and formats into a monthly average price */
 export const formatPrice = (price: string, currency: string, period: 'monthly' | 'annually' | 'quarterly') => {
@@ -77,8 +104,8 @@ export const formatPrice = (price: string, currency: string, period: 'monthly' |
 };
 export const usePrices = () => {
     const pricesBlank: Prices = {
-        monthly: { diy: '$--', diyMax: '$--' },
-        quarterly: { diy: '$--', diyMax: '$--' },
+        monthly: { diy: '$--', diyMax: '$--', VIP: t('pricing.contactUs'), free: '$0' },
+        quarterly: { diy: '$--', diyMax: '$--', VIP: t('pricing.contactUs'), free: '$0' },
     };
     const { data: prices } = useSWR('prices', async () => {
         try {
@@ -89,11 +116,13 @@ export const usePrices = () => {
                 diy: formatPrice(diy.prices.monthly, diy.currency, 'monthly'),
                 diyMax: formatPrice(diyMax.prices.monthly, diyMax.currency, 'monthly'),
                 VIP: t('pricing.contactUs'),
+                free: '$0',
             };
             const quarterly = {
                 diy: formatPrice(diy.prices.quarterly, diy.currency, 'quarterly'),
                 diyMax: formatPrice(diyMax.prices.quarterly, diyMax.currency, 'quarterly'),
                 VIP: t('pricing.contactUs'),
+                free: '$0',
             };
             const result: Prices = {
                 monthly,

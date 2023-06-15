@@ -1,7 +1,6 @@
-import type { ChangeEvent } from 'react';
 import { useEffect, useState } from 'react';
 import { Switch } from '../library';
-import { PriceDetailsCard } from './price-details-card';
+import { PriceDetailsCard } from '../pricing/price-details-card';
 import type { ActiveSubscriptionPeriod, ActiveSubscriptionTier } from 'src/hooks/use-prices';
 import { PRICE_IDS, usePrices } from 'src/hooks/use-prices';
 import { useTranslation } from 'react-i18next';
@@ -21,10 +20,10 @@ export const PricingSection = ({ setPriceId }: { setPriceId: (priceId: string) =
             <Switch
                 wrapperClassName="self-end"
                 checked={period === 'quarterly'}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                onChange={(e) => {
                     setPeriod(e.target.checked ? 'quarterly' : 'monthly');
                 }}
-                afterLabel="Quarterly"
+                afterLabel={t('pricing.quarterly') || 'Quarterly'}
             />
             <div className="mt-10 divide-x-2 divide-gray-200">
                 <button

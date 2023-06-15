@@ -5,7 +5,6 @@ import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { createSubscriptionErrors } from 'src/errors/subscription';
 import { hasCustomError } from 'src/utils/errors';
-import type { SubscriptionPeriod } from 'types';
 
 import { Button } from '../button';
 import { Modal } from '../modal';
@@ -13,10 +12,11 @@ import { nextFetchWithQueries } from 'src/utils/fetcher';
 import type { CouponGetQueries, CouponGetResponse } from 'pages/api/subscriptions/coupon';
 import { clientLogger } from 'src/utils/logger-client';
 import { Input } from '../input';
+import type { ActiveSubscriptionPeriod, ActiveSubscriptionTier } from 'src/hooks/use-prices';
 
 export interface SubscriptionConfirmModalData {
-    plan: 'diy' | 'diyMax';
-    period: SubscriptionPeriod;
+    priceTier: ActiveSubscriptionTier;
+    period: ActiveSubscriptionPeriod;
     priceId: string;
     price: string;
 }
@@ -38,7 +38,7 @@ export const SubscriptionConfirmModal = ({
     const [couponId, setCouponId] = useState<string>('');
     const [couponInfo, setCouponInfo] = useState<CouponGetResponse | null>(null);
     const [checkingCoupon, setCheckingCoupon] = useState<boolean>(false);
-    const { price, period, priceId, plan } = confirmModalData || {};
+    const { price, period, priceId, priceTier } = confirmModalData || {};
     const handleCreateSubscription = useCallback(async () => {
         setSubmitStatus('submitting');
         const id = toast.loading(t('account.subscription.modal.subscribing'));
@@ -94,12 +94,12 @@ export const SubscriptionConfirmModal = ({
 
     return (
         <Modal visible={!!confirmModalData} onClose={() => setConfirmModalData(null)}>
-            {priceAfterCoupon && period && priceId && plan ? (
+            {priceAfterCoupon && period && priceId && priceTier ? (
                 <div className="p-2">
                     <div className="mb-8 flex justify-between">
                         <h1 className="text-2xl text-primary-700">
                             {t('account.subscription.modal.plan_planName', {
-                                planName: plan === 'diy' ? 'DIY' : 'DIY Max',
+                                planName: priceTier === 'diy' ? 'DIY' : 'DIY Max',
                             })}
                         </h1>
                         <Button

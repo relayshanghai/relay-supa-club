@@ -41,6 +41,10 @@ const pricing = {
     thirtyDayFreeTrial: '30 day free trial',
     noChargeToday: 'No charge today!',
     getStartedWithYourFreeTrial: 'Get started with your free trial',
+    justGettingStartedOrScalingUp: 'Just getting started, or scaling up.',
+    relayClubCanHelp: 'relay.club can help.',
+    free: 'Free',
+    freeTrial: 'Free trial',
 };
 
 export default pricing;

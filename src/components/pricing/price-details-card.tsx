@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { priceDetails, type PriceTiers } from 'src/hooks/use-prices';
 import { CheckIcon, CrossIcon, PlusIcon } from '../icons';
 
+/** priceTier can also be 'free' */
 export const PriceDetailsCard = ({ priceTier }: { priceTier: keyof PriceTiers }) => {
     const { t } = useTranslation();
     return (
