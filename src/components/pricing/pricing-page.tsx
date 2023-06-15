@@ -8,10 +8,12 @@ import { SubscriptionConfirmModal } from '../account/subscription-confirm-modal'
 import { Switch } from '../library';
 import { PriceCard } from './price-card';
 import { Button } from '../button';
+import { useRouter } from 'next/router';
 
 export const PricingPage = ({ page = 'upgrade' }: { page: 'upgrade' | 'landing' }) => {
     const landingPage = page === 'landing';
     const { t } = useTranslation();
+    const router = useRouter();
     const [period, setPeriod] = useState<ActiveSubscriptionPeriod>('quarterly');
     const [confirmModalData, setConfirmModalData] = useState<SubscriptionConfirmModalData | null>(null);
     const { createSubscription } = useSubscription();
@@ -22,6 +24,10 @@ export const PricingPage = ({ page = 'upgrade' }: { page: 'upgrade' | 'landing' 
         setConfirmModalData({ priceTier, period, priceId, price: prices[period][priceTier] });
     };
     const options = ['free', 'diy', 'diyMax'] as ActiveSubscriptionTier[];
+
+    const handleStartFreeTrialClicked = () => {
+        router.push('/signup');
+    };
 
     return (
         <main className="flex-grow pt-10">
@@ -64,7 +70,11 @@ export const PricingPage = ({ page = 'upgrade' }: { page: 'upgrade' | 'landing' 
                         />
                     ))}
                 </div>
-                {landingPage && <Button className="mt-2 !text-lg">{t('pricing.startFreeTrial')}</Button>}
+                {landingPage && (
+                    <Button onClick={handleStartFreeTrialClicked} className="mt-2 !text-lg">
+                        {t('pricing.startFreeTrial')}
+                    </Button>
+                )}
             </div>
         </main>
     );
