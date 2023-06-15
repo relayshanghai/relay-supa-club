@@ -1,3 +1,5 @@
+import { z } from 'zod';
+
 import type {
     CampaignCreatorsTable,
     CompanyTable,
@@ -95,3 +97,6 @@ export interface DatabaseWithCustomTypes extends Database {
         };
     };
 }
+
+export const CompanySize = z.union([z.literal('small'), z.literal('medium'), z.literal('large')]);
+export type CompanySize = z.infer<typeof CompanySize>;
