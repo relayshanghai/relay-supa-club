@@ -21,7 +21,7 @@ const CompanyCreatePostBody = z.object({
     category: z.string().optional(),
 });
 
-export type CompanyCreatePostBody = z.infer<typeof CompanyCreatePostBody>;
+export type CompanyCreatePostBody = z.input<typeof CompanyCreatePostBody>;
 
 export type CompanyCreatePostResponse = CompanyDB;
 
@@ -33,6 +33,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     const { user_id, name: untrimmedName, website, ...body } = result.data;
+
     const name = untrimmedName.trim();
 
     // Do not allow users to create a company with our reserved name for internal employees
