@@ -1,9 +1,13 @@
 import { useTranslation } from 'react-i18next';
-import type { ReactNode } from 'react';
+import { useState, type ReactNode, useEffect } from 'react';
+import { useRouter } from 'next/router';
+import toast from 'react-hot-toast';
 import { Progress } from '../library';
 import { Button } from '../button';
 import type { FieldValues, UseFormHandleSubmit } from 'react-hook-form';
-// import { useUser } from 'src/hooks/use-user';
+import { useUser } from 'src/hooks/use-user';
+import { clientLogger } from 'src/utils/logger-client';
+import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
 
 interface stepsType {
     title: string;
@@ -27,7 +31,11 @@ export const FormWizard = ({
     formData: FieldValues;
 }) => {
     const { t } = useTranslation();
-    // const { signup } = useUser();
+    const router = useRouter();
+    const { signup, createEmployee, profile } = useUser();
+
+    const [signupSuccess, setSignupSuccess] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const handleProfileCreate = async (formData: FieldValues) => {
         const { firstName, lastName, phoneNumber, email, password } = formData;
@@ -40,14 +48,32 @@ export const FormWizard = ({
                 phone: phoneNumber,
             },
         };
-        //eslint-disable-next-line
-        console.log('Create Profile', data);
-        // try {
-        //     const signUpProfileRes = await signup(data);
-        //     console.log('signup!!', signUpProfileRes);
-        // } catch (error) {
-        //     clientLogger(error, 'error');
-        // }
+        try {
+            setLoading(true);
+            const signUpProfileRes = await signup(data);
+            if (signUpProfileRes?.session?.user.id) {
+                if (EMPLOYEE_EMAILS.includes(email)) {
+                    const employeeRes = await createEmployee(email);
+                    if (employeeRes?.id) {
+                        setSignupSuccess(true);
+                    } else {
+                        throw new Error('Could not create employee');
+                    }
+                }
+            } else {
+                throw new Error('Could not sign up');
+            }
+        } catch (error: any) {
+            clientLogger(error, 'error');
+            // this is a supabase provided error so we don't have our custom error handling
+            if (error?.message === 'User already registered') {
+                toast.error(t('login.userAlreadyRegistered'));
+                router.push(`/login?email=${encodeURIComponent(email)}`);
+            } else {
+                toast.error(t('login.oopsSomethingWentWrong'));
+            }
+            setLoading(false);
+        } // why do we not set loading to false here? Because sometimes the user is logged in but the profile has not loaded yet. The next page needs the profile ready. Therefore we wait in the useEffect above for the profile to load before redirecting.
     };
 
     const handleCompanyCreate = async (formData: FieldValues) => {
@@ -83,6 +109,14 @@ export const FormWizard = ({
         setCurrentStep(currentStep - 1);
     };
 
+    useEffect(() => {
+        if (signupSuccess && profile?.id) {
+            if (EMPLOYEE_EMAILS.includes(formData.email)) {
+                router.push('/dashboard');
+            }
+        }
+    }, [profile?.id, router, signupSuccess, formData.email]);
+
     return (
         // The width is to match the exact design on Figma
         <div className="w-80 lg:w-[28rem]">
@@ -92,7 +126,7 @@ export const FormWizard = ({
                 <div className="p-5">{children}</div>
                 <div className="m-5 flex justify-between">
                     {currentStep === 1 ? (
-                        <Button className="w-full" onClick={() => setCurrentStep(currentStep + 1)}>
+                        <Button disabled={loading} className="w-full" onClick={() => setCurrentStep(currentStep + 1)}>
                             {t('signup.next')}
                         </Button>
                     ) : (
@@ -100,7 +134,12 @@ export const FormWizard = ({
                             <Button variant="secondary" className="w-32 lg:w-44" onClick={() => handleBack()}>
                                 {t('signup.back')}
                             </Button>
-                            <Button type="submit" className="w-32 lg:w-44" onClick={() => handleNext()}>
+                            <Button
+                                disabled={loading}
+                                type="submit"
+                                className="w-32 lg:w-44"
+                                onClick={() => handleNext()}
+                            >
                                 {currentStep === steps.length ? t('signup.submit') : t('signup.next')}
                             </Button>
                         </>
