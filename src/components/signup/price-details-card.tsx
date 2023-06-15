@@ -10,7 +10,9 @@ export const PriceDetailsCard = ({ priceTier }: { priceTier: keyof PriceTiers })
                 return (
                     <div
                         key={index}
-                        className={`relative mb-2 flex items-center text-gray-600 ${index === 0 ? 'font-bold' : ''}`}
+                        className={`relative mb-2 flex items-center text-sm text-gray-600 ${
+                            index === 0 ? 'font-bold' : ''
+                        }`}
                     >
                         <span
                             className={`mr-2 mt-1 inline-flex flex-shrink-0 items-center justify-center self-start rounded-full ${

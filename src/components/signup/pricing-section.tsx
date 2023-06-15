@@ -4,8 +4,10 @@ import { Switch } from '../library';
 import { PriceDetailsCard } from './price-details-card';
 import type { ActiveSubscriptionPeriod, ActiveSubscriptionTier } from 'src/hooks/use-prices';
 import { PRICE_IDS, usePrices } from 'src/hooks/use-prices';
+import { useTranslation } from 'react-i18next';
 
 export const PricingSection = ({ setPriceId }: { setPriceId: (priceId: string) => void }) => {
+    const { t } = useTranslation();
     const [period, setPeriod] = useState<ActiveSubscriptionPeriod>('quarterly');
     const [priceTier, setPriceTier] = useState<ActiveSubscriptionTier>('diyMax');
     const prices = usePrices();
@@ -42,26 +44,27 @@ export const PricingSection = ({ setPriceId }: { setPriceId: (priceId: string) =
                     DIY
                 </button>
             </div>
-            <p className="mt-4 text-xs text-gray-500">For those looking to scale</p>
+            <p className="mt-4 text-xs text-gray-500">{t('pricing.forThoseLookingToScale')}</p>
 
             <div className="mt-12 flex gap-x-5">
                 <PriceDetailsCard priceTier={priceTier} />
                 <div className="flex min-w-fit flex-col justify-end text-right">
                     <h3 className="mb-3 inline text-4xl font-semibold text-gray-700">
                         {prices ? prices[period][priceTier] ?? '$349' : '$349'}
-                        <p className="ml-1 inline text-xs text-gray-400">/ month</p>
+                        <p className="ml-1 inline text-xs text-gray-400">{t('pricing.perMonth')}</p>
                     </h3>
                     <div>
                         <h4 className="inline text-gray-500">
-                            Billed Quarterly <h3 className="inline underline">after</h3>
+                            {period === 'monthly' ? t('pricing.billedMonthly') : t(`pricing.billedQuarterly`)}{' '}
+                            <h3 className="inline underline">after</h3>
                         </h4>
-                        <h3 className="text-primary-600">30 day free trial</h3>
+                        <h3 className="text-primary-600">{t('pricing.thirtyDayFreeTrial')}</h3>
                     </div>
                 </div>
             </div>
             <div className="mt-20 self-end text-right align-bottom">
-                <h2 className="text-4xl font-semibold text-gray-700">No Charge Today!</h2>
-                <h3 className="mt-3 text-primary-600">Get started with your free trial</h3>
+                <h2 className="text-4xl font-semibold text-gray-700">{t('pricing.noChargeToday')}</h2>
+                <h3 className="mt-3 text-primary-600">{t('pricing.getStartedWithYourFreeTrial')}</h3>
             </div>
         </div>
     );

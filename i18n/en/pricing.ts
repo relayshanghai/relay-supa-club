@@ -10,7 +10,7 @@ const pricing = {
     diy: 'DIY',
     diyMax: 'DIY Max',
     VIP: 'VIP',
-    perMonth: '/month',
+    perMonth: '/ month',
     startFreeTrial: 'Start Free Trial',
     contactNow: 'Contact Now',
     checkOutOur: 'Check out our ',
@@ -35,6 +35,12 @@ const pricing = {
     couponApplied: 'Coupon applied',
     applyCoupon: 'Apply coupon',
     discount: 'Discount',
+    forThoseLookingToScale: 'For those looking to scale',
+    billedQuarterly: 'Billed quarterly',
+    billedMonthly: 'Billed monthly',
+    thirtyDayFreeTrial: '30 day free trial',
+    noChargeToday: 'No charge today!',
+    getStartedWithYourFreeTrial: 'Get started with your free trial',
 };
 
 export default pricing;
