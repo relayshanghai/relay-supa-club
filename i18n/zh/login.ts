@@ -70,5 +70,6 @@ const login = {
     disclaimer:
         '* 在relay.club，我们非常注重保护您的数据隐私。我们承诺不会向任何第三方透露或出售您的邮箱和手机号码。我们可能会使用您的邮箱和手机号码联系您，以便安排产品演示，为您提供更好的使用体验。',
     noSpacesAllowed: '不许包含空格',
+    activateSuccess: '激活成功',
 };
 export default login;

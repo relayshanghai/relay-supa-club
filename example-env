@@ -1,7 +1,8 @@
 # Stripe
 
-STRIPE_WEBHOOK_SECRET=asdf
+STRIPE_SIGNING_SECRET=asdf
 STRIPE_API_KEY=asdf
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=asdf
 
 # Stripe product IDs (Do not set in development to connect to test mode account)
 
@@ -75,3 +76,6 @@ GOOGLE_CLIENT_ID=123123
 # Apify
 
 APIFY_TOKEN=asdfasdf
+
+# Chatwoot
+NEXT_PUBLIC_CHATWOOT_WEBSITE_TOKEN=123abc

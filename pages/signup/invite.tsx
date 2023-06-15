@@ -19,7 +19,7 @@ import type { SignupInputTypes } from 'src/utils/validation/signup';
 import { Spinner } from 'src/components/icons';
 import { isMissing } from 'src/utils/utils';
 import { useInvites } from 'src/hooks/use-invites';
-import { LoginSignupLayout } from 'src/components/SignupLayout';
+import { LegacyLoginSignupLayout } from 'src/components/LegacySignupLayout';
 
 type InviteStatus = InviteStatusError | 'pending' | 'inviteValid';
 
@@ -143,7 +143,7 @@ export default function Register() {
     const submitDisabled = registering || invalidFormInput;
 
     return (
-        <LoginSignupLayout>
+        <LegacyLoginSignupLayout>
             {inviteStatus === 'inviteValid' ? (
                 <form className="mx-auto flex w-full max-w-xs flex-grow flex-col items-center justify-center space-y-2">
                     <div className="w-full text-left">
@@ -212,6 +212,6 @@ export default function Register() {
                     <Button onClick={() => router.back()}>{t('login.back')}</Button>
                 </div>
             )}
-        </LoginSignupLayout>
+        </LegacyLoginSignupLayout>
     );
 }

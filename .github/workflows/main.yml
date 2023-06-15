@@ -13,6 +13,7 @@ on:
 
 env:
     STRIPE_API_KEY: ${{ secrets.STRIPE_API_KEY }}
+    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY }}
     DATA_PASS: ${{ secrets.DATA_PASS }}
     DATA_USER: ${{ secrets.DATA_USER }}
     DATA_KEY: ${{ secrets.DATA_KEY }}
@@ -27,6 +28,7 @@ env:
     GOOGLE_PRIVATE_KEY_ID: ${{ secrets.GOOGLE_PRIVATE_KEY_ID }}
     GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
     NEXT_PUBLIC_CI: true
+    NEXT_PUBLIC_CHATWOOT_WEBSITE_TOKEN: ${{ vars.NEXT_PUBLIC_CHATWOOT_WEBSITE_TOKEN }}
     APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
     NEXT_PUBLIC_RUDDERSTACK_APP_WRITE_KEY: ${{ secrets.NEXT_PUBLIC_RUDDERSTACK_APP_WRITE_KEY }}
     NEXT_PUBLIC_RUDDERSTACK_APP_DATA_PLANE_URL: ${{ secrets.NEXT_PUBLIC_RUDDERSTACK_APP_DATA_PLANE_URL }}
@@ -43,7 +45,7 @@ jobs:
 
             - uses: supabase/setup-cli@v1
               with:
-                  version: 1.50.8
+                  version: 1.64.8
 
             - name: Verify supabase cli version
               run: supabase -v

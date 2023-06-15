@@ -7,7 +7,7 @@ import { Button } from 'src/components/button';
 
 import { Spinner } from 'src/components/icons';
 import { Input } from 'src/components/input';
-import { LoginSignupLayout } from 'src/components/SignupLayout';
+import { LegacyLoginSignupLayout } from 'src/components/LegacySignupLayout';
 import { createCompanyErrors, createCompanyValidationErrors } from 'src/errors/company';
 import { useCompany } from 'src/hooks/use-company';
 import { useFields } from 'src/hooks/use-fields';
@@ -55,7 +55,7 @@ export default function Register() {
     }, [trackEvent, createCompany, router, t, values]);
 
     return (
-        <LoginSignupLayout>
+        <LegacyLoginSignupLayout>
             <form className="mx-auto flex w-full max-w-xs flex-grow flex-col items-center justify-center space-y-2">
                 {loading && !submitting ? (
                     <Spinner className="h-20 w-20 fill-primary-600 text-white" />
@@ -95,6 +95,6 @@ export default function Register() {
                     </button>
                 </div>
             </form>
-        </LoginSignupLayout>
+        </LegacyLoginSignupLayout>
     );
 }
