@@ -43,11 +43,6 @@ export const priceDetails: PriceDetails = {
         { title: 'search264MillionInfluencers', icon: 'check' },
         { title: 'unlimitedCampaigns', icon: 'check' },
         { title: 'unlimitedUserAccountsPerCompany', icon: 'check' },
-        {
-            title: 'clubbyStarterPack',
-            icon: 'check',
-            info: 'includesCustomEmailTemplates',
-        },
         { title: 'influencerOutreachExpertWorkingOnYourCampaigns', icon: 'cross' },
     ],
     diyMax: [
@@ -55,11 +50,6 @@ export const priceDetails: PriceDetails = {
         { title: 'search264MillionInfluencers', icon: 'check' },
         { title: 'unlimitedCampaigns', icon: 'check' },
         { title: 'unlimitedUserAccountsPerCompany', icon: 'check' },
-        {
-            title: 'clubbyStarterPack',
-            icon: 'check',
-            info: 'includesCustomEmailTemplates',
-        },
         { title: 'influencerOutreachExpertWorkingOnYourCampaigns', icon: 'cross' },
     ],
     VIP: [
@@ -67,11 +57,6 @@ export const priceDetails: PriceDetails = {
         { title: 'search264MillionInfluencers', icon: 'check' },
         { title: 'unlimitedCampaigns', icon: 'check' },
         { title: 'unlimitedUserAccountsPerCompany', icon: 'check' },
-        {
-            title: 'clubbyStarterPack',
-            icon: 'check',
-            info: 'includesCustomEmailTemplates',
-        },
         { title: 'influencerOutreachExpertWorkingOnYourCampaigns', icon: 'check' },
     ],
     free: [
@@ -79,11 +64,6 @@ export const priceDetails: PriceDetails = {
         { title: 'search264MillionInfluencers', icon: 'check' },
         { title: 'unlimitedCampaigns', icon: 'check' },
         { title: 'unlimitedUserAccountsPerCompany', icon: 'check' },
-        {
-            title: 'clubbyStarterPack',
-            icon: 'check',
-            info: 'includesCustomEmailTemplates',
-        },
         { title: 'influencerOutreachExpertWorkingOnYourCampaigns', icon: 'check' },
     ],
 };

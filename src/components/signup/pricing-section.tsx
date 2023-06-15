@@ -46,7 +46,7 @@ export const PricingSection = ({ setPriceId }: { setPriceId: (priceId: string) =
             <p className="mt-4 text-xs text-gray-500">{t('pricing.forThoseLookingToScale')}</p>
 
             <div className="mt-12 flex gap-x-5">
-                <PriceDetailsCard priceTier={priceTier} />
+                <PriceDetailsCard priceTier={priceTier} size="small" />
                 <div className="flex min-w-fit flex-col justify-end text-right">
                     <h3 className="mb-3 inline text-4xl font-semibold text-gray-700">
                         {prices ? prices[period][priceTier] ?? '$349' : '$349'}
@@ -54,7 +54,7 @@ export const PricingSection = ({ setPriceId }: { setPriceId: (priceId: string) =
                     </h3>
                     <div>
                         <h4 className="inline text-gray-500">
-                            {period === 'monthly' ? t('pricing.billedMonthly') : t(`pricing.billedQuarterly`)}
+                            {period === 'monthly' ? t('pricing.billedMonthly') : t(`pricing.billedQuarterly`)}{' '}
                             <h3 className="inline underline">after</h3>
                         </h4>
                         <h3 className="text-primary-600">{t('pricing.thirtyDayFreeTrial')}</h3>

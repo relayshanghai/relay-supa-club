@@ -3,7 +3,13 @@ import { priceDetails, type PriceTiers } from 'src/hooks/use-prices';
 import { CheckIcon, CrossIcon, PlusIcon } from '../icons';
 
 /** priceTier can also be 'free' */
-export const PriceDetailsCard = ({ priceTier }: { priceTier: keyof PriceTiers }) => {
+export const PriceDetailsCard = ({
+    priceTier,
+    size = 'large',
+}: {
+    priceTier: keyof PriceTiers;
+    size?: 'small' | 'large';
+}) => {
     const { t } = useTranslation();
     return (
         <div>
@@ -11,9 +17,9 @@ export const PriceDetailsCard = ({ priceTier }: { priceTier: keyof PriceTiers })
                 return (
                     <div
                         key={index}
-                        className={`relative mb-2 flex items-center text-xs font-semibold text-gray-600 ${
-                            index === 0 ? 'font-bold' : ''
-                        }`}
+                        className={`relative mb-2 flex items-center  text-gray-600 ${
+                            size === 'small' ? 'text-xs font-semibold' : 'text-sm font-medium'
+                        } ${index === 0 ? 'font-bold' : ''}`}
                     >
                         <span
                             className={`mr-2 mt-1 inline-flex flex-shrink-0 items-center justify-center self-start rounded-full ${

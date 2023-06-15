@@ -49,9 +49,9 @@ export const PriceCard = ({
     return (
         <div className="w-full p-4 transition-all ease-in-out hover:-translate-y-3 md:w-1/2 lg:w-1/3">
             <div
-                className={`relative flex ${
-                    !landingPage ? 'h-full' : ''
-                } flex-col overflow-hidden rounded-lg border-2 border-gray-300 p-6`}
+                className={`relative flex h-full flex-col overflow-hidden rounded-lg border-2 ${
+                    priceTier === 'diyMax' ? 'border-primary-500' : 'border-gray-300'
+                } p-6`}
             >
                 <h1 className="text-4xl font-semibold text-gray-800">{t(`pricing.${priceTier}.title`)}</h1>
                 <h4 className="text-xs text-gray-500">{t(`pricing.${priceTier}.subTitle`)}</h4>
@@ -69,7 +69,7 @@ export const PriceCard = ({
                     <Button
                         onClick={() => openConfirmModal(priceTier, period, PRICE_IDS[period][priceTier])}
                         disabled={disableButton(priceTier, period, subscription)}
-                        className="flex"
+                        className="mt-auto"
                     >
                         {isCurrentPlan(priceTier, period, subscription)
                             ? t('pricing.yourCurrentPlan')

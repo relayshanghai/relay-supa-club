@@ -10,7 +10,7 @@ import { PriceCard } from './price-card';
 import { Button } from '../button';
 import { useRouter } from 'next/router';
 
-export const PricingPage = ({ page = 'upgrade' }: { page: 'upgrade' | 'landing' }) => {
+export const PricingPage = ({ page = 'upgrade' }: { page?: 'upgrade' | 'landing' }) => {
     const landingPage = page === 'landing';
     const { t } = useTranslation();
     const router = useRouter();
@@ -23,7 +23,7 @@ export const PricingPage = ({ page = 'upgrade' }: { page: 'upgrade' | 'landing' 
     const openConfirmModal = (priceTier: ActiveSubscriptionTier, period: ActiveSubscriptionPeriod, priceId: string) => {
         setConfirmModalData({ priceTier, period, priceId, price: prices[period][priceTier] });
     };
-    const options = ['free', 'diy', 'diyMax'] as ActiveSubscriptionTier[];
+    const options: ActiveSubscriptionTier[] = landingPage ? ['free', 'diyMax', 'diy'] : ['diyMax', 'diy'];
 
     const handleStartFreeTrialClicked = () => {
         router.push('/signup');
@@ -42,22 +42,26 @@ export const PricingPage = ({ page = 'upgrade' }: { page: 'upgrade' | 'landing' 
                     <h2 className="font-heading mb-6 mt-4 text-3xl font-semibold text-gray-800 md:text-4xl">
                         {t('pricing.justGettingStartedOrScalingUp')}
                     </h2>
-                    <p className="text-3xl font-semibold text-primary-700 md:text-4xl">
+                    <h4 className="-mt-2 text-3xl font-semibold text-primary-500 md:text-4xl">
                         {t('pricing.relayClubCanHelp')}
-                    </p>
+                    </h4>
                 </div>
-                <Switch
-                    wrapperClassName="mb-2"
-                    checked={period === 'quarterly'}
-                    onChange={(e) => {
-                        setPeriod(e.target.checked ? 'quarterly' : 'monthly');
-                    }}
-                    beforeLabel={t('pricing.monthly') || 'Monthly'}
-                    afterLabel={t('pricing.quarterly') || 'Quarterly'}
-                />
+                <div className="relative">
+                    <Switch
+                        size={4}
+                        wrapperClassName="mb-2"
+                        checked={period === 'quarterly'}
+                        onChange={(e) => {
+                            setPeriod(e.target.checked ? 'quarterly' : 'monthly');
+                        }}
+                        beforeLabel={t('pricing.monthly') || 'Monthly'}
+                        afterLabel={t('pricing.quarterly') || 'Quarterly'}
+                    />
+                    <p className="-right-15 -top-15 absolute">Save 15%</p>
+                </div>
                 <div
                     className={`container m-auto flex ${
-                        !landingPage ? 'min-h-[32rem]' : 'min-h-[20rem]'
+                        landingPage ? 'min-h-[30rem]' : 'min-h-[32rem]'
                     } w-full max-w-screen-xl flex-wrap justify-center`}
                 >
                     {options.map((option) => (
@@ -71,7 +75,7 @@ export const PricingPage = ({ page = 'upgrade' }: { page: 'upgrade' | 'landing' 
                     ))}
                 </div>
                 {landingPage && (
-                    <Button onClick={handleStartFreeTrialClicked} className="mt-2 !text-lg">
+                    <Button onClick={handleStartFreeTrialClicked} className="mb-20 mt-2 !text-xl">
                         {t('pricing.startFreeTrial')}
                     </Button>
                 )}

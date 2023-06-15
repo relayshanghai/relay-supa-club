@@ -9,7 +9,7 @@ const pricing = {
     annually: 'Annually',
     perMonth: '/ month',
     usdPerMonth: 'USD / Month',
-    startFreeTrial: 'Start Free Trial',
+    startFreeTrial: 'Start Your Free Trial',
     contactNow: 'Contact Now',
     checkOutOur: 'Check out our ',
     blog: 'blog',
