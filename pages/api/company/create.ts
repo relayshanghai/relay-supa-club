@@ -17,7 +17,7 @@ const CompanyCreatePostBody = z.object({
     user_id: z.string(),
     name: z.string(),
     website: z.string().optional(),
-    size: CompanySize.optional(),
+    size: CompanySize.optional().default('small'),
     category: z.string().optional(),
 });
 
@@ -32,7 +32,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         return res.status(httpCodes.BAD_REQUEST).json(result.error.format());
     }
 
-    const { user_id, name: untrimmedName, website, ...body } = req.body as CompanyCreatePostBody;
+    const { user_id, name: untrimmedName, website, ...body } = result.data;
     const name = untrimmedName.trim();
 
     // Do not allow users to create a company with our reserved name for internal employees
@@ -53,7 +53,10 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
     }
 
-    await db<typeof addCompanyCategory>(addCompanyCategory)(company, body.category || 'small');
+    // @note temporarily allow company categories to be optional
+    if (body.category) {
+        await db<typeof addCompanyCategory>(addCompanyCategory)(company, body.category);
+    }
 
     const { error: profileError, data: profile } = await updateProfile({
         id: user_id,
