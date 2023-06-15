@@ -22,7 +22,7 @@ export class RelayError extends Error {
         super(msg);
         this._httpCode = httpCode;
         this._shouldLog = options?.shouldLog || true; // log to server by default
-        this._sendToSentry = options?.sendToSentry || process.env.NODE_ENV === 'development';
+        this._sendToSentry = !!options?.sendToSentry && process.env.NODE_ENV !== 'development'; // Don’t send to sentry unless explicitly set in options, and only in production
     }
 
     get httpCode() {
@@ -56,6 +56,7 @@ export const exceptionHandler = <T = any>(fn: NextApiHandler<T>) => {
                 e.httpCode = error.httpCode;
                 e.message = error.message;
 
+                // if it's a RelayError, allow silencing the log
                 if (error.shouldLog) serverLogger(error, 'error', error.sendToSentry);
             }
 
@@ -70,6 +71,11 @@ export const exceptionHandler = <T = any>(fn: NextApiHandler<T>) => {
             // Hide server errors if not in development
             if (e.httpCode >= 500 && process.env.NODE_ENV !== 'development') {
                 e.message = 'Error occurred';
+            }
+
+            // if it's not a RelayError, log it by default
+            if (!(error instanceof RelayError)) {
+                serverLogger(error, 'error');
             }
 
             return res.status(e.httpCode).json({ error: e.message });
