@@ -51,11 +51,12 @@ export const FormWizard = ({
     };
 
     const handleCompanyCreate = async (formData: FieldValues) => {
-        const { companyName, companyWebsite, companyCategories } = formData;
+        const { companyName, companyWebsite, companyCategories, companySize } = formData;
         const data = {
             name: companyName,
             website: companyWebsite,
             categories: companyCategories,
+            size: companySize,
         };
         //eslint-disable-next-line
         console.log('Create Company!', data);

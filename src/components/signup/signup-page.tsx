@@ -28,7 +28,6 @@ const SignUpPage = ({ selectedPriceId }: { selectedPriceId: string }) => {
             confirmPassword,
             phoneNumber,
             companyName,
-            companySize,
             companyWebsite,
             companyCategory,
         },
@@ -41,24 +40,12 @@ const SignUpPage = ({ selectedPriceId }: { selectedPriceId: string }) => {
         confirmPassword: '',
         phoneNumber: '',
         companyName: '',
-        companySize: '',
         companyWebsite: '',
         companyCategory: '',
     });
-    const formData = {
-        firstName,
-        lastName,
-        email,
-        password,
-        confirmPassword,
-        phoneNumber,
-        companyName,
-        companySize,
-        companyWebsite,
-        companyCategory,
-    };
 
     const [currentStep, setCurrentStep] = useState(1);
+    const [selectedSize, setSelectedSize] = useState('');
     const [validationErrors, setValidationErrors] = useState({
         firstName: '',
         lastName: '',
@@ -68,6 +55,22 @@ const SignUpPage = ({ selectedPriceId }: { selectedPriceId: string }) => {
         phoneNumber: '',
     });
 
+    const handleCompanySizeChange = (newValue: string) => {
+        setSelectedSize(newValue);
+    };
+
+    const formData = {
+        firstName,
+        lastName,
+        email,
+        password,
+        confirmPassword,
+        phoneNumber,
+        companyName,
+        companySize: selectedSize,
+        companyWebsite,
+        companyCategory,
+    };
     const steps = [
         {
             title: t('signup.step1title'),
@@ -96,6 +99,7 @@ const SignUpPage = ({ selectedPriceId }: { selectedPriceId: string }) => {
         { label: '11-50', value: '11-50' },
         { label: '50 +', value: '50+' },
     ];
+    //TODO: phone validation need to be updated
     const setAndValidate = (type: SignupInputTypes, value: string) => {
         setFieldValue(type, value);
         const validationError = validateSignupInput(type, value, password);
@@ -170,6 +174,7 @@ const SignUpPage = ({ selectedPriceId }: { selectedPriceId: string }) => {
                                             onChange={(e) => setAndValidate('password', e.target.value)}
                                         />
                                         <Input
+                                            error={validationErrors.confirmPassword}
                                             label={t('signup.confirmPassword')}
                                             type="password"
                                             placeholder={t('signup.confirmPasswordPlaceholder')}
@@ -213,8 +218,7 @@ const SignUpPage = ({ selectedPriceId }: { selectedPriceId: string }) => {
                                         <Radio
                                             label={t('signup.companySize')}
                                             options={companySizeOptions}
-                                            value={companySize}
-                                            onChange={(e) => setFieldValue('companySize', e.target.value)}
+                                            onValueChange={handleCompanySizeChange}
                                         />
                                     </>
                                 )}
