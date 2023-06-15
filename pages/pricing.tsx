@@ -6,7 +6,8 @@ import { Button } from 'src/components/button';
 import { SALES_REP_EMAIL } from 'src/constants/employeeContacts';
 import { useSubscription } from 'src/hooks/use-subscription';
 import { Layout } from 'src/components/layout';
-import type { SubscriptionPeriod } from 'types';
+
+import type { ActiveSubscriptionPeriod } from 'src/hooks/use-prices';
 import { PRICE_IDS, usePrices } from 'src/hooks/use-prices';
 const details = {
     diy: [
@@ -59,12 +60,12 @@ const selectedTabClasses = 'py-1 px-4 border-x border-primary-500 bg-primary-500
 const Pricing = () => {
     const { t } = useTranslation();
     const { subscription, createSubscription } = useSubscription();
-    const [period, setPeriod] = useState<SubscriptionPeriod>('quarterly');
+    const [period, setPeriod] = useState<ActiveSubscriptionPeriod>('quarterly');
     const [confirmModalData, setConfirmModalData] = useState<SubscriptionConfirmModalData | null>(null);
 
     const prices = usePrices();
 
-    const openConfirmModal = (plan: 'diy' | 'diyMax', period: SubscriptionPeriod, priceId: string) => {
+    const openConfirmModal = (plan: 'diy' | 'diyMax', period: ActiveSubscriptionPeriod, priceId: string) => {
         setConfirmModalData({ plan, period, priceId, price: prices[period][plan] });
     };
 

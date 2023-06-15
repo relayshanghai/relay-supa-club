@@ -10,11 +10,14 @@ import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
 import useSWR from 'swr';
 import type { SubscriptionPeriod, SubscriptionTier } from 'types';
+// We are not promoting VIP and annually now, but we still need them for legacy support elsewhere
+export type ActiveSubscriptionTier = Exclude<SubscriptionTier, 'VIP'>;
+export type ActiveSubscriptionPeriod = Exclude<SubscriptionPeriod, 'annually'>;
 export type PriceTiers = {
-    [key in SubscriptionTier]: string;
+    [key in ActiveSubscriptionTier]: string;
 };
 export type Prices = {
-    [key in SubscriptionPeriod]: PriceTiers;
+    [key in ActiveSubscriptionPeriod]: PriceTiers;
 };
 
 export const PRICE_IDS: Prices = {
@@ -28,7 +31,7 @@ export const PRICE_IDS: Prices = {
     },
 };
 export type PriceDetails = {
-    [key in SubscriptionTier]: { title: string; icon: string; info?: string }[];
+    [key in ActiveSubscriptionTier]: { title: string; icon: string; info?: string }[];
 };
 
 export const priceDetails: PriceDetails = {

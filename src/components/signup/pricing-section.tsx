@@ -2,12 +2,12 @@ import type { ChangeEvent } from 'react';
 import { useEffect, useState } from 'react';
 import { Switch } from '../library';
 import { PriceDetailsCard } from './price-details-card';
+import type { ActiveSubscriptionPeriod, ActiveSubscriptionTier } from 'src/hooks/use-prices';
 import { PRICE_IDS, usePrices } from 'src/hooks/use-prices';
-import type { SubscriptionPeriod, SubscriptionTier } from 'types';
 
 export const PricingSection = ({ setPriceId }: { setPriceId: (priceId: string) => void }) => {
-    const [period, setPeriod] = useState<SubscriptionPeriod>('quarterly');
-    const [priceTier, setPriceTier] = useState<SubscriptionTier>('diyMax');
+    const [period, setPeriod] = useState<ActiveSubscriptionPeriod>('quarterly');
+    const [priceTier, setPriceTier] = useState<ActiveSubscriptionTier>('diyMax');
     const prices = usePrices();
 
     useEffect(() => {
