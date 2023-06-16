@@ -112,12 +112,7 @@ export const prepareFetchCreatorsFiltered = ({
 
     body.sort = { field: 'followers', direction: 'desc' };
 
-    body.filter = {
-        relevance: {
-            value: [...tagsValue, ...lookalikeValue].join(' '),
-        },
-        actions: [{ filter: 'relevance', action: 'must' }],
-    };
+    body.filter = {};
 
     if (tagsValue.length > 0 || lookalikeValue.length > 0) {
         body.sort.field = 'relevance';
