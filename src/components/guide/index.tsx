@@ -2,7 +2,6 @@ import Image from 'next/image';
 import { useTranslation } from 'react-i18next';
 import guidePage from 'i18n/en/guide';
 import { Compass, FourSquare, Account, PieChart, Guide, EmailOutline, ArrowRight } from '../icons';
-import { Button } from '../button';
 import { GuideModal } from './guideModal';
 import { useState } from 'react';
 
@@ -32,11 +31,15 @@ export const GuideCards = ({ cardName }: { cardName: string }) => {
                     {cardName === 'guide' && <Guide height={24} width={24} className="stroke-primary-500" />}
                 </div>
             </div>
-            <p className="break-words">{t(`guidePage.cards.${cardName}.title`)}</p>
+            <p className="break-words text-xl font-semibold">{t(`guidePage.cards.${cardName}.title`)}</p>
             <p className="break-words">{t(`guidePage.cards.${cardName}.description`)}</p>
-            <Button data-testid={`guide-modal-${cardName}`} className="flex flex-row gap-3" onClick={handleGuideModal}>
-                Learn more <ArrowRight className="stroke-white" height={18} width={18} />
-            </Button>
+            <p
+                data-testid={`guide-modal-${cardName}`}
+                className="flex cursor-pointer flex-row items-center gap-2 font-medium text-primary-700"
+                onClick={handleGuideModal}
+            >
+                Learn more <ArrowRight className="stroke-primary-700" height={18} width={18} />
+            </p>
             <GuideModal section={cardName} show={guideShow} setShow={setGuideShow} />
         </div>
     );
