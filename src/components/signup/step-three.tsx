@@ -1,14 +1,33 @@
 import { useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
+
 import { SingleSelect } from '../ui';
+import { Button } from '../button';
 import { companyCategories } from './company-categories';
 
-export const StepThree = () => {
+export const StepThree = ({
+    loading,
+    onNext,
+    onBack,
+    setSelectedCategory,
+}: {
+    loading: boolean;
+    onNext: any;
+    onBack: () => void;
+    setSelectedCategory: (newValue: string) => void;
+}) => {
+    const { t } = useTranslation();
     const {
         control,
-        // handleSubmit,
         setValue,
         formState: { errors },
+        handleSubmit,
     } = useForm();
+
+    const onSubmit = (data: any) => {
+        setSelectedCategory(data.companyCategory);
+        onNext();
+    };
 
     return (
         <>
@@ -21,6 +40,14 @@ export const StepThree = () => {
                 valueName="companyCategory"
                 setValue={setValue}
             />
+            <div className="flex justify-between">
+                <Button variant="secondary" className="w-32 lg:w-44" onClick={onBack}>
+                    {t('signup.back')}
+                </Button>
+                <Button disabled={loading} type="submit" className="w-32 lg:w-44" onClick={handleSubmit(onSubmit)}>
+                    {t('signup.next')}
+                </Button>
+            </div>
         </>
     );
 };

@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
-import { useForm } from 'react-hook-form';
 import { FormWizard } from './form-wizard';
 import { OnboardPaymentSection } from './onboard-payment-section';
 import { validateSignupInput } from 'src/utils/validation/signup';
@@ -15,7 +14,7 @@ import { clientLogger } from 'src/utils/logger-client';
 import { hasCustomError } from 'src/utils/errors';
 import { useUser } from 'src/hooks/use-user';
 import { useCompany } from 'src/hooks/use-company';
-// import type { SignupInputTypes } from 'src/utils/validation/signup';
+import type { SignupInputTypes } from 'src/utils/validation/signup';
 import type { FieldValues } from 'react-hook-form';
 
 export interface SignUpValidationErrors {
@@ -24,10 +23,9 @@ export interface SignUpValidationErrors {
     email: string;
     password: string;
     confirmPassword: string;
-    phoneNumber: string;
+    phoneNumber?: string;
     companyName: string;
-    companyWebsite: string;
-    companySize: string;
+    companyWebsite?: string;
 }
 
 const CompanyErrors = {
@@ -66,7 +64,6 @@ const SignUpPage = ({ selectedPriceId }: { selectedPriceId: string }) => {
         phoneNumber: '',
         companyName: '',
         companyWebsite: '',
-        companySize: '',
     });
     // const [signupSuccess, setSignupSuccess] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -83,7 +80,7 @@ const SignUpPage = ({ selectedPriceId }: { selectedPriceId: string }) => {
         companySize: selectedSize,
         companyCategory: selectedCategory,
     };
-    const { handleSubmit } = useForm();
+
     const steps = [
         {
             title: t('signup.step1title'),
@@ -108,9 +105,7 @@ const SignUpPage = ({ selectedPriceId }: { selectedPriceId: string }) => {
     ];
 
     //TODO: phone validation need to be updated
-    //TODO: fix the type SignupInputTypes to replace any
-
-    const setAndValidate = (type: any, value: string) => {
+    const setAndValidate = (type: SignupInputTypes, value: string) => {
         setFieldValue(type, value);
         const validationError = validateSignupInput(type, value, password);
         if (validationError) {
@@ -120,16 +115,12 @@ const SignUpPage = ({ selectedPriceId }: { selectedPriceId: string }) => {
         }
     };
 
-    const onNext = async (data: FieldValues) => {
+    const onNext = () => {
         if (currentStep === steps.length) {
             return;
         }
         if (currentStep === 2) {
             handleProfileCreate(formData);
-        }
-        if (currentStep === 3) {
-            setSelectedCategory(data.companyCategory);
-            // console.log('data', data);
         }
         if (currentStep === 4) {
             handleCompanyCreate(formData);
@@ -201,16 +192,7 @@ const SignUpPage = ({ selectedPriceId }: { selectedPriceId: string }) => {
             {steps.map(
                 (step) =>
                     step.num === currentStep && (
-                        <FormWizard
-                            title={step.title}
-                            key={step.num}
-                            steps={steps}
-                            currentStep={currentStep}
-                            onNext={onNext}
-                            onBack={onBack}
-                            loading={loading}
-                            handleSubmit={handleSubmit}
-                        >
+                        <FormWizard title={step.title} key={step.num} steps={steps} currentStep={currentStep}>
                             {currentStep === 1 && (
                                 <StepOne
                                     firstName={firstName}
@@ -218,6 +200,8 @@ const SignUpPage = ({ selectedPriceId }: { selectedPriceId: string }) => {
                                     phoneNumber={phoneNumber}
                                     validationErrors={validationErrors}
                                     setAndValidate={setAndValidate}
+                                    loading={loading}
+                                    onNext={onNext}
                                 />
                             )}
 
@@ -228,10 +212,20 @@ const SignUpPage = ({ selectedPriceId }: { selectedPriceId: string }) => {
                                     confirmPassword={confirmPassword}
                                     setAndValidate={setAndValidate}
                                     validationErrors={validationErrors}
+                                    loading={loading}
+                                    onNext={onNext}
+                                    onBack={onBack}
                                 />
                             )}
 
-                            {currentStep === 3 && <StepThree />}
+                            {currentStep === 3 && (
+                                <StepThree
+                                    setSelectedCategory={setSelectedCategory}
+                                    loading={loading}
+                                    onNext={onNext}
+                                    onBack={onBack}
+                                />
+                            )}
 
                             {currentStep === 4 && (
                                 <StepFour
@@ -239,6 +233,9 @@ const SignUpPage = ({ selectedPriceId }: { selectedPriceId: string }) => {
                                     companyWebsite={companyWebsite}
                                     setSelectedSize={setSelectedSize}
                                     setAndValidate={setAndValidate}
+                                    loading={loading}
+                                    onNext={onNext}
+                                    onBack={onBack}
                                 />
                             )}
 
