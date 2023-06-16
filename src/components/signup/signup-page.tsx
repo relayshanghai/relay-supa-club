@@ -1,24 +1,45 @@
 import { useTranslation } from 'react-i18next';
-import { useForm } from 'react-hook-form';
 import { useState } from 'react';
+import toast from 'react-hot-toast';
+import { useForm } from 'react-hook-form';
 import { FormWizard } from './form-wizard';
-import { Input } from '../input';
-import { SingleSelect } from '../ui';
-import { companyCategories } from './company-categories';
-import { Radio } from '../ui/radio';
 import { OnboardPaymentSection } from './onboard-payment-section';
 import { validateSignupInput } from 'src/utils/validation/signup';
 import { useFields } from 'src/hooks/use-fields';
-import type { SignupInputTypes } from 'src/utils/validation/signup';
+import { StepOne } from './step-one';
+import { StepTwo } from './step-two';
+import { StepThree } from './step-three';
+import { StepFour } from './step-four';
+import { createCompanyErrors, createCompanyValidationErrors } from 'src/errors/company';
+import { clientLogger } from 'src/utils/logger-client';
+import { hasCustomError } from 'src/utils/errors';
+import { useUser } from 'src/hooks/use-user';
+import { useCompany } from 'src/hooks/use-company';
+// import type { SignupInputTypes } from 'src/utils/validation/signup';
+import type { FieldValues } from 'react-hook-form';
+
+export interface SignUpValidationErrors {
+    firstName: string;
+    lastName: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
+    phoneNumber: string;
+    companyName: string;
+    companyWebsite: string;
+    companySize: string;
+}
+
+const CompanyErrors = {
+    ...createCompanyErrors,
+    ...createCompanyValidationErrors,
+};
 
 const SignUpPage = ({ selectedPriceId }: { selectedPriceId: string }) => {
     const { t } = useTranslation();
-    const {
-        control,
-        handleSubmit,
-        setValue,
-        formState: { errors },
-    } = useForm();
+    const { signup } = useUser();
+    const { createCompany } = useCompany();
+
     const {
         values: { firstName, lastName, email, password, confirmPassword, phoneNumber, companyName, companyWebsite },
         setFieldValue,
@@ -34,19 +55,21 @@ const SignUpPage = ({ selectedPriceId }: { selectedPriceId: string }) => {
     });
 
     const [currentStep, setCurrentStep] = useState(1);
-    const [selectedSize, setSelectedSize] = useState('');
-    const [validationErrors, setValidationErrors] = useState({
+    const [selectedSize, setSelectedSize] = useState<string>('');
+    const [selectedCategory, setSelectedCategory] = useState<string>('');
+    const [validationErrors, setValidationErrors] = useState<SignUpValidationErrors>({
         firstName: '',
         lastName: '',
         email: '',
         password: '',
         confirmPassword: '',
         phoneNumber: '',
+        companyName: '',
+        companyWebsite: '',
+        companySize: '',
     });
-
-    const handleCompanySizeChange = (newValue: string) => {
-        setSelectedSize(newValue);
-    };
+    // const [signupSuccess, setSignupSuccess] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const formData = {
         firstName,
@@ -56,9 +79,11 @@ const SignUpPage = ({ selectedPriceId }: { selectedPriceId: string }) => {
         confirmPassword,
         phoneNumber,
         companyName,
-        companySize: selectedSize,
         companyWebsite,
+        companySize: selectedSize,
+        companyCategory: selectedCategory,
     };
+    const { handleSubmit } = useForm();
     const steps = [
         {
             title: t('signup.step1title'),
@@ -82,19 +107,92 @@ const SignUpPage = ({ selectedPriceId }: { selectedPriceId: string }) => {
         },
     ];
 
-    const companySizeOptions = [
-        { label: '1-10', value: 'small' },
-        { label: '11-50', value: 'medium' },
-        { label: '50 +', value: 'large' },
-    ];
     //TODO: phone validation need to be updated
-    const setAndValidate = (type: SignupInputTypes, value: string) => {
+    //TODO: fix the type SignupInputTypes to replace any
+
+    const setAndValidate = (type: any, value: string) => {
         setFieldValue(type, value);
         const validationError = validateSignupInput(type, value, password);
         if (validationError) {
             setValidationErrors({ ...validationErrors, [type]: t(validationError) });
         } else {
             setValidationErrors({ ...validationErrors, [type]: '' });
+        }
+    };
+
+    const onNext = async (data: FieldValues) => {
+        if (currentStep === steps.length) {
+            return;
+        }
+        if (currentStep === 2) {
+            handleProfileCreate(formData);
+        }
+        if (currentStep === 3) {
+            setSelectedCategory(data.companyCategory);
+            // console.log('data', data);
+        }
+        if (currentStep === 4) {
+            handleCompanyCreate(formData);
+        }
+        setCurrentStep(currentStep + 1);
+    };
+
+    const onBack = () => {
+        if (currentStep === 1) {
+            return;
+        }
+        setCurrentStep(currentStep - 1);
+    };
+
+    const handleProfileCreate = async (formData: FieldValues) => {
+        const { firstName, lastName, phoneNumber, email, password } = formData;
+        const data = {
+            email,
+            password,
+            data: {
+                first_name: firstName,
+                last_name: lastName,
+                phone: phoneNumber,
+            },
+        };
+        try {
+            setLoading(true);
+            await signup(data);
+        } catch (error: any) {
+            clientLogger(error, 'error');
+            // this is a supabase provided error so we don't have our custom error handling
+            if (error?.message === 'User already registered') {
+                toast.error(t('login.userAlreadyRegistered'));
+            } else {
+                toast.error(t('login.oopsSomethingWentWrong'));
+            }
+        }
+        setLoading(false);
+    };
+
+    const handleCompanyCreate = async (formData: FieldValues) => {
+        const { companyName, companyWebsite, companySize, companyCategory } = formData;
+        const data = {
+            name: companyName,
+            website: companyWebsite,
+            category: companyCategory,
+            size: companySize,
+        };
+        try {
+            setLoading(true);
+            const signupCompanyRes = await createCompany(data);
+            if (!signupCompanyRes?.cus_id) {
+                throw new Error('no cus_id, error creating company');
+            }
+        } catch (e: any) {
+            clientLogger(e, 'error');
+            if (hasCustomError(e, CompanyErrors)) {
+                toast.error(t(`login.${e.message}`));
+            } else {
+                toast.error(t('login.oopsSomethingWentWrong'));
+            }
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -108,107 +206,42 @@ const SignUpPage = ({ selectedPriceId }: { selectedPriceId: string }) => {
                             key={step.num}
                             steps={steps}
                             currentStep={currentStep}
-                            setCurrentStep={setCurrentStep}
+                            onNext={onNext}
+                            onBack={onBack}
+                            loading={loading}
                             handleSubmit={handleSubmit}
-                            formData={formData}
                         >
                             {currentStep === 1 && (
-                                <>
-                                    <Input
-                                        error={validationErrors.firstName}
-                                        label={t('signup.firstName')}
-                                        value={firstName}
-                                        placeholder={t('signup.firstNamePlaceholder')}
-                                        required
-                                        onChange={(e) => setAndValidate('firstName', e.target.value)}
-                                    />
-                                    <Input
-                                        error={validationErrors.lastName}
-                                        label={t('signup.lastName')}
-                                        placeholder={t('signup.lastNamePlaceholder')}
-                                        value={lastName}
-                                        required
-                                        onChange={(e) => setAndValidate('lastName', e.target.value)}
-                                    />
-                                    <Input
-                                        error={validationErrors.phoneNumber}
-                                        label={t('signup.phoneNumber')}
-                                        placeholder={t('signup.phoneNumberPlaceholder')}
-                                        value={phoneNumber}
-                                        onChange={(e) => setAndValidate('phoneNumber', e.target.value)}
-                                    />
-                                </>
+                                <StepOne
+                                    firstName={firstName}
+                                    lastName={lastName}
+                                    phoneNumber={phoneNumber}
+                                    validationErrors={validationErrors}
+                                    setAndValidate={setAndValidate}
+                                />
                             )}
 
                             {currentStep === 2 && (
-                                <>
-                                    <Input
-                                        error={validationErrors.email}
-                                        label={t('signup.email')}
-                                        type="email"
-                                        placeholder="you@site.com"
-                                        value={email}
-                                        required
-                                        onChange={(e) => setAndValidate('email', e.target.value)}
-                                    />
-                                    <Input
-                                        error={validationErrors.password}
-                                        label={t('signup.password')}
-                                        type="password"
-                                        placeholder={t('signup.passwordPlaceholder')}
-                                        value={password}
-                                        required
-                                        onChange={(e) => setAndValidate('password', e.target.value)}
-                                    />
-                                    <Input
-                                        error={validationErrors.confirmPassword}
-                                        label={t('signup.confirmPassword')}
-                                        type="password"
-                                        placeholder={t('signup.confirmPasswordPlaceholder')}
-                                        value={confirmPassword}
-                                        required
-                                        onChange={(e) => setAndValidate('confirmPassword', e.target.value)}
-                                    />
-                                </>
+                                <StepTwo
+                                    email={email}
+                                    password={password}
+                                    confirmPassword={confirmPassword}
+                                    setAndValidate={setAndValidate}
+                                    validationErrors={validationErrors}
+                                />
                             )}
 
-                            {currentStep === 3 && (
-                                <>
-                                    <SingleSelect
-                                        fieldName="companyCategory"
-                                        errors={errors}
-                                        isRequired
-                                        control={control}
-                                        options={companyCategories}
-                                        valueName="companyCategory"
-                                        setValue={setValue}
-                                    />
-                                </>
-                            )}
+                            {currentStep === 3 && <StepThree />}
 
                             {currentStep === 4 && (
-                                <>
-                                    <Input
-                                        label={t('signup.company')}
-                                        value={companyName}
-                                        placeholder={t('signup.companyPlaceholder')}
-                                        required
-                                        onChange={(e) => setFieldValue('companyName', e.target.value)}
-                                    />
-                                    <Input
-                                        label={t('signup.website')}
-                                        value={companyWebsite}
-                                        placeholder="www.site.com"
-                                        onChange={(e) => setFieldValue('companyWebsite', e.target.value)}
-                                    />
-
-                                    <Radio
-                                        label={t('signup.companySize')}
-                                        options={companySizeOptions}
-                                        onValueChange={handleCompanySizeChange}
-                                    />
-                                </>
+                                <StepFour
+                                    companyName={companyName}
+                                    companyWebsite={companyWebsite}
+                                    setSelectedSize={setSelectedSize}
+                                    setAndValidate={setAndValidate}
+                                />
                             )}
+
                             {currentStep === 5 && <OnboardPaymentSection priceId={selectedPriceId} />}
                         </FormWizard>
                     ),
