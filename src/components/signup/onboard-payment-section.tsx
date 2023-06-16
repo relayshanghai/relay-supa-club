@@ -68,7 +68,7 @@ const OnboardPaymentSectionInner = ({ priceId }: OnboardPaymentSectionProps) => 
 
     useEffect(() => {
         if (subscription?.status === 'trialing' || subscription?.status === 'active') {
-            // return handleSuccess();
+            return handleSuccess();
         }
     }, [subscription?.status, handleSuccess]);
 
