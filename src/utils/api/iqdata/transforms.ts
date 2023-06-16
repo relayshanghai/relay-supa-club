@@ -86,6 +86,18 @@ const textTagsFilter = (s: string) => {
     }, []);
 };
 
+const tagsFilter = (value: { tag: string }[]) => {
+    const tags = value.map((tag) => `#${tag.tag}`);
+
+    return tags.join(' ');
+};
+
+const lookalikeFilter = (value: CreatorAccount[]) => {
+    const lookalikes = value.map((account) => `@${account.user_id}`);
+
+    return lookalikes.join(' ');
+};
+
 export const prepareFetchCreatorsFiltered = ({
     platform = 'youtube',
     tags = [],
@@ -99,9 +111,6 @@ export const prepareFetchCreatorsFiltered = ({
     platform: CreatorPlatform;
     body: SearchInfluencersPayload['body'];
 } => {
-    const tagsValue = tags.map((tag: { tag: string }) => `#${tag.tag}`);
-    const lookalikeValue = lookalike.map((account: CreatorAccount) => `@${account.user_id}`);
-
     const body: SearchInfluencersPayload['body'] = {
         paging: {
             limit: resultsPerPageLimit,
@@ -110,16 +119,22 @@ export const prepareFetchCreatorsFiltered = ({
         audience_source: 'any',
     };
 
-    body.sort = { field: 'followers', direction: 'desc' };
-
     body.filter = {};
 
-    if (tagsValue.length > 0 || lookalikeValue.length > 0) {
-        body.sort.field = 'relevance';
+    if (tags.length > 0) {
+        if (!body.filter.relevance) {
+            body.filter.relevance = { value: '' };
+        }
 
-        body.filter.relevance = {
-            value: [...tagsValue, ...lookalikeValue].join(' '),
-        };
+        body.filter.relevance.value += ' ' + tagsFilter(tags);
+    }
+
+    if (lookalike.length > 0) {
+        if (!body.filter.relevance) {
+            body.filter.relevance = { value: '' };
+        }
+
+        body.filter.relevance.value += ' ' + lookalikeFilter(lookalike);
     }
 
     if (params.gender) {
@@ -199,8 +214,14 @@ export const prepareFetchCreatorsFiltered = ({
         body.filter.text_tags = textTagsFilter(params.text_tags);
     }
 
-    if (!body.filter.relevance && Object.keys(body.filter).length > 0) {
+    body.sort = { field: 'followers', direction: 'desc' };
+
+    if (Object.keys(body.filter).length > 0) {
         body.sort.field = 'engagements';
+    }
+
+    if (body.filter.relevance) {
+        body.sort.field = 'relevance';
     }
 
     return { platform, body };
