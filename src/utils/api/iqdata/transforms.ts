@@ -124,19 +124,19 @@ export const prepareFetchCreatorsFiltered = ({
             action: 'should',
         });
     }
-    if (views && platform !== 'instagram') {
+    if (views && platform !== 'instagram' && (views[0] || views[1])) {
         body.filter.views = leftRightNumberTransform(views);
     }
     if (views && platform === 'instagram') {
         body.filter.reels_plays = leftRightNumberTransform(views);
     }
-    if (audience) {
+    if (audience && (audience[0] || audience[1])) {
         body.filter.followers = leftRightNumberTransform(audience);
     }
-    if (audienceLocation) {
+    if (audienceLocation && audienceLocation.length > 0) {
         body.filter.audience_geo = audienceLocation.map(locationTransform) || [];
     }
-    if (influencerLocation) {
+    if (influencerLocation && influencerLocation.length > 0) {
         body.filter.geo = influencerLocation.map(locationTransform) || [];
     }
     if (lastPost && Number(lastPost) >= 30) {
