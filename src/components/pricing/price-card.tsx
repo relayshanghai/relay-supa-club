@@ -47,9 +47,9 @@ export const PriceCard = ({
     const freeTier = priceTier === 'free';
 
     return (
-        <div className="w-full p-4 transition-all ease-in-out hover:-translate-y-3 md:w-1/2 lg:w-1/3">
+        <div className="w-full  p-4 transition-all ease-in-out hover:-translate-y-3 md:w-1/2 lg:w-1/3">
             <div
-                className={`relative flex h-full flex-col overflow-hidden rounded-lg border-2 ${
+                className={`relative flex h-full flex-col overflow-hidden rounded-lg border-2 bg-white ${
                     priceTier === 'diyMax' ? 'border-primary-500' : 'border-gray-300'
                 } p-6`}
             >
