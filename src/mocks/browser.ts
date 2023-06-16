@@ -73,7 +73,7 @@ const frontendHandlers = [
     rest.post(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/list/images`, (_req, res, ctx) => {
         return res(ctx.json([]));
     }),
-    rest.get(`${process.env.APP_URL_CYPRESS}/api/subscriptions/prices`, (_req, res, ctx) => {
+    rest.get(`${APP_URL_CYPRESS}/api/subscriptions/prices`, (_req, res, ctx) => {
         return res(ctx.json(prices));
     }),
 ];
