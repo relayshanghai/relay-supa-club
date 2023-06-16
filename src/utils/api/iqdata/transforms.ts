@@ -90,18 +90,17 @@ export const prepareFetchCreatorsFiltered = ({
             limit: resultsPerPageLimit,
             skip: page ? page * resultsPerPageLimit : undefined,
         },
-        filter: {
-            relevance: {
-                value: [...tagsValue, ...lookalikeValue].join(' '),
-            },
-            actions: [{ filter: 'relevance', action: 'must' }],
-        },
+        filter: {},
         sort: { field: 'followers', direction: 'desc' },
         audience_source: 'any',
     };
 
-    if (tagsValue.length > 0) {
+    if (tagsValue.length > 0 || lookalikeValue.length > 0) {
         body.sort.field = 'relevance';
+
+        body.filter.relevance = {
+            value: [...tagsValue, ...lookalikeValue].join(' '),
+        };
     }
 
     if (gender) {
@@ -125,19 +124,19 @@ export const prepareFetchCreatorsFiltered = ({
             action: 'should',
         });
     }
-    if (views && platform !== 'instagram') {
+    if (views && platform !== 'instagram' && (views[0] || views[1])) {
         body.filter.views = leftRightNumberTransform(views);
     }
     if (views && platform === 'instagram') {
         body.filter.reels_plays = leftRightNumberTransform(views);
     }
-    if (audience) {
+    if (audience && (audience[0] || audience[1])) {
         body.filter.followers = leftRightNumberTransform(audience);
     }
-    if (audienceLocation) {
+    if (audienceLocation && audienceLocation.length > 0) {
         body.filter.audience_geo = audienceLocation.map(locationTransform) || [];
     }
-    if (influencerLocation) {
+    if (influencerLocation && influencerLocation.length > 0) {
         body.filter.geo = influencerLocation.map(locationTransform) || [];
     }
     if (lastPost && Number(lastPost) >= 30) {
@@ -152,6 +151,10 @@ export const prepareFetchCreatorsFiltered = ({
 
     if (only_recommended && recommendedInfluencers && featRecommended()) {
         body.filter.filter_ids = isRecommendedTransform(platform, recommendedInfluencers);
+    }
+
+    if (!body.filter.relevance && Object.keys(body.filter).length > 0) {
+        body.sort.field = 'engagements';
     }
 
     return { platform, body };
