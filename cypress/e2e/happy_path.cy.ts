@@ -84,7 +84,7 @@ describe('Main pages happy paths', () => {
         cy.contains('Add this influencer to your existing campaigns');
         cy.contains('Beauty for All Skin Tones'); // this functionality is tested in campaigns page test
     });
-    it.only('can use account and pricing pages', () => {
+    it('can use account and pricing pages', () => {
         setupIntercepts();
 
         cy.loginTestUser();
