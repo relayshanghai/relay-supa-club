@@ -173,8 +173,8 @@ export const filter = z
     });
 
 export const query = z.object({
-    auto_unhide: z.number().or(z.boolean()).default(1).optional(),
-    platform: z.string().default('youtube').optional(),
+    auto_unhide: z.number().or(z.boolean()).default(1),
+    platform: z.string().default('youtube'),
 });
 
 export const body = z.object({
@@ -190,7 +190,5 @@ export const SearchInfluencersPayload = z.object({
     query: query.optional(),
     body: body.optional(),
 });
-
-export type SearchInfluencersPayload = z.infer<typeof SearchInfluencersPayload>;
 
 export type SearchInfluencersTextTagsFilter = z.infer<typeof text_tags>;
