@@ -53,11 +53,6 @@ const pricing = {
         title: 'DIY Max',
         subTitle: 'For teams looking to grow',
     },
-
-    vip: {
-        title: 'VIP',
-        subTitle: 'For teams who want personalized service',
-    },
     free: {
         title: 'Free Trial',
         subTitle: 'Check out what we can offer',

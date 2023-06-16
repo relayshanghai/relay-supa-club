@@ -51,11 +51,6 @@ const pricing = {
         title: 'DIY Max',
         subTitle: '适合想要扩展业务的团队',
     },
-
-    vip: {
-        title: 'VIP',
-        subTitle: '适合想要个性化服务的团队',
-    },
     free: {
         title: '免费试用',
         subTitle: '查看我们可以提供什么',

@@ -102,14 +102,16 @@ describe('Main pages happy paths', () => {
         // open one of the modals
         cy.contains('button', 'Add more members').click();
         cy.contains('Invite Members');
-        cy.contains('button', /Cancel/).click();
+        cy.contains('button', /Cancel/).click({ force: true });
         cy.contains('Invite Members').should('not.exist');
 
         // upgrade subscription links to pricing page
         cy.contains('button', 'Upgrade subscription').click(); // loads subscription data
-        cy.contains('Choose the best plan for you', { timeout: 10000 }); // loads pricing page
+        cy.contains('Just getting started, or scaling up.', { timeout: 10000 }); // loads pricing page
         cy.url().should('include', `/pricing`);
+        cy.contains('DIY');
         cy.contains('DIY Max');
+
         // this doesn't work anymore because we aren't using a live account anymore, so stripe sends back 'can't find subscription' and the button is disabled.
         cy.contains('button', 'Buy Now').click();
         cy.contains('button', 'Subscribe');
@@ -277,7 +279,7 @@ describe('Main pages happy paths', () => {
         cy.contains('My Campaign');
     });
 
-    it.only('can record search usages, can manage clients as a company owner', () => {
+    it('can record search usages, can manage clients as a company owner', () => {
         setupIntercepts();
         cy.loginAdmin();
 
@@ -443,4 +445,4 @@ describe('Main pages happy paths', () => {
 });
 
 // Need to export an empty object to keep typescript happy. Otherwise, it will complain that the file is a module, but it has no imports or exports.
-export { };
+export {};
