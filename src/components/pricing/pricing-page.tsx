@@ -48,14 +48,14 @@ export const PricingPage = ({ page = 'upgrade' }: { page?: 'upgrade' | 'landing'
     return (
         <>
             <ImageBackground />
-            <main className="flex-grow">
+            <main className="flex flex-grow flex-col">
                 <SubscriptionConfirmModal
                     confirmModalData={confirmModalData}
                     setConfirmModalData={setConfirmModalData}
                     createSubscription={createSubscription}
                 />
 
-                <div className="container mx-auto mt-10 flex flex-col items-center">
+                <div className="container mx-auto mt-6 flex flex-col items-center">
                     <div className="mx-auto mb-14 max-w-3xl text-center">
                         <h2 className="font-heading mb-6 mt-4 text-3xl font-semibold text-gray-800 md:text-4xl">
                             {t('pricing.justGettingStartedOrScalingUp')}
