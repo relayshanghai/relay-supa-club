@@ -90,18 +90,17 @@ export const prepareFetchCreatorsFiltered = ({
             limit: resultsPerPageLimit,
             skip: page ? page * resultsPerPageLimit : undefined,
         },
-        filter: {
-            relevance: {
-                value: [...tagsValue, ...lookalikeValue].join(' '),
-            },
-            actions: [{ filter: 'relevance', action: 'must' }],
-        },
+        filter: {},
         sort: { field: 'followers', direction: 'desc' },
         audience_source: 'any',
     };
 
-    if (tagsValue.length > 0) {
+    if (tagsValue.length > 0 || lookalikeValue.length > 0) {
         body.sort.field = 'relevance';
+
+        body.filter.relevance = {
+            value: [...tagsValue, ...lookalikeValue].join(' '),
+        };
     }
 
     if (gender) {
@@ -152,6 +151,10 @@ export const prepareFetchCreatorsFiltered = ({
 
     if (only_recommended && recommendedInfluencers && featRecommended()) {
         body.filter.filter_ids = isRecommendedTransform(platform, recommendedInfluencers);
+    }
+
+    if (!body.filter.relevance && Object.keys(body.filter).length > 0) {
+        body.sort.field = 'engagements';
     }
 
     return { platform, body };
