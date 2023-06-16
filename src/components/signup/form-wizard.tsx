@@ -6,8 +6,10 @@ import { Progress } from '../library';
 import { Button } from '../button';
 import type { FieldValues, UseFormHandleSubmit } from 'react-hook-form';
 import { useUser } from 'src/hooks/use-user';
+import { useCompany } from 'src/hooks/use-company';
 import { clientLogger } from 'src/utils/logger-client';
 import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
+// import { hasCustomError } from 'src/utils/errors';
 
 interface stepsType {
     title: string;
@@ -34,6 +36,7 @@ export const FormWizard = ({
     const { t } = useTranslation();
     const router = useRouter();
     const { signup, createEmployee, profile } = useUser();
+    const { createCompany } = useCompany();
 
     const [signupSuccess, setSignupSuccess] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState<string>('');
@@ -110,6 +113,24 @@ export const FormWizard = ({
         };
         //eslint-disable-next-line
         console.log('Create Company!', data);
+        try {
+            setLoading(true);
+            const signupCompanyRes = await createCompany(data);
+            if (!signupCompanyRes?.cus_id) {
+                throw new Error('no cus_id, error creating company');
+            }
+            toast.success(t('login.companyCreated'));
+            await router.push('/signup/payment-onboard');
+        } catch (e: any) {
+            clientLogger(e, 'error');
+            // if (hasCustomError(e, errors)) {
+            //     toast.error(t(`login.${e.message}`));
+            // } else {
+            //     toast.error(t('login.oopsSomethingWentWrong'));
+            // }
+        } finally {
+            setLoading(false);
+        }
     };
 
     useEffect(() => {
