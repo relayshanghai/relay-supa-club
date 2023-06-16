@@ -13,11 +13,17 @@ import type { CompanyDB } from 'src/utils/api/db';
 import { useAtomValue } from 'jotai';
 import { clientRoleAtom } from 'src/atoms/client-role-atom';
 import { clientLogger } from 'src/utils/logger-client';
+import type { CompanySize } from 'types';
 
 export interface CompanyContext {
     company: CompanyDB | undefined;
     updateCompany: (input: Omit<CompanyPutBody, 'id'>) => Promise<CompanyPutResponse | null>;
-    createCompany: (input: { name: string; website?: string }) => Promise<CompanyCreatePostResponse | null>;
+    createCompany: (input: {
+        name: string;
+        website?: string;
+        size?: CompanySize;
+        category?: string;
+    }) => Promise<CompanyCreatePostResponse | null>;
     refreshCompany: KeyedMutator<CompanyDB> | (() => void);
 }
 
@@ -67,9 +73,10 @@ export const CompanyProvider = ({ children }: PropsWithChildren) => {
     );
 
     const createCompany = useCallback(
-        async (input: { name: string; website?: string }) => {
+        async (input: { name: string; website?: string; size?: CompanySize; category?: string }) => {
             if (!profile?.id) throw new Error(createCompanyValidationErrors.noLoggedInUserFound);
             if (!input.name) throw new Error(createCompanyValidationErrors.noCompanyNameFound);
+
             const body: CompanyCreatePostBody = {
                 ...input,
                 user_id: profile?.id,
