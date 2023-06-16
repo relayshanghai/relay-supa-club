@@ -14,17 +14,20 @@ const pricing = {
     checkOutOur: 'Check out our ',
     blog: 'blog',
     andLearnHowToGetTheMost: ' and learn how to get the most value out of your subscription.',
-    twoHundredNewInfluencerProfilesPerMonth: '200 new influencer profiles unlocked per month',
-    fourHundredFiftyNewInfluencerProfilesPerMonth: '450 new influencer profiles unlocked per month',
-    search264MillionInfluencers: 'Search 264 million+ influencers on YouTube, TikTok, and Instagram',
+
+    upTo_amount_Searches: 'Up to {{amount}} Influencer Search Results',
+    amount_InfluencerAudienceReports: '{{amount}} Influencer Audience Reports',
+    campaignManagementTool: 'Campaign Management Tool',
+    amount_AIGeneratedEmailTemplates: '{{amount}} AI Generated Email Templates',
+    fullCustomerService: 'Full Customer Service',
+
     unlimitedCampaigns: 'Unlimited campaigns',
     unlimitedUserAccountsPerCompany: 'Unlimited user accounts per company',
-    clubbyStarterPack: '"Clubby" starter pack',
     influencerOutreachExpertWorkingOnYourCampaigns:
         'Influencer outreach expert working on your campaigns 5 days a week',
-    includesCustomEmailTemplates:
-        'Includes custom email templates, subject headings, and search categories based on your brief',
+    search264MillionInfluencers: 'Search 264 million+ influencers on YouTube, TikTok, and Instagram',
     moreInfluencerProfiles: 'More influencer profiles',
+
     buyNow: 'Buy Now',
     contactUs: 'Contact us',
     popular: 'POPULAR',

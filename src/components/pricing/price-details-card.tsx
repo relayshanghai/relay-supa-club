@@ -13,7 +13,7 @@ export const PriceDetailsCard = ({
     const { t } = useTranslation();
     return (
         <div>
-            {priceDetails[priceTier].map(({ title, icon, info }, index) => {
+            {priceDetails[priceTier].map(({ title, icon, info, amount }, index) => {
                 return (
                     <div
                         key={index}
@@ -29,7 +29,9 @@ export const PriceDetailsCard = ({
                             {icon === 'check' && <CheckIcon />}
                             {icon === 'cross' && <CrossIcon />}
                         </span>
-                        {t('pricing.' + title)}{' '}
+                        {t('pricing.' + title, {
+                            amount: amount ? new Intl.NumberFormat().format(amount) : '',
+                        })}{' '}
                         {info && (
                             <div className="group absolute right-0 top-1 h-4 w-4 ">
                                 <PlusIcon />

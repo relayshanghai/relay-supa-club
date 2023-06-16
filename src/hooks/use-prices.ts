@@ -34,32 +34,31 @@ export const PRICE_IDS: Prices = {
     },
 };
 export type PriceDetails = {
-    [key in ActiveSubscriptionTier]: { title: string; icon: string; info?: string }[];
+    [key in ActiveSubscriptionTier]: { title: string; icon: string; info?: string; amount?: number }[];
 };
 
 export const priceDetails: PriceDetails = {
-    diy: [
-        { title: 'twoHundredNewInfluencerProfilesPerMonth', icon: 'check' },
-        { title: 'search264MillionInfluencers', icon: 'check' },
-        { title: 'unlimitedCampaigns', icon: 'check' },
-        { title: 'unlimitedUserAccountsPerCompany', icon: 'check' },
-        { title: 'influencerOutreachExpertWorkingOnYourCampaigns', icon: 'cross' },
+    free: [
+        { title: 'upTo_amount_Searches', icon: 'check', amount: 1000 },
+        { title: 'amount_InfluencerAudienceReports', icon: 'check', amount: 30 },
+        { title: 'campaignManagementTool', icon: 'check' },
+        { title: 'amount_AIGeneratedEmailTemplates', icon: 'check', amount: 50 },
     ],
     diyMax: [
-        { title: 'fourHundredFiftyNewInfluencerProfilesPerMonth', icon: 'check' },
-        { title: 'search264MillionInfluencers', icon: 'check' },
-        { title: 'unlimitedCampaigns', icon: 'check' },
-        { title: 'unlimitedUserAccountsPerCompany', icon: 'check' },
-        { title: 'influencerOutreachExpertWorkingOnYourCampaigns', icon: 'cross' },
+        { title: 'upTo_amount_Searches', icon: 'check', amount: 50000 },
+        { title: 'amount_InfluencerAudienceReports', icon: 'check', amount: 450 },
+        { title: 'campaignManagementTool', icon: 'check' },
+        { title: 'amount_AIGeneratedEmailTemplates', icon: 'check', amount: 2000 },
+        { title: 'fullCustomerService', icon: 'check' },
+    ],
+    diy: [
+        { title: 'upTo_amount_Searches', icon: 'check', amount: 25000 },
+        { title: 'amount_InfluencerAudienceReports', icon: 'check', amount: 200 },
+        { title: 'campaignManagementTool', icon: 'check' },
+        { title: 'amount_AIGeneratedEmailTemplates', icon: 'check', amount: 1000 },
+        { title: 'fullCustomerService', icon: 'check' },
     ],
     VIP: [
-        { title: 'moreInfluencerProfiles', icon: 'check' },
-        { title: 'search264MillionInfluencers', icon: 'check' },
-        { title: 'unlimitedCampaigns', icon: 'check' },
-        { title: 'unlimitedUserAccountsPerCompany', icon: 'check' },
-        { title: 'influencerOutreachExpertWorkingOnYourCampaigns', icon: 'check' },
-    ],
-    free: [
         { title: 'moreInfluencerProfiles', icon: 'check' },
         { title: 'search264MillionInfluencers', icon: 'check' },
         { title: 'unlimitedCampaigns', icon: 'check' },
