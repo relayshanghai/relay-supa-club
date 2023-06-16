@@ -21,13 +21,6 @@ const pricing = {
     amount_AIGeneratedEmailTemplates: '{{amount}} AI Generated Email Templates',
     fullCustomerService: 'Full Customer Service',
 
-    unlimitedCampaigns: 'Unlimited campaigns',
-    unlimitedUserAccountsPerCompany: 'Unlimited user accounts per company',
-    influencerOutreachExpertWorkingOnYourCampaigns:
-        'Influencer outreach expert working on your campaigns 5 days a week',
-    search264MillionInfluencers: 'Search 264 million+ influencers on YouTube, TikTok, and Instagram',
-    moreInfluencerProfiles: 'More influencer profiles',
-
     buyNow: 'Buy Now',
     contactUs: 'Contact us',
     popular: 'POPULAR',

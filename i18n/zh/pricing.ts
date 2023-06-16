@@ -20,12 +20,6 @@ const pricing = {
     amount_AIGeneratedEmailTemplates: '{{amount}}个AI生成的电子邮件模板',
     fullCustomerService: '完整的客户服务',
 
-    unlimitedCampaigns: '无限制的项目',
-    unlimitedUserAccountsPerCompany: '每个公司无限制的用户账户',
-    influencerOutreachExpertWorkingOnYourCampaigns: '专业的海外KOL推广专家为您的项目工作一周5天',
-    search264MillionInfluencers: '搜索2640万+海外KOL资料，包括YouTube、TikTok和Instagram',
-    moreInfluencerProfiles: '更多海外KOL资料',
-
     buyNow: '立即购买',
     contactUs: '联系我们',
     popular: '热门',
