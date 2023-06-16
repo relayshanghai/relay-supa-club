@@ -9,12 +9,17 @@ import { useUser } from 'src/hooks/use-user';
 import { useCompany } from 'src/hooks/use-company';
 import { clientLogger } from 'src/utils/logger-client';
 import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
-// import { hasCustomError } from 'src/utils/errors';
+import { hasCustomError } from 'src/utils/errors';
+import { createCompanyErrors, createCompanyValidationErrors } from 'src/errors/company';
 
 interface stepsType {
     title: string;
     num: number;
 }
+const CompanyErrors = {
+    ...createCompanyErrors,
+    ...createCompanyValidationErrors,
+};
 
 export const FormWizard = ({
     title,
@@ -42,9 +47,10 @@ export const FormWizard = ({
     const [selectedCategory, setSelectedCategory] = useState<string>('');
     const [loading, setLoading] = useState(false);
 
-    const handleNext = (data: FieldValues) => {
+    const handleNext = async (data: FieldValues) => {
+        // console.log(data.companyCategory);
         setSelectedCategory(data.companyCategory);
-        // console.log('test:', selectedCategory);
+        // console.log('selectedCategory', selectedCategory);
         if (currentStep === steps.length) {
             return;
         }
@@ -74,6 +80,7 @@ export const FormWizard = ({
                 phone: phoneNumber,
             },
         };
+        // console.log('profileData', data);
         try {
             setLoading(true);
             const signUpProfileRes = await signup(data);
@@ -94,13 +101,12 @@ export const FormWizard = ({
             // this is a supabase provided error so we don't have our custom error handling
             if (error?.message === 'User already registered') {
                 toast.error(t('login.userAlreadyRegistered'));
-                //TODO: this route is not right in v2, if an profile is created (email and password), but it does not have a company name, need to redirect to step 3
-                router.push(`/login?email=${encodeURIComponent(email)}`);
             } else {
                 toast.error(t('login.oopsSomethingWentWrong'));
             }
             setLoading(false);
-        } // why do we not set loading to false here? Because sometimes the user is logged in but the profile has not loaded yet. The next page needs the profile ready. Therefore we wait in the useEffect above for the profile to load before redirecting.
+        }
+        // why do we not set loading to false here? Because sometimes the user is logged in but the profile has not loaded yet. The next page needs the profile ready. Therefore we wait in the useEffect above for the profile to load before redirecting.
     };
 
     const handleCompanyCreate = async (formData: FieldValues) => {
@@ -108,26 +114,23 @@ export const FormWizard = ({
         const data = {
             name: companyName,
             website: companyWebsite,
-            categories: selectedCategory,
+            category: selectedCategory,
             size: companySize,
         };
-        //eslint-disable-next-line
-        console.log('Create Company!', data);
+        // console.log('Create Company!', data);
         try {
             setLoading(true);
             const signupCompanyRes = await createCompany(data);
             if (!signupCompanyRes?.cus_id) {
                 throw new Error('no cus_id, error creating company');
             }
-            toast.success(t('login.companyCreated'));
-            await router.push('/signup/payment-onboard');
         } catch (e: any) {
             clientLogger(e, 'error');
-            // if (hasCustomError(e, errors)) {
-            //     toast.error(t(`login.${e.message}`));
-            // } else {
-            //     toast.error(t('login.oopsSomethingWentWrong'));
-            // }
+            if (hasCustomError(e, CompanyErrors)) {
+                toast.error(t(`login.${e.message}`));
+            } else {
+                toast.error(t('login.oopsSomethingWentWrong'));
+            }
         } finally {
             setLoading(false);
         }
