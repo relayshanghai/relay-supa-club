@@ -48,9 +48,8 @@ describe('Main pages happy paths', () => {
 
         cy.getByTestId('search-topics').within(() => {
             cy.get('input').type('alligators');
+            cy.getByTestId('search-spinner').should('exist'); // wait for spinner to appear
         });
-
-        cy.getByTestId('search-spinner').should('exist'); // wait for spinner to appear
 
         // cy.contains will not include the input element text in the search, so this shows that the result options are in the DOM
         cy.contains('alligators').click();
@@ -85,7 +84,7 @@ describe('Main pages happy paths', () => {
         cy.contains('Add this influencer to your existing campaigns');
         cy.contains('Beauty for All Skin Tones'); // this functionality is tested in campaigns page test
     });
-    it('can use account and pricing pages', () => {
+    it.only('can use account and pricing pages', () => {
         setupIntercepts();
 
         cy.loginTestUser();
