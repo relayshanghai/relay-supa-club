@@ -55,9 +55,9 @@ export const PricingPage = ({ page = 'upgrade' }: { page?: 'upgrade' | 'landing'
                     createSubscription={createSubscription}
                 />
 
-                <div className="container mx-auto mt-6 flex flex-col items-center">
+                <div className="container mx-auto flex flex-col items-center">
                     <div className="mx-auto mb-14 max-w-3xl text-center">
-                        <h2 className="font-heading mb-6 mt-4 text-3xl font-semibold text-gray-800 md:text-4xl">
+                        <h2 className="font-heading mb-6 text-3xl font-semibold text-gray-800 md:text-4xl">
                             {t('pricing.justGettingStartedOrScalingUp')}
                         </h2>
                         <h4 className="-mt-2 text-3xl font-semibold text-primary-500 md:text-4xl">
