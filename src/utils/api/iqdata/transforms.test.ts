@@ -17,12 +17,7 @@ describe('prepareFetchCreatorsFiltered', () => {
         expect(body).toEqual({
             paging: { limit: 10, skip: 0 },
             filter: {
-                relevance: { value: '' },
                 actions: [
-                    {
-                        action: 'must',
-                        filter: 'relevance',
-                    },
                     {
                         filter: 'username',
                         action: 'should',
@@ -36,7 +31,7 @@ describe('prepareFetchCreatorsFiltered', () => {
                 views: { left_number: undefined, right_number: undefined },
                 followers: { left_number: undefined, right_number: undefined },
             },
-            sort: { field: 'followers', direction: 'desc' },
+            sort: { field: 'engagements', direction: 'desc' },
             audience_source: 'any',
         });
     });

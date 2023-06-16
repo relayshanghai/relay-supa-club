@@ -128,8 +128,12 @@ export const prepareFetchCreatorsFiltered = ({
         actions: [{ filter: 'relevance', action: 'must' }],
     };
 
-    if (body.sort && tagsValue.length > 0) {
+    if (body.sort && (tagsValue.length > 0 || lookalikeValue.length > 0)) {
         body.sort.field = 'relevance';
+
+        body.filter.relevance = {
+            value: [...tagsValue, ...lookalikeValue].join(' '),
+        };
     }
 
     if (gender) {
@@ -207,6 +211,10 @@ export const prepareFetchCreatorsFiltered = ({
 
     if (params.text_tags) {
         body.filter.text_tags = textTagsFilter(params.text_tags);
+    }
+
+    if (body.sort && !body.filter.relevance && Object.keys(body.filter).length > 0) {
+        body.sort.field = 'engagements';
     }
 
     return { platform, body };
