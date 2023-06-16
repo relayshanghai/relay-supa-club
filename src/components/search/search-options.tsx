@@ -9,7 +9,7 @@ import { featRecommended } from 'src/constants/feature-flags';
 
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { useEffect } from 'react';
-import { WordCloudComponent } from '../wordcloud';
+import WordCloudComponent from '../wordcloud';
 import SearchKeywords from './search-keywords';
 
 export const SearchOptions = ({
@@ -207,7 +207,7 @@ export const SearchOptions = ({
                         </div>
                     </div>
                 </div>
-                <WordCloudComponent tags={tags} platform={platform} setTopicTags={setTopicTags} />
+                <WordCloudComponent tags={tags} platform={platform} updateTags={(newTags) => setTopicTags(newTags)} />
             </div>
         </>
     );
