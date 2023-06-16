@@ -60,6 +60,7 @@ const mockCompany: CompanyDB = {
     subscription_current_period_start: '2023-06-08T09:18:58.294957+00:00',
     ai_email_generator_limit: '100000000',
     trial_ai_email_generator_limit: '10',
+    size: 'small',
 };
 export interface TestMountOptions {
     /** The pathname that it will tell the router the app is currently visiting */

@@ -271,6 +271,7 @@ export interface Database {
           name: string | null
           profiles_limit: string
           searches_limit: string
+          size: string | null
           subscription_current_period_end: string | null
           subscription_current_period_start: string | null
           subscription_end_date: string | null
@@ -291,6 +292,7 @@ export interface Database {
           name?: string | null
           profiles_limit?: string
           searches_limit?: string
+          size?: string | null
           subscription_current_period_end?: string | null
           subscription_current_period_start?: string | null
           subscription_end_date?: string | null
@@ -311,6 +313,7 @@ export interface Database {
           name?: string | null
           profiles_limit?: string
           searches_limit?: string
+          size?: string | null
           subscription_current_period_end?: string | null
           subscription_current_period_start?: string | null
           subscription_end_date?: string | null
@@ -323,6 +326,34 @@ export interface Database {
           website?: string | null
         }
         Relationships: []
+      }
+      company_categories: {
+        Row: {
+          category: string
+          company_id: string
+          created_at: string
+          id: number
+        }
+        Insert: {
+          category: string
+          company_id: string
+          created_at?: string
+          id?: number
+        }
+        Update: {
+          category?: string
+          company_id?: string
+          created_at?: string
+          id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_categories_company_id_fkey"
+            columns: ["company_id"]
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       influencer_categories: {
         Row: {
