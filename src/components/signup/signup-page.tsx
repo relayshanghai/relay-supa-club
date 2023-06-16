@@ -83,9 +83,9 @@ const SignUpPage = ({ selectedPriceId }: { selectedPriceId: string }) => {
     ];
 
     const companySizeOptions = [
-        { label: '1-10', value: '1-10' },
-        { label: '11-50', value: '11-50' },
-        { label: '50 +', value: '50+' },
+        { label: '1-10', value: 'small' },
+        { label: '11-50', value: 'medium' },
+        { label: '50 +', value: 'large' },
     ];
     //TODO: phone validation need to be updated
     const setAndValidate = (type: SignupInputTypes, value: string) => {
