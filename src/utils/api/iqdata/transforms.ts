@@ -94,16 +94,6 @@ export const prepareFetchCreatorsFiltered = ({
     audienceLocation = [],
     resultsPerPageLimit = 10,
     page = 0,
-    text,
-    username,
-    audience,
-    views,
-    gender,
-    engagement,
-    lastPost,
-    contactInfo,
-    only_recommended,
-    recommendedInfluencers,
     ...params
 }: FetchCreatorsFilteredParams): {
     platform: CreatorPlatform;
@@ -137,16 +127,16 @@ export const prepareFetchCreatorsFiltered = ({
         };
     }
 
-    if (gender) {
-        body.filter.gender = genderFilter(gender);
+    if (params.gender) {
+        body.filter.gender = genderFilter(params.gender);
     }
 
-    if (text) {
-        body.filter.text = textFilter(text);
+    if (params.text) {
+        body.filter.text = textFilter(params.text);
     }
 
-    if (username) {
-        body.filter.username = usernameFilter(username);
+    if (params.username) {
+        body.filter.username = usernameFilter(params.username);
 
         if (!body.filter.actions) body.filter.actions = [];
 
@@ -161,16 +151,16 @@ export const prepareFetchCreatorsFiltered = ({
         });
     }
 
-    if (views && platform !== 'instagram') {
-        body.filter.views = leftRightNumberTransform(views);
+    if (params.views && platform !== 'instagram') {
+        body.filter.views = leftRightNumberTransform(params.views);
     }
 
-    if (views && platform === 'instagram') {
-        body.filter.reels_plays = leftRightNumberTransform(views);
+    if (params.views && platform === 'instagram') {
+        body.filter.reels_plays = leftRightNumberTransform(params.views);
     }
 
-    if (audience) {
-        body.filter.followers = leftRightNumberTransform(audience);
+    if (params.audience) {
+        body.filter.followers = leftRightNumberTransform(params.audience);
     }
 
     if (audienceLocation && audienceLocation.length > 0) {
@@ -181,20 +171,20 @@ export const prepareFetchCreatorsFiltered = ({
         body.filter.geo = influencerLocation.map(locationTransform) || [];
     }
 
-    if (lastPost) {
-        body.filter.last_posted = lastPostedFilter(+lastPost);
+    if (params.lastPost) {
+        body.filter.last_posted = lastPostedFilter(+params.lastPost);
     }
 
-    if (contactInfo) {
+    if (params.contactInfo) {
         body.filter.with_contact = [{ type: 'email', action: 'should' }];
     }
 
-    if (engagement && Number(engagement) >= 0 && Number(engagement / 100)) {
-        body.filter.engagement_rate = { value: Number((engagement / 100).toFixed(2)), operator: 'gte' };
+    if (params.engagement && Number(params.engagement) >= 0 && Number(params.engagement / 100)) {
+        body.filter.engagement_rate = { value: Number((params.engagement / 100).toFixed(2)), operator: 'gte' };
     }
 
-    if (only_recommended && recommendedInfluencers && featRecommended()) {
-        body.filter.filter_ids = isRecommendedTransform(platform, recommendedInfluencers);
+    if (params.only_recommended && params.recommendedInfluencers && featRecommended()) {
+        body.filter.filter_ids = isRecommendedTransform(platform, params.recommendedInfluencers);
     }
 
     if (params.keywords) {
