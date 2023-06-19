@@ -28,8 +28,6 @@ describe('prepareFetchCreatorsFiltered', () => {
                     },
                 ],
                 username: { value: 'test_user' },
-                views: { left_number: undefined, right_number: undefined },
-                followers: { left_number: undefined, right_number: undefined },
             },
             sort: { field: 'engagements', direction: 'desc' },
             audience_source: 'any',

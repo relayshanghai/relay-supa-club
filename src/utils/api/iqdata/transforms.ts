@@ -161,7 +161,7 @@ export const prepareFetchCreatorsFiltered = ({
         });
     }
 
-    if (params.views && platform !== 'instagram') {
+    if (params.views && platform !== 'instagram' && (params.views[0] || params.views[1])) {
         body.filter.views = leftRightNumberTransform(params.views);
     }
 
@@ -169,7 +169,7 @@ export const prepareFetchCreatorsFiltered = ({
         body.filter.reels_plays = leftRightNumberTransform(params.views);
     }
 
-    if (params.audience) {
+    if (params.audience && (params.audience[0] || params.audience[1])) {
         body.filter.followers = leftRightNumberTransform(params.audience);
     }
 
