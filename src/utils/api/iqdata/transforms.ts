@@ -5,6 +5,7 @@ import type {
     SearchInfluencersTextTagsFilter,
 } from './influencers/search-influencers-payload';
 import { Gender, LastPosted } from '../types';
+import type { z } from 'zod';
 
 type NullStringTuple = [null | string, null | string];
 
@@ -109,9 +110,9 @@ export const prepareFetchCreatorsFiltered = ({
     ...params
 }: FetchCreatorsFilteredParams): {
     platform: CreatorPlatform;
-    body: SearchInfluencersPayload['body'];
+    body: z.input<typeof SearchInfluencersPayload>['body'];
 } => {
-    const body: SearchInfluencersPayload['body'] = {
+    const body: z.infer<typeof SearchInfluencersPayload>['body'] = {
         paging: {
             limit: resultsPerPageLimit,
             skip: page ? page * resultsPerPageLimit : 0,
