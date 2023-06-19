@@ -152,14 +152,11 @@ describe('Add', () => {
         });
 
         cy.contains('button', 'Save').click();
-        // could not get this working, but manually testing it works
-        // cy.get('@updateCampaignCreator').should('be.calledWith', [
-        //     {
-        //         ...creator,
-        //         payment_currency: 'USD',
-        //         payment_rate: 2.4,
-        //     },
-        // ]);
+        cy.get('@updateCampaignCreator').should('be.calledWith', {
+            ...creator,
+            payment_currency: 'USD',
+            payment_rate: 2.4,
+        });
         cy.get('@updateCampaignCreator').should('be.calledOnce');
     });
 
@@ -183,7 +180,7 @@ describe('Add', () => {
         cy.contains('Must be a number').should('not.exist');
 
         cy.contains('div', 'Influencer Fee ()').within(() => {
-            cy.get('input').should('have.value', '0').clear().type('asdf').should('have.value', 'asdf');
+            cy.get('input').should('have.value', '0').clear().type('asdf');
         });
         cy.contains('Must be a number').should('exist');
 

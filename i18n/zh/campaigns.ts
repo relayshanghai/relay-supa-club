@@ -261,6 +261,8 @@ const campaigns = {
         cancel: '取消',
         save: '保存',
         contactInfo: '联系方式',
+        invalidDate: '无效的日期',
+        invalidNumber: '无效的数字',
     },
 };
 export default campaigns;
