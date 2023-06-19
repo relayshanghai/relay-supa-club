@@ -156,8 +156,8 @@ describe('Add', () => {
         // cy.get('@updateCampaignCreator').should('be.calledWith', [
         //     {
         //         ...creator,
-        //         paid_amount_currency: 'USD',
-        //         rate_cents: 2.4,
+        //         payment_currency: 'USD',
+        //         payment_rate: 2.4,
         //     },
         // ]);
         cy.get('@updateCampaignCreator').should('be.calledOnce');

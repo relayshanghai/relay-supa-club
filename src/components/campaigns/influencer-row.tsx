@@ -149,15 +149,15 @@ const InfluencerRow = ({
                     {column.type === 'inputNumber' && (
                         <button
                             className="relative cursor-pointer pr-2 text-left text-xs text-gray-900  hover:text-primary-500"
-                            onClick={() => setInlineEdit(index, 'paid_amount_cents')}
+                            onClick={() => setInlineEdit(index, 'paid_amount')}
                         >
                             {creator.paid_amount?.toLocaleString() || '-'} {creator.payment_currency}
-                            {editingModeTrue(index, 'paid_amount_cents') && (
+                            {editingModeTrue(index, 'paid_amount') && (
                                 <TableInput
                                     value={creator.paid_amount.toLocaleString()}
                                     type="number"
                                     creator={creator}
-                                    objKey="paid_amount_cents"
+                                    objKey="paid_amount"
                                     ref={inputRef}
                                     updateCampaignCreator={updateCampaignCreator}
                                     closeModal={() => setToEdit(null)}
