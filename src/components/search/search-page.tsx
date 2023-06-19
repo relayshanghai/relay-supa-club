@@ -18,6 +18,7 @@ import { MoreResultsRows } from './search-result-row';
 import ClientRoleWarning from './client-role-warning';
 import { useAllCampaignCreators } from 'src/hooks/use-all-campaign-creators';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { SearchCreators } from './search-creators';
 // import { featRecommended } from 'src/constants/feature-flags';
 
 export const SearchPageInner = () => {
@@ -96,7 +97,12 @@ export const SearchPageInner = () => {
     return (
         <div className="space-y-4">
             <ClientRoleWarning />
-            <SelectPlatform />
+            <div className="flex justify-between">
+                <SelectPlatform />
+                <div className="w-fit">
+                    <SearchCreators platform={platform} />
+                </div>
+            </div>
 
             <SearchOptions setPage={setPage} setShowFiltersModal={setShowFiltersModal} />
 

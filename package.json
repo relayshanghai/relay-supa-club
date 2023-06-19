@@ -52,6 +52,7 @@
     "react-i18next": "^12.2.0",
     "react-select": "^5.7.2",
     "react-visibility-sensor": "^5.1.1",
+    "react-wordcloud": "^1.2.7",
     "recharts": "^2.5.0",
     "rudder-sdk-js": "^2.30.0",
     "sib-api-v3-sdk": "^8.5.0",

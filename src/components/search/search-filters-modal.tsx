@@ -3,9 +3,17 @@ import { useSearch } from 'src/hooks/use-search';
 import { numberFormatter } from 'src/utils/formatter';
 import { Modal } from '../modal';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { SearchLocations } from './search-locations';
+import LocationTag from './location-tag';
 
 /** Search Filter Modal, Subscribers and Avg view filter options: 1k, 5k, 10k, 15k, 25k, 50k, 100k, 250k, 500k, 1m */
 const options = [1e3, 5e3, 1e4, 15e3, 25e3, 50e3, 1e5, 25e4, 50e4, 1e6];
+
+const filterCountry = (items: any[]) => {
+    return items.filter((item: any) => {
+        return item.type?.[0] === 'country';
+    });
+};
 
 export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: (open: boolean) => void }) => {
     const {
@@ -21,6 +29,11 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
         setLastPost,
         contactInfo,
         setContactInfo,
+        influencerLocation,
+        audienceLocation,
+        platform,
+        setAudienceLocation,
+        setInfluencerLocation,
     } = useSearch();
 
     const { t } = useTranslation();
@@ -90,6 +103,31 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                             </div>
                         </div>
                     </label>
+                </div>
+                <div>
+                    <SearchLocations
+                        path="influencer-search/locations"
+                        placeholder={t('creators.filter.locationPlaceholder')}
+                        locations={influencerLocation}
+                        platform={platform}
+                        filter={filterCountry}
+                        onSetLocations={(topics) => {
+                            setInfluencerLocation(topics);
+                            trackEvent('Search Options, search influencer location', { location: topics });
+                        }}
+                    />
+                    <SearchLocations
+                        path="influencer-search/locations"
+                        placeholder={t('creators.filter.audienceLocation')}
+                        locations={audienceLocation}
+                        platform={platform}
+                        filter={filterCountry}
+                        onSetLocations={(topics) => {
+                            setAudienceLocation(topics.map((item) => ({ ...item, weight: 5 })));
+                            trackEvent('Search Options, search audience location', { location: topics });
+                        }}
+                        TagComponent={LocationTag}
+                    />
                 </div>
                 <div>
                     <label className="text-sm">
