@@ -3,6 +3,8 @@ import type { CreatorPlatform, CreatorAccount, LocationWeighted } from 'types';
 import type {
     SearchInfluencersPayload,
     SearchInfluencersTextTagsFilter,
+    with_contact,
+    engagement_rate,
 } from './influencers/search-influencers-payload';
 import { Gender, LastPosted } from '../types';
 import type { z } from 'zod';
@@ -58,11 +60,18 @@ const usernameFilter = (value: string) => {
 };
 
 const leftRightNumberTransform = (tuple: NullStringTuple) => {
-    const [left, right] = tuple;
-    return {
-        left_number: left ? Number(left) ?? undefined : undefined,
-        right_number: right ? Number(right) ?? undefined : undefined,
-    };
+    const [left_number, right_number] = tuple;
+    const filter: { left_number?: number; right_number?: number } = {};
+
+    if (left_number) {
+        filter.left_number = +left_number;
+    }
+
+    if (right_number) {
+        filter.right_number = +right_number;
+    }
+
+    return filter;
 };
 
 export const isRecommendedTransform = (platform: CreatorPlatform, influencerIdsWithPlatform: string[]) => {
@@ -97,6 +106,46 @@ const lookalikeFilter = (value: CreatorAccount[]) => {
     const lookalikes = value.map((account) => `@${account.user_id}`);
 
     return lookalikes.join(' ');
+};
+
+const viewsFilter = (value: NullStringTuple) => {
+    return leftRightNumberTransform(value);
+};
+
+const audienceFilter = (value: NullStringTuple) => {
+    return leftRightNumberTransform(value);
+};
+
+const audienceLocationFilter = (value: LocationWeighted[]) => {
+    if (value.length <= 0) {
+        return undefined;
+    }
+
+    return value.map(locationTransform) || [];
+};
+
+const influencerLocationFilter = (value: LocationWeighted[]) => {
+    if (value.length <= 0) {
+        return undefined;
+    }
+
+    return value.map(locationTransform) || [];
+};
+
+const engagementFilter = (value: string | number) => {
+    const rate = +(+value / 100).toFixed(2);
+
+    return { value: rate, operator: 'gte' } as z.infer<typeof engagement_rate>;
+};
+
+const contactInfoFilter = (value: string[]) => {
+    const contactType = value.map((v) => {
+        if (v === 'email') {
+            return { type: 'email', action: 'should' };
+        }
+    });
+
+    return contactType.filter((v) => !!v) as z.infer<typeof with_contact>[];
 };
 
 export const prepareFetchCreatorsFiltered = ({
@@ -163,23 +212,23 @@ export const prepareFetchCreatorsFiltered = ({
     }
 
     if (params.views && platform !== 'instagram' && (params.views[0] || params.views[1])) {
-        body.filter.views = leftRightNumberTransform(params.views);
+        body.filter.views = viewsFilter(params.views);
     }
 
-    if (params.views && platform === 'instagram') {
-        body.filter.reels_plays = leftRightNumberTransform(params.views);
+    if (params.views && platform === 'instagram' && (params.views[0] || params.views[1])) {
+        body.filter.reels_plays = viewsFilter(params.views);
     }
 
     if (params.audience && (params.audience[0] || params.audience[1])) {
-        body.filter.followers = leftRightNumberTransform(params.audience);
+        body.filter.followers = audienceFilter(params.audience);
     }
 
-    if (audienceLocation && audienceLocation.length > 0) {
-        body.filter.audience_geo = audienceLocation.map(locationTransform) || [];
+    if (audienceLocation) {
+        body.filter.audience_geo = audienceLocationFilter(audienceLocation);
     }
 
-    if (influencerLocation && influencerLocation.length > 0) {
-        body.filter.geo = influencerLocation.map(locationTransform) || [];
+    if (influencerLocation) {
+        body.filter.geo = influencerLocationFilter(influencerLocation);
     }
 
     if (params.lastPost) {
@@ -187,11 +236,11 @@ export const prepareFetchCreatorsFiltered = ({
     }
 
     if (params.contactInfo) {
-        body.filter.with_contact = [{ type: 'email', action: 'should' }];
+        body.filter.with_contact = contactInfoFilter([params.contactInfo]);
     }
 
-    if (params.engagement && Number(params.engagement) >= 0 && Number(params.engagement / 100)) {
-        body.filter.engagement_rate = { value: Number((params.engagement / 100).toFixed(2)), operator: 'gte' };
+    if (params.engagement) {
+        body.filter.engagement_rate = engagementFilter(params.engagement);
     }
 
     if (params.only_recommended && params.recommendedInfluencers && featRecommended()) {
