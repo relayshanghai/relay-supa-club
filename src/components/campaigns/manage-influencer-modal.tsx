@@ -147,7 +147,7 @@ const FormSection = ({ creator: initialCreator, onClose, updateCampaignCreator }
                                     paid_amount: Number.parseFloat(e.target.value),
                                 }))
                             }
-                            value={creator.paid_amount?.toString()}
+                            value={creator.paid_amount?.toString() ?? ''}
                         />
                         {creator.paid_amount?.toString() !== initialCreator.paid_amount?.toString() && (
                             <p className="text-xs text-red-400">
@@ -163,13 +163,18 @@ const FormSection = ({ creator: initialCreator, onClose, updateCampaignCreator }
                             id="influencer-publication-date-input"
                             className={inputClass}
                             onChange={(e) => setCreator((c) => ({ ...c, publication_date: e.target.value }))}
-                            value={creator.publication_date?.toString()}
+                            value={
+                                creator.publication_date
+                                    ? // 'en-CA' locale formats the date in the "YYYY-MM-DD" format, which is what the HTML date input element expects.
+                                      new Date(creator.publication_date).toLocaleDateString('en-CA', {
+                                          formatMatcher: 'basic',
+                                      })
+                                    : ''
+                            }
                             type="date"
                         />
-                        {creator.publication_date?.toString() !== initialCreator.publication_date?.toString() && (
-                            <p className="text-xs text-red-400">
-                                {t(validateDate(creator.publication_date?.toString()))}
-                            </p>
+                        {creator.publication_date !== initialCreator.publication_date && (
+                            <p className="text-xs text-red-400">{t(validateDate(creator.publication_date ?? ''))}</p>
                         )}
                     </div>
                 </div>
@@ -199,7 +204,7 @@ const FormSection = ({ creator: initialCreator, onClose, updateCampaignCreator }
                                 id="influencer-next-action-input"
                                 className={inputClass}
                                 onChange={(e) => setCreator((c) => ({ ...c, next_step: e.target.value }))}
-                                value={creator.next_step?.toString()}
+                                value={creator.next_step?.toString() ?? ''}
                             />
                         </div>
                         {/* TODO: Sales */}
