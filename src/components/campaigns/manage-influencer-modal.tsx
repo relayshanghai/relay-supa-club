@@ -32,23 +32,24 @@ export interface ManageInfluencerModalProps extends Omit<ModalProps, 'children'>
     updateCampaignCreator: (creator: CampaignCreatorDB) => Promise<void>;
 }
 
-const validateNumberInput = (fee: string) => {
-    // must be a number
+const validateNumberInput = (fee?: string) => {
     if (!fee) {
         return '';
     }
     if (isNaN(Number(fee))) {
-        return 'Must be a number';
+        return 'campaigns.manageInfluencer.invalidNumber';
     }
+    return '';
 };
 
-const validateDate = (date: string) => {
+const validateDate = (date?: string) => {
     if (!date) {
         return '';
     }
     if (isNaN(Date.parse(date))) {
-        return 'Must be a valid date';
+        return 'campaigns.manageInfluencer.invalidDate';
     }
+    return '';
 };
 
 const inputClass =
@@ -64,22 +65,12 @@ const FormSection = ({ creator: initialCreator, onClose, updateCampaignCreator }
         await updateCampaignCreator(creator);
     }, [creator, updateCampaignCreator]);
 
-    const handleStatusSelect = (status: InfluencerOutreachStatus) => {
-        setCreator({ ...creator, status });
-    };
+    const invalidNumber = [creator.payment_rate?.toString(), creator.paid_amount?.toString()].some((field) =>
+        validateNumberInput(field),
+    );
 
-    const [influencerFee, setInfluencerFee] = useState(creator.payment_rate?.toString());
-    const [paymentDetails, setPaymentDetails] = useState(creator.payment_details || '');
-    const [paymentAmount, setPaymentAmount] = useState(creator.paid_amount?.toString());
-    const [publicationDate, setPublicationDate] = useState(creator.publication_date?.toString() || '');
-    const [nextPoint, setNextPoint] = useState(creator.next_step?.toString() || '');
-    // const [sales, setSales] = useState(creator.sales?.toString() || '');
-    const [address, setAddress] = useState(creator.address || '');
-    const [sampleStatus, setSampleStatus] = useState(creator.sample_status || '');
-
-    const submitDisabled =
-        [influencerFee, paymentAmount].some((field) => validateNumberInput(field)) ||
-        [publicationDate].some((field) => validateDate(field));
+    const invalidDate = [creator.publication_date?.toString()].some((field) => validateDate(field));
+    const submitDisabled = invalidNumber || invalidDate;
 
     return (
         <form
@@ -115,11 +106,21 @@ const FormSection = ({ creator: initialCreator, onClose, updateCampaignCreator }
                         </label>
                         <input
                             id="influencer-fee-input"
+                            type="number"
                             className={inputClass}
-                            onChange={(e) => setInfluencerFee(e.target.value)}
-                            value={influencerFee}
+                            onChange={(e) =>
+                                setCreator((c) => ({
+                                    ...c,
+                                    payment_rate: Number.parseFloat(e.target.value),
+                                }))
+                            }
+                            value={creator.payment_rate?.toString()}
                         />
-                        <p className="text-xs text-red-400">{validateNumberInput(influencerFee)}</p>
+                        {creator.payment_rate?.toString() !== initialCreator.payment_rate?.toString() && (
+                            <p className="text-xs text-red-400">
+                                {t(validateNumberInput(creator.payment_rate?.toString()))}
+                            </p>
+                        )}
                     </div>
                     <div className="flex flex-col gap-y-3">
                         <label htmlFor="influencer-payment-info-input" className="text-sm font-bold">
@@ -128,8 +129,8 @@ const FormSection = ({ creator: initialCreator, onClose, updateCampaignCreator }
                         <input
                             id="influencer-payment-info-input"
                             className={inputClass}
-                            onChange={(e) => setPaymentDetails(e.target.value)}
-                            value={paymentDetails}
+                            onChange={(e) => setCreator((c) => ({ ...c, payment_details: e.target.value }))}
+                            value={creator.payment_details || ''}
                         />
                     </div>
                     <div className="flex flex-col gap-y-3">
@@ -139,10 +140,20 @@ const FormSection = ({ creator: initialCreator, onClose, updateCampaignCreator }
                         <input
                             id="influencer-paid-amount-input"
                             className={inputClass}
-                            onChange={(e) => setPaymentAmount(e.target.value)}
-                            value={paymentAmount}
+                            type="number"
+                            onChange={(e) =>
+                                setCreator((c) => ({
+                                    ...c,
+                                    paid_amount: Number.parseFloat(e.target.value),
+                                }))
+                            }
+                            value={creator.paid_amount?.toString() ?? ''}
                         />
-                        <p className="text-xs text-red-400">{validateNumberInput(paymentAmount)}</p>
+                        {creator.paid_amount?.toString() !== initialCreator.paid_amount?.toString() && (
+                            <p className="text-xs text-red-400">
+                                {t(validateNumberInput(creator.paid_amount?.toString()))}
+                            </p>
+                        )}
                     </div>
                     <div className="flex flex-col gap-y-3">
                         <label htmlFor="influencer-publication-date-input" className="text-sm font-bold">
@@ -151,11 +162,22 @@ const FormSection = ({ creator: initialCreator, onClose, updateCampaignCreator }
                         <input
                             id="influencer-publication-date-input"
                             className={inputClass}
-                            onChange={(e) => setPublicationDate(e.target.value)}
-                            value={publicationDate}
+                            onChange={(e) =>
+                                setCreator((c) => ({ ...c, publication_date: new Date(e.target.value).toISOString() }))
+                            }
+                            value={
+                                creator.publication_date
+                                    ? // 'en-CA' locale formats the date in the "YYYY-MM-DD" format, which is what the HTML date input element expects.
+                                      new Date(creator.publication_date).toLocaleDateString('en-CA', {
+                                          formatMatcher: 'basic',
+                                      })
+                                    : ''
+                            }
                             type="date"
                         />
-                        <p className="text-xs text-red-400">{validateDate(publicationDate)}</p>
+                        {creator.publication_date !== initialCreator.publication_date && (
+                            <p className="text-xs text-red-400">{t(validateDate(creator.publication_date ?? ''))}</p>
+                        )}
                     </div>
                 </div>
                 <div className="flex w-full flex-col gap-y-3 px-3 sm:w-1/2">
@@ -166,7 +188,7 @@ const FormSection = ({ creator: initialCreator, onClose, updateCampaignCreator }
                         <select
                             id="status-dropdown"
                             data-testid="status-dropdown"
-                            onChange={(e) => handleStatusSelect(e.target.value as InfluencerOutreachStatus)}
+                            onChange={(e) => setCreator((c) => ({ ...c, status: e.target.value as any }))}
                             value={creator.status || ''}
                             className="w-fit cursor-pointer appearance-none rounded-md border border-gray-200 bg-primary-50 px-4 py-2 text-center text-sm font-semibold text-primary-500 outline-none duration-300 hover:bg-primary-100"
                         >
@@ -183,8 +205,8 @@ const FormSection = ({ creator: initialCreator, onClose, updateCampaignCreator }
                             <input
                                 id="influencer-next-action-input"
                                 className={inputClass}
-                                onChange={(e) => setNextPoint(e.target.value)}
-                                value={nextPoint}
+                                onChange={(e) => setCreator((c) => ({ ...c, next_step: e.target.value }))}
+                                value={creator.next_step?.toString() ?? ''}
                             />
                         </div>
                         {/* TODO: Sales */}
@@ -206,8 +228,8 @@ const FormSection = ({ creator: initialCreator, onClose, updateCampaignCreator }
                             <input
                                 id="influencer-address-input"
                                 className={inputClass}
-                                onChange={(e) => setAddress(e.target.value)}
-                                value={address}
+                                onChange={(e) => setCreator((c) => ({ ...c, address: e.target.value }))}
+                                value={creator.address || ''}
                             />
                         </div>
                         <div className="flex flex-col gap-y-3">
@@ -217,8 +239,8 @@ const FormSection = ({ creator: initialCreator, onClose, updateCampaignCreator }
                             <input
                                 id="influencer-sample-status-input"
                                 className={inputClass}
-                                onChange={(e) => setSampleStatus(e.target.value)}
-                                value={sampleStatus}
+                                onChange={(e) => setCreator((c) => ({ ...c, sample_status: e.target.value }))}
+                                value={creator.sample_status || ''}
                             />
                         </div>
                     </div>
