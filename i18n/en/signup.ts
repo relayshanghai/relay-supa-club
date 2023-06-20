@@ -32,5 +32,6 @@ const signup = {
         title4: 'Data Center',
         description4: 'See the impact of your campaigns',
     },
+    alreadySignedUp: 'Already signed up?',
 };
 export default signup;
