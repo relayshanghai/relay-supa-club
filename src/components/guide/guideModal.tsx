@@ -18,17 +18,18 @@ export const GuideModal = ({
     const selectedGuide = guidePage.modalInfo[section as keyof typeof guidePage.modalInfo];
 
     return (
-        <Modal visible={show} onClose={() => setShow(false)} title={t(`guidePage.modalInfo.${section}.title`) || ''}>
+        <Modal
+            visible={show}
+            maxWidth={`${section === 'discover' ? 'max-w-5xl' : 'max-w-lg'}`}
+            onClose={() => setShow(false)}
+            title={t(`guidePage.modalInfo.${section}.title`) || ''}
+        >
             <div className="flex flex-col rounded-full">
-                <p className="text-2xl font-semibold text-gray-500">{t(`guidePage.modalInfo.${section}.subtitle`)}</p>
-                <p className="text-sm font-semibold text-gray-500">{t(`guidePage.modalInfo.${section}.description`)}</p>
                 {Object.keys(selectedGuide['sections' as keyof typeof selectedGuide]).map((guideSection, index) => {
                     return (
-                        <div key={index} className="mt-4 flex flex-col gap-2">
-                            <p className="text-base font-semibold text-gray-700">
-                                {t(
-                                    `guidePage.modalInfo.${section}.sections.${guideSection}.title`
-                                )}
+                        <div key={index} className="mt-6 flex flex-col gap-2">
+                            <p className="text-xl font-semibold text-gray-700">
+                                {t(`guidePage.modalInfo.${section}.sections.${guideSection}.title`)}
                             </p>
                             <p className="font-regular text-sm text-gray-500">
                                 {t(`guidePage.modalInfo.${section}.sections.${guideSection}.description`)}
@@ -36,13 +37,16 @@ export const GuideModal = ({
                         </div>
                     );
                 })}
-                <div className="mt-4 flex gap-4">
+                <div className="mt-8 flex justify-end gap-4">
+                    <p
+                        className="flex cursor-pointer flex-row items-center gap-2 text-sm font-medium text-primary-700"
+                        onClick={() => setShow(false)}
+                    >
+                        {t('guidePage.goBack')}
+                    </p>
                     <Link href={selectedGuide.url}>
                         <Button className="flex flex-row gap-3">{t(`guidePage.modalInfo.${section}.goto`)}</Button>
                     </Link>
-                    <Button className="flex flex-row gap-3" onClick={() => setShow(false)}>
-                        {t('guidePage.goBack')}
-                    </Button>
                 </div>
             </div>
         </Modal>

@@ -34,11 +34,9 @@ describe('GuideCards', () => {
         it('should open modal and close it', () => {
             cy.mount(<GuideCards cardName={`${section}`} />);
             cy.contains('Learn more').click();
-            cy.contains(sectionDetails.subtitle);
-            cy.contains(sectionDetails.description);
+            cy.contains(sectionDetails.title);
             cy.contains(guidePage.goBack).click();
-            cy.contains(sectionDetails.subtitle).should('not.exist');
-            cy.contains(sectionDetails.description).should('not.exist');
+            cy.contains(sectionDetails.title).should('not.exist');
         });
     });
 });

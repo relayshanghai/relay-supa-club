@@ -25,8 +25,6 @@ describe('checks restricted to guide page', () => {
             const sectionData = guidePage.modalInfo[section as keyof typeof guidePage.modalInfo];
             cy.get('[data-testid="guide-modal-' + section + '"]').click();
             cy.contains(sectionData.title);
-            cy.contains(sectionData.subtitle);
-            cy.contains(sectionData.description);
             cy.contains('Go to ' + sectionData.title).click();
             cy.url().should('not.include', '/guide');
             cy.url().should('include', sectionData.url);
@@ -40,8 +38,6 @@ describe('checks restricted to guide page', () => {
             const sectionData = guidePage.modalInfo[section as keyof typeof guidePage.modalInfo];
             cy.get('[data-testid="guide-modal-' + section + '"]').click();
             cy.contains(sectionData.title);
-            cy.contains(sectionData.subtitle);
-            cy.contains(sectionData.description);
             cy.contains(guidePage.goBack).click();
             cy.url().should('include', '/guide');
         })
