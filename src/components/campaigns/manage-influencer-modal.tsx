@@ -162,7 +162,9 @@ const FormSection = ({ creator: initialCreator, onClose, updateCampaignCreator }
                         <input
                             id="influencer-publication-date-input"
                             className={inputClass}
-                            onChange={(e) => setCreator((c) => ({ ...c, publication_date: e.target.value }))}
+                            onChange={(e) =>
+                                setCreator((c) => ({ ...c, publication_date: new Date(e.target.value).toISOString() }))
+                            }
                             value={
                                 creator.publication_date
                                     ? // 'en-CA' locale formats the date in the "YYYY-MM-DD" format, which is what the HTML date input element expects.
