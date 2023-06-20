@@ -11,7 +11,6 @@ export const StepFour = ({
     setAndValidate,
     loading,
     onNext,
-    onBack,
 }: {
     companyName: string;
     companyWebsite: string;
@@ -19,7 +18,6 @@ export const StepFour = ({
     setAndValidate: (type: SignupInputTypes, value: string) => void;
     loading: boolean;
     onNext: any;
-    onBack: () => void;
 }) => {
     const { t } = useTranslation();
 
@@ -53,14 +51,10 @@ export const StepFour = ({
                 options={companySizeOptions}
                 onValueChange={handleCompanySizeChange}
             />
-            <div className="flex justify-between">
-                <Button variant="secondary" className="w-32 lg:w-44" onClick={onBack}>
-                    {t('signup.back')}
-                </Button>
-                <Button disabled={loading} type="submit" className="w-32 lg:w-44" onClick={onNext}>
-                    {t('signup.next')}
-                </Button>
-            </div>
+
+            <Button disabled={loading} type="submit" className="w-full" onClick={onNext}>
+                {t('signup.next')}
+            </Button>
         </>
     );
 };

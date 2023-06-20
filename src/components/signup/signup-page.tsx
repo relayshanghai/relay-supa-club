@@ -125,13 +125,6 @@ const SignUpPage = ({ selectedPriceId }: { selectedPriceId: string }) => {
         setCurrentStep(currentStep + 1);
     };
 
-    const onBack = () => {
-        if (currentStep === 1) {
-            return;
-        }
-        setCurrentStep(currentStep - 1);
-    };
-
     const handleProfileCreate = async (formData: FieldValues) => {
         const { firstName, lastName, phoneNumber, email, password } = formData;
         const data = {
@@ -211,7 +204,6 @@ const SignUpPage = ({ selectedPriceId }: { selectedPriceId: string }) => {
                                     validationErrors={validationErrors}
                                     loading={loading}
                                     onNext={onNext}
-                                    onBack={onBack}
                                 />
                             )}
 
@@ -220,7 +212,6 @@ const SignUpPage = ({ selectedPriceId }: { selectedPriceId: string }) => {
                                     setSelectedCategory={setSelectedCategory}
                                     loading={loading}
                                     onNext={onNext}
-                                    onBack={onBack}
                                 />
                             )}
 
@@ -232,7 +223,6 @@ const SignUpPage = ({ selectedPriceId }: { selectedPriceId: string }) => {
                                     setAndValidate={setAndValidate}
                                     loading={loading}
                                     onNext={onNext}
-                                    onBack={onBack}
                                 />
                             )}
 
