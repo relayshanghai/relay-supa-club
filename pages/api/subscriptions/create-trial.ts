@@ -49,6 +49,13 @@ const postHandler: NextApiHandler = async (req, res) => {
         throw new RelayError('Missing company ID', httpCodes.BAD_REQUEST);
     }
 
+    const subscriptions = await stripeClient.subscriptions.list({
+        customer: customerId,
+    });
+    if (subscriptions.data.length > 0) {
+        return res.status(httpCodes.BAD_REQUEST).json({ error: createSubscriptionErrors.alreadySubscribed });
+    }
+
     const price = (await stripeClient.prices.retrieve(priceId, {
         expand: ['product'],
     })) as Stripe.Response<StripePriceWithProductMetadata>;
