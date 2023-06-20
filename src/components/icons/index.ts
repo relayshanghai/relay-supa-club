@@ -51,3 +51,6 @@ export { default as SquarePlus } from './SquarePlus';
 export { default as ArrowRightOnRectangle } from './ArrowRightOnRectangle';
 export { default as ChevronLeft } from './ChevronLeft';
 export { default as ChevronRight } from './ChevronRight';
+export { default as CheckIcon } from './CheckIcon';
+export { default as CrossIcon } from './CrossIcon';
+export { default as PlusIcon } from './PlusIcon';

@@ -24,7 +24,8 @@ export type LocationWeighted = {
 };
 export type CreatorSearchTag = { tag: string; value: string };
 
-export type SubscriptionPeriod = 'monthly' | 'annually' | 'quarterly';
+export type SubscriptionPeriod = 'monthly' | 'quarterly' | 'annually';
+export type SubscriptionTier = 'diy' | 'diyMax' | 'VIP';
 export type RelayPlan = {
     currency: string;
     prices: {

@@ -31,5 +31,6 @@ const signup = {
         title4: '数据中心',
         description4: 'KOL 数据一目了然',
     },
+    alreadySignedUp: '已经注册过账号？',
 };
 export default signup;
