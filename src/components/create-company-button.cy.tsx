@@ -20,7 +20,9 @@ describe('<CreateCompanyButton />', () => {
 
         cy.contains('Click Me').click();
 
-        cy.wait('@rudderstack-api-call');
+        cy.wait('@rudderstack-api-call', {
+            timeout: 30000,
+        });
     });
 });
 
