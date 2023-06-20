@@ -1,6 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
-import { AI_EMAIL_SUBSCRIPTION_USAGE_LIMIT } from 'src/constants/openai';
 import { createSubscriptionErrors } from 'src/errors/subscription';
 import { getCompanyCusId, updateCompanySubscriptionStatus, updateCompanyUsageLimits } from 'src/utils/api/db';
 import { getSubscription } from 'src/utils/api/stripe/helpers';
@@ -9,6 +8,7 @@ import { isCompanyOwnerOrRelayEmployee } from 'src/utils/auth';
 import { serverLogger } from 'src/utils/logger-server';
 import { unixEpochToISOString } from 'src/utils/utils';
 import type Stripe from 'stripe';
+import type { RelayPlanStripeProduct } from 'types';
 
 export type SubscriptionDiscountRenewPostBody = {
     company_id: string;
@@ -75,15 +75,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             });
 
             const price = await stripeClient.prices.retrieve(price_id);
-            const product = await stripeClient.products.retrieve(price.product as string);
+            const product = (await stripeClient.products.retrieve(price.product as string)) as RelayPlanStripeProduct;
 
             const subscription_start_date = unixEpochToISOString(subscription.start_date);
             if (!subscription_start_date) throw new Error('Missing subscription start date');
-
+            const { profiles, searches, ai_emails } = product.metadata;
+            if (!profiles || !searches || !ai_emails) {
+                serverLogger('Missing product metadata: ' + JSON.stringify({ product, price }), 'error', true);
+                throw new Error('Missing product metadata');
+            }
             await updateCompanyUsageLimits({
-                profiles_limit: product.metadata.profiles,
-                searches_limit: product.metadata.searches,
-                ai_email_generator_limit: AI_EMAIL_SUBSCRIPTION_USAGE_LIMIT,
+                profiles_limit: profiles,
+                searches_limit: searches,
+                ai_email_generator_limit: ai_emails,
                 id: company_id,
             });
 

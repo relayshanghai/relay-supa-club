@@ -59,6 +59,10 @@ export type RelayAccountPlanMetadata = {
     trial_searches?: string;
     /** How many profiles are allowed during the trial period (stringified number) */
     trial_profiles?: string;
+    /** How many AI email generations are allowed in trial  period (stringified number)   */
+    trial_ai_emails?: string;
+    /** How many AI email generations are allowed pre month (stringified number)   */
+    ai_emails?: string;
 };
 export interface StripePriceWithProductMetadata extends Stripe.Price {
     product: RelayPlanStripeProduct;
