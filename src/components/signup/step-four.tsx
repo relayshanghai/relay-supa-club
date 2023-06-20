@@ -3,23 +3,25 @@ import { Input } from '../input';
 import { Radio } from '../ui/radio';
 import { Button } from '../button';
 import type { SignupInputTypes } from 'src/utils/validation/signup';
+import { isMissing } from 'src/utils/utils';
+import type { SignUpValidationErrors } from './signup-page';
 
 export const StepFour = ({
     companyName,
     companyWebsite,
     setSelectedSize,
     setAndValidate,
+    validationErrors,
     loading,
     onNext,
-    onBack,
 }: {
     companyName: string;
     companyWebsite: string;
     setSelectedSize: (newValue: string) => void;
     setAndValidate: (type: SignupInputTypes, value: string) => void;
+    validationErrors: SignUpValidationErrors;
     loading: boolean;
     onNext: any;
-    onBack: () => void;
 }) => {
     const { t } = useTranslation();
 
@@ -32,6 +34,11 @@ export const StepFour = ({
     const handleCompanySizeChange = (newValue: string) => {
         setSelectedSize(newValue);
     };
+
+    const invalidFormInput =
+        isMissing(companyName) || validationErrors.companyName !== '' || validationErrors.companyWebsite !== '';
+
+    const submitDisabled = invalidFormInput || loading;
 
     return (
         <>
@@ -53,14 +60,10 @@ export const StepFour = ({
                 options={companySizeOptions}
                 onValueChange={handleCompanySizeChange}
             />
-            <div className="flex justify-between">
-                <Button variant="secondary" className="w-32 lg:w-44" onClick={onBack}>
-                    {t('signup.back')}
-                </Button>
-                <Button disabled={loading} type="submit" className="w-32 lg:w-44" onClick={onNext}>
-                    {t('signup.next')}
-                </Button>
-            </div>
+
+            <Button disabled={submitDisabled} type="submit" className="w-full" onClick={onNext}>
+                {t('signup.next')}
+            </Button>
         </>
     );
 };

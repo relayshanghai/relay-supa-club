@@ -3,6 +3,7 @@ import { Input } from '../input';
 import { Button } from '../button';
 import type { SignUpValidationErrors } from './signup-page';
 import type { SignupInputTypes } from 'src/utils/validation/signup';
+import { isMissing } from 'src/utils/utils';
 
 export const StepTwo = ({
     email,
@@ -12,7 +13,6 @@ export const StepTwo = ({
     setAndValidate,
     loading,
     onNext,
-    onBack,
 }: {
     email: string;
     password: string;
@@ -21,9 +21,15 @@ export const StepTwo = ({
     setAndValidate: (type: SignupInputTypes, value: string) => void;
     loading: boolean;
     onNext: any;
-    onBack: () => void;
 }) => {
     const { t } = useTranslation();
+    const invalidFormInput =
+        isMissing(email, password, confirmPassword) ||
+        validationErrors.email !== '' ||
+        validationErrors.password !== '' ||
+        validationErrors.confirmPassword !== '';
+    const submitDisabled = invalidFormInput || loading;
+
     return (
         <>
             <Input
@@ -53,14 +59,9 @@ export const StepTwo = ({
                 required
                 onChange={(e) => setAndValidate('confirmPassword', e.target.value)}
             />
-            <div className="flex justify-between">
-                <Button variant="secondary" className="w-32 lg:w-44" onClick={onBack}>
-                    {t('signup.back')}
-                </Button>
-                <Button disabled={loading} type="submit" className="w-32 lg:w-44" onClick={onNext}>
-                    {t('signup.next')}
-                </Button>
-            </div>
+            <Button disabled={submitDisabled} type="submit" className="w-full" onClick={onNext}>
+                {t('signup.next')}
+            </Button>
         </>
     );
 };

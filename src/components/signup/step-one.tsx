@@ -3,6 +3,7 @@ import { Input } from '../input';
 import { Button } from '../button';
 import type { SignUpValidationErrors } from './signup-page';
 import type { SignupInputTypes } from 'src/utils/validation/signup';
+import { isMissing } from 'src/utils/utils';
 
 export const StepOne = ({
     firstName,
@@ -22,6 +23,10 @@ export const StepOne = ({
     onNext: any;
 }) => {
     const { t } = useTranslation();
+    const invalidFormInput =
+        isMissing(firstName, lastName) || validationErrors.firstName !== '' || validationErrors.lastName !== '';
+    const submitDisabled = invalidFormInput || loading;
+
     return (
         <>
             <Input
@@ -47,7 +52,7 @@ export const StepOne = ({
                 value={phoneNumber}
                 onChange={(e) => setAndValidate('phoneNumber', e.target.value)}
             />
-            <Button disabled={loading} className="w-full" onClick={onNext}>
+            <Button disabled={submitDisabled} className="w-full" onClick={onNext}>
                 {t('signup.next')}
             </Button>
         </>

@@ -8,12 +8,10 @@ import { companyCategories } from './company-categories';
 export const StepThree = ({
     loading,
     onNext,
-    onBack,
     setSelectedCategory,
 }: {
     loading: boolean;
     onNext: any;
-    onBack: () => void;
     setSelectedCategory: (newValue: string) => void;
 }) => {
     const { t } = useTranslation();
@@ -39,15 +37,11 @@ export const StepThree = ({
                 options={companyCategories}
                 valueName="companyCategory"
                 setValue={setValue}
+                className="mb-4"
             />
-            <div className="flex justify-between">
-                <Button variant="secondary" className="w-32 lg:w-44" onClick={onBack}>
-                    {t('signup.back')}
-                </Button>
-                <Button disabled={loading} type="submit" className="w-32 lg:w-44" onClick={handleSubmit(onSubmit)}>
-                    {t('signup.next')}
-                </Button>
-            </div>
+            <Button disabled={loading} type="submit" className="w-full" onClick={handleSubmit(onSubmit)}>
+                {t('signup.next')}
+            </Button>
         </>
     );
 };

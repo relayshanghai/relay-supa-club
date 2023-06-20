@@ -112,24 +112,17 @@ const SignUpPage = ({ selectedPriceId }: { selectedPriceId: string }) => {
         }
     };
 
-    const onNext = () => {
+    const onNext = async () => {
         if (currentStep === steps.length) {
             return;
         }
         if (currentStep === 2) {
-            handleProfileCreate(formData);
+            await handleProfileCreate(formData);
         }
         if (currentStep === 4) {
-            handleCompanyCreate(formData);
+            await handleCompanyCreate(formData);
         }
         setCurrentStep(currentStep + 1);
-    };
-
-    const onBack = () => {
-        if (currentStep === 1) {
-            return;
-        }
-        setCurrentStep(currentStep - 1);
     };
 
     const handleProfileCreate = async (formData: FieldValues) => {
@@ -211,7 +204,6 @@ const SignUpPage = ({ selectedPriceId }: { selectedPriceId: string }) => {
                                     validationErrors={validationErrors}
                                     loading={loading}
                                     onNext={onNext}
-                                    onBack={onBack}
                                 />
                             )}
 
@@ -220,7 +212,6 @@ const SignUpPage = ({ selectedPriceId }: { selectedPriceId: string }) => {
                                     setSelectedCategory={setSelectedCategory}
                                     loading={loading}
                                     onNext={onNext}
-                                    onBack={onBack}
                                 />
                             )}
 
@@ -230,9 +221,9 @@ const SignUpPage = ({ selectedPriceId }: { selectedPriceId: string }) => {
                                     companyWebsite={companyWebsite}
                                     setSelectedSize={setSelectedSize}
                                     setAndValidate={setAndValidate}
+                                    validationErrors={validationErrors}
                                     loading={loading}
                                     onNext={onNext}
-                                    onBack={onBack}
                                 />
                             )}
 
