@@ -42,10 +42,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             const subscriptions = await stripeClient.subscriptions.list({
                 customer: cusId,
-                status: 'active',
             });
-            const activeSubscription = subscriptions.data[0];
-            if (activeSubscription) {
+            if (subscriptions.data.length > 0) {
                 return res.status(httpCodes.BAD_REQUEST).json({ error: createSubscriptionErrors.alreadySubscribed });
             }
             const diyPrices = (await stripeClient.prices.list({
