@@ -4,123 +4,121 @@ const guidePage = {
     goBack: 'Back to Guide',
     cards: {
         discover: {
-            title: 'Discover KOL',
+            title: '发现KOL',
             description:
-                'With a database of over 275 million accounts across 3 platforms, we give you the data driven tools you need to find the perfect influencers.',
+                '我们的数据库涵盖了3个平台共计超过2.75亿个的红人帐户，并提供数据驱动工具助您找到完美的网红达人。',
         },
         campaigns: {
-            title: 'Manage Campaigns',
+            title: '项目管理',
             description:
-                'Influencer marketing is time consuming enough as it is, that’s why we provide you our Campaign CRM system to keep yourself organized.',
+                '考虑到网红营销本身就需要耗费时间，我们为您提供项目CRM系统，助您井然有序地管理项目下的一切相关事务。',
         },
         performance: {
-            title: 'Track Performance',
-            description:
-                'No more spreadsheets - just input the content link and we’ll track views, likes, comments, and sales for you!',
+            title: '追踪绩效',
+            description: '您将不再需要电子表格 - 只需输入内容链接，我们将为您追踪浏览量、点赞数、评论和销售情况！',
         },
         account: {
-            title: 'Monitor Your Usage',
-            description:
-                'Check to see who has access to your campaigns and how many influencer profiles you have opened.',
+            title: '监控您的使用情况',
+            description: '查看谁有您管理项目的访问权，以及您打开了多少位网红达人的档案。',
         },
         aiEmailGenerator: {
-            title: 'Tailor Your Outreach',
-            description: 'Increase your conversion rates with customized emails to send to potential influencers.',
+            title: '量身定制您的外联合作',
+            description: '向潜在的网红达人发送个性化的电子邮件，提高转化率',
         },
     },
     modalInfo: {
         discover: {
-            title: 'Discover KOL',
+            title: '发现KOL',
             url: '/dashboard',
             goto: 'Go to Discover',
             sections: [
                 {
-                    title: 'Topic-based Search',
+                    title: '基于主题的搜索',
                     description:
-                        'By analyzing profile and content information for all influencer accounts, we use topics as a way of labeling the influencers according to their actual content and channel focus. Topics are a great way to find the most relevant influencers in a specific niche. Try keeping your topics to 3-4 similar topics for best results. If you add a topic unrelated to the others, results will decrease as it’s hard to find influencers that are relevant to diverse topics!',
+                        '我们根据网红达人在社交媒体上发布的内容和个人资料，为他们打上与特定领域相关的标签。这是一个可以帮助您寻找相关的网红达人的好方法。为了获得最佳的搜索结果，我们建议尽量将标签保持在3-4个相似主题范围内。如果添加与其他无关的标签，搜索结果会减少，因为很难找到同时与多个标签相关的网红达人！',
                 },
                 {
-                    title: 'Keywords',
+                    title: '关键词',
                     description:
-                        'We look at Youtube video transcripts and post descriptions for recent videos to find influencers talking about your keyword. This is a great way to broaden your search, and include influencers with a recent interest in your keyword alongside the results from your topic search. Try to think of a phrase, or buzzword that influencers you’re looking for would use in the video as we are examining their transcripts!',
+                        '我们查看YouTube上最近发布的视频转文字文档和视频描述，找到提及您搜索关键词的网红达人。这是一个扩大搜索范围的好方法，可以将最近对您搜索关键词感兴趣的网红达人一并包括在内。我们通常会分析网红达人在视频中使用的短语或流行词的转录文本，来寻找符合您意向的网红达人。',
                 },
                 {
-                    title: 'Hashtags',
+                    title: '标签',
                     description:
-                        'Hashtags are how we recommend broadening your searches on Instagram and TikTok. By adding hashtags into your search, we will show you influencers who have used these hashtags in their last 100 posts alongside the results from your topic search. You can include multiple hashtags to really broaden your results, however sometimes influencers will include hashtags that aren’t actually related to their content.',
+                        '在Instagram和TikTok上，我们推荐使用标签来扩大搜索范围。将相应的话题标签添加到搜索中，我们将向您展示最近发布的100篇帖子中使用了这些标签的网红达人，并一并展示您所使用的主题搜索结果。您可以添加多个标签以增加搜索结果，但有时网红达人自己添加的标签并不总是与其实际发布的内容密切相关。',
                 },
                 {
-                    title: 'Filter by Influencer and Audience',
+                    title: '按网红达人与受众进行筛选',
                     description:
-                        'These filters are used to limit the results you see to your target niche. You can target an audience or influencer location based on what markets you are looking to generate sales, or develop brand awareness. We recommend setting the audience location to greater than 30% in the market you’re looking to generate sales in. Try focusing on microinfluencer for better ROI by limiting the followers from 10k - 1m.',
+                        '这些筛选条件将帮助您把检索到的结果限定在您的目标领域内。您可以根据所希望达成销售或建立品牌知名度的市场，来确定受众或网红达人的所在地。我们建议在您所希望达成销售的市场中将受众定位设置为大于30％。可以试着重点关注粉丝数量在10,000到1,000,000之间的尾部和腰部达人，以获得更好的投资回报率（ROI）。',
                 },
                 {
-                    title: 'Engagement Rate',
+                    title: '互动率',
                     description:
-                        'The formula for calculating engagement rate may vary across the industry as there isn’t one recognized way to calculate it. At relay.club we divide Average Likes for the last 30 posts by the total number of followers.',
+                        '互动率的计算公式可能因行业而异，目前尚未有一种公认的标准方法来计算互动率。在relay.club，我们通过用达人最近发布的30篇帖子的平均点赞数，除以粉丝总数来计算得出互动率。',
                 },
                 {
-                    title: 'Contact Info',
+                    title: '联系方式',
                     description:
-                        'To find the contact information for an influencer account, we need to scrape their information from their profile. Many influencers choose not to put this information in their profile, and so we aren’t able to collect it. We are working on new ways to collect this information, but for now showing only results with email available will be a much smaller pool of influencers than without.',
+                        '要找到网红达人的联系方式，我们需要通过爬虫从他们的个人资料中抓取信息。但许多达人不愿在个人资料中披露这些信息，所以我们无法收集到。我们正在研究寻找新的方法来收集这些信息，但目前来看，仅显示有可用电子邮件的达人会比显示无电子邮件信息的达人更精确地定位。',
                 },
             ],
         },
         campaigns: {
-            title: 'Campaigns',
+            title: '项目管理',
             url: '/campaigns',
             goto: 'Go to Campaigns',
             sections: [
                 {
-                    title: 'Tracking your outreach',
+                    title: '追踪您的外联合作',
                     description:
-                        'Once you add an influencer to your campaigns, move them through the influencer outreach funnel. You will first see anyone you added in “to contact” - once you’ve emailed or reached out, change their status to “contacted” and we’ll move them to the appropriate tab.',
+                        '当您在项目中添加一个网红达人，他们会进入达人漏斗筛选流程。您首先会在“待联系”列表中看到他们 - 当您通过电子邮件或其他方式与他们联系后，可将其状态更改为“已联系”，然后他们会移动到相对应的状态下。',
                 },
                 {
                     title: '',
                     description:
-                        'Set the status to “in progress” if the influencer has responded. Once you’ve negotiated a deal successfully they’re “confirmed”. Finally, after they’ve posted, you can change to “posted” and remember to add the post link so we can track the engagements for you!',
+                        '如果达人已回复，请将状态设置为“进行中”。当您与他们达成交易时，需要将状态改为“已确认”。最后，当达人发布了内容后，请将状态更改为“已发布”并添加发布链接，以便我们为您追踪互动率！',
                 },
                 {
                     title: '',
                     description:
-                        'Sometimes it just doesn’t work out, change status to “ignored” if an influencer hasn’t responded to you after a few weeks, or “rejected” if they don’t think it’s a good fit.',
+                        '有时事与愿违。如果几周了达人还没有回复您，可将状态更改为“已忽略”。如果他们认为项目不合适，也可将状态更改为“已拒绝”。',
                 },
             ],
         },
         performance: {
-            title: 'Performance',
+            title: '追踪绩效',
             url: '/performance',
             goto: 'Go to Performance',
             sections: [
                 {
-                    title: 'You provide the link, we’ll handle the tracking ',
+                    title: '您提供链接，我们负责跟踪数据',
                     description:
-                        'Once the influencer has posted, click on the “Content” button in the campaign table under the ‘Posted’ tab to add the post directly to your campaign. From there, we will start tracking the overall views, likes, and comments. You can check out your company’s overall performance by clicking “Performance” on the left side of your dashboard. Here you will see overall posts, and a summary of total views, likes, comments, and sales.',
+                        '达人发布帖子后，你需要在项目管理的“已发布”状态下，点击“内容”按钮并添加链接，即可开始追踪总浏览量、点赞数和评论。通过点击控制面板左侧的“数据中心”按钮，您可以查看公司的整体绩效表现，包括帖子总数和总的浏览量、点赞数、评论和销售情况的摘要。',
                 },
             ],
         },
         account: {
-            title: 'My Account',
+            title: '监控您的使用情况',
             url: '/account',
             goto: 'Go to My Account',
             sections: [
                 {
-                    title: 'Manage your teams efforts',
+                    title: '管理团队合作',
                     description:
-                        'The ‘My Account’ section is there to keep track of the details for you. See which team members are signed up on relay.club, how many Searches and Influencer Reports you’ve opened so far this month, and how many you have left. If you find you’re running out too quickly, get in touch with our sales team to upgrade your account!',
+                        '“我的帐户”旨在为您跟踪具体的细节信息。您可以在此查看已在relay.club上注册的团队成员、本月迄今为止的搜索次数，已查看网红达人的报告数，以及剩余的搜索额度。如果发现您的配额使用过快，请与我们的销售团队联系升级您的账户！',
                 },
             ],
         },
         aiEmailGenerator: {
-            title: 'AI Email',
+            title: '量身定制您的外联合作',
             goto: 'Go to AI Email',
             url: '/ai-email-generator',
             sections: [
                 {
-                    title: 'Leverage the power of AI in your outreach',
+                    title: '利用AI技术赋能您的外联合作',
                     description:
-                        'We’ve incorporated OpenAI technology into our email template generator. Just provide the information in the form and we’ll create a high conversion email and subject line for you that incorporates both your product information and details from the influencers account to make your emails stand out from the crowd.',
+                        '嵌入OpenAI的技术，我们的电子邮件模板生成器可以为您创建一封包含您产品信息和网红达人账户详细信息的高转化电子邮件和主题。只需要填写一个表格，让您的电子邮件在众多邮件中脱颖而出。',
                 },
             ],
         },

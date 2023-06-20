@@ -28,9 +28,11 @@ export const GuideModal = ({
                 {Object.keys(selectedGuide['sections' as keyof typeof selectedGuide]).map((guideSection, index) => {
                     return (
                         <div key={index} className="mt-6 flex flex-col gap-2">
-                            <p className="text-xl font-semibold text-gray-700">
-                                {t(`guidePage.modalInfo.${section}.sections.${guideSection}.title`)}
-                            </p>
+                            {t(`guidePage.modalInfo.${section}.sections.${guideSection}.title`) !== '' && (
+                                <p className="text-xl font-semibold text-gray-700">
+                                    {t(`guidePage.modalInfo.${section}.sections.${guideSection}.title`)}
+                                </p>
+                            )}
                             <p className="font-regular text-sm text-gray-500">
                                 {t(`guidePage.modalInfo.${section}.sections.${guideSection}.description`)}
                             </p>
