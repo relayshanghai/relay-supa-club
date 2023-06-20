@@ -5,7 +5,63 @@ describe('Main pages happy paths', () => {
     beforeEach(async () => {
         await deleteDB('app-cache');
     });
+    it.only('Can sign up new users using signup wizard', () => {
+        const randomEmail = `test${Math.floor(Math.random() * 1000000)}@test.com`;
 
+        cy.switchToEnglish();
+        cy.visit('signup');
+        cy.contains('Verify your number to get started');
+
+        // Carousel
+        cy.contains('Discover');
+        cy.contains('Project Management').should('not.exist');
+        cy.contains('Find the perfect influencer without all the hassle');
+
+        cy.contains('label', 'First Name').within(() => {
+            cy.get('input').should('have.attr', 'placeholder', 'Jane').type('Joe');
+        });
+        cy.contains('label', 'Last Name').within(() => {
+            cy.get('input').should('have.attr', 'placeholder', 'Doe').type('Smith');
+        });
+        cy.contains('label', 'Phone Number').within(() => {
+            cy.get('input').should('have.attr', 'placeholder', '+1 (000) 000-0000').type('1234567890');
+        });
+        cy.contains('button', 'Next').click();
+
+        cy.contains('Add an email and password to your account');
+        cy.contains('label', 'Email').within(() => {
+            cy.get('input').should('have.attr', 'placeholder', 'you@site.com').type(randomEmail);
+        });
+        cy.contains('label', 'Password').within(() => {
+            cy.get('input').should('have.attr', 'placeholder', 'Enter your password').type('test1234');
+            cy.contains('Must be at least 10 characters long');
+            cy.get('input').clear().type('test12345678');
+        });
+        cy.contains('label', 'Confirm Password').within(() => {
+            cy.get('input').should('have.attr', 'placeholder', 'Confirm your password').type('test12345678');
+        });
+        cy.contains('button', 'Next').click();
+
+        cy.contains('What category of product do you sell?');
+        cy.get('input').click();
+        cy.contains('AR/VR/XR').click();
+        cy.contains('button', 'Next').click();
+
+        cy.contains('Tell us about your Company');
+        cy.contains('label', 'Company').within(() => {
+            cy.get('input').should('have.attr', 'placeholder', 'Enter your company name').type('Test Company');
+        });
+        cy.contains('label', 'Website').within(() => {
+            cy.get('input').should('have.attr', 'placeholder', 'www.site.com').type('https://test.com');
+        });
+        cy.contains('Size');
+        cy.contains('11-50').click();
+        cy.contains('button', 'Next').click();
+
+        // carousel has moved to second slide
+        cy.contains('Find the perfect influencer without all the hassle').should('not.exist');
+        cy.contains('Our filters let you target your niche audience');
+    });
     it('can log in and load search page and switch language', () => {
         setupIntercepts();
         cy.visit('/');
