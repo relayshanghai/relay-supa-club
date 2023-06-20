@@ -1,6 +1,5 @@
 import type { NextApiHandler } from 'next';
 import httpCodes from 'src/constants/httpCodes';
-import { AI_EMAIL_SUBSCRIPTION_USAGE_LIMIT, AI_EMAIL_TRIAL_USAGE_LIMIT } from 'src/constants/openai';
 import { createSubscriptionErrors } from 'src/errors/subscription';
 import { ApiHandler, RelayError } from 'src/utils/api-handler';
 import { updateCompanyUsageLimits, updateCompanySubscriptionStatus } from 'src/utils/api/db';
@@ -49,15 +48,33 @@ const postHandler: NextApiHandler = async (req, res) => {
         throw new RelayError('Missing company ID', httpCodes.BAD_REQUEST);
     }
 
+    const subscriptions = await stripeClient.subscriptions.list({
+        customer: customerId,
+    });
+    if (subscriptions.data.length > 0) {
+        return res.status(httpCodes.BAD_REQUEST).json({ error: createSubscriptionErrors.alreadySubscribed });
+    }
+
     const price = (await stripeClient.prices.retrieve(priceId, {
         expand: ['product'],
     })) as Stripe.Response<StripePriceWithProductMetadata>;
     if (!price) {
         throw new RelayError('Failed to retrieve price');
     }
-    const { trial_days, trial_profiles, trial_searches } = price.product.metadata;
+    const { trial_days, trial_profiles, trial_searches, trial_ai_emails, profiles, searches, ai_emails } =
+        price.product.metadata;
 
-    if (!trial_days || Number.isNaN(Number.parseInt(trial_days)) || !trial_profiles || !trial_searches) {
+    if (
+        !trial_days ||
+        Number.isNaN(Number.parseInt(trial_days)) ||
+        !trial_profiles ||
+        !trial_searches ||
+        !trial_ai_emails ||
+        !profiles ||
+        !searches ||
+        !ai_emails
+    ) {
+        serverLogger('Missing product metadata: ' + JSON.stringify({ priceId, price }), 'error', true);
         throw new RelayError('Missing product metadata', httpCodes.INTERNAL_SERVER_ERROR, { sendToSentry: true });
     }
 
@@ -75,18 +92,13 @@ const postHandler: NextApiHandler = async (req, res) => {
         return res.status(httpCodes.BAD_REQUEST).json({ error: createSubscriptionErrors.unableToActivateSubscription });
     }
 
-    if (!price?.product?.metadata?.profiles || !price.product.metadata.searches) {
-        serverLogger(new Error('Missing metadata'), 'error', true);
-        return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
-    }
-
     await updateCompanyUsageLimits({
-        profiles_limit: price.product.metadata.profiles,
-        searches_limit: price.product.metadata.searches,
-        ai_email_generator_limit: AI_EMAIL_SUBSCRIPTION_USAGE_LIMIT,
+        profiles_limit: profiles,
+        searches_limit: searches,
+        ai_email_generator_limit: ai_emails,
         trial_profiles_limit: trial_profiles,
         trial_searches_limit: trial_searches,
-        trial_ai_email_generator_limit: AI_EMAIL_TRIAL_USAGE_LIMIT,
+        trial_ai_email_generator_limit: trial_ai_emails,
         id: companyId,
     });
 
