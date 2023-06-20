@@ -24,6 +24,8 @@ export interface ISearchContext {
     setText: (text: string) => void;
     keywords: string;
     setKeywords: (keywords: string) => void;
+    hashtags: string[];
+    setHashtags: (hashtags: string[]) => void;
     username: string;
     setUsername: (username: string) => void;
     influencerLocation: LocationWeighted[];
@@ -69,6 +71,8 @@ export const SearchContext = createContext<ISearchContext>({
     setText: () => null,
     keywords: '',
     setKeywords: () => null,
+    hashtags: [],
+    setHashtags: () => null,
     username: '',
     setUsername: () => null,
     influencerLocation: [],
@@ -135,6 +139,7 @@ export const useSearchResults = (page: number) => {
                     username,
                     text,
                     keywords,
+                    hashtags,
                     influencerLocation,
                     audienceLocation,
                     resultsPerPageLimit,
@@ -158,6 +163,7 @@ export const useSearchResults = (page: number) => {
                     platform,
                     text,
                     keywords,
+                    hashtags,
                     username,
                     influencerLocation,
                     audienceLocation,
@@ -236,6 +242,7 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
     const [tags, setTopicTags] = useState<CreatorSearchTag[]>([]);
     const [text, setText] = useState<string>('');
     const [keywords, setKeywords] = useState<string>('');
+    const [hashtags, setHashtags] = useState<string[]>([]);
     const [username, setUsername] = useState<string>('');
     const [influencerLocation, setInfluencerLocation] = useState<LocationWeighted[]>([]);
     const [views, setViews] = useState<NullStringTuple>([null, null]);
@@ -266,6 +273,8 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
                 setText,
                 keywords,
                 setKeywords,
+                hashtags,
+                setHashtags,
                 username,
                 setUsername,
                 influencerLocation,

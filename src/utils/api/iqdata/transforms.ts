@@ -1,11 +1,6 @@
 import { featRecommended } from 'src/constants/feature-flags';
 import type { CreatorPlatform, CreatorAccount, LocationWeighted } from 'types';
-import type {
-    SearchInfluencersPayload,
-    SearchInfluencersTextTagsFilter,
-    with_contact,
-    engagement_rate,
-} from './influencers/search-influencers-payload';
+import type { SearchInfluencersPayload, with_contact, engagement_rate } from './influencers/search-influencers-payload';
 import { Gender, LastPosted } from '../types';
 import type { z } from 'zod';
 
@@ -18,6 +13,7 @@ export interface FetchCreatorsFilteredParams {
     text?: string;
     username?: string;
     keywords?: string;
+    hashtags?: string[];
     influencerLocation?: LocationWeighted[];
     audienceLocation?: LocationWeighted[];
     resultsPerPageLimit?: number;
@@ -88,13 +84,14 @@ export const isRecommendedTransform = (platform: CreatorPlatform, influencerIdsW
     return recommendedByPlatform;
 };
 
-const textTagsFilter = (s: string) => {
-    const tags = s.split(' ');
-
-    return tags.reduce<SearchInfluencersTextTagsFilter[]>((o, value) => {
-        return [...o, { type: 'hashtag', value }];
-    }, []);
-};
+// const textTagsFilter = (s: string[]) => {
+//     return s.map((tag, _index) => {
+//         return {
+//             type: 'hashtag',
+//             value: tag,
+//         }
+//     }, []);
+// };
 
 const tagsFilter = (value: { tag: string }[]) => {
     const tags = value.map((tag) => `#${tag.tag}`);
@@ -260,8 +257,11 @@ export const prepareFetchCreatorsFiltered = ({
         });
     }
 
-    if (params.text_tags) {
-        body.filter.text_tags = textTagsFilter(params.text_tags);
+    if (params.hashtags) {
+        body.filter.text_tags = params.hashtags.map((tag) => ({
+            value: tag,
+            type: 'hashtag',
+        }));
     }
 
     body.sort = { field: 'followers', direction: 'desc' };

@@ -10,6 +10,7 @@ import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { useEffect } from 'react';
 import WordCloudComponent from '../wordcloud';
 import SearchKeywords from './search-keywords';
+import SearchHashtags from './search-hashtags';
 
 export const SearchOptions = ({
     setPage,
@@ -45,6 +46,8 @@ export const SearchOptions = ({
         setSearchParams,
         keywords,
         setKeywords,
+        hashtags,
+        setHashtags,
     } = useSearch();
 
     const { t } = useTranslation();
@@ -65,6 +68,8 @@ export const SearchOptions = ({
                 platform,
                 tags,
                 username,
+                keywords,
+                hashtags,
                 influencerLocation,
                 views,
                 audience,
@@ -83,6 +88,8 @@ export const SearchOptions = ({
         // onlyRecommended,
         setSearchParams,
         tags,
+        keywords,
+        hashtags,
         username,
         influencerLocation,
         views,
@@ -111,16 +118,29 @@ export const SearchOptions = ({
                             }}
                         />
                     </div>
-                    <div data-testid="search-keywords " className="w-full">
-                        <p className="mb-2 text-sm font-semibold">Add keywords and #hashtags</p>
-                        <SearchKeywords
-                            path="influencer-search/topics"
-                            placeholder={t('creators.searchKeyword')}
-                            keywords={keywords}
-                            platform={platform}
-                            setKeywords={setKeywords}
-                        />
-                    </div>
+                    {platform === 'youtube' ? (
+                        <div data-testid="search-keywords " className="w-full">
+                            <p className="mb-2 text-sm font-semibold">Add keywords</p>
+                            <SearchKeywords
+                                path="influencer-search/topics"
+                                placeholder={t('creators.searchKeyword')}
+                                keywords={keywords}
+                                platform={platform}
+                                setKeywords={setKeywords}
+                            />
+                        </div>
+                    ) : (
+                        <div data-testid="search-hashtags " className="w-full">
+                            <p className="mb-2 text-sm font-semibold">Add #hashtags</p>
+                            <SearchHashtags
+                                path="influencer-search/topics"
+                                placeholder={t('creators.searchHashtags')}
+                                hashtags={hashtags}
+                                platform={platform}
+                                setHashtags={setHashtags}
+                            />
+                        </div>
+                    )}
                     <div className="w-full ">
                         <div className="my-4 flex flex-row items-center justify-between">
                             <button
