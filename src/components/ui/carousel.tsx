@@ -37,7 +37,7 @@ export default function Carousel({ slides, autoSlide = false, autoSlideInterval 
                         width={600}
                         height={400}
                         alt={slides[currIndex].title || ''}
-                        className="rounded-3xl bg-cover bg-center"
+                        className="rounded-2xl bg-cover bg-center"
                     />
                 </div>
 
