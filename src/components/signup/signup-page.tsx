@@ -119,16 +119,14 @@ const SignUpPage = ({ selectedPriceId }: { selectedPriceId: string }) => {
         if (currentStep === steps.length) {
             return;
         }
+
         if (currentStep === 2) {
             await handleProfileCreate(formData);
-        }
-        if (currentStep === 4) {
-            if (!createProfileSuccess || !profile?.id) {
-                throw new Error('no profile id');
-            }
+        } else if (currentStep === 4) {
             await handleCompanyCreate(formData);
+        } else {
+            setCurrentStep(currentStep + 1);
         }
-        setCurrentStep(currentStep + 1);
     };
 
     const handleProfileCreate = async (formData: FieldValues) => {
@@ -156,6 +154,7 @@ const SignUpPage = ({ selectedPriceId }: { selectedPriceId: string }) => {
                 } else {
                     setCreateProfileSuccess(true);
                 }
+                setCurrentStep(currentStep + 1);
             } else {
                 throw new Error('Could not sign up');
             }
@@ -181,11 +180,14 @@ const SignUpPage = ({ selectedPriceId }: { selectedPriceId: string }) => {
         };
         try {
             setLoading(true);
-
+            if (!createProfileSuccess || !profile?.id) {
+                throw new Error('no profile id');
+            }
             const signupCompanyRes = await createCompany(data);
             if (!signupCompanyRes?.cus_id) {
                 throw new Error('no cus_id, error creating company');
             }
+            setCurrentStep(currentStep + 1);
         } catch (e: any) {
             clientLogger(e, 'error');
             if (hasCustomError(e, CompanyErrors)) {
