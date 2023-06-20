@@ -3,12 +3,15 @@ import { Input } from '../input';
 import { Radio } from '../ui/radio';
 import { Button } from '../button';
 import type { SignupInputTypes } from 'src/utils/validation/signup';
+import { isMissing } from 'src/utils/utils';
+import type { SignUpValidationErrors } from './signup-page';
 
 export const StepFour = ({
     companyName,
     companyWebsite,
     setSelectedSize,
     setAndValidate,
+    validationErrors,
     loading,
     onNext,
 }: {
@@ -16,6 +19,7 @@ export const StepFour = ({
     companyWebsite: string;
     setSelectedSize: (newValue: string) => void;
     setAndValidate: (type: SignupInputTypes, value: string) => void;
+    validationErrors: SignUpValidationErrors;
     loading: boolean;
     onNext: any;
 }) => {
@@ -30,6 +34,11 @@ export const StepFour = ({
     const handleCompanySizeChange = (newValue: string) => {
         setSelectedSize(newValue);
     };
+
+    const invalidFormInput =
+        isMissing(companyName) || validationErrors.companyName !== '' || validationErrors.companyWebsite !== '';
+
+    const submitDisabled = invalidFormInput || loading;
 
     return (
         <>
@@ -52,7 +61,7 @@ export const StepFour = ({
                 onValueChange={handleCompanySizeChange}
             />
 
-            <Button disabled={loading} type="submit" className="w-full" onClick={onNext}>
+            <Button disabled={submitDisabled} type="submit" className="w-full" onClick={onNext}>
                 {t('signup.next')}
             </Button>
         </>

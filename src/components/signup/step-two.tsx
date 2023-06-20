@@ -3,6 +3,7 @@ import { Input } from '../input';
 import { Button } from '../button';
 import type { SignUpValidationErrors } from './signup-page';
 import type { SignupInputTypes } from 'src/utils/validation/signup';
+import { isMissing } from 'src/utils/utils';
 
 export const StepTwo = ({
     email,
@@ -22,6 +23,13 @@ export const StepTwo = ({
     onNext: any;
 }) => {
     const { t } = useTranslation();
+    const invalidFormInput =
+        isMissing(email, password, confirmPassword) ||
+        validationErrors.email !== '' ||
+        validationErrors.password !== '' ||
+        validationErrors.confirmPassword !== '';
+    const submitDisabled = invalidFormInput || loading;
+
     return (
         <>
             <Input
@@ -51,7 +59,7 @@ export const StepTwo = ({
                 required
                 onChange={(e) => setAndValidate('confirmPassword', e.target.value)}
             />
-            <Button disabled={loading} type="submit" className="w-full" onClick={onNext}>
+            <Button disabled={submitDisabled} type="submit" className="w-full" onClick={onNext}>
                 {t('signup.next')}
             </Button>
         </>
