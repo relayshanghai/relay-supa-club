@@ -32,7 +32,13 @@ const CompanyErrors = {
     ...createCompanyValidationErrors,
 };
 
-const SignUpPage = ({ selectedPriceId }: { selectedPriceId: string }) => {
+const SignUpPage = ({
+    selectedPriceId,
+    setShowCarousel,
+}: {
+    selectedPriceId: string;
+    setShowCarousel: (show: boolean) => void;
+}) => {
     const { t } = useTranslation();
     const router = useRouter();
     const { signup, createEmployee, profile } = useUser();
@@ -127,6 +133,7 @@ const SignUpPage = ({ selectedPriceId }: { selectedPriceId: string }) => {
                 throw new Error('no profile id');
             }
             await handleCompanyCreate(formData);
+            setShowCarousel(false);
         }
         setCurrentStep(currentStep + 1);
     };
