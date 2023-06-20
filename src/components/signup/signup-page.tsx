@@ -125,6 +125,7 @@ const SignUpPage = ({
         if (currentStep === steps.length) {
             return;
         }
+
         if (currentStep === 2) {
             await handleProfileCreate(formData);
         } else if (currentStep === 4) {

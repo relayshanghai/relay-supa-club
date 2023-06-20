@@ -21,7 +21,7 @@ export const FormWizard = ({
         <div className="w-80 lg:w-[28rem]">
             <Progress height="small" percentage={((currentStep - 1) / steps.length) * 100} className="mb-2" />
             <div className="flex flex-col rounded shadow-md">
-                <form>
+                <form onSubmit={(e) => e.preventDefault()}>
                     <div className="border-b-gray-100 bg-gray-100 p-5 text-base font-semibold text-gray-500">
                         {title}
                     </div>
