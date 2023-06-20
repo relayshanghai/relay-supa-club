@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { useCallback, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
-import { Button } from 'src/components/button';
+import CreateCompanyButton from 'src/components/create-company-button';
 
 import { Spinner } from 'src/components/icons';
 import { Input } from 'src/components/input';
@@ -80,9 +80,13 @@ export default function Register() {
                             value={values.website}
                             onChange={(e) => setFieldValue('website', e.target.value)}
                         />
-                        <Button type="button" disabled={!values.name || submitting} onClick={handleSubmit}>
+                        <CreateCompanyButton
+                            company={values.name}
+                            disabled={!values.name || submitting}
+                            onClick={handleSubmit}
+                        >
                             {t('login.createCompany')}
-                        </Button>
+                        </CreateCompanyButton>
                     </>
                 )}
                 <div className="pt-20">
