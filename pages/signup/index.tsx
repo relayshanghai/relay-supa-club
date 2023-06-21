@@ -123,14 +123,14 @@ export default function Register() {
             handleSubmit();
         }
     };
-    const [selectedPriceId, _setSelectedPriceId] = useState(STRIPE_PRICE_MONTHLY_DIY);
+    const [selectedPriceId, setSelectedPriceId] = useState(STRIPE_PRICE_MONTHLY_DIY);
     const [showCarousel, setShowCarousel] = useState(true);
 
     return (
         <>
             {featSignupV2() ? (
                 <LoginSignupLayout
-                    left={showCarousel ? <ScreenshotsCarousel /> : <PricingSection setPriceId={_setSelectedPriceId} />}
+                    left={showCarousel ? <ScreenshotsCarousel /> : <PricingSection setPriceId={setSelectedPriceId} />}
                     right={<SignUpPage selectedPriceId={selectedPriceId} setShowCarousel={setShowCarousel} />}
                 />
             ) : (
