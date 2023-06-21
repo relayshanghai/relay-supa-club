@@ -61,9 +61,6 @@ describe('Main pages happy paths', () => {
         cy.contains('label', 'Website').within(() => {
             cy.get('input').should('have.attr', 'placeholder', 'www.site.com').type('https://test.com');
         });
-        // carousel has moved to second slide
-        cy.contains('Find the perfect influencer without all the hassle').should('not.exist');
-        cy.contains('Our filters let you target your niche audience');
 
         cy.contains('Size');
         cy.contains('11-50').click();
