@@ -20,11 +20,14 @@ describe('<CreateCompanyButton />', () => {
         //     'rudderstack-dataplane-call',
         // );
 
-        cy.contains('Click Me').click();
+        const opts = {
+            log: true,
+            timeout: 60000,
+        };
 
-        cy.wait('@rudderstack-api-call', {
-            timeout: 30000,
-        });
+        cy.contains('Click Me', opts).click(opts);
+
+        cy.wait('@rudderstack-api-call', opts);
     });
 });
 
