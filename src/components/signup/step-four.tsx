@@ -68,7 +68,12 @@ export const StepFour = ({
                 onValueChange={handleCompanySizeChange}
             />
 
-            <Button disabled={submitDisabled} type="submit" className="flex w-full justify-center" onClick={onNext}>
+            <Button
+                disabled={submitDisabled}
+                type="submit"
+                className="mt-12 flex w-full justify-center"
+                onClick={onNext}
+            >
                 {loading ? <Spinner className="h-5 w-5 fill-primary-600" /> : t('signup.next')}
             </Button>
         </>

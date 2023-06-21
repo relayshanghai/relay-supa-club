@@ -16,15 +16,15 @@ export const Radio = ({ label, options, onValueChange }: RadioProps) => {
 
     return (
         <div className="flex flex-col">
-            <div className="text-xs font-semibold text-gray-800">{label}</div>
-            <div className="my-2 flex justify-between">
+            <div className="text-sm font-semibold text-gray-800">{label}</div>
+            <div className="my-2 flex justify-between space-x-5">
                 {options.map((option, index) => (
-                    <div className="flex" key={index}>
+                    <div className="flex flex-grow whitespace-nowrap" key={index}>
                         <label className="flex w-full rounded-md border border-gray-200 bg-white p-3 focus:border-primary-500 focus:ring-primary-500">
                             <input
                                 type="radio"
                                 name="radio-button"
-                                className="pointer-events-none mt-0.5 shrink-0 rounded-full border-gray-200 text-primary-600 focus:ring-primary-500"
+                                className="pointer-events-none mt-0.5 rounded-full border-gray-200 text-primary-600 focus:ring-primary-500"
                                 id="radio-button"
                                 value={option.value}
                                 checked={selectedValue === option.value}

@@ -47,7 +47,7 @@ export const StepThree = ({
                 setValue={setValue}
                 className="mb-4"
             />
-            <Button disabled={loading} type="submit" className="w-full" onClick={handleSubmit(onSubmit)}>
+            <Button disabled={loading} type="submit" className="mt-12 w-full" onClick={handleSubmit(onSubmit)}>
                 {t('signup.next')}
             </Button>
         </>
