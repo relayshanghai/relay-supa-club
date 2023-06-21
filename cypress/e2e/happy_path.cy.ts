@@ -10,7 +10,7 @@ describe('Main pages happy paths', () => {
     beforeEach(async () => {
         await deleteDB('app-cache');
     });
-    it.only('Can sign up new users using signup wizard', () => {
+    it('Can sign up new users using signup wizard', () => {
         const randomEmail = `test${randomString()}@example.com`;
 
         cy.switchToEnglish();
