@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { audience_age, audience_gender } from './iqdata/influencers/search-influencers-payload';
 
 export type ApiPayload = {
     path?: {
@@ -51,13 +52,16 @@ export const InfluencerSearchFilter = z.object({
     text: z.string().optional(),
     username: z.string().optional(),
     keywords: z.string().optional(),
+    influencerAge: NullString.optional(),
     influencerLocation: Location.array().optional(),
+    audienceAge: audience_age.optional(),
     audienceLocation: Location.array().optional(),
     resultsPerPageLimit: z.number().optional().default(10),
     page: z.number().optional().default(0),
     audience: NullString.optional(),
     views: NullString.optional(),
     gender: z.string().optional(),
+    audienceGender: audience_gender.optional(),
     engagement: z.number().optional(),
     lastPost: z.string().optional(),
     contactInfo: z.string().optional(),

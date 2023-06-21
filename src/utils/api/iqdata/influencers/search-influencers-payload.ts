@@ -96,19 +96,50 @@ export const gender = z.object({
     code: z.union([z.literal('MALE'), z.literal('FEMALE'), z.literal('KNOWN'), z.literal('UNKNOWN')]),
 });
 
+const audience_gender_code_enum = z.enum(['MALE', 'FEMALE']);
+
+export const audience_gender_code = z
+    .string()
+    .transform((v) => v.toUpperCase() as z.infer<typeof audience_gender_code_enum>)
+    .refine((v) => audience_gender_code_enum.safeParse(v).success);
+
+export const audience_gender = z.object({
+    code: audience_gender_code,
+    weight: z.number().optional(),
+});
+
 export const views = z.object({
     left_number: z.number().optional(),
-    right_nuber: z.number().optional(),
+    right_number: z.number().optional(),
 });
 
 export const reel_plays = z.object({
     left_number: z.number().optional(),
-    right_nuber: z.number().optional(),
+    right_number: z.number().optional(),
 });
 
 export const followers = z.object({
     left_number: z.number().optional(),
-    right_nuber: z.number().optional(),
+    right_number: z.number().optional(),
+});
+
+export const age = z.object({
+    left_number: z.number().optional(),
+    right_number: z.number().optional(),
+});
+
+export const audience_age_code = z.enum(['18-24', '25-34', '35-44', '45-64', '65-']);
+
+export const audience_age = z.object({
+    code: audience_age_code,
+    weight: z.number().optional(),
+});
+
+export const audience_age_range = z.object({
+    left_number: z.enum(['13', '18', '25', '35', '45', '65']).optional(),
+    right_number: z.enum(['17', '24', '34', '44', '64']).optional(),
+    weight: z.number().optional(),
+    operator: z.union([z.literal('lt'), z.literal('lte'), z.literal('gt'), z.literal('gte')]).optional(),
 });
 
 export const engagement_rate = z.object({
@@ -162,12 +193,16 @@ export const filter = z
         views: views.optional(),
         followers: followers.optional(),
         reels_plays: reel_plays.optional(),
+        age: age.optional(),
         geo: geo.array().optional(),
+        audience_age: audience_age.array().optional(),
+        audience_age_range: audience_age_range.optional(),
         audience_geo: audience_geo.array().optional(),
         relevance: relevance.optional(),
         text_tags: text_tags.array().optional(),
         username: username.optional(),
         gender: gender.optional(),
+        audience_gender: audience_gender.optional(),
         with_contact: with_contact.array().optional(),
         actions: actions.array().optional(),
     });

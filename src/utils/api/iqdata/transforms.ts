@@ -6,6 +6,7 @@ import type {
     with_contact,
     engagement_rate,
 } from './influencers/search-influencers-payload';
+import { audience_age_range, audience_gender } from './influencers/search-influencers-payload';
 import { Gender, LastPosted } from '../types';
 import type { z } from 'zod';
 
@@ -18,13 +19,16 @@ export interface FetchCreatorsFilteredParams {
     text?: string;
     username?: string;
     keywords?: string;
+    influencerAge?: NullStringTuple;
     influencerLocation?: LocationWeighted[];
+    audienceAge?: z.input<typeof audience_age_range>;
     audienceLocation?: LocationWeighted[];
     resultsPerPageLimit?: number;
     page?: number;
     audience: NullStringTuple;
     views: NullStringTuple;
     gender?: string;
+    audienceGender?: z.input<typeof audience_gender>;
     engagement?: number;
     lastPost?: string;
     contactInfo?: string;
@@ -41,6 +45,10 @@ const locationTransform = ({ id, weight }: { id: string; weight: number | string
 const genderFilter = (value: string) => {
     const code = Gender.parse(value);
     return { code };
+};
+
+const audienceGenderFilter = (value: z.input<typeof audience_gender>) => {
+    return audience_gender.parse(value);
 };
 
 const textFilter = (value: string) => {
@@ -148,6 +156,14 @@ const contactInfoFilter = (value: string[]) => {
     return contactType.filter((v) => !!v) as z.infer<typeof with_contact>[];
 };
 
+const influencerAgeFilter = (value: NullStringTuple) => {
+    return leftRightNumberTransform(value);
+};
+
+const audienceAgeFilter = (value: z.input<typeof audience_age_range>) => {
+    return audience_age_range.parse(value);
+};
+
 export const prepareFetchCreatorsFiltered = ({
     platform = 'youtube',
     tags = [],
@@ -189,6 +205,10 @@ export const prepareFetchCreatorsFiltered = ({
 
     if (params.gender) {
         body.filter.gender = genderFilter(params.gender);
+    }
+
+    if (params.audienceGender) {
+        body.filter.audience_gender = audienceGenderFilter(params.audienceGender);
     }
 
     if (params.text) {
@@ -237,6 +257,14 @@ export const prepareFetchCreatorsFiltered = ({
 
     if (params.contactInfo) {
         body.filter.with_contact = contactInfoFilter([params.contactInfo]);
+    }
+
+    if (params.influencerAge) {
+        body.filter.age = influencerAgeFilter(params.influencerAge);
+    }
+
+    if (params.audienceAge) {
+        body.filter.audience_age_range = audienceAgeFilter(params.audienceAge);
     }
 
     if (params.engagement) {
