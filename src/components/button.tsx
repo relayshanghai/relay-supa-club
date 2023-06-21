@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes } from 'react';
+import { forwardRef, type ButtonHTMLAttributes, type ForwardedRef } from 'react';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     variant?: 'primary' | 'secondary' | 'neutral';
@@ -16,9 +16,10 @@ const neutralClasses = 'text-left';
  *
  * @note If you want to change one of the already applied css styles in the passed in className, you might need to use !important. e.g. className="!py-4"
  */
-export const Button = ({ children, variant, className, ...rest }: ButtonProps) => {
+function ButtonWithRef({ children, variant, className, ...rest }: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
     return (
         <button
+            ref={ref}
             className={`
                 ${
                     variant === 'neutral'
@@ -30,4 +31,5 @@ export const Button = ({ children, variant, className, ...rest }: ButtonProps) =
             {children}
         </button>
     );
-};
+}
+export const Button = forwardRef(ButtonWithRef);

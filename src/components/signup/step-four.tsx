@@ -7,7 +7,7 @@ import { isMissing } from 'src/utils/utils';
 import type { SignUpValidationErrors } from './signup-page';
 import { Spinner } from '../icons';
 import { useUser } from 'src/hooks/use-user';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 export const StepFour = ({
     companyName,
@@ -46,7 +46,8 @@ export const StepFour = ({
         isMissing(companyName) || validationErrors.companyName !== '' || validationErrors.companyWebsite !== '';
 
     const submitDisabled = invalidFormInput || loading || !profile?.id;
-
+    const websiteRef = useRef<HTMLInputElement>(null);
+    const sizeRef = useRef<HTMLInputElement>(null);
     return (
         <>
             <Input
@@ -55,17 +56,35 @@ export const StepFour = ({
                 placeholder={t('signup.companyPlaceholder')}
                 required
                 onChange={(e) => setAndValidate('companyName', e.target.value)}
+                autoFocus
+                onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                        websiteRef?.current?.focus();
+                    }
+                }}
             />
             <Input
                 label={t('signup.website')}
                 value={companyWebsite}
                 placeholder="www.site.com"
                 onChange={(e) => setAndValidate('companyWebsite', e.target.value)}
+                ref={websiteRef}
+                onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                        sizeRef?.current?.focus();
+                    }
+                }}
             />
             <Radio
                 label={t('signup.companySize')}
                 options={companySizeOptions}
                 onValueChange={handleCompanySizeChange}
+                ref={sizeRef}
+                onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !submitDisabled) {
+                        onNext();
+                    }
+                }}
             />
 
             <Button
