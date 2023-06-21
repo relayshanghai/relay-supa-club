@@ -8,6 +8,7 @@ const pricing = {
     quarterly: '每季度',
     annually: '每年',
     perMonth: '/月',
+    usdPerMonth: '美金/月',
     startFreeTrial: '开始免费试用',
     contactNow: '立即联系',
     checkOutOur: '查看我们的',

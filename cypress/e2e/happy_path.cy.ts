@@ -1,12 +1,17 @@
 import { deleteDB } from 'idb';
 import { addPostIntercept, cocomelonId, setupIntercepts } from './intercepts';
 
+export const randomString = (length = 8) =>
+    Math.random()
+        .toString(36)
+        .substring(2, length + 2);
+
 describe('Main pages happy paths', () => {
     beforeEach(async () => {
         await deleteDB('app-cache');
     });
     it.only('Can sign up new users using signup wizard', () => {
-        const randomEmail = `test${Math.floor(Math.random() * 1000000)}@test.com`;
+        const randomEmail = `test${randomString()}@example.com`;
 
         cy.switchToEnglish();
         cy.visit('signup');
@@ -35,10 +40,10 @@ describe('Main pages happy paths', () => {
         cy.contains('label', 'Password').within(() => {
             cy.get('input').should('have.attr', 'placeholder', 'Enter your password').type('test1234');
             cy.contains('Must be at least 10 characters long');
-            cy.get('input').clear().type('test12345678');
+            cy.get('input').clear().type('test12345678!');
         });
         cy.contains('label', 'Confirm Password').within(() => {
-            cy.get('input').should('have.attr', 'placeholder', 'Confirm your password').type('test12345678');
+            cy.get('input').should('have.attr', 'placeholder', 'Confirm your password').type('test12345678!');
         });
         cy.contains('button', 'Next').click();
 
@@ -49,18 +54,22 @@ describe('Main pages happy paths', () => {
 
         cy.contains('Tell us about your Company');
         cy.contains('label', 'Company').within(() => {
-            cy.get('input').should('have.attr', 'placeholder', 'Enter your company name').type('Test Company');
+            cy.get('input')
+                .should('have.attr', 'placeholder', 'Enter your company name')
+                .type(`Test Company ${randomString()}`);
         });
         cy.contains('label', 'Website').within(() => {
             cy.get('input').should('have.attr', 'placeholder', 'www.site.com').type('https://test.com');
         });
+        // carousel has moved to second slide
+        cy.contains('Find the perfect influencer without all the hassle').should('not.exist');
+        cy.contains('Our filters let you target your niche audience');
+
         cy.contains('Size');
         cy.contains('11-50').click();
         cy.contains('button', 'Next').click();
 
-        // carousel has moved to second slide
-        cy.contains('Find the perfect influencer without all the hassle').should('not.exist');
-        cy.contains('Our filters let you target your niche audience');
+        cy.contains('We won’t charge your card until the free trial ends!');
     });
     it('can log in and load search page and switch language', () => {
         setupIntercepts();
