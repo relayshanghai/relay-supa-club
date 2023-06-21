@@ -6,8 +6,12 @@ import type {
     with_contact,
     engagement_rate,
 } from './influencers/search-influencers-payload';
-import { audience_age_range, audience_gender } from './influencers/search-influencers-payload';
-import { Gender, LastPosted } from '../types';
+import {
+    last_posted,
+    gender_code,
+    audience_age_range,
+    audience_gender,
+} from './influencers/search-influencers-payload';
 import type { z } from 'zod';
 
 type NullStringTuple = [null | string, null | string];
@@ -30,7 +34,7 @@ export interface FetchCreatorsFilteredParams {
     gender?: string;
     audienceGender?: z.input<typeof audience_gender>;
     engagement?: number;
-    lastPost?: string;
+    lastPost?: z.input<typeof last_posted>;
     contactInfo?: string;
     only_recommended?: boolean;
     recommendedInfluencers?: string[];
@@ -42,8 +46,8 @@ const locationTransform = ({ id, weight }: { id: string; weight: number | string
     weight: weight ? Number(weight) / 100 : 0.5,
 });
 
-const genderFilter = (value: string) => {
-    const code = Gender.parse(value);
+const genderFilter = (value: z.input<typeof gender_code>) => {
+    const code = gender_code.parse(value);
     return { code };
 };
 
@@ -59,8 +63,8 @@ const keywordsFilter = (value: string) => {
     return value;
 };
 
-const lastPostedFilter = (value: number) => {
-    return LastPosted.parse(value);
+const lastPostedFilter = (value: z.input<typeof last_posted>) => {
+    return last_posted.parse(value);
 };
 
 const usernameFilter = (value: string) => {

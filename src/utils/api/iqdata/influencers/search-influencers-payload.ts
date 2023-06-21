@@ -92,8 +92,15 @@ export const with_contact = z.object({
     action: z.union([z.literal('must'), z.literal('should'), z.literal('not')]).optional(),
 });
 
+const gender_code_enum = z.union([z.literal('MALE'), z.literal('FEMALE'), z.literal('KNOWN'), z.literal('UNKNOWN')]);
+
+export const gender_code = z
+    .string()
+    .transform((v) => v.toUpperCase() as z.infer<typeof gender_code_enum>)
+    .refine((v) => gender_code_enum.safeParse(v).success);
+
 export const gender = z.object({
-    code: z.union([z.literal('MALE'), z.literal('FEMALE'), z.literal('KNOWN'), z.literal('UNKNOWN')]),
+    code: gender_code,
 });
 
 const audience_gender_code_enum = z.enum(['MALE', 'FEMALE']);
@@ -180,9 +187,15 @@ export const actions = z.object({
     action: z.union([z.literal('must'), z.literal('should'), z.literal('not')]).optional(),
 });
 
+export const last_posted = z
+    .string()
+    .or(z.number())
+    .transform((v) => +v)
+    .pipe(z.number().gte(30));
+
 export const filter = z
     .object({
-        last_posted: z.number().gte(30).optional(),
+        last_posted: last_posted.optional(),
         keywords: z.string().optional(),
         text: z.string().optional(),
         // @todo customize error message via https://zod.dev/ERROR_HANDLING
