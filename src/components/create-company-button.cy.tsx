@@ -6,6 +6,9 @@ import CreateCompanyButton from './create-company-button';
 describe('<CreateCompanyButton />', () => {
     it('Sends Rudderstack event', () => {
         const requestHandler = (req: any) => {
+            cy.log('TEST', req);
+            // eslint-disable-next-line no-console
+            console.log('TEST2', req);
             // @todo create a better stub reply for dataplane call to work
             req.reply({ message: 'ok' });
         };
