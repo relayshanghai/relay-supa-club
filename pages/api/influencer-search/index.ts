@@ -24,7 +24,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             if (hasCustomSearchParams(searchParams)) {
                 const { error: recordError } = await recordSearchUsage(company_id, user_id);
                 if (recordError) {
-                    res.status(httpCodes.BAD_REQUEST).json({ error: recordError });
+                    return res.status(httpCodes.BAD_REQUEST).json({ error: recordError });
                 }
             }
             const results = await fetchCreatorsFiltered(searchParams);
