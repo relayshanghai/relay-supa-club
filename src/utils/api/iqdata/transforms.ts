@@ -1,5 +1,11 @@
 import { featRecommended } from 'src/constants/feature-flags';
-import type { CreatorPlatform, CreatorAccount, LocationWeighted } from 'types';
+import type {
+    CreatorPlatform,
+    CreatorAccount,
+    LocationWeighted,
+    AudienceAgeRangeWeighted,
+    AudienceGenderWeighted,
+} from 'types';
 import type { SearchInfluencersPayload, with_contact, engagement_rate } from './influencers/search-influencers-payload';
 import { Gender, LastPosted } from '../types';
 import type { z } from 'zod';
@@ -19,6 +25,8 @@ export interface FetchCreatorsFilteredParams {
     resultsPerPageLimit?: number;
     page?: number;
     audience: NullStringTuple;
+    audienceAge: AudienceAgeRangeWeighted;
+    audienceGender: AudienceGenderWeighted;
     views: NullStringTuple;
     gender?: string;
     engagement?: number;
@@ -49,6 +57,14 @@ const keywordsFilter = (value: string) => {
 
 const lastPostedFilter = (value: number) => {
     return LastPosted.parse(value);
+};
+
+const audienceAgeFilter = (value: AudienceAgeRangeWeighted) => {
+    return value;
+};
+
+const audienceGenderFilter = (value: AudienceGenderWeighted) => {
+    return value;
 };
 
 const usernameFilter = (value: string) => {
@@ -222,6 +238,14 @@ export const prepareFetchCreatorsFiltered = ({
 
     if (audienceLocation) {
         body.filter.audience_geo = audienceLocationFilter(audienceLocation);
+    }
+
+    if (params.audienceAge) {
+        body.filter.audience_age_range = audienceAgeFilter(params.audienceAge);
+    }
+
+    if (params.audienceGender) {
+        body.filter.audience_gender = audienceGenderFilter(params.audienceGender);
     }
 
     if (influencerLocation) {

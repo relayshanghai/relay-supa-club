@@ -22,6 +22,15 @@ export type LocationWeighted = {
         code: string;
     };
 };
+export type AudienceAgeRangeWeighted = {
+    left_number: '13' | '18' | '25' | '35' | '45' | '65';
+    right_number: '17' | '24' | '34' | '44' | '64';
+    weight: number;
+};
+export type AudienceGenderWeighted = {
+    code: 'MALE' | 'FEMALE';
+    weight: number;
+};
 export type CreatorSearchTag = { tag: string; value: string };
 
 export type SubscriptionPeriod = 'monthly' | 'annually' | 'quarterly';

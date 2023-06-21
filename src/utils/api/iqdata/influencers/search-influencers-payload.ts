@@ -38,6 +38,24 @@ export const audience_geo = z.object({
     weight: z.number().optional(),
 });
 
+export const audience_age_range = z.object({
+    left_number: z.union([
+        z.literal('13'),
+        z.literal('18'),
+        z.literal('25'),
+        z.literal('35'),
+        z.literal('45'),
+        z.literal('65'),
+    ]),
+    right_number: z.union([z.literal('17'), z.literal('24'), z.literal('34'), z.literal('44'), z.literal('64')]),
+    weight: z.number().optional(),
+});
+
+export const audience_gender = z.object({
+    code: z.union([z.literal('MALE'), z.literal('FEMALE'), z.literal('KNOWN'), z.literal('UNKNOWN')]),
+    weight: z.number().optional(),
+});
+
 export const geo = z.object({
     id: z.number(),
     weight: z.number().optional(),
@@ -164,6 +182,8 @@ export const filter = z
         reels_plays: reel_plays.optional(),
         geo: geo.array().optional(),
         audience_geo: audience_geo.array().optional(),
+        audience_age_range: audience_age_range.optional(),
+        audience_gender: audience_gender.optional(),
         relevance: relevance.optional(),
         text_tags: text_tags.array().optional(),
         username: username.optional(),

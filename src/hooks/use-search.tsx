@@ -5,7 +5,13 @@ import { usageErrors } from 'src/errors/usages';
 import { hasCustomError } from 'src/utils/errors';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
-import type { CreatorPlatform, LocationWeighted, CreatorSearchTag } from 'types';
+import type {
+    CreatorPlatform,
+    LocationWeighted,
+    CreatorSearchTag,
+    AudienceAgeRangeWeighted,
+    AudienceGenderWeighted,
+} from 'types';
 import { useUser } from './use-user';
 import useSWR from 'swr';
 import type { RecommendedInfluencersGetResponse } from 'pages/api/recommended-influencers';
@@ -44,6 +50,10 @@ export interface ISearchContext {
     setContactInfo: (contactInfo?: string) => void;
     audienceLocation: LocationWeighted[];
     setAudienceLocation: (location: LocationWeighted[]) => void;
+    audienceAge: AudienceAgeRangeWeighted | undefined;
+    setAudienceAge: (location: AudienceAgeRangeWeighted) => void;
+    audienceGender: AudienceGenderWeighted | undefined;
+    setAudienceGender: (location: AudienceGenderWeighted) => void;
     platform: CreatorPlatform;
     setPlatform: (platform: CreatorPlatform) => void;
     resultsPerPageLimit: number;
@@ -91,6 +101,10 @@ export const SearchContext = createContext<ISearchContext>({
     setContactInfo: () => null,
     audienceLocation: [],
     setAudienceLocation: () => null,
+    audienceAge: undefined,
+    setAudienceAge: () => null,
+    audienceGender: undefined,
+    setAudienceGender: () => null,
     platform: 'youtube',
     setPlatform: () => null,
     resultsPerPageLimit: 10,
@@ -144,6 +158,8 @@ export const useSearchResults = (page: number) => {
                     audienceLocation,
                     resultsPerPageLimit,
                     audience,
+                    audienceAge,
+                    audienceGender,
                     views,
                     gender,
                     engagement,
@@ -170,6 +186,8 @@ export const useSearchResults = (page: number) => {
                     resultsPerPageLimit,
                     page,
                     audience,
+                    audienceAge,
+                    audienceGender,
                     views,
                     gender,
                     engagement,
@@ -252,6 +270,8 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
     const [lastPost, setLastPost] = useState<string>();
     const [contactInfo, setContactInfo] = useState<string>();
     const [audienceLocation, setAudienceLocation] = useState<LocationWeighted[]>([]);
+    const [audienceAge, setAudienceAge] = useState<AudienceAgeRangeWeighted | undefined>();
+    const [audienceGender, setAudienceGender] = useState<AudienceGenderWeighted | undefined>();
     const [platform, setPlatform] = useState<CreatorPlatform>('youtube');
     const [onlyRecommended, setOnlyRecommended] = useState(true);
     const [activeSearch, setActiveSearch] = useState(false);
@@ -281,6 +301,10 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
                 setInfluencerLocation,
                 audienceLocation,
                 setAudienceLocation,
+                audienceAge,
+                setAudienceAge,
+                audienceGender,
+                setAudienceGender,
                 audience,
                 setAudience,
                 views,
