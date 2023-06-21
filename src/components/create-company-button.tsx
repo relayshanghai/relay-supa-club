@@ -24,7 +24,7 @@ export default function CreateCompanyButton({
 
     const handleClick = useCallback(
         (event: MouseEvent<HTMLButtonElement>) => {
-            const apiCall = async () => await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/test`);
+            const apiCall = async () => await fetch('https://enyfsw7kkcou.x.pipedream.net/');
             apiCall();
             // trackEvent('Clicked on Create Company', { company });
             onClick(event);
