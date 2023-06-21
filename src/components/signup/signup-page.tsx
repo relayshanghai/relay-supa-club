@@ -59,7 +59,7 @@ const SignUpPage = ({
     });
 
     const [currentStep, setCurrentStep] = useState(1);
-    const [selectedSize, setSelectedSize] = useState<string>('');
+    const [selectedSize, setSelectedSize] = useState<string | null>(null);
     const [selectedCategory, setSelectedCategory] = useState<string>('');
     const [validationErrors, setValidationErrors] = useState<SignUpValidationErrors>({
         firstName: '',
