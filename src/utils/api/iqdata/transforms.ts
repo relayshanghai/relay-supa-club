@@ -25,8 +25,8 @@ export interface FetchCreatorsFilteredParams {
     resultsPerPageLimit?: number;
     page?: number;
     audience: NullStringTuple;
-    audienceAge: AudienceAgeRangeWeighted;
-    audienceGender: AudienceGenderWeighted;
+    audienceAge?: AudienceAgeRangeWeighted;
+    audienceGender?: AudienceGenderWeighted;
     views: NullStringTuple;
     gender?: string;
     engagement?: number;
