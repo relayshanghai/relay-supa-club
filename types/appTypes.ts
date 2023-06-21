@@ -103,5 +103,5 @@ export interface DatabaseWithCustomTypes extends Database {
     };
 }
 
-export const CompanySize = z.union([z.literal('small'), z.literal('medium'), z.literal('large')]);
+export const CompanySize = z.union([z.literal('small'), z.literal('medium'), z.literal('large'), z.null()]);
 export type CompanySize = z.infer<typeof CompanySize>;

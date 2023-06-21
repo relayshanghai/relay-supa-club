@@ -119,12 +119,7 @@ const OnboardPaymentSectionInner = ({ priceId }: OnboardPaymentSectionProps) => 
     const buttonDisabled = loading || !formReady || !company?.cus_id || !priceId || !stripe || !elements;
 
     return (
-        <form
-            onSubmit={(e) => {
-                e.preventDefault();
-                handleSubmit();
-            }}
-        >
+        <div>
             <PaymentElement
                 onChange={(e) => {
                     setFormReady(e.complete);
@@ -133,6 +128,10 @@ const OnboardPaymentSectionInner = ({ priceId }: OnboardPaymentSectionProps) => 
             <Button
                 disabled={buttonDisabled}
                 className={`mt-10 w-full ${success ? '!border-green-500 !bg-green-500' : ''}`}
+                onClick={(e) => {
+                    e.preventDefault();
+                    handleSubmit();
+                }}
             >
                 {success ? (
                     t('login.activateSuccess')
@@ -143,7 +142,7 @@ const OnboardPaymentSectionInner = ({ priceId }: OnboardPaymentSectionProps) => 
                 )}
             </Button>
             {errorMessage && <p className="mt-2 text-red-600">{errorMessage}</p>}
-        </form>
+        </div>
     );
 };
 

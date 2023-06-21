@@ -32,7 +32,13 @@ const CompanyErrors = {
     ...createCompanyValidationErrors,
 };
 
-const SignUpPage = ({ selectedPriceId }: { selectedPriceId: string }) => {
+const SignUpPage = ({
+    selectedPriceId,
+    setShowCarousel,
+}: {
+    selectedPriceId: string;
+    setShowCarousel: (show: boolean) => void;
+}) => {
     const { t } = useTranslation();
     const router = useRouter();
     const { signup, createEmployee, profile } = useUser();
@@ -53,7 +59,7 @@ const SignUpPage = ({ selectedPriceId }: { selectedPriceId: string }) => {
     });
 
     const [currentStep, setCurrentStep] = useState(1);
-    const [selectedSize, setSelectedSize] = useState<string>('');
+    const [selectedSize, setSelectedSize] = useState<string | null>(null);
     const [selectedCategory, setSelectedCategory] = useState<string>('');
     const [validationErrors, setValidationErrors] = useState<SignUpValidationErrors>({
         firstName: '',
@@ -124,6 +130,7 @@ const SignUpPage = ({ selectedPriceId }: { selectedPriceId: string }) => {
             await handleProfileCreate(formData);
         } else if (currentStep === 4) {
             await handleCompanyCreate(formData);
+            setShowCarousel(false);
         } else {
             setCurrentStep(currentStep + 1);
         }
