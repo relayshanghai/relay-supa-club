@@ -107,14 +107,11 @@ jobs:
             - name: Export Supabase keys
               run: bash supabase/export_supabase_keys.sh
 
-            - name: Build tailwind
-              run: npm run tailwind:build
-
             - name: Run cypress component tests
               uses: cypress-io/github-action@v5
               with:
                 browser: chrome
-                start: npm run dev
+                start: npm run tailwind:build && npm run dev
                 wait-on: http://localhost:3000, http://localhost:54323
                 wait-on-timeout: 180
                 component: true
