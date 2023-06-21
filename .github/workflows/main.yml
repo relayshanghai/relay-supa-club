@@ -73,7 +73,7 @@ jobs:
                   chmod +x ./supabase/db.sh
                   ./supabase/db.sh db_test
 
-    cypress-components:
+    build-and-unit-test:
         runs-on:
             group: large-runner
         environment: preview
@@ -94,28 +94,9 @@ jobs:
                   node-version: ${{ matrix.node-version }}
                   cache: 'npm'
 
-            - uses: supabase/setup-cli@v1
-              with:
-                  version: latest
-
-            - name: Create supabase config file
-              run: cp supabase/config.toml.example supabase/config.toml
-
-            - name: Start Supabase local development setup
-              run: supabase start
-
-            - name: Export Supabase keys
-              run: bash supabase/export_supabase_keys.sh
-
-            - name: Run cypress component tests
-              uses: cypress-io/github-action@v5
-              with:
-                browser: chrome
-                start: npm run dev
-                wait-on: http://localhost:3000, http://localhost:54323
-                wait-on-timeout: 180
-                component: true
-                command: npm run test-cypress-unit
+            - run: npm ci
+            - run: npm run build
+            - run: npm run test-cypress-unit
 
     cypress-e2e:
         runs-on:
