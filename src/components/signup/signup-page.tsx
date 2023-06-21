@@ -213,6 +213,12 @@ const SignUpPage = ({
         }
     }, [email, router, createProfileSuccess, profile?.id]);
 
+    useEffect(() => {
+        router.query.curStep = currentStep.toString();
+        router.push(router);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentStep, router.isReady]);
+
     return (
         <div>
             {steps.map(
