@@ -61,7 +61,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 const { error: recordError } = await recordReportUsage(company_id, user_id, creator_id);
                 if (recordError) {
                     serverLogger(recordError, 'error');
-                    res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
+                    return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
                 }
 
                 await catchInfluencer(data);
