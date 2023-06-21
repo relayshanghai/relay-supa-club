@@ -10,6 +10,17 @@ describe('Main pages happy paths', () => {
     beforeEach(async () => {
         await deleteDB('app-cache');
     });
+    it('Landing page works, has both languages, and links to signup', () => {
+        cy.visit('/');
+        cy.contains('relay.club可以帮助');
+        cy.switchToEnglish();
+        cy.reload();
+        cy.contains('relay.club可以帮助').should('not.exist');
+        cy.contains('relay.club can help.');
+        cy.contains('Already signed up?Log in');
+        cy.contains('button', 'Start Your Free Trial').click();
+        cy.url().should('include', '/signup');
+    });
     it('Can sign up new users using signup wizard', () => {
         const randomEmail = `test${randomString()}@example.com`;
 
@@ -80,19 +91,6 @@ describe('Main pages happy paths', () => {
         cy.contains('Success', { timeout: 30000 });
         // redirects to dashboard on success
         cy.url().should('include', '/dashboard', { timeout: 30000 });
-    });
-    it('can log in and load search page and switch language', () => {
-        setupIntercepts();
-        cy.visit('/');
-
-        localStorage.setItem('language', 'zh-CN');
-        // starts on signup page. has an h1 that says signup in Chinese: 注册
-        cy.get('h1').contains('注册');
-
-        cy.loginTestUser();
-
-        cy.contains('Campaigns'); // dashboard page load
-        cy.url().should('include', '/dashboard');
     });
     it('can search for an influencer', () => {
         setupIntercepts();
