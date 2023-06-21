@@ -70,6 +70,19 @@ describe('Main pages happy paths', () => {
         cy.contains('button', 'Next').click();
 
         cy.contains('We won’t charge your card until the free trial ends!');
+
+        cy.iframe('iframe[title="Secure payment input frame"]').within(() => {
+            cy.contains('Country', { timeout: 10000 });
+            cy.get('input[autocomplete="billing cc-number"]').type('4242424242424242');
+            cy.get('input[autocomplete="billing cc-exp"]').type('1227');
+            cy.get('input[autocomplete="billing cc-csc"]').type('123');
+            cy.get('input[autocomplete="billing postal-code"]').type('12345');
+        });
+        cy.contains('Success').should('not.exist');
+        cy.contains('button', 'Start Free Trial').click();
+        cy.contains('Success', { timeout: 30000 });
+        // redirects to dashboard on success
+        cy.url().should('include', '/dashboard', { timeout: 30000 });
     });
     it('can log in and load search page and switch language', () => {
         setupIntercepts();
