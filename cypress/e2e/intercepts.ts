@@ -91,6 +91,7 @@ export const setupIntercepts = () => {
                         { tag: 'alligator_attack', value: 'alligator attack' },
                     ],
                 },
+                delay: 1000,
             });
         } else if (body.term === 'monkeys') {
             req.reply({
@@ -104,6 +105,7 @@ export const setupIntercepts = () => {
                     ],
                     success: true,
                 },
+                delay: 1000,
             });
         } else {
             req.reply({

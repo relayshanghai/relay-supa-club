@@ -272,6 +272,8 @@ const campaigns = {
         cancel: 'Cancel',
         save: 'Save',
         contactInfo: 'Contact Info',
+        invalidDate: 'Must be a date',
+        invalidNumber: 'Must be a number',
     },
 };
 export default campaigns;

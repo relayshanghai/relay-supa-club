@@ -15,7 +15,7 @@ import { hasCustomError } from 'src/utils/errors';
 
 import { clientLogger } from 'src/utils/logger-client';
 import { validateSignupInput } from 'src/utils/validation/signup';
-import type { SignupInputTypes } from 'src/utils/validation/signup';
+import type { LegacySignupInputTypes } from 'src/utils/validation/signup';
 import { Spinner } from 'src/components/icons';
 import { isMissing } from 'src/utils/utils';
 import { useInvites } from 'src/hooks/use-invites';
@@ -124,7 +124,7 @@ export default function Register() {
             </div>
         );
 
-    const setAndValidate = (type: SignupInputTypes, value: string) => {
+    const setAndValidate = (type: LegacySignupInputTypes, value: string) => {
         setFieldValue(type, value);
         const validationError = validateSignupInput(type, value, password);
         if (validationError) {

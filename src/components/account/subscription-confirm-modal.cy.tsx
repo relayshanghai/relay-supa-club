@@ -8,7 +8,7 @@ import { testMount } from '../../utils/cypress-app-wrapper';
 import { rest } from 'msw';
 
 const confirmModalData: SubscriptionConfirmModalData = {
-    plan: 'diyMax',
+    priceTier: 'diyMax',
     period: 'monthly',
     priceId: 'price_123',
     price: '$199.00',

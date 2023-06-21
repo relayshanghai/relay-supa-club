@@ -52,7 +52,6 @@ const PaymentOnboard = () => {
             } else {
                 toast.error(t('login.oopsSomethingWentWrong'));
             }
-        } finally {
             setSubmitting(false);
         }
     };

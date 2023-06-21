@@ -12,6 +12,7 @@ const signup = {
     phoneNumber: 'Phone Number',
     firstNamePlaceholder: 'Jane',
     lastNamePlaceholder: 'Doe',
+    phoneNumberPlaceholder: '+1 (000) 000-0000',
     email: 'Email',
     password: 'Password',
     confirmPassword: 'Confirm Password',
@@ -31,5 +32,6 @@ const signup = {
         title4: 'Data Center',
         description4: 'See the impact of your campaigns',
     },
+    alreadySignedUp: 'Already signed up?',
 };
 export default signup;
