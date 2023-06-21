@@ -107,6 +107,9 @@ jobs:
             - name: Export Supabase keys
               run: bash supabase/export_supabase_keys.sh
 
+            - name: Build tailwind
+              run: npm run tailwind:build
+
             - name: Run cypress component tests
               uses: cypress-io/github-action@v5
               with:
