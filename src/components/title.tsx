@@ -10,7 +10,7 @@ export const Title = ({ size = 'default' }: TitleProps) => {
         <Link className={`flex justify-center md:self-start ${sizeClass}`} href="/">
             <div className="flex cursor-pointer items-center px-12 py-4 font-poppins ">
                 <div className="poppins font-extrabold tracking-wide text-tertiary-600">
-                    relay<span className="text-primary-500">.</span>club
+                    relay<span className="text-relay-purple">.</span>club
                 </div>
             </div>
         </Link>

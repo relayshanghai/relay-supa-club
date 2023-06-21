@@ -9,6 +9,7 @@ export const loginValidationErrors = {
     missingRequiredFields: 'login.missingRequiredFields',
     phoneNumberInvalid: 'login.phoneNumberInvalid',
     noSpacesAllowed: 'login.noSpacesAllowed',
+    companyNameRequired: 'login.companyNameRequired',
 };
 
 export type InviteStatusError =

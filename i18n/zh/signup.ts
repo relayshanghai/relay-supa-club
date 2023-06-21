@@ -12,6 +12,7 @@ const signup = {
     phoneNumber: '电话号码',
     firstNamePlaceholder: '三',
     lastNamePlaceholder: '张',
+    phoneNumberPlaceholder: '139-999-9999',
     email: '电子邮件',
     password: '密码',
     confirmPassword: '确认密码',
