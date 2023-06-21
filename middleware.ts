@@ -114,6 +114,7 @@ const checkOnboardingStatus = async (
     // if company registered, but no payment method, redirect to payment onboarding
     if (subscriptionStatus === 'awaiting_payment_method') {
         // allow the endpoints payment onboarding page requires
+        if (req.nextUrl.pathname.includes('/signup')) return res;
         if (req.nextUrl.pathname.includes('/api/company') || req.nextUrl.pathname.includes('/api/subscriptions'))
             return res;
 
