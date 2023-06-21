@@ -114,6 +114,7 @@ const checkOnboardingStatus = async (
     // if company registered, but no payment method, redirect to payment onboarding
     if (subscriptionStatus === 'awaiting_payment_method') {
         // allow the endpoints payment onboarding page requires
+        if (req.nextUrl.pathname.includes('/signup')) return res;
         if (req.nextUrl.pathname.includes('/api/company') || req.nextUrl.pathname.includes('/api/subscriptions'))
             return res;
 
@@ -153,6 +154,7 @@ const checkIsRelayEmployee = async (res: NextResponse, email: string) => {
 export async function middleware(req: NextRequest) {
     // We need to create a response and hand it to the supabase client to be able to modify the response headers.
     const res = NextResponse.next();
+    if (req.nextUrl.pathname === '/') return res;
     if (req.nextUrl.pathname === '/api/subscriptions/prices') return allowPricingCors(req, res);
     if (req.nextUrl.pathname === '/api/slack/create') return res;
     if (req.nextUrl.pathname === '/api/subscriptions/webhook') return res;

@@ -4,6 +4,7 @@ import { Button } from '../button';
 import type { SignUpValidationErrors } from './signup-page';
 import type { SignupInputTypes } from 'src/utils/validation/signup';
 import { isMissing } from 'src/utils/utils';
+import { Spinner } from '../icons';
 
 export const StepTwo = ({
     email,
@@ -59,8 +60,9 @@ export const StepTwo = ({
                 required
                 onChange={(e) => setAndValidate('confirmPassword', e.target.value)}
             />
-            <Button disabled={submitDisabled} type="submit" className="w-full" onClick={onNext}>
-                {t('signup.next')}
+
+            <Button disabled={submitDisabled} type="submit" className="flex w-full justify-center" onClick={onNext}>
+                {loading ? <Spinner className="h-5 w-5 fill-primary-600" /> : t('signup.next')}
             </Button>
         </>
     );

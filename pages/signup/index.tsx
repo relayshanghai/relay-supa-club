@@ -19,6 +19,7 @@ import { validateSignupInput } from 'src/utils/validation/signup';
 import { LoginSignupLayout } from 'src/components/SignupLayout';
 import { STRIPE_PRICE_MONTHLY_DIY } from 'src/utils/api/stripe/constants';
 import { ScreenshotsCarousel } from 'src/components/signup/screenshots-carousel';
+import { PricingSection } from 'src/components/signup/pricing-section';
 
 export default function Register() {
     const { t } = useTranslation();
@@ -122,14 +123,15 @@ export default function Register() {
             handleSubmit();
         }
     };
-    const [selectedPriceId, _setSelectedPriceId] = useState(STRIPE_PRICE_MONTHLY_DIY);
+    const [selectedPriceId, setSelectedPriceId] = useState(STRIPE_PRICE_MONTHLY_DIY);
+    const [showCarousel, setShowCarousel] = useState(true);
 
     return (
         <>
             {featSignupV2() ? (
                 <LoginSignupLayout
-                    left={<ScreenshotsCarousel />}
-                    right={<SignUpPage selectedPriceId={selectedPriceId} />}
+                    left={showCarousel ? <ScreenshotsCarousel /> : <PricingSection setPriceId={setSelectedPriceId} />}
+                    right={<SignUpPage selectedPriceId={selectedPriceId} setShowCarousel={setShowCarousel} />}
                 />
             ) : (
                 <LegacyLoginSignupLayout>

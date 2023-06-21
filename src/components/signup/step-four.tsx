@@ -5,6 +5,7 @@ import { Button } from '../button';
 import type { SignupInputTypes } from 'src/utils/validation/signup';
 import { isMissing } from 'src/utils/utils';
 import type { SignUpValidationErrors } from './signup-page';
+import { Spinner } from '../icons';
 
 export const StepFour = ({
     companyName,
@@ -61,8 +62,8 @@ export const StepFour = ({
                 onValueChange={handleCompanySizeChange}
             />
 
-            <Button disabled={submitDisabled} type="submit" className="w-full" onClick={onNext}>
-                {t('signup.next')}
+            <Button disabled={submitDisabled} type="submit" className="flex w-full justify-center" onClick={onNext}>
+                {loading ? <Spinner className="h-5 w-5 fill-primary-600" /> : t('signup.next')}
             </Button>
         </>
     );

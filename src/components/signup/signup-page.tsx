@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import { useState } from 'react';
+import { useRouter } from 'next/router';
+import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { FormWizard } from './form-wizard';
 import { OnboardPaymentSection } from './onboard-payment-section';
@@ -13,6 +14,7 @@ import { useUser } from 'src/hooks/use-user';
 import { useCompany } from 'src/hooks/use-company';
 import type { SignupInputTypes } from 'src/utils/validation/signup';
 import type { FieldValues } from 'react-hook-form';
+import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
 
 export interface SignUpValidationErrors {
     firstName: string;
@@ -30,9 +32,16 @@ const CompanyErrors = {
     ...createCompanyValidationErrors,
 };
 
-const SignUpPage = ({ selectedPriceId }: { selectedPriceId: string }) => {
+const SignUpPage = ({
+    selectedPriceId,
+    setShowCarousel,
+}: {
+    selectedPriceId: string;
+    setShowCarousel: (show: boolean) => void;
+}) => {
     const { t } = useTranslation();
-    const { signup } = useUser();
+    const router = useRouter();
+    const { signup, createEmployee, profile } = useUser();
     const { createCompany } = useCompany();
 
     const {
@@ -50,7 +59,7 @@ const SignUpPage = ({ selectedPriceId }: { selectedPriceId: string }) => {
     });
 
     const [currentStep, setCurrentStep] = useState(1);
-    const [selectedSize, setSelectedSize] = useState<string>('');
+    const [selectedSize, setSelectedSize] = useState<string | null>(null);
     const [selectedCategory, setSelectedCategory] = useState<string>('');
     const [validationErrors, setValidationErrors] = useState<SignUpValidationErrors>({
         firstName: '',
@@ -62,7 +71,7 @@ const SignUpPage = ({ selectedPriceId }: { selectedPriceId: string }) => {
         companyName: '',
         companyWebsite: '',
     });
-    // const [signupSuccess, setSignupSuccess] = useState(false);
+    const [createProfileSuccess, setCreateProfileSuccess] = useState(false);
     const [loading, setLoading] = useState(false);
 
     const formData = {
@@ -116,13 +125,15 @@ const SignUpPage = ({ selectedPriceId }: { selectedPriceId: string }) => {
         if (currentStep === steps.length) {
             return;
         }
+
         if (currentStep === 2) {
             await handleProfileCreate(formData);
-        }
-        if (currentStep === 4) {
+        } else if (currentStep === 4) {
             await handleCompanyCreate(formData);
+            setShowCarousel(false);
+        } else {
+            setCurrentStep(currentStep + 1);
         }
-        setCurrentStep(currentStep + 1);
     };
 
     const handleProfileCreate = async (formData: FieldValues) => {
@@ -138,7 +149,22 @@ const SignUpPage = ({ selectedPriceId }: { selectedPriceId: string }) => {
         };
         try {
             setLoading(true);
-            await signup(data);
+            const signupProfileRes = await signup(data);
+            if (signupProfileRes?.session?.user.id) {
+                if (EMPLOYEE_EMAILS.includes(email)) {
+                    const employeeRes = await createEmployee(email);
+                    if (employeeRes?.id) {
+                        setCreateProfileSuccess(true);
+                    } else {
+                        throw new Error('Could not create employee');
+                    }
+                } else {
+                    setCreateProfileSuccess(true);
+                }
+                setCurrentStep(currentStep + 1);
+            } else {
+                throw new Error('Could not sign up');
+            }
         } catch (error: any) {
             clientLogger(error, 'error');
             // this is a supabase provided error so we don't have our custom error handling
@@ -161,10 +187,14 @@ const SignUpPage = ({ selectedPriceId }: { selectedPriceId: string }) => {
         };
         try {
             setLoading(true);
+            if (!createProfileSuccess || !profile?.id) {
+                throw new Error('no profile id');
+            }
             const signupCompanyRes = await createCompany(data);
             if (!signupCompanyRes?.cus_id) {
                 throw new Error('no cus_id, error creating company');
             }
+            setCurrentStep(currentStep + 1);
         } catch (e: any) {
             clientLogger(e, 'error');
             if (hasCustomError(e, CompanyErrors)) {
@@ -176,6 +206,12 @@ const SignUpPage = ({ selectedPriceId }: { selectedPriceId: string }) => {
             setLoading(false);
         }
     };
+
+    useEffect(() => {
+        if (createProfileSuccess && profile?.id && EMPLOYEE_EMAILS.includes(email)) {
+            router.push('/dashboard');
+        }
+    }, [email, router, createProfileSuccess, profile?.id]);
 
     return (
         <div>
