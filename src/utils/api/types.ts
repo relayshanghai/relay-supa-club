@@ -1,4 +1,10 @@
 import { z } from 'zod';
+import {
+    audience_age,
+    audience_gender,
+    gender_code,
+    last_posted,
+} from './iqdata/influencers/search-influencers-payload';
 
 export type ApiPayload = {
     path?: {
@@ -32,17 +38,6 @@ export const Location = z.object({
     country: Country,
 });
 
-const GenderUpper = z.union([z.literal('MALE'), z.literal('FEMALE'), z.literal('KNOWN'), z.literal('UNKNOWN')]);
-
-export const Gender = z
-    .string()
-    .transform((v) => v.toUpperCase() as z.infer<typeof GenderUpper>)
-    .refine((v) => GenderUpper.safeParse(v).success);
-
-type Gender = z.output<typeof Gender>;
-
-export const LastPosted = z.number().min(30);
-
 const NullString = z.union([z.string().or(z.null()), z.string().or(z.null())]);
 
 export const InfluencerSearchFilter = z.object({
@@ -51,15 +46,18 @@ export const InfluencerSearchFilter = z.object({
     text: z.string().optional(),
     username: z.string().optional(),
     keywords: z.string().optional(),
+    influencerAge: NullString.optional(),
     influencerLocation: Location.array().optional(),
+    audienceAge: audience_age.optional(),
     audienceLocation: Location.array().optional(),
     resultsPerPageLimit: z.number().optional().default(10),
     page: z.number().optional().default(0),
     audience: NullString.optional(),
     views: NullString.optional(),
-    gender: z.string().optional(),
+    gender: gender_code.optional(),
+    audienceGender: audience_gender.optional(),
     engagement: z.number().optional(),
-    lastPost: z.string().optional(),
+    lastPost: last_posted.optional(),
     contactInfo: z.string().optional(),
     only_recommended: z.boolean().optional(),
     recommendedInfluencers: z.string().array().optional(),

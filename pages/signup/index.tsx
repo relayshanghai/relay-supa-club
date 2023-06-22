@@ -14,7 +14,7 @@ import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { useUser } from 'src/hooks/use-user';
 import { clientLogger } from 'src/utils/logger-client';
 import { isMissing } from 'src/utils/utils';
-import type { SignupInputTypes } from 'src/utils/validation/signup';
+import type { LegacySignupInputTypes } from 'src/utils/validation/signup';
 import { validateSignupInput } from 'src/utils/validation/signup';
 import { LoginSignupLayout } from 'src/components/SignupLayout';
 import { STRIPE_PRICE_MONTHLY_DIY } from 'src/utils/api/stripe/constants';
@@ -99,7 +99,7 @@ export default function Register() {
         // why do we not set loading to false here? Because sometimes the user is logged in but the profile has not loaded yet. The next page needs the profile ready. Therefore we wait in the useEffect above for the profile to load before redirecting.
     };
 
-    const setAndValidate = (type: SignupInputTypes, value: string) => {
+    const setAndValidate = (type: LegacySignupInputTypes, value: string) => {
         setFieldValue(type, value);
         const validationError = validateSignupInput(type, value, password);
         if (validationError) {
@@ -127,7 +127,10 @@ export default function Register() {
     return (
         <>
             {featSignupV2() ? (
-                <LoginSignupLayout left={<ScreenshotsCarousel />} right={<SignUpPage selectedPriceId={selectedPriceId} />} />
+                <LoginSignupLayout
+                    left={<ScreenshotsCarousel />}
+                    right={<SignUpPage selectedPriceId={selectedPriceId} />}
+                />
             ) : (
                 <LegacyLoginSignupLayout>
                     <form className="mx-auto flex w-full max-w-xs flex-grow flex-col items-center justify-center space-y-2">

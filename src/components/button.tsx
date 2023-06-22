@@ -5,7 +5,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const defaultClasses =
-    'text-sm px-4 py-2 rounded-md flex-shrink-0 font-medium disabled:bg-gray-300 border-primary-500 border disabled:cursor-default disabled:border-gray-300 disabled:text-gray-500';
+    'text-sm px-4 py-[.75em] rounded-md flex-shrink-0 font-medium disabled:bg-gray-300 border-primary-500 border disabled:cursor-default disabled:border-gray-300 disabled:text-gray-500';
 const primaryClasses = 'text-white bg-primary-500 hover:bg-primary-700';
 const secondaryClasses = 'text-primary-500 bg-white border-primary-500 border hover:bg-primary-100';
 /** override default browser styles */
@@ -19,11 +19,12 @@ const neutralClasses = 'text-left';
 export const Button = ({ children, variant, className, ...rest }: ButtonProps) => {
     return (
         <button
-            className={
-                variant === 'neutral'
-                    ? `${neutralClasses} ${className}`
-                    : `${defaultClasses} ${variant === 'secondary' ? secondaryClasses : primaryClasses} ${className}`
-            }
+            className={`
+                ${
+                    variant === 'neutral'
+                        ? `${neutralClasses}`
+                        : `${defaultClasses} ${variant === 'secondary' ? secondaryClasses : primaryClasses}`
+                }  ${className}`}
             {...rest}
         >
             {children}

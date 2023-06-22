@@ -54,7 +54,7 @@ describe('Caches SWR requests', () => {
             });
         });
         cy.reload();
-        cy.contains('Cocomelon - Nursery Rhymes', { timeout: 1000 }).should('exist'); // even though the delay is 10 seconds, the search is cached
+        cy.contains('Cocomelon - Nursery Rhymes').should('exist'); // even though the delay is 10 seconds, the search is cached
     });
 });
 

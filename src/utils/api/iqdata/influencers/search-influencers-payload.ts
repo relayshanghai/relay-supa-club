@@ -51,11 +51,6 @@ export const audience_age_range = z.object({
     weight: z.number().optional(),
 });
 
-export const audience_gender = z.object({
-    code: z.union([z.literal('MALE'), z.literal('FEMALE'), z.literal('KNOWN'), z.literal('UNKNOWN')]),
-    weight: z.number().optional(),
-});
-
 export const geo = z.object({
     id: z.number(),
     weight: z.number().optional(),
@@ -110,23 +105,54 @@ export const with_contact = z.object({
     action: z.union([z.literal('must'), z.literal('should'), z.literal('not')]).optional(),
 });
 
+const gender_code_enum = z.union([z.literal('MALE'), z.literal('FEMALE'), z.literal('KNOWN'), z.literal('UNKNOWN')]);
+
+export const gender_code = z
+    .string()
+    .transform((v) => v.toUpperCase() as z.infer<typeof gender_code_enum>)
+    .refine((v) => gender_code_enum.safeParse(v).success);
+
 export const gender = z.object({
-    code: z.union([z.literal('MALE'), z.literal('FEMALE'), z.literal('KNOWN'), z.literal('UNKNOWN')]),
+    code: gender_code,
+});
+
+const audience_gender_code_enum = z.enum(['MALE', 'FEMALE']);
+
+export const audience_gender_code = z
+    .string()
+    .transform((v) => v.toUpperCase() as z.infer<typeof audience_gender_code_enum>)
+    .refine((v) => audience_gender_code_enum.safeParse(v).success);
+
+export const audience_gender = z.object({
+    code: audience_gender_code,
+    weight: z.number().optional(),
 });
 
 export const views = z.object({
     left_number: z.number().optional(),
-    right_nuber: z.number().optional(),
+    right_number: z.number().optional(),
 });
 
 export const reel_plays = z.object({
     left_number: z.number().optional(),
-    right_nuber: z.number().optional(),
+    right_number: z.number().optional(),
 });
 
 export const followers = z.object({
     left_number: z.number().optional(),
-    right_nuber: z.number().optional(),
+    right_number: z.number().optional(),
+});
+
+export const age = z.object({
+    left_number: z.number().optional(),
+    right_number: z.number().optional(),
+});
+
+export const audience_age_code = z.enum(['18-24', '25-34', '35-44', '45-64', '65-']);
+
+export const audience_age = z.object({
+    code: audience_age_code,
+    weight: z.number().optional(),
 });
 
 export const engagement_rate = z.object({
@@ -167,9 +193,15 @@ export const actions = z.object({
     action: z.union([z.literal('must'), z.literal('should'), z.literal('not')]).optional(),
 });
 
+export const last_posted = z
+    .string()
+    .or(z.number())
+    .transform((v) => +v)
+    .pipe(z.number().gte(30));
+
 export const filter = z
     .object({
-        last_posted: z.number().gte(30).optional(),
+        last_posted: last_posted.optional(),
         keywords: z.string().optional(),
         text: z.string().optional(),
         // @todo customize error message via https://zod.dev/ERROR_HANDLING
@@ -180,14 +212,16 @@ export const filter = z
         views: views.optional(),
         followers: followers.optional(),
         reels_plays: reel_plays.optional(),
+        age: age.optional(),
         geo: geo.array().optional(),
-        audience_geo: audience_geo.array().optional(),
+        audience_age: audience_age.array().optional(),
         audience_age_range: audience_age_range.optional(),
-        audience_gender: audience_gender.optional(),
+        audience_geo: audience_geo.array().optional(),
         relevance: relevance.optional(),
         text_tags: text_tags.array().optional(),
         username: username.optional(),
         gender: gender.optional(),
+        audience_gender: audience_gender.optional(),
         with_contact: with_contact.array().optional(),
         actions: actions.array().optional(),
     });

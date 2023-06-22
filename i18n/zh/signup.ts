@@ -12,6 +12,7 @@ const signup = {
     phoneNumber: '电话号码',
     firstNamePlaceholder: '三',
     lastNamePlaceholder: '张',
+    phoneNumberPlaceholder: '139-999-9999',
     email: '电子邮件',
     password: '密码',
     confirmPassword: '确认密码',
@@ -31,5 +32,6 @@ const signup = {
         title4: '数据中心',
         description4: 'KOL 数据一目了然',
     },
+    alreadySignedUp: '已经注册过账号？',
 };
 export default signup;

@@ -1,6 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
-import { AI_EMAIL_SUBSCRIPTION_USAGE_LIMIT, AI_EMAIL_TRIAL_USAGE_LIMIT } from 'src/constants/openai';
 import { createSubscriptionErrors } from 'src/errors/subscription';
 import { getCompanyCusId, updateCompanySubscriptionStatus, updateCompanyUsageLimits } from 'src/utils/api/db';
 import { STRIPE_PRICE_MONTHLY_DIY, STRIPE_PRODUCT_ID_DIY } from 'src/utils/api/stripe/constants';
@@ -42,10 +41,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             const subscriptions = await stripeClient.subscriptions.list({
                 customer: cusId,
-                status: 'active',
             });
-            const activeSubscription = subscriptions.data[0];
-            if (activeSubscription) {
+            if (subscriptions.data.length > 0) {
                 return res.status(httpCodes.BAD_REQUEST).json({ error: createSubscriptionErrors.alreadySubscribed });
             }
             const diyPrices = (await stripeClient.prices.list({
@@ -61,9 +58,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
             }
 
-            const { trial_days, trial_profiles, trial_searches } = diyTrialPrice.product.metadata;
+            const { trial_days, trial_profiles, trial_searches, trial_ai_emails } = diyTrialPrice.product.metadata;
 
-            if (!trial_days || !trial_profiles || !trial_searches) {
+            if (!trial_days || !trial_profiles || !trial_searches || !trial_ai_emails) {
                 serverLogger(new Error('Missing product metadata'), 'error', true);
                 return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
             }
@@ -88,18 +85,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 expand: ['product'],
             })) as StripePriceWithProductMetadata;
 
-            if (!price?.product?.metadata?.profiles || !price.product.metadata.searches) {
+            const { searches, profiles, ai_emails } = price.product.metadata;
+            if (!profiles || !searches || !ai_emails) {
                 serverLogger(new Error('Missing metadata'), 'error', true);
                 return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
             }
-
             await updateCompanyUsageLimits({
-                profiles_limit: price.product.metadata.profiles,
-                searches_limit: price.product.metadata.searches,
-                ai_email_generator_limit: AI_EMAIL_SUBSCRIPTION_USAGE_LIMIT,
+                profiles_limit: profiles,
+                searches_limit: searches,
+                ai_email_generator_limit: ai_emails,
                 trial_profiles_limit: trial_profiles,
                 trial_searches_limit: trial_searches,
-                trial_ai_email_generator_limit: AI_EMAIL_TRIAL_USAGE_LIMIT,
+                trial_ai_email_generator_limit: trial_ai_emails,
                 id: company_id,
             });
 

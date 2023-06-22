@@ -1,14 +1,13 @@
 import { featRecommended } from 'src/constants/feature-flags';
-import type {
-    CreatorPlatform,
-    CreatorAccount,
-    LocationWeighted,
-    AudienceAgeRangeWeighted,
-    AudienceGenderWeighted,
-} from 'types';
 import type { SearchInfluencersPayload, with_contact, engagement_rate } from './influencers/search-influencers-payload';
-import { Gender, LastPosted } from '../types';
+import {
+    last_posted,
+    gender_code,
+    audience_age_range,
+    audience_gender,
+} from './influencers/search-influencers-payload';
 import type { z } from 'zod';
+import type { CreatorAccount, CreatorPlatform, LocationWeighted } from 'types';
 
 type NullStringTuple = [null | string, null | string];
 
@@ -19,22 +18,23 @@ export interface FetchCreatorsFilteredParams {
     text?: string;
     username?: string;
     keywords?: string;
-    hashtags?: string[];
+    influencerAge?: NullStringTuple;
     influencerLocation?: LocationWeighted[];
+    audienceAge?: z.input<typeof audience_age_range>;
     audienceLocation?: LocationWeighted[];
     resultsPerPageLimit?: number;
     page?: number;
     audience: NullStringTuple;
-    audienceAge?: AudienceAgeRangeWeighted;
-    audienceGender?: AudienceGenderWeighted;
     views: NullStringTuple;
     gender?: string;
+    audienceGender?: z.input<typeof audience_gender>;
     engagement?: number;
-    lastPost?: string;
+    lastPost?: z.input<typeof last_posted>;
     contactInfo?: string;
     only_recommended?: boolean;
     recommendedInfluencers?: string[];
     text_tags?: string;
+    hashtags?: string[];
 }
 
 const locationTransform = ({ id, weight }: { id: string; weight: number | string }) => ({
@@ -42,9 +42,13 @@ const locationTransform = ({ id, weight }: { id: string; weight: number | string
     weight: weight ? Number(weight) / 100 : 0.5,
 });
 
-const genderFilter = (value: string) => {
-    const code = Gender.parse(value);
+const genderFilter = (value: z.input<typeof gender_code>) => {
+    const code = gender_code.parse(value);
     return { code };
+};
+
+const audienceGenderFilter = (value: z.input<typeof audience_gender>) => {
+    return audience_gender.parse(value);
 };
 
 const textFilter = (value: string) => {
@@ -55,16 +59,8 @@ const keywordsFilter = (value: string) => {
     return value;
 };
 
-const lastPostedFilter = (value: number) => {
-    return LastPosted.parse(value);
-};
-
-const audienceAgeFilter = (value: AudienceAgeRangeWeighted) => {
-    return value;
-};
-
-const audienceGenderFilter = (value: AudienceGenderWeighted) => {
-    return value;
+const lastPostedFilter = (value: z.input<typeof last_posted>) => {
+    return last_posted.parse(value);
 };
 
 const usernameFilter = (value: string) => {
@@ -161,6 +157,14 @@ const contactInfoFilter = (value: string[]) => {
     return contactType.filter((v) => !!v) as z.infer<typeof with_contact>[];
 };
 
+const influencerAgeFilter = (value: NullStringTuple) => {
+    return leftRightNumberTransform(value);
+};
+
+const audienceAgeFilter = (value: z.input<typeof audience_age_range>) => {
+    return audience_age_range.parse(value);
+};
+
 export const prepareFetchCreatorsFiltered = ({
     platform = 'youtube',
     tags = [],
@@ -202,6 +206,10 @@ export const prepareFetchCreatorsFiltered = ({
 
     if (params.gender) {
         body.filter.gender = genderFilter(params.gender);
+    }
+
+    if (params.audienceGender) {
+        body.filter.audience_gender = audienceGenderFilter(params.audienceGender);
     }
 
     if (params.text) {
@@ -258,6 +266,14 @@ export const prepareFetchCreatorsFiltered = ({
 
     if (params.contactInfo) {
         body.filter.with_contact = contactInfoFilter([params.contactInfo]);
+    }
+
+    if (params.influencerAge) {
+        body.filter.age = influencerAgeFilter(params.influencerAge);
+    }
+
+    if (params.audienceAge) {
+        body.filter.audience_age_range = audienceAgeFilter(params.audienceAge);
     }
 
     if (params.engagement) {
