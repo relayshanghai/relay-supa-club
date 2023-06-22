@@ -2,7 +2,7 @@ import { Button } from 'src/components/button';
 import type { ButtonProps } from 'src/components/button';
 import type { MouseEvent, MouseEventHandler } from 'react';
 import { useCallback } from 'react';
-import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { useRudderstack } from './rudderstack/rudderstack-provider';
 
 type CreateCompanyEventParams = {
     company: string;
@@ -15,14 +15,14 @@ type CreateCompanyButtonProps = {
     CreateCompanyEventParams;
 
 export default function CreateCompanyButton({ children, onClick, company, ...props }: CreateCompanyButtonProps) {
-    const { trackEvent } = useRudderstack();
+    const rudderstack = useRudderstack();
 
     const handleClick = useCallback(
         (event: MouseEvent<HTMLButtonElement>) => {
-            trackEvent('Clicked on Create Company', { company });
+            rudderstack?.track('Clicked on Create Company', { company });
             onClick(event);
         },
-        [onClick, trackEvent, company],
+        [onClick, rudderstack, company],
     );
 
     return (

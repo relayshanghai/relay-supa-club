@@ -2,6 +2,7 @@
 // @ts-check
 import React from 'react';
 import CreateCompanyButton from './create-company-button';
+import RudderstackProvider from './rudderstack/rudderstack-provider';
 
 describe('<CreateCompanyButton />', () => {
     it('Sends Rudderstack event', () => {
@@ -11,7 +12,11 @@ describe('<CreateCompanyButton />', () => {
 
         cy.intercept('GET', 'https://api.rudderlabs.com/sourceConfig/*', requestHandler).as('rudderstack-api-call');
 
-        cy.mount(<CreateCompanyButton company={'Foo'} onClick={() => null} label={'Click Me'} />);
+        cy.mount(
+            <RudderstackProvider>
+                <CreateCompanyButton company={'Foo'} onClick={() => null} label={'Click Me'} />
+            </RudderstackProvider>,
+        );
 
         // cy.intercept('GET', '/api/test*', requestHandler).as('rudderstack-api-call');
         // cy.intercept('GET', 'https://enyfsw7kkcou.x.pipedream.net/', requestHandler).as('rudderstack-api-call');

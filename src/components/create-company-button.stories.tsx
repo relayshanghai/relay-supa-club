@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 import CreateCompanyButton from './create-company-button';
+import RudderstackProvider from './rudderstack/rudderstack-provider';
 
 type Story = StoryObj<typeof CreateCompanyButton>;
 
@@ -21,5 +22,9 @@ export const Default: Story = {
             type: 'function',
         },
     },
-    render: ({ company, onClick }) => <CreateCompanyButton company={company} onClick={onClick} />,
+    render: ({ company, onClick }) => (
+        <RudderstackProvider>
+            <CreateCompanyButton company={company} onClick={onClick} />
+        </RudderstackProvider>
+    ),
 };
