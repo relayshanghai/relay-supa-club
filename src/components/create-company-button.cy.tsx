@@ -1,8 +1,7 @@
 /// <reference types="@testing-library/cypress" />
 // @ts-check
 import React from 'react';
-import CreateCompanyButton from './create-company-button';
-import RudderstackProvider from './rudderstack/rudderstack-provider';
+import CreateCompanyButton, { CreateCompanyEvent } from './create-company-button';
 
 describe('<CreateCompanyButton />', () => {
     it('Sends Rudderstack event', () => {
@@ -10,24 +9,17 @@ describe('<CreateCompanyButton />', () => {
             req.reply({ message: 'ok' });
         };
 
-        // cy.intercept('GET', 'https://api.rudderlabs.com/sourceConfig/*', requestHandler).as('rudderstack-api-call');
-
-        cy.intercept('POST', 'https://relaytechhee.dataplane.rudderstack.com/**/*', requestHandler).as(
-            'rudderstack-dataplane-call',
-        );
-
-        cy.mount(
-            <RudderstackProvider>
-                <CreateCompanyButton company={'Foo'} onClick={() => null} label={'Click Me'} />
-            </RudderstackProvider>,
-        );
-
-        // cy.intercept('GET', '/api/test*', requestHandler).as('rudderstack-api-call');
-        // cy.intercept('GET', 'https://enyfsw7kkcou.x.pipedream.net/', requestHandler).as('rudderstack-api-call');
+        cy.intercept('GET', 'https://api.rudderlabs.com/sourceConfig/*', requestHandler).as('rudderstack-api-call');
 
         // cy.intercept('POST', 'https://relaytechhee.dataplane.rudderstack.com/**/*', requestHandler).as(
         //     'rudderstack-dataplane-call',
         // );
+
+        cy.mount(
+            <CreateCompanyButton event={CreateCompanyEvent} eventpayload={{ company: 'Foo' }}>
+                Click Me
+            </CreateCompanyButton>,
+        );
 
         const opts = {
             log: true,
@@ -36,8 +28,8 @@ describe('<CreateCompanyButton />', () => {
 
         cy.contains('Click Me', opts).click(opts);
 
-        // cy.wait('@rudderstack-api-call', opts);
-        cy.wait('@rudderstack-dataplane-call', opts);
+        cy.wait('@rudderstack-api-call', opts);
+        // cy.wait('@rudderstack-dataplane-call', opts);
     });
 });
 

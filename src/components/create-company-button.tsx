@@ -1,33 +1,21 @@
 import { Button } from 'src/components/button';
 import type { ButtonProps } from 'src/components/button';
-import type { MouseEvent, MouseEventHandler } from 'react';
-import { useCallback } from 'react';
-import { useRudderstack } from './rudderstack/rudderstack-provider';
+import type { PropsWithChildren } from 'react';
+import type { RudderEvent } from './with-tracking';
+import { WithClickTracking } from './with-tracking';
 
-type CreateCompanyEventParams = {
+export type CreateCompanyEventParams = {
     company: string;
 };
 
-type CreateCompanyButtonProps = {
-    label?: string;
-    onClick: MouseEventHandler<HTMLButtonElement>;
-} & ButtonProps &
-    CreateCompanyEventParams;
+export const CreateCompanyEvent: RudderEvent = (rudder) => (properties: CreateCompanyEventParams) => {
+    rudder.trackEvent('Clicked on Create Company', properties);
+};
 
-export default function CreateCompanyButton({ children, onClick, company, ...props }: CreateCompanyButtonProps) {
-    const rudderstack = useRudderstack();
+const CreateCompanyButton = ({ children, ...props }: PropsWithChildren<ButtonProps>) => (
+    <Button type="button" {...props}>
+        {children}
+    </Button>
+);
 
-    const handleClick = useCallback(
-        (event: MouseEvent<HTMLButtonElement>) => {
-            rudderstack?.track('Clicked on Create Company', { company });
-            onClick(event);
-        },
-        [onClick, rudderstack, company],
-    );
-
-    return (
-        <Button type="button" {...props} onClick={handleClick}>
-            {props.label || children || 'Create Company'}
-        </Button>
-    );
-}
+export default WithClickTracking(CreateCompanyButton);

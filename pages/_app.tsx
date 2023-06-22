@@ -9,13 +9,12 @@ import type { Session } from '@supabase/auth-helpers-react';
 import { SessionContextProvider } from '@supabase/auth-helpers-react';
 import { useEffect, useState } from 'react';
 import { CompanyProvider } from 'src/hooks/use-company';
-// import { rudderInitialized } from 'src/utils/rudder-initialize';
+import { rudderInitialized } from 'src/utils/rudder-initialize';
 import { CacheProvider } from 'src/utils/indexeddb-cache-provider';
 import { Provider as JotaiProvider } from 'jotai';
 import ChatwootProvider from 'src/components/chatwoot/chatwoot-provider';
 import chatwootConfig from 'chatwoot.config';
 import { useTranslation } from 'react-i18next';
-import RudderstackProvider from 'src/components/rudderstack/rudderstack-provider';
 
 function MyApp({
     Component,
@@ -25,9 +24,9 @@ function MyApp({
 }>) {
     const [lang, setLang] = useState(i18n.language);
 
-    // useEffect(() => {
-    //     rudderInitialized();
-    // }, []); //enable rudderstack Analytics
+    useEffect(() => {
+        rudderInitialized();
+    }, []); //enable rudderstack Analytics
 
     const [supabaseClient] = useState(() => createBrowserSupabaseClient());
     const { i18n: _i18n } = useTranslation();
@@ -68,24 +67,19 @@ function MyApp({
                 />
             </Head>
 
-            <RudderstackProvider
-                writeKey={process.env.NEXT_PUBLIC_RUDDERSTACK_APP_WRITE_KEY}
-                dataPlane={process.env.NEXT_PUBLIC_RUDDERSTACK_APP_DATA_PLANE_URL}
-            >
-                <SessionContextProvider supabaseClient={supabaseClient} initialSession={pageProps.initialSession}>
-                    <CacheProvider>
-                        <UserProvider>
-                            <ChatwootProvider {...chatwootConfig} locale={lang}>
-                                <JotaiProvider>
-                                    <CompanyProvider>
-                                        <Component {...pageProps} />
-                                    </CompanyProvider>
-                                </JotaiProvider>
-                            </ChatwootProvider>
-                        </UserProvider>
-                    </CacheProvider>
-                </SessionContextProvider>
-            </RudderstackProvider>
+            <SessionContextProvider supabaseClient={supabaseClient} initialSession={pageProps.initialSession}>
+                <CacheProvider>
+                    <UserProvider>
+                        <ChatwootProvider {...chatwootConfig} locale={lang}>
+                            <JotaiProvider>
+                                <CompanyProvider>
+                                    <Component {...pageProps} />
+                                </CompanyProvider>
+                            </JotaiProvider>
+                        </ChatwootProvider>
+                    </UserProvider>
+                </CacheProvider>
+            </SessionContextProvider>
             <Toaster />
         </>
     );

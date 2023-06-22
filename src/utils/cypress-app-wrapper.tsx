@@ -10,7 +10,6 @@ import { SWRConfig } from 'swr';
 import { Toaster } from 'react-hot-toast';
 import type { TestMountOptions } from './user-test-wrapper';
 import { UserAndCompanyTestWrapper } from './user-test-wrapper';
-import RudderstackProvider from 'src/components/rudderstack/rudderstack-provider';
 
 i18n.changeLanguage('en-US');
 
@@ -33,14 +32,12 @@ export const TestContextsWrapper = ({
     return (
         <AppRouterContext.Provider value={router as any}>
             <I18nextProvider i18n={i18n}>
-                <RudderstackProvider>
-                    <SessionContextProvider supabaseClient={supabaseClient} initialSession={{} as any}>
-                        {/* gets rid of the localStorage cache in tests */}
-                        <SWRConfig value={{ provider: () => new Map() }}>
-                            <UserAndCompanyTestWrapper>{children}</UserAndCompanyTestWrapper>
-                        </SWRConfig>
-                    </SessionContextProvider>
-                </RudderstackProvider>
+                <SessionContextProvider supabaseClient={supabaseClient} initialSession={{} as any}>
+                    {/* gets rid of the localStorage cache in tests */}
+                    <SWRConfig value={{ provider: () => new Map() }}>
+                        <UserAndCompanyTestWrapper>{children}</UserAndCompanyTestWrapper>
+                    </SWRConfig>
+                </SessionContextProvider>
             </I18nextProvider>
             <Toaster />
         </AppRouterContext.Provider>
