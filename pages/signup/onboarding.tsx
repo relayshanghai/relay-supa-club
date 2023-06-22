@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { useCallback, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
-import _CreateCompanyButton from 'src/components/create-company-button';
+import CreateCompanyButton from 'src/components/create-company-button';
 
 import { Spinner } from 'src/components/icons';
 import { Input } from 'src/components/input';
@@ -32,7 +32,7 @@ export default function Register() {
         website: '',
     });
     const [submitting, setSubmitting] = useState(false);
-    const _handleSubmit = useCallback(async () => {
+    const handleSubmit = useCallback(async () => {
         try {
             setSubmitting(true);
             const created = await createCompany(values);
@@ -80,13 +80,13 @@ export default function Register() {
                             value={values.website}
                             onChange={(e) => setFieldValue('website', e.target.value)}
                         />
-                        {/*<CreateCompanyButton
+                        <CreateCompanyButton
                             company={values.name}
                             disabled={!values.name || submitting}
                             onClick={handleSubmit}
                         >
                             {t('login.createCompany')}
-                        </CreateCompanyButton>*/}
+                        </CreateCompanyButton>
                     </>
                 )}
                 <div className="pt-20">
