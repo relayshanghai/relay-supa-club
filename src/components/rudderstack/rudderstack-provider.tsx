@@ -17,7 +17,11 @@ export default function RudderstackProvider({ children, writeKey, dataPlane }: R
     const [rudder, setRudderstack] = useState<rudderstack | null>(null);
 
     useEffect(() => {
-        loadRudderstack(writeKey ?? '', dataPlane ?? '', (rudderstack: rudderstack) => setRudderstack(rudderstack));
+        loadRudderstack(
+            writeKey ?? process.env.NEXT_PUBLIC_RUDDERSTACK_APP_WRITE_KEY ?? '',
+            dataPlane ?? process.env.NEXT_PUBLIC_RUDDERSTACK_APP_DATA_PLANE_URL ?? '',
+            (rudderstack: rudderstack) => setRudderstack(rudderstack),
+        );
     }, [writeKey, dataPlane]);
 
     // @todo create a loading skeleton
