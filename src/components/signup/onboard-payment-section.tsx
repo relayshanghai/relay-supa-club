@@ -56,7 +56,7 @@ const OnboardPaymentSectionInner = ({ priceId }: OnboardPaymentSectionProps) => 
         let timer: any;
         if (redirect) {
             timer = setTimeout(() => {
-                router.push('/account');
+                router.push('/dashboard');
             }, 1500);
         }
         return () => {
