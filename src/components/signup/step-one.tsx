@@ -52,7 +52,7 @@ export const StepOne = ({
                 value={phoneNumber}
                 onChange={(e) => setAndValidate('phoneNumber', e.target.value)}
             />
-            <Button disabled={submitDisabled} className="w-full" onClick={onNext}>
+            <Button disabled={submitDisabled} className="mt-12 w-full" onClick={onNext}>
                 {t('signup.next')}
             </Button>
         </>

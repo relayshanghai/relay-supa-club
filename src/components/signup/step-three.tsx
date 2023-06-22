@@ -4,6 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { SingleSelect } from '../ui';
 import { Button } from '../button';
 import { companyCategories } from './company-categories';
+import { useUser } from 'src/hooks/use-user';
+import { useEffect } from 'react';
 
 export const StepThree = ({
     loading,
@@ -15,6 +17,12 @@ export const StepThree = ({
     setSelectedCategory: (newValue: string) => void;
 }) => {
     const { t } = useTranslation();
+    const { refreshProfile } = useUser();
+
+    useEffect(() => {
+        refreshProfile();
+    }, [refreshProfile]);
+
     const {
         control,
         setValue,
@@ -39,7 +47,7 @@ export const StepThree = ({
                 setValue={setValue}
                 className="mb-4"
             />
-            <Button disabled={loading} type="submit" className="w-full" onClick={handleSubmit(onSubmit)}>
+            <Button disabled={loading} type="submit" className="mt-12 w-full" onClick={handleSubmit(onSubmit)}>
                 {t('signup.next')}
             </Button>
         </>

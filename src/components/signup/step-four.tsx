@@ -6,6 +6,8 @@ import type { SignupInputTypes } from 'src/utils/validation/signup';
 import { isMissing } from 'src/utils/utils';
 import type { SignUpValidationErrors } from './signup-page';
 import { Spinner } from '../icons';
+import { useUser } from 'src/hooks/use-user';
+import { useEffect } from 'react';
 
 export const StepFour = ({
     companyName,
@@ -25,6 +27,10 @@ export const StepFour = ({
     onNext: any;
 }) => {
     const { t } = useTranslation();
+    const { profile, refreshProfile } = useUser();
+    useEffect(() => {
+        refreshProfile();
+    }, [refreshProfile]);
 
     const companySizeOptions = [
         { label: '1-10', value: 'small' },
@@ -39,7 +45,7 @@ export const StepFour = ({
     const invalidFormInput =
         isMissing(companyName) || validationErrors.companyName !== '' || validationErrors.companyWebsite !== '';
 
-    const submitDisabled = invalidFormInput || loading;
+    const submitDisabled = invalidFormInput || loading || !profile?.id;
 
     return (
         <>
@@ -62,7 +68,12 @@ export const StepFour = ({
                 onValueChange={handleCompanySizeChange}
             />
 
-            <Button disabled={submitDisabled} type="submit" className="flex w-full justify-center" onClick={onNext}>
+            <Button
+                disabled={submitDisabled}
+                type="submit"
+                className="mt-12 flex w-full justify-center"
+                onClick={onNext}
+            >
                 {loading ? <Spinner className="h-5 w-5 fill-primary-600" /> : t('signup.next')}
             </Button>
         </>

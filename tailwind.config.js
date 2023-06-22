@@ -39,6 +39,7 @@ module.exports = {
                     800: '#1f2937',
                     900: '#111827',
                 },
+                'relay-purple': '#6B65AD',
             },
         },
     },

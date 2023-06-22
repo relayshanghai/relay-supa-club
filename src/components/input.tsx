@@ -15,7 +15,7 @@ export const Input = ({ label, error, note, placeholder, type = 'text', ...rest 
     const togglePasswordVisibility = () => setIsPasswordVisible(!isPasswordVisible);
 
     return (
-        <label className="flex w-full flex-col text-xs text-gray-800">
+        <label className="flex w-full flex-col text-sm text-gray-800">
             <div className="font-semibold">
                 {label}
                 {rest.required ? <span className="ml-1 text-xs text-primary-500">*</span> : null}
