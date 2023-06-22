@@ -1,30 +1,27 @@
 import type { PropsWithChildren } from 'react';
-import { useEffect, useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import React, { createContext } from 'react';
-import * as ruddersdk from 'rudder-sdk-js';
+import type { rudderstack } from './rudderstack';
+import { loadRudderstack } from './rudderstack';
 
-const RudderstackContext = createContext<typeof ruddersdk | null>(null);
+// @ts-ignore
+const RudderstackContext = createContext<rudderstack>(null);
 
 export const useRudderstack = () => useContext(RudderstackContext);
-type RudderstackProviderProps = PropsWithChildren;
+type RudderstackProviderProps = PropsWithChildren<{
+    writeKey?: string;
+    dataPlane?: string;
+}>;
 
-export default function RudderstackProvider({ children, ..._props }: RudderstackProviderProps) {
-    const [rudderstack, setRudderstack] = useState<typeof ruddersdk | null>(null);
+export default function RudderstackProvider({ children, writeKey, dataPlane }: RudderstackProviderProps) {
+    const [rudder, setRudderstack] = useState<rudderstack | null>(null);
 
     useEffect(() => {
-        ruddersdk.ready(() => {
-            setRudderstack(ruddersdk);
-        });
+        loadRudderstack(writeKey ?? '', dataPlane ?? '', (rudderstack: rudderstack) => setRudderstack(rudderstack));
+    }, [writeKey, dataPlane]);
 
-        ruddersdk.load(
-            process.env.NEXT_PUBLIC_RUDDERSTACK_APP_WRITE_KEY || '',
-            process.env.NEXT_PUBLIC_RUDDERSTACK_APP_DATA_PLANE_URL || '',
-        );
+    // @todo create a loading skeleton
+    if (rudder === null) return <></>;
 
-        return () => {
-            setRudderstack(null);
-        };
-    }, []);
-
-    return <RudderstackContext.Provider value={rudderstack}>{children}</RudderstackContext.Provider>;
+    return <RudderstackContext.Provider value={rudder}>{children}</RudderstackContext.Provider>;
 }
