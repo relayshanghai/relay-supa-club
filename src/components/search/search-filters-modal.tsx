@@ -125,7 +125,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                                 gender
                                     ? {
                                           code: gender,
-                                          weight: 0.25,
+                                          weight: 0.05,
                                       }
                                     : undefined,
                             );
@@ -137,7 +137,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                     </select>
                     <select
                         disabled={audienceGender ? false : true}
-                        value={audienceGender?.weight || '>25%'}
+                        value={audienceGender?.weight || '>5%'}
                         onChange={(e) => {
                             if (!audienceGender) return;
                             const weight = parseFloat(e.target.value);
@@ -198,7 +198,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                     </select>
                     <select
                         disabled={audienceAge ? false : true}
-                        value={audienceAge?.weight || '>25%'}
+                        value={audienceAge?.weight || '>5%'}
                         onChange={(e) => {
                             if (!audienceAge) return;
                             const weight = parseFloat(e.target.value);
