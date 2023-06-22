@@ -5,6 +5,7 @@ import { Modal } from '../modal';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { SearchLocations } from './search-locations';
 import LocationTag from './location-tag';
+import { useEffect } from 'react';
 
 /** Search Filter Modal, Subscribers and Avg view filter options: 1k, 5k, 10k, 15k, 25k, 50k, 100k, 250k, 500k, 1m */
 const options = [1e3, 5e3, 1e4, 15e3, 25e3, 50e3, 1e5, 25e4, 50e4, 1e6];
@@ -23,6 +24,10 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
         setViews,
         gender,
         setGender,
+        audienceGender,
+        setAudienceGender,
+        audienceAge,
+        setAudienceAge,
         engagement,
         setEngagement,
         lastPost,
@@ -38,6 +43,13 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
 
     const { t } = useTranslation();
     const { trackEvent } = useRudderstack();
+
+    useEffect(() => {
+        if (!audienceAge) return;
+        if (!audienceAge.left_number && !audienceAge.right_number) {
+            setAudienceAge(undefined);
+        }
+    }, [audienceAge, setAudienceAge]);
 
     return (
         <Modal visible={show} onClose={() => setShow(false)} title={t('creators.filter.title') || ''}>
@@ -103,6 +115,103 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                             </div>
                         </div>
                     </label>
+                </div>
+                <div>
+                    <select
+                        value={audienceGender?.code || 'ANY'}
+                        onChange={(e) => {
+                            const gender = e.target.value === 'ANY' ? null : e.target.value;
+                            setAudienceGender(
+                                gender
+                                    ? {
+                                          code: gender,
+                                          weight: 0.25,
+                                      }
+                                    : undefined,
+                            );
+                        }}
+                    >
+                        <option value="ANY">Any</option>
+                        <option value="MALE">Male</option>
+                        <option value="FEMALE">Female</option>
+                    </select>
+                    <select
+                        disabled={audienceGender ? false : true}
+                        value={audienceGender?.weight || '>25%'}
+                        onChange={(e) => {
+                            if (!audienceGender) return;
+                            const weight = parseFloat(e.target.value);
+                            setAudienceGender({
+                                ...audienceGender,
+                                weight: weight,
+                            });
+                        }}
+                    >
+                        {Array.from({ length: 10 }, (_, i) => (i + 1) * 5).map((value) => (
+                            <option key={value} value={value / 100}>{`>${value}%`}</option>
+                        ))}
+                    </select>
+                </div>
+                <div>
+                    <select
+                        value={audienceAge?.left_number || 'Min'}
+                        onChange={(e) => {
+                            // if (!audienceAge) return;
+                            const lowerAge =
+                                e.target.value === 'Min'
+                                    ? undefined
+                                    : (e.target.value as '13' | '18' | '25' | '35' | '45' | '65' | undefined);
+                            setAudienceAge({
+                                ...audienceAge,
+                                left_number: lowerAge,
+                            });
+                        }}
+                    >
+                        <option value={undefined}>Min</option>
+                        <option value={13}>13</option>
+                        <option value={18}>18</option>
+                        <option value={25}>25</option>
+                        <option value={35}>35</option>
+                        <option value={45}>45</option>
+                        <option value={65}>65</option>
+                    </select>
+                    <select
+                        value={audienceAge?.right_number || 'Max'}
+                        onChange={(e) => {
+                            // if (!audienceAge) return;
+                            const upperAge =
+                                e.target.value === 'Max'
+                                    ? undefined
+                                    : (e.target.value as '17' | '24' | '34' | '44' | '64' | undefined);
+                            setAudienceAge({
+                                ...audienceAge,
+                                right_number: upperAge,
+                            });
+                        }}
+                    >
+                        <option value={17}>17</option>
+                        <option value={24}>24</option>
+                        <option value={34}>34</option>
+                        <option value={44}>44</option>
+                        <option value={64}>64</option>
+                        <option value={undefined}>Max</option>
+                    </select>
+                    <select
+                        disabled={audienceAge ? false : true}
+                        value={audienceAge?.weight || '>25%'}
+                        onChange={(e) => {
+                            if (!audienceAge) return;
+                            const weight = parseFloat(e.target.value);
+                            setAudienceAge({
+                                ...audienceAge,
+                                weight: weight,
+                            });
+                        }}
+                    >
+                        {Array.from({ length: 10 }, (_, i) => (i + 1) * 5).map((value) => (
+                            <option key={value} value={value / 100}>{`>${value}%`}</option>
+                        ))}
+                    </select>
                 </div>
                 <div>
                     <SearchLocations

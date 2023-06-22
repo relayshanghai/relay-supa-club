@@ -27,6 +27,8 @@ export const SearchOptions = ({
         audienceLocation,
         audience,
         setAudience,
+        audienceAge,
+        audienceGender,
         views,
         setViews,
         gender,
@@ -78,6 +80,8 @@ export const SearchOptions = ({
                 lastPost,
                 contactInfo,
                 audienceLocation,
+                audienceAge,
+                audienceGender,
                 // recommendedInfluencers: featRecommended() ? recommendedInfluencers : [],
                 // only_recommended: featRecommended() ? onlyRecommended : false,
             });
@@ -99,6 +103,8 @@ export const SearchOptions = ({
         lastPost,
         contactInfo,
         audienceLocation,
+        audienceAge,
+        audienceGender,
         // recommendedInfluencers,
     ]);
 

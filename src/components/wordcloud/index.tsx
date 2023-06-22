@@ -2,17 +2,14 @@ import React, { useCallback, useEffect, useState } from 'react';
 import type { CreatorPlatform, CreatorSearchTag } from 'types';
 import type { TopicTensorData } from 'src/utils/api/iqdata/topics/get-relevant-topic-tags';
 import { nextFetch } from 'src/utils/fetcher';
-import 'tippy.js/dist/tippy.css';
-import 'tippy.js/animations/scale.css';
-import ReactWordCloud from 'react-wordcloud';
-import type { Word } from 'react-wordcloud';
+import WordCloud from 'react-d3-cloud';
 
 type DistanceType = {
     text: string;
     distance: number;
 };
 
-const getWordElements = (tag: TopicTensorData[]): Word[] => {
+const getWordElements = (tag: TopicTensorData[]): any[] => {
     if (!tag) return [];
     const maxFreq = Math.max(...tag.map((tagElement) => tagElement.freq));
     const minFreq = Math.min(...tag.map((tagElement) => tagElement.freq));
@@ -52,7 +49,7 @@ interface WordCloudProps {
 }
 
 const WordCloudComponent = ({ tags, platform, updateTags }: WordCloudProps) => {
-    const [words, setWords] = useState<Word[]>([]);
+    const [words, setWords] = useState<any[]>([]);
     const [wordsDistance, setWordsDistance] = useState<DistanceType[]>([]);
     const [selectedTag, setSelectedTag] = useState<CreatorSearchTag | null>(null);
 
@@ -105,13 +102,16 @@ const WordCloudComponent = ({ tags, platform, updateTags }: WordCloudProps) => {
         addTag(selectedTag);
     }, [selectedTag, tags, addTag, removeTag]);
 
-    const handleWord = async (w: string) => {
-        const newTag: CreatorSearchTag = {
-            tag: w,
-            value: w,
-        };
-        setSelectedTag(newTag);
-    };
+    const handleWord = useCallback(
+        async (w: string) => {
+            const newTag: CreatorSearchTag = {
+                tag: w,
+                value: w,
+            };
+            setSelectedTag(newTag);
+        },
+        [setSelectedTag],
+    );
 
     const colorWord = useCallback(
         (wo: string) => {
@@ -125,27 +125,27 @@ const WordCloudComponent = ({ tags, platform, updateTags }: WordCloudProps) => {
         [tags, wordsDistance],
     );
 
-    const callbacks = {
-        getWordColor: (word: any) => {
-            return colorWord(word.text);
-        },
-        onWordClick: async (word: any) => {
-            handleWord(word.text);
-        },
-    };
+    // const callbacks = {
+    //     getWordColor: (word: any) => {
+    //         return colorWord(word.text);
+    //     },
+    //     onWordClick: async (word: any) => {
+    //         handleWord(word.text);
+    //     },
+    // };
 
-    const options = {
-        rotations: 0,
-        rotationAngles: [0, 0] as [number, number],
-        fontFamily: 'Poppins',
-        fontSizes: [12, 50] as [number, number],
-        padding: 1.5,
-        deterministic: true,
-        enableTooltip: false,
-    };
+    // const options = {
+    //     rotations: 0,
+    //     rotationAngles: [0, 0] as [number, number],
+    //     fontFamily: 'Poppins',
+    //     fontSizes: [12, 50] as [number, number],
+    //     padding: 1.5,
+    //     deterministic: true,
+    //     enableTooltip: false,
+    // };
 
     return (
-        <div className="bg-primary flex w-full text-center">
+        <div className="bg-primary h-auto w-full text-center transition-all">
             {/* <MyCloud
                 words={fixedWords}
                 setWords={(words: WordCloudData[]) => {
@@ -154,7 +154,27 @@ const WordCloudComponent = ({ tags, platform, updateTags }: WordCloudProps) => {
                 setSelectedTag={setSelectedTag}
                 tags={tags}
             /> */}
-            <ReactWordCloud callbacks={callbacks} options={options} words={words} />
+            {/* <ReactWordCloud callbacks={callbacks} options={options} words={words} /> */}
+            <WordCloud
+                data={words}
+                font="Poppins"
+                padding={1.5}
+                width={500}
+                height={200}
+                rotate={0}
+                random={() => {
+                    return 0;
+                }}
+                fontSize={(word) => Math.log2(word.value) * 5}
+                fill={(word: any, _index: number) => colorWord(word.text)}
+                onWordClick={(_event: any, word: any) => {
+                    handleWord(word.text);
+                }}
+                onWordMouseOver={(event: any, _word: any) => {
+                    event.target.style.cursor = 'pointer';
+                    event.target.style.animationTimingFunction = 'ease-in-out';
+                }}
+            />
         </div>
     );
 };
