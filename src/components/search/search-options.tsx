@@ -111,6 +111,7 @@ export const SearchOptions = ({
                             content="Topics"
                             detail="Topics are created and applied to the influencer account through analysis of their content over time. We will return Influencers most relevant to the topics you search for."
                             position="bottom-right"
+                            className="w-fit"
                         >
                             <p className="mb-2 text-sm font-semibold">Topic Relevance</p>
                         </Tooltip>
@@ -130,6 +131,7 @@ export const SearchOptions = ({
                                 content="Keyword or Phrase"
                                 detail="We search through youtube video transcripts to add influencers that have used these words or phrases in recent videos in your results. Try using a word or phrase influencers would actually say to get more results."
                                 position="top-right"
+                                className="w-fit"
                             >
                                 <p className="mb-2 text-sm font-semibold">Add keywords</p>
                             </Tooltip>
@@ -147,8 +149,9 @@ export const SearchOptions = ({
                                 content="Hashtags"
                                 detail="We will add influencers who have used your hashtags in their recent post descriptions to your search results."
                                 position="top-right"
+                                className="w-fit"
                             >
-                                <p className="mb-2 text-sm font-semibold">Add #hashtags (max 10)</p>
+                                <p className="mb-2 w-fit text-sm font-semibold">Add #hashtags (max 10)</p>
                             </Tooltip>
                             <SearchHashtags
                                 path="influencer-search/topics"
