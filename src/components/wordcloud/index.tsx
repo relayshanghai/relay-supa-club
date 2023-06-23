@@ -72,7 +72,6 @@ const WordCloudComponent = ({ tags, platform, updateTags }: WordCloudProps) => {
 
     useEffect(() => {
         const term = tags.length > 0 ? tags[0].tag : 'influencer';
-        if (words.length > 0 && words[0]?.text === term) return;
         const setWordArray = async () => {
             const body = {
                 term: term,
@@ -89,7 +88,7 @@ const WordCloudComponent = ({ tags, platform, updateTags }: WordCloudProps) => {
             setWordsDistance(finalDistances);
         };
         setWordArray();
-    }, [tags, platform, words]);
+    }, [tags, platform]);
 
     const addTag = useCallback(
         (item: any) => {
