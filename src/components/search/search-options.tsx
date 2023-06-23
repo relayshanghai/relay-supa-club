@@ -26,18 +26,12 @@ export const SearchOptions = ({
         influencerLocation,
         audienceLocation,
         audience,
-        setAudience,
         audienceAge,
         audienceGender,
         views,
-        setViews,
         gender,
-        setGender,
         engagement,
-        setEngagement,
         lastPost,
-        setLastPost,
-        setContactInfo,
         username,
         contactInfo,
         onlyRecommended,
@@ -113,7 +107,13 @@ export const SearchOptions = ({
             <div className="flex h-full basis-1/2 flex-row">
                 <div className="flex w-full  flex-col items-start justify-between space-y-2 py-4 font-light md:gap-x-4 md:gap-y-0">
                     <div data-testid="search-topics" className="w-full">
-                        <p className="mb-2 text-sm font-semibold">Topic Relevance</p>
+                        <Tooltip
+                            content="Topics"
+                            detail="Topics are created and applied to the influencer account through analysis of their content over time. We will return Influencers most relevant to the topics you search for."
+                            position="bottom-right"
+                        >
+                            <p className="mb-2 text-sm font-semibold">Topic Relevance</p>
+                        </Tooltip>
                         <SearchTopics
                             path="influencer-search/topics"
                             placeholder={t('creators.searchTopic')}
@@ -126,7 +126,13 @@ export const SearchOptions = ({
                     </div>
                     {platform === 'youtube' ? (
                         <div data-testid="search-keywords " className="w-full">
-                            <p className="mb-2 text-sm font-semibold">Add keywords</p>
+                            <Tooltip
+                                content="Keyword or Phrase"
+                                detail="We search through youtube video transcripts to add influencers that have used these words or phrases in recent videos in your results. Try using a word or phrase influencers would actually say to get more results."
+                                position="top-right"
+                            >
+                                <p className="mb-2 text-sm font-semibold">Add keywords</p>
+                            </Tooltip>
                             <SearchKeywords
                                 path="influencer-search/topics"
                                 placeholder={t('creators.searchKeyword')}
@@ -137,7 +143,13 @@ export const SearchOptions = ({
                         </div>
                     ) : (
                         <div data-testid="search-hashtags " className="w-full">
-                            <p className="mb-2 text-sm font-semibold">Add #hashtags</p>
+                            <Tooltip
+                                content="Hashtags"
+                                detail="We will add influencers who have used your hashtags in their recent post descriptions to your search results."
+                                position="top-right"
+                            >
+                                <p className="mb-2 text-sm font-semibold">Add #hashtags (max 10)</p>
+                            </Tooltip>
                             <SearchHashtags
                                 path="influencer-search/topics"
                                 placeholder={t('creators.searchHashtags')}
@@ -190,23 +202,7 @@ export const SearchOptions = ({
                             <Button className="mx-2" onClick={(e) => handleSearch(e)}>
                                 {t('campaigns.index.search')}
                             </Button>
-                            {hasSetViews || hasSetAudience || gender || engagement || lastPost ? (
-                                <Button
-                                    onClick={(e: any) => {
-                                        e.preventDefault();
-                                        setAudience([null, null]);
-                                        setViews([null, null]);
-                                        setGender(undefined);
-                                        setEngagement(undefined);
-                                        setLastPost(undefined);
-                                        setContactInfo(undefined);
-                                        trackEvent('Search Filters Modal, clear search filters');
-                                    }}
-                                    variant="secondary"
-                                >
-                                    {t('creators.clearFilter')}
-                                </Button>
-                            ) : null}
+
                             {featRecommended() && (
                                 <div className="ml-auto">
                                     <Tooltip

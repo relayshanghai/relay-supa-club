@@ -107,9 +107,9 @@ export const SearchPageInner = () => {
             <SearchOptions setPage={setPage} setShowFiltersModal={setShowFiltersModal} />
 
             <div className="flex items-center justify-between">
-                <div className="text-sm font-medium">{`${t('creators.results')}: ${numberFormatter(
+                <div className="text-sm font-medium">{`We found ${numberFormatter(
                     resultsTotal,
-                )}`}</div>
+                )} influencer accounts relevant to your topics or using your keywords in recent videos, that matched your filters`}</div>
             </div>
 
             <SearchResultsTable

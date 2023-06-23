@@ -28,18 +28,35 @@ const getWordElements = (tag: TopicTensorData[]): any[] => {
 const getWordDistances = (tag: TopicTensorData[]): DistanceType[] => {
     if (!tag) return [];
 
-    const maxDistance = Math.max(...tag.map((tagElement) => tagElement.freq));
-    const minDistance = Math.min(...tag.map((tagElement) => tagElement.freq));
+    const maxDistance = Math.max(...tag.map((tagElement) => tagElement.distance));
+    const minDistance = Math.min(...tag.map((tagElement) => tagElement.distance));
     const distanceRange = maxDistance - minDistance;
 
     return tag.map((tagElement, _index) => {
-        const normalizedDistance = (tagElement.freq - minDistance) / distanceRange;
+        const normalizedDistance = (tagElement.distance - minDistance) / distanceRange;
         const tagName = tagElement.tag.replace('#', '');
         return {
             distance: normalizedDistance,
             text: tagName,
         };
     });
+};
+const normalizeFontSize = (text: string, fontSize: number) => {
+    // Calculate the average word length.
+    const words = text.split(' ');
+    const totalCharacters = words.reduce((sum, word) => sum + word.length, 0);
+    const averageWordLength = totalCharacters / words.length;
+
+    // Minimum fontSize.
+    const minFontSize = 10;
+    // Maximum fontSize.
+    const maxFontSize = 15;
+
+    // Determine the normalized fontSize based on the average word length.
+    const normalizedFontSize =
+        minFontSize + ((fontSize - averageWordLength) * (maxFontSize - minFontSize)) / maxFontSize;
+
+    return Math.floor(normalizedFontSize);
 };
 
 interface WordCloudProps {
@@ -59,7 +76,7 @@ const WordCloudComponent = ({ tags, platform, updateTags }: WordCloudProps) => {
         const setWordArray = async () => {
             const body = {
                 term: term,
-                limit: 20,
+                limit: 25,
                 platform: platform,
             };
             const res = await nextFetch('topics/tensor', {
@@ -120,7 +137,7 @@ const WordCloudComponent = ({ tags, platform, updateTags }: WordCloudProps) => {
             }
             const word = wordsDistance.find((word) => word.text === wo);
             const opacity = word?.distance || 1;
-            return `rgba(139, 92, 246, ${0.3 + opacity})`;
+            return `rgba(139, 92, 246, ${opacity})`;
         },
         [tags, wordsDistance],
     );
@@ -158,21 +175,21 @@ const WordCloudComponent = ({ tags, platform, updateTags }: WordCloudProps) => {
             <WordCloud
                 data={words}
                 font="Poppins"
-                padding={1.5}
+                padding={0.1}
                 width={500}
                 height={200}
                 rotate={0}
+                spiral={'rectangular'}
                 random={() => {
                     return 0;
                 }}
-                fontSize={(word) => Math.log2(word.value) * 5}
+                fontSize={(word) => normalizeFontSize(word.text, word.value)}
                 fill={(word: any, _index: number) => colorWord(word.text)}
                 onWordClick={(_event: any, word: any) => {
                     handleWord(word.text);
                 }}
                 onWordMouseOver={(event: any, _word: any) => {
                     event.target.style.cursor = 'pointer';
-                    event.target.style.animationTimingFunction = 'ease-in-out';
                 }}
             />
         </div>

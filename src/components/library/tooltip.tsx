@@ -31,12 +31,12 @@ export const Tooltip = ({ children, content, detail, className, position }: Tool
                             : position === 'left'
                             ? 'bottom-0 right-[110%]'
                             : 'bottom-0 left-[110%]'
-                    } z-30 w-auto rounded bg-gray-500 text-white opacity-100 transition-opacity`}
+                    } z-30 w-auto rounded bg-white font-semibold text-gray-500 opacity-100 transition-opacity`}
                     role="tooltip"
                 >
                     <div className="flex w-52 flex-col px-2 py-1">
                         <p className="text-sm">{content}</p>
-                        {detail && <p className="text-xs text-gray-50">{detail}</p>}
+                        {detail && <p className="text-xs font-normal text-gray-800">{detail}</p>}
                     </div>
                 </div>
             )}
