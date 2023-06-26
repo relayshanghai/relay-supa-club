@@ -276,7 +276,7 @@ export const prepareFetchCreatorsFiltered = ({
 
     if (params.only_recommended && params.recommendedInfluencers && featRecommended()) {
         body.filter.filter_ids = recommendedInfluencersFilter(
-            params.recommendedInfluencers.filter((influencer) => influencer.split('/')[0] === 'platform'),
+            params.recommendedInfluencers.filter((influencer) => influencer.split('/')[0] === platform),
         );
     }
 
