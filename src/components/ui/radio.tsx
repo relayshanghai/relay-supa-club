@@ -1,12 +1,13 @@
-import type { InputHTMLAttributes } from 'react';
-import { useState } from 'react';
+import type { ForwardedRef, InputHTMLAttributes } from 'react';
+import { forwardRef, useState } from 'react';
 interface RadioProps extends InputHTMLAttributes<HTMLInputElement> {
     label: string;
     options: { label: string; value: string }[];
     onValueChange: (newValue: string) => void;
+    onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }
 
-export const Radio = ({ label, options, onValueChange }: RadioProps) => {
+function RadioWithRef({ label, options, onValueChange, onKeyDown }: RadioProps, ref: ForwardedRef<HTMLInputElement>) {
     const [selectedValue, setSelectedValue] = useState('');
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -29,6 +30,8 @@ export const Radio = ({ label, options, onValueChange }: RadioProps) => {
                                 value={option.value}
                                 checked={selectedValue === option.value}
                                 onChange={handleChange}
+                                ref={ref}
+                                onKeyDown={onKeyDown}
                             />
                             <span className="ml-3 text-sm font-medium text-gray-500">{option.label}</span>
                         </label>
@@ -37,4 +40,5 @@ export const Radio = ({ label, options, onValueChange }: RadioProps) => {
             </div>
         </div>
     );
-};
+}
+export const Radio = forwardRef(RadioWithRef);
