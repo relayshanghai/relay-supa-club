@@ -1,4 +1,5 @@
 import { clientLogger } from './logger-client';
+
 const turnOffRudderInDev = () => {
     window.rudder = {
         load: () => null,
