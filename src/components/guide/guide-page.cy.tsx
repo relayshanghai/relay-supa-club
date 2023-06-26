@@ -2,7 +2,7 @@
 // @ts-check
 
 import { GuideCards, GuideComponent } from './index';
-import guidePage from 'i18n/en/guide';
+import guidePage from 'i18n/zh/guide';
 
 describe('GuideComponent', () => {
     Object.keys(guidePage.modalInfo).forEach((section) => {
@@ -11,7 +11,7 @@ describe('GuideComponent', () => {
             cy.mount(<GuideComponent />);
         });
         it('should render', () => {
-            cy.contains('Welcome to relay.club');
+            cy.contains(guidePage.welcome + ' relay.club');
             cy.contains(guidePage.welcomeDescription);
         });
         it('should show section title and description', () => {
@@ -29,14 +29,14 @@ describe('GuideCards', () => {
             cy.mount(<GuideCards cardName={`${section}`} />);
             cy.contains(cardDetails.title);
             cy.contains(cardDetails.description);
-            cy.contains('Learn more');
+            cy.contains(guidePage.learnMore);
         });
         it('should open modal and close it', () => {
             cy.mount(<GuideCards cardName={`${section}`} />);
-            cy.contains('Learn more').click();
+            cy.contains(guidePage.learnMore).click();
             cy.contains(sectionDetails.title);
             cy.contains(guidePage.goBack).click();
-            cy.contains(sectionDetails.title).should('not.exist');
+            cy.contains(guidePage.goto + ' ' + sectionDetails.title).should('not.exist');
         });
     });
 });

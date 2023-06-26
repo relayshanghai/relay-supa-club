@@ -1,5 +1,5 @@
 const guidePage = {
-    welcome: 'Welcome to ',
+    welcome: 'Welcome to',
     welcomeDescription: 'Need help? Check out the topics below for more information about our platform!',
     goBack: 'Back to Guide',
     goto: 'Go to',
