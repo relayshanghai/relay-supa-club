@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import { useTranslation } from 'react-i18next';
 import guidePage from 'i18n/en/guide';
 import { Compass, FourSquare, Account, PieChart, Guide, EmailOutline, ArrowRight } from '../icons';
@@ -56,15 +55,15 @@ export const GuideComponent = () => {
                 </p>
                 <p className="text-base text-gray-500">{t('guidePage.welcomeDescription')}</p>
             </div>
-            <div className="rounded-3xl shadow-lg sm:w-11/12 md:w-5/6 lg:w-1/2">
-                <Image
-                    src="/assets/imgs/placeholders/dashboard-current.png"
-                    alt="Description of the image"
-                    layout="responsive"
-                    width={1200}
-                    height={800}
-                />
-            </div>
+            <video
+                muted={false}
+                controls={true}
+                autoPlay
+                loop
+                className="rounded-3xl shadow-lg sm:w-11/12 md:w-5/6 lg:w-1/2"
+            >
+                <source src="/assets/videos/demo.mp4" />
+            </video>
             <div className="flex w-screen flex-row flex-wrap justify-center md:gap-4 md:gap-y-8">
                 {Object.keys(guidePage.cards).map((name: string, index: number) => {
                     return <GuideCards key={index} cardName={name} />;
