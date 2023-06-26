@@ -5,6 +5,7 @@ import { nextFetch } from 'src/utils/fetcher';
 import WordCloud from 'react-d3-cloud';
 import { QuestionMarkCircleIcon } from '@heroicons/react/24/solid';
 import { Tooltip } from '../library';
+import { useTranslation } from 'react-i18next';
 
 type DistanceType = {
     text: string;
@@ -71,6 +72,8 @@ const WordCloudComponent = ({ tags, platform, updateTags }: WordCloudProps) => {
     const [words, setWords] = useState<any[]>([]);
     const [wordsDistance, setWordsDistance] = useState<DistanceType[]>([]);
     const [selectedTag, setSelectedTag] = useState<CreatorSearchTag | null>(null);
+
+    const { t } = useTranslation();
 
     useEffect(() => {
         const term = tags.length > 0 ? tags[0].tag : 'influencer';
@@ -166,8 +169,8 @@ const WordCloudComponent = ({ tags, platform, updateTags }: WordCloudProps) => {
         <div className="group relative w-full">
             <div className="absolute right-0 top-0 h-6 w-6">
                 <Tooltip
-                    content="TopicCloud"
-                    detail="The TopicCloud is generated using the first topic you enter. We use related topics to create the cloud, with topics more relevant to your original topic having a darker colour, and topics that are attached to more influencers are larger in size."
+                    content={t('tooltips.topicCloud.title')}
+                    detail={t('tooltips.topicCloud.description')}
                     position="bottom-left"
                 >
                     <p>

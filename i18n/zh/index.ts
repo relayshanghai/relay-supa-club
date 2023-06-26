@@ -9,12 +9,15 @@ import aiEmailGenerator from './ai-email-generator';
 import usages from './usages';
 import performance from './performance';
 import signup from './signup';
+import filters from './filters';
+import tooltips from './tooltips';
 
 const translations = {
     translation: {
         campaigns,
         navbar,
         creators,
+        filters,
         website,
         account,
         login,
@@ -23,6 +26,7 @@ const translations = {
         usages,
         performance,
         signup,
+        tooltips,
     },
 };
 export default translations;

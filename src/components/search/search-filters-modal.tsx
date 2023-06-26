@@ -54,20 +54,15 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
     }, [audienceAge, setAudienceAge]);
 
     return (
-        <Modal
-            maxWidth="max-w-3xl"
-            visible={show}
-            onClose={() => setShow(false)}
-            title={t('creators.filter.title') || ''}
-        >
+        <Modal maxWidth="max-w-3xl" visible={show} onClose={() => setShow(false)} title={t('filters.title') || ''}>
             <div className="space-y-8 p-8">
-                <p className="text-2xl font-semibold">Audience Filters</p>
+                <p className="text-2xl font-semibold">{t('filters.audience.title')}</p>
                 <div className="flex flex-row flex-wrap justify-between gap-4">
                     <div className="w-full">
-                        <div className="mb-1 text-base font-medium">Location</div>
+                        <div className="mb-1 text-base font-medium">{t('filters.location.label')}</div>
                         <SearchLocations
                             path="influencer-search/locations"
-                            placeholder={t('creators.filter.audienceLocation')}
+                            placeholder={t('filters.location.audiencePlaceholder')}
                             locations={audienceLocation}
                             platform={platform}
                             filter={filterCountry}
@@ -80,15 +75,15 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                     </div>
 
                     <div>
-                        <div className="mb-1 text-base font-medium">Age</div>
+                        <div className="mb-1 text-base font-medium">{t('filters.audience.ageLabel')}</div>
                         <div className="flex gap-2">
                             <select
                                 className="rounded-md bg-white px-4 py-2 text-base text-gray-500 ring-1 ring-gray-300"
-                                value={audienceAge?.left_number || 'Min'}
+                                value={audienceAge?.left_number || (t('filters.minOption') as string)}
                                 onChange={(e) => {
                                     // if (!audienceAge) return;
                                     const lowerAge =
-                                        e.target.value === 'Min (13)'
+                                        e.target.value === t('filters.minOption') + ' (13)'
                                             ? undefined
                                             : (e.target.value as '18' | '25' | '35' | '45' | '65' | undefined);
                                     setAudienceAge({
@@ -98,7 +93,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                                     });
                                 }}
                             >
-                                <option value={undefined}>Min (13)</option>
+                                <option value={undefined}>{t('filters.minOption')} (13)</option>
                                 <option value={18}>18</option>
                                 <option value={25}>25</option>
                                 <option value={35}>35</option>
@@ -107,11 +102,11 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                             </select>
                             <select
                                 className="rounded-md bg-white px-4 py-2 text-base text-gray-500 ring-1 ring-gray-300"
-                                value={audienceAge?.right_number || 'Max'}
+                                value={audienceAge?.right_number || (t('filters.maxOption') as string)}
                                 onChange={(e) => {
                                     // if (!audienceAge) return;
                                     const upperAge =
-                                        e.target.value === 'Max'
+                                        e.target.value === t('filters.maxOption')
                                             ? undefined
                                             : (e.target.value as '17' | '24' | '34' | '44' | '64' | undefined);
                                     setAudienceAge({
@@ -126,7 +121,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                                 <option value={34}>34</option>
                                 <option value={44}>44</option>
                                 <option value={64}>64</option>
-                                <option value={undefined}>Max</option>
+                                <option value={undefined}>{t('filters.maxOption')}</option>
                             </select>
                             <select
                                 className={`rounded-md transition-all ${
@@ -151,7 +146,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                     </div>
 
                     <div>
-                        <div className="mb-1 text-base font-medium">Gender</div>
+                        <div className="mb-1 text-base font-medium">{t('filters.gender.label')}</div>
                         <div className="flex gap-2">
                             <select
                                 className="rounded-md bg-white px-4 py-2 text-base text-gray-500 ring-1 ring-gray-300"
@@ -168,9 +163,9 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                                     );
                                 }}
                             >
-                                <option value="ANY">Any</option>
-                                <option value="MALE">Male</option>
-                                <option value="FEMALE">Female</option>
+                                <option value="ANY">{t('filters.anyOption')}</option>
+                                <option value="MALE">{t('filters.gender.maleOption')}</option>
+                                <option value="FEMALE">{t('filters.gender.femaleOption')}</option>
                             </select>
                             <select
                                 className={`rounded-md transition-all ${
@@ -210,10 +205,10 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                 </div>
                 <div className="flex flex-row flex-wrap items-center justify-between gap-4">
                     <div className="w-auto">
-                        <div className="mb-1 text-base font-medium">Location</div>
+                        <div className="mb-1 text-base font-medium">{t('filters.location.label')}</div>
                         <SearchLocations
                             path="influencer-search/locations"
-                            placeholder={t('creators.filter.locationPlaceholder')}
+                            placeholder={t('filters.location.influencerPlaceholder')}
                             locations={influencerLocation}
                             platform={platform}
                             filter={filterCountry}
@@ -254,7 +249,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                     </div>
                     <div>
                         <label className="text-sm">
-                            <h4 className="mb-1 text-base font-medium">{t('creators.filter.subscribers')}</h4>
+                            <h4 className="mb-1 text-base font-medium">{t('filters.influencers.subscribersLabel')}</h4>
                             <div className="flex flex-row space-x-4">
                                 <div className="flex items-center gap-2">
                                     <select
@@ -303,7 +298,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                                                 {numberFormatter(option)}
                                             </option>
                                         ))}
-                                        <option value="any">{t('creators.filter.max')}</option>
+                                        <option value="any">{t('filters.maxOption')}</option>
                                     </select>
                                 </div>
                             </div>
@@ -311,7 +306,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                     </div>
                     <div>
                         <label className="text-sm">
-                            <div className="mb-1 text-base font-medium">{t('creators.filter.gender')}</div>
+                            <div className="mb-1 text-base font-medium">{t('filters.gender.label')}</div>
                             <select
                                 className="rounded-md bg-white px-4 py-2 text-base text-gray-500 ring-1 ring-gray-300"
                                 value={gender}
@@ -326,16 +321,16 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                                     });
                                 }}
                             >
-                                <option value="any">{t('creators.filter.any')}</option>
-                                <option value="male">{t('creators.filter.male')}</option>
-                                <option value="female">{t('creators.filter.female')}</option>
+                                <option value="any">{t('filters.anyOption')}</option>
+                                <option value="male">{t('filters.gender.maleOption')}</option>
+                                <option value="female">{t('filters.gender.femaleOption')}</option>
                             </select>
                         </label>
                     </div>
 
                     <div>
                         <label className="text-sm">
-                            <div className="mb-1 text-base font-medium">{t('creators.filter.lastPost')}</div>
+                            <div className="mb-1 text-base font-medium">{t('filters.influencers.lastPostLabel')}</div>
                             <select
                                 className="rounded-md bg-white px-4 py-2 text-base text-gray-500 ring-1 ring-gray-300"
                                 value={lastPost}
@@ -350,10 +345,10 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                                     });
                                 }}
                             >
-                                <option value={'any'}>{t('creators.filter.any')}</option>
-                                <option value={30}>30 {t('creators.filter.days')}</option>
-                                <option value={90}>3 {t('creators.filter.months')}</option>
-                                <option value={120}>6 {t('creators.filter.months')}</option>
+                                <option value={'any'}>{t('filters.anyOption')}</option>
+                                <option value={30}>30 {t('filters.days')}</option>
+                                <option value={90}>3 {t('filters.months')}</option>
+                                <option value={120}>6 {t('filters.months')}</option>
                             </select>
                         </label>
                     </div>
@@ -433,7 +428,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                     }}
                     variant="secondary"
                 >
-                    Clear Filters
+                    {t('filters.clearButton')}
                 </Button>
             </div>
         </Modal>

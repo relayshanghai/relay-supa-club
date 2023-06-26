@@ -108,12 +108,12 @@ export const SearchOptions = ({
                 <div className="flex w-full  flex-col items-start justify-between space-y-2 py-4 font-light md:gap-x-4 md:gap-y-0">
                     <div data-testid="search-topics" className="w-full">
                         <Tooltip
-                            content="Topics"
-                            detail="Topics are created and applied to the influencer account through analysis of their content over time. We will return Influencers most relevant to the topics you search for."
+                            content={t('tooltips.searchTopics.title')}
+                            detail={t('tooltips.searchTopics.description')}
                             position="bottom-right"
                             className="w-fit"
                         >
-                            <p className="mb-2 text-sm font-semibold">Topic Relevance</p>
+                            <p className="mb-2 text-sm font-semibold">{t('creators.searchTopicLabel')}</p>
                         </Tooltip>
                         <SearchTopics
                             path="influencer-search/topics"
@@ -128,16 +128,16 @@ export const SearchOptions = ({
                     {platform === 'youtube' ? (
                         <div data-testid="search-keywords " className="w-full">
                             <Tooltip
-                                content="Keyword or Phrase"
-                                detail="We search through youtube video transcripts to add influencers that have used these words or phrases in recent videos in your results. Try using a word or phrase influencers would actually say to get more results."
+                                content={t('tooltips.searchKeywords.title')}
+                                detail={t('tooltips.searchKeywords.description')}
                                 position="top-right"
                                 className="w-fit"
                             >
-                                <p className="mb-2 text-sm font-semibold">Add keywords</p>
+                                <p className="mb-2 text-sm font-semibold">{t('creators.searchKeywordsLabel')}</p>
                             </Tooltip>
                             <SearchKeywords
                                 path="influencer-search/topics"
-                                placeholder={t('creators.searchKeyword')}
+                                placeholder={t('creators.searchKeywords')}
                                 keywords={keywords}
                                 platform={platform}
                                 setKeywords={setKeywords}
@@ -146,12 +146,12 @@ export const SearchOptions = ({
                     ) : (
                         <div data-testid="search-hashtags " className="w-full">
                             <Tooltip
-                                content="Hashtags"
-                                detail="We will add influencers who have used your hashtags in their recent post descriptions to your search results."
+                                content={t('tooltips.searchHashtags.title')}
+                                detail={t('tooltips.searchHashtags.description')}
                                 position="top-right"
                                 className="w-fit"
                             >
-                                <p className="mb-2 w-fit text-sm font-semibold">Add #hashtags (max 10)</p>
+                                <p className="mb-2 w-fit text-sm font-semibold">{t('creators.searchHashTagsLabel')}</p>
                             </Tooltip>
                             <SearchHashtags
                                 path="influencer-search/topics"
