@@ -20,6 +20,7 @@ export default defineConfig({
         viewportWidth: 1536,
         viewportHeight: 960,
         baseUrl: process.env.NEXT_PUBLIC_APP_URL,
+        chromeWebSecurity: false,
     },
 
     component: {
@@ -29,6 +30,5 @@ export default defineConfig({
         },
         viewportWidth: 1536,
         viewportHeight: 960,
-        chromeWebSecurity: false,
     },
 });

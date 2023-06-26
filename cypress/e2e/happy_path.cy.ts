@@ -1,23 +1,96 @@
 import { deleteDB } from 'idb';
 import { addPostIntercept, cocomelonId, setupIntercepts } from './intercepts';
 
+export const randomString = (length = 8) =>
+    Math.random()
+        .toString(36)
+        .substring(2, length + 2);
+
 describe('Main pages happy paths', () => {
     beforeEach(async () => {
         await deleteDB('app-cache');
     });
-
-    it('can log in and load search page and switch language', () => {
-        setupIntercepts();
+    it('Landing page works, has both languages, and links to signup', () => {
         cy.visit('/');
+        cy.contains('relay.club可以帮助');
+        cy.switchToEnglish();
+        cy.reload();
+        cy.contains('relay.club可以帮助').should('not.exist');
+        cy.contains('relay.club can help.');
+        cy.contains('Already signed up?Log in');
+        cy.contains('button', 'Start Your Free Trial').click();
+        cy.url().should('include', '/signup');
+    });
+    it('Can sign up new users using signup wizard', () => {
+        const randomEmail = `test${randomString()}@example.com`;
 
-        localStorage.setItem('language', 'zh-CN');
-        // starts on signup page. has an h1 that says signup in Chinese: 注册
-        cy.get('h1').contains('注册');
+        cy.switchToEnglish();
+        cy.visit('signup');
+        cy.contains('Verify your number to get started');
 
-        cy.loginTestUser();
+        // Carousel
+        cy.contains('Discover');
+        cy.contains('Project Management').should('not.exist');
+        cy.contains('Find the perfect influencer without all the hassle');
 
-        cy.contains('Campaigns'); // dashboard page load
-        cy.url().should('include', '/dashboard');
+        cy.contains('label', 'First Name').within(() => {
+            cy.get('input').should('have.attr', 'placeholder', 'Jane').type('Joe');
+        });
+        cy.contains('label', 'Last Name').within(() => {
+            cy.get('input').should('have.attr', 'placeholder', 'Doe').type('Smith');
+        });
+        cy.contains('label', 'Phone Number').within(() => {
+            cy.get('input').should('have.attr', 'placeholder', '+1 (000) 000-0000').type('1234567890');
+        });
+        cy.contains('button', 'Next').click();
+
+        cy.contains('Add an email and password to your account');
+        cy.contains('label', 'Email').within(() => {
+            cy.get('input').should('have.attr', 'placeholder', 'you@site.com').type(randomEmail);
+        });
+        cy.contains('label', 'Password').within(() => {
+            cy.get('input').should('have.attr', 'placeholder', 'Enter your password').type('test1234');
+            cy.contains('Must be at least 10 characters long');
+            cy.get('input').clear().type('test12345678!');
+        });
+        cy.contains('label', 'Confirm Password').within(() => {
+            cy.get('input').should('have.attr', 'placeholder', 'Confirm your password').type('test12345678!');
+        });
+        cy.contains('button', 'Next').click();
+
+        cy.contains('What category of product do you sell?');
+        cy.get('input').click();
+        cy.contains('AR/VR/XR').click();
+        cy.contains('button', 'Next').click();
+
+        cy.contains('Tell us about your Company');
+        cy.contains('label', 'Company').within(() => {
+            cy.get('input')
+                .should('have.attr', 'placeholder', 'Enter your company name')
+                .type(`Test Company ${randomString()}`);
+        });
+        cy.contains('label', 'Website').within(() => {
+            cy.get('input').should('have.attr', 'placeholder', 'www.site.com').type('https://test.com');
+        });
+
+        cy.contains('Size');
+        cy.contains('11-50').click();
+        cy.contains('button', 'Next').click();
+
+        cy.contains('We won’t charge your card until the free trial ends!');
+
+        cy.iframe('iframe[title="Secure payment input frame"]').within(() => {
+            cy.contains('Country', { timeout: 10000 });
+            cy.get('input[autocomplete="billing cc-number"]').type('4242424242424242');
+            cy.get('input[autocomplete="billing cc-exp"]').type('1227');
+            cy.get('input[autocomplete="billing cc-csc"]').type('123');
+            cy.get('input[autocomplete="billing postal-code"]').type('12345');
+        });
+        cy.contains('Success').should('not.exist');
+        cy.contains('button', 'Start Free Trial').click();
+        cy.contains('Success', { timeout: 30000 });
+        // redirects to dashboard on success
+        cy.url().should('include', '/dashboard', { timeout: 30000 });
     });
     it('can search for an influencer', () => {
         setupIntercepts();
@@ -48,9 +121,8 @@ describe('Main pages happy paths', () => {
 
         cy.getByTestId('search-topics').within(() => {
             cy.get('input').type('alligators');
+            cy.getByTestId('search-spinner').should('exist'); // wait for spinner to appear
         });
-
-        cy.getByTestId('search-spinner').should('exist'); // wait for spinner to appear
 
         // cy.contains will not include the input element text in the search, so this shows that the result options are in the DOM
         cy.contains('alligators').click();
@@ -102,14 +174,16 @@ describe('Main pages happy paths', () => {
         // open one of the modals
         cy.contains('button', 'Add more members').click();
         cy.contains('Invite Members');
-        cy.contains('button', /Cancel/).click();
+        cy.contains('button', /Cancel/).click({ force: true });
         cy.contains('Invite Members').should('not.exist');
 
         // upgrade subscription links to pricing page
         cy.contains('button', 'Upgrade subscription').click(); // loads subscription data
-        cy.contains('Choose the best plan for you', { timeout: 10000 }); // loads pricing page
+        cy.contains('Just getting started, or scaling up.', { timeout: 10000 }); // loads pricing page
         cy.url().should('include', `/pricing`);
+        cy.contains('DIY');
         cy.contains('DIY Max');
+
         // this doesn't work anymore because we aren't using a live account anymore, so stripe sends back 'can't find subscription' and the button is disabled.
         cy.contains('button', 'Buy Now').click();
         cy.contains('button', 'Subscribe');
@@ -277,7 +351,7 @@ describe('Main pages happy paths', () => {
         cy.contains('My Campaign');
     });
 
-    it.only('can record search usages, can manage clients as a company owner', () => {
+    it('can record search usages, can manage clients as a company owner', () => {
         setupIntercepts();
         cy.loginAdmin();
 
@@ -443,4 +517,4 @@ describe('Main pages happy paths', () => {
 });
 
 // Need to export an empty object to keep typescript happy. Otherwise, it will complain that the file is a module, but it has no imports or exports.
-export { };
+export {};

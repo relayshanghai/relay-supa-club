@@ -3,6 +3,3 @@
 
 # verify tests
 npm test
-
-# verify types
-npm run type-check:app

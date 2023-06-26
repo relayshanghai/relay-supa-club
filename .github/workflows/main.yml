@@ -23,6 +23,7 @@ env:
     OPENAI_API_ORG: ${{ secrets.OPENAI_API_ORG }}
     OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
     NEXT_PUBLIC_FEAT_RECOMMENDED: true
+    NEXT_PUBLIC_FEAT_SIGNUP_V2: true
     SENTRY_IGNORE_API_RESOLUTION_ERROR: 1
     GOOGLE_PRIVATE_KEY: ${{ secrets.GOOGLE_PRIVATE_KEY }}
     GOOGLE_PRIVATE_KEY_ID: ${{ secrets.GOOGLE_PRIVATE_KEY_ID }}
@@ -45,7 +46,7 @@ jobs:
 
             - uses: supabase/setup-cli@v1
               with:
-                  version: 1.50.8
+                  version: 1.64.8
 
             - name: Verify supabase cli version
               run: supabase -v

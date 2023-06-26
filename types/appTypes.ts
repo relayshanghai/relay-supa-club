@@ -1,3 +1,5 @@
+import { z } from 'zod';
+
 import type {
     CampaignCreatorsTable,
     CompanyTable,
@@ -22,7 +24,8 @@ export type LocationWeighted = {
 };
 export type CreatorSearchTag = { tag: string; value: string };
 
-export type SubscriptionPeriod = 'monthly' | 'annually' | 'quarterly';
+export type SubscriptionPeriod = 'monthly' | 'quarterly' | 'annually';
+export type SubscriptionTier = 'diy' | 'diyMax' | 'VIP';
 export type RelayPlan = {
     currency: string;
     prices: {
@@ -57,6 +60,10 @@ export type RelayAccountPlanMetadata = {
     trial_searches?: string;
     /** How many profiles are allowed during the trial period (stringified number) */
     trial_profiles?: string;
+    /** How many AI email generations are allowed in trial  period (stringified number)   */
+    trial_ai_emails?: string;
+    /** How many AI email generations are allowed pre month (stringified number)   */
+    ai_emails?: string;
 };
 export interface StripePriceWithProductMetadata extends Stripe.Price {
     product: RelayPlanStripeProduct;
@@ -95,3 +102,6 @@ export interface DatabaseWithCustomTypes extends Database {
         };
     };
 }
+
+export const CompanySize = z.union([z.literal('small'), z.literal('medium'), z.literal('large'), z.null()]);
+export type CompanySize = z.infer<typeof CompanySize>;
