@@ -7,7 +7,6 @@ import { SearchLocations } from './search-locations';
 import LocationTag from './location-tag';
 import { useEffect } from 'react';
 import { Switch } from '../library';
-import { Button } from '../button';
 
 /** Search Filter Modal, Subscribers and Avg view filter options: 1k, 5k, 10k, 15k, 25k, 50k, 100k, 250k, 500k, 1m */
 const options = [1e3, 5e3, 1e4, 15e3, 25e3, 50e3, 1e5, 25e4, 50e4, 1e6];
@@ -55,6 +54,25 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
 
     return (
         <Modal maxWidth="max-w-3xl" visible={show} onClose={() => setShow(false)} title={t('filters.title') || ''}>
+            <p
+                className="absolute right-6 top-6 cursor-pointer border-red-500 bg-transparent font-medium text-red-500 hover:underline"
+                onClick={(e: any) => {
+                    e.preventDefault();
+                    setAudience([null, null]);
+                    setViews([null, null]);
+                    setGender(undefined);
+                    setEngagement(undefined);
+                    setLastPost(undefined);
+                    setContactInfo(undefined);
+                    setAudienceLocation([]);
+                    setInfluencerLocation([]);
+                    setAudienceGender(undefined);
+                    setAudienceAge(undefined);
+                    trackEvent('Search Filters Modal, clear search filters');
+                }}
+            >
+                {t('filters.clearButton')}
+            </p>
             <div className="space-y-8 p-8">
                 <p className="text-2xl font-semibold">{t('filters.audience.title')}</p>
                 <div className="flex flex-row flex-wrap justify-between gap-4">
@@ -116,11 +134,21 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                                     });
                                 }}
                             >
-                                <option value={17}>17</option>
-                                <option value={24}>24</option>
-                                <option value={34}>34</option>
-                                <option value={44}>44</option>
-                                <option value={64}>64</option>
+                                <option hidden={parseInt(audienceAge?.left_number || '0') > 17} value={17}>
+                                    17
+                                </option>
+                                <option hidden={parseInt(audienceAge?.left_number || '0') > 24} value={24}>
+                                    24
+                                </option>
+                                <option hidden={parseInt(audienceAge?.left_number || '0') > 34} value={34}>
+                                    34
+                                </option>
+                                <option hidden={parseInt(audienceAge?.left_number || '0') > 44} value={44}>
+                                    44
+                                </option>
+                                <option hidden={parseInt(audienceAge?.left_number || '0') > 64} value={64}>
+                                    64
+                                </option>
                                 <option value={undefined}>{t('filters.maxOption')}</option>
                             </select>
                             <select
@@ -189,7 +217,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                         </div>
                     </div>
                 </div>
-
+                {/* INFLUENCER SECTION */}
                 <div className="flex items-center justify-between">
                     <p className="text-2xl font-semibold">Influencer Filters</p>
                     <label className="flex flex-row gap-2 text-sm">
@@ -410,26 +438,6 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                         </label>
                     </div>
                 </div>
-                <Button
-                    className="border-red-500 bg-transparent text-red-500 transition-all hover:bg-red-400 hover:text-white"
-                    onClick={(e: any) => {
-                        e.preventDefault();
-                        setAudience([null, null]);
-                        setViews([null, null]);
-                        setGender(undefined);
-                        setEngagement(undefined);
-                        setLastPost(undefined);
-                        setContactInfo(undefined);
-                        setAudienceLocation([]);
-                        setInfluencerLocation([]);
-                        setAudienceGender(undefined);
-                        setAudienceAge(undefined);
-                        trackEvent('Search Filters Modal, clear search filters');
-                    }}
-                    variant="secondary"
-                >
-                    {t('filters.clearButton')}
-                </Button>
             </div>
         </Modal>
     );
