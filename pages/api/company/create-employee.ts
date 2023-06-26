@@ -5,7 +5,7 @@ import httpCodes from 'src/constants/httpCodes';
 import { createEmployeeError } from 'src/errors/company';
 import type { CompanyDB, ProfileDB } from 'src/utils/api/db';
 import {
-    createCompany,
+    createCompanyLegacy,
     getCompanyByName,
     getProfileByEmail,
     updateCompany,
@@ -35,7 +35,7 @@ const getOrCreateRelayCompany = async () => {
             relayCompany = data;
         }
         if (!relayCompany?.id) {
-            const { data: companyCreated, error: createRelayCompanyError } = await createCompany({
+            const { data: companyCreated, error: createRelayCompanyError } = await createCompanyLegacy({
                 name: relayCompanyConfig.name,
                 website: relayCompanyConfig.website,
             });
@@ -88,10 +88,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             if (!EMPLOYEE_EMAILS.includes(email)) {
                 return res.status(httpCodes.BAD_REQUEST).json({ error: createEmployeeError.isNotEmployee });
             }
-            const { data: company, error: getOrCreateCompanyError } = await getOrCreateRelayCompany();
+            const { data: company, error: getOrcreateCompanyLegacyError } = await getOrCreateRelayCompany();
 
-            if (!company?.id || getOrCreateCompanyError) {
-                serverLogger(getOrCreateCompanyError, 'error');
+            if (!company?.id || getOrcreateCompanyLegacyError) {
+                serverLogger(getOrcreateCompanyLegacyError, 'error');
                 return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
             }
 
