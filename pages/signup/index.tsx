@@ -124,14 +124,32 @@ export default function Register() {
         }
     };
     const [selectedPriceId, setSelectedPriceId] = useState(STRIPE_PRICE_MONTHLY_DIY);
-    const [showCarousel, setShowCarousel] = useState(true);
+    const [currentStep, setCurrentStepState] = useState(1);
+    const setCurrentStep = (step: number) => {
+        router.query.curStep = step.toString();
+        router.push(router);
+        setCurrentStepState(step);
+    };
+    useEffect(() => {
+        if (!router.isReady || typeof router.query.curStep !== 'string') return;
+        setCurrentStepState(parseInt(router.query.curStep));
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [router.query.curStep, router.isReady]);
 
     return (
         <>
             {featSignupV2() ? (
                 <LoginSignupLayout
-                    left={showCarousel ? <ScreenshotsCarousel /> : <PricingSection setPriceId={setSelectedPriceId} />}
-                    right={<SignUpPage selectedPriceId={selectedPriceId} setShowCarousel={setShowCarousel} />}
+                    left={
+                        currentStep !== 5 ? <ScreenshotsCarousel /> : <PricingSection setPriceId={setSelectedPriceId} />
+                    }
+                    right={
+                        <SignUpPage
+                            currentStep={currentStep}
+                            setCurrentStep={setCurrentStep}
+                            selectedPriceId={selectedPriceId}
+                        />
+                    }
                 />
             ) : (
                 <LegacyLoginSignupLayout>

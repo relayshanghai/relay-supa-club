@@ -18,11 +18,18 @@ import type { CompanySize } from 'types';
 export interface CompanyContext {
     company: CompanyDB | undefined;
     updateCompany: (input: Omit<CompanyPutBody, 'id'>) => Promise<CompanyPutResponse | null>;
+    createCompanyLegacy: (input: {
+        name: string;
+        website?: string;
+        size?: CompanySize;
+        category?: string;
+    }) => Promise<CompanyCreatePostResponse | null>;
     createCompany: (input: {
         name: string;
         website?: string;
         size?: CompanySize;
         category?: string;
+        profileId: string;
     }) => Promise<CompanyCreatePostResponse | null>;
     refreshCompany: KeyedMutator<CompanyDB> | (() => void);
 }
@@ -30,6 +37,7 @@ export interface CompanyContext {
 export const companyContext = createContext<CompanyContext>({
     company: undefined,
     updateCompany: async () => null,
+    createCompanyLegacy: async () => null,
     createCompany: async () => null,
     refreshCompany: () => null,
 });
@@ -72,7 +80,7 @@ export const CompanyProvider = ({ children }: PropsWithChildren) => {
         [companyId],
     );
 
-    const createCompany = useCallback(
+    const createCompanyLegacy = useCallback(
         async (input: { name: string; website?: string; size?: CompanySize; category?: string }) => {
             if (!profile?.id) throw new Error(createCompanyValidationErrors.noLoggedInUserFound);
             if (!input.name) throw new Error(createCompanyValidationErrors.noCompanyNameFound);
@@ -91,12 +99,33 @@ export const CompanyProvider = ({ children }: PropsWithChildren) => {
         },
         [refreshProfile, profile],
     );
+    const createCompany = useCallback(
+        async (input: { name: string; website?: string; size?: CompanySize; category?: string; profileId: string }) => {
+            if (!input.profileId) throw new Error(createCompanyValidationErrors.noLoggedInUserFound);
+            if (!input.name) throw new Error(createCompanyValidationErrors.noCompanyNameFound);
+
+            const body: CompanyCreatePostBody = {
+                ...input,
+                user_id: input.profileId,
+            };
+            const res = await nextFetch<CompanyCreatePostResponse>(`company/create`, {
+                method: 'post',
+                body,
+            });
+            // create company adds company to user profile, so we need to refresh the profile
+            refreshProfile();
+            return res;
+        },
+        [refreshProfile],
+    );
+
     return (
         <companyContext.Provider
             value={{
                 company,
                 updateCompany,
                 createCompany,
+                createCompanyLegacy,
                 refreshCompany,
             }}
         >
