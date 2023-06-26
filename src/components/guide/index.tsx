@@ -65,7 +65,7 @@ export const GuideComponent = () => {
                     height={800}
                 />
             </div>
-            <div className="flex w-screen flex-row flex-wrap justify-center">
+            <div className="flex w-screen flex-row flex-wrap justify-center md:gap-4 md:gap-y-8">
                 {Object.keys(guidePage.cards).map((name: string, index: number) => {
                     return <GuideCards key={index} cardName={name} />;
                 })}
