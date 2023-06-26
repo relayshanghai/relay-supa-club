@@ -23,3 +23,6 @@ fi
 
 # verify formatting
 npx lint-staged --verbose
+
+# verify types
+npm run type-check:app

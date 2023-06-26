@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import type { KeyboardEventHandler } from 'react';
 import { useState } from 'react';
 import type { OnChangeValue } from 'react-select';
 import Select from 'react-select';
@@ -22,6 +23,8 @@ interface SelectProps {
     valueName?: string;
     setValue: (name: string, value: any) => void;
     defaultValue?: any;
+    autoFocus?: boolean;
+    onKeyDown?: KeyboardEventHandler<HTMLDivElement>;
 }
 interface MultiSelectProps extends SelectProps {
     maxLimit?: number;
@@ -36,6 +39,8 @@ function MultiSelect({
     placeholder,
     defaultValue,
     maxLimit = 100,
+    autoFocus,
+    onKeyDown,
 }: MultiSelectProps) {
     const { t } = useTranslation();
     const [optionsSelected, setOptionsSelected] = useState<LabelValueObject[]>([]);
@@ -60,6 +65,8 @@ function MultiSelect({
                         placeholder={placeholder}
                         isMulti
                         isOptionDisabled={() => optionsSelected.length >= maxLimit}
+                        autoFocus={autoFocus}
+                        onKeyDown={onKeyDown}
                     />
                 )}
             />
@@ -79,6 +86,8 @@ const SingleSelect = ({
     valueName,
     setValue,
     defaultValue,
+    autoFocus,
+    onKeyDown,
 }: SelectProps) => {
     const { t } = useTranslation();
 
@@ -101,6 +110,8 @@ const SingleSelect = ({
                         }}
                         options={options}
                         placeholder={placeholder}
+                        autoFocus={autoFocus}
+                        onKeyDown={onKeyDown}
                     />
                 )}
             />
