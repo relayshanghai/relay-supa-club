@@ -88,10 +88,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             if (!EMPLOYEE_EMAILS.includes(email)) {
                 return res.status(httpCodes.BAD_REQUEST).json({ error: createEmployeeError.isNotEmployee });
             }
-            const { data: company, error: getOrcreateCompanyLegacyError } = await getOrCreateRelayCompany();
+            const { data: company, error: getOrcreateCompanyError } = await getOrCreateRelayCompany();
 
-            if (!company?.id || getOrcreateCompanyLegacyError) {
-                serverLogger(getOrcreateCompanyLegacyError, 'error');
+            if (!company?.id || getOrcreateCompanyError) {
+                serverLogger(getOrcreateCompanyError, 'error');
                 return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
             }
 
