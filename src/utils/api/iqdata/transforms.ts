@@ -11,6 +11,7 @@ import {
     gender_code,
     audience_age_range,
     audience_gender,
+    actions,
 } from './influencers/search-influencers-payload';
 import type { z } from 'zod';
 
@@ -167,6 +168,10 @@ const audienceAgeFilter = (value: z.input<typeof audience_age_range>) => {
     return audience_age_range.parse(value);
 };
 
+const actionsFilter = (filters: z.input<typeof actions>[]) => {
+    return actions.array().parse(filters);
+};
+
 export const prepareFetchCreatorsFiltered = ({
     platform = 'youtube',
     tags = [],
@@ -180,6 +185,8 @@ export const prepareFetchCreatorsFiltered = ({
     platform: CreatorPlatform;
     body: z.input<typeof SearchInfluencersPayload>['body'];
 } => {
+    const actionsFilterKeys = ['keywords', 'username', 'text'];
+
     const body: z.infer<typeof SearchInfluencersPayload>['body'] = {
         paging: {
             limit: resultsPerPageLimit,
@@ -220,18 +227,6 @@ export const prepareFetchCreatorsFiltered = ({
 
     if (params.username) {
         body.filter.username = usernameFilter(params.username);
-
-        if (!body.filter.actions) body.filter.actions = [];
-
-        // Since username will always be provided, we can add filter actions for text and username here
-        body.filter.actions.push({
-            filter: 'username',
-            action: 'should',
-        });
-        body.filter.actions.push({
-            filter: 'text',
-            action: 'should',
-        });
     }
 
     if (params.views && platform !== 'instagram' && (params.views[0] || params.views[1])) {
@@ -282,19 +277,28 @@ export const prepareFetchCreatorsFiltered = ({
 
     if (params.keywords) {
         body.filter.keywords = keywordsFilter(params.keywords);
-
-        if (!body.filter.actions) {
-            body.filter.actions = [];
-        }
-
-        body.filter.actions.push({
-            filter: 'keywords',
-            action: 'should',
-        });
     }
 
     if (params.text_tags) {
         body.filter.text_tags = textTagsFilter(params.text_tags);
+    }
+
+    if (actionsFilterKeys.some((k) => k in params)) {
+        const filters: z.input<typeof actions>[] = [];
+
+        if (params.keywords) {
+            filters.push({ filter: 'keywords', action: 'should' });
+        }
+
+        if (params.username) {
+            filters.push({ filter: 'username', action: 'should' });
+        }
+
+        if (params.text) {
+            filters.push({ filter: 'text', action: 'should' });
+        }
+
+        body.filter.actions = actionsFilter(filters);
     }
 
     body.sort = { field: 'followers', direction: 'desc' };

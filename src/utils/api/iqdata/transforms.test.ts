@@ -23,10 +23,6 @@ describe('prepareFetchCreatorsFiltered', () => {
                         filter: 'username',
                         action: 'should',
                     },
-                    {
-                        filter: 'text',
-                        action: 'should',
-                    },
                 ],
                 username: { value: 'test_user' },
             },
@@ -92,7 +88,7 @@ describe('prepareFetchCreatorsFiltered', () => {
         const result2 = recommendedInfluencersFilter(recommendedInfluencers2);
         expect(result2).toHaveLength(1000);
     });
-    it.only('includes recommendedInfluencers transform', () => {
+    it('includes recommendedInfluencers transform', () => {
         const recommendedInfluencers = [
             'youtube/UCh_ugKacslKhsGGdXP0cRRA',
             'youtube/UCwyXamwtzfDIvRjEFcqNmSw',
