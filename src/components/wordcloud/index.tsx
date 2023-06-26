@@ -123,7 +123,7 @@ const WordCloudComponent = ({ tags, platform, updateTags }: WordCloudProps) => {
     const handleWord = useCallback(
         async (w: string) => {
             const newTag: CreatorSearchTag = {
-                tag: w,
+                tag: w.replace(/ /g, '_'),
                 value: w,
             };
             setSelectedTag(newTag);

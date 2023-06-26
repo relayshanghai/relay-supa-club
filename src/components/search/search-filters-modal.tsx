@@ -55,7 +55,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
 
     return (
         <Modal
-            maxWidth="max-w-2xl"
+            maxWidth="max-w-3xl"
             visible={show}
             onClose={() => setShow(false)}
             title={t('creators.filter.title') || ''}
@@ -88,9 +88,9 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                                 onChange={(e) => {
                                     // if (!audienceAge) return;
                                     const lowerAge =
-                                        e.target.value === 'Min'
+                                        e.target.value === 'Min (13)'
                                             ? undefined
-                                            : (e.target.value as '13' | '18' | '25' | '35' | '45' | '65' | undefined);
+                                            : (e.target.value as '18' | '25' | '35' | '45' | '65' | undefined);
                                     setAudienceAge({
                                         ...audienceAge,
                                         left_number: lowerAge,
@@ -98,8 +98,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                                     });
                                 }}
                             >
-                                <option value={undefined}>Min</option>
-                                <option value={13}>13</option>
+                                <option value={undefined}>Min (13)</option>
                                 <option value={18}>18</option>
                                 <option value={25}>25</option>
                                 <option value={35}>35</option>
@@ -209,8 +208,8 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                         <div className="mb-1 text-base font-medium">Has Email</div>
                     </label>
                 </div>
-                <div className="flex flex-row flex-wrap justify-between gap-4">
-                    <div className="w-full">
+                <div className="flex flex-row flex-wrap items-center justify-between gap-4">
+                    <div className="w-auto">
                         <div className="mb-1 text-base font-medium">Location</div>
                         <SearchLocations
                             path="influencer-search/locations"
