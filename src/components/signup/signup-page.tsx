@@ -15,6 +15,7 @@ import { useCompany } from 'src/hooks/use-company';
 import type { SignupInputTypes } from 'src/utils/validation/signup';
 import type { FieldValues } from 'react-hook-form';
 import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
+import Link from 'next/link';
 
 export interface SignUpValidationErrors {
     firstName: string;
@@ -33,15 +34,17 @@ const CompanyErrors = {
 };
 
 const SignUpPage = ({
+    currentStep,
+    setCurrentStep,
     selectedPriceId,
-    setShowCarousel,
 }: {
+    currentStep: number;
+    setCurrentStep: (step: number) => void;
     selectedPriceId: string;
-    setShowCarousel: (show: boolean) => void;
 }) => {
     const { t } = useTranslation();
     const router = useRouter();
-    const { signup, createEmployee, profile } = useUser();
+    const { signup, createEmployee, profile, logout } = useUser();
     const { createCompany } = useCompany();
 
     const {
@@ -58,7 +61,6 @@ const SignUpPage = ({
         companyWebsite: '',
     });
 
-    const [currentStep, setCurrentStep] = useState(1);
     const [selectedSize, setSelectedSize] = useState<string | null>(null);
     const [selectedCategory, setSelectedCategory] = useState<string>('');
     const [validationErrors, setValidationErrors] = useState<SignUpValidationErrors>({
@@ -126,11 +128,13 @@ const SignUpPage = ({
             return;
         }
 
-        if (currentStep === 2) {
-            await handleProfileCreate(formData);
-        } else if (currentStep === 4) {
-            await handleCompanyCreate(formData);
-            setShowCarousel(false);
+        if (currentStep === 4) {
+            const profileId = await handleProfileCreate(formData);
+            if (!profileId) {
+                throw new Error('Could not find profile id');
+                toast.error('Could not find profile id'); //TODO:add translation
+            }
+            await handleCompanyCreate(formData, profileId);
         } else {
             setCurrentStep(currentStep + 1);
         }
@@ -161,7 +165,7 @@ const SignUpPage = ({
                 } else {
                     setCreateProfileSuccess(true);
                 }
-                setCurrentStep(currentStep + 1);
+                return signupProfileRes.session.user.id;
             } else {
                 throw new Error('Could not sign up');
             }
@@ -177,19 +181,17 @@ const SignUpPage = ({
         setLoading(false);
     };
 
-    const handleCompanyCreate = async (formData: FieldValues) => {
+    const handleCompanyCreate = async (formData: FieldValues, profileId: string) => {
         const { companyName, companyWebsite, companySize, companyCategory } = formData;
         const data = {
             name: companyName,
             website: companyWebsite,
             category: companyCategory,
             size: companySize,
+            profileId: profileId,
         };
         try {
             setLoading(true);
-            if (!createProfileSuccess || !profile?.id) {
-                throw new Error('no profile id');
-            }
             const signupCompanyRes = await createCompany(data);
             if (!signupCompanyRes?.cus_id) {
                 throw new Error('no cus_id, error creating company');
@@ -267,6 +269,17 @@ const SignUpPage = ({
                         </FormWizard>
                     ),
             )}
+            <div className="pt-20">
+                {currentStep === 5 && (
+                    <button type="button" className="text-sm text-gray-500" onClick={logout}>
+                        {t('login.stuckHereTryAgain1')}
+                        <Link className="text-primary-500" href="/logout">
+                            {t('login.signOut')}
+                        </Link>
+                        {t('login.stuckHereTryAgain2')}
+                    </button>
+                )}
+            </div>
         </div>
     );
 };

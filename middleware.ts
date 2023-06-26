@@ -6,6 +6,7 @@ import type { DatabaseWithCustomTypes } from 'types';
 import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
 import httpCodes from 'src/constants/httpCodes';
 import { serverLogger } from 'src/utils/logger-server';
+import { featSignupV2 } from 'src/constants/feature-flags';
 
 const pricingAllowList = ['https://en-relay-club.vercel.app', 'https://relay.club'];
 
@@ -40,7 +41,7 @@ const checkOnboardingStatus = async (
     supabase: SupabaseClient<DatabaseWithCustomTypes>,
 ) => {
     const redirectUrl = req.nextUrl.clone();
-
+    const curStep = new URL(req.url).searchParams.get('curStep');
     // special case where we require a signed in user to create a company, but we don't want to redirect them to onboarding cause this happens before they are onboarded
     if (req.nextUrl.pathname === '/api/company/create') {
         const { user_id } = JSON.parse(await req.text());
@@ -49,8 +50,8 @@ const checkOnboardingStatus = async (
         }
         return res;
     }
-    // special case where we require a signed in user to view their profile, but we don't want to redirect them to onboarding cause this happens before they are onboarded
 
+    // special case where we require a signed in user to view their profile, but we don't want to redirect them to onboarding cause this happens before they are onboarded
     if (req.nextUrl.pathname === '/api/profiles' && req.method === 'GET') {
         // print req queries
         const id = new URL(req.url).searchParams.get('id');
@@ -71,11 +72,16 @@ const checkOnboardingStatus = async (
         }
         if (req.nextUrl.pathname === '/signup/onboarding') return res;
         redirectUrl.pathname = '/signup/onboarding';
+        if (featSignupV2()) {
+            //eslint-disable-next-line
+            console.log('No subscription_status found, should never happen');
+        }
         return NextResponse.redirect(redirectUrl);
     }
+
     if (subscriptionStatus === 'active' || subscriptionStatus === 'trial') {
         // if already signed in and has company, when navigating to index or login page, redirect to dashboard
-        if (req.nextUrl.pathname === '/' || req.nextUrl.pathname === '/login') {
+        if (req.nextUrl.pathname === '/' || req.nextUrl.pathname === '/login' || req.nextUrl.pathname === '/signup') {
             redirectUrl.pathname = '/dashboard';
             return NextResponse.redirect(redirectUrl);
         }
@@ -86,6 +92,7 @@ const checkOnboardingStatus = async (
     if (subscriptionStatus === 'canceled') {
         // if subscription ended only allow access to account page, and subscription endpoints
         const allowedPaths = [
+            '/',
             '/signup',
             '/login',
             '/account',
@@ -114,12 +121,19 @@ const checkOnboardingStatus = async (
     // if company registered, but no payment method, redirect to payment onboarding
     if (subscriptionStatus === 'awaiting_payment_method') {
         // allow the endpoints payment onboarding page requires
-        if (req.nextUrl.pathname.includes('/signup')) return res;
         if (req.nextUrl.pathname.includes('/api/company') || req.nextUrl.pathname.includes('/api/subscriptions'))
             return res;
 
-        if (req.nextUrl.pathname.includes('/signup/payment-onboard')) return res;
-        redirectUrl.pathname = '/signup/payment-onboard';
+        if (featSignupV2()) {
+            if (curStep === '5') {
+                return res;
+            }
+            redirectUrl.pathname = '/signup';
+            redirectUrl.searchParams.set('curStep', '5');
+        } else {
+            if (req.nextUrl.pathname.includes('/signup/payment-onboard')) return res;
+            redirectUrl.pathname = '/signup/payment-onboard';
+        }
         return NextResponse.redirect(redirectUrl);
     }
 
@@ -153,8 +167,9 @@ const checkIsRelayEmployee = async (res: NextResponse, email: string) => {
  */
 export async function middleware(req: NextRequest) {
     // We need to create a response and hand it to the supabase client to be able to modify the response headers.
+
     const res = NextResponse.next();
-    if (req.nextUrl.pathname === '/') return res;
+
     if (req.nextUrl.pathname === '/api/subscriptions/prices') return allowPricingCors(req, res);
     if (req.nextUrl.pathname === '/api/slack/create') return res;
     if (req.nextUrl.pathname === '/api/subscriptions/webhook') return res;
@@ -181,7 +196,9 @@ export async function middleware(req: NextRequest) {
     const redirectUrl = req.nextUrl.clone();
 
     // unauthenticated pages requests, send to signup
-    redirectUrl.pathname = '/signup';
+    if (req.nextUrl.pathname === '/') return res;
+    if (req.nextUrl.pathname === '/signup') return res;
+    redirectUrl.pathname = '/';
     return NextResponse.redirect(redirectUrl);
 }
 
@@ -199,6 +216,6 @@ export const config = {
          * - login, signup, logout (login, signup, logout pages)
          * - Stripe webhook (instead use signing key to protect)
          */
-        '/((?!_next/static|_next/image|favicon.ico|assets/*|api/invites/accept*|api/company/create-employee*|login*|login/reset-password|signup|signup/invite*|logout|api/logout|api/subscriptions/webhook|api/webhooks).*)',
+        '/((?!_next/static|_next/image|favicon.ico|assets/*|api/invites/accept*|api/company/create-employee*|login*|login/reset-password|signup/invite*|logout|api/logout|api/subscriptions/webhook|api/webhooks).*)',
     ],
 };
