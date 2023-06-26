@@ -47,7 +47,9 @@ export const GuideModal = ({
                         {t('guidePage.goBack')}
                     </p>
                     <Link href={selectedGuide.url}>
-                        <Button className="flex flex-row gap-3">{t(`guidePage.modalInfo.${section}.goto`)}</Button>
+                        <Button className="flex flex-row gap-3">
+                            {t(`guidePage.goto`) + ' ' + t(`guidePage.modalInfo.${section}.title`)}
+                        </Button>
                     </Link>
                 </div>
             </div>

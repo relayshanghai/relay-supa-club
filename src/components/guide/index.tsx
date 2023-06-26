@@ -37,7 +37,7 @@ export const GuideCards = ({ cardName }: { cardName: string }) => {
                 className="flex cursor-pointer flex-row items-center gap-2 font-medium text-primary-700"
                 onClick={handleGuideModal}
             >
-                Learn more <ArrowRight className="stroke-primary-700" height={18} width={18} />
+                {t('guidePage.learnMore')} <ArrowRight className="stroke-primary-700" height={18} width={18} />
             </p>
             <GuideModal section={cardName} show={guideShow} setShow={setGuideShow} />
         </div>

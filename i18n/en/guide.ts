@@ -1,7 +1,9 @@
 const guidePage = {
-    welcome: 'Welcome to',
+    welcome: 'Welcome to ',
     welcomeDescription: 'Need help? Check out the topics below for more information about our platform!',
     goBack: 'Back to Guide',
+    goto: 'Go to',
+    learnMore: 'Learn More',
     cards: {
         discover: {
             title: 'Discover KOL',
@@ -32,7 +34,6 @@ const guidePage = {
         discover: {
             title: 'Discover KOL',
             url: '/dashboard',
-            goto: 'Go to Discover',
             sections: [
                 {
                     title: 'Topic-based Search',
@@ -69,7 +70,6 @@ const guidePage = {
         campaigns: {
             title: 'Campaigns',
             url: '/campaigns',
-            goto: 'Go to Campaigns',
             sections: [
                 {
                     title: 'Tracking your outreach',
@@ -91,7 +91,6 @@ const guidePage = {
         performance: {
             title: 'Performance',
             url: '/performance',
-            goto: 'Go to Performance',
             sections: [
                 {
                     title: 'You provide the link, we’ll handle the tracking ',
@@ -103,7 +102,6 @@ const guidePage = {
         account: {
             title: 'My Account',
             url: '/account',
-            goto: 'Go to My Account',
             sections: [
                 {
                     title: 'Manage your teams efforts',
@@ -114,7 +112,6 @@ const guidePage = {
         },
         aiEmailGenerator: {
             title: 'AI Email',
-            goto: 'Go to AI Email',
             url: '/ai-email-generator',
             sections: [
                 {

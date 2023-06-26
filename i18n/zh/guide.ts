@@ -1,7 +1,9 @@
 const guidePage = {
-    welcome: 'Welcome to',
-    welcomeDescription: 'Need help? Check out the topics below for more information about our platform!',
-    goBack: 'Back to Guide',
+    welcome: '欢迎来到',
+    welcomeDescription: '需要帮助吗？请查看以下主题，了解有关我们平台的更多信息！',
+    goBack: '返回指南',
+    goto: '前往',
+    learnMore: '了解更多',
     cards: {
         discover: {
             title: '发现KOL',
@@ -30,7 +32,6 @@ const guidePage = {
         discover: {
             title: '发现KOL',
             url: '/dashboard',
-            goto: 'Go to Discover',
             sections: [
                 {
                     title: '基于主题的搜索',
@@ -67,7 +68,6 @@ const guidePage = {
         campaigns: {
             title: '项目管理',
             url: '/campaigns',
-            goto: 'Go to Campaigns',
             sections: [
                 {
                     title: '追踪您的外联合作',
@@ -89,7 +89,6 @@ const guidePage = {
         performance: {
             title: '追踪绩效',
             url: '/performance',
-            goto: 'Go to Performance',
             sections: [
                 {
                     title: '您提供链接，我们负责跟踪数据',
@@ -101,7 +100,6 @@ const guidePage = {
         account: {
             title: '监控您的使用情况',
             url: '/account',
-            goto: 'Go to My Account',
             sections: [
                 {
                     title: '管理团队合作',
@@ -112,7 +110,6 @@ const guidePage = {
         },
         aiEmailGenerator: {
             title: '量身定制您的外联合作',
-            goto: 'Go to AI Email',
             url: '/ai-email-generator',
             sections: [
                 {
