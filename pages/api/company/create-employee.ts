@@ -5,7 +5,7 @@ import httpCodes from 'src/constants/httpCodes';
 import { createEmployeeError } from 'src/errors/company';
 import type { CompanyDB, ProfileDB } from 'src/utils/api/db';
 import {
-    createCompanyLegacy,
+    createCompany,
     getCompanyByName,
     getProfileByEmail,
     updateCompany,
@@ -35,7 +35,7 @@ const getOrCreateRelayCompany = async () => {
             relayCompany = data;
         }
         if (!relayCompany?.id) {
-            const { data: companyCreated, error: createRelayCompanyError } = await createCompanyLegacy({
+            const { data: companyCreated, error: createRelayCompanyError } = await createCompany({
                 name: relayCompanyConfig.name,
                 website: relayCompanyConfig.website,
             });
