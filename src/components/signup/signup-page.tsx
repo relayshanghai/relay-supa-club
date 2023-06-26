@@ -15,6 +15,7 @@ import { useCompany } from 'src/hooks/use-company';
 import type { SignupInputTypes } from 'src/utils/validation/signup';
 import type { FieldValues } from 'react-hook-form';
 import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
+import Link from 'next/link';
 
 export interface SignUpValidationErrors {
     firstName: string;
@@ -41,7 +42,7 @@ const SignUpPage = ({
 }) => {
     const { t } = useTranslation();
     const router = useRouter();
-    const { signup, createEmployee, profile } = useUser();
+    const { signup, createEmployee, profile, logout } = useUser();
     const { createCompany } = useCompany();
 
     const {
@@ -267,6 +268,17 @@ const SignUpPage = ({
                         </FormWizard>
                     ),
             )}
+            <div className="pt-20">
+                {currentStep === 5 && (
+                    <button type="button" className="text-sm text-gray-500" onClick={logout}>
+                        {t('login.stuckHereTryAgain1')}
+                        <Link className="text-primary-500" href="/logout">
+                            {t('login.signOut')}
+                        </Link>
+                        {t('login.stuckHereTryAgain2')}
+                    </button>
+                )}
+            </div>
         </div>
     );
 };
