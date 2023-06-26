@@ -19,11 +19,7 @@ export const FormWizard = ({
     return (
         // The width is to match the exact design on Figma
         <div className="w-80 lg:w-[28rem]">
-            <Progress
-                height="small"
-                percentage={currentStep === 1 ? 1 : ((currentStep - 1) / steps.length) * 100}
-                className="mb-2"
-            />
+            <Progress height="small" percentage={(currentStep / steps.length) * 100} className="mb-2" />
             <div className="flex flex-col rounded shadow-md">
                 <form
                     onSubmit={(e) => e.preventDefault()}
