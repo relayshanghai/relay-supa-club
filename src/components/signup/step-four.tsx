@@ -6,8 +6,7 @@ import type { SignupInputTypes } from 'src/utils/validation/signup';
 import { isMissing } from 'src/utils/utils';
 import type { SignUpValidationErrors } from './signup-page';
 import { Spinner } from '../icons';
-import { useUser } from 'src/hooks/use-user';
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 
 export const StepFour = ({
     companyName,
@@ -27,11 +26,6 @@ export const StepFour = ({
     onNext: any;
 }) => {
     const { t } = useTranslation();
-    const { profile, refreshProfile } = useUser();
-    useEffect(() => {
-        refreshProfile();
-    }, [refreshProfile]);
-
     const companySizeOptions = [
         { label: '1-10', value: 'small' },
         { label: '11-50', value: 'medium' },
@@ -44,10 +38,10 @@ export const StepFour = ({
 
     const invalidFormInput =
         isMissing(companyName) || validationErrors.companyName !== '' || validationErrors.companyWebsite !== '';
-
-    const submitDisabled = invalidFormInput || loading || !profile?.id;
+    const submitDisabled = invalidFormInput || loading;
     const websiteRef = useRef<HTMLInputElement>(null);
     const sizeRef = useRef<HTMLInputElement>(null);
+
     return (
         <>
             <Input

@@ -23,7 +23,7 @@ const turnOffRudderInDev = () => {
 };
 
 export async function rudderInitialized() {
-    if (process.env.NODE_ENV === 'development' || process.env.NEXT_PUBLIC_CI === 'true') {
+    if (process.env.NEXT_PUBLIC_CI === 'true') {
         return turnOffRudderInDev();
     }
     //these keys are for RudderStack App-Frontend Source, if we need to add new source we need to add new keys
@@ -37,7 +37,6 @@ export async function rudderInitialized() {
 
     window.rudder = await import('rudder-sdk-js');
     const rudder = (window.rudder = window.rudder || []);
-
     rudder.load(WRITE_KEY, DATA_PLANE_URL, {
         integrations: { All: true }, // load call options
     });
