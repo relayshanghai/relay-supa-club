@@ -6,6 +6,7 @@ import type { DatabaseWithCustomTypes } from 'types';
 import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
 import httpCodes from 'src/constants/httpCodes';
 import { serverLogger } from 'src/utils/logger-server';
+import { NextURL } from 'next/dist/server/web/next-url';
 
 const pricingAllowList = ['https://en-relay-club.vercel.app', 'https://relay.club'];
 
@@ -42,7 +43,7 @@ const checkOnboardingStatus = async (
     const redirectUrl = req.nextUrl.clone();
 
     // special case where we require a signed in user to create a company, but we don't want to redirect them to onboarding cause this happens before they are onboarded
-    if (req.nextUrl.pathname === '/api/company/create') {
+    if (req.nextUrl.pathname === '/api/company/create' || req.referrer.includes('curStep=3')) {
         const { user_id } = JSON.parse(await req.text());
         if (!user_id || user_id !== session.user.id) {
             return NextResponse.rewrite(redirectUrl.origin, { status: httpCodes.FORBIDDEN });
@@ -153,6 +154,7 @@ const checkIsRelayEmployee = async (res: NextResponse, email: string) => {
  */
 export async function middleware(req: NextRequest) {
     // We need to create a response and hand it to the supabase client to be able to modify the response headers.
+    // console.dir(req.nextUrl, { depth: 10 });
     const res = NextResponse.next();
     if (req.nextUrl.pathname === '/') return res;
     if (req.nextUrl.pathname === '/api/subscriptions/prices') return allowPricingCors(req, res);
