@@ -48,7 +48,6 @@ OR REPLACE FUNCTION create_supabase_user(email TEXT, _first_name TEXT, _last_nam
       email,
       crypt('password123!',
         gen_salt('bf')),
-      '2023-02-18 23:31:13.017218+00',
       NULL,
       '',
       '2023-02-18 23:31:12.757017+00',
