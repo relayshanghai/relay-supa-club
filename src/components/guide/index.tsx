@@ -15,10 +15,12 @@ export const GuideCards = ({ cardName }: { cardName: string }) => {
         setGuideShow((prev) => !prev);
     };
     return (
-        <div className="m-1 my-6 flex w-screen basis-1/2 flex-col items-center gap-5 text-center md:w-auto lg:basis-1/3 2xl:basis-1/4">
+        <div className="m-1 my-6 flex w-screen flex-col items-center gap-5 text-center md:w-auto md:basis-1/2 lg:basis-1/3 2xl:basis-1/4">
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary-50">
                 <div className="flex h-11 w-11 items-center justify-center rounded-full bg-primary-100">
-                    {cardName === 'discover' && <Compass height={24} width={24} className="stroke-primary-500" />}
+                    {cardName === 'discover' && (
+                        <Compass height={24} width={24} className="stroke-primary-500" color="#8B5CF6" />
+                    )}
 
                     {cardName === 'campaigns' && <FourSquare height={24} width={24} className="stroke-primary-500" />}
 
@@ -33,8 +35,8 @@ export const GuideCards = ({ cardName }: { cardName: string }) => {
                     {cardName === 'guide' && <Guide height={24} width={24} className="stroke-primary-500" />}
                 </div>
             </div>
-            <p className="break-words text-xl font-semibold">{t(`guidePage.cards.${cardName}.title`)}</p>
-            <p className="break-words">{t(`guidePage.cards.${cardName}.description`)}</p>
+            <p className="break-words text-xl font-semibold text-gray-800">{t(`guidePage.cards.${cardName}.title`)}</p>
+            <p className="break-words text-gray-600">{t(`guidePage.cards.${cardName}.description`)}</p>
             <p
                 data-testid={`guide-modal-${cardName}`}
                 className="flex cursor-pointer flex-row items-center gap-2 font-medium text-primary-700"
@@ -53,8 +55,8 @@ export const GuideComponent = () => {
     return (
         <div className="m-10 flex flex-col items-center gap-6">
             <div className="flex flex-col gap-2 text-center">
-                <p className="text-4xl font-bold text-black">
-                    {t('guidePage.welcome')} relay<span className="text-violet-500">.</span>club
+                <p className="text-4xl font-bold text-gray-800">
+                    {t('guidePage.welcome')} relay<span className="text-[#6B65AD]">.</span>club
                 </p>
                 <p className="text-base text-gray-500">{t('guidePage.welcomeDescription')}</p>
             </div>
@@ -79,7 +81,7 @@ export const GuideComponent = () => {
                     />
                 </div>
             )}
-            <div className="flex w-screen flex-row flex-wrap justify-center md:gap-4 md:gap-y-8">
+            <div className="flex w-full flex-row flex-wrap justify-center md:justify-evenly md:gap-4 md:gap-y-8">
                 {Object.keys(guidePage.cards).map((name: string, index: number) => {
                     return <GuideCards key={index} cardName={name} />;
                 })}
