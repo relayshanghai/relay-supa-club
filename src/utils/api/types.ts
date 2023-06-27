@@ -40,6 +40,9 @@ export const Location = z.object({
 
 const NullString = z.union([z.string().or(z.null()), z.string().or(z.null())]);
 
+/**
+ * @see /src/utils/api/iqdata/transforms.ts - FetchCreatorsFilteredParams
+ */
 export const InfluencerSearchFilter = z.object({
     platform: Platform.optional().default('youtube'),
     tags: Tag.array().optional(),
