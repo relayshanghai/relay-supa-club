@@ -34,7 +34,7 @@ export const WithTracking = <P = any,>(Component: ComponentType<P & { track?: Tr
                 }
 
                 if (eventpayload && typeof eventpayload !== 'function') {
-                    payload = { ...eventpayload, ...payload };
+                    payload = { ...payload, ...eventpayload };
                 }
 
                 return event && event(rudder)(payload);
