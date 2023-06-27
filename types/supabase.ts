@@ -699,25 +699,25 @@ export interface Database {
       }
       sales: {
         Row: {
+          amount: number
           campaign_id: string | null
           company_id: string
           created_at: string | null
           id: number
-          value: number
         }
         Insert: {
+          amount: number
           campaign_id?: string | null
           company_id: string
           created_at?: string | null
           id?: number
-          value: number
         }
         Update: {
+          amount?: number
           campaign_id?: string | null
           company_id?: string
           created_at?: string | null
           id?: number
-          value?: number
         }
         Relationships: [
           {
