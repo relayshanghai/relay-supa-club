@@ -5,7 +5,7 @@ import { GuideModal } from './guideModal';
 import { useState } from 'react';
 import Image from 'next/image';
 
-const videoFlag = true;
+const featVideo = true;
 
 export const GuideCards = ({ cardName }: { cardName: string }) => {
     const { t } = useTranslation();
@@ -58,7 +58,7 @@ export const GuideComponent = () => {
                 </p>
                 <p className="text-base text-gray-500">{t('guidePage.welcomeDescription')}</p>
             </div>
-            {videoFlag ? (
+            {featVideo ? (
                 <video
                     muted={false}
                     controls={true}
