@@ -46,7 +46,7 @@ jobs:
 
             - uses: supabase/setup-cli@v1
               with:
-                  version: 1.64.8
+                  version: 1.68.6
 
             - name: Verify supabase cli version
               run: supabase -v
@@ -117,7 +117,10 @@ jobs:
 
             - uses: supabase/setup-cli@v1
               with:
-                  version: latest
+                  version: 1.68.6
+
+            - name: Verify supabase cli version
+              run: supabase -v
 
             - name: Create supabase config file
               run: cp supabase/config.toml.example supabase/config.toml
