@@ -1,23 +1,22 @@
 const tooltips = {
     searchTopics: {
-        title: 'Topics',
+        title: '主题',
         description:
-            'Topics are created and applied to the influencer account through analysis of their content over time. We will return Influencers most relevant to the topics you search for.',
+            '我们通过对网红内容的长期分析，来创建并应用主题到他们的账户。这样一来，当您搜索主题时，我们会给您输出最相关的网红达人。',
     },
     searchKeywords: {
-        title: 'Keyword or Phrase',
+        title: '关键词或短语',
         description:
-            'We search through youtube video transcripts to add influencers that have used these words or phrases in recent videos in your results. Try using a word or phrase influencers would actually say to get more results.',
+            '我们会搜索 YouTube 视频的转录稿，并将最近在视频中使用这些单词或短语的网红添加到您的搜索结果中。尝试下使用网红实际在视频中提到的单词或短语吧，你可以获得更多相关的搜索结果。',
     },
     searchHashTags: {
-        title: 'Hashtags',
-        description:
-            'We will add influencers who have used your hashtags in their recent post descriptions to your search results.',
+        title: '标签',
+        description: '我们会把最近在帖子描述中使用了这个标签的网红添加到搜索结果中，让您更轻松地找到相关内容。',
     },
     topicCloud: {
-        title: 'TopicCloud',
+        title: '主题词云',
         description:
-            'The TopicCloud is generated using the first topic you enter. We use related topics to create the cloud, with topics more relevant to your original topic having a darker colour, and topics that are attached to more influencers are larger in size.',
+            '主题词云是由你输入的第一个主题词生成的云图。我们会用相关的主题来组成这个云图，比如与原始主题关联性更高的主题会用深色呈现，和更多红人结果有关联的主题会以更大的字体呈现。',
     },
 };
 

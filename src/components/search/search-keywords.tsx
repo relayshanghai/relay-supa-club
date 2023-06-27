@@ -36,10 +36,10 @@ export const SearchKeywords = ({ setKeywords, keywords, placeholder }: SearchTop
                             if (e.key === 'Enter') {
                                 e.preventDefault();
                                 setKeywords(value);
-                                setValue('');
                                 trackEvent('Search Filter Modal, change keywords', {
                                     keywords: value,
                                 });
+                                setValue('');
                             }
                         }}
                         value={value}
