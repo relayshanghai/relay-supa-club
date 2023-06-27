@@ -50,7 +50,8 @@ export const SearchHashtags = ({ setHashtags, hashtags, placeholder }: SearchTop
             })}
             <input
                 className="w-full appearance-none border border-transparent bg-white px-3 py-2 font-medium text-gray-900 placeholder-gray-400 focus:border-transparent focus:outline-none focus:ring-0 sm:text-sm"
-                placeholder={placeholder}
+                placeholder={hashtags.length < 10 ? placeholder : ''}
+                disabled={hashtags.length < 10 ? false : true}
                 onChange={(e) => {
                     setValue(e.target.value);
                 }}

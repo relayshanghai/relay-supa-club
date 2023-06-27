@@ -219,7 +219,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                 </div>
                 {/* INFLUENCER SECTION */}
                 <div className="flex items-center justify-between">
-                    <p className="text-2xl font-semibold">Influencer Filters</p>
+                    <p className="text-2xl font-semibold">{t('filters.influencers.title')}</p>
                     <label className="flex flex-row gap-2 text-sm">
                         <Switch
                             data-testid="has-email-toggle"
@@ -228,7 +228,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                                 setContactInfo(e.target.checked ? 'email' : undefined);
                             }}
                         />
-                        <div className="mb-1 text-base font-medium">Has Email</div>
+                        <div className="mb-1 text-base font-medium">{t('filters.influencers.hasEmail')}</div>
                     </label>
                 </div>
                 <div className="flex flex-row flex-wrap items-center justify-between gap-4">

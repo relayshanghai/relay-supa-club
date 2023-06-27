@@ -29,6 +29,7 @@ export const SearchPageInner = () => {
         // recommendedInfluencers,
         // onlyRecommended,
         setAudience,
+        keywords,
         setViews,
         setGender,
         setEngagement,
@@ -107,9 +108,11 @@ export const SearchPageInner = () => {
             <SearchOptions setPage={setPage} setShowFiltersModal={setShowFiltersModal} />
 
             <div className="flex items-center justify-between">
-                <div className="text-sm font-medium">{`We found ${numberFormatter(
+                <div className="text-sm font-medium">{`${t('creators.resultsPrefix')} ${numberFormatter(
                     resultsTotal,
-                )} influencer accounts relevant to your topics or using your keywords in recent videos, that matched your filters`}</div>
+                )} ${
+                    keywords === 'youtube' ? t('creators.resultsPostfixKeywords') : t('creators.resultsPostfixHashtags')
+                }`}</div>
             </div>
 
             <SearchResultsTable
