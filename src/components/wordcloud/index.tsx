@@ -136,7 +136,7 @@ const WordCloudComponent = ({ tags, platform, updateTags }: WordCloudProps) => {
 
     const colorWord = useCallback(
         (wo: string) => {
-            if (tags.some((w) => w.tag === wo) || !wordsDistance.some((word) => word.text === wo)) {
+            if (tags.some((w) => w.value === wo) || !wordsDistance.some((word) => word.text === wo)) {
                 return `#EC4899`;
             }
             const word = wordsDistance.find((word) => word.text === wo);

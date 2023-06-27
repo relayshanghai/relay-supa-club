@@ -29,7 +29,6 @@ export const SearchPageInner = () => {
         // recommendedInfluencers,
         // onlyRecommended,
         setAudience,
-        keywords,
         setViews,
         setGender,
         setEngagement,
@@ -111,7 +110,7 @@ export const SearchPageInner = () => {
                 <div className="text-sm font-medium">{`${t('creators.resultsPrefix')} ${numberFormatter(
                     resultsTotal,
                 )} ${
-                    keywords === 'youtube' ? t('creators.resultsPostfixKeywords') : t('creators.resultsPostfixHashtags')
+                    platform === 'youtube' ? t('creators.resultsPostfixKeywords') : t('creators.resultsPostfixHashtags')
                 }`}</div>
             </div>
 
