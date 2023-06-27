@@ -15,7 +15,6 @@ OR REPLACE FUNCTION create_supabase_user(email TEXT, _first_name TEXT, _last_nam
       "role",
       "email",
       "encrypted_password",
-      "email_confirmed_at",
       "invited_at",
       "confirmation_token",
       "confirmation_sent_at",
