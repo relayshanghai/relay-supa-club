@@ -14,6 +14,7 @@ import {
     actions,
 } from './influencers/search-influencers-payload';
 import type { z } from 'zod';
+import { serverLogger } from 'src/utils/logger-server';
 
 type NullStringTuple = [null | string, null | string];
 
@@ -94,6 +95,7 @@ export const recommendedInfluencersFilter = (influencers: string[]) => {
     const ids = influencers.map((influencer) => influencer.split('/')[1]);
 
     if (ids.length > 1000) {
+        serverLogger('Recommended influencer ids truncated', 'error', true);
         return ids.slice(0, 1000);
     }
 
