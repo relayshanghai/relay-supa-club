@@ -2,7 +2,21 @@ import { Modal } from '../modal';
 import { Button } from '../button';
 import { useState } from 'react';
 
-export const CampaignSalesModal = ({ show, setShow }: { show: boolean; setShow: (open: boolean) => void }) => {
+type CampagnSales = {
+    campaign_id: string;
+    company_id: string;
+    amount: number;
+};
+
+export const CampaignSalesModal = ({
+    show,
+    setShow,
+    onAddSales,
+}: {
+    show: boolean;
+    setShow: (open: boolean) => void;
+    onAddSales: (amount: number) => CampagnSales;
+}) => {
     // const { t } = useTranslation();
 
     const [amount, setAmount] = useState<number>(0);
@@ -21,7 +35,8 @@ export const CampaignSalesModal = ({ show, setShow }: { show: boolean; setShow: 
                 </div>
                 <Button
                     onClick={() => {
-                        alert(amount);
+                        // alert(amount);
+                        onAddSales(amount);
                         setShow(false);
                     }}
                 >

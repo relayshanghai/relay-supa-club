@@ -203,11 +203,19 @@ export default function CampaignInfluencersTable({
         return campaignCreators?.filter((c) => c.status === status).length ?? 0;
     };
 
+    const onAddSales = (amount: number) => {
+        return {
+            campaign_id: 'test_123',
+            company_id: 'test_123',
+            amount: amount,
+        };
+    };
+
     const editingModeTrue = (index: number, key: string) => index === toEdit?.index && key === toEdit?.key;
 
     return (
         <div>
-            <CampaignSalesModal show={showSalesModal} setShow={setShowSalesModal} />
+            <CampaignSalesModal show={showSalesModal} setShow={setShowSalesModal} onAddSales={onAddSales} />
             {/* Outreach Tabs */}
             <div className="mb-4 flex overflow-x-auto">
                 <Link href="/dashboard" legacyBehavior>
