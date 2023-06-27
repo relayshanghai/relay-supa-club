@@ -4,6 +4,7 @@ import { Button } from '../button';
 import type { SignUpValidationErrors } from './signup-page';
 import type { SignupInputTypes } from 'src/utils/validation/signup';
 import { isMissing } from 'src/utils/utils';
+import { useRef } from 'react';
 
 export const StepOne = ({
     firstName,
@@ -27,6 +28,8 @@ export const StepOne = ({
         isMissing(firstName, lastName) || validationErrors.firstName !== '' || validationErrors.lastName !== '';
     const submitDisabled = invalidFormInput || loading;
 
+    const lastNameRef = useRef<HTMLInputElement>(null);
+    const phoneNumberRef = useRef<HTMLInputElement>(null);
     return (
         <>
             <Input
@@ -36,6 +39,12 @@ export const StepOne = ({
                 placeholder={t('signup.firstNamePlaceholder')}
                 required
                 onChange={(e) => setAndValidate('firstName', e.target.value)}
+                autoFocus
+                onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                        lastNameRef?.current?.focus();
+                    }
+                }}
             />
             <Input
                 error={validationErrors.lastName}
@@ -44,6 +53,12 @@ export const StepOne = ({
                 value={lastName}
                 required
                 onChange={(e) => setAndValidate('lastName', e.target.value)}
+                ref={lastNameRef}
+                onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                        phoneNumberRef?.current?.focus();
+                    }
+                }}
             />
             <Input
                 error={validationErrors.phoneNumber}
@@ -51,8 +66,14 @@ export const StepOne = ({
                 placeholder={t('signup.phoneNumberPlaceholder')}
                 value={phoneNumber}
                 onChange={(e) => setAndValidate('phoneNumber', e.target.value)}
+                ref={phoneNumberRef}
+                onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !submitDisabled) {
+                        onNext();
+                    }
+                }}
             />
-            <Button disabled={submitDisabled} className="w-full" onClick={onNext}>
+            <Button disabled={submitDisabled} className="mt-12 w-full" onClick={onNext}>
                 {t('signup.next')}
             </Button>
         </>

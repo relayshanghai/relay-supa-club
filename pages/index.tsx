@@ -1,10 +1,9 @@
-import { useRouter } from 'next/router';
-import { useEffect } from 'react';
+import LandingPage from './component-previews/landing-page';
 
 export default function Index() {
-    const router = useRouter();
-    useEffect(() => {
-        router.push('/login');
-    }, [router]);
-    return <></>;
+    return (
+        <>
+            <LandingPage />
+        </>
+    );
 }

@@ -170,6 +170,7 @@ export const SearchResultRow = ({
                     <Link
                         href={`/influencer/${platform}/${user_id}`}
                         target="_blank"
+                        rel="noopener noreferrer"
                         onClick={() => trackEvent('Search Result Row, open report', { platform, user_id })}
                         data-testid={`analyze-button/${user_id}`}
                     >

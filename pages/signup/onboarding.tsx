@@ -26,7 +26,7 @@ export default function Register() {
     const { trackEvent } = useRudderstack();
     const router = useRouter();
     const { loading, logout } = useUser();
-    const { createCompany } = useCompany();
+    const { createCompanyLegacy } = useCompany();
     const { values, setFieldValue } = useFields({
         name: '',
         website: '',
@@ -35,7 +35,7 @@ export default function Register() {
     const handleSubmit = useCallback(async () => {
         try {
             setSubmitting(true);
-            const created = await createCompany(values);
+            const created = await createCompanyLegacy(values);
             if (!created?.cus_id) {
                 throw new Error('no cus_id, error creating company');
             }
@@ -52,7 +52,7 @@ export default function Register() {
         } finally {
             setSubmitting(false);
         }
-    }, [trackEvent, createCompany, router, t, values]);
+    }, [trackEvent, createCompanyLegacy, router, t, values]);
 
     return (
         <LegacyLoginSignupLayout>

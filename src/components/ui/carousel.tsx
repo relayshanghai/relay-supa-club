@@ -38,6 +38,7 @@ export default function Carousel({ slides, autoSlide = false, autoSlideInterval 
                         height={400}
                         alt={slides[currIndex].title || ''}
                         className="rounded-2xl bg-cover bg-center"
+                        quality={100}
                     />
                 </div>
 

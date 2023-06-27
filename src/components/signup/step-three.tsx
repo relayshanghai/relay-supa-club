@@ -4,6 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { SingleSelect } from '../ui';
 import { Button } from '../button';
 import { companyCategories } from './company-categories';
+import { useUser } from 'src/hooks/use-user';
+import { useEffect, useRef } from 'react';
 
 export const StepThree = ({
     loading,
@@ -15,6 +17,12 @@ export const StepThree = ({
     setSelectedCategory: (newValue: string) => void;
 }) => {
     const { t } = useTranslation();
+    const { refreshProfile } = useUser();
+
+    useEffect(() => {
+        refreshProfile();
+    }, [refreshProfile]);
+
     const {
         control,
         setValue,
@@ -27,6 +35,7 @@ export const StepThree = ({
         onNext();
     };
 
+    const buttonRef = useRef<HTMLButtonElement>(null);
     return (
         <>
             <SingleSelect
@@ -38,8 +47,20 @@ export const StepThree = ({
                 valueName="companyCategory"
                 setValue={setValue}
                 className="mb-4"
+                autoFocus
+                onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                        buttonRef?.current?.focus();
+                    }
+                }}
             />
-            <Button disabled={loading} type="submit" className="w-full" onClick={handleSubmit(onSubmit)}>
+            <Button
+                ref={buttonRef}
+                disabled={loading}
+                type="submit"
+                className="mt-12 w-full"
+                onClick={handleSubmit(onSubmit)}
+            >
                 {t('signup.next')}
             </Button>
         </>

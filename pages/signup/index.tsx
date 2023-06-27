@@ -19,6 +19,7 @@ import { validateSignupInput } from 'src/utils/validation/signup';
 import { LoginSignupLayout } from 'src/components/SignupLayout';
 import { STRIPE_PRICE_MONTHLY_DIY } from 'src/utils/api/stripe/constants';
 import { ScreenshotsCarousel } from 'src/components/signup/screenshots-carousel';
+import { PricingSection } from 'src/components/signup/pricing-section';
 
 export default function Register() {
     const { t } = useTranslation();
@@ -122,14 +123,33 @@ export default function Register() {
             handleSubmit();
         }
     };
-    const [selectedPriceId, _setSelectedPriceId] = useState(STRIPE_PRICE_MONTHLY_DIY);
+    const [selectedPriceId, setSelectedPriceId] = useState(STRIPE_PRICE_MONTHLY_DIY);
+    const [currentStep, setCurrentStepState] = useState(1);
+    const setCurrentStep = (step: number) => {
+        router.query.curStep = step.toString();
+        router.push(router);
+        setCurrentStepState(step);
+    };
+    useEffect(() => {
+        if (!router.isReady || typeof router.query.curStep !== 'string') return;
+        setCurrentStepState(parseInt(router.query.curStep));
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [router.query.curStep, router.isReady]);
 
     return (
         <>
             {featSignupV2() ? (
                 <LoginSignupLayout
-                    left={<ScreenshotsCarousel />}
-                    right={<SignUpPage selectedPriceId={selectedPriceId} />}
+                    left={
+                        currentStep !== 5 ? <ScreenshotsCarousel /> : <PricingSection setPriceId={setSelectedPriceId} />
+                    }
+                    right={
+                        <SignUpPage
+                            currentStep={currentStep}
+                            setCurrentStep={setCurrentStep}
+                            selectedPriceId={selectedPriceId}
+                        />
+                    }
                 />
             ) : (
                 <LegacyLoginSignupLayout>

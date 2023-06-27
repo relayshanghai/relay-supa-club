@@ -76,6 +76,7 @@ export type InitialValues = [WritableAtom<unknown, any[], any>, unknown][];
 const mockCompanyContext: CompanyContext = {
     company: mockCompany,
     updateCompany: async () => null,
+    createCompanyLegacy: async () => null,
     createCompany: async () => null,
     refreshCompany: () => null,
 };
