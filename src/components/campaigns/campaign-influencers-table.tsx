@@ -13,6 +13,7 @@ import InfluencerRow from './influencer-row';
 import { ManageInfluencerModal } from './manage-influencer-modal';
 import { AddPostModal } from './add-post-modal';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { CampaignSalesModal } from './campaign-sales-modal';
 
 export interface CreatorsOutreachProps {
     currentCampaign: CampaignDB;
@@ -43,6 +44,7 @@ export default function CampaignInfluencersTable({
     const [toEdit, setToEdit] = useState<{ index: number; key: string } | null>(null);
     const [searchTerm, setSearchTerm] = useState<string | ''>('');
     const [influencersList, setInfluencersList] = useState<CampaignCreatorDB[]>([]);
+    const [showSalesModal, setShowSalesModal] = useState<boolean>(false);
 
     const [showMoveInfluencerModal, setShowMoveInfluencerModal] = useState(false);
     const [showManageInfluencerModal, setShowManageInfluencerModal] = useState(false);
@@ -205,6 +207,7 @@ export default function CampaignInfluencersTable({
 
     return (
         <div>
+            <CampaignSalesModal show={showSalesModal} setShow={setShowSalesModal} />
             {/* Outreach Tabs */}
             <div className="mb-4 flex overflow-x-auto">
                 <Link href="/dashboard" legacyBehavior>
@@ -215,6 +218,17 @@ export default function CampaignInfluencersTable({
                         <a>{t('campaigns.show.activities.outreach.addNewInfluencer')}</a>
                     </div>
                 </Link>
+                <p>
+                    <div
+                        onClick={() => {
+                            trackEvent('Campaign Management, click on add sales');
+                            setShowSalesModal(true);
+                        }}
+                        className="mr-4 flex-shrink-0 cursor-pointer rounded-md bg-gray-100 px-4 py-2 text-xs text-gray-600 duration-300 hover:bg-primary-500 hover:text-white"
+                    >
+                        <a>Add Sales</a>
+                    </div>
+                </p>
                 {/* TODO: make Tabs component reusable */}
                 <div className="hidden items-center sm:flex">
                     {tabs.map((tab) => (
