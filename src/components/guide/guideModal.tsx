@@ -20,7 +20,7 @@ export const GuideModal = ({
     return (
         <Modal
             visible={show}
-            maxWidth={`${section === 'discover' ? 'max-w-5xl' : 'max-w-lg'}`}
+            maxWidth={`max-w-xl`}
             onClose={() => setShow(false)}
             title={t(`guidePage.modalInfo.${section}.title`) || ''}
         >
