@@ -75,7 +75,7 @@ export const PricingPage = ({ page = 'upgrade' }: { page?: 'upgrade' | 'landing'
                             beforeLabel={t('pricing.monthly') || 'Monthly'}
                             afterLabel={t('pricing.quarterly') || 'Quarterly'}
                         />
-                        <p className="absolute -right-20 -top-1 mr-2 text-sm font-semibold text-pink-500">
+                        <p className="absolute -right-24 -top-2 mr-2 text-sm font-semibold text-pink-500">
                             {t('pricing.saveUpTo33Percent')}
                         </p>
                     </div>
