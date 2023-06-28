@@ -1,0 +1,112 @@
+import { useTranslation } from 'react-i18next';
+import guidePage from 'i18n/en/guide';
+import { Compass, FourSquare, Account, PieChart, Guide, EmailOutline, ArrowRight } from '../icons';
+import { GuideModal } from './guideModal';
+import { useState } from 'react';
+import Image from 'next/image';
+import { useRudderstack } from 'src/hooks/use-rudderstack';
+
+const featVideo = true;
+
+export const GuideCards = ({ cardName }: { cardName: string }) => {
+    const { t } = useTranslation();
+    const { trackEvent } = useRudderstack();
+    const [guideShow, setGuideShow] = useState<boolean>(false);
+
+    const handleGuideModal = () => {
+        trackEvent('Guide Page, modal opened', { guideSection: cardName });
+        setGuideShow((prev) => !prev);
+    };
+    return (
+        <div className="m-1 my-6 flex w-screen flex-col items-center gap-5 text-center md:w-auto md:basis-1/2 lg:basis-1/3 2xl:basis-1/4">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary-50">
+                <div className="flex h-11 w-11 items-center justify-center rounded-full bg-primary-100">
+                    {cardName === 'discover' && (
+                        <Compass height={24} width={24} className="stroke-primary-500" color="#8B5CF6" />
+                    )}
+
+                    {cardName === 'campaigns' && <FourSquare height={24} width={24} className="stroke-primary-500" />}
+
+                    {cardName === 'aiEmailGenerator' && (
+                        <EmailOutline height={24} width={24} className="stroke-primary-500" />
+                    )}
+
+                    {cardName === 'account' && <Account height={24} width={24} className="stroke-primary-500" />}
+
+                    {cardName === 'performance' && <PieChart height={24} width={24} className="stroke-primary-500" />}
+
+                    {cardName === 'guide' && <Guide height={24} width={24} className="stroke-primary-500" />}
+                </div>
+            </div>
+            <p className="break-words text-xl font-semibold text-gray-800">{t(`guidePage.cards.${cardName}.title`)}</p>
+            <p className="break-words text-gray-600">{t(`guidePage.cards.${cardName}.description`)}</p>
+            <p
+                data-testid={`guide-modal-${cardName}`}
+                className="flex cursor-pointer flex-row items-center gap-2 font-medium text-primary-700"
+                onClick={handleGuideModal}
+            >
+                {t('guidePage.learnMore')} <ArrowRight className="stroke-primary-700" height={18} width={18} />
+            </p>
+            <GuideModal section={cardName} show={guideShow} setShow={setGuideShow} />
+        </div>
+    );
+};
+
+export const GuideComponent = () => {
+    const { t } = useTranslation();
+    const { trackEvent } = useRudderstack();
+
+    return (
+        <div onLoad={() => trackEvent('Guide Page, opened')} className="m-10 flex flex-col items-center gap-6">
+            <div className="flex flex-col gap-2 text-center">
+                <p className="text-4xl font-bold text-gray-800">
+                    {t('guidePage.welcome')} relay<span className="text-[#6B65AD]">.</span>club
+                </p>
+                <p className="text-base text-gray-500">{t('guidePage.welcomeDescription')}</p>
+            </div>
+            {featVideo ? (
+                <video
+                    muted={false}
+                    controls={true}
+                    onPlay={(e) => {
+                        trackEvent('Guide Page, tutorial video played', {
+                            timestamp: (e.target as HTMLMediaElement).currentTime,
+                        });
+                    }}
+                    onPause={(e) => {
+                        trackEvent('Guide Page, tutorial video paused', {
+                            timestamp: (e.target as HTMLMediaElement).currentTime,
+                        });
+                    }}
+                    onEnded={() => {
+                        trackEvent('Guide Page, tutorial video ended');
+                    }}
+                    onSeeked={(e) => {
+                        trackEvent('Guide Page, tutorial video seeked', {
+                            timestamp: (e.target as HTMLMediaElement).currentTime,
+                        });
+                    }}
+                    autoPlay
+                    className="rounded-3xl shadow-lg sm:w-11/12 md:w-5/6 lg:w-1/2"
+                >
+                    <source src="/assets/videos/demo.mp4" />
+                </video>
+            ) : (
+                <div className="rounded-3xl shadow-lg sm:w-11/12 md:w-5/6 lg:w-1/2">
+                    <Image
+                        src="/assets/imgs/placeholders/dashboard-current.png"
+                        alt="Description of the image"
+                        layout="responsive"
+                        width={1200}
+                        height={800}
+                    />
+                </div>
+            )}
+            <div className="flex w-full flex-row flex-wrap justify-center md:justify-evenly md:gap-4 md:gap-y-8">
+                {Object.keys(guidePage.cards).map((name: string, index: number) => {
+                    return <GuideCards key={index} cardName={name} />;
+                })}
+            </div>
+        </div>
+    );
+};
