@@ -8,6 +8,7 @@ import pricing from './pricing';
 import aiEmailGenerator from './ai-email-generator';
 import usages from './usages';
 import performance from './performance';
+import guidePage from './guide';
 import signup from './signup';
 import filters from './filters';
 import tooltips from './tooltips';
@@ -25,6 +26,7 @@ const translations = {
         aiEmailGenerator,
         usages,
         performance,
+        guidePage,
         signup,
         tooltips,
     },

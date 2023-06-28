@@ -198,7 +198,7 @@ const WordCloudComponent = ({ tags, platform, updateTags }: WordCloudProps) => {
                 random={() => {
                     return 0;
                 }}
-                fontSize={(word) => normalizeFontSize(word.text, word.value)}
+                fontSize={(word: any) => normalizeFontSize(word.text, word.value)}
                 fill={(word: any, _index: number) => colorWord(word.text)}
                 onWordClick={(_event: any, word: any) => {
                     handleWord(word.text);
