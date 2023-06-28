@@ -100,7 +100,6 @@
   },
   "lint-staged": {
     "(supabase|supabase/policies|supabase/functions|supabase/tests)/**/(*|seed).sql": [
-      "command -v sqlfluff &>/dev/null",
       "sqlfluff fix --force --disable-progress-bar --ignore=parsing"
     ],
     "supabase/tests/**/*.sql": [
