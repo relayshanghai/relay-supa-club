@@ -5,6 +5,7 @@ const navbar = {
     account: 'My Account',
     logout: 'Log Out',
     performance: 'Performance',
+    guide: 'Guide',
 };
 
 export default navbar;
