@@ -332,19 +332,19 @@ export interface Database {
           category: string
           company_id: string
           created_at: string
-          id: number
+          id: string
         }
         Insert: {
           category: string
           company_id: string
           created_at?: string
-          id?: number
+          id?: string
         }
         Update: {
           category?: string
           company_id?: string
           created_at?: string
-          id?: number
+          id?: string
         }
         Relationships: [
           {
