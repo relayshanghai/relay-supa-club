@@ -244,11 +244,13 @@ export const prepareFetchCreatorsFiltered = ({
     }
 
     if (audienceLocation) {
-        body.filter.audience_geo = audienceLocationFilter(audienceLocation);
+        const filter = audienceLocationFilter(audienceLocation);
+        filter ? (body.filter.audience_geo = filter) : null;
     }
 
     if (influencerLocation) {
-        body.filter.geo = influencerLocationFilter(influencerLocation);
+        const filter = influencerLocationFilter(influencerLocation);
+        filter ? (body.filter.geo = filter) : null;
     }
 
     if (params.lastPost) {
@@ -285,7 +287,7 @@ export const prepareFetchCreatorsFiltered = ({
         body.filter.text_tags = textTagsFilter(params.text_tags);
     }
 
-    if (actionsFilterKeys.some((k) => k in params)) {
+    if (actionsFilterKeys.some((k) => body.filter && k in body.filter)) {
         const filters: z.input<typeof actions>[] = [];
 
         if (params.keywords) {
