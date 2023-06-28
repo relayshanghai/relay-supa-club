@@ -703,21 +703,21 @@ export interface Database {
           campaign_id: string | null
           company_id: string
           created_at: string | null
-          id: number
+          id: string
         }
         Insert: {
           amount: number
           campaign_id?: string | null
           company_id: string
           created_at?: string | null
-          id?: number
+          id?: string
         }
         Update: {
           amount?: number
           campaign_id?: string | null
           company_id?: string
           created_at?: string | null
-          id?: number
+          id?: string
         }
         Relationships: [
           {
