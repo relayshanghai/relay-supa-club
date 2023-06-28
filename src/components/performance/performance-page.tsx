@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { Layout } from 'src/components/layout';
-import { ArrowRight, BoxFilled, Spinner, ThumbUpOutline } from '../icons';
+import { ArrowRight, BoxFilled, Money, Spinner, ThumbUpOutline } from '../icons';
 import { EyeOutline } from '../icons';
 import { ChatBubbleTextOutline } from '../icons';
 // import SalesBarChart from './sales-bar-chart';
@@ -36,7 +36,7 @@ const PerformancePage = () => {
 
     const viewsTotal = selectedStats?.reduce((acc, curr) => (curr.viewCount ? acc + curr.viewCount : acc), 0);
 
-    // const salesTotal = selectedStats?.reduce((acc, curr) => (curr.sales ? acc + curr.sales : acc), 0);
+    const salesTotal = selectedStats?.reduce((acc, curr) => (curr.sales ? acc + curr.sales : acc), 0);
 
     const postsTotal = selectedStats?.length;
 
@@ -55,6 +55,11 @@ const PerformancePage = () => {
             Icon: EyeOutline,
             label: t('performance.stats.views'),
             value: viewsTotal ? numFormatter(viewsTotal) : '',
+        },
+        sales: {
+            Icon: Money,
+            label: t('performance.stats.sales'),
+            value: salesTotal ? '$' + numFormatter(salesTotal) : '',
         },
     };
     return (
