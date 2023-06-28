@@ -4,14 +4,17 @@ import { Compass, FourSquare, Account, PieChart, Guide, EmailOutline, ArrowRight
 import { GuideModal } from './guideModal';
 import { useState } from 'react';
 import Image from 'next/image';
+import { useRudderstack } from 'src/hooks/use-rudderstack';
 
 const featVideo = true;
 
 export const GuideCards = ({ cardName }: { cardName: string }) => {
     const { t } = useTranslation();
+    const { trackEvent } = useRudderstack();
     const [guideShow, setGuideShow] = useState<boolean>(false);
 
     const handleGuideModal = () => {
+        trackEvent('Guide Page, modal opened', { guideSection: cardName });
         setGuideShow((prev) => !prev);
     };
     return (
@@ -51,9 +54,10 @@ export const GuideCards = ({ cardName }: { cardName: string }) => {
 
 export const GuideComponent = () => {
     const { t } = useTranslation();
+    const { trackEvent } = useRudderstack();
 
     return (
-        <div className="m-10 flex flex-col items-center gap-6">
+        <div onLoad={() => trackEvent('Guide Page, opened')} className="m-10 flex flex-col items-center gap-6">
             <div className="flex flex-col gap-2 text-center">
                 <p className="text-4xl font-bold text-gray-800">
                     {t('guidePage.welcome')} relay<span className="text-[#6B65AD]">.</span>club
@@ -64,8 +68,25 @@ export const GuideComponent = () => {
                 <video
                     muted={false}
                     controls={true}
+                    onPlay={(e) => {
+                        trackEvent('Guide Page, tutorial video played', {
+                            timestamp: (e.target as HTMLMediaElement).currentTime,
+                        });
+                    }}
+                    onPause={(e) => {
+                        trackEvent('Guide Page, tutorial video paused', {
+                            timestamp: (e.target as HTMLMediaElement).currentTime,
+                        });
+                    }}
+                    onEnded={() => {
+                        trackEvent('Guide Page, tutorial video ended');
+                    }}
+                    onSeeked={(e) => {
+                        trackEvent('Guide Page, tutorial video seeked', {
+                            timestamp: (e.target as HTMLMediaElement).currentTime,
+                        });
+                    }}
                     autoPlay
-                    loop
                     className="rounded-3xl shadow-lg sm:w-11/12 md:w-5/6 lg:w-1/2"
                 >
                     <source src="/assets/videos/demo.mp4" />
