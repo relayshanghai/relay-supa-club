@@ -3,6 +3,7 @@ import { Modal } from '../modal';
 import guidePage from 'i18n/en/guide';
 import Link from 'next/link';
 import { Button } from '../button';
+import { useRudderstack } from 'src/hooks/use-rudderstack';
 
 export const GuideModal = ({
     section,
@@ -14,6 +15,7 @@ export const GuideModal = ({
     setShow: (open: boolean) => void;
 }) => {
     const { t } = useTranslation();
+    const { trackEvent } = useRudderstack();
 
     const selectedGuide = guidePage.modalInfo[section as keyof typeof guidePage.modalInfo];
 
@@ -42,11 +44,19 @@ export const GuideModal = ({
                 <div className="mt-8 flex justify-end gap-4">
                     <p
                         className="flex cursor-pointer flex-row items-center gap-2 text-sm font-medium text-primary-700"
-                        onClick={() => setShow(false)}
+                        onClick={() => {
+                            trackEvent('Guide Page, closed modal', { guideSection: section });
+                            setShow(false);
+                        }}
                     >
                         {t('guidePage.goBack')}
                     </p>
-                    <Link href={selectedGuide.url}>
+                    <Link
+                        onClick={() => {
+                            trackEvent('Guide Page, navigate to page', { guideSection: section });
+                        }}
+                        href={selectedGuide.url}
+                    >
                         <Button className="flex flex-row gap-3">
                             {t(`guidePage.goto`) + ' ' + t(`guidePage.modalInfo.${section}.title`)}
                         </Button>
