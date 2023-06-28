@@ -14,6 +14,7 @@ import { ManageInfluencerModal } from './manage-influencer-modal';
 import { AddPostModal } from './add-post-modal';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { CampaignSalesModal } from './campaign-sales-modal';
+import { nextFetch } from 'src/utils/fetcher';
 
 export interface CreatorsOutreachProps {
     currentCampaign: CampaignDB;
@@ -203,12 +204,16 @@ export default function CampaignInfluencersTable({
         return campaignCreators?.filter((c) => c.status === status).length ?? 0;
     };
 
-    const onAddSales = (amount: number) => {
-        return {
-            campaign_id: 'test_123',
-            company_id: 'test_123',
+    const onAddSales = async (amount: number) => {
+        const body = {
+            campaign_id: currentCampaign.id,
+            company_id: currentCampaign.company_id,
             amount: amount,
         };
+        await nextFetch('sales/insert', {
+            method: 'post',
+            body,
+        });
     };
 
     const editingModeTrue = (index: number, key: string) => index === toEdit?.index && key === toEdit?.key;
