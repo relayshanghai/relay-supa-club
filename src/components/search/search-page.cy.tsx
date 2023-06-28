@@ -19,7 +19,9 @@ describe('<SearchPage />', () => {
                 <SearchPageInner />
             </SearchProvider>,
         );
-        cy.contains('Total Results: 8.43M');
+        cy.contains(
+            'We found 8.43M influencer accounts relevant to your topics or using your keywords in recent videos, that matched your filters',
+        );
         cy.contains('T-Series');
     });
     it('can filter results by recommended or not. toggle has a hover message like in search-result-row', () => {
@@ -28,7 +30,9 @@ describe('<SearchPage />', () => {
                 <SearchPageInner />
             </SearchProvider>,
         );
-        cy.contains('Total Results: 8.43M');
+        cy.contains(
+            'We found 8.43M influencer accounts relevant to your topics or using your keywords in recent videos, that matched your filters',
+        );
 
         cy.findAllByRole('row').should('have.length', 11);
 
@@ -54,9 +58,12 @@ describe('<SearchPage />', () => {
                 <SearchPageInner />
             </SearchProvider>,
         );
-        cy.contains('Total Results');
+        cy.contains('We found');
         // there is a 5 second wait on the first load until 'no results' is shown
-        cy.contains('No results found', { timeout: 6000 });
+        cy.contains(
+            'influencer accounts relevant to your topics or using your keywords in recent videos, that matched your filters',
+            { timeout: 6000 },
+        );
     });
 
     it('renders error on search error', async () => {
