@@ -4,10 +4,12 @@ import { useCallback, useEffect } from 'react';
 import { appCacheDBKey } from 'src/constants';
 import { useUser } from 'src/hooks/use-user';
 import { nextFetch } from 'src/utils/fetcher';
+import { useAnalytics } from 'use-analytics';
 
 export default function Logout() {
     const router = useRouter();
     const { supabaseClient, refreshProfile, profile, user, getProfileController } = useUser();
+    const analytics = useAnalytics();
     const { email } = router.query;
     const signOut = useCallback(async () => {
         getProfileController.current?.abort();
@@ -26,9 +28,12 @@ export default function Logout() {
                 await deleteDB(appCacheDBKey);
                 return;
             }
+
+            analytics.reset();
+
             window.location.href = email ? `/login?email=${email}` : '/login';
         }
-    }, [email, getProfileController, profile?.id, refreshProfile, supabaseClient, user?.id]);
+    }, [analytics, email, getProfileController, profile?.id, refreshProfile, supabaseClient, user?.id]);
 
     useEffect(() => {
         signOut();
