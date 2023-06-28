@@ -49,6 +49,7 @@ export { default as ArrowRight } from './ArrowRight';
 export { default as BoxFilled } from './BoxFilled';
 export { default as SquarePlus } from './SquarePlus';
 export { default as ArrowRightOnRectangle } from './ArrowRightOnRectangle';
+export { default as Guide } from './Guide';
 export { default as ChevronLeft } from './ChevronLeft';
 export { default as ChevronRight } from './ChevronRight';
 export { default as CheckIcon } from './CheckIcon';
