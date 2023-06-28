@@ -16,7 +16,7 @@ import type { PostPerformanceData } from 'src/utils/api/iqdata/post-performance'
 const PerformancePage = () => {
     const { t } = useTranslation();
 
-    const { campaigns } = useCampaigns({});
+    const { campaigns, totalSales } = useCampaigns({});
     const { performanceData, loading, selectedCampaign } = usePostPerformance(campaigns.map((campaign) => campaign.id));
 
     const combineCampaignsData = (performanceData: PostPerformanceByCampaign): PostPerformanceData[] => {
@@ -36,7 +36,7 @@ const PerformancePage = () => {
 
     const viewsTotal = selectedStats?.reduce((acc, curr) => (curr.viewCount ? acc + curr.viewCount : acc), 0);
 
-    const salesTotal = selectedStats?.reduce((acc, curr) => (curr.sales ? acc + curr.sales : acc), 0);
+    // const salesTotal = selectedStats?.sales;
 
     const postsTotal = selectedStats?.length;
 
@@ -59,7 +59,7 @@ const PerformancePage = () => {
         sales: {
             Icon: Money,
             label: t('performance.stats.sales'),
-            value: salesTotal ? '$' + numFormatter(salesTotal) : '',
+            value: totalSales ? '$' + numFormatter(totalSales) : '',
         },
     };
     return (

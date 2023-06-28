@@ -2,11 +2,11 @@ import { Modal } from '../modal';
 import { Button } from '../button';
 import { useState } from 'react';
 
-type CampagnSales = {
-    campaign_id: string;
-    company_id: string;
-    amount: number;
-};
+// type CampagnSales = {
+//     campaign_id: string;
+//     company_id: string;
+//     amount: number;
+// };
 
 export const CampaignSalesModal = ({
     show,
@@ -15,7 +15,7 @@ export const CampaignSalesModal = ({
 }: {
     show: boolean;
     setShow: (open: boolean) => void;
-    onAddSales: (amount: number) => CampagnSales;
+    onAddSales: (amount: number) => Promise<void>;
 }) => {
     // const { t } = useTranslation();
 

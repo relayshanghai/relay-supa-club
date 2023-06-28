@@ -3,6 +3,7 @@ import useSWR from 'swr';
 import { useClientDb } from 'src/utils/client-db/use-client-db';
 import { useCompany } from './use-company';
 import type { CampaignDB, CampaignDBInsert } from 'src/utils/api/db/types';
+import { nextFetch } from 'src/utils/fetcher';
 
 /**
  * Hook to fetch campaigns and create/update campaigns
@@ -11,7 +12,7 @@ import type { CampaignDB, CampaignDBInsert } from 'src/utils/api/db/types';
 export const useCampaigns = ({ campaignId }: { campaignId?: string }) => {
     const { company } = useCompany();
     const { getCampaigns, createCampaign: createCampaignCall, updateCampaign } = useClientDb();
-
+    const [totalSales, setTotalSales] = useState<number>(0);
     const {
         data: allCampaigns,
         mutate: refreshCampaigns,
@@ -21,6 +22,14 @@ export const useCampaigns = ({ campaignId }: { campaignId?: string }) => {
 
     useEffect(() => {
         refreshCampaigns();
+        const getCampaignSales = async () => {
+            const sales = await nextFetch('sales/get', {
+                method: 'POST',
+                body: JSON.stringify(company?.id),
+            });
+            setTotalSales(sales);
+        };
+        getCampaignSales();
     }, [company?.id, refreshCampaigns]);
 
     const [campaign, setCampaign] = useState<CampaignDB | null>(null);
@@ -68,5 +77,6 @@ export const useCampaigns = ({ campaignId }: { campaignId?: string }) => {
         loading,
         isValidating,
         refreshCampaigns,
+        totalSales,
     };
 };
