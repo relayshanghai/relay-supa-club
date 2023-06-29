@@ -11,6 +11,8 @@ import { SearchLocations } from './search-locations';
 import LocationTag from './location-tag';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { useEffect } from 'react';
+import { useAnalytics } from '../analytics/analytics-provider';
+import { SearchFilterAudienceLocationUsed } from '../analytics/events/search-filter-audience_location';
 
 const filterCountry = (items: any[]) => {
     return items.filter((item: any) => {
@@ -54,6 +56,7 @@ export const SearchOptions = ({
         setSearchParams,
     } = useSearch();
 
+    const { track } = useAnalytics();
     const { t } = useTranslation();
     const hasSetViews = views[0] || views[1];
     const hasSetAudience = audience[0] || audience[1];
@@ -139,6 +142,8 @@ export const SearchOptions = ({
                     platform={platform}
                     filter={filterCountry}
                     onSetLocations={(topics) => {
+                        // @demo track audience_location usage
+                        track(SearchFilterAudienceLocationUsed)(topics);
                         setAudienceLocation(topics.map((item) => ({ ...item, weight: 5 })));
                         trackEvent('Search Options, search audience location', { location: topics });
                     }}
