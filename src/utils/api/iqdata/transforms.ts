@@ -245,12 +245,18 @@ export const prepareFetchCreatorsFiltered = ({
 
     if (audienceLocation) {
         const filter = audienceLocationFilter(audienceLocation);
-        filter ? (body.filter.audience_geo = filter) : null;
+
+        if (filter) {
+            body.filter.audience_geo = filter;
+        }
     }
 
     if (influencerLocation) {
         const filter = influencerLocationFilter(influencerLocation);
-        filter ? (body.filter.geo = filter) : null;
+
+        if (filter) {
+            body.filter.geo = filter;
+        }
     }
 
     if (params.lastPost) {
