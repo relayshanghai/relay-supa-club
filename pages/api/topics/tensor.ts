@@ -6,7 +6,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     const { term, limit, platform } = req.body;
 
     const results = await getRelevantTopicTags({
-        query: { q: term, limit: limit, platform },
+        query: { q: term, limit, platform },
     });
 
     return res.status(200).json(results);
