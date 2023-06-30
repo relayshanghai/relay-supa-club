@@ -39,7 +39,7 @@ export const SearchHashtags = ({ setHashtags, hashtags, placeholder }: SearchTop
                 return (
                     <div
                         key={index}
-                        className="flex cursor-pointer flex-row items-center rounded-full bg-primary-400 p-1"
+                        className="flex cursor-pointer justify-center self-center whitespace-nowrap rounded bg-gray-100 px-2 font-medium text-gray-900 hover:bg-gray-200"
                         onClick={() => {
                             setHashtags(hashtags.filter((_, i) => i !== index));
                         }}

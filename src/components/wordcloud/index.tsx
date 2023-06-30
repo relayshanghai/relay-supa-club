@@ -165,7 +165,7 @@ const WordCloudComponent = ({ tags, platform, updateTags }: WordCloudProps) => {
     // };
 
     return (
-        <div className="group relative mt-6 hidden w-full lg:block">
+        <div className="group relative mt-6 hidden w-full pt-4 lg:block 2xl:pt-10">
             <div className="absolute right-0 top-0 h-6 w-6">
                 <Tooltip
                     content={t('tooltips.topicCloud.title')}
@@ -173,7 +173,7 @@ const WordCloudComponent = ({ tags, platform, updateTags }: WordCloudProps) => {
                     position="bottom-left"
                 >
                     <p>
-                        <QuestionMarkCircleIcon />
+                        <QuestionMarkCircleIcon color="#D1D5DB" />
                     </p>
                 </Tooltip>
             </div>
@@ -191,7 +191,7 @@ const WordCloudComponent = ({ tags, platform, updateTags }: WordCloudProps) => {
                 font="Poppins"
                 padding={0.1}
                 width={500}
-                height={200}
+                height={170}
                 rotate={0}
                 spiral={'rectangular'}
                 random={() => {
