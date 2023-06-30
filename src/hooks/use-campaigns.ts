@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 import useSWR from 'swr';
-import { useClientDb } from 'src/utils/client-db/use-client-db';
+import { useClientDb, useDB } from 'src/utils/client-db/use-client-db';
 import { useCompany } from './use-company';
 import type { CampaignDB, CampaignDBInsert } from 'src/utils/api/db/types';
-import { nextFetch } from 'src/utils/fetcher';
+import { getSales } from 'src/utils/client-db/sales';
 
 /**
  * Hook to fetch campaigns and create/update campaigns
@@ -20,17 +20,14 @@ export const useCampaigns = ({ campaignId }: { campaignId?: string }) => {
         isLoading: loading,
     } = useSWR(company?.id ? ['campaigns', company?.id] : null, ([_path, companyId]) => getCampaigns(companyId));
 
+    const getFromSales = useDB<typeof getSales>(getSales);
+
     useEffect(() => {
-        refreshCampaigns();
         const getCampaignSales = async () => {
-            const sales = await nextFetch('sales/get', {
-                method: 'POST',
-                body: JSON.stringify(company?.id),
-            });
-            setTotalSales(sales);
+            setTotalSales(await getFromSales(company?.id || ''));
         };
         getCampaignSales();
-    }, [company?.id, refreshCampaigns]);
+    }, [getFromSales, company]);
 
     const [campaign, setCampaign] = useState<CampaignDB | null>(null);
 

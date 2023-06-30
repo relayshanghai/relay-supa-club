@@ -14,7 +14,8 @@ import { ManageInfluencerModal } from './manage-influencer-modal';
 import { AddPostModal } from './add-post-modal';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { CampaignSalesModal } from './campaign-sales-modal';
-import { nextFetch } from 'src/utils/fetcher';
+import { useDB } from 'src/utils/client-db/use-client-db';
+import { addSales } from 'src/utils/client-db/sales';
 
 export interface CreatorsOutreachProps {
     currentCampaign: CampaignDB;
@@ -50,6 +51,8 @@ export default function CampaignInfluencersTable({
     const [showMoveInfluencerModal, setShowMoveInfluencerModal] = useState(false);
     const [showManageInfluencerModal, setShowManageInfluencerModal] = useState(false);
     const [showAddPostModal, setShowAddPostModal] = useState(false);
+
+    const addToSales = useDB<typeof addSales>(addSales);
 
     const { campaignCreators, deleteCreatorInCampaign, updateCreatorInCampaign, refreshCampaignCreators } =
         useCampaignCreators({
@@ -210,10 +213,7 @@ export default function CampaignInfluencersTable({
             company_id: currentCampaign.company_id,
             amount: amount,
         };
-        await nextFetch('sales/insert', {
-            method: 'post',
-            body,
-        });
+        addToSales(body);
     };
 
     const editingModeTrue = (index: number, key: string) => index === toEdit?.index && key === toEdit?.key;
