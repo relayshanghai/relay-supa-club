@@ -40,7 +40,6 @@ const LoginPage = () => {
             await router.push('/dashboard');
         } catch (error: any) {
             toast.error(error.message || t('login.oopsSomethingWentWrong'));
-        } finally {
             setLoggingIn(false);
         }
     };
