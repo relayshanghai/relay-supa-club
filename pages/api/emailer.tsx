@@ -168,7 +168,7 @@ const postHandler: NextApiHandler = async (req: NextApiRequest, res: NextApiResp
 
     /** Mailer is for sending */
     const mailer = nodeMailer.createTransport({
-        host: 'smtp' + domain,
+        host: 'smtp.' + domain,
         // smtp should always be 465
         port: 465,
         secure: true,
