@@ -104,9 +104,9 @@ export const SearchOptions = ({
 
     return (
         <>
-            <div className="flex h-full basis-1/2 flex-row">
-                <div className="flex w-full  flex-col items-start justify-between space-y-2 py-4 font-light md:gap-x-4 md:gap-y-0">
-                    <div data-testid="search-topics" className="w-full">
+            <div className="flex h-full  flex-row">
+                <div className="flex w-full flex-col items-start justify-evenly space-y-2 py-4 font-light md:gap-x-4 md:gap-y-0">
+                    <div data-testid="search-topics" className="flex h-full w-full flex-col justify-evenly">
                         <Tooltip
                             content={t('tooltips.searchTopics.title')}
                             detail={t('tooltips.searchTopics.description')}
@@ -115,18 +115,20 @@ export const SearchOptions = ({
                         >
                             <p className="mb-2 text-sm font-semibold">{t('creators.searchTopicLabel')}</p>
                         </Tooltip>
-                        <SearchTopics
-                            path="influencer-search/topics"
-                            placeholder={t('creators.searchTopic')}
-                            topics={tags}
-                            platform={platform}
-                            onSetTopics={(topics) => {
-                                setTopicTags(topics);
-                            }}
-                        />
+                        <div>
+                            <SearchTopics
+                                path="influencer-search/topics"
+                                placeholder={t('creators.searchTopic')}
+                                topics={tags}
+                                platform={platform}
+                                onSetTopics={(topics) => {
+                                    setTopicTags(topics);
+                                }}
+                            />
+                        </div>
                     </div>
                     {platform === 'youtube' ? (
-                        <div data-testid="search-keywords " className="w-full">
+                        <div data-testid="search-keywords " className="flex h-full w-full flex-col justify-evenly">
                             <Tooltip
                                 content={t('tooltips.searchKeywords.title')}
                                 detail={t('tooltips.searchKeywords.description')}
@@ -162,18 +164,18 @@ export const SearchOptions = ({
                             />
                         </div>
                     )}
-                    <div className="w-full">
-                        <div className="my-4 flex w-full flex-row items-center gap-4">
+                    <div className="flex w-full justify-end">
+                        <div className="my-4 grid w-fit grid-cols-2 items-center gap-4">
                             <button
                                 onClick={() => {
                                     setShowFiltersModal(true);
                                     trackEvent('Search Filters Modal, open modal');
                                 }}
-                                className={`group w-fit flex-1 items-center justify-center rounded-md border border-transparent bg-primary-100 px-2 py-1 text-sm font-semibold text-[#7C3AED] shadow ring-1 ring-gray-900 ring-opacity-5 focus:border-primary-500 focus:outline-none focus:ring-primary-500`}
+                                className={`group col-span-1 items-center justify-center rounded-md border border-transparent bg-primary-100 px-2 py-1 text-sm font-semibold text-[#7C3AED] shadow ring-1 ring-gray-900 ring-opacity-5 focus:border-primary-500 focus:outline-none focus:ring-primary-500`}
                             >
                                 <p className="w-full p-1">{t('creators.addFilters')}</p>
                             </button>
-                            <Button className="flex-1" onClick={(e) => handleSearch(e)}>
+                            <Button className="col-span-1" onClick={(e) => handleSearch(e)}>
                                 {t('campaigns.index.search')}
                             </Button>
 

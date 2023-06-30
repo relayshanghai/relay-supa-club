@@ -34,9 +34,9 @@ export const Tooltip = ({ children, content, detail, className, position }: Tool
                     } z-30 w-auto rounded bg-white font-semibold text-gray-500 opacity-100 transition-opacity`}
                     role="tooltip"
                 >
-                    <div className="flex w-52 flex-col px-2 py-1">
-                        <p className="text-sm">{content}</p>
-                        {detail && <p className="text-xs font-normal text-gray-800">{detail}</p>}
+                    <div className="flex w-52 flex-col justify-evenly gap-2 p-2 leading-4 shadow-lg">
+                        <p className="text-md">{content}</p>
+                        {detail && <p className="text-sm font-normal text-gray-800">{detail}</p>}
                     </div>
                 </div>
             )}
