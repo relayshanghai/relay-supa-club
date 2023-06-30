@@ -3,9 +3,9 @@ import type { CreatorPlatform, CreatorSearchTag } from 'types';
 import type { TopicTensorData } from 'src/utils/api/iqdata/topics/get-relevant-topic-tags';
 import { nextFetch } from 'src/utils/fetcher';
 import WordCloud from 'react-d3-cloud';
-import { QuestionMarkCircleIcon } from '@heroicons/react/24/solid';
 import { Tooltip } from '../library';
 import { useTranslation } from 'react-i18next';
+import { Question } from '../icons';
 
 type DistanceType = {
     text: string;
@@ -152,7 +152,7 @@ const WordCloudComponent = ({ tags, platform, updateTags }: WordCloudProps) => {
                     position="bottom-left"
                 >
                     <p>
-                        <QuestionMarkCircleIcon color="#D1D5DB" />
+                        <Question className="stroke-gray-300" />
                     </p>
                 </Tooltip>
             </div>

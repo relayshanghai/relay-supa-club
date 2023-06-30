@@ -25,4 +25,4 @@ fi
 npx lint-staged --verbose
 
 # verify types
-# npm run type-check:app
+npm run type-check:app
