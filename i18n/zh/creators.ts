@@ -8,6 +8,7 @@ const creators = {
         '个达人账户与您的主题相关，或在最近发布的视频中使用了您的关键词，与您设置的筛选条件相匹配。',
     resultsPostfixHashtags: '个达人账户与您的主题相关，或在最近发布的帖子中使用了您的标签，与您设置的筛选条件相匹配。',
     noResults: '无结果',
+    addFilters: '添加筛选项',
     searchResultError: '无法获取搜索结果',
     clearFilter: '清除筛选',
     failedToFetchReport: '无法获取报告',

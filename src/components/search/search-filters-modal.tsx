@@ -7,6 +7,7 @@ import { SearchLocations } from './search-locations';
 import LocationTag from './location-tag';
 import { useEffect } from 'react';
 import { Switch } from '../library';
+import { Button } from '../button';
 
 /** Search Filter Modal, Subscribers and Avg view filter options: 1k, 5k, 10k, 15k, 25k, 50k, 100k, 250k, 500k, 1m */
 const options = [1e3, 5e3, 1e4, 15e3, 25e3, 50e3, 1e5, 25e4, 50e4, 1e6];
@@ -39,11 +40,21 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
         audienceLocation,
         platform,
         setAudienceLocation,
+        setActiveSearch,
+        setPage,
         setInfluencerLocation,
     } = useSearch();
 
     const { t } = useTranslation();
     const { trackEvent } = useRudderstack();
+
+    const handleSearch = (e: any) => {
+        e.preventDefault();
+        setActiveSearch(true);
+        setPage(0);
+        trackEvent('Search Options, search');
+        setShow(false);
+    };
 
     useEffect(() => {
         if (!audienceAge) return;
@@ -80,7 +91,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                         <div className="mb-1 text-base font-medium">{t('filters.location.label')}</div>
                         <SearchLocations
                             path="influencer-search/locations"
-                            placeholder={t('filters.location.audiencePlaceholder')}
+                            placeholder={t('filters.location.placeholder')}
                             locations={audienceLocation}
                             platform={platform}
                             filter={filterCountry}
@@ -94,7 +105,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
 
                     <div>
                         <div className="mb-1 text-base font-medium">{t('filters.audience.ageLabel')}</div>
-                        <div className="flex gap-2">
+                        <div className="flex gap-4">
                             <select
                                 className="rounded-md bg-white px-4 py-2 text-base text-gray-500 ring-1 ring-gray-300"
                                 value={audienceAge?.left_number || (t('filters.minOption') as string)}
@@ -175,7 +186,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
 
                     <div>
                         <div className="mb-1 text-base font-medium">{t('filters.gender.label')}</div>
-                        <div className="flex gap-2">
+                        <div className="flex gap-4">
                             <select
                                 className="rounded-md bg-white px-4 py-2 text-base text-gray-500 ring-1 ring-gray-300"
                                 value={audienceGender?.code || 'ANY'}
@@ -231,12 +242,12 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                         <div className="mb-1 text-base font-medium">{t('filters.influencers.hasEmail')}</div>
                     </label>
                 </div>
-                <div className="flex flex-row flex-wrap items-center justify-between gap-4">
+                <div className="grid grid-cols-3 grid-rows-2 flex-wrap items-center justify-between gap-4">
                     <div className="w-auto">
                         <div className="mb-1 text-base font-medium">{t('filters.location.label')}</div>
                         <SearchLocations
                             path="influencer-search/locations"
-                            placeholder={t('filters.location.influencerPlaceholder')}
+                            placeholder={t('filters.location.placeholder')}
                             locations={influencerLocation}
                             platform={platform}
                             filter={filterCountry}
@@ -279,7 +290,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                         <label className="text-sm">
                             <h4 className="mb-1 text-base font-medium">{t('filters.influencers.subscribersLabel')}</h4>
                             <div className="flex flex-row space-x-4">
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-4">
                                     <select
                                         className="rounded-md bg-white px-4 py-2 text-base text-gray-500 ring-1 ring-gray-300"
                                         value={audience[0] ?? 'any'}
@@ -384,7 +395,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                         <label className="text-sm">
                             <div className="mb-1 text-base font-medium">{t('creators.filter.averageViews')}</div>
                             <div className="flex flex-row space-x-4">
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-4">
                                     <select
                                         className="rounded-md bg-white px-4 py-2 text-base text-gray-500 ring-1 ring-gray-300"
                                         value={views[0] ?? 'any'}
@@ -437,6 +448,9 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                             </div>
                         </label>
                     </div>
+                </div>
+                <div className="flex w-full justify-end">
+                    <Button onClick={handleSearch}>Search with filters</Button>
                 </div>
             </div>
         </Modal>

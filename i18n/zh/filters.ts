@@ -2,8 +2,7 @@ const filters = {
     title: '筛选条件',
     location: {
         label: '地区',
-        influencerPlaceholder: '请输入国家（必填英文)',
-        audiencePlaceholder: '粉丝国家',
+        placeholder: '选择一个国家',
     },
     gender: {
         label: '性别',

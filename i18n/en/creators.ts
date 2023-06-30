@@ -10,6 +10,7 @@ const creators = {
     resultsPostfixHashtags:
         'influencer accounts relevant to your topics or using your hastags in recent posts, that matched your filters.',
     noResults: 'No results found',
+    addFilters: 'Add filters to tailor your results',
     searchResultError: 'Failed to fetch search results',
     clearFilter: 'Clear',
     failedToFetchReport: 'Failed to fetch report',

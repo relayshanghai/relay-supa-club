@@ -1,11 +1,11 @@
-import { AdjustmentsVerticalIcon } from '@heroicons/react/24/solid';
+// import { AdjustmentsVerticalIcon } from '@heroicons/react/24/solid';
 import { useTranslation } from 'react-i18next';
 import { useSearch } from 'src/hooks/use-search';
-import { numberFormatter } from 'src/utils/formatter';
+// import { numberFormatter } from 'src/utils/formatter';
 import { Button } from '../button';
 import SearchTopics from './search-topics';
-import { Switch, Tooltip } from '../library';
-import { featRecommended } from 'src/constants/feature-flags';
+import { Tooltip } from '../library';
+// import { featRecommended } from 'src/constants/feature-flags';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { useEffect } from 'react';
 import WordCloudComponent from '../wordcloud';
@@ -34,9 +34,9 @@ export const SearchOptions = ({
         lastPost,
         username,
         contactInfo,
-        onlyRecommended,
-        setOnlyRecommended,
-        recommendedInfluencers,
+        // onlyRecommended,
+        // setOnlyRecommended,
+        // recommendedInfluencers,
         activeSearch,
         setActiveSearch,
         setSearchParams,
@@ -47,8 +47,8 @@ export const SearchOptions = ({
     } = useSearch();
 
     const { t } = useTranslation();
-    const hasSetViews = views[0] || views[1];
-    const hasSetAudience = audience[0] || audience[1];
+    // const hasSetViews = views[0] || views[1];
+    // const hasSetAudience = audience[0] || audience[1];
     const { trackEvent } = useRudderstack();
 
     const handleSearch = (e: any) => {
@@ -162,51 +162,22 @@ export const SearchOptions = ({
                             />
                         </div>
                     )}
-                    <div className="w-full ">
-                        <div className="my-4 flex flex-row items-center justify-between">
+                    <div className="w-full">
+                        <div className="my-4 flex w-full flex-row items-center gap-4">
                             <button
                                 onClick={() => {
                                     setShowFiltersModal(true);
                                     trackEvent('Search Filters Modal, open modal');
                                 }}
-                                className={`group flex flex-row items-center rounded-md border border-transparent bg-primary-100 px-2 py-1 text-sm font-semibold text-[#7C3AED] shadow ring-1 ring-gray-900 ring-opacity-5 focus:border-primary-500 focus:outline-none focus:ring-primary-500`}
+                                className={`group w-fit flex-1 items-center justify-center rounded-md border border-transparent bg-primary-100 px-2 py-1 text-sm font-semibold text-[#7C3AED] shadow ring-1 ring-gray-900 ring-opacity-5 focus:border-primary-500 focus:outline-none focus:ring-primary-500`}
                             >
-                                <AdjustmentsVerticalIcon
-                                    className={`mr-2 h-6 w-6 transition duration-150 ease-in-out group-hover:text-opacity-80`}
-                                    aria-hidden="true"
-                                />
-                                Add filters to tailor your results
-                                <div className="flex flex-row space-x-5 text-xs">
-                                    {hasSetAudience && (
-                                        <p>
-                                            {`${t('creators.filter.subs')}: ${
-                                                audience[0] ? numberFormatter(audience[0]) : 0
-                                            } - ${
-                                                audience[1] ? numberFormatter(audience[1]) : t('creators.filter.max')
-                                            }`}
-                                        </p>
-                                    )}
-                                    {hasSetViews && (
-                                        <p>
-                                            {`${t('creators.filter.avgViews')}: ${
-                                                views[0] ? numberFormatter(views[0]) : 0
-                                            } - ${views[1] ? numberFormatter(views[1]) : t('creators.filter.max')}`}
-                                        </p>
-                                    )}
-                                    {gender && <p>{t(`creators.filter.${gender}`)}</p>}
-                                    {engagement && <p>{`${t('creators.filter.engagement')}: >${engagement}%`}</p>}
-                                    {lastPost && (
-                                        <p>{`${t('creators.filter.lastPost')}: ${lastPost} ${t(
-                                            'creators.filter.days',
-                                        )}`}</p>
-                                    )}
-                                </div>
+                                <p className="w-full p-1">{t('creators.addFilters')}</p>
                             </button>
-                            <Button className="mx-2" onClick={(e) => handleSearch(e)}>
+                            <Button className="flex-1" onClick={(e) => handleSearch(e)}>
                                 {t('campaigns.index.search')}
                             </Button>
 
-                            {featRecommended() && (
+                            {/* {featRecommended() && (
                                 <div className="ml-auto">
                                     <Tooltip
                                         content={t('creators.recommendedTooltip')}
@@ -225,7 +196,7 @@ export const SearchOptions = ({
                                         />
                                     </Tooltip>
                                 </div>
-                            )}
+                            )} */}
                         </div>
                     </div>
                 </div>

@@ -2,8 +2,7 @@ const filters = {
     title: 'Filters',
     location: {
         label: 'Location',
-        influencerPlaceholder: 'Influencer Location',
-        audiencePlaceholder: 'Audience Location',
+        placeholder: 'Select a Country',
     },
     gender: {
         label: 'Gender',

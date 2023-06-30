@@ -44,16 +44,15 @@ const getWordDistances = (tag: TopicTensorData[]): DistanceType[] => {
         };
     });
 };
-const normalizeFontSize = (text: string, fontSize: number) => {
+const normalizeFontSize = (tags: any[], fontSize: number) => {
     // Calculate the average word length.
-    const words = text.split(' ');
-    const totalCharacters = words.reduce((sum, word) => sum + word.length, 0);
-    const averageWordLength = totalCharacters / words.length;
+    const totalCharacters = tags.reduce((sum, word) => sum + word.text.length, 0);
+    const averageWordLength = totalCharacters / tags.length;
 
     // Minimum fontSize.
     const minFontSize = 10;
     // Maximum fontSize.
-    const maxFontSize = 15;
+    const maxFontSize = tags[0].length > 8 ? 13 : 15;
 
     // Determine the normalized fontSize based on the average word length.
     const normalizedFontSize =
@@ -80,7 +79,7 @@ const WordCloudComponent = ({ tags, platform, updateTags }: WordCloudProps) => {
         const setWordArray = async () => {
             const body = {
                 term: term,
-                limit: 25,
+                limit: 20,
                 platform: platform,
             };
             const res = await nextFetch('topics/tensor', {
@@ -166,7 +165,7 @@ const WordCloudComponent = ({ tags, platform, updateTags }: WordCloudProps) => {
     // };
 
     return (
-        <div className="group relative w-full">
+        <div className="group relative mt-6 hidden w-full lg:block">
             <div className="absolute right-0 top-0 h-6 w-6">
                 <Tooltip
                     content={t('tooltips.topicCloud.title')}
@@ -198,7 +197,7 @@ const WordCloudComponent = ({ tags, platform, updateTags }: WordCloudProps) => {
                 random={() => {
                     return 0;
                 }}
-                fontSize={(word: any) => normalizeFontSize(word.text, word.value)}
+                fontSize={(word: any) => normalizeFontSize(words, word.value)}
                 fill={(word: any, _index: number) => colorWord(word.text)}
                 onWordClick={(_event: any, word: any) => {
                     handleWord(word.text);

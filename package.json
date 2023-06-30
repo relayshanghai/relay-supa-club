@@ -34,6 +34,7 @@
     "@supabase/auth-helpers-nextjs": "^0.6.1",
     "@supabase/auth-helpers-react": "^0.3.1",
     "@supabase/supabase-js": "^2.20.0",
+    "d3-selection": "^3.0.0",
     "date-fns": "^2.29.3",
     "dotenv": "^16.0.3",
     "fuse.js": "^6.6.2",
