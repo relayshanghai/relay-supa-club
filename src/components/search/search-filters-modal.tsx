@@ -126,7 +126,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                         <div className="mb-1 text-base font-medium">{t('filters.audience.ageLabel')}</div>
                         <div className="flex gap-4">
                             <select
-                                className="rounded-md bg-white px-4 py-2 text-base text-gray-500 ring-1 ring-gray-300"
+                                className="rounded-md bg-white py-2 text-base text-gray-500 ring-1 ring-gray-300"
                                 value={audienceAge?.left_number || (t('filters.minOption') as string)}
                                 onChange={(e) => {
                                     const lowerAge = getLowerAge(e.target.value, t('filters.maxOption'));
@@ -145,7 +145,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                                 <option value={65}>65</option>
                             </select>
                             <select
-                                className="rounded-md bg-white px-4 py-2 text-base text-gray-500 ring-1 ring-gray-300"
+                                className="rounded-md bg-white py-2 text-base text-gray-500 ring-1 ring-gray-300"
                                 value={audienceAge?.right_number || (t('filters.maxOption') as string)}
                                 onChange={(e) => {
                                     const upperAge = getUpperAge(e.target.value, t('filters.maxOption'));
@@ -177,7 +177,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                             <select
                                 className={`rounded-md transition-all ${
                                     audienceAge ? 'bg-white' : 'bg-slate-300'
-                                } px-4 py-2 text-gray-500 ring-1 ring-gray-300`}
+                                } py-2 text-gray-500 ring-1 ring-gray-300`}
                                 disabled={audienceAge ? false : true}
                                 value={audienceAge?.weight || '>5%'}
                                 onChange={(e) => {
@@ -200,7 +200,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                         <div className="mb-1 text-base font-medium">{t('filters.gender.label')}</div>
                         <div className="flex gap-4">
                             <select
-                                className="rounded-md bg-white px-4 py-2 text-base text-gray-500 ring-1 ring-gray-300"
+                                className="rounded-md bg-white py-2 text-base text-gray-500 ring-1 ring-gray-300"
                                 value={audienceGender?.code || 'ANY'}
                                 onChange={(e) => {
                                     const gender = e.target.value === 'ANY' ? null : e.target.value;
@@ -221,7 +221,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                             <select
                                 className={`rounded-md transition-all ${
                                     audienceGender ? 'bg-white' : 'bg-slate-300'
-                                } px-4 py-2 text-base text-gray-500 ring-1 ring-gray-300`}
+                                } py-2 text-base text-gray-500 ring-1 ring-gray-300`}
                                 disabled={audienceGender ? false : true}
                                 value={audienceGender?.weight || '>5%'}
                                 onChange={(e) => {
@@ -273,7 +273,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                         <label className="text-sm">
                             <div className="mb-1 text-base font-medium">{t('creators.filter.engagementRate')}</div>
                             <select
-                                className="rounded-md bg-white px-4 py-2 text-base text-gray-500 ring-1 ring-gray-300"
+                                className="rounded-md bg-white py-2 text-base text-gray-500 ring-1 ring-gray-300"
                                 value={engagement}
                                 onChange={(e) => {
                                     if (e.target.value === 'any' || Number(e.target.value) === 0) {
@@ -304,7 +304,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                             <div className="flex flex-row space-x-4">
                                 <div className="flex items-center gap-4">
                                     <select
-                                        className="rounded-md bg-white px-4 py-2 text-base text-gray-500 ring-1 ring-gray-300"
+                                        className="rounded-md bg-white py-2 text-base text-gray-500 ring-1 ring-gray-300"
                                         value={audience[0] ?? 'any'}
                                         onChange={(e) => {
                                             setAudience((audiencePrevious) => [
@@ -328,7 +328,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                                         ))}
                                     </select>
                                     <select
-                                        className="rounded-md bg-white px-4 py-2 text-base text-gray-500 ring-1 ring-gray-300"
+                                        className="rounded-md bg-white py-2 text-base text-gray-500 ring-1 ring-gray-300"
                                         value={audience[1] ?? 'any'}
                                         onChange={(e) => {
                                             setAudience((audiencePrevious) => [
@@ -359,7 +359,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                         <label className="text-sm">
                             <div className="mb-1 text-base font-medium">{t('filters.gender.label')}</div>
                             <select
-                                className="rounded-md bg-white px-4 py-2 text-base text-gray-500 ring-1 ring-gray-300"
+                                className="rounded-md bg-white py-2 text-base text-gray-500 ring-1 ring-gray-300"
                                 value={gender}
                                 onChange={(e) => {
                                     if (e.target.value === 'any') {
@@ -383,7 +383,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                         <label className="text-sm">
                             <div className="mb-1 text-base font-medium">{t('filters.influencers.lastPostLabel')}</div>
                             <select
-                                className="rounded-md bg-white px-4 py-2 text-base text-gray-500 ring-1 ring-gray-300"
+                                className="rounded-md bg-white py-2 text-base text-gray-500 ring-1 ring-gray-300"
                                 value={lastPost}
                                 onChange={(e) => {
                                     if (e.target.value === 'any') {
@@ -409,7 +409,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                             <div className="flex flex-row space-x-4">
                                 <div className="flex items-center gap-4">
                                     <select
-                                        className="rounded-md bg-white px-4 py-2 text-base text-gray-500 ring-1 ring-gray-300"
+                                        className="rounded-md bg-white py-2 text-base text-gray-500 ring-1 ring-gray-300"
                                         value={views[0] ?? 'any'}
                                         onChange={(e) => {
                                             setViews((viewsPrevious) => [
@@ -433,7 +433,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                                         ))}
                                     </select>
                                     <select
-                                        className="rounded-md bg-white px-4 py-2 text-base text-gray-500 ring-1 ring-gray-300"
+                                        className="rounded-md bg-white py-2 text-base text-gray-500 ring-1 ring-gray-300"
                                         value={views[1] ?? 'any'}
                                         onChange={(e) => {
                                             setViews((viewsPrevious) => [
