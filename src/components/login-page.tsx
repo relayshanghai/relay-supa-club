@@ -78,18 +78,14 @@ const LoginPage = () => {
                     type="email"
                     placeholder="hello@relay.club"
                     value={email}
-                    onChange={(e) => {
-                        setFieldValue('email', e.target.value);
-                    }}
+                    onChange={(e) => setFieldValue('email', e.target.value)}
                 />
                 <Input
                     label={t('login.password')}
                     type="password"
                     placeholder={t('login.passwordPlaceholder')}
                     value={password}
-                    onChange={(e) => {
-                        setFieldValue('password', e.target.value);
-                    }}
+                    onChange={(e) => setFieldValue('password', e.target.value)}
                     onKeyDown={(e) => handleKeyDown(e)}
                 />
                 <Button
