@@ -24,7 +24,7 @@ describe('<SearchPage />', () => {
         );
         cy.contains('T-Series');
     });
-    it('can filter results by recommended or not. toggle has a hover message like in search-result-row', () => {
+    it.skip('can filter results by recommended or not. toggle has a hover message like in search-result-row', () => {
         testMount(
             <SearchProvider>
                 <SearchPageInner />

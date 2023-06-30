@@ -145,25 +145,6 @@ const WordCloudComponent = ({ tags, platform, updateTags }: WordCloudProps) => {
         [tags, wordsDistance],
     );
 
-    // const callbacks = {
-    //     getWordColor: (word: any) => {
-    //         return colorWord(word.text);
-    //     },
-    //     onWordClick: async (word: any) => {
-    //         handleWord(word.text);
-    //     },
-    // };
-
-    // const options = {
-    //     rotations: 0,
-    //     rotationAngles: [0, 0] as [number, number],
-    //     fontFamily: 'Poppins',
-    //     fontSizes: [12, 50] as [number, number],
-    //     padding: 1.5,
-    //     deterministic: true,
-    //     enableTooltip: false,
-    // };
-
     return (
         <div className="group relative mt-6 hidden w-full pt-4 lg:block 2xl:pt-10">
             <div className="absolute right-0 top-0 h-6 w-6">
@@ -177,15 +158,6 @@ const WordCloudComponent = ({ tags, platform, updateTags }: WordCloudProps) => {
                     </p>
                 </Tooltip>
             </div>
-            {/* <MyCloud
-                words={fixedWords}
-                setWords={(words: WordCloudData[]) => {
-                    setFixedWords(words);
-                }}
-                setSelectedTag={setSelectedTag}
-                tags={tags}
-            /> */}
-            {/* <ReactWordCloud callbacks={callbacks} options={options} words={words} /> */}
             <WordCloud
                 data={words}
                 font="Poppins"
