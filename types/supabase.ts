@@ -332,19 +332,19 @@ export interface Database {
           category: string
           company_id: string
           created_at: string
-          id: number
+          id: string
         }
         Insert: {
           category: string
           company_id: string
           created_at?: string
-          id?: number
+          id?: string
         }
         Update: {
           category?: string
           company_id?: string
           created_at?: string
-          id?: number
+          id?: string
         }
         Relationships: [
           {
@@ -693,6 +693,43 @@ export interface Database {
             foreignKeyName: "profiles_id_fkey"
             columns: ["id"]
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      sales: {
+        Row: {
+          amount: number
+          campaign_id: string | null
+          company_id: string
+          created_at: string | null
+          id: string
+        }
+        Insert: {
+          amount: number
+          campaign_id?: string | null
+          company_id: string
+          created_at?: string | null
+          id?: string
+        }
+        Update: {
+          amount?: number
+          campaign_id?: string | null
+          company_id?: string
+          created_at?: string | null
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sales_campaign_id_fkey"
+            columns: ["campaign_id"]
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_company_id_fkey"
+            columns: ["company_id"]
+            referencedRelation: "companies"
             referencedColumns: ["id"]
           }
         ]
