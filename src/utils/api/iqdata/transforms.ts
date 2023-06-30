@@ -1,5 +1,11 @@
 import { featRecommended } from 'src/constants/feature-flags';
-import type { SearchInfluencersPayload, with_contact, engagement_rate } from './influencers/search-influencers-payload';
+import type { CreatorPlatform, CreatorAccount, LocationWeighted } from 'types';
+import type {
+    SearchInfluencersPayload,
+    SearchInfluencersTextTagsFilter,
+    with_contact,
+    engagement_rate,
+} from './influencers/search-influencers-payload';
 import {
     last_posted,
     gender_code,
@@ -9,7 +15,6 @@ import {
 } from './influencers/search-influencers-payload';
 import type { z } from 'zod';
 import { serverLogger } from 'src/utils/logger-server';
-import type { CreatorAccount, CreatorPlatform, LocationWeighted } from 'types';
 
 type NullStringTuple = [null | string, null | string];
 
@@ -36,7 +41,6 @@ export interface FetchCreatorsFilteredParams {
     only_recommended?: boolean;
     recommendedInfluencers?: string[];
     text_tags?: string;
-    hashtags?: string[];
 }
 
 const locationTransform = ({ id, weight }: { id: string; weight: number | string }) => ({
@@ -98,14 +102,13 @@ export const recommendedInfluencersFilter = (influencers: string[]) => {
     return ids;
 };
 
-// const textTagsFilter = (s: string[]) => {
-//     return s.map((tag, _index) => {
-//         return {
-//             type: 'hashtag',
-//             value: tag,
-//         }
-//     }, []);
-// };
+const textTagsFilter = (s: string) => {
+    const tags = s.split(' ');
+
+    return tags.reduce<SearchInfluencersTextTagsFilter[]>((o, value) => {
+        return [...o, { type: 'hashtag', value }];
+    }, []);
+};
 
 const tagsFilter = (value: { tag: string }[]) => {
     const tags = value.map((tag) => `#${tag.tag}`);
@@ -248,22 +251,6 @@ export const prepareFetchCreatorsFiltered = ({
         }
     }
 
-    if (params.audienceAge) {
-        body.filter.audience_age_range = audienceAgeFilter(params.audienceAge);
-    }
-
-    if (params.audienceGender) {
-        body.filter.audience_gender = audienceGenderFilter(params.audienceGender);
-    }
-
-    if (params.audienceAge) {
-        body.filter.audience_age_range = audienceAgeFilter(params.audienceAge);
-    }
-
-    if (params.audienceGender) {
-        body.filter.audience_gender = audienceGenderFilter(params.audienceGender);
-    }
-
     if (influencerLocation) {
         const filter = influencerLocationFilter(influencerLocation);
 
@@ -304,28 +291,6 @@ export const prepareFetchCreatorsFiltered = ({
 
     if (params.text_tags) {
         body.filter.text_tags = textTagsFilter(params.text_tags);
-    }
-
-    if (actionsFilterKeys.some((k) => body.filter && k in body.filter)) {
-        const filters: z.input<typeof actions>[] = [];
-
-        if (params.keywords) {
-            filters.push({ filter: 'keywords', action: 'should' });
-        }
-
-        if (params.username) {
-            filters.push({ filter: 'username', action: 'should' });
-        }
-
-        if (params.text) {
-            filters.push({ filter: 'text', action: 'should' });
-        }
-
-        if (tags.length > 0 || lookalike.length > 0) {
-            filters.push({ filter: 'relevance', action: 'should' });
-        }
-
-        body.filter.actions = actionsFilter(filters);
     }
 
     if (actionsFilterKeys.some((k) => body.filter && k in body.filter)) {
