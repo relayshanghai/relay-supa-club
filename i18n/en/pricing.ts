@@ -50,7 +50,7 @@ const pricing = {
         title: 'Free Trial',
         subTitle: 'Check out what we can offer',
     },
-    save15Percent: 'Save 15%',
+    saveUpTo33Percent: 'up to 33% off',
 };
 
 export default pricing;
