@@ -1,5 +1,8 @@
 import type { ApiPayload } from './types';
 
+/**
+ * For fetching API's externally or internally
+ */
 export const apiFetch = async <T = any>(url: string, payload: ApiPayload, options: RequestInit = {}) => {
     const urlParams = new URLSearchParams(payload.query).toString();
 
@@ -34,6 +37,7 @@ export const apiFetch = async <T = any>(url: string, payload: ApiPayload, option
         content = await response.json();
     }
 
+    // @note leaving this here for iqdata endpoints that return gzip, in-case we need it in the future
     // if (!response.bodyUsed && contentType.indexOf('x-gzip') !== -1) {
     //     const buffer = await response.arrayBuffer();
     //     content = gunzipSync(buffer).toString('utf8');

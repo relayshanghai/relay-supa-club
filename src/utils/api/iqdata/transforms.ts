@@ -5,8 +5,10 @@ import {
     gender_code,
     audience_age_range,
     audience_gender,
+    actions,
 } from './influencers/search-influencers-payload';
 import type { z } from 'zod';
+import { serverLogger } from 'src/utils/logger-server';
 import type { CreatorAccount, CreatorPlatform, LocationWeighted } from 'types';
 
 type NullStringTuple = [null | string, null | string];
@@ -82,18 +84,18 @@ const leftRightNumberTransform = (tuple: NullStringTuple) => {
     return filter;
 };
 
-export const isRecommendedTransform = (platform: CreatorPlatform, influencerIdsWithPlatform: string[]) => {
-    // idWithPlatform is a string of the form "platform/id"
-    const recommendedByPlatform = influencerIdsWithPlatform
-        .filter((idWithPlatform) => idWithPlatform.split('/')[0] === platform)
-        .map((idWithPlatform) => idWithPlatform.split('/')[1]);
-    if (recommendedByPlatform.length > 1000) {
-        // TODO: For now we can only handle 1000 influencers per platform, so if we exceed that we will need to reimplement some things: https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/352
-        throw new Error(
-            `Too many recommended influencers for platform ${platform}. Please remove some from the recommendedInfluencers list.`,
-        );
+/**
+ * @see https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/352
+ */
+export const recommendedInfluencersFilter = (influencers: string[]) => {
+    const ids = influencers.map((influencer) => influencer.split('/')[1]);
+
+    if (ids.length > 1000) {
+        serverLogger('Recommended influencer ids truncated', 'error', true);
+        return ids.slice(0, 1000);
     }
-    return recommendedByPlatform;
+
+    return ids;
 };
 
 // const textTagsFilter = (s: string[]) => {
@@ -165,6 +167,10 @@ const audienceAgeFilter = (value: z.input<typeof audience_age_range>) => {
     return audience_age_range.parse(value);
 };
 
+const actionsFilter = (filters: z.input<typeof actions>[]) => {
+    return actions.array().parse(filters);
+};
+
 export const prepareFetchCreatorsFiltered = ({
     platform = 'youtube',
     tags = [],
@@ -178,6 +184,8 @@ export const prepareFetchCreatorsFiltered = ({
     platform: CreatorPlatform;
     body: z.input<typeof SearchInfluencersPayload>['body'];
 } => {
+    const actionsFilterKeys = ['keywords', 'username', 'text', 'relevance'];
+
     const body: z.infer<typeof SearchInfluencersPayload>['body'] = {
         paging: {
             limit: resultsPerPageLimit,
@@ -218,18 +226,6 @@ export const prepareFetchCreatorsFiltered = ({
 
     if (params.username) {
         body.filter.username = usernameFilter(params.username);
-
-        if (!body.filter.actions) body.filter.actions = [];
-
-        // Since username will always be provided, we can add filter actions for text and username here
-        body.filter.actions.push({
-            filter: 'username',
-            action: 'should',
-        });
-        body.filter.actions.push({
-            filter: 'text',
-            action: 'should',
-        });
     }
 
     if (params.views && platform !== 'instagram' && (params.views[0] || params.views[1])) {
@@ -245,7 +241,19 @@ export const prepareFetchCreatorsFiltered = ({
     }
 
     if (audienceLocation) {
-        body.filter.audience_geo = audienceLocationFilter(audienceLocation);
+        const filter = audienceLocationFilter(audienceLocation);
+
+        if (filter) {
+            body.filter.audience_geo = filter;
+        }
+    }
+
+    if (params.audienceAge) {
+        body.filter.audience_age_range = audienceAgeFilter(params.audienceAge);
+    }
+
+    if (params.audienceGender) {
+        body.filter.audience_gender = audienceGenderFilter(params.audienceGender);
     }
 
     if (params.audienceAge) {
@@ -257,7 +265,11 @@ export const prepareFetchCreatorsFiltered = ({
     }
 
     if (influencerLocation) {
-        body.filter.geo = influencerLocationFilter(influencerLocation);
+        const filter = influencerLocationFilter(influencerLocation);
+
+        if (filter) {
+            body.filter.geo = filter;
+        }
     }
 
     if (params.lastPost) {
@@ -281,27 +293,61 @@ export const prepareFetchCreatorsFiltered = ({
     }
 
     if (params.only_recommended && params.recommendedInfluencers && featRecommended()) {
-        body.filter.filter_ids = isRecommendedTransform(platform, params.recommendedInfluencers);
+        body.filter.filter_ids = recommendedInfluencersFilter(
+            params.recommendedInfluencers.filter((influencer) => influencer.split('/')[0] === platform),
+        );
     }
 
     if (params.keywords) {
         body.filter.keywords = keywordsFilter(params.keywords);
-
-        if (!body.filter.actions) {
-            body.filter.actions = [];
-        }
-
-        body.filter.actions.push({
-            filter: 'keywords',
-            action: 'should',
-        });
     }
 
-    if (params.hashtags) {
-        body.filter.text_tags = params.hashtags.map((tag) => ({
-            value: tag,
-            type: 'hashtag',
-        }));
+    if (params.text_tags) {
+        body.filter.text_tags = textTagsFilter(params.text_tags);
+    }
+
+    if (actionsFilterKeys.some((k) => body.filter && k in body.filter)) {
+        const filters: z.input<typeof actions>[] = [];
+
+        if (params.keywords) {
+            filters.push({ filter: 'keywords', action: 'should' });
+        }
+
+        if (params.username) {
+            filters.push({ filter: 'username', action: 'should' });
+        }
+
+        if (params.text) {
+            filters.push({ filter: 'text', action: 'should' });
+        }
+
+        if (tags.length > 0 || lookalike.length > 0) {
+            filters.push({ filter: 'relevance', action: 'should' });
+        }
+
+        body.filter.actions = actionsFilter(filters);
+    }
+
+    if (actionsFilterKeys.some((k) => body.filter && k in body.filter)) {
+        const filters: z.input<typeof actions>[] = [];
+
+        if (params.keywords) {
+            filters.push({ filter: 'keywords', action: 'should' });
+        }
+
+        if (params.username) {
+            filters.push({ filter: 'username', action: 'should' });
+        }
+
+        if (params.text) {
+            filters.push({ filter: 'text', action: 'should' });
+        }
+
+        if (tags.length > 0 || lookalike.length > 0) {
+            filters.push({ filter: 'relevance', action: 'should' });
+        }
+
+        body.filter.actions = actionsFilter(filters);
     }
 
     body.sort = { field: 'followers', direction: 'desc' };

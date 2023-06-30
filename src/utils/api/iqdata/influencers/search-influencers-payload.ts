@@ -229,6 +229,9 @@ export const body = z.object({
         .optional(),
 });
 
+/**
+ * @see /types/iqdata/influencer-search-request-body.ts
+ */
 export const SearchInfluencersPayload = z.object({
     query: query.optional(),
     body: body.optional(),

@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
 import type { FetchCreatorsFilteredParams } from './transforms';
-import { isRecommendedTransform, prepareFetchCreatorsFiltered } from './transforms';
+import { recommendedInfluencersFilter } from './transforms';
+import { prepareFetchCreatorsFiltered } from './transforms';
 
 const defaultOptions: FetchCreatorsFilteredParams = {
     platform: 'youtube',
@@ -20,10 +21,6 @@ describe('prepareFetchCreatorsFiltered', () => {
                 actions: [
                     {
                         filter: 'username',
-                        action: 'should',
-                    },
-                    {
-                        filter: 'text',
                         action: 'should',
                     },
                 ],
@@ -81,25 +78,20 @@ describe('prepareFetchCreatorsFiltered', () => {
         const recommendedInfluencers = [
             'youtube/UCh_ugKacslKhsGGdXP0cRRA',
             'youtube/UCwyXamwtzfDIvRjEFcqNmSw',
-            'instagram/25025320',
-            'instagram/208560325',
             'youtube/UCbCmjCuTUZos6Inko4u57UQ',
         ];
-        const result = isRecommendedTransform('youtube', recommendedInfluencers);
+        const result = recommendedInfluencersFilter(recommendedInfluencers);
         expect(result).toEqual(['UCh_ugKacslKhsGGdXP0cRRA', 'UCwyXamwtzfDIvRjEFcqNmSw', 'UCbCmjCuTUZos6Inko4u57UQ']);
-        const result2 = isRecommendedTransform('instagram', recommendedInfluencers);
-        expect(result2).toEqual(['25025320', '208560325']);
 
         // it throws if more than 1000 influencers are passed in
         const recommendedInfluencers2 = Array.from({ length: 1001 }, (_, i) => 'youtube/' + i.toString());
-        expect(() => isRecommendedTransform('youtube', recommendedInfluencers2)).toThrow();
+        const result2 = recommendedInfluencersFilter(recommendedInfluencers2);
+        expect(result2).toHaveLength(1000);
     });
     it('includes recommendedInfluencers transform', () => {
         const recommendedInfluencers = [
             'youtube/UCh_ugKacslKhsGGdXP0cRRA',
             'youtube/UCwyXamwtzfDIvRjEFcqNmSw',
-            'instagram/25025320',
-            'instagram/208560325',
             'youtube/UCbCmjCuTUZos6Inko4u57UQ',
         ];
         const options: FetchCreatorsFilteredParams = {
