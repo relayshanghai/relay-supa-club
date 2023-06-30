@@ -187,7 +187,7 @@ export const prepareFetchCreatorsFiltered = ({
     platform: CreatorPlatform;
     body: z.input<typeof SearchInfluencersPayload>['body'];
 } => {
-    const actionsFilterKeys = ['keywords', 'username', 'text'];
+    const actionsFilterKeys = ['keywords', 'username', 'text', 'relevance'];
 
     const body: z.infer<typeof SearchInfluencersPayload>['body'] = {
         paging: {
@@ -306,6 +306,10 @@ export const prepareFetchCreatorsFiltered = ({
 
         if (params.text) {
             filters.push({ filter: 'text', action: 'should' });
+        }
+
+        if (tags || lookalike) {
+            filters.push({ filter: 'relevance', action: 'should' });
         }
 
         body.filter.actions = actionsFilter(filters);
