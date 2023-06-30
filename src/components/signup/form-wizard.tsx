@@ -10,16 +10,20 @@ export const FormWizard = ({
     children,
     steps,
     currentStep,
+    showProgress = true,
 }: {
     title: string;
     children: ReactNode;
-    currentStep: number;
-    steps: stepsType[];
+    currentStep?: number;
+    steps?: stepsType[];
+    showProgress?: boolean;
 }) => {
     return (
         // The width is to match the exact design on Figma
         <div className="w-80 lg:w-[28rem]">
-            <Progress height="small" percentage={(currentStep / steps.length) * 100} className="mb-2" />
+            {showProgress && currentStep && steps && (
+                <Progress height="small" percentage={(currentStep / steps.length) * 100} className="mb-2" />
+            )}
             <div className="flex flex-col rounded shadow-md">
                 <form
                     onSubmit={(e) => e.preventDefault()}
