@@ -48,7 +48,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
     const { t } = useTranslation();
     const { trackEvent } = useRudderstack();
 
-    const handleSearch = (e: any) => {
+    const handleSearch = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         setActiveSearch(true);
         setPage(0);
@@ -62,6 +62,25 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
             setAudienceAge(undefined);
         }
     }, [audienceAge, setAudienceAge]);
+
+    const getUpperAge = (targetValue: string, maxOption: string): '17' | '24' | '34' | '44' | '64' | undefined => {
+        if (targetValue === maxOption) {
+            return undefined;
+        } else {
+            return targetValue as '17' | '24' | '34' | '44' | '64';
+        }
+    };
+
+    const getLowerAge = (
+        targetValue: string,
+        maxOption: string,
+    ): '13' | '18' | '25' | '35' | '45' | '65' | undefined => {
+        if (targetValue === maxOption) {
+            return undefined;
+        } else {
+            return targetValue as '13' | '18' | '25' | '35' | '45' | '65';
+        }
+    };
 
     return (
         <Modal maxWidth="max-w-3xl" visible={show} onClose={() => setShow(false)} title={t('filters.title') || ''}>
@@ -110,11 +129,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                                 className="rounded-md bg-white px-4 py-2 text-base text-gray-500 ring-1 ring-gray-300"
                                 value={audienceAge?.left_number || (t('filters.minOption') as string)}
                                 onChange={(e) => {
-                                    // if (!audienceAge) return;
-                                    const lowerAge =
-                                        e.target.value === t('filters.minOption') + ' (13)'
-                                            ? undefined
-                                            : (e.target.value as '18' | '25' | '35' | '45' | '65' | undefined);
+                                    const lowerAge = getLowerAge(e.target.value, t('filters.maxOption'));
                                     setAudienceAge({
                                         ...audienceAge,
                                         left_number: lowerAge,
@@ -133,11 +148,8 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                                 className="rounded-md bg-white px-4 py-2 text-base text-gray-500 ring-1 ring-gray-300"
                                 value={audienceAge?.right_number || (t('filters.maxOption') as string)}
                                 onChange={(e) => {
-                                    // if (!audienceAge) return;
-                                    const upperAge =
-                                        e.target.value === t('filters.maxOption')
-                                            ? undefined
-                                            : (e.target.value as '17' | '24' | '34' | '44' | '64' | undefined);
+                                    const upperAge = getUpperAge(e.target.value, t('filters.maxOption'));
+
                                     setAudienceAge({
                                         ...audienceAge,
                                         right_number: upperAge,

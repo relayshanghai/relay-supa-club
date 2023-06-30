@@ -45,16 +45,12 @@ const getWordDistances = (tag: TopicTensorData[]): DistanceType[] => {
     });
 };
 const normalizeFontSize = (tags: any[], fontSize: number) => {
-    // Calculate the average word length.
     const totalCharacters = tags.reduce((sum, word) => sum + word.text.length, 0);
     const averageWordLength = totalCharacters / tags.length;
 
-    // Minimum fontSize.
     const minFontSize = 10;
-    // Maximum fontSize.
     const maxFontSize = tags[0].length > 8 ? 13 : 15;
 
-    // Determine the normalized fontSize based on the average word length.
     const normalizedFontSize =
         minFontSize + ((fontSize - averageWordLength) * (maxFontSize - minFontSize)) / maxFontSize;
 
@@ -78,18 +74,17 @@ const WordCloudComponent = ({ tags, platform, updateTags }: WordCloudProps) => {
         const term = tags.length > 0 ? tags[0].tag : 'influencer';
         const setWordArray = async () => {
             const body = {
-                term: term,
+                term,
                 limit: 20,
-                platform: platform,
+                platform,
             };
             const res = await nextFetch('topics/tensor', {
                 method: 'post',
                 body,
             });
-            const finalWords = getWordElements(res.data);
-            const finalDistances = getWordDistances(res.data);
-            setWords(finalWords);
-            setWordsDistance(finalDistances);
+
+            setWords(getWordElements(res.data));
+            setWordsDistance(getWordDistances(res.data));
         };
         setWordArray();
     }, [tags, platform]);
@@ -123,10 +118,10 @@ const WordCloudComponent = ({ tags, platform, updateTags }: WordCloudProps) => {
     }, [selectedTag, tags, addTag, removeTag]);
 
     const handleWord = useCallback(
-        async (w: string) => {
+        async (word: string) => {
             const newTag: CreatorSearchTag = {
-                tag: w.replace(/ /g, '_'),
-                value: w,
+                tag: word.replaceAll(' ', '_'),
+                value: word,
             };
             setSelectedTag(newTag);
         },
@@ -134,12 +129,15 @@ const WordCloudComponent = ({ tags, platform, updateTags }: WordCloudProps) => {
     );
 
     const colorWord = useCallback(
-        (wo: string) => {
-            if (tags.some((w) => w.value === wo) || !wordsDistance.some((word) => word.text === wo)) {
+        (word: string) => {
+            if (
+                tags.some((tagWords) => tagWords.value === word) ||
+                !wordsDistance.some((distancedWords) => distancedWords.text === word)
+            ) {
                 return `#EC4899`;
             }
-            const word = wordsDistance.find((word) => word.text === wo);
-            const opacity = word?.distance || 1;
+            const foundWord = wordsDistance.find((distancedWords) => distancedWords.text === word);
+            const opacity = foundWord?.distance || 1;
             return `rgba(139, 92, 246, ${opacity})`;
         },
         [tags, wordsDistance],
