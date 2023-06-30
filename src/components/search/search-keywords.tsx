@@ -7,10 +7,10 @@ type SearchTopicsProps = {
     placeholder: string;
     keywords: string;
     platform: CreatorPlatform;
-    setKeywords: (keywords: string) => void;
+    onSetKeywords: (keywords: string) => void;
 };
 
-export const SearchKeywords = ({ setKeywords, keywords, placeholder }: SearchTopicsProps) => {
+export const SearchKeywords = ({ keywords, placeholder, onSetKeywords }: SearchTopicsProps) => {
     const { trackEvent } = useRudderstack();
     const [value, setValue] = useState('');
     return (
@@ -20,7 +20,7 @@ export const SearchKeywords = ({ setKeywords, keywords, placeholder }: SearchTop
                     <div
                         className="flex cursor-pointer justify-center self-center whitespace-nowrap rounded bg-gray-100 px-2 font-medium text-gray-900 hover:bg-gray-200"
                         onClick={() => {
-                            setKeywords('');
+                            onSetKeywords('');
                         }}
                     >
                         <p>{keywords}</p>
@@ -36,7 +36,7 @@ export const SearchKeywords = ({ setKeywords, keywords, placeholder }: SearchTop
                     onKeyDown={(e) => {
                         if (e.key === 'Enter') {
                             e.preventDefault();
-                            setKeywords(value);
+                            onSetKeywords(value);
                             trackEvent('Search Filter Modal, change keywords', {
                                 keywords: value,
                             });

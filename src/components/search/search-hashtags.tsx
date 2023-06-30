@@ -7,10 +7,10 @@ type SearchTopicsProps = {
     placeholder: string;
     hashtags: string[];
     platform: CreatorPlatform;
-    setHashtags: (keywords: string[]) => void;
+    onSetHashtags: (keywords: string[]) => void;
 };
 
-export const SearchHashtags = ({ setHashtags, hashtags, placeholder }: SearchTopicsProps) => {
+export const SearchHashtags = ({ hashtags, placeholder, onSetHashtags }: SearchTopicsProps) => {
     const { trackEvent } = useRudderstack();
 
     const [value, setValue] = useState('');
@@ -25,10 +25,10 @@ export const SearchHashtags = ({ setHashtags, hashtags, placeholder }: SearchTop
 
             setValue(lastTag);
             // Remove last tag
-            setHashtags(hashtags.filter((_, i) => i !== hashtags.length - 1));
+            onSetHashtags(hashtags.filter((_, i) => i !== hashtags.length - 1));
         } else if (e.key === 'Enter') {
             e.preventDefault();
-            setHashtags([...hashtags, value]);
+            onSetHashtags([...hashtags, value]);
             setValue('');
         }
     };
@@ -41,7 +41,7 @@ export const SearchHashtags = ({ setHashtags, hashtags, placeholder }: SearchTop
                         key={index}
                         className="flex cursor-pointer justify-center self-center whitespace-nowrap rounded bg-gray-100 px-2 font-medium text-gray-900 hover:bg-gray-200"
                         onClick={() => {
-                            setHashtags(hashtags.filter((_, i) => i !== index));
+                            onSetHashtags(hashtags.filter((_, i) => i !== index));
                         }}
                     >
                         <p>#{hashtag}</p>

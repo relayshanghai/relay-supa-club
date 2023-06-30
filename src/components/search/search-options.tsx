@@ -123,6 +123,8 @@ export const SearchOptions = ({
                                 platform={platform}
                                 onSetTopics={(topics) => {
                                     setTopicTags(topics);
+                                    setHashtags([]);
+                                    setKeywords('');
                                 }}
                             />
                         </div>
@@ -142,7 +144,11 @@ export const SearchOptions = ({
                                 placeholder={t('creators.searchKeywords')}
                                 keywords={keywords}
                                 platform={platform}
-                                setKeywords={setKeywords}
+                                onSetKeywords={(keywords) => {
+                                    setTopicTags([]);
+                                    setHashtags([]);
+                                    setKeywords(keywords);
+                                }}
                             />
                         </div>
                     ) : (
@@ -160,7 +166,11 @@ export const SearchOptions = ({
                                 placeholder={t('creators.searchHashTags')}
                                 hashtags={hashtags}
                                 platform={platform}
-                                setHashtags={setHashtags}
+                                onSetHashtags={(hashtags) => {
+                                    setTopicTags([]);
+                                    setHashtags(hashtags);
+                                    setKeywords('');
+                                }}
                             />
                         </div>
                     )}
