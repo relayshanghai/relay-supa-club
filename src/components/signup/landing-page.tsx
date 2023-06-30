@@ -17,7 +17,7 @@ export const LandingPage = () => {
                     <Link
                         href="/login"
                         className="ml-2 text-primary-500"
-                        onClick={() => trackEvent('ladingPage, go to Login Page')}
+                        onClick={() => trackEvent('Lading Page, go to Login Page')}
                     >
                         {t('login.logIn')}
                     </Link>

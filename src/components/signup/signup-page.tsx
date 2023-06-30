@@ -16,6 +16,7 @@ import type { SignupInputTypes } from 'src/utils/validation/signup';
 import type { FieldValues } from 'react-hook-form';
 import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
 import Link from 'next/link';
+import { useRudderstack } from 'src/hooks/use-rudderstack';
 
 export interface SignUpValidationErrors {
     firstName: string;
@@ -46,6 +47,7 @@ const SignUpPage = ({
     const router = useRouter();
     const { signup, createEmployee, profile, logout } = useUser();
     const { createCompany } = useCompany();
+    const { trackEvent } = useRudderstack();
 
     const {
         values: { firstName, lastName, email, password, confirmPassword, phoneNumber, companyName, companyWebsite },
@@ -137,6 +139,20 @@ const SignUpPage = ({
             await handleCompanyCreate(formData, profileId);
         } else {
             setCurrentStep(currentStep + 1);
+        }
+        if (currentStep === 5) {
+            return;
+        } else {
+            trackEvent(`Signup Wizard, step-${currentStep}`, {
+                firstName,
+                lastName,
+                phoneNumber,
+                email,
+                companyName,
+                companyWebsite,
+                companySize: selectedSize ?? '',
+                companyCategory: selectedCategory,
+            });
         }
     };
 
@@ -273,7 +289,11 @@ const SignUpPage = ({
                 {currentStep === 5 && (
                     <button type="button" className="text-sm text-gray-500" onClick={logout}>
                         {t('login.stuckHereTryAgain1')}
-                        <Link className="text-primary-500" href="/logout">
+                        <Link
+                            className="text-primary-500"
+                            href="/logout"
+                            onClick={() => trackEvent('Signup Wizard, step-5, log out')}
+                        >
                             {t('login.signOut')}
                         </Link>
                         {t('login.stuckHereTryAgain2')}
