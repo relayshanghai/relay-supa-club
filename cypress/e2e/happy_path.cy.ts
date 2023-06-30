@@ -84,10 +84,12 @@ describe('Main pages happy paths', () => {
             cy.get('input[autocomplete="billing cc-number"]').type('4242424242424242');
             cy.get('input[autocomplete="billing cc-exp"]').type('1227');
             cy.get('input[autocomplete="billing cc-csc"]').type('123');
-            cy.get('select[autocomplete="billing country"]').then($body => {
-                if ($body.find('input[autocomplete="billing postal-code"]').length > 0) {   // Replace 'selector' with your selector
-                        cy.get('input[autocomplete="billing postal-code"]').type('12345');    }
+            // Some countries like India won't show an input for Postal Code
+            cy.get('form').then($form => {
+                if ($form.find('input[autocomplete="billing postal-code"]').length > 0)   // Replace 'selector' with your selector
+                        cy.get('input[autocomplete="billing postal-code"]').type('12345');
             })
+
         });
         cy.contains('Success').should('not.exist');
         cy.contains('button', 'Start Free Trial').click();
