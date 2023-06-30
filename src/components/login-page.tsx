@@ -85,7 +85,7 @@ const LoginPage = () => {
                 <Input
                     label={t('login.password')}
                     type="password"
-                    placeholder="Enter your password"
+                    placeholder={t('login.passwordPlaceholder')}
                     value={password}
                     onChange={(e) => {
                         setFieldValue('password', e.target.value);
