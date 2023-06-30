@@ -308,10 +308,6 @@ export const prepareFetchCreatorsFiltered = ({
             filters.push({ filter: 'text', action: 'should' });
         }
 
-        if (tags.length > 0 || lookalike.length > 0) {
-            filters.push({ filter: 'relevance', action: 'should' });
-        }
-
         body.filter.actions = actionsFilter(filters);
     }
 
