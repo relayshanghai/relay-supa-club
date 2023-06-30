@@ -26,10 +26,11 @@ const LoginPage = () => {
     });
 
     useEffect(() => {
+        if (!router.isReady || typeof emailQuery !== 'string') return;
         if (emailQuery) {
             setFieldValue('email', emailQuery.toString());
         }
-    }, [emailQuery, setFieldValue]);
+    }, [emailQuery, setFieldValue, router.isReady]);
 
     const handleSubmit = async () => {
         try {
