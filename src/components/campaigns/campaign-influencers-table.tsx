@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import type { ChangeEvent } from 'react';
 import { useState } from 'react';
 import Link from 'next/link';
@@ -207,14 +207,17 @@ export default function CampaignInfluencersTable({
         return campaignCreators?.filter((c) => c.status === status).length ?? 0;
     };
 
-    const onAddSales = async (amount: number) => {
-        const body = {
-            campaign_id: currentCampaign.id,
-            company_id: currentCampaign.company_id,
-            amount: amount,
-        };
-        addToSales(body);
-    };
+    const onAddSales = useCallback(
+        async (amount: number) => {
+            const body = {
+                campaign_id: currentCampaign.id,
+                company_id: currentCampaign.company_id,
+                amount: amount,
+            };
+            addToSales(body);
+        },
+        [currentCampaign, addToSales],
+    );
 
     const editingModeTrue = (index: number, key: string) => index === toEdit?.index && key === toEdit?.key;
 
