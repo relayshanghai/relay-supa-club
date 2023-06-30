@@ -115,14 +115,36 @@ const postHandler: NextApiHandler = async (req: NextApiRequest, res: NextApiResp
     }
     // if server is 'imap.example.com' then domain is 'example.com'
     const domain = server.split('.').slice(1).join('.');
-    /** IMAP is for listening */
-    const imap = new Imap({
-        user: email,
-        password,
-        host: server,
-        port,
-        tls: true,
+
+    /** Mailer is for sending */
+    const mailer = nodeMailer.createTransport({
+        host: 'smtp.' + domain,
+        // smtp should always be 465
+        port: 465,
+        secure: true,
+        auth: {
+            // 'user@example.com'
+            user: email,
+            pass: password,
+        },
     });
+
+    const mailOptions = {
+        from: email,
+        to: recipient,
+        subject: 'Hello',
+        text: content,
+    };
+    console.log({ mailOptions });
+
+    mailer.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            serverLogger(error, 'error');
+        } else {
+            serverLogger('Email sent: ' + info.response);
+        }
+    });
+
     const mailListener = new MailListener({
         username: email,
         password,
@@ -136,8 +158,6 @@ const postHandler: NextApiHandler = async (req: NextApiRequest, res: NextApiResp
         attachments: false,
     });
     mailListener.start();
-
-    mailListener.start(); // start listening
 
     // stop listening
     //mailListener.stop();
@@ -164,34 +184,6 @@ const postHandler: NextApiHandler = async (req: NextApiRequest, res: NextApiResp
 
     mailListener.on('body', function (body: any, seqno: any) {
         console.log({ body, seqno });
-    });
-
-    /** Mailer is for sending */
-    const mailer = nodeMailer.createTransport({
-        host: 'smtp.' + domain,
-        // smtp should always be 465
-        port: 465,
-        secure: true,
-        auth: {
-            // 'user@example.com'
-            user: email,
-            pass: password,
-        },
-    });
-
-    const mailOptions = {
-        from: email,
-        to: recipient,
-        subject: 'Hello',
-        text: content,
-    };
-
-    mailer.sendMail(mailOptions, (error, info) => {
-        if (error) {
-            serverLogger(error, 'error');
-        } else {
-            serverLogger('Email sent: ' + info.response);
-        }
     });
 
     res.status(httpCodes.OK).json({ data: {} });
