@@ -65,7 +65,7 @@ export const SearchOptions = ({
                 tags,
                 username,
                 keywords,
-                hashtags,
+                text_tags: hashtags.join(' '),
                 influencerLocation,
                 views,
                 audience,
@@ -146,7 +146,7 @@ export const SearchOptions = ({
                             />
                         </div>
                     ) : (
-                        <div data-testid="search-hashtags " className="w-full">
+                        <div data-testid="search-hashtags " className="flex h-full w-full flex-col justify-evenly">
                             <Tooltip
                                 content={t('tooltips.searchHashtags.title')}
                                 detail={t('tooltips.searchHashtags.description')}
@@ -157,7 +157,7 @@ export const SearchOptions = ({
                             </Tooltip>
                             <SearchHashtags
                                 path="influencer-search/topics"
-                                placeholder={t('creators.searchHashtags')}
+                                placeholder={t('creators.searchHashTags')}
                                 hashtags={hashtags}
                                 platform={platform}
                                 setHashtags={setHashtags}
