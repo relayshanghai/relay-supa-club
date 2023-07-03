@@ -31,6 +31,7 @@ export const CampaignSalesModal = ({
                         className="input-field"
                         type="number"
                         autoComplete="off"
+                        data-testid="campaign-sales-input"
                         onChange={(e) => {
                             const input = parseFloat(e.target.value);
                             if (isNaN(input)) {
