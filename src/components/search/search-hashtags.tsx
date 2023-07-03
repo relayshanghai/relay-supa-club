@@ -27,7 +27,7 @@ export const SearchHashtags = ({ hashtags, placeholder, onSetHashtags, onChangeT
             setValue(lastTag);
             // Remove last tag
             onSetHashtags(hashtags.filter((_, i) => i !== hashtags.length - 1));
-        } else if (e.key === 'Enter') {
+        } else if (e.key === ' ' || e.key === 'Enter') {
             e.preventDefault();
             onSetHashtags([...hashtags, value]);
             setValue('');
@@ -40,12 +40,18 @@ export const SearchHashtags = ({ hashtags, placeholder, onSetHashtags, onChangeT
                 return (
                     <div
                         key={index}
-                        className="flex cursor-pointer justify-center self-center whitespace-nowrap rounded bg-gray-100 px-2 font-medium text-gray-900 hover:bg-gray-200"
+                        className="mx-1 flex cursor-pointer justify-center self-center whitespace-nowrap rounded bg-gray-100 px-2 font-medium text-gray-900 hover:bg-gray-200"
                         onClick={() => {
                             onSetHashtags(hashtags.filter((_, i) => i !== index));
                         }}
                     >
                         <p>#{hashtag}</p>
+                        <span
+                            className="ml-2 cursor-pointer whitespace-nowrap text-gray-400"
+                            id={`remove-hashtag-${hashtag}`}
+                        >
+                            x
+                        </span>
                     </div>
                 );
             })}

@@ -25,6 +25,12 @@ export const SearchKeywords = ({ keywords, placeholder, onSetKeywords, onChangeT
                         }}
                     >
                         <p>{keywords}</p>
+                        <span
+                            className="ml-2 cursor-pointer whitespace-nowrap text-gray-400"
+                            id={`remove-keyword-${keywords}`}
+                        >
+                            x
+                        </span>
                     </div>
                 )}
                 <input
