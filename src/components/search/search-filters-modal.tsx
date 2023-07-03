@@ -18,6 +18,13 @@ const filterCountry = (items: any[]) => {
     });
 };
 
+export type UpperAgeType = '17' | '24' | '34' | '44' | '64';
+
+export type LowerAgeType = '13' | '18' | '25' | '35' | '45' | '65';
+
+const lowerAgeOptions = [18, 25, 35, 45, 65];
+const upperAgeOptions = [17, 24, 34, 44, 64];
+
 export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: (open: boolean) => void }) => {
     const {
         audience,
@@ -63,22 +70,19 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
         }
     }, [audienceAge, setAudienceAge]);
 
-    const getUpperAge = (targetValue: string, maxOption: string): '17' | '24' | '34' | '44' | '64' | undefined => {
+    const getUpperAge = (targetValue: string, maxOption: string): UpperAgeType | undefined => {
         if (targetValue === maxOption) {
             return undefined;
         } else {
-            return targetValue as '17' | '24' | '34' | '44' | '64';
+            return targetValue as UpperAgeType;
         }
     };
 
-    const getLowerAge = (
-        targetValue: string,
-        maxOption: string,
-    ): '13' | '18' | '25' | '35' | '45' | '65' | undefined => {
+    const getLowerAge = (targetValue: string, maxOption: string): LowerAgeType | undefined => {
         if (targetValue === maxOption) {
             return undefined;
         } else {
-            return targetValue as '13' | '18' | '25' | '35' | '45' | '65';
+            return targetValue as LowerAgeType;
         }
     };
 
@@ -126,7 +130,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                         <div className="mb-1 text-base font-medium">{t('filters.audience.ageLabel')}</div>
                         <div className="flex gap-4">
                             <select
-                                className="rounded-md bg-white py-2 text-base text-gray-500 ring-1 ring-gray-300"
+                                className="rounded-md border-gray-200 bg-white py-2 text-base text-gray-500 ring-1 ring-gray-200"
                                 value={audienceAge?.left_number || (t('filters.minOption') as string)}
                                 onChange={(e) => {
                                     const lowerAge = getLowerAge(e.target.value, t('filters.maxOption'));
@@ -138,14 +142,20 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                                 }}
                             >
                                 <option value={undefined}>{t('filters.minOption')} (13)</option>
-                                <option value={18}>18</option>
-                                <option value={25}>25</option>
-                                <option value={35}>35</option>
-                                <option value={45}>45</option>
-                                <option value={65}>65</option>
+                                {lowerAgeOptions.map((lowerAge, index) => {
+                                    return (
+                                        <option
+                                            key={index}
+                                            hidden={parseInt(audienceAge?.right_number || '100') < lowerAge}
+                                            value={lowerAge}
+                                        >
+                                            {lowerAge}
+                                        </option>
+                                    );
+                                })}
                             </select>
                             <select
-                                className="rounded-md bg-white py-2 text-base text-gray-500 ring-1 ring-gray-300"
+                                className="rounded-md border-gray-200 bg-white py-2 text-base text-gray-500 ring-1 ring-gray-200"
                                 value={audienceAge?.right_number || (t('filters.maxOption') as string)}
                                 onChange={(e) => {
                                     const upperAge = getUpperAge(e.target.value, t('filters.maxOption'));
@@ -157,27 +167,23 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                                     });
                                 }}
                             >
-                                <option hidden={parseInt(audienceAge?.left_number || '0') > 17} value={17}>
-                                    17
-                                </option>
-                                <option hidden={parseInt(audienceAge?.left_number || '0') > 24} value={24}>
-                                    24
-                                </option>
-                                <option hidden={parseInt(audienceAge?.left_number || '0') > 34} value={34}>
-                                    34
-                                </option>
-                                <option hidden={parseInt(audienceAge?.left_number || '0') > 44} value={44}>
-                                    44
-                                </option>
-                                <option hidden={parseInt(audienceAge?.left_number || '0') > 64} value={64}>
-                                    64
-                                </option>
+                                {upperAgeOptions.map((upperAge, index) => {
+                                    return (
+                                        <option
+                                            key={index}
+                                            hidden={parseInt(audienceAge?.left_number || '0') > upperAge}
+                                            value={upperAge}
+                                        >
+                                            {upperAge}
+                                        </option>
+                                    );
+                                })}
                                 <option value={undefined}>{t('filters.maxOption')}</option>
                             </select>
                             <select
                                 className={`rounded-md transition-all ${
                                     audienceAge ? 'bg-white' : 'bg-slate-300'
-                                } py-2 text-gray-500 ring-1 ring-gray-300`}
+                                } border-gray-200 py-2 text-gray-500 ring-1 ring-gray-200`}
                                 disabled={audienceAge ? false : true}
                                 value={audienceAge?.weight || '>5%'}
                                 onChange={(e) => {
@@ -200,7 +206,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                         <div className="mb-1 text-base font-medium">{t('filters.gender.label')}</div>
                         <div className="flex gap-4">
                             <select
-                                className="rounded-md bg-white py-2 text-base text-gray-500 ring-1 ring-gray-300"
+                                className="rounded-md border-gray-200 bg-white py-2 text-base text-gray-500 ring-1 ring-gray-200"
                                 value={audienceGender?.code || 'ANY'}
                                 onChange={(e) => {
                                     const gender = e.target.value === 'ANY' ? null : e.target.value;
@@ -221,7 +227,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                             <select
                                 className={`rounded-md transition-all ${
                                     audienceGender ? 'bg-white' : 'bg-slate-300'
-                                } py-2 text-base text-gray-500 ring-1 ring-gray-300`}
+                                } border-gray-200 py-2 text-base text-gray-500 ring-1 ring-gray-200`}
                                 disabled={audienceGender ? false : true}
                                 value={audienceGender?.weight || '>5%'}
                                 onChange={(e) => {
@@ -273,7 +279,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                         <label className="text-sm">
                             <div className="mb-1 text-base font-medium">{t('creators.filter.engagementRate')}</div>
                             <select
-                                className="rounded-md bg-white py-2 text-base text-gray-500 ring-1 ring-gray-300"
+                                className="rounded-md border-gray-200 bg-white py-2 text-base text-gray-500 ring-1 ring-gray-200"
                                 value={engagement}
                                 onChange={(e) => {
                                     if (e.target.value === 'any' || Number(e.target.value) === 0) {
@@ -304,7 +310,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                             <div className="flex flex-row space-x-4">
                                 <div className="flex items-center gap-4">
                                     <select
-                                        className="rounded-md bg-white py-2 text-base text-gray-500 ring-1 ring-gray-300"
+                                        className="rounded-md border-gray-200 bg-white py-2 text-base text-gray-500 ring-1 ring-gray-200"
                                         value={audience[0] ?? 'any'}
                                         onChange={(e) => {
                                             setAudience((audiencePrevious) => [
@@ -328,7 +334,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                                         ))}
                                     </select>
                                     <select
-                                        className="rounded-md bg-white py-2 text-base text-gray-500 ring-1 ring-gray-300"
+                                        className="rounded-md border-gray-200 bg-white py-2 text-base text-gray-500 ring-1 ring-gray-200"
                                         value={audience[1] ?? 'any'}
                                         onChange={(e) => {
                                             setAudience((audiencePrevious) => [
@@ -359,7 +365,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                         <label className="text-sm">
                             <div className="mb-1 text-base font-medium">{t('filters.gender.label')}</div>
                             <select
-                                className="rounded-md bg-white py-2 text-base text-gray-500 ring-1 ring-gray-300"
+                                className="rounded-md border-gray-200 bg-white py-2 text-base text-gray-500 ring-1 ring-gray-200"
                                 value={gender}
                                 onChange={(e) => {
                                     if (e.target.value === 'any') {
@@ -383,7 +389,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                         <label className="text-sm">
                             <div className="mb-1 text-base font-medium">{t('filters.influencers.lastPostLabel')}</div>
                             <select
-                                className="rounded-md bg-white py-2 text-base text-gray-500 ring-1 ring-gray-300"
+                                className="rounded-md border-gray-200 bg-white py-2 text-base text-gray-500 ring-1 ring-gray-200"
                                 value={lastPost}
                                 onChange={(e) => {
                                     if (e.target.value === 'any') {
@@ -409,7 +415,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                             <div className="flex flex-row space-x-4">
                                 <div className="flex items-center gap-4">
                                     <select
-                                        className="rounded-md bg-white py-2 text-base text-gray-500 ring-1 ring-gray-300"
+                                        className="rounded-md border-gray-200 bg-white py-2 text-base text-gray-500 ring-1 ring-gray-200"
                                         value={views[0] ?? 'any'}
                                         onChange={(e) => {
                                             setViews((viewsPrevious) => [
@@ -433,7 +439,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                                         ))}
                                     </select>
                                     <select
-                                        className="rounded-md bg-white py-2 text-base text-gray-500 ring-1 ring-gray-300"
+                                        className="rounded-md border-gray-200 bg-white py-2 text-base text-gray-500 ring-1 ring-gray-200"
                                         value={views[1] ?? 'any'}
                                         onChange={(e) => {
                                             setViews((viewsPrevious) => [

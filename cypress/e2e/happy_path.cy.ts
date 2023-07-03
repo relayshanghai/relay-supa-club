@@ -119,10 +119,6 @@ describe('Main pages happy paths', () => {
         setupIntercepts();
 
         cy.loginTestUser();
-        // cy.get('input[type="checkbox').uncheck({ force: true }); // turn off the Recommended Only
-
-        // // wait for search results
-        // cy.contains('T-Series', { timeout: 20000 }); // the first influencer search result
 
         cy.getByTestId('search-topics').within(() => {
             cy.get('input').type('alligators');
@@ -253,7 +249,6 @@ describe('Main pages happy paths', () => {
 
         // go to search and add an influencer to campaign
         cy.contains('Add New Influencer').click();
-        // cy.get('input[type="checkbox').uncheck({ force: true }); // turn off the Recommended Only
 
         cy.contains('tr', 'SET India', { timeout: 30000 }).contains('Add to campaign').click(); // not sure why this is still slow
         cy.contains('Beauty for All Skin Tones');

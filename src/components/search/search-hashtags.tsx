@@ -58,7 +58,6 @@ export const SearchHashtags = ({ hashtags, placeholder, onSetHashtags, onChangeT
                     onChangeTopics();
                 }}
                 onKeyDown={(e) => {
-                    // setHashtags([...hashtags, e.target.value]);
                     tagKeyboardInputHandler(e);
                     trackEvent('Search Filter Modal, change hashtags', {
                         hashtags: hashtags,

@@ -1,5 +1,5 @@
 import { Dialog, Transition } from '@headlessui/react';
-import { Fragment, useEffect } from 'react';
+import { Fragment } from 'react';
 
 export interface ModalProps {
     visible: boolean;
@@ -11,9 +11,6 @@ export interface ModalProps {
 }
 
 export const Modal: React.FC<ModalProps> = ({ children, visible, onClose, title, maxWidth = 'max-w-md' }) => {
-    useEffect(() => {
-        window.scrollTo(0, 0);
-    }, [visible]);
     return (
         <Transition appear show={visible} as={Fragment}>
             <Dialog open={visible} as="div" className="relative z-10" onClose={onClose}>
