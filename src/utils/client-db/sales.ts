@@ -7,6 +7,10 @@ export type SalesType = {
     amount: number;
 };
 
+export type RowType = {
+    amount: number;
+};
+
 export const addSales = (db: SupabaseClient<DatabaseWithCustomTypes>) => async (body: SalesType) => {
     const { error } = await db.from('sales').insert({
         campaign_id: body.campaign_id,
@@ -15,19 +19,20 @@ export const addSales = (db: SupabaseClient<DatabaseWithCustomTypes>) => async (
     });
 
     if (error) {
-        return -1;
+        throw 'Error inserting sales data';
     }
-    return 0;
 };
 
 export const getSales = (db: SupabaseClient<DatabaseWithCustomTypes>) => async (companyId: string) => {
+    if (companyId.length <= 0) throw 'Company ID missing!';
+
     const { data, error } = await db.from('sales').select('amount').eq('company_id', companyId);
 
     if (error) {
-        return 0;
+        throw 'Error getting sales data';
     }
 
-    const totalAmount = data.reduce((sum: number, row: any) => sum + row.amount, 0);
+    const totalAmount = data.reduce((sum: number, row: RowType) => sum + row.amount, 0);
 
     return totalAmount;
 };

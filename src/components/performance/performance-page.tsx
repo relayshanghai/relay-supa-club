@@ -3,11 +3,7 @@ import { Layout } from 'src/components/layout';
 import { ArrowRight, BoxFilled, Money, Spinner, ThumbUpOutline } from '../icons';
 import { EyeOutline } from '../icons';
 import { ChatBubbleTextOutline } from '../icons';
-// import SalesBarChart from './sales-bar-chart';
-import {
-    //  toCurrency,
-    numFormatter,
-} from 'src/utils/utils';
+import { numFormatter } from 'src/utils/utils';
 import { useCampaigns } from 'src/hooks/use-campaigns';
 import type { PostPerformanceByCampaign } from 'src/hooks/use-post-performance';
 import usePostPerformance from 'src/hooks/use-post-performance';
@@ -36,8 +32,6 @@ const PerformancePage = () => {
 
     const viewsTotal = selectedStats?.reduce((acc, curr) => (curr.viewCount ? acc + curr.viewCount : acc), 0);
 
-    // const salesTotal = selectedStats?.sales;
-
     const postsTotal = selectedStats?.length;
 
     const totals = {
@@ -59,7 +53,7 @@ const PerformancePage = () => {
         sales: {
             Icon: Money,
             label: t('performance.stats.sales'),
-            value: totalSales ? '$' + numFormatter(totalSales) : '',
+            value: totalSales ? t('campaigns.addSalesModal.currency') + numFormatter(totalSales) : '',
         },
     };
     return (

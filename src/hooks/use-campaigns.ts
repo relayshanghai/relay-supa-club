@@ -24,7 +24,10 @@ export const useCampaigns = ({ campaignId }: { campaignId?: string }) => {
 
     useEffect(() => {
         const getCampaignSales = async () => {
-            setTotalSales(await getFromSales(company?.id || ''));
+            if (!company?.id) {
+                throw 'No Company ID';
+            }
+            setTotalSales(await getFromSales(company.id));
         };
         getCampaignSales();
     }, [getFromSales, company]);

@@ -1,12 +1,8 @@
 import { Modal } from '../modal';
 import { Button } from '../button';
 import { useState } from 'react';
-
-// type CampagnSales = {
-//     campaign_id: string;
-//     company_id: string;
-//     amount: number;
-// };
+import { useTranslation } from 'react-i18next';
+import { toast } from 'react-hot-toast';
 
 export const CampaignSalesModal = ({
     show,
@@ -17,30 +13,41 @@ export const CampaignSalesModal = ({
     setShow: (open: boolean) => void;
     onAddSales: (amount: number) => Promise<void>;
 }) => {
-    // const { t } = useTranslation();
+    const { t } = useTranslation();
 
     const [amount, setAmount] = useState<number>(0);
 
     return (
-        <Modal visible={show} maxWidth={`max-w-md`} onClose={() => setShow(false)} title="Add Sales (USD)">
+        <Modal
+            visible={show}
+            maxWidth={`max-w-md`}
+            onClose={() => setShow(false)}
+            title={t('campaigns.addSalesModal.title') || ''}
+        >
             <div className="flex flex-row items-center justify-between gap-4">
-                <p>$</p>
+                <p>{t('campaigns.addSalesModal.currency')}</p>
                 <div className="w-full rounded-full">
                     <input
                         className="input-field"
                         type="number"
                         autoComplete="off"
-                        onChange={(e) => setAmount(parseFloat(e.target.value))}
+                        onChange={(e) => {
+                            const input = parseFloat(e.target.value);
+                            if (isNaN(input)) {
+                                toast.error('Please enter a number!');
+                                return;
+                            }
+                            setAmount(parseFloat(e.target.value));
+                        }}
                     />
                 </div>
                 <Button
                     onClick={() => {
-                        // alert(amount);
                         onAddSales(amount);
                         setShow(false);
                     }}
                 >
-                    Add Amount
+                    {t('campaigns.addSalesModal.modalButton')}
                 </Button>
             </div>
         </Modal>

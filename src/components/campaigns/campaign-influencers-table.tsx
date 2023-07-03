@@ -48,9 +48,9 @@ export default function CampaignInfluencersTable({
     const [influencersList, setInfluencersList] = useState<CampaignCreatorDB[]>([]);
     const [showSalesModal, setShowSalesModal] = useState<boolean>(false);
 
-    const [showMoveInfluencerModal, setShowMoveInfluencerModal] = useState(false);
-    const [showManageInfluencerModal, setShowManageInfluencerModal] = useState(false);
-    const [showAddPostModal, setShowAddPostModal] = useState(false);
+    const [showMoveInfluencerModal, setShowMoveInfluencerModal] = useState<boolean>(false);
+    const [showManageInfluencerModal, setShowManageInfluencerModal] = useState<boolean>(false);
+    const [showAddPostModal, setShowAddPostModal] = useState<boolean>(false);
 
     const addToSales = useDB<typeof addSales>(addSales);
 
@@ -242,7 +242,7 @@ export default function CampaignInfluencersTable({
                         }}
                         className="mr-4 flex-shrink-0 cursor-pointer rounded-md bg-gray-100 px-4 py-2 text-xs text-gray-600 duration-300 hover:bg-primary-500 hover:text-white"
                     >
-                        <a>Add Sales</a>
+                        <a>{t('campaigns.addSalesModal.caption')}</a>
                     </div>
                 </p>
                 {/* TODO: make Tabs component reusable */}
