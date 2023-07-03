@@ -2,7 +2,7 @@ const tooltips = {
     searchTopics: {
         title: 'Topics',
         description:
-            'We analyse profile content over extended periods of time to determine the topics relevant to an influencers.',
+            'We analyze profile content over extended periods of time to determine the topics relevant to an influencer.',
         link: 'Read more',
         highlight: 'Can only use either Topic Relevance OR a keyword in a single search, not both.',
     },
