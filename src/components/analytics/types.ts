@@ -33,3 +33,30 @@ export type AnalyticsEventParam = {
 };
 
 export type AnalyticsEvent = (analytics: AnalyticsInstance) => (value: any) => void;
+
+// @note I really should create a separate package for this now..
+export type JourneyObject = {
+    id: string;
+    name: string;
+    status: JourneyStatus;
+    created_at?: number;
+    updated_at?: number;
+    tag?: string;
+};
+
+export type Journey = {
+    onStart?: (journey: JourneyObject, payload?: any, tag?: string) => any;
+    onEnd?: (journey: JourneyObject, payload?: any) => any;
+    onAbort?: (journey: JourneyObject, payload?: any) => any;
+    onUpdate?: (journey: JourneyObject, payload?: any, tag?: string) => any;
+};
+
+export enum JourneyStatus {
+    ONGOING = 'ongoing',
+    ENDED = 'ended',
+    ABORTED = 'aborted',
+}
+
+export type JourneyCollection = {
+    [key: string]: (args?: any) => Journey;
+};
