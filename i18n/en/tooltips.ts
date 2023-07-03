@@ -9,7 +9,7 @@ const tooltips = {
     searchKeywords: {
         title: 'Keyword or Phrase',
         description:
-            'We search through the video transcripts to find influencers who have talked about your keyword (or a similar phrase) in recent videos.',
+            'We search through posts and video transcripts to find influencers who have mentioned your keyword (or a similar phrase) in recently posted content.',
         link: 'Read more',
         highlight: 'Can only use either Topic Relevance OR a keyword in a single search, not both.',
     },
