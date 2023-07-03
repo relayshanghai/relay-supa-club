@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import type { DetailedHTMLProps, HTMLAttributes, PropsWithChildren } from 'react';
 import { useState } from 'react';
 interface Props extends DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLSpanElement> {
@@ -5,18 +6,28 @@ interface Props extends DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLS
     detail?: string | null;
     children: React.ReactNode;
     position?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'left' | 'right';
+    link?: string | null;
+    linkText?: string | null;
+    highlight?: string | null;
 }
 export type TooltipProps = PropsWithChildren<Props>;
 
 /** Wrap this around the component that you'd like to have the tooltip appear over when hovered. see `pages/component-previews/library.tsx` for examples*/
-export const Tooltip = ({ children, content, detail, className, position }: TooltipProps) => {
+export const Tooltip = ({
+    children,
+    content,
+    detail,
+    className,
+    position,
+    link,
+    linkText,
+    highlight,
+}: TooltipProps) => {
     const [isHovered, setIsHovered] = useState(false);
 
     return (
-        <div className={`relative ${className}`}>
-            <div onMouseOver={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
-                {children}
-            </div>
+        <div className={`relative ${className}`} onMouseLeave={() => setIsHovered(false)}>
+            <div onMouseOver={() => setIsHovered(true)}>{children}</div>
             {isHovered && (
                 <div
                     className={`absolute  ${
@@ -34,9 +45,15 @@ export const Tooltip = ({ children, content, detail, className, position }: Tool
                     } z-30 w-auto rounded bg-white font-semibold text-gray-500 opacity-100 transition-opacity`}
                     role="tooltip"
                 >
-                    <div className="flex w-52 flex-col justify-evenly gap-2 p-2 leading-4 shadow-lg">
+                    <div className="flex w-72 flex-col justify-evenly gap-2 p-2 leading-4 shadow-lg">
                         <p className="text-md">{content}</p>
                         {detail && <p className="text-sm font-normal text-gray-800">{detail}</p>}
+                        {highlight && <p className="text-sm font-medium italic text-gray-800">{highlight}</p>}
+                        {link && linkText && (
+                            <Link className="font-normal text-primary-400" href={link}>
+                                {linkText}
+                            </Link>
+                        )}
                     </div>
                 </div>
             )}

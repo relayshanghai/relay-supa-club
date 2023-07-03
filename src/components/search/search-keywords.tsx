@@ -8,9 +8,10 @@ type SearchTopicsProps = {
     keywords: string;
     platform: CreatorPlatform;
     onSetKeywords: (keywords: string) => void;
+    onChangeTopics: () => void;
 };
 
-export const SearchKeywords = ({ keywords, placeholder, onSetKeywords }: SearchTopicsProps) => {
+export const SearchKeywords = ({ keywords, placeholder, onSetKeywords, onChangeTopics }: SearchTopicsProps) => {
     const { trackEvent } = useRudderstack();
     const [value, setValue] = useState('');
     return (
@@ -32,6 +33,7 @@ export const SearchKeywords = ({ keywords, placeholder, onSetKeywords }: SearchT
                     placeholder={keywords === '' ? placeholder : ''}
                     onChange={(e) => {
                         setValue(e.target.value);
+                        onChangeTopics();
                     }}
                     onKeyDown={(e) => {
                         if (e.key === 'Enter') {

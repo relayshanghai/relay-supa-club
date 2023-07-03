@@ -2,17 +2,22 @@ const tooltips = {
     searchTopics: {
         title: 'Topics',
         description:
-            'Topics are created and applied to the influencer account through analysis of their content over time. We will return Influencers most relevant to the topics you search for.',
+            'We analyse profile content over extended periods of time to determine the topics relevant to an influencers.',
+        link: 'Read more',
+        highlight: 'Can only use either Topic Relevance OR a keyword in a single search, not both.',
     },
     searchKeywords: {
         title: 'Keyword or Phrase',
         description:
-            'We search through youtube video transcripts to add influencers that have used these words or phrases in recent videos in your results. Try using a word or phrase influencers would actually say to get more results.',
+            'We search through the video transcripts to find influencers who have talked about your keyword (or a similar phrase) in recent videos.',
+        link: 'Read more',
+        highlight: 'Can only use either Topic Relevance OR a keyword in a single search, not both.',
     },
     searchHashTags: {
         title: 'Hashtags',
-        description:
-            'We will add influencers who have used your hashtags in their recent post descriptions to your search results.',
+        description: 'Will return influencers who have used your hashtags in their recent posts.',
+        link: 'Read more',
+        highlight: 'Can only use either Topic Relevance OR hashtags in a single search, not both.',
     },
     topicCloud: {
         title: 'TopicCloud',

@@ -8,9 +8,10 @@ type SearchTopicsProps = {
     hashtags: string[];
     platform: CreatorPlatform;
     onSetHashtags: (keywords: string[]) => void;
+    onChangeTopics: () => void;
 };
 
-export const SearchHashtags = ({ hashtags, placeholder, onSetHashtags }: SearchTopicsProps) => {
+export const SearchHashtags = ({ hashtags, placeholder, onSetHashtags, onChangeTopics }: SearchTopicsProps) => {
     const { trackEvent } = useRudderstack();
 
     const [value, setValue] = useState('');
@@ -54,6 +55,7 @@ export const SearchHashtags = ({ hashtags, placeholder, onSetHashtags }: SearchT
                 disabled={hashtags.length < 10 ? false : true}
                 onChange={(e) => {
                     setValue(e.target.value);
+                    onChangeTopics();
                 }}
                 onKeyDown={(e) => {
                     // setHashtags([...hashtags, e.target.value]);

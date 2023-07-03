@@ -110,6 +110,13 @@ export const SearchOptions = ({
                         <Tooltip
                             content={t('tooltips.searchTopics.title')}
                             detail={t('tooltips.searchTopics.description')}
+                            link="/guide"
+                            linkText={t('tooltips.searchTopics.link')}
+                            highlight={
+                                platform === 'youtube'
+                                    ? t('tooltips.searchTopics.highlight')
+                                    : t('tooltips.searchHashTags.highlight')
+                            }
                             position="bottom-right"
                             className="w-fit"
                         >
@@ -121,19 +128,24 @@ export const SearchOptions = ({
                                 placeholder={t('creators.searchTopic')}
                                 topics={tags}
                                 platform={platform}
+                                onChangeTopics={() => {
+                                    hashtags.length !== 0 && setHashtags([]);
+                                    keywords.length !== 0 && setKeywords('');
+                                }}
                                 onSetTopics={(topics) => {
                                     setTopicTags(topics);
-                                    setHashtags([]);
-                                    setKeywords('');
                                 }}
                             />
                         </div>
                     </div>
                     {platform === 'youtube' ? (
-                        <div data-testid="search-keywords " className="flex h-full w-full flex-col justify-evenly">
+                        <div data-testid="search-keywords" className="flex h-full w-full flex-col justify-evenly">
                             <Tooltip
                                 content={t('tooltips.searchKeywords.title')}
                                 detail={t('tooltips.searchKeywords.description')}
+                                link="/guide"
+                                linkText={t('tooltips.searchKeywords.link')}
+                                highlight={t('tooltips.searchKeywords.highlight')}
                                 position="top-right"
                                 className="w-fit"
                             >
@@ -144,18 +156,23 @@ export const SearchOptions = ({
                                 placeholder={t('creators.searchKeywords')}
                                 keywords={keywords}
                                 platform={platform}
+                                onChangeTopics={() => {
+                                    tags.length !== 0 && setTopicTags([]);
+                                    hashtags.length !== 0 && setHashtags([]);
+                                }}
                                 onSetKeywords={(keywords) => {
-                                    setTopicTags([]);
-                                    setHashtags([]);
                                     setKeywords(keywords);
                                 }}
                             />
                         </div>
                     ) : (
-                        <div data-testid="search-hashtags " className="flex h-full w-full flex-col justify-evenly">
+                        <div data-testid="search-hashtags" className="flex h-full w-full flex-col justify-evenly">
                             <Tooltip
-                                content={t('tooltips.searchHashtags.title')}
-                                detail={t('tooltips.searchHashtags.description')}
+                                content={t('tooltips.searchHashTags.title')}
+                                detail={t('tooltips.searchHashTags.description')}
+                                link="/guide"
+                                linkText={t('tooltips.searchHashTags.link')}
+                                highlight={t('tooltips.searchHashTags.highlight')}
                                 position="top-right"
                                 className="w-fit"
                             >
@@ -167,9 +184,11 @@ export const SearchOptions = ({
                                 hashtags={hashtags}
                                 platform={platform}
                                 onSetHashtags={(hashtags) => {
-                                    setTopicTags([]);
                                     setHashtags(hashtags);
-                                    setKeywords('');
+                                }}
+                                onChangeTopics={() => {
+                                    tags.length !== 0 && setTopicTags([]);
+                                    keywords.length !== 0 && setKeywords('');
                                 }}
                             />
                         </div>
