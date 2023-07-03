@@ -45,8 +45,8 @@ export const Tooltip = ({
                     } z-30 w-auto rounded bg-white font-semibold text-gray-500 opacity-100 transition-opacity`}
                     role="tooltip"
                 >
-                    <div className="flex w-72 flex-col justify-evenly gap-2 p-2 leading-4 shadow-lg">
-                        <p className="text-md">{content}</p>
+                    <div className="flex w-max max-w-2xl flex-col justify-evenly gap-2 rounded-md p-4 leading-4 shadow-lg">
+                        <p className="text-md my-2">{content}</p>
                         {detail && <p className="text-sm font-normal text-gray-800">{detail}</p>}
                         {highlight && <p className="text-sm font-medium italic text-gray-800">{highlight}</p>}
                         {link && linkText && (
