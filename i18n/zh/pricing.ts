@@ -50,7 +50,7 @@ const pricing = {
         title: '免费试用',
         subTitle: '查看我们可以提供什么',
     },
-    save15Percent: '节省15%',
+    saveUpTo33Percent: '高达33%折扣',
 };
 
 export default pricing;

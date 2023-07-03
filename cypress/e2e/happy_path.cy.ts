@@ -269,9 +269,9 @@ describe('Main pages happy paths', () => {
         cy.contains('Edit', { timeout: 60000 }).click();
         cy.get('textarea[name=description]').type('This campaign is about selling some stuff');
         cy.get('input[name=product_name]').type('Gadget');
-        cy.get('input[id=react-select-3-input]').click();
+        cy.get('input[aria-haspopup="true"]').first().click();
         cy.contains('Books').click();
-        cy.get('input[id=react-select-5-input]').click();
+        cy.get('input[aria-haspopup="true"]').eq(1).click();
         cy.contains('Albania').click();
         cy.get('input[name=budget_cents]').type('1000');
         cy.get('input[name=promo_types]').check({ force: true });
