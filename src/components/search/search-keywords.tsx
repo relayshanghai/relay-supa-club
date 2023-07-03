@@ -37,6 +37,7 @@ export const SearchKeywords = ({ keywords, placeholder, onSetKeywords, onChangeT
                     className="w-full appearance-none border border-transparent bg-white px-3 py-2 font-medium text-gray-900 placeholder-gray-400 focus:border-transparent focus:outline-none focus:ring-0 sm:text-sm"
                     disabled={keywords === '' ? false : true}
                     placeholder={keywords === '' ? placeholder : ''}
+                    data-testid="input-keywords"
                     onChange={(e) => {
                         setValue(e.target.value);
                         onChangeTopics();
