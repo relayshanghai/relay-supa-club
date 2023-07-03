@@ -44,7 +44,7 @@ export const PricingPage = ({ page = 'upgrade' }: { page?: 'upgrade' | 'landing'
     const options: ActiveSubscriptionTier[] = landingPage ? ['free', 'diyMax', 'diy'] : ['diyMax', 'diy'];
 
     const handleStartFreeTrialClicked = () => {
-        trackEvent('Lading Page, clicked on start free trial');
+        trackEvent('Landing Page, clicked on start free trial');
         router.push('/signup');
     };
 
@@ -74,7 +74,7 @@ export const PricingPage = ({ page = 'upgrade' }: { page?: 'upgrade' | 'landing'
                             checked={period === 'quarterly'}
                             onChange={(e) => {
                                 setPeriod(e.target.checked ? 'quarterly' : 'monthly');
-                                trackEvent('Lading Page, clicked on switch', { selectedPeriod: period });
+                                trackEvent('Landing Page, clicked on switch', { selectedPeriod: period });
                             }}
                             beforeLabel={t('pricing.monthly') || 'Monthly'}
                             afterLabel={t('pricing.quarterly') || 'Quarterly'}

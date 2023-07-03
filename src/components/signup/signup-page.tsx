@@ -140,20 +140,20 @@ const SignUpPage = ({
         } else {
             setCurrentStep(currentStep + 1);
         }
+        // on step 5, which is the add payment step, we will track the events from PricingSection component and OnboardPaymentSection component.
         if (currentStep === 5) {
             return;
-        } else {
-            trackEvent(`Signup Wizard, step-${currentStep}`, {
-                firstName,
-                lastName,
-                phoneNumber,
-                email,
-                companyName,
-                companyWebsite,
-                companySize: selectedSize ?? '',
-                companyCategory: selectedCategory,
-            });
         }
+        trackEvent(`Signup Wizard, step-${currentStep}`, {
+            firstName,
+            lastName,
+            phoneNumber,
+            email,
+            companyName,
+            companyWebsite,
+            companySize: selectedSize ?? '',
+            companyCategory: selectedCategory,
+        });
     };
 
     const handleProfileCreate = async (formData: FieldValues) => {
