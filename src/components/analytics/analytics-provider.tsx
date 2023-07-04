@@ -8,7 +8,7 @@ import { createContext } from 'react';
 import { useEffect } from 'react';
 import { useState } from 'react';
 import { AnalyticsProvider as BaseAnalyticsProvider } from 'use-analytics';
-import { useSession } from './use-session';
+import { useSession } from 'src/hooks/use-session';
 import { SupabasePlugin } from '../../utils/analytics/plugins/analytics-plugin-supabase';
 
 type AnalyticsEvent = (analytics: AnalyticsInstance) => (value: any) => void;
