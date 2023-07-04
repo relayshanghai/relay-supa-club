@@ -1,5 +1,5 @@
 CREATE TABLE "public"."tracking_events" (
-  "id" uuid NOT NULL,
+  "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
   "created_at" timestamp with time zone DEFAULT now(),
   "user_id" uuid,
   "profile_id" uuid,

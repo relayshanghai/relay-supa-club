@@ -756,7 +756,7 @@ export interface Database {
           data?: Json | null
           event: string
           event_at?: string | null
-          id: string
+          id?: string
           journey_id?: string | null
           journey_type?: string | null
           profile_id?: string | null
