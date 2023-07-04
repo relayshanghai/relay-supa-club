@@ -13,6 +13,7 @@ import { Button } from '../button';
 import { Spinner } from '../icons';
 import { CancelSubscriptionModal } from './modal-cancel-subscription';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { ACCOUNT_SUBSCRIPTION } from 'src/utils/rudderstack/event-names';
 
 export const SubscriptionDetails = () => {
     const { subscription } = useSubscription();
@@ -24,7 +25,7 @@ export const SubscriptionDetails = () => {
     const [showCancelModal, setShowCancelModal] = useState(false);
     const handleCancelSubscription = async () => {
         setShowCancelModal(true);
-        trackEvent('Account, Subscription, open cancel subscription modal');
+        trackEvent(ACCOUNT_SUBSCRIPTION('open cancel subscription modal'));
     };
 
     checkStripeAndDatabaseMatch(company, subscription);
@@ -59,7 +60,7 @@ export const SubscriptionDetails = () => {
                         <Link href={buildSubscriptionPortalUrl({ id: company.id })}>
                             <Button
                                 variant="secondary"
-                                onClick={() => trackEvent('Account, Subscription, View billing portal')}
+                                onClick={() => trackEvent(ACCOUNT_SUBSCRIPTION('View billing portal'))}
                             >
                                 {t('account.subscription.viewBillingPortal')}
                             </Button>
@@ -165,7 +166,7 @@ export const SubscriptionDetails = () => {
                             <Button
                                 onClick={() =>
                                     trackEvent(
-                                        'Account, Subscription, click upgrade subscription and go to pricing page',
+                                        ACCOUNT_SUBSCRIPTION('click upgrade subscription and go to pricing page'),
                                     )
                                 }
                             >
