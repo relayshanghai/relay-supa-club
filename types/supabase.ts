@@ -734,6 +734,70 @@ export interface Database {
           }
         ]
       }
+      tracking_events: {
+        Row: {
+          anonymous_id: string | null
+          company_id: string | null
+          created_at: string | null
+          data: Json | null
+          event: string
+          event_at: string | null
+          id: string
+          journey_id: string | null
+          journey_type: string | null
+          profile_id: string | null
+          session_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          anonymous_id?: string | null
+          company_id?: string | null
+          created_at?: string | null
+          data?: Json | null
+          event: string
+          event_at?: string | null
+          id: string
+          journey_id?: string | null
+          journey_type?: string | null
+          profile_id?: string | null
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          anonymous_id?: string | null
+          company_id?: string | null
+          created_at?: string | null
+          data?: Json | null
+          event?: string
+          event_at?: string | null
+          id?: string
+          journey_id?: string | null
+          journey_type?: string | null
+          profile_id?: string | null
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tracking_events_company_id_fkey"
+            columns: ["company_id"]
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tracking_events_profile_id_fkey"
+            columns: ["profile_id"]
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tracking_events_user_id_fkey"
+            columns: ["user_id"]
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       usages: {
         Row: {
           company_id: string
