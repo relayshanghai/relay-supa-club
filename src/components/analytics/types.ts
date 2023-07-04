@@ -44,11 +44,29 @@ export type JourneyObject = {
     tag?: string;
 };
 
+export type JourneyEventPayload = {
+    [key: string]: any;
+    __tag?: string;
+    __previous?: JourneyObject | boolean | void | Promise<JourneyObject | void>;
+};
+
 export type Journey = {
-    onStart?: (journey: JourneyObject, payload?: any, tag?: string) => any;
-    onEnd?: (journey: JourneyObject, payload?: any) => any;
-    onAbort?: (journey: JourneyObject, payload?: any) => any;
-    onUpdate?: (journey: JourneyObject, payload?: any, tag?: string) => any;
+    onStart?: (
+        journey: JourneyObject,
+        payload?: JourneyEventPayload,
+    ) => JourneyObject | Promise<JourneyObject | void> | void;
+    onEnd?: (
+        journey: JourneyObject,
+        payload?: Omit<JourneyEventPayload, '__tag' | '__previous'>,
+    ) => JourneyObject | Promise<JourneyObject | void> | void;
+    onAbort?: (
+        journey: JourneyObject,
+        payload?: Omit<JourneyEventPayload, '__tag' | '__previous'>,
+    ) => JourneyObject | Promise<JourneyObject | void> | void;
+    onUpdate?: (
+        journey: JourneyObject,
+        payload?: Omit<JourneyEventPayload, '__tag'>,
+    ) => JourneyObject | Promise<JourneyObject | void> | void;
 };
 
 export enum JourneyStatus {

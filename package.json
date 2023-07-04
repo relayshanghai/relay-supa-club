@@ -36,6 +36,7 @@
     "@supabase/auth-helpers-react": "^0.3.1",
     "@supabase/supabase-js": "^2.20.0",
     "analytics": "^0.8.9",
+    "cookies-next": "^2.1.2",
     "date-fns": "^2.29.3",
     "dotenv": "^16.0.3",
     "fuse.js": "^6.6.2",
