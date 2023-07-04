@@ -1,4 +1,4 @@
-import type { AnalyticsInstance, AnalyticsPlugin } from 'analytics';
+import type { AnalyticsPlugin } from 'analytics';
 
 export type AnalyticsEventParam = {
     abort: () => void;
@@ -30,9 +30,6 @@ export type AnalyticsEventParam = {
     };
 };
 
-export type AnalyticsEvent = (analytics: AnalyticsInstance) => (value: any) => void;
-
-// @note I really should create a separate package for this now..
 export type JourneyObject = {
     id: string;
     name: string;

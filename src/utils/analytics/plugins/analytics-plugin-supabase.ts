@@ -1,5 +1,5 @@
 import type { AnalyticsPlugin } from 'analytics';
-import type { AnalyticsEventParam } from 'src/components/analytics/types';
+import type { AnalyticsEventParam } from '../types';
 
 export type SupabasePluginConfig = any;
 
