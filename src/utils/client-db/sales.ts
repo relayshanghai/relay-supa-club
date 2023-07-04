@@ -19,7 +19,7 @@ export const addSales = (db: SupabaseClient<DatabaseWithCustomTypes>) => async (
     });
 
     if (error) {
-        throw 'Error inserting sales data';
+        throw 'Error inserting sales data' + error.message;
     }
 };
 
@@ -29,7 +29,7 @@ export const getSales = (db: SupabaseClient<DatabaseWithCustomTypes>) => async (
     const { data, error } = await db.from('sales').select('amount').eq('company_id', companyId);
 
     if (error) {
-        throw 'Error getting sales data';
+        throw 'Error getting sales data' + error.message;
     }
 
     const totalAmount = data.reduce((sum: number, row: RowType) => sum + row.amount, 0);
