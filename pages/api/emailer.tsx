@@ -137,7 +137,7 @@ const postHandler: NextApiHandler = async (req: NextApiRequest, res: NextApiResp
     };
     console.log({ mailOptions });
 
-    mailer.sendMail(mailOptions, (error, info) => {
+    await mailer.sendMail(mailOptions, (error, info) => {
         if (error) {
             serverLogger(error, 'error');
         } else {
