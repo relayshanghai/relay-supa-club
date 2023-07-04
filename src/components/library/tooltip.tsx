@@ -42,13 +42,13 @@ export const Tooltip = ({
                             : position === 'left'
                             ? 'bottom-0 right-[110%]'
                             : 'bottom-0 left-[110%]'
-                    } z-30 w-auto rounded bg-white font-semibold text-gray-500 opacity-100 transition-opacity`}
+                    } z-30 w-auto rounded bg-black font-semibold text-gray-100 opacity-90 transition-opacity`}
                     role="tooltip"
                 >
                     <div className="flex w-max max-w-2xl flex-col justify-evenly gap-2 rounded-md p-4 leading-4 shadow-lg">
                         <p className="text-md my-2">{content}</p>
-                        {detail && <p className="text-sm font-normal text-gray-800">{detail}</p>}
-                        {highlight && <p className="text-sm font-medium italic text-gray-800">{highlight}</p>}
+                        {detail && <p className="text-sm font-normal text-gray-200">{detail}</p>}
+                        {highlight && <p className="text-sm font-medium italic text-gray-200">{highlight}</p>}
                         {link && linkText && (
                             <Link className="font-normal text-primary-400" href={link}>
                                 {linkText}

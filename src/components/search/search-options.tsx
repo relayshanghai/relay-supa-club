@@ -7,10 +7,11 @@ import SearchTopics from './search-topics';
 import { Tooltip } from '../library';
 // import { featRecommended } from 'src/constants/feature-flags';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import WordCloudComponent from '../wordcloud';
 import SearchKeywords from './search-keywords';
 import SearchHashtags from './search-hashtags';
+import { Question } from '../icons';
 
 export const SearchOptions = ({
     setPage,
@@ -45,6 +46,7 @@ export const SearchOptions = ({
         hashtags,
         setHashtags,
     } = useSearch();
+    const [keywordInput, setKeywordInput] = useState<string>('');
 
     const { t } = useTranslation();
     // const hasSetViews = views[0] || views[1];
@@ -52,6 +54,11 @@ export const SearchOptions = ({
     const { trackEvent } = useRudderstack();
 
     const handleSearch = (e: any) => {
+        setKeywords(keywordInput);
+        trackEvent('Search Filter Modal, change keywords', {
+            keywords: keywordInput,
+        });
+        setKeywordInput('');
         e.preventDefault();
         setActiveSearch(true);
         setPage(0);
@@ -107,21 +114,22 @@ export const SearchOptions = ({
             <div className="flex h-full  flex-row">
                 <div className="flex w-full flex-col items-start justify-evenly space-y-2 py-4 font-light md:gap-x-4 md:gap-y-0">
                     <div data-testid="search-topics" className="flex h-full w-full flex-col justify-evenly">
-                        <Tooltip
-                            content={t('tooltips.searchTopics.title')}
-                            detail={t('tooltips.searchTopics.description')}
-                            link="/guide"
-                            linkText={t('tooltips.searchTopics.link')}
-                            highlight={
-                                platform === 'youtube'
-                                    ? t('tooltips.searchTopics.highlight')
-                                    : t('tooltips.searchHashTags.highlight')
-                            }
-                            position="bottom-right"
-                            className="w-fit"
-                        >
+                        <div className="flex gap-2">
                             <p className="mb-2 text-sm font-semibold">{t('creators.searchTopicLabel')}</p>
-                        </Tooltip>
+                            <Tooltip
+                                content={t('tooltips.searchTopics.title')}
+                                detail={t('tooltips.searchTopics.description')}
+                                highlight={
+                                    platform === 'youtube'
+                                        ? t('tooltips.searchTopics.highlight')
+                                        : t('tooltips.searchHashTags.highlight')
+                                }
+                                position="bottom-right"
+                                className="w-fit"
+                            >
+                                <Question className="stroke-gray-300" />
+                            </Tooltip>
+                        </div>
                         <div>
                             <SearchTopics
                                 path="influencer-search/topics"
@@ -140,19 +148,22 @@ export const SearchOptions = ({
                     </div>
                     {platform === 'youtube' ? (
                         <div data-testid="search-keywords" className="flex h-full w-full flex-col justify-evenly">
-                            <Tooltip
-                                content={t('tooltips.searchKeywords.title')}
-                                detail={t('tooltips.searchKeywords.description')}
-                                link="/guide"
-                                linkText={t('tooltips.searchKeywords.link')}
-                                highlight={t('tooltips.searchKeywords.highlight')}
-                                position="top-right"
-                                className="w-fit"
-                            >
+                            <div className="flex gap-2">
                                 <p className="mb-2 text-sm font-semibold">{t('creators.searchKeywordsLabel')}</p>
-                            </Tooltip>
+                                <Tooltip
+                                    content={t('tooltips.searchKeywords.title')}
+                                    detail={t('tooltips.searchKeywords.description')}
+                                    highlight={t('tooltips.searchKeywords.highlight')}
+                                    position="top-right"
+                                    className="w-fit"
+                                >
+                                    <Question className="stroke-gray-300" />
+                                </Tooltip>
+                            </div>
                             <SearchKeywords
                                 path="influencer-search/topics"
+                                keywordInput={keywordInput}
+                                setKeywordInput={setKeywordInput}
                                 placeholder={t('creators.searchKeywords')}
                                 keywords={keywords}
                                 platform={platform}
@@ -167,17 +178,18 @@ export const SearchOptions = ({
                         </div>
                     ) : (
                         <div data-testid="search-hashtags" className="flex h-full w-full flex-col justify-evenly">
-                            <Tooltip
-                                content={t('tooltips.searchHashTags.title')}
-                                detail={t('tooltips.searchHashTags.description')}
-                                link="/guide"
-                                linkText={t('tooltips.searchHashTags.link')}
-                                highlight={t('tooltips.searchHashTags.highlight')}
-                                position="top-right"
-                                className="w-fit"
-                            >
+                            <div className="flex gap-2">
                                 <p className="mb-2 w-fit text-sm font-semibold">{t('creators.searchHashTagsLabel')}</p>
-                            </Tooltip>
+                                <Tooltip
+                                    content={t('tooltips.searchHashTags.title')}
+                                    detail={t('tooltips.searchHashTags.description')}
+                                    highlight={t('tooltips.searchHashTags.highlight')}
+                                    position="top-right"
+                                    className="w-fit"
+                                >
+                                    <Question className="stroke-gray-300" />
+                                </Tooltip>
+                            </div>
                             <SearchHashtags
                                 path="influencer-search/topics"
                                 placeholder={t('creators.searchHashTags')}

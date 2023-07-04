@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import type { CreatorPlatform } from 'types';
 
@@ -6,14 +5,22 @@ type SearchTopicsProps = {
     path: string;
     placeholder: string;
     keywords: string;
+    keywordInput: string;
+    setKeywordInput: (keywords: string) => void;
     platform: CreatorPlatform;
     onSetKeywords: (keywords: string) => void;
     onChangeTopics: () => void;
 };
 
-export const SearchKeywords = ({ keywords, placeholder, onSetKeywords, onChangeTopics }: SearchTopicsProps) => {
+export const SearchKeywords = ({
+    keywords,
+    keywordInput,
+    setKeywordInput,
+    placeholder,
+    onSetKeywords,
+    onChangeTopics,
+}: SearchTopicsProps) => {
     const { trackEvent } = useRudderstack();
-    const [value, setValue] = useState('');
     return (
         <>
             <div className="flex w-full flex-row items-center rounded-md border border-gray-200 bg-white px-2 text-gray-900 ring-1 ring-gray-900 ring-opacity-5 focus:border-primary-500 focus:outline-none focus:ring-primary-500 sm:text-sm">
@@ -39,20 +46,20 @@ export const SearchKeywords = ({ keywords, placeholder, onSetKeywords, onChangeT
                     placeholder={keywords === '' ? placeholder : ''}
                     data-testid="input-keywords"
                     onChange={(e) => {
-                        setValue(e.target.value);
+                        setKeywordInput(e.target.value);
                         onChangeTopics();
                     }}
                     onKeyDown={(e) => {
                         if (e.key === 'Enter') {
                             e.preventDefault();
-                            onSetKeywords(value);
+                            onSetKeywords(keywordInput);
                             trackEvent('Search Filter Modal, change keywords', {
-                                keywords: value,
+                                keywords: keywordInput,
                             });
-                            setValue('');
+                            setKeywordInput('');
                         }
                     }}
-                    value={value}
+                    value={keywordInput}
                 />
             </div>
         </>
