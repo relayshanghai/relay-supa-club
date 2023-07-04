@@ -33,5 +33,6 @@ const signup = {
         description4: 'See the impact of your campaigns',
     },
     alreadySignedUp: 'Already signed up?',
+    noProfileId: 'Could not find profile id',
 };
 export default signup;
