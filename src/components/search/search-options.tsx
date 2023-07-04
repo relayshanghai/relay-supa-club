@@ -208,6 +208,7 @@ export const SearchOptions = ({
                     <div className="flex w-full justify-end">
                         <div className="my-4 grid w-fit grid-cols-2 items-center gap-4">
                             <button
+                                data-testid="filters-button"
                                 onClick={() => {
                                     setShowFiltersModal(true);
                                     trackEvent('Search Filters Modal, open modal');
@@ -219,27 +220,6 @@ export const SearchOptions = ({
                             <Button data-testid="search-button" className="col-span-1" onClick={(e) => handleSearch(e)}>
                                 {t('campaigns.index.search')}
                             </Button>
-
-                            {/* {featRecommended() && (
-                                <div className="ml-auto">
-                                    <Tooltip
-                                        content={t('creators.recommendedTooltip')}
-                                        detail={t('creators.recommendedTooltipDetail')}
-                                        className="flex flex-wrap items-center"
-                                        position="top-left"
-                                    >
-                                        <Switch
-                                            disabled={!recommendedInfluencers || recommendedInfluencers.length === 0}
-                                            data-testid="recommended-toggle"
-                                            checked={onlyRecommended}
-                                            onChange={(e) => {
-                                                setOnlyRecommended(e.target.checked);
-                                            }}
-                                            beforeLabel="Recommended only"
-                                        />
-                                    </Tooltip>
-                                </div>
-                            )} */}
                         </div>
                     </div>
                 </div>

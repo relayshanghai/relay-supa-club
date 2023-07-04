@@ -24,27 +24,32 @@ describe('<SearchPage />', () => {
         );
         cy.contains('T-Series');
     });
-    it.skip('can filter results by recommended or not. toggle has a hover message like in search-result-row', () => {
+    it('can filter results and clear filters', () => {
         testMount(
             <SearchProvider>
                 <SearchPageInner />
             </SearchProvider>,
         );
-        cy.contains(
-            'We found 8.43M influencer accounts relevant to your topics or using your keywords in recent videos, that matched your filters',
-        );
+        cy.findAllByTestId('filters-button').click();
+        cy.contains('Filters');
+        cy.contains('Audience Filters');
+        cy.contains('Influencer Filters');
+        cy.findAllByTestId('has-email-toggle').check({ force: true });
+        cy.get('[data-testid="filter-gender"]').select('Male');
+        cy.get('[data-testid="filter-gender-percent"]').select('>50%');
 
-        cy.findAllByRole('row').should('have.length', 11);
+        cy.get('[data-testid="filter-lowerage"]').select('45');
+        cy.get('[data-testid="filter-upperage"]').select('64');
+        cy.get('[data-testid="filter-age-percent"]').select('>30%');
 
-        cy.contains(
-            'Are those which have worked with relay.club brands in the past and are known to be open to cooperation',
-        ).should('not.exist');
-        cy.findByTestId('recommended-toggle').click({ force: true });
-        cy.contains(
-            'Are those which have worked with relay.club brands in the past and are known to be open to cooperation',
-        );
-        // TODO: reimplement
-        // cy.findAllByRole('row').should('have.length', 3);
+        cy.findAllByTestId('search-with-filters').click();
+
+        cy.findAllByTestId('filters-button').click();
+        cy.findAllByTestId('clear-filters').click();
+        cy.get('[data-testid="filter-gender"]').should('have.value', 'ANY');
+        cy.get('[data-testid="filter-gender-percent"]').should('be.disabled');
+
+        // cy.findAllByRole('row').should('have.length', 11);
     });
     it('renders with no results', () => {
         const searchResult = {
