@@ -16,6 +16,8 @@ import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { isRecommendedInfluencer } from 'src/utils/utils';
 
 import type { CampaignCreatorBasicInfo } from 'src/utils/client-db/campaignCreators';
+import { useAtom } from 'jotai';
+import { clientRoleAtom } from 'src/atoms/client-role-atom';
 export interface SearchResultRowProps {
     creator: CreatorSearchAccountObject;
     setSelectedCreator: (creator: CreatorSearchAccountObject) => void;
@@ -123,6 +125,8 @@ export const SearchResultRow = ({
     };
 
     const desktop = useAboveScreenWidth(500);
+    const [clientRoleData] = useAtom(clientRoleAtom);
+    const inActAsMode = clientRoleData.companyId?.length > 0;
 
     return (
         <tr className="group hover:bg-primary-100">
@@ -169,7 +173,7 @@ export const SearchResultRow = ({
                 <div className="relative hidden flex-row items-center justify-center gap-2 duration-100 group-hover:opacity-100 lg:flex lg:opacity-100">
                     <Link
                         href={`/influencer/${platform}/${user_id}`}
-                        target="_blank"
+                        target={inActAsMode ? '_self' : '_blank'}
                         rel="noopener noreferrer"
                         onClick={() => trackEvent('Search Result Row, open report', { platform, user_id })}
                         data-testid={`analyze-button/${user_id}`}

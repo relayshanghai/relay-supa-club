@@ -18,22 +18,25 @@ function RadioWithRef({ label, options, onValueChange, onKeyDown }: RadioProps, 
     return (
         <div className="flex flex-col">
             <div className="text-sm font-semibold text-gray-800">{label}</div>
-            <div className="my-2 flex justify-between space-x-5">
+            <div className="my-2 flex justify-between space-x-3">
                 {options.map((option, index) => (
-                    <div className="flex flex-grow whitespace-nowrap" key={index}>
-                        <label className="flex w-full rounded-md border border-gray-200 bg-white p-3 focus:border-primary-500 focus:ring-primary-500">
-                            <input
-                                type="radio"
-                                name="radio-button"
-                                className="pointer-events-none mt-0.5 rounded-full border-gray-200 text-primary-600 focus:ring-primary-500"
-                                id="radio-button"
-                                value={option.value}
-                                checked={selectedValue === option.value}
-                                onChange={handleChange}
-                                ref={ref}
-                                onKeyDown={onKeyDown}
-                            />
-                            <span className="ml-3 text-sm font-medium text-gray-500">{option.label}</span>
+                    <div className="flex whitespace-nowrap rounded-md border border-gray-200 bg-white p-3" key={index}>
+                        <input
+                            type="radio"
+                            name="radio-button"
+                            id="radio-button"
+                            className="mt-1 rounded-full border-2 border-gray-200 text-primary-600 focus:ring-1 focus:ring-primary-500"
+                            value={option.value}
+                            checked={selectedValue === option.value}
+                            onChange={handleChange}
+                            ref={ref}
+                            onKeyDown={onKeyDown}
+                        />
+                        <label
+                            className="ml-2 flex w-full rounded-md border-none text-base font-medium"
+                            htmlFor="radio-button"
+                        >
+                            {option.label}
                         </label>
                     </div>
                 ))}

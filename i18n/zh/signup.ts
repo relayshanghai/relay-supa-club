@@ -33,5 +33,6 @@ const signup = {
         description4: 'KOL 数据一目了然',
     },
     alreadySignedUp: '已经注册过账号？',
+    noProfileId: '找不到账户ID',
 };
 export default signup;
