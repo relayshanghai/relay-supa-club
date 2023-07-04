@@ -8,9 +8,9 @@ import { createContext } from 'react';
 import { useEffect } from 'react';
 import { useState } from 'react';
 import { AnalyticsProvider as BaseAnalyticsProvider } from 'use-analytics';
-import { SupabasePlugin } from './analytics-plugin-supabase';
 import { useSession } from './use-session';
 import type { AnalyticsEvent } from './types';
+import { SupabasePlugin } from '../../utils/analytics/plugins/analytics-plugin-supabase';
 
 const createTrack = (analytics: AnalyticsInstance) => (event: AnalyticsEvent) => event(analytics);
 

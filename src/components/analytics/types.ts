@@ -1,7 +1,5 @@
 import type { AnalyticsInstance, AnalyticsPlugin } from 'analytics';
 
-export type SupabasePluginConfig = any;
-
 export type AnalyticsEventParam = {
     abort: () => void;
     config: any;
