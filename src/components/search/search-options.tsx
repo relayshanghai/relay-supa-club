@@ -12,7 +12,8 @@ import LocationTag from './location-tag';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { useEffect } from 'react';
 import { useAnalytics } from '../analytics/analytics-provider';
-import { SearchFilterAudienceLocationUsed } from '../analytics/events/search-filter-audience_location';
+import { SearchFilterAudienceLocationUsed } from 'src/utils/analytics/events/search-filter-audience_location';
+// import { clearJourneys, listJourneys, startJourney } from '../analytics/journey';
 
 const filterCountry = (items: any[]) => {
     return items.filter((item: any) => {
@@ -71,7 +72,7 @@ export const SearchOptions = ({
     // TODO:comment out the related codes when feat recommended is ready
     useEffect(() => {
         if (activeSearch) {
-            setSearchParams({
+            const params = {
                 platform,
                 tags,
                 username,
@@ -85,7 +86,12 @@ export const SearchOptions = ({
                 audienceLocation,
                 // recommendedInfluencers: featRecommended() ? recommendedInfluencers : [],
                 // only_recommended: featRecommended() ? onlyRecommended : false,
-            });
+            };
+
+            // startJourney({ name: 'search', search: params })
+            // console.log("list journeys", listJourneys())
+
+            setSearchParams(params);
         }
     }, [
         activeSearch,
