@@ -45,7 +45,7 @@ type AnalyticsProviderProps = PropsWithChildren;
 export const AnalyticsProvider = ({ children }: AnalyticsProviderProps) => {
     const { supabaseClient: client } = useSessionContext();
 
-    const session = useSession();
+    const { session } = useSession();
 
     const [analytics] = useState(() => initAnalytics([SupabasePlugin({ client })]));
 

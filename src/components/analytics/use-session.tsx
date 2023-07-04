@@ -1,6 +1,6 @@
 import type { Session } from '@supabase/auth-helpers-react';
 import { useSessionContext } from '@supabase/auth-helpers-react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 type useSessionParams = {
     onClear?: () => void;
@@ -44,6 +44,10 @@ export const useSession = (params?: useSessionParams) => {
 
     const [session, setSession] = useState<Session | null>(null);
 
+    const refreshSession = useCallback(() => {
+        setSession(supabaseSession);
+    }, [supabaseSession]);
+
     useEffect(() => {
         setSession((state) => {
             if (supabaseSession === null && state !== null) {
@@ -64,5 +68,5 @@ export const useSession = (params?: useSessionParams) => {
         });
     }, [supabaseSession, setSession, params]);
 
-    return session;
+    return { session, refreshSession };
 };
