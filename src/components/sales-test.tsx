@@ -1,13 +1,17 @@
-import { useState } from 'react';
-import { addSales, getSales } from 'src/utils/client-db/sales';
+import { useEffect, useState } from 'react';
+import { addSales, deleteSales, getSales } from 'src/utils/client-db/sales';
 import { useDB } from 'src/utils/client-db/use-client-db';
 
 const SalesTestComponent = () => {
     const addToSales = useDB<typeof addSales>(addSales);
     const getFromSales = useDB<typeof getSales>(getSales);
+    const deleteFromSales = useDB<typeof deleteSales>(deleteSales);
     const [sales, setSales] = useState<number>(0);
     const companyID = 'a02811bb-8920-45b0-ba99-ce64c61d1855';
     const campaignID = '6fa76f19-2860-4926-8e06-39a8fec71eb7';
+    useEffect(() => {
+        deleteFromSales(companyID);
+    }, [deleteFromSales]);
     return (
         <div>
             <button

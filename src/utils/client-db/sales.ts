@@ -36,3 +36,15 @@ export const getSales = (db: SupabaseClient<DatabaseWithCustomTypes>) => async (
 
     return totalAmount;
 };
+
+export const deleteSales = (db: SupabaseClient<DatabaseWithCustomTypes>) => async (companyId: string) => {
+    if (companyId.length <= 0) throw 'Company ID missing!';
+
+    const { error } = await db.from('sales').delete().eq('company_id', companyId);
+
+    if (error) {
+        throw 'Error deleting sales data: ' + error.message;
+    }
+
+    return 'Sales data deleted successfully.';
+};
