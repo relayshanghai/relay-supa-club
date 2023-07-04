@@ -4,9 +4,12 @@ import { PriceDetailsCard } from '../pricing/price-details-card';
 import type { ActiveSubscriptionPeriod, ActiveSubscriptionTier } from 'src/hooks/use-prices';
 import { PRICE_IDS, usePrices } from 'src/hooks/use-prices';
 import { useTranslation } from 'react-i18next';
+import { useRudderstack } from 'src/hooks/use-rudderstack';
 
 export const PricingSection = ({ setPriceId }: { setPriceId: (priceId: string) => void }) => {
     const { t } = useTranslation();
+    const { trackEvent } = useRudderstack();
+
     const [period, setPeriod] = useState<ActiveSubscriptionPeriod>('quarterly');
     const [priceTier, setPriceTier] = useState<ActiveSubscriptionTier>('diyMax');
     const prices = usePrices();
@@ -22,6 +25,9 @@ export const PricingSection = ({ setPriceId }: { setPriceId: (priceId: string) =
                 checked={period === 'quarterly'}
                 onChange={(e) => {
                     setPeriod(e.target.checked ? 'quarterly' : 'monthly');
+                    trackEvent('Signup Wizard, Pricing Section, click to toggle monthly or quarterly', {
+                        selectedPeriod: period,
+                    });
                 }}
                 afterLabel={t('pricing.quarterly') || 'Quarterly'}
             />
@@ -30,7 +36,10 @@ export const PricingSection = ({ setPriceId }: { setPriceId: (priceId: string) =
                     className={`pr-4 text-5xl font-semibold ${
                         priceTier === 'diyMax' ? 'text-gray-700' : 'text-gray-300'
                     }`}
-                    onClick={() => setPriceTier('diyMax')}
+                    onClick={() => {
+                        setPriceTier('diyMax');
+                        trackEvent('Signup Wizard, Pricing Section, click to select DIY Max');
+                    }}
                 >
                     DIY Max
                 </button>
@@ -38,7 +47,10 @@ export const PricingSection = ({ setPriceId }: { setPriceId: (priceId: string) =
                     className={`pl-4 text-5xl font-semibold ${
                         priceTier === 'diyMax' ? 'text-gray-300' : 'text-gray-700'
                     }`}
-                    onClick={() => setPriceTier('diy')}
+                    onClick={() => {
+                        setPriceTier('diy');
+                        trackEvent('Signup Wizard, Pricing Section, click to select DIY');
+                    }}
                 >
                     DIY
                 </button>
