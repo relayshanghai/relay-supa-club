@@ -1,6 +1,7 @@
 import { testMount } from 'src/utils/cypress-app-wrapper';
 import SalesTestComponent from './sales-test';
 
+// Test will only run if the company does not have any pre-existing sales
 describe('check if client hooks functioning', () => {
     it('renders', () => {
         testMount(<SalesTestComponent />);
