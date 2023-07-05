@@ -15,7 +15,7 @@ export const addSales = (db: SupabaseClient<DatabaseWithCustomTypes>) => async (
     const { error } = await db.from('sales').insert(body);
 
     if (error) {
-        throw 'Error inserting sales data' + error.message;
+        throw 'Error inserting sales data: ' + error.message;
     }
 };
 
