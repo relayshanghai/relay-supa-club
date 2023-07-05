@@ -20,7 +20,7 @@ export const CampaignSalesModal = ({
     return (
         <Modal
             visible={show}
-            maxWidth={`max-w-sm`}
+            maxWidth="max-w-sm"
             onClose={() => setShow(false)}
             title={t('campaigns.addSalesModal.title') || ''}
         >
