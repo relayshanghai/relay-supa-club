@@ -12,11 +12,7 @@ export type RowType = {
 };
 
 export const addSales = (db: SupabaseClient<DatabaseWithCustomTypes>) => async (body: SalesType) => {
-    const { error } = await db.from('sales').insert({
-        campaign_id: body.campaign_id,
-        company_id: body.company_id,
-        amount: body.amount,
-    });
+    const { error } = await db.from('sales').insert(body);
 
     if (error) {
         throw 'Error inserting sales data' + error.message;
