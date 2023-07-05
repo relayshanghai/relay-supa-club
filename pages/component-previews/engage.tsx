@@ -15,6 +15,7 @@ export default function Gmail() {
 
     const [status, setStatus] = useState(0);
     const [checkingStatus, setCheckingStatus] = useState(false);
+    const [recordsStatus, setRecordsStatus] = useState<CheckDomainResponse['result'][0]>();
 
     const [recipient, setRecipient] = useState('');
     const [content, setContent] = useState('');
@@ -55,6 +56,9 @@ export default function Gmail() {
                 body,
             });
             console.log({ res });
+            if (res.result[0]) {
+                setRecordsStatus(res.result[0]);
+            }
             if (res.result[0]?.status === 1 || res.result[0]?.status === 2) {
                 setStatus(res.result[0]?.status);
             } else {
@@ -164,6 +168,14 @@ export default function Gmail() {
                         Check record registration
                     </Button>
                     <p>registration status: {status === 0 ? 'unverified' : status === 1 ? 'usable' : 'verified'} </p>
+                    {recordsStatus && (
+                        <div className="flex flex-col space-y-2">
+                            <p>SPF: {recordsStatus.config.spf ? 'ok' : 'not ok'}</p>
+                            <p>DKIM: {recordsStatus.config.dkim ? 'ok' : 'not ok'}</p>
+                            <p>MX: {recordsStatus.config.mx ? 'ok' : 'not ok'}</p>
+                            <p>DMARC: {recordsStatus.config.dmarc ? 'ok' : 'not ok'}</p>
+                        </div>
+                    )}
                 </div>
             )}
 
