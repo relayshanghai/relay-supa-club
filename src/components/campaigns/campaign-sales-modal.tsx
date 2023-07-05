@@ -1,8 +1,7 @@
 import { Modal } from '../modal';
 import { Button } from '../button';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { toast } from 'react-hot-toast';
 
 export const CampaignSalesModal = ({
     show,
@@ -16,6 +15,16 @@ export const CampaignSalesModal = ({
     const { t } = useTranslation();
 
     const [amount, setAmount] = useState<number>(0);
+    const [error, setError] = useState<boolean>(false);
+
+    const handleSubmit = useCallback(() => {
+        if (isNaN(amount)) {
+            setError(true);
+            return;
+        }
+        onAddSales(amount);
+        setShow(false);
+    }, [amount, onAddSales, setShow]);
 
     return (
         <Modal
@@ -29,28 +38,18 @@ export const CampaignSalesModal = ({
                     <p>{t('campaigns.addSalesModal.currency')}</p>
                     <div className="w-full rounded-full">
                         <input
-                            className="input-field"
-                            type="number"
+                            className={`input-field ${error && 'border-red-500 focus-within:border-red-500'}`}
                             autoComplete="off"
                             data-testid="campaign-sales-input"
-                            onChange={(e) => {
-                                const input = parseFloat(e.target.value);
-                                if (isNaN(input)) {
-                                    toast.error('Please enter a number!');
-                                    return;
-                                }
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                                 setAmount(parseFloat(e.target.value));
+                                setError(false);
                             }}
                         />
                     </div>
                 </div>
-                <Button
-                    className="w-full"
-                    onClick={() => {
-                        onAddSales(amount);
-                        setShow(false);
-                    }}
-                >
+                {error && <p className="text-red-500">{t('campaigns.addSalesModal.error')}</p>}
+                <Button className="w-full" onClick={handleSubmit}>
                     {t('campaigns.addSalesModal.modalButton')}
                 </Button>
             </div>

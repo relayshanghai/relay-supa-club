@@ -16,4 +16,11 @@ describe('CampaignSalesModal', () => {
         cy.contains('Add Amount').click();
         cy.wrap(onAddSales).should('be.calledWith', 999999);
     });
+
+    it('Should error on submitting NaN values', () => {
+        testMount(<CampaignSalesModal show={true} setShow={cy.stub().withArgs(false)} onAddSales={cy.stub()} />);
+        cy.get('[data-testid=campaign-sales-input]').type('not a number');
+        cy.contains('Add Amount').click();
+        cy.contains('Please enter a number');
+    });
 });

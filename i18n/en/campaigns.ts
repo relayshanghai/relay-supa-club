@@ -93,6 +93,7 @@ const campaigns = {
         title: 'Add Sales (USD)',
         currency: '$',
         modalButton: 'Add Amount',
+        error: 'Please enter a number',
     },
     email: {
         dayLimit: 'You can only send an influencer an email every 24 hours to avoid spam.',
