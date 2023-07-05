@@ -88,6 +88,12 @@ const campaigns = {
         delivered: 'Delivered',
         influencerUpdated: 'Influencer Information Updated',
     },
+    addSalesModal: {
+        caption: 'Add Sales',
+        title: 'Add Sales (USD)',
+        currency: '$',
+        modalButton: 'Add Amount',
+    },
     email: {
         dayLimit: 'You can only send an influencer an email every 24 hours to avoid spam.',
         emailSent: 'Email sent successfully',
