@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useRudderstack } from 'src/hooks/use-rudderstack';
+import type { KeyboardEvent } from 'react';
 import type { CreatorPlatform } from 'types';
 
 type SearchTopicsProps = {
@@ -12,25 +12,23 @@ type SearchTopicsProps = {
 };
 
 export const SearchHashtags = ({ hashtags, placeholder, onSetHashtags, onChangeTopics }: SearchTopicsProps) => {
-    const { trackEvent } = useRudderstack();
+    const [hashTagInput, setHashTagInput] = useState('');
 
-    const [value, setValue] = useState('');
-
-    const tagKeyboardInputHandler = (e: React.KeyboardEvent) => {
-        if (e.key === 'Backspace' && !value) {
+    const tagKeyboardInputHandler = (e: KeyboardEvent) => {
+        if (e.key === 'Backspace' && !hashTagInput && hashtags.length > 0) {
             e.preventDefault();
             let lastTag = '';
 
             if (hashtags.length === 0) return;
             lastTag = hashtags[hashtags.length - 1];
 
-            setValue(lastTag);
+            setHashTagInput(lastTag);
             // Remove last tag
             onSetHashtags(hashtags.filter((_, i) => i !== hashtags.length - 1));
         } else if (e.key === ' ' || e.key === 'Enter') {
             e.preventDefault();
-            onSetHashtags([...hashtags, value]);
-            setValue('');
+            onSetHashtags([...hashtags, hashTagInput]);
+            setHashTagInput('');
         }
     };
 
@@ -64,16 +62,13 @@ export const SearchHashtags = ({ hashtags, placeholder, onSetHashtags, onChangeT
                 placeholder={hashtags.length < 10 ? placeholder : ''}
                 disabled={hashtags.length < 10 ? false : true}
                 onChange={(e) => {
-                    setValue(e.target.value);
+                    setHashTagInput(e.target.value);
                     onChangeTopics();
                 }}
-                onKeyDown={(e) => {
+                onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
                     tagKeyboardInputHandler(e);
-                    trackEvent('Search Filter Modal, change hashtags', {
-                        hashtags: hashtags,
-                    });
                 }}
-                value={value}
+                value={hashTagInput}
             />
         </div>
     );

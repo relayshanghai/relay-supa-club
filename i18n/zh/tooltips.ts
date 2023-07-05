@@ -1,6 +1,6 @@
 const tooltips = {
     searchTopics: {
-        title: '主题',
+        title: '按主题搜索',
         description: '我们基于KOL的长期创作内容，以确定与KOL相关的主题。',
         link: '了解更多',
         highlight: '在每一次搜索中，您只能使用相关主题词或关键短语功能进行单独搜索，不能同时使用这两个搜索功能。',

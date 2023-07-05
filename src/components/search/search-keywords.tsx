@@ -1,5 +1,5 @@
-import { useRudderstack } from 'src/hooks/use-rudderstack';
 import type { CreatorPlatform } from 'types';
+import type { ChangeEvent, KeyboardEvent } from 'react';
 
 type SearchTopicsProps = {
     path: string;
@@ -20,7 +20,6 @@ export const SearchKeywords = ({
     onSetKeywords,
     onChangeTopics,
 }: SearchTopicsProps) => {
-    const { trackEvent } = useRudderstack();
     return (
         <>
             <div
@@ -49,17 +48,14 @@ export const SearchKeywords = ({
                     disabled={keywords === '' ? false : true}
                     placeholder={keywords === '' ? placeholder : ''}
                     data-testid="input-keywords"
-                    onChange={(e) => {
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
                         setKeywordInput(e.target.value);
                         onChangeTopics();
                     }}
-                    onKeyDown={(e) => {
+                    onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
                         if (e.key === 'Enter') {
                             e.preventDefault();
                             onSetKeywords(keywordInput);
-                            trackEvent('Search Filter Modal, change keywords', {
-                                keywords: keywordInput,
-                            });
                             setKeywordInput('');
                         }
                     }}
