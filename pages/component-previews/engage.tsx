@@ -17,6 +17,7 @@ export default function Gmail() {
     const [checkingStatus, setCheckingStatus] = useState(false);
     const [recordsStatus, setRecordsStatus] = useState<CheckDomainResponse['result'][0]>();
 
+    const [sender, setSender] = useState('');
     const [recipient, setRecipient] = useState('');
     const [content, setContent] = useState('');
 
@@ -73,10 +74,18 @@ export default function Gmail() {
 
     const handleSendEmail = async () => {
         try {
+            if (!recipient || !content) {
+                alert('please fill in all fields');
+                return;
+            }
+            if (sender && sender.split('@')[1] !== domain) {
+                alert('sender must be from the domain');
+                return;
+            }
             const body: EngagePostBody = {
                 type: 'sendEmail',
                 to: [recipient],
-                from: 'testuser@' + domain,
+                from: sender ? sender : 'testuser@' + domain,
                 body: {
                     subject: 'test',
                     content: { text: content },
@@ -188,7 +197,16 @@ export default function Gmail() {
                     }}
                 >
                     <label htmlFor="recipient">Email recipient:</label>
-                    <br />
+
+                    <input
+                        type="text"
+                        id="sender"
+                        name="sender"
+                        value={sender}
+                        onChange={(e) => setSender(e.target.value)}
+                        placeholder="Default will be testuser@your.domain"
+                    />
+
                     <input
                         type="text"
                         id="recipient"
@@ -197,10 +215,9 @@ export default function Gmail() {
                         onChange={(e) => setRecipient(e.target.value)}
                         placeholder="friend@example.com"
                     />
-                    <br />
 
                     <label htmlFor="content">Email content:</label>
-                    <br />
+
                     <input
                         type="text"
                         id="content"
@@ -209,7 +226,6 @@ export default function Gmail() {
                         onChange={(e) => setContent(e.target.value)}
                         placeholder="Hi how are you?"
                     />
-                    <br />
 
                     <Button>SUBMIT</Button>
                 </form>
