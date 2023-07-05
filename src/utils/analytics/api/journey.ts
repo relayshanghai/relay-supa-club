@@ -1,6 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { JOURNEY_COOKIE_NAME } from '../constants';
 import { getCookie } from 'cookies-next';
+import { parseJson } from 'src/utils/json';
+import { JourneyObject } from '../types';
 
 /**
  * a Server Context contains a request and response
@@ -19,11 +21,17 @@ export const getJourney = (ctx: ctx) => {
         cookie = String(cookie);
     }
 
-    const [id, name, status, created_at, updated_at, tag] = cookie.split('|');
+    const journey = parseJson<JourneyObject>(cookie);
 
-    if (!updated_at) {
+    if (journey === false) {
         return null;
     }
 
-    return { id, name, status, created_at, updated_at, tag };
+    const result = JourneyObject.safeParse(journey);
+
+    if (result.success === false) {
+        return null;
+    }
+
+    return result.data;
 };

@@ -1,4 +1,6 @@
+import { z } from 'zod';
 import type { AnalyticsPlugin } from 'analytics';
+import { timestamp } from '../datetime';
 
 export type AnalyticsEventParam = {
     abort: () => void;
@@ -30,6 +32,14 @@ export type AnalyticsEventParam = {
     };
 };
 
+export enum JourneyStatus {
+    ONGOING = 'ongoing',
+    ENDED = 'ended',
+    ABORTED = 'aborted',
+}
+
+export const JourneyStatusEnum = z.nativeEnum(JourneyStatus);
+
 export type JourneyObject = {
     id: string;
     name: string;
@@ -38,6 +48,15 @@ export type JourneyObject = {
     updated_at?: number;
     tag?: string;
 };
+
+export const JourneyObject = z.object({
+    id: z.string(),
+    name: z.string(),
+    status: JourneyStatusEnum.optional(),
+    created_at: z.number().optional().default(timestamp),
+    updated_at: z.number().optional().default(timestamp),
+    tag: z.string().optional(),
+});
 
 export type JourneyEventPayload = {
     [key: string]: any;
@@ -63,12 +82,6 @@ export type Journey = {
         payload?: Omit<JourneyEventPayload, '__tag'>,
     ) => JourneyObject | Promise<JourneyObject | void> | void;
 };
-
-export enum JourneyStatus {
-    ONGOING = 'ongoing',
-    ENDED = 'ended',
-    ABORTED = 'aborted',
-}
 
 export type JourneyCollection = {
     [key: string]: (args?: any) => Journey;

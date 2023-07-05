@@ -124,3 +124,5 @@ export type InfluencerSocialProfilesTable = Database['public']['Tables']['influe
         reference_id: InfluencerSocialProfileReferenceId;
     };
 };
+
+export type TrackingEvents = Database['public']['Tables']['tracking_events'];

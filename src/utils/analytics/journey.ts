@@ -13,8 +13,7 @@ type JourneyIndex = { id: string; name: string }[];
 type JourneyTypes = keyof typeof journeys;
 
 export const updateJourneyCookie = (journey: JourneyObject) => {
-    const { id, name, status, created_at, updated_at, tag } = journey;
-    setCookie(JOURNEY_COOKIE_NAME, `${id}|${name}|${status}|${created_at}|${updated_at}|${tag}`, { path: '/' });
+    setCookie(JOURNEY_COOKIE_NAME, JSON.stringify(journey), { path: '/' });
 };
 
 export const getCurrentJourneyId = () => {
