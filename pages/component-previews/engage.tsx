@@ -9,7 +9,7 @@ import { nextFetch } from 'src/utils/fetcher';
 export default function Gmail() {
     const { profile } = useUser();
 
-    const [domain, setDomain] = useState('relay.club');
+    const [domain, setDomain] = useState('relayclub.cn');
 
     const [registerResults, setRegisterResults] = useState<AddDomainResponse['result']>();
 
@@ -120,6 +120,7 @@ export default function Gmail() {
                     <table className="max-w-full table-auto">
                         <thead>
                             <tr className="bg-gray-200">
+                                <td className="px-4 py-2">Name</td>
                                 <td className="px-4 py-2">Type</td>
                                 <td className="px-4 py-2">Host</td>
                                 <td className="px-4 py-2">Value</td>
@@ -128,11 +129,13 @@ export default function Gmail() {
                         <tbody>
                             <tr>
                                 <td className="border px-4 py-2">spf</td>
+                                <td className="border px-4 py-2">TXT</td>
                                 <td className="border px-4 py-2">{registerResults.spf.domain}</td>
                                 <td className="border px-4 py-2">{registerResults.spf.value}</td>
                             </tr>
                             <tr>
                                 <td className="border px-4 py-2">dkim</td>
+                                <td className="border px-4 py-2">TXT</td>
                                 <td className="border px-4 py-2">{registerResults.dkim.domain}</td>
                                 <td className="max-w-xl overflow-scroll border px-4 py-2">
                                     {registerResults.dkim.value}
@@ -140,12 +143,14 @@ export default function Gmail() {
                             </tr>
                             <tr>
                                 <td className="border px-4 py-2">mx</td>
-                                <td className="border px-4 py-2">{registerResults.dkim.domain}</td>
+                                <td className="border px-4 py-2">MX</td>
+                                <td className="border px-4 py-2">{registerResults.mx.domain}</td>
                                 <td className="border px-4 py-2">{registerResults.mx.value}</td>
                             </tr>
                             <tr>
                                 <td className="border px-4 py-2">dmarc</td>
-                                <td className="border px-4 py-2">{registerResults.dkim.domain}</td>
+                                <td className="border px-4 py-2">TXT</td>
+                                <td className="border px-4 py-2">{registerResults.dmarc.domain}</td>
                                 <td className="border px-4 py-2">{registerResults.dmarc.value}</td>
                             </tr>
                         </tbody>
