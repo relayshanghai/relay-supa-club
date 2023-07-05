@@ -90,7 +90,7 @@ export default function Gmail() {
 
     useEffect(() => {
         if (profile?.email) {
-            handleCheckDomain();
+            // handleCheckDomain();
         }
     }, [handleCheckDomain, profile?.email]);
 
