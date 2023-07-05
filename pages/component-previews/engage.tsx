@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import type { AddDomainResponse, CheckDomainResponse, EngagePostBody } from 'pages/api/engage';
 import { useCallback, useEffect, useState } from 'react';
 import { Button } from 'src/components/button';
@@ -12,7 +13,8 @@ export default function Gmail() {
 
     const [registerResults, setRegisterResults] = useState<AddDomainResponse['result']>();
 
-    const [status, setStatus] = useState('');
+    const [status, setStatus] = useState(0);
+    const [checkingStatus, setCheckingStatus] = useState(false);
 
     const [recipient, setRecipient] = useState('');
     const [content, setContent] = useState('');
@@ -36,11 +38,13 @@ export default function Gmail() {
                 alert('something went wrong');
             }
         } catch (error: any) {
-            alert(error.message);
+            console.error(error);
+            // alert(error.message);
         }
     };
 
     const handleCheckDomain = useCallback(async () => {
+        setCheckingStatus(true);
         try {
             const body: EngagePostBody = {
                 type: 'checkDomain',
@@ -52,14 +56,15 @@ export default function Gmail() {
             });
             console.log({ res });
             if (res.result[0]?.status === 1 || res.result[0]?.status === 2) {
-                setStatus('ok');
+                setStatus(res.result[0]?.status);
             } else {
-                setStatus('not ok');
+                setStatus(0);
             }
         } catch (error: any) {
             console.error(error);
             // alert(error.message);
         }
+        setCheckingStatus(false);
     }, [domain]);
 
     const handleSendEmail = async () => {
@@ -90,9 +95,15 @@ export default function Gmail() {
     }, [handleCheckDomain, profile?.email]);
 
     return (
-        <div>
+        <div className="flex flex-col space-x-4 space-y-4">
             {!registerResults && (
-                <form>
+                <form
+                    className="flex flex-col space-x-4 space-y-4"
+                    onSubmit={(e) => {
+                        e.preventDefault();
+                        handleRegisterDomain();
+                    }}
+                >
                     <Input
                         label="Domain"
                         value={domain}
@@ -100,50 +111,59 @@ export default function Gmail() {
                             setDomain(e.target.value);
                         }}
                     />
-                    <Button onClick={handleRegisterDomain}>Get Domain Registry info</Button>
+                    <Button>Get Domain Registry info</Button>
                 </form>
             )}
-            {registerResults && status !== 'ok' && (
-                <div>
-                    <h3>Records to add to domain: {registerResults.name}</h3>
+            {registerResults && status === 0 && (
+                <div className="flex flex-col space-x-4 space-y-4">
+                    <h3>Add these records to your domain: {registerResults.name}</h3>
 
-                    <h4>SPF</h4>
-                    <table>
+                    <table className="w-full table-auto">
                         <thead>
-                            <th>type</th>
-                            <th>Host</th>
-                            <th>Value</th>
+                            <tr className="bg-gray-200">
+                                <td className="px-4 py-2">Type</td>
+                                <td className="px-4 py-2">Host</td>
+                                <td className="px-4 py-2">Value</td>
+                            </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>spf</td>
-                                <td>{registerResults.spf.domain}</td>
-                                <td>{registerResults.spf.value}</td>
-                            </tr>{' '}
+                                <td className="border px-4 py-2">spf</td>
+                                <td className="border px-4 py-2">{registerResults.spf.domain}</td>
+                                <td className="border px-4 py-2">{registerResults.spf.value}</td>
+                            </tr>
                             <tr>
-                                <td>dkim</td>
-                                <td>{registerResults.dkim.domain}</td>
-                                <td>{registerResults.dkim.value}</td>
-                            </tr>{' '}
+                                <td className="border px-4 py-2">dkim</td>
+                                <td className="border px-4 py-2">{registerResults.dkim.domain}</td>
+                                <td className="border px-4 py-2">{registerResults.dkim.value}</td>
+                            </tr>
                             <tr>
-                                <td>mx</td>
-                                <td>{registerResults.dkim.domain}</td>
-                                <td>{registerResults.mx.value}</td>
-                            </tr>{' '}
+                                <td className="border px-4 py-2">mx</td>
+                                <td className="border px-4 py-2">{registerResults.dkim.domain}</td>
+                                <td className="border px-4 py-2">{registerResults.mx.value}</td>
+                            </tr>
                             <tr>
-                                <td>dmarc</td>
-                                <td>{registerResults.dkim.domain}</td>
-                                <td>{registerResults.dmarc.value}</td>
+                                <td className="border px-4 py-2">dmarc</td>
+                                <td className="border px-4 py-2">{registerResults.dkim.domain}</td>
+                                <td className="border px-4 py-2">{registerResults.dmarc.value}</td>
                             </tr>
                         </tbody>
                     </table>
-                    <div className="flex">spf record: {registerResults.spf.domain}</div>
-                    <Button onClick={handleCheckDomain}>Check record registration</Button>
+                </div>
+            )}
+            {registerResults && (
+                // 0:unverified 1:usable 2:Verified\
+                <div className="mt-5 flex flex-col space-x-2 space-y-2 p-10">
+                    <Button disabled={checkingStatus} onClick={handleCheckDomain}>
+                        Check record registration
+                    </Button>
+                    <p>registration status: {status === 0 ? 'unverified' : status === 1 ? 'usable' : 'verified'} </p>
                 </div>
             )}
 
-            {registerResults && status === 'ok' && (
+            {registerResults && status !== 0 && (
                 <form
+                    className="flex flex-col space-x-4 space-y-4"
                     onSubmit={(e) => {
                         e.preventDefault();
                         handleSendEmail();

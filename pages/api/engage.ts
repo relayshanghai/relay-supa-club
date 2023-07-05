@@ -8,11 +8,16 @@ const addDomainPath = 'domains';
 const checkDomainPath = 'domains/check';
 const sendEmailPath = 'mail/send';
 const ENGAGE_LAB_API_KEY = process.env.ENGAGE_LAB_API_KEY;
+const ENGAGE_LAB_API_USER = process.env.ENGAGE_LAB_API_USER;
 if (!ENGAGE_LAB_API_KEY) {
     throw new Error('ENGAGE_LAB_API_KEY not found in env');
 }
+if (!ENGAGE_LAB_API_USER) {
+    throw new Error('ENGAGE_LAB_API_USER not found in env');
+}
+
 const engageAuthHeaders = {
-    Authorization: 'Basic ' + ENGAGE_LAB_API_KEY,
+    Authorization: 'Basic ' + Buffer.from(`${ENGAGE_LAB_API_USER}:${ENGAGE_LAB_API_KEY}`).toString('base64'),
 };
 
 /**
@@ -38,6 +43,7 @@ export const engageFetch = async <T = any>(path: string, options: RequestInitWit
     const optionsWithBody = { ...options, body: stringified };
 
     const res = await fetch(ENGAGE_URL + path, optionsWithBody);
+
     await handleResError(res);
     const json = await res.json();
     return json as T;
@@ -52,6 +58,7 @@ export const engageFetchWithQueries = async <Q extends Record<string, string>, T
     for (const key in queries) {
         if (queries.hasOwnProperty(key)) url.searchParams.set(key, queries[key].toString());
     }
+    options.headers = { ...engageAuthHeaders };
     const res = await fetch(url.toString(), options);
     await handleResError(res);
     const json = await res.json();
@@ -88,7 +95,7 @@ const addDomain = async (domain: string) => {
         name: domain,
     };
 
-    return engageFetch<AddDomainResponse>(addDomainPath, {
+    return await engageFetch<AddDomainResponse>(addDomainPath, {
         method: 'POST',
         body,
     });
@@ -116,7 +123,7 @@ export type CheckDomainResponse = {
 };
 
 const checkDomain = async (domain: string) =>
-    engageFetchWithQueries<CheckDomainQueries, CheckDomainResponse>(checkDomainPath, {
+    await engageFetchWithQueries<CheckDomainQueries, CheckDomainResponse>(checkDomainPath, {
         name: domain,
     });
 
