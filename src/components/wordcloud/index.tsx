@@ -151,7 +151,7 @@ const WordCloudComponent = ({ tags, platform, updateTags }: WordCloudProps) => {
                     detail={t('tooltips.topicCloud.description')}
                     position="bottom-left"
                 >
-                    <Question className="stroke-gray-300" />
+                    <Question className="stroke-gray-400" />
                 </Tooltip>
             </div>
             <WordCloud
