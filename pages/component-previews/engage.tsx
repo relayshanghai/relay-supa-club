@@ -76,7 +76,7 @@ export default function Gmail() {
             const body: EngagePostBody = {
                 type: 'sendEmail',
                 to: [recipient],
-                from: profile?.email ?? '',
+                from: 'testuser@' + domain,
                 body: {
                     subject: 'test',
                     content: { text: content },
