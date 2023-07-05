@@ -29,6 +29,7 @@
     "@analytics/storage-utils": "^0.4.2",
     "@headlessui/react": "^1.7.14",
     "@heroicons/react": "^2.0.17",
+    "@rudderstack/rudder-sdk-node": "^2.0.2",
     "@sentry/nextjs": "^7.48.0",
     "@stripe/react-stripe-js": "^2.1.0",
     "@stripe/stripe-js": "^1.54.0",
