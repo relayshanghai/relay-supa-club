@@ -1,5 +1,6 @@
+/* eslint-disable no-console */
 import { useRouter } from 'next/router';
-import { GmailPostBody } from 'pages/api/gmail';
+import type { GmailPostBody } from 'pages/api/gmail';
 import { useEffect, useState } from 'react';
 import { Button } from 'src/components/button';
 import { useUser } from 'src/hooks/use-user';
@@ -35,6 +36,7 @@ export default function Gmail() {
     }, []);
     return (
         <div>
+            {!url && <div>fetching authentication link...</div>}
             {url && !code && (
                 <Button>
                     <a href={url}>authenticate</a>
