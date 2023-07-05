@@ -96,29 +96,28 @@ export default function Gmail() {
 
     return (
         <div className="flex flex-col space-x-4 space-y-4">
-            {!registerResults && (
-                <form
-                    className="flex flex-col space-x-4 space-y-4"
-                    onSubmit={(e) => {
-                        e.preventDefault();
-                        handleRegisterDomain();
+            <form
+                className="flex w-fit flex-col space-x-4 space-y-4 p-10"
+                onSubmit={(e) => {
+                    e.preventDefault();
+                    handleRegisterDomain();
+                }}
+            >
+                <Input
+                    label="Domain"
+                    value={domain}
+                    onChange={(e) => {
+                        setDomain(e.target.value);
                     }}
-                >
-                    <Input
-                        label="Domain"
-                        value={domain}
-                        onChange={(e) => {
-                            setDomain(e.target.value);
-                        }}
-                    />
-                    <Button>Get Domain Registry info</Button>
-                </form>
-            )}
-            {registerResults && status === 0 && (
-                <div className="flex flex-col space-x-4 space-y-4">
+                />
+                <Button>Get Domain Registry info</Button>
+            </form>
+
+            {registerResults && (
+                <div className="flex w-fit flex-col space-x-4 space-y-4">
                     <h3>Add these records to your domain: {registerResults.name}</h3>
 
-                    <table className="w-full table-auto">
+                    <table className="max-w-full table-auto">
                         <thead>
                             <tr className="bg-gray-200">
                                 <td className="px-4 py-2">Type</td>
@@ -135,7 +134,9 @@ export default function Gmail() {
                             <tr>
                                 <td className="border px-4 py-2">dkim</td>
                                 <td className="border px-4 py-2">{registerResults.dkim.domain}</td>
-                                <td className="border px-4 py-2">{registerResults.dkim.value}</td>
+                                <td className="max-w-xl overflow-scroll border px-4 py-2">
+                                    {registerResults.dkim.value}
+                                </td>
                             </tr>
                             <tr>
                                 <td className="border px-4 py-2">mx</td>
@@ -153,7 +154,7 @@ export default function Gmail() {
             )}
             {registerResults && (
                 // 0:unverified 1:usable 2:Verified\
-                <div className="mt-5 flex flex-col space-x-2 space-y-2 p-10">
+                <div className="mt-5 flex w-fit flex-col space-x-2 space-y-2 p-10">
                     <Button disabled={checkingStatus} onClick={handleCheckDomain}>
                         Check record registration
                     </Button>
