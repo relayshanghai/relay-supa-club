@@ -138,6 +138,7 @@ const WordCloudComponent = ({ tags, platform, updateTags }: WordCloudProps) => {
             }
             const foundWord = wordsDistance.find((distancedWords) => distancedWords.text === word);
             const opacity = foundWord?.distance || 1;
+            // this color is our primary tailwind color class, cannot use tailwind with this library
             return `rgba(139, 92, 246, ${opacity})`;
         },
         [tags, wordsDistance],
