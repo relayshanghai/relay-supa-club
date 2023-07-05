@@ -10,6 +10,7 @@ export const SIGNUP_WIZARD = generateEventName('Signup Wizard');
 // Discovery
 export const CAMPAIGN_INFLUENCER_ROW = generateEventName('Campaign Influencer Row');
 export const ANALYZE_PAGE = generateEventName('Analyze Page');
+export const SEARCH_FILTER_MODAL = generateEventName('Search Filter Modal');
 
 // Campaigns
 export const CAMPAIGN_BANNER = generateEventName('Campaign Banner');
@@ -34,4 +35,5 @@ export const CANCEL_SUBSCRIPTION_MODAL = generateEventName('Cancel Subscription 
 export const MANAGE_POSTS_MODAL = generateEventName('Manage Posts Modal');
 
 // Navigation
+export const NAVBAR = generateEventName('Navbar');
 export const LANGUAGE_TOGGLE = generateEventName('Language Toggle');

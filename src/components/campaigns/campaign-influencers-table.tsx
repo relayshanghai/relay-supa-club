@@ -238,7 +238,7 @@ export default function CampaignInfluencersTable({
                 <p>
                     <div
                         onClick={() => {
-                            trackEvent('Campaign Management, click on add sales');
+                            trackEvent(INFLUENCER_TABLE('click on add sales'));
                             setShowSalesModal(true);
                         }}
                         className="mr-4 flex-shrink-0 cursor-pointer rounded-md bg-gray-100 px-4 py-2 text-xs text-gray-600 duration-300 hover:bg-primary-500 hover:text-white"

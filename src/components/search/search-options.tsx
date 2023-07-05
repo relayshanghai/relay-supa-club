@@ -11,6 +11,7 @@ import { SearchLocations } from './search-locations';
 import LocationTag from './location-tag';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { useEffect } from 'react';
+import { SEARCH_FILTER_MODAL } from 'src/utils/rudderstack/event-names';
 
 const filterCountry = (items: any[]) => {
     return items.filter((item: any) => {
@@ -150,7 +151,7 @@ export const SearchOptions = ({
                     <button
                         onClick={() => {
                             setShowFiltersModal(true);
-                            trackEvent('Search Filters Modal, open modal');
+                            trackEvent(SEARCH_FILTER_MODAL('open modal'));
                         }}
                         className={`group flex flex-row items-center rounded-md border border-transparent bg-white px-2 py-1 text-gray-900 shadow ring-1 ring-gray-900 ring-opacity-5 focus:border-primary-500 focus:outline-none focus:ring-primary-500 sm:text-sm`}
                     >
@@ -193,7 +194,7 @@ export const SearchOptions = ({
                                 setEngagement(undefined);
                                 setLastPost(undefined);
                                 setContactInfo(undefined);
-                                trackEvent('Search Filters Modal, clear search filters');
+                                trackEvent(SEARCH_FILTER_MODAL('clear search filters'));
                             }}
                             variant="secondary"
                         >
