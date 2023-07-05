@@ -21,16 +21,12 @@ export const useCampaigns = ({ campaignId }: { campaignId?: string }) => {
     } = useSWR(company?.id ? ['campaigns', company?.id] : null, ([_path, companyId]) => getCampaigns(companyId));
 
     const getFromSales = useDB<typeof getSales>(getSales);
-
-    useEffect(() => {
-        const getCampaignSales = async () => {
-            if (!company?.id) {
-                throw 'No Company ID';
-            }
-            setTotalSales(await getFromSales(company.id));
-        };
-        getCampaignSales();
-    }, [getFromSales, company]);
+    const getCampaignSales = useCallback(async () => {
+        if (!company?.id) {
+            throw 'No Company ID';
+        }
+        setTotalSales(await getFromSales(company.id));
+    }, [getFromSales, company?.id]);
 
     const [campaign, setCampaign] = useState<CampaignDB | null>(null);
 
@@ -77,6 +73,7 @@ export const useCampaigns = ({ campaignId }: { campaignId?: string }) => {
         loading,
         isValidating,
         refreshCampaigns,
+        getCampaignSales,
         totalSales,
     };
 };

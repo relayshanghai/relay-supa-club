@@ -12,12 +12,14 @@ import type { PostPerformanceData } from 'src/utils/api/iqdata/post-performance'
 const PerformancePage = () => {
     const { t } = useTranslation();
 
-    const { campaigns, totalSales } = useCampaigns({});
+    const { campaigns, totalSales, getCampaignSales } = useCampaigns({});
     const { performanceData, loading, selectedCampaign } = usePostPerformance(campaigns.map((campaign) => campaign.id));
 
     const combineCampaignsData = (performanceData: PostPerformanceByCampaign): PostPerformanceData[] => {
         return Object.values(performanceData).reduce((acc, curr) => [...acc, ...curr]);
     };
+
+    getCampaignSales();
 
     const selectedStats = performanceData
         ? selectedCampaign
