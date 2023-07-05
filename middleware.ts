@@ -199,7 +199,8 @@ export const config = {
          * - create-employee endpoint (api/company/create-employee)
          * - login, signup, logout (login, signup, logout pages)
          * - Stripe webhook (instead use signing key to protect)
+         * - /api/webhooks/* (webhook routes)
          */
-        '/((?!_next/static|_next/image|favicon.ico|assets/*|api/invites/accept*|api/company/create-employee*|login*|login/reset-password|signup/invite*|logout|api/logout|api/subscriptions/webhook).*)',
+        '/((?!_next/static|_next/image|favicon.ico|assets/*|api/invites/accept*|api/company/create-employee*|login*|login/reset-password|signup/invite*|logout|api/logout|api/subscriptions/webhook|api/webhooks).*)',
     ],
 };
