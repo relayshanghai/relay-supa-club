@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import type { ChangeEvent } from 'react';
 import { useState } from 'react';
 import Link from 'next/link';
@@ -13,6 +13,9 @@ import InfluencerRow from './influencer-row';
 import { ManageInfluencerModal } from './manage-influencer-modal';
 import { AddPostModal } from './add-post-modal';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { CampaignSalesModal } from './campaign-sales-modal';
+import { useDB } from 'src/utils/client-db/use-client-db';
+import { addSales } from 'src/utils/client-db/sales';
 import { INFLUENCER_TABLE } from 'src/utils/rudderstack/event-names';
 
 export interface CreatorsOutreachProps {
@@ -44,10 +47,13 @@ export default function CampaignInfluencersTable({
     const [toEdit, setToEdit] = useState<{ index: number; key: string } | null>(null);
     const [searchTerm, setSearchTerm] = useState<string | ''>('');
     const [influencersList, setInfluencersList] = useState<CampaignCreatorDB[]>([]);
+    const [showSalesModal, setShowSalesModal] = useState<boolean>(false);
 
-    const [showMoveInfluencerModal, setShowMoveInfluencerModal] = useState(false);
-    const [showManageInfluencerModal, setShowManageInfluencerModal] = useState(false);
-    const [showAddPostModal, setShowAddPostModal] = useState(false);
+    const [showMoveInfluencerModal, setShowMoveInfluencerModal] = useState<boolean>(false);
+    const [showManageInfluencerModal, setShowManageInfluencerModal] = useState<boolean>(false);
+    const [showAddPostModal, setShowAddPostModal] = useState<boolean>(false);
+
+    const addToSales = useDB<typeof addSales>(addSales);
 
     const { campaignCreators, deleteCreatorInCampaign, updateCreatorInCampaign, refreshCampaignCreators } =
         useCampaignCreators({
@@ -202,10 +208,23 @@ export default function CampaignInfluencersTable({
         return campaignCreators?.filter((c) => c.status === status).length ?? 0;
     };
 
+    const onAddSales = useCallback(
+        async (amount: number) => {
+            const body = {
+                campaign_id: currentCampaign.id,
+                company_id: currentCampaign.company_id,
+                amount,
+            };
+            addToSales(body);
+        },
+        [currentCampaign, addToSales],
+    );
+
     const editingModeTrue = (index: number, key: string) => index === toEdit?.index && key === toEdit?.key;
 
     return (
         <div>
+            <CampaignSalesModal show={showSalesModal} setShow={setShowSalesModal} onAddSales={onAddSales} />
             {/* Outreach Tabs */}
             <div className="mb-4 flex overflow-x-auto">
                 <Link href="/dashboard" legacyBehavior>
@@ -216,6 +235,17 @@ export default function CampaignInfluencersTable({
                         <a>{t('campaigns.show.activities.outreach.addNewInfluencer')}</a>
                     </div>
                 </Link>
+                <p>
+                    <div
+                        onClick={() => {
+                            trackEvent('Campaign Management, click on add sales');
+                            setShowSalesModal(true);
+                        }}
+                        className="mr-4 flex-shrink-0 cursor-pointer rounded-md bg-gray-100 px-4 py-2 text-xs text-gray-600 duration-300 hover:bg-primary-500 hover:text-white"
+                    >
+                        <a>{t('campaigns.addSalesModal.caption')}</a>
+                    </div>
+                </p>
                 {/* TODO: make Tabs component reusable */}
                 <div className="hidden items-center sm:flex">
                     {tabs.map((tab) => (

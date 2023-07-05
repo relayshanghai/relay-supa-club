@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 import useSWR from 'swr';
-import { useClientDb } from 'src/utils/client-db/use-client-db';
+import { useClientDb, useDB } from 'src/utils/client-db/use-client-db';
 import { useCompany } from './use-company';
 import type { CampaignDB, CampaignDBInsert } from 'src/utils/api/db/types';
+import { getSales } from 'src/utils/client-db/sales';
 
 /**
  * Hook to fetch campaigns and create/update campaigns
@@ -11,7 +12,7 @@ import type { CampaignDB, CampaignDBInsert } from 'src/utils/api/db/types';
 export const useCampaigns = ({ campaignId }: { campaignId?: string }) => {
     const { company } = useCompany();
     const { getCampaigns, createCampaign: createCampaignCall, updateCampaign } = useClientDb();
-
+    const [totalSales, setTotalSales] = useState<number>(0);
     const {
         data: allCampaigns,
         mutate: refreshCampaigns,
@@ -19,9 +20,13 @@ export const useCampaigns = ({ campaignId }: { campaignId?: string }) => {
         isLoading: loading,
     } = useSWR(company?.id ? ['campaigns', company?.id] : null, ([_path, companyId]) => getCampaigns(companyId));
 
-    useEffect(() => {
-        refreshCampaigns();
-    }, [company?.id, refreshCampaigns]);
+    const getFromSales = useDB<typeof getSales>(getSales);
+    const getCampaignSales = useCallback(async () => {
+        if (!company?.id) {
+            throw 'No Company ID';
+        }
+        setTotalSales(await getFromSales(company.id));
+    }, [getFromSales, company?.id]);
 
     const [campaign, setCampaign] = useState<CampaignDB | null>(null);
 
@@ -68,5 +73,7 @@ export const useCampaigns = ({ campaignId }: { campaignId?: string }) => {
         loading,
         isValidating,
         refreshCampaigns,
+        getCampaignSales,
+        totalSales,
     };
 };
