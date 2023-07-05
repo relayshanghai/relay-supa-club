@@ -212,7 +212,7 @@ export default function CampaignInfluencersTable({
             const body = {
                 campaign_id: currentCampaign.id,
                 company_id: currentCampaign.company_id,
-                amount: amount,
+                amount,
             };
             addToSales(body);
         },
