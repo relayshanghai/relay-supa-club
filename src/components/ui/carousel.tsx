@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { ChevronLeft, ChevronRight } from '../icons';
 import Image from 'next/image';
+import { useRudderstack } from 'src/hooks/use-rudderstack';
 
 interface CarouselProps {
     slides: Array<{
@@ -14,12 +15,16 @@ interface CarouselProps {
 
 export default function Carousel({ slides, autoSlide = false, autoSlideInterval = 5000 }: CarouselProps) {
     const [currIndex, setCurrIndex] = useState(0);
+    const { trackEvent } = useRudderstack();
 
-    const prevSlide = () => setCurrIndex((currIndex) => (currIndex === 0 ? slides?.length - 1 : currIndex - 1));
-    const nextSlide = useCallback(
-        () => setCurrIndex((currIndex) => (currIndex === slides?.length - 1 ? 0 : currIndex + 1)),
-        [slides?.length],
-    );
+    const prevSlide = () => {
+        setCurrIndex((currIndex) => (currIndex === 0 ? slides?.length - 1 : currIndex - 1));
+        trackEvent('Carousel, click to go to previous slide');
+    };
+    const nextSlide = useCallback(() => {
+        setCurrIndex((currIndex) => (currIndex === slides?.length - 1 ? 0 : currIndex + 1));
+        trackEvent('Carousel, click to go to next slide');
+    }, [slides?.length, trackEvent]);
 
     useEffect(() => {
         if (!autoSlide) return;
@@ -64,7 +69,10 @@ export default function Carousel({ slides, autoSlide = false, autoSlideInterval 
                     {slides.map((_, i) => (
                         <div
                             key={i}
-                            onClick={() => setCurrIndex(i)}
+                            onClick={() => {
+                                setCurrIndex(i);
+                                trackEvent(`Carousel, go to slide ${currIndex + 1}`);
+                            }}
                             className={`h-2 w-2 rounded-full bg-white transition-all duration-500 ease-in-out hover:cursor-pointer ${
                                 currIndex === i ? 'bg-primary-900 p-1' : 'bg-opacity-80'
                             }`}

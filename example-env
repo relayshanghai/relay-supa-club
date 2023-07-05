@@ -61,6 +61,10 @@ TEST_USER_PASSWORD='123-abc-find-out-what-you-mean-to-me'
 NEXT_PUBLIC_RUDDERSTACK_APP_WRITE_KEY=""
 NEXT_PUBLIC_RUDDERSTACK_APP_DATA_PLANE_URL=""
 
+# Rudderstack Backend
+RUDDERSTACK_APP_WRITE_KEY=""
+RUDDERSTACK_APP_DATA_PLANE_URL=""
+
 # Sentry
 
 # silences some errors in the console
@@ -79,3 +83,4 @@ APIFY_TOKEN=asdfasdf
 
 # Chatwoot
 NEXT_PUBLIC_CHATWOOT_WEBSITE_TOKEN=123abc
+CHATWOOT_WEBHOOK_TOKEN=""
