@@ -480,7 +480,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                 </div>
                 <div className="flex w-full justify-end">
                     <Button data-testid="search-with-filters" onClick={handleSearch}>
-                        Search with filters
+                        {t('filters.searchButton')}
                     </Button>
                 </div>
             </div>
