@@ -24,7 +24,7 @@ const creators = {
     searchTopic: '搜索关键词（英文)',
     searchHashTagsLabel: '添加标签（最多可添加10个）',
     searchHashTags: '添加标签有助于增加搜索结果',
-    searchKeywordsLabel: '关键词句视频转录搜索',
+    searchKeywordsLabel: '关键词搜索',
     searchKeywords: '添加关键词或短语有助于增加搜索结果',
     addToFavorites: '收藏',
     removeFromFavorites: '取消收藏',
