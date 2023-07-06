@@ -36,14 +36,44 @@ env:
     NEXT_PUBLIC_RUDDERSTACK_APP_DATA_PLANE_URL: ${{ secrets.NEXT_PUBLIC_RUDDERSTACK_APP_DATA_PLANE_URL }}
     RUDDERSTACK_APP_WRITE_KEY: ${{ secrets.RUDDERSTACK_APP_WRITE_KEY }}
     RUDDERSTACK_APP_DATA_PLANE_URL: ${{ secrets.RUDDERSTACK_APP_DATA_PLANE_URL }}
+    SUPABASE_SCANNER_BUFFER_SIZE: 5mb
 
 jobs:
-    supabase-test:
+    component-test:
+        runs-on:
+            group: large-runner
+        environment: preview
         env:
-            SUPABASE_SCANNER_BUFFER_SIZE: 5mb
+            # unit tests don't need the real keys, but they load some functions that check for them on init.
+            SUPABASE_SERVICE_KEY: dummy key
+            NEXT_PUBLIC_SUPABASE_ANON_KEY: dummy key
+
+        strategy:
+            matrix:
+                node-version: [18.14.0]
+        steps:
+            - uses: actions/checkout@v3
+
+            - name: Use Node.js ${{ matrix.node-version }}
+              uses: actions/setup-node@v3
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  cache: 'npm'
+
+            - run: npm ci
+            - run: npm run build
+            - run: npm run test-cypress-unit
+
+    e2e-test:
+        environment: preview
 
         runs-on:
             group: large-runner
+
+        strategy:
+            matrix:
+                node-version: [18.14.0]
+
         steps:
             - uses: actions/checkout@v3
 
@@ -77,62 +107,10 @@ jobs:
                   chmod +x ./supabase/db.sh
                   ./supabase/db.sh db_test
 
-    build-and-unit-test:
-        runs-on:
-            group: large-runner
-        environment: preview
-        env:
-            # unit tests don't need the real keys, but they load some functions that check for them on init.
-            SUPABASE_SERVICE_KEY: dummy key
-            NEXT_PUBLIC_SUPABASE_ANON_KEY: dummy key
-
-        strategy:
-            matrix:
-                node-version: [18.14.0]
-        steps:
-            - uses: actions/checkout@v3
-
-            - name: Use Node.js ${{ matrix.node-version }}
-              uses: actions/setup-node@v3
-              with:
-                  node-version: ${{ matrix.node-version }}
-                  cache: 'npm'
-
-            - run: npm ci
-            - run: npm run build
-            - run: npm run test-cypress-unit
-
-    cypress-e2e:
-        runs-on:
-            group: large-runner
-        environment: preview
-
-        strategy:
-            matrix:
-                node-version: [18.14.0]
-
-        steps:
-            - uses: actions/checkout@v3
             - name: Use Node.js ${{ matrix.node-version }}
               uses: actions/setup-node@v1
               with:
                   node-version: ${{ matrix.node-version }}
-
-            - uses: supabase/setup-cli@v1
-              with:
-                  version: 1.75.3
-
-            - name: Verify supabase cli version
-              run: supabase -v
-
-            - name: Verify supabase cli version
-              run: supabase -v
-
-            - name: Create supabase config file
-              run: cp supabase/config.toml.example supabase/config.toml
-
-            - name: Start Supabase local development setup
-              run: supabase start
 
             - name: Export Supabase keys
               # Uses supabase status to print the anon key and service key to the terminal and populates the environment variables
@@ -149,3 +127,4 @@ jobs:
                   # http://localhost:54323/ is the supabase dashboard
                   wait-on: http://localhost:3000, http://localhost:54323
                   wait-on-timeout: 180
+
