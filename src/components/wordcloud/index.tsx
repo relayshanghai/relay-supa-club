@@ -3,6 +3,7 @@ import type { CreatorPlatform, CreatorSearchTag } from 'types';
 import type { TopicTensorData } from 'src/utils/api/iqdata/topics/get-relevant-topic-tags';
 import { nextFetch } from 'src/utils/fetcher';
 import WordCloud from 'react-d3-cloud';
+import type { Word } from 'react-d3-cloud/src/WordCloud';
 import { Tooltip } from '../library';
 import { useTranslation } from 'react-i18next';
 import { Question } from '../icons';
@@ -44,12 +45,15 @@ const getWordDistances = (tag: TopicTensorData[]): DistanceType[] => {
         };
     });
 };
-const normalizeFontSize = (tags: any[], fontSize: number) => {
+const normalizeFontSize = (tags: Word[], fontSize: number) => {
     const totalCharacters = tags.reduce((sum, word) => sum + word.text.length, 0);
     const averageWordLength = totalCharacters / tags.length;
 
     const minFontSize = 10;
-    const maxFontSize = tags[0].length > 8 ? 13 : 15;
+    const maxFontSize =
+        tags.some((tag) => tag.text.length > 10 && tag.value > 80) || tags.filter((tag) => tag.value > 60).length > 6
+            ? 13
+            : 17;
 
     const normalizedFontSize =
         minFontSize + ((fontSize - averageWordLength) * (maxFontSize - minFontSize)) / maxFontSize;
@@ -64,7 +68,7 @@ interface WordCloudProps {
 }
 
 const WordCloudComponent = ({ tags, platform, updateTags }: WordCloudProps) => {
-    const [words, setWords] = useState<any[]>([]);
+    const [words, setWords] = useState<Word[]>([]);
     const [wordsDistance, setWordsDistance] = useState<DistanceType[]>([]);
     const [selectedTag, setSelectedTag] = useState<CreatorSearchTag | null>(null);
 
@@ -90,7 +94,7 @@ const WordCloudComponent = ({ tags, platform, updateTags }: WordCloudProps) => {
     }, [tags, platform]);
 
     const addTag = useCallback(
-        (item: any) => {
+        (item: CreatorSearchTag) => {
             updateTags([...tags, item]);
             setSelectedTag(null);
         },
@@ -98,7 +102,8 @@ const WordCloudComponent = ({ tags, platform, updateTags }: WordCloudProps) => {
     );
 
     const removeTag = useCallback(
-        (item: any) => {
+        (item: CreatorSearchTag | undefined) => {
+            if (!item) return;
             const clone = tags.slice();
             clone.splice(tags.indexOf(item), 1);
             updateTags(clone);
@@ -145,7 +150,7 @@ const WordCloudComponent = ({ tags, platform, updateTags }: WordCloudProps) => {
     );
 
     return (
-        <div className="group relative mt-6 hidden w-full pt-4 lg:block 2xl:pt-10">
+        <div className="group relative hidden w-full pt-4 lg:block 2xl:pt-10">
             <div className="absolute right-0 top-0 h-6 w-6">
                 <Tooltip
                     content={t('tooltips.topicCloud.title')}
@@ -166,12 +171,12 @@ const WordCloudComponent = ({ tags, platform, updateTags }: WordCloudProps) => {
                 random={() => {
                     return 0;
                 }}
-                fontSize={(word: any) => normalizeFontSize(words, word.value)}
-                fill={(word: any, _index: number) => colorWord(word.text)}
-                onWordClick={(_event: any, word: any) => {
+                fontSize={(word: Word) => normalizeFontSize(words, word.value)}
+                fill={(word: Word, _index: number) => colorWord(word.text)}
+                onWordClick={(_event: any, word: Word) => {
                     handleWord(word.text);
                 }}
-                onWordMouseOver={(event: any, _word: any) => {
+                onWordMouseOver={(event: any, _word: Word) => {
                     event.target.style.cursor = 'pointer';
                 }}
             />
