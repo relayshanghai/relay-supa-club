@@ -3,7 +3,6 @@ import type { CreatorPlatform, CreatorSearchTag } from 'types';
 import type { TopicTensorData } from 'src/utils/api/iqdata/topics/get-relevant-topic-tags';
 import { nextFetch } from 'src/utils/fetcher';
 import WordCloud from 'react-d3-cloud';
-import type { Word } from 'react-d3-cloud/src/WordCloud';
 import { Tooltip } from '../library';
 import { useTranslation } from 'react-i18next';
 import { Question } from '../icons';
@@ -12,6 +11,11 @@ type DistanceType = {
     text: string;
     distance: number;
 };
+
+export interface Word {
+    text: string;
+    value: number;
+}
 
 const getWordElements = (tag: TopicTensorData[]): any[] => {
     if (!tag) return [];
