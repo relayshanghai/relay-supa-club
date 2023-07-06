@@ -13,7 +13,7 @@ import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { useEffect } from 'react';
 import { useAnalytics } from '../analytics/analytics-provider';
 import { SearchFilterAudienceLocationUsed } from 'src/utils/analytics/events/search-filter-audience_location';
-// import { clearJourneys, listJourneys, startJourney } from '../analytics/journey';
+import { startJourney } from 'src/utils/analytics/journey';
 
 const filterCountry = (items: any[]) => {
     return items.filter((item: any) => {
@@ -88,9 +88,7 @@ export const SearchOptions = ({
                 // only_recommended: featRecommended() ? onlyRecommended : false,
             };
 
-            // startJourney({ name: 'search', search: params })
-            // console.log("list journeys", listJourneys())
-
+            startJourney('search');
             setSearchParams(params);
         }
     }, [

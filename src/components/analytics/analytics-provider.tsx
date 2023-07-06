@@ -58,7 +58,9 @@ export const AnalyticsProvider = ({ children }: AnalyticsProviderProps) => {
         }
 
         if (session === null) {
-            analytics.reset();
+            // @todo do not reset since it clears anon id
+            //       should we track users after logging out?
+            // analytics.reset();
         }
     }, [session, analytics]);
 

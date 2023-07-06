@@ -1,13 +1,8 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
 import { JOURNEY_COOKIE_NAME } from '../constants';
 import { getCookie } from 'cookies-next';
 import { parseJson } from 'src/utils/json';
 import { JourneyObject } from '../types';
-
-/**
- * a Server Context contains a request and response
- */
-type ctx = { req: NextApiRequest; res: NextApiResponse };
+import type { ctx } from '../types';
 
 /**
  * Get the current journey (if available) on the server side

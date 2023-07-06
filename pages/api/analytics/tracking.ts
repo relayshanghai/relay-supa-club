@@ -8,6 +8,7 @@ import type { SupabaseClient } from '@supabase/auth-helpers-nextjs';
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
 import { z } from 'zod';
 import { now } from 'src/utils/datetime';
+import { getAnonId } from 'src/utils/analytics/api/analytics';
 
 type SessionIds = {
     session_id?: string;
@@ -40,7 +41,6 @@ const getSessionIds = (db: SupabaseClient) => async () => {
 const PostRequestBody = z.object({
     event: z.string(),
     event_at: z.string().optional().default(now),
-    anonymous_id: z.string().optional(),
 });
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -50,10 +50,10 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const journey_id = journey ? journey.id : null;
     const journey_type = journey ? journey.name : null;
-    const { event, event_at, anonymous_id } = PostRequestBody.parse({
-        anonymous_id: '123456abcdef',
-        event: 'load_more_results',
-    });
+
+    const anonymous_id = getAnonId({ req, res });
+
+    const { event, event_at } = PostRequestBody.parse(req.body);
 
     const _insertTrackingEvent = insertTrackingEvent(supabase);
 

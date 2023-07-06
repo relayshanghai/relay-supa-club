@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import type { AnalyticsPlugin } from 'analytics';
 import { timestamp } from '../datetime';
+import type { NextApiRequest, NextApiResponse } from 'next';
 
 export type AnalyticsEventParam = {
     abort: () => void;
@@ -86,3 +87,8 @@ export type Journey = {
 export type JourneyCollection = {
     [key: string]: (args?: any) => Journey;
 };
+
+/**
+ * a Server Context contains a request and response
+ */
+export type ctx = { req: NextApiRequest; res: NextApiResponse };
