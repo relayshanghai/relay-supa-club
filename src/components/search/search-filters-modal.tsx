@@ -22,7 +22,7 @@ export type UpperAgeType = '17' | '24' | '34' | '44' | '64';
 
 export type LowerAgeType = '13' | '18' | '25' | '35' | '45' | '65';
 
-const lowerAgeOptions = [18, 25, 35, 45, 65];
+const lowerAgeOptions: LowerAgeOption[] = [18, 25, 35, 45, 65];
 const upperAgeOptions = [17, 24, 34, 44, 64];
 
 export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: (open: boolean) => void }) => {
