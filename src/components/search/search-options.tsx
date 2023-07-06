@@ -219,7 +219,7 @@ export const SearchOptions = ({
                         </div>
                     </div>
                 </div>
-                <WordCloudComponent tags={tags} platform={platform} updateTags={(newTags) => setTopicTags(newTags)} />
+                <WordCloudComponent tags={tags} platform={platform} updateTags={setTopicTags} />
             </div>
         </>
     );
