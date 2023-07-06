@@ -11,6 +11,7 @@ import { Button } from '../button';
 import { useRouter } from 'next/router';
 import { screenshots } from 'public/assets/imgs/screenshots';
 import Image from 'next/image';
+import { useRudderstack } from 'src/hooks/use-rudderstack';
 
 const ImageBackground = () => {
     return (
@@ -30,6 +31,7 @@ export const PricingPage = ({ page = 'upgrade' }: { page?: 'upgrade' | 'landing'
     const landingPage = page === 'landing';
     const { t } = useTranslation();
     const router = useRouter();
+    const { trackEvent } = useRudderstack();
     const [period, setPeriod] = useState<ActiveSubscriptionPeriod>('quarterly');
     const [confirmModalData, setConfirmModalData] = useState<SubscriptionConfirmModalData | null>(null);
     const { createSubscription } = useSubscription();
@@ -42,6 +44,7 @@ export const PricingPage = ({ page = 'upgrade' }: { page?: 'upgrade' | 'landing'
     const options: ActiveSubscriptionTier[] = landingPage ? ['free', 'diyMax', 'diy'] : ['diyMax', 'diy'];
 
     const handleStartFreeTrialClicked = () => {
+        trackEvent('Landing Page, clicked on start free trial');
         router.push('/signup');
     };
 
@@ -71,12 +74,13 @@ export const PricingPage = ({ page = 'upgrade' }: { page?: 'upgrade' | 'landing'
                             checked={period === 'quarterly'}
                             onChange={(e) => {
                                 setPeriod(e.target.checked ? 'quarterly' : 'monthly');
+                                trackEvent('Landing Page, clicked on switch', { selectedPeriod: period });
                             }}
                             beforeLabel={t('pricing.monthly') || 'Monthly'}
                             afterLabel={t('pricing.quarterly') || 'Quarterly'}
                         />
-                        <p className="absolute -right-20 -top-1 mr-2 text-sm font-semibold text-pink-500">
-                            {t('pricing.save15Percent')}
+                        <p className="absolute -right-24 -top-2 mr-2 text-sm font-semibold text-pink-500">
+                            {t('pricing.saveUpTo33Percent')}
                         </p>
                     </div>
                     <div

@@ -129,6 +129,29 @@ OR REPLACE FUNCTION create_company(
 $$;
 
 CREATE
+OR REPLACE FUNCTION create_company_category(
+  company UUID,
+  category TEXT
+) RETURNS RECORD SECURITY DEFINER LANGUAGE plpgsql AS $$
+    DECLARE
+      _row RECORD;
+    BEGIN
+      INSERT INTO company_categories
+        (
+          category,
+          company_id
+        )
+      VALUES
+        (
+          category,
+          company
+        )
+      RETURNING * INTO _row;
+      RETURN _row;
+    END;
+$$;
+
+CREATE
 OR REPLACE FUNCTION create_campaign(
   company_id UUID,
   campaign_name TEXT,
@@ -410,6 +433,8 @@ BEGIN
   -- Test Company
   _company_test := create_company('Blue Moonlight Stream Enterprises', 'https://blue-moonlight-stream.com', 'active');
 
+  PERFORM create_company_category(_company_test.id, 'Video Game Streaming');
+
   _profile_william := create_profile(
     _company_test.id,
     'william.edward.douglas@blue-moonlight-stream.com',
@@ -573,6 +598,8 @@ BEGIN
   -- Relay Club
   _company_relay := create_company('Relay Club', 'https://relay.club', 'active');
 
+  PERFORM create_company_category(_company_test.id, 'Influencer Marketing');
+
   _campaign_gaming := create_campaign(
     _company_relay.id,
     'The Future of Gaming is Here',
@@ -598,6 +625,7 @@ $$;
 
 -- cleanup
 DROP FUNCTION IF EXISTS create_company;
+DROP FUNCTION IF EXISTS create_company_category;
 DROP FUNCTION IF EXISTS create_profile;
 DROP FUNCTION IF EXISTS create_supabase_user;
 DROP FUNCTION IF EXISTS create_campaign;

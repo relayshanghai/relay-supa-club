@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import useAboveScreenWidth from 'src/hooks/use-above-screen-width';
 import EmailOutline from './icons/EmailOutline';
 import { useUser } from 'src/hooks/use-user';
-import { Compass, FourSquare, Account, Team, PieChart } from './icons';
+import { Compass, FourSquare, Account, Team, PieChart, Guide } from './icons';
 import { Title } from './title';
 import { useTranslation } from 'react-i18next';
 
@@ -37,6 +37,8 @@ const ActiveLink = ({ href, children }: { href: string; children: ReactNode }) =
 
             {href === '/performance' && <PieChart height={18} width={18} className="mr-4 stroke-inherit" />}
 
+            {href === '/guide' && <Guide height={18} width={18} className="mr-4 stroke-inherit" />}
+
             {children}
         </Link>
     );
@@ -56,6 +58,7 @@ const NavBarInner = ({ loggedIn, isRelayEmployee }: { loggedIn: boolean | null; 
                 <ActiveLink href="/ai-email-generator">{t('navbar.aiEmailGenerator')}</ActiveLink>
                 <ActiveLink href="/performance">{t('navbar.performance')}</ActiveLink>
                 {loggedIn && <ActiveLink href="/account">{t('navbar.account')}</ActiveLink>}
+                <ActiveLink href="/guide">{t('navbar.guide')}</ActiveLink>
             </div>
             {isRelayEmployee && (
                 <div className="mt-8 flex flex-col space-y-4">

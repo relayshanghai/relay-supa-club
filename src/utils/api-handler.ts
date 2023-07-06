@@ -1,6 +1,7 @@
 import type { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { serverLogger } from 'src/utils/logger-server';
+import { ZodError } from 'zod';
 
 export type ApiHandlerParams = {
     getHandler?: NextApiHandler;
@@ -39,17 +40,24 @@ export class RelayError extends Error {
 }
 
 export const exceptionHandler = <T = any>(fn: NextApiHandler<T>) => {
-    return async (req: NextApiRequest, res: NextApiResponse<T | { error: string }>) => {
+    return async (req: NextApiRequest, res: NextApiResponse<T | { error: any }>) => {
         try {
             await fn(req, res);
         } catch (error) {
-            const e = {
+            const e: {
+                httpCode: number;
+                message: any;
+            } = {
                 httpCode: httpCodes.INTERNAL_SERVER_ERROR,
                 message: 'Unknown Error',
             };
 
             if (error instanceof Error) {
                 e.message = error.message;
+            }
+
+            if (error instanceof ZodError) {
+                e.message = error.issues;
             }
 
             if (error instanceof RelayError) {
@@ -64,7 +72,12 @@ export const exceptionHandler = <T = any>(fn: NextApiHandler<T>) => {
                 e.message = error;
             }
 
-            if (error !== null && typeof error === 'object' && error.constructor.name === 'Object') {
+            if (
+                !(error instanceof Error) &&
+                error !== null &&
+                typeof error === 'object' &&
+                error.constructor.name === 'Object'
+            ) {
                 e.message = JSON.stringify(error);
             }
 
@@ -88,7 +101,6 @@ export const ApiHandler =
     async (req: NextApiRequest, res: NextApiResponse) => {
         if (req.method === 'GET' && params.getHandler !== undefined) {
             return await exceptionHandler<T>(params.getHandler)(req, res);
-            // return await params.getHandler(req, res);
         }
 
         if (req.method === 'POST' && params.postHandler !== undefined) {

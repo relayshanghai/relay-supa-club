@@ -6,7 +6,6 @@ import type { DatabaseWithCustomTypes } from 'types';
 import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
 import httpCodes from 'src/constants/httpCodes';
 import { serverLogger } from 'src/utils/logger-server';
-import { featSignupV2 } from 'src/constants/feature-flags';
 
 const pricingAllowList = ['https://en-relay-club.vercel.app', 'https://relay.club'];
 
@@ -41,7 +40,6 @@ const checkOnboardingStatus = async (
     supabase: SupabaseClient<DatabaseWithCustomTypes>,
 ) => {
     const redirectUrl = req.nextUrl.clone();
-    const curStep = new URL(req.url).searchParams.get('curStep');
     // special case where we require a signed in user to create a company, but we don't want to redirect them to onboarding cause this happens before they are onboarded
     if (req.nextUrl.pathname === '/api/company/create') {
         const { user_id } = JSON.parse(await req.text());
@@ -65,21 +63,14 @@ const checkOnboardingStatus = async (
         return res;
     }
     const { subscriptionStatus, subscriptionEndDate } = await getCompanySubscriptionStatus(supabase, session.user.id);
-    // if signed up, but no company, redirect to onboarding
     if (!subscriptionStatus) {
         if (req.nextUrl.pathname.includes('api')) {
             return NextResponse.rewrite(redirectUrl.origin, { status: httpCodes.FORBIDDEN });
         }
-        if (req.nextUrl.pathname === '/signup/onboarding') return res;
-        redirectUrl.pathname = '/signup/onboarding';
-        if (featSignupV2()) {
-            //eslint-disable-next-line
-            console.log('No subscription_status found, should never happen');
-        }
-        return NextResponse.redirect(redirectUrl);
-    }
-
-    if (subscriptionStatus === 'active' || subscriptionStatus === 'trial') {
+        if (req.nextUrl.pathname.includes('signup')) return res;
+        //eslint-disable-next-line
+        console.error('No subscription_status found, should never happen'); // because either they don't have a session, or they should be awaiting_payment or active etc
+    } else if (subscriptionStatus === 'active' || subscriptionStatus === 'trial') {
         // if already signed in and has company, when navigating to index or login page, redirect to dashboard
         if (req.nextUrl.pathname === '/' || req.nextUrl.pathname === '/login' || req.nextUrl.pathname === '/signup') {
             redirectUrl.pathname = '/dashboard';
@@ -88,8 +79,7 @@ const checkOnboardingStatus = async (
 
         // Authentication successful, forward request to protected route.
         return res;
-    }
-    if (subscriptionStatus === 'canceled') {
+    } else if (subscriptionStatus === 'canceled') {
         // if subscription ended only allow access to account page, and subscription endpoints
         const allowedPaths = [
             '/',
@@ -116,24 +106,18 @@ const checkOnboardingStatus = async (
                 return NextResponse.redirect(redirectUrl);
             } else return res;
         }
-    }
-
-    // if company registered, but no payment method, redirect to payment onboarding
-    if (subscriptionStatus === 'awaiting_payment_method') {
+    } else if (subscriptionStatus === 'awaiting_payment_method') {
         // allow the endpoints payment onboarding page requires
-        if (req.nextUrl.pathname.includes('/api/company') || req.nextUrl.pathname.includes('/api/subscriptions'))
+        if (req.nextUrl.pathname.includes('/api/company') || req.nextUrl.pathname.includes('/api/subscriptions')) {
             return res;
-
-        if (featSignupV2()) {
-            if (curStep === '5') {
-                return res;
-            }
-            redirectUrl.pathname = '/signup';
-            redirectUrl.searchParams.set('curStep', '5');
-        } else {
-            if (req.nextUrl.pathname.includes('/signup/payment-onboard')) return res;
-            redirectUrl.pathname = '/signup/payment-onboard';
         }
+        const curStep = new URL(req.url).searchParams.get('curStep');
+        if (curStep === '5') {
+            return res;
+        }
+        redirectUrl.pathname = '/signup';
+        redirectUrl.searchParams.set('curStep', '5');
+
         return NextResponse.redirect(redirectUrl);
     }
 
@@ -215,7 +199,8 @@ export const config = {
          * - create-employee endpoint (api/company/create-employee)
          * - login, signup, logout (login, signup, logout pages)
          * - Stripe webhook (instead use signing key to protect)
+         * - /api/webhooks/* (webhook routes)
          */
-        '/((?!_next/static|_next/image|favicon.ico|assets/*|api/invites/accept*|api/company/create-employee*|login*|login/reset-password|signup/invite*|logout|api/logout|api/subscriptions/webhook).*)',
+        '/((?!_next/static|_next/image|favicon.ico|assets/*|api/invites/accept*|api/company/create-employee*|login*|login/reset-password|signup/invite*|logout|api/logout|api/subscriptions/webhook|api/webhooks).*)',
     ],
 };

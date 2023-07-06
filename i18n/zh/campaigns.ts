@@ -84,6 +84,12 @@ const campaigns = {
         delivered: '已签收',
         influencerUpdated: 'KOL信息已更新',
     },
+    addSalesModal: {
+        caption: '添加销售额',
+        title: '添加销售额（美元）',
+        currency: '$',
+        modalButton: '添加金额',
+    },
     email: {
         dayLimit: '您只能每 24 小时向 KOL 发送一封邮件，以避免被识别为垃圾邮件',
         emailSent: '邮件发送成功。',

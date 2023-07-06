@@ -28,6 +28,7 @@
   "dependencies": {
     "@headlessui/react": "^1.7.14",
     "@heroicons/react": "^2.0.17",
+    "@rudderstack/rudder-sdk-node": "^2.0.2",
     "@sentry/nextjs": "^7.48.0",
     "@stripe/react-stripe-js": "^2.1.0",
     "@stripe/stripe-js": "^1.54.0",
@@ -69,6 +70,7 @@
     "@storybook/nextjs": "^7.0.7",
     "@storybook/react": "^7.0.7",
     "@storybook/testing-library": "^0.0.14-next.2",
+    "@tailwindcss/forms": "^0.5.3",
     "@testing-library/cypress": "^9.0.0",
     "@types/node": "18.15.11",
     "@types/react": "18.0.37",
@@ -97,7 +99,6 @@
   },
   "lint-staged": {
     "(supabase|supabase/policies|supabase/functions|supabase/tests)/**/(*|seed).sql": [
-      "command -v sqlfluff &>/dev/null",
       "sqlfluff fix --force --disable-progress-bar --ignore=parsing"
     ],
     "supabase/tests/**/*.sql": [

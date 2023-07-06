@@ -30,9 +30,12 @@ env:
     GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
     NEXT_PUBLIC_CI: true
     NEXT_PUBLIC_CHATWOOT_WEBSITE_TOKEN: ${{ vars.NEXT_PUBLIC_CHATWOOT_WEBSITE_TOKEN }}
+    CHATWOOT_WEBHOOK_TOKEN: ${{ vars.CHATWOOT_WEBHOOK_TOKEN }}
     APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
     NEXT_PUBLIC_RUDDERSTACK_APP_WRITE_KEY: ${{ secrets.NEXT_PUBLIC_RUDDERSTACK_APP_WRITE_KEY }}
     NEXT_PUBLIC_RUDDERSTACK_APP_DATA_PLANE_URL: ${{ secrets.NEXT_PUBLIC_RUDDERSTACK_APP_DATA_PLANE_URL }}
+    RUDDERSTACK_APP_WRITE_KEY: ${{ secrets.RUDDERSTACK_APP_WRITE_KEY }}
+    RUDDERSTACK_APP_DATA_PLANE_URL: ${{ secrets.RUDDERSTACK_APP_DATA_PLANE_URL }}
 
 jobs:
     supabase-test:
@@ -46,7 +49,7 @@ jobs:
 
             - uses: supabase/setup-cli@v1
               with:
-                  version: latest
+                  version: 1.75.3
 
             - name: Verify supabase cli version
               run: supabase -v
@@ -117,7 +120,10 @@ jobs:
 
             - uses: supabase/setup-cli@v1
               with:
-                  version: latest
+                  version: 1.75.3
+
+            - name: Verify supabase cli version
+              run: supabase -v
 
             - name: Verify supabase cli version
               run: supabase -v
