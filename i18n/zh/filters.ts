@@ -27,6 +27,7 @@ const filters = {
     days: '天',
     months: '月',
     clearButton: '清除目前筛选条件',
+    searchButton: '带筛选器搜索',
 };
 
 export default filters;

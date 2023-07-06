@@ -26,8 +26,10 @@ export const Tooltip = ({
     const [isHovered, setIsHovered] = useState(false);
 
     return (
-        <div className={`relative ${className}`} onMouseLeave={() => setIsHovered(false)}>
-            <div onMouseOver={() => setIsHovered(true)}>{children}</div>
+        <div className={`relative ${className}`}>
+            <div onMouseOver={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
+                {children}
+            </div>
             {isHovered && (
                 <div
                     className={`absolute  ${

@@ -14,8 +14,8 @@ export const InputWithTags = ({ disabled, tags = [], onTagRemove, TagComponent, 
         <label className="flex w-full flex-col text-xs font-medium text-gray-500">
             <div
                 className={`flex w-full flex-row items-center rounded-md ${
-                    tags.length > 0 && 'px-2'
-                } border border-gray-200 bg-white  text-gray-900 ring-1 ring-gray-900 ring-opacity-5 focus:border-primary-500 focus:outline-none focus:ring-primary-500 sm:text-sm`}
+                    tags.length > 0 && 'pl-2'
+                } border border-gray-200 bg-white pr-2  text-gray-900 ring-1 ring-gray-900 ring-opacity-5 focus:border-primary-500 focus:outline-none focus:ring-primary-500 sm:text-sm`}
             >
                 <div className="my-2 flex h-6 space-x-2">
                     {tags

@@ -27,6 +27,7 @@ const filters = {
     days: 'Days',
     months: 'Months',
     clearButton: 'Clear Filters',
+    searchButton: 'Search with Filters',
 };
 
 export default filters;

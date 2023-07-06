@@ -49,12 +49,10 @@ export const SearchOptions = ({
     const [keywordInput, setKeywordInput] = useState<string>('');
 
     const { t } = useTranslation();
-    // const hasSetViews = views[0] || views[1];
-    // const hasSetAudience = audience[0] || audience[1];
     const { trackEvent } = useRudderstack();
 
     const handleSearch = (e: any) => {
-        setKeywords(keywordInput);
+        keywordInput.length > 0 && setKeywords(keywordInput);
         trackEvent('Search Filter Modal, change keywords', {
             keywords: keywordInput,
         });
@@ -114,7 +112,7 @@ export const SearchOptions = ({
             <div className="flex h-full  flex-row">
                 <div className="flex w-full flex-col items-start justify-evenly space-y-2 py-4 font-light md:gap-x-4 md:gap-y-0">
                     <div data-testid="search-topics" className="flex h-full w-full flex-col justify-evenly">
-                        <div className="flex">
+                        <div className="flex gap-1">
                             <p className="mb-2 text-sm font-semibold">{t('creators.searchTopicLabel')}</p>
                             <Tooltip
                                 content={t('tooltips.searchTopics.title')}
@@ -148,7 +146,7 @@ export const SearchOptions = ({
                     </div>
                     {platform === 'youtube' ? (
                         <div data-testid="search-keywords" className="flex h-full w-full flex-col justify-evenly">
-                            <div className="flex">
+                            <div className="flex gap-1">
                                 <p className="mb-2 text-sm font-semibold">{t('creators.searchKeywordsLabel')}</p>
                                 <Tooltip
                                     content={t('tooltips.searchKeywords.title')}
@@ -169,7 +167,6 @@ export const SearchOptions = ({
                                 platform={platform}
                                 onChangeTopics={() => {
                                     tags.length !== 0 && setTopicTags([]);
-                                    hashtags.length !== 0 && setHashtags([]);
                                 }}
                                 onSetKeywords={(keywords) => {
                                     setKeywords(keywords);
@@ -178,7 +175,7 @@ export const SearchOptions = ({
                         </div>
                     ) : (
                         <div data-testid="search-hashtags" className="flex h-full w-full flex-col justify-evenly">
-                            <div className="flex">
+                            <div className="flex gap-1">
                                 <p className="mb-2 w-fit text-sm font-semibold">{t('creators.searchHashTagsLabel')}</p>
                                 <Tooltip
                                     content={t('tooltips.searchHashTags.title')}
@@ -200,7 +197,6 @@ export const SearchOptions = ({
                                 }}
                                 onChangeTopics={() => {
                                     tags.length !== 0 && setTopicTags([]);
-                                    keywords.length !== 0 && setKeywords('');
                                 }}
                             />
                         </div>
