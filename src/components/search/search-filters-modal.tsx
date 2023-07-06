@@ -18,7 +18,7 @@ const filterCountry = (items: any[]) => {
     });
 };
 
-export type UpperAgeType = '17' | '24' | '34' | '44' | '64';
+export type UpperAgeOption = '17' | '24' | '34' | '44' | '64';
 
 export type LowerAgeOption = '13' | '18' | '25' | '35' | '45' | '65';
 
