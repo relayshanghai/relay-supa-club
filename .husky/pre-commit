@@ -8,6 +8,9 @@ then
     exit
 fi
 
+# verify types
+npm run type-check:app
+
 # sqlfluff is unfortunately not in npm. add dev hint for installing here
 if ! command -v sqlfluff >/dev/null 2>&1; then
     if command -v pip >/dev/null 2>&1; then
@@ -23,6 +26,3 @@ fi
 
 # verify formatting
 npx lint-staged --verbose
-
-# verify types
-npm run type-check:app
