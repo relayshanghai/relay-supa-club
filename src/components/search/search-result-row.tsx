@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { Menu } from '@headlessui/react';
 import { PlusCircleIcon } from '@heroicons/react/24/solid';
 import Link from 'next/link';
@@ -9,7 +10,7 @@ import useAboveScreenWidth from 'src/hooks/use-above-screen-width';
 import { useSearch, useSearchResults } from 'src/hooks/use-search';
 import { imgProxy } from 'src/utils/fetcher';
 import { decimalToPercent, numberFormatter } from 'src/utils/formatter';
-import type { CreatorSearchAccountObject } from 'types';
+import type { CreatorPlatform, CreatorSearchAccountObject } from 'types';
 import { Badge, Tooltip } from '../library';
 import { SkeletonSearchResultRow } from '../common/skeleton-search-result-row';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
@@ -18,6 +19,8 @@ import { isRecommendedInfluencer } from 'src/utils/utils';
 import type { CampaignCreatorBasicInfo } from 'src/utils/client-db/campaignCreators';
 import { useAtom } from 'jotai';
 import { clientRoleAtom } from 'src/atoms/client-role-atom';
+import { SearchAnalyzeInfluencer } from 'src/utils/analytics/events';
+import { useAnalytics } from '../analytics/analytics-provider';
 export interface SearchResultRowProps {
     creator: CreatorSearchAccountObject;
     setSelectedCreator: (creator: CreatorSearchAccountObject) => void;
@@ -87,6 +90,7 @@ export const SearchResultRow = ({
     const { t } = useTranslation();
     const { platform, recommendedInfluencers } = useSearch();
     const { trackEvent } = useRudderstack();
+    const { track } = useAnalytics();
     const {
         username,
         custom_name,
@@ -127,6 +131,15 @@ export const SearchResultRow = ({
     const desktop = useAboveScreenWidth(500);
     const [clientRoleData] = useAtom(clientRoleAtom);
     const inActAsMode = clientRoleData.companyId?.length > 0;
+
+    const analyzeInfluencer = useCallback(
+        (args: { platform: CreatorPlatform; user_id: string }) => {
+            const { platform, user_id } = args;
+            track(SearchAnalyzeInfluencer)({ platform, user_id });
+            trackEvent('Search Result Row, open report', { platform, user_id });
+        },
+        [track, trackEvent],
+    );
 
     return (
         <tr className="group hover:bg-primary-100">
@@ -175,7 +188,7 @@ export const SearchResultRow = ({
                         href={`/influencer/${platform}/${user_id}`}
                         target={inActAsMode ? '_self' : '_blank'}
                         rel="noopener noreferrer"
-                        onClick={() => trackEvent('Search Result Row, open report', { platform, user_id })}
+                        onClick={() => analyzeInfluencer({ platform, user_id })}
                         data-testid={`analyze-button/${user_id}`}
                     >
                         <Button className="flex flex-row items-center" variant="secondary">
@@ -238,9 +251,7 @@ export const SearchResultRow = ({
                                                 className={`${
                                                     active ? 'bg-violet-500 text-white' : 'text-gray-900'
                                                 } group flex w-full items-center justify-center rounded-md px-2 py-2 text-sm`}
-                                                onClick={() =>
-                                                    trackEvent('Search Result Row, open report', { platform, user_id })
-                                                }
+                                                onClick={() => analyzeInfluencer({ platform, user_id })}
                                             >
                                                 {t('creators.analyzeProfile')}
                                             </button>

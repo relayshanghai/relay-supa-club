@@ -19,6 +19,10 @@ export const apiFetch = async <T = any>(url: string, payload: ApiPayload, option
     if (payload.body) {
         options.method = 'POST';
         options.body = JSON.stringify(payload.body);
+        options.headers = {
+            ...options.headers,
+            'Content-Type': 'application/json',
+        };
     }
 
     const response = await fetch(url, options).catch((err) => {

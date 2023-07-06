@@ -9,9 +9,12 @@ export type AnalyticsEventParam = {
     plugins: AnalyticsPlugin[];
     payload: {
         type: string;
-        plugins: any[];
-        disabled: any[];
-        meta: any[];
+        meta: any;
+        anonymousId: string;
+        userId: string;
+        event: string;
+        options: any;
+        properties: any;
     };
     instance: {
         identify: (...params: any[]) => any;

@@ -18,6 +18,8 @@ import { MoreResultsRows } from './search-result-row';
 import ClientRoleWarning from './client-role-warning';
 import { useAllCampaignCreators } from 'src/hooks/use-all-campaign-creators';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { useAnalytics } from '../analytics/analytics-provider';
+import { SearchLoadMoreResults } from 'src/utils/analytics/events';
 // import { featRecommended } from 'src/constants/feature-flags';
 
 export const SearchPageInner = () => {
@@ -43,6 +45,7 @@ export const SearchPageInner = () => {
     const { campaigns } = useCampaigns({});
     const { allCampaignCreators } = useAllCampaignCreators(campaigns);
     const { trackEvent } = useRudderstack();
+    const { track } = useAnalytics();
 
     const [page, setPage] = useState(0);
     const {
@@ -134,7 +137,9 @@ export const SearchPageInner = () => {
             {!noResults && (
                 <Button
                     onClick={async () => {
-                        setPage(page + 1);
+                        const nextPage = page + 1;
+                        setPage(nextPage);
+                        track(SearchLoadMoreResults)({ page: nextPage });
                         trackEvent('Search Result, load more');
                     }}
                 >

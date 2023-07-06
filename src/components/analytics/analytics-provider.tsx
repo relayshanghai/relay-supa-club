@@ -11,7 +11,7 @@ import { AnalyticsProvider as BaseAnalyticsProvider } from 'use-analytics';
 import { useSession } from 'src/hooks/use-session';
 import { SupabasePlugin } from '../../utils/analytics/plugins/analytics-plugin-supabase';
 
-type AnalyticsEvent = (analytics: AnalyticsInstance) => (value: any) => void;
+type AnalyticsEvent = (analytics: AnalyticsInstance) => (value?: any) => void;
 
 const createTrack = (analytics: AnalyticsInstance) => (event: AnalyticsEvent) => event(analytics);
 
