@@ -114,7 +114,7 @@ jobs:
 
             - name: Export Supabase keys
               # Uses supabase status to print the anon key and service key to the terminal and populates the environment variables
-              run: bash supabase/export_supabase_keys.sh
+              run: ./supabase/db.sh export_supabase_keys
 
             - name: Make sure seed is loaded
               run: supabase db reset
