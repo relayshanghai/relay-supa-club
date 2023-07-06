@@ -12,7 +12,7 @@ const tooltips = {
         highlight: '在每一次搜索中，您只能使用「主题搜索」或「关键词搜索」，不能同时使用这两个搜索功能。',
     },
     searchHashTags: {
-        title: '标签',
+        title: '添加标签',
         description: '我们将找到在他们最近的发布内容中使用过您的标签的KOL。',
         link: '了解更多',
         highlight: '在每一次搜索中，您只能使用「主题搜索」或「标签搜索」，不能同时使用这两个搜索功能。',
