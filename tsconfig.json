@@ -22,5 +22,5 @@
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "pages/_error.js"],
   // Exclude test files because they are not part of the build
-  "exclude": ["node_modules", "**/*.test.ts", "node_modules/react-d3-cloud/src/WordCloud.tsx"]
+  "exclude": ["node_modules", "**/*.test.ts"]
 }
