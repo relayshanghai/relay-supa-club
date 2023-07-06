@@ -86,7 +86,7 @@ describe('Main pages happy paths', () => {
             cy.get('input[autocomplete="billing cc-csc"]').type('123');
             // Some countries like India won't show an input for Postal Code
             cy.get('form').then($form => {
-                if ($form.find('input[autocomplete="billing postal-code"]').length > 0)   // Replace 'selector' with your selector
+                if ($form.find('input[autocomplete="billing postal-code"]').length > 0)
                         cy.get('input[autocomplete="billing postal-code"]').type('12345');
             })
 
