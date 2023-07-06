@@ -22,8 +22,8 @@ export type UpperAgeOption = '17' | '24' | '34' | '44' | '64';
 
 export type LowerAgeOption = '13' | '18' | '25' | '35' | '45' | '65';
 
-const lowerAgeOptions: LowerAgeOption[] = [18, 25, 35, 45, 65];
-const upperAgeOptions = [17, 24, 34, 44, 64];
+const lowerAgeOptions: LowerAgeOption[] = ['18', '25', '35', '45', '65'];
+const upperAgeOptions: UpperAgeOption[] = ['17', '24', '34', '44', '64'];
 
 export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: (open: boolean) => void }) => {
     const {
@@ -70,19 +70,19 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
         }
     }, [audienceAge, setAudienceAge]);
 
-    const getUpperAge = (targetValue: string, maxOption: string): UpperAgeType | undefined => {
+    const getUpperAge = (targetValue: string, maxOption: string): UpperAgeOption | undefined => {
         if (targetValue === maxOption) {
             return undefined;
         } else {
-            return targetValue as UpperAgeType;
+            return targetValue as UpperAgeOption;
         }
     };
 
-    const getLowerAge = (targetValue: string, maxOption: string): LowerAgeType | undefined => {
+    const getLowerAge = (targetValue: string, maxOption: string): LowerAgeOption | undefined => {
         if (targetValue === maxOption) {
             return undefined;
         } else {
-            return targetValue as LowerAgeType;
+            return targetValue as LowerAgeOption;
         }
     };
 
@@ -148,7 +148,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                                     return (
                                         <option
                                             key={index}
-                                            hidden={parseInt(audienceAge?.right_number || '100') < lowerAge}
+                                            hidden={parseInt(audienceAge?.right_number || '100') < parseInt(lowerAge)}
                                             value={lowerAge}
                                         >
                                             {lowerAge}
@@ -174,7 +174,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                                     return (
                                         <option
                                             key={index}
-                                            hidden={parseInt(audienceAge?.left_number || '0') > upperAge}
+                                            hidden={parseInt(audienceAge?.left_number || '0') > parseInt(upperAge)}
                                             value={upperAge}
                                         >
                                             {upperAge}
