@@ -109,7 +109,7 @@ const InfluencerRow = ({
                             data-testid="status-dropdown"
                             onChange={(e) => handleDropdownSelect(e.target.value, creator, 'status')}
                             value={creator.status || ''}
-                            className="-ml-1 mr-2.5 cursor-pointer appearance-none rounded-md border border-gray-200 bg-primary-50 px-4 py-2 text-center text-xs font-semibold text-primary-500 outline-none hover:bg-primary-100"
+                            className="-ml-1 mr-2.5 cursor-pointer appearance-none rounded-md border border-gray-200 bg-primary-50  text-center text-xs font-semibold text-primary-500 outline-none hover:bg-primary-100"
                         >
                             {tabs.map((tab) => (
                                 <option value={tab.value} key={tab.label}>
