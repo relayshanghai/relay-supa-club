@@ -28,6 +28,7 @@ export const SearchTopics = ({
     const [loading, setLoading] = useState(false);
     const inputRef = useRef<any>();
     const { trackEvent } = useRudderstack();
+    const ref = useRef<any>();
 
     useOnOutsideClick(inputRef, () => {
         setSuggestions([]);
@@ -38,8 +39,12 @@ export const SearchTopics = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const setTopicSearch = useCallback(
         debounce(async (term: string) => {
-            const abortController = new AbortController();
-            const signal = abortController.signal;
+            if (ref.current) {
+                ref.current.abort();
+            }
+            const controller = new AbortController();
+            const signal = controller.signal;
+            ref.current = controller;
 
             try {
                 setLoading(true);
@@ -62,12 +67,7 @@ export const SearchTopics = ({
                 clientLogger(error, 'error');
             }
             setLoading(false);
-
-            // Abort fetch request after 5 seconds
-            setTimeout(() => {
-                abortController.abort();
-            }, 5000);
-        }),
+        }, 100),
         [platform, path],
     );
 
