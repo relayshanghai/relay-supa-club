@@ -13,9 +13,17 @@ type SearchTopicsProps = {
     topics: CreatorSearchTag[];
     platform: CreatorPlatform;
     onSetTopics: (topics: CreatorSearchTag[]) => void;
+    onChangeTopics: () => void;
 };
 
-export const SearchTopics = ({ onSetTopics, topics, platform, path, placeholder }: SearchTopicsProps) => {
+export const SearchTopics = ({
+    onSetTopics,
+    topics,
+    platform,
+    path,
+    placeholder,
+    onChangeTopics,
+}: SearchTopicsProps) => {
     const [suggestions, setSuggestions] = useState<CreatorSearchTag[]>([]);
     const [loading, setLoading] = useState(false);
     const inputRef = useRef<any>();
@@ -94,6 +102,7 @@ export const SearchTopics = ({ onSetTopics, topics, platform, path, placeholder 
             suggestions={suggestions}
             onChange={(item) => {
                 setTopicSearch(item);
+                onChangeTopics();
             }}
             onRemoveTag={(item) => {
                 removeTag(item);

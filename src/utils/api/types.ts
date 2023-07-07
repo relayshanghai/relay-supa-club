@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import {
-    audience_age,
+    audience_age_range,
     audience_gender,
     gender_code,
     last_posted,
@@ -51,7 +51,7 @@ export const InfluencerSearchFilter = z.object({
     keywords: z.string().optional(),
     influencerAge: NullString.optional(),
     influencerLocation: Location.array().optional(),
-    audienceAge: audience_age.optional(),
+    audienceAge: audience_age_range.optional(),
     audienceLocation: Location.array().optional(),
     resultsPerPageLimit: z.number().optional().default(10),
     page: z.number().optional().default(0),

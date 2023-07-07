@@ -9,6 +9,7 @@ import type {
 } from 'src/utils/api/db';
 import type Stripe from 'stripe';
 import type { Database } from './supabase';
+import type { audience_age_range, audience_gender } from 'src/utils/api/iqdata/influencers/search-influencers-payload';
 
 export type LabelValueObject = { label: string; value: string };
 export type LocationWeighted = {
@@ -22,6 +23,8 @@ export type LocationWeighted = {
         code: string;
     };
 };
+export type AudienceAgeRangeWeighted = z.input<typeof audience_age_range> | undefined;
+export type AudienceGenderWeighted = z.input<typeof audience_gender> | undefined;
 export type CreatorSearchTag = { tag: string; value: string };
 
 export type SubscriptionPeriod = 'monthly' | 'quarterly' | 'annually';
