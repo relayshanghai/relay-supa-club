@@ -19,7 +19,7 @@ import { isRecommendedInfluencer } from 'src/utils/utils';
 import type { CampaignCreatorBasicInfo } from 'src/utils/client-db/campaignCreators';
 import { useAtom } from 'jotai';
 import { clientRoleAtom } from 'src/atoms/client-role-atom';
-import { SearchAnalyzeInfluencer } from 'src/utils/analytics/events';
+import { SearchAnalyzeInfluencer, SearchOpenSocialProfile } from 'src/utils/analytics/events';
 import { useAnalytics } from '../analytics/analytics-provider';
 export interface SearchResultRowProps {
     creator: CreatorSearchAccountObject;
@@ -141,6 +141,15 @@ export const SearchResultRow = ({
         [track, trackEvent],
     );
 
+    const openSocialProfile = useCallback(
+        (args: { url: string }) => {
+            const { url } = args;
+            track(SearchOpenSocialProfile)({ url });
+            trackEvent('Search Result Row, open social link', { url });
+        },
+        [track, trackEvent],
+    );
+
     return (
         <tr className="group hover:bg-primary-100">
             <td className="flex w-full">
@@ -208,7 +217,7 @@ export const SearchResultRow = ({
                     {url && (
                         <Link href={url} target="_blank" rel="noopener noreferrer">
                             <Button
-                                onClick={() => trackEvent('Search Result Row, open social link', { url })}
+                                onClick={() => openSocialProfile({ url })}
                                 data-testid={`open-influencer-link-button/${user_id}`}
                             >
                                 <ShareLink className="w-5 fill-current text-white" />
@@ -264,9 +273,7 @@ export const SearchResultRow = ({
                                         <Menu.Item>
                                             {({ active }) => (
                                                 <button
-                                                    onClick={() =>
-                                                        trackEvent('Search Result Row, open social link', { url })
-                                                    }
+                                                    onClick={() => openSocialProfile({ url })}
                                                     className={`${
                                                         active ? 'bg-violet-500 text-white' : 'text-gray-900'
                                                     } group flex w-full items-center justify-center rounded-md px-2 py-2 text-sm`}
