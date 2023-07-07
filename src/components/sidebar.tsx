@@ -24,7 +24,7 @@ const ActiveLink = ({ href, children }: { href: string; children: ReactNode }) =
             }`}
         >
             {(href === '/influencer' || href === '/dashboard') && (
-                <Compass height={18} width={18} className="mr-4 text-inherit" />
+                <Compass height={18} width={18} className="mr-4 stroke-inherit" />
             )}
 
             {href === '/campaigns' && <FourSquare height={18} width={18} className="mr-4 stroke-inherit" />}

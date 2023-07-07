@@ -5,14 +5,14 @@ import type { CreatorPlatform } from 'types';
 import type { ChangeEvent } from 'react';
 import { debounce } from 'src/utils/debounce';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
-import { Spinner } from '../icons';
+import { Search, Spinner } from '../icons';
 
 export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
     const [searchTerm, setSearchTerm] = useState<string | ''>();
     const [spinnerLoading, setSpinnerLoading] = useState(false);
     const { t } = useTranslation();
 
-    const { setPlatform, setUsername, setText, setKeywords } = useSearch();
+    const { setPlatform, setUsername, setText } = useSearch();
     const { trackEvent } = useRudderstack();
 
     // Disabling the exhaustive-deps rule because we need to use the debounce function and we already know the required dependencies.
@@ -22,7 +22,6 @@ export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
             setPlatform(platform);
             setUsername(term);
             setText(term);
-            setKeywords(term);
             trackEvent('Search Options, search for an influencer', { influencer: term, platform });
             setSpinnerLoading(false);
         }),
@@ -36,7 +35,6 @@ export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
         if (e.target.value.trim() === '') {
             setUsername('');
             setText('');
-            setKeywords('');
         }
 
         searchInfluencer(e.target.value);
@@ -44,8 +42,9 @@ export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
 
     return (
         <div className="group relative flex w-full flex-col font-medium">
+            <Search className="absolute left-2 top-2 h-6 w-6 fill-gray-400" />
             <input
-                className="block w-full appearance-none rounded-md border border-gray-200 bg-white px-5 py-2 text-gray-600 placeholder-gray-400 ring-1 ring-gray-900 ring-opacity-5 placeholder:text-sm focus:outline-none"
+                className="block w-full appearance-none rounded-full border border-gray-200 bg-white py-2 pl-10 pr-6 text-gray-600 placeholder-gray-400 ring-1 ring-gray-900 ring-opacity-5 placeholder:text-sm focus:outline-none"
                 placeholder={t('creators.show.searchInfluencerPlaceholder') as string}
                 data-testid="creator-search"
                 id="creator-search"
