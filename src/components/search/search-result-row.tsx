@@ -135,7 +135,7 @@ export const SearchResultRow = ({
     const analyzeInfluencer = useCallback(
         (args: { platform: CreatorPlatform; user_id: string }) => {
             const { platform, user_id } = args;
-            track(SearchAnalyzeInfluencer)({ platform, user_id });
+            track(SearchAnalyzeInfluencer, { platform, user_id });
             trackEvent('Search Result Row, open report', { platform, user_id });
         },
         [track, trackEvent],
@@ -144,7 +144,7 @@ export const SearchResultRow = ({
     const openSocialProfile = useCallback(
         (args: { url: string }) => {
             const { url } = args;
-            track(SearchOpenSocialProfile)({ url });
+            track(SearchOpenSocialProfile, { url });
             trackEvent('Search Result Row, open social link', { url });
         },
         [track, trackEvent],

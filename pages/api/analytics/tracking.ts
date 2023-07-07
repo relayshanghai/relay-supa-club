@@ -10,6 +10,8 @@ import { z } from 'zod';
 import { now } from 'src/utils/datetime';
 import { getAnonId } from 'src/utils/analytics/api/analytics';
 import { JsonRoot } from 'src/utils/json';
+import type { TrackedEvent, ctx } from 'src/utils/analytics/types';
+import events, { eventKeys } from 'src/utils/analytics/events';
 
 type SessionIds = {
     session_id?: string;
@@ -40,37 +42,40 @@ const getSessionIds = (db: SupabaseClient) => async () => {
 };
 
 const PostRequestBody = z.object({
-    event: z.string(),
+    event: eventKeys,
     event_at: z.string().optional().default(now),
     payload: JsonRoot,
 });
 
-const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
-    const supabase = createServerSupabaseClient<DatabaseWithCustomTypes>({ req, res });
+const createTrack = (ctx: ctx) => async (event: TrackedEvent, payload?: any) => {
+    const supabase = createServerSupabaseClient<DatabaseWithCustomTypes>(ctx);
     const sessionIds = await getSessionIds(supabase)();
-    const journey = getJourney({ req, res });
+    const journey = getJourney(ctx);
+    const anonymous_id = getAnonId(ctx);
+    const trigger = (eventName: string, payload?: any) =>
+        insertTrackingEvent(supabase)({ ...payload, event: eventName });
 
-    const journey_id = journey ? journey.id : null;
-    const journey_type = journey ? journey.name : null;
+    const { event_at, ...otherPayload } = payload;
 
-    const anonymous_id = getAnonId({ req, res });
-
-    const { event, event_at, payload } = PostRequestBody.parse(req.body);
-
-    const _insertTrackingEvent = insertTrackingEvent(supabase);
-
-    const result = await _insertTrackingEvent({
-        event,
-        event_at,
-        journey_id,
-        journey_type,
+    const _payload = {
+        event_at: event_at ?? now(),
+        journey_id: journey ? journey.id : null,
+        journey_type: journey ? journey.name : null,
         data: {
             journey,
-            ...payload,
+            ...otherPayload,
         },
         anonymous_id,
         ...sessionIds,
-    });
+    };
+
+    return await event(trigger, _payload);
+};
+
+const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
+    const { event, event_at, payload } = PostRequestBody.parse(req.body);
+
+    const result = createTrack({ req, res })(events[event], { ...payload, event_at });
 
     return res.status(httpCodes.OK).json(result);
 };

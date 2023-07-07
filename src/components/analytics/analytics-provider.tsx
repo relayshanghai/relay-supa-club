@@ -10,10 +10,10 @@ import { useState } from 'react';
 import { AnalyticsProvider as BaseAnalyticsProvider } from 'use-analytics';
 import { useSession } from 'src/hooks/use-session';
 import { SupabasePlugin } from '../../utils/analytics/plugins/analytics-plugin-supabase';
+import type { TrackedEvent } from 'src/utils/analytics/types';
 
-type AnalyticsEvent = (analytics: AnalyticsInstance) => (value?: any) => void;
-
-const createTrack = (analytics: AnalyticsInstance) => (event: AnalyticsEvent) => event(analytics);
+const createTrack = (analytics: AnalyticsInstance) => (event: TrackedEvent, payload?: any) =>
+    analytics.track(event.eventName, { event, payload });
 
 export const AnalyticsContext = createContext<
     | {

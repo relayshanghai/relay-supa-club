@@ -3,7 +3,7 @@ import type { AnalyticsPlugin } from 'analytics';
 import { timestamp } from '../datetime';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-export type AnalyticsEventParam = {
+export type AnalyticsEventParam<T = any> = {
     abort: () => void;
     config: any;
     plugins: AnalyticsPlugin[];
@@ -14,7 +14,7 @@ export type AnalyticsEventParam = {
         userId: string;
         event: string;
         options: any;
-        properties: any;
+        properties: T;
     };
     instance: {
         identify: (...params: any[]) => any;
@@ -95,3 +95,10 @@ export type JourneyCollection = {
  * a Server Context contains a request and response
  */
 export type ctx = { req: NextApiRequest; res: NextApiResponse };
+
+export type TriggerEvent = (eventName: string, payload?: any) => any;
+
+export type TrackedEvent = {
+    (trigger: TriggerEvent, payload?: any): any;
+    eventName: string;
+};

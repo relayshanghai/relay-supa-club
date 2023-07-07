@@ -1,8 +1,11 @@
 import type { AnalyticsPlugin } from 'analytics';
-import type { AnalyticsEventParam } from '../types';
+import type { AnalyticsEventParam, TrackedEvent } from '../types';
 import { apiFetch } from 'src/utils/api/api-fetch';
+import { now } from 'src/utils/datetime';
 
 export type SupabasePluginConfig = any;
+
+type TrackPropertiesType = { event: TrackedEvent, payload?: any }
 
 export const SupabasePlugin = (config: SupabasePluginConfig = {}): AnalyticsPlugin => {
     return {
@@ -28,13 +31,23 @@ export const SupabasePlugin = (config: SupabasePluginConfig = {}): AnalyticsPlug
             // eslint-disable-next-line no-console
             console.log('trackStart', args);
         },
-        track: async (args: AnalyticsEventParam) => {
+        track: async (args: AnalyticsEventParam<TrackPropertiesType>) => {
             // eslint-disable-next-line no-console
             console.log('track', args);
 
-            await apiFetch('/api/analytics/tracking', {
-                body: { ...args.payload.properties }
-            })
+            const { event, payload } = args.payload.properties
+
+            const trigger = async (eventName: string, payload?: any) => {
+                return await apiFetch('/api/analytics/tracking', {
+                    body: {
+                        event: eventName,
+                        event_at: now(),
+                        payload,
+                    }
+                })
+            }
+
+            return await event(trigger, payload)
         },
     };
 };

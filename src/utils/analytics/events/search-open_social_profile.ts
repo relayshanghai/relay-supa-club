@@ -1,14 +1,7 @@
-import type { AnalyticsInstance } from 'analytics';
-import { now } from 'src/utils/datetime';
+import type { TrackedEvent } from '../types';
 
 export const SEARCH_OPEN_SOCIAL_PROFILE = 'search-open_social_profile';
 
-export const SearchOpenSocialProfile = (analytics: AnalyticsInstance) => (value?: any) => {
-    analytics.track(SEARCH_OPEN_SOCIAL_PROFILE, {
-        event: SEARCH_OPEN_SOCIAL_PROFILE,
-        event_at: now(),
-        payload: {
-            ...value,
-        },
-    });
-};
+export const SearchOpenSocialProfile: TrackedEvent = (trigger, value?) => trigger(SEARCH_OPEN_SOCIAL_PROFILE, value);
+
+SearchOpenSocialProfile.eventName = SEARCH_OPEN_SOCIAL_PROFILE;

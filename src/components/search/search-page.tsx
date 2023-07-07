@@ -147,7 +147,7 @@ export const SearchPageInner = () => {
                     onClick={async () => {
                         const nextPage = page + 1;
                         setPage(nextPage);
-                        track(SearchLoadMoreResults)({ page: nextPage });
+                        track(SearchLoadMoreResults, { page: nextPage });
                         trackEvent('Search Result, load more');
                     }}
                 >
