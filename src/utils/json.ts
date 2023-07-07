@@ -29,4 +29,4 @@ export const Json: z.ZodType<Jsonable> = z.lazy(() => z.union([Literals, z.array
  * Since a valid JSON can be ALSO be a non empty string, a number, boolean or null,
  * JsonRoot expects the "root" to always be an object or array (not a literal)
  */
-export const JsonRoot = z.lazy(() => z.union([z.array(Json), z.record(Json)]));
+export const JsonRoot = z.union([z.array(Json), z.record(Json)]);
