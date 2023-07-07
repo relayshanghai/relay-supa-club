@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import type { KeyboardEvent } from 'react';
 import type { CreatorPlatform } from 'types';
 
@@ -6,14 +5,21 @@ type SearchTopicsProps = {
     path: string;
     placeholder: string;
     hashtags: string[];
+    hashTagInput: string;
+    setHashTagInput: (keywords: string) => void;
     platform: CreatorPlatform;
     onSetHashtags: (keywords: string[]) => void;
     onChangeTopics: () => void;
 };
 
-export const SearchHashtags = ({ hashtags, placeholder, onSetHashtags, onChangeTopics }: SearchTopicsProps) => {
-    const [hashTagInput, setHashTagInput] = useState('');
-
+export const SearchHashtags = ({
+    hashtags,
+    placeholder,
+    onSetHashtags,
+    onChangeTopics,
+    hashTagInput,
+    setHashTagInput,
+}: SearchTopicsProps) => {
     const tagKeyboardInputHandler = (e: KeyboardEvent) => {
         if (e.key === 'Backspace' && !hashTagInput && hashtags.length > 0) {
             e.preventDefault();

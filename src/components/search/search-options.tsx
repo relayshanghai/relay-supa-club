@@ -47,6 +47,7 @@ export const SearchOptions = ({
         setHashtags,
     } = useSearch();
     const [keywordInput, setKeywordInput] = useState<string>('');
+    const [hashTagInput, setHashTagInput] = useState<string>('');
 
     const { t } = useTranslation();
     const { trackEvent } = useRudderstack();
@@ -137,6 +138,8 @@ export const SearchOptions = ({
                                 onChangeTopics={() => {
                                     hashtags.length !== 0 && setHashtags([]);
                                     keywords.length !== 0 && setKeywords('');
+                                    keywordInput.length !== 0 && setKeywordInput('');
+                                    hashTagInput.length !== 0 && setHashTagInput('');
                                 }}
                                 onSetTopics={(topics) => {
                                     setTopicTags(topics);
@@ -190,6 +193,8 @@ export const SearchOptions = ({
                             <SearchHashtags
                                 path="influencer-search/topics"
                                 placeholder={t('creators.searchHashTags')}
+                                hashTagInput={hashTagInput}
+                                setHashTagInput={setHashTagInput}
                                 hashtags={hashtags}
                                 platform={platform}
                                 onSetHashtags={(hashtags) => {
