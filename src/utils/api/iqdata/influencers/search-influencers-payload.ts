@@ -38,6 +38,16 @@ export const audience_geo = z.object({
     weight: z.number().optional(),
 });
 
+export const audience_age_range = z.object({
+    left_number: z
+        .union([z.literal('13'), z.literal('18'), z.literal('25'), z.literal('35'), z.literal('45'), z.literal('65')])
+        .optional(),
+    right_number: z
+        .union([z.literal('17'), z.literal('24'), z.literal('34'), z.literal('44'), z.literal('64')])
+        .optional(),
+    weight: z.number().optional(),
+});
+
 export const geo = z.object({
     id: z.number(),
     weight: z.number().optional(),
@@ -135,20 +145,6 @@ export const age = z.object({
     right_number: z.number().optional(),
 });
 
-export const audience_age_code = z.enum(['18-24', '25-34', '35-44', '45-64', '65-']);
-
-export const audience_age = z.object({
-    code: audience_age_code,
-    weight: z.number().optional(),
-});
-
-export const audience_age_range = z.object({
-    left_number: z.enum(['13', '18', '25', '35', '45', '65']).optional(),
-    right_number: z.enum(['17', '24', '34', '44', '64']).optional(),
-    weight: z.number().optional(),
-    operator: z.union([z.literal('lt'), z.literal('lte'), z.literal('gt'), z.literal('gte')]).optional(),
-});
-
 export const engagement_rate = z.object({
     value: z.number(),
     operator: z.union([z.literal('lt'), z.literal('lte'), z.literal('gt'), z.literal('gte')]),
@@ -208,7 +204,6 @@ export const filter = z
         reels_plays: reel_plays.optional(),
         age: age.optional(),
         geo: geo.array().optional(),
-        audience_age: audience_age.array().optional(),
         audience_age_range: audience_age_range.optional(),
         audience_geo: audience_geo.array().optional(),
         relevance: relevance.optional(),

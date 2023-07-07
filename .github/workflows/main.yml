@@ -14,6 +14,15 @@ on:
 env:
     STRIPE_API_KEY: ${{ secrets.STRIPE_API_KEY }}
     NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY }}
+    NEXT_PUBLIC_STRIPE_PRODUCT_ID_DIY: prod_MskCkXTZd6tim9
+    NEXT_PUBLIC_STRIPE_PRICE_MONTHLY_DIY: price_1MNB61As9LEfZQ298w3oW64k
+    NEXT_PUBLIC_STRIPE_PRICE_QUARTERLY_DIY: price_1MNB5iAs9LEfZQ29sssMyA6m
+    NEXT_PUBLIC_STRIPE_PRICE_YEARLY_DIY: price_1M8yhpAs9LEfZQ29TSiaQVun
+    NEXT_PUBLIC_STRIPE_PRODUCT_ID_DIY_MAX: prod_N7PH5AciWQkPyv
+    NEXT_PUBLIC_STRIPE_PRICE_MONTHLY_DIY_MAX: price_1MNAT0As9LEfZQ292rmiX8Cj
+    NEXT_PUBLIC_STRIPE_PRICE_QUARTERLY_DIY_MAX: price_1MNBZ8As9LEfZQ294QasjNYv
+    NEXT_PUBLIC_STRIPE_PRICE_YEARLY_DIY_MAX: price_1MNBZ8As9LEfZQ29vph62DoE
+    NEXT_PUBLIC_STRIPE_PRODUCT_ID_VIP: prod_NJ1l6867a0bkhL
     DATA_PASS: ${{ secrets.DATA_PASS }}
     DATA_USER: ${{ secrets.DATA_USER }}
     DATA_KEY: ${{ secrets.DATA_KEY }}
@@ -36,14 +45,44 @@ env:
     NEXT_PUBLIC_RUDDERSTACK_APP_DATA_PLANE_URL: ${{ secrets.NEXT_PUBLIC_RUDDERSTACK_APP_DATA_PLANE_URL }}
     RUDDERSTACK_APP_WRITE_KEY: ${{ secrets.RUDDERSTACK_APP_WRITE_KEY }}
     RUDDERSTACK_APP_DATA_PLANE_URL: ${{ secrets.RUDDERSTACK_APP_DATA_PLANE_URL }}
+    SUPABASE_SCANNER_BUFFER_SIZE: 5mb
 
 jobs:
-    supabase-test:
+    component-test:
+        runs-on:
+            group: large-runner
+        environment: preview
         env:
-            SUPABASE_SCANNER_BUFFER_SIZE: 5mb
+            # unit tests don't need the real keys, but they load some functions that check for them on init.
+            SUPABASE_SERVICE_KEY: dummy key
+            NEXT_PUBLIC_SUPABASE_ANON_KEY: dummy key
+
+        strategy:
+            matrix:
+                node-version: [18.14.0]
+        steps:
+            - uses: actions/checkout@v3
+
+            - name: Use Node.js ${{ matrix.node-version }}
+              uses: actions/setup-node@v3
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  cache: 'npm'
+
+            - run: npm ci
+            - run: npm run build
+            - run: npm run test-cypress-unit
+
+    e2e-test:
+        environment: preview
 
         runs-on:
             group: large-runner
+
+        strategy:
+            matrix:
+                node-version: [18.14.0]
+
         steps:
             - uses: actions/checkout@v3
 
@@ -77,63 +116,14 @@ jobs:
                   chmod +x ./supabase/db.sh
                   ./supabase/db.sh db_test
 
-    build-and-unit-test:
-        runs-on:
-            group: large-runner
-        environment: preview
-        env:
-            # unit tests don't need the real keys, but they load some functions that check for them on init.
-            SUPABASE_SERVICE_KEY: dummy key
-            NEXT_PUBLIC_SUPABASE_ANON_KEY: dummy key
-
-        strategy:
-            matrix:
-                node-version: [18.14.0]
-        steps:
-            - uses: actions/checkout@v3
-
-            - name: Use Node.js ${{ matrix.node-version }}
-              uses: actions/setup-node@v3
-              with:
-                  node-version: ${{ matrix.node-version }}
-                  cache: 'npm'
-
-            - run: npm ci
-            - run: npm run build
-            - run: npm run test-cypress-unit
-
-    cypress-e2e:
-        runs-on:
-            group: large-runner
-        environment: preview
-
-        strategy:
-            matrix:
-                node-version: [18.14.0]
-
-        steps:
-            - uses: actions/checkout@v3
             - name: Use Node.js ${{ matrix.node-version }}
               uses: actions/setup-node@v1
               with:
                   node-version: ${{ matrix.node-version }}
 
-            - uses: supabase/setup-cli@v1
-              with:
-                  version: 1.68.6
-
-            - name: Verify supabase cli version
-              run: supabase -v
-
-            - name: Create supabase config file
-              run: cp supabase/config.toml.example supabase/config.toml
-
-            - name: Start Supabase local development setup
-              run: supabase start
-
             - name: Export Supabase keys
               # Uses supabase status to print the anon key and service key to the terminal and populates the environment variables
-              run: bash supabase/export_supabase_keys.sh
+              run: ./supabase/db.sh export_supabase_keys
 
             - name: Make sure seed is loaded
               run: supabase db reset

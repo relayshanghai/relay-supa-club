@@ -10,12 +10,15 @@ import usages from './usages';
 import performance from './performance';
 import guidePage from './guide';
 import signup from './signup';
+import filters from './filters';
+import tooltips from './tooltips';
 
 const translations = {
     translation: {
         campaigns,
         navbar,
         creators,
+        filters,
         website,
         account,
         login,
@@ -25,6 +28,7 @@ const translations = {
         performance,
         guidePage,
         signup,
+        tooltips,
     },
 };
 export default translations;

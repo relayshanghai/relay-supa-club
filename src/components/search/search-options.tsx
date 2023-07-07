@@ -1,22 +1,17 @@
-import { AdjustmentsVerticalIcon } from '@heroicons/react/24/solid';
+// import { AdjustmentsVerticalIcon } from '@heroicons/react/24/solid';
 import { useTranslation } from 'react-i18next';
 import { useSearch } from 'src/hooks/use-search';
-import { numberFormatter } from 'src/utils/formatter';
+// import { numberFormatter } from 'src/utils/formatter';
 import { Button } from '../button';
-import { SearchCreators } from './search-creators';
 import SearchTopics from './search-topics';
-import { Switch, Tooltip } from '../library';
-import { featRecommended } from 'src/constants/feature-flags';
-import { SearchLocations } from './search-locations';
-import LocationTag from './location-tag';
+import { Tooltip } from '../library';
+// import { featRecommended } from 'src/constants/feature-flags';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
-import { useEffect } from 'react';
-
-const filterCountry = (items: any[]) => {
-    return items.filter((item: any) => {
-        return item.type?.[0] === 'country';
-    });
-};
+import { useEffect, useState } from 'react';
+import WordCloudComponent from '../wordcloud';
+import SearchKeywords from './search-keywords';
+import SearchHashtags from './search-hashtags';
+import { Question } from '../icons';
 
 export const SearchOptions = ({
     setPage,
@@ -30,36 +25,39 @@ export const SearchOptions = ({
         tags,
         setTopicTags,
         influencerLocation,
-        setInfluencerLocation,
         audienceLocation,
-        setAudienceLocation,
         audience,
-        setAudience,
+        audienceAge,
+        audienceGender,
         views,
-        setViews,
         gender,
-        setGender,
         engagement,
-        setEngagement,
         lastPost,
-        setLastPost,
-        setContactInfo,
         username,
         contactInfo,
-        onlyRecommended,
-        setOnlyRecommended,
-        recommendedInfluencers,
+        // onlyRecommended,
+        // setOnlyRecommended,
+        // recommendedInfluencers,
         activeSearch,
         setActiveSearch,
         setSearchParams,
+        keywords,
+        setKeywords,
+        hashtags,
+        setHashtags,
     } = useSearch();
+    const [keywordInput, setKeywordInput] = useState<string>('');
+    const [hashTagInput, setHashTagInput] = useState<string>('');
 
     const { t } = useTranslation();
-    const hasSetViews = views[0] || views[1];
-    const hasSetAudience = audience[0] || audience[1];
     const { trackEvent } = useRudderstack();
 
     const handleSearch = (e: any) => {
+        keywordInput.length > 0 && setKeywords(keywordInput);
+        trackEvent('Search Filter Modal, change keywords', {
+            keywords: keywordInput,
+        });
+        setKeywordInput('');
         e.preventDefault();
         setActiveSearch(true);
         setPage(0);
@@ -72,6 +70,8 @@ export const SearchOptions = ({
                 platform,
                 tags,
                 username,
+                keywords,
+                text_tags: hashtags.join(' '),
                 influencerLocation,
                 views,
                 audience,
@@ -80,6 +80,8 @@ export const SearchOptions = ({
                 lastPost,
                 contactInfo,
                 audienceLocation,
+                audienceAge,
+                audienceGender,
                 // recommendedInfluencers: featRecommended() ? recommendedInfluencers : [],
                 // only_recommended: featRecommended() ? onlyRecommended : false,
             });
@@ -90,6 +92,8 @@ export const SearchOptions = ({
         // onlyRecommended,
         setSearchParams,
         tags,
+        keywords,
+        hashtags,
         username,
         influencerLocation,
         views,
@@ -99,128 +103,128 @@ export const SearchOptions = ({
         lastPost,
         contactInfo,
         audienceLocation,
+        audienceAge,
+        audienceGender,
         // recommendedInfluencers,
     ]);
 
     return (
         <>
-            <div className="flex w-full flex-col items-start space-y-2 py-4 font-light md:flex-row md:space-x-4 md:space-y-0">
-                <div data-testid="search-topics" className="w-full">
-                    <SearchTopics
-                        path="influencer-search/topics"
-                        placeholder={t('creators.searchTopic')}
-                        topics={tags}
-                        platform={platform}
-                        onSetTopics={(topics) => {
-                            setTopicTags(topics);
-                        }}
-                    />
-                </div>
-                <div className="w-full">
-                    <SearchCreators platform={platform} />
-                </div>
-            </div>
-            <div className="flex flex-col items-start space-y-2 md:flex-row md:space-x-4 md:space-y-0">
-                <SearchLocations
-                    path="influencer-search/locations"
-                    placeholder={t('creators.filter.locationPlaceholder')}
-                    locations={influencerLocation}
-                    platform={platform}
-                    filter={filterCountry}
-                    onSetLocations={(topics) => {
-                        setInfluencerLocation(topics);
-                        trackEvent('Search Options, search influencer location', { location: topics });
-                    }}
-                />
-                <SearchLocations
-                    path="influencer-search/locations"
-                    placeholder={t('creators.filter.audienceLocation')}
-                    locations={audienceLocation}
-                    platform={platform}
-                    filter={filterCountry}
-                    onSetLocations={(topics) => {
-                        setAudienceLocation(topics.map((item) => ({ ...item, weight: 5 })));
-                        trackEvent('Search Options, search audience location', { location: topics });
-                    }}
-                    TagComponent={LocationTag}
-                />
-            </div>
-            <div>
-                <div className="flex flex-row items-center">
-                    <button
-                        onClick={() => {
-                            setShowFiltersModal(true);
-                            trackEvent('Search Filters Modal, open modal');
-                        }}
-                        className={`group flex flex-row items-center rounded-md border border-transparent bg-white px-2 py-1 text-gray-900 shadow ring-1 ring-gray-900 ring-opacity-5 focus:border-primary-500 focus:outline-none focus:ring-primary-500 sm:text-sm`}
-                    >
-                        <AdjustmentsVerticalIcon
-                            className={`mr-2 h-6 w-6 text-gray-400 transition duration-150 ease-in-out group-hover:text-opacity-80`}
-                            aria-hidden="true"
-                        />
-                        <div className="flex flex-row space-x-5 text-xs">
-                            {hasSetAudience && (
-                                <p>
-                                    {`${t('creators.filter.subs')}: ${
-                                        audience[0] ? numberFormatter(audience[0]) : 0
-                                    } - ${audience[1] ? numberFormatter(audience[1]) : t('creators.filter.max')}`}
-                                </p>
-                            )}
-                            {hasSetViews && (
-                                <p>
-                                    {`${t('creators.filter.avgViews')}: ${views[0] ? numberFormatter(views[0]) : 0} - ${
-                                        views[1] ? numberFormatter(views[1]) : t('creators.filter.max')
-                                    }`}
-                                </p>
-                            )}
-                            {gender && <p>{t(`creators.filter.${gender}`)}</p>}
-                            {engagement && <p>{`${t('creators.filter.engagement')}: >${engagement}%`}</p>}
-                            {lastPost && (
-                                <p>{`${t('creators.filter.lastPost')}: ${lastPost} ${t('creators.filter.days')}`}</p>
-                            )}
-                        </div>
-                    </button>
-                    <Button className="mx-2" onClick={(e) => handleSearch(e)}>
-                        {t('campaigns.index.search')}
-                    </Button>
-                    {hasSetViews || hasSetAudience || gender || engagement || lastPost ? (
-                        <Button
-                            onClick={(e: any) => {
-                                e.preventDefault();
-                                setAudience([null, null]);
-                                setViews([null, null]);
-                                setGender(undefined);
-                                setEngagement(undefined);
-                                setLastPost(undefined);
-                                setContactInfo(undefined);
-                                trackEvent('Search Filters Modal, clear search filters');
-                            }}
-                            variant="secondary"
-                        >
-                            {t('creators.clearFilter')}
-                        </Button>
-                    ) : null}
-                    {featRecommended() && (
-                        <div className="ml-auto">
+            <div className="flex h-full  flex-row">
+                <div className="flex w-full flex-col items-start justify-evenly space-y-2 py-4 font-light md:gap-x-4 md:gap-y-0">
+                    <div data-testid="search-topics" className="flex h-full w-full flex-col justify-evenly">
+                        <div className="flex gap-1">
+                            <p className="mb-2 text-sm font-semibold">{t('creators.searchTopicLabel')}</p>
                             <Tooltip
-                                content={t('creators.recommendedTooltip')}
-                                detail={t('creators.recommendedTooltipDetail')}
-                                className="flex flex-wrap items-center"
-                                position="top-left"
+                                content={t('tooltips.searchTopics.title')}
+                                detail={t('tooltips.searchTopics.description')}
+                                highlight={
+                                    platform === 'youtube'
+                                        ? t('tooltips.searchTopics.highlight')
+                                        : t('tooltips.searchHashTags.highlight')
+                                }
+                                position="bottom-right"
+                                className="w-fit"
                             >
-                                <Switch
-                                    disabled={!recommendedInfluencers || recommendedInfluencers.length === 0}
-                                    data-testid="recommended-toggle"
-                                    checked={onlyRecommended}
-                                    onChange={(e) => {
-                                        setOnlyRecommended(e.target.checked);
-                                    }}
-                                    beforeLabel="Recommended only"
-                                />
+                                <Question className="h-1/2 w-1/2 stroke-gray-400" />
                             </Tooltip>
                         </div>
+                        <div>
+                            <SearchTopics
+                                path="influencer-search/topics"
+                                placeholder={t('creators.searchTopic')}
+                                topics={tags}
+                                platform={platform}
+                                onChangeTopics={() => {
+                                    hashtags.length !== 0 && setHashtags([]);
+                                    keywords.length !== 0 && setKeywords('');
+                                    keywordInput.length !== 0 && setKeywordInput('');
+                                    hashTagInput.length !== 0 && setHashTagInput('');
+                                }}
+                                onSetTopics={(topics) => {
+                                    setTopicTags(topics);
+                                }}
+                            />
+                        </div>
+                    </div>
+                    {platform === 'youtube' ? (
+                        <div data-testid="search-keywords" className="flex h-full w-full flex-col justify-evenly">
+                            <div className="flex gap-1">
+                                <p className="mb-2 text-sm font-semibold">{t('creators.searchKeywordsLabel')}</p>
+                                <Tooltip
+                                    content={t('tooltips.searchKeywords.title')}
+                                    detail={t('tooltips.searchKeywords.description')}
+                                    highlight={t('tooltips.searchKeywords.highlight')}
+                                    position="top-right"
+                                    className="w-fit"
+                                >
+                                    <Question className="h-1/2 w-1/2 stroke-gray-400" />
+                                </Tooltip>
+                            </div>
+                            <SearchKeywords
+                                path="influencer-search/topics"
+                                keywordInput={keywordInput}
+                                setKeywordInput={setKeywordInput}
+                                placeholder={t('creators.searchKeywords')}
+                                keywords={keywords}
+                                platform={platform}
+                                onChangeTopics={() => {
+                                    tags.length !== 0 && setTopicTags([]);
+                                }}
+                                onSetKeywords={(keywords) => {
+                                    setKeywords(keywords);
+                                }}
+                            />
+                        </div>
+                    ) : (
+                        <div data-testid="search-hashtags" className="flex h-full w-full flex-col justify-evenly">
+                            <div className="flex gap-1">
+                                <p className="mb-2 w-fit text-sm font-semibold">{t('creators.searchHashTagsLabel')}</p>
+                                <Tooltip
+                                    content={t('tooltips.searchHashTags.title')}
+                                    detail={t('tooltips.searchHashTags.description')}
+                                    highlight={t('tooltips.searchHashTags.highlight')}
+                                    position="top-right"
+                                    className="w-fit"
+                                >
+                                    <Question className="h-1/2 w-1/2 stroke-gray-400" />
+                                </Tooltip>
+                            </div>
+                            <SearchHashtags
+                                path="influencer-search/topics"
+                                placeholder={t('creators.searchHashTags')}
+                                hashTagInput={hashTagInput}
+                                setHashTagInput={setHashTagInput}
+                                hashtags={hashtags}
+                                platform={platform}
+                                onSetHashtags={(hashtags) => {
+                                    setHashtags(hashtags);
+                                }}
+                                onChangeTopics={() => {
+                                    tags.length !== 0 && setTopicTags([]);
+                                }}
+                            />
+                        </div>
                     )}
+                    <div className="flex w-full justify-end">
+                        <div className="my-4 grid w-fit grid-cols-2 items-center gap-4">
+                            <button
+                                data-testid="filters-button"
+                                onClick={() => {
+                                    setShowFiltersModal(true);
+                                    trackEvent('Search Filters Modal, open modal');
+                                }}
+                                className={`group col-span-1 items-center justify-center rounded-md border border-transparent bg-primary-100 px-2 py-1 text-sm font-semibold text-[#7C3AED] shadow ring-1 ring-gray-900 ring-opacity-5 focus:border-primary-500 focus:outline-none focus:ring-primary-500`}
+                            >
+                                <p className="w-full p-1">{t('creators.addFilters')}</p>
+                            </button>
+                            <Button data-testid="search-button" className="col-span-1" onClick={(e) => handleSearch(e)}>
+                                {t('campaigns.index.search')}
+                            </Button>
+                        </div>
+                    </div>
                 </div>
+                <WordCloudComponent tags={tags} platform={platform} updateTags={setTopicTags} />
             </div>
         </>
     );
