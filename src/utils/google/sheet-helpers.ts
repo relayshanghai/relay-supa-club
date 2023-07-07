@@ -48,13 +48,11 @@ const prepareCredentials = async () => {
  */
 export async function authorizeGoogle() {
     const credentials = await prepareCredentials();
-    serverLogger('Authorizing Google API...');
 
     const client = new google.auth.GoogleAuth({
         scopes: SCOPES,
         credentials,
     });
-    serverLogger('Authorized Google API.');
     return client as GoogleAuth;
 }
 
