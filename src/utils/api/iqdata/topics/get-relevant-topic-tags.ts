@@ -10,7 +10,7 @@ export type GetRelevantTopicTagsPayload = {
     };
 };
 
-type TopicTensorData = {
+export type TopicTensorData = {
     tag: string;
     distance: number;
     freq: number;

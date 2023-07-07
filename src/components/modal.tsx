@@ -43,7 +43,6 @@ export const Modal: React.FC<ModalProps> = ({ children, visible, onClose, title,
                                 <Dialog.Title as="h3" className="my-2 text-2xl font-medium leading-6 text-tertiary-600">
                                     {title}
                                 </Dialog.Title>
-
                                 <>{children}</>
                             </Dialog.Panel>
                         </Transition.Child>

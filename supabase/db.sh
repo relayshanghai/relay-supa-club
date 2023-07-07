@@ -113,6 +113,46 @@ function supabase {
     npx supabase $@
 }
 
+function update_env_var() {
+    var="$1"
+    val="$2"
+    env="${3:-.env.local}"
+
+    if [ -z "${var}" ] || [ -z "${val}" ]; then
+        echo "Cannot update env file without var=val"
+        exit 1
+    fi
+
+    if grep -q "^$var=" "$env"; then
+        echo "Updating $var in $env with $val"
+        sed -i "s/^$var=.*/$var=$val/" "$env"
+    else
+        echo "Adding $var in $env with $val"
+        echo "$var=$val" >> "$env"
+    fi
+}
+
+function export_supabase_keys() {
+    ENV_FILE="${1:-.env.local}"
+
+    if [ ! -z "${GITHUB_ENV}" ]; then
+        echo "GITHUB ENV Found!"
+        ENV_FILE=$GITHUB_ENV
+    fi
+
+    if [ ! -f $ENV_FILE ]; then
+        echo "creating new $ENV_FILE..."
+        echo "">$ENV_FILE
+    fi
+
+    status_output=$(npx supabase status)
+    anon_key=$(echo "$status_output" | sed -n 's/^.*anon key: \([^ ]*\).*$/\1/p')
+    service_role_key=$(echo "$status_output" | sed -n 's/^.*service_role key: \([^ ]*\).*$/\1/p')
+
+    update_env_var "NEXT_PUBLIC_SUPABASE_ANON_KEY" $anon_key $ENV_FILE
+    update_env_var "SUPABASE_SERVICE_KEY" $service_role_key $ENV_FILE
+}
+
 function save_password {
     read -s -p "Password: " password
     echo $db_host:$db_port:$db_name:$db_user:$password >>~/.pgpass
@@ -254,6 +294,11 @@ function get_linked_project {
     fi
 }
 
+function start_database {
+    npx supabase start
+    export_supabase_keys
+}
+
 # Reverse engineered from
 # https://github.com/supabase/cli/blob/main/internal/db/test/test.go#L39
 function test_database {
@@ -354,6 +399,14 @@ function help {
     Drop a policy:
         ./$script_name drop_policy <policy_name> <table_name>
 
+    Export Supabase keys:
+        Export supabase keys to .env.local or github env (if found)
+        ./$script_name export_supabase_keys
+
+    Start database:
+        Start database and export supabase keys to .env.local
+        ./$script_name db_start
+
     Test database:
         ./$script_name db_test [test1] [test2...]
 
@@ -414,8 +467,14 @@ case $fn in
   "gen_db_types")
     generate_database_types
     ;;
+  "export_supabase_keys")
+    export_supabase_keys $@
+    ;;
   "db_test")
     test_database $@
+    ;;
+  "db_start")
+    start_database $@
     ;;
   "get_proj")
     get_linked_project $@
