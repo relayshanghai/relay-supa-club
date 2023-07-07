@@ -22,7 +22,7 @@ const LocationTag: React.FC<LocationTagProps> = ({ onClick, ...item }: LocationT
             {(item as LocationWeighted).title}
             <select
                 value={selected.weight}
-                className="ml-2 rounded-md bg-primary-200"
+                className="ml-2 rounded-md bg-primary-200 py-0 pl-2 pr-5"
                 onClick={(e: any) => {
                     e.preventDefault();
                     e.stopPropagation();
