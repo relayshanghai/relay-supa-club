@@ -45,6 +45,8 @@ export const SearchOptions = ({
         setKeywords,
         hashtags,
         setHashtags,
+        activeInput,
+        setActiveInput,
     } = useSearch();
     const [keywordInput, setKeywordInput] = useState<string>('');
     const [hashTagInput, setHashTagInput] = useState<string>('');
@@ -135,6 +137,8 @@ export const SearchOptions = ({
                                 placeholder={t('creators.searchTopic')}
                                 topics={tags}
                                 platform={platform}
+                                disabled={activeInput !== 'topic' ? true : false}
+                                setActiveInput={setActiveInput}
                                 onChangeTopics={() => {
                                     hashtags.length !== 0 && setHashtags([]);
                                     keywords.length !== 0 && setKeywords('');
@@ -168,6 +172,8 @@ export const SearchOptions = ({
                                 placeholder={t('creators.searchKeywords')}
                                 keywords={keywords}
                                 platform={platform}
+                                disabled={activeInput !== 'keyword' ? true : false}
+                                setActiveInput={setActiveInput}
                                 onChangeTopics={() => {
                                     tags.length !== 0 && setTopicTags([]);
                                 }}
@@ -197,6 +203,8 @@ export const SearchOptions = ({
                                 setHashTagInput={setHashTagInput}
                                 hashtags={hashtags}
                                 platform={platform}
+                                disabled={activeInput !== 'hashtag' ? true : false}
+                                setActiveInput={setActiveInput}
                                 onSetHashtags={(hashtags) => {
                                     setHashtags(hashtags);
                                 }}

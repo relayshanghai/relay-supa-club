@@ -14,7 +14,7 @@ const platforms: {
 ];
 
 export const SelectPlatform = () => {
-    const { platform, setPlatform, loading } = useSearch();
+    const { platform, setPlatform, loading, setActiveInput } = useSearch();
     const { trackEvent } = useRudderstack();
 
     return (
@@ -27,6 +27,7 @@ export const SelectPlatform = () => {
                     disabled={loading}
                     key={label}
                     onClick={() => {
+                        platform !== id && setActiveInput('topic');
                         setPlatform(id);
                         trackEvent('Search Options, change platform', { platform: id });
                     }}

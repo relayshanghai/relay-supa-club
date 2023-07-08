@@ -69,6 +69,8 @@ export interface ISearchContext {
     setActiveSearch: (activeSearch: boolean) => void;
     searchParams: FetchCreatorsFilteredParams | undefined;
     setSearchParams: (searchParams: FetchCreatorsFilteredParams | undefined) => void;
+    activeInput: string;
+    setActiveInput: (activeInput: string) => void;
 }
 
 export const SearchContext = createContext<ISearchContext>({
@@ -120,6 +122,8 @@ export const SearchContext = createContext<ISearchContext>({
     setActiveSearch: () => null,
     searchParams: undefined,
     setSearchParams: () => null,
+    activeInput: 'topic',
+    setActiveInput: () => null,
 });
 
 export const useSearch = () => useContext(SearchContext);
@@ -255,6 +259,7 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
     const [usageExceeded, setUsageExceeded] = useState(false);
     const [page, setPage] = useState(0);
     const [searchParams, setSearchParams] = useState<FetchCreatorsFilteredParams>();
+    const [activeInput, setActiveInput] = useState<string>('topic');
 
     // search options
     const [tags, setTopicTags] = useState<CreatorSearchTag[]>([]);
@@ -326,6 +331,8 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
                 onlyRecommended,
                 setOnlyRecommended,
                 recommendedInfluencers: recommendedInfluencers ?? [],
+                activeInput,
+                setActiveInput,
                 activeSearch,
                 setActiveSearch,
                 searchParams,
