@@ -54,6 +54,7 @@ export const getUserSession = (db: SupabaseClient) => async () => {
  */
 export const createTrack = <T extends TrackedEvent>(ctx: ServerContext) => {
     return async (event: T, payload?: Parameters<T>[1]) => {
+        // @note logs a TypeError "Cannot set headers.." due to outdated auth-helpers-next package
         const supabase = createServerSupabaseClient<DatabaseWithCustomTypes>(ctx);
         const sessionIds = await getUserSession(supabase)();
         const journey = getJourney(ctx);
@@ -65,7 +66,7 @@ export const createTrack = <T extends TrackedEvent>(ctx: ServerContext) => {
             payload = {};
         }
 
-        const { event_at, _payload } = payload;
+        const { event_at, ..._payload } = payload;
 
         const eventPayload = {
             event_at: event_at ?? now(),
