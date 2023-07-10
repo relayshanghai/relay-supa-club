@@ -1,6 +1,6 @@
 import { getCookie } from 'cookies-next';
 import { ANALYTICS_COOKIE_ANON } from '../constants';
-import type { TrackedEvent, ServerContext } from '../types';
+import type { ServerContext, TrackedEvent } from '../types';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { getProfileByUser, insertTrackingEvent } from 'src/utils/api/db/calls/tracking_events';
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
@@ -52,27 +52,33 @@ export const getUserSession = (db: SupabaseClient) => async () => {
 /**
  * Return a function that tracks an event on the backend
  */
-export const createTrack = (ctx: ServerContext) => async (event: TrackedEvent, payload?: any) => {
-    const supabase = createServerSupabaseClient<DatabaseWithCustomTypes>(ctx);
-    const sessionIds = await getUserSession(supabase)();
-    const journey = getJourney(ctx);
-    const anonymous_id = getAnonId(ctx);
-    const trigger = (eventName: string, payload?: any) =>
-        insertTrackingEvent(supabase)({ ...payload, event: eventName });
+export const createTrack = <T extends TrackedEvent>(ctx: ServerContext) => {
+    return async (event: T, payload?: Parameters<T>[1]) => {
+        const supabase = createServerSupabaseClient<DatabaseWithCustomTypes>(ctx);
+        const sessionIds = await getUserSession(supabase)();
+        const journey = getJourney(ctx);
+        const anonymous_id = getAnonId(ctx);
+        const trigger = (eventName: string, payload?: any) =>
+            insertTrackingEvent(supabase)({ ...payload, event: eventName });
 
-    const { event_at, ...otherPayload } = payload;
+        if (payload === undefined) {
+            payload = {};
+        }
 
-    const _payload = {
-        event_at: event_at ?? now(),
-        journey_id: journey ? journey.id : null,
-        journey_type: journey ? journey.name : null,
-        data: {
-            journey,
-            ...otherPayload,
-        },
-        anonymous_id,
-        ...sessionIds,
+        const { event_at, _payload } = payload;
+
+        const eventPayload = {
+            event_at: event_at ?? now(),
+            journey_id: journey ? journey.id : null,
+            journey_type: journey ? journey.name : null,
+            data: {
+                journey,
+                ..._payload,
+            },
+            anonymous_id,
+            ...sessionIds,
+        };
+
+        return await event(trigger, eventPayload);
     };
-
-    return await event(trigger, _payload);
 };

@@ -1,7 +1,10 @@
-import type { TrackedEvent } from '../types';
+import type { EventPayload, TriggerEvent } from '../types';
 
 export const SEARCH_ANALYZE_INFLUENCER = 'search-analyze_influencer';
 
-export const SearchAnalyzeInfluencer: TrackedEvent = (trigger, value?) => trigger(SEARCH_ANALYZE_INFLUENCER, value);
+export type SearchAnalyzeInfluencerPayload = EventPayload;
+
+export const SearchAnalyzeInfluencer = (trigger: TriggerEvent, value?: SearchAnalyzeInfluencerPayload) =>
+    trigger(SEARCH_ANALYZE_INFLUENCER, value);
 
 SearchAnalyzeInfluencer.eventName = SEARCH_ANALYZE_INFLUENCER;

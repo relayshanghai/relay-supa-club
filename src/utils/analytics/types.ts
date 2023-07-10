@@ -96,9 +96,20 @@ export type JourneyCollection = {
  */
 export type ServerContext = { req: NextApiRequest; res: NextApiResponse };
 
-export type TriggerEvent = (eventName: string, payload?: any) => any;
+/**
+ * Callback function that is called inside a tracked event
+ */
+export type TriggerEvent<P = any, R = any> = (eventName: string, payload?: P) => R;
 
-export type TrackedEvent = {
-    (trigger: TriggerEvent, payload?: any): any;
+/**
+ * Event function that contains eventName property
+ */
+export type TrackedEvent<P = any, R = any> = {
+    (trigger: TriggerEvent<P, R>, payload?: P): ReturnType<typeof trigger>;
     eventName: string;
 };
+
+/**
+ * Event payload that optionally expects an event_at property
+ */
+export type EventPayload<T = { [key: string]: any }> = { event_at?: string } & T;
