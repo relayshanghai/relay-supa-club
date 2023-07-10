@@ -50,7 +50,7 @@ export const getUserSession = (db: SupabaseClient) => async () => {
 };
 
 /**
- * Return a function that tracks an event
+ * Return a function that tracks an event on the backend
  */
 export const createTrack = (ctx: ServerContext) => async (event: TrackedEvent, payload?: any) => {
     const supabase = createServerSupabaseClient<DatabaseWithCustomTypes>(ctx);
