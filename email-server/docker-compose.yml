@@ -1,0 +1,38 @@
+version: '3.7'
+services:
+    emailengine:
+        restart: always
+        image: postalsys/emailengine:latest
+        ports:
+            # API and web interface
+            - '3000:3000'
+            # SMTP for message submission
+            - '2525:2525'
+        depends_on:
+            - redis
+        environment:
+            # Configuration to EmailEngine can be passed via environment variables
+            # For full list see https://github.com/postalsys/emailengine#config-mapping
+
+            # Settings to write to v1/settings on startup (https://api.emailengine.app/#operation/postV1Settings)
+            # The following value is a YAML block scalar string, so make it sure it is properly indented
+            # This configuration enables SMTP server for local submission
+            EENGINE_SETTINGS: >
+                {
+                    "smtpServerEnabled": true,
+                    "smtpServerPort": 2525,
+                    "smtpServerHost": "0.0.0.0",
+                    "smtpServerAuthEnabled": true,
+                    "smtpServerPassword": "passw0rd"
+                }
+
+            # Encryption secret
+            EENGINE_SECRET: 'secret'
+            # Database connection URL
+            EENGINE_REDIS: 'redis://redis:6379/2'
+
+    redis:
+        image: redis:alpine
+        restart: always
+        volumes:
+            - /data
