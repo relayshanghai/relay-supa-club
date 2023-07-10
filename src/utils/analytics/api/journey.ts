@@ -2,14 +2,14 @@ import { JOURNEY_COOKIE_NAME } from '../constants';
 import { getCookie } from 'cookies-next';
 import { parseJson } from 'src/utils/json';
 import { JourneyObject } from '../types';
-import type { ctx } from '../types';
+import type { ServerContext } from '../types';
 
 /**
  * Get the current journey (if available) on the server side
  *
- * @param  {ctx}  [ctx] Server context
+ * @param  {ServerContext}  [ctx] Server context
  */
-export const getJourney = (ctx: ctx) => {
+export const getJourney = (ctx: ServerContext) => {
     let cookie = getCookie(JOURNEY_COOKIE_NAME, ctx);
 
     if (typeof cookie !== 'string') {

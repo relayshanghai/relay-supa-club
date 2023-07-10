@@ -92,9 +92,9 @@ export type JourneyCollection = {
 };
 
 /**
- * a Server Context contains a request and response
+ * The Server Context contains a request and response
  */
-export type ctx = { req: NextApiRequest; res: NextApiResponse };
+export type ServerContext = { req: NextApiRequest; res: NextApiResponse };
 
 export type TriggerEvent = (eventName: string, payload?: any) => any;
 
