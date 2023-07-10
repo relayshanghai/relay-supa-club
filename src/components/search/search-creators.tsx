@@ -11,10 +11,9 @@ export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
     const [searchTerm, setSearchTerm] = useState<string | ''>();
     const [spinnerLoading, setSpinnerLoading] = useState(false);
     const { t } = useTranslation();
-    const { trackSearchInfluencer } = useSearchTrackers();
+    const { trackSearchInfluencer, trackSearch } = useSearchTrackers();
 
     const { setPlatform, setUsername, setText, setActiveSearch, setPage } = useSearch();
-    const { trackEvent } = useRudderstack();
 
     // Disabling the exhaustive-deps rule because we need to use the debounce function and we already know the required dependencies.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -44,8 +43,8 @@ export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
     const handleSearch = useCallback(() => {
         setActiveSearch(true);
         setPage(0);
-        trackEvent('Search Options, search');
-    }, [setActiveSearch, setPage, trackEvent]);
+        trackSearch('Search Options');
+    }, [setActiveSearch, setPage, trackSearch]);
 
     const handleSubmit = useCallback(() => {
         searchInfluencer(searchTerm);
