@@ -1,5 +1,3 @@
-import { getCookie } from 'cookies-next';
-import { ANALYTICS_COOKIE_ANON } from '../constants';
 import type { ServerContext, TrackedEvent } from '../types';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { getProfileByUser, insertTrackingEvent } from 'src/utils/api/db/calls/tracking_events';
@@ -16,13 +14,7 @@ type SessionIds = {
 };
 
 export const getAnonId = (ctx: ServerContext) => {
-    let cookie = getCookie(ANALYTICS_COOKIE_ANON, ctx);
-
-    if (typeof cookie !== 'string') {
-        cookie = String(cookie);
-    }
-
-    return cookie;
+    return ctx.req.headers['x-analytics-anon-id'];
 };
 
 /**

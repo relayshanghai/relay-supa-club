@@ -2,6 +2,8 @@ import type { AnalyticsPlugin } from 'analytics';
 import type { AnalyticsEventParam, TrackedEvent } from '../types';
 import { apiFetch } from 'src/utils/api/api-fetch';
 import { now } from 'src/utils/datetime';
+import { ANALYTICS_COOKIE_ANON } from '../constants';
+import { getItem } from '@analytics/storage-utils';
 
 export type SupabasePluginConfig = any;
 
@@ -37,12 +39,18 @@ export const SupabasePlugin = (config: SupabasePluginConfig = {}): AnalyticsPlug
 
             const { event, payload } = args.payload.properties
 
+            const anonymous_id = getItem(ANALYTICS_COOKIE_ANON)
+
             const trigger = async (eventName: string, payload?: any) => {
                 return await apiFetch('/api/analytics/tracking', {
                     body: {
                         event: eventName,
                         event_at: now(),
                         payload,
+                    }
+                }, {
+                    headers: {
+                        'x-analytics-anon-id': anonymous_id
                     }
                 })
             }
