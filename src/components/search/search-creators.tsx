@@ -4,16 +4,16 @@ import { useTranslation } from 'react-i18next';
 import type { CreatorPlatform } from 'types';
 import type { ChangeEvent } from 'react';
 import { debounce } from 'src/utils/debounce';
-import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { Search, Spinner } from '../icons';
+import { useSearchTrackers } from '../rudder/searchui-rudder-calls';
 
 export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
     const [searchTerm, setSearchTerm] = useState<string | ''>();
     const [spinnerLoading, setSpinnerLoading] = useState(false);
     const { t } = useTranslation();
+    const { trackSearchInfluencer } = useSearchTrackers();
 
     const { setPlatform, setUsername, setText } = useSearch();
-    const { trackEvent } = useRudderstack();
 
     // Disabling the exhaustive-deps rule because we need to use the debounce function and we already know the required dependencies.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -22,7 +22,7 @@ export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
             setPlatform(platform);
             setUsername(term);
             setText(term);
-            trackEvent('Search Options, search for an influencer', { influencer: term, platform });
+            trackSearchInfluencer({ term }, platform);
             setSpinnerLoading(false);
         }),
         [platform],

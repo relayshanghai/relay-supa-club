@@ -9,7 +9,6 @@ import type {
 } from './influencers/search-influencers-payload';
 import type { z } from 'zod';
 import {
-    withRudderStack,
     audienceFilter,
     audienceGenderFilter,
     audienceLocationFilter,
@@ -88,7 +87,7 @@ export const prepareFetchCreatorsFiltered = ({
             body.filter.relevance = { value: '' };
         }
 
-        body.filter.relevance.value += ' ' + withRudderStack(tagsFilter, 'Search Options, changed active tags')(tags);
+        body.filter.relevance.value += tagsFilter(tags);
     }
 
     if (lookalike.length > 0) {
@@ -96,61 +95,39 @@ export const prepareFetchCreatorsFiltered = ({
             body.filter.relevance = { value: '' };
         }
 
-        body.filter.relevance.value +=
-            ' ' + withRudderStack(lookalikeFilter, 'Search Filters Modal, changed lookalike filter')(lookalike);
+        body.filter.relevance.value += ' ' + lookalikeFilter(lookalike);
     }
 
     if (params.gender) {
-        body.filter.gender = withRudderStack(
-            genderFilter,
-            'Search Filters Modal, changed influencer gender',
-        )(params.gender);
+        body.filter.gender = genderFilter(params.gender);
     }
 
     if (params.audienceGender) {
-        body.filter.audience_gender = withRudderStack(
-            audienceGenderFilter,
-            'Search Filters Modal, changed audience gender',
-        )(params.audienceGender);
+        body.filter.audience_gender = audienceGenderFilter(params.audienceGender);
     }
 
     if (params.text) {
-        body.filter.text = withRudderStack(textFilter, 'Search Filters Modal, changed text requirement')(params.text);
+        body.filter.text = textFilter(params.text);
     }
 
     if (params.username) {
-        body.filter.username = withRudderStack(
-            usernameFilter,
-            'Search Page, changed influencer username filter',
-        )(params.username);
+        body.filter.username = usernameFilter(params.username);
     }
 
     if (params.views && platform !== 'instagram' && (params.views[0] || params.views[1])) {
-        body.filter.views = withRudderStack(
-            viewsFilter,
-            'Search Filters Modal, changed views requirement',
-        )(params.views);
+        body.filter.views = viewsFilter(params.views);
     }
 
     if (params.views && platform === 'instagram' && (params.views[0] || params.views[1])) {
-        body.filter.reels_plays = withRudderStack(
-            viewsFilter,
-            'Search Filters Modal, changed views requirement',
-        )(params.views);
+        body.filter.reels_plays = viewsFilter(params.views);
     }
 
     if (params.audience && (params.audience[0] || params.audience[1])) {
-        body.filter.followers = withRudderStack(
-            audienceFilter,
-            'Search Filters Modal, changed followers requirement',
-        )(params.audience);
+        body.filter.followers = audienceFilter(params.audience);
     }
 
     if (audienceLocation) {
-        const filter = withRudderStack(
-            audienceLocationFilter,
-            'Search Filters Modal, changed audience location',
-        )(audienceLocation);
+        const filter = audienceLocationFilter(audienceLocation);
 
         if (filter) {
             body.filter.audience_geo = filter;
@@ -158,10 +135,7 @@ export const prepareFetchCreatorsFiltered = ({
     }
 
     if (influencerLocation) {
-        const filter = withRudderStack(
-            influencerLocationFilter,
-            'Search Filters Modal, changed influencer location',
-        )(influencerLocation);
+        const filter = influencerLocationFilter(influencerLocation);
 
         if (filter) {
             body.filter.geo = filter;
@@ -169,53 +143,37 @@ export const prepareFetchCreatorsFiltered = ({
     }
 
     if (params.lastPost) {
-        body.filter.last_posted = withRudderStack(
-            lastPostedFilter,
-            'Search Filters Modal, changed last posted date requirement',
-        )(params.lastPost);
+        body.filter.last_posted = lastPostedFilter(params.lastPost);
     }
 
     if (params.contactInfo) {
-        body.filter.with_contact = withRudderStack(
-            contactInfoFilter,
-            'Search Filters Modal, changed emailID requirement',
-        )([params.contactInfo]);
+        body.filter.with_contact = contactInfoFilter([params.contactInfo]);
     }
 
     if (params.influencerAge) {
-        body.filter.age = withRudderStack(
-            influencerAgeFilter,
-            'Search Filters Modal, changed influencer age requirement',
-        )(params.influencerAge);
+        body.filter.age = influencerAgeFilter(params.influencerAge);
     }
 
     if (params.audienceAge) {
-        body.filter.audience_age_range = withRudderStack(
-            audienceAgeFilter,
-            'Search Filters Modal, changed audience age requirement',
-        )(params.audienceAge);
+        body.filter.audience_age_range = audienceAgeFilter(params.audienceAge);
     }
 
     if (params.engagement) {
-        body.filter.engagement_rate = withRudderStack(
-            engagementFilter,
-            'Search Filters Modal, changed engagement rate requirement',
-        )(params.engagement);
+        body.filter.engagement_rate = engagementFilter(params.engagement);
     }
 
     if (params.only_recommended && params.recommendedInfluencers && featRecommended()) {
-        body.filter.filter_ids = withRudderStack(
-            recommendedInfluencersFilter,
-            'Search Filters Modal, changed recommended requirement',
-        )(params.recommendedInfluencers.filter((influencer) => influencer.split('/')[0] === platform));
+        body.filter.filter_ids = recommendedInfluencersFilter(
+            params.recommendedInfluencers.filter((influencer) => influencer.split('/')[0] === platform),
+        );
     }
 
     if (params.keywords) {
-        body.filter.keywords = withRudderStack(keywordsFilter, 'Search Options, changed keywords')(params.keywords);
+        body.filter.keywords = keywordsFilter(params.keywords);
     }
 
     if (params.text_tags) {
-        body.filter.text_tags = withRudderStack(textTagsFilter, 'Search Options, changed hashtags')(params.text_tags);
+        body.filter.text_tags = textTagsFilter(params.text_tags);
     }
 
     if (actionsFilterKeys.some((k) => body.filter && k in body.filter)) {
@@ -233,10 +191,7 @@ export const prepareFetchCreatorsFiltered = ({
             filters.push({ filter: 'text', action: 'should' });
         }
 
-        body.filter.actions = withRudderStack(
-            actionsFilter,
-            'Search Filters Modal, changed actions requirement',
-        )(filters);
+        body.filter.actions = actionsFilter(filters);
     }
 
     body.sort = { field: 'followers', direction: 'desc' };

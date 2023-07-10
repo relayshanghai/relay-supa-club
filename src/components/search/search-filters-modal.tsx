@@ -2,12 +2,12 @@ import { useTranslation } from 'react-i18next';
 import { useSearch } from 'src/hooks/use-search';
 import { numberFormatter } from 'src/utils/formatter';
 import { Modal } from '../modal';
-import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { SearchLocations } from './search-locations';
 import LocationTag from './location-tag';
 import { useEffect } from 'react';
 import { Switch } from '../library';
 import { Button } from '../button';
+import { useSearchTrackers } from '../rudder/searchui-rudder-calls';
 
 /** Search Filter Modal, Subscribers and Avg view filter options: 1k, 5k, 10k, 15k, 25k, 50k, 100k, 250k, 500k, 1m */
 const options = [1e3, 5e3, 1e4, 15e3, 25e3, 50e3, 1e5, 25e4, 50e4, 1e6];
@@ -53,13 +53,33 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
     } = useSearch();
 
     const { t } = useTranslation();
-    const { trackEvent } = useRudderstack();
+
+    const {
+        trackSearch,
+        trackCloseFilterModal,
+        trackClearFilters,
+        trackAudienceLocation,
+        trackAudienceAgeFrom,
+        trackAudienceAgeTo,
+        trackAudienceAgeWeight,
+        trackAudienceGender,
+        trackAudienceGenderWeight,
+        trackInfluencerEngagement,
+        trackInfluencerGender,
+        trackInfluencerHasEmail,
+        trackInfluencerLastPost,
+        trackInfluencerLocation,
+        trackInfluencerSubscribersFrom,
+        trackInfluencerSubscribersTo,
+        trackInfluencerViewsFrom,
+        trackInfluencerViewsTo,
+    } = useSearchTrackers();
 
     const handleSearch = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         setActiveSearch(true);
         setPage(0);
-        trackEvent('Search Options, search');
+        trackSearch('Search Filters Modal');
         setShow(false);
     };
 
@@ -87,7 +107,15 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
     };
 
     return (
-        <Modal maxWidth="max-w-3xl" visible={show} onClose={() => setShow(false)} title={t('filters.title') || ''}>
+        <Modal
+            maxWidth="max-w-3xl"
+            visible={show}
+            onClose={() => {
+                trackCloseFilterModal();
+                setShow(false);
+            }}
+            title={t('filters.title') || ''}
+        >
             <p
                 className="absolute right-6 top-6 cursor-pointer border-red-500 bg-transparent font-medium text-red-500 hover:underline"
                 onClick={(e: any) => {
@@ -102,7 +130,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                     setInfluencerLocation([]);
                     setAudienceGender(undefined);
                     setAudienceAge(undefined);
-                    trackEvent('Search Filters Modal, clear search filters');
+                    trackClearFilters();
                 }}
                 data-testid="clear-filters"
             >
@@ -121,7 +149,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                             filter={filterCountry}
                             onSetLocations={(topics) => {
                                 setAudienceLocation(topics.map((item) => ({ ...item, weight: 5 })));
-                                trackEvent('Search Options, search audience location', { location: topics });
+                                trackAudienceLocation({ location: topics });
                             }}
                             TagComponent={LocationTag}
                         />
@@ -141,6 +169,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                                         left_number: lowerAge,
                                         weight: audienceAge?.weight || 0.05,
                                     });
+                                    trackAudienceAgeFrom({ lower: lowerAge, weight: audienceAge?.weight || 0.05 });
                                 }}
                             >
                                 <option value={undefined}>{t('filters.minOption')} (13)</option>
@@ -168,6 +197,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                                         right_number: upperAge,
                                         weight: audienceAge?.weight || 0.05,
                                     });
+                                    trackAudienceAgeTo({ upper: upperAge, weight: audienceAge?.weight || 0.05 });
                                 }}
                             >
                                 {upperAgeOptions.map((upperAge, index) => {
@@ -197,6 +227,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                                         ...audienceAge,
                                         weight: weight,
                                     });
+                                    trackAudienceAgeWeight({ weight: weight });
                                 }}
                             >
                                 {Array.from({ length: 10 }, (_, i) => (i + 1) * 5).map((value) => (
@@ -223,6 +254,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                                               }
                                             : undefined,
                                     );
+                                    trackAudienceGender(gender ? { code: gender, weight: 0.05 } : undefined);
                                 }}
                             >
                                 <option value="ANY">{t('filters.anyOption')}</option>
@@ -243,6 +275,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                                         ...audienceGender,
                                         weight: weight,
                                     });
+                                    trackAudienceGenderWeight({ weight: weight });
                                 }}
                             >
                                 {Array.from({ length: 10 }, (_, i) => (i + 1) * 5).map((value) => (
@@ -260,6 +293,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                         checked={contactInfo == 'email' ? true : false}
                         onChange={(e) => {
                             setContactInfo(e.target.checked ? 'email' : undefined);
+                            trackInfluencerHasEmail({ mode: e.target.checked ? 'email' : 'any' });
                         }}
                         afterLabel={t('filters.influencers.hasEmail') || ''}
                     />
@@ -275,7 +309,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                             filter={filterCountry}
                             onSetLocations={(topics) => {
                                 setInfluencerLocation(topics);
-                                trackEvent('Search Options, search influencer location', { location: topics });
+                                trackInfluencerLocation({ location: topics });
                             }}
                         />
                     </div>
@@ -292,7 +326,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                                     } else {
                                         setEngagement(Number(e.target.value));
                                     }
-                                    trackEvent('Search Filter Modal, change engagement rate', {
+                                    trackInfluencerEngagement({
                                         engagement_rate: `>` + Number(e.target.value) + `%`,
                                     });
                                 }}
@@ -323,7 +357,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                                                 e.target.value === 'any' ? null : e.target.value,
                                                 audiencePrevious[1],
                                             ]);
-                                            trackEvent('Search Filter Modal, change subscribers from', {
+                                            trackInfluencerSubscribersFrom({
                                                 subscribers: e.target.value,
                                             });
                                         }}
@@ -348,7 +382,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                                                 audiencePrevious[0],
                                                 e.target.value === 'any' ? null : e.target.value,
                                             ]);
-                                            trackEvent('Search Filter Modal, change subscribers to', {
+                                            trackInfluencerSubscribersTo({
                                                 subscribers: e.target.value,
                                             });
                                         }}
@@ -381,8 +415,8 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                                     } else {
                                         setGender(e.target.value);
                                     }
-                                    trackEvent('Search Filter Modal, change gender', {
-                                        gender: e.target.value,
+                                    trackInfluencerGender({
+                                        code: e.target.value,
                                     });
                                 }}
                             >
@@ -406,7 +440,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                                     } else {
                                         setLastPost(e.target.value);
                                     }
-                                    trackEvent('Search Filter Modal, change last post', {
+                                    trackInfluencerLastPost({
                                         last_post: e.target.value + ` days`,
                                     });
                                 }}
@@ -432,7 +466,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                                                 e.target.value === 'any' ? null : e.target.value,
                                                 viewsPrevious[1],
                                             ]);
-                                            trackEvent('Search Filter Modal, change average views from', {
+                                            trackInfluencerViewsFrom({
                                                 views: e.target.value,
                                             });
                                         }}
@@ -457,7 +491,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                                                 viewsPrevious[0],
                                                 e.target.value === 'any' ? null : e.target.value,
                                             ]);
-                                            trackEvent('Search Filter Modal, change average views to', {
+                                            trackInfluencerViewsTo({
                                                 views: e.target.value,
                                             });
                                         }}
