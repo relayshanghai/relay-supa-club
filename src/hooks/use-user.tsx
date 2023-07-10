@@ -14,6 +14,7 @@ import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
 import type { DatabaseWithCustomTypes } from 'types';
 import { useClientDb } from 'src/utils/client-db/use-client-db';
+import { LOG_IN, LOG_OUT } from 'src/utils/rudderstack/event-names';
 
 export type SignupData = {
     email: string;
@@ -130,7 +131,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
             });
 
             if (error) throw new Error(error.message || 'Unknown error');
-            trackEvent('Logged in', { email });
+            trackEvent(LOG_IN(), { email });
             return data;
         } catch (e: unknown) {
             clientLogger(e, 'error');
@@ -218,7 +219,7 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
         // cannot use router.push() here because it won't cancel in-flight requests which wil re-set the cookie
 
         window.location.href = email ? `/logout?${new URLSearchParams({ email })}` : '/logout';
-        trackEvent('Logged out', { email });
+        trackEvent(LOG_OUT(), { email });
     };
 
     useEffect(() => {

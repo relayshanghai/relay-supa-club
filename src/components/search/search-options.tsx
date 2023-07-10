@@ -12,6 +12,7 @@ import WordCloudComponent from '../wordcloud';
 import SearchKeywords from './search-keywords';
 import SearchHashtags from './search-hashtags';
 import { Question } from '../icons';
+import { SEARCH_FILTER_MODAL, SEARCH_OPTIONS } from 'src/utils/rudderstack/event-names';
 
 export const SearchOptions = ({
     setPage,
@@ -54,14 +55,14 @@ export const SearchOptions = ({
 
     const handleSearch = (e: any) => {
         keywordInput.length > 0 && setKeywords(keywordInput);
-        trackEvent('Search Filter Modal, change keywords', {
+        trackEvent(SEARCH_FILTER_MODAL('change keywords'), {
             keywords: keywordInput,
         });
         setKeywordInput('');
         e.preventDefault();
         setActiveSearch(true);
         setPage(0);
-        trackEvent('Search Options, search');
+        trackEvent(SEARCH_OPTIONS('search'));
     };
     // TODO:comment out the related codes when feat recommended is ready
     useEffect(() => {
@@ -212,7 +213,7 @@ export const SearchOptions = ({
                                 data-testid="filters-button"
                                 onClick={() => {
                                     setShowFiltersModal(true);
-                                    trackEvent('Search Filters Modal, open modal');
+                                    trackEvent(SEARCH_FILTER_MODAL('open modal'));
                                 }}
                                 className={`group col-span-1 items-center justify-center rounded-md border border-transparent bg-primary-100 px-2 py-1 text-sm font-semibold text-[#7C3AED] shadow ring-1 ring-gray-900 ring-opacity-5 focus:border-primary-500 focus:outline-none focus:ring-primary-500`}
                             >

@@ -147,7 +147,7 @@ const SignUpPage = ({
         if (currentStep === 5) {
             return;
         }
-        trackEvent(`Signup Wizard, step-${currentStep}`, {
+        trackEvent(SIGNUP_WIZARD(`step-${currentStep}`), {
             firstName,
             lastName,
             phoneNumber,

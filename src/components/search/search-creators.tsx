@@ -6,6 +6,7 @@ import type { ChangeEvent } from 'react';
 import { debounce } from 'src/utils/debounce';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { Search, Spinner } from '../icons';
+import { SEARCH_OPTIONS } from 'src/utils/rudderstack/event-names';
 
 export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
     const [searchTerm, setSearchTerm] = useState<string | ''>();
@@ -22,7 +23,7 @@ export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
             setPlatform(platform);
             setUsername(term);
             setText(term);
-            trackEvent('Search Options, search for an influencer', { influencer: term, platform });
+            trackEvent(SEARCH_OPTIONS('search for an influencer'), { influencer: term, platform });
             setSpinnerLoading(false);
         }),
         [platform],
