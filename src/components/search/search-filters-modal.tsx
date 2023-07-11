@@ -313,7 +313,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                         <label className="text-sm">
                             <h4 className="mb-1 text-base font-medium">{t('filters.influencers.subscribersLabel')}</h4>
                             <div className="flex flex-row space-x-4">
-                                <div className="flex items-center gap-4">
+                                <div className="flex w-full items-center justify-between">
                                     <select
                                         data-testid="filter-subs-lower"
                                         className="rounded-md border-gray-200 bg-white text-sm font-medium text-gray-400 ring-1 ring-gray-200"
@@ -422,7 +422,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                         <label className="text-sm">
                             <div className="mb-1 text-base font-medium">{t('creators.filter.averageViews')}</div>
                             <div className="flex flex-row space-x-4">
-                                <div className="flex items-center gap-4">
+                                <div className="flex w-full items-center justify-between">
                                     <select
                                         data-testid="filter-lower-views"
                                         className="rounded-md border-gray-200 bg-white text-sm font-medium text-gray-400 ring-1 ring-gray-200"
