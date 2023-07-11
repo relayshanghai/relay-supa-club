@@ -5,7 +5,7 @@ import { SEARCH_LOAD_MORE_RESULTS, SearchLoadMoreResults } from './search-load_m
 import { SEARCH_OPEN_SOCIAL_PROFILE, SearchOpenSocialProfile } from './search-open_social_profile';
 import { SEARCH_ADD_TO_CAMPAIGN, SearchAddToCampaign } from './search-add_to_campaign';
 
-export { Search, SearchLoadMoreResults, SearchAnalyzeInfluencer, SearchOpenSocialProfile };
+export { Search, SearchLoadMoreResults, SearchAddToCampaign, SearchAnalyzeInfluencer, SearchOpenSocialProfile };
 
 export const events = {
     [SEARCH_KEY]: Search,

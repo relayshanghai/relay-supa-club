@@ -12,7 +12,7 @@ import { isMissing } from 'src/utils/utils';
 import { useCampaignCreators } from 'src/hooks/use-campaign-creators';
 import type { CampaignCreatorBasicInfo } from 'src/utils/client-db/campaignCreators';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
-import { SearchAddToCampaign } from 'src/utils/analytics/events/search-add_to_campaign';
+import { SearchAddToCampaign } from 'src/utils/analytics/events';
 import { useAnalytics } from '../analytics/analytics-provider';
 
 export default function CampaignModalCard({
