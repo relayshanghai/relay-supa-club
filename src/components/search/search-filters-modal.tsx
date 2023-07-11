@@ -98,8 +98,8 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
         }
     };
 
-    const getLowerAge = (targetValue: string, maxOption: string): LowerAgeOption | undefined => {
-        if (targetValue === maxOption) {
+    const getLowerAge = (targetValue: string, minOption: string): LowerAgeOption | undefined => {
+        if (targetValue === minOption) {
             return undefined;
         } else {
             return targetValue as LowerAgeOption;
@@ -163,7 +163,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                                 className="rounded-md border-gray-200 bg-white text-sm font-medium text-gray-400 ring-1 ring-gray-200"
                                 value={audienceAge?.left_number || (t('filters.minOption') as string)}
                                 onChange={(e) => {
-                                    const lowerAge = getLowerAge(e.target.value, t('filters.maxOption'));
+                                    const lowerAge = getLowerAge(e.target.value, t('filters.minOption') + ' (13)');
                                     setAudienceAge({
                                         ...audienceAge,
                                         left_number: lowerAge,
@@ -172,7 +172,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                                     trackAudienceAgeFrom({ lower: lowerAge, weight: audienceAge?.weight || 0.05 });
                                 }}
                             >
-                                <option value={undefined}>{t('filters.minOption')} (13)</option>
+                                <option value={undefined}>{t('filters.minOption') + ' (13)'}</option>
                                 {lowerAgeOptions.map((lowerAge, index) => {
                                     return (
                                         <option
