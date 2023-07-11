@@ -23,6 +23,7 @@ export const SearchOptions = ({
     const {
         platform,
         tags,
+        text,
         setTopicTags,
         influencerLocation,
         audienceLocation,
@@ -69,6 +70,7 @@ export const SearchOptions = ({
             setSearchParams({
                 platform,
                 tags,
+                text,
                 username,
                 keywords,
                 text_tags: hashtags.join(' '),
@@ -91,6 +93,7 @@ export const SearchOptions = ({
         platform,
         // onlyRecommended,
         setSearchParams,
+        text,
         tags,
         keywords,
         hashtags,
