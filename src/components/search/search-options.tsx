@@ -234,7 +234,11 @@ export const SearchOptions = ({
                             >
                                 <p className="w-full p-1">{t('creators.addFilters')}</p>
                             </button>
-                            <Button data-testid="search-button" className="col-span-1" onClick={(e) => handleSearch(e)}>
+                            <Button
+                                data-testid="search-button"
+                                className="col-span-1 h-full"
+                                onClick={(e) => handleSearch(e)}
+                            >
                                 {t('campaigns.index.search')}
                             </Button>
                         </div>

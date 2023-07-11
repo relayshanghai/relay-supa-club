@@ -159,7 +159,7 @@ const WordCloudComponent = ({ tags, platform, updateTags }: WordCloudProps) => {
     );
 
     return (
-        <div className="group relative hidden w-full pt-4 lg:block 2xl:pt-10">
+        <div className="group relative hidden w-full pt-4 lg:block lg:pt-10">
             <div className="absolute right-0 top-0 h-6 w-6">
                 <Tooltip
                     content={t('tooltips.topicCloud.title')}

@@ -20,6 +20,7 @@ export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
     const searchInfluencer = useCallback(
         debounce((term: any) => {
             setPlatform(platform);
+            setUsername(term);
             setText(term);
             trackSearchInfluencer({ term }, platform);
             setSpinnerLoading(false);
