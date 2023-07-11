@@ -65,6 +65,7 @@ export const CreatorPage = ({ creator_id, platform }: { creator_id: string; plat
                 }}
                 campaigns={campaigns}
                 allCampaignCreators={allCampaignCreators}
+                source="analyze"
             />
             <InfluencerAlreadyAddedModal
                 show={showAlreadyAddedModal}

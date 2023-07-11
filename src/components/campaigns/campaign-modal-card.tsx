@@ -12,7 +12,7 @@ import { isMissing } from 'src/utils/utils';
 import { useCampaignCreators } from 'src/hooks/use-campaign-creators';
 import type { CampaignCreatorBasicInfo } from 'src/utils/client-db/campaignCreators';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
-import { SearchAddToCampaign } from 'src/utils/analytics/events';
+import { SearchAddToCampaign, AnalyzeAddToCampaign } from 'src/utils/analytics/events';
 import { useAnalytics } from '../analytics/analytics-provider';
 
 export default function CampaignModalCard({
@@ -20,11 +20,13 @@ export default function CampaignModalCard({
     creator,
     platform,
     campaignCreators,
+    source,
 }: {
     campaign: CampaignDB;
     creator: CreatorUserProfile | null;
     platform: CreatorPlatform;
     campaignCreators: CampaignCreatorBasicInfo[];
+    source: string;
 }) {
     const { track } = useAnalytics();
     const supabase = useSupabaseClient();
@@ -55,7 +57,8 @@ export default function CampaignModalCard({
                 added_by_id: profile.id,
             });
             toast.success(t('campaigns.modal.addedSuccessfully'));
-            track(SearchAddToCampaign, {
+            const AddToCampaignSource = source === 'search' ? SearchAddToCampaign : AnalyzeAddToCampaign;
+            track(AddToCampaignSource, {
                 creator: creator?.username || creator?.fullname || creator?.user_id,
                 campaign: campaign?.id,
             });

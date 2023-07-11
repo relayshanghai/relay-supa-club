@@ -166,6 +166,7 @@ export const SearchPageInner = () => {
                 }}
                 campaigns={campaigns}
                 allCampaignCreators={allCampaignCreators}
+                source="search"
             />
 
             <InfluencerAlreadyAddedModal
