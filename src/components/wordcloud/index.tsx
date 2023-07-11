@@ -6,6 +6,7 @@ import WordCloud from 'react-d3-cloud';
 import { Tooltip } from '../library';
 import { useTranslation } from 'react-i18next';
 import { Question } from '../icons';
+import { useSearchTrackers } from '../rudder/searchui-rudder-calls';
 
 type DistanceType = {
     text: string;
@@ -76,6 +77,8 @@ const WordCloudComponent = ({ tags, platform, updateTags }: WordCloudProps) => {
     const [wordsDistance, setWordsDistance] = useState<DistanceType[]>([]);
     const [selectedTag, setSelectedTag] = useState<CreatorSearchTag | null>(null);
 
+    const { trackWordCloudAddTag, trackWordCloudRemoveTag } = useSearchTrackers();
+
     const { t } = useTranslation();
 
     useEffect(() => {
@@ -101,8 +104,9 @@ const WordCloudComponent = ({ tags, platform, updateTags }: WordCloudProps) => {
         (item: CreatorSearchTag) => {
             updateTags([...tags, item]);
             setSelectedTag(null);
+            trackWordCloudAddTag(item);
         },
-        [tags, updateTags],
+        [tags, updateTags, trackWordCloudAddTag],
     );
 
     const removeTag = useCallback(
@@ -112,8 +116,9 @@ const WordCloudComponent = ({ tags, platform, updateTags }: WordCloudProps) => {
             clone.splice(tags.indexOf(item), 1);
             updateTags(clone);
             setSelectedTag(null);
+            trackWordCloudRemoveTag(item);
         },
-        [tags, updateTags],
+        [tags, updateTags, trackWordCloudRemoveTag],
     );
 
     useEffect(() => {

@@ -1,7 +1,7 @@
 import { useSearch } from 'src/hooks/use-search';
 import type { CreatorPlatform } from 'types';
 import { Spinner } from '../icons';
-import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { useSearchTrackers } from '../rudder/searchui-rudder-calls';
 
 const platforms: {
     icon: string;
@@ -15,7 +15,7 @@ const platforms: {
 
 export const SelectPlatform = () => {
     const { platform, setPlatform, loading } = useSearch();
-    const { trackEvent } = useRudderstack();
+    const { trackPlatformChange } = useSearchTrackers();
 
     return (
         <div className="flex flex-row space-x-2">
@@ -28,7 +28,7 @@ export const SelectPlatform = () => {
                     key={label}
                     onClick={() => {
                         setPlatform(id);
-                        trackEvent('Search Options, change platform', { platform: id });
+                        trackPlatformChange(id);
                     }}
                 >
                     {loading && platform === id ? (
