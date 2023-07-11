@@ -13,7 +13,7 @@ export const AddToCampaignModal = ({
     selectedCreator,
     campaigns,
     allCampaignCreators,
-    source,
+    track,
 }: {
     show: boolean;
     setShow: (show: boolean) => void;
@@ -21,7 +21,7 @@ export const AddToCampaignModal = ({
     selectedCreator: CreatorUserProfile | null;
     campaigns?: CampaignDB[] | undefined;
     allCampaignCreators?: CampaignCreatorBasicInfo[];
-    source: string;
+    track: (campaign: string) => void;
 }) => {
     const { t } = useTranslation();
 
@@ -46,7 +46,7 @@ export const AddToCampaignModal = ({
                                 campaignCreators={
                                     allCampaignCreators?.filter((creator) => creator.campaign_id === campaign.id) ?? []
                                 }
-                                source={source}
+                                track={track}
                             />
                         ))}
                     </div>

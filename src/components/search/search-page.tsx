@@ -20,6 +20,8 @@ import { useAllCampaignCreators } from 'src/hooks/use-all-campaign-creators';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { SearchCreators } from './search-creators';
 import { startJourney } from 'src/utils/analytics/journey';
+import { useAnalytics } from '../analytics/analytics-provider';
+import { SearchAddToCampaign } from 'src/utils/analytics/events';
 // import { featRecommended } from 'src/constants/feature-flags';
 
 export const SearchPageInner = () => {
@@ -45,6 +47,7 @@ export const SearchPageInner = () => {
     const { campaigns } = useCampaigns({});
     const { allCampaignCreators } = useAllCampaignCreators(campaigns);
     const { trackEvent } = useRudderstack();
+    const { track } = useAnalytics();
 
     const [page, setPage] = useState(0);
     const {
@@ -166,7 +169,15 @@ export const SearchPageInner = () => {
                 }}
                 campaigns={campaigns}
                 allCampaignCreators={allCampaignCreators}
-                source="search"
+                track={(campaign: string) => {
+                    track(SearchAddToCampaign, {
+                        creator:
+                            selectedCreator?.account.user_profile.username ||
+                            selectedCreator?.account.user_profile.fullname ||
+                            selectedCreator?.account.user_profile.user_id,
+                        campaign: campaign,
+                    });
+                }}
             />
 
             <InfluencerAlreadyAddedModal
