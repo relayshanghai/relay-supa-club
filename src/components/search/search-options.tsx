@@ -136,12 +136,18 @@ export const SearchOptions = ({
                                 topics={tags}
                                 platform={platform}
                                 onChangeTopics={() => {
-                                    hashtags.length !== 0 && setHashtags([]);
-                                    hashtags.length !== 0 && trackHashtags({ hashtags: [] });
-                                    keywords.length !== 0 && setKeywords('');
-                                    keywords.length !== 0 && trackKeyword({ keyword: '' });
-                                    keywordInput.length !== 0 && setKeywordInput('');
-                                    hashTagInput.length !== 0 && setHashTagInput('');
+                                    if (hashtags.length !== 0) {
+                                        setHashtags([]);
+                                        trackHashtags({ hashtags: [] });
+                                    }
+                                    if (keywords.length !== 0) {
+                                        setKeywords('');
+                                        trackKeyword({ keyword: '' });
+                                    }
+                                    if (keywordInput.length !== 0) {
+                                        setKeywordInput('');
+                                        setHashTagInput('');
+                                    }
                                 }}
                                 onSetTopics={(topics) => {
                                     setTopicTags(topics);
