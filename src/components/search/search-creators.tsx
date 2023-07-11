@@ -4,26 +4,24 @@ import { useTranslation } from 'react-i18next';
 import type { CreatorPlatform } from 'types';
 import type { ChangeEvent } from 'react';
 import { debounce } from 'src/utils/debounce';
-import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { Search, Spinner } from '../icons';
-import { SEARCH_OPTIONS } from 'src/utils/rudderstack/event-names';
+import { useSearchTrackers } from '../rudder/searchui-rudder-calls';
 
 export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
     const [searchTerm, setSearchTerm] = useState<string | ''>();
     const [spinnerLoading, setSpinnerLoading] = useState(false);
     const { t } = useTranslation();
+    const { trackSearchInfluencer, trackSearch } = useSearchTrackers();
 
     const { setPlatform, setUsername, setText, setActiveSearch, setPage } = useSearch();
-    const { trackEvent } = useRudderstack();
 
     // Disabling the exhaustive-deps rule because we need to use the debounce function and we already know the required dependencies.
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const searchInfluencer = useCallback(
         debounce((term: any) => {
             setPlatform(platform);
-            setUsername(term);
             setText(term);
-            trackEvent(SEARCH_OPTIONS('search for an influencer'), { influencer: term, platform });
+            trackSearchInfluencer({ term }, platform);
             setSpinnerLoading(false);
         }),
         [platform],
@@ -34,8 +32,8 @@ export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
         setSpinnerLoading(true);
 
         if (e.target.value.trim() === '') {
-            setUsername('');
             setText('');
+            setUsername('');
         }
 
         searchInfluencer(e.target.value);
@@ -44,8 +42,8 @@ export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
     const handleSearch = useCallback(() => {
         setActiveSearch(true);
         setPage(0);
-        trackEvent('Search Options, search');
-    }, [setActiveSearch, setPage, trackEvent]);
+        trackSearch('Search Options');
+    }, [setActiveSearch, setPage, trackSearch]);
 
     const handleSubmit = useCallback(() => {
         searchInfluencer(searchTerm);

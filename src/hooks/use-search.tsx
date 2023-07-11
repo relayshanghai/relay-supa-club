@@ -198,6 +198,7 @@ export const useSearchResults = (page: number) => {
                     user_id: profile?.id,
                     recommendedInfluencers,
                 };
+
                 const res = await nextFetch<InfluencerPostResponse>(path, {
                     method: 'post',
                     signal,

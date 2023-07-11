@@ -16,6 +16,7 @@ export const SEARCH_OPTIONS = generateEventName('Search Options');
 export const SEARCH_RESULT = generateEventName('Search Result');
 export const SEARCH_RESULT_ROW = generateEventName('Search Result Row');
 export const SEARCH_TOPICS_INPUT = generateEventName('Search Topics Input');
+export const WORD_CLOUD_COMPONENT = generateEventName('Word Cloud Component');
 
 // Campaigns
 export const CAMPAIGN_BANNER = generateEventName('Campaign Banner');

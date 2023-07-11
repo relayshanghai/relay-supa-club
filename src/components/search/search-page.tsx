@@ -64,6 +64,7 @@ export const SearchPageInner = () => {
             page: 0,
             platform,
             username: '',
+            text: '',
             views: [null, null],
             audience: [null, null],
             // recommendedInfluencers: featRecommended() ? recommendedInfluencers : [],

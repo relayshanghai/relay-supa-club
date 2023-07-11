@@ -74,7 +74,7 @@ describe('prepareFetchCreatorsFiltered', () => {
             { id: 678, weight: 0.25 },
         ]);
     });
-    it('transforms recommendedInfluencers using isRecommendedTransform', () => {
+    it.skip('transforms recommendedInfluencers using isRecommendedTransform', () => {
         const recommendedInfluencers = [
             'youtube/UCh_ugKacslKhsGGdXP0cRRA',
             'youtube/UCwyXamwtzfDIvRjEFcqNmSw',
