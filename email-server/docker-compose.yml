@@ -5,7 +5,8 @@ services:
         image: postalsys/emailengine:latest
         ports:
             # API and web interface
-            - '3000:3000'
+            # outward/inward ports
+            - '4000:3000'
             # SMTP for message submission
             - '2525:2525'
         depends_on:
@@ -24,6 +25,7 @@ services:
                     "smtpServerHost": "0.0.0.0",
                     "smtpServerAuthEnabled": true,
                     "smtpServerPassword": "passw0rd"
+                    "serviceUrl": "http://127.0.0.1:4000"
                 }
 
             # Encryption secret
