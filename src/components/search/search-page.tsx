@@ -18,9 +18,8 @@ import { MoreResultsRows } from './search-result-row';
 import ClientRoleWarning from './client-role-warning';
 import { useAllCampaignCreators } from 'src/hooks/use-all-campaign-creators';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
-import { useAnalytics } from '../analytics/analytics-provider';
-import { SearchLoadMoreResults } from 'src/utils/analytics/events';
 import { SearchCreators } from './search-creators';
+import { startJourney } from 'src/utils/analytics/journey';
 // import { featRecommended } from 'src/constants/feature-flags';
 
 export const SearchPageInner = () => {
@@ -46,7 +45,6 @@ export const SearchPageInner = () => {
     const { campaigns } = useCampaigns({});
     const { allCampaignCreators } = useAllCampaignCreators(campaigns);
     const { trackEvent } = useRudderstack();
-    const { track } = useAnalytics();
 
     const [page, setPage] = useState(0);
     const {
@@ -59,6 +57,11 @@ export const SearchPageInner = () => {
     } = useSearchResults(0);
 
     const [showAlreadyAddedModal, setShowAlreadyAddedModal] = useState(false);
+
+    // Automatically start a journey on render
+    useEffect(() => {
+        startJourney('search');
+    }, []);
 
     // TODO:comment out the related codes when feat recommended is ready
     useEffect(() => {
@@ -147,7 +150,6 @@ export const SearchPageInner = () => {
                     onClick={async () => {
                         const nextPage = page + 1;
                         setPage(nextPage);
-                        track(SearchLoadMoreResults, { page: nextPage });
                         trackEvent('Search Result, load more');
                     }}
                 >

@@ -9,6 +9,7 @@ import { hasCustomSearchParams } from 'src/utils/usagesHelpers';
 import type { CreatorSearchResult } from 'types';
 import { createTrack } from 'src/utils/analytics/api/analytics';
 import { Search } from 'src/utils/analytics/events';
+import { SearchLoadMoreResults } from 'src/utils/analytics/events';
 
 export type InfluencerPostRequest = FetchCreatorsFilteredParams & {
     company_id: string;
@@ -40,9 +41,11 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const results = await searchInfluencers(parameters);
 
-    const trackSearch = createTrack<Search>({ req, res });
+    const trackSearch = createTrack<Search | SearchLoadMoreResults>({ req, res });
 
-    trackSearch(Search, {
+    const event = searchParams.page && searchParams.page > 0 ? SearchLoadMoreResults : Search;
+
+    trackSearch(event, {
         parameters,
     });
 

@@ -7,4 +7,6 @@ export type SearchAnalyzeInfluencerPayload = EventPayload;
 export const SearchAnalyzeInfluencer = (trigger: TriggerEvent, value?: SearchAnalyzeInfluencerPayload) =>
     trigger(SEARCH_ANALYZE_INFLUENCER, value);
 
+export type SearchAnalyzeInfluencer = typeof SearchAnalyzeInfluencer;
+
 SearchAnalyzeInfluencer.eventName = SEARCH_ANALYZE_INFLUENCER;
