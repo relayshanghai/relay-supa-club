@@ -7,6 +7,8 @@ import { serverLogger } from 'src/utils/logger-server';
 import { saveInfluencer } from 'src/utils/save-influencer';
 import type { CreatorPlatform, CreatorReport } from 'types';
 import { db } from 'src/utils/supabase-client';
+import { Analyze } from 'src/utils/analytics/events';
+import { createAnalyzeSnapshot } from 'src/utils/analytics/api/create-analyze-snapshot';
 
 export type CreatorsReportGetQueries = {
     platform: CreatorPlatform;
@@ -69,6 +71,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 } catch (error) {
                     serverLogger(error, 'error', true);
                 }
+                // console.log("Snapshot Data: ", data);
+                createAnalyzeSnapshot<Analyze>({ req, res })(Analyze, {
+                    parameters: data,
+                });
 
                 return res.status(httpCodes.OK).json(data);
             }

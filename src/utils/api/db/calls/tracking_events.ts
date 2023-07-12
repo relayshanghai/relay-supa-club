@@ -5,6 +5,7 @@ import type { SupabaseAuthClient } from '@supabase/supabase-js/dist/module/lib/S
 
 // @todo move out here
 type RelayDatabase = SupabaseClient<DatabaseWithCustomTypes>;
+// @todo use profiles since user.id is profiles.id too
 type AuthUser = Exclude<Awaited<ReturnType<SupabaseAuthClient['getUser']>>['data']['user'], null>;
 
 export const insertTrackingEvent = (db: RelayDatabase) => async (data: TrackingEvents['Insert']) => {

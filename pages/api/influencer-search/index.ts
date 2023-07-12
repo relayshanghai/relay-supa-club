@@ -7,9 +7,7 @@ import type { FetchCreatorsFilteredParams } from 'src/utils/api/iqdata/transform
 import { prepareFetchCreatorsFiltered } from 'src/utils/api/iqdata/transforms';
 import { hasCustomSearchParams } from 'src/utils/usagesHelpers';
 import type { CreatorSearchResult } from 'types';
-import { createTrack } from 'src/utils/analytics/api/analytics';
-import { Search } from 'src/utils/analytics/events';
-import { SearchLoadMoreResults } from 'src/utils/analytics/events';
+import { createSearchSnapshot } from 'src/utils/analytics/api/analytics';
 
 export type InfluencerPostRequest = FetchCreatorsFilteredParams & {
     company_id: string;
@@ -41,13 +39,20 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const results = await searchInfluencers(parameters);
 
-    const trackSearch = createTrack<Search | SearchLoadMoreResults>({ req, res });
+    const snapshot = await createSearchSnapshot(
+        { req, res },
+        {
+            payload: {
+                parameters,
+                results,
+            },
+        },
+    );
 
-    const event = searchParams.page && searchParams.page > 0 ? SearchLoadMoreResults : Search;
-
-    trackSearch(event, {
-        parameters,
-    });
+    // @see /types/appTypes/SearchResultMetadata
+    results.__metadata = {
+        snapshot_id: snapshot.id,
+    };
 
     return res.status(httpCodes.OK).json(results);
 };

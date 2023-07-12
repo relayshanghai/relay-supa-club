@@ -11,6 +11,7 @@ import type {
     CreatorSearchTag,
     AudienceAgeRangeWeighted,
     AudienceGenderWeighted,
+    SearchResultMetadata,
 } from 'types';
 import { useUser } from './use-user';
 import useSWR from 'swr';
@@ -132,8 +133,8 @@ export const useSearchResults = (page: number) => {
     const { setUsageExceeded, setLoading, setActiveSearch, searchParams } = useSearch();
 
     const { data, isLoading, mutate, isValidating, error } = useSWR(
-        profile?.id && searchParams ? ['influencer-search', searchParams, page] : null,
-        async ([path, searchParams, page]) => {
+        profile?.id && searchParams ? { path: 'influencer-search', searchParams, page } : null,
+        async ({ path, searchParams, page }) => {
             try {
                 if (!profile?.id) {
                     throw new Error('No profile');
@@ -147,58 +148,19 @@ export const useSearchResults = (page: number) => {
                 const signal = controller.signal;
                 ref.current = controller;
 
-                const {
-                    tags,
-                    platform,
-                    username,
-                    text,
-                    keywords,
-                    text_tags,
-                    influencerLocation,
-                    audienceLocation,
-                    resultsPerPageLimit,
-                    audience,
-                    audienceAge,
-                    audienceGender,
-                    views,
-                    gender,
-                    engagement,
-                    lastPost,
-                    contactInfo,
-                    only_recommended: onlyRecommended,
-                    recommendedInfluencers,
-                } = searchParams;
-
                 const companyId = company?.id || profile.company_id;
                 if (!companyId) {
                     throw new Error('No company');
                 }
 
                 const body: InfluencerPostRequest = {
-                    tags,
-                    platform,
-                    text,
-                    keywords,
-                    text_tags,
-                    username,
-                    influencerLocation,
-                    audienceLocation,
-                    resultsPerPageLimit,
-                    page,
-                    audience,
-                    audienceAge,
-                    audienceGender,
-                    views,
-                    gender,
-                    engagement,
-                    lastPost,
-                    contactInfo,
-                    only_recommended: onlyRecommended,
+                    ...searchParams,
                     company_id: companyId,
                     user_id: profile?.id,
-                    recommendedInfluencers,
+                    page,
                 };
-                const res = await nextFetch<InfluencerPostResponse>(path, {
+
+                const res = await nextFetch<InfluencerPostResponse & SearchResultMetadata>(path, {
                     method: 'post',
                     signal,
                     body,
@@ -207,7 +169,8 @@ export const useSearchResults = (page: number) => {
                 if (!res?.accounts) {
                     throw new Error('no accounts in results');
                 }
-                return { results: res?.accounts, resultsTotal: res?.total };
+
+                return { results: res?.accounts, resultsTotal: res?.total, __metadata: res.__metadata };
             } catch (error: any) {
                 if (hasCustomError(error, usageErrors)) {
                     setUsageExceeded(true);
@@ -227,6 +190,15 @@ export const useSearchResults = (page: number) => {
         },
     );
 
+    // try to determine if data is cached by swr
+    const [isCached, setIsCached] = useState(() => {
+        return data !== undefined && isLoading === false;
+    });
+
+    useEffect(() => {
+        setIsCached(data !== undefined && isLoading === false);
+    }, [data, isLoading]);
+
     useEffect(() => {
         if (error) {
             setLoading(false);
@@ -245,6 +217,8 @@ export const useSearchResults = (page: number) => {
         isValidating,
         noResults,
         mutate,
+        metadata: data?.__metadata,
+        isCached,
     };
 };
 
