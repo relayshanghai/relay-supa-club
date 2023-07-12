@@ -18,6 +18,7 @@ import { isRecommendedInfluencer } from 'src/utils/utils';
 import type { CampaignCreatorBasicInfo } from 'src/utils/client-db/campaignCreators';
 import { useAtom } from 'jotai';
 import { clientRoleAtom } from 'src/atoms/client-role-atom';
+import { SEARCH_RESULT_ROW } from 'src/utils/rudderstack/event-names';
 export interface SearchResultRowProps {
     creator: CreatorSearchAccountObject;
     setSelectedCreator: (creator: CreatorSearchAccountObject) => void;
@@ -121,7 +122,7 @@ export const SearchResultRow = ({
         } else {
             setShowCampaignListModal(true);
         }
-        trackEvent('Search Result Row, add to campaign', { platform, user_id });
+        trackEvent(SEARCH_RESULT_ROW('add to campaign'), { platform, user_id });
     };
 
     const desktop = useAboveScreenWidth(500);
@@ -175,7 +176,7 @@ export const SearchResultRow = ({
                         href={`/influencer/${platform}/${user_id}`}
                         target={inActAsMode ? '_self' : '_blank'}
                         rel="noopener noreferrer"
-                        onClick={() => trackEvent('Search Result Row, open report', { platform, user_id })}
+                        onClick={() => trackEvent(SEARCH_RESULT_ROW('open report'), { platform, user_id })}
                         data-testid={`analyze-button/${user_id}`}
                     >
                         <Button className="flex flex-row items-center" variant="secondary">
@@ -195,7 +196,7 @@ export const SearchResultRow = ({
                     {url && (
                         <Link href={url} target="_blank" rel="noopener noreferrer">
                             <Button
-                                onClick={() => trackEvent('Search Result Row, open social link', { url })}
+                                onClick={() => trackEvent(SEARCH_RESULT_ROW('open social link'), { url })}
                                 data-testid={`open-influencer-link-button/${user_id}`}
                             >
                                 <ShareLink className="w-5 fill-current text-white" />
@@ -239,7 +240,7 @@ export const SearchResultRow = ({
                                                     active ? 'bg-violet-500 text-white' : 'text-gray-900'
                                                 } group flex w-full items-center justify-center rounded-md px-2 py-2 text-sm`}
                                                 onClick={() =>
-                                                    trackEvent('Search Result Row, open report', { platform, user_id })
+                                                    trackEvent(SEARCH_RESULT_ROW('open report'), { platform, user_id })
                                                 }
                                             >
                                                 {t('creators.analyzeProfile')}
@@ -254,7 +255,7 @@ export const SearchResultRow = ({
                                             {({ active }) => (
                                                 <button
                                                     onClick={() =>
-                                                        trackEvent('Search Result Row, open social link', { url })
+                                                        trackEvent(SEARCH_RESULT_ROW('open social link'), { url })
                                                     }
                                                     className={`${
                                                         active ? 'bg-violet-500 text-white' : 'text-gray-900'

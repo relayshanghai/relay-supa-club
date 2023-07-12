@@ -18,6 +18,7 @@ import { imgProxy } from 'src/utils/fetcher';
 import { Spinner } from 'src/components/icons';
 import { toast } from 'react-hot-toast';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { CAMPAIGN_BANNER } from 'src/utils/rudderstack/event-names';
 
 export default function CampaignShow() {
     const router = useRouter();
@@ -50,7 +51,7 @@ export default function CampaignShow() {
         const status = e.target.value;
         await updateCampaign({ ...currentCampaign, status });
         refreshCampaigns();
-        trackEvent('Campaign Banner, change status');
+        trackEvent(CAMPAIGN_BANNER('change status'));
     };
 
     const archiveCampaignHandler = async () => {
@@ -59,7 +60,7 @@ export default function CampaignShow() {
         router.push('/campaigns');
         toast.success(t('campaigns.show.archived'));
         refreshCampaigns();
-        trackEvent('Campaign Banner, archive campaign');
+        trackEvent(CAMPAIGN_BANNER('archive campaign'));
     };
 
     const unarchiveCampaignHandler = async () => {
@@ -68,7 +69,7 @@ export default function CampaignShow() {
         router.push('/campaigns');
         toast.success(t('campaigns.show.unarchived'));
         refreshCampaigns();
-        trackEvent('Campaign Banner, unarchive campaign');
+        trackEvent(CAMPAIGN_BANNER('unarchive campaign'));
     };
 
     useEffect(() => {
@@ -214,7 +215,7 @@ export default function CampaignShow() {
                         <Link href={`/campaigns/form/${encodeURIComponent(currentCampaign?.id)}`} legacyBehavior>
                             <span
                                 className="flex flex-row items-center gap-1 px-2 text-gray-400 duration-300 group-hover:text-primary-500"
-                                onClick={() => trackEvent('Campaign Banner, edit campaign')}
+                                onClick={() => trackEvent(CAMPAIGN_BANNER('edit campaign'))}
                             >
                                 {t('campaigns.index.edit')}
                                 <PencilSquareIcon name="edit" className="h-4 w-4 fill-current" />

@@ -5,6 +5,7 @@ import { GuideModal } from './guideModal';
 import { useState } from 'react';
 import Image from 'next/image';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { GUIDE_PAGE } from 'src/utils/rudderstack/event-names';
 
 const featVideo = true;
 
@@ -14,7 +15,7 @@ export const GuideCards = ({ cardName }: { cardName: string }) => {
     const [guideShow, setGuideShow] = useState<boolean>(false);
 
     const handleGuideModal = () => {
-        trackEvent('Guide Page, modal opened', { guideSection: cardName });
+        trackEvent(GUIDE_PAGE('modal opened'), { guideSection: cardName });
         setGuideShow((prev) => !prev);
     };
     return (
@@ -57,7 +58,7 @@ export const GuideComponent = () => {
     const { trackEvent } = useRudderstack();
 
     return (
-        <div onLoad={() => trackEvent('Guide Page, opened')} className="m-10 flex flex-col items-center gap-6">
+        <div onLoad={() => trackEvent(GUIDE_PAGE('opened'))} className="m-10 flex flex-col items-center gap-6">
             <div className="flex flex-col gap-2 text-center">
                 <p className="text-4xl font-bold text-gray-800">
                     {t('guidePage.welcome')} relay<span className="text-[#6B65AD]">.</span>club
@@ -69,20 +70,20 @@ export const GuideComponent = () => {
                     muted={false}
                     controls={true}
                     onPlay={(e) => {
-                        trackEvent('Guide Page, tutorial video played', {
+                        trackEvent(GUIDE_PAGE('tutorial video played'), {
                             timestamp: (e.target as HTMLMediaElement).currentTime,
                         });
                     }}
                     onPause={(e) => {
-                        trackEvent('Guide Page, tutorial video paused', {
+                        trackEvent(GUIDE_PAGE('tutorial video paused'), {
                             timestamp: (e.target as HTMLMediaElement).currentTime,
                         });
                     }}
                     onEnded={() => {
-                        trackEvent('Guide Page, tutorial video ended');
+                        trackEvent(GUIDE_PAGE('tutorial video ended'));
                     }}
                     onSeeked={(e) => {
-                        trackEvent('Guide Page, tutorial video seeked', {
+                        trackEvent(GUIDE_PAGE('tutorial video seeked'), {
                             timestamp: (e.target as HTMLMediaElement).currentTime,
                         });
                     }}
