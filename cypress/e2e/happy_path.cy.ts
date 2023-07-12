@@ -25,7 +25,7 @@ describe('Main pages happy paths', () => {
         const randomEmail = `test${randomString()}@example.com`;
 
         cy.switchToEnglish();
-        cy.visit('signup');
+        cy.visit('/signup');
         cy.contains('Verify your number to get started');
 
         // Carousel
@@ -235,6 +235,7 @@ describe('Main pages happy paths', () => {
         // check displays new campaign
         cy.get('input[name=name]').type('My Campaign');
         cy.get('button').contains('Create Campaign').click();
+
         cy.contains('Campaign Launch Date', { timeout: 10000 });
         cy.contains('SET India').should('not.exist');
 
@@ -308,7 +309,7 @@ describe('Main pages happy paths', () => {
         // move influencer to new campaign
         cy.contains('tr', 'SET India').within(() => cy.getByTestId('move-influencer-button').click()); // can take
 
-        cy.getByTestId('move-influencer-button:My Campaign').click();
+        cy.getByTestId('move-influencer-button:My Campaign').click({ multiple: true });
         cy.contains('Campaign Launch Date').click({ force: true }); // click out of modal
         cy.contains('SET India').should('not.exist');
         cy.contains('Campaigns').click();
