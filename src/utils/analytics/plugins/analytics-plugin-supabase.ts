@@ -41,9 +41,12 @@ export const SupabasePlugin = (config: SupabasePluginConfig = {}): AnalyticsPlug
 
             const anonymous_id = getItem(ANALYTICS_COOKIE_ANON)
 
-            const trigger = async (eventName: string, payload?: any) => {
+            const trigger = async (eventName: string, _payload?: any) => {
+                const { snapshot_id, ...payload } = _payload;
+
                 return await apiFetch('/api/analytics/tracking', {
                     body: {
+                        snapshot_id,
                         event: eventName,
                         event_at: now(),
                         payload,

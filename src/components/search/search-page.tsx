@@ -20,12 +20,15 @@ import { useAllCampaignCreators } from 'src/hooks/use-all-campaign-creators';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { SearchCreators } from './search-creators';
 import { startJourney } from 'src/utils/analytics/journey';
+import { Search, SearchLoadMoreResults } from 'src/utils/analytics/events';
+import { useAnalytics } from '../analytics/analytics-provider';
 // import { featRecommended } from 'src/constants/feature-flags';
 
 export const SearchPageInner = () => {
     const { t } = useTranslation();
     const {
         platform,
+        searchParams,
         setSearchParams,
         // recommendedInfluencers,
         // onlyRecommended,
@@ -54,7 +57,26 @@ export const SearchPageInner = () => {
         error,
         isValidating,
         loading: resultsLoading,
+        isCached,
+        metadata,
     } = useSearchResults(0);
+
+    const { track } = useAnalytics();
+
+    useEffect(() => {
+        if (!isCached || metadata === undefined) return;
+
+        // @note quick fix for searchParams not being updated
+        if (searchParams) searchParams.page = page;
+
+        const event = page > 0 ? SearchLoadMoreResults : Search;
+
+        track<Search | SearchLoadMoreResults>(event, {
+            snapshot_id: metadata.snapshot_id,
+            parameters: searchParams,
+            page,
+        });
+    }, [track, searchParams, page, isCached, metadata]);
 
     const [showAlreadyAddedModal, setShowAlreadyAddedModal] = useState(false);
 
@@ -64,6 +86,7 @@ export const SearchPageInner = () => {
     }, []);
 
     // TODO:comment out the related codes when feat recommended is ready
+    // @note: this causes rerender, searchParams value should be initiated in the useState
     useEffect(() => {
         setSearchParams({
             page: 0,

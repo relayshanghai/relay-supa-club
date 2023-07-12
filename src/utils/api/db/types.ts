@@ -126,3 +126,4 @@ export type InfluencerSocialProfilesTable = Database['public']['Tables']['influe
 };
 
 export type TrackingEvents = Database['public']['Tables']['tracking_events'];
+export type SearchSnapshots = Database['public']['Tables']['search_snapshots'];

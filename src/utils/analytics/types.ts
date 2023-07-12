@@ -104,8 +104,8 @@ export type TriggerEvent<P = any, R = any> = (eventName: string, payload?: P) =>
 /**
  * Event function that contains eventName property
  */
-export type TrackedEvent<P = any, R = any> = {
-    (trigger: TriggerEvent<P, R>, payload?: P): ReturnType<typeof trigger>;
+export type TrackedEvent = {
+    <T extends TriggerEvent = (n: string, p: any) => void>(trigger: T, payload?: Parameters<T>[1]): ReturnType<T>;
     eventName: string;
 };
 
