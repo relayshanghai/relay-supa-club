@@ -10,6 +10,7 @@ import { Button } from '../button';
 import { Edit } from '../icons';
 import { Input } from '../input';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { ACCOUNT_PERSONAL_DETAILS } from 'src/utils/rudderstack/event-names';
 
 export const PersonalDetails = () => {
     const {
@@ -42,7 +43,7 @@ export const PersonalDetails = () => {
             });
             if (error) throw error;
             toast.success(t('login.resetPasswordEmailSent'));
-            trackEvent('Account, PersonalDetails, click on change password');
+            trackEvent(ACCOUNT_PERSONAL_DETAILS('click on change password'));
         } catch (error: any) {
             toast.error(error.message || t('login.oopsSomethingWentWrong'));
         }
@@ -71,7 +72,7 @@ export const PersonalDetails = () => {
             refreshCompany();
             toast.success(t('account.personal.profileUpdated'));
             setEditMode(false);
-            trackEvent('Account, PersonalDetails, update profile name');
+            trackEvent(ACCOUNT_PERSONAL_DETAILS('update profile name'));
         } catch (e) {
             clientLogger(e, 'error');
             toast.error(t('account.personal.oopsWentWrong'));
@@ -96,7 +97,7 @@ export const PersonalDetails = () => {
             );
             if (error) throw error;
             toast.success(t('account.personal.confirmationEmailSentToNewAddress'));
-            trackEvent('Account, PersonalDetails, update email');
+            trackEvent(ACCOUNT_PERSONAL_DETAILS('update email'));
         } catch (error: any) {
             clientLogger(error, 'error');
             toast.error(error?.message || t('account.personal.oopsWentWrong'));
@@ -187,7 +188,7 @@ export const PersonalDetails = () => {
                     disabled={userDataLoading}
                     onClick={() => {
                         setEditMode(true);
-                        trackEvent('Account, PersonalDetails, click on Edit');
+                        trackEvent(ACCOUNT_PERSONAL_DETAILS('click on Edit'));
                     }}
                     variant="secondary"
                 >

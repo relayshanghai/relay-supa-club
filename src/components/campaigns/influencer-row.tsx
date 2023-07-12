@@ -13,6 +13,7 @@ import { Button } from '../button';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import type { TableColumns } from './campaign-influencers-table';
 import { Tooltip } from '../library';
+import { CAMPAIGN_INFLUENCER_ROW } from 'src/utils/rudderstack/event-names';
 
 export interface InfluencerRowProps {
     index: number;
@@ -84,7 +85,7 @@ const InfluencerRow = ({
                                 <div
                                     className="ml-4"
                                     onClick={() =>
-                                        trackEvent('Campaign Influencer Row, open social link', {
+                                        trackEvent(CAMPAIGN_INFLUENCER_ROW('open social link'), {
                                             platform: creator.platform,
                                             user_id: creator.creator_id,
                                         })

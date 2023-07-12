@@ -12,6 +12,7 @@ import { useRouter } from 'next/router';
 import { screenshots } from 'public/assets/imgs/screenshots';
 import Image from 'next/image';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { LANDING_PAGE } from 'src/utils/rudderstack/event-names';
 
 const ImageBackground = () => {
     return (
@@ -44,7 +45,7 @@ export const PricingPage = ({ page = 'upgrade' }: { page?: 'upgrade' | 'landing'
     const options: ActiveSubscriptionTier[] = landingPage ? ['free', 'diyMax', 'diy'] : ['diyMax', 'diy'];
 
     const handleStartFreeTrialClicked = () => {
-        trackEvent('Landing Page, clicked on start free trial');
+        trackEvent(LANDING_PAGE('clicked on start free trial'));
         router.push('/signup');
     };
 
@@ -74,7 +75,7 @@ export const PricingPage = ({ page = 'upgrade' }: { page?: 'upgrade' | 'landing'
                             checked={period === 'quarterly'}
                             onChange={(e) => {
                                 setPeriod(e.target.checked ? 'quarterly' : 'monthly');
-                                trackEvent('Landing Page, clicked on switch', { selectedPeriod: period });
+                                trackEvent(LANDING_PAGE('clicked on switch'), { selectedPeriod: period });
                             }}
                             beforeLabel={t('pricing.monthly') || 'Monthly'}
                             afterLabel={t('pricing.quarterly') || 'Quarterly'}

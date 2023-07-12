@@ -19,6 +19,7 @@ import ClientRoleWarning from './client-role-warning';
 import { useAllCampaignCreators } from 'src/hooks/use-all-campaign-creators';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { SearchCreators } from './search-creators';
+import { SEARCH_RESULT } from 'src/utils/rudderstack/event-names';
 // import { featRecommended } from 'src/constants/feature-flags';
 
 export const SearchPageInner = () => {
@@ -144,7 +145,7 @@ export const SearchPageInner = () => {
                 <Button
                     onClick={async () => {
                         setPage(page + 1);
-                        trackEvent('Search Result, load more');
+                        trackEvent(SEARCH_RESULT('load more'));
                     }}
                 >
                     {t('creators.loadMore')}

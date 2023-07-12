@@ -14,6 +14,7 @@ import { useTeammates } from 'src/hooks/use-teammates';
 import { useCompany } from 'src/hooks/use-company';
 import { useUser } from 'src/hooks/use-user';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { ACCOUNT_COMPANY_DETAILS } from 'src/utils/rudderstack/event-names';
 
 export const CompanyDetails = () => {
     const { company, updateCompany, refreshCompany } = useCompany();
@@ -54,7 +55,7 @@ export const CompanyDetails = () => {
             });
             toast.success(t('account.company.companyProfileUpdated'));
             setEditMode(false);
-            trackEvent('Account, CompanyDetails, update company');
+            trackEvent(ACCOUNT_COMPANY_DETAILS('update company'));
         } catch (e: any) {
             if (hasCustomError(e, updateCompanyErrors)) {
                 // right now we only have the companyWithSameNameExists error that's also used in login
@@ -131,7 +132,7 @@ export const CompanyDetails = () => {
                             disabled={userDataLoading || updating}
                             onClick={() => {
                                 setEditMode(true);
-                                trackEvent('Account, CompanyDetails, click on Edit');
+                                trackEvent(ACCOUNT_COMPANY_DETAILS('click on Edit'));
                             }}
                             variant="secondary"
                         >
@@ -192,7 +193,7 @@ export const CompanyDetails = () => {
                             variant="secondary"
                             onClick={() => {
                                 setShowAddMoreMembers(true);
-                                trackEvent('Account, CompanyDetails, open addMoreMembers modal');
+                                trackEvent(ACCOUNT_COMPANY_DETAILS('open addMoreMembers modal'));
                             }}
                         >
                             {t('account.company.addMoreMembers')}

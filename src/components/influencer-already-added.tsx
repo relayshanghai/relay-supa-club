@@ -3,6 +3,7 @@ import { ModalWithButtons } from './modal-with-buttons';
 import type { CampaignDB } from 'src/utils/api/db';
 import type { CampaignCreatorBasicInfo } from 'src/utils/client-db/campaignCreators';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { ALREADY_ADDED_MODAL } from 'src/utils/rudderstack/event-names';
 
 export const InfluencerAlreadyAddedModal = ({
     show,
@@ -35,14 +36,14 @@ export const InfluencerAlreadyAddedModal = ({
             visible={show}
             onClose={() => {
                 setShow(false);
-                trackEvent('Already Added Modal - click do not add');
+                trackEvent(ALREADY_ADDED_MODAL('click do not add'));
             }}
             closeButtonText={t('campaigns.modal.doNotAdd') || ''}
             okButtonText={t('campaigns.modal.addAnyway') || ''}
             onOkay={() => {
                 setShow(false);
                 setCampaignListModal(true);
-                trackEvent('Already Added Modal - click add anyway');
+                trackEvent(ALREADY_ADDED_MODAL('click add anyway'));
             }}
         >
             <div className="flex flex-col gap-2">
