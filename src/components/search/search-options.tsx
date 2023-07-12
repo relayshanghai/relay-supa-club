@@ -6,12 +6,12 @@ import { Button } from '../button';
 import SearchTopics from './search-topics';
 import { Tooltip } from '../library';
 // import { featRecommended } from 'src/constants/feature-flags';
-import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { useEffect, useState } from 'react';
 import WordCloudComponent from '../wordcloud';
 import SearchKeywords from './search-keywords';
 import SearchHashtags from './search-hashtags';
 import { Question } from '../icons';
+import { useSearchTrackers } from '../rudder/searchui-rudder-calls';
 
 export const SearchOptions = ({
     setPage,
@@ -51,18 +51,18 @@ export const SearchOptions = ({
     const [hashTagInput, setHashTagInput] = useState<string>('');
 
     const { t } = useTranslation();
-    const { trackEvent } = useRudderstack();
+    const { trackSearch, trackKeyword, trackOpenFilterModal, trackHashtags, trackTopics } = useSearchTrackers();
 
     const handleSearch = (e: any) => {
         keywordInput.length > 0 && setKeywords(keywordInput);
-        trackEvent('Search Filter Modal, change keywords', {
-            keywords: keywordInput,
+        trackKeyword({
+            keyword: keywordInput,
         });
         setKeywordInput('');
         e.preventDefault();
         setActiveSearch(true);
         setPage(0);
-        trackEvent('Search Options, search');
+        trackSearch('Search Options');
     };
     // TODO:comment out the related codes when feat recommended is ready
     useEffect(() => {
@@ -139,13 +139,22 @@ export const SearchOptions = ({
                                 topics={tags}
                                 platform={platform}
                                 onChangeTopics={() => {
-                                    hashtags.length !== 0 && setHashtags([]);
-                                    keywords.length !== 0 && setKeywords('');
-                                    keywordInput.length !== 0 && setKeywordInput('');
-                                    hashTagInput.length !== 0 && setHashTagInput('');
+                                    if (hashtags.length !== 0) {
+                                        setHashtags([]);
+                                        trackHashtags({ hashtags: [] });
+                                    }
+                                    if (keywords.length !== 0) {
+                                        setKeywords('');
+                                        trackKeyword({ keyword: '' });
+                                    }
+                                    if (keywordInput.length !== 0) {
+                                        setKeywordInput('');
+                                        setHashTagInput('');
+                                    }
                                 }}
                                 onSetTopics={(topics) => {
                                     setTopicTags(topics);
+                                    trackTopics({ tags: topics });
                                 }}
                             />
                         </div>
@@ -173,9 +182,11 @@ export const SearchOptions = ({
                                 platform={platform}
                                 onChangeTopics={() => {
                                     tags.length !== 0 && setTopicTags([]);
+                                    tags.length !== 0 && trackTopics({ tags: [] });
                                 }}
                                 onSetKeywords={(keywords) => {
                                     setKeywords(keywords);
+                                    trackKeyword({ keyword: keywords });
                                 }}
                             />
                         </div>
@@ -202,9 +213,11 @@ export const SearchOptions = ({
                                 platform={platform}
                                 onSetHashtags={(hashtags) => {
                                     setHashtags(hashtags);
+                                    trackHashtags({ hashtags: hashtags });
                                 }}
                                 onChangeTopics={() => {
                                     tags.length !== 0 && setTopicTags([]);
+                                    tags.length !== 0 && trackTopics({ tags: [] });
                                 }}
                             />
                         </div>
@@ -215,13 +228,17 @@ export const SearchOptions = ({
                                 data-testid="filters-button"
                                 onClick={() => {
                                     setShowFiltersModal(true);
-                                    trackEvent('Search Filters Modal, open modal');
+                                    trackOpenFilterModal();
                                 }}
                                 className={`group col-span-1 items-center justify-center rounded-md border border-transparent bg-primary-100 px-2 py-1 text-sm font-semibold text-[#7C3AED] shadow ring-1 ring-gray-900 ring-opacity-5 focus:border-primary-500 focus:outline-none focus:ring-primary-500`}
                             >
                                 <p className="w-full p-1">{t('creators.addFilters')}</p>
                             </button>
-                            <Button data-testid="search-button" className="col-span-1" onClick={(e) => handleSearch(e)}>
+                            <Button
+                                data-testid="search-button"
+                                className="col-span-1 h-full"
+                                onClick={(e) => handleSearch(e)}
+                            >
                                 {t('campaigns.index.search')}
                             </Button>
                         </div>
