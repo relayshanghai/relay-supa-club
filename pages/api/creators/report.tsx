@@ -7,8 +7,7 @@ import { serverLogger } from 'src/utils/logger-server';
 import { saveInfluencer } from 'src/utils/save-influencer';
 import type { CreatorPlatform, CreatorReport } from 'types';
 import { db } from 'src/utils/supabase-client';
-import { Analyze } from 'src/utils/analytics/events';
-import { createAnalyzeSnapshot } from 'src/utils/analytics/api/create-analyze-snapshot';
+import { createAnalyzeSnapshot } from 'src/utils/analytics/api/analytics';
 
 export type CreatorsReportGetQueries = {
     platform: CreatorPlatform;
@@ -72,11 +71,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     serverLogger(error, 'error', true);
                 }
                 // console.log("Snapshot Data: ", data);
-                createAnalyzeSnapshot<Analyze>({ req, res })(Analyze, {
-                    parameters: data,
-                });
+                const snapshot = await createAnalyzeSnapshot(
+                    { req, res },
+                    {
+                        payload: {
+                            parameters: req.body,
+                            results: data,
+                        },
+                    },
+                );
 
-                return res.status(httpCodes.OK).json(data);
+                const metadata = {
+                    snapshot_id: snapshot.id,
+                };
+
+                return res.status(httpCodes.OK).json({ ...data, __metadata: metadata });
             }
         } catch (error) {
             serverLogger(error, 'error');

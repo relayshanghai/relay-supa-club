@@ -6,6 +6,7 @@ import type { DatabaseWithCustomTypes } from 'types';
 import { getJourney } from 'src/utils/analytics/api/journey';
 import { now } from 'src/utils/datetime';
 import { insertSearchSnapshot } from 'src/utils/api/db/calls/search_snapshots';
+import { insertAnalyzeSnapshot } from 'src/utils/api/db/calls';
 
 type SessionIds = {
     session_id?: string;
@@ -93,6 +94,14 @@ export type CreateSearchSnapshotParams = {
     };
 };
 
+export type CreateAnalyzeSnapshotParams = {
+    event_id?: string;
+    payload: {
+        parameters: any;
+        results: any;
+    };
+};
+
 export const createSearchSnapshot = async (ctx: ServerContext, payload: CreateSearchSnapshotParams) => {
     // @note logs a TypeError "Cannot set headers.." due to outdated auth-helpers-next package
     const supabase = createServerSupabaseClient<DatabaseWithCustomTypes>(ctx);
@@ -108,4 +117,21 @@ export const createSearchSnapshot = async (ctx: ServerContext, payload: CreateSe
     };
 
     return await insertSearchSnapshot(supabase)(insertData);
+};
+
+export const createAnalyzeSnapshot = async (ctx: ServerContext, payload: CreateAnalyzeSnapshotParams) => {
+    // @note logs a TypeError "Cannot set headers.." due to outdated auth-helpers-next package
+    const supabase = createServerSupabaseClient<DatabaseWithCustomTypes>(ctx);
+    const { profile_id, company_id } = await getUserSession(supabase)();
+
+    const { event_id, ...snapshot } = payload;
+
+    const insertData = {
+        event_id,
+        profile_id,
+        company_id,
+        snapshot,
+    };
+
+    return await insertAnalyzeSnapshot(supabase)(insertData);
 };

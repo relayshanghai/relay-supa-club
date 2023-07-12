@@ -780,6 +780,52 @@ export interface Database {
           }
         ]
       }
+      analyze_snapshots: {
+        Row: {
+          company_id: string | null
+          created_at: string | null
+          event_id: string | null
+          id: string
+          profile_id: string | null
+          snapshot: Json
+        }
+        Insert: {
+          company_id?: string | null
+          created_at?: string | null
+          event_id?: string | null
+          id?: string
+          profile_id?: string | null
+          snapshot: Json
+        }
+        Update: {
+          company_id?: string | null
+          created_at?: string | null
+          event_id?: string | null
+          id?: string
+          profile_id?: string | null
+          snapshot?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "analyze_snapshots_company_id_fkey"
+            columns: ["company_id"]
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "analyze_snapshots_event_id_fkey"
+            columns: ["event_id"]
+            referencedRelation: "tracking_events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "analyze_snapshots_profile_id_fkey"
+            columns: ["profile_id"]
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       tracking_events: {
         Row: {
           anonymous_id: string | null
