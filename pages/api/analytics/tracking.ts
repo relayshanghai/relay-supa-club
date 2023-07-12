@@ -8,7 +8,6 @@ import { JsonRoot } from 'src/utils/json';
 import events, { eventKeys } from 'src/utils/analytics/events';
 import { db } from 'src/utils/supabase-client';
 import { getSearchSnapshot, insertSearchSnapshot, updateSearchSnapshot } from 'src/utils/api/db/calls/search_snapshots';
-import { v4 } from 'uuid';
 
 const PostRequestBody = z.object({
     snapshot_id: z.string().optional(),
@@ -35,7 +34,10 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         }
 
         if (_snapshot !== null && _snapshot.event_id === null) {
-            snapshot = await db<typeof updateSearchSnapshot>(updateSearchSnapshot)({ event_id: v4() }, snapshot_id);
+            snapshot = await db<typeof updateSearchSnapshot>(updateSearchSnapshot)(
+                { event_id: result.id },
+                snapshot_id,
+            );
         }
     }
 
