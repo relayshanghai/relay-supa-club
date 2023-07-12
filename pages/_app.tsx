@@ -44,12 +44,19 @@ function MyApp({
 
         return () => _i18n.on('languageChanged', () => null);
     }, [_i18n]);
+    const GOOGLE_ANALYTICS_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS;
+
+    if (!GOOGLE_ANALYTICS_ID) {
+        throw new Error('Google Analytics keys not set');
+    }
 
     return (
         <>
             <Script
                 strategy="lazyOnload"
-                src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS}`}
+                src={`https://www.googletagmanager.com/gtag/js?${new URLSearchParams({
+                    id: GOOGLE_ANALYTICS_ID,
+                })}`}
             />
 
             <Script strategy="lazyOnload" id="google-tag-script">
@@ -57,7 +64,7 @@ function MyApp({
                     window.dataLayer = window.dataLayer || [];
                     function gtag(){dataLayer.push(arguments);}
                     gtag('js', new Date());
-                    gtag('config', '${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS}', {
+                    gtag('config', '${GOOGLE_ANALYTICS_ID}', {
                     page_path: window.location.pathname,
                     });
                 `}
