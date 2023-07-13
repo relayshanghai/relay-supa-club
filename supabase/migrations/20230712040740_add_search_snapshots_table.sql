@@ -8,7 +8,7 @@ CREATE TABLE "public"."search_snapshots" (
 );
 
 
-ALTER TABLE "public"."tracking_events" ENABLE ROW LEVEL SECURITY;
+-- ALTER TABLE "public"."tracking_events" ENABLE ROW LEVEL SECURITY;
 
 CREATE UNIQUE INDEX search_snapshots_pkey ON public.search_snapshots USING btree (id);
 

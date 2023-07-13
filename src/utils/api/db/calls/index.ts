@@ -5,4 +5,4 @@ export * from './profiles';
 export * from './invites';
 export * from './logs';
 export * from './post-performance';
-export * from './analyze_snapshots';
+export * from './report_snapshots';

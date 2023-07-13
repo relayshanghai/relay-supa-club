@@ -7,7 +7,7 @@ import { serverLogger } from 'src/utils/logger-server';
 import { saveInfluencer } from 'src/utils/save-influencer';
 import type { CreatorPlatform, CreatorReport } from 'types';
 import { db } from 'src/utils/supabase-client';
-import { createAnalyzeSnapshot } from 'src/utils/analytics/api/analytics';
+import { createReportSnapshot } from 'src/utils/analytics/api/analytics';
 
 export type CreatorsReportGetQueries = {
     platform: CreatorPlatform;
@@ -54,6 +54,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     serverLogger(error, 'error', true);
                 }
 
+                await createReportSnapshot(
+                    { req, res },
+                    {
+                        payload: {
+                            parameters: req.body,
+                            results: data,
+                        },
+                    },
+                );
+
                 return res.status(httpCodes.OK).json({ ...data, createdAt });
             } catch (error) {
                 const data = await requestNewReport(platform, creator_id);
@@ -70,8 +80,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 } catch (error) {
                     serverLogger(error, 'error', true);
                 }
-                // console.log("Snapshot Data: ", data);
-                const snapshot = await createAnalyzeSnapshot(
+
+                await createReportSnapshot(
                     { req, res },
                     {
                         payload: {
@@ -81,11 +91,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     },
                 );
 
-                const metadata = {
-                    snapshot_id: snapshot.id,
-                };
-
-                return res.status(httpCodes.OK).json({ ...data, __metadata: metadata });
+                return res.status(httpCodes.OK).json(data);
             }
         } catch (error) {
             serverLogger(error, 'error');
