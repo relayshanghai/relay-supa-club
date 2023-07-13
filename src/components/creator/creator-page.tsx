@@ -18,13 +18,14 @@ import { InfluencerAlreadyAddedModal } from '../influencer-already-added';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { useAnalytics } from '../analytics/analytics-provider';
 import { AnalyzeAddToCampaign } from 'src/utils/analytics/events';
-import { SEARCH_ANALYZE_INFLUENCER } from 'src/utils/analytics/events/search-analyze-influencer';
+import { SearchAnalyzeInfluencer } from 'src/utils/analytics/events';
+import type { eventKeys } from 'src/utils/analytics/events';
 
 export const CreatorPage = ({ creator_id, platform }: { creator_id: string; platform: CreatorPlatform }) => {
     const { loading, report, reportCreatedAt, errorMessage } = useReport({
         platform,
         creator_id,
-        track: SEARCH_ANALYZE_INFLUENCER,
+        track: SearchAnalyzeInfluencer.eventName as eventKeys,
     });
 
     const [showCampaignListModal, setShowCampaignListModal] = useState(false);

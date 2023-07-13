@@ -37,7 +37,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         body,
     };
 
-    const results: any = await searchInfluencers(parameters);
+    const results = await searchInfluencers(parameters);
 
     const snapshot = await createSearchSnapshot(
         { req, res },

@@ -1,4 +1,3 @@
-import type { TypeOf } from 'zod';
 import type { CreatorsReportGetQueries, CreatorsReportGetResponse } from 'pages/api/creators/report';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -39,7 +38,7 @@ export type UseReport = ({
 }: {
     platform: CreatorPlatform;
     creator_id: string;
-    track?: TypeOf<typeof eventKeys>;
+    track?: eventKeys;
 }) => {
     loading: boolean;
     report: CreatorReport | undefined;
@@ -55,7 +54,7 @@ export const useReport: UseReport = ({
 }: {
     platform: CreatorPlatform;
     creator_id: string;
-    track?: TypeOf<typeof eventKeys>;
+    track?: eventKeys;
 }) => {
     const [errorMessage, setErrorMessage] = useState('');
     const [usageExceeded, setUsageExceeded] = useState(false);

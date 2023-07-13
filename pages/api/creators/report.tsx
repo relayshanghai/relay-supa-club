@@ -7,17 +7,38 @@ import { serverLogger } from 'src/utils/logger-server';
 import { saveInfluencer } from 'src/utils/save-influencer';
 import type { CreatorPlatform, CreatorReport } from 'types';
 import { db } from 'src/utils/supabase-client';
-import events from 'src/utils/analytics/events';
+import events, { SearchAnalyzeInfluencer } from 'src/utils/analytics/events';
 import { createReportSnapshot, createTrack } from 'src/utils/analytics/api/analytics';
 import type { eventKeys } from 'src/utils/analytics/events';
-import type { TypeOf } from 'zod';
 
 export type CreatorsReportGetQueries = {
     platform: CreatorPlatform;
     creator_id: string;
     company_id: string;
     user_id: string;
-    track?: TypeOf<typeof eventKeys> | undefined;
+    track?: eventKeys | undefined;
+};
+
+const trackAndSnap = async (
+    track: eventKeys | undefined,
+    req: NextApiRequest,
+    res: NextApiResponse,
+    eventsObject: typeof events,
+    data: CreatorReport,
+) => {
+    if (track !== SearchAnalyzeInfluencer.eventName) return;
+    const result = await createTrack({ req, res })(eventsObject[track]);
+
+    await createReportSnapshot(
+        { req, res },
+        {
+            payload: {
+                parameters: req.body,
+                results: data,
+            },
+            event_id: result.id,
+        },
+    );
 };
 
 export type CreatorsReportGetResponse = CreatorReport & { createdAt: string };
@@ -58,20 +79,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     serverLogger(error, 'error', true);
                 }
 
-                if (track !== undefined) {
-                    const result = await createTrack({ req, res })(events[track]);
-
-                    await createReportSnapshot(
-                        { req, res },
-                        {
-                            payload: {
-                                parameters: req.body,
-                                results: data,
-                            },
-                            event_id: result.id,
-                        },
-                    );
-                }
+                await trackAndSnap(track, req, res, events, data);
 
                 return res.status(httpCodes.OK).json({ ...data, createdAt });
             } catch (error) {
@@ -90,20 +98,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     serverLogger(error, 'error', true);
                 }
 
-                if (track !== undefined) {
-                    const result = await createTrack({ req, res })(events[track]);
-
-                    await createReportSnapshot(
-                        { req, res },
-                        {
-                            payload: {
-                                parameters: req.body,
-                                results: data,
-                            },
-                            event_id: result.id,
-                        },
-                    );
-                }
+                await trackAndSnap(track, req, res, events, data);
 
                 return res.status(httpCodes.OK).json(data);
             }

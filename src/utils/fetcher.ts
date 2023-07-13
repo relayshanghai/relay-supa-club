@@ -65,7 +65,7 @@ export const nextFetchWithQueries = async <Q extends Record<string, string>, T =
     const anonymous_id = getItem(ANALYTICS_COOKIE_ANON);
     const url = new URL('/api/' + path, window.location.origin);
     for (const key in queries) {
-        if (queries.hasOwnProperty(key) && queries[key]) url.searchParams.set(key, queries[key].toString());
+        if (queries.hasOwnProperty(key)) url.searchParams.set(key, queries[key]?.toString());
     }
     options.headers = { ...options.headers, 'x-analytics-anon-id': anonymous_id };
     const res = await fetch(url.toString(), options);
