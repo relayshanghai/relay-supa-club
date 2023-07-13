@@ -1,11 +1,12 @@
 import type { ServerContext, TrackedEvent } from '../types';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import { getProfileByUser, insertTrackingEvent } from 'src/utils/api/db/calls/tracking_events';
+import { getProfileByUser, getTrackingEvent, insertTrackingEvent } from 'src/utils/api/db/calls/tracking_events';
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
 import type { DatabaseWithCustomTypes } from 'types';
 import { getJourney } from 'src/utils/analytics/api/journey';
 import { now } from 'src/utils/datetime';
 import { insertSearchSnapshot } from 'src/utils/api/db/calls/search_snapshots';
+import { v4 } from 'uuid';
 
 type SessionIds = {
     session_id?: string;
@@ -61,13 +62,31 @@ export const createTrack = <T extends TrackedEvent>(ctx: ServerContext) => {
             payload = {};
         }
 
-        const { event_at, ..._payload } = payload;
+        const { event_id, event_at, ..._payload } = payload;
 
         const _insertTrackingEvent = insertTrackingEvent(supabase);
+        const _getTrackingEvent = getTrackingEvent(supabase);
         type TriggerPayload = Omit<Parameters<typeof _insertTrackingEvent>[0], 'id' | 'event'>;
 
-        const trigger = async (eventName: string, payload?: TriggerPayload) =>
-            await _insertTrackingEvent({ ...payload, event: eventName });
+        const trigger = async (eventName: string, payload?: TriggerPayload) => {
+            const trackingEvent = event_id ? await _getTrackingEvent(event_id) : null;
+            let data: Parameters<typeof _insertTrackingEvent>[0] = { ...payload, event: eventName };
+
+            if (!trackingEvent && event_id) {
+                data.id = event_id;
+            }
+
+            if (trackingEvent) {
+                const newId = v4();
+                data = { ...data, id: newId };
+
+                // @note remind us that this event is a copy
+                // @ts-ignore suppress Supabase's Json type
+                data.data.event_copy_id = event_id;
+            }
+
+            return await _insertTrackingEvent(data);
+        };
 
         const eventPayload = {
             event_at: event_at ?? now(),

@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { Menu } from '@headlessui/react';
 import { PlusCircleIcon } from '@heroicons/react/24/solid';
 import Link from 'next/link';
@@ -21,6 +21,8 @@ import { useAtom } from 'jotai';
 import { clientRoleAtom } from 'src/atoms/client-role-atom';
 import { SearchAnalyzeInfluencer, SearchOpenSocialProfile } from 'src/utils/analytics/events';
 import { useAnalytics } from '../analytics/analytics-provider';
+import { SearchLoadMoreResults } from 'src/utils/analytics/events';
+
 export interface SearchResultRowProps {
     creator: CreatorSearchAccountObject;
     setSelectedCreator: (creator: CreatorSearchAccountObject) => void;
@@ -40,8 +42,24 @@ export const MoreResultsRows = ({
     allCampaignCreators,
 }: MoreResultsRowsProps) => {
     const { t } = useTranslation();
-    const { resultsPerPageLimit } = useSearch();
-    const { results, loading, error } = useSearchResults(page);
+    const { resultsPerPageLimit, searchParams } = useSearch();
+    const { results, loading, error, isCached, metadata } = useSearchResults(page);
+
+    const { track } = useAnalytics();
+
+    useEffect(() => {
+        if (!isCached || metadata === undefined) return;
+
+        // @note quick fix for searchParams not being updated
+        if (searchParams) searchParams.page = page;
+
+        track<SearchLoadMoreResults>(SearchLoadMoreResults, {
+            event_id: metadata.event_id,
+            snapshot_id: metadata.snapshot_id,
+            parameters: searchParams,
+            page,
+        });
+    }, [track, searchParams, page, isCached, metadata]);
 
     if (error)
         return (

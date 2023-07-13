@@ -110,13 +110,14 @@ export const CompanySize = z.union([z.literal('small'), z.literal('medium'), z.l
 export type CompanySize = z.infer<typeof CompanySize>;
 
 /**
- * Contains an object that holds the snapshot_id
+ * Contains an object that holds the event_id and snapshot_id
  *
  *  This serves as a workaround for the cached search results
  *  by passing around ids between the frontend and backend
  */
 export type SearchResultMetadata = {
     __metadata?: {
+        event_id: string;
         snapshot_id: string;
     };
 };
