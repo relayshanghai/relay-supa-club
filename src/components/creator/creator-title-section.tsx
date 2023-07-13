@@ -4,7 +4,7 @@ import type { CreatorPlatform, CreatorReport } from 'types';
 import { Button } from '../button';
 import { SocialMediaIcon } from '../common/social-media-icon';
 import { useAnalytics } from '../analytics/analytics-provider';
-import { AnalyzeOpenSocialProfile } from 'src/utils/analytics/events';
+import { AnalyzeOpenExternalSocialProfile } from 'src/utils/analytics/events';
 
 export const TitleSection = ({
     user_profile,
@@ -18,7 +18,7 @@ export const TitleSection = ({
     const { track } = useAnalytics();
     const { t } = useTranslation();
     const trackOpenLink = () => {
-        track(AnalyzeOpenSocialProfile, { url: user_profile.url });
+        track(AnalyzeOpenExternalSocialProfile, { url: user_profile.url });
     };
     return (
         <div className="p-6">
