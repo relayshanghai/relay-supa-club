@@ -7,7 +7,8 @@ import { serverLogger } from 'src/utils/logger-server';
 import { saveInfluencer } from 'src/utils/save-influencer';
 import type { CreatorPlatform, CreatorReport } from 'types';
 import { db } from 'src/utils/supabase-client';
-import { createReportSnapshot } from 'src/utils/analytics/api/analytics';
+import { Report } from 'src/utils/analytics/events';
+import { createReportSnapshot, createTrack } from 'src/utils/analytics/api/analytics';
 
 export type CreatorsReportGetQueries = {
     platform: CreatorPlatform;
@@ -54,6 +55,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     serverLogger(error, 'error', true);
                 }
 
+                const result = await createTrack({ req, res })(Report);
+
                 await createReportSnapshot(
                     { req, res },
                     {
@@ -61,6 +64,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                             parameters: req.body,
                             results: data,
                         },
+                        event_id: result.id,
                     },
                 );
 
@@ -81,6 +85,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     serverLogger(error, 'error', true);
                 }
 
+                const result = await createTrack({ req, res })(Report);
                 await createReportSnapshot(
                     { req, res },
                     {
@@ -88,6 +93,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                             parameters: req.body,
                             results: data,
                         },
+                        event_id: result.id,
                     },
                 );
 

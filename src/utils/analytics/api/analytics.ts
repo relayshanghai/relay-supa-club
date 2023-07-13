@@ -7,7 +7,6 @@ import { getJourney } from 'src/utils/analytics/api/journey';
 import { now } from 'src/utils/datetime';
 import { insertSearchSnapshot } from 'src/utils/api/db/calls/search_snapshots';
 import { insertReportSnapshot } from 'src/utils/api/db/calls';
-import { Report } from '../events';
 
 type SessionIds = {
     session_id?: string;
@@ -124,26 +123,11 @@ export const createReportSnapshot = async (ctx: ServerContext, payload: CreateAn
     // @note logs a TypeError "Cannot set headers.." due to outdated auth-helpers-next package
     const supabase = createServerSupabaseClient<DatabaseWithCustomTypes>(ctx);
     const sessionIds = await getUserSession(supabase)();
-    const journey = getJourney(ctx);
-    const anonymous_id = getAnonId(ctx);
 
-    const { ...snapshot } = payload;
-
-    const trackingPayload = {
-        event_at: now(),
-        journey_id: journey ? journey.id : null,
-        journey_type: journey ? journey.name : null,
-        data: {
-            journey,
-        },
-        anonymous_id,
-        ...sessionIds,
-    };
-
-    const eventData = await insertTrackingEvent(supabase)({ ...trackingPayload, event: Report.eventName });
+    const { event_id, ...snapshot } = payload;
 
     const insertData = {
-        event_id: eventData.id,
+        event_id,
         profile_id: sessionIds.profile_id,
         company_id: sessionIds.company_id,
         snapshot,
