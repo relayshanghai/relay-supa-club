@@ -93,6 +93,7 @@ export const useReport: UseReport = ({
         },
         {
             revalidateOnFocus: false,
+            revalidateOnReconnect: false,
         },
     );
     const { report, createdAt } = data || {};
