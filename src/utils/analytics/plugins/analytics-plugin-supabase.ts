@@ -2,7 +2,7 @@ import type { AnalyticsPlugin } from 'analytics';
 import type { AnalyticsEventParam, TrackedEvent } from '../types';
 import { apiFetch } from 'src/utils/api/api-fetch';
 import { now } from 'src/utils/datetime';
-import { ANALYTICS_COOKIE_ANON } from '../constants';
+import { ANALYTICS_COOKIE_ANON, ANALYTICS_HEADER_NAME } from '../constants';
 import { getItem } from '@analytics/storage-utils';
 
 export type SupabasePluginConfig = any;
@@ -47,7 +47,7 @@ export const SupabasePlugin = (config: SupabasePluginConfig = {}): AnalyticsPlug
                     }
                 }, {
                     headers: {
-                        'x-analytics-anon-id': anonymous_id
+                        [ANALYTICS_HEADER_NAME]: anonymous_id
                     },
                     signal: options && options.__abort ? options.__abort.signal : undefined
                 })

@@ -1,9 +1,4 @@
-import type { SupabaseClient } from '@supabase/supabase-js';
-import type { DatabaseWithCustomTypes } from 'types';
-import type { ReportSnapshots } from '../types';
-
-// @todo move out here
-type RelayDatabase = SupabaseClient<DatabaseWithCustomTypes>;
+import type { RelayDatabase, ReportSnapshots } from '../types';
 
 export const insertReportSnapshot = (db: RelayDatabase) => async (data: ReportSnapshots['Insert']) => {
     const result = await db.from('report_snapshots').insert(data).select().single();

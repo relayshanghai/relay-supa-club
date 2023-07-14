@@ -1,5 +1,6 @@
 import { getItem } from '@analytics/storage-utils';
 import { ANALYTICS_COOKIE_ANON } from './analytics/constants';
+import { ANALYTICS_HEADER_NAME } from './analytics/constants';
 
 /** TODO: seems to be used only for Stripe? Re-org and put all stripe related work together */
 export const fetcher = (url: string) => fetch(url, { credentials: 'include' }).then((res) => res.json());
@@ -67,7 +68,7 @@ export const nextFetchWithQueries = async <Q extends Record<string, string>, T =
     for (const key in queries) {
         if (queries.hasOwnProperty(key)) url.searchParams.set(key, queries[key]?.toString());
     }
-    options.headers = { ...options.headers, 'x-analytics-anon-id': anonymous_id };
+    options.headers = { ...options.headers, [ANALYTICS_HEADER_NAME]: anonymous_id };
     const res = await fetch(url.toString(), options);
     await handleResError(res);
     const json = await res.json();

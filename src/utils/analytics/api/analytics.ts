@@ -8,6 +8,7 @@ import { now } from 'src/utils/datetime';
 import { insertSearchSnapshot } from 'src/utils/api/db/calls/search_snapshots';
 import { insertReportSnapshot } from 'src/utils/api/db/calls';
 import { v4 } from 'uuid';
+import { ANALYTICS_HEADER_NAME } from '../constants';
 
 type SessionIds = {
     session_id?: string;
@@ -17,8 +18,8 @@ type SessionIds = {
 };
 
 export const getAnonId = (ctx: ServerContext) => {
-    if ('x-analytics-anon-id' in ctx.req.headers) {
-        const id = ctx.req.headers['x-analytics-anon-id'];
+    if (ANALYTICS_HEADER_NAME in ctx.req.headers) {
+        const id = ctx.req.headers[ANALYTICS_HEADER_NAME];
         return Array.isArray(id) ? id[0] : id;
     }
 };
