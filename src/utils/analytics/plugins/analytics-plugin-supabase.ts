@@ -7,7 +7,7 @@ import { getItem } from '@analytics/storage-utils';
 
 export type SupabasePluginConfig = any;
 
-type TrackPropertiesType = { event: TrackedEvent, payload?: any }
+type TrackPropertiesType = { event: TrackedEvent, payload?: any, options?: { __abort?: AbortController }}
 
 export const SupabasePlugin = (config: SupabasePluginConfig = {}): AnalyticsPlugin => {
     return {
@@ -29,15 +29,8 @@ export const SupabasePlugin = (config: SupabasePluginConfig = {}): AnalyticsPlug
             // eslint-disable-next-line no-console
             console.log('resetStart', args.payload);
         },
-        trackStart: (args: AnalyticsEventParam) => {
-            // eslint-disable-next-line no-console
-            console.log('trackStart', args);
-        },
         track: async (args: AnalyticsEventParam<TrackPropertiesType>) => {
-            // eslint-disable-next-line no-console
-            console.log('track', args);
-
-            const { event, payload } = args.payload.properties
+            const { event, payload, options } = args.payload.properties
 
             const anonymous_id = getItem(ANALYTICS_COOKIE_ANON)
 
@@ -55,11 +48,12 @@ export const SupabasePlugin = (config: SupabasePluginConfig = {}): AnalyticsPlug
                 }, {
                     headers: {
                         'x-analytics-anon-id': anonymous_id
-                    }
+                    },
+                    signal: options && options.__abort ? options.__abort.signal : undefined
                 })
             }
 
-            return await event(trigger, payload)
+            return await event<typeof trigger>(trigger, payload)
         },
     };
 };

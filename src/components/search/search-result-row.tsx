@@ -48,17 +48,26 @@ export const MoreResultsRows = ({
     const { track } = useAnalytics();
 
     useEffect(() => {
-        if (!isCached || metadata === undefined) return;
+        if (page === 0 || !isCached || metadata === undefined || searchParams === undefined) return;
+        const __abort = new AbortController();
 
         // @note quick fix for searchParams not being updated
-        if (searchParams) searchParams.page = page;
+        const _searchParams = { ...searchParams, page };
 
-        track<SearchLoadMoreResults>(SearchLoadMoreResults, {
-            event_id: metadata.event_id,
-            snapshot_id: metadata.snapshot_id,
-            parameters: searchParams,
-            page,
-        });
+        track<SearchLoadMoreResults>(
+            SearchLoadMoreResults,
+            {
+                event_id: metadata.event_id,
+                snapshot_id: metadata.snapshot_id,
+                parameters: _searchParams,
+                page,
+            },
+            {
+                __abort,
+            },
+        );
+
+        return () => __abort.abort();
     }, [track, searchParams, page, isCached, metadata]);
 
     if (error)
