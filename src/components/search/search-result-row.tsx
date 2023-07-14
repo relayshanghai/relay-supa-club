@@ -19,7 +19,7 @@ import { isRecommendedInfluencer } from 'src/utils/utils';
 import type { CampaignCreatorBasicInfo } from 'src/utils/client-db/campaignCreators';
 import { useAtom } from 'jotai';
 import { clientRoleAtom } from 'src/atoms/client-role-atom';
-import { SearchAnalyzeInfluencer, SearchOpenSocialProfile } from 'src/utils/analytics/events';
+import { SearchOpenExternalSocialProfile } from 'src/utils/analytics/events';
 import { useAnalytics } from '../analytics/analytics-provider';
 import { SearchLoadMoreResults } from 'src/utils/analytics/events';
 
@@ -153,16 +153,15 @@ export const SearchResultRow = ({
     const analyzeInfluencer = useCallback(
         (args: { platform: CreatorPlatform; user_id: string }) => {
             const { platform, user_id } = args;
-            track(SearchAnalyzeInfluencer, { platform, user_id });
             trackEvent('Search Result Row, open report', { platform, user_id });
         },
-        [track, trackEvent],
+        [trackEvent],
     );
 
     const openSocialProfile = useCallback(
         (args: { url: string }) => {
             const { url } = args;
-            track(SearchOpenSocialProfile, { url });
+            track(SearchOpenExternalSocialProfile, { url });
             trackEvent('Search Result Row, open social link', { url });
         },
         [track, trackEvent],

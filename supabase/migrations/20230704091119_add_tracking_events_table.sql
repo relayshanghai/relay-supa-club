@@ -14,7 +14,7 @@ CREATE TABLE "public"."tracking_events" (
 );
 
 
-ALTER TABLE "public"."tracking_events" ENABLE ROW LEVEL SECURITY;
+-- ALTER TABLE "public"."tracking_events" ENABLE ROW LEVEL SECURITY;
 
 CREATE UNIQUE INDEX tracking_events_pkey ON public.tracking_events USING btree (id);
 
