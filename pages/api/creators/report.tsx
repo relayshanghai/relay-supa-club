@@ -98,8 +98,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     serverLogger(error, 'error', true);
                 }
 
-                await trackAndSnap(track, req, res, events, data);
-
                 return res.status(httpCodes.OK).json(data);
             }
         } catch (error) {

@@ -6,7 +6,7 @@ import type { ReportSnapshots } from '../types';
 type RelayDatabase = SupabaseClient<DatabaseWithCustomTypes>;
 
 export const insertReportSnapshot = (db: RelayDatabase) => async (data: ReportSnapshots['Insert']) => {
-    const result = await db.from('analyze_snapshots').insert(data).select().single();
+    const result = await db.from('report_snapshots').insert(data).select().single();
     if (result.error) {
         throw result.error;
     }
@@ -15,7 +15,7 @@ export const insertReportSnapshot = (db: RelayDatabase) => async (data: ReportSn
 };
 
 export const updateReportSnapshot = (db: RelayDatabase) => async (data: ReportSnapshots['Update'], id: string) => {
-    const result = await db.from('analyze_snapshots').update(data).eq('id', id).select().single();
+    const result = await db.from('report_snapshots').update(data).eq('id', id).select().single();
 
     if (result.error) {
         throw result.error;
@@ -25,7 +25,7 @@ export const updateReportSnapshot = (db: RelayDatabase) => async (data: ReportSn
 };
 
 export const getReportSnapshot = (db: RelayDatabase) => async (id: string) => {
-    const result = await db.from('analyze_snapshots').select().eq('id', id).maybeSingle();
+    const result = await db.from('report_snapshots').select().eq('id', id).maybeSingle();
 
     if (result.error) {
         throw result.error;

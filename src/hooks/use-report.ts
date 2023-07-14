@@ -91,6 +91,10 @@ export const useReport: UseReport = ({
                 } else setErrorMessage(t('creators.failedToFetchReport') || '');
             }
         },
+        {
+            revalidateOnFocus: false,
+            revalidateOnReconnect: false,
+        },
     );
     const { report, createdAt } = data || {};
     // mutate, refresh stale caches
