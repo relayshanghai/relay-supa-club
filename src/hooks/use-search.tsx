@@ -133,8 +133,8 @@ export const useSearchResults = (page: number) => {
     const { setUsageExceeded, setLoading, setActiveSearch, searchParams } = useSearch();
 
     const { data, isLoading, mutate, isValidating, error } = useSWR(
-        profile?.id && searchParams ? { path: 'influencer-search', searchParams, page } : null,
-        async ({ path, searchParams, page }) => {
+        profile?.id && searchParams ? ['influencer-search', searchParams, page] : null,
+        async ([path, searchParams, page]) => {
             try {
                 if (!profile?.id) {
                     throw new Error('No profile');

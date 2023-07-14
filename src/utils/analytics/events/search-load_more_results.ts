@@ -3,6 +3,7 @@ import type { EventPayload, TriggerEvent } from '../types';
 export const SEARCH_LOAD_MORE_RESULTS = 'search-load_more_results';
 
 export type SearchLoadMoreResultsPayload = EventPayload<{
+    event_id: string | null;
     snapshot_id: string | null;
     parameters: any;
     page: number;

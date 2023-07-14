@@ -10,6 +10,7 @@ import { db } from 'src/utils/supabase-client';
 import { getSearchSnapshot, insertSearchSnapshot, updateSearchSnapshot } from 'src/utils/api/db/calls/search_snapshots';
 
 const PostRequestBody = z.object({
+    event_id: z.string().optional(),
     snapshot_id: z.string().optional(),
     event: eventKeys,
     event_at: z.string().optional().default(now),
@@ -17,10 +18,10 @@ const PostRequestBody = z.object({
 });
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
-    const { snapshot_id, event, event_at, payload } = PostRequestBody.parse(req.body);
+    const { event_id, snapshot_id, event, event_at, payload } = PostRequestBody.parse(req.body);
     let snapshot = null;
 
-    const result = await createTrack({ req, res })(events[event], { ...payload, event_at });
+    const result = await createTrack({ req, res })(events[event], { ...payload, event_id, event_at });
 
     // @todo move to copySnapshot
     if (snapshot_id) {

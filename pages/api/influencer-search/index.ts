@@ -8,6 +8,7 @@ import { prepareFetchCreatorsFiltered } from 'src/utils/api/iqdata/transforms';
 import { hasCustomSearchParams } from 'src/utils/usagesHelpers';
 import type { CreatorSearchResult } from 'types';
 import { createSearchSnapshot } from 'src/utils/analytics/api/analytics';
+import { v4 } from 'uuid';
 
 export type InfluencerPostRequest = FetchCreatorsFilteredParams & {
     company_id: string;
@@ -51,6 +52,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     // @see /types/appTypes/SearchResultMetadata
     results.__metadata = {
+        event_id: v4(),
         snapshot_id: snapshot.id,
     };
 

@@ -20,6 +20,7 @@ import { useAllCampaignCreators } from 'src/hooks/use-all-campaign-creators';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { SearchCreators } from './search-creators';
 import { startJourney } from 'src/utils/analytics/journey';
+import { Search } from 'src/utils/analytics/events';
 import { useAnalytics } from '../analytics/analytics-provider';
 import { SearchAddToCampaign } from 'src/utils/analytics/events';
 import { Search, SearchLoadMoreResults } from 'src/utils/analytics/events';
@@ -65,14 +66,13 @@ export const SearchPageInner = () => {
     const { track } = useAnalytics();
 
     useEffect(() => {
-        if (!isCached || metadata === undefined) return;
+        if (page !== 0 || !isCached || metadata === undefined) return;
 
         // @note quick fix for searchParams not being updated
         if (searchParams) searchParams.page = page;
 
-        const event = page > 0 ? SearchLoadMoreResults : Search;
-
-        track<Search | SearchLoadMoreResults>(event, {
+        track<Search>(Search, {
+            event_id: metadata.event_id,
             snapshot_id: metadata.snapshot_id,
             parameters: searchParams,
             page,
