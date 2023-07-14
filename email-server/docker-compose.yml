@@ -18,6 +18,10 @@ services:
             # Settings to write to v1/settings on startup (https://api.emailengine.app/#operation/postV1Settings)
             # The following value is a YAML block scalar string, so make it sure it is properly indented
             # This configuration enables SMTP server for local submission
+            # !!CHANGE IN PROD WHEN DEPLOYING!!
+            # "smtpServerPassword"
+            # "serviceUrl"
+            # EENGINE_SECRET
             EENGINE_SETTINGS: >
                 {
                     "smtpServerEnabled": true,
