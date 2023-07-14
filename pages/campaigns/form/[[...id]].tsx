@@ -22,6 +22,7 @@ import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import type { CampaignDB } from 'src/utils/api/db';
 import { Modal } from 'src/components/modal';
+import { CAMPAIGN_FORM } from 'src/utils/rudderstack/event-names';
 
 const TimelineInput = ({
     q,
@@ -130,7 +131,7 @@ export default function CampaignForm() {
                 }
                 toast(t('campaigns.form.successCreateMsg'));
                 setSubmitting(false);
-                trackEvent('Campaign Form, create new campaign');
+                trackEvent(CAMPAIGN_FORM('create new campaign'));
                 router.push(`/campaigns/${encodeURIComponent(result.id)}`);
             } catch (error: any) {
                 clientLogger(error, 'error');

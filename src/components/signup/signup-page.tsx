@@ -17,6 +17,7 @@ import type { FieldValues } from 'react-hook-form';
 import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
 import Link from 'next/link';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { SIGNUP_WIZARD } from 'src/utils/rudderstack/event-names';
 
 export interface SignUpValidationErrors {
     firstName: string;
@@ -146,7 +147,7 @@ const SignUpPage = ({
         if (currentStep === 5) {
             return;
         }
-        trackEvent(`Signup Wizard, step-${currentStep}`, {
+        trackEvent(SIGNUP_WIZARD(`step-${currentStep}`), {
             firstName,
             lastName,
             phoneNumber,
@@ -294,7 +295,7 @@ const SignUpPage = ({
                         <Link
                             className="text-primary-500"
                             href="/logout"
-                            onClick={() => trackEvent('Signup Wizard, step-5, log out')}
+                            onClick={() => trackEvent(SIGNUP_WIZARD('step-5, log out'))}
                         >
                             {t('login.signOut')}
                         </Link>

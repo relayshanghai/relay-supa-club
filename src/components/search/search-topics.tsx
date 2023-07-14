@@ -6,6 +6,7 @@ import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import type { CreatorPlatform, CreatorSearchTag } from 'types';
+import { SEARCH_OPTIONS, SEARCH_TOPICS_INPUT } from 'src/utils/rudderstack/event-names';
 
 type SearchTopicsProps = {
     path: string;
@@ -106,12 +107,12 @@ export const SearchTopics = ({
             }}
             onRemoveTag={(item) => {
                 removeTag(item);
-                trackEvent('Search Topics Input, remove a tag', { tag: item });
+                trackEvent(SEARCH_TOPICS_INPUT('remove a tag'), { tag: item });
             }}
             onAddTag={(item) => {
                 addTag(item);
-                trackEvent('Search Topics Input, add a tag', { tag: item });
-                trackEvent('Search Options, search topics', { topic: item });
+                trackEvent(SEARCH_TOPICS_INPUT('add a tag'), { tag: item });
+                trackEvent(SEARCH_OPTIONS('search topics'), { topic: item });
             }}
             spinnerLoading={loading}
         />

@@ -16,6 +16,7 @@ import { useCampaigns } from 'src/hooks/use-campaigns';
 import { useAllCampaignCreators } from 'src/hooks/use-all-campaign-creators';
 import { InfluencerAlreadyAddedModal } from '../influencer-already-added';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { ANALYZE_PAGE } from 'src/utils/rudderstack/event-names';
 
 export const CreatorPage = ({ creator_id, platform }: { creator_id: string; platform: CreatorPlatform }) => {
     const { loading, report, reportCreatedAt, errorMessage } = useReport({ platform, creator_id });
@@ -47,7 +48,7 @@ export const CreatorPage = ({ creator_id, platform }: { creator_id: string; plat
         } else {
             setShowCampaignListModal(true);
         }
-        trackEvent('Analyze Page, add to campaign', { platform, user_id: selectedCreatorUserId });
+        trackEvent(ANALYZE_PAGE('add to campaign'), { platform, user_id: selectedCreatorUserId });
     };
 
     if (IQDATA_MAINTENANCE) {

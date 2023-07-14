@@ -15,6 +15,7 @@ import { Provider as JotaiProvider } from 'jotai';
 import ChatwootProvider from 'src/components/chatwoot/chatwoot-provider';
 import chatwootConfig from 'chatwoot.config';
 import { useTranslation } from 'react-i18next';
+import Script from 'next/script';
 
 function MyApp({
     Component,
@@ -43,9 +44,31 @@ function MyApp({
 
         return () => _i18n.on('languageChanged', () => null);
     }, [_i18n]);
+    const GOOGLE_ANALYTICS_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS;
+
+    if (!GOOGLE_ANALYTICS_ID) {
+        throw new Error('Google Analytics keys not set');
+    }
 
     return (
         <>
+            <Script
+                strategy="lazyOnload"
+                src={`https://www.googletagmanager.com/gtag/js?${new URLSearchParams({
+                    id: GOOGLE_ANALYTICS_ID,
+                })}`}
+            />
+
+            <Script strategy="lazyOnload" id="google-tag-script">
+                {`
+                    window.dataLayer = window.dataLayer || [];
+                    function gtag(){dataLayer.push(arguments);}
+                    gtag('js', new Date());
+                    gtag('config', '${GOOGLE_ANALYTICS_ID}', {
+                    page_path: window.location.pathname,
+                    });
+                `}
+            </Script>
             <Head>
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <meta name="title" content="relay.club: A complete influencer management software solution" />

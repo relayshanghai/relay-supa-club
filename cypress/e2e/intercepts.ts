@@ -46,7 +46,7 @@ export const setupIntercepts = () => {
             item_id: ulid(),
             created_at: justNow.toISOString(),
         };
-        if (body.username === 'GRTR') {
+        if (body.username === 'GRTR' || body.text === 'GRTR') {
             return supabase
                 .from('usages')
                 .insert(usage)
