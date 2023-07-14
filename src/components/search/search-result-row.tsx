@@ -15,13 +15,13 @@ import { Badge, Tooltip } from '../library';
 import { SkeletonSearchResultRow } from '../common/skeleton-search-result-row';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { isRecommendedInfluencer } from 'src/utils/utils';
-
 import type { CampaignCreatorBasicInfo } from 'src/utils/client-db/campaignCreators';
 import { useAtom } from 'jotai';
 import { clientRoleAtom } from 'src/atoms/client-role-atom';
 import { SearchOpenExternalSocialProfile } from 'src/utils/analytics/events';
 import { useAnalytics } from '../analytics/analytics-provider';
 import { SearchLoadMoreResults } from 'src/utils/analytics/events';
+import { SEARCH_RESULT_ROW } from 'src/utils/rudderstack/event-names';
 
 export interface SearchResultRowProps {
     creator: CreatorSearchAccountObject;
@@ -152,7 +152,7 @@ export const SearchResultRow = ({
         } else {
             setShowCampaignListModal(true);
         }
-        trackEvent('Search Result Row, add to campaign', { platform, user_id });
+        trackEvent(SEARCH_RESULT_ROW('add to campaign'), { platform, user_id });
     };
 
     const desktop = useAboveScreenWidth(500);
@@ -162,7 +162,7 @@ export const SearchResultRow = ({
     const analyzeInfluencer = useCallback(
         (args: { platform: CreatorPlatform; user_id: string }) => {
             const { platform, user_id } = args;
-            trackEvent('Search Result Row, open report', { platform, user_id });
+            trackEvent(SEARCH_RESULT_ROW('open report'), { platform, user_id });
         },
         [trackEvent],
     );
@@ -171,7 +171,7 @@ export const SearchResultRow = ({
         (args: { url: string }) => {
             const { url } = args;
             track(SearchOpenExternalSocialProfile, { url });
-            trackEvent('Search Result Row, open social link', { url });
+            trackEvent(SEARCH_RESULT_ROW('open social link'), { url });
         },
         [track, trackEvent],
     );

@@ -12,6 +12,7 @@ import { isMissing } from 'src/utils/utils';
 import { useCampaignCreators } from 'src/hooks/use-campaign-creators';
 import type { CampaignCreatorBasicInfo } from 'src/utils/client-db/campaignCreators';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { CAMPAIGN_MODAL_CARD } from 'src/utils/rudderstack/event-names';
 
 export default function CampaignModalCard({
     campaign,
@@ -56,7 +57,7 @@ export default function CampaignModalCard({
             toast.success(t('campaigns.modal.addedSuccessfully'));
             track(campaign?.id);
 
-            trackEvent('Campaign Modal Card, added creator to campaign', {
+            trackEvent(CAMPAIGN_MODAL_CARD('added creator to campaign'), {
                 creator: creator?.username || creator?.fullname || creator?.user_id,
                 campaign: campaign?.id,
             });

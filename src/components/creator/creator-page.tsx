@@ -20,6 +20,7 @@ import { useAnalytics } from '../analytics/analytics-provider';
 import { AnalyzeAddToCampaign } from 'src/utils/analytics/events';
 import { SearchAnalyzeInfluencer } from 'src/utils/analytics/events';
 import type { eventKeys } from 'src/utils/analytics/events';
+import { ANALYZE_PAGE } from 'src/utils/rudderstack/event-names';
 
 export const CreatorPage = ({ creator_id, platform }: { creator_id: string; platform: CreatorPlatform }) => {
     const { loading, report, reportCreatedAt, errorMessage } = useReport({
@@ -56,7 +57,7 @@ export const CreatorPage = ({ creator_id, platform }: { creator_id: string; plat
         } else {
             setShowCampaignListModal(true);
         }
-        trackEvent('Analyze Page, add to campaign', { platform, user_id: selectedCreatorUserId });
+        trackEvent(ANALYZE_PAGE('add to campaign'), { platform, user_id: selectedCreatorUserId });
     };
 
     if (IQDATA_MAINTENANCE) {

@@ -23,6 +23,7 @@ import { startJourney } from 'src/utils/analytics/journey';
 import { useAnalytics } from '../analytics/analytics-provider';
 import { SearchAddToCampaign } from 'src/utils/analytics/events';
 import { Search } from 'src/utils/analytics/events';
+import { SEARCH_RESULT } from 'src/utils/rudderstack/event-names';
 // import { featRecommended } from 'src/constants/feature-flags';
 
 export const SearchPageInner = () => {
@@ -101,6 +102,7 @@ export const SearchPageInner = () => {
             page: 0,
             platform,
             username: '',
+            text: '',
             views: [null, null],
             audience: [null, null],
             // recommendedInfluencers: featRecommended() ? recommendedInfluencers : [],
@@ -182,7 +184,7 @@ export const SearchPageInner = () => {
                     onClick={async () => {
                         const nextPage = page + 1;
                         setPage(nextPage);
-                        trackEvent('Search Result, load more');
+                        trackEvent(SEARCH_RESULT('load more'));
                     }}
                 >
                     {t('creators.loadMore')}

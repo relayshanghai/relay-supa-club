@@ -4,6 +4,7 @@ import guidePage from 'i18n/en/guide';
 import Link from 'next/link';
 import { Button } from '../button';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { GUIDE_PAGE } from 'src/utils/rudderstack/event-names';
 
 export const GuideModal = ({
     section,
@@ -47,7 +48,7 @@ export const GuideModal = ({
                     <p
                         className="flex cursor-pointer flex-row items-center gap-2 text-sm font-medium text-primary-700"
                         onClick={() => {
-                            trackEvent('Guide Page, closed modal', { guideSection: section });
+                            trackEvent(GUIDE_PAGE('closed modal'), { guideSection: section });
                             setShow(false);
                         }}
                     >
@@ -55,7 +56,7 @@ export const GuideModal = ({
                     </p>
                     <Link
                         onClick={() => {
-                            trackEvent('Guide Page, navigate to page', { guideSection: section });
+                            trackEvent(GUIDE_PAGE('navigate to page'), { guideSection: section });
                         }}
                         href={selectedGuide.url}
                     >
