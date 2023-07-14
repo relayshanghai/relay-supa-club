@@ -6,5 +6,5 @@ import type { TrackedEvent } from './types';
  */
 export const createTrack =
     (analytics: AnalyticsInstance) =>
-    <T extends TrackedEvent>(event: T, payload?: Parameters<T>[1]) =>
-        analytics.track(event.eventName, { event, payload });
+    <T extends TrackedEvent>(event: T, payload?: Parameters<T>[1], options?: { __abort?: AbortController }) =>
+        analytics.track(event.eventName, { event, payload, options });
