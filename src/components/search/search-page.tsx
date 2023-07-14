@@ -20,10 +20,9 @@ import { useAllCampaignCreators } from 'src/hooks/use-all-campaign-creators';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { SearchCreators } from './search-creators';
 import { startJourney } from 'src/utils/analytics/journey';
-import { Search } from 'src/utils/analytics/events';
 import { useAnalytics } from '../analytics/analytics-provider';
 import { SearchAddToCampaign } from 'src/utils/analytics/events';
-import { Search, SearchLoadMoreResults } from 'src/utils/analytics/events';
+import { Search } from 'src/utils/analytics/events';
 // import { featRecommended } from 'src/constants/feature-flags';
 
 export const SearchPageInner = () => {
