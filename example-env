@@ -87,3 +87,6 @@ CHATWOOT_WEBHOOK_TOKEN=""
 
 # Google Analytics
 NEXT_PUBLIC_GOOGLE_ANALYTICS=G-xxxxx
+
+# Email engine
+EMAIL_ENGINE_API_URL="https://email.relay.club"
