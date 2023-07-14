@@ -1,4 +1,11 @@
-import type { AccountRole, CreatorPlatform, InfluencerOutreachStatus, SubscriptionStatus, UsageType } from 'types';
+import type {
+    AccountRole,
+    ContactEnum,
+    CreatorPlatform,
+    InfluencerOutreachStatus,
+    SubscriptionStatus,
+    UsageType,
+} from 'types';
 import type { Database } from 'types/supabase';
 import type { SupabaseLogType } from './calls/';
 
@@ -122,5 +129,17 @@ export type InfluencerSocialProfilesTable = Database['public']['Tables']['influe
          *  We can use this to "refer" to the social profile in that datasource
          */
         reference_id: InfluencerSocialProfileReferenceId;
+    };
+};
+
+export type InfluencerContactInsert = Database['public']['Tables']['influencer_contacts']['Insert'];
+export type InfluencerContactRow = Database['public']['Tables']['influencer_contacts']['Row'];
+
+export type InfluencerContactsTable = Database['public']['Tables']['influencer_contacts'] & {
+    Row: Database['public']['Tables']['influencer_contacts']['Row'] & {
+        type: ContactEnum;
+    };
+    Insert: Database['public']['Tables']['influencer_contacts']['Insert'] & {
+        type: ContactEnum;
     };
 };

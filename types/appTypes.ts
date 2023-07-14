@@ -108,3 +108,34 @@ export interface DatabaseWithCustomTypes extends Database {
 
 export const CompanySize = z.union([z.literal('small'), z.literal('medium'), z.literal('large'), z.null()]);
 export type CompanySize = z.infer<typeof CompanySize>;
+
+// IQdata contact types are from https://iqdata.social/docs/api#operation/export-contacts
+export const ContactEnum = z.enum([
+    'bbm',
+    'email',
+    'facebook',
+    'instagram',
+    'itunes',
+    'kakao',
+    'kik',
+    'lineid',
+    'linktree',
+    'phone',
+    'pinterest',
+    'sarahah',
+    'sayat',
+    'skype',
+    'snapchat',
+    'telegram',
+    'tiktok',
+    'tumblr',
+    'twitchtv',
+    'twitter',
+    'viber',
+    'vk',
+    'wechat',
+    'weibo',
+    'whatsapp',
+    'youtube',
+]);
+export type ContactEnum = z.infer<typeof ContactEnum>;

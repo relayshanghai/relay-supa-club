@@ -7,6 +7,8 @@ import type {
     InfluencerSocialProfileRow,
     InfluencerInsert,
     InfluencerSocialProfileInsert,
+    InfluencerContactInsert,
+    InfluencerContactRow,
 } from '../types';
 import type { Database } from 'types/supabase';
 
@@ -32,4 +34,16 @@ export const insertInfluencerSocialProfile =
         }
 
         return socialProfile.data[0];
+    };
+
+export const insertInfluencerContact =
+    (db: SupabaseClient<Database>) =>
+    async (data: InfluencerContactInsert): Promise<InfluencerContactRow> => {
+        const contact = await db.from('influencer_contacts').insert(data).select();
+
+        if (contact.error) {
+            throw contact.error;
+        }
+
+        return contact.data[0];
     };
