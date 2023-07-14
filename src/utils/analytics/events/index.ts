@@ -1,6 +1,5 @@
 import { z } from 'zod';
 import { SEARCH as SEARCH_KEY, Search } from './search';
-import { REPORT as REPORT_KEY, Report } from './report';
 import { SEARCH_ANALYZE_INFLUENCER, SearchAnalyzeInfluencer } from './search-analyze-influencer';
 import { SEARCH_LOAD_MORE_RESULTS, SearchLoadMoreResults } from './search-load_more_results';
 import {
@@ -16,7 +15,6 @@ import {
 
 export {
     Search,
-    Report,
     SearchLoadMoreResults,
     SearchAddToCampaign,
     AnalyzeAddToCampaign,
@@ -27,7 +25,6 @@ export {
 
 export const events = {
     [SEARCH_KEY]: Search,
-    [REPORT_KEY]: Report,
     [SEARCH_LOAD_MORE_RESULTS]: SearchLoadMoreResults,
     [SEARCH_ANALYZE_INFLUENCER]: SearchAnalyzeInfluencer,
     [SEARCH_OPEN_EXTERNAL_SOCIAL_PROFILE]: SearchOpenExternalSocialProfile,
@@ -38,7 +35,6 @@ export const events = {
 
 export const eventKeys = z.union([
     z.literal(SEARCH_KEY),
-    z.literal(REPORT_KEY),
     z.literal(SEARCH_LOAD_MORE_RESULTS),
     z.literal(SEARCH_ANALYZE_INFLUENCER),
     z.literal(SEARCH_OPEN_EXTERNAL_SOCIAL_PROFILE),
