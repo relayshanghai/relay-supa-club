@@ -1,0 +1,23 @@
+server {
+    listen 80;
+    listen [::]:80;
+
+    server_name email.relay.club;
+
+    return 301 https://$server_name$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+
+    server_name email.relay.club;
+
+    ssl_certificate /etc/nginx/cert/email.relay.club.pem;
+    ssl_certificate_key /etc/nginx/cert/email.relay.club.key;
+
+    location / {
+        proxy_pass http://localhost:4000;
+    }
+
+}
