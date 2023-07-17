@@ -6,6 +6,7 @@ import type { DatabaseWithCustomTypes } from 'types';
 import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
 import httpCodes from 'src/constants/httpCodes';
 import { serverLogger } from 'src/utils/logger-server';
+import { featRecommended } from 'src/constants/feature-flags';
 
 const pricingAllowList = ['https://en-relay-club.vercel.app', 'https://relay.club'];
 
@@ -151,8 +152,14 @@ const checkIsRelayEmployee = async (res: NextResponse, email: string) => {
  */
 export async function middleware(req: NextRequest) {
     // We need to create a response and hand it to the supabase client to be able to modify the response headers.
-
     const res = NextResponse.next();
+
+    // don't allow users to use the email pages/apis before they are ready
+    if (!featRecommended()) {
+        if (req.nextUrl.pathname.includes('email-engine')) {
+            return NextResponse.rewrite('/404', { status: httpCodes.NOT_FOUND });
+        }
+    }
 
     if (req.nextUrl.pathname === '/api/subscriptions/prices') return allowPricingCors(req, res);
     if (req.nextUrl.pathname === '/api/slack/create') return res;
