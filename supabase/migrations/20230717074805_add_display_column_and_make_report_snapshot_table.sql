@@ -3,10 +3,17 @@ CREATE TABLE "public"."report_snapshots" (
   "event_id" uuid,
   "company_id" uuid,
   "profile_id" uuid,
-  "snapshot" jsonb NOT NULL,
-  "created_at" timestamp with time zone DEFAULT now()
+  "snapshot_data" jsonb NOT NULL,
+  "created_at" timestamp with time zone DEFAULT now(),
+  "snapshot_display" character varying[]
 );
 
+
+ALTER TABLE "public"."search_snapshots" DROP COLUMN "snapshot";
+
+ALTER TABLE "public"."search_snapshots" ADD COLUMN "snapshot_data" jsonb NOT NULL;
+
+ALTER TABLE "public"."search_snapshots" ADD COLUMN "snapshot_display" character varying[];
 
 CREATE UNIQUE INDEX report_snapshots_pkey ON public.report_snapshots USING btree (id);
 

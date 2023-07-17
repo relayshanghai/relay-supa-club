@@ -17,6 +17,47 @@ type SessionIds = {
     company_id?: string | null;
 };
 
+const reportDisplay = [
+    'user_profile.fullname',
+    'user_profile.url',
+    'user_profile.user_id',
+    'user_profile.description',
+    'user_profile.contacts',
+    'user_profile.geo',
+    'user_profile.followers',
+    'user_profile.total_views',
+    'user_profile.avg_views',
+    'user_profile.engagements',
+    'user_profile.avg_likes',
+    'user_profile.avg_comments',
+    'user_profile.engagement_rate',
+    'user_profile.similar_users',
+    'user_profile.stat_history',
+    'audience_followers.data.audience_types',
+    'audience_followers.data.audience_genders',
+    'audience_followers.data.audience_ages',
+    'audience_followers.data.audience_locations',
+    'audience_followers.data.audience_languages',
+    'audience_followers.data.audience_interests',
+    'audience_followers.data.audience_geo.countries',
+    'audience_followers.data.audience_geo.cities',
+    'audience_followers.data.audience_brand_affinity',
+    'audience_followers.data.audience_genders_per_age',
+    'audience_followers.data.audience_lookalikes',
+    'user_profile.top_posts',
+    'user_profile.recent_posts',
+    'user_profile.commercial_posts',
+];
+
+const searchDisplay = [
+    'accounts.account.fullname',
+    'accounts.account.username',
+    'accounts.account.followers',
+    'accounts.account.engagements',
+    'accounts.account.engagement_rate',
+    'accounts.account.avg_views',
+];
+
 export const getAnonId = (ctx: ServerContext) => {
     if (ANALYTICS_HEADER_NAME in ctx.req.headers) {
         const id = ctx.req.headers[ANALYTICS_HEADER_NAME];
@@ -133,7 +174,8 @@ export const createSearchSnapshot = async (ctx: ServerContext, payload: CreateSe
         event_id,
         profile_id,
         company_id,
-        snapshot,
+        snapshot_data: snapshot,
+        snapshot_display: searchDisplay,
     };
 
     return await insertSearchSnapshot(supabase)(insertData);
@@ -150,7 +192,8 @@ export const createReportSnapshot = async (ctx: ServerContext, payload: CreateAn
         event_id,
         profile_id: sessionIds.profile_id,
         company_id: sessionIds.company_id,
-        snapshot,
+        snapshot_data: snapshot,
+        snapshot_display: reportDisplay,
     };
 
     return await insertReportSnapshot(supabase)(insertData);

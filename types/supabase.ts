@@ -704,7 +704,8 @@ export interface Database {
           event_id: string | null
           id: string
           profile_id: string | null
-          snapshot: Json
+          snapshot_data: Json
+          snapshot_display: string[]
         }
         Insert: {
           company_id?: string | null
@@ -712,7 +713,8 @@ export interface Database {
           event_id?: string | null
           id?: string
           profile_id?: string | null
-          snapshot: Json
+          snapshot_data: Json
+          snapshot_display: string[]
         }
         Update: {
           company_id?: string | null
@@ -720,7 +722,8 @@ export interface Database {
           event_id?: string | null
           id?: string
           profile_id?: string | null
-          snapshot?: Json
+          snapshot_data?: Json
+          snapshot_display?: string[]
         }
         Relationships: [
           {
@@ -787,7 +790,8 @@ export interface Database {
           event_id: string | null
           id: string
           profile_id: string | null
-          snapshot: Json
+          snapshot_data: Json
+          snapshot_display: string[]
         }
         Insert: {
           company_id?: string | null
@@ -795,7 +799,8 @@ export interface Database {
           event_id?: string | null
           id?: string
           profile_id?: string | null
-          snapshot: Json
+          snapshot_data: Json
+          snapshot_display: string[]
         }
         Update: {
           company_id?: string | null
@@ -803,7 +808,8 @@ export interface Database {
           event_id?: string | null
           id?: string
           profile_id?: string | null
-          snapshot?: Json
+          snapshot_data?: Json
+          snapshot_display?: string[]
         }
         Relationships: [
           {
