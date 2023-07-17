@@ -124,7 +124,7 @@ export interface SendEmailResponseBody {
 }
 
 export const sendEmail = async (body: SendEmailRequestBody, account: string) =>
-    await emailEngineApiFetch<SendEmailResponseBody>(`account/${account}/submit`, {
+    await emailEngineApiFetch<SendEmailResponseBody>(`account/${encodeURIComponent(account)}/submit`, {
         method: 'POST',
         body,
     });
