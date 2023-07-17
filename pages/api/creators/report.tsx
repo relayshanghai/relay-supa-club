@@ -26,7 +26,9 @@ const trackAndSnap = async (
     eventsObject: typeof events,
     data: CreatorReport,
 ) => {
-    if (track !== SearchAnalyzeInfluencer.eventName) return;
+    if (track !== SearchAnalyzeInfluencer.eventName) {
+        return;
+    }
     const result = await createTrack({ req, res })(eventsObject[track]);
 
     await createReportSnapshot(

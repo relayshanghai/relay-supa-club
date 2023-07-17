@@ -201,13 +201,11 @@ export const SearchPageInner = () => {
                 campaigns={campaigns}
                 allCampaignCreators={allCampaignCreators}
                 track={(campaign: string) => {
-                    track(SearchAddToCampaign, {
-                        creator:
-                            selectedCreator?.account.user_profile.username ||
-                            selectedCreator?.account.user_profile.fullname ||
-                            selectedCreator?.account.user_profile.user_id,
-                        campaign: campaign,
-                    });
+                    selectedCreator &&
+                        track(SearchAddToCampaign, {
+                            creator: selectedCreator.account.user_profile,
+                            campaign: campaign,
+                        });
                 }}
             />
 
