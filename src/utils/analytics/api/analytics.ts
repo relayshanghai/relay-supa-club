@@ -128,12 +128,29 @@ export const createSearchSnapshot = async (ctx: ServerContext, payload: CreateSe
     const { profile_id, company_id } = await getUserSession(supabase)();
 
     const { event_id, ...snapshot } = payload;
+    snapshot.payload.results.accounts;
+
+    const snapshotData = snapshot.payload.results.accounts.reduce(
+        (result: any, account: any) => {
+            const { username, fullname, url, followers, engagements, engagement_rate, avg_views } =
+                account.account.user_profile;
+            result.username.push(username);
+            result.fullname.push(fullname);
+            result.url.push(url);
+            result.followers.push(followers);
+            result.engagements.push(engagements);
+            result.engagement_rate.push(engagement_rate);
+            result.avg_views.push(avg_views);
+            return result;
+        },
+        { username: [], fullname: [], url: [], followers: [], engagements: [], engagement_rate: [], avg_views: [] },
+    );
 
     const insertData = {
         event_id,
         profile_id,
         company_id,
-        snapshot,
+        snapshot: snapshotData,
     };
 
     return await insertSearchSnapshot(supabase)(insertData);
@@ -146,11 +163,45 @@ export const createReportSnapshot = async (ctx: ServerContext, payload: CreateAn
 
     const { event_id, ...snapshot } = payload;
 
+    const { user_profile, audience_followers } = snapshot.payload.results;
+
+    const snapshotData = {
+        'user_profile.fullname': user_profile.fullname,
+        'user_profile.url': user_profile.url,
+        'user_profile.user_id': user_profile.user_id,
+        'user_profile.description': user_profile.description,
+        'user_profile.contacts': user_profile.contacts,
+        'user_profile.geo': user_profile.geo,
+        'user_profile.followers': user_profile.followers,
+        'user_profile.total_views': user_profile.total_views,
+        'user_profile.avg_views': user_profile.avg_views,
+        'user_profile.engagements': user_profile.engagements,
+        'user_profile.avg_likes': user_profile.avg_likes,
+        'user_profile.avg_comments': user_profile.avg_comments,
+        'user_profile.engagement_rate': user_profile.engagement_rate,
+        'user_profile.similar_users': user_profile.similar_users,
+        'user_profile.stat_history': user_profile.stat_history,
+        'audience_followers.data.audience_types': audience_followers.data.audience_types,
+        'audience_followers.data.audience_genders': audience_followers.data.audience_genders,
+        'audience_followers.data.audience_ages': audience_followers.data.audience_ages,
+        'audience_followers.data.audience_locations': audience_followers.data.audience_locations,
+        'audience_followers.data.audience_languages': audience_followers.data.audience_languages,
+        'audience_followers.data.audience_interests': audience_followers.data.audience_interests,
+        'audience_followers.data.audience_geo.countries': audience_followers.data.audience_geo.countries,
+        'audience_followers.data.audience_geo.cities': audience_followers.data.audience_geo.cities,
+        'audience_followers.data.audience_brand_affinity': audience_followers.data.audience_brand_affinity,
+        'audience_followers.data.audience_genders_per_age': audience_followers.data.audience_genders_per_age,
+        'audience_followers.data.audience_lookalikes': audience_followers.data.audience_lookalikes,
+        'user_profile.top_posts': user_profile.top_posts,
+        'user_profile.recent_posts': user_profile.recent_posts,
+        'user_profile.commercial_posts': user_profile.commercial_posts,
+    };
+
     const insertData = {
         event_id,
         profile_id: sessionIds.profile_id,
         company_id: sessionIds.company_id,
-        snapshot,
+        snapshot: snapshotData,
     };
 
     return await insertReportSnapshot(supabase)(insertData);
