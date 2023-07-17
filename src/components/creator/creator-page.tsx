@@ -76,13 +76,11 @@ export const CreatorPage = ({ creator_id, platform }: { creator_id: string; plat
                 campaigns={campaigns}
                 allCampaignCreators={allCampaignCreators}
                 track={(campaign: string) => {
-                    track(AnalyzeAddToCampaign, {
-                        creator:
-                            report?.user_profile.username ||
-                            report?.user_profile.fullname ||
-                            report?.user_profile?.user_id,
-                        campaign: campaign,
-                    });
+                    report &&
+                        track(AnalyzeAddToCampaign, {
+                            creator: report.user_profile,
+                            campaign: campaign,
+                        });
                 }}
             />
             <InfluencerAlreadyAddedModal
