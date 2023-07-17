@@ -8,6 +8,34 @@ export const EMAIL_ENGINE_API_URL = process.env.EMAIL_ENGINE_API_URL
 const EMAIL_ENGINE_API_KEY = process.env.EMAIL_ENGINE_API_KEY;
 if (!EMAIL_ENGINE_API_KEY) throw new Error('EMAIL_ENGINE_API_KEY is not defined');
 
+interface SequenceInfluencer {
+    id: string;
+    name: string;
+    email: string;
+    /** 0 means not sent. 1 means first step sent, awaiting 2. */
+    sequenceStep: number;
+    /** Will basically follow the campaign influencers status' */
+    status: string;
+}
+
+export const mockInfluencers: SequenceInfluencer[] = [
+    {
+        id: '1',
+        name: 'Jacob',
+        email: 'jacob@relay.club',
+        sequenceStep: 0,
+        status: 'To Contact',
+    },
+    {
+        id: '2',
+        name: 'Brendan',
+        email: 'brendan@relay.club',
+        sequenceStep: 0,
+        status: 'To Contact',
+    },
+    { id: '3', name: 'Tech Account', email: 'tech@relay.club', sequenceStep: 0, status: 'To Contact' },
+];
+
 const headers = {
     Authorization: `Bearer ${EMAIL_ENGINE_API_KEY}`,
 };
