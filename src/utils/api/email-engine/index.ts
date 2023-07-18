@@ -9,6 +9,7 @@ import type {
     AccountAccountSearchPostRequestBody,
     MailboxSearchOptions,
 } from 'types/email-engine/account-account-search-post';
+import type { AccountAccountMailboxesGetResponse } from 'types/email-engine/account-account-mailboxes-get';
 
 const authLinkPath = 'authentication/form';
 
@@ -16,6 +17,11 @@ export const generateAuthLink = async (body: GenerateAuthLinkRequestBody) => {
     const res = await emailEngineApiFetch<GenerateAuthLinkResponse>(authLinkPath, { method: 'POST', body });
     return res.url;
 };
+
+const getMailboxesPath = (account: string) => `account/${encodeURIComponent(account)}/mailboxes`;
+
+export const getMailboxes = async (account: string) =>
+    await emailEngineApiFetch<AccountAccountMailboxesGetResponse>(getMailboxesPath(account));
 
 const sendEmailPath = (account: string) => `account/${encodeURIComponent(account)}/submit`;
 
