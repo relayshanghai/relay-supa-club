@@ -73,10 +73,10 @@ export interface MailboxSearchOptions {
     bcc?: string;
     body?: string;
     subject?: string;
-    larger?: 1073741824;
-    smaller?: 1073741824;
+    larger?: number;
+    smaller?: number;
     uid?: string;
-    modseq?: 0;
+    modseq?: number;
     /** date string e.g. 2023-07-18 */
     before?: string;
     /** date string e.g. 2023-07-18 */
@@ -86,9 +86,11 @@ export interface MailboxSearchOptions {
     /** date string e.g. 2023-07-18 */
     sentSince?: string;
     emailId?: string;
-    threadId?: '1771683502402987397';
+    /** Gmail specific threadID */
+    threadId?: string;
     header?: Record<string, string>;
-    gmailRaw?: 'has:attachment in:unread';
+    /** e.g. 'has:attachment in:unread' */
+    gmailRaw?: string;
 }
 
 export interface AccountAccountSearchPostRequestBody {
