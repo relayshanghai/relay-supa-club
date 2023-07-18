@@ -17,17 +17,22 @@ const getMailboxesPath = (account: string) => `account/${encodeURIComponent(acco
 const sendEmailPath = (account: string) => `account/${encodeURIComponent(account)}/submit`;
 
 const getEmailsPath = (account: string, mailboxPath: string, page = 0, pageSize = 20, documentStore = false) =>
-    `account/${encodeURIComponent(account)}/messages?path=${encodeURIComponent(
-        mailboxPath,
-    )}&page=${page}&pageSize=${pageSize}&documentStore=${documentStore}`;
+    `account/${encodeURIComponent(account)}/messages?${new URLSearchParams({
+        page: String(page),
+        path: mailboxPath,
+        pageSize: String(pageSize),
+        documentStore: String(documentStore),
+    })}`;
 
 const getEmailTextPath = (account: string, messageId: string, textType: TextType) =>
-    `account/${encodeURIComponent(account)}/text/${encodeURIComponent(messageId)}?textType=${textType}`;
+    `account/${encodeURIComponent(account)}/text/${encodeURIComponent(messageId)}?${new URLSearchParams({ textType })}`;
 
 const searchMailboxPath = (account: string, mailboxPath: string, page = 0, pageSize = 20) =>
-    `account/${encodeURIComponent(account)}/search?path=${encodeURIComponent(
-        mailboxPath,
-    )}&page=${page}&pageSize=${pageSize}`;
+    `account/${encodeURIComponent(account)}/search?${new URLSearchParams({
+        path: mailboxPath,
+        page: String(page),
+        pageSize: String(pageSize),
+    })}`;
 
 export const generateAuthLink = async (body: GenerateAuthLinkRequestBody) => {
     const res = await emailEngineApiFetch<GenerateAuthLinkResponse>(authLinkPath, { method: 'POST', body });
