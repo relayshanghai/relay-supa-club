@@ -13,38 +13,39 @@ import type { AccountAccountMailboxesGetResponse } from 'types/email-engine/acco
 
 const authLinkPath = 'authentication/form';
 
-export const generateAuthLink = async (body: GenerateAuthLinkRequestBody) => {
-    const res = await emailEngineApiFetch<GenerateAuthLinkResponse>(authLinkPath, { method: 'POST', body });
-    return res.url;
-};
-
 const getMailboxesPath = (account: string) => `account/${encodeURIComponent(account)}/mailboxes`;
 
-export const getMailboxes = async (account: string) =>
-    await emailEngineApiFetch<AccountAccountMailboxesGetResponse>(getMailboxesPath(account));
-
 const sendEmailPath = (account: string) => `account/${encodeURIComponent(account)}/submit`;
-
-export const sendEmail = async (body: SendEmailRequestBody, account: string) =>
-    await emailEngineApiFetch<SendEmailResponseBody>(sendEmailPath(account), { method: 'POST', body });
 
 const getEmailsPath = (account: string, mailboxPath: string, page = 0, pageSize = 20, documentStore = false) =>
     `account/${encodeURIComponent(account)}/messages?path=${encodeURIComponent(
         mailboxPath,
     )}&page=${page}&pageSize=${pageSize}&documentStore=${documentStore}`;
 
-export const getEmails = async (account: string, mailboxPath = GMAIL_INBOX) =>
-    await emailEngineApiFetch<AccountAccountMessagesGet>(getEmailsPath(account, mailboxPath));
-
 const getEmailTextPath = (account: string, messageId: string, textType: TextType) =>
     `account/${encodeURIComponent(account)}/text/${encodeURIComponent(messageId)}?textType=${textType}`;
-export const getEmailText = async (account: string, messageId: string, textType: TextType = '*') =>
-    await emailEngineApiFetch<AccountAccountTextTextGetResponse>(getEmailTextPath(account, messageId, textType));
 
 const searchMailboxPath = (account: string, mailboxPath: string, page = 0, pageSize = 20) =>
     `account/${encodeURIComponent(account)}/search?path=${encodeURIComponent(
         mailboxPath,
     )}&page=${page}&pageSize=${pageSize}`;
+
+export const generateAuthLink = async (body: GenerateAuthLinkRequestBody) => {
+    const res = await emailEngineApiFetch<GenerateAuthLinkResponse>(authLinkPath, { method: 'POST', body });
+    return res.url;
+};
+
+export const getMailboxes = async (account: string) =>
+    await emailEngineApiFetch<AccountAccountMailboxesGetResponse>(getMailboxesPath(account));
+
+export const sendEmail = async (body: SendEmailRequestBody, account: string) =>
+    await emailEngineApiFetch<SendEmailResponseBody>(sendEmailPath(account), { method: 'POST', body });
+
+export const getEmails = async (account: string, mailboxPath = GMAIL_INBOX) =>
+    await emailEngineApiFetch<AccountAccountMessagesGet>(getEmailsPath(account, mailboxPath));
+
+export const getEmailText = async (account: string, messageId: string, textType: TextType = '*') =>
+    await emailEngineApiFetch<AccountAccountTextTextGetResponse>(getEmailTextPath(account, messageId, textType));
 
 export const searchMailbox = async (
     account: string,
