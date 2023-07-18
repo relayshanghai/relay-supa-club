@@ -23,7 +23,8 @@
     "prepare": "husky install",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "supabase": "npx supabase start"
+    "supabase": "npx supabase start",
+    "lint:baseline": "npx eslint-baseline --update-baseline ."
   },
   "dependencies": {
     "@headlessui/react": "^1.7.14",
@@ -82,6 +83,7 @@
     "cypress": "^12.13.0",
     "cypress-iframe": "^1.0.1",
     "eslint": "8.38.0",
+    "eslint-baseline": "^0.4.0",
     "eslint-config-next": "^13.3.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-storybook": "^0.6.11",
