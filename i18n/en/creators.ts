@@ -4,8 +4,13 @@ const creators = {
     recommendedTooltipDetail:
         'Are those which have worked with relay.club brands in the past and are known to be open to cooperation',
     loadMore: 'Load more',
-    results: 'Total Results',
+    resultsPrefix: 'We found',
+    resultsPostfixKeywords:
+        'influencer accounts relevant to your topics or using your keywords in recent videos, that matched your filters',
+    resultsPostfixHashtags:
+        'influencer accounts relevant to your topics or using your hastags in recent posts, that matched your filters.',
     noResults: 'No results found',
+    addFilters: 'Add filters to tailor your results',
     searchResultError: 'Failed to fetch search results',
     clearFilter: 'Clear',
     failedToFetchReport: 'Failed to fetch report',
@@ -18,7 +23,12 @@ const creators = {
     analyzeProfile: 'Analyze',
     similarInfluencer: 'Find Similar',
     account: 'Account',
+    searchTopicLabel: 'Search by Topics',
     searchTopic: 'Search for a topic',
+    searchHashTagsLabel: 'Search by Hashtags',
+    searchHashTags: 'Add hashtags',
+    searchKeywordsLabel: 'Search by Key Phrase',
+    searchKeywords: 'Add a keyword or phrase',
     addToFavorites: 'Add to favorites',
     removeFromFavorites: 'Remove from favorites',
     openLink: 'Open Social Link',

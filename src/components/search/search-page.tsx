@@ -18,6 +18,8 @@ import { MoreResultsRows } from './search-result-row';
 import ClientRoleWarning from './client-role-warning';
 import { useAllCampaignCreators } from 'src/hooks/use-all-campaign-creators';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { SearchCreators } from './search-creators';
+import { SEARCH_RESULT } from 'src/utils/rudderstack/event-names';
 // import { featRecommended } from 'src/constants/feature-flags';
 
 export const SearchPageInner = () => {
@@ -62,6 +64,7 @@ export const SearchPageInner = () => {
             page: 0,
             platform,
             username: '',
+            text: '',
             views: [null, null],
             audience: [null, null],
             // recommendedInfluencers: featRecommended() ? recommendedInfluencers : [],
@@ -96,14 +99,21 @@ export const SearchPageInner = () => {
     return (
         <div className="space-y-4">
             <ClientRoleWarning />
-            <SelectPlatform />
+            <div className="flex justify-between">
+                <SelectPlatform />
+                <div className="w-fit">
+                    <SearchCreators platform={platform} />
+                </div>
+            </div>
 
             <SearchOptions setPage={setPage} setShowFiltersModal={setShowFiltersModal} />
 
             <div className="flex items-center justify-between">
-                <div className="text-sm font-medium">{`${t('creators.results')}: ${numberFormatter(
+                <div className="text-sm font-medium">{`${t('creators.resultsPrefix')} ${numberFormatter(
                     resultsTotal,
-                )}`}</div>
+                )} ${
+                    platform === 'youtube' ? t('creators.resultsPostfixKeywords') : t('creators.resultsPostfixHashtags')
+                }`}</div>
             </div>
 
             <SearchResultsTable
@@ -135,7 +145,7 @@ export const SearchPageInner = () => {
                 <Button
                     onClick={async () => {
                         setPage(page + 1);
-                        trackEvent('Search Result, load more');
+                        trackEvent(SEARCH_RESULT('load more'));
                     }}
                 >
                     {t('creators.loadMore')}

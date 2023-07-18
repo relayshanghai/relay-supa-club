@@ -5,7 +5,13 @@ import { usageErrors } from 'src/errors/usages';
 import { hasCustomError } from 'src/utils/errors';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
-import type { CreatorPlatform, LocationWeighted, CreatorSearchTag } from 'types';
+import type {
+    CreatorPlatform,
+    LocationWeighted,
+    CreatorSearchTag,
+    AudienceAgeRangeWeighted,
+    AudienceGenderWeighted,
+} from 'types';
 import { useUser } from './use-user';
 import useSWR from 'swr';
 import type { RecommendedInfluencersGetResponse } from 'pages/api/recommended-influencers';
@@ -24,6 +30,8 @@ export interface ISearchContext {
     setText: (text: string) => void;
     keywords: string;
     setKeywords: (keywords: string) => void;
+    hashtags: string[];
+    setHashtags: (hashtags: string[]) => void;
     username: string;
     setUsername: (username: string) => void;
     influencerLocation: LocationWeighted[];
@@ -42,6 +50,10 @@ export interface ISearchContext {
     setContactInfo: (contactInfo?: string) => void;
     audienceLocation: LocationWeighted[];
     setAudienceLocation: (location: LocationWeighted[]) => void;
+    audienceAge: AudienceAgeRangeWeighted | undefined;
+    setAudienceAge: (location: AudienceAgeRangeWeighted) => void;
+    audienceGender: AudienceGenderWeighted | undefined;
+    setAudienceGender: (location: AudienceGenderWeighted) => void;
     platform: CreatorPlatform;
     setPlatform: (platform: CreatorPlatform) => void;
     resultsPerPageLimit: number;
@@ -69,6 +81,8 @@ export const SearchContext = createContext<ISearchContext>({
     setText: () => null,
     keywords: '',
     setKeywords: () => null,
+    hashtags: [],
+    setHashtags: () => null,
     username: '',
     setUsername: () => null,
     influencerLocation: [],
@@ -87,6 +101,10 @@ export const SearchContext = createContext<ISearchContext>({
     setContactInfo: () => null,
     audienceLocation: [],
     setAudienceLocation: () => null,
+    audienceAge: undefined,
+    setAudienceAge: () => null,
+    audienceGender: undefined,
+    setAudienceGender: () => null,
     platform: 'youtube',
     setPlatform: () => null,
     resultsPerPageLimit: 10,
@@ -135,10 +153,13 @@ export const useSearchResults = (page: number) => {
                     username,
                     text,
                     keywords,
+                    text_tags,
                     influencerLocation,
                     audienceLocation,
                     resultsPerPageLimit,
                     audience,
+                    audienceAge,
+                    audienceGender,
                     views,
                     gender,
                     engagement,
@@ -158,12 +179,15 @@ export const useSearchResults = (page: number) => {
                     platform,
                     text,
                     keywords,
+                    text_tags,
                     username,
                     influencerLocation,
                     audienceLocation,
                     resultsPerPageLimit,
                     page,
                     audience,
+                    audienceAge,
+                    audienceGender,
                     views,
                     gender,
                     engagement,
@@ -174,6 +198,7 @@ export const useSearchResults = (page: number) => {
                     user_id: profile?.id,
                     recommendedInfluencers,
                 };
+
                 const res = await nextFetch<InfluencerPostResponse>(path, {
                     method: 'post',
                     signal,
@@ -236,6 +261,7 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
     const [tags, setTopicTags] = useState<CreatorSearchTag[]>([]);
     const [text, setText] = useState<string>('');
     const [keywords, setKeywords] = useState<string>('');
+    const [hashtags, setHashtags] = useState<string[]>([]);
     const [username, setUsername] = useState<string>('');
     const [influencerLocation, setInfluencerLocation] = useState<LocationWeighted[]>([]);
     const [views, setViews] = useState<NullStringTuple>([null, null]);
@@ -245,6 +271,8 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
     const [lastPost, setLastPost] = useState<string>();
     const [contactInfo, setContactInfo] = useState<string>();
     const [audienceLocation, setAudienceLocation] = useState<LocationWeighted[]>([]);
+    const [audienceAge, setAudienceAge] = useState<AudienceAgeRangeWeighted | undefined>();
+    const [audienceGender, setAudienceGender] = useState<AudienceGenderWeighted | undefined>();
     const [platform, setPlatform] = useState<CreatorPlatform>('youtube');
     const [onlyRecommended, setOnlyRecommended] = useState(true);
     const [activeSearch, setActiveSearch] = useState(false);
@@ -266,12 +294,18 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
                 setText,
                 keywords,
                 setKeywords,
+                hashtags,
+                setHashtags,
                 username,
                 setUsername,
                 influencerLocation,
                 setInfluencerLocation,
                 audienceLocation,
                 setAudienceLocation,
+                audienceAge,
+                setAudienceAge,
+                audienceGender,
+                setAudienceGender,
                 audience,
                 setAudience,
                 views,

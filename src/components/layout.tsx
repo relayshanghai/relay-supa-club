@@ -10,6 +10,7 @@ import { useUser } from 'src/hooks/use-user';
 import useOnOutsideClick from 'src/hooks/use-on-outside-click';
 import ClientRoleWarning from './search/client-role-warning';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { NAVBAR } from 'src/utils/rudderstack/event-names';
 
 export const Layout = ({ children }: any) => {
     const { t } = useTranslation();
@@ -35,7 +36,7 @@ export const Layout = ({ children }: any) => {
                     <Button
                         onClick={() => {
                             setSideBarOpen(!sideBarOpen);
-                            trackEvent('NavBar, Hamburger Menu Clicked');
+                            trackEvent(NAVBAR('Hamburger Menu Clicked'));
                         }}
                         variant="neutral"
                         className="flex items-center p-4 hover:text-primary-500"

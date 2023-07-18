@@ -4,6 +4,7 @@ import i18next from 'i18next';
 import { Globe } from '../icons';
 import useOnOutsideClick from 'src/hooks/use-on-outside-click';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { LANGUAGE_TOGGLE } from 'src/utils/rudderstack/event-names';
 
 export const LanguageToggle = () => {
     const [displayOptions, setDisplayOptions] = useState(false);
@@ -26,7 +27,7 @@ export const LanguageToggle = () => {
                     ref={languageButtonRef}
                     onClick={() => {
                         setDisplayOptions(!displayOptions);
-                        trackEvent('LanguageToggle, Clicked');
+                        trackEvent(LANGUAGE_TOGGLE('Clicked'));
                     }}
                     data-testid="language-toggle-button"
                 >
@@ -40,7 +41,7 @@ export const LanguageToggle = () => {
                         <button
                             onClick={() => {
                                 toggleLanguage('zh-CN');
-                                trackEvent('LanguageToggle, switch to zh-CN');
+                                trackEvent(LANGUAGE_TOGGLE('switch to zh-CN'));
                             }}
                             id="zh-CN"
                             className="px-4 py-2 text-left text-sm hover:bg-gray-100 active:bg-gray-200"
@@ -50,7 +51,7 @@ export const LanguageToggle = () => {
                         <button
                             onClick={() => {
                                 toggleLanguage('en-US');
-                                trackEvent('LanguageToggle, switch to en-US');
+                                trackEvent(LANGUAGE_TOGGLE('switch to en-US'));
                             }}
                             id="en-US"
                             className="px-4 py-2 text-left text-sm hover:bg-gray-100 active:bg-gray-200"

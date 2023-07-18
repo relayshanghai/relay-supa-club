@@ -20,6 +20,7 @@ import type { AIEmailGeneratorPostBody } from 'src/utils/api/ai-generate/email';
 import type { AIEmailSubjectGeneratorPostBody } from 'src/utils/api/ai-generate/subject';
 import { emailErrors, subjectErrors } from 'src/errors/ai-email-generate';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { AI_EMAIL_GENERATOR } from 'src/utils/rudderstack/event-names';
 
 const MAX_CHARACTER_LENGTH = 600;
 
@@ -119,14 +120,14 @@ const AIImageGenerator = () => {
         try {
             if (type === 'email') {
                 await generateEmail();
-                trackEvent('AI Email Generator, regenerate email');
+                trackEvent(AI_EMAIL_GENERATOR('regenerate email'));
             } else if (type === 'subject') {
                 await generateSubject();
-                trackEvent('AI Email Generator, regenerate subject');
+                trackEvent(AI_EMAIL_GENERATOR('regenerate subject'));
             } else {
                 await generateEmail();
                 await generateSubject();
-                trackEvent('AI Email Generator, generate email and subject');
+                trackEvent(AI_EMAIL_GENERATOR('generate email and subject'));
             }
             toast.dismiss(loadingToast);
             toast.success(t('aiEmailGenerator.index.status.generatedSuccessfully') || '');
@@ -263,7 +264,7 @@ const AIImageGenerator = () => {
                                 <Button
                                     onClick={() => {
                                         copyToClipboard(generatedSubject);
-                                        trackEvent('AI Email Generator, copy subject line');
+                                        trackEvent(AI_EMAIL_GENERATOR('copy subject line'));
                                     }}
                                     disabled={loadingEmail || loadingSubject}
                                     className="flex items-center gap-2"
@@ -298,7 +299,7 @@ const AIImageGenerator = () => {
                                 <Button
                                     onClick={() => {
                                         copyToClipboard(generatedEmail);
-                                        trackEvent('AI Email Generator, copy email');
+                                        trackEvent(AI_EMAIL_GENERATOR('copy email'));
                                     }}
                                     className="flex items-center gap-2"
                                     disabled={loadingEmail || loadingSubject}

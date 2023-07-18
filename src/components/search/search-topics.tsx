@@ -6,6 +6,7 @@ import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import type { CreatorPlatform, CreatorSearchTag } from 'types';
+import { SEARCH_OPTIONS, SEARCH_TOPICS_INPUT } from 'src/utils/rudderstack/event-names';
 
 type SearchTopicsProps = {
     path: string;
@@ -13,13 +14,22 @@ type SearchTopicsProps = {
     topics: CreatorSearchTag[];
     platform: CreatorPlatform;
     onSetTopics: (topics: CreatorSearchTag[]) => void;
+    onChangeTopics: () => void;
 };
 
-export const SearchTopics = ({ onSetTopics, topics, platform, path, placeholder }: SearchTopicsProps) => {
+export const SearchTopics = ({
+    onSetTopics,
+    topics,
+    platform,
+    path,
+    placeholder,
+    onChangeTopics,
+}: SearchTopicsProps) => {
     const [suggestions, setSuggestions] = useState<CreatorSearchTag[]>([]);
     const [loading, setLoading] = useState(false);
     const inputRef = useRef<any>();
     const { trackEvent } = useRudderstack();
+    const ref = useRef<any>();
 
     useOnOutsideClick(inputRef, () => {
         setSuggestions([]);
@@ -30,8 +40,12 @@ export const SearchTopics = ({ onSetTopics, topics, platform, path, placeholder 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const setTopicSearch = useCallback(
         debounce(async (term: string) => {
-            const abortController = new AbortController();
-            const signal = abortController.signal;
+            if (ref.current) {
+                ref.current.abort();
+            }
+            const controller = new AbortController();
+            const signal = controller.signal;
+            ref.current = controller;
 
             try {
                 setLoading(true);
@@ -54,12 +68,7 @@ export const SearchTopics = ({ onSetTopics, topics, platform, path, placeholder 
                 clientLogger(error, 'error');
             }
             setLoading(false);
-
-            // Abort fetch request after 5 seconds
-            setTimeout(() => {
-                abortController.abort();
-            }, 5000);
-        }),
+        }, 100),
         [platform, path],
     );
 
@@ -94,15 +103,16 @@ export const SearchTopics = ({ onSetTopics, topics, platform, path, placeholder 
             suggestions={suggestions}
             onChange={(item) => {
                 setTopicSearch(item);
+                onChangeTopics();
             }}
             onRemoveTag={(item) => {
                 removeTag(item);
-                trackEvent('Search Topics Input, remove a tag', { tag: item });
+                trackEvent(SEARCH_TOPICS_INPUT('remove a tag'), { tag: item });
             }}
             onAddTag={(item) => {
                 addTag(item);
-                trackEvent('Search Topics Input, add a tag', { tag: item });
-                trackEvent('Search Options, search topics', { topic: item });
+                trackEvent(SEARCH_TOPICS_INPUT('add a tag'), { tag: item });
+                trackEvent(SEARCH_OPTIONS('search topics'), { topic: item });
             }}
             spinnerLoading={loading}
         />
