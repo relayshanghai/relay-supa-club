@@ -1,20 +1,20 @@
 import type { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { ApiHandler } from 'src/utils/api-handler';
-import type { SendEmailRequestBody, SendEmailResponseBody } from 'src/utils/api/email-engine';
+
 import { sendEmail } from 'src/utils/api/email-engine';
 import { serverLogger } from 'src/utils/logger-server';
 
 // text.id is the id to query for the text, not messageId
 
-export type SendEmailPostRequestBody = SendEmailRequestBody & {
+export type GetEmailPostRequestBody = any & {
     account: string;
 };
-export type SendEmailPostResponseBody = SendEmailResponseBody;
+export type GetEmailPostResponseBody = any;
 const postHandler: NextApiHandler = async (req: NextApiRequest, res: NextApiResponse) => {
-    const { account, ...body } = req.body as SendEmailPostRequestBody;
+    const { account, ...body } = req.body as GetEmailPostRequestBody;
     try {
-        const result: SendEmailPostResponseBody = await sendEmail(body, account);
+        const result: GetEmailPostResponseBody = await sendEmail(body, account);
         return res.status(httpCodes.OK).json(result);
     } catch (error: any) {
         serverLogger(error, 'error');

@@ -1,9 +1,10 @@
 import type { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { ApiHandler } from 'src/utils/api-handler';
-import type { SendEmailRequestBody, SendEmailResponseBody } from 'src/utils/api/email-engine';
+
 import { sendEmail } from 'src/utils/api/email-engine';
 import { serverLogger } from 'src/utils/logger-server';
+import type { SendEmailRequestBody, SendEmailResponseBody } from 'types/email-engine/account-account-submit-post';
 
 export type SendEmailPostRequestBody = SendEmailRequestBody & {
     account: string;

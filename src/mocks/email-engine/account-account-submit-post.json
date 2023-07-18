@@ -1,0 +1,29 @@
+{
+  "response": "Queued for delivery",
+  "messageId": "<a2184d08-a470-fec6-a493-fa211a3756e9@example.com>",
+  "queueId": "d41f0423195f271f",
+  "sendAt": "2021-07-08T07:06:34.336Z",
+  "reference": {
+    "message": "AAAAAQAACnA",
+    "documentStore": true,
+    "success": true,
+    "error": "Referenced message was not found"
+  },
+  "preview": "Q29udGVudC1UeXBlOiBtdWx0aX...",
+  "mailMerge": [
+    {
+      "success": true,
+      "to": {
+        "name": "Andris 2",
+        "address": "andris@ethereal.email"
+      },
+      "messageId": "<19b9c433-d428-f6d8-1d00-d666ebcadfc4@ekiri.ee>",
+      "queueId": "1812477338914c8372a",
+      "reference": {
+        "message": "AAAAAQAACnA",
+        "success": true
+      },
+      "sendAt": "2021-07-08T07:06:34.336Z"
+    }
+  ]
+}
