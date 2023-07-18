@@ -1,7 +1,6 @@
 import type { SendEmailRequestBody, SendEmailResponseBody } from 'types/email-engine/account-account-submit-post';
 import type { GenerateAuthLinkRequestBody, GenerateAuthLinkResponse } from 'types/email-engine/authentication-form';
 import { emailEngineApiFetch } from './fetcher';
-import { GMAIL_INBOX } from './prototype-mocks';
 import type { AccountAccountMessagesGet } from 'types/email-engine/account-account-messages-get';
 import type { AccountAccountTextTextGetResponse, TextType } from 'types/email-engine/account-account-text-text-get';
 import type {
@@ -41,16 +40,16 @@ export const getMailboxes = async (account: string) =>
 export const sendEmail = async (body: SendEmailRequestBody, account: string) =>
     await emailEngineApiFetch<SendEmailResponseBody>(sendEmailPath(account), { method: 'POST', body });
 
-export const getEmails = async (account: string, mailboxPath = GMAIL_INBOX) =>
+export const getEmails = async (account: string, mailboxPath: string) =>
     await emailEngineApiFetch<AccountAccountMessagesGet>(getEmailsPath(account, mailboxPath));
 
-export const getEmailText = async (account: string, messageId: string, textType: TextType = '*') =>
-    await emailEngineApiFetch<AccountAccountTextTextGetResponse>(getEmailTextPath(account, messageId, textType));
+export const getEmailText = async (account: string, emailId: string, textType: TextType = '*') =>
+    await emailEngineApiFetch<AccountAccountTextTextGetResponse>(getEmailTextPath(account, emailId, textType));
 
 export const searchMailbox = async (
     account: string,
     search: MailboxSearchOptions,
-    mailboxPath = GMAIL_INBOX,
+    mailboxPath: string,
     page = 0,
     pageSize = 20,
 ) => {

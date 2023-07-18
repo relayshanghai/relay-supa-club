@@ -1,17 +1,24 @@
-import type { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiHandler } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { ApiHandler } from 'src/utils/api-handler';
+import { searchMailbox } from 'src/utils/api/email-engine';
 
-import { sendEmail } from 'src/utils/api/email-engine';
+import { GMAIL_INBOX } from 'src/utils/api/email-engine/prototype-mocks';
+import type { AccountAccountSearchPost, MailboxSearchOptions } from 'types/email-engine/account-account-search-post';
 
 export type GetEmailPostRequestBody = any & {
     account: string;
+    search: MailboxSearchOptions;
+    // mailboxPath: string; // using mock for now
+    page?: number;
+    pageSize?: number;
 };
-export type GetEmailPostResponseBody = any;
-const postHandler: NextApiHandler = async (req: NextApiRequest, res: NextApiResponse) => {
-    const { account, ...body } = req.body as GetEmailPostRequestBody;
+export type GetEmailPostResponseBody = AccountAccountSearchPost;
 
-    const result: GetEmailPostResponseBody = await sendEmail(body, account);
+const postHandler: NextApiHandler = async (req, res) => {
+    const { account, search, page, pageSize } = req.body as GetEmailPostRequestBody;
+
+    const result: GetEmailPostResponseBody = await searchMailbox(account, search, GMAIL_INBOX, page, pageSize);
     return res.status(httpCodes.OK).json(result);
 };
 

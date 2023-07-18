@@ -1,19 +1,23 @@
-import type { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiHandler } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { ApiHandler } from 'src/utils/api-handler';
 
-import { sendEmail } from 'src/utils/api/email-engine';
+import { getEmails } from 'src/utils/api/email-engine';
+import { GMAIL_INBOX } from 'src/utils/api/email-engine/prototype-mocks';
+import type { AccountAccountMessagesGet } from 'types/email-engine/account-account-messages-get';
 
-// text.id is the id to query for the text, not messageId
-
-export type GetEmailPostRequestBody = any & {
+export type ListEmailsPostRequestBody = {
     account: string;
+    // mailboxPath: string; // using mock for now
+    page?: number;
+    pageSize?: number;
 };
-export type GetEmailPostResponseBody = any;
-const postHandler: NextApiHandler = async (req: NextApiRequest, res: NextApiResponse) => {
-    const { account, ...body } = req.body as GetEmailPostRequestBody;
+export type ListEmailsPostResponseBody = AccountAccountMessagesGet;
 
-    const result: GetEmailPostResponseBody = await sendEmail(body, account);
+const postHandler: NextApiHandler = async (req, res) => {
+    const { account } = req.body as ListEmailsPostRequestBody;
+
+    const result: ListEmailsPostResponseBody = await getEmails(account, GMAIL_INBOX);
     return res.status(httpCodes.OK).json(result);
 };
 
