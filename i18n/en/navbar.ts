@@ -6,6 +6,8 @@ const navbar = {
     logout: 'Log Out',
     performance: 'Performance',
     guide: 'Guide',
+    sequences: 'Sequences',
+    inbox: 'Inbox',
 };
 
 export default navbar;
