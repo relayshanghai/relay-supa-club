@@ -156,7 +156,11 @@ export async function middleware(req: NextRequest) {
 
     // don't allow users to use the email pages/apis before they are ready
     if (!featRecommended()) {
-        if (req.nextUrl.pathname.includes('email-engine')) {
+        if (
+            req.nextUrl.pathname.includes('email-engine') ||
+            req.nextUrl.pathname.includes('sequences') ||
+            req.nextUrl.pathname.includes('inbox')
+        ) {
             return NextResponse.rewrite('/404', { status: httpCodes.NOT_FOUND });
         }
     }
