@@ -1,9 +1,10 @@
 import type { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { ApiHandler } from 'src/utils/api-handler';
-import type { GenerateAuthLinkRequestBody } from 'src/utils/api/email-engine';
+
 import { generateAuthLink } from 'src/utils/api/email-engine';
 import { serverLogger } from 'src/utils/logger-server';
+import type { GenerateAuthLinkRequestBody } from 'types/email-engine/authentication-form';
 
 export type GetAuthLinkPostRequestBody = GenerateAuthLinkRequestBody;
 export type GetAuthLinkPostResponseBody = { url: string };
