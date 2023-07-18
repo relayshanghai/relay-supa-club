@@ -23,7 +23,8 @@
     "prepare": "husky install",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "supabase": "npx supabase start"
+    "supabase": "npx supabase start",
+    "start-email-server": "cd email-server && docker-compose up -d"
   },
   "dependencies": {
     "@analytics/storage-utils": "^0.4.2",

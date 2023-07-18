@@ -17,7 +17,7 @@ export const handleResError = async (res: Response) => {
     }
 };
 
-interface RequestInitWithBody extends RequestInit {
+export interface RequestInitWithBody extends RequestInit {
     body?: any;
 }
 
