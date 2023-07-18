@@ -6,7 +6,7 @@ import { searchMailbox } from 'src/utils/api/email-engine';
 import { GMAIL_INBOX } from 'src/utils/api/email-engine/prototype-mocks';
 import type { AccountAccountSearchPost, MailboxSearchOptions } from 'types/email-engine/account-account-search-post';
 
-export type GetEmailPostRequestBody = any & {
+export type GetEmailPostRequestBody = {
     account: string;
     search: MailboxSearchOptions;
     // mailboxPath: string; // using mock for now
