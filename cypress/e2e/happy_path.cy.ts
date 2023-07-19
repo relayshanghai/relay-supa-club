@@ -245,7 +245,7 @@ describe('Main pages happy paths', () => {
         cy.wait(5000); // wait for campaign to be added to db
         cy.getByTestId('campaign-cards-container').children().first().contains('My Campaign');
         cy.getByTestId('campaign-cards-container').children().first().next().contains('Beauty for All Skin Tones');
-        cy.wait(5000);
+        cy.wait(20000);
         cy.contains('My Campaign').click();
 
         // go to search and add an influencer to campaign
@@ -346,7 +346,7 @@ describe('Main pages happy paths', () => {
         // archive a campaign
         cy.contains('span', 'Archive').click();
         cy.contains('Campaigns').click();
-        cy.wait(5000);
+        cy.wait(20000);
         cy.contains('My Campaign').should('not.exist');
         cy.contains('Archived Campaigns').click();
         cy.contains('My Campaign');
