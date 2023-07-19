@@ -245,6 +245,8 @@ describe('Main pages happy paths', () => {
 
         // campaigns are listed in order of most recently added/edited.
         cy.wait(5000); // wait for campaign to be added to db
+        cy.task('log', 'check-children')
+        cy.getByTestId('campaign-cards-container').children().should('have.length', 2)
         cy.task('log', 'campaign-3')
         cy.getByTestId('campaign-cards-container', { timeout: 60000 }).children().first().contains('My Campaign');
         cy.getByTestId('campaign-cards-container').children().first().next().contains('Beauty for All Skin Tones');
