@@ -1,0 +1,105 @@
+{
+  "mailboxes": [
+    {
+      "path": "INBOX",
+      "delimiter": "/",
+      "listed": true,
+      "name": "INBOX",
+      "subscribed": true,
+      "specialUse": "\\Inbox",
+      "specialUseSource": "name",
+      "noInferiors": false,
+      "messages": 115,
+      "uidNext": 116
+    },
+    {
+      "path": "[Gmail]/Starred",
+      "delimiter": "/",
+      "listed": true,
+      "name": "Starred",
+      "subscribed": true,
+      "specialUse": "\\Flagged",
+      "specialUseSource": "extension",
+      "noInferiors": false,
+      "parentPath": "[Gmail]",
+      "messages": 0,
+      "uidNext": 1
+    },
+    {
+      "path": "[Gmail]/Sent Mail",
+      "delimiter": "/",
+      "listed": true,
+      "name": "Sent Mail",
+      "subscribed": true,
+      "specialUse": "\\Sent",
+      "specialUseSource": "extension",
+      "noInferiors": false,
+      "parentPath": "[Gmail]",
+      "messages": 3,
+      "uidNext": 4
+    },
+    {
+      "path": "[Gmail]/Drafts",
+      "delimiter": "/",
+      "listed": true,
+      "name": "Drafts",
+      "subscribed": true,
+      "specialUse": "\\Drafts",
+      "specialUseSource": "extension",
+      "noInferiors": false,
+      "parentPath": "[Gmail]",
+      "messages": 0,
+      "uidNext": 1
+    },
+    {
+      "path": "[Gmail]/All Mail",
+      "delimiter": "/",
+      "listed": true,
+      "name": "All Mail",
+      "subscribed": true,
+      "specialUse": "\\All",
+      "specialUseSource": "extension",
+      "noInferiors": false,
+      "parentPath": "[Gmail]",
+      "messages": 118,
+      "uidNext": 119
+    },
+    {
+      "path": "[Gmail]/Spam",
+      "delimiter": "/",
+      "listed": true,
+      "name": "Spam",
+      "subscribed": true,
+      "specialUse": "\\Junk",
+      "specialUseSource": "extension",
+      "noInferiors": false,
+      "parentPath": "[Gmail]",
+      "messages": 0,
+      "uidNext": 1
+    },
+    {
+      "path": "[Gmail]/Trash",
+      "delimiter": "/",
+      "listed": true,
+      "name": "Trash",
+      "subscribed": true,
+      "specialUse": "\\Trash",
+      "specialUseSource": "extension",
+      "noInferiors": false,
+      "parentPath": "[Gmail]",
+      "messages": 0,
+      "uidNext": 1
+    },
+    {
+      "path": "[Gmail]/Important",
+      "delimiter": "/",
+      "listed": true,
+      "name": "Important",
+      "subscribed": true,
+      "noInferiors": false,
+      "parentPath": "[Gmail]",
+      "messages": 2,
+      "uidNext": 3
+    }
+  ]
+}

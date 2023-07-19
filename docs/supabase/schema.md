@@ -17,3 +17,7 @@ This table stores information about the posts made by influencers on their socia
 # Posts Performance
 
 This table stores information about the performance of each post made by influencers. It typically includes metrics such as the number of likes, comments, shares, and impressions the post received. This table can also include more advanced metrics such as engagement rates, reach, and conversion rates. This table typically has a one-to-one relationship with the Influencer_Posts table since each post has only one performance record.
+
+# Influencer Contacts
+
+This table stores information about the contacts of influencers, such as their email, phone, whatsapp and other social profile links etc. It typically has a one-to-many relationship with the Influencers table since each influencer may have multiple contacts.
