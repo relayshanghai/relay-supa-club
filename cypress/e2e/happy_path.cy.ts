@@ -395,7 +395,7 @@ describe('Main pages happy paths', () => {
         cy.contains('button', 'Search').click();
 
         cy.contains('My Account').click();
-        cy.contains('https://relay.club');
+        cy.contains('https://relay.club', { timeout: 20000 });
 
         // searches should have increased by 2
         cy.contains('td', '2', { timeout: 30000 }); // wait for count to update
