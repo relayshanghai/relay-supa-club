@@ -1,0 +1,67 @@
+{
+  "total": 120,
+  "page": 0,
+  "pages": 24,
+  "messages": [
+    {
+      "id": "AAAAAgAACrI",
+      "uid": 12345,
+      "emailId": "1694937972638499881",
+      "threadId": "1694936993596975454",
+      "date": "2021-03-22T13:13:31.000Z",
+      "draft": false,
+      "unseen": true,
+      "flagged": true,
+      "size": 1040,
+      "subject": "What a wonderful message",
+      "from": {
+        "name": "From Me",
+        "address": "sender@example.com"
+      },
+      "replyTo": [
+        {
+          "address": "recipient@example.com"
+        }
+      ],
+      "to": [
+        {
+          "address": "recipient@example.com"
+        }
+      ],
+      "cc": [
+        {
+          "name": "Some Name",
+          "address": "user@example.com"
+        }
+      ],
+      "bcc": [
+        {
+          "name": "Some Name",
+          "address": "user@example.com"
+        }
+      ],
+      "messageId": "<test123@example.com>",
+      "inReplyTo": "<7JBUMt0WOn+_==MOkaCOQ@mail.gmail.com>",
+      "flags": ["\\Seen"],
+      "labels": ["\\Important"],
+      "attachments": [
+        {
+          "id": "AAAAAgAACrIyLjI",
+          "contentType": "image/gif",
+          "encodedSize": 48,
+          "embedded": true,
+          "inline": true,
+          "contentId": "<unique-image-id@localhost>"
+        }
+      ],
+      "text": {
+        "id": "AAAAAgAACqiTkaExkaEykA",
+        "encodedSize": {
+          "plain": 1013,
+          "html": 1013
+        }
+      },
+      "preview": "string"
+    }
+  ]
+}

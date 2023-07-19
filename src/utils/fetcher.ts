@@ -28,7 +28,7 @@ export interface RequestInitWithBody extends RequestInit {
  * @description fetcher for internal next API routes. Add a type to the generic to get types on your response.
  *  if it encounters an error, it will throw an Error with the error message from the response. Remember to add an `{error: ''}` to api responses.
  * options.body does not need to be stringified.
- * if options.method is POST or PUT, it will set the Content-Type header to application/json
+ * if options.method is POST or PUT, it will set the content-type header to application/json
  * @example `const data = await nextFetch<SomeType>('some/path')`
  */
 export const nextFetch = async <T = any>(path: string, options: RequestInitWithBody = {}) => {
@@ -36,8 +36,8 @@ export const nextFetch = async <T = any>(path: string, options: RequestInitWithB
     const method = options.method?.toUpperCase();
     if (method === 'POST' || method === 'PUT' || method === 'DELETE') {
         options.headers = {
-            'Content-Type': 'application/json',
-            // allow manual override of Content-Type by placing this after
+            'content-type': 'application/json',
+            // allow manual override of 'content-type' by placing this after
             ...options.headers,
         };
     }
