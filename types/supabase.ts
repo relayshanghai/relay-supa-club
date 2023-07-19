@@ -383,6 +383,34 @@ export interface Database {
           }
         ]
       }
+      influencer_contacts: {
+        Row: {
+          id: string
+          influencer_id: string | null
+          type: string | null
+          value: string | null
+        }
+        Insert: {
+          id: string
+          influencer_id?: string | null
+          type?: string | null
+          value?: string | null
+        }
+        Update: {
+          id?: string
+          influencer_id?: string | null
+          type?: string | null
+          value?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "influencer_contacts_influencer_id_fkey"
+            columns: ["influencer_id"]
+            referencedRelation: "influencers"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       influencer_posts: {
         Row: {
           campaign_id: string
