@@ -6,7 +6,14 @@ dotenv.config({ path: '.env.local' });
 export default defineConfig({
     video: false,
     e2e: {
-        setupNodeEvents(_on, config) {
+        setupNodeEvents(on, config) {
+            on('task', {
+                log(message: any) {
+                  // eslint-disable-next-line no-console
+                  console.log(message)
+                  return null
+                },
+            })
             // implement node event listeners here
             config.env = {
                 TEST_USER_EMAIL_COMPANY_OWNER: 'william.edward.douglas@blue-moonlight-stream.com',

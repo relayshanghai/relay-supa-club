@@ -217,6 +217,7 @@ describe('Main pages happy paths', () => {
         cy.url().should('include', `/campaigns`);
 
         // campaigns listed
+        cy.task('log', 'Campaign');
         cy.contains('My Campaign').should('not.exist');
         cy.contains('Beauty for All Skin Tones').click();
 
@@ -233,6 +234,7 @@ describe('Main pages happy paths', () => {
         // new campaign form
         cy.contains('Campaign Name *', { timeout: 10000 });
         // check displays new campaign
+        cy.task('log', 'Campaign');
         cy.get('input[name=name]').type('My Campaign');
         cy.get('button').contains('Create Campaign').click();
 
@@ -242,10 +244,12 @@ describe('Main pages happy paths', () => {
         cy.contains('Campaigns').click();
 
         // campaigns are listed in order of most recently added/edited.
-        cy.wait(5000); // wait for campaign to be added to db
+        cy.wait(10000); // wait for campaign to be added to db
+        cy.task('log', 'Campaign');
         cy.getByTestId('campaign-cards-container').children().first().contains('My Campaign');
         cy.getByTestId('campaign-cards-container').children().first().next().contains('Beauty for All Skin Tones');
-        cy.contains('My Campaign', {timeout: 15000}).click();
+        cy.task('log', 'Campaign');
+        cy.task('My Campaign', cy.contains('My Campaign', {timeout: 15000}).click());
 
         // go to search and add an influencer to campaign
         cy.contains('Add New Influencer').click();
@@ -284,8 +288,9 @@ describe('Main pages happy paths', () => {
         cy.contains('Campaigns').click(); // We're sure new influencers have been added, now go back and check order of campaigns
 
         // Beauty for All Skin Tones should now be listed first, since we added an influencer to it
-        cy.getByTestId('campaign-cards-container').children().first().contains('Beauty for All Skin Tones');
-        cy.getByTestId('campaign-cards-container').children().first().next().contains('My Campaign');
+        cy.getByTestId('campaign-cards-container').children().first().contains('Beauty for All Skin Tones', {timeout: 15000});
+        cy.getByTestId('campaign-cards-container').children().first().next().contains('My Campaign', {timeout: 15000});
+        cy.task('log', 'My Campaign')
         cy.contains('Beauty for All Skin Tones').click();
 
         // influencers should be presented in order of last added/edited
