@@ -1,4 +1,4 @@
-import type { CreatorPlatform, SocialMediaPlatform } from 'types/appTypes';
+import type { ContactEnum, CreatorPlatform } from 'types/appTypes';
 
 export interface CreatorReport {
     success: boolean;
@@ -252,7 +252,7 @@ interface Stat {
 }
 
 export interface CreatorReportContact {
-    type: SocialMediaPlatform;
+    type: ContactEnum;
     value: string;
     formatted_value: string;
 }

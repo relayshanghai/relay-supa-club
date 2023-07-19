@@ -29,3 +29,14 @@ export const mapIqdataProfileToInfluencerSocialProfile = (
 export const extractInfluencerReferenceId = (userProfile: CreatorReport['user_profile']) => {
     return `iqdata:${userProfile.user_id}`;
 };
+
+export const mapIqdataProfileToInfluencerContacts = (userProfile: CreatorReport['user_profile']) => {
+    // map user profile contacts to influencer contacts
+    const contacts = userProfile.contacts;
+    return contacts.map((contact: any) => {
+        return {
+            type: contact.type,
+            value: contact.value,
+        };
+    });
+};

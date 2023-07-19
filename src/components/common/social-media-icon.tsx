@@ -1,11 +1,11 @@
 import type { SVGProps } from 'react';
-import type { SocialMediaPlatform } from 'types';
+import type { ContactEnum, SocialMediaPlatform } from 'types';
 import { Email, Facebook, Instagram, Tiktok, Twitter, Wechat, Youtube, Link } from '../icons';
 
 export const SocialMediaIcon = ({
     platform,
     ...props
-}: SVGProps<SVGSVGElement> & { platform: SocialMediaPlatform }) => {
+}: SVGProps<SVGSVGElement> & { platform: SocialMediaPlatform | ContactEnum }) => {
     if (platform === 'youtube') return <Youtube {...props} />;
     if (platform === 'instagram') return <Instagram {...props} />;
     if (platform === 'tiktok') return <Tiktok {...props} />;

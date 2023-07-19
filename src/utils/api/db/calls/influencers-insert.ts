@@ -28,7 +28,6 @@ export const insertInfluencerSocialProfile =
     (db: SupabaseClient<Database>) =>
     async (data: InfluencerSocialProfileInsert): Promise<InfluencerSocialProfileRow> => {
         const socialProfile = await db.from('influencer_social_profiles').insert(data).select();
-
         if (socialProfile.error) {
             throw socialProfile.error;
         }
