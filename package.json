@@ -24,7 +24,6 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "supabase": "npx supabase start",
-    "lint:baseline": "npx eslint-baseline --update-baseline .",
     "start-email-server": "cd email-server && docker-compose up -d"
   },
   "dependencies": {
