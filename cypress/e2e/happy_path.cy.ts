@@ -301,7 +301,6 @@ describe('Main pages happy paths', () => {
         cy.get('input[id="influencer-address-input"]').type('123 Main St');
         cy.contains('button', 'Save').click();
         cy.contains('Beauty for All Skin Tones').click({ force: true }); // click out of modal
-        cy.reload();
         cy.get('tr').eq(1).contains('SET India');
         cy.get('tr').eq(2).contains('PewDiePie');
         cy.get('tr').eq(3).contains('@Greg Renko');
@@ -346,7 +345,6 @@ describe('Main pages happy paths', () => {
 
         // archive a campaign
         cy.contains('span', 'Archive').click();
-        cy.reload();
         cy.contains('Campaigns').click();
         cy.contains('My Campaign').should('not.exist');
         cy.contains('Archived Campaigns').click();
