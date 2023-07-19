@@ -245,8 +245,7 @@ describe('Main pages happy paths', () => {
         cy.wait(5000); // wait for campaign to be added to db
         cy.getByTestId('campaign-cards-container').children().first().contains('My Campaign');
         cy.getByTestId('campaign-cards-container').children().first().next().contains('Beauty for All Skin Tones');
-        cy.wait(20000);
-        cy.contains('My Campaign').click();
+        cy.contains('My Campaign', {timeout: 15000}).click();
 
         // go to search and add an influencer to campaign
         cy.contains('Add New Influencer').click();
@@ -336,7 +335,7 @@ describe('Main pages happy paths', () => {
         cy.getByTestId('submit-comment-button').click();
         cy.contains('William Edward', { timeout: 10000 }); // user name shows
         cy.contains('This influencer is great');
-        cy.contains('My Campaign').click({ force: true }); // hidden by modal
+        cy.contains('My Campaign', {timeout: 15000}).click({ force: true }); // hidden by modal
 
         // delete an influencer
         cy.getByTestId('delete-creator').click();
@@ -346,10 +345,9 @@ describe('Main pages happy paths', () => {
         // archive a campaign
         cy.contains('span', 'Archive').click();
         cy.contains('Campaigns').click();
-        cy.wait(20000);
         cy.contains('My Campaign').should('not.exist');
         cy.contains('Archived Campaigns').click();
-        cy.contains('My Campaign');
+        cy.contains('My Campaign').then((x) => cy.log('My Campaign Clicked', x));;
     });
 
     it('can record search usages, can manage clients as a company owner', () => {
