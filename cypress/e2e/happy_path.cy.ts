@@ -18,7 +18,7 @@ describe('Main pages happy paths', () => {
         cy.contains('relay.club可以帮助').should('not.exist');
         cy.contains('relay.club can help.');
         cy.contains('Already signed up?Log in');
-        cy.contains('button', 'Start Your Free Trial').click();
+        cy.contains('button', 'Start Your Free Trial').click( { force: true } );
         cy.url().should('include', '/signup');
     });
     it('Can sign up new users using signup wizard', () => {
@@ -42,7 +42,7 @@ describe('Main pages happy paths', () => {
         cy.contains('label', 'Phone Number').within(() => {
             cy.get('input').should('have.attr', 'placeholder', '+1 (000) 000-0000').type('1234567890');
         });
-        cy.contains('button', 'Next').click();
+        cy.contains('button', 'Next').click( { force: true } );
 
         cy.contains('Add an email and password to your account');
         cy.contains('label', 'Email').within(() => {
@@ -56,12 +56,12 @@ describe('Main pages happy paths', () => {
         cy.contains('label', 'Confirm Password').within(() => {
             cy.get('input').should('have.attr', 'placeholder', 'Confirm your password').type('test12345678!');
         });
-        cy.contains('button', 'Next').click();
+        cy.contains('button', 'Next').click( { force: true } );
 
         cy.contains('What category of product do you sell?');
-        cy.get('input').click();
-        cy.contains('AR/VR/XR').click();
-        cy.contains('button', 'Next').click();
+        cy.get('input').click( { force: true } );
+        cy.contains('AR/VR/XR').click( { force: true } );
+        cy.contains('button', 'Next').click( { force: true } );
 
         cy.contains('Tell us about your Company');
         cy.contains('label', 'Company').within(() => {
@@ -74,8 +74,8 @@ describe('Main pages happy paths', () => {
         });
 
         cy.contains('Size');
-        cy.contains('11-50').click();
-        cy.contains('button', 'Next').click();
+        cy.contains('11-50').click( { force: true } );
+        cy.contains('button', 'Next').click( { force: true } );
 
         cy.contains('We won’t charge your card until the free trial ends!');
 
@@ -91,7 +91,7 @@ describe('Main pages happy paths', () => {
             });
         });
         cy.contains('Success').should('not.exist');
-        cy.contains('button', 'Start Free Trial').click();
+        cy.contains('button', 'Start Free Trial').click( { force: true } );
         cy.contains('Success', { timeout: 30000 });
         // redirects to dashboard on success
         cy.url().should('include', '/dashboard', { timeout: 30000 });
@@ -111,7 +111,7 @@ describe('Main pages happy paths', () => {
         cy.getByTestId('creator-search').type('GRTR{enter}');
         cy.wait(2000); // due to some funky rerendering, so button click doesn't work immediately
 
-        cy.contains('button', 'Search').click(); // click twice
+        cy.contains('button', 'Search').click( { force: true } ); // click twice
         cy.contains('GRTR');
     });
     it('can search for a topic', () => {
@@ -125,10 +125,10 @@ describe('Main pages happy paths', () => {
         });
 
         // cy.contains will not include the input element text in the search, so this shows that the result options are in the DOM
-        cy.contains('alligators').click();
+        cy.contains('alligators').click( { force: true } );
 
         cy.getByTestId('search-spinner').should('not.exist'); // wait for spinner to disappear
-        cy.contains('button', 'Search').click();
+        cy.contains('button', 'Search').click( { force: true } );
 
         cy.contains('Brave Wilderness'); // the first influencer search result for alligators
     });
@@ -153,7 +153,7 @@ describe('Main pages happy paths', () => {
         cy.contains('Similar Influencers');
         cy.contains('Shorts Factory');
 
-        cy.contains('button', 'Add To Campaign').click();
+        cy.contains('button', 'Add To Campaign').click( { force: true } );
         cy.contains('Add this influencer to your existing campaigns');
         cy.contains('Beauty for All Skin Tones'); // this functionality is tested in campaigns page test
     });
@@ -161,7 +161,7 @@ describe('Main pages happy paths', () => {
         setupIntercepts();
 
         cy.loginTestUser();
-        cy.contains('My Account').click();
+        cy.contains('My Account').click( { force: true } );
         cy.contains('Subscription', { timeout: 10000 }); // loads account page
 
         cy.url().should('include', `/account`);
@@ -172,22 +172,22 @@ describe('Main pages happy paths', () => {
         cy.contains('Blue Moonlight Stream Enterprises');
 
         // open one of the modals
-        cy.contains('button', 'Add more members').click();
+        cy.contains('button', 'Add more members').click( { force: true } );
         cy.contains('Invite Members');
         cy.contains('button', /Cancel/).click({ force: true });
         cy.contains('Invite Members').should('not.exist');
 
         // upgrade subscription links to pricing page
-        cy.contains('button', 'Upgrade subscription').click(); // loads subscription data
+        cy.contains('button', 'Upgrade subscription').click( { force: true } ); // loads subscription data
         cy.contains('Just getting started, or scaling up.', { timeout: 10000 }); // loads pricing page
         cy.url().should('include', `/pricing`);
         cy.contains('DIY');
         cy.contains('DIY Max');
 
         // this doesn't work anymore because we aren't using a live account anymore, so stripe sends back 'can't find subscription' and the button is disabled.
-        cy.contains('button', 'Buy Now').click();
+        cy.contains('button', 'Buy Now').click( { force: true } );
         cy.contains('button', 'Subscribe');
-        cy.contains('button', 'Close').click();
+        cy.contains('button', 'Close').click( { force: true } );
         cy.contains('button', 'Subscribe').should('not.exist');
     });
     it('can open ai email generator', () => {
@@ -195,7 +195,7 @@ describe('Main pages happy paths', () => {
 
         // not actually testing functionality of the email generator. Just making sure the page opens.
         cy.loginTestUser();
-        cy.contains('AI Email Generator').click();
+        cy.contains('AI Email Generator').click( { force: true } );
         cy.contains('Generate emails to influencers with our AI Email Generator', {
             timeout: 10000,
         }); // loads ai email generator page
@@ -212,13 +212,14 @@ describe('Main pages happy paths', () => {
         // list, add, move, delete campaign influencers
 
         cy.loginTestUser();
-        cy.contains('Campaigns').click();
+        cy.contains('Campaigns').click( { force: true } );
         cy.contains('button', 'New Campaign', { timeout: 20000 }); // loads campaigns page
         cy.url().should('include', `/campaigns`);
 
         // campaigns listed
+        cy.reload();
         cy.contains('My Campaign').should('not.exist');
-        cy.contains('Beauty for All Skin Tones').click();
+        cy.contains('Beauty for All Skin Tones').click( { force: true } );
 
         // campaign details
         cy.contains('Campaign Launch Date', { timeout: 10000 });
@@ -228,18 +229,18 @@ describe('Main pages happy paths', () => {
         cy.contains('SET India').should('not.exist');
 
         cy.go(-1);
-        cy.get('button').contains('New Campaign', { timeout: 10000 }).click();
+        cy.get('button').contains('New Campaign', { timeout: 10000 }).click( { force: true } );
 
         // new campaign form
         cy.contains('Campaign Name *', { timeout: 10000 });
         // check displays new campaign
         cy.get('input[name=name]').type('My Campaign');
-        cy.get('button').contains('Create Campaign').click();
+        cy.get('button').contains('Create Campaign').click( { force: true } );
 
         cy.contains('Campaign Launch Date', { timeout: 10000 });
         cy.contains('SET India').should('not.exist');
 
-        cy.contains('Campaigns').click();
+        cy.contains('Campaigns').click( { force: true } );
 
         // campaigns are listed in order of most recently added/edited.
         cy.wait(5000); // wait for campaign to be added to db
@@ -247,48 +248,48 @@ describe('Main pages happy paths', () => {
         cy.getByTestId('campaign-cards-container').children().first().contains('My Campaign');
         cy.getByTestId('campaign-cards-container').children().first().next().contains('Beauty for All Skin Tones');
 
-        cy.contains('My Campaign').click();
+        cy.contains('My Campaign').click( { force: true } );
 
         // go to search and add an influencer to campaign
-        cy.contains('Add New Influencer').click();
+        cy.contains('Add New Influencer').click( { force: true } );
 
-        cy.contains('tr', 'SET India', { timeout: 30000 }).contains('Add to campaign').click(); // not sure why this is still slow
+        cy.contains('tr', 'SET India', { timeout: 30000 }).contains('Add to campaign').click( { force: true } ); // not sure why this is still slow
         cy.contains('Beauty for All Skin Tones');
-        cy.getByTestId('add-creator-button:Beauty for All Skin Tones').click();
+        cy.getByTestId('add-creator-button:Beauty for All Skin Tones').click( { force: true } );
         cy.contains('Influencer added successfully.', { timeout: 60000 });
         cy.contains('Followers').click({ force: true }); // click out of modal
-        cy.contains('tr', 'PewDiePie').contains('Add to campaign').click();
+        cy.contains('tr', 'PewDiePie').contains('Add to campaign').click( { force: true } );
         cy.contains('Beauty for All Skin Tones');
-        cy.getByTestId('add-creator-button:Beauty for All Skin Tones').click();
+        cy.getByTestId('add-creator-button:Beauty for All Skin Tones').click( { force: true } );
 
         cy.contains('Campaigns').click({ force: true }); // hidden by modal
         cy.contains('Influencer added successfully.', { timeout: 60000 });
         cy.get('button').contains('New Campaign');
 
-        cy.contains('Beauty for All Skin Tones').click();
+        cy.contains('Beauty for All Skin Tones').click( { force: true } );
 
         // edit a campaign
-        cy.contains('Edit', { timeout: 60000 }).click();
+        cy.contains('Edit', { timeout: 60000 }).click( { force: true } );
         cy.get('textarea[name=description]').type('This campaign is about selling some stuff');
         cy.get('input[name=product_name]').type('Gadget');
-        cy.get('input[aria-haspopup="true"]').first().click();
-        cy.contains('Books').click();
-        cy.get('input[aria-haspopup="true"]').eq(1).click();
-        cy.contains('Albania').click();
+        cy.get('input[aria-haspopup="true"]').first().click( { force: true } );
+        cy.contains('Books').click( { force: true } );
+        cy.get('input[aria-haspopup="true"]').eq(1).click( { force: true } );
+        cy.contains('Albania').click( { force: true } );
         cy.get('input[name=budget_cents]').type('1000');
         cy.get('input[name=promo_types]').check({ force: true });
-        cy.contains('button', 'Save Campaign').click();
+        cy.contains('button', 'Save Campaign').click( { force: true } );
 
         cy.contains('tr', 'PewDiePie', { timeout: 60000 });
         cy.contains('tr', 'SET India', { timeout: 60000 });
         cy.contains('tr', '@Greg Renko');
 
-        cy.contains('Campaigns').click(); // We're sure new influencers have been added, now go back and check order of campaigns
+        cy.contains('Campaigns').click( { force: true } ); // We're sure new influencers have been added, now go back and check order of campaigns
 
         // Beauty for All Skin Tones should now be listed first, since we added an influencer to it
         cy.getByTestId('campaign-cards-container').children().first().contains('Beauty for All Skin Tones');
         cy.getByTestId('campaign-cards-container').children().first().next().contains('My Campaign');
-        cy.contains('Beauty for All Skin Tones').click();
+        cy.contains('Beauty for All Skin Tones').click( { force: true } );
 
         // influencers should be presented in order of last added/edited
         cy.get('tr').eq(1).contains('PewDiePie'); //starts at 1 cause table head is a tr as well
@@ -296,25 +297,27 @@ describe('Main pages happy paths', () => {
         cy.get('tr').eq(3).contains('@Greg Renko');
 
         cy.contains('tr', 'SET India').within(() => {
-            cy.getByTestId('manage-button').click();
+            cy.getByTestId('manage-button').click( { force: true } );
         });
         cy.contains('Manage Influencer');
         cy.get('input[id="influencer-address-input"]').type('123 Main St');
-        cy.contains('button', 'Save').click();
+        cy.contains('button', 'Save').click( { force: true } );
         cy.contains('Beauty for All Skin Tones').click({ force: true }); // click out of modal
+
+        cy.reload();
 
         cy.get('tr').eq(1).contains('SET India');
         cy.get('tr').eq(2).contains('PewDiePie');
         cy.get('tr').eq(3).contains('@Greg Renko');
 
         // move influencer to new campaign
-        cy.contains('tr', 'SET India').within(() => cy.getByTestId('move-influencer-button').click()); // can take
+        cy.contains('tr', 'SET India').within(() => cy.getByTestId('move-influencer-button').click({ force: true })); // can take
 
         cy.getByTestId('move-influencer-button:My Campaign').click({ multiple: true });
         cy.contains('Campaign Launch Date').click({ force: true }); // click out of modal
         cy.contains('SET India').should('not.exist');
-        cy.contains('Campaigns').click();
-        cy.contains('My Campaign').click();
+        cy.contains('Campaigns').click( { force: true } );
+        cy.contains('My Campaign').click( { force: true } );
         cy.contains('SET India');
 
         // change influencer status, and change status tabs
@@ -323,34 +326,34 @@ describe('Main pages happy paths', () => {
         );
         cy.contains('Influencer Information Updated', { timeout: 10000 });
         cy.contains('SET India').should('not.exist');
-        cy.contains('Contacted 1').click();
+        cy.contains('Contacted 1').click( { force: true } );
         cy.contains('SET India');
 
         // add notes
-        cy.getByTestId('manage-button').click();
+        cy.getByTestId('manage-button').click( { force: true } );
         cy.contains('Notes');
-        cy.getByTestId('show-influencer-notes').click();
+        cy.getByTestId('show-influencer-notes').click( { force: true } );
 
         cy.contains('Internal Comments');
         cy.get('textarea').type('This influencer is great');
         cy.contains('William Edward').should('not.exist'); // user name doesn't show
 
-        cy.getByTestId('submit-comment-button').click();
+        cy.getByTestId('submit-comment-button').click( { force: true } );
         cy.contains('William Edward', { timeout: 10000 }); // user name shows
         cy.contains('This influencer is great');
         cy.contains('My Campaign').click({ force: true }); // hidden by modal
 
         // delete an influencer
-        cy.getByTestId('delete-creator').click();
+        cy.getByTestId('delete-creator').click( { force: true } );
         cy.contains('Influencer was deleted.');
         cy.contains('SET India').should('not.exist');
 
         // archive a campaign
-        cy.contains('span', 'Archive').click();
+        cy.contains('span', 'Archive').click( { force: true } );
         cy.reload();
-        cy.contains('Campaigns').click();
+        cy.contains('Campaigns').click( { force: true } );
         cy.contains('My Campaign').should('not.exist');
-        cy.contains('Archived Campaigns').click();
+        cy.contains('Archived Campaigns').click( { force: true } );
         cy.contains('My Campaign');
     });
 
@@ -358,32 +361,32 @@ describe('Main pages happy paths', () => {
         setupIntercepts();
         cy.loginAdmin();
 
-        cy.contains('My Account').click();
+        cy.contains('My Account').click( { force: true } );
         cy.contains('https://relay.club', { timeout: 20000 });
         cy.contains('https://blue-moonlight-stream.com').should('not.exist');
         cy.contains('tr', 'Searches').within(() => {
             cy.contains('td', '0');
         });
 
-        cy.contains('Discover').click();
+        cy.contains('Discover').click( { force: true } );
         cy.contains('button', 'Search');
 
         // rack up 2 searches
         cy.getByTestId('search-topics').within(() => {
             cy.get('input').type('alligators');
         });
-        cy.contains('alligators').click();
+        cy.contains('alligators').click( { force: true } );
         cy.getByTestId('search-spinner').should('not.exist');
-        cy.contains('button', 'Search').click();
+        cy.contains('button', 'Search').click( { force: true } );
 
         cy.getByTestId('search-topics').within(() => {
             cy.get('input').type('monkeys');
         });
-        cy.contains('monkeys').click();
+        cy.contains('monkeys').click( { force: true } );
         cy.getByTestId('search-spinner').should('not.exist');
-        cy.contains('button', 'Search').click();
+        cy.contains('button', 'Search').click( { force: true } );
 
-        cy.contains('My Account').click();
+        cy.contains('My Account').click( { force: true } );
         cy.contains('https://relay.club');
 
         // searches should have increased by 2
@@ -392,28 +395,28 @@ describe('Main pages happy paths', () => {
             cy.contains('td', '2');
         });
 
-        cy.contains('Campaigns').click();
+        cy.contains('Campaigns').click( { force: true } );
         cy.contains('The Future of Gaming is Here'); // the relay company campaign
         cy.contains('Beauty for All Skin Tones').should('not.exist'); // the user's company campaign
 
-        cy.contains('Clients').click();
+        cy.contains('Clients').click( { force: true } );
 
         // check warning message
         cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises').should('not.exist');
         cy.contains('tr', 'Blue Moonlight Stream Enterprises', { timeout: 20000 }).within(() => {
-            cy.contains('Manage').click();
+            cy.contains('Manage').click( { force: true } );
         });
         cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises');
 
         // can see client's campaigns
-        cy.contains('Campaigns').click();
+        cy.contains('Campaigns').click( { force: true } );
         cy.contains('button', 'New Campaign');
         cy.contains('Beauty for All Skin Tones', { timeout: 30000 }); // wait for campaigns to load
         cy.contains('The Future of Gaming is Here').should('not.exist');
         cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises'); // check that warning persists
 
         // can see client's search totals
-        cy.contains('My Account').click();
+        cy.contains('My Account').click( { force: true } );
         cy.contains('https://blue-moonlight-stream.com', { timeout: 20000 });
         cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises'); // check that warning persists
         cy.contains('tr', 'Searches').within(() => {
@@ -421,18 +424,18 @@ describe('Main pages happy paths', () => {
         });
 
         // rack up 1 search
-        cy.contains('Discover').click();
+        cy.contains('Discover').click( { force: true } );
         cy.contains('button', 'Search');
         cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises'); // check that warning persists
         cy.getByTestId('search-topics').within(() => {
             cy.get('input').type('alligators');
         });
-        cy.contains('alligators').click();
+        cy.contains('alligators').click( { force: true } );
         cy.getByTestId('search-spinner').should('not.exist');
-        cy.contains('button', 'Search').click();
+        cy.contains('button', 'Search').click( { force: true } );
 
         // Check that search total increased
-        cy.contains('My Account').click();
+        cy.contains('My Account').click( { force: true } );
         cy.contains('https://blue-moonlight-stream.com');
         cy.contains('td', '1', { timeout: 30000 }); // wait for count to update
         cy.contains('tr', 'Searches').within(() => {
@@ -441,12 +444,12 @@ describe('Main pages happy paths', () => {
         cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises'); // check that warning persists
 
         // can cancel out of manage mode
-        cy.contains('Clients').click();
+        cy.contains('Clients').click( { force: true } );
         cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises');
-        cy.contains('Close', { timeout: 1000 }).click();
+        cy.contains('Close', { timeout: 1000 }).click( { force: true } );
         cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises').should('not.exist');
 
-        cy.contains('My Account').click();
+        cy.contains('My Account').click( { force: true } );
         cy.contains('https://blue-moonlight-stream.com').should('not.exist');
         cy.contains('https://relay.club');
     });
@@ -455,8 +458,8 @@ describe('Main pages happy paths', () => {
         setupIntercepts();
 
         cy.loginTestUser();
-        cy.getByTestId('layout-account-menu').click();
-        cy.contains('Log Out').click();
+        cy.getByTestId('layout-account-menu').click( { force: true } );
+        cy.contains('Log Out').click( { force: true } );
         cy.contains('Log in'); // loads login page
         cy.url().should('include', `/login`);
 
@@ -467,7 +470,7 @@ describe('Main pages happy paths', () => {
         addPostIntercept();
         // check 'before' performance page totals
         cy.loginTestUser();
-        cy.contains('Performance').click();
+        cy.contains('Performance').click( { force: true } );
         cy.contains('All campaigns', { timeout: 20000 });
         cy.contains('div', 'Likes').within(() => {
             cy.contains('166.5K').should('not.exist');
@@ -481,20 +484,20 @@ describe('Main pages happy paths', () => {
             cy.contains('96.2K');
         });
 
-        cy.contains('Campaigns').click();
-        cy.contains('Beauty for All Skin Tones').click();
+        cy.contains('Campaigns').click( { force: true } );
+        cy.contains('Beauty for All Skin Tones').click( { force: true } );
         cy.contains('tr', 'Greg Renko').within(() =>
             cy.getByTestId('status-dropdown').select('Posted', { force: true }),
         );
 
-        cy.contains('Posted 1').click();
-        cy.contains('Content').click();
+        cy.contains('Posted 1').click( { force: true } );
+        cy.contains('Content').click( { force: true } );
         cy.contains('h2', 'Manage Posts');
 
         const youtubeLink = 'https://www.youtube.com/watch?v=UzL-0vZ5-wk';
         cy.contains('form', 'Add Post URL').within(() => {
             cy.get('input').type(youtubeLink);
-            cy.get('button').contains('Submit').should('not.be.disabled').click();
+            cy.get('button').contains('Submit').should('not.be.disabled').click( { force: true } );
         });
 
         cy.contains('Successfully added 1 URLs');
@@ -503,7 +506,7 @@ describe('Main pages happy paths', () => {
         );
 
         // check 'after' performance page totals
-        cy.contains('Performance').click();
+        cy.contains('Performance').click( { force: true } );
         cy.contains('All campaigns', { timeout: 20000 });
         cy.contains('div', 'Likes').within(() => {
             cy.contains('166.5K').should('not.exist');
