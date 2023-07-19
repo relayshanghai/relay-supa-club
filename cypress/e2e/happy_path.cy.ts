@@ -249,7 +249,7 @@ describe('Main pages happy paths', () => {
         cy.getByTestId('campaign-cards-container').children().first().contains('My Campaign');
         cy.getByTestId('campaign-cards-container').children().first().next().contains('Beauty for All Skin Tones');
         cy.task('log', 'Campaign');
-        cy.task('My Campaign', cy.contains('My Campaign', {timeout: 15000}).click());
+        cy.contains('My Campaign', {timeout: 15000}).click();
 
         // go to search and add an influencer to campaign
         cy.contains('Add New Influencer').click();
