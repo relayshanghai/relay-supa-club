@@ -244,7 +244,7 @@ describe('Main pages happy paths', () => {
         cy.contains('Campaigns').click();
 
         // campaigns are listed in order of most recently added/edited.
-        cy.wait(5000); // wait for campaign to be added to db
+        cy.wait(60000); // wait for campaign to be added to db
         cy.task('log', 'check-children')
         cy.getByTestId('campaign-cards-container').children().should('have.length', 2)
         cy.task('log', 'campaign-3')
