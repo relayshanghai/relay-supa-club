@@ -59,7 +59,6 @@ export const InboxPage = () => {
                     body,
                 },
             );
-            setSelectedMessages(inboxThreadMessages); // set what we've got so far to make more responsive UI
             const { messages: sentMessages } = await nextFetch<EmailSearchPostResponseBody>('email-engine/search', {
                 method: 'POST',
                 body: {
