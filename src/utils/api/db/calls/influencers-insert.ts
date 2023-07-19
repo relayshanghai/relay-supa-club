@@ -35,14 +35,12 @@ export const insertInfluencerSocialProfile =
         return socialProfile.data[0];
     };
 
-export const insertInfluencerContact =
+export const insertInfluencerContacts =
     (db: SupabaseClient<Database>) =>
     async (data: InfluencerContactInsert): Promise<InfluencerContactRow> => {
         const contact = await db.from('influencer_contacts').insert(data).select();
-
         if (contact.error) {
             throw contact.error;
         }
-
         return contact.data[0];
     };

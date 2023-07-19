@@ -1,5 +1,5 @@
 import type { CreatorReport } from 'types';
-import type { InfluencerInsert, InfluencerSocialProfileInsert } from '../db';
+import type { InfluencerContactRow, InfluencerInsert, InfluencerSocialProfileInsert } from '../db';
 
 export const mapIqdataProfileToInfluencer = (
     userProfile: CreatorReport['user_profile'],
@@ -30,10 +30,8 @@ export const extractInfluencerReferenceId = (userProfile: CreatorReport['user_pr
     return `iqdata:${userProfile.user_id}`;
 };
 
-export const mapIqdataProfileToInfluencerContacts = (userProfile: CreatorReport['user_profile']) => {
-    // map user profile contacts to influencer contacts
-    const contacts = userProfile.contacts;
-    return contacts.map((contact: any) => {
+export const mapIqdataProfileToInfluencerContacts = (contacts: InfluencerContactRow[]) => {
+    contacts.map((contact) => {
         return {
             type: contact.type,
             value: contact.value,

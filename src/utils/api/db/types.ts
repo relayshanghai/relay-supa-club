@@ -132,9 +132,6 @@ export type InfluencerSocialProfilesTable = Database['public']['Tables']['influe
     };
 };
 
-export type InfluencerContactInsert = Database['public']['Tables']['influencer_contacts']['Insert'];
-export type InfluencerContactRow = Database['public']['Tables']['influencer_contacts']['Row'];
-
 export type InfluencerContactsTable = Database['public']['Tables']['influencer_contacts'] & {
     Row: Database['public']['Tables']['influencer_contacts']['Row'] & {
         type: ContactEnum;
@@ -143,3 +140,6 @@ export type InfluencerContactsTable = Database['public']['Tables']['influencer_c
         type: ContactEnum;
     };
 };
+
+export type InfluencerContactRow = InfluencerContactsTable['Row'];
+export type InfluencerContactInsert = InfluencerContactsTable['Insert'];

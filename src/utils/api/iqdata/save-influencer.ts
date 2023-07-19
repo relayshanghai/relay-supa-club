@@ -1,8 +1,8 @@
-import type { CreatorReport, DatabaseWithCustomTypes } from 'types';
+import type { CreatorReport, CreatorReportContact, DatabaseWithCustomTypes } from 'types';
 import {
     insertInfluencer as insertInfluencerToDb,
     insertInfluencerSocialProfile as insertInfluencerSocialProfileToDb,
-    insertInfluencerContact as insertInfluencerContactToDb,
+    insertInfluencerContacts as insertInfluencerContactToDb,
 } from '../db/calls/influencers-insert';
 import {
     mapIqdataProfileToInfluencer,
@@ -19,10 +19,9 @@ const addInfluencerToSocialProfile = (influencer: InfluencerRow) => {
     };
 };
 
-// TODO: this is tempt function, remove or combine it with the one above
 const addInfluencerToContact = (influencer: InfluencerRow) => {
-    return (user_profile: CreatorReport['user_profile']) => {
-        return { ...user_profile, influencer_id: influencer.id };
+    return (contact: InfluencerContactRow) => {
+        return { ...contact, influencer_id: influencer.id };
     };
 };
 
@@ -42,7 +41,7 @@ const insertSocialProfileFromIqdataProfile =
     };
 
 const insertInfluencerContactFromIqdataProfile =
-    (db: SupabaseClient<DatabaseWithCustomTypes>) => (user_profile: CreatorReport['user_profile']) => {
+    (db: SupabaseClient<DatabaseWithCustomTypes>) => (influencerContacts: CreatorReportContact) => {
         return async (getInfluencer: Promise<InfluencerRow>): Promise<[InfluencerRow, InfluencerContactRow]> => {
             const influencer = await getInfluencer;
 
@@ -51,24 +50,26 @@ const insertInfluencerContactFromIqdataProfile =
                 addInfluencerToContact(influencer),
                 mapIqdataProfileToInfluencerContacts,
             );
-            const contact = await insertInfluencerContactToDbFromIqdataProfile(user_profile);
+            const contacts = await insertInfluencerContactToDbFromIqdataProfile(influencerContacts);
 
-            return [influencer, contact];
+            return [influencer, contacts];
         };
     };
 
 export const saveInfluencer =
     (db: SupabaseClient<DatabaseWithCustomTypes>) =>
-    async (data: CreatorReport): Promise<[InfluencerRow, InfluencerSocialProfileRow] | [null, null]> => {
+    async (
+        data: CreatorReport,
+    ): Promise<[InfluencerRow, InfluencerSocialProfileRow, InfluencerContactRow] | [null, null, null]> => {
         const insertInfluencerFromIqdataProfile = compose(
             insertSocialProfileFromIqdataProfile(db)(data.user_profile),
-            insertInfluencerContactFromIqdataProfile(db)(data.user_profile),
+            insertInfluencerContactFromIqdataProfile(db)(data.user_profile.contacts),
             insertInfluencerToDb(db),
             mapIqdataProfileToInfluencer,
         );
-        const [influencer, socialProfile] = await insertInfluencerFromIqdataProfile(data.user_profile);
+        const [influencer, socialProfile, contacts] = await insertInfluencerFromIqdataProfile(data.user_profile);
 
-        if (influencer === null) return [null, null];
+        if (influencer === null) return [null, null, null];
 
-        return [influencer, socialProfile];
+        return [influencer, socialProfile, contacts];
     };
