@@ -237,6 +237,7 @@ describe('Main pages happy paths', () => {
         cy.task('log', 'campaign-2')
         cy.get('input[name=name]').type('My Campaign');
         cy.get('button').contains('Create Campaign').click();
+        cy.wait(30000); // wait for campaign to be added to db
 
         cy.contains('Campaign Launch Date', { timeout: 10000 });
         cy.contains('SET India').should('not.exist');
@@ -244,7 +245,7 @@ describe('Main pages happy paths', () => {
         cy.contains('Campaigns').click();
 
         // campaigns are listed in order of most recently added/edited.
-        cy.wait(60000); // wait for campaign to be added to db
+        cy.wait(5000); // wait for campaign to be added to db
         cy.task('log', 'check-children')
         cy.getByTestId('campaign-cards-container').children().should('have.length', 2)
         cy.task('log', 'campaign-3')
