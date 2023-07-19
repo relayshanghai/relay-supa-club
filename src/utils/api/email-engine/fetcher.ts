@@ -21,8 +21,8 @@ export const emailEngineApiFetch = async <T = any>(path: string, options: Reques
     if (method === 'POST' || method === 'PUT' || method === 'DELETE') {
         options.headers = {
             accept: 'application/json',
-            'Content-Type': 'application/json',
-            // allow manual override of Content-Type by placing this after
+            'content-type': 'application/json',
+            // allow manual override of content-type by placing this after
             ...headers,
             ...options.headers,
         };
