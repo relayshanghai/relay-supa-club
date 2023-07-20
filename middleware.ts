@@ -139,11 +139,16 @@ const allowPricingCors = (req: NextRequest, res: NextResponse) => {
     return res;
 };
 
-const allowWebhookCors = (req: NextRequest, res: NextResponse) => {
+const emailWebhookAllowList = ['email.relay.club'];
+
+const allowEmailWebhookCors = (req: NextRequest, res: NextResponse) => {
     const origin = req.headers.get('origin');
     if (origin && origin.includes('localhost')) {
         res.headers.set('Access-Control-Allow-Origin', '*');
+    } else if (origin && emailWebhookAllowList.some((allowed) => origin.includes(allowed))) {
+        res.headers.set('Access-Control-Allow-Origin', origin);
     }
+
     res.headers.set('Access-Control-Allow-Methods', 'POST');
     return res;
 };
@@ -178,7 +183,7 @@ export async function middleware(req: NextRequest) {
     if (req.nextUrl.pathname === '/api/slack/create') return res;
     if (req.nextUrl.pathname === '/api/subscriptions/webhook') return res;
     if (req.nextUrl.pathname === '/api/email-engine/webhook' && process.env.NODE_ENV === 'development') {
-        return allowWebhookCors(req, res);
+        return allowEmailWebhookCors(req, res);
     }
 
     // Create authenticated Supabase Client.
