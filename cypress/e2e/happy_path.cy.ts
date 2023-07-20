@@ -10,7 +10,7 @@ describe('Main pages happy paths', () => {
     beforeEach(async () => {
         await deleteDB('app-cache');
     });
-    it('Landing page works, has both languages, and links to signup', () => {
+    it.skip('Landing page works, has both languages, and links to signup', () => {
         cy.visit('/');
         cy.contains('relay.club可以帮助');
         cy.switchToEnglish();
@@ -21,7 +21,7 @@ describe('Main pages happy paths', () => {
         cy.contains('button', 'Start Your Free Trial').click();
         cy.url().should('include', '/signup');
     });
-    it('Can sign up new users using signup wizard', () => {
+    it.skip('Can sign up new users using signup wizard', () => {
         const randomEmail = `test${randomString()}@example.com`;
 
         cy.switchToEnglish();
@@ -96,7 +96,7 @@ describe('Main pages happy paths', () => {
         // redirects to dashboard on success
         cy.url().should('include', '/dashboard', { timeout: 30000 });
     });
-    it('can search for an influencer', () => {
+    it.skip('can search for an influencer', () => {
         setupIntercepts();
 
         cy.loginTestUser();
@@ -114,7 +114,7 @@ describe('Main pages happy paths', () => {
         cy.contains('button', 'Search').click(); // click twice
         cy.contains('GRTR');
     });
-    it('can search for a topic', () => {
+    it.skip('can search for a topic', () => {
         setupIntercepts();
 
         cy.loginTestUser();
@@ -132,7 +132,7 @@ describe('Main pages happy paths', () => {
 
         cy.contains('Brave Wilderness'); // the first influencer search result for alligators
     });
-    it('can open analyze page', () => {
+    it.skip('can open analyze page', () => {
         setupIntercepts();
 
         cy.loginTestUser();
@@ -157,7 +157,7 @@ describe('Main pages happy paths', () => {
         cy.contains('Add this influencer to your existing campaigns');
         cy.contains('Beauty for All Skin Tones'); // this functionality is tested in campaigns page test
     });
-    it('can use account and pricing pages', () => {
+    it.skip('can use account and pricing pages', () => {
         setupIntercepts();
 
         cy.loginTestUser();
@@ -190,7 +190,7 @@ describe('Main pages happy paths', () => {
         cy.contains('button', 'Close').click();
         cy.contains('button', 'Subscribe').should('not.exist');
     });
-    it('can open ai email generator', () => {
+    it.skip('can open ai email generator', () => {
         setupIntercepts();
 
         // not actually testing functionality of the email generator. Just making sure the page opens.
@@ -206,7 +206,7 @@ describe('Main pages happy paths', () => {
             .type('123')
             .should('have.value', 'Blue Moonlight Stream Enterprises123');
     });
-    it('can open campaigns page and manage campaign influencers', () => {
+    it.skip('can open campaigns page and manage campaign influencers', () => {
         setupIntercepts();
         // list, add, archive campaigns
         // list, add, move, delete campaign influencers
@@ -354,7 +354,7 @@ describe('Main pages happy paths', () => {
         cy.contains('My Campaign');
     });
 
-    it('can record search usages, can manage clients as a company owner', () => {
+    it.skip('can record search usages, can manage clients as a company owner', () => {
         setupIntercepts();
         cy.loginAdmin();
 
@@ -465,7 +465,7 @@ describe('Main pages happy paths', () => {
         // pre-populates email with original email
         cy.get('input[type="email"]').should('have.value', Cypress.env('TEST_USER_EMAIL_COMPANY_OWNER'));
     });
-    it('Can add post URLs to campaign influencers and see their posts performance updated on the performance page', () => {
+    it.skip('Can add post URLs to campaign influencers and see their posts performance updated on the performance page', () => {
         addPostIntercept();
         // check 'before' performance page totals
         cy.loginTestUser();

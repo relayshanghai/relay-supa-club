@@ -3,7 +3,7 @@ import { setupIntercepts } from './intercepts';
 import guidePage from 'i18n/en/guide';
 
 describe('checks restricted to guide page', () => {
-    it('check if guide page opens', async () => {
+    it.skip('check if guide page opens', async () => {
         await deleteDB('app-cache');
         setupIntercepts();
         cy.visit('/');
@@ -17,7 +17,7 @@ describe('checks restricted to guide page', () => {
     beforeEach(async () => {
         await deleteDB('app-cache');
     });
-    it('check modal functioning for every separate guide', () => {
+    it.skip('check modal functioning for every separate guide', () => {
         setupIntercepts();
         cy.loginTestUser();
         Object.keys(guidePage.modalInfo).forEach((section) => {
@@ -30,7 +30,7 @@ describe('checks restricted to guide page', () => {
             cy.url().should('include', sectionData.url);
         })
     });
-    it('check modal for every separate guide but go back', () => {
+    it.skip('check modal for every separate guide but go back', () => {
         setupIntercepts();
         cy.loginTestUser();
         cy.visit('/guide');

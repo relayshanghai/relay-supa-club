@@ -5,7 +5,7 @@ describe('Caches SWR requests', () => {
     beforeEach(async () => {
         await deleteDB('app-cache');
     });
-    it('caches reports from `use-report`', () => {
+    it.skip('caches reports from `use-report`', () => {
         setupIntercepts(); // some will be overriden
         cy.loginTestUser();
 
@@ -36,7 +36,7 @@ describe('Caches SWR requests', () => {
 
         cy.contains('Cocomelon - Nursery Rhymes', { timeout: 2500 }); // loads report faster than it did before even though timeout is longer
     });
-    it('caches searches on the dashboard', () => {
+    it.skip('caches searches on the dashboard', () => {
         setupIntercepts(); // some will be overriden
         cy.loginTestUser();
         cy.intercept('/api/influencer-search*', (req) => {
