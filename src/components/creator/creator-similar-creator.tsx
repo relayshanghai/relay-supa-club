@@ -6,6 +6,7 @@ import type { CreatorPlatform, SimilarUser } from 'types';
 import { Button } from '../button';
 import { ShareLink } from '../icons';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { ANALYZE_PAGE } from 'src/utils/rudderstack/event-names';
 
 export const SimilarCreator = ({ creator, platform }: { creator: SimilarUser; platform: CreatorPlatform }) => {
     const { t } = useTranslation();
@@ -36,7 +37,7 @@ export const SimilarCreator = ({ creator, platform }: { creator: SimilarUser; pl
                     variant="secondary"
                     className="px-3 py-1"
                     onClick={() => {
-                        trackEvent('Similar Influencer Section, open report', {
+                        trackEvent(ANALYZE_PAGE('Similar Influencer Section, open report'), {
                             platform,
                             user_id: creator.user_id,
                         });

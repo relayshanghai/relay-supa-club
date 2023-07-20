@@ -9,6 +9,7 @@ import { Button } from '../button';
 import { Input } from '../input';
 import { Modal } from '../modal';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { ACCOUNT_COMPANY_DETAILS } from 'src/utils/rudderstack/event-names';
 
 export const InviteMembersModal = ({
     showAddMoreMembers,
@@ -34,7 +35,7 @@ export const InviteMembersModal = ({
             setShowAddMoreMembers(false);
             toast.success('Invite sent');
             refreshCompany();
-            trackEvent('Account, CompanyDetails, send invite');
+            trackEvent(ACCOUNT_COMPANY_DETAILS('send invite'));
         } catch (error: any) {
             if (hasCustomError(error, createInviteErrors)) {
                 toast.error(t(`login.${error.message}`));
@@ -67,7 +68,7 @@ export const InviteMembersModal = ({
                     id="companyOwner"
                     onChange={() => {
                         setCompanyOwner(!companyOwner);
-                        trackEvent('Account, CompanyDetails, mark an invited email as admin');
+                        trackEvent(ACCOUNT_COMPANY_DETAILS('mark an invited email as admin'));
                     }}
                     checked={companyOwner}
                 />

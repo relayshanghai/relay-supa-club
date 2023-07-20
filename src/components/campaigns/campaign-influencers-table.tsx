@@ -16,6 +16,7 @@ import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { CampaignSalesModal } from './campaign-sales-modal';
 import { useDB } from 'src/utils/client-db/use-client-db';
 import { addSales } from 'src/utils/client-db/sales';
+import { INFLUENCER_TABLE } from 'src/utils/rudderstack/event-names';
 
 export interface CreatorsOutreachProps {
     currentCampaign: CampaignDB;
@@ -143,7 +144,7 @@ export default function CampaignInfluencersTable({
     const handleTabChange = (value: string) => {
         router.push({ pathname, query: { ...query, curTab: value } });
         setTabStatus(value);
-        trackEvent('Influencers Table, tab status changed', { tab: value });
+        trackEvent(INFLUENCER_TABLE('tab status changed'), { tab: value });
     };
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -155,35 +156,35 @@ export default function CampaignInfluencersTable({
         await updateCreatorInCampaign(creator);
         refreshCampaignCreators();
         toast.success(t('campaigns.creatorModal.influencerUpdated'));
-        trackEvent('Influencers Table, influencer status changed', { status: value });
+        trackEvent(INFLUENCER_TABLE('influencer status changed'), { status: value });
     };
 
     const setInlineEdit = (index: number, key: string) => {
         setToEdit({ index, key });
-        trackEvent('Influencers Table, inline edit clicked', { key });
+        trackEvent(INFLUENCER_TABLE('inline edit clicked'), { key });
     };
 
     const openNotes = (creator: CampaignCreatorDB) => {
         setCurrentCreator(creator);
         setShowNotesModal(true);
-        trackEvent('Influencers Table, notes opened');
+        trackEvent(INFLUENCER_TABLE('notes opened'));
     };
 
     const openMoveInfluencerModal = (creator: CampaignCreatorDB) => {
         setCurrentCreator(creator);
         setShowMoveInfluencerModal(true);
-        trackEvent('Influencers Table, move influencer modal opened');
+        trackEvent(INFLUENCER_TABLE('move influencer modal opened'));
     };
 
     const openManageInfluencerModal = (creator: CampaignCreatorDB) => {
         setCurrentCreator(creator);
         setShowManageInfluencerModal(true);
-        trackEvent('Influencers Table, manage influencer modal opened');
+        trackEvent(INFLUENCER_TABLE('manage influencer modal opened'));
     };
     const openAddPostModal = (creator: CampaignCreatorDB) => {
         setCurrentCreator(creator);
         setShowAddPostModal(true);
-        trackEvent('Influencers Table, add post modal opened');
+        trackEvent(INFLUENCER_TABLE('add post modal opened'));
     };
 
     const deleteCampaignCreator = async (creator: CampaignCreatorDB) => {
@@ -192,7 +193,7 @@ export default function CampaignInfluencersTable({
         await deleteCreatorInCampaign({ creatorId: creator.id, campaignId: currentCampaign.id });
         refreshCampaignCreators();
         toast.success(t('campaigns.modal.deletedSuccessfully'));
-        trackEvent('Influencers Table, influencer deleted');
+        trackEvent(INFLUENCER_TABLE('influencer deleted'));
     };
 
     const updateCampaignCreator = async (creator: CampaignCreatorDB) => {
@@ -228,7 +229,7 @@ export default function CampaignInfluencersTable({
             <div className="mb-4 flex overflow-x-auto">
                 <Link href="/dashboard" legacyBehavior>
                     <div
-                        onClick={() => trackEvent('Campaign Management, click on add new influencer')}
+                        onClick={() => trackEvent(INFLUENCER_TABLE('click on add new influencer'))}
                         className="mr-4 flex-shrink-0 cursor-pointer rounded-md bg-gray-100 px-4 py-2 text-xs text-gray-600 duration-300 hover:bg-primary-500 hover:text-white"
                     >
                         <a>{t('campaigns.show.activities.outreach.addNewInfluencer')}</a>
@@ -237,10 +238,10 @@ export default function CampaignInfluencersTable({
                 <p>
                     <div
                         onClick={() => {
-                            trackEvent('Campaign Management, click on add sales');
+                            trackEvent(INFLUENCER_TABLE('click on add sales'));
                             setShowSalesModal(true);
                         }}
-                        className="mr-4 flex-shrink-0 cursor-pointer rounded-md bg-gray-100 px-4 py-2 text-xs text-gray-600 duration-300 hover:bg-primary-500 hover:text-white"
+                        className="mr-4 flex-shrink-0 cursor-pointer whitespace-nowrap rounded-md bg-gray-100 px-4 py-2 text-xs text-gray-600 duration-300 hover:bg-primary-500 hover:text-white"
                     >
                         <a>{t('campaigns.addSalesModal.caption')}</a>
                     </div>

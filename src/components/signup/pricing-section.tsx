@@ -5,6 +5,7 @@ import type { ActiveSubscriptionPeriod, ActiveSubscriptionTier } from 'src/hooks
 import { PRICE_IDS, usePrices } from 'src/hooks/use-prices';
 import { useTranslation } from 'react-i18next';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { SIGNUP_WIZARD } from 'src/utils/rudderstack/event-names';
 
 export const PricingSection = ({ setPriceId }: { setPriceId: (priceId: string) => void }) => {
     const { t } = useTranslation();
@@ -25,7 +26,7 @@ export const PricingSection = ({ setPriceId }: { setPriceId: (priceId: string) =
                 checked={period === 'quarterly'}
                 onChange={(e) => {
                     setPeriod(e.target.checked ? 'quarterly' : 'monthly');
-                    trackEvent('Signup Wizard, Pricing Section, click to toggle monthly or quarterly', {
+                    trackEvent(SIGNUP_WIZARD('Pricing Section, click to toggle monthly or quarterly'), {
                         selectedPeriod: period,
                     });
                 }}
@@ -38,7 +39,7 @@ export const PricingSection = ({ setPriceId }: { setPriceId: (priceId: string) =
                     }`}
                     onClick={() => {
                         setPriceTier('diyMax');
-                        trackEvent('Signup Wizard, Pricing Section, click to select DIY Max');
+                        trackEvent(SIGNUP_WIZARD('Pricing Section, click to select DIY Max'));
                     }}
                 >
                     DIY Max
@@ -49,7 +50,7 @@ export const PricingSection = ({ setPriceId }: { setPriceId: (priceId: string) =
                     }`}
                     onClick={() => {
                         setPriceTier('diy');
-                        trackEvent('Signup Wizard, Pricing Section, click to select DIY');
+                        trackEvent(SIGNUP_WIZARD('Pricing Section, click to select DIY'));
                     }}
                 >
                     DIY

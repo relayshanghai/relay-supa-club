@@ -1,0 +1,724 @@
+{
+  "total": 118,
+  "page": 0,
+  "pages": 6,
+  "messages": [
+    {
+      "id": "AAAAAgAAAHY",
+      "uid": 118,
+      "emailId": "1771730432316948111",
+      "threadId": "1771659551258254834",
+      "date": "2023-07-18T04:16:36.000Z",
+      "flags": ["\\Answered", "\\Seen"],
+      "labels": ["\\Important"],
+      "answered": true,
+      "size": 9253,
+      "subject": "Re: Let's have a discussion",
+      "from": {
+        "name": "Jacob Cohen-Rosenthal",
+        "address": "xiaokourou@gmail.com"
+      },
+      "replyTo": [
+        {
+          "name": "Jacob Cohen-Rosenthal",
+          "address": "xiaokourou@gmail.com"
+        }
+      ],
+      "to": [
+        {
+          "name": "Brendan McBride",
+          "address": "brendan.relay@gmail.com"
+        }
+      ],
+      "messageId": "<CAHkyipbP5TQdUTRLGHVMwctft_4H0wqU8uiqPcTDu-zHO8gXRg@mail.gmail.com>",
+      "inReplyTo": "<CABTec3a4OA+VA5BxbOQ-UkBzQeKMAAo4-ZR6yX0+xwXd3-OZ=g@mail.gmail.com>",
+      "text": {
+        "id": "AAAAAgAAAHaTkaExkaEykA",
+        "encodedSize": {
+          "plain": 866,
+          "html": 2818
+        }
+      }
+    },
+    {
+      "id": "AAAAAgAAAHU",
+      "uid": 117,
+      "emailId": "1771683502402987397",
+      "threadId": "1771683502402987397",
+      "date": "2023-07-17T15:50:49.000Z",
+      "flags": [],
+      "labels": [],
+      "unseen": true,
+      "size": 55116,
+      "subject": "Aaron Draplin workshop tickets disappearing soon 🏃‍♂️",
+      "from": {
+        "name": "Dribbble",
+        "address": "no-reply@n.dribbble.com"
+      },
+      "replyTo": [
+        {
+          "name": "",
+          "address": "no-reply@n.dribbble.com"
+        }
+      ],
+      "to": [
+        {
+          "name": "",
+          "address": "brendan.relay@gmail.com"
+        }
+      ],
+      "messageId": "<20230717155049.e487cc8693f64b99@n.dribbble.com>",
+      "text": {
+        "id": "AAAAAgAAAHWTkaExkaEykA",
+        "encodedSize": {
+          "plain": 9612,
+          "html": 39354
+        }
+      }
+    },
+    {
+      "id": "AAAAAgAAAHQ",
+      "uid": 116,
+      "emailId": "1771679642762632135",
+      "threadId": "1771659551258254834",
+      "date": "2023-07-17T14:49:19.000Z",
+      "flags": ["\\Answered", "\\Seen"],
+      "labels": ["\\Important"],
+      "answered": true,
+      "size": 7019,
+      "subject": "Re: Let's have a discussion",
+      "from": {
+        "name": "Jacob Cohen-Rosenthal",
+        "address": "xiaokourou@gmail.com"
+      },
+      "replyTo": [
+        {
+          "name": "Jacob Cohen-Rosenthal",
+          "address": "xiaokourou@gmail.com"
+        }
+      ],
+      "to": [
+        {
+          "name": "Brendan McBride",
+          "address": "brendan.relay@gmail.com"
+        }
+      ],
+      "messageId": "<CAHkyipY=LUAr4zbDwPSO83i1UnscSq=1fhNptMyKg+88BQ7igw@mail.gmail.com>",
+      "inReplyTo": "<CABTec3YnGNY_E6nkrrHnyFq6PMRN9Tyxg7YpZ4iSjTkm0+0iUw@mail.gmail.com>",
+      "text": {
+        "id": "AAAAAgAAAHSTkaExkaEykA",
+        "encodedSize": {
+          "plain": 372,
+          "html": 1219
+        }
+      }
+    },
+    {
+      "id": "AAAAAgAAAHM",
+      "uid": 115,
+      "emailId": "1771657500125672703",
+      "threadId": "1771657500125672703",
+      "date": "2023-07-17T08:57:34.000Z",
+      "flags": [],
+      "labels": [],
+      "unseen": true,
+      "size": 12061,
+      "subject": "Security alert",
+      "from": {
+        "name": "Google",
+        "address": "no-reply@accounts.google.com"
+      },
+      "replyTo": [
+        {
+          "name": "Google",
+          "address": "no-reply@accounts.google.com"
+        }
+      ],
+      "to": [
+        {
+          "name": "",
+          "address": "brendan.relay@gmail.com"
+        }
+      ],
+      "messageId": "<cnbiXT20cC92DdrTWfiwoQ@notifications.google.com>",
+      "text": {
+        "id": "AAAAAgAAAHOTkaExkaEykA",
+        "encodedSize": {
+          "plain": 968,
+          "html": 5105
+        }
+      }
+    },
+    {
+      "id": "AAAAAgAAAHI",
+      "uid": 114,
+      "emailId": "1771406602428950943",
+      "threadId": "1771406602428950943",
+      "date": "2023-07-14T14:29:39.000Z",
+      "flags": [],
+      "labels": [],
+      "unseen": true,
+      "size": 101038,
+      "subject": "Get inspired 🏠 📳 Spatial UI design for Smart Homes",
+      "from": {
+        "name": "Dribbble",
+        "address": "no-reply@n.dribbble.com"
+      },
+      "replyTo": [
+        {
+          "name": "Dribbble",
+          "address": "no-reply@n.dribbble.com"
+        }
+      ],
+      "to": [
+        {
+          "name": "Brendan McBride",
+          "address": "brendan.relay@gmail.com"
+        }
+      ],
+      "messageId": "<64b15bd3581e0_5ed2ef2414338c8@resque-load5.mail>",
+      "text": {
+        "id": "AAAAAgAAAHKTkaExkaEykA",
+        "encodedSize": {
+          "plain": 7464,
+          "html": 87966
+        }
+      }
+    },
+    {
+      "id": "AAAAAgAAAHE",
+      "uid": 113,
+      "emailId": "1771383893466358744",
+      "threadId": "1771383893466358744",
+      "date": "2023-07-14T08:28:40.000Z",
+      "flags": [],
+      "labels": [],
+      "unseen": true,
+      "size": 11365,
+      "subject": "Security alert",
+      "from": {
+        "name": "Google",
+        "address": "no-reply@accounts.google.com"
+      },
+      "replyTo": [
+        {
+          "name": "Google",
+          "address": "no-reply@accounts.google.com"
+        }
+      ],
+      "to": [
+        {
+          "name": "",
+          "address": "brendan.relay@gmail.com"
+        }
+      ],
+      "messageId": "<B1hVJ4Ev-iEozw0ZjBhagQ@notifications.google.com>",
+      "text": {
+        "id": "AAAAAgAAAHGTkaExkaEykA",
+        "encodedSize": {
+          "plain": 788,
+          "html": 4589
+        }
+      }
+    },
+    {
+      "id": "AAAAAgAAAHA",
+      "uid": 112,
+      "emailId": "1771327797421924699",
+      "threadId": "1771327797421924699",
+      "date": "2023-07-13T17:37:05.000Z",
+      "flags": [],
+      "labels": [],
+      "unseen": true,
+      "size": 95334,
+      "subject": "Just launched: More languages, countries, and possibilities",
+      "from": {
+        "name": "Bard, an AI experiment by Google",
+        "address": "bard-noreply@google.com"
+      },
+      "replyTo": [
+        {
+          "name": "Bard, an AI experiment by Google",
+          "address": "bard-noreply@google.com"
+        }
+      ],
+      "to": [
+        {
+          "name": "",
+          "address": "brendan.relay@gmail.com"
+        }
+      ],
+      "messageId": "<544023653cb843d078c9c5f433640006ded1d6b9-20269878-111348988@google.com>",
+      "text": {
+        "id": "AAAAAgAAAHCTkaExkaEykA",
+        "encodedSize": {
+          "plain": 4240,
+          "html": 84254
+        }
+      }
+    },
+    {
+      "id": "AAAAAgAAAG8",
+      "uid": 111,
+      "emailId": "1771247787290568935",
+      "threadId": "1771247787290568935",
+      "date": "2023-07-12T17:25:27.000Z",
+      "flags": [],
+      "labels": [],
+      "unseen": true,
+      "size": 59285,
+      "subject": "📽 Presentations. Our latest feature.",
+      "from": {
+        "name": "Excalidraw+",
+        "address": "newsletter@excalidraw.com"
+      },
+      "replyTo": [
+        {
+          "name": "",
+          "address": "support@excalidraw.com"
+        }
+      ],
+      "to": [
+        {
+          "name": "",
+          "address": "brendan.relay@gmail.com"
+        }
+      ],
+      "messageId": "<M-ebI5ZXTN2jDESwEP7IGg@geopod-ismtpd-3>",
+      "text": {
+        "id": "AAAAAgAAAG-TkaExkaEykA",
+        "encodedSize": {
+          "plain": 5070,
+          "html": 44994
+        }
+      }
+    },
+    {
+      "id": "AAAAAgAAAG4",
+      "uid": 110,
+      "emailId": "1771235404924395406",
+      "threadId": "1771235404924395406",
+      "date": "2023-07-12T14:33:44.000Z",
+      "flags": [],
+      "labels": [],
+      "unseen": true,
+      "size": 43272,
+      "subject": "All (illustration) systems go 🚀",
+      "from": {
+        "name": "Dribbble",
+        "address": "no-reply@n.dribbble.com"
+      },
+      "replyTo": [
+        {
+          "name": "Dribbble",
+          "address": "no-reply@n.dribbble.com"
+        }
+      ],
+      "to": [
+        {
+          "name": "",
+          "address": "brendan.relay@gmail.com"
+        }
+      ],
+      "messageId": "<a301ce26-b5be-4eef-b3a3-9e4da31da4f1@n.dribbble.com>",
+      "text": {
+        "id": "AAAAAgAAAG6TkJGhMZA",
+        "encodedSize": {
+          "html": 37716
+        }
+      }
+    },
+    {
+      "id": "AAAAAgAAAG0",
+      "uid": 109,
+      "emailId": "1771144518660627272",
+      "threadId": "1771144518660627272",
+      "date": "2023-07-11T14:50:42.000Z",
+      "flags": [],
+      "labels": [],
+      "unseen": true,
+      "size": 97855,
+      "subject": "💼 Now hiring: U.S. House of Representatives, Future Engineers, and more",
+      "from": {
+        "name": "Dribbble",
+        "address": "no-reply@n.dribbble.com"
+      },
+      "replyTo": [
+        {
+          "name": "Dribbble",
+          "address": "no-reply@n.dribbble.com"
+        }
+      ],
+      "to": [
+        {
+          "name": "",
+          "address": "brendan.relay@gmail.com"
+        }
+      ],
+      "messageId": "<5a611f2b-feb8-403d-a883-6044e3daf5d9@n.dribbble.com>",
+      "text": {
+        "id": "AAAAAgAAAG2TkJGhMZA",
+        "encodedSize": {
+          "html": 92209
+        }
+      }
+    },
+    {
+      "id": "AAAAAgAAAGw",
+      "uid": 108,
+      "emailId": "1771141772305636068",
+      "threadId": "1771141772305636068",
+      "date": "2023-07-11T16:20:18.000Z",
+      "flags": [],
+      "labels": [],
+      "unseen": true,
+      "size": 35712,
+      "subject": "Unlock the potential of AI",
+      "from": {
+        "name": "Ruth from Intercom",
+        "address": "hello@intercom.com"
+      },
+      "replyTo": [
+        {
+          "name": "",
+          "address": "reply@intercom.com"
+        }
+      ],
+      "to": [
+        {
+          "name": "",
+          "address": "brendan.relay@gmail.com"
+        }
+      ],
+      "messageId": "<2022617104.549443348.1689092418712@abmktmail-batch1n.marketo.org>",
+      "text": {
+        "id": "AAAAAgAAAGyTkaExkaEykA",
+        "encodedSize": {
+          "plain": 2345,
+          "html": 27780
+        }
+      }
+    },
+    {
+      "id": "AAAAAgAAAGs",
+      "uid": 107,
+      "emailId": "1771043520345259235",
+      "threadId": "1771043520345259235",
+      "date": "2023-07-10T14:18:33.000Z",
+      "flags": [],
+      "labels": [],
+      "unseen": true,
+      "size": 55242,
+      "subject": "📣 Back for 1 day only: Aaron Draplin teaches logo design & workflow optimization",
+      "from": {
+        "name": "Dribbble",
+        "address": "no-reply@n.dribbble.com"
+      },
+      "replyTo": [
+        {
+          "name": "",
+          "address": "no-reply@n.dribbble.com"
+        }
+      ],
+      "to": [
+        {
+          "name": "",
+          "address": "brendan.relay@gmail.com"
+        }
+      ],
+      "messageId": "<20230710141833.bde5d4704c8cc7a2@n.dribbble.com>",
+      "text": {
+        "id": "AAAAAgAAAGuTkaExkaEykA",
+        "encodedSize": {
+          "plain": 9668,
+          "html": 39419
+        }
+      }
+    },
+    {
+      "id": "AAAAAgAAAGo",
+      "uid": 106,
+      "emailId": "1770767662163037622",
+      "threadId": "1770767662163037622",
+      "date": "2023-07-07T13:13:57.000Z",
+      "flags": [],
+      "labels": [],
+      "unseen": true,
+      "size": 100311,
+      "subject": "Get inspired ✈️ Gamify Your Travel Adventures",
+      "from": {
+        "name": "Dribbble",
+        "address": "no-reply@n.dribbble.com"
+      },
+      "replyTo": [
+        {
+          "name": "Dribbble",
+          "address": "no-reply@n.dribbble.com"
+        }
+      ],
+      "to": [
+        {
+          "name": "Brendan McBride",
+          "address": "brendan.relay@gmail.com"
+        }
+      ],
+      "messageId": "<64a80f954a1a6_2260eec09678d1@resque-load6.mail>",
+      "text": {
+        "id": "AAAAAgAAAGqTkaExkaEykA",
+        "encodedSize": {
+          "plain": 7271,
+          "html": 87434
+        }
+      }
+    },
+    {
+      "id": "AAAAAgAAAGk",
+      "uid": 105,
+      "emailId": "1770602238869161422",
+      "threadId": "1770602238869161422",
+      "date": "2023-07-05T14:44:36.000Z",
+      "flags": [],
+      "labels": [],
+      "unseen": true,
+      "size": 43065,
+      "subject": "The Mobile UX Playbook 🤳",
+      "from": {
+        "name": "Dribbble",
+        "address": "no-reply@n.dribbble.com"
+      },
+      "replyTo": [
+        {
+          "name": "Dribbble",
+          "address": "no-reply@n.dribbble.com"
+        }
+      ],
+      "to": [
+        {
+          "name": "",
+          "address": "brendan.relay@gmail.com"
+        }
+      ],
+      "messageId": "<ff74107d-fd6c-4dfc-bb1b-331305bb9204@n.dribbble.com>",
+      "text": {
+        "id": "AAAAAgAAAGmTkJGhMZA",
+        "encodedSize": {
+          "html": 37537
+        }
+      }
+    },
+    {
+      "id": "AAAAAgAAAGg",
+      "uid": 104,
+      "emailId": "1770137740006194854",
+      "threadId": "1770137740006194854",
+      "date": "2023-06-30T14:21:28.000Z",
+      "flags": [],
+      "labels": [],
+      "unseen": true,
+      "size": 107652,
+      "subject": "Get inspired 🥃 Whiskey branding with a sweet twist",
+      "from": {
+        "name": "Dribbble",
+        "address": "no-reply@n.dribbble.com"
+      },
+      "replyTo": [
+        {
+          "name": "Dribbble",
+          "address": "no-reply@n.dribbble.com"
+        }
+      ],
+      "to": [
+        {
+          "name": "Brendan McBride",
+          "address": "brendan.relay@gmail.com"
+        }
+      ],
+      "messageId": "<649ee4e85f522_59f0eec01190048@resque4.mail>",
+      "text": {
+        "id": "AAAAAgAAAGiTkaExkaEykA",
+        "encodedSize": {
+          "plain": 7558,
+          "html": 94471
+        }
+      }
+    },
+    {
+      "id": "AAAAAgAAAGc",
+      "uid": 103,
+      "emailId": "1769975671933585324",
+      "threadId": "1769975671933585324",
+      "date": "2023-06-28T13:12:19.000Z",
+      "flags": [],
+      "labels": [],
+      "unseen": true,
+      "size": 66012,
+      "subject": "Everyone, everywhere, collaborating all at once",
+      "from": {
+        "name": "Lucid",
+        "address": "email@lucid.co"
+      },
+      "replyTo": [
+        {
+          "name": "",
+          "address": "email@lucid.co"
+        }
+      ],
+      "to": [
+        {
+          "name": "",
+          "address": "brendan.relay@gmail.com"
+        }
+      ],
+      "messageId": "<1309139155.354929044.1687957939766@abmktmail-batch1e.marketo.org>",
+      "text": {
+        "id": "AAAAAgAAAGeTkaExkaEykA",
+        "encodedSize": {
+          "plain": 7,
+          "html": 60558
+        }
+      }
+    },
+    {
+      "id": "AAAAAgAAAGY",
+      "uid": 102,
+      "emailId": "1769969048008276912",
+      "threadId": "1769969048008276912",
+      "date": "2023-06-28T15:02:35.000Z",
+      "flags": [],
+      "labels": [],
+      "unseen": true,
+      "size": 43358,
+      "subject": "A day in the life of a UI designer 👩‍💻",
+      "from": {
+        "name": "Dribbble",
+        "address": "no-reply@n.dribbble.com"
+      },
+      "replyTo": [
+        {
+          "name": "Dribbble",
+          "address": "no-reply@n.dribbble.com"
+        }
+      ],
+      "to": [
+        {
+          "name": "",
+          "address": "brendan.relay@gmail.com"
+        }
+      ],
+      "messageId": "<d8d31984-07b8-4571-8ae4-51a060ded661@n.dribbble.com>",
+      "text": {
+        "id": "AAAAAgAAAGaTkJGhMZA",
+        "encodedSize": {
+          "html": 37777
+        }
+      }
+    },
+    {
+      "id": "AAAAAgAAAGU",
+      "uid": 101,
+      "emailId": "1769880993905323283",
+      "threadId": "1769880993905323283",
+      "date": "2023-06-27T16:02:12.000Z",
+      "flags": [],
+      "labels": [],
+      "unseen": true,
+      "size": 97119,
+      "subject": "💼 Now hiring: Teaching.com, Jet Aviation, Vivapets, and more!",
+      "from": {
+        "name": "Dribbble",
+        "address": "no-reply@n.dribbble.com"
+      },
+      "replyTo": [
+        {
+          "name": "Dribbble",
+          "address": "no-reply@n.dribbble.com"
+        }
+      ],
+      "to": [
+        {
+          "name": "",
+          "address": "brendan.relay@gmail.com"
+        }
+      ],
+      "messageId": "<fc3d2430-42f1-4637-8a33-ef8a8afa080b@n.dribbble.com>",
+      "text": {
+        "id": "AAAAAgAAAGWTkJGhMZA",
+        "encodedSize": {
+          "html": 91500
+        }
+      }
+    },
+    {
+      "id": "AAAAAgAAAGQ",
+      "uid": 100,
+      "emailId": "1769789164584337744",
+      "threadId": "1769789164584337744",
+      "date": "2023-06-26T18:01:04.000Z",
+      "flags": [],
+      "labels": [],
+      "unseen": true,
+      "size": 39691,
+      "subject": "Fast-track your automated support strategy",
+      "from": {
+        "name": "Mark from Intercom",
+        "address": "hello@intercom.com"
+      },
+      "replyTo": [
+        {
+          "name": "",
+          "address": "reply@intercom.com"
+        }
+      ],
+      "to": [
+        {
+          "name": "",
+          "address": "brendan.relay@gmail.com"
+        }
+      ],
+      "messageId": "<1240632874.316813356.1687802464543@abmktmail-batch1j.marketo.org>",
+      "text": {
+        "id": "AAAAAgAAAGSTkaExkaEykA",
+        "encodedSize": {
+          "plain": 2489,
+          "html": 31656
+        }
+      }
+    },
+    {
+      "id": "AAAAAgAAAGM",
+      "uid": 99,
+      "emailId": "1769789069240638967",
+      "threadId": "1769789069240638967",
+      "date": "2023-06-26T17:59:40.000Z",
+      "flags": [],
+      "labels": [],
+      "unseen": true,
+      "size": 75081,
+      "subject": "Live Tomorrow 🗓 Design Systems Workshop with Dan Mall",
+      "from": {
+        "name": "Dribbble",
+        "address": "no-reply@n.dribbble.com"
+      },
+      "replyTo": [
+        {
+          "name": "",
+          "address": "no-reply@n.dribbble.com"
+        }
+      ],
+      "to": [
+        {
+          "name": "",
+          "address": "brendan.relay@gmail.com"
+        }
+      ],
+      "messageId": "<20230626175940.31384043ce974d70@n.dribbble.com>",
+      "text": {
+        "id": "AAAAAgAAAGOTkaExkaEykA",
+        "encodedSize": {
+          "plain": 12066,
+          "html": 56970
+        }
+      }
+    }
+  ]
+}

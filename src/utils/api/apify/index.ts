@@ -13,7 +13,7 @@ export const apifyFetch = async <T = any>(path: string, options: RequestInit = {
         options.method === 'post' || options.method === 'put'
             ? {
                   ...options.headers,
-                  'Content-Type': 'application/json',
+                  'content-type': 'application/json',
               }
             : options.headers || {};
 

@@ -23,7 +23,8 @@
     "prepare": "husky install",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "supabase": "npx supabase start"
+    "supabase": "npx supabase start",
+    "start-email-server": "cd email-server && docker-compose up -d"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.14",
@@ -35,7 +36,9 @@
     "@supabase/auth-helpers-nextjs": "^0.6.1",
     "@supabase/auth-helpers-react": "^0.3.1",
     "@supabase/supabase-js": "^2.20.0",
+    "d3-selection": "^3.0.0",
     "date-fns": "^2.29.3",
+    "dompurify": "^3.0.5",
     "dotenv": "^16.0.3",
     "fuse.js": "^6.6.2",
     "googleapis": "^118.0.0",
@@ -47,6 +50,7 @@
     "openai": "^3.2.1",
     "react": "^18.2.0",
     "react-countup": "^6.4.2",
+    "react-d3-cloud": "^1.0.6",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.43.9",
     "react-hot-toast": "^2.4.0",
@@ -72,6 +76,7 @@
     "@storybook/testing-library": "^0.0.14-next.2",
     "@tailwindcss/forms": "^0.5.3",
     "@testing-library/cypress": "^9.0.0",
+    "@types/dompurify": "^3.0.2",
     "@types/node": "18.15.11",
     "@types/react": "18.0.37",
     "@types/react-dom": "18.0.11",

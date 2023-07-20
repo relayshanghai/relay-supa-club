@@ -4,16 +4,16 @@ import { useTranslation } from 'react-i18next';
 import type { CreatorPlatform } from 'types';
 import type { ChangeEvent } from 'react';
 import { debounce } from 'src/utils/debounce';
-import { useRudderstack } from 'src/hooks/use-rudderstack';
-import { Spinner } from '../icons';
+import { Search, Spinner } from '../icons';
+import { useSearchTrackers } from '../rudder/searchui-rudder-calls';
 
 export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
     const [searchTerm, setSearchTerm] = useState<string | ''>();
     const [spinnerLoading, setSpinnerLoading] = useState(false);
     const { t } = useTranslation();
+    const { trackSearchInfluencer, trackSearch } = useSearchTrackers();
 
-    const { setPlatform, setUsername, setText, setKeywords } = useSearch();
-    const { trackEvent } = useRudderstack();
+    const { setPlatform, setUsername, setText, setActiveSearch, setPage } = useSearch();
 
     // Disabling the exhaustive-deps rule because we need to use the debounce function and we already know the required dependencies.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -22,8 +22,7 @@ export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
             setPlatform(platform);
             setUsername(term);
             setText(term);
-            setKeywords(term);
-            trackEvent('Search Options, search for an influencer', { influencer: term, platform });
+            trackSearchInfluencer({ term }, platform);
             setSpinnerLoading(false);
         }),
         [platform],
@@ -34,23 +33,35 @@ export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
         setSpinnerLoading(true);
 
         if (e.target.value.trim() === '') {
-            setUsername('');
             setText('');
-            setKeywords('');
+            setUsername('');
         }
 
         searchInfluencer(e.target.value);
     };
 
+    const handleSearch = useCallback(() => {
+        setActiveSearch(true);
+        setPage(0);
+        trackSearch('Search Options');
+    }, [setActiveSearch, setPage, trackSearch]);
+
+    const handleSubmit = useCallback(() => {
+        searchInfluencer(searchTerm);
+        handleSearch();
+    }, [searchTerm, searchInfluencer, handleSearch]);
+
     return (
         <div className="group relative flex w-full flex-col font-medium">
+            <Search onClick={handleSubmit} className="absolute left-2 top-2 h-6 w-6 cursor-pointer fill-gray-400" />
             <input
-                className="block w-full appearance-none rounded-md border border-gray-200 bg-white px-5 py-2 text-gray-600 placeholder-gray-400 ring-1 ring-gray-900 ring-opacity-5 placeholder:text-sm focus:outline-none"
+                className="block w-full appearance-none rounded-full border border-gray-200 bg-white py-2 pl-10 pr-6 text-gray-600 placeholder-gray-400 ring-1 ring-gray-900 ring-opacity-5 placeholder:text-sm focus:outline-none"
                 placeholder={t('creators.show.searchInfluencerPlaceholder') as string}
                 data-testid="creator-search"
                 id="creator-search"
                 value={searchTerm}
                 onChange={handleChange}
+                onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
             />
             {spinnerLoading && <Spinner className="absolute right-2 top-3 h-5 w-5 fill-primary-600 text-white" />}
         </div>

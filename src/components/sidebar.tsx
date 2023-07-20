@@ -5,9 +5,23 @@ import { useEffect } from 'react';
 import useAboveScreenWidth from 'src/hooks/use-above-screen-width';
 import EmailOutline from './icons/EmailOutline';
 import { useUser } from 'src/hooks/use-user';
-import { Compass, FourSquare, Account, Team, PieChart, Guide } from './icons';
+import { Compass, FourSquare, Account, Team, PieChart, Guide, Send, Engagements } from './icons';
 import { Title } from './title';
 import { useTranslation } from 'react-i18next';
+import { featEmail } from 'src/constants/feature-flags';
+
+const links = {
+    discover: '/dashboard',
+    influencer: '/influencer',
+    campaigns: '/campaigns',
+    aiEmailGenerator: '/ai-email-generator',
+    account: '/account',
+    admin: '/admin/clients',
+    performance: '/performance',
+    guide: '/guide',
+    sequences: '/sequences',
+    inbox: '/inbox',
+};
 
 const ActiveLink = ({ href, children }: { href: string; children: ReactNode }) => {
     const router = useRouter();
@@ -23,22 +37,24 @@ const ActiveLink = ({ href, children }: { href: string; children: ReactNode }) =
                 isRouteActive ? 'border-l-4 border-primary-500 stroke-primary-500 text-primary-500' : ''
             }`}
         >
-            {(href === '/influencer' || href === '/dashboard') && (
-                <Compass height={18} width={18} className="mr-4 text-inherit" />
+            {(href === links.influencer || href === links.discover) && (
+                <Compass height={18} width={18} className="mr-4 stroke-inherit" />
             )}
 
-            {href === '/campaigns' && <FourSquare height={18} width={18} className="mr-4 stroke-inherit" />}
+            {href === links.campaigns && <FourSquare height={18} width={18} className="mr-4 stroke-inherit" />}
 
-            {href === '/ai-email-generator' && <EmailOutline height={18} width={18} className="mr-4 stroke-inherit" />}
+            {href === links.aiEmailGenerator && <EmailOutline height={18} width={18} className="mr-4 stroke-inherit" />}
 
-            {href === '/account' && <Account height={18} width={18} className="mr-4 stroke-inherit" />}
+            {href === links.account && <Account height={18} width={18} className="mr-4 stroke-inherit" />}
 
-            {href === '/admin/clients' && <Team height={18} width={18} className="mr-4 stroke-inherit" />}
+            {href === links.admin && <Team height={18} width={18} className="mr-4 stroke-inherit" />}
 
-            {href === '/performance' && <PieChart height={18} width={18} className="mr-4 stroke-inherit" />}
+            {href === links.performance && <PieChart height={18} width={18} className="mr-4 stroke-inherit" />}
 
-            {href === '/guide' && <Guide height={18} width={18} className="mr-4 stroke-inherit" />}
+            {href === links.guide && <Guide height={18} width={18} className="mr-4 stroke-inherit" />}
 
+            {href === links.sequences && <Send height={18} width={18} className="mr-4 stroke-inherit" />}
+            {href === links.inbox && <Engagements height={18} width={18} className="mr-4 stroke-inherit" />}
             {children}
         </Link>
     );
@@ -53,17 +69,19 @@ const NavBarInner = ({ loggedIn, isRelayEmployee }: { loggedIn: boolean | null; 
                 <Title />
             </div>
             <div className="mt-8 flex flex-col space-y-4">
-                <ActiveLink href={'/dashboard'}>{t('navbar.discover')}</ActiveLink>
-                <ActiveLink href={'/campaigns'}>{t('navbar.campaigns')}</ActiveLink>
-                <ActiveLink href="/ai-email-generator">{t('navbar.aiEmailGenerator')}</ActiveLink>
-                <ActiveLink href="/performance">{t('navbar.performance')}</ActiveLink>
+                <ActiveLink href={links.discover}>{t('navbar.discover')}</ActiveLink>
+                <ActiveLink href={links.campaigns}>{t('navbar.campaigns')}</ActiveLink>
+                <ActiveLink href={links.aiEmailGenerator}>{t('navbar.aiEmailGenerator')}</ActiveLink>
+                <ActiveLink href={links.performance}>{t('navbar.performance')}</ActiveLink>
                 {loggedIn && <ActiveLink href="/account">{t('navbar.account')}</ActiveLink>}
                 <ActiveLink href="/guide">{t('navbar.guide')}</ActiveLink>
+                {featEmail() && <ActiveLink href={links.sequences}>{t('navbar.sequences')}</ActiveLink>}
+                {featEmail() && <ActiveLink href={links.inbox}>{t('navbar.inbox')}</ActiveLink>}
             </div>
             {isRelayEmployee && (
                 <div className="mt-8 flex flex-col space-y-4">
                     <h2 className="ml-6">ADMIN</h2>
-                    <ActiveLink href="/admin/clients">Clients</ActiveLink>
+                    <ActiveLink href={links.admin}>Clients</ActiveLink>
                 </div>
             )}
         </>
