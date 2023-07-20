@@ -89,7 +89,7 @@ jobs:
 
             - uses: supabase/setup-cli@v1
               with:
-                  version: 1.75.6
+                  version: latest
 
             - name: Verify supabase cli version
               run: supabase -v
