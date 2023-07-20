@@ -9,6 +9,7 @@ import type {
     MailboxSearchOptions,
 } from 'types/email-engine/account-account-search-post';
 import type { AccountAccountMailboxesGetResponse } from 'types/email-engine/account-account-mailboxes-get';
+import type { AccountAccountMessageGet } from 'types/email-engine/account-account-message-get';
 
 const authLinkPath = 'authentication/form';
 
@@ -47,6 +48,9 @@ export const sendEmail = async (body: SendEmailRequestBody, account: string) =>
 
 export const getEmails = async (account: string, mailboxPath: string) =>
     await emailEngineApiFetch<AccountAccountMessagesGet>(getEmailsPath(account, mailboxPath));
+
+export const getMessage = async (account: string, messageId: string) =>
+    await emailEngineApiFetch<AccountAccountMessageGet>(getEmailsPath(account, messageId));
 
 export const getEmailText = async (account: string, emailId: string, textType: TextType = '*') =>
     await emailEngineApiFetch<AccountAccountTextTextGetResponse>(getEmailTextPath(account, emailId, textType));
