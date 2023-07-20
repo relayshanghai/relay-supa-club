@@ -99,18 +99,6 @@ export const InboxPage = () => {
                                     loadingSelectedMessages={loadingSelectedMessages}
                                 />
                             </div>
-
-                            // <li
-                            //     className={`m-2 border border-black p-2 ${message.unseen ? 'font-bold' : 'font-light'}`}
-                            //     key={message.id}
-                            // >
-                            //     <button
-                            //         onClick={() => handleGetThreadEmails(message)}
-                            //         disabled={loadingSelectedMessages}
-                            //     >
-                            //         {message.subject}
-                            //     </button>
-                            // </li>
                         ))}
                     </ul>
                 )}
