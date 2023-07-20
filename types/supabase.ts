@@ -3,7 +3,7 @@ export type Json =
   | number
   | boolean
   | null
-  | { [key: string]: Json | undefined }
+  | { [key: string]: Json }
   | Json[]
 
 export interface Database {
@@ -725,6 +725,52 @@ export interface Database {
           }
         ]
       }
+      report_snapshots: {
+        Row: {
+          company_id: string | null
+          created_at: string | null
+          event_id: string | null
+          id: string
+          profile_id: string | null
+          snapshot: Json
+        }
+        Insert: {
+          company_id?: string | null
+          created_at?: string | null
+          event_id?: string | null
+          id?: string
+          profile_id?: string | null
+          snapshot: Json
+        }
+        Update: {
+          company_id?: string | null
+          created_at?: string | null
+          event_id?: string | null
+          id?: string
+          profile_id?: string | null
+          snapshot?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_snapshots_company_id_fkey"
+            columns: ["company_id"]
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "report_snapshots_event_id_fkey"
+            columns: ["event_id"]
+            referencedRelation: "tracking_events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "report_snapshots_profile_id_fkey"
+            columns: ["profile_id"]
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       sales: {
         Row: {
           amount: number
@@ -758,6 +804,116 @@ export interface Database {
             foreignKeyName: "sales_company_id_fkey"
             columns: ["company_id"]
             referencedRelation: "companies"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      search_snapshots: {
+        Row: {
+          company_id: string | null
+          created_at: string | null
+          event_id: string | null
+          id: string
+          profile_id: string | null
+          snapshot: Json
+        }
+        Insert: {
+          company_id?: string | null
+          created_at?: string | null
+          event_id?: string | null
+          id?: string
+          profile_id?: string | null
+          snapshot: Json
+        }
+        Update: {
+          company_id?: string | null
+          created_at?: string | null
+          event_id?: string | null
+          id?: string
+          profile_id?: string | null
+          snapshot?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "search_snapshots_company_id_fkey"
+            columns: ["company_id"]
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "search_snapshots_event_id_fkey"
+            columns: ["event_id"]
+            referencedRelation: "tracking_events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "search_snapshots_profile_id_fkey"
+            columns: ["profile_id"]
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      tracking_events: {
+        Row: {
+          anonymous_id: string | null
+          company_id: string | null
+          created_at: string | null
+          data: Json | null
+          event: string
+          event_at: string | null
+          id: string
+          journey_id: string | null
+          journey_type: string | null
+          profile_id: string | null
+          session_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          anonymous_id?: string | null
+          company_id?: string | null
+          created_at?: string | null
+          data?: Json | null
+          event: string
+          event_at?: string | null
+          id?: string
+          journey_id?: string | null
+          journey_type?: string | null
+          profile_id?: string | null
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          anonymous_id?: string | null
+          company_id?: string | null
+          created_at?: string | null
+          data?: Json | null
+          event?: string
+          event_at?: string | null
+          id?: string
+          journey_id?: string | null
+          journey_type?: string | null
+          profile_id?: string | null
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tracking_events_company_id_fkey"
+            columns: ["company_id"]
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tracking_events_profile_id_fkey"
+            columns: ["profile_id"]
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tracking_events_user_id_fkey"
+            columns: ["user_id"]
+            referencedRelation: "users"
             referencedColumns: ["id"]
           }
         ]
