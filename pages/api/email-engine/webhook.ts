@@ -91,6 +91,7 @@ const handleOtherWebhook = async (event: WebhookEvent, res: NextApiResponse) => 
 
 export type SendEmailPostResponseBody = SendEmailResponseBody;
 const postHandler: NextApiHandler = async (req, res) => {
+    // TODO: use a signing secret from the email client to authenticate the request
     const body = req.body as WebhookEvent;
     switch (body.event) {
         case 'messageNew':

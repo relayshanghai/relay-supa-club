@@ -3,10 +3,10 @@ export interface AccountAccountMessagesGet {
     total: number;
     page: number;
     pages: number;
-    messages: EmailMessage[];
+    messages: MessagesGetMessage[];
 }
 
-export interface EmailMessage {
+export interface MessagesGetMessage {
     id: string;
     uid: number;
     emailId: string;
