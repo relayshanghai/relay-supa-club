@@ -237,7 +237,7 @@ describe('Main pages happy paths', () => {
         cy.task('log', 'campaign-2')
         cy.get('input[name=name]').type('My Campaign');
         cy.get('button').contains('Create Campaign').click();
-        cy.wait(30000); // wait for campaign to be added to db
+        cy.wait(15000); // wait for campaign to be added to db
 
         cy.contains('Campaign Launch Date', { timeout: 10000 });
         cy.contains('SET India').should('not.exist');
@@ -370,6 +370,7 @@ describe('Main pages happy paths', () => {
         cy.loginAdmin();
 
         cy.contains('My Account').click();
+        cy.contains('Usage limits', { timeout: 30000 });
         cy.contains('https://relay.club', { timeout: 20000 });
         cy.contains('https://blue-moonlight-stream.com').should('not.exist');
         cy.contains('tr', 'Searches').within(() => {
@@ -395,6 +396,7 @@ describe('Main pages happy paths', () => {
         cy.contains('button', 'Search').click();
 
         cy.contains('My Account').click();
+        cy.contains('Usage limits', { timeout: 30000 });
         cy.contains('https://relay.club', { timeout: 20000 });
 
         // searches should have increased by 2
