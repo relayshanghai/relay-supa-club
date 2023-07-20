@@ -9,7 +9,7 @@ export interface SequenceInfluencer {
 }
 
 export const GMAIL_INBOX = 'INBOX';
-
+export const GMAIL_SENT = '[Gmail]/Sent Mail';
 export const testAccount = 'gprtldm3xqb0424p'; // brendan.relay@gmail.com
 
 export const mockInfluencers: SequenceInfluencer[] = [
