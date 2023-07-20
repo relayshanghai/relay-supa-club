@@ -10,20 +10,26 @@ const EMAIL_ENGINE_API_KEY = process.env.EMAIL_ENGINE_API_KEY;
 if (!EMAIL_ENGINE_API_KEY) {
     throw new Error('EMAIL_ENGINE_API_KEY is not defined');
 }
-
-const headers = {
+const authHeaders = {
     Authorization: `Bearer ${EMAIL_ENGINE_API_KEY}`,
 };
 
-export const emailEngineApiFetch = async <T = any>(path: string, options: RequestInitWithBody = {}) => {
+export const emailEngineApiFetch = async <T = any>(path: string, passedOptions: RequestInitWithBody = {}) => {
+    const options = {
+        ...passedOptions,
+        headers: {
+            ...authHeaders,
+            ...passedOptions.headers,
+        },
+    } as RequestInitWithBody;
     const body = options.body;
     const method = options.method?.toUpperCase();
+
     if (method === 'POST' || method === 'PUT' || method === 'DELETE') {
         options.headers = {
             accept: 'application/json',
             'content-type': 'application/json',
-            // allow manual override of content-type by placing this after
-            ...headers,
+            // allow manual override of 'content-type' by placing this after
             ...options.headers,
         };
     }
