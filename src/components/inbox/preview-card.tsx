@@ -63,7 +63,9 @@ export const PreviewCard = ({
                 loadingSelectedMessages && 'disabled'
             }`}
         >
-            <div className={`mr-1 h-1.5 rounded-full bg-primary-500 opacity-0 ${message.unseen && 'opacity-100'}`} />
+            <div
+                className={`mr-1 h-1.5 w-1.5 rounded-full bg-primary-500 opacity-0 ${message.unseen && 'opacity-100'}`}
+            />
             <div className="flex w-11/12 flex-col justify-center space-y-1">
                 <div className="overflow-hidden text-sm font-bold text-tertiary-500">
                     {message.from.name || message.from.address}
