@@ -217,7 +217,6 @@ describe('Main pages happy paths', () => {
         cy.url().should('include', `/campaigns`);
 
         // campaigns listed
-        cy.task('log', 'campaign-1')
         cy.contains('My Campaign').should('not.exist');
         cy.contains('Beauty for All Skin Tones').click();
 
@@ -234,10 +233,9 @@ describe('Main pages happy paths', () => {
         // new campaign form
         cy.contains('Campaign Name *', { timeout: 10000 });
         // check displays new campaign
-        cy.task('log', 'campaign-2')
         cy.get('input[name=name]').type('My Campaign');
         cy.get('button').contains('Create Campaign').click();
-        cy.wait(15000); // wait for campaign to be added to db
+        cy.wait(10000); // wait for campaign to be added to db
 
         cy.contains('Campaign Launch Date', { timeout: 10000 });
         cy.contains('SET India').should('not.exist');
@@ -246,13 +244,10 @@ describe('Main pages happy paths', () => {
 
         // campaigns are listed in order of most recently added/edited.
         cy.wait(5000); // wait for campaign to be added to db
-        cy.task('log', 'check-children')
         cy.getByTestId('campaign-cards-container').children().should('have.length', 2)
-        cy.task('log', 'campaign-3')
         cy.getByTestId('campaign-cards-container', { timeout: 60000 }).children().first().contains('My Campaign');
         cy.getByTestId('campaign-cards-container').children().first().next().contains('Beauty for All Skin Tones');
 
-        cy.task('log', 'campaign-4')
         cy.contains('My Campaign').click();
 
         // go to search and add an influencer to campaign
@@ -293,7 +288,6 @@ describe('Main pages happy paths', () => {
 
         // Beauty for All Skin Tones should now be listed first, since we added an influencer to it
         cy.getByTestId('campaign-cards-container').children().first().contains('Beauty for All Skin Tones');
-        cy.task('log', 'campaign-5')
         cy.getByTestId('campaign-cards-container').children().first().next().contains('My Campaign');
         cy.contains('Beauty for All Skin Tones').click();
 
@@ -317,12 +311,10 @@ describe('Main pages happy paths', () => {
         // move influencer to new campaign
         cy.contains('tr', 'SET India').within(() => cy.getByTestId('move-influencer-button').click()); // can take
 
-        cy.task('log', 'campaign-6')
         cy.getByTestId('move-influencer-button:My Campaign').click({ multiple: true });
         cy.contains('Campaign Launch Date').click({ force: true }); // click out of modal
         cy.contains('SET India').should('not.exist');
         cy.contains('Campaigns').click();
-        cy.task('log', 'campaign-7')
         cy.contains('My Campaign').click();
         cy.contains('SET India');
 
@@ -347,7 +339,6 @@ describe('Main pages happy paths', () => {
         cy.getByTestId('submit-comment-button').click();
         cy.contains('William Edward', { timeout: 10000 }); // user name shows
         cy.contains('This influencer is great');
-        cy.task('log', 'campaign-8')
         cy.contains('My Campaign').click({ force: true }); // hidden by modal
 
         // delete an influencer
@@ -358,10 +349,8 @@ describe('Main pages happy paths', () => {
         // archive a campaign
         cy.contains('span', 'Archive').click();
         cy.contains('Campaigns').click();
-        cy.task('log', 'campaign-9')
         cy.contains('My Campaign').should('not.exist');
         cy.contains('Archived Campaigns').click();
-        cy.task('log', 'campaign-10')
         cy.contains('My Campaign');
     });
 
@@ -397,7 +386,7 @@ describe('Main pages happy paths', () => {
 
         cy.contains('My Account').click();
         cy.contains('Usage limits', { timeout: 30000 });
-        cy.contains('https://relay.club', { timeout: 20000 });
+        cy.contains('https://relay.club');
 
         // searches should have increased by 2
         cy.contains('td', '2', { timeout: 30000 }); // wait for count to update
