@@ -43,6 +43,7 @@ export const Email = ({ message }: { message: SearchResponseMessage }) => {
                 <p>Loading...</p>
             ) : (
                 <div
+                    className="overflow-y-auto"
                     dangerouslySetInnerHTML={{
                         __html: cleanEmailBody(content),
                     }}
