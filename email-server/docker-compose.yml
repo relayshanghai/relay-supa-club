@@ -21,6 +21,7 @@ services:
             # "smtpServerPassword"
             # "serviceUrl"
             # EENGINE_SECRET
+            # Theses are the settings from https://api.emailengine.app/#operation/postV1Settings
             EENGINE_SETTINGS: >
                 {
                     "smtpServerEnabled": true,
@@ -28,7 +29,9 @@ services:
                     "smtpServerHost": "0.0.0.0",
                     "smtpServerAuthEnabled": true,
                     "smtpServerPassword": "passw0rd",
-                    "serviceUrl": "http://127.0.0.1:4000"
+                    "serviceUrl": "http://127.0.0.1:4000",
+                    "webhooksEnabled": true,
+                    "webhooks": "https://app.relay.club/api/email-engine/webhook",
                 }
 
             # Encryption secret

@@ -6,7 +6,7 @@ import type { DatabaseWithCustomTypes } from 'types';
 import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
 import httpCodes from 'src/constants/httpCodes';
 import { serverLogger } from 'src/utils/logger-server';
-import { featRecommended } from 'src/constants/feature-flags';
+import { featEmail } from 'src/constants/feature-flags';
 
 const pricingAllowList = ['https://en-relay-club.vercel.app', 'https://relay.club'];
 
@@ -139,6 +139,15 @@ const allowPricingCors = (req: NextRequest, res: NextResponse) => {
     return res;
 };
 
+const allowWebhookCors = (req: NextRequest, res: NextResponse) => {
+    const origin = req.headers.get('origin');
+    if (origin && origin.includes('localhost')) {
+        res.headers.set('Access-Control-Allow-Origin', '*');
+    }
+    res.headers.set('Access-Control-Allow-Methods', 'POST');
+    return res;
+};
+
 const checkIsRelayEmployee = async (res: NextResponse, email: string) => {
     if (!EMPLOYEE_EMAILS.includes(email)) {
         return NextResponse.json({ error: 'user is unauthorized for this action' });
@@ -155,7 +164,7 @@ export async function middleware(req: NextRequest) {
     const res = NextResponse.next();
 
     // don't allow users to use the email pages/apis before they are ready
-    if (!featRecommended()) {
+    if (!featEmail()) {
         if (
             req.nextUrl.pathname.includes('email-engine') ||
             req.nextUrl.pathname.includes('sequences') ||
@@ -164,10 +173,13 @@ export async function middleware(req: NextRequest) {
             return NextResponse.rewrite('/404', { status: httpCodes.NOT_FOUND });
         }
     }
-
+    if (req.nextUrl.pathname === '/api/ping') return res;
     if (req.nextUrl.pathname === '/api/subscriptions/prices') return allowPricingCors(req, res);
     if (req.nextUrl.pathname === '/api/slack/create') return res;
     if (req.nextUrl.pathname === '/api/subscriptions/webhook') return res;
+    if (req.nextUrl.pathname === '/api/email-engine/webhook' && process.env.NODE_ENV === 'development') {
+        return allowWebhookCors(req, res);
+    }
 
     // Create authenticated Supabase Client.
     const supabase = createMiddlewareSupabaseClient<DatabaseWithCustomTypes>({ req, res });

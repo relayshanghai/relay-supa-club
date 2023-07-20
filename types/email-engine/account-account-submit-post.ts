@@ -1,13 +1,91 @@
 /** There are a lot more options available https://email.relay.club/admin/iframe/docs#/Submit/postV1AccountAccountSubmit  */
 export interface SendEmailRequestBody {
-    to: {
-        address: string;
-    }[];
-    subject: string;
-    /** need either text or html */
+    reference?: Reference;
+    envelope?: Envelope;
+    raw?: string;
+    from?: From;
+    replyTo?: From[];
+    to: To[];
+    cc?: From[];
+    bcc?: From[];
+    subject?: string;
+    /** Need either text or html */
     text?: string;
-    /** need either text or html */
+    /** Need either text or html */
     html?: string;
+    previewText?: string;
+    template?: string;
+    render?: Render;
+    mailMerge?: MailMerge[];
+    attachments?: Attachment[];
+    messageId?: string;
+    headers?: Headers;
+    trackingEnabled?: boolean;
+    copy?: null;
+    sentMailPath?: string;
+    locale?: string;
+    tz?: string;
+    sendAt?: string;
+    deliveryAttempts?: number;
+    gateway?: string;
+    listId?: string;
+    dsn?: DSN;
+    baseUrl?: string;
+    dryRun?: boolean;
+}
+
+export interface Attachment {
+    filename: string;
+    content: string;
+    contentType: string;
+    contentDisposition: string;
+    cid: string;
+    encoding: string;
+    reference: string;
+}
+
+export interface From {
+    name: string;
+    address: string;
+}
+
+export interface DSN {
+    id: string;
+    return: string;
+    notify: string[];
+    recipient: string;
+}
+
+export interface Envelope {
+    from: string;
+    to: string[];
+}
+
+type Headers = Record<string, string>;
+
+export interface MailMerge {
+    to: From;
+    messageId: string;
+    params: Headers;
+    sendAt: string;
+}
+
+export interface Reference {
+    message: string;
+    action: string;
+    inline: boolean;
+    forwardAttachments: boolean;
+    ignoreMissing: boolean;
+    documentStore: boolean;
+}
+
+export interface Render {
+    format: string;
+    params: Headers;
+}
+
+export interface To {
+    address: string;
 }
 
 /** https://email.relay.club/admin/iframe/docs#/Submit/postV1AccountAccountSubmit */
