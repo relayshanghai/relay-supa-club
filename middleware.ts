@@ -182,7 +182,7 @@ export async function middleware(req: NextRequest) {
     if (req.nextUrl.pathname === '/api/subscriptions/prices') return allowPricingCors(req, res);
     if (req.nextUrl.pathname === '/api/slack/create') return res;
     if (req.nextUrl.pathname === '/api/subscriptions/webhook') return res;
-    if (req.nextUrl.pathname === '/api/email-engine/webhook' && process.env.NODE_ENV === 'development') {
+    if (req.nextUrl.pathname === '/api/email-engine/webhook') {
         return allowEmailWebhookCors(req, res);
     }
 
