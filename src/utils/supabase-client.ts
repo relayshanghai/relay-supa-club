@@ -10,11 +10,7 @@ const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY || '';
 if (!supabaseServiceKey) throw new Error('SUPABASE_SERVICE_KEY not set');
 
 /** ***THIS SHOULD ONLY BE USED SERVER-SIDE*** */
-export const supabase = createClient<DatabaseWithCustomTypes>(supabaseUrl, supabaseServiceKey, {
-    auth: {
-        persistSession: false,
-    },
-});
+export const supabase = createClient<DatabaseWithCustomTypes>(supabaseUrl, supabaseServiceKey);
 
 export const db = <T extends (supabase: SupabaseClient<D>) => any, D = DatabaseWithCustomTypes>(
     query: DBQuery<T, D>,
@@ -23,10 +19,6 @@ export const db = <T extends (supabase: SupabaseClient<D>) => any, D = DatabaseW
         throw new Error('Supabase URL or service key is not set');
     }
 
-    const supabase = createClient<D>(supabaseUrl, supabaseServiceKey, {
-        auth: {
-            persistSession: false,
-        },
-    });
+    const supabase = createClient<D>(supabaseUrl, supabaseServiceKey);
     return (...args: Parameters<ReturnType<T>>) => query(supabase)(...args);
 };
