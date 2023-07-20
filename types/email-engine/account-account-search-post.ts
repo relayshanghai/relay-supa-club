@@ -3,10 +3,10 @@ export interface AccountAccountSearchPost {
     total: number;
     page: number;
     pages: number;
-    messages: Message[];
+    messages: SearchResponseMessage[];
 }
 
-export interface Message {
+export interface SearchResponseMessage {
     id: string;
     uid: number;
     emailId: string;
