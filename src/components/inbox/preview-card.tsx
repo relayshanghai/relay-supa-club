@@ -31,7 +31,8 @@ export const PreviewCard = ({
                     <div className="font-base ml-2 min-w-fit">{dateFormat(message.date, 'isoDate', true, true)} </div>
                 </div>
                 <div className="flex items-center justify-between text-xs text-tertiary-400">
-                    <div className="truncate">{message.text.id}</div>
+                    {/* TODO: add preview text after document store is implemented V2-578 */}
+                    {/* <div className="truncate">{message.text.id}</div> */}
                 </div>
             </div>
         </div>
