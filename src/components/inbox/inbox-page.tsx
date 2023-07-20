@@ -85,12 +85,12 @@ export const InboxPage = () => {
 
     return (
         <Layout>
-            <div className="flex">
+            <div className="flex h-full">
                 {loadingMessages && <p>Loading...</p>}
                 {getMessagesError && <p>Error: {getMessagesError}</p>}
                 {messages.length === 0 && !loadingMessages && !getMessagesError && <p>No messages</p>}
                 {messages.length > 0 && (
-                    <ul className="w-1/2">
+                    <ul className="h-full w-1/2 overflow-y-auto">
                         {messages.map((message) => (
                             <div key={message.id}>
                                 <PreviewCard
@@ -112,6 +112,11 @@ export const InboxPage = () => {
                             </li>
                         ))}
                     </ul>
+                )}
+                {!selectedMessages && !loadingMessages && (
+                    <div className="font-sm m-auto flex h-full items-center justify-between overflow-y-auto text-gray-500">
+                        No message has been selected yet.
+                    </div>
                 )}
             </div>
         </Layout>
