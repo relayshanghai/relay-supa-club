@@ -4,9 +4,9 @@ import { testAccount } from 'src/utils/api/email-engine/prototype-mocks';
 import type { GetEmailPostRequestBody, GetEmailPostResponseBody } from 'pages/api/email-engine/email-text';
 import { clientLogger } from 'src/utils/logger-client';
 import { cleanEmailBody } from 'src/utils/clean-html';
-import type { Message } from 'types/email-engine/account-account-search-post';
+import type { SearchResponseMessage } from 'types/email-engine/account-account-search-post';
 
-export const Email = ({ message }: { message: Message }) => {
+export const Email = ({ message }: { message: SearchResponseMessage }) => {
     // TODO: mark email as seen. Use update email endpoint /v1/account/{account}/messages
 
     const [content, setContent] = useState('');
@@ -43,6 +43,7 @@ export const Email = ({ message }: { message: Message }) => {
                 <p>Loading...</p>
             ) : (
                 <div
+                    className="overflow-y-auto"
                     dangerouslySetInnerHTML={{
                         __html: cleanEmailBody(content),
                     }}
