@@ -74,7 +74,8 @@ function loginTestUser(
     cy.get('input[type="email"]').type(email);
     cy.get('input[type="password"]').type(Cypress.env('TEST_USER_PASSWORD'));
     cy.get('form').get('button').contains('Log in').click();
-    cy.contains('Successfully logged in', { timeout: 30000 }); // the toast message
+    cy.wait(10000)
+    cy.contains('Successfully logged in', { timeout: 10000 }); // the toast message
     cy.contains('Campaigns', { timeout: 10000 }); // dashboard page load
 }
 Cypress.Commands.add('loginTestUser', loginTestUser);
@@ -98,7 +99,8 @@ function loginAdmin(
     cy.get('input[type="email"]').type(email);
     cy.get('input[type="password"]').type(Cypress.env('TEST_USER_PASSWORD'));
     cy.get('form').get('button').contains('Log in').click();
-    cy.contains('Successfully logged in', { timeout: 30000 }); // the toast message
+    cy.wait(10000)
+    cy.contains('Successfully logged in', { timeout: 10000 }); // the toast message
     cy.contains('Campaigns', { timeout: 10000 }); // dashboard page load
 }
 Cypress.Commands.add('loginAdmin', loginAdmin);
