@@ -6,6 +6,7 @@ import type { FetchCreatorsFilteredParams } from './transforms';
 import { prepareFetchCreatorsFiltered } from './transforms';
 import type { TikTokVideoDataRaw } from 'types/iqdata/tiktok-video-info';
 import type { YoutubeVideoDataRaw } from 'types/iqdata/youtube-video-info';
+import { logRateLimitError } from 'pages/api/webhooks/rate_limit';
 
 export const IQDATA_URL = 'https://socapi.icu/v2.0/api/';
 
@@ -25,6 +26,9 @@ export const iqDataFetch = async <T = any>(path: string, options: RequestInit = 
     });
     await handleResError(res);
     const json = await res.json();
+    if (res.status === 429) {
+        await logRateLimitError();
+    }
     return json as T;
 };
 
