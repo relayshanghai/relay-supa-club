@@ -28,50 +28,58 @@ export type WebhookEvent =
     | WebhookTrackClick
     | WebhookTrackOpen;
 
-const handleNewEmail = (event: WebhookMessageNew, res: NextApiResponse) => {
+const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) => {
     console.log({ WebhookMessageNew: event });
-    supabaseLogger({ type: 'email-webhook', data: event as any });
+    await supabaseLogger({
+        type: 'email-webhook',
+        data: event as any,
+        message: `newMessage from: ${event.data.from.address}`,
+    });
     return res.status(httpCodes.OK).json({});
 };
-const handleTrackClick = (event: WebhookTrackClick, res: NextApiResponse) => {
+const handleTrackClick = async (event: WebhookTrackClick, res: NextApiResponse) => {
     console.log({ WebhookTrackClick: event });
-    supabaseLogger({ type: 'email-webhook', data: event as any });
+    await supabaseLogger({ type: 'email-webhook', data: event as any, message: `trackClick url: ${event.data.url}` });
     return res.status(httpCodes.OK).json({});
 };
 
-const handleTrackOpen = (event: WebhookTrackOpen, res: NextApiResponse) => {
+const handleTrackOpen = async (event: WebhookTrackOpen, res: NextApiResponse) => {
     console.log({ WebhookTrackOpen: event });
-    supabaseLogger({ type: 'email-webhook', data: event as any });
+    await supabaseLogger({
+        type: 'email-webhook',
+        data: event as any,
+        message: `trackOpen messageId: ${event.data.messageId}`,
+    });
     return res.status(httpCodes.OK).json({});
 };
 
-const handleBounce = (event: WebhookMessageBounce, res: NextApiResponse) => {
+const handleBounce = async (event: WebhookMessageBounce, res: NextApiResponse) => {
     console.log({ WebhookMessageBounce: event });
-    supabaseLogger({ type: 'email-webhook', data: event as any });
+    await supabaseLogger({ type: 'email-webhook', data: event as any });
     return res.status(httpCodes.OK).json({});
 };
 
-const handleComplaint = (event: WebhookMessageComplaint, res: NextApiResponse) => {
+const handleComplaint = async (event: WebhookMessageComplaint, res: NextApiResponse) => {
     console.log({ WebhookMessageComplaint: event });
-    supabaseLogger({ type: 'email-webhook', data: event as any });
+    await supabaseLogger({ type: 'email-webhook', data: event as any });
     return res.status(httpCodes.OK).json({});
 };
 
-const handleDeliveryError = (event: WebhookMessageDeliveryError, res: NextApiResponse) => {
+const handleDeliveryError = async (event: WebhookMessageDeliveryError, res: NextApiResponse) => {
     console.log({ WebhookMessageDeliveryError: event });
-    supabaseLogger({ type: 'email-webhook', data: event as any });
+    await supabaseLogger({ type: 'email-webhook', data: event as any });
     return res.status(httpCodes.OK).json({});
 };
 
-const handleFailed = (event: WebhookMessageFailed, res: NextApiResponse) => {
+const handleFailed = async (event: WebhookMessageFailed, res: NextApiResponse) => {
     console.log({ WebhookMessageFailed: event });
-    supabaseLogger({ type: 'email-webhook', data: event as any });
+    await supabaseLogger({ type: 'email-webhook', data: event as any });
     return res.status(httpCodes.OK).json({});
 };
 
-const handleSent = (event: WebhookMessageSent, res: NextApiResponse) => {
+const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
     console.log({ WebhookMessageSent: event });
-    supabaseLogger({ type: 'email-webhook', data: event as any });
+    await supabaseLogger({ type: 'email-webhook', data: event as any });
     return res.status(httpCodes.OK).json({});
 };
 
