@@ -83,6 +83,12 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
     return res.status(httpCodes.OK).json({});
 };
 
+const handleOtherWebhook = async (event: WebhookEvent, res: NextApiResponse) => {
+    console.log({ UnknownWebhook: event });
+    await supabaseLogger({ type: 'email-webhook', data: event as any });
+    return res.status(httpCodes.OK).json({});
+};
+
 export type SendEmailPostResponseBody = SendEmailResponseBody;
 const postHandler: NextApiHandler = async (req, res) => {
     const body = req.body as WebhookEvent;
@@ -103,12 +109,9 @@ const postHandler: NextApiHandler = async (req, res) => {
             return handleFailed(body, res);
         case 'messageSent':
             return handleSent(body, res);
-
         default:
-            break;
+            return handleOtherWebhook(body, res);
     }
-
-    return res.status(httpCodes.OK).json({ body });
 };
 
 export default ApiHandler({ postHandler });
