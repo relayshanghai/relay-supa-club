@@ -36,7 +36,9 @@ const LoginPage = () => {
         try {
             setLoggingIn(true);
             await login(email, password);
-            toast.success(t('login.loginSuccess'));
+            toast.success(t('login.loginSuccess'), {
+                duration: 10000,
+            });
             await router.push('/dashboard');
         } catch (error: any) {
             toast.error(error.message || t('login.oopsSomethingWentWrong'));
