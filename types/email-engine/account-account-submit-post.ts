@@ -44,33 +44,33 @@ export interface Attachment {
     reference: string;
 }
 
-export interface From {
+interface From {
     name: string;
     address: string;
 }
 
-export interface DSN {
+interface DSN {
     id: string;
     return: string;
     notify: string[];
     recipient: string;
 }
 
-export interface Envelope {
+interface Envelope {
     from: string;
     to: string[];
 }
 
 type Headers = Record<string, string>;
 
-export interface MailMerge {
+interface MailMerge {
     to: From;
     messageId: string;
     params: Headers;
     sendAt: string;
 }
 
-export interface Reference {
+interface Reference {
     message: string;
     action: string;
     inline: boolean;
@@ -79,12 +79,12 @@ export interface Reference {
     documentStore: boolean;
 }
 
-export interface Render {
+interface Render {
     format: string;
     params: Headers;
 }
 
-export interface To {
+interface To {
     address: string;
 }
 

@@ -10,7 +10,9 @@ export interface SequenceInfluencer {
 
 export const GMAIL_INBOX = 'INBOX';
 export const GMAIL_SENT = '[Gmail]/Sent Mail';
-export const testAccount = 'gprtldm3xqb0424p'; // brendan.relay@gmail.com
+// export const testAccount = 'gprtldm3xqb0424p'; // brendan.relay@gmail.com on prod
+// export const testAccount = 'r3e7hpvesxek82fj'; // localhost docker account
+export const testAccount = 'gzz2n7isa54a36ve'; // localhost account
 
 export const mockInfluencers: SequenceInfluencer[] = [
     {

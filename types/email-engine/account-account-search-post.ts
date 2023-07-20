@@ -31,7 +31,7 @@ export interface Message {
     preview: string;
 }
 
-export interface Attachment {
+interface Attachment {
     id: string;
     contentType: string;
     encodedSize: number;
@@ -40,21 +40,21 @@ export interface Attachment {
     contentId: string;
 }
 
-export interface From {
+interface From {
     name: string;
     address: string;
 }
 
-export interface ReplyTo {
+interface ReplyTo {
     address: string;
 }
 
-export interface Text {
+interface Text {
     id: string;
     encodedSize: EncodedSize;
 }
 
-export interface EncodedSize {
+interface EncodedSize {
     plain: number;
     html: number;
 }
