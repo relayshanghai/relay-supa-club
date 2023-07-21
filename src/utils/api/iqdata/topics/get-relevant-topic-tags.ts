@@ -43,7 +43,7 @@ export const getRelevantTopicTags = async (payload: GetRelevantTopicTagsPayload)
         { headers },
     );
 
-    if (response.success === true) {
+    if (response && response.success === true) {
         sortByDistance(response.data);
     }
 
