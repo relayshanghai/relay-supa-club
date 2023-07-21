@@ -1,5 +1,6 @@
 import type { ApiPayload } from '../types';
 import { IQDATA_URL } from '.';
+import { headers } from 'src/utils/api/iqdata/constants';
 
 /**
  * For fetching API's externally or internally
@@ -20,6 +21,7 @@ export const apiFetch = async <T = any>(url: string, payload: ApiPayload, option
     if (payload.body) {
         options.method = 'POST';
         options.body = JSON.stringify(payload.body);
+        options.headers = headers;
     }
 
     const response = await fetch(IQDATA_URL + url, options).catch((err) => {
