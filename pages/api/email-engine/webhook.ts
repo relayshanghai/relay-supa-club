@@ -3,6 +3,8 @@ import type { NextApiHandler, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { ApiHandler } from 'src/utils/api-handler';
 import { supabaseLogger } from 'src/utils/api/db';
+import { deleteEmailFromOutbox, getOutbox } from 'src/utils/api/email-engine';
+import { GMAIL_SENT_SPECIAL_USE_FLAG } from 'src/utils/api/email-engine/prototype-mocks';
 
 import type { SendEmailRequestBody, SendEmailResponseBody } from 'types/email-engine/account-account-submit-post';
 import type { WebhookMessageBounce } from 'types/email-engine/webhook-message-bounce';
@@ -28,13 +30,39 @@ export type WebhookEvent =
     | WebhookTrackClick
     | WebhookTrackOpen;
 
+getOutbox().then((outbox) => console.log({ outbox }));
+
 const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) => {
     console.log({ WebhookMessageNew: event });
-    await supabaseLogger({
-        type: 'email-webhook',
-        data: event as any,
-        message: `newMessage from: ${event.data.from.address}`,
-    });
+
+    if (event.data.messageSpecialUse === GMAIL_SENT_SPECIAL_USE_FLAG) {
+        // For some reason, sent mail also shows up in `messageNew`, so filter them out.
+        // TODO: find a more general, non-hardcoded way to do this that will work for non-gmail providers.
+        return res.status(httpCodes.OK).json({});
+    }
+
+    const outbox = await getOutbox();
+    // if there is a sequenced email in the outbox to this address, cancel it
+    // TODO: also check sequence in database?
+    if (outbox.messages.some((message) => message.envelope.to.includes(event.data.from.address))) {
+        const message = outbox.messages.find((message) => message.envelope.to.includes(event.data.from.address));
+        if (!message) {
+            return;
+        }
+        const { deleted } = await deleteEmailFromOutbox(message.queueId);
+
+        await supabaseLogger({
+            type: 'email-webhook',
+            data: event as any,
+            message: `${deleted ? 'canceled' : 'failed to cancel'} email to: ${JSON.stringify(message.envelope.to)}`,
+        });
+    } else {
+        await supabaseLogger({
+            type: 'email-webhook',
+            data: event as any,
+            message: `newMessage from: ${event.data.from.address}`,
+        });
+    }
     return res.status(httpCodes.OK).json({});
 };
 const handleTrackClick = async (event: WebhookTrackClick, res: NextApiResponse) => {

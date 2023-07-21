@@ -8,8 +8,13 @@ export interface SequenceInfluencer {
     status: string;
 }
 
+// GMAIL specific constants. If we support other providers we will need workarounds for these.
 export const GMAIL_INBOX = 'INBOX';
 export const GMAIL_SENT = '[Gmail]/Sent Mail';
+export const GMAIL_ALL_MAIL = '[Gmail]/All Mail';
+
+export const GMAIL_SENT_SPECIAL_USE_FLAG = '\\Sent';
+
 export const testAccount = 'gprtldm3xqb0424p'; // brendan.relay@gmail.com on prod
 // export const testAccount = 'r3e7hpvesxek82fj'; // localhost docker account
 // export const testAccount = 'gzz2n7isa54a36ve'; // localhost account
