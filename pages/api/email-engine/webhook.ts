@@ -30,8 +30,6 @@ export type WebhookEvent =
     | WebhookTrackClick
     | WebhookTrackOpen;
 
-getOutbox().then((outbox) => console.log({ outbox }));
-
 const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) => {
     console.log({ WebhookMessageNew: event });
 
