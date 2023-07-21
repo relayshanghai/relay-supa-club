@@ -3,10 +3,10 @@ export interface AccountAccountMessagesGet {
     total: number;
     page: number;
     pages: number;
-    messages: EmailMessage[];
+    messages: MessagesGetMessage[];
 }
 
-export interface EmailMessage {
+export interface MessagesGetMessage {
     id: string;
     uid: number;
     emailId: string;
@@ -24,17 +24,17 @@ export interface EmailMessage {
     text: Text;
 }
 
-export interface From {
+interface From {
     name: string;
     address: string;
 }
 
-export interface Text {
+interface Text {
     id: string;
     encodedSize: EncodedSize;
 }
 
-export interface EncodedSize {
+interface EncodedSize {
     plain?: number;
     html: number;
 }

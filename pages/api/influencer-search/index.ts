@@ -60,6 +60,10 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         snapshot_id: snapshot.id,
     };
 
+    if (results === undefined) {
+        throw new RelayError('Cannot search influencers');
+    }
+
     return res.status(httpCodes.OK).json(results);
 };
 

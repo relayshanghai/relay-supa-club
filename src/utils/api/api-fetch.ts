@@ -20,8 +20,8 @@ export const apiFetch = async <T = any>(url: string, payload: ApiPayload, option
         options.method = 'POST';
         options.body = JSON.stringify(payload.body);
         options.headers = {
+            'content-type': 'application/json',
             ...options.headers,
-            'Content-Type': 'application/json',
         };
     }
 

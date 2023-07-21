@@ -3,13 +3,14 @@ import { Layout } from '../layout';
 import { nextFetch } from 'src/utils/fetcher';
 import { GMAIL_INBOX, GMAIL_SENT, testAccount } from 'src/utils/api/email-engine/prototype-mocks';
 import type { ListEmailsPostRequestBody } from 'pages/api/email-engine/list-emails';
-import type { EmailMessage } from 'types/email-engine/account-account-messages-get';
+import type { MessagesGetMessage } from 'types/email-engine/account-account-messages-get';
 import type { EmailSearchPostRequestBody, EmailSearchPostResponseBody } from 'pages/api/email-engine/search';
 import { clientLogger } from 'src/utils/logger-client';
 import { Email } from './Email';
+import { PreviewCard } from './preview-card';
 
 export const InboxPage = () => {
-    const [messages, setMessages] = useState<EmailMessage[]>([]);
+    const [messages, setMessages] = useState<MessagesGetMessage[]>([]);
     const [loadingMessages, setLoadingMessages] = useState(false);
     const [getMessagesError, setGetMessagesError] = useState('');
 
@@ -40,7 +41,7 @@ export const InboxPage = () => {
         }
     }, [getMessages, loadingMessages, messages.length]);
 
-    const handleGetThreadEmails = async (message: EmailMessage) => {
+    const handleGetThreadEmails = async (message: MessagesGetMessage) => {
         setSelectedMessages([]);
         setLoadingSelectedMessages(true);
         setGetSelectedMessagesError('');
@@ -84,24 +85,20 @@ export const InboxPage = () => {
 
     return (
         <Layout>
-            <div className="flex">
+            <div className="flex h-full">
                 {loadingMessages && <p>Loading...</p>}
                 {getMessagesError && <p>Error: {getMessagesError}</p>}
                 {messages.length === 0 && !loadingMessages && !getMessagesError && <p>No messages</p>}
                 {messages.length > 0 && (
-                    <ul className={`${selectedMessages && 'w-1/2'}`}>
+                    <ul className="h-full w-1/2 overflow-y-auto">
                         {messages.map((message) => (
-                            <li
-                                className={`m-2 border border-black p-2 ${message.unseen ? 'font-bold' : 'font-light'}`}
-                                key={message.id}
-                            >
-                                <button
-                                    onClick={() => handleGetThreadEmails(message)}
-                                    disabled={loadingSelectedMessages}
-                                >
-                                    {message.subject}
-                                </button>
-                            </li>
+                            <div key={message.id}>
+                                <PreviewCard
+                                    message={message}
+                                    handleGetThreadEmails={handleGetThreadEmails}
+                                    loadingSelectedMessages={loadingSelectedMessages}
+                                />
+                            </div>
                         ))}
                     </ul>
                 )}
@@ -115,6 +112,11 @@ export const InboxPage = () => {
                             </li>
                         ))}
                     </ul>
+                )}
+                {!selectedMessages && !loadingMessages && (
+                    <div className="font-sm m-auto flex h-full items-center justify-between overflow-y-auto text-gray-500">
+                        No message has been selected yet.
+                    </div>
                 )}
             </div>
         </Layout>
