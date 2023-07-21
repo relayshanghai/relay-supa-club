@@ -28,7 +28,7 @@ export const setupIntercepts = () => {
     const supabaseServiceKey = Cypress.env('SUPABASE_SERVICE_KEY') || '';
     if (!supabaseServiceKey) throw new Error('SUPABASE_SERVICE_KEY not set');
 
-    const supabase = createClient<DatabaseWithCustomTypes>(supabaseUrl, supabaseServiceKey);
+    const supabase = createClient<DatabaseWithCustomTypes>(supabaseUrl, supabaseServiceKey, { auth: { persistSession: false } });
     resetUsages(supabase);
     // IQData intercepts
     cy.intercept('/api/creators/report*', (req) => {
@@ -212,7 +212,7 @@ export const addPostIntercept = () => {
     const supabaseServiceKey = Cypress.env('SUPABASE_SERVICE_KEY') || '';
     if (!supabaseServiceKey) throw new Error('SUPABASE_SERVICE_KEY not set');
 
-    const supabase = createClient<DatabaseWithCustomTypes>(supabaseUrl, supabaseServiceKey);
+    const supabase = createClient<DatabaseWithCustomTypes>(supabaseUrl, supabaseServiceKey, { auth: { persistSession: false } });
     const mockPostData = {
         title: 'initial post title',
         postedDate: new Date('2021-09-01').toISOString(),

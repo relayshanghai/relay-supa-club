@@ -39,57 +39,66 @@ export class RelayError extends Error {
     }
 }
 
+const isJsonable = (error: any) => {
+    return (
+        !(error instanceof Error) && error !== null && typeof error === 'object' && error.constructor.name === 'Object'
+    );
+};
+
+const createErrorObject = (error: any) => {
+    const e: {
+        httpCode: number;
+        message: any;
+    } = {
+        httpCode: httpCodes.INTERNAL_SERVER_ERROR,
+        message: 'Unknown Error',
+    };
+
+    if (error instanceof Error) {
+        e.message = error.message;
+    }
+
+    if (error instanceof ZodError) {
+        e.message = error.issues;
+    }
+
+    if (error instanceof RelayError) {
+        e.httpCode = error.httpCode;
+        e.message = error.message;
+    }
+
+    if (typeof error === 'string') {
+        e.message = error;
+    }
+
+    if (isJsonable(error)) {
+        e.message = JSON.stringify(error);
+    }
+
+    // Hide server errors if not in development
+    if (e.httpCode >= 500 && process.env.NODE_ENV !== 'development') {
+        e.message = 'Error occurred';
+    }
+
+    return e;
+};
+
 export const exceptionHandler = <T = any>(fn: NextApiHandler<T>) => {
     return async (req: NextApiRequest, res: NextApiResponse<T | { error: any }>) => {
         try {
             await fn(req, res);
         } catch (error) {
-            const e: {
-                httpCode: number;
-                message: any;
-            } = {
-                httpCode: httpCodes.INTERNAL_SERVER_ERROR,
-                message: 'Unknown Error',
-            };
-
-            if (error instanceof Error) {
-                e.message = error.message;
-            }
-
-            if (error instanceof ZodError) {
-                e.message = error.issues;
-            }
-
-            if (error instanceof RelayError) {
-                e.httpCode = error.httpCode;
-                e.message = error.message;
-
-                // if it's a RelayError, allow silencing the log
-                if (error.shouldLog) serverLogger(error, 'error', error.sendToSentry);
-            }
-
-            if (typeof error === 'string') {
-                e.message = error;
-            }
-
-            if (
-                !(error instanceof Error) &&
-                error !== null &&
-                typeof error === 'object' &&
-                error.constructor.name === 'Object'
-            ) {
-                e.message = JSON.stringify(error);
-            }
-
-            // Hide server errors if not in development
-            if (e.httpCode >= 500 && process.env.NODE_ENV !== 'development') {
-                e.message = 'Error occurred';
+            // if it's a RelayError, allow silencing the log
+            if (error instanceof RelayError && error.shouldLog) {
+                serverLogger(error, 'error', error.sendToSentry);
             }
 
             // if it's not a RelayError, log it by default
             if (!(error instanceof RelayError)) {
                 serverLogger(error, 'error');
             }
+
+            const e = createErrorObject(error);
 
             return res.status(e.httpCode).json({ error: e.message });
         }
