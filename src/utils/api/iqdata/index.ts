@@ -6,8 +6,6 @@ import type { FetchCreatorsFilteredParams } from './transforms';
 import { prepareFetchCreatorsFiltered } from './transforms';
 import type { TikTokVideoDataRaw } from 'types/iqdata/tiktok-video-info';
 import type { YoutubeVideoDataRaw } from 'types/iqdata/youtube-video-info';
-import { logRateLimitError } from 'pages/api/webhooks/rate_limit';
-
 export const IQDATA_URL = 'https://socapi.icu/v2.0/api/';
 
 /**
