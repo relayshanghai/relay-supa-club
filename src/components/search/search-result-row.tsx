@@ -43,12 +43,12 @@ export const MoreResultsRows = ({
 }: MoreResultsRowsProps) => {
     const { t } = useTranslation();
     const { resultsPerPageLimit, searchParams } = useSearch();
-    const { results, loading, error, isCached, metadata } = useSearchResults(page);
+    const { results, loading, error, metadata } = useSearchResults(page);
 
     const { track } = useAnalytics();
 
     useEffect(() => {
-        if (page === 0 || !isCached || metadata === undefined || searchParams === undefined) return;
+        if (page === 0 || metadata === undefined || searchParams === undefined) return;
         const __abort = new AbortController();
 
         // @note quick fix for searchParams not being updated
@@ -68,7 +68,7 @@ export const MoreResultsRows = ({
         );
 
         return () => __abort.abort();
-    }, [track, searchParams, page, isCached, metadata]);
+    }, [track, searchParams, page, metadata]);
 
     if (error)
         return (

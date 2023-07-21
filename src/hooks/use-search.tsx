@@ -190,15 +190,6 @@ export const useSearchResults = (page: number) => {
         },
     );
 
-    // try to determine if data is cached by swr
-    const [isCached, setIsCached] = useState(() => {
-        return data !== undefined && isLoading === false;
-    });
-
-    useEffect(() => {
-        setIsCached(data !== undefined && isLoading === false);
-    }, [data, isLoading]);
-
     useEffect(() => {
         if (error) {
             setLoading(false);
@@ -218,7 +209,6 @@ export const useSearchResults = (page: number) => {
         noResults,
         mutate,
         metadata: data?.__metadata,
-        isCached,
     };
 };
 

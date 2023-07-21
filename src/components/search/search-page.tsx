@@ -59,14 +59,13 @@ export const SearchPageInner = () => {
         error,
         isValidating,
         loading: resultsLoading,
-        isCached,
         metadata,
     } = useSearchResults(0);
 
     const { track } = useAnalytics();
 
     useEffect(() => {
-        if (page !== 0 || !isCached || metadata === undefined || searchParams === undefined) return;
+        if (page !== 0 || metadata === undefined || searchParams === undefined) return;
         const __abort = new AbortController();
 
         // @note quick fix for searchParams not being updated
@@ -86,7 +85,7 @@ export const SearchPageInner = () => {
         );
 
         return () => __abort.abort();
-    }, [track, searchParams, page, isCached, metadata]);
+    }, [track, searchParams, page, metadata]);
 
     const [showAlreadyAddedModal, setShowAlreadyAddedModal] = useState(false);
 
