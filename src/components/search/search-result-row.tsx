@@ -99,6 +99,8 @@ export const MoreResultsRows = ({
     return null;
 };
 
+// @todo refactor complexity
+// eslint-disable-next-line complexity
 export const SearchResultRow = ({
     creator,
     setShowCampaignListModal,
