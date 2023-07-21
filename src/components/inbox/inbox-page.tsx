@@ -8,8 +8,9 @@ import type { MessagesGetMessage } from 'types/email-engine/account-account-mess
 import type { EmailSearchPostRequestBody, EmailSearchPostResponseBody } from 'pages/api/email-engine/search';
 import { clientLogger } from 'src/utils/logger-client';
 import { Email } from './Email';
-import { PreviewCard } from './preview-card';
 import { ToolBar } from './tool-bar';
+import { PreviewSection } from './preview-section';
+import toast from 'react-hot-toast';
 
 export const InboxPage = () => {
     const [messages, setMessages] = useState<MessagesGetMessage[]>([]);
@@ -35,6 +36,7 @@ export const InboxPage = () => {
         } catch (error: any) {
             clientLogger(error, 'error');
             setGetMessagesError(error.message);
+            toast(getMessagesError);
         } finally {
             setLoadingMessages(false);
         }
@@ -64,18 +66,6 @@ export const InboxPage = () => {
         const results = fuse.search(searchTerm);
         setSearchResults(results.map((result) => result.item));
     }, [filteredMessages, searchTerm]);
-
-    const renderMessagesPreview = (messages: MessagesGetMessage[]) => {
-        return messages.map((message) => (
-            <div key={message.id}>
-                <PreviewCard
-                    message={message}
-                    handleGetThreadEmails={handleGetThreadEmails}
-                    loadingSelectedMessages={loadingSelectedMessages}
-                />
-            </div>
-        ));
-    };
 
     const handleGetThreadEmails = async (message: MessagesGetMessage) => {
         setSelectedMessages([]);
@@ -115,6 +105,7 @@ export const InboxPage = () => {
         } catch (error: any) {
             clientLogger(error, 'error');
             setGetSelectedMessagesError(error.message);
+            toast(getSelectedMessagesError);
         }
         setLoadingSelectedMessages(false);
     };
@@ -123,7 +114,6 @@ export const InboxPage = () => {
         <Layout>
             <div className="flex h-full">
                 {loadingMessages && <p>Loading...</p>}
-                {getMessagesError && <p>Error: {getMessagesError}</p>}
                 {messages.length === 0 && !loadingMessages && !getMessagesError && <p>No messages</p>}
                 <div className="w-2/5">
                     {messages.length > 0 && (
@@ -135,16 +125,25 @@ export const InboxPage = () => {
                                 setSearchTerm={setSearchTerm}
                             />
                             <ul className="h-full overflow-y-auto">
-                                {searchResults.length > 0
-                                    ? renderMessagesPreview(searchResults)
-                                    : renderMessagesPreview(filteredMessages)}
+                                {searchResults.length > 0 ? (
+                                    <PreviewSection
+                                        messages={searchResults}
+                                        handleGetThreadEmails={handleGetThreadEmails}
+                                        loadingSelectedMessages={loadingSelectedMessages}
+                                    />
+                                ) : (
+                                    <PreviewSection
+                                        messages={filteredMessages}
+                                        handleGetThreadEmails={handleGetThreadEmails}
+                                        loadingSelectedMessages={loadingSelectedMessages}
+                                    />
+                                )}
                             </ul>
                         </>
                     )}
                 </div>
                 <div className="w-3/5">
-                    {getSelectedMessagesError && <p>Error: {getSelectedMessagesError}</p>}
-                    {selectedMessages && (
+                    {selectedMessages ? (
                         <ul>
                             {loadingSelectedMessages && <p>Loading...</p>}
                             {selectedMessages.map((message) => (
@@ -153,8 +152,7 @@ export const InboxPage = () => {
                                 </li>
                             ))}
                         </ul>
-                    )}
-                    {!selectedMessages && !loadingMessages && (
+                    ) : (
                         <div className="font-sm flex h-full items-center justify-center overflow-y-auto text-gray-500">
                             No message has been selected yet.
                         </div>
