@@ -18,6 +18,7 @@ export const emailEngineApiFetch = async <T = any>(path: string, passedOptions: 
     const options = {
         ...passedOptions,
         headers: {
+            accept: 'application/json',
             ...authHeaders,
             ...passedOptions.headers,
         },

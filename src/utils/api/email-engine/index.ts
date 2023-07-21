@@ -10,6 +10,10 @@ import type {
 } from 'types/email-engine/account-account-search-post';
 import type { AccountAccountMailboxesGetResponse } from 'types/email-engine/account-account-mailboxes-get';
 import type { AccountAccountMessageGet } from 'types/email-engine/account-account-message-get';
+import type { OutboxGet } from 'types/email-engine/outbox-get';
+import type { OutboxQueueidDelete } from 'types/email-engine/outbox-queueid-delete';
+
+// PATHS
 
 const authLinkPath = 'authentication/form';
 
@@ -39,6 +43,17 @@ export const generateAuthLink = async (body: GenerateAuthLinkRequestBody) => {
     const res = await emailEngineApiFetch<GenerateAuthLinkResponse>(authLinkPath, { method: 'POST', body });
     return res.url;
 };
+
+export const outboxPath = (page = 0, pageSize = 100) =>
+    `outbox?${new URLSearchParams({
+        page: String(page),
+        pageSize: String(pageSize),
+    })}`;
+
+export const outboxDeletePath = (queueId: string) => `outbox/${encodeURIComponent(queueId)}
+    `;
+
+// CALLS
 
 export const getMailboxes = async (account: string) =>
     await emailEngineApiFetch<AccountAccountMailboxesGetResponse>(getMailboxesPath(account));
@@ -71,3 +86,9 @@ export const searchMailbox = async (
         },
     );
 };
+
+/** outbox is global for all accounts */
+export const getOutbox = async () => await emailEngineApiFetch<OutboxGet>(outboxPath());
+
+export const deleteEmailFromOutbox = async (queueId: string) =>
+    await emailEngineApiFetch<OutboxQueueidDelete>(outboxDeletePath(queueId), { method: 'DELETE' });
