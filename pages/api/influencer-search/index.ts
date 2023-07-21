@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
-import { ApiHandler } from 'src/utils/api-handler';
+import { ApiHandler, RelayError } from 'src/utils/api-handler';
 import { recordSearchUsage } from 'src/utils/api/db/calls/usages';
 import { searchInfluencers } from 'src/utils/api/iqdata/influencers/search-influencers';
 import type { FetchCreatorsFilteredParams } from 'src/utils/api/iqdata/transforms';
@@ -35,6 +35,10 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         query: { platform },
         body,
     });
+
+    if (results === undefined) {
+        throw new RelayError('Cannot search influencers');
+    }
 
     return res.status(httpCodes.OK).json(results);
 };
