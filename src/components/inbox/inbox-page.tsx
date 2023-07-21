@@ -113,51 +113,56 @@ export const InboxPage = () => {
     return (
         <Layout>
             <div className="flex h-full">
-                {loadingMessages && <p>Loading...</p>}
-                {messages.length === 0 && !loadingMessages && !getMessagesError && <p>No messages</p>}
-                <div className="w-2/5">
-                    {messages.length > 0 && (
-                        <>
-                            <ToolBar
-                                selectedTab={selectedTab}
-                                setSelectedTab={setSelectedTab}
-                                searchTerm={searchTerm}
-                                setSearchTerm={setSearchTerm}
-                            />
-                            <ul className="h-full overflow-y-auto">
-                                {searchResults.length > 0 ? (
-                                    <PreviewSection
-                                        messages={searchResults}
-                                        handleGetThreadEmails={handleGetThreadEmails}
-                                        loadingSelectedMessages={loadingSelectedMessages}
+                {loadingMessages ? (
+                    <p>Loading...</p>
+                ) : (
+                    <>
+                        {messages.length === 0 && !loadingMessages && !getMessagesError && <p>No messages</p>}
+                        <div className="w-2/5">
+                            {messages.length > 0 && (
+                                <>
+                                    <ToolBar
+                                        selectedTab={selectedTab}
+                                        setSelectedTab={setSelectedTab}
+                                        searchTerm={searchTerm}
+                                        setSearchTerm={setSearchTerm}
                                     />
-                                ) : (
-                                    <PreviewSection
-                                        messages={filteredMessages}
-                                        handleGetThreadEmails={handleGetThreadEmails}
-                                        loadingSelectedMessages={loadingSelectedMessages}
-                                    />
-                                )}
-                            </ul>
-                        </>
-                    )}
-                </div>
-                <div className="w-3/5">
-                    {selectedMessages ? (
-                        <ul>
-                            {loadingSelectedMessages && <p>Loading...</p>}
-                            {selectedMessages.map((message) => (
-                                <li className="m-2 border border-black p-2" key={message.id}>
-                                    <Email message={message} />
-                                </li>
-                            ))}
-                        </ul>
-                    ) : (
-                        <div className="font-sm flex h-full items-center justify-center overflow-y-auto text-gray-500">
-                            No message has been selected yet.
+                                    <ul className="h-full overflow-y-auto">
+                                        {searchResults.length > 0 ? (
+                                            <PreviewSection
+                                                messages={searchResults}
+                                                handleGetThreadEmails={handleGetThreadEmails}
+                                                loadingSelectedMessages={loadingSelectedMessages}
+                                            />
+                                        ) : (
+                                            <PreviewSection
+                                                messages={filteredMessages}
+                                                handleGetThreadEmails={handleGetThreadEmails}
+                                                loadingSelectedMessages={loadingSelectedMessages}
+                                            />
+                                        )}
+                                    </ul>
+                                </>
+                            )}
                         </div>
-                    )}
-                </div>
+                        <div className="w-3/5">
+                            {selectedMessages ? (
+                                <ul>
+                                    {loadingSelectedMessages && <p>Loading...</p>}
+                                    {selectedMessages.map((message) => (
+                                        <li className="m-2 border border-black p-2" key={message.id}>
+                                            <Email message={message} />
+                                        </li>
+                                    ))}
+                                </ul>
+                            ) : (
+                                <div className="font-sm flex h-full items-center justify-center overflow-y-auto text-gray-500">
+                                    No message has been selected yet.
+                                </div>
+                            )}
+                        </div>
+                    </>
+                )}
             </div>
         </Layout>
     );
