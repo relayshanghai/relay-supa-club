@@ -36,7 +36,7 @@ export const InboxPage = () => {
         } catch (error: any) {
             clientLogger(error, 'error');
             setGetMessagesError(error.message);
-            toast(getMessagesError);
+            toast(error.message);
         } finally {
             setLoadingMessages(false);
         }

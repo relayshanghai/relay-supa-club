@@ -1,4 +1,4 @@
-import type { Dispatch, SetStateAction } from 'react';
+import type { ChangeEvent, Dispatch, SetStateAction } from 'react';
 import { debounce } from 'src/utils/debounce';
 
 export const ToolBar = ({
@@ -16,7 +16,7 @@ export const ToolBar = ({
         setSelectedTab(tab.value);
     };
 
-    const handleInputChange = debounce((e: any) => {
+    const handleInputChange = debounce((e: ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(e.target.value);
     }, 1000);
 
