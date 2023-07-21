@@ -22,6 +22,7 @@ export const Email = ({ message }: { message: SearchResponseMessage }) => {
                 method: 'POST',
                 body,
             });
+            if (!html) throw new Error('No html returned');
             setContent(html);
         } catch (error: any) {
             clientLogger(error, 'error');
