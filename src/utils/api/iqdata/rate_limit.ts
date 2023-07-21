@@ -1,6 +1,6 @@
 const URL = process.env.RATE_LIMIT_HOOK;
 
-export const logRateLimitError = async () => {
+export const logRateLimitError = async (accountInfo: { company_id: string; user_id: string }, action: string) => {
     const reqBody = {
         blocks: [
             {
@@ -13,10 +13,24 @@ export const logRateLimitError = async () => {
             },
             {
                 type: 'section',
-                text: {
-                    type: 'mrkdwn',
-                    text: `*Error:*\nRate Limit Exceeded`,
-                },
+                fields: [
+                    {
+                        type: 'mrkdwn',
+                        text: `*Error:*\nRate Limit Exceeded`,
+                    },
+                    {
+                        type: 'mrkdwn',
+                        text: `*Company ID:*\n${accountInfo.company_id}`,
+                    },
+                    {
+                        type: 'mrkdwn',
+                        text: `*User ID:*\n${accountInfo.user_id}`,
+                    },
+                    {
+                        type: 'mrkdwn',
+                        text: `*action:*\n${action}`,
+                    },
+                ],
             },
         ],
     };

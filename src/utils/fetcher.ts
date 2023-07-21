@@ -3,11 +3,11 @@ import { logRateLimitError } from 'src/utils/api/iqdata/rate_limit';
 /** TODO: seems to be used only for Stripe? Re-org and put all stripe related work together */
 export const fetcher = (url: string) => fetch(url, { credentials: 'include' }).then((res) => res.json());
 
-export const handleResError = async (res: Response) => {
+export const handleResError = async (res: Response, action: string) => {
     if (!res.status.toString().startsWith('2')) {
         const json = await res.json();
         if (res.status === 429) {
-            await logRateLimitError();
+            await logRateLimitError({ company_id: 'sample', user_id: 'sample' }, action);
         }
         if (json?.error) throw new Error(typeof json.error === 'string' ? json.error : JSON.stringify(json.error));
         if (json?.message)
@@ -47,7 +47,7 @@ export const nextFetch = async <T = any>(path: string, options: RequestInitWithB
     const stringified = body && typeof body !== 'string' ? JSON.stringify(body) : body;
     const optionsWithBody = { ...options, body: stringified };
     const res = await fetch('/api/' + path, optionsWithBody);
-    await handleResError(res);
+    await handleResError(res, path);
     const json = await res.json();
     return json as T;
 };
@@ -69,7 +69,7 @@ export const nextFetchWithQueries = async <Q extends Record<string, string>, T =
         if (queries.hasOwnProperty(key)) url.searchParams.set(key, queries[key].toString());
     }
     const res = await fetch(url.toString(), options);
-    await handleResError(res);
+    await handleResError(res, path);
     const json = await res.json();
     return json as T;
 };

@@ -31,10 +31,13 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const { platform, body } = prepareFetchCreatorsFiltered(searchParams);
 
-    const results = await searchInfluencers({
-        query: { platform },
-        body,
-    });
+    const results = await searchInfluencers(
+        { company_id, user_id },
+        {
+            query: { platform },
+            body,
+        },
+    );
 
     return res.status(httpCodes.OK).json(results);
 };

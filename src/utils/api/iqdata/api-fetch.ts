@@ -5,13 +5,18 @@ import { headers } from 'src/utils/api/iqdata/constants';
 import { apiFetch as apiFetchOriginal } from '../api-fetch';
 import { logRateLimitError } from './rate_limit';
 
-export const apiFetch = async <T extends object>(url: string, payload: ApiPayload, options: RequestInit = {}) => {
+export const apiFetch = async <T extends object>(
+    url: string,
+    accountInfo: { company_id: string; user_id: string },
+    payload: ApiPayload,
+    options: RequestInit = {},
+) => {
     const content = await apiFetchOriginal<T>(IQDATA_URL + url, payload, {
         ...options,
         headers,
     });
     if (content && 'status' in content && content.status === 429) {
-        logRateLimitError();
+        logRateLimitError(accountInfo, url);
     }
     return content;
 };
