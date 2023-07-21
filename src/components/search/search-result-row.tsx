@@ -29,6 +29,7 @@ export interface SearchResultRowProps {
     setShowCampaignListModal: (show: boolean) => void;
     setShowAlreadyAddedModal: (show: boolean) => void;
     allCampaignCreators?: CampaignCreatorBasicInfo[];
+    trackSearch?: (...args: any[]) => any;
 }
 export interface MoreResultsRowsProps extends Omit<SearchResultRowProps, 'creator'> {
     page: number;
@@ -40,35 +41,26 @@ export const MoreResultsRows = ({
     setSelectedCreator,
     setShowAlreadyAddedModal,
     allCampaignCreators,
+    trackSearch,
 }: MoreResultsRowsProps) => {
     const { t } = useTranslation();
     const { resultsPerPageLimit, searchParams } = useSearch();
     const { results, loading, error, metadata } = useSearchResults(page);
 
-    const { track } = useAnalytics();
-
     useEffect(() => {
-        if (page === 0 || metadata === undefined || searchParams === undefined) return;
-        const __abort = new AbortController();
+        if (!trackSearch || page === 0 || metadata === undefined || searchParams === undefined) return;
 
-        // @note quick fix for searchParams not being updated
-        const _searchParams = { ...searchParams, page };
+        const controller = new AbortController();
 
-        track<SearchLoadMoreResults>(
-            SearchLoadMoreResults,
-            {
-                event_id: metadata.event_id,
-                snapshot_id: metadata.snapshot_id,
-                parameters: _searchParams,
-                page,
-            },
-            {
-                __abort,
-            },
-        );
+        trackSearch({
+            event: SearchLoadMoreResults,
+            searchParams: searchParams ? { ...searchParams, page } : undefined,
+            metadata,
+            controller,
+        });
 
-        return () => __abort.abort();
-    }, [track, searchParams, page, metadata]);
+        return () => controller.abort();
+    }, [trackSearch, searchParams, page, metadata]);
 
     if (error)
         return (

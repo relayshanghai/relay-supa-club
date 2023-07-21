@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Button } from 'src/components/button';
 import { SearchProvider, useSearch, useSearchResults } from 'src/hooks/use-search';
 import { numberFormatter } from 'src/utils/formatter';
@@ -21,7 +21,8 @@ import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { SearchCreators } from './search-creators';
 import { startJourney } from 'src/utils/analytics/journey';
 import { useAnalytics } from '../analytics/analytics-provider';
-import { SearchAddToCampaign } from 'src/utils/analytics/events';
+import type events from 'src/utils/analytics/events';
+import { SearchAddToCampaign, SearchDefault } from 'src/utils/analytics/events';
 import { Search } from 'src/utils/analytics/events';
 import { SEARCH_RESULT } from 'src/utils/rudderstack/event-names';
 // import { featRecommended } from 'src/constants/feature-flags';
@@ -64,28 +65,76 @@ export const SearchPageInner = () => {
 
     const { track } = useAnalytics();
 
+    const [rendered, setRendered] = useState(false);
+
+    type TrackParams = {
+        event: (typeof events)[keyof typeof events];
+        searchParams: typeof searchParams;
+        metadata: typeof metadata;
+        controller?: AbortController;
+    };
+
+    /**
+     * Since searchParams & metadata states are weirdly initialized late in useEffect,
+     * we create a reusable memoized version of useAnalytics.track that
+     * watches these states if they are initialized
+     */
+    const trackSearch = useCallback(
+        ({ event, searchParams, metadata, controller }: TrackParams) => {
+            if (metadata === undefined || searchParams === undefined) return Promise.resolve();
+
+            return track<TrackParams['event']>(
+                event,
+                {
+                    event_id: metadata.event_id,
+                    snapshot_id: metadata.snapshot_id,
+                    parameters: searchParams,
+                    page: searchParams.page,
+                },
+                { __abort: controller },
+            );
+        },
+        [track],
+    );
+
+    /**
+     * Handle the SearchOptions.onSearch event
+     */
+    const handleSearch = useCallback(() => {
+        trackSearch({
+            event: Search,
+            searchParams: searchParams ? { ...searchParams, page } : undefined,
+            metadata,
+        });
+    }, [trackSearch, searchParams, page, metadata]);
+
+    /**
+     * Tracks a SearchDefault event on render
+     */
     useEffect(() => {
-        if (page !== 0 || metadata === undefined || searchParams === undefined) return;
-        const __abort = new AbortController();
+        if (rendered === true) return;
 
-        // @note quick fix for searchParams not being updated
-        const _searchParams = { ...searchParams, page };
+        if (metadata === undefined || searchParams === undefined) return;
 
-        track<Search>(
-            Search,
-            {
-                event_id: metadata.event_id,
-                snapshot_id: metadata.snapshot_id,
-                parameters: _searchParams,
-                page,
-            },
-            {
-                __abort,
-            },
-        );
+        if (searchParams.page && searchParams.page !== 0) return;
 
-        return () => __abort.abort();
-    }, [track, searchParams, page, metadata]);
+        const controller = new AbortController();
+
+        trackSearch({
+            event: SearchDefault,
+            // @note quick fix for searchParams not being updated
+            searchParams: searchParams ? { ...searchParams, page: 0 } : undefined,
+            metadata,
+            controller,
+        }).then((response) => {
+            if (response && !controller.signal.aborted) {
+                setRendered(true);
+            }
+            return response;
+        });
+
+        return () => controller.abort();
+    }, [trackSearch, searchParams, metadata, rendered]);
 
     const [showAlreadyAddedModal, setShowAlreadyAddedModal] = useState(false);
 
@@ -143,7 +192,7 @@ export const SearchPageInner = () => {
                 </div>
             </div>
 
-            <SearchOptions setPage={setPage} setShowFiltersModal={setShowFiltersModal} />
+            <SearchOptions setPage={setPage} setShowFiltersModal={setShowFiltersModal} onSearch={handleSearch} />
 
             <div className="flex items-center justify-between">
                 <div className="text-sm font-medium">{`${t('creators.resultsPrefix')} ${numberFormatter(
@@ -172,6 +221,7 @@ export const SearchPageInner = () => {
                                 setShowCampaignListModal={setShowCampaignListModal}
                                 setShowAlreadyAddedModal={setShowAlreadyAddedModal}
                                 allCampaignCreators={allCampaignCreators}
+                                trackSearch={trackSearch}
                             />
                         ))}
                     </>

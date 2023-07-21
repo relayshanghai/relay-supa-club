@@ -17,9 +17,11 @@ import { useSearchTrackers } from '../rudder/searchui-rudder-calls';
 export const SearchOptions = ({
     setPage,
     setShowFiltersModal,
+    onSearch,
 }: {
     setPage: (page: number) => void;
     setShowFiltersModal: (show: boolean) => void;
+    onSearch: (...args: any[]) => any;
 }) => {
     const {
         platform,
@@ -64,6 +66,7 @@ export const SearchOptions = ({
         setActiveSearch(true);
         setPage(0);
         trackSearch('Search Options');
+        onSearch();
     };
     // TODO:comment out the related codes when feat recommended is ready
     useEffect(() => {
