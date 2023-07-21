@@ -26,9 +26,6 @@ export const iqDataFetch = async <T = any>(path: string, options: RequestInit = 
     });
     await handleResError(res);
     const json = await res.json();
-    if (res.status === 429) {
-        await logRateLimitError();
-    }
     return json as T;
 };
 
