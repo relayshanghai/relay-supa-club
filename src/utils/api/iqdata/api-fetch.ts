@@ -10,7 +10,7 @@ export const apiFetch = async <T extends object>(url: string, payload: ApiPayloa
         ...options,
         headers,
     });
-    if ('status' in content && content.status === 429) {
+    if (content && 'status' in content && content.status === 429) {
         logRateLimitError();
     }
     return content;
