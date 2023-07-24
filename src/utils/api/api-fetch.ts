@@ -19,11 +19,21 @@ export const apiFetch = async <T = any>(url: string, payload: ApiPayload, option
     if (payload.body) {
         options.method = 'POST';
         options.body = JSON.stringify(payload.body);
+        options.headers = {
+            'content-type': 'application/json',
+            ...options.headers,
+        };
     }
 
     const response = await fetch(url, options).catch((err) => {
+        if (err instanceof Error) return err;
+
         return new Error(err);
     });
+
+    if (response instanceof Error && response.name === 'AbortError') {
+        return;
+    }
 
     if (response instanceof Error) {
         throw response;

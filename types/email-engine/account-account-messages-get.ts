@@ -24,17 +24,17 @@ export interface MessagesGetMessage {
     text: Text;
 }
 
-export interface From {
+interface From {
     name: string;
     address: string;
 }
 
-export interface Text {
+interface Text {
     id: string;
     encodedSize: EncodedSize;
 }
 
-export interface EncodedSize {
+interface EncodedSize {
     plain?: number;
     html: number;
 }

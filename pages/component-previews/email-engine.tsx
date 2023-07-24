@@ -39,7 +39,8 @@ export default function EmailEngine() {
                 account,
                 to: [{ address: toEmail }],
                 subject: 'testing Email Engine',
-                text,
+                html: text,
+                trackingEnabled: true,
             };
             const res = await nextFetch('email-engine/send-email', {
                 method: 'POST',
