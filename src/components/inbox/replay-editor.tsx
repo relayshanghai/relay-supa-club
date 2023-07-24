@@ -9,6 +9,7 @@ export const ReplayEditor = () => {
                 placeholder="Reply here.."
                 // value={productDescription}
                 onChange={(e) => {
+                    //eslint-disable-next-line
                     console.log(e.target.value);
                 }}
             />

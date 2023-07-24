@@ -11,10 +11,6 @@ export const CorrespondenceSection = ({
     selectedMessages: SearchResponseMessage[];
     loadingSelectedMessages: boolean;
 }) => {
-    // if it is a thread, selectedMessages.length >0
-    // show threads component
-    // else show email component
-
     return (
         <div className="h-full ">
             {loadingSelectedMessages ? (
