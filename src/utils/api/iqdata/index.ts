@@ -68,8 +68,8 @@ export const fetchIqDataLookalikeByInfluencer = async (
 export const fetchIqDataTopics = async (
     term: string,
     platform: CreatorPlatform,
-    limit = 10,
     context?: { req: NextApiRequest; res: NextApiResponse },
+    limit = 10,
 ) => await iqDataFetch(`dict/topic-tags/?q=${term}&platform=${platform}&limit=${limit}`, { context });
 
 export const fetchIqDataGeos = async (term: string, context?: { req: NextApiRequest; res: NextApiResponse }) =>
@@ -94,9 +94,9 @@ export const fetchCreatorsFiltered = async (
 export const requestNewReport = async (
     platform: CreatorPlatform,
     id: string,
+    context?: { req: NextApiRequest; res: NextApiResponse },
     subscribe = false,
     dry_run = false,
-    context?: { req: NextApiRequest; res: NextApiResponse },
 ) =>
     await iqDataFetch<CreatorReport>(
         `reports/new?platform=${platform}&url=${id}&subscribe=${subscribe ? 1 : 0}&dry_run=${dry_run}`,
