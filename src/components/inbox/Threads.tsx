@@ -15,9 +15,10 @@ export interface ThreadMessage {
 }
 
 export const Threads = ({ messages }: { messages: SearchResponseMessage[] }) => {
-    //style messages to chat boxes
-    //sort messages by date, latest at the bottom
-    // style received messages to left, sent messages to right
+    //[x] style messages to chat boxes
+    //[] sort messages by date, latest at the bottom
+    //[] style received messages to left, sent messages to right
+
     const [singleMessage, setSingleMessage] = useState<string>('');
     const [threadMessages, setThreadMessages] = useState<ThreadMessage[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
@@ -78,7 +79,7 @@ export const Threads = ({ messages }: { messages: SearchResponseMessage[] }) => 
                 <div>
                     <div className="space-y-2">
                         {threadMessages.map((message) => (
-                            <div key={message.id} className="rounded-md border border-primary-200 p-2">
+                            <div key={message.id} className="w-4/5 rounded-md border border-primary-200 p-2">
                                 <div className="flex justify-between">
                                     <div className="text-sm text-gray-700">{message.from}</div>
                                     <div className="text-xs">{dateFormat(message.date, 'isoTime', true, true)}</div>

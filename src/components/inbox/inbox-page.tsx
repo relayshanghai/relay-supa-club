@@ -72,7 +72,6 @@ export const InboxPage = () => {
         setSelectedMessages([]);
         setLoadingSelectedMessages(true);
         setGetSelectedMessagesError('');
-        console.log('threadId', message.threadId);
         try {
             const body: EmailSearchPostRequestBody = {
                 account: testAccount,

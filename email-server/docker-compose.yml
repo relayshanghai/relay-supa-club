@@ -31,7 +31,7 @@ services:
                     "smtpServerPassword": "passw0rd",
                     "serviceUrl": "http://127.0.0.1:4000",
                     "webhooksEnabled": true,
-                    "webhooks": "https://app.relay.club/api/email-engine/webhook",
+                    "webhooks": "https://app.relay.club/api/email-engine/webhook"
                 }
 
             # Encryption secret
