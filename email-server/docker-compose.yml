@@ -15,15 +15,8 @@ services:
         environment:
             # Configuration to EmailEngine can be passed via environment variables
             # For full list see https://github.com/postalsys/emailengine#config-mapping
-
             # Settings to write to v1/settings on startup (https://api.emailengine.app/#operation/postV1Settings)
             # The following value is a YAML block scalar string, so make it sure it is properly indented
-            # This configuration enables SMTP server for local submission
-            # !!CHANGE IN PROD WHEN DEPLOYING!!
-            # "smtpServerPassword"
-            # "serviceUrl"
-            # EENGINE_SECRET
-            # Theses are the settings from https://api.emailengine.app/#operation/postV1Settings
             EENGINE_SETTINGS: >
                 {
                     "smtpServerEnabled": true,
