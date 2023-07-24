@@ -37,7 +37,7 @@ export const InboxPage = () => {
         } catch (error: any) {
             clientLogger(error, 'error');
             setGetMessagesError(error.message);
-            toast(error.message);
+            throw error.message;
         } finally {
             setLoadingMessages(false);
         }
@@ -146,14 +146,14 @@ export const InboxPage = () => {
                                 </>
                             )}
                         </div>
-                        <div className="w-3/5">
+                        <div className="w-3/5 overflow-y-auto">
                             {selectedMessages ? (
                                 <CorrespondenceSection
                                     selectedMessages={selectedMessages}
                                     loadingSelectedMessages={loadingSelectedMessages}
                                 />
                             ) : (
-                                <div className="font-sm flex h-full items-center justify-center overflow-y-auto text-gray-500">
+                                <div className="font-sm flex h-full items-center justify-center text-gray-500">
                                     No message has been selected yet.
                                 </div>
                             )}

@@ -18,15 +18,21 @@ export const Email = ({ message }: { message: SearchResponseMessage }) => {
             emailId: id,
         };
         try {
-            const { html } = await nextFetch<GetEmailPostResponseBody>('email-engine/email-text', {
+            const { html, plain } = await nextFetch<GetEmailPostResponseBody>('email-engine/email-text', {
                 method: 'POST',
                 body,
             });
-            if (!html) throw new Error('No html returned');
+
+            // console.log('plain', plain);
+            if (!html) {
+                setContent(plain);
+                throw new Error('No html returned');
+            }
+
             setContent(html);
         } catch (error: any) {
             clientLogger(error, 'error');
-            setContent('Error fetching email: ' + error.message);
+            // setContent('Error fetching email: ' + error.message);
         }
         setLoading(false);
     }, []);
