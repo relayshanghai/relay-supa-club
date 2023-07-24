@@ -12,6 +12,8 @@ services:
             - redis
             - elasticsearch
             # - kibana
+        networks:
+            - elastic
         environment:
             # Configuration to EmailEngine can be passed via environment variables
             # For full list see https://github.com/postalsys/emailengine#config-mapping
