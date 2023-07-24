@@ -32,8 +32,14 @@ export type InfluencerPostPostResponse =
           error: string;
       };
 
-const processURL = async (url: string, campaign_id: string, creator_id: string) => {
-    const scrape = await scrapeInfluencerPost(url);
+const processURL = async (
+    req: NextApiRequest,
+    res: NextApiResponse,
+    url: string,
+    campaign_id: string,
+    creator_id: string,
+) => {
+    const scrape = await scrapeInfluencerPost({ req, res }, url);
 
     const _savePostPerformance = db<typeof savePostPerformance>(savePostPerformance);
     const _saveInfluencerPost = db<typeof saveInfluencerPost>(saveInfluencerPost);
@@ -89,7 +95,7 @@ const postHandler: NextApiHandler = async (req: NextApiRequest, res: NextApiResp
 
     for (const url of body.urls) {
         try {
-            const result = await processURL(url, body.campaign_id, body.creator_id);
+            const result = await processURL(req, res, url, body.campaign_id, body.creator_id);
 
             data.successful.push({
                 title: result.post.title || '',

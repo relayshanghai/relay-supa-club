@@ -1,13 +1,26 @@
-import { logRateLimitError } from 'src/utils/api/iqdata/rate_limit';
+import { logRateLimitError, logDailyTokensError } from 'src/utils/api/slack/handle-alerts';
+
+interface ResponseWithError extends Response {
+    success?: boolean;
+    error?: string;
+    error_message?: string;
+}
 
 /** TODO: seems to be used only for Stripe? Re-org and put all stripe related work together */
 export const fetcher = (url: string) => fetch(url, { credentials: 'include' }).then((res) => res.json());
 
-export const handleResError = async (res: Response, action: string) => {
+export const handleResError = async (
+    res: ResponseWithError,
+    action: string,
+    accountInfo?: { user_id: string | null | undefined; company_id: string | null | undefined },
+) => {
     if (!res.status.toString().startsWith('2')) {
         const json = await res.json();
         if (res.status === 429) {
-            await logRateLimitError({ company_id: 'sample', user_id: 'sample' }, action);
+            await logRateLimitError(action, accountInfo);
+        }
+        if (res.error === 'daily_tokens_limit_exceeded') {
+            await logDailyTokensError(action, accountInfo);
         }
         if (json?.error) throw new Error(typeof json.error === 'string' ? json.error : JSON.stringify(json.error));
         if (json?.message)

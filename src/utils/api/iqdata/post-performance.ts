@@ -1,4 +1,5 @@
 // This is really both IQData and Apify but because it mixes them together let's just put it here.
+import type { NextApiRequest, NextApiResponse } from 'next';
 import type { PostPerformanceAndPost, PostsPerformanceUpdate } from 'src/utils/api/db';
 import { getPostsPerformancesByCampaign, updatePostPerformance } from 'src/utils/api/db';
 import { serverLogger } from 'src/utils/logger-server';
@@ -19,6 +20,7 @@ export type PostPerformanceData = {
 };
 
 export const fetchPostPerformanceData = async (
+    context: { req: NextApiRequest; res: NextApiResponse },
     platform: CreatorPlatform,
     url?: string,
 ): Promise<Omit<PostPerformanceData, 'id'>> => {
@@ -27,11 +29,11 @@ export const fetchPostPerformanceData = async (
     }
 
     if (platform === 'youtube') {
-        return await scrapeYoutubeUrl(url);
+        return await scrapeYoutubeUrl(context, url);
     }
 
     if (platform === 'tiktok') {
-        return await scrapeTiktokUrl(url);
+        return await scrapeTiktokUrl(context, url);
     }
 
     if (platform === 'instagram') {

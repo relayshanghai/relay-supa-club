@@ -1,5 +1,6 @@
 import type { NextApiRequest } from 'next/types';
 import type { InsertCompanyPayload, InsertProfilePayload, UpdateCompanyPayload } from 'types';
+import { sendSlackMessage } from '.';
 
 //Send a message to the slack channel when a new customer signs up
 export const handleNewProfileMessage = async (req: NextApiRequest, URL: string) => {
@@ -36,10 +37,7 @@ export const handleNewProfileMessage = async (req: NextApiRequest, URL: string) 
                 },
             ],
         };
-        await fetch(URL, {
-            method: 'POST',
-            body: JSON.stringify(reqBody),
-        });
+        await sendSlackMessage(URL, reqBody);
     }
 };
 
@@ -77,10 +75,7 @@ export const handleNewCompanyMessage = async (req: NextApiRequest, URL: string) 
                 },
             ],
         };
-        await fetch(URL, {
-            method: 'POST',
-            body: JSON.stringify(reqBody),
-        });
+        await sendSlackMessage(URL, reqBody);
     }
 };
 
@@ -125,9 +120,6 @@ export const handleCompanyUpdateMessage = async (req: NextApiRequest, URL: strin
                 },
             ],
         };
-        await fetch(URL, {
-            method: 'POST',
-            body: JSON.stringify(reqBody),
-        });
+        await sendSlackMessage(URL, reqBody);
     }
 };
