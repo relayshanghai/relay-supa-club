@@ -1,8 +1,5 @@
 services:
     emailengine:
-        env_file:
-            - ../.env.local
-
         restart: always
         image: postalsys/emailengine:latest
         ports:
@@ -33,19 +30,19 @@ services:
                     "smtpServerPort": 2525,
                     "smtpServerHost": "0.0.0.0",
                     "smtpServerAuthEnabled": true,
-                    "smtpServerPassword": "passw0rd",
-                    "serviceUrl": "http://127.0.0.1:4000",
+                    "smtpServerPassword": "${SMTP_SERVER_PASSWORD}",
+                    "serviceUrl": "${SERVICE_URL}",
                     "webhooksEnabled": true,
-                    "webhooks": "https://app.relay.club/api/email-engine/webhook",
+                    "webhooks": "${WEBHOOK_URL}",
                     "documentStoreEnabled": true,
-                    "documentStoreUrl": "http://elasticsearch:${ES_PORT}",
+                    "documentStoreUrl": "${DOCUMENT_STORE_URL}",
                     "documentStoreAuthEnabled": true,
-                    "documentStoreUsername": "${ELASTIC_PASSWORD}",
+                    "documentStoreUsername": "${DOCUMENT_STORE_USERNAME}",
                     "documentStorePassword": "${ELASTIC_PASSWORD}"
                 }
 
             # Encryption secret
-            EENGINE_SECRET: 'secret'
+            EENGINE_SECRET: '${EENGINE_SECRET}'
             # Database connection URL
             EENGINE_REDIS: 'redis://redis:6379/2'
 
@@ -56,9 +53,6 @@ services:
             - /data
 
     elasticsearch:
-        env_file:
-            - ../.env.local
-
         image: docker.elastic.co/elasticsearch/elasticsearch:${STACK_VERSION}
         container_name: elasticsearch
         environment:
