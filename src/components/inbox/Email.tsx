@@ -18,14 +18,12 @@ export const Email = ({ message }: { message: SearchResponseMessage }) => {
             emailId: id,
         };
         try {
-            const { html, plain } = await nextFetch<GetEmailPostResponseBody>('email-engine/email-text', {
+            const { html } = await nextFetch<GetEmailPostResponseBody>('email-engine/email-text', {
                 method: 'POST',
                 body,
             });
 
-            // console.log('plain', plain);
             if (!html) {
-                setContent(plain);
                 throw new Error('No html returned');
             }
 
@@ -41,7 +39,7 @@ export const Email = ({ message }: { message: SearchResponseMessage }) => {
         if (message.text.id && !loading && !content) {
             getText(message.text.id);
         }
-    }, [content, getText, loading, message.text]);
+    }, [content, getText, loading, message]);
 
     return (
         <div>

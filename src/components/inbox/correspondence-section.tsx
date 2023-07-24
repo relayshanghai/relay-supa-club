@@ -14,7 +14,7 @@ export const CorrespondenceSection = ({
     return (
         <div className="h-full ">
             {loadingSelectedMessages ? (
-                <div className="flex w-full items-center justify-center">
+                <div className="flex h-full w-full items-center justify-center">
                     <Spinner className="h-6 w-6 fill-primary-600 text-primary-200" />
                 </div>
             ) : (
@@ -22,7 +22,7 @@ export const CorrespondenceSection = ({
                     {selectedMessages.length > 1 ? (
                         <Threads messages={selectedMessages} />
                     ) : (
-                        <Email message={selectedMessages[0]} />
+                        <>{selectedMessages.length > 0 && <Email message={selectedMessages[0]} />}</>
                     )}
                     <ReplayEditor />
                 </div>
