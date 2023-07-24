@@ -1,3 +1,4 @@
+import type { NextApiRequest, NextApiResponse } from 'next';
 import { logRateLimitError, logDailyTokensError } from 'src/utils/api/slack/handle-alerts';
 
 interface ResponseWithError extends Response {
@@ -12,15 +13,15 @@ export const fetcher = (url: string) => fetch(url, { credentials: 'include' }).t
 export const handleResError = async (
     res: ResponseWithError,
     action: string,
-    accountInfo?: { user_id: string | null | undefined; company_id: string | null | undefined },
+    context?: { req: NextApiRequest; res: NextApiResponse },
 ) => {
     if (!res.status.toString().startsWith('2')) {
         const json = await res.json();
-        if (res.status === 429) {
-            await logRateLimitError(action, accountInfo);
+        if (context && res.status === 429) {
+            await logRateLimitError(action, context);
         }
-        if (res.error === 'daily_tokens_limit_exceeded') {
-            await logDailyTokensError(action, accountInfo);
+        if (context && res.error === 'daily_tokens_limit_exceeded') {
+            await logDailyTokensError(action, context);
         }
         if (json?.error) throw new Error(typeof json.error === 'string' ? json.error : JSON.stringify(json.error));
         if (json?.message)

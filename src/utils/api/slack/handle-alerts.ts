@@ -1,17 +1,22 @@
+import { getUserSession } from './../analytics';
+import type { NextApiRequest, NextApiResponse } from 'next';
 import { sendSlackMessage } from '.';
-import { alertIncomingWebhookURL, now } from './constants';
+import { alertIncomingWebhookURL } from './constants';
+import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
+import type { DatabaseWithCustomTypes } from 'types';
 
-export const logRateLimitError = async (
-    action: string,
-    accountInfo?: { company_id?: string | null; user_id?: string | null },
-) => {
+const time = new Date().toISOString();
+
+export const logRateLimitError = async (action: string, context: { req: NextApiRequest; res: NextApiResponse }) => {
+    const supabase = createServerSupabaseClient<DatabaseWithCustomTypes>(context);
+    const { user_id, company_id } = await getUserSession(supabase)();
     const reqBody = {
         blocks: [
             {
                 type: 'header',
                 text: {
                     type: 'plain_text',
-                    text: ':octagonal_sign: Rate limit error',
+                    text: ':octagonal_sign: Rate Limit Exceeded',
                     emoji: true,
                 },
             },
@@ -20,15 +25,11 @@ export const logRateLimitError = async (
                 fields: [
                     {
                         type: 'mrkdwn',
-                        text: `*Error:*\nRate Limit Exceeded`,
+                        text: `*Company ID:*\n${company_id}`,
                     },
                     {
                         type: 'mrkdwn',
-                        text: `*Company ID:*\n${accountInfo?.company_id}`,
-                    },
-                    {
-                        type: 'mrkdwn',
-                        text: `*User ID:*\n${accountInfo?.user_id}`,
+                        text: `*User ID:*\n${user_id}`,
                     },
                     {
                         type: 'mrkdwn',
@@ -36,7 +37,7 @@ export const logRateLimitError = async (
                     },
                     {
                         type: 'mrkdwn',
-                        text: `*Time:*\n${now}`,
+                        text: `*Time:*\n${time}`,
                     },
                 ],
             },
@@ -46,10 +47,10 @@ export const logRateLimitError = async (
     alertIncomingWebhookURL && (await sendSlackMessage(alertIncomingWebhookURL, reqBody));
 };
 
-export const logDailyTokensError = async (
-    action: string,
-    accountInfo?: { company_id?: string | null; user_id?: string | null },
-) => {
+export const logDailyTokensError = async (action: string, context: { req: NextApiRequest; res: NextApiResponse }) => {
+    const supabase = createServerSupabaseClient<DatabaseWithCustomTypes>(context);
+    const { user_id, company_id } = await getUserSession(supabase)();
+
     const reqBody = {
         blocks: [
             {
@@ -65,15 +66,11 @@ export const logDailyTokensError = async (
                 fields: [
                     {
                         type: 'mrkdwn',
-                        text: `*Error:*\nDaily Tokens Exceeded`,
+                        text: `*Company ID:*\n${company_id}`,
                     },
                     {
                         type: 'mrkdwn',
-                        text: `*Company ID:*\n${accountInfo?.company_id}`,
-                    },
-                    {
-                        type: 'mrkdwn',
-                        text: `*User ID:*\n${accountInfo?.user_id}`,
+                        text: `*User ID:*\n${user_id}`,
                     },
                     {
                         type: 'mrkdwn',
@@ -81,7 +78,7 @@ export const logDailyTokensError = async (
                     },
                     {
                         type: 'mrkdwn',
-                        text: `*Time:*\n${now}`,
+                        text: `*Time:*\n${time}`,
                     },
                 ],
             },

@@ -3,9 +3,6 @@ import { IQDATA_URL } from '.';
 import { headers } from 'src/utils/api/iqdata/constants';
 import { apiFetch as apiFetchOriginal } from '../api-fetch';
 import { logDailyTokensError, logRateLimitError } from '../slack/handle-alerts';
-import { getUserSession } from '../analytics';
-import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
-import type { DatabaseWithCustomTypes } from 'types';
 
 export const apiFetch = async <T extends object>(url: string, payload: ApiPayload, options: RequestInit = {}) => {
     const { context, ...strippedPayload } = payload;
@@ -13,19 +10,12 @@ export const apiFetch = async <T extends object>(url: string, payload: ApiPayloa
         ...options,
         headers,
     });
-
-    if (!context) {
-        throw new Error('No Context Provided!');
-    }
-
-    const supabase = createServerSupabaseClient<DatabaseWithCustomTypes>(context);
-    const { user_id, company_id } = await getUserSession(supabase)();
-    if (content && 'status' in content && 'error' in content) {
+    if (context && content && 'status' in content && 'error' in content) {
         if (content.status === 429) {
-            logRateLimitError(url, { user_id, company_id });
+            logRateLimitError(url, context);
         }
         if (content.error === 'daily_tokens_limit_exceeded') {
-            logDailyTokensError(url, { user_id, company_id });
+            logDailyTokensError(url, context);
         }
     }
     return content;

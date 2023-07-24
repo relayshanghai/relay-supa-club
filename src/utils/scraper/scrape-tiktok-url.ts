@@ -6,7 +6,7 @@ export const scrapeTiktokUrl = async (
     context: { req: NextApiRequest; res: NextApiResponse },
     url: string,
 ): Promise<ScrapeData> => {
-    const result = await iqdataFetchTiktokVideoInfo(context, url);
+    const result = await iqdataFetchTiktokVideoInfo(url, context);
 
     if (!result.media.itemInfo.itemStruct.stats) {
         throw new Error('unable to fetch tiktok video info');

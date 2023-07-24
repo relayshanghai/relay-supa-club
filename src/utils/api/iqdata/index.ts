@@ -1,19 +1,17 @@
-import { getUserSession } from './../analytics';
 import { headers } from 'src/utils/api/iqdata/constants';
 import { handleResError } from 'src/utils/fetcher';
-import type { CreatorPlatform, CreatorReport, CreatorSearchResult, DatabaseWithCustomTypes } from 'types';
+import type { CreatorPlatform, CreatorReport, CreatorSearchResult } from 'types';
 import type { CreatorReportsMetadata } from 'types/iqdata/creator-reports-metadata';
 import type { FetchCreatorsFilteredParams } from './transforms';
 import { prepareFetchCreatorsFiltered } from './transforms';
 import type { TikTokVideoDataRaw } from 'types/iqdata/tiktok-video-info';
 import type { YoutubeVideoDataRaw } from 'types/iqdata/youtube-video-info';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
 export const IQDATA_URL = 'https://socapi.icu/v2.0/api/';
 
 export const withServerContextIqdata = (fetchFunction: (...args: any[]) => any) => {
     return (context: { req: NextApiRequest; res: NextApiResponse }, ...args: any[]) => {
-        return fetchFunction(context, ...args);
+        return fetchFunction(...args, context);
     };
 };
 
@@ -32,19 +30,19 @@ export const withServerContext = (fetchFunction: (args: any) => any) => {
  */
 export const iqDataFetch = async <T = any>(
     path: string,
-    context: { req: NextApiRequest; res: NextApiResponse },
-    options: RequestInit = {},
+    options: RequestInit & { context?: { req: NextApiRequest; res: NextApiResponse } } = {},
 ) => {
-    const supabase = createServerSupabaseClient<DatabaseWithCustomTypes>(context);
-    const { user_id, company_id } = await getUserSession(supabase)();
+    const { context, ...strippedOptions } = options;
+
     const res = await fetch(IQDATA_URL + path, {
-        ...options,
+        ...strippedOptions,
         headers: {
             ...headers,
-            ...options.headers,
+            ...strippedOptions.headers,
         },
     });
-    await handleResError(res, path, { user_id, company_id });
+
+    await handleResError(res, path, context);
     const json = await res.json();
     return json as T;
 };
@@ -56,74 +54,75 @@ export const iqDataFetch = async <T = any>(
 // 2. Influencer lookalike: help you to find influencers that post similar content
 // These two option returns different data, so we need to use both in our search in order to give customer the best results.
 export const fetchIqDataLookalikeByAudience = async (
-    context: { req: NextApiRequest; res: NextApiResponse },
     term: string,
     platform: CreatorPlatform,
-) => await iqDataFetch(`dict/users/?q=${term}&type=lookalike&platform=${platform}&limit=5`, context); //Audience lookalike
+    context?: { req: NextApiRequest; res: NextApiResponse },
+) => await iqDataFetch(`dict/users/?q=${term}&type=lookalike&platform=${platform}&limit=5`, { context }); //Audience lookalike
 
 export const fetchIqDataLookalikeByInfluencer = async (
-    context: { req: NextApiRequest; res: NextApiResponse },
     term: string,
     platform: CreatorPlatform,
-) => await iqDataFetch(`dict/users/?q=${term}&type=topic-tags&platform=${platform}&limit=5`, context); //Influencer lookalike
+    context?: { req: NextApiRequest; res: NextApiResponse },
+) => await iqDataFetch(`dict/users/?q=${term}&type=topic-tags&platform=${platform}&limit=5`, { context }); //Influencer lookalike
 
 export const fetchIqDataTopics = async (
-    context: { req: NextApiRequest; res: NextApiResponse },
     term: string,
     platform: CreatorPlatform,
     limit = 10,
-) => await iqDataFetch(`dict/topic-tags/?q=${term}&platform=${platform}&limit=${limit}`, context);
+    context?: { req: NextApiRequest; res: NextApiResponse },
+) => await iqDataFetch(`dict/topic-tags/?q=${term}&platform=${platform}&limit=${limit}`, { context });
 
-export const fetchIqDataGeos = async (context: { req: NextApiRequest; res: NextApiResponse }, term: string) =>
-    await iqDataFetch(`geos/?q=${term}&types=country&limit=5`, context);
+export const fetchIqDataGeos = async (term: string, context?: { req: NextApiRequest; res: NextApiResponse }) =>
+    await iqDataFetch(`geos/?q=${term}&types=country&limit=5`, { context });
 
 export const fetchCreatorsFiltered = async (
-    context: { req: NextApiRequest; res: NextApiResponse },
     params: FetchCreatorsFilteredParams,
+    context?: { req: NextApiRequest; res: NextApiResponse },
 ) => {
     const { platform, body } = prepareFetchCreatorsFiltered(params);
 
     return await iqDataFetch<CreatorSearchResult>(
         `search/newv1?${new URLSearchParams({ platform, auto_unhide: '1' })}`,
-        context,
         {
             method: 'post',
             body: JSON.stringify(body),
+            context,
         },
     );
 };
 
 export const requestNewReport = async (
-    context: { req: NextApiRequest; res: NextApiResponse },
     platform: CreatorPlatform,
     id: string,
     subscribe = false,
     dry_run = false,
+    context?: { req: NextApiRequest; res: NextApiResponse },
 ) =>
     await iqDataFetch<CreatorReport>(
         `reports/new?platform=${platform}&url=${id}&subscribe=${subscribe ? 1 : 0}&dry_run=${dry_run}`,
-        context,
+        { context },
     );
 
-export const fetchReport = async (context: { req: NextApiRequest; res: NextApiResponse }, reportId: string) =>
-    await iqDataFetch<CreatorReport>(`reports/${reportId}`, context);
+export const fetchReport = async (reportId: string, context?: { req: NextApiRequest; res: NextApiResponse }) =>
+    await iqDataFetch<CreatorReport>(`reports/${reportId}`, { context });
 
 //** omit id to get all previously generated reports of that platform */
 export const fetchReportsMetadata = async (
-    context: { req: NextApiRequest; res: NextApiResponse },
     platform: CreatorPlatform,
     creator_id?: string,
+    context?: { req: NextApiRequest; res: NextApiResponse },
 ) =>
-    await iqDataFetch<CreatorReportsMetadata>(
-        `reports?platform=${platform}${creator_id ? `&url=${creator_id}` : ''}`,
+    await iqDataFetch<CreatorReportsMetadata>(`reports?platform=${platform}${creator_id ? `&url=${creator_id}` : ''}`, {
         context,
-    );
+    });
 
-export const fetchYoutubeVideoInfo = async (context: { req: NextApiRequest; res: NextApiResponse }, videoUrl: string) =>
-    await iqDataFetch<YoutubeVideoDataRaw>(`raw/yt/video?${new URLSearchParams({ url: videoUrl })}`, context);
+export const fetchYoutubeVideoInfo = async (
+    videoUrl: string,
+    context?: { req: NextApiRequest; res: NextApiResponse },
+) => await iqDataFetch<YoutubeVideoDataRaw>(`raw/yt/video?${new URLSearchParams({ url: videoUrl })}`, { context });
 
-export const fetchTiktokVideoInfo = async (context: { req: NextApiRequest; res: NextApiResponse }, videoUrl: string) =>
-    await iqDataFetch<TikTokVideoDataRaw>(`raw/tt/user/media?${new URLSearchParams({ url: videoUrl })}`, context);
+export const fetchTiktokVideoInfo = async (videoUrl: string, context?: { req: NextApiRequest; res: NextApiResponse }) =>
+    await iqDataFetch<TikTokVideoDataRaw>(`raw/tt/user/media?${new URLSearchParams({ url: videoUrl })}`, { context });
 
 export const fetchIqDataLookalikeByAudienceWithContext = withServerContextIqdata(fetchIqDataLookalikeByAudience);
 export const fetchIqDataLookalikeByInfluencerWithContext = withServerContextIqdata(fetchIqDataLookalikeByInfluencer);
