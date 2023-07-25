@@ -11,7 +11,7 @@ export const PreviewSection = ({
     loadingSelectedMessages: boolean;
 }) => {
     return (
-        <div className="h-full overflow-y-auto">
+        <div className="h-full overflow-y-auto border-r-2 border-tertiary-200">
             {messages.map((message) => (
                 <div key={message.id}>
                     <PreviewCard
