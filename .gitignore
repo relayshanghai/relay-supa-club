@@ -51,3 +51,4 @@ public/mockServiceWorker.js
 
 # Google API Key
 src/utils/google/credentials.json
+email-server/.env

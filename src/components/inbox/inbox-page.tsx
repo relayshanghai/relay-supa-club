@@ -17,6 +17,7 @@ export const InboxPage = () => {
     const [searchResults, setSearchResults] = useState<MessagesGetMessage[]>([]);
     const [loadingMessages, setLoadingMessages] = useState(false);
     const [getMessagesError, setGetMessagesError] = useState('');
+    const [pages, setPages] = useState(0);
 
     const [selectedMessages, setSelectedMessages] = useState<EmailSearchPostResponseBody['messages'] | null>(null);
     const [loadingSelectedMessages, setLoadingSelectedMessages] = useState(false);
@@ -31,8 +32,9 @@ export const InboxPage = () => {
             const body: ListEmailsPostRequestBody = {
                 account: testAccount,
             };
-            const { messages } = await nextFetch('email-engine/list-emails', { method: 'POST', body });
+            const { messages, pages } = await nextFetch('email-engine/list-emails', { method: 'POST', body });
             setMessages(messages);
+            setPages(pages);
         } catch (error: any) {
             clientLogger(error, 'error');
             setGetMessagesError(error.message);
@@ -43,10 +45,10 @@ export const InboxPage = () => {
     }, []);
 
     useEffect(() => {
-        if (!loadingMessages && messages.length === 0) {
+        if (!loadingMessages && pages === 0 && messages.length === 0) {
             getMessages();
         }
-    }, [getMessages, loadingMessages, messages.length]);
+    }, [getMessages, loadingMessages, messages.length, pages]);
 
     const filteredMessages = useMemo(() => {
         if (selectedTab === 'new') {
