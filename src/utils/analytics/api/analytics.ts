@@ -9,6 +9,14 @@ import { insertSearchSnapshot } from 'src/utils/api/db/calls/search_snapshots';
 import { insertReportSnapshot } from 'src/utils/api/db/calls';
 import { v4 } from 'uuid';
 import { ANALYTICS_HEADER_NAME } from '../constants';
+import {
+    insertSearchParameters,
+    getSearchParameterByHash,
+    getOrInsertSearchParameter,
+} from 'src/utils/api/db/calls/search-parameters';
+import crypto from 'crypto';
+import { SearchInfluencersPayload } from 'src/utils/api/iqdata/influencers/search-influencers-payload';
+import type { ApiPayload } from 'src/utils/api/types';
 
 type SessionIds = {
     session_id?: string;
@@ -195,4 +203,13 @@ export const createReportSnapshot = async (ctx: ServerContext, payload: CreateAn
     };
 
     return await insertReportSnapshot(supabase)(insertData);
+};
+
+export const createSearchParameter = (db: SupabaseClient) => async (payload: ApiPayload) => {
+    const parsedPayload = SearchInfluencersPayload.parse(payload);
+
+    const payloadString = JSON.stringify(parsedPayload);
+    const hash = crypto.createHash('sha256').update(payloadString).digest('hex');
+
+    return await getOrInsertSearchParameter(db)({ hash, data: payload });
 };
