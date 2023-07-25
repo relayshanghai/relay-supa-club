@@ -97,7 +97,7 @@ export const InboxPage = () => {
                     },
                 },
             });
-            console.log({ inboxThreadMessages }, { sentMessages });
+            // console.log({ inboxThreadMessages }, { sentMessages });
             const threadMessages = inboxThreadMessages.concat(sentMessages);
             threadMessages.sort((a, b) => {
                 return new Date(b.date).getTime() - new Date(a.date).getTime();
