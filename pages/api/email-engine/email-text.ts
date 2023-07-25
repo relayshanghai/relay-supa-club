@@ -8,14 +8,14 @@ import type { AccountAccountTextTextGetResponse } from 'types/email-engine/accou
 export type GetEmailPostRequestBody = {
     account: string;
     /* `text.id` is the id to query for the text, not `messageId` */
-    emailId: string;
+    textId: string;
 };
 export type GetEmailPostResponseBody = AccountAccountTextTextGetResponse;
 
 const postHandler: NextApiHandler = async (req, res) => {
-    const { account, emailId } = req.body as GetEmailPostRequestBody;
+    const { account, textId } = req.body as GetEmailPostRequestBody;
 
-    const result: GetEmailPostResponseBody = await getEmailText(account, emailId);
+    const result: GetEmailPostResponseBody = await getEmailText(account, textId);
     return res.status(httpCodes.OK).json(result);
 };
 

@@ -18,13 +18,17 @@ export const CorrespondenceSection = ({
                     <Spinner className="h-6 w-6 fill-primary-600 text-primary-200" />
                 </div>
             ) : (
-                <div className="flex h-full flex-col justify-between p-3 ">
-                    {selectedMessages.length > 1 ? (
-                        <Threads messages={selectedMessages} />
-                    ) : (
-                        <>{selectedMessages.length > 0 && <Email message={selectedMessages[0]} />}</>
-                    )}
-                    <ReplayEditor />
+                <div className="relative flex w-full flex-col justify-between  p-3">
+                    <div className="mb-6 overflow-y-auto">
+                        {selectedMessages.length > 1 ? (
+                            <Threads messages={selectedMessages} />
+                        ) : (
+                            <>{selectedMessages.length > 0 && <Email message={selectedMessages[0]} />}</>
+                        )}
+                    </div>
+                    <div className="fixed bottom-0 w-full">
+                        <ReplayEditor />
+                    </div>
                 </div>
             )}
         </div>

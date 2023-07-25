@@ -3,6 +3,7 @@ import { GMAIL_INBOX, GMAIL_SENT, testAccount } from 'src/utils/api/email-engine
 import { nextFetch } from 'src/utils/fetcher';
 import type { EmailSearchPostRequestBody, EmailSearchPostResponseBody } from 'pages/api/email-engine/search';
 import type { ListEmailsPostRequestBody } from 'pages/api/email-engine/list-emails';
+import type { GetEmailPostRequestBody, GetEmailPostResponseBody } from 'pages/api/email-engine/email-text';
 
 export const getAccountMessages = async () => {
     const body: ListEmailsPostRequestBody = {
@@ -41,4 +42,16 @@ export const getSentThreadMessages = async (message: MessagesGetMessage) => {
         body,
     });
     return sentThreadMessages;
+};
+
+export const getMessageText = async (textId: string) => {
+    const body: GetEmailPostRequestBody = {
+        account: testAccount,
+        textId: textId,
+    };
+    const { plain, html } = await nextFetch<GetEmailPostResponseBody>('email-engine/email-text', {
+        method: 'POST',
+        body,
+    });
+    return { plain, html };
 };

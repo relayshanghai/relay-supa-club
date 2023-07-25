@@ -78,7 +78,7 @@ export const InboxPage = () => {
             const sentThreadMessages = await getSentThreadMessages(message);
             const threadMessages = inboxThreadMessages.concat(sentThreadMessages);
             threadMessages.sort((a, b) => {
-                return new Date(b.date).getTime() - new Date(a.date).getTime();
+                return new Date(a.date).getTime() - new Date(b.date).getTime();
             });
             setSelectedMessages(threadMessages);
             setLoadingSelectedMessages(false);

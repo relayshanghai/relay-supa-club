@@ -10,7 +10,7 @@ export const ReplayEditor = () => {
         <div className="relative">
             <InputTextArea
                 label=""
-                className="h-36 rounded-md border-gray-200"
+                className="h-36 rounded-md border-gray-200 placeholder:text-xs"
                 placeholder="Reply here.."
                 // value={productDescription}
                 onChange={(e) => {
