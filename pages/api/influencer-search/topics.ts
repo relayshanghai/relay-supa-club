@@ -1,11 +1,11 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { fetchIqDataTopicsWithContext } from 'src/utils/api/iqdata';
+import { fetchIqDataTopicsWithContext as fetchIqDataTopics } from 'src/utils/api/iqdata';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
         const { term, platform } = req.body;
 
-        const results = await fetchIqDataTopicsWithContext({ req, res }, term, platform);
+        const results = await fetchIqDataTopics({ req, res }, term, platform);
         return res.status(200).json(results);
     }
 

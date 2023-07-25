@@ -2,9 +2,9 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { recordReportUsage } from 'src/utils/api/db/calls/usages';
 import {
-    fetchReportWithContext,
-    fetchReportsMetadataWithContext,
-    requestNewReportWithContext,
+    fetchReportWithContext as fetchReport,
+    fetchReportsMetadataWithContext as fetchReportsMetadata,
+    requestNewReportWithContext as requestNewReport,
 } from 'src/utils/api/iqdata';
 import { getInfluencer } from 'src/utils/get-influencer';
 import { serverLogger } from 'src/utils/logger-server';
@@ -37,12 +37,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 return res.status(httpCodes.BAD_REQUEST).json({ error: 'Invalid request' });
 
             try {
-                const reportMetadata = await fetchReportsMetadataWithContext({ req, res }, platform, creator_id);
+                const reportMetadata = await fetchReportsMetadata({ req, res }, platform, creator_id);
                 if (!reportMetadata.results || reportMetadata.results.length === 0) throw new Error('No reports found');
                 const report_id = reportMetadata.results[0].id;
                 if (!report_id) throw new Error('No report ID found');
                 const createdAt = reportMetadata.results[0].created_at;
-                const data = await fetchReportWithContext({ req, res }, report_id);
+                const data = await fetchReport({ req, res }, report_id);
                 if (!data.success) throw new Error('Failed to find report');
 
                 const { error: recordError } = await recordReportUsage(company_id, user_id, creator_id);
@@ -59,7 +59,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
                 return res.status(httpCodes.OK).json({ ...data, createdAt });
             } catch (error) {
-                const data = await requestNewReportWithContext({ req, res }, platform, creator_id);
+                const data = await requestNewReport({ req, res }, platform, creator_id);
                 if (!data.success) throw new Error('Failed to request new report');
 
                 const { error: recordError } = await recordReportUsage(company_id, user_id, creator_id);

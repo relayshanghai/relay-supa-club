@@ -1,3 +1,5 @@
+import { serverLogger } from 'src/utils/logger-server';
+
 //for more information, refer to https://api.slack.com/messaging/composing/layouts
 export interface SlackMessage {
     blocks: {
@@ -21,11 +23,7 @@ export const sendSlackMessage = async (url: string, message: SlackMessage) => {
         method: 'POST',
         body: JSON.stringify(message),
     });
-    if (response.ok) {
-        // eslint-disable-next-line no-console
-        console.log('Slack message sent');
-    } else {
-        // eslint-disable-next-line no-console
-        console.error('Slack message failed');
+    if (!response.ok) {
+        serverLogger('Slack message failed');
     }
 };

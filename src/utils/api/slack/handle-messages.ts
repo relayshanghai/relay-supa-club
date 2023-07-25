@@ -1,6 +1,7 @@
 import type { NextApiRequest } from 'next/types';
 import type { InsertCompanyPayload, InsertProfilePayload, UpdateCompanyPayload } from 'types';
 import { sendSlackMessage } from '.';
+import type { SlackMessage } from '.';
 
 //Send a message to the slack channel when a new customer signs up
 export const handleNewProfileMessage = async (req: NextApiRequest, URL: string) => {
@@ -8,7 +9,7 @@ export const handleNewProfileMessage = async (req: NextApiRequest, URL: string) 
     const { first_name: firstName, last_name: lastName, phone, email } = data.record;
     if (data.table === 'profiles' && data.type === 'INSERT') {
         //For how to format Slack message body, see more at https://api.slack.com/messaging/composing/layouts
-        const reqBody = {
+        const reqBody: SlackMessage = {
             blocks: [
                 {
                     type: 'header',
@@ -46,7 +47,7 @@ export const handleNewCompanyMessage = async (req: NextApiRequest, URL: string) 
     const data = req.body as InsertCompanyPayload;
     const { name: companyName, website, subscription_status: subscriptionStatus } = data.record;
     if (data.table === 'companies' && data.type === 'INSERT') {
-        const reqBody = {
+        const reqBody: SlackMessage = {
             blocks: [
                 {
                     type: 'header',
@@ -86,7 +87,7 @@ export const handleCompanyUpdateMessage = async (req: NextApiRequest, URL: strin
     if (!data.old_record) return; //If the old_record is not present, it means the record is being created for the first time (handled in handleNewCompanyMessage
     const { subscription_status: oldSubscriptionStatus } = data.old_record;
     if (data.table === 'companies' && data.type === 'UPDATE' && oldSubscriptionStatus !== subscriptionStatus) {
-        const reqBody = {
+        const reqBody: SlackMessage = {
             blocks: [
                 {
                     type: 'header',

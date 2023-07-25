@@ -1,6 +1,7 @@
 import { getUserSession } from './../analytics';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { sendSlackMessage } from '.';
+import type { SlackMessage } from '.';
 import { alertIncomingWebhookURL } from './constants';
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
 import type { DatabaseWithCustomTypes } from 'types';
@@ -10,7 +11,7 @@ const time = new Date().toISOString();
 export const logRateLimitError = async (action: string, context: { req: NextApiRequest; res: NextApiResponse }) => {
     const supabase = createServerSupabaseClient<DatabaseWithCustomTypes>(context);
     const { user_id, company_id } = await getUserSession(supabase)();
-    const reqBody = {
+    const reqBody: SlackMessage = {
         blocks: [
             {
                 type: 'header',
@@ -51,7 +52,7 @@ export const logDailyTokensError = async (action: string, context: { req: NextAp
     const supabase = createServerSupabaseClient<DatabaseWithCustomTypes>(context);
     const { user_id, company_id } = await getUserSession(supabase)();
 
-    const reqBody = {
+    const reqBody: SlackMessage = {
         blocks: [
             {
                 type: 'header',

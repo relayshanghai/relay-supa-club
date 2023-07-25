@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { ApiHandler, RelayError } from 'src/utils/api-handler';
 import { recordSearchUsage } from 'src/utils/api/db/calls/usages';
-import { searchInfluencersWithContext } from 'src/utils/api/iqdata/influencers/search-influencers';
+import { searchInfluencersWithContext as searchInfluencers } from 'src/utils/api/iqdata/influencers/search-influencers';
 import type { FetchCreatorsFilteredParams } from 'src/utils/api/iqdata/transforms';
 import { prepareFetchCreatorsFiltered } from 'src/utils/api/iqdata/transforms';
 import { hasCustomSearchParams } from 'src/utils/usagesHelpers';
@@ -31,7 +31,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const { platform, body } = prepareFetchCreatorsFiltered(searchParams);
 
-    const results = await searchInfluencersWithContext(
+    const results = await searchInfluencers(
         { req, res },
         {
             query: { platform },
