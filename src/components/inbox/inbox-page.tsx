@@ -10,7 +10,7 @@ import toast from 'react-hot-toast';
 import { Spinner } from '../icons';
 import { CorrespondenceSection } from './correspondence-section';
 import {
-    getAccountMessages,
+    getInBoxMessages,
     getInboxThreadMessages,
     getSentThreadMessages,
 } from 'src/utils/api/email-engine/handle-messages';
@@ -32,7 +32,7 @@ export const InboxPage = () => {
         setLoadingMessages(true);
         setGetMessagesError('');
         try {
-            const { messages, pages } = await getAccountMessages();
+            const { messages, pages } = await getInBoxMessages();
             setMessages(messages);
             setPages(pages);
         } catch (error: any) {
@@ -81,6 +81,7 @@ export const InboxPage = () => {
                 return new Date(a.date).getTime() - new Date(b.date).getTime();
             });
             setSelectedMessages(threadMessages);
+            // console.log({ sentThreadMessages }, { inboxThreadMessages });
             setLoadingSelectedMessages(false);
         } catch (error: any) {
             clientLogger(error, 'error');

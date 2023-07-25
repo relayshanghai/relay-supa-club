@@ -2,14 +2,18 @@ import type { MessagesGetMessage } from 'types/email-engine/account-account-mess
 import { GMAIL_INBOX, GMAIL_SENT, testAccount } from 'src/utils/api/email-engine/prototype-mocks';
 import { nextFetch } from 'src/utils/fetcher';
 import type { EmailSearchPostRequestBody, EmailSearchPostResponseBody } from 'pages/api/email-engine/search';
-import type { ListEmailsPostRequestBody } from 'pages/api/email-engine/list-emails';
+import type { ListEmailsPostRequestBody, ListEmailsPostResponseBody } from 'pages/api/email-engine/list-emails';
 import type { GetEmailPostRequestBody, GetEmailPostResponseBody } from 'pages/api/email-engine/email-text';
 
-export const getAccountMessages = async () => {
+export const getInBoxMessages = async () => {
     const body: ListEmailsPostRequestBody = {
         account: testAccount,
+        mailboxPath: GMAIL_INBOX,
     };
-    const { messages, pages } = await nextFetch('email-engine/list-emails', { method: 'POST', body });
+    const { messages, pages } = await nextFetch<ListEmailsPostResponseBody>('email-engine/list-emails', {
+        method: 'POST',
+        body,
+    });
     return { messages, pages };
 };
 
