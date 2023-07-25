@@ -6,6 +6,8 @@ export interface SequenceInfluencer {
     sequenceStep: number;
     /** Will basically follow the campaign influencers status' */
     status: string;
+    platform: string;
+    channel: string;
 }
 
 // GMAIL specific constants. If we support other providers we will need workarounds for these.
@@ -15,7 +17,7 @@ export const GMAIL_ALL_MAIL = '[Gmail]/All Mail';
 
 export const GMAIL_SENT_SPECIAL_USE_FLAG = '\\Sent';
 
-export const testAccount = 'gprtldm3xqb0424p'; // brendan.relay@gmail.com on prod
+export const testAccount = 'fyasv5klfoioc1hx'; // brendan.relay@gmail.com on prod
 // export const testAccount = 'r3e7hpvesxek82fj'; // localhost docker account
 // export const testAccount = 'gzz2n7isa54a36ve'; // localhost account
 
@@ -26,6 +28,8 @@ export const mockInfluencers: SequenceInfluencer[] = [
         email: 'jacob@relay.club',
         sequenceStep: 0,
         status: 'To Contact',
+        platform: 'instagram',
+        channel: '@jacob',
     },
     {
         id: 'mockInfluencers2',
@@ -33,39 +37,39 @@ export const mockInfluencers: SequenceInfluencer[] = [
         email: 'brendan@relay.club',
         sequenceStep: 0,
         status: 'To Contact',
+        platform: 'tiktok',
+        channel: '@brendan',
     },
-    { id: 'mockInfluencers3', name: 'Tech Account', email: 'tech@relay.club', sequenceStep: 0, status: 'To Contact' },
+    {
+        id: 'mockInfluencers3',
+        name: 'Tech Account',
+        email: 'tech@relay.club',
+        sequenceStep: 0,
+        status: 'To Contact',
+        platform: 'youtube',
+        channel: '@tech',
+    },
 ];
 
 export type SequenceStep = {
     id: string;
     name: string;
     waitTimeHrs: number;
-    html: string;
+    templateId: string;
 };
 
 export const mockSequenceEmail1: SequenceStep = {
     id: 'mockSequenceEmail1',
-    name: 'Brendan',
+    name: 'Sequence Step 1',
     waitTimeHrs: 0,
-    html: `
-    <p>Hi {{name}},</p>
-    <p>My name is Brendan and I'm the founder of Relay. I'm reaching out because I saw your instagram and think we could cooperate. Check out our website at <a href="https://relay.club">relay.club</a> and let me know if you're interested.</p>
-    <p>Thanks,</p>
-    <p>Brendan</p>
-`,
+    templateId: 'AAABiYr-poEAAAAC',
 };
 export const mockSequenceEmail2: SequenceStep = {
     id: 'mockSequenceEmail2',
-    name: 'Brendan',
-    // waitTimeHrs: 3 * 24,
+    name: 'Sequence Step 2',
+    // waitTimeHrs: 3 * 24, // 3 days
     waitTimeHrs: 1,
-    html: `
-    <p>Hi {{name}},</p>
-    <p>Just following up on my last email. I'm the founder of Relay. I'm reaching out because I saw your instagram and think we could cooperate. Check out our website at <a href="https://relay.club">relay.club</a> and let me know if you're interested.</p>
-    <p>Thanks,</p>
-    <p>Brendan</p>
-`,
+    templateId: 'AAABiYsMUIAAAAAD',
 };
 
 export interface Sequence {
