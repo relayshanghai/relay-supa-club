@@ -22,7 +22,7 @@ export const InputWithTags = ({ disabled, tags = [], onTagRemove, TagComponent, 
                         ? tags.map((item, i) => {
                               if (TagComponent) {
                                   return (
-                                      <>
+                                      <span key={i}>
                                           {spinnerLoading && (
                                               <Spinner
                                                   data-testid="search-spinner"
@@ -30,7 +30,7 @@ export const InputWithTags = ({ disabled, tags = [], onTagRemove, TagComponent, 
                                               />
                                           )}
                                           <TagComponent key={i} {...item} onClick={() => onTagRemove(item)} />
-                                      </>
+                                      </span>
                                   );
                               }
                               return (
