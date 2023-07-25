@@ -5,6 +5,7 @@ import { testAccount } from 'src/utils/api/email-engine/prototype-mocks';
 import type { GetEmailPostRequestBody, GetEmailPostResponseBody } from 'pages/api/email-engine/email-text';
 import { clientLogger } from 'src/utils/logger-client';
 import dateFormat from 'src/utils/dateFormat';
+// import { cleanEmailBody } from 'src/utils/clean-html';
 
 export interface ThreadMessage {
     subject: string;
@@ -44,6 +45,7 @@ export const Threads = ({ messages }: { messages: SearchResponseMessage[] }) => 
 
     const getThreadEmailText = useCallback(
         async (messages: SearchResponseMessage[]) => {
+            setThreadMessages([]);
             messages.forEach((message) => {
                 if (message.text.id) {
                     getText(message.text.id);
@@ -65,11 +67,8 @@ export const Threads = ({ messages }: { messages: SearchResponseMessage[] }) => 
 
     useEffect(() => {
         getThreadEmailText(messages);
+        // console.log(threadMessages);
     }, [getThreadEmailText, messages]);
-
-    useEffect(() => {
-        setThreadMessages([]);
-    }, []);
 
     return (
         <div>
@@ -85,7 +84,15 @@ export const Threads = ({ messages }: { messages: SearchResponseMessage[] }) => 
                                     <div className="text-xs">{dateFormat(message.date, 'isoTime', true, true)}</div>
                                 </div>
                                 <div className="text-xs font-semibold text-gray-500">{message.subject}</div>
-                                <div className="my-2 text-xs">{message.text}</div>
+                                {/* <div className="my-2 text-xs">{message.text}</div>
+                                 */}
+                                <div>{message.id}</div>
+                                {/* <div
+                                    className="overflow-y-auto"
+                                    dangerouslySetInnerHTML={{
+                                        __html: cleanEmailBody(message.text),
+                                    }}
+                                /> */}
                             </div>
                         ))}
                     </div>
