@@ -12,8 +12,6 @@ services:
             - redis
             - elasticsearch
             # - kibana
-        networks:
-            - elastic
         environment:
             # Configuration to EmailEngine can be passed via environment variables
             # For full list see https://github.com/postalsys/emailengine#config-mapping
@@ -58,8 +56,6 @@ services:
             - ${ES_PORT}:${ES_PORT}
         volumes:
             - esdata:/usr/share/elasticsearch/data
-        networks:
-            - elastic
 
     # Kibana now requires a service key which is a pain to get from elastic search, so let's not activate yet.
     # Error: value of "elastic" is forbidden. This is a superuser account that cannot write to system indices that Kibana needs to function. Use a service account token instead. Learn more: https://www.elastic.co/guide/en/elasticsearch/reference/8.0/service-accounts.html
@@ -80,7 +76,3 @@ services:
 
 volumes:
     esdata:
-
-networks:
-    elastic:
-        driver: bridge
