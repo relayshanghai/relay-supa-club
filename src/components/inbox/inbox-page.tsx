@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import Fuse from 'fuse.js';
 import { Layout } from '../layout';
 import { nextFetch } from 'src/utils/fetcher';
-import { GMAIL_INBOX, GMAIL_SENT, testAccount } from 'src/utils/api/email-engine/prototype-mocks';
+import { testAccount } from 'src/utils/api/email-engine/prototype-mocks';
 import type { ListEmailsPostRequestBody } from 'pages/api/email-engine/list-emails';
 import type { MessagesGetMessage } from 'types/email-engine/account-account-messages-get';
 import type { EmailSearchPostRequestBody, EmailSearchPostResponseBody } from 'pages/api/email-engine/search';
@@ -12,6 +12,7 @@ import { PreviewSection } from './preview-section';
 import toast from 'react-hot-toast';
 import { Spinner } from '../icons';
 import { CorrespondenceSection } from './correspondence-section';
+import { getInboxThreadMessages, getSentThreadMessages } from 'src/utils/api/email-engine/handle-messages';
 
 export const InboxPage = () => {
     const [messages, setMessages] = useState<MessagesGetMessage[]>([]);
@@ -75,32 +76,10 @@ export const InboxPage = () => {
         setLoadingSelectedMessages(true);
         setGetSelectedMessagesError('');
         try {
-            const body: EmailSearchPostRequestBody = {
-                account: testAccount,
-                mailboxPath: GMAIL_INBOX,
-                search: {
-                    threadId: message.threadId,
-                },
-            };
-            const { messages: inboxThreadMessages } = await nextFetch<EmailSearchPostResponseBody>(
-                'email-engine/search',
-                {
-                    method: 'POST',
-                    body,
-                },
-            );
-            const { messages: sentMessages } = await nextFetch<EmailSearchPostResponseBody>('email-engine/search', {
-                method: 'POST',
-                body: {
-                    ...body,
-                    mailboxPath: GMAIL_SENT,
-                    search: {
-                        threadId: message.threadId,
-                    },
-                },
-            });
+            const inboxThreadMessages = await getInboxThreadMessages(message);
+            const sentThreadMessages = await getSentThreadMessages(message);
             // console.log({ inboxThreadMessages }, { sentMessages });
-            const threadMessages = inboxThreadMessages.concat(sentMessages);
+            const threadMessages = inboxThreadMessages.concat(sentThreadMessages);
             threadMessages.sort((a, b) => {
                 return new Date(b.date).getTime() - new Date(a.date).getTime();
             });
