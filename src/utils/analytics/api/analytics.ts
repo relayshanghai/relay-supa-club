@@ -9,11 +9,7 @@ import { insertSearchSnapshot } from 'src/utils/api/db/calls/search_snapshots';
 import { insertReportSnapshot } from 'src/utils/api/db/calls';
 import { v4 } from 'uuid';
 import { ANALYTICS_HEADER_NAME } from '../constants';
-import {
-    insertSearchParameters,
-    getSearchParameterByHash,
-    getOrInsertSearchParameter,
-} from 'src/utils/api/db/calls/search-parameters';
+import { getOrInsertSearchParameter } from 'src/utils/api/db/calls/search-parameters';
 import crypto from 'crypto';
 import { SearchInfluencersPayload } from 'src/utils/api/iqdata/influencers/search-influencers-payload';
 import type { ApiPayload } from 'src/utils/api/types';
