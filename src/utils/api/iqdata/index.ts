@@ -12,8 +12,10 @@ export const IQDATA_URL = 'https://socapi.icu/v2.0/api/';
 export type ServerContext = { req: NextApiRequest; res: NextApiResponse };
 
 export const withServerContextIqdata = (fetchFunction: (...args: any[]) => any) => {
-    return (context?: ServerContext, ...args: any[]) => {
-        return fetchFunction(...args, context);
+    return (context?: ServerContext) => {
+        return (...args: any[]) => {
+            return fetchFunction(...args, context);
+        };
     };
 };
 

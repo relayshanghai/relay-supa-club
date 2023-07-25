@@ -14,14 +14,14 @@ type ScrapeDataWithInfluencer = Omit<ScrapeData, 'influencer'> & {
     influencer_platform_id: string;
 };
 
-export const scrapeInfluencerPost = async (context: ServerContext, url: string): Promise<ScrapeDataWithInfluencer> => {
+export const scrapeInfluencerPost = async (url: string, context?: ServerContext): Promise<ScrapeDataWithInfluencer> => {
     const platform = extractPlatformFromURL(url) as CreatorPlatform;
 
     if (!platform) {
         throw new Error(`Cannot determine platform from given URL: ${url}`);
     }
 
-    const scrape = (await fetchPostPerformanceData(context, platform, url)) as ScrapeData;
+    const scrape = (await fetchPostPerformanceData(platform, url, context)) as ScrapeData;
 
     const { influencer: influencer_platform_id, ...result } = scrape;
 
@@ -43,7 +43,7 @@ export const scrapeInfluencerPost = async (context: ServerContext, url: string):
     const socialProfile: InfluencerSocialProfileRow | null = await getInfluencer(influencer_platform_id);
 
     if (socialProfile === null) {
-        const report = await fetchReport(context, influencer_platform_id, platform);
+        const report = await fetchReport(context)(influencer_platform_id, platform);
 
         if (!report) {
             throw new Error(`Cannot fetch report for influencer: ${influencer_platform_id}, ${platform}`);

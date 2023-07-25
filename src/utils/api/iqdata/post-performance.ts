@@ -20,20 +20,20 @@ export type PostPerformanceData = {
 };
 
 export const fetchPostPerformanceData = async (
-    context: ServerContext,
     platform: CreatorPlatform,
     url?: string,
+    context?: ServerContext,
 ): Promise<Omit<PostPerformanceData, 'id'>> => {
     if (!url) {
         throw new Error('Invalid url');
     }
 
     if (platform === 'youtube') {
-        return await scrapeYoutubeUrl(context, url);
+        return await scrapeYoutubeUrl(url, context);
     }
 
     if (platform === 'tiktok') {
-        return await scrapeTiktokUrl(context, url);
+        return await scrapeTiktokUrl(url, context);
     }
 
     if (platform === 'instagram') {
