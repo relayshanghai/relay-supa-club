@@ -5,8 +5,10 @@ import {
     gender_code,
     last_posted,
 } from './iqdata/influencers/search-influencers-payload';
+import type { NextApiRequest, NextApiResponse } from 'next';
 
 export type ApiPayload = {
+    context?: { req: NextApiRequest; res: NextApiResponse };
     path?: {
         [key: string]: any;
     };

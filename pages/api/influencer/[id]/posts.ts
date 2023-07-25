@@ -8,6 +8,7 @@ import type { PostInfo } from '../posts';
 import { fetchReport } from 'src/utils/api/iqdata/fetch-report';
 import { saveInfluencer } from 'src/utils/save-influencer';
 import type { CampaignCreatorDB, CampaignCreatorDBInsert } from 'src/utils/api/db';
+import type { ServerContext } from 'src/utils/api/iqdata';
 
 export type InfluencerPostResponse = PostInfo[] | { error: string };
 
@@ -15,6 +16,7 @@ export type InfluencerPostResponse = PostInfo[] | { error: string };
 //        https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/416
 const patchCampaignCreatorWithoutInfluencerSocial = async (
     creator: CampaignCreatorDBInsert,
+    context?: ServerContext,
 ): Promise<CampaignCreatorDB> => {
     const _updateCampaignCreator = db<typeof updateCampaignCreator>(updateCampaignCreator);
 
@@ -22,7 +24,7 @@ const patchCampaignCreatorWithoutInfluencerSocial = async (
         throw new Error(`Cannot patch influencer: ${creator.creator_id}, ${creator.platform}`);
     }
 
-    const report = await fetchReport(creator.creator_id, creator.platform);
+    const report = await fetchReport(creator.creator_id, creator.platform, context);
 
     if (!report) {
         throw new Error(`Cannot fetch report for influencer: ${creator.creator_id}, ${creator.platform}`);
@@ -64,7 +66,7 @@ const getHandler: NextApiHandler = async (req: NextApiRequest, res: NextApiRespo
     }
 
     if (!creator.influencer_social_profiles_id) {
-        creator = await patchCampaignCreatorWithoutInfluencerSocial(creator);
+        creator = await patchCampaignCreatorWithoutInfluencerSocial(creator, { req, res });
     }
 
     const posts = await _getInfluencerPostsBySocialProfile(creator.influencer_social_profiles_id);

@@ -232,9 +232,11 @@ export const body = z.object({
 /**
  * @see /types/iqdata/influencer-search-request-body.ts
  */
-export const SearchInfluencersPayload = z.object({
-    query: query.optional(),
-    body: body.optional(),
-});
+export const SearchInfluencersPayload = z
+    .object({
+        query: query.optional(),
+        body: body.optional(),
+    })
+    .passthrough();
 
 export type SearchInfluencersTextTagsFilter = z.infer<typeof text_tags>;
