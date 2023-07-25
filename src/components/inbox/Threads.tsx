@@ -48,8 +48,10 @@ export const Threads = ({ messages }: { messages: SearchResponseMessage[] }) => 
     }, []);
 
     useEffect(() => {
-        getThreadEmailText(messages);
-    }, [getThreadEmailText, messages]);
+        if (!loading && threadMessages.length === 0) {
+            getThreadEmailText(messages);
+        }
+    }, [getThreadEmailText, loading, messages, threadMessages]);
 
     return (
         <div>
