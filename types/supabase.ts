@@ -808,6 +808,27 @@ export interface Database {
           }
         ]
       }
+      search_parameters: {
+        Row: {
+          created_at: string | null
+          data: Json
+          hash: string
+          id: string
+        }
+        Insert: {
+          created_at?: string | null
+          data: Json
+          hash: string
+          id?: string
+        }
+        Update: {
+          created_at?: string | null
+          data?: Json
+          hash?: string
+          id?: string
+        }
+        Relationships: []
+      }
       search_snapshots: {
         Row: {
           company_id: string | null
