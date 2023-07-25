@@ -8,14 +8,15 @@ import type { PostInfo } from '../posts';
 import { fetchReport } from 'src/utils/api/iqdata/fetch-report';
 import { saveInfluencer } from 'src/utils/save-influencer';
 import type { CampaignCreatorDB, CampaignCreatorDBInsert } from 'src/utils/api/db';
+import type { ServerContext } from 'src/utils/api/iqdata';
 
 export type InfluencerPostResponse = PostInfo[] | { error: string };
 
 // @note: link campaign_creators to influencer_social_profiles
 //        https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/416
 const patchCampaignCreatorWithoutInfluencerSocial = async (
-    context: { req: NextApiRequest; res: NextApiResponse },
     creator: CampaignCreatorDBInsert,
+    context?: ServerContext,
 ): Promise<CampaignCreatorDB> => {
     const _updateCampaignCreator = db<typeof updateCampaignCreator>(updateCampaignCreator);
 
@@ -65,7 +66,7 @@ const getHandler: NextApiHandler = async (req: NextApiRequest, res: NextApiRespo
     }
 
     if (!creator.influencer_social_profiles_id) {
-        creator = await patchCampaignCreatorWithoutInfluencerSocial({ req, res }, creator);
+        creator = await patchCampaignCreatorWithoutInfluencerSocial(creator, { req, res });
     }
 
     const posts = await _getInfluencerPostsBySocialProfile(creator.influencer_social_profiles_id);
