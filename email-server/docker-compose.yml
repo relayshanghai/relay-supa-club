@@ -10,32 +10,32 @@ services:
             - '2525:2525'
         depends_on:
             - redis
+            - elasticsearch
+            # - kibana
         environment:
             # Configuration to EmailEngine can be passed via environment variables
             # For full list see https://github.com/postalsys/emailengine#config-mapping
-
             # Settings to write to v1/settings on startup (https://api.emailengine.app/#operation/postV1Settings)
             # The following value is a YAML block scalar string, so make it sure it is properly indented
-            # This configuration enables SMTP server for local submission
-            # !!CHANGE IN PROD WHEN DEPLOYING!!
-            # "smtpServerPassword"
-            # "serviceUrl"
-            # EENGINE_SECRET
-            # Theses are the settings from https://api.emailengine.app/#operation/postV1Settings
             EENGINE_SETTINGS: >
                 {
                     "smtpServerEnabled": true,
                     "smtpServerPort": 2525,
                     "smtpServerHost": "0.0.0.0",
                     "smtpServerAuthEnabled": true,
-                    "smtpServerPassword": "passw0rd",
-                    "serviceUrl": "http://127.0.0.1:4000",
+                    "smtpServerPassword": "${SMTP_SERVER_PASSWORD}",
+                    "serviceUrl": "${SERVICE_URL}",
                     "webhooksEnabled": true,
-                    "webhooks": "https://app.relay.club/api/email-engine/webhook"
+                    "webhooks": "${WEBHOOK_URL}",
+                    "documentStoreEnabled": true,
+                    "documentStoreUrl": "${DOCUMENT_STORE_URL}",
+                    "documentStoreAuthEnabled": true,
+                    "documentStoreUsername": "${DOCUMENT_STORE_USERNAME}",
+                    "documentStorePassword": "${ELASTIC_PASSWORD}"
                 }
 
             # Encryption secret
-            EENGINE_SECRET: 'secret'
+            EENGINE_SECRET: '${EENGINE_SECRET}'
             # Database connection URL
             EENGINE_REDIS: 'redis://redis:6379/2'
 
@@ -44,3 +44,35 @@ services:
         restart: always
         volumes:
             - /data
+
+    elasticsearch:
+        image: docker.elastic.co/elasticsearch/elasticsearch:${STACK_VERSION}
+        container_name: elasticsearch
+        environment:
+            - 'discovery.type=single-node'
+            - 'ES_JAVA_OPTS=-Xms512m -Xmx512m'
+            - 'ELASTIC_PASSWORD=${ELASTIC_PASSWORD}'
+        ports:
+            - ${ES_PORT}:${ES_PORT}
+        volumes:
+            - esdata:/usr/share/elasticsearch/data
+
+    # Kibana now requires a service key which is a pain to get from elastic search, so let's not activate yet.
+    # Error: value of "elastic" is forbidden. This is a superuser account that cannot write to system indices that Kibana needs to function. Use a service account token instead. Learn more: https://www.elastic.co/guide/en/elasticsearch/reference/8.0/service-accounts.html
+    # kibana:
+    #     env_file:
+    #         - ../.env.local
+
+    #     image: docker.elastic.co/kibana/kibana:${STACK_VERSION}
+    #     container_name: kibana
+    #     environment:
+    #         - 'ELASTICSEARCH_HOSTS=http://elasticsearch:${ES_PORT}'
+    #         - 'ELASTICSEARCH_USERNAME=elastic'
+    #         - 'ELASTICSEARCH_PASSWORD=${ELASTIC_PASSWORD}'
+    #     ports:
+    #         - ${KIBANA_PORT}:${KIBANA_PORT}
+    #     networks:
+    #         - elastic
+
+volumes:
+    esdata:
