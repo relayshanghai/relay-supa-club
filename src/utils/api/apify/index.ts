@@ -8,7 +8,7 @@ if (!APIFY_TOKEN) {
 }
 const APIFY_URL = 'https://api.apify.com/v2/';
 
-export const apifyFetch = async <T = any>(path: string, action: string, options: RequestInit = {}) => {
+export const apifyFetch = async <T = any>(path: string, options: RequestInit = {}) => {
     const headers =
         options.method === 'post' || options.method === 'put'
             ? {
@@ -26,7 +26,7 @@ export const apifyFetch = async <T = any>(path: string, action: string, options:
             headers,
         },
     );
-    await handleResError(res, action);
+    await handleResError(res, path);
     const json = await res.json();
     return json as T;
 };
@@ -41,7 +41,7 @@ const prepareYoutubeScrapeParams = (url: string) => ({
 });
 
 export const fetchYoutubeVideoInfo = async (url: string) =>
-    apifyFetch<YoutubeVideoScrapeRaw>(youtubeScraperEndpoint, fetchYoutubeVideoInfo.name, {
+    apifyFetch<YoutubeVideoScrapeRaw>(youtubeScraperEndpoint, {
         method: 'post',
         body: JSON.stringify(prepareYoutubeScrapeParams(url)),
     });
@@ -60,7 +60,7 @@ const prepareInstagramPostScrapeParams = (url: string) => ({
 });
 
 export const fetchInstagramPostInfo = async (url: string) =>
-    apifyFetch<InstagramPostScrape>(instagramPostScraperEndpoint, fetchInstagramPostInfo.name, {
+    apifyFetch<InstagramPostScrape>(instagramPostScraperEndpoint, {
         method: 'post',
         body: JSON.stringify(prepareInstagramPostScrapeParams(url)),
     });

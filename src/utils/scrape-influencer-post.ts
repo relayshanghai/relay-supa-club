@@ -6,7 +6,7 @@ import { db } from './supabase-client';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { InfluencerSocialProfileRow } from './api/db';
 import { saveInfluencer } from './save-influencer';
-import type { NextApiRequest, NextApiResponse } from 'next';
+import type { ServerContext } from './api/iqdata';
 import { fetchReportWithContext as fetchReport } from './api/iqdata';
 
 type ScrapeDataWithInfluencer = Omit<ScrapeData, 'influencer'> & {
@@ -14,10 +14,7 @@ type ScrapeDataWithInfluencer = Omit<ScrapeData, 'influencer'> & {
     influencer_platform_id: string;
 };
 
-export const scrapeInfluencerPost = async (
-    context: { req: NextApiRequest; res: NextApiResponse },
-    url: string,
-): Promise<ScrapeDataWithInfluencer> => {
+export const scrapeInfluencerPost = async (context: ServerContext, url: string): Promise<ScrapeDataWithInfluencer> => {
     const platform = extractPlatformFromURL(url) as CreatorPlatform;
 
     if (!platform) {

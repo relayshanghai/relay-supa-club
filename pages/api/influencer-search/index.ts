@@ -32,11 +32,11 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     const { platform, body } = prepareFetchCreatorsFiltered(searchParams);
 
     const results = await searchInfluencers(
-        { req, res },
         {
             query: { platform },
             body,
         },
+        { req, res },
     );
 
     if (results === undefined) {

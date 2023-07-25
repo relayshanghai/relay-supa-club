@@ -23,7 +23,7 @@ const patchCampaignCreatorWithoutInfluencerSocial = async (
         throw new Error(`Cannot patch influencer: ${creator.creator_id}, ${creator.platform}`);
     }
 
-    const report = await fetchReport(context, creator.creator_id, creator.platform);
+    const report = await fetchReport(creator.creator_id, creator.platform, context);
 
     if (!report) {
         throw new Error(`Cannot fetch report for influencer: ${creator.creator_id}, ${creator.platform}`);

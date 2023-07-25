@@ -4,13 +4,9 @@ import {
     requestNewReportWithContext as requestNewReport,
     fetchReportWithContext as apiFetchReport,
 } from '.';
-import type { NextApiRequest, NextApiResponse } from 'next';
+import type { ServerContext } from '.';
 
-export const fetchReport = async (
-    context: { req: NextApiRequest; res: NextApiResponse },
-    influencerId: string,
-    platform: CreatorPlatform,
-) => {
+export const fetchReport = async (influencerId: string, platform: CreatorPlatform, context?: ServerContext) => {
     const response = await fetchReportsMetadata(context, platform, influencerId);
     let report: CreatorReport | null = null;
 

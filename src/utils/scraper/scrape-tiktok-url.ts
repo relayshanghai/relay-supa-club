@@ -1,11 +1,8 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
+import type { ServerContext } from '../api/iqdata';
 import { fetchTiktokVideoInfo as iqdataFetchTiktokVideoInfo } from '../api/iqdata';
 import type { ScrapeData } from './types';
 
-export const scrapeTiktokUrl = async (
-    context: { req: NextApiRequest; res: NextApiResponse },
-    url: string,
-): Promise<ScrapeData> => {
+export const scrapeTiktokUrl = async (context: ServerContext, url: string): Promise<ScrapeData> => {
     const result = await iqdataFetchTiktokVideoInfo(url, context);
 
     if (!result.media.itemInfo.itemStruct.stats) {

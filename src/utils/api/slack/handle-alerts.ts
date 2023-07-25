@@ -2,7 +2,7 @@ import { getUserSession } from './../analytics';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { sendSlackMessage } from '.';
 import type { SlackMessage } from '.';
-import { alertIncomingWebhookURL } from './constants';
+import { ALTERT_INCOMING_WEBHOOK_URL } from './constants';
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
 import type { DatabaseWithCustomTypes } from 'types';
 
@@ -45,7 +45,7 @@ export const logRateLimitError = async (action: string, context: { req: NextApiR
         ],
     };
 
-    alertIncomingWebhookURL && (await sendSlackMessage(alertIncomingWebhookURL, reqBody));
+    ALTERT_INCOMING_WEBHOOK_URL && (await sendSlackMessage(ALTERT_INCOMING_WEBHOOK_URL, reqBody));
 };
 
 export const logDailyTokensError = async (action: string, context: { req: NextApiRequest; res: NextApiResponse }) => {
@@ -86,5 +86,5 @@ export const logDailyTokensError = async (action: string, context: { req: NextAp
         ],
     };
 
-    alertIncomingWebhookURL && (await sendSlackMessage(alertIncomingWebhookURL, reqBody));
+    ALTERT_INCOMING_WEBHOOK_URL && (await sendSlackMessage(ALTERT_INCOMING_WEBHOOK_URL, reqBody));
 };

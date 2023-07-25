@@ -1,11 +1,8 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
+import type { ServerContext } from '../api/iqdata';
 import { fetchYoutubeVideoInfoWithContext as iqdataFetchYoutubeVideoInfo } from '../api/iqdata';
 import type { ScrapeData } from './types';
 
-export const scrapeYoutubeUrl = async (
-    context: { req: NextApiRequest; res: NextApiResponse },
-    url: string,
-): Promise<ScrapeData> => {
+export const scrapeYoutubeUrl = async (context: ServerContext, url: string): Promise<ScrapeData> => {
     const result = await iqdataFetchYoutubeVideoInfo(context, url);
 
     if (!result.success || !result.video_info.likes) {
