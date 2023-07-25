@@ -100,13 +100,19 @@ export const SearchPageInner = () => {
     /**
      * Handle the SearchOptions.onSearch event
      */
-    const handleSearch = useCallback(() => {
-        trackSearch({
-            event: Search,
-            searchParams: searchParams ? { ...searchParams, page } : undefined,
-            metadata,
-        });
-    }, [trackSearch, searchParams, page, metadata]);
+    const handleSearch = useCallback(
+        ({ searchParams }: { searchParams: any }) => {
+            // eslint-disable-next-line no-console
+            console.log('handle search @ search-page', searchParams);
+
+            trackSearch({
+                event: Search,
+                searchParams: searchParams ? { ...searchParams, page } : undefined,
+                metadata,
+            });
+        },
+        [trackSearch, page, metadata],
+    );
 
     /**
      * Tracks a SearchDefault event on render
@@ -118,6 +124,8 @@ export const SearchPageInner = () => {
 
         if (searchParams.page && searchParams.page !== 0) return;
 
+        // eslint-disable-next-line no-console
+        console.log('initial track search', { event, searchParams, metadata });
         const controller = new AbortController();
 
         trackSearch({
@@ -146,6 +154,8 @@ export const SearchPageInner = () => {
     // TODO:comment out the related codes when feat recommended is ready
     // @note: this causes rerender, searchParams value should be initiated in the useState
     useEffect(() => {
+        // eslint-disable-next-line no-console
+        console.log('search page');
         setSearchParams({
             page: 0,
             platform,
@@ -267,7 +277,7 @@ export const SearchPageInner = () => {
                 allCampaignCreators={allCampaignCreators}
             />
 
-            <SearchFiltersModal show={filterModalOpen} setShow={setShowFiltersModal} />
+            <SearchFiltersModal show={filterModalOpen} setShow={setShowFiltersModal} onSearch={handleSearch} />
         </div>
     );
 };

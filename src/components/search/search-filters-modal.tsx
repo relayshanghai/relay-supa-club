@@ -4,7 +4,7 @@ import { numberFormatter } from 'src/utils/formatter';
 import { Modal } from '../modal';
 import { SearchLocations } from './search-locations';
 import LocationTag from './location-tag';
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { Switch } from '../library';
 import { Button } from '../button';
 import { useSearchTrackers } from '../rudder/searchui-rudder-calls';
@@ -25,7 +25,29 @@ export type LowerAgeOption = '13' | '18' | '25' | '35' | '45' | '65';
 const lowerAgeOptions: LowerAgeOption[] = ['18', '25', '35', '45', '65'];
 const upperAgeOptions: UpperAgeOption[] = ['17', '24', '34', '44', '64'];
 
-export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: (open: boolean) => void }) => {
+const getUpperAge = (targetValue: string, maxOption: string): UpperAgeOption | undefined => {
+    if (targetValue === maxOption) {
+        return undefined;
+    } else {
+        return targetValue as UpperAgeOption;
+    }
+};
+
+const getLowerAge = (targetValue: string, minOption: string): LowerAgeOption | undefined => {
+    if (targetValue === minOption) {
+        return undefined;
+    } else {
+        return targetValue as LowerAgeOption;
+    }
+};
+
+type SearchFiltersModalProps = {
+    show: boolean;
+    setShow: (open: boolean) => void;
+    onSearch: (...args: any[]) => any;
+};
+
+export const SearchFiltersModal = ({ show, setShow, onSearch }: SearchFiltersModalProps) => {
     const {
         audience,
         setAudience,
@@ -50,6 +72,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
         setActiveSearch,
         setPage,
         setInfluencerLocation,
+        searchParams,
     } = useSearch();
 
     const { t } = useTranslation();
@@ -75,13 +98,25 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
         trackInfluencerViewsTo,
     } = useSearchTrackers();
 
-    const handleSearch = (e: React.MouseEvent<HTMLButtonElement>) => {
-        e.preventDefault();
-        setActiveSearch(true);
-        setPage(0);
-        trackSearch('Search Filters Modal');
-        setShow(false);
-    };
+    const handleSearch = useCallback(
+        (e: React.MouseEvent<HTMLButtonElement>) => {
+            e.preventDefault();
+            setActiveSearch(true);
+            setPage(0);
+            trackSearch('Search Filters Modal');
+            setShow(false);
+
+            // eslint-disable-next-line no-console
+            console.log('handle search @ search-filters-modal', { searchParams });
+            onSearch({ searchParams });
+        },
+        [onSearch, setShow, trackSearch, setPage, setActiveSearch, searchParams],
+    );
+
+    useEffect(() => {
+        // eslint-disable-next-line no-console
+        console.log('searchParams @ search-filters-modal', searchParams);
+    }, [searchParams]);
 
     useEffect(() => {
         if (!audienceAge) return;
@@ -90,21 +125,30 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
         }
     }, [audienceAge, setAudienceAge]);
 
-    const getUpperAge = (targetValue: string, maxOption: string): UpperAgeOption | undefined => {
-        if (targetValue === maxOption) {
-            return undefined;
-        } else {
-            return targetValue as UpperAgeOption;
-        }
+    const clearFilters = (e: any) => {
+        e.preventDefault();
+        setAudience([null, null]);
+        setViews([null, null]);
+        setGender(undefined);
+        setEngagement(undefined);
+        setLastPost(undefined);
+        setContactInfo(undefined);
+        setAudienceLocation([]);
+        setInfluencerLocation([]);
+        setAudienceGender(undefined);
+        setAudienceAge(undefined);
+        trackClearFilters();
     };
 
-    const getLowerAge = (targetValue: string, minOption: string): LowerAgeOption | undefined => {
-        if (targetValue === minOption) {
-            return undefined;
-        } else {
-            return targetValue as LowerAgeOption;
-        }
-    };
+    const isContactInfoEmail = useCallback(() => (contactInfo == 'email' ? true : false), [contactInfo]);
+
+    const getAudienceGenderCode = useCallback(() => audienceGender?.code || 'ANY', [audienceGender]);
+
+    const getAudienceGenderWeight = useCallback(() => audienceGender?.weight || '>5%', [audienceGender]);
+
+    const getAudience = useCallback((i: number) => audience[i] ?? 'any', [audience]);
+
+    const getViews = useCallback((i: number) => views[i] ?? 'any', [views]);
 
     return (
         <Modal
@@ -118,20 +162,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
         >
             <p
                 className="absolute right-6 top-6 cursor-pointer border-red-500 bg-transparent font-medium text-red-500 hover:underline"
-                onClick={(e: any) => {
-                    e.preventDefault();
-                    setAudience([null, null]);
-                    setViews([null, null]);
-                    setGender(undefined);
-                    setEngagement(undefined);
-                    setLastPost(undefined);
-                    setContactInfo(undefined);
-                    setAudienceLocation([]);
-                    setInfluencerLocation([]);
-                    setAudienceGender(undefined);
-                    setAudienceAge(undefined);
-                    trackClearFilters();
-                }}
+                onClick={clearFilters}
                 data-testid="clear-filters"
             >
                 {t('filters.clearButton')}
@@ -243,7 +274,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                             <select
                                 data-testid="filter-gender"
                                 className="rounded-md border-gray-200 bg-white text-sm font-medium text-gray-400 ring-1 ring-gray-200"
-                                value={audienceGender?.code || 'ANY'}
+                                value={getAudienceGenderCode()}
                                 onChange={(e) => {
                                     const gender = e.target.value === 'ANY' ? null : e.target.value;
                                     setAudienceGender(
@@ -267,7 +298,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                                     audienceGender ? 'bg-white' : 'bg-slate-300'
                                 } border-gray-200 text-sm font-medium text-gray-400 ring-1 ring-gray-200`}
                                 disabled={audienceGender ? false : true}
-                                value={audienceGender?.weight || '>5%'}
+                                value={getAudienceGenderWeight()}
                                 onChange={(e) => {
                                     if (!audienceGender) return;
                                     const weight = parseFloat(e.target.value);
@@ -290,7 +321,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                     <p className="text-2xl font-semibold">{t('filters.influencers.title')}</p>
                     <Switch
                         data-testid="has-email-toggle"
-                        checked={contactInfo == 'email' ? true : false}
+                        checked={isContactInfoEmail()}
                         onChange={(e) => {
                             setContactInfo(e.target.checked ? 'email' : undefined);
                             trackInfluencerHasEmail({ mode: e.target.checked ? 'email' : 'any' });
@@ -351,7 +382,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                                     <select
                                         data-testid="filter-subs-lower"
                                         className="rounded-md border-gray-200 bg-white text-sm font-medium text-gray-400 ring-1 ring-gray-200"
-                                        value={audience[0] ?? 'any'}
+                                        value={getAudience(0)}
                                         onChange={(e) => {
                                             setAudience((audiencePrevious) => [
                                                 e.target.value === 'any' ? null : e.target.value,
@@ -376,7 +407,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                                     <select
                                         data-testid="filter-subs-upper"
                                         className="rounded-md border-gray-200 bg-white text-sm font-medium text-gray-400 ring-1 ring-gray-200"
-                                        value={audience[1] ?? 'any'}
+                                        value={getAudience(1)}
                                         onChange={(e) => {
                                             setAudience((audiencePrevious) => [
                                                 audiencePrevious[0],
@@ -460,7 +491,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                                     <select
                                         data-testid="filter-lower-views"
                                         className="rounded-md border-gray-200 bg-white text-sm font-medium text-gray-400 ring-1 ring-gray-200"
-                                        value={views[0] ?? 'any'}
+                                        value={getViews(0)}
                                         onChange={(e) => {
                                             setViews((viewsPrevious) => [
                                                 e.target.value === 'any' ? null : e.target.value,
@@ -485,7 +516,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                                     <select
                                         data-testid="filter-upper-views"
                                         className="rounded-md border-gray-200 bg-white text-sm font-medium text-gray-400 ring-1 ring-gray-200"
-                                        value={views[1] ?? 'any'}
+                                        value={getViews(0)}
                                         onChange={(e) => {
                                             setViews((viewsPrevious) => [
                                                 viewsPrevious[0],

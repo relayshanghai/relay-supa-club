@@ -7,7 +7,7 @@ import SearchTopics from './search-topics';
 import { Tooltip } from '../library';
 // import { featRecommended } from 'src/constants/feature-flags';
 import { startJourney } from 'src/utils/analytics/journey';
-import { useEffect, useState } from 'react';
+import { useState, useCallback } from 'react';
 import WordCloudComponent from '../wordcloud';
 import SearchKeywords from './search-keywords';
 import SearchHashtags from './search-hashtags';
@@ -42,7 +42,6 @@ export const SearchOptions = ({
         // onlyRecommended,
         // setOnlyRecommended,
         // recommendedInfluencers,
-        activeSearch,
         setActiveSearch,
         setSearchParams,
         keywords,
@@ -56,21 +55,24 @@ export const SearchOptions = ({
     const { t } = useTranslation();
     const { trackSearch, trackKeyword, trackOpenFilterModal, trackHashtags, trackTopics } = useSearchTrackers();
 
-    const handleSearch = (e: any) => {
-        keywordInput.length > 0 && setKeywords(keywordInput);
-        trackKeyword({
-            keyword: keywordInput,
-        });
-        setKeywordInput('');
-        e.preventDefault();
-        setActiveSearch(true);
-        setPage(0);
-        trackSearch('Search Options');
-        onSearch();
-    };
-    // TODO:comment out the related codes when feat recommended is ready
-    useEffect(() => {
-        if (activeSearch) {
+    const handleSearch = useCallback(
+        (e: any) => {
+            // eslint-disable-next-line no-console
+            console.log('search options', tags);
+
+            if (keywordInput.length > 0) {
+                setKeywords(keywordInput);
+                trackKeyword({
+                    keyword: keywordInput,
+                });
+                setKeywordInput('');
+            }
+
+            e.preventDefault();
+            setActiveSearch(true);
+            setPage(0);
+            trackSearch('Search Options');
+
             const params = {
                 platform,
                 tags,
@@ -94,29 +96,54 @@ export const SearchOptions = ({
 
             startJourney('search');
             setSearchParams(params);
-        }
-    }, [
-        activeSearch,
-        platform,
-        // onlyRecommended,
-        setSearchParams,
-        text,
-        tags,
-        keywords,
-        hashtags,
-        username,
-        influencerLocation,
-        views,
-        audience,
-        gender,
-        engagement,
-        lastPost,
-        contactInfo,
-        audienceLocation,
-        audienceAge,
-        audienceGender,
-        // recommendedInfluencers,
-    ]);
+            onSearch({ searchParams: params });
+        },
+        [
+            keywordInput,
+            setKeywordInput,
+            onSearch,
+            setActiveSearch,
+            setKeywords,
+            setPage,
+            trackKeyword,
+            trackSearch,
+            // TODO:comment out the related codes when feat recommended is ready
+            platform,
+            // onlyRecommended,
+            setSearchParams,
+            text,
+            tags,
+            keywords,
+            hashtags,
+            username,
+            influencerLocation,
+            views,
+            audience,
+            gender,
+            engagement,
+            lastPost,
+            contactInfo,
+            audienceLocation,
+            audienceAge,
+            audienceGender,
+            // recommendedInfluencers,
+        ],
+    );
+
+    const handleKeywordsBlur = useCallback(
+        (v: string | null) => {
+            const keyword = v ?? '';
+
+            if (keyword !== '' && tags.length > 0) {
+                setTopicTags([]);
+                trackTopics({ tags: [] }); // <- @note track clearing topics?
+            }
+
+            setKeywords(keyword);
+            trackKeyword({ keyword }); // <- @note should track only on search
+        },
+        [setKeywords, trackKeyword, trackTopics, setTopicTags, tags],
+    );
 
     return (
         <>
@@ -182,19 +209,10 @@ export const SearchOptions = ({
                             </div>
                             <SearchKeywords
                                 path="influencer-search/topics"
-                                keywordInput={keywordInput}
-                                setKeywordInput={setKeywordInput}
                                 placeholder={t('creators.searchKeywords')}
-                                keywords={keywords}
+                                value={keywords}
                                 platform={platform}
-                                onChangeTopics={() => {
-                                    tags.length !== 0 && setTopicTags([]);
-                                    tags.length !== 0 && trackTopics({ tags: [] });
-                                }}
-                                onSetKeywords={(keywords) => {
-                                    setKeywords(keywords);
-                                    trackKeyword({ keyword: keywords });
-                                }}
+                                onBlur={handleKeywordsBlur}
                             />
                         </div>
                     ) : (
