@@ -51,14 +51,15 @@ export const Threads = ({ messages }: { messages: SearchResponseMessage[] }) => 
         if (!loading && threadMessages.length === 0) {
             getThreadEmailText(messages);
         }
-    }, [getThreadEmailText, loading, messages, threadMessages]);
+        //eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [loading, messages]);
 
     return (
         <div>
             {loading ? (
                 <p>Loading...</p>
             ) : (
-                <div className="flex w-full flex-col space-y-3">
+                <div className="flex w-full flex-col space-y-4">
                     {threadMessages.map((message) => (
                         <div
                             key={message.id}

@@ -4,6 +4,7 @@ import { nextFetch } from 'src/utils/fetcher';
 import type { EmailSearchPostRequestBody, EmailSearchPostResponseBody } from 'pages/api/email-engine/search';
 import type { ListEmailsPostRequestBody, ListEmailsPostResponseBody } from 'pages/api/email-engine/list-emails';
 import type { GetEmailPostRequestBody, GetEmailPostResponseBody } from 'pages/api/email-engine/email-text';
+import type { SendEmailRequestBody, SendEmailResponseBody } from 'types/email-engine/account-account-submit-post';
 
 export const getInBoxMessages = async () => {
     const body: ListEmailsPostRequestBody = {
@@ -58,4 +59,9 @@ export const getMessageText = async (textId: string) => {
         body,
     });
     return { plain, html };
+};
+
+export const sendMessage = async (body: SendEmailRequestBody) => {
+    const res = await nextFetch<SendEmailResponseBody>('email-engine/send-email', { method: 'POST', body });
+    return res;
 };
