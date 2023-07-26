@@ -8,10 +8,22 @@ import type { SendEmailRequestBody, SendEmailResponseBody } from 'types/email-en
 export type SendEmailPostRequestBody = SendEmailRequestBody & {
     account: string;
 };
+
+export type ReplyEmailPostRequestBody = {
+    account: string;
+    body: {
+        reference: {
+            message: string;
+            inline?: boolean;
+            action: string;
+        };
+        html: string;
+    };
+};
+
 export type SendEmailPostResponseBody = SendEmailResponseBody;
 const postHandler: NextApiHandler = async (req, res) => {
     const { account, ...body } = req.body as SendEmailPostRequestBody;
-
     const result: SendEmailPostResponseBody = await sendEmail(body, account);
     return res.status(httpCodes.OK).json(result);
 };
