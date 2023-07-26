@@ -14,7 +14,7 @@ const LoginPage = () => {
     const { t } = useTranslation();
     const router = useRouter();
     const { email: emailQuery } = router.query;
-    const { login, supabaseClient } = useUser();
+    const { login, supabaseClient, profile, refreshProfile } = useUser();
     const [loggingIn, setLoggingIn] = useState(false);
     const [generatingResetEmail, setGeneratingResetEmail] = useState(false);
     const {
@@ -24,6 +24,13 @@ const LoginPage = () => {
         email: '',
         password: '',
     });
+
+    useEffect(() => {
+        if (profile?.email) {
+            toast.success(t('login.loginSuccess'));
+            router.push('/dashboard');
+        }
+    }, [profile?.email, router, t]);
 
     useEffect(() => {
         if (!router.isReady || typeof emailQuery !== 'string') return;
@@ -36,8 +43,7 @@ const LoginPage = () => {
         try {
             setLoggingIn(true);
             await login(email, password);
-            toast.success(t('login.loginSuccess'));
-            await router.push('/dashboard');
+            refreshProfile();
         } catch (error: any) {
             toast.error(error.message || t('login.oopsSomethingWentWrong'));
             setLoggingIn(false);
