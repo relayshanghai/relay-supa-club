@@ -45,6 +45,7 @@ export const apiFetch = async <T = any>(url: string, payload: ApiPayload, option
 
     if (!response.bodyUsed && contentType.indexOf('application/json') !== -1) {
         content = await response.json();
+        content = { ...content, status: response.status };
     }
 
     // @note leaving this here for iqdata endpoints that return gzip, in-case we need it in the future

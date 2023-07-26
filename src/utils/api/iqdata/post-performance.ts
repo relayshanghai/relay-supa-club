@@ -6,6 +6,7 @@ import { scrapeInstagramUrl } from 'src/utils/scraper/scrape-instagram-url';
 import { scrapeTiktokUrl } from 'src/utils/scraper/scrape-tiktok-url';
 import { scrapeYoutubeUrl } from 'src/utils/scraper/scrape-youtube-url';
 import type { CreatorPlatform } from 'types';
+import type { ServerContext } from '.';
 
 export type PostPerformanceData = {
     id: string;
@@ -21,17 +22,18 @@ export type PostPerformanceData = {
 export const fetchPostPerformanceData = async (
     platform: CreatorPlatform,
     url?: string,
+    context?: ServerContext,
 ): Promise<Omit<PostPerformanceData, 'id'>> => {
     if (!url) {
         throw new Error('Invalid url');
     }
 
     if (platform === 'youtube') {
-        return await scrapeYoutubeUrl(url);
+        return await scrapeYoutubeUrl(url, context);
     }
 
     if (platform === 'tiktok') {
-        return await scrapeTiktokUrl(url);
+        return await scrapeTiktokUrl(url, context);
     }
 
     if (platform === 'instagram') {
