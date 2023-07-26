@@ -6,6 +6,8 @@ type SessionIds = {
     user_id?: string;
     profile_id?: string;
     company_id?: string | null;
+    fullname?: string;
+    email?: string | null;
 };
 
 export const getUserSession = (db: SupabaseClient) => async () => {
@@ -25,6 +27,8 @@ export const getUserSession = (db: SupabaseClient) => async () => {
         // @todo profile.id is user.id
         data.profile_id = profile.id;
         data.company_id = profile.company_id;
+        data.fullname = profile.first_name + ' ' + profile.last_name;
+        data.email = profile.email;
     }
 
     return data;
