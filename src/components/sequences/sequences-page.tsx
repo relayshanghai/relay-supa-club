@@ -59,10 +59,12 @@ export const SequencesPage = () => {
 
     return (
         <Layout>
-            <div className="space-x-4 space-y-4 p-4">
+            <div className="flex flex-col space-x-4 space-y-4 p-4">
                 <h1 className="text-lg font-bold">{sequence.name}</h1>
                 <SequenceStats />
-                <Button onClick={handleStartSequence}>Start</Button>
+                <Button onClick={handleStartSequence} className="w-fit self-end">
+                    Start
+                </Button>
                 <SequenceTable influencers={influencers} />
             </div>
         </Layout>
