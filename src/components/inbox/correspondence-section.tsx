@@ -42,14 +42,14 @@ export const CorrespondenceSection = ({
                     <Spinner className="h-6 w-6 fill-primary-600 text-primary-200" />
                 </div>
             ) : (
-                <div className="h-[670px] overflow-y-auto p-3 lg:h-[960px] 2xl:min-h-[1024px]">
+                <div className="h-[560px] p-3 xl:h-[760px] 2xl:min-h-[1024px]">
                     {selectedMessages.length > 1 ? (
                         <Threads messages={selectedMessages} />
                     ) : (
                         <>{selectedMessages.length > 0 && <Email message={selectedMessages[0]} />}</>
                     )}
 
-                    <div className="fixed bottom-0 w-full">
+                    <div className="fixed bottom-2 w-full">
                         <ReplayEditor
                             replyMessage={replyMessage}
                             setReplyMessage={setReplyMessage}

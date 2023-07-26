@@ -64,15 +64,15 @@ export const Threads = ({ messages }: { messages: SearchResponseMessage[] }) => 
     }, [threadMessages]);
 
     return (
-        <>
+        <div className="h-full overflow-y-auto">
             {loading ? (
                 <p>Loading...</p>
             ) : (
-                <div className="flex h-full flex-col space-y-4">
+                <div className="flex w-full flex-col space-y-6">
                     {threadMessages.map((message) => (
                         <div
                             key={message.id}
-                            className={`w-4/5 whitespace-normal rounded-md border border-primary-200 px-3 py-2 ${
+                            className={`w-2/3 whitespace-normal rounded-md border border-primary-200 px-3 py-2 ${
                                 message.isMe ? 'self-end bg-primary-100 bg-opacity-70' : 'self-start'
                             }`}
                         >
@@ -94,6 +94,6 @@ export const Threads = ({ messages }: { messages: SearchResponseMessage[] }) => 
                     <div ref={endOfThread} />
                 </div>
             )}
-        </>
+        </div>
     );
 };
