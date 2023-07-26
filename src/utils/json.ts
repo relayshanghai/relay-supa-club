@@ -1,5 +1,4 @@
-import { Json } from 'types/supabase';
-import { z } from 'zod';
+import type { Json } from 'types/supabase';
 
 type JsonParseArgs = [text: string, reviver?: Parameters<typeof JSON.parse>[1], throwOnerror?: boolean];
 
@@ -32,14 +31,3 @@ export const isJson = (data: any): data is Json => {
 
     return false;
 };
-const Literals = z.union([z.string(), z.number(), z.boolean(), z.null()]);
-type Literal = z.infer<typeof Literals>;
-type Jsonable = Literal | { [key: string]: Jsonable } | Jsonable[];
-
-export const Json: z.ZodType<Jsonable> = z.lazy(() => z.union([Literals, z.array(Json), z.record(Json)]));
-
-/**
- * Since a valid JSON can be ALSO be a non empty string, a number, boolean or null,
- * JsonRoot expects the "root" to always be an object or array (not a literal)
- */
-export const JsonRoot = z.union([z.array(Json), z.record(Json)]);
