@@ -12,14 +12,14 @@ export const CorrespondenceSection = ({
     loadingSelectedMessages: boolean;
 }) => {
     return (
-        <div className="h-full ">
+        <div>
             {loadingSelectedMessages ? (
                 <div className="flex h-full w-full items-center justify-center">
                     <Spinner className="h-6 w-6 fill-primary-600 text-primary-200" />
                 </div>
             ) : (
-                <div className="relative flex w-full flex-col justify-between  p-3">
-                    <div className="mb-6 overflow-y-auto">
+                <div className=" h-[670px] overflow-y-auto p-3">
+                    <div className="mb-36">
                         {selectedMessages.length > 1 ? (
                             <Threads messages={selectedMessages} />
                         ) : (

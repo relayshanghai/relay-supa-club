@@ -1,5 +1,5 @@
 import type { SearchResponseMessage } from 'types/email-engine/account-account-search-post';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { clientLogger } from 'src/utils/logger-client';
 import dateFormat from 'src/utils/dateFormat';
 import { getMessageText } from 'src/utils/api/email-engine/handle-messages';
@@ -18,6 +18,11 @@ export interface ThreadMessage {
 export const Threads = ({ messages }: { messages: SearchResponseMessage[] }) => {
     const [threadMessages, setThreadMessages] = useState<ThreadMessage[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
+    const endOfThread = useRef<null | HTMLDivElement>(null);
+
+    const scrollToBottom = () => {
+        endOfThread.current?.scrollIntoView({ behavior: 'smooth' });
+    };
 
     const getThreadEmailText = useCallback(async (messages: SearchResponseMessage[]) => {
         setThreadMessages([]);
@@ -54,12 +59,16 @@ export const Threads = ({ messages }: { messages: SearchResponseMessage[] }) => 
         //eslint-disable-next-line react-hooks/exhaustive-deps
     }, [loading, messages]);
 
+    useEffect(() => {
+        scrollToBottom();
+    }, [threadMessages]);
+
     return (
-        <div>
+        <>
             {loading ? (
                 <p>Loading...</p>
             ) : (
-                <div className="flex w-full flex-col space-y-4">
+                <div className="flex h-full flex-col space-y-4">
                     {threadMessages.map((message) => (
                         <div
                             key={message.id}
@@ -82,8 +91,9 @@ export const Threads = ({ messages }: { messages: SearchResponseMessage[] }) => 
                             />
                         </div>
                     ))}
+                    <div ref={endOfThread} />
                 </div>
             )}
-        </div>
+        </>
     );
 };
