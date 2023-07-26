@@ -67,6 +67,60 @@ export type CampaignCreatorDB = CampaignCreatorsTable['Row'];
 export type CampaignCreatorDBInsert = CampaignCreatorsTable['Insert'];
 export type CampaignCreatorDBUpdate = CampaignCreatorsTable['Update'];
 
+export type Sequence = Database['public']['Tables']['sequences']['Row'];
+export type SequenceInsert = Database['public']['Tables']['sequences']['Insert'];
+export type SequenceUpdate = Database['public']['Tables']['sequences']['Update'];
+
+type SequenceStepDetailedTypes = {
+    /** Int, first step = 0 */
+    order: number;
+    /** The params to be passed to the template. e.g. 'companyName' */
+    params: string[];
+};
+export type SequenceStep = Database['public']['Tables']['sequence_steps']['Row'] & SequenceStepDetailedTypes;
+export type SequenceStepInsert = Database['public']['Tables']['sequence_steps']['Insert'] & SequenceStepDetailedTypes;
+export type SequenceStepUpdate = Database['public']['Tables']['sequence_steps']['Update'] & SequenceStepDetailedTypes;
+
+export type EmailOpenStatus = 'Scheduled' | 'Delivered' | 'Opened' | 'Replied' | 'Bounced';
+/** Ignored means it has gone through the whole sequence with no reply (+ 7 days) */
+export type FunnelStatus =
+    | 'To Contact'
+    | 'In Sequence'
+    | 'Ignored'
+    | 'Negotiating'
+    | 'Confirmed'
+    | 'Shipped'
+    | 'Rejected'
+    | 'Received'
+    | 'Content Approval'
+    | 'Posted';
+
+type SequenceInfluencerDetailedTypes = {
+    /** 'fullname' from IQData */
+    username: string;
+    /** handle = username || custom_name || fullname */
+    handle: string;
+    /** 0 means not sent. 1 means first step sent, awaiting 2. */
+    sequence_step: number;
+    last_email_open_status: EmailOpenStatus;
+    /** ISO date */
+    last_email_send_date: string | null;
+    /** ISO date.  */
+    next_email_send_date: string | null;
+    funnel_status: FunnelStatus;
+    /** from IQData */
+    categories: string[];
+};
+
+export type SequenceInfluencer = Database['public']['Tables']['sequence_influencer']['Row'] &
+    SequenceInfluencerDetailedTypes;
+export type SequenceInfluencerInsert = Database['public']['Tables']['sequence_influencer'] &
+    SequenceInfluencerDetailedTypes;
+['Insert'];
+export type SequenceInfluencerUpdate = Database['public']['Tables']['sequence_influencer'] &
+    SequenceInfluencerDetailedTypes;
+['Update'];
+
 export type UsagesTable = Database['public']['Tables']['usages'] & {
     Row: Database['public']['Tables']['usages']['Row'] & {
         type: UsageType;
