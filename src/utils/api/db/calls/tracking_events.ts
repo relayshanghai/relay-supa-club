@@ -1,4 +1,5 @@
-import type { AuthUser, RelayDatabase, TrackingEvents } from '../types';
+import type { AuthUser } from '@supabase/supabase-js';
+import type { RelayDatabase, TrackingEvents } from '../types';
 
 export const insertTrackingEvent = (db: RelayDatabase) => async (data: TrackingEvents['Insert']) => {
     const result = await db.from('tracking_events').insert(data).select().single();

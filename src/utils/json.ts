@@ -1,3 +1,4 @@
+import { Json } from 'types/supabase';
 import { z } from 'zod';
 
 type JsonParseArgs = [text: string, reviver?: Parameters<typeof JSON.parse>[1], throwOnerror?: boolean];
@@ -19,6 +20,18 @@ export const parseJson: <T = any>(...args: JsonParseArgs) => T | false = (text, 
     return false;
 };
 
+/**
+ * Check if provided data is parseable to a JSON string
+ */
+export const isJson = (data: any): data is Json => {
+    try {
+        JSON.stringify(data);
+
+        return true;
+    } catch (e) {}
+
+    return false;
+};
 const Literals = z.union([z.string(), z.number(), z.boolean(), z.null()]);
 type Literal = z.infer<typeof Literals>;
 type Jsonable = Literal | { [key: string]: Jsonable } | Jsonable[];

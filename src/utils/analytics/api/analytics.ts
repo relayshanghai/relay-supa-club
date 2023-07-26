@@ -13,6 +13,7 @@ import { getOrInsertSearchParameter } from 'src/utils/api/db/calls/search-parame
 import crypto from 'crypto';
 import { SearchInfluencersPayload } from 'src/utils/api/iqdata/influencers/search-influencers-payload';
 import type { ApiPayload } from 'src/utils/api/types';
+import { isJson } from 'src/utils/json';
 
 type SessionIds = {
     session_id?: string;
@@ -203,9 +204,14 @@ export const createReportSnapshot = async (ctx: ServerContext, payload: CreateAn
 
 export const createSearchParameter = (db: SupabaseClient) => async (payload: ApiPayload) => {
     const parsedPayload = SearchInfluencersPayload.parse(payload);
+    const { context: _, ...data } = parsedPayload;
 
     const payloadString = JSON.stringify(parsedPayload);
     const hash = crypto.createHash('sha256').update(payloadString).digest('hex');
 
-    return await getOrInsertSearchParameter(db)({ hash, data: payload });
+    if (isJson(data)) {
+        return await getOrInsertSearchParameter(db)({ hash, data });
+    }
+
+    throw new Error('payload cannot be parsed to JSON');
 };

@@ -26,7 +26,7 @@ export const apifyFetch = async <T = any>(path: string, options: RequestInit = {
             headers,
         },
     );
-    await handleResError(res);
+    await handleResError(res, path);
     const json = await res.json();
     return json as T;
 };

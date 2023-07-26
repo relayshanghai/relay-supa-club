@@ -1,8 +1,9 @@
+import type { ServerContext } from '../api/iqdata';
 import { fetchTiktokVideoInfo as iqdataFetchTiktokVideoInfo } from '../api/iqdata';
 import type { ScrapeData } from './types';
 
-export const scrapeTiktokUrl = async (url: string): Promise<ScrapeData> => {
-    const result = await iqdataFetchTiktokVideoInfo(url);
+export const scrapeTiktokUrl = async (url: string, context?: ServerContext): Promise<ScrapeData> => {
+    const result = await iqdataFetchTiktokVideoInfo(url, context);
 
     if (!result.media.itemInfo.itemStruct.stats) {
         throw new Error('unable to fetch tiktok video info');

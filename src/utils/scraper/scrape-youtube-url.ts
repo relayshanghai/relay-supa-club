@@ -1,8 +1,9 @@
-import { fetchYoutubeVideoInfo as iqdataFetchYoutubeVideoInfo } from '../api/iqdata';
+import type { ServerContext } from '../api/iqdata';
+import { fetchYoutubeVideoInfoWithContext as iqdataFetchYoutubeVideoInfo } from '../api/iqdata';
 import type { ScrapeData } from './types';
 
-export const scrapeYoutubeUrl = async (url: string): Promise<ScrapeData> => {
-    const result = await iqdataFetchYoutubeVideoInfo(url);
+export const scrapeYoutubeUrl = async (url: string, context?: ServerContext): Promise<ScrapeData> => {
+    const result = await iqdataFetchYoutubeVideoInfo(context)(url);
 
     if (!result.success || !result.video_info.likes) {
         throw new Error('unable to fetch youtube video info');

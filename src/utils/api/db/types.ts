@@ -9,7 +9,6 @@ import type {
 import type { Database } from 'types/supabase';
 import type { SupabaseLogType } from './calls/';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { SupabaseAuthClient } from '@supabase/supabase-js/dist/module/lib/SupabaseAuthClient';
 
 export type ProfilesTable = Database['public']['Tables']['profiles'] & {
     Row: Database['public']['Tables']['profiles']['Row'] & {
@@ -138,11 +137,6 @@ export type InfluencerSocialProfilesTable = Database['public']['Tables']['influe
  * Supabase client instance with custom database
  */
 export type RelayDatabase = SupabaseClient<DatabaseWithCustomTypes>;
-
-/**
- * The auth.user row
- */
-export type AuthUser = NonNullable<Awaited<ReturnType<SupabaseAuthClient['getUser']>>['data']['user']>;
 
 export type TrackingEvents = Database['public']['Tables']['tracking_events'];
 export type SearchSnapshots = Database['public']['Tables']['search_snapshots'];

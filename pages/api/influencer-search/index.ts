@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { ApiHandler, RelayError } from 'src/utils/api-handler';
 import { recordSearchUsage } from 'src/utils/api/db/calls/usages';
-import { searchInfluencers } from 'src/utils/api/iqdata/influencers/search-influencers';
+import { searchInfluencersWithContext as searchInfluencers } from 'src/utils/api/iqdata/influencers/search-influencers';
 import type { FetchCreatorsFilteredParams } from 'src/utils/api/iqdata/transforms';
 import { prepareFetchCreatorsFiltered } from 'src/utils/api/iqdata/transforms';
 import { hasCustomSearchParams } from 'src/utils/usagesHelpers';
@@ -38,7 +38,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         body,
     };
 
-    const results = await searchInfluencers(parameters);
+    const results = await searchInfluencers(parameters, { req, res });
 
     if (results === undefined) {
         throw new RelayError('Cannot search influencers');

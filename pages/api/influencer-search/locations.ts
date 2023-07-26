@@ -1,13 +1,13 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { fetchIqDataGeos } from 'src/utils/api/iqdata';
+import { fetchIqDataGeosWithContext as fetchIqDataGeos } from 'src/utils/api/iqdata';
 import { chinaFilter } from 'src/utils/utils';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
         const { term } = req.body;
 
-        const results = await fetchIqDataGeos(term);
+        const results = await fetchIqDataGeos({ req, res })(term);
 
         // Filter out Taiwan and Hong Kong in the location results from iqData and replace with China (Taiwan) and China (Hong Kong)
         const filteredResults = results?.map((result: { title: string; name: string }) => {
