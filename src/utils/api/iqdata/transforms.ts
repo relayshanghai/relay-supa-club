@@ -32,7 +32,7 @@ import {
 
 type NullStringTuple = [null | string, null | string];
 
-export interface FetchCreatorsFilteredParams {
+export type FetchCreatorsFilteredParams = {
     platform?: CreatorPlatform;
     tags?: { tag: string }[];
     lookalike?: CreatorAccount[];
@@ -55,7 +55,7 @@ export interface FetchCreatorsFilteredParams {
     only_recommended?: boolean;
     recommendedInfluencers?: string[];
     text_tags?: string;
-}
+};
 
 export const prepareFetchCreatorsFiltered = ({
     platform = 'youtube',
