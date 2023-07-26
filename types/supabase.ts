@@ -3,7 +3,7 @@ export type Json =
   | number
   | boolean
   | null
-  | { [key: string]: Json | undefined }
+  | { [key: string]: Json }
   | Json[]
 
 export interface Database {
@@ -140,6 +140,7 @@ export interface Database {
           created_at: string | null
           id: string
           important: boolean
+          sequence_influencer_id: string | null
           user_id: string
         }
         Insert: {
@@ -148,6 +149,7 @@ export interface Database {
           created_at?: string | null
           id?: string
           important?: boolean
+          sequence_influencer_id?: string | null
           user_id: string
         }
         Update: {
@@ -156,6 +158,7 @@ export interface Database {
           created_at?: string | null
           id?: string
           important?: boolean
+          sequence_influencer_id?: string | null
           user_id?: string
         }
         Relationships: [
@@ -163,6 +166,12 @@ export interface Database {
             foreignKeyName: "campaign_notes_campaign_creator_id_fkey"
             columns: ["campaign_creator_id"]
             referencedRelation: "campaign_creators"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "campaign_notes_sequence_influencer_id_fkey"
+            columns: ["sequence_influencer_id"]
+            referencedRelation: "sequence_influencer"
             referencedColumns: ["id"]
           },
           {
@@ -333,24 +342,33 @@ export interface Database {
           company_id: string
           created_at: string
           id: string
+          product_id: string | null
         }
         Insert: {
           category: string
           company_id: string
           created_at?: string
           id?: string
+          product_id?: string | null
         }
         Update: {
           category?: string
           company_id?: string
           created_at?: string
           id?: string
+          product_id?: string | null
         }
         Relationships: [
           {
             foreignKeyName: "company_categories_company_id_fkey"
             columns: ["company_id"]
             referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "company_categories_product_id_fkey"
+            columns: ["product_id"]
+            referencedRelation: "product"
             referencedColumns: ["id"]
           }
         ]
@@ -424,6 +442,8 @@ export interface Database {
           posted_date: string | null
           preview_url: string | null
           publish_date: string | null
+          sequence_id: string | null
+          sequence_influencer_id: string | null
           title: string | null
           type: string
           updated_at: string | null
@@ -441,6 +461,8 @@ export interface Database {
           posted_date?: string | null
           preview_url?: string | null
           publish_date?: string | null
+          sequence_id?: string | null
+          sequence_influencer_id?: string | null
           title?: string | null
           type: string
           updated_at?: string | null
@@ -458,6 +480,8 @@ export interface Database {
           posted_date?: string | null
           preview_url?: string | null
           publish_date?: string | null
+          sequence_id?: string | null
+          sequence_influencer_id?: string | null
           title?: string | null
           type?: string
           updated_at?: string | null
@@ -474,6 +498,18 @@ export interface Database {
             foreignKeyName: "influencer_posts_influencer_social_profile_id_fkey"
             columns: ["influencer_social_profile_id"]
             referencedRelation: "influencer_social_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "influencer_posts_sequence_id_fkey"
+            columns: ["sequence_id"]
+            referencedRelation: "sequences"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "influencer_posts_sequence_influencer_id_fkey"
+            columns: ["sequence_influencer_id"]
+            referencedRelation: "sequence_influencer"
             referencedColumns: ["id"]
           }
         ]
@@ -673,6 +709,36 @@ export interface Database {
           }
         ]
       }
+      product: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          price: number | null
+          price_currency: string | null
+          shop_url: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          price?: number | null
+          price_currency?: string | null
+          shop_url?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          price?: number | null
+          price_currency?: string | null
+          shop_url?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -756,6 +822,192 @@ export interface Database {
           },
           {
             foreignKeyName: "sales_company_id_fkey"
+            columns: ["company_id"]
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      sequence_influencer: {
+        Row: {
+          added_by: string
+          address: string | null
+          avatar_url: string | null
+          categories: string[]
+          channel_url: string
+          city: string | null
+          country: string | null
+          created_at: string
+          email: string | null
+          funnel_status: string
+          handle: string
+          id: string
+          influencer_id: string
+          last_email_open_status: string
+          last_email_send_date: string | null
+          next_email_send_date: string | null
+          next_step: string | null
+          phone_number: string | null
+          platform: string
+          postal_code: string | null
+          rate_amount: number | null
+          rate_currency: string | null
+          real_name: string | null
+          scheduled_post_date: string | null
+          sequence_step: number
+          state: string | null
+          tags: string[]
+          tracking_code: string | null
+          updated_at: string
+          username: string
+          video_details: string | null
+        }
+        Insert: {
+          added_by: string
+          address?: string | null
+          avatar_url?: string | null
+          categories?: string[]
+          channel_url: string
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          email?: string | null
+          funnel_status: string
+          handle: string
+          id?: string
+          influencer_id: string
+          last_email_open_status: string
+          last_email_send_date?: string | null
+          next_email_send_date?: string | null
+          next_step?: string | null
+          phone_number?: string | null
+          platform: string
+          postal_code?: string | null
+          rate_amount?: number | null
+          rate_currency?: string | null
+          real_name?: string | null
+          scheduled_post_date?: string | null
+          sequence_step?: number
+          state?: string | null
+          tags?: string[]
+          tracking_code?: string | null
+          updated_at?: string
+          username: string
+          video_details?: string | null
+        }
+        Update: {
+          added_by?: string
+          address?: string | null
+          avatar_url?: string | null
+          categories?: string[]
+          channel_url?: string
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          email?: string | null
+          funnel_status?: string
+          handle?: string
+          id?: string
+          influencer_id?: string
+          last_email_open_status?: string
+          last_email_send_date?: string | null
+          next_email_send_date?: string | null
+          next_step?: string | null
+          phone_number?: string | null
+          platform?: string
+          postal_code?: string | null
+          rate_amount?: number | null
+          rate_currency?: string | null
+          real_name?: string | null
+          scheduled_post_date?: string | null
+          sequence_step?: number
+          state?: string | null
+          tags?: string[]
+          tracking_code?: string | null
+          updated_at?: string
+          username?: string
+          video_details?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sequence_influencer_influencer_id_fkey"
+            columns: ["influencer_id"]
+            referencedRelation: "influencers"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      sequence_steps: {
+        Row: {
+          created_at: string
+          id: string
+          name: string | null
+          order: number
+          params: string[]
+          sequence_id: string
+          template_id: string
+          updated_at: string
+          wait_time_hours: number
+        }
+        Insert: {
+          created_at?: string
+          id: string
+          name?: string | null
+          order?: number
+          params?: string[]
+          sequence_id: string
+          template_id: string
+          updated_at?: string
+          wait_time_hours?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string | null
+          order?: number
+          params?: string[]
+          sequence_id?: string
+          template_id?: string
+          updated_at?: string
+          wait_time_hours?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sequence_steps_sequence_id_fkey"
+            columns: ["sequence_id"]
+            referencedRelation: "sequences"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      sequences: {
+        Row: {
+          auto_start: boolean
+          company_id: string
+          created_at: string
+          id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          auto_start?: boolean
+          company_id: string
+          created_at?: string
+          id?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          auto_start?: boolean
+          company_id?: string
+          created_at?: string
+          id?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sequences_company_id_fkey"
             columns: ["company_id"]
             referencedRelation: "companies"
             referencedColumns: ["id"]
