@@ -60,7 +60,6 @@ export const SequencesPage = () => {
     return (
         <Layout>
             <div className="flex flex-col space-x-4 space-y-4 p-4">
-                <h1 className="text-lg font-bold">{sequence.name}</h1>
                 <SequenceStats />
                 <Button onClick={handleStartSequence} className="w-fit self-end">
                     Start

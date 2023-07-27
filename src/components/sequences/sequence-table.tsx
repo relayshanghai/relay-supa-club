@@ -10,7 +10,6 @@ const SequenceTable: React.FC<SequenceTableProps> = ({ influencers }) => {
         <table className="border-collapse border border-gray-300">
             <thead>
                 <tr className="bg-gray-100">
-                    <th className="border-b px-4 py-2">ID</th>
                     <th className="border-b px-4 py-2">Name</th>
                     <th className="border-b px-4 py-2">Email</th>
                     <th className="border-b px-4 py-2">Sequence Step</th>

@@ -3,7 +3,7 @@ import { StatCard } from './stat-card';
 export const SequenceStats = () => {
     const stats = [
         {
-            name: 'Delivered Emails',
+            name: 'Total Influencers',
             value: '345',
         },
         {
@@ -11,12 +11,16 @@ export const SequenceStats = () => {
             value: '15%',
         },
         {
-            name: 'Click Rate',
+            name: 'Clicked Rate',
             value: '12%',
+        },
+        {
+            name: 'Replied',
+            value: '10',
         },
     ];
     return (
-        <div className="flex justify-around rounded-lg bg-white px-12 py-8 shadow-sm">
+        <div className="flex flex-wrap justify-around rounded-lg bg-white px-12 py-8 shadow-sm">
             {stats.map((stat) => (
                 <div key={stat.name}>
                     <StatCard name={stat.name} value={stat.value} />
