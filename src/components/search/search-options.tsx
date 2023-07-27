@@ -23,7 +23,17 @@ export const SearchOptions = ({
     setShowFiltersModal: (show: boolean) => void;
     onSearch: (...args: any[]) => any;
 }) => {
-    const { platform, tags, setTopicTags, setActiveSearch, keywords, setKeywords, hashtags, setHashtags } = useSearch();
+    const {
+        platform,
+        tags,
+        setTopicTags,
+        setActiveSearch,
+        keywords,
+        setKeywords,
+        hashtags,
+        setHashtags,
+        searchParams,
+    } = useSearch();
     const [keywordInput, setKeywordInput] = useState<string>('');
     const [hashTagInput, setHashTagInput] = useState<string>('');
 
@@ -46,9 +56,9 @@ export const SearchOptions = ({
             trackSearch('Search Options');
 
             startJourney('search');
-            onSearch();
+            onSearch({ searchParams });
         },
-        [keywordInput, onSearch, setActiveSearch, setKeywords, setPage, trackKeyword, trackSearch],
+        [keywordInput, onSearch, setActiveSearch, setKeywords, setPage, trackKeyword, trackSearch, searchParams],
     );
 
     const handleKeywordsBlur = useCallback(
