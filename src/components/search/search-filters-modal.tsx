@@ -366,8 +366,9 @@ export const SearchFiltersModal = ({
                                         onChange={(e) => {
                                             setSearchParams((state) => {
                                                 const value = e.target.value === 'any' ? null : e.target.value;
+                                                const right = state && state.audience ? state.audience[1] : null;
                                                 const audience: [null | string, null | string] = state
-                                                    ? [value, state.audience[1]]
+                                                    ? [value, right]
                                                     : [value, null];
                                                 return state ? { ...state, audience } : state;
                                             });
@@ -394,8 +395,9 @@ export const SearchFiltersModal = ({
                                         onChange={(e) => {
                                             setSearchParams((state) => {
                                                 const value = e.target.value === 'any' ? null : e.target.value;
+                                                const left = state && state.audience ? state.audience[0] : null;
                                                 const audience: [null | string, null | string] = state
-                                                    ? [state.audience[0], value]
+                                                    ? [left, value]
                                                     : [null, value];
                                                 return state ? { ...state, audience } : state;
                                             });
@@ -481,8 +483,9 @@ export const SearchFiltersModal = ({
                                         onChange={(e) => {
                                             setSearchParams((state) => {
                                                 const value = e.target.value === 'any' ? null : e.target.value;
+                                                const right = state && state.views ? state.views[1] : null;
                                                 const views: [null | string, null | string] = state
-                                                    ? [value, state.views[1]]
+                                                    ? [value, right]
                                                     : [value, null];
                                                 return state ? { ...state, views } : state;
                                             });
@@ -509,8 +512,9 @@ export const SearchFiltersModal = ({
                                         onChange={(e) => {
                                             setSearchParams((state) => {
                                                 const value = e.target.value === 'any' ? null : e.target.value;
+                                                const left = state && state.views ? state.views[1] : null;
                                                 const views: [null | string, null | string] = state
-                                                    ? [state.views[0], value]
+                                                    ? [left, value]
                                                     : [null, value];
                                                 return state ? { ...state, views } : state;
                                             });

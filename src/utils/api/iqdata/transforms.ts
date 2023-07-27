@@ -45,8 +45,8 @@ export interface FetchCreatorsFilteredParams {
     audienceLocation?: LocationWeighted[];
     resultsPerPageLimit?: number;
     page?: number;
-    audience: NullStringTuple;
-    views: NullStringTuple;
+    audience?: NullStringTuple;
+    views?: NullStringTuple;
     gender?: string;
     audienceGender?: z.input<typeof audience_gender>;
     engagement?: number;

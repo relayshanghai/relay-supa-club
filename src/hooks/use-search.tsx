@@ -214,6 +214,10 @@ export const useSearchResults = () => {
         }
     }, [setLoading, isLoading, error]);
 
+    // useEffect(() => {
+    //     console.log("state?", state)
+    // }, [state])
+
     const noResults = !state.response?.results || state.response?.results.length === 0;
     return {
         search,
@@ -246,6 +250,10 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
         // only_recommended: featRecommended() ? onlyRecommended : false,
     });
 
+    // useEffect(() => {
+    //     console.log("searchParams?", searchParams)
+    // }, [searchParams])
+
     const platform = searchParams?.platform ?? 'youtube';
     const setPlatform = useCallback(
         (platform?: CreatorPlatform) => {
@@ -273,8 +281,6 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
     const gender = searchParams?.gender;
     const setGender = useCallback(
         (gender?: string) => {
-            if (!gender) return;
-
             setSearchParams((state) => {
                 return state ? { ...state, gender } : state;
             });
@@ -285,10 +291,10 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
     const influencerLocation = searchParams?.influencerLocation ?? [];
     const setInfluencerLocation = useCallback(
         (influencerLocation?: LocationWeighted[]) => {
-            if (!influencerLocation || influencerLocation.length <= 0) return;
+            const value = influencerLocation && influencerLocation.length <= 0 ? undefined : influencerLocation;
 
             setSearchParams((state) => {
-                return state ? { ...state, influencerLocation } : state;
+                return state ? { ...state, influencerLocation: value } : state;
             });
         },
         [setSearchParams],
@@ -297,10 +303,10 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
     const audienceLocation = searchParams?.audienceLocation ?? [];
     const setAudienceLocation = useCallback(
         (audienceLocation?: LocationWeighted[]) => {
-            if (!audienceLocation || audienceLocation.length <= 0) return;
+            const value = audienceLocation && audienceLocation.length <= 0 ? undefined : audienceLocation;
 
             setSearchParams((state) => {
-                return state ? { ...state, audienceLocation } : state;
+                return state ? { ...state, audienceLocation: value } : state;
             });
         },
         [setSearchParams],
@@ -309,10 +315,11 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
     const tags = searchParams?.tags ?? [];
     const setTopicTags = useCallback(
         (tags?: CreatorSearchTag[]) => {
-            if (!tags) return;
+            // @note create a better way to clear fields
+            const value = tags && tags.length > 0 ? tags : undefined;
 
             setSearchParams((state) => {
-                return state ? { ...state, tags } : state;
+                return state ? { ...state, tags: value } : state;
             });
         },
         [setSearchParams],
@@ -321,9 +328,7 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
     const keywords = searchParams?.keywords ?? '';
     const setKeywords = useCallback(
         (keywords?: string) => {
-            if (keywords === undefined) return;
-
-            const value = keywords !== '' ? keywords : undefined;
+            const value = keywords && keywords !== '' ? keywords : undefined;
 
             setSearchParams((state) => {
                 return state ? { ...state, keywords: value } : state;
@@ -334,8 +339,6 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
 
     const setTextTags = useCallback(
         (text_tags?: string) => {
-            // if (!text_tags) return;
-
             setSearchParams((state) => {
                 return state ? { ...state, text_tags } : state;
             });
@@ -348,8 +351,10 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
         (audience?: NullStringTuple) => {
             if (!audience || audience.length <= 0) return;
 
+            const value = audience && audience[0] === null && audience[1] === null ? undefined : audience;
+
             setSearchParams((state) => {
-                return state ? { ...state, audience } : state;
+                return state ? { ...state, audience: value } : state;
             });
         },
         [setSearchParams],
@@ -360,8 +365,10 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
         (views?: NullStringTuple) => {
             if (!views || views.length <= 0) return;
 
+            const value = views && views[0] === null && views[1] === null ? undefined : views;
+
             setSearchParams((state) => {
-                return state ? { ...state, views } : state;
+                return state ? { ...state, views: value } : state;
             });
         },
         [setSearchParams],
@@ -370,8 +377,6 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
     const audienceGender = searchParams?.audienceGender;
     const setAudienceGender = useCallback(
         (audienceGender?: AudienceGenderWeighted) => {
-            if (!audienceGender) return;
-
             setSearchParams((state) => {
                 return state ? { ...state, audienceGender } : state;
             });
@@ -382,10 +387,13 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
     const audienceAge = searchParams?.audienceAge;
     const setAudienceAge = useCallback(
         (audienceAge?: AudienceAgeRangeWeighted) => {
-            if (!audienceAge) return;
+            const value =
+                audienceAge && audienceAge.left_number === undefined && audienceAge.right_number === undefined
+                    ? undefined
+                    : audienceAge;
 
             setSearchParams((state) => {
-                return state ? { ...state, audienceAge } : state;
+                return state ? { ...state, audienceAge: value } : state;
             });
         },
         [setSearchParams],
@@ -394,8 +402,6 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
     const engagement = searchParams?.engagement;
     const setEngagement = useCallback(
         (engagement?: number) => {
-            if (!engagement) return;
-
             setSearchParams((state) => {
                 return state ? { ...state, engagement } : state;
             });
@@ -406,8 +412,6 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
     const lastPost = String(searchParams?.lastPost);
     const setLastPost = useCallback(
         (lastPost?: string) => {
-            if (!lastPost || lastPost.length <= 0) return;
-
             setSearchParams((state) => {
                 return state ? { ...state, lastPost } : state;
             });
@@ -418,8 +422,6 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
     const contactInfo = searchParams?.contactInfo;
     const setContactInfo = useCallback(
         (contactInfo?: string) => {
-            if (!contactInfo) return;
-
             setSearchParams((state) => {
                 return state ? { ...state, contactInfo } : state;
             });
@@ -430,8 +432,6 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
     const hashtags = searchParams?.text_tags ? searchParams.text_tags.split(' ') : [];
     const setHashtags = useCallback(
         (hashtags?: string[]) => {
-            // if (!hashtags) return;
-
             setTextTags(hashtags ? hashtags.join(' ') : '');
         },
         [setTextTags],
