@@ -19,6 +19,7 @@ export const GMAIL_SENT_SPECIAL_USE_FLAG = '\\Sent';
 
 // export const testAccount = 'dtykdqrfxpth5hgy'; // ellie.relay@gmail.com on prod
 export const testAccount = 'fyasv5klfoioc1hx'; // relayemailertest@gmail.com
+export const testEmail = 'relayemailertest@gmail.com';
 // export const testAccount = 'r3e7hpvesxek82fj'; // localhost docker account
 // export const testAccount = 'gzz2n7isa54a36ve'; // localhost account
 
