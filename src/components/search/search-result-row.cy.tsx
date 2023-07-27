@@ -47,7 +47,13 @@ describe('<CreatorPage />', () => {
     });
 
     it('renders', () => {
-        testMount(<SearchResultRow {...setupProps()} />);
+        testMount(
+            <SearchContext.Provider
+                value={{ platform: 'instagram', recommendedInfluencers: ['instagram/25025320'] } as any}
+            >
+                <SearchResultRow {...setupProps()} />
+            </SearchContext.Provider>,
+        );
         cy.contains('@instagram');
         cy.contains('Add to campaign');
     });
