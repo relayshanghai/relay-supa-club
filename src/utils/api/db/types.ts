@@ -81,7 +81,7 @@ export type SequenceStep = Database['public']['Tables']['sequence_steps']['Row']
 export type SequenceStepInsert = Database['public']['Tables']['sequence_steps']['Insert'] & SequenceStepDetailedTypes;
 export type SequenceStepUpdate = Database['public']['Tables']['sequence_steps']['Update'] & SequenceStepDetailedTypes;
 
-export type EmailOpenStatus = 'Scheduled' | 'Delivered' | 'Replied' | 'Bounced';
+export type EmailDeliveryStatus = 'Scheduled' | 'Delivered' | 'Replied' | 'Bounced';
 export type EmailTrackingStatus = 'Opened' | 'Link Clicked';
 /** Ignored means it has gone through the whole sequence with no reply (+ 7 days) */
 export type FunnelStatus =
@@ -97,28 +97,17 @@ export type FunnelStatus =
     | 'Posted';
 
 type SequenceInfluencerDetailedTypes = {
-    /** 'fullname' from IQData */
-    username: string;
-    /** handle = username || custom_name || fullname */
-    handle: string;
     /** 0 means not sent. 1 means first step sent, awaiting 2. */
     sequence_step: number;
-    last_email_open_status: EmailOpenStatus;
-    /** ISO date */
-    last_email_send_date: string | null;
-    /** ISO date.  */
-    next_email_send_date: string | null;
     funnel_status: FunnelStatus;
-    /** from IQData */
-    categories: string[];
 };
 
-export type SequenceInfluencer = Database['public']['Tables']['sequence_influencer']['Row'] &
+export type SequenceInfluencer = Database['public']['Tables']['sequence_influencers']['Row'] &
     SequenceInfluencerDetailedTypes;
-export type SequenceInfluencerInsert = Database['public']['Tables']['sequence_influencer'] &
+export type SequenceInfluencerInsert = Database['public']['Tables']['sequence_influencers'] &
     SequenceInfluencerDetailedTypes;
 ['Insert'];
-export type SequenceInfluencerUpdate = Database['public']['Tables']['sequence_influencer'] &
+export type SequenceInfluencerUpdate = Database['public']['Tables']['sequence_influencers'] &
     SequenceInfluencerDetailedTypes;
 ['Update'];
 

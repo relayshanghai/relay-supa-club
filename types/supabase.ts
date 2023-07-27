@@ -9,6 +9,51 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
+      addresses: {
+        Row: {
+          address_line_1: string
+          address_line_2: string | null
+          city: string
+          country: string
+          created_at: string
+          id: string
+          name: string
+          phone_number: string | null
+          postal_code: string
+          state: string
+          tracking_code: string | null
+          updated_at: string
+        }
+        Insert: {
+          address_line_1: string
+          address_line_2?: string | null
+          city: string
+          country: string
+          created_at?: string
+          id?: string
+          name: string
+          phone_number?: string | null
+          postal_code: string
+          state: string
+          tracking_code?: string | null
+          updated_at?: string
+        }
+        Update: {
+          address_line_1?: string
+          address_line_2?: string | null
+          city?: string
+          country?: string
+          created_at?: string
+          id?: string
+          name?: string
+          phone_number?: string | null
+          postal_code?: string
+          state?: string
+          tracking_code?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       campaign_creators: {
         Row: {
           added_by_id: string
@@ -171,7 +216,7 @@ export interface Database {
           {
             foreignKeyName: "campaign_notes_sequence_influencer_id_fkey"
             columns: ["sequence_influencer_id"]
-            referencedRelation: "sequence_influencer"
+            referencedRelation: "sequence_influencers"
             referencedColumns: ["id"]
           },
           {
@@ -368,7 +413,7 @@ export interface Database {
           {
             foreignKeyName: "company_categories_product_id_fkey"
             columns: ["product_id"]
-            referencedRelation: "product"
+            referencedRelation: "products"
             referencedColumns: ["id"]
           }
         ]
@@ -509,7 +554,7 @@ export interface Database {
           {
             foreignKeyName: "influencer_posts_sequence_influencer_id_fkey"
             columns: ["sequence_influencer_id"]
-            referencedRelation: "sequence_influencer"
+            referencedRelation: "sequence_influencers"
             referencedColumns: ["id"]
           }
         ]
@@ -709,7 +754,7 @@ export interface Database {
           }
         ]
       }
-      product: {
+      products: {
         Row: {
           created_at: string
           description: string | null
@@ -828,127 +873,79 @@ export interface Database {
           }
         ]
       }
-      sequence_influencer: {
+      sequence_influencers: {
         Row: {
           added_by: string
-          address: string | null
-          avatar_url: string | null
-          categories: string[]
-          channel_url: string
-          city: string | null
           company_id: string
-          country: string | null
           created_at: string
           email: string | null
           funnel_status: string
-          handle: string
           id: string
           influencer_id: string
-          last_email_open_status: string
-          last_email_send_date: string | null
-          next_email_send_date: string | null
           next_step: string | null
-          phone_number: string | null
-          platform: string
-          postal_code: string | null
           rate_amount: number | null
           rate_currency: string | null
-          real_name: string | null
+          real_full_name: string | null
           scheduled_post_date: string | null
           sequence_id: string
           sequence_step: number
-          state: string | null
           tags: string[]
-          tracking_code: string | null
           updated_at: string
-          username: string
           video_details: string | null
         }
         Insert: {
           added_by: string
-          address?: string | null
-          avatar_url?: string | null
-          categories?: string[]
-          channel_url: string
-          city?: string | null
           company_id: string
-          country?: string | null
           created_at?: string
           email?: string | null
           funnel_status: string
-          handle: string
           id?: string
           influencer_id: string
-          last_email_open_status: string
-          last_email_send_date?: string | null
-          next_email_send_date?: string | null
           next_step?: string | null
-          phone_number?: string | null
-          platform: string
-          postal_code?: string | null
           rate_amount?: number | null
           rate_currency?: string | null
-          real_name?: string | null
+          real_full_name?: string | null
           scheduled_post_date?: string | null
           sequence_id: string
           sequence_step?: number
-          state?: string | null
           tags?: string[]
-          tracking_code?: string | null
           updated_at?: string
-          username: string
           video_details?: string | null
         }
         Update: {
           added_by?: string
-          address?: string | null
-          avatar_url?: string | null
-          categories?: string[]
-          channel_url?: string
-          city?: string | null
           company_id?: string
-          country?: string | null
           created_at?: string
           email?: string | null
           funnel_status?: string
-          handle?: string
           id?: string
           influencer_id?: string
-          last_email_open_status?: string
-          last_email_send_date?: string | null
-          next_email_send_date?: string | null
           next_step?: string | null
-          phone_number?: string | null
-          platform?: string
-          postal_code?: string | null
           rate_amount?: number | null
           rate_currency?: string | null
-          real_name?: string | null
+          real_full_name?: string | null
           scheduled_post_date?: string | null
           sequence_id?: string
           sequence_step?: number
-          state?: string | null
           tags?: string[]
-          tracking_code?: string | null
           updated_at?: string
-          username?: string
           video_details?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "sequence_influencer_company_id_fkey"
+            foreignKeyName: "sequence_influencers_company_id_fkey"
             columns: ["company_id"]
             referencedRelation: "companies"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "sequence_influencer_influencer_id_fkey"
+            foreignKeyName: "sequence_influencers_influencer_id_fkey"
             columns: ["influencer_id"]
             referencedRelation: "influencers"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "sequence_influencer_sequence_id_fkey"
+            foreignKeyName: "sequence_influencers_sequence_id_fkey"
             columns: ["sequence_id"]
             referencedRelation: "sequences"
             referencedColumns: ["id"]
@@ -958,6 +955,10 @@ export interface Database {
       sequence_steps: {
         Row: {
           created_at: string
+          email_delivery_status: string | null
+          email_id: string | null
+          email_send_at: string | null
+          email_tracking_status: string | null
           id: string
           name: string | null
           params: string[]
@@ -969,6 +970,10 @@ export interface Database {
         }
         Insert: {
           created_at?: string
+          email_delivery_status?: string | null
+          email_id?: string | null
+          email_send_at?: string | null
+          email_tracking_status?: string | null
           id: string
           name?: string | null
           params?: string[]
@@ -980,6 +985,10 @@ export interface Database {
         }
         Update: {
           created_at?: string
+          email_delivery_status?: string | null
+          email_id?: string | null
+          email_send_at?: string | null
+          email_tracking_status?: string | null
           id?: string
           name?: string | null
           params?: string[]
