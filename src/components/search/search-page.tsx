@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 import { Button } from 'src/components/button';
 import { SearchProvider, useSearch, useSearchResults } from 'src/hooks/use-search';
 import { numberFormatter } from 'src/utils/formatter';
-import type { CreatorSearchAccountObject } from 'types';
+import type { CreatorPlatform, CreatorSearchAccountObject } from 'types';
 import { useTranslation } from 'react-i18next';
 import { AddToCampaignModal } from 'src/components/modal-add-to-campaign';
 import { SelectPlatform } from './search-select-platform';
@@ -52,9 +52,12 @@ export const SearchPageInner = () => {
     );
 
     // Trigger a search when platform is changed
-    const handlePlatformChange = useCallback(() => {
-        handleSearch();
-    }, [handleSearch]);
+    const handlePlatformChange = useCallback(
+        (platform: CreatorPlatform) => {
+            handleSearch({ platform });
+        },
+        [handleSearch],
+    );
 
     const handleLoadMore = useCallback(() => {
         const page = (searchParams?.page ?? 0) + 1;
