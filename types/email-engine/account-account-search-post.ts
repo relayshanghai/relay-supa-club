@@ -29,6 +29,7 @@ export interface SearchResponseMessage {
     attachments: Attachment[];
     text: Text;
     preview: string;
+    path?: string;
 }
 
 interface Attachment {

@@ -1,16 +1,19 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Fuse from 'fuse.js';
 import { Layout } from '../layout';
-import { nextFetch } from 'src/utils/fetcher';
-import { GMAIL_INBOX, GMAIL_SENT, testAccount } from 'src/utils/api/email-engine/prototype-mocks';
-import type { ListEmailsPostRequestBody } from 'pages/api/email-engine/list-emails';
 import type { MessagesGetMessage } from 'types/email-engine/account-account-messages-get';
-import type { EmailSearchPostRequestBody, EmailSearchPostResponseBody } from 'pages/api/email-engine/search';
+import type { EmailSearchPostResponseBody } from 'pages/api/email-engine/search';
 import { clientLogger } from 'src/utils/logger-client';
-import { Email } from './Email';
 import { ToolBar } from './tool-bar';
 import { PreviewSection } from './preview-section';
 import toast from 'react-hot-toast';
+import { Spinner } from '../icons';
+import { CorrespondenceSection } from './correspondence-section';
+import {
+    getInBoxMessages,
+    getInboxThreadMessages,
+    getSentThreadMessages,
+} from 'src/utils/api/email-engine/handle-messages';
 
 export const InboxPage = () => {
     const [messages, setMessages] = useState<MessagesGetMessage[]>([]);
@@ -29,16 +32,13 @@ export const InboxPage = () => {
         setLoadingMessages(true);
         setGetMessagesError('');
         try {
-            const body: ListEmailsPostRequestBody = {
-                account: testAccount,
-            };
-            const { messages, pages } = await nextFetch('email-engine/list-emails', { method: 'POST', body });
+            const { messages, pages } = await getInBoxMessages();
             setMessages(messages);
             setPages(pages);
         } catch (error: any) {
             clientLogger(error, 'error');
             setGetMessagesError(error.message);
-            toast(error.message);
+            throw error.message;
         } finally {
             setLoadingMessages(false);
         }
@@ -74,35 +74,14 @@ export const InboxPage = () => {
         setLoadingSelectedMessages(true);
         setGetSelectedMessagesError('');
         try {
-            const body: EmailSearchPostRequestBody = {
-                account: testAccount,
-                mailboxPath: GMAIL_INBOX,
-                search: {
-                    threadId: message.threadId,
-                },
-            };
-            const { messages: inboxThreadMessages } = await nextFetch<EmailSearchPostResponseBody>(
-                'email-engine/search',
-                {
-                    method: 'POST',
-                    body,
-                },
-            );
-            const { messages: sentMessages } = await nextFetch<EmailSearchPostResponseBody>('email-engine/search', {
-                method: 'POST',
-                body: {
-                    ...body,
-                    mailboxPath: GMAIL_SENT,
-                    search: {
-                        threadId: message.threadId,
-                    },
-                },
-            });
-            const threadMessages = inboxThreadMessages.concat(sentMessages);
+            const inboxThreadMessages = await getInboxThreadMessages(message);
+            const sentThreadMessages = await getSentThreadMessages(message);
+            const threadMessages = inboxThreadMessages.concat(sentThreadMessages);
             threadMessages.sort((a, b) => {
-                return new Date(b.date).getTime() - new Date(a.date).getTime();
+                return new Date(a.date).getTime() - new Date(b.date).getTime();
             });
             setSelectedMessages(threadMessages);
+            // console.log({ sentThreadMessages }, { inboxThreadMessages });
             setLoadingSelectedMessages(false);
         } catch (error: any) {
             clientLogger(error, 'error');
@@ -115,51 +94,52 @@ export const InboxPage = () => {
     return (
         <Layout>
             <div className="flex h-full">
-                {loadingMessages && <p>Loading...</p>}
-                {messages.length === 0 && !loadingMessages && !getMessagesError && <p>No messages</p>}
-                <div className="w-2/5">
-                    {messages.length > 0 && (
-                        <>
-                            <ToolBar
-                                selectedTab={selectedTab}
-                                setSelectedTab={setSelectedTab}
-                                searchTerm={searchTerm}
-                                setSearchTerm={setSearchTerm}
-                            />
-                            <ul className="h-full overflow-y-auto">
-                                {searchResults.length > 0 ? (
-                                    <PreviewSection
-                                        messages={searchResults}
-                                        handleGetThreadEmails={handleGetThreadEmails}
-                                        loadingSelectedMessages={loadingSelectedMessages}
+                {loadingMessages ? (
+                    <div className="flex w-full items-center justify-center">
+                        <Spinner className="h-6 w-6 fill-primary-600 text-primary-200" />
+                    </div>
+                ) : (
+                    <>
+                        {messages.length === 0 && !loadingMessages && !getMessagesError && <p>No messages</p>}
+                        <div className="h-full w-2/5 overflow-auto">
+                            {messages.length > 0 && (
+                                <>
+                                    <ToolBar
+                                        selectedTab={selectedTab}
+                                        setSelectedTab={setSelectedTab}
+                                        searchTerm={searchTerm}
+                                        setSearchTerm={setSearchTerm}
                                     />
-                                ) : (
-                                    <PreviewSection
-                                        messages={filteredMessages}
-                                        handleGetThreadEmails={handleGetThreadEmails}
-                                        loadingSelectedMessages={loadingSelectedMessages}
-                                    />
-                                )}
-                            </ul>
-                        </>
-                    )}
-                </div>
-                <div className="w-3/5">
-                    {selectedMessages ? (
-                        <ul>
-                            {loadingSelectedMessages && <p>Loading...</p>}
-                            {selectedMessages.map((message) => (
-                                <li className="m-2 border border-black p-2" key={message.id}>
-                                    <Email message={message} />
-                                </li>
-                            ))}
-                        </ul>
-                    ) : (
-                        <div className="font-sm flex h-full items-center justify-center overflow-y-auto text-gray-500">
-                            No message has been selected yet.
+                                    {searchResults.length > 0 ? (
+                                        <PreviewSection
+                                            messages={searchResults}
+                                            handleGetThreadEmails={handleGetThreadEmails}
+                                            loadingSelectedMessages={loadingSelectedMessages}
+                                        />
+                                    ) : (
+                                        <PreviewSection
+                                            messages={filteredMessages}
+                                            handleGetThreadEmails={handleGetThreadEmails}
+                                            loadingSelectedMessages={loadingSelectedMessages}
+                                        />
+                                    )}
+                                </>
+                            )}
                         </div>
-                    )}
-                </div>
+                        <div className="h-full w-3/5 overflow-auto">
+                            {selectedMessages ? (
+                                <CorrespondenceSection
+                                    selectedMessages={selectedMessages}
+                                    loadingSelectedMessages={loadingSelectedMessages}
+                                />
+                            ) : (
+                                <div className="font-sm flex h-full items-center justify-center text-gray-500">
+                                    No message has been selected yet.
+                                </div>
+                            )}
+                        </div>
+                    </>
+                )}
             </div>
         </Layout>
     );

@@ -20,11 +20,13 @@ export const handleResError = async (
 ) => {
     if (!res.status.toString().startsWith('2')) {
         const json = await res.json();
-        if (context && res.status === 429) {
-            await logRateLimitError(action, context);
-        }
-        if (context && res.error === 'daily_tokens_limit_exceeded') {
-            await logDailyTokensError(action, context);
+        if (context) {
+            if (res.status === 429) {
+                await logRateLimitError(action, context);
+            }
+            if (json.error === 'daily_tokens_limit_exceeded') {
+                await logDailyTokensError(action, context);
+            }
         }
         if (json?.error) throw new Error(typeof json.error === 'string' ? json.error : JSON.stringify(json.error));
         if (json?.message)

@@ -23,32 +23,7 @@ export const SearchOptions = ({
     setShowFiltersModal: (show: boolean) => void;
     onSearch: (...args: any[]) => any;
 }) => {
-    const {
-        platform,
-        tags,
-        text,
-        setTopicTags,
-        influencerLocation,
-        audienceLocation,
-        audience,
-        audienceAge,
-        audienceGender,
-        views,
-        gender,
-        engagement,
-        lastPost,
-        username,
-        contactInfo,
-        // onlyRecommended,
-        // setOnlyRecommended,
-        // recommendedInfluencers,
-        setActiveSearch,
-        setSearchParams,
-        keywords,
-        setKeywords,
-        hashtags,
-        setHashtags,
-    } = useSearch();
+    const { platform, tags, setTopicTags, setActiveSearch, keywords, setKeywords, hashtags, setHashtags } = useSearch();
     const [keywordInput, setKeywordInput] = useState<string>('');
     const [hashTagInput, setHashTagInput] = useState<string>('');
 
@@ -57,9 +32,6 @@ export const SearchOptions = ({
 
     const handleSearch = useCallback(
         (e: any) => {
-            // eslint-disable-next-line no-console
-            console.log('search options', tags);
-
             if (keywordInput.length > 0) {
                 setKeywords(keywordInput);
                 trackKeyword({
@@ -73,61 +45,10 @@ export const SearchOptions = ({
             setPage(0);
             trackSearch('Search Options');
 
-            const params = {
-                platform,
-                tags,
-                text,
-                username,
-                keywords,
-                text_tags: hashtags.join(' '),
-                influencerLocation,
-                views,
-                audience,
-                gender,
-                engagement,
-                lastPost,
-                contactInfo,
-                audienceLocation,
-                audienceAge,
-                audienceGender,
-                // recommendedInfluencers: featRecommended() ? recommendedInfluencers : [],
-                // only_recommended: featRecommended() ? onlyRecommended : false,
-            };
-
             startJourney('search');
-            setSearchParams(params);
-            onSearch({ searchParams: params });
+            onSearch();
         },
-        [
-            keywordInput,
-            setKeywordInput,
-            onSearch,
-            setActiveSearch,
-            setKeywords,
-            setPage,
-            trackKeyword,
-            trackSearch,
-            // TODO:comment out the related codes when feat recommended is ready
-            platform,
-            // onlyRecommended,
-            setSearchParams,
-            text,
-            tags,
-            keywords,
-            hashtags,
-            username,
-            influencerLocation,
-            views,
-            audience,
-            gender,
-            engagement,
-            lastPost,
-            contactInfo,
-            audienceLocation,
-            audienceAge,
-            audienceGender,
-            // recommendedInfluencers,
-        ],
+        [keywordInput, onSearch, setActiveSearch, setKeywords, setPage, trackKeyword, trackSearch],
     );
 
     const handleKeywordsBlur = useCallback(
