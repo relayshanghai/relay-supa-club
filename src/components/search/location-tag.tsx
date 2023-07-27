@@ -29,7 +29,8 @@ const LocationTag: React.FC<LocationTagProps> = ({ onClick, ...item }: LocationT
                 }}
                 onChange={(e: any) => {
                     const clone = audienceLocation.slice();
-                    const index = audienceLocation.indexOf(selected);
+                    // @ts-ignore
+                    const index = audienceLocation.indexOf(selected); // <- @note selected variable failing type checks
 
                     if (index !== -1) {
                         clone[index] = { ...selected, weight: e.target.value };

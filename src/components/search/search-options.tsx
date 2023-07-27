@@ -6,7 +6,7 @@ import { Button } from '../button';
 import SearchTopics from './search-topics';
 import { Tooltip } from '../library';
 // import { featRecommended } from 'src/constants/feature-flags';
-import { useCallback, useEffect, useState } from 'react';
+import { useState, useCallback } from 'react';
 import WordCloudComponent from '../wordcloud';
 import SearchKeywords from './search-keywords';
 import SearchHashtags from './search-hashtags';
@@ -16,9 +16,11 @@ import { useSearchTrackers } from '../rudder/searchui-rudder-calls';
 export const SearchOptions = ({
     setPage,
     setShowFiltersModal,
+    onSearch,
 }: {
     setPage: (page: number) => void;
     setShowFiltersModal: (show: boolean) => void;
+    onSearch: (...args: any[]) => any;
 }) => {
     const {
         platform,
@@ -39,7 +41,6 @@ export const SearchOptions = ({
         // onlyRecommended,
         // setOnlyRecommended,
         // recommendedInfluencers,
-        activeSearch,
         setActiveSearch,
         setSearchParams,
         keywords,
@@ -53,21 +54,25 @@ export const SearchOptions = ({
     const { t } = useTranslation();
     const { trackSearch, trackKeyword, trackOpenFilterModal, trackHashtags, trackTopics } = useSearchTrackers();
 
-    const handleSearch = (e: any) => {
-        keywordInput.length > 0 && setKeywords(keywordInput);
-        trackKeyword({
-            keyword: keywordInput,
-        });
-        setKeywordInput('');
-        e.preventDefault();
-        setActiveSearch(true);
-        setPage(0);
-        trackSearch('Search Options');
-    };
-    // TODO:comment out the related codes when feat recommended is ready
-    useEffect(() => {
-        if (activeSearch) {
-            setSearchParams({
+    const handleSearch = useCallback(
+        (e: any) => {
+            // eslint-disable-next-line no-console
+            console.log('search options', tags);
+
+            if (keywordInput.length > 0) {
+                setKeywords(keywordInput);
+                trackKeyword({
+                    keyword: keywordInput,
+                });
+                setKeywordInput('');
+            }
+
+            e.preventDefault();
+            setActiveSearch(true);
+            setPage(0);
+            trackSearch('Search Options');
+
+            const params = {
                 platform,
                 tags,
                 text,
@@ -86,36 +91,48 @@ export const SearchOptions = ({
                 audienceGender,
                 // recommendedInfluencers: featRecommended() ? recommendedInfluencers : [],
                 // only_recommended: featRecommended() ? onlyRecommended : false,
-            });
-        }
-    }, [
-        activeSearch,
-        platform,
-        // onlyRecommended,
-        setSearchParams,
-        text,
-        tags,
-        keywords,
-        hashtags,
-        username,
-        influencerLocation,
-        views,
-        audience,
-        gender,
-        engagement,
-        lastPost,
-        contactInfo,
-        audienceLocation,
-        audienceAge,
-        audienceGender,
-        // recommendedInfluencers,
-    ]);
+            };
+
+            setSearchParams(params);
+            onSearch({ searchParams: params });
+        },
+        [
+            keywordInput,
+            setKeywordInput,
+            onSearch,
+            setActiveSearch,
+            setKeywords,
+            setPage,
+            trackKeyword,
+            trackSearch,
+            // TODO:comment out the related codes when feat recommended is ready
+            platform,
+            // onlyRecommended,
+            setSearchParams,
+            text,
+            tags,
+            keywords,
+            hashtags,
+            username,
+            influencerLocation,
+            views,
+            audience,
+            gender,
+            engagement,
+            lastPost,
+            contactInfo,
+            audienceLocation,
+            audienceAge,
+            audienceGender,
+            // recommendedInfluencers,
+        ],
+    );
 
     const handleKeywordsBlur = useCallback(
         (v: string | null) => {
             const keyword = v ?? '';
 
-            if (keyword !== '' && tags.length > 0) {
+            if (keyword !== '' && tags && tags.length > 0) {
                 setTopicTags([]);
                 trackTopics({ tags: [] }); // <- @note track clearing topics?
             }
@@ -222,8 +239,8 @@ export const SearchOptions = ({
                                     trackHashtags({ hashtags: hashtags });
                                 }}
                                 onChangeTopics={() => {
-                                    tags.length !== 0 && setTopicTags([]);
-                                    tags.length !== 0 && trackTopics({ tags: [] });
+                                    tags && tags.length !== 0 && setTopicTags([]);
+                                    tags && tags.length !== 0 && trackTopics({ tags: [] });
                                 }}
                             />
                         </div>
@@ -250,7 +267,11 @@ export const SearchOptions = ({
                         </div>
                     </div>
                 </div>
-                <WordCloudComponent tags={tags} platform={platform} updateTags={setTopicTags} />
+                <WordCloudComponent
+                    tags={tags ?? [{ tag: 'influencer', value: 'influencer' }]}
+                    platform={platform}
+                    updateTags={setTopicTags}
+                />
             </div>
         </>
     );

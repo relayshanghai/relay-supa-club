@@ -25,7 +25,16 @@ export type LowerAgeOption = '13' | '18' | '25' | '35' | '45' | '65';
 const lowerAgeOptions: LowerAgeOption[] = ['18', '25', '35', '45', '65'];
 const upperAgeOptions: UpperAgeOption[] = ['17', '24', '34', '44', '64'];
 
-export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: (open: boolean) => void }) => {
+// eslint-disable-next-line complexity
+export const SearchFiltersModal = ({
+    show,
+    setShow,
+    onSearch,
+}: {
+    show: boolean;
+    setShow: (open: boolean) => void;
+    onSearch: () => void;
+}) => {
     const {
         audience,
         setAudience,
@@ -50,6 +59,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
         setActiveSearch,
         setPage,
         setInfluencerLocation,
+        setSearchParams,
     } = useSearch();
 
     const { t } = useTranslation();
@@ -81,6 +91,7 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
         setPage(0);
         trackSearch('Search Filters Modal');
         setShow(false);
+        onSearch();
     };
 
     useEffect(() => {
@@ -353,10 +364,13 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                                         className="rounded-md border-gray-200 bg-white text-sm font-medium text-gray-400 ring-1 ring-gray-200"
                                         value={audience[0] ?? 'any'}
                                         onChange={(e) => {
-                                            setAudience((audiencePrevious) => [
-                                                e.target.value === 'any' ? null : e.target.value,
-                                                audiencePrevious[1],
-                                            ]);
+                                            setSearchParams((state) => {
+                                                const value = e.target.value === 'any' ? null : e.target.value;
+                                                const audience: [null | string, null | string] = state
+                                                    ? [value, state.audience[1]]
+                                                    : [value, null];
+                                                return state ? { ...state, audience } : state;
+                                            });
                                             trackInfluencerSubscribersFrom({
                                                 subscribers: e.target.value,
                                             });
@@ -378,10 +392,13 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                                         className="rounded-md border-gray-200 bg-white text-sm font-medium text-gray-400 ring-1 ring-gray-200"
                                         value={audience[1] ?? 'any'}
                                         onChange={(e) => {
-                                            setAudience((audiencePrevious) => [
-                                                audiencePrevious[0],
-                                                e.target.value === 'any' ? null : e.target.value,
-                                            ]);
+                                            setSearchParams((state) => {
+                                                const value = e.target.value === 'any' ? null : e.target.value;
+                                                const audience: [null | string, null | string] = state
+                                                    ? [state.audience[0], value]
+                                                    : [null, value];
+                                                return state ? { ...state, audience } : state;
+                                            });
                                             trackInfluencerSubscribersTo({
                                                 subscribers: e.target.value,
                                             });
@@ -462,10 +479,13 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                                         className="rounded-md border-gray-200 bg-white text-sm font-medium text-gray-400 ring-1 ring-gray-200"
                                         value={views[0] ?? 'any'}
                                         onChange={(e) => {
-                                            setViews((viewsPrevious) => [
-                                                e.target.value === 'any' ? null : e.target.value,
-                                                viewsPrevious[1],
-                                            ]);
+                                            setSearchParams((state) => {
+                                                const value = e.target.value === 'any' ? null : e.target.value;
+                                                const views: [null | string, null | string] = state
+                                                    ? [value, state.views[1]]
+                                                    : [value, null];
+                                                return state ? { ...state, views } : state;
+                                            });
                                             trackInfluencerViewsFrom({
                                                 views: e.target.value,
                                             });
@@ -487,10 +507,13 @@ export const SearchFiltersModal = ({ show, setShow }: { show: boolean; setShow: 
                                         className="rounded-md border-gray-200 bg-white text-sm font-medium text-gray-400 ring-1 ring-gray-200"
                                         value={views[1] ?? 'any'}
                                         onChange={(e) => {
-                                            setViews((viewsPrevious) => [
-                                                viewsPrevious[0],
-                                                e.target.value === 'any' ? null : e.target.value,
-                                            ]);
+                                            setSearchParams((state) => {
+                                                const value = e.target.value === 'any' ? null : e.target.value;
+                                                const views: [null | string, null | string] = state
+                                                    ? [state.views[0], value]
+                                                    : [null, value];
+                                                return state ? { ...state, views } : state;
+                                            });
                                             trackInfluencerViewsTo({
                                                 views: e.target.value,
                                             });

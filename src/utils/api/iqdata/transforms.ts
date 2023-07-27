@@ -1,5 +1,5 @@
 import { featRecommended } from 'src/constants/feature-flags';
-import type { CreatorPlatform, CreatorAccount, LocationWeighted } from 'types';
+import type { CreatorPlatform, CreatorAccount, LocationWeighted, CreatorSearchTag } from 'types';
 import type { SearchInfluencersPayload } from './influencers/search-influencers-payload';
 import type {
     last_posted,
@@ -34,7 +34,7 @@ type NullStringTuple = [null | string, null | string];
 
 export interface FetchCreatorsFilteredParams {
     platform?: CreatorPlatform;
-    tags?: { tag: string }[];
+    tags?: CreatorSearchTag[];
     lookalike?: CreatorAccount[];
     text?: string;
     username?: string;
@@ -57,6 +57,7 @@ export interface FetchCreatorsFilteredParams {
     text_tags?: string;
 }
 
+// eslint-disable-next-line complexity
 export const prepareFetchCreatorsFiltered = ({
     platform = 'youtube',
     tags = [],

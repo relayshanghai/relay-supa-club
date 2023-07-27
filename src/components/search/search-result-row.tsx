@@ -31,7 +31,6 @@ export interface MoreResultsRowsProps extends Omit<SearchResultRowProps, 'creato
 }
 
 export const MoreResultsRows = ({
-    page,
     setShowCampaignListModal,
     setSelectedCreator,
     setShowAlreadyAddedModal,
@@ -39,7 +38,7 @@ export const MoreResultsRows = ({
 }: MoreResultsRowsProps) => {
     const { t } = useTranslation();
     const { resultsPerPageLimit } = useSearch();
-    const { results, loading, error } = useSearchResults(page);
+    const { results, loading, error } = useSearchResults();
 
     if (error)
         return (
@@ -78,6 +77,7 @@ export const MoreResultsRows = ({
     return null;
 };
 
+// eslint-disable-next-line complexity
 export const SearchResultRow = ({
     creator,
     setShowCampaignListModal,

@@ -13,7 +13,7 @@ const platforms: {
     { icon: '/assets/imgs/icons/tiktok.svg', label: 'TikTok', id: 'tiktok' },
 ];
 
-export const SelectPlatform = () => {
+export const SelectPlatform = ({ onSelect }: { onSelect?: (platform: CreatorPlatform) => void }) => {
     const { platform, setPlatform, loading } = useSearch();
     const { trackPlatformChange } = useSearchTrackers();
 
@@ -27,6 +27,7 @@ export const SelectPlatform = () => {
                     disabled={loading}
                     key={label}
                     onClick={() => {
+                        onSelect && onSelect(id);
                         setPlatform(id);
                         trackPlatformChange(id);
                     }}

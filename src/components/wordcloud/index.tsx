@@ -82,7 +82,7 @@ const WordCloudComponent = ({ tags, platform, updateTags }: WordCloudProps) => {
     const { t } = useTranslation();
 
     useEffect(() => {
-        const term = tags.length > 0 ? tags[0].tag : 'influencer';
+        const term = tags && tags.length > 0 ? tags[0].tag : 'influencer';
         const setWordArray = async () => {
             const body = {
                 term,
@@ -123,7 +123,7 @@ const WordCloudComponent = ({ tags, platform, updateTags }: WordCloudProps) => {
 
     useEffect(() => {
         if (!selectedTag) return;
-        if (tags.some((tag) => tag.tag === selectedTag.tag)) {
+        if (tags && tags.some((tag) => tag.tag === selectedTag.tag)) {
             const index = tags.find((tag) => tag.tag === selectedTag.tag);
             removeTag(index);
             return;
@@ -145,7 +145,7 @@ const WordCloudComponent = ({ tags, platform, updateTags }: WordCloudProps) => {
     const colorWord = useCallback(
         (word: string) => {
             if (
-                tags.some((tagWords) => tagWords.value === word) ||
+                (tags && tags.some((tagWords) => tagWords.value === word)) ||
                 !wordsDistance.some((distancedWords) => distancedWords.text === word)
             ) {
                 return `#EC4899`;
