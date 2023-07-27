@@ -1,41 +1,35 @@
 import { useCallback, useEffect, useState } from 'react';
-import { nextFetch } from 'src/utils/fetcher';
-import { testAccount } from 'src/utils/api/email-engine/prototype-mocks';
-import type { GetEmailPostRequestBody, GetEmailPostResponseBody } from 'pages/api/email-engine/email-text';
 import { clientLogger } from 'src/utils/logger-client';
 import { cleanEmailBody } from 'src/utils/clean-html';
 import type { SearchResponseMessage } from 'types/email-engine/account-account-search-post';
+import { getMessageText } from 'src/utils/api/email-engine/handle-messages';
 
 export const Email = ({ message }: { message: SearchResponseMessage }) => {
     // TODO: mark email as seen. Use update email endpoint /v1/account/{account}/messages
-
     const [content, setContent] = useState('');
     const [loading, setLoading] = useState(false);
+
     const getText = useCallback(async (id: string) => {
         setLoading(true);
-        const body: GetEmailPostRequestBody = {
-            account: testAccount,
-            emailId: id,
-        };
         try {
-            const { html } = await nextFetch<GetEmailPostResponseBody>('email-engine/email-text', {
-                method: 'POST',
-                body,
-            });
-            if (!html) throw new Error('No html returned');
+            const { html } = await getMessageText(id);
+            if (!html) {
+                throw new Error('No html returned');
+            }
             setContent(html);
         } catch (error: any) {
             clientLogger(error, 'error');
-            setContent('Error fetching email: ' + error.message);
+            throw new Error('Error fetching email: ' + error.message);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     }, []);
 
     useEffect(() => {
         if (message.text.id && !loading && !content) {
             getText(message.text.id);
         }
-    }, [content, getText, loading, message.text]);
+    }, [content, getText, loading, message]);
 
     return (
         <div>
