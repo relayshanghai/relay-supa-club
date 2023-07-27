@@ -7,8 +7,14 @@ import { debounce } from 'src/utils/debounce';
 import { Search, Spinner } from '../icons';
 import { useSearchTrackers } from '../rudder/searchui-rudder-calls';
 
-export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
-    const [searchTerm, setSearchTerm] = useState<string | ''>();
+export const SearchCreators = ({
+    platform,
+    onSearch,
+}: {
+    platform: CreatorPlatform;
+    onSearch: (params: any) => void;
+}) => {
+    const [searchTerm, setSearchTerm] = useState('');
     const [spinnerLoading, setSpinnerLoading] = useState(false);
     const { t } = useTranslation();
     const { trackSearchInfluencer, trackSearch } = useSearchTrackers();
@@ -49,7 +55,8 @@ export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
     const handleSubmit = useCallback(() => {
         searchInfluencer(searchTerm);
         handleSearch();
-    }, [searchTerm, searchInfluencer, handleSearch]);
+        onSearch({ username: searchTerm, text: searchTerm });
+    }, [searchTerm, searchInfluencer, handleSearch, onSearch]);
 
     return (
         <div className="group relative flex w-full flex-col font-medium">
