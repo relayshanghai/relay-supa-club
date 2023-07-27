@@ -309,7 +309,7 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
     const tags = searchParams?.tags ?? [];
     const setTopicTags = useCallback(
         (tags?: CreatorSearchTag[]) => {
-            if (!tags || tags.length <= 0) return;
+            if (!tags) return;
 
             setSearchParams((state) => {
                 return state ? { ...state, tags } : state;
@@ -323,8 +323,10 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
         (keywords?: string) => {
             if (keywords === undefined) return;
 
+            const value = keywords !== '' ? keywords : undefined;
+
             setSearchParams((state) => {
-                return state ? { ...state, keywords } : state;
+                return state ? { ...state, keywords: value } : state;
             });
         },
         [setSearchParams],
