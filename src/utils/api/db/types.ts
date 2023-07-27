@@ -81,7 +81,8 @@ export type SequenceStep = Database['public']['Tables']['sequence_steps']['Row']
 export type SequenceStepInsert = Database['public']['Tables']['sequence_steps']['Insert'] & SequenceStepDetailedTypes;
 export type SequenceStepUpdate = Database['public']['Tables']['sequence_steps']['Update'] & SequenceStepDetailedTypes;
 
-export type EmailOpenStatus = 'Scheduled' | 'Delivered' | 'Opened' | 'Replied' | 'Bounced';
+export type EmailOpenStatus = 'Scheduled' | 'Delivered' | 'Replied' | 'Bounced';
+export type EmailTrackingStatus = 'Opened' | 'Link Clicked';
 /** Ignored means it has gone through the whole sequence with no reply (+ 7 days) */
 export type FunnelStatus =
     | 'To Contact'
