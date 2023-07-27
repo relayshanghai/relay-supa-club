@@ -44,7 +44,8 @@ CREATE TABLE "public"."sequence_influencers" (
   "rate_currency" text,
   "real_full_name" text,
   "company_id" uuid NOT NULL,
-  "sequence_id" uuid NOT NULL
+  "sequence_id" uuid NOT NULL,
+  "address_id" uuid
 );
 
 
@@ -120,6 +121,10 @@ ALTER TABLE "public"."influencer_posts" VALIDATE CONSTRAINT "influencer_posts_se
 ALTER TABLE "public"."influencer_posts" ADD CONSTRAINT "influencer_posts_sequence_influencer_id_fkey" FOREIGN KEY (sequence_influencer_id) REFERENCES sequence_influencers (id) ON DELETE CASCADE NOT VALID;
 
 ALTER TABLE "public"."influencer_posts" VALIDATE CONSTRAINT "influencer_posts_sequence_influencer_id_fkey";
+
+ALTER TABLE "public"."sequence_influencers" ADD CONSTRAINT "sequence_influencers_address_id_fkey" FOREIGN KEY (address_id) REFERENCES addresses (id) NOT VALID;
+
+ALTER TABLE "public"."sequence_influencers" VALIDATE CONSTRAINT "sequence_influencers_address_id_fkey";
 
 ALTER TABLE "public"."sequence_influencers" ADD CONSTRAINT "sequence_influencers_company_id_fkey" FOREIGN KEY (company_id) REFERENCES companies (id) ON DELETE CASCADE NOT VALID;
 

@@ -876,6 +876,7 @@ export interface Database {
       sequence_influencers: {
         Row: {
           added_by: string
+          address_id: string | null
           company_id: string
           created_at: string
           email: string | null
@@ -895,6 +896,7 @@ export interface Database {
         }
         Insert: {
           added_by: string
+          address_id?: string | null
           company_id: string
           created_at?: string
           email?: string | null
@@ -914,6 +916,7 @@ export interface Database {
         }
         Update: {
           added_by?: string
+          address_id?: string | null
           company_id?: string
           created_at?: string
           email?: string | null
@@ -932,6 +935,12 @@ export interface Database {
           video_details?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "sequence_influencers_address_id_fkey"
+            columns: ["address_id"]
+            referencedRelation: "addresses"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "sequence_influencers_company_id_fkey"
             columns: ["company_id"]
