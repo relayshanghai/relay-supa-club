@@ -836,6 +836,7 @@ export interface Database {
           categories: string[]
           channel_url: string
           city: string | null
+          company_id: string
           country: string | null
           created_at: string
           email: string | null
@@ -854,6 +855,7 @@ export interface Database {
           rate_currency: string | null
           real_name: string | null
           scheduled_post_date: string | null
+          sequence_id: string
           sequence_step: number
           state: string | null
           tags: string[]
@@ -869,6 +871,7 @@ export interface Database {
           categories?: string[]
           channel_url: string
           city?: string | null
+          company_id: string
           country?: string | null
           created_at?: string
           email?: string | null
@@ -887,6 +890,7 @@ export interface Database {
           rate_currency?: string | null
           real_name?: string | null
           scheduled_post_date?: string | null
+          sequence_id: string
           sequence_step?: number
           state?: string | null
           tags?: string[]
@@ -902,6 +906,7 @@ export interface Database {
           categories?: string[]
           channel_url?: string
           city?: string | null
+          company_id?: string
           country?: string | null
           created_at?: string
           email?: string | null
@@ -920,6 +925,7 @@ export interface Database {
           rate_currency?: string | null
           real_name?: string | null
           scheduled_post_date?: string | null
+          sequence_id?: string
           sequence_step?: number
           state?: string | null
           tags?: string[]
@@ -930,9 +936,21 @@ export interface Database {
         }
         Relationships: [
           {
+            foreignKeyName: "sequence_influencer_company_id_fkey"
+            columns: ["company_id"]
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "sequence_influencer_influencer_id_fkey"
             columns: ["influencer_id"]
             referencedRelation: "influencers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sequence_influencer_sequence_id_fkey"
+            columns: ["sequence_id"]
+            referencedRelation: "sequences"
             referencedColumns: ["id"]
           }
         ]
