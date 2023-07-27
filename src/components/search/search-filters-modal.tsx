@@ -73,6 +73,7 @@ export const SearchFiltersModal = ({ show, setShow, onSearch }: SearchFiltersMod
         setPage,
         setInfluencerLocation,
         searchParams,
+        getSearchParams,
     } = useSearch();
 
     const { t } = useTranslation();
@@ -107,10 +108,10 @@ export const SearchFiltersModal = ({ show, setShow, onSearch }: SearchFiltersMod
             setShow(false);
 
             // eslint-disable-next-line no-console
-            console.log('handle search @ search-filters-modal', { searchParams });
-            onSearch({ searchParams });
+            console.log('handle search @ search-filters-modal', { searchParams: getSearchParams() });
+            onSearch({ searchParams: getSearchParams() });
         },
-        [onSearch, setShow, trackSearch, setPage, setActiveSearch, searchParams],
+        [onSearch, setShow, trackSearch, setPage, setActiveSearch, getSearchParams],
     );
 
     useEffect(() => {

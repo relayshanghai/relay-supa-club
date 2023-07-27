@@ -1,6 +1,6 @@
 import type { InfluencerPostRequest, InfluencerPostResponse } from 'pages/api/influencer-search';
 import type { Dispatch, PropsWithChildren, SetStateAction } from 'react';
-import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { createContext, useContext, useEffect, useRef, useState, useCallback } from 'react';
 import { usageErrors } from 'src/errors/usages';
 import { hasCustomError } from 'src/utils/errors';
 import { nextFetch } from 'src/utils/fetcher';
@@ -70,6 +70,7 @@ export interface ISearchContext {
     setActiveSearch: (activeSearch: boolean) => void;
     searchParams: FetchCreatorsFilteredParams | undefined;
     setSearchParams: (searchParams: FetchCreatorsFilteredParams | undefined) => void;
+    getSearchParams: () => FetchCreatorsFilteredParams | undefined;
 }
 
 export const SearchContext = createContext<ISearchContext>({
@@ -121,6 +122,7 @@ export const SearchContext = createContext<ISearchContext>({
     setActiveSearch: () => null,
     searchParams: undefined,
     setSearchParams: () => null,
+    getSearchParams: () => undefined,
 });
 
 export const useSearch = () => useContext(SearchContext);
@@ -244,6 +246,54 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
         nextFetch<RecommendedInfluencersGetResponse>(path),
     );
 
+    const getSearchParams = useCallback((): typeof searchParams & {
+        hashtags: string[];
+        onlyRecommended: boolean;
+        activeSearch: boolean;
+    } => {
+        return {
+            page,
+            tags,
+            text,
+            keywords,
+            hashtags,
+            username,
+            influencerLocation,
+            views,
+            audience,
+            gender,
+            engagement,
+            lastPost,
+            contactInfo,
+            audienceLocation,
+            audienceAge,
+            audienceGender,
+            platform,
+            onlyRecommended,
+            activeSearch,
+        };
+    }, [
+        page,
+        tags,
+        text,
+        keywords,
+        hashtags,
+        username,
+        influencerLocation,
+        views,
+        audience,
+        gender,
+        engagement,
+        lastPost,
+        contactInfo,
+        audienceLocation,
+        audienceAge,
+        audienceGender,
+        platform,
+        onlyRecommended,
+        activeSearch,
+    ]);
+
     return (
         <SearchContext.Provider
             value={{
@@ -294,6 +344,7 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
                 setActiveSearch,
                 searchParams,
                 setSearchParams,
+                getSearchParams,
             }}
         >
             {children}

@@ -102,8 +102,13 @@ export const SearchPageInner = () => {
      */
     const handleSearch = useCallback(
         ({ searchParams }: { searchParams: any }) => {
+            if (!searchParams) return;
+
             // eslint-disable-next-line no-console
             console.log('handle search @ search-page', searchParams);
+
+            // @note this triggers the search api call
+            setSearchParams(searchParams);
 
             trackSearch({
                 event: Search,
@@ -111,7 +116,7 @@ export const SearchPageInner = () => {
                 metadata,
             });
         },
-        [trackSearch, page, metadata],
+        [trackSearch, page, metadata, setSearchParams],
     );
 
     /**
@@ -154,8 +159,6 @@ export const SearchPageInner = () => {
     // TODO:comment out the related codes when feat recommended is ready
     // @note: this causes rerender, searchParams value should be initiated in the useState
     useEffect(() => {
-        // eslint-disable-next-line no-console
-        console.log('search page');
         setSearchParams({
             page: 0,
             platform,
@@ -198,7 +201,7 @@ export const SearchPageInner = () => {
             <div className="flex justify-between">
                 <SelectPlatform />
                 <div className="w-fit">
-                    <SearchCreators platform={platform} />
+                    <SearchCreators platform={platform} onSearch={handleSearch} />
                 </div>
             </div>
 

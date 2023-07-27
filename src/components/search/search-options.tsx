@@ -32,7 +32,7 @@ export const SearchOptions = ({
         setKeywords,
         hashtags,
         setHashtags,
-        searchParams,
+        getSearchParams,
     } = useSearch();
     const [keywordInput, setKeywordInput] = useState<string>('');
     const [hashTagInput, setHashTagInput] = useState<string>('');
@@ -56,9 +56,9 @@ export const SearchOptions = ({
             trackSearch('Search Options');
 
             startJourney('search');
-            onSearch({ searchParams });
+            onSearch({ searchParams: getSearchParams() });
         },
-        [keywordInput, onSearch, setActiveSearch, setKeywords, setPage, trackKeyword, trackSearch, searchParams],
+        [keywordInput, onSearch, setActiveSearch, setKeywords, setPage, trackKeyword, trackSearch, getSearchParams],
     );
 
     const handleKeywordsBlur = useCallback(
