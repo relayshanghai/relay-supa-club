@@ -73,7 +73,7 @@ export type SequenceUpdate = Database['public']['Tables']['sequences']['Update']
 
 type SequenceStepDetailedTypes = {
     /** Int, first step = 0 */
-    order: number;
+    step_number: number;
     /** The params to be passed to the template. e.g. 'companyName' */
     params: string[];
 };

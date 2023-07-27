@@ -960,9 +960,9 @@ export interface Database {
           created_at: string
           id: string
           name: string | null
-          order: number
           params: string[]
           sequence_id: string
+          step_number: number
           template_id: string
           updated_at: string
           wait_time_hours: number
@@ -971,9 +971,9 @@ export interface Database {
           created_at?: string
           id: string
           name?: string | null
-          order?: number
           params?: string[]
           sequence_id: string
+          step_number?: number
           template_id: string
           updated_at?: string
           wait_time_hours?: number
@@ -982,9 +982,9 @@ export interface Database {
           created_at?: string
           id?: string
           name?: string | null
-          order?: number
           params?: string[]
           sequence_id?: string
+          step_number?: number
           template_id?: string
           updated_at?: string
           wait_time_hours?: number
