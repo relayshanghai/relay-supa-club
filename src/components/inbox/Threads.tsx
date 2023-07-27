@@ -32,7 +32,7 @@ export const Threads = ({ messages }: { messages: SearchResponseMessage[] }) => 
                 if (!message.text.id) {
                     throw new Error('No text id');
                 }
-                const { html, plain } = await getMessageText(message.text.id);
+                const { html } = await getMessageText(message.text.id);
                 setThreadMessages((prev) => [
                     ...prev,
                     {
@@ -40,16 +40,17 @@ export const Threads = ({ messages }: { messages: SearchResponseMessage[] }) => 
                         id: message.id,
                         from: message.from.name || message.from.address,
                         date: message.date,
-                        text: html ?? plain,
+                        text: html,
                         isMe: message.path === GMAIL_SENT,
                     },
                 ]);
             });
         } catch (error: any) {
             clientLogger(error, 'error');
-            throw error.message;
+            throw new Error('Error fetching thread: ' + error.message);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     }, []);
 
     useEffect(() => {
@@ -81,8 +82,6 @@ export const Threads = ({ messages }: { messages: SearchResponseMessage[] }) => 
                                 <div className="text-xs">{dateFormat(message.date, 'isoTime', true, true)}</div>
                             </div>
                             <div className="mb-2 text-xs font-semibold text-gray-500">{message.subject}</div>
-                            {/* <div className="my-2 text-xs">{message.text}</div> */}
-
                             <div
                                 className="text-xs"
                                 dangerouslySetInnerHTML={{

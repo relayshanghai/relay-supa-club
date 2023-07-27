@@ -19,9 +19,10 @@ export const Email = ({ message }: { message: SearchResponseMessage }) => {
             setContent(html);
         } catch (error: any) {
             clientLogger(error, 'error');
-            throw error.message;
+            throw new Error('Error fetching email: ' + error.message);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     }, []);
 
     useEffect(() => {
