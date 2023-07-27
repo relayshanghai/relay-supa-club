@@ -1,6 +1,14 @@
-import type { AccountRole, CreatorPlatform, InfluencerOutreachStatus, SubscriptionStatus, UsageType } from 'types';
+import type {
+    AccountRole,
+    CreatorPlatform,
+    DatabaseWithCustomTypes,
+    InfluencerOutreachStatus,
+    SubscriptionStatus,
+    UsageType,
+} from 'types';
 import type { Database } from 'types/supabase';
 import type { SupabaseLogType } from './calls/';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 export type ProfilesTable = Database['public']['Tables']['profiles'] & {
     Row: Database['public']['Tables']['profiles']['Row'] & {
@@ -29,6 +37,8 @@ export type CompanyTable = Database['public']['Tables']['companies'] & {
         subscription_status?: SubscriptionStatus;
     };
 };
+
+export type RelayDatabase = SupabaseClient<DatabaseWithCustomTypes>;
 
 export type CompanyDB = CompanyTable['Row'];
 export type CompanyDBUpdate = CompanyTable['Update'];

@@ -81,7 +81,7 @@ interface Reference {
 
 interface Render {
     format: string;
-    params: Headers;
+    params: Record<string, string>;
 }
 
 interface To {

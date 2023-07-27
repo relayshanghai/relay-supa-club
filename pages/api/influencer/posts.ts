@@ -3,6 +3,7 @@ import httpCodes from 'src/constants/httpCodes';
 import { ApiHandler } from 'src/utils/api-handler';
 import { getCampaignCreator } from 'src/utils/api/db/calls/campaign-creators';
 import { updateCampaignCreator } from 'src/utils/api/db/calls/campaign-creators';
+import type { ServerContext } from 'src/utils/api/iqdata';
 import { serverLogger } from 'src/utils/logger-server';
 import { saveInfluencerPost } from 'src/utils/save-influencer-post';
 import { savePostPerformance } from 'src/utils/save-post-performance';
@@ -32,8 +33,8 @@ export type InfluencerPostPostResponse =
           error: string;
       };
 
-const processURL = async (url: string, campaign_id: string, creator_id: string) => {
-    const scrape = await scrapeInfluencerPost(url);
+const processURL = async (url: string, campaign_id: string, creator_id: string, context?: ServerContext) => {
+    const scrape = await scrapeInfluencerPost(url, context);
 
     const _savePostPerformance = db<typeof savePostPerformance>(savePostPerformance);
     const _saveInfluencerPost = db<typeof saveInfluencerPost>(saveInfluencerPost);
@@ -89,7 +90,7 @@ const postHandler: NextApiHandler = async (req: NextApiRequest, res: NextApiResp
 
     for (const url of body.urls) {
         try {
-            const result = await processURL(url, body.campaign_id, body.creator_id);
+            const result = await processURL(url, body.campaign_id, body.creator_id, { req, res });
 
             data.successful.push({
                 title: result.post.title || '',
