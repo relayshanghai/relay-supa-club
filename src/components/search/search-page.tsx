@@ -46,7 +46,7 @@ export const SearchPageInner = () => {
 
     const handleSearch = useCallback(
         (params?: Partial<FetchCreatorsFilteredParams>) => {
-            search({ ...searchParams, ...(params ?? {}) });
+            search({ ...searchParams, page: 0, ...(params ?? {}) });
         },
         [search, searchParams],
     );
