@@ -316,7 +316,9 @@ OR REPLACE FUNCTION create_sequence_steps(
   params TEXT[],
   template_id TEXT,
   step_number NUMERIC,
-  wait_time_hours NUMERIC
+  wait_time_hours NUMERIC,
+  email_delivery_status TEXT,
+  email_tracking_status TEXT
 ) RETURNS RECORD SECURITY DEFINER LANGUAGE plpgsql AS $$
     DECLARE
       _row RECORD;
@@ -331,7 +333,9 @@ OR REPLACE FUNCTION create_sequence_steps(
           params,
           template_id,
           step_number,
-          wait_time_hours
+          wait_time_hours,
+          email_delivery_status,
+          email_tracking_status
         )
       VALUES
         (
@@ -343,7 +347,9 @@ OR REPLACE FUNCTION create_sequence_steps(
           params,
           template_id,
           step_number,
-          wait_time_hours
+          wait_time_hours,
+          email_delivery_status,
+          email_tracking_status
         )
       RETURNING * INTO _row;
       RETURN _row;
@@ -356,14 +362,12 @@ OR REPLACE FUNCTION create_sequence_influencer(
   sequence_id UUID,
   added_by UUID,
   influencer_id UUID,
-  email TEXT,
-  handle TEXT,
-  username TEXT
+  email TEXT
 ) RETURNS RECORD SECURITY DEFINER LANGUAGE plpgsql AS $$
     DECLARE
       _row RECORD;
     BEGIN
-      INSERT INTO sequence_influencer
+      INSERT INTO sequence_influencers
         (
           id,
           created_at,
@@ -377,7 +381,7 @@ OR REPLACE FUNCTION create_sequence_influencer(
           next_step,
           rate_amount,
           rate_currency,
-          real_name,
+          real_full_name,
           scheduled_post_date,
           sequence_step,
           tags,
@@ -391,31 +395,16 @@ OR REPLACE FUNCTION create_sequence_influencer(
           company_id,
           sequence_id,
           added_by,
-          '123 Main St',
-          ARRAY['category1', 'category2'],
-          'youtube.com/channel/123',
-          'city',
-          'country',
           email,
           'To Contact',
-          handle,
           influencer_id,
-          'Scheduled',
-          '2022-01-01 00:00:00.000000+00',
-          '2027-01-01 00:00:00.000000+00',
           'next_step',
-          'phone_number',
-          'youtube',
-          'postal_code',
           543,
           'USD',
-          'real_name',
-          '2026-01-01 00:00:00.000000+00',
+          'real_full_name',
+          '2027-01-01 00:00:00.000000+00',
           0,
-          'state',
           ARRAY['tag1', 'tag2'],
-          'tracking_code',
-          username,
           'video_details'           
         )
       RETURNING * INTO _row;
@@ -645,7 +634,9 @@ BEGIN
     ],
     'AAABiYr-poEAAAAC',
     0,
-    0
+    0,
+    'Scheduled',
+    NULL
   );
 
   PERFORM create_sequence_steps(
@@ -656,7 +647,9 @@ BEGIN
     ],
     'AAABiYsMUIAAAAAD',
     1,
-    1
+    1,
+    'Delivered',
+    'Opened'
   );
 
   PERFORM create_campaign_creator(
@@ -713,9 +706,7 @@ BEGIN
     _sequence_beauty_for_all.id,
     _profile_william.id,
     _influencer_alice.id,
-    'influencer_alice@example.com',
-    'Influencer Alice',
-    'influencer-alice'
+    'influencer_alice@example.com'
   );
 
   PERFORM create_sequence_influencer(
@@ -723,9 +714,7 @@ BEGIN
     _sequence_beauty_for_all.id,
     _profile_william.id,
     _influencer_bob.id,
-    'influencer_bob@example.com',
-    'Influencer Bob',
-    'influencer-bob'
+    'influencer_bob@example.com'
   );
 
   PERFORM create_sequence_influencer(
@@ -733,9 +722,7 @@ BEGIN
     _sequence_beauty_for_all.id,
     _profile_william.id,
     _influencer_charlie.id,
-    'influencer_charlie@example.com',
-    'Influencer Charlie',
-    'influencer-charlie'
+    'influencer_charlie@example.com'
   );    
 
   -- Influencer 3 will have no social profiles so we can handle this edge case

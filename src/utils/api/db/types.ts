@@ -71,18 +71,20 @@ export type Sequence = Database['public']['Tables']['sequences']['Row'];
 export type SequenceInsert = Database['public']['Tables']['sequences']['Insert'];
 export type SequenceUpdate = Database['public']['Tables']['sequences']['Update'];
 
+export type EmailDeliveryStatus = 'Scheduled' | 'Delivered' | 'Replied' | 'Bounced';
+export type EmailTrackingStatus = 'Opened' | 'Link Clicked';
 type SequenceStepDetailedTypes = {
     /** Int, first step = 0 */
     step_number: number;
     /** The params to be passed to the template. e.g. 'companyName' */
     params: string[];
+    email_delivery_status: EmailDeliveryStatus;
+    email_tracking_status: EmailTrackingStatus;
 };
 export type SequenceStep = Database['public']['Tables']['sequence_steps']['Row'] & SequenceStepDetailedTypes;
 export type SequenceStepInsert = Database['public']['Tables']['sequence_steps']['Insert'] & SequenceStepDetailedTypes;
 export type SequenceStepUpdate = Database['public']['Tables']['sequence_steps']['Update'] & SequenceStepDetailedTypes;
 
-export type EmailDeliveryStatus = 'Scheduled' | 'Delivered' | 'Replied' | 'Bounced';
-export type EmailTrackingStatus = 'Opened' | 'Link Clicked';
 /** Ignored means it has gone through the whole sequence with no reply (+ 7 days) */
 export type FunnelStatus =
     | 'To Contact'
