@@ -132,6 +132,19 @@ export const useSearchResults = (page: number) => {
     const { company } = useCompany();
     const ref = useRef<any>();
 
+    type SearchResults = {
+        results: InfluencerPostResponse['accounts'];
+        resultsTotal: InfluencerPostResponse['total'];
+        __metadata: SearchResultMetadata['__metadata'];
+    };
+
+    /**
+     * Function to run after SWR request finished "loading"
+     */
+    const [onLoad, setOnLoad] = useState<(_data: SearchResults | undefined) => void>(
+        () => (_data: SearchResults | undefined) => null,
+    );
+
     const { setUsageExceeded, setLoading, setActiveSearch, searchParams } = useSearch();
 
     const { data, isLoading, mutate, isValidating, error } = useSWR(
@@ -192,6 +205,12 @@ export const useSearchResults = (page: number) => {
         },
     );
 
+    // wait for swr to finish loading
+    useEffect(() => {
+        if (!data || isLoading === true) return;
+        onLoad(data);
+    }, [onLoad, isLoading, data]);
+
     useEffect(() => {
         if (error) {
             setLoading(false);
@@ -211,6 +230,8 @@ export const useSearchResults = (page: number) => {
         noResults,
         mutate,
         metadata: data?.__metadata,
+        onLoad,
+        setOnLoad,
     };
 };
 

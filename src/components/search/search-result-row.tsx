@@ -22,6 +22,7 @@ import { SearchOpenExternalSocialProfile } from 'src/utils/analytics/events';
 import { useAnalytics } from '../analytics/analytics-provider';
 import { SearchLoadMoreResults } from 'src/utils/analytics/events';
 import { SEARCH_RESULT_ROW } from 'src/utils/rudderstack/event-names';
+import type { track } from './use-track-event';
 
 export interface SearchResultRowProps {
     creator: CreatorSearchAccountObject;
@@ -29,7 +30,7 @@ export interface SearchResultRowProps {
     setShowCampaignListModal: (show: boolean) => void;
     setShowAlreadyAddedModal: (show: boolean) => void;
     allCampaignCreators?: CampaignCreatorBasicInfo[];
-    trackSearch?: (...args: any[]) => any;
+    trackSearch?: track;
 }
 export interface MoreResultsRowsProps extends Omit<SearchResultRowProps, 'creator'> {
     page: number;
@@ -45,22 +46,30 @@ export const MoreResultsRows = ({
 }: MoreResultsRowsProps) => {
     const { t } = useTranslation();
     const { resultsPerPageLimit, searchParams } = useSearch();
-    const { results, loading, error, metadata } = useSearchResults(page);
+    const { results, loading, error, setOnLoad } = useSearchResults(page);
 
     useEffect(() => {
-        if (!trackSearch || page === 0 || metadata === undefined || searchParams === undefined) return;
+        if (!trackSearch || page === 0 || searchParams === undefined) return;
 
         const controller = new AbortController();
 
-        trackSearch({
-            event: SearchLoadMoreResults,
-            searchParams: searchParams ? { ...searchParams, page } : undefined,
-            metadata,
-            controller,
-        });
+        const tracker = (result: any) => {
+            trackSearch<typeof SearchLoadMoreResults>({
+                event: SearchLoadMoreResults,
+                controller,
+                payload: {
+                    event_id: result.__metadata.event_id,
+                    snapshot_id: result.__metadata.snapshot_id,
+                    parameters: searchParams,
+                    page: searchParams.page ?? 0,
+                },
+            });
+        };
+
+        setOnLoad(() => tracker);
 
         return () => controller.abort();
-    }, [trackSearch, searchParams, page, metadata]);
+    }, [trackSearch, searchParams, page, setOnLoad]);
 
     if (error)
         return (

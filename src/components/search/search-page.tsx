@@ -21,10 +21,10 @@ import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { SearchCreators } from './search-creators';
 import { startJourney } from 'src/utils/analytics/journey';
 import { useAnalytics } from '../analytics/analytics-provider';
-import type events from 'src/utils/analytics/events';
 import { SearchAddToCampaign, SearchDefault } from 'src/utils/analytics/events';
 import { Search } from 'src/utils/analytics/events';
 import { SEARCH_RESULT } from 'src/utils/rudderstack/event-names';
+import { useTrackEvent } from './use-track-event';
 // import { featRecommended } from 'src/constants/feature-flags';
 
 export const SearchPageInner = () => {
@@ -61,62 +61,42 @@ export const SearchPageInner = () => {
         isValidating,
         loading: resultsLoading,
         metadata,
+        setOnLoad,
     } = useSearchResults(0);
 
-    const { track } = useAnalytics();
+    const { track: trackAnalytics } = useAnalytics();
+    const { track } = useTrackEvent();
 
     const [rendered, setRendered] = useState(false);
-
-    type TrackParams = {
-        event: (typeof events)[keyof typeof events];
-        searchParams: typeof searchParams;
-        metadata: typeof metadata;
-        controller?: AbortController;
-    };
-
-    /**
-     * Since searchParams & metadata states are weirdly initialized late in useEffect,
-     * we create a reusable memoized version of useAnalytics.track that
-     * watches these states if they are initialized
-     */
-    const trackSearch = useCallback(
-        ({ event, searchParams, metadata, controller }: TrackParams) => {
-            if (metadata === undefined || searchParams === undefined) return Promise.resolve();
-
-            return track<TrackParams['event']>(
-                event,
-                {
-                    event_id: metadata.event_id,
-                    snapshot_id: metadata.snapshot_id,
-                    parameters: searchParams,
-                    page: searchParams.page,
-                },
-                { __abort: controller },
-            );
-        },
-        [track],
-    );
 
     /**
      * Handle the SearchOptions.onSearch event
      */
     const handleSearch = useCallback(
         ({ searchParams }: { searchParams: any }) => {
-            if (!searchParams) return;
+            if (searchParams === undefined) return;
 
             // eslint-disable-next-line no-console
             console.log('handle search @ search-page', searchParams);
 
+            const tracker = (results: any) => {
+                return track<typeof Search>({
+                    event: Search,
+                    payload: {
+                        event_id: results.__metadata.event_id,
+                        snapshot_id: results.__metadata.snapshot_id,
+                        parameters: searchParams,
+                        page: searchParams.page,
+                    },
+                });
+            };
+
+            setOnLoad(() => tracker);
+
             // @note this triggers the search api call
             setSearchParams(searchParams);
-
-            trackSearch({
-                event: Search,
-                searchParams: searchParams ? { ...searchParams, page } : undefined,
-                metadata,
-            });
         },
-        [trackSearch, page, metadata, setSearchParams],
+        [track, setSearchParams, setOnLoad],
     );
 
     /**
@@ -130,24 +110,31 @@ export const SearchPageInner = () => {
         if (searchParams.page && searchParams.page !== 0) return;
 
         // eslint-disable-next-line no-console
-        console.log('initial track search', { event, searchParams, metadata });
+        console.log('initial track search', { event, searchParams });
         const controller = new AbortController();
 
-        trackSearch({
-            event: SearchDefault,
-            // @note quick fix for searchParams not being updated
-            searchParams: searchParams ? { ...searchParams, page: 0 } : undefined,
-            metadata,
-            controller,
-        }).then((response) => {
-            if (response && !controller.signal.aborted) {
-                setRendered(true);
-            }
-            return response;
-        });
+        const tracker = async (result: any) => {
+            return track<typeof SearchDefault>({
+                event: SearchDefault,
+                controller,
+                payload: {
+                    event_id: result.__metadata.event_id,
+                    snapshot_id: result.__metadata.snapshot_id,
+                    parameters: searchParams,
+                    page: searchParams.page,
+                },
+            }).then((response) => {
+                if (response && !controller.signal.aborted) {
+                    setRendered(true);
+                }
+                return response;
+            });
+        };
+
+        setOnLoad(() => tracker);
 
         return () => controller.abort();
-    }, [trackSearch, searchParams, metadata, rendered]);
+    }, [track, setOnLoad, searchParams, metadata, rendered]);
 
     const [showAlreadyAddedModal, setShowAlreadyAddedModal] = useState(false);
 
@@ -234,7 +221,7 @@ export const SearchPageInner = () => {
                                 setShowCampaignListModal={setShowCampaignListModal}
                                 setShowAlreadyAddedModal={setShowAlreadyAddedModal}
                                 allCampaignCreators={allCampaignCreators}
-                                trackSearch={trackSearch}
+                                trackSearch={track}
                             />
                         ))}
                     </>
@@ -263,8 +250,9 @@ export const SearchPageInner = () => {
                 campaigns={campaigns}
                 allCampaignCreators={allCampaignCreators}
                 track={(campaign: string) => {
+                    // @todo ideally we would want this to use useTrackEvent.track
                     selectedCreator &&
-                        track(SearchAddToCampaign, {
+                        trackAnalytics(SearchAddToCampaign, {
                             creator: selectedCreator.account.user_profile,
                             campaign: campaign,
                         });
