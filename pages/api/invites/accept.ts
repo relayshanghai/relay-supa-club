@@ -32,16 +32,12 @@ export type CompanyAcceptInviteGetResponse = {
 const postHandler: NextApiHandler = async (req, res) => {
     const { token, password, firstName, lastName, phone } = req.body as CompanyAcceptInvitePostBody;
     if (!token || !password || !firstName || !lastName) {
-        return res.status(httpCodes.BAD_REQUEST).json({
-            error: loginValidationErrors.missingRequiredFields,
-        });
+        throw new RelayError(loginValidationErrors.missingRequiredFields, httpCodes.UNAUTHORIZED);
     }
 
     const passwordInvalid = validatePassword(password);
     if (passwordInvalid) {
-        return res.status(httpCodes.BAD_REQUEST).json({
-            error: passwordInvalid,
-        });
+        throw new RelayError('invalid password', httpCodes.UNAUTHORIZED);
     }
 
     const { data: invite } = await getInviteById(token);
