@@ -9,6 +9,51 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
+      addresses: {
+        Row: {
+          address_line_1: string
+          address_line_2: string | null
+          city: string
+          country: string
+          created_at: string
+          id: string
+          name: string
+          phone_number: string | null
+          postal_code: string
+          state: string
+          tracking_code: string | null
+          updated_at: string
+        }
+        Insert: {
+          address_line_1: string
+          address_line_2?: string | null
+          city: string
+          country: string
+          created_at?: string
+          id?: string
+          name: string
+          phone_number?: string | null
+          postal_code: string
+          state: string
+          tracking_code?: string | null
+          updated_at?: string
+        }
+        Update: {
+          address_line_1?: string
+          address_line_2?: string | null
+          city?: string
+          country?: string
+          created_at?: string
+          id?: string
+          name?: string
+          phone_number?: string | null
+          postal_code?: string
+          state?: string
+          tracking_code?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       campaign_creators: {
         Row: {
           added_by_id: string
@@ -140,6 +185,7 @@ export interface Database {
           created_at: string | null
           id: string
           important: boolean
+          sequence_influencer_id: string | null
           user_id: string
         }
         Insert: {
@@ -148,6 +194,7 @@ export interface Database {
           created_at?: string | null
           id?: string
           important?: boolean
+          sequence_influencer_id?: string | null
           user_id: string
         }
         Update: {
@@ -156,6 +203,7 @@ export interface Database {
           created_at?: string | null
           id?: string
           important?: boolean
+          sequence_influencer_id?: string | null
           user_id?: string
         }
         Relationships: [
@@ -163,6 +211,12 @@ export interface Database {
             foreignKeyName: "campaign_notes_campaign_creator_id_fkey"
             columns: ["campaign_creator_id"]
             referencedRelation: "campaign_creators"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "campaign_notes_sequence_influencer_id_fkey"
+            columns: ["sequence_influencer_id"]
+            referencedRelation: "sequence_influencers"
             referencedColumns: ["id"]
           },
           {
@@ -333,24 +387,33 @@ export interface Database {
           company_id: string
           created_at: string
           id: string
+          product_id: string | null
         }
         Insert: {
           category: string
           company_id: string
           created_at?: string
           id?: string
+          product_id?: string | null
         }
         Update: {
           category?: string
           company_id?: string
           created_at?: string
           id?: string
+          product_id?: string | null
         }
         Relationships: [
           {
             foreignKeyName: "company_categories_company_id_fkey"
             columns: ["company_id"]
             referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "company_categories_product_id_fkey"
+            columns: ["product_id"]
+            referencedRelation: "products"
             referencedColumns: ["id"]
           }
         ]
@@ -424,6 +487,8 @@ export interface Database {
           posted_date: string | null
           preview_url: string | null
           publish_date: string | null
+          sequence_id: string | null
+          sequence_influencer_id: string | null
           title: string | null
           type: string
           updated_at: string | null
@@ -441,6 +506,8 @@ export interface Database {
           posted_date?: string | null
           preview_url?: string | null
           publish_date?: string | null
+          sequence_id?: string | null
+          sequence_influencer_id?: string | null
           title?: string | null
           type: string
           updated_at?: string | null
@@ -458,6 +525,8 @@ export interface Database {
           posted_date?: string | null
           preview_url?: string | null
           publish_date?: string | null
+          sequence_id?: string | null
+          sequence_influencer_id?: string | null
           title?: string | null
           type?: string
           updated_at?: string | null
@@ -474,6 +543,18 @@ export interface Database {
             foreignKeyName: "influencer_posts_influencer_social_profile_id_fkey"
             columns: ["influencer_social_profile_id"]
             referencedRelation: "influencer_social_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "influencer_posts_sequence_id_fkey"
+            columns: ["sequence_id"]
+            referencedRelation: "sequences"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "influencer_posts_sequence_influencer_id_fkey"
+            columns: ["sequence_influencer_id"]
+            referencedRelation: "sequence_influencers"
             referencedColumns: ["id"]
           }
         ]
@@ -673,6 +754,36 @@ export interface Database {
           }
         ]
       }
+      products: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          price: number | null
+          price_currency: string | null
+          shop_url: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          price?: number | null
+          price_currency?: string | null
+          shop_url?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          price?: number | null
+          price_currency?: string | null
+          shop_url?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -871,6 +982,183 @@ export interface Database {
             foreignKeyName: "search_snapshots_profile_id_fkey"
             columns: ["profile_id"]
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      sequence_influencers: {
+        Row: {
+          added_by: string
+          address_id: string | null
+          company_id: string
+          created_at: string
+          email: string | null
+          funnel_status: string
+          id: string
+          influencer_id: string
+          next_step: string | null
+          rate_amount: number | null
+          rate_currency: string | null
+          real_full_name: string | null
+          scheduled_post_date: string | null
+          sequence_id: string
+          sequence_step: number
+          tags: string[]
+          updated_at: string
+          video_details: string | null
+        }
+        Insert: {
+          added_by: string
+          address_id?: string | null
+          company_id: string
+          created_at?: string
+          email?: string | null
+          funnel_status: string
+          id?: string
+          influencer_id: string
+          next_step?: string | null
+          rate_amount?: number | null
+          rate_currency?: string | null
+          real_full_name?: string | null
+          scheduled_post_date?: string | null
+          sequence_id: string
+          sequence_step?: number
+          tags?: string[]
+          updated_at?: string
+          video_details?: string | null
+        }
+        Update: {
+          added_by?: string
+          address_id?: string | null
+          company_id?: string
+          created_at?: string
+          email?: string | null
+          funnel_status?: string
+          id?: string
+          influencer_id?: string
+          next_step?: string | null
+          rate_amount?: number | null
+          rate_currency?: string | null
+          real_full_name?: string | null
+          scheduled_post_date?: string | null
+          sequence_id?: string
+          sequence_step?: number
+          tags?: string[]
+          updated_at?: string
+          video_details?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sequence_influencers_address_id_fkey"
+            columns: ["address_id"]
+            referencedRelation: "addresses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sequence_influencers_company_id_fkey"
+            columns: ["company_id"]
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sequence_influencers_influencer_id_fkey"
+            columns: ["influencer_id"]
+            referencedRelation: "influencers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sequence_influencers_sequence_id_fkey"
+            columns: ["sequence_id"]
+            referencedRelation: "sequences"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      sequence_steps: {
+        Row: {
+          created_at: string
+          email_delivery_status: string | null
+          email_id: string | null
+          email_send_at: string | null
+          email_tracking_status: string | null
+          id: string
+          name: string | null
+          params: string[]
+          sequence_id: string
+          step_number: number
+          template_id: string
+          updated_at: string
+          wait_time_hours: number
+        }
+        Insert: {
+          created_at?: string
+          email_delivery_status?: string | null
+          email_id?: string | null
+          email_send_at?: string | null
+          email_tracking_status?: string | null
+          id?: string
+          name?: string | null
+          params?: string[]
+          sequence_id: string
+          step_number?: number
+          template_id: string
+          updated_at?: string
+          wait_time_hours?: number
+        }
+        Update: {
+          created_at?: string
+          email_delivery_status?: string | null
+          email_id?: string | null
+          email_send_at?: string | null
+          email_tracking_status?: string | null
+          id?: string
+          name?: string | null
+          params?: string[]
+          sequence_id?: string
+          step_number?: number
+          template_id?: string
+          updated_at?: string
+          wait_time_hours?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sequence_steps_sequence_id_fkey"
+            columns: ["sequence_id"]
+            referencedRelation: "sequences"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      sequences: {
+        Row: {
+          auto_start: boolean
+          company_id: string
+          created_at: string
+          id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          auto_start?: boolean
+          company_id: string
+          created_at?: string
+          id?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          auto_start?: boolean
+          company_id?: string
+          created_at?: string
+          id?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sequences_company_id_fkey"
+            columns: ["company_id"]
+            referencedRelation: "companies"
             referencedColumns: ["id"]
           }
         ]

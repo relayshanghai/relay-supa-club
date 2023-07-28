@@ -278,6 +278,140 @@ OR REPLACE FUNCTION create_campaign_creator(
     END;
 $$;
 
+CREATE
+OR REPLACE FUNCTION create_sequence(
+  company_id UUID,
+  name TEXT
+) RETURNS RECORD SECURITY DEFINER LANGUAGE plpgsql AS $$
+    DECLARE
+      _row RECORD;
+    BEGIN
+      INSERT INTO sequences
+        (
+          id,
+          created_at,
+          updated_at,
+          company_id,
+          name,
+          auto_start
+        )
+      VALUES
+        (
+          uuid_generate_v4(),
+          now(),
+          now(),
+          company_id,
+          name,
+          false
+        )
+      RETURNING * INTO _row;
+      RETURN _row;
+    END;
+$$;
+
+CREATE
+OR REPLACE FUNCTION create_sequence_steps(
+  sequence_id UUID,
+  name TEXT,
+  params TEXT[],
+  template_id TEXT,
+  step_number NUMERIC,
+  wait_time_hours NUMERIC,
+  email_delivery_status TEXT,
+  email_tracking_status TEXT
+) RETURNS RECORD SECURITY DEFINER LANGUAGE plpgsql AS $$
+    DECLARE
+      _row RECORD;
+    BEGIN
+      INSERT INTO sequence_steps
+        (
+          id,
+          created_at,
+          updated_at,
+          sequence_id,
+          name,
+          params,
+          template_id,
+          step_number,
+          wait_time_hours,
+          email_delivery_status,
+          email_tracking_status
+        )
+      VALUES
+        (
+          uuid_generate_v4(),
+          now(),
+          now(),
+          sequence_id,
+          name,
+          params,
+          template_id,
+          step_number,
+          wait_time_hours,
+          email_delivery_status,
+          email_tracking_status
+        )
+      RETURNING * INTO _row;
+      RETURN _row;
+    END;
+$$;
+
+CREATE
+OR REPLACE FUNCTION create_sequence_influencer(
+  company_id UUID,
+  sequence_id UUID,
+  added_by UUID,
+  influencer_id UUID,
+  email TEXT
+) RETURNS RECORD SECURITY DEFINER LANGUAGE plpgsql AS $$
+    DECLARE
+      _row RECORD;
+    BEGIN
+      INSERT INTO sequence_influencers
+        (
+          id,
+          created_at,
+          updated_at,
+          company_id,
+          sequence_id,
+          added_by,
+          email,
+          funnel_status,
+          influencer_id,
+          next_step,
+          rate_amount,
+          rate_currency,
+          real_full_name,
+          scheduled_post_date,
+          sequence_step,
+          tags,
+          video_details 
+        )
+      VALUES
+        (
+          uuid_generate_v4(),
+          now(),
+          now(),
+          company_id,
+          sequence_id,
+          added_by,
+          email,
+          'To Contact',
+          influencer_id,
+          'next_step',
+          543,
+          'USD',
+          'real_full_name',
+          '2027-01-01 00:00:00.000000+00',
+          0,
+          ARRAY['tag1', 'tag2'],
+          'video_details'           
+        )
+      RETURNING * INTO _row;
+      RETURN _row;
+    END;
+$$;
+
 CREATE OR REPLACE FUNCTION create_influencer(
   _name TEXT,
   _email TEXT,
@@ -442,6 +576,7 @@ DECLARE
   _profile_william RECORD;
   _profile_christopher RECORD;
   _campaign_beauty_for_all RECORD;
+  _sequence_beauty_for_all RECORD;
   _campaign_gaming RECORD;
   _profile_relay_employee RECORD;
   _influencer_alice RECORD;
@@ -484,6 +619,37 @@ BEGIN
     allowing everyone to feel confident and beautiful.',
     'Shade Range Makeup',
     ARRAY['beauty','inclusivity','makeup','diversity','confidence']
+  );
+
+  _sequence_beauty_for_all := create_sequence(
+    _company_test.id,
+    'Beauty for All Skin Tones'
+  );
+
+  PERFORM create_sequence_steps(
+    _sequence_beauty_for_all.id,
+    'Outreach Email',
+    ARRAY[
+      'platform', 'channel', 'companyName', 'outreachPersonName'
+    ],
+    'AAABiYr-poEAAAAC',
+    0,
+    0,
+    'Scheduled',
+    NULL
+  );
+
+  PERFORM create_sequence_steps(
+    _sequence_beauty_for_all.id,
+    'Follow Up Email 1',
+    ARRAY[
+      'channel', 'companyName', 'outreachPersonName'
+    ],
+    'AAABiYsMUIAAAAAD',
+    1,
+    1,
+    'Delivered',
+    'Opened'
   );
 
   PERFORM create_campaign_creator(
@@ -534,6 +700,31 @@ BEGIN
     'iqdata_3',
     'bob2'
   );
+
+  PERFORM create_sequence_influencer(
+    _company_test.id,
+    _sequence_beauty_for_all.id,
+    _profile_william.id,
+    _influencer_alice.id,
+    'influencer_alice@example.com'
+  );
+
+  PERFORM create_sequence_influencer(
+    _company_test.id,
+    _sequence_beauty_for_all.id,
+    _profile_william.id,
+    _influencer_bob.id,
+    'influencer_bob@example.com'
+  );
+
+  PERFORM create_sequence_influencer(
+    _company_test.id,
+    _sequence_beauty_for_all.id,
+    _profile_william.id,
+    _influencer_charlie.id,
+    'influencer_charlie@example.com'
+  );    
+
   -- Influencer 3 will have no social profiles so we can handle this edge case
 
   _influencer_post_alice_1 := create_influencer_post(
@@ -660,5 +851,7 @@ DROP FUNCTION IF EXISTS create_influencer;
 DROP FUNCTION IF EXISTS create_influencer_social_profile;
 DROP FUNCTION IF EXISTS create_influencer_post;
 DROP FUNCTION IF EXISTS create_posts_performance;
-
+DROP FUNCTION IF EXISTS create_sequence;
+DROP FUNCTION IF EXISTS create_sequence_influencer;
+DROP FUNCTION IF EXISTS create_sequence_steps;
 COMMIT;
