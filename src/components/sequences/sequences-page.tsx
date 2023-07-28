@@ -7,14 +7,27 @@ import type { SendEmailPostRequestBody } from 'pages/api/email-engine/send-email
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
 import { SequenceStats } from './sequence-stats';
+import { useUser } from 'src/hooks/use-user';
+import { useCompany } from 'src/hooks/use-company';
 
-const sendEmail = async (account: string, toEmail: string, html: string, sendAt: string) => {
+
+const sendEmail = async (
+    account: string,
+    toEmail: string,
+    template: string,
+    sendAt: string,
+    params: Record<string, string>,
+) => {
     try {
         const body: SendEmailPostRequestBody = {
             account,
             to: [{ address: toEmail }],
             subject: 'testing Email Sequence',
-            html,
+            template,
+            render: {
+                format: 'html',
+                params,
+            },
             trackingEnabled: true,
             sendAt,
         };
@@ -27,15 +40,20 @@ const sendEmail = async (account: string, toEmail: string, html: string, sendAt:
         return error.message;
     }
 };
-
-const sendSequence = async (account: string, sequence: Sequence, influencer: SequenceInfluencer) => {
+/** TODO: move 'send sequence' to the sever, because the emails need to be sent sequentially, not in parallel, so if the user navigates away it could cause some emails to be unsent. */
+const sendSequence = async (
+    account: string,
+    sequence: Sequence,
+    influencer: SequenceInfluencer,
+    params: Record<string, string>,
+) => {
     const results = [];
     for (const step of sequence.steps) {
         const sendAt = new Date();
         //add the step's waitTimeHrs to the sendAt date
         sendAt.setHours(sendAt.getHours() + step.waitTimeHrs);
-        const { html } = step;
-        const res = await sendEmail(account, influencer.email, html, sendAt.toISOString());
+        const { templateId } = step;
+        const res = await sendEmail(account, influencer.email, templateId, sendAt.toISOString(), params);
         results.push({
             ...res,
             ...influencer,
@@ -45,13 +63,21 @@ const sendSequence = async (account: string, sequence: Sequence, influencer: Seq
     return results;
 };
 export const SequencesPage = () => {
+    const { profile } = useUser();
+    const { company } = useCompany();
     const sequence = mockSequence;
     const influencers = mockInfluencers;
 
     const handleStartSequence = async () => {
         const allResults = [];
         for (const influencer of influencers) {
-            const results = await sendSequence(testAccount, sequence, influencer);
+            const params = {
+                companyName: company?.name ?? '',
+                outreachPersonName: profile?.first_name ?? '',
+                channel: influencer.channel,
+                platform: influencer.platform,
+            };
+            const results = await sendSequence(testAccount, sequence, influencer, params);
             allResults.push(results);
         }
         clientLogger(allResults);

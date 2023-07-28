@@ -10,7 +10,7 @@ const time = new Date().toISOString();
 
 export const logRateLimitError = async (action: string, context: { req: NextApiRequest; res: NextApiResponse }) => {
     const supabase = createServerSupabaseClient<DatabaseWithCustomTypes>(context);
-    const { user_id, company_id } = await getUserSession(supabase)();
+    const { user_id, company_id, fullname, email } = await getUserSession(supabase)();
     const reqBody: SlackMessage = {
         blocks: [
             {
@@ -34,6 +34,14 @@ export const logRateLimitError = async (action: string, context: { req: NextApiR
                     },
                     {
                         type: 'mrkdwn',
+                        text: `*Name:*\n${fullname}`,
+                    },
+                    {
+                        type: 'mrkdwn',
+                        text: `*Email ID:*\n${email}`,
+                    },
+                    {
+                        type: 'mrkdwn',
                         text: `*Action:*\n\`${action}\``,
                     },
                     {
@@ -50,7 +58,7 @@ export const logRateLimitError = async (action: string, context: { req: NextApiR
 
 export const logDailyTokensError = async (action: string, context: { req: NextApiRequest; res: NextApiResponse }) => {
     const supabase = createServerSupabaseClient<DatabaseWithCustomTypes>(context);
-    const { user_id, company_id } = await getUserSession(supabase)();
+    const { user_id, company_id, fullname, email } = await getUserSession(supabase)();
 
     const reqBody: SlackMessage = {
         blocks: [
@@ -72,6 +80,14 @@ export const logDailyTokensError = async (action: string, context: { req: NextAp
                     {
                         type: 'mrkdwn',
                         text: `*User ID:*\n${user_id}`,
+                    },
+                    {
+                        type: 'mrkdwn',
+                        text: `*Name:*\n${fullname}`,
+                    },
+                    {
+                        type: 'mrkdwn',
+                        text: `*Email ID:*\n${email}`,
                     },
                     {
                         type: 'mrkdwn',
