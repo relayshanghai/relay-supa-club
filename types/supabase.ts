@@ -3,7 +3,7 @@ export type Json =
   | number
   | boolean
   | null
-  | { [key: string]: Json }
+  | { [key: string]: Json | undefined }
   | Json[]
 
 export interface Database {
@@ -983,7 +983,7 @@ export interface Database {
           email_id?: string | null
           email_send_at?: string | null
           email_tracking_status?: string | null
-          id: string
+          id?: string
           name?: string | null
           params?: string[]
           sequence_id: string
