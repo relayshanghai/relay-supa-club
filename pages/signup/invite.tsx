@@ -88,6 +88,7 @@ export default function Register() {
                 firstName,
                 lastName,
                 email,
+                phone: phoneNumber,
             });
             if (!res.id) {
                 throw new Error('Error accepting invite');
@@ -115,7 +116,19 @@ export default function Register() {
         } finally {
             setRegistering(false);
         }
-    }, [acceptInvite, email, firstName, lastName, login, password, router, supabaseClient?.auth, t, token]);
+    }, [
+        acceptInvite,
+        email,
+        firstName,
+        lastName,
+        login,
+        password,
+        phoneNumber,
+        router,
+        supabaseClient?.auth,
+        t,
+        token,
+    ]);
     if (!token)
         return (
             <div className="mx-auto flex h-full flex-col items-center justify-center space-y-6">
