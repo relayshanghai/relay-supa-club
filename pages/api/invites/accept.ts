@@ -1,9 +1,11 @@
+/* eslint-disable complexity */
 import type { User } from '@supabase/supabase-js';
 import type { NextApiHandler } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { acceptInviteErrors } from 'src/errors/company';
 import { inviteStatusErrors, loginValidationErrors } from 'src/errors/login';
 import type { InviteStatusError } from 'src/errors/login';
+import { ApiHandler, RelayError } from 'src/utils/api-handler';
 import { getInviteById, getInviteValidityData, insertProfile, markInviteUsed, updateUserRole } from 'src/utils/api/db';
 import { serverLogger } from 'src/utils/logger-server';
 import { supabase } from 'src/utils/supabase-client';
@@ -15,6 +17,7 @@ export type CompanyAcceptInvitePostBody = {
     firstName: string;
     lastName: string;
     email: string;
+    phone?: string;
 };
 export type CompanyAcceptInvitePostResponse = User;
 
@@ -26,64 +29,65 @@ export type CompanyAcceptInviteGetResponse = {
     email?: string;
 };
 
-const handlePost: NextApiHandler = async (req, res) => {
+const postHandler: NextApiHandler = async (req, res) => {
+    const { token, password, firstName, lastName, phone } = req.body as CompanyAcceptInvitePostBody;
+    if (!token || !password || !firstName || !lastName) {
+        throw new RelayError(loginValidationErrors.missingRequiredFields, httpCodes.UNAUTHORIZED);
+    }
+
+    const passwordInvalid = validatePassword(password);
+    if (passwordInvalid) {
+        throw new RelayError('invalid password', httpCodes.UNAUTHORIZED);
+    }
+
+    const { data: invite } = await getInviteById(token);
+
+    if (!invite?.company_id) {
+        throw new RelayError(acceptInviteErrors.inviteInvalid, httpCodes.UNAUTHORIZED);
+    }
+
+    if (invite?.used || Date.now() >= new Date(invite.expire_at ?? '').getTime()) {
+        throw new RelayError(acceptInviteErrors.inviteInvalid, httpCodes.UNAUTHORIZED);
+    }
+
+    // Sign-up the user with the given credentials
+    const {
+        data: { user },
+        error: userError,
+    } = await supabase.auth.admin.createUser({
+        email: invite.email,
+        password,
+        email_confirm: true,
+    });
+
+    if (userError) {
+        // supabase returns this error if the user already exists
+        if (userError?.message === 'User already registered') {
+            throw new RelayError(acceptInviteErrors.userAlreadyRegistered, httpCodes.BAD_REQUEST);
+        }
+        serverLogger(userError, 'error');
+        throw new RelayError('Signup failed', httpCodes.BAD_REQUEST);
+    }
+    if (!user?.id) {
+        throw new RelayError('User not found', httpCodes.BAD_REQUEST);
+    }
+
     try {
-        const { token, password, firstName, lastName } = req.body as CompanyAcceptInvitePostBody;
-        if (!token || !password || !firstName || !lastName) {
-            return res.status(httpCodes.BAD_REQUEST).json({
-                error: loginValidationErrors.missingRequiredFields,
-            });
-        }
-        const passwordInvalid = validatePassword(password);
-        if (passwordInvalid) {
-            return res.status(httpCodes.BAD_REQUEST).json({
-                error: passwordInvalid,
-            });
-        }
-
-        const invite = await getInviteById(token);
-
-        if (!invite?.company_id) {
-            return res.status(httpCodes.UNAUTHORIZED).json({
-                error: acceptInviteErrors.inviteInvalid,
-            });
-        }
-
-        if (invite?.used || Date.now() >= new Date(invite.expire_at ?? '').getTime()) {
-            return res.status(httpCodes.UNAUTHORIZED).json({
-                error: acceptInviteErrors.inviteInvalid,
-            });
-        }
-
-        // Sign-up the user with the given credentials
-        const {
-            data: { user },
-            error: userError,
-        } = await supabase.auth.signUp({
-            email: invite.email,
-            password,
-        });
-
-        if (userError) {
-            // supabase returns this error if the user already exists
-            if (userError?.message === 'User already registered') {
-                return res.status(httpCodes.BAD_REQUEST).json({ error: acceptInviteErrors.userAlreadyRegistered });
-            }
-            serverLogger(userError, 'error');
-            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
-        }
-        if (!user?.id) {
-            throw new Error('User not found');
-        }
         const profileBody = {
             id: user.id,
             first_name: firstName,
             last_name: lastName,
             company_id: invite.company_id,
+            email: invite.email,
+            phone,
         };
-        const { error: profileError } = await insertProfile(profileBody);
+        const { data: profile, error: profileError } = await insertProfile(profileBody);
+
         if (profileError) {
-            throw new Error(profileError.message);
+            throw new RelayError(profileError.message, httpCodes.BAD_REQUEST);
+        }
+        if (!profile.email || profile.email !== invite.email) {
+            throw new RelayError('Error creating profile', httpCodes.BAD_REQUEST);
         }
 
         const { error: updateRoleError } = await updateUserRole(
@@ -92,57 +96,41 @@ const handlePost: NextApiHandler = async (req, res) => {
         );
 
         if (updateRoleError) {
-            throw new Error(updateRoleError.message);
+            throw new RelayError(updateRoleError.message, httpCodes.BAD_REQUEST);
         }
 
         await markInviteUsed(token);
         const returnData: CompanyAcceptInvitePostResponse = user;
 
         return res.status(httpCodes.OK).json(returnData);
-    } catch (error) {
-        serverLogger(error, 'error', true);
-        return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
+    } catch (error: any) {
+        // if any errors, delete the half-formed account
+        const { error: profileDeleteError } = await supabase.from('profiles').delete().match({ id: user.id });
+        const { data, error: authDeleteError } = await supabase.auth.admin.deleteUser(user.id);
+        serverLogger({ profileDeleteError, authDeleteError, data }, 'error');
+        throw new RelayError(error.message, httpCodes.BAD_REQUEST);
     }
 };
-const handleGet: NextApiHandler = async (req, res) => {
-    try {
-        const { token } = req.query as CompanyAcceptInviteGetQueries;
-        if (!token) return res.status(httpCodes.BAD_REQUEST).json({ error: 'Missing token' });
-        const { data, error } = await getInviteValidityData(token);
-        if (error) {
-            serverLogger(error, 'error');
-            const response: { error: InviteStatusError } = {
-                error: inviteStatusErrors.inviteInvalid,
-            };
-            return res.status(httpCodes.UNAUTHORIZED).json(response);
-        }
-        if (data?.used) {
-            const response: { error: InviteStatusError } = {
-                error: inviteStatusErrors.inviteUsed,
-            };
-            return res.status(httpCodes.UNAUTHORIZED).json(response);
-        }
-        if (Date.now() >= new Date(data.expire_at ?? '').getTime()) {
-            const response: { error: InviteStatusError } = {
-                error: inviteStatusErrors.inviteExpired,
-            };
-            return res.status(httpCodes.UNAUTHORIZED).json(response);
-        }
-        return res.status(httpCodes.OK).json({ message: 'inviteValid', email: data.email });
-    } catch (error) {
+const getHandler: NextApiHandler = async (req, res) => {
+    const { token } = req.query as CompanyAcceptInviteGetQueries;
+    if (!token) {
+        throw new RelayError('Missing token', httpCodes.BAD_REQUEST);
+    }
+    const { data, error } = await getInviteValidityData(token);
+    if (error) {
         serverLogger(error, 'error');
-        return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({ message: 'Something went wrong' });
+        throw new RelayError(inviteStatusErrors.inviteInvalid, httpCodes.UNAUTHORIZED);
     }
-};
-const handler: NextApiHandler = async (req, res) => {
-    if (req.method === 'POST') {
-        return await handlePost(req, res);
+    if (data?.used) {
+        throw new RelayError(inviteStatusErrors.inviteUsed, httpCodes.UNAUTHORIZED);
     }
-    if (req.method === 'GET') {
-        return await handleGet(req, res);
+    if (Date.now() >= new Date(data.expire_at ?? '').getTime()) {
+        throw new RelayError(inviteStatusErrors.inviteExpired, httpCodes.UNAUTHORIZED);
     }
-
-    return res.status(httpCodes.METHOD_NOT_ALLOWED).json({});
+    return res.status(httpCodes.OK).json({ message: 'inviteValid', email: data.email });
 };
 
-export default handler;
+export default ApiHandler({
+    postHandler,
+    getHandler,
+});
