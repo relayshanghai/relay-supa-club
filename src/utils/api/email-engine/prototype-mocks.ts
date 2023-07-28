@@ -17,10 +17,8 @@ export const GMAIL_ALL_MAIL = '[Gmail]/All Mail';
 
 export const GMAIL_SENT_SPECIAL_USE_FLAG = '\\Sent';
 
-export const testAccount = 'ncpdcqbtytt108lk'; // ellie.relay@gmail.com on prod
-export const testEmail = 'ellie.relay@gmail.com';
-// export const testAccount = 'fyasv5klfoioc1hx'; // relayemailertest@gmail.com
-// export const testEmail = 'relayemailertest@gmail.com';
+export const testAccount = 'fyasv5klfoioc1hx'; // relayemailertest@gmail.com
+export const testEmail = 'relayemailertest@gmail.com';
 
 export const mockInfluencers: SequenceInfluencer[] = [
     {
