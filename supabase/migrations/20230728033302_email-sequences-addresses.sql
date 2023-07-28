@@ -50,7 +50,7 @@ CREATE TABLE "public"."sequence_influencers" (
 
 
 CREATE TABLE "public"."sequence_steps" (
-  "id" uuid NOT NULL,
+  "id" uuid NOT NULL DEFAULT gen_random_uuid(),
   "created_at" timestamp with time zone NOT NULL DEFAULT now(),
   "updated_at" timestamp with time zone NOT NULL DEFAULT now(),
   "name" text,
@@ -83,6 +83,8 @@ ALTER TABLE "public"."company_categories" ADD COLUMN "product_id" uuid;
 ALTER TABLE "public"."influencer_posts" ADD COLUMN "sequence_id" uuid;
 
 ALTER TABLE "public"."influencer_posts" ADD COLUMN "sequence_influencer_id" uuid;
+
+ALTER TABLE "public"."usages" ALTER COLUMN "id" SET DEFAULT gen_random_uuid();
 
 CREATE UNIQUE INDEX addresses_pkey ON public.addresses USING btree(id);
 
