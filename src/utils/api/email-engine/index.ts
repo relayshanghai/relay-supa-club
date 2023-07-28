@@ -29,13 +29,13 @@ const getEmailsPath = (account: string, mailboxPath: string, page = 0, pageSize 
         documentStore: String(documentStore),
     })}`;
 
-const getEmailTextPath = (account: string, messageId: string, textType: TextType, documentStore = false) =>
+const getEmailTextPath = (account: string, messageId: string, textType: TextType, documentStore = true) =>
     `account/${encodeURIComponent(account)}/text/${encodeURIComponent(messageId)}?${new URLSearchParams({
         textType,
         documentStore: String(documentStore),
     })}`;
 
-const searchMailboxPath = (account: string, mailboxPath: string, page = 0, pageSize = 20, documentStore = false) =>
+const searchMailboxPath = (account: string, mailboxPath: string, page = 0, pageSize = 20, documentStore = true) =>
     `account/${encodeURIComponent(account)}/search?${new URLSearchParams({
         path: mailboxPath,
         page: String(page),
