@@ -49,7 +49,7 @@ export default function Carousel({ slides, autoSlide = false, autoSlideInterval 
                 <div className="absolute inset-0 flex items-center justify-between p-3">
                     <button
                         onClick={() => {
-                            prevSlide;
+                            prevSlide();
                             trackEvent(CAROUSEL('click to go to previous slide'));
                         }}
                         className="hidden rounded-full bg-white/50 p-1 text-gray-800 shadow hover:bg-white group-hover:block"
@@ -58,7 +58,7 @@ export default function Carousel({ slides, autoSlide = false, autoSlideInterval 
                     </button>
                     <button
                         onClick={() => {
-                            nextSlide;
+                            nextSlide();
                             trackEvent(CAROUSEL('click to go to next slide'));
                         }}
                         className="hidden rounded-full bg-white/50 p-1 text-gray-800 shadow hover:bg-white group-hover:block"
