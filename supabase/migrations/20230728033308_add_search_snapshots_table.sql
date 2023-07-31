@@ -3,6 +3,7 @@ CREATE TABLE "public"."search_snapshots" (
   "event_id" uuid,
   "company_id" uuid,
   "profile_id" uuid,
+  "parameter_id" uuid,
   "snapshot" jsonb NOT NULL,
   "created_at" timestamp with time zone DEFAULT now()
 );
@@ -25,3 +26,7 @@ ALTER TABLE "public"."search_snapshots" VALIDATE CONSTRAINT "search_snapshots_ev
 ALTER TABLE "public"."search_snapshots" ADD CONSTRAINT "search_snapshots_profile_id_fkey" FOREIGN KEY (profile_id) REFERENCES profiles (id) ON DELETE SET NULL NOT VALID;
 
 ALTER TABLE "public"."search_snapshots" VALIDATE CONSTRAINT "search_snapshots_profile_id_fkey";
+
+ALTER TABLE "public"."search_snapshots" ADD CONSTRAINT "search_snapshots_parameter_id_fkey" FOREIGN KEY (parameter_id) REFERENCES search_parameters (id) ON DELETE SET NULL NOT VALID;
+
+ALTER TABLE "public"."search_snapshots" VALIDATE CONSTRAINT "search_snapshots_parameter_id_fkey";
