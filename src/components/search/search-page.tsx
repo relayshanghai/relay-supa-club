@@ -82,6 +82,7 @@ export const SearchPageInner = () => {
                     payload: {
                         event_id: results.__metadata?.event_id,
                         snapshot_id: results.__metadata?.snapshot_id,
+                        parameters_id: results.__metadata?.parameters_id,
                         parameters: searchParams,
                         page: searchParams.page,
                     },
@@ -115,6 +116,7 @@ export const SearchPageInner = () => {
                 payload: {
                     event_id: result.__metadata?.event_id,
                     snapshot_id: result.__metadata?.snapshot_id,
+                    parameters_id: result.__metadata?.parameters_id,
                     parameters: searchParams,
                     page: searchParams.page,
                 },

@@ -5,6 +5,7 @@ export const SEARCH = 'search';
 export type SearchPayload = EventPayload<{
     event_id: string | null;
     snapshot_id: string | null;
+    parameters_id: string | null;
     parameters: any;
     page?: number;
 }>;

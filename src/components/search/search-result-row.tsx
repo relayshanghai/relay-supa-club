@@ -58,8 +58,9 @@ export const MoreResultsRows = ({
                 event: SearchLoadMoreResults,
                 controller,
                 payload: {
-                    event_id: result.__metadata.event_id,
-                    snapshot_id: result.__metadata.snapshot_id,
+                    event_id: result.__metadata?.event_id,
+                    snapshot_id: result.__metadata?.snapshot_id,
+                    parameters_id: result.__metadata?.parameters_id,
                     parameters: searchParams,
                     page: searchParams.page ?? 0,
                 },

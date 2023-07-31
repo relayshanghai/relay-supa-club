@@ -5,6 +5,7 @@ export const SEARCH_DEFAULT = 'search-default';
 export type SearchDefaultPayload = EventPayload<{
     event_id: string | null;
     snapshot_id: string | null;
+    parameters_id: string | null;
     parameters: any;
     page?: number;
 }>;

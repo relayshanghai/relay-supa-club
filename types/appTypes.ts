@@ -119,5 +119,6 @@ export type SearchResultMetadata = {
     __metadata?: {
         event_id: string;
         snapshot_id: string;
+        parameters_id: string;
     };
 };

@@ -113,18 +113,15 @@ export const createTrack = <T extends TrackedEvent>(ctx: ServerContext) => {
 
 export type CreateSearchSnapshotParams = {
     event_id?: string;
-    payload: {
-        parameters: any;
-        results: any;
-    };
+    parameters_id: string;
+    parameters: any;
+    results: any;
 };
 
 export type CreateAnalyzeSnapshotParams = {
     event_id?: string;
-    payload: {
-        parameters: any;
-        results: any;
-    };
+    parameters: any;
+    results: any;
 };
 
 export const createSearchSnapshot = async (ctx: ServerContext, payload: CreateSearchSnapshotParams) => {
@@ -132,7 +129,7 @@ export const createSearchSnapshot = async (ctx: ServerContext, payload: CreateSe
     const supabase = createServerSupabaseClient<DatabaseWithCustomTypes>(ctx);
     const { profile_id, company_id } = await getUserSession(supabase)();
 
-    const { event_id, ...snapshot } = payload;
+    const { event_id, parameters_id, ...snapshot } = payload;
 
     const displayed = [
         'accounts.account.fullname',
@@ -147,6 +144,7 @@ export const createSearchSnapshot = async (ctx: ServerContext, payload: CreateSe
         event_id,
         profile_id,
         company_id,
+        parameters_id,
         snapshot: { ...snapshot, displayed },
     };
 

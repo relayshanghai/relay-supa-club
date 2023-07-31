@@ -38,10 +38,8 @@ const trackAndSnap = async (
     await createReportSnapshot(
         { req, res },
         {
-            payload: {
-                parameters: req.body,
-                results: data,
-            },
+            parameters: req.body,
+            results: data,
             event_id: result.id,
         },
     );

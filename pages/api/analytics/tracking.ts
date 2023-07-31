@@ -3,12 +3,11 @@ import httpCodes from 'src/constants/httpCodes';
 import { ApiHandler } from 'src/utils/api-handler';
 import { z } from 'zod';
 import { now } from 'src/utils/datetime';
-import { createSearchParameter, createTrack } from 'src/utils/analytics/api/analytics';
-import events, { Search, SearchDefault, SearchLoadMoreResults, eventKeys } from 'src/utils/analytics/events';
+import { createTrack } from 'src/utils/analytics/api/analytics';
+import events, { eventKeys } from 'src/utils/analytics/events';
 import { db } from 'src/utils/supabase-client';
 import { getSearchSnapshot, insertSearchSnapshot, updateSearchSnapshot } from 'src/utils/api/db/calls/search_snapshots';
 import type { FetchCreatorsFilteredParams} from 'src/utils/api/iqdata/transforms';
-import { prepareFetchCreatorsFiltered } from 'src/utils/api/iqdata/transforms';
 import { ztype } from 'src/utils/zod';
 
 const PostRequestBody = z.object({
@@ -46,18 +45,9 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         }
     }
 
-    let searchParameter = null;
-
-    if (event === Search.eventName || event === SearchDefault.eventName || event === SearchLoadMoreResults.eventName) {
-        const { platform, body } = prepareFetchCreatorsFiltered(payload.parameters);
-        const parameters = { query: { platform }, body };
-        searchParameter = await db<typeof createSearchParameter>(createSearchParameter)(parameters);
-    }
-
     return res.status(httpCodes.OK).json({
         result,
         snapshot,
-        parameter: searchParameter,
     });
 };
 
