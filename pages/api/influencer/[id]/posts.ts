@@ -66,7 +66,11 @@ const getHandler: NextApiHandler = async (req: NextApiRequest, res: NextApiRespo
     }
 
     if (!creator.influencer_social_profiles_id) {
-        creator = await patchCampaignCreatorWithoutInfluencerSocial(creator, { req, res });
+        const metadata = {
+            creator,
+            action: 'influencer-posts',
+        };
+        creator = await patchCampaignCreatorWithoutInfluencerSocial(creator, { req, res, metadata });
     }
 
     const posts = await _getInfluencerPostsBySocialProfile(creator.influencer_social_profiles_id);
