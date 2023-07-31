@@ -1,14 +1,14 @@
 import { getUserSession } from './../analytics';
-import type { NextApiRequest, NextApiResponse } from 'next';
 import { sendSlackMessage } from '.';
 import type { SlackMessage } from '.';
 import { ALTERT_INCOMING_WEBHOOK_URL } from './constants';
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
 import type { DatabaseWithCustomTypes } from 'types';
+import type { ServerContext } from '../iqdata';
 
 const time = new Date().toISOString();
 
-export const logRateLimitError = async (action: string, context: { req: NextApiRequest; res: NextApiResponse }) => {
+export const logRateLimitError = async (action: string, context: ServerContext) => {
     const supabase = createServerSupabaseClient<DatabaseWithCustomTypes>(context);
     const { user_id, company_id, fullname, email } = await getUserSession(supabase)();
     const reqBody: SlackMessage = {
@@ -53,10 +53,19 @@ export const logRateLimitError = async (action: string, context: { req: NextApiR
         ],
     };
 
+    if (reqBody.blocks[1].fields && context.metadata) {
+        const metadata = JSON.stringify(context.metadata);
+
+        reqBody.blocks[1].fields.push({
+            type: 'mrkdwn',
+            text: `*Extra Context:*\n\`${metadata}\``,
+        });
+    }
+
     ALTERT_INCOMING_WEBHOOK_URL && (await sendSlackMessage(ALTERT_INCOMING_WEBHOOK_URL, reqBody));
 };
 
-export const logDailyTokensError = async (action: string, context: { req: NextApiRequest; res: NextApiResponse }) => {
+export const logDailyTokensError = async (action: string, context: ServerContext) => {
     const supabase = createServerSupabaseClient<DatabaseWithCustomTypes>(context);
     const { user_id, company_id, fullname, email } = await getUserSession(supabase)();
 
@@ -101,6 +110,15 @@ export const logDailyTokensError = async (action: string, context: { req: NextAp
             },
         ],
     };
+
+    if (reqBody.blocks[1].fields && context.metadata) {
+        const metadata = JSON.stringify(context.metadata);
+
+        reqBody.blocks[1].fields.push({
+            type: 'mrkdwn',
+            text: `*Extra Context:*\n\`${metadata}\``,
+        });
+    }
 
     ALTERT_INCOMING_WEBHOOK_URL && (await sendSlackMessage(ALTERT_INCOMING_WEBHOOK_URL, reqBody));
 };

@@ -7,9 +7,7 @@ export const getInvitesByCompany = async (companyId: string) => {
 };
 
 export const getInviteById = async (inviteId: string) => {
-    const { data, error } = await supabase.from('invites').select().eq('id', inviteId).limit(1).single();
-    if (error) throw error;
-    return data;
+    return await supabase.from('invites').select().eq('id', inviteId).limit(1).single();
 };
 
 export const markInviteUsed = async (inviteId: string) => {

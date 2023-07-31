@@ -6,8 +6,10 @@ import { Button } from '../button';
 import type { SendEmailPostRequestBody } from 'pages/api/email-engine/send-email';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
+import { SequenceStats } from './sequence-stats';
 import { useUser } from 'src/hooks/use-user';
 import { useCompany } from 'src/hooks/use-company';
+
 
 const sendEmail = async (
     account: string,
@@ -83,9 +85,11 @@ export const SequencesPage = () => {
 
     return (
         <Layout>
-            <div className="space-x-4 space-y-4 p-4">
-                <h1 className="text-lg font-bold">{sequence.name}</h1>
-                <Button onClick={handleStartSequence}>Start</Button>
+            <div className="flex flex-col space-x-4 space-y-4 p-4">
+                <SequenceStats />
+                <Button onClick={handleStartSequence} className="w-fit self-end">
+                    Start
+                </Button>
                 <SequenceTable influencers={influencers} />
             </div>
         </Layout>

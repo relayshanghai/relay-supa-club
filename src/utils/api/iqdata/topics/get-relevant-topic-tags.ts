@@ -1,5 +1,5 @@
 import type { CreatorPlatform } from 'types';
-import { apiFetch } from '../../api-fetch';
+import { apiFetch } from '../api-fetch';
 import { headers } from 'src/utils/api/iqdata/constants';
 
 export type GetRelevantTopicTagsPayload = {

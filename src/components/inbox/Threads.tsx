@@ -4,7 +4,8 @@ import { clientLogger } from 'src/utils/logger-client';
 import dateFormat from 'src/utils/dateFormat';
 import { getMessageText } from 'src/utils/api/email-engine/handle-messages';
 import { cleanEmailBody } from 'src/utils/clean-html';
-import { GMAIL_SENT } from 'src/utils/api/email-engine/prototype-mocks';
+import { testEmail } from 'src/utils/api/email-engine/prototype-mocks';
+import CommentCardsSkeleton from '../campaigns/comment-cards-skeleton';
 
 export interface ThreadMessage {
     subject: string;
@@ -25,26 +26,25 @@ export const Threads = ({ messages }: { messages: SearchResponseMessage[] }) => 
     };
 
     const getThreadEmailText = useCallback(async (messages: SearchResponseMessage[]) => {
+        const newThreadMessages: ThreadMessage[] = [];
         setThreadMessages([]);
         setLoading(true);
         try {
-            messages.forEach(async (message) => {
+            for (const message of messages) {
                 if (!message.text.id) {
                     throw new Error('No text id');
                 }
                 const { html } = await getMessageText(message.text.id);
-                setThreadMessages((prev) => [
-                    ...prev,
-                    {
-                        subject: message.subject,
-                        id: message.id,
-                        from: message.from.name || message.from.address,
-                        date: message.date,
-                        text: html,
-                        isMe: message.path === GMAIL_SENT,
-                    },
-                ]);
-            });
+                newThreadMessages.push({
+                    subject: message.subject,
+                    id: message.id,
+                    from: message.from.name || message.from.address,
+                    date: message.date,
+                    text: html,
+                    isMe: message.from.address === testEmail,
+                });
+            }
+            setThreadMessages(newThreadMessages);
         } catch (error: any) {
             clientLogger(error, 'error');
             throw new Error('Error fetching thread: ' + error.message);
@@ -67,7 +67,7 @@ export const Threads = ({ messages }: { messages: SearchResponseMessage[] }) => 
     return (
         <div className="h-full overflow-y-auto">
             {loading ? (
-                <p>Loading...</p>
+                <CommentCardsSkeleton />
             ) : (
                 <div className="flex w-full flex-col space-y-6">
                     {threadMessages.map((message) => (
@@ -79,7 +79,7 @@ export const Threads = ({ messages }: { messages: SearchResponseMessage[] }) => 
                         >
                             <div className="mb-3 flex flex-wrap justify-between">
                                 <div className="text-sm font-semibold text-gray-700">{message.from}</div>
-                                <div className="text-xs">{dateFormat(message.date, 'isoTime', true, true)}</div>
+                                <div className="text-xs">{dateFormat(message.date, 'isoDateTime', true, true)}</div>
                             </div>
                             <div className="mb-2 text-xs font-semibold text-gray-500">{message.subject}</div>
                             <div
