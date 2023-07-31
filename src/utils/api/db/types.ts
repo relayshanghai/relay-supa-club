@@ -81,9 +81,16 @@ type SequenceStepDetailedTypes = {
     email_delivery_status: EmailDeliveryStatus;
     email_tracking_status: EmailTrackingStatus;
 };
-export type SequenceStep = Database['public']['Tables']['sequence_steps']['Row'] & SequenceStepDetailedTypes;
-export type SequenceStepInsert = Database['public']['Tables']['sequence_steps']['Insert'] & SequenceStepDetailedTypes;
-export type SequenceStepUpdate = Database['public']['Tables']['sequence_steps']['Update'] & SequenceStepDetailedTypes;
+
+export type SequenceStepsTable = Database['public']['Tables']['sequence_steps'] & {
+    Row: Database['public']['Tables']['sequence_steps']['Row'] & SequenceStepDetailedTypes;
+    Insert: Database['public']['Tables']['sequence_steps']['Insert'] & SequenceStepDetailedTypes;
+    Update: Database['public']['Tables']['sequence_steps']['Update'] & SequenceStepDetailedTypes;
+};
+
+export type SequenceStep = SequenceStepsTable['Row'];
+export type SequenceStepInsert = SequenceStepsTable['Insert'];
+export type SequenceStepUpdate = SequenceStepsTable['Update'];
 
 /** Ignored means it has gone through the whole sequence with no reply (+ 7 days) */
 export type FunnelStatus =
@@ -104,14 +111,15 @@ type SequenceInfluencerDetailedTypes = {
     funnel_status: FunnelStatus;
 };
 
-export type SequenceInfluencer = Database['public']['Tables']['sequence_influencers']['Row'] &
-    SequenceInfluencerDetailedTypes;
-export type SequenceInfluencerInsert = Database['public']['Tables']['sequence_influencers'] &
-    SequenceInfluencerDetailedTypes;
-['Insert'];
-export type SequenceInfluencerUpdate = Database['public']['Tables']['sequence_influencers'] &
-    SequenceInfluencerDetailedTypes;
-['Update'];
+export type SequenceInfluencersTable = Database['public']['Tables']['sequence_influencers'] & {
+    Row: Database['public']['Tables']['sequence_influencers']['Row'] & SequenceInfluencerDetailedTypes;
+    Insert: Database['public']['Tables']['sequence_influencers']['Insert'] & SequenceInfluencerDetailedTypes;
+    Update: Database['public']['Tables']['sequence_influencers']['Update'] & SequenceInfluencerDetailedTypes;
+};
+
+export type SequenceInfluencer = SequenceInfluencersTable['Row'];
+export type SequenceInfluencerInsert = SequenceInfluencersTable['Insert'];
+export type SequenceInfluencerUpdate = SequenceInfluencersTable['Update'];
 
 export type UsagesTable = Database['public']['Tables']['usages'] & {
     Row: Database['public']['Tables']['usages']['Row'] & {
