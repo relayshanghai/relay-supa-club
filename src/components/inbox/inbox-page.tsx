@@ -13,6 +13,7 @@ import {
     getInBoxMessages,
     getInboxThreadMessages,
     getSentThreadMessages,
+    updateMessageAsSeen,
 } from 'src/utils/api/email-engine/handle-messages';
 
 export const InboxPage = () => {
@@ -81,7 +82,6 @@ export const InboxPage = () => {
                 return new Date(a.date).getTime() - new Date(b.date).getTime();
             });
             setSelectedMessages(threadMessages);
-            // console.log({ sentThreadMessages }, { inboxThreadMessages });
             setLoadingSelectedMessages(false);
         } catch (error: any) {
             clientLogger(error, 'error');
@@ -90,6 +90,21 @@ export const InboxPage = () => {
         }
         setLoadingSelectedMessages(false);
     };
+
+    useEffect(() => {
+        if (!selectedMessages) {
+            return;
+        }
+        const unSeenMessages = selectedMessages.filter((message) => {
+            return !message.flags.includes('\\Seen');
+        });
+        if (unSeenMessages.length === 0) {
+            return;
+        }
+        unSeenMessages.forEach(async (message) => {
+            await updateMessageAsSeen(message.id);
+        });
+    }, [selectedMessages]);
 
     return (
         <Layout>
