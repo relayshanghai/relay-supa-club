@@ -80,8 +80,8 @@ export const SearchPageInner = () => {
                 return track<typeof Search>({
                     event: Search,
                     payload: {
-                        event_id: results.__metadata.event_id,
-                        snapshot_id: results.__metadata.snapshot_id,
+                        event_id: results.__metadata?.event_id,
+                        snapshot_id: results.__metadata?.snapshot_id,
                         parameters: searchParams,
                         page: searchParams.page,
                     },
@@ -113,8 +113,8 @@ export const SearchPageInner = () => {
                 event: SearchDefault,
                 controller,
                 payload: {
-                    event_id: result.__metadata.event_id,
-                    snapshot_id: result.__metadata.snapshot_id,
+                    event_id: result.__metadata?.event_id,
+                    snapshot_id: result.__metadata?.snapshot_id,
                     parameters: searchParams,
                     page: searchParams.page,
                 },
