@@ -26,7 +26,13 @@ const getHandler: NextApiHandler = async (req: NextApiRequest, res: NextApiRespo
         return res.status(httpCodes.OK).json({ data: socialProfile });
     }
 
-    const report = await fetchReport(platform_id, platform, { req, res });
+    const metadata = {
+        platform,
+        platform_id,
+        action: 'influencer-scrape',
+    };
+
+    const report = await fetchReport(platform_id, platform, { req, res, metadata });
 
     if (!report) {
         serverLogger(`Cannot fetch report for influencer: ${platform_id}, ${platform}`, 'error', true);
