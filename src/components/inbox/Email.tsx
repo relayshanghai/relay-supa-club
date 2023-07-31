@@ -5,7 +5,6 @@ import type { SearchResponseMessage } from 'types/email-engine/account-account-s
 import { getMessageText } from 'src/utils/api/email-engine/handle-messages';
 
 export const Email = ({ message }: { message: SearchResponseMessage }) => {
-    // TODO: mark email as seen. Use update email endpoint /v1/account/{account}/messages
     const [content, setContent] = useState('');
     const [loading, setLoading] = useState(false);
 
