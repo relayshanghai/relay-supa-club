@@ -60,20 +60,15 @@ export const abort = (journeys: JourneyCollection) => (payload?: any) => {
     const item = getJourney();
     if (!item) return false;
 
-    const updated = setItem<JourneyObject>(`${JOURNEY_STORAGE_KEY}.${item.id}`, {
-        ...item,
-        status: JourneyStatus.ABORTED,
-        updated_at: new Date().getTime(),
-    });
-    updateJourneyCookie(updated.current);
+    removeItem(`${JOURNEY_STORAGE_KEY}.${item.id}`);
 
-    const { onAbort } = journeys[updated.current.name]();
+    const { onAbort } = journeys[item.name]();
 
     if (onAbort) {
-        return onAbort(updated.current, payload);
+        return onAbort(item, payload);
     }
 
-    return updated.current;
+    return item;
 };
 
 export const update = (journeys: JourneyCollection) => (payload?: any, tag?: string) => {
