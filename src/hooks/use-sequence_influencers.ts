@@ -5,7 +5,7 @@ import { useClientDb } from 'src/utils/client-db/use-client-db';
 export const useSequenceInfluencers = (sequenceId?: string) => {
     const db = useClientDb();
     const { data: sequenceInfluencers, mutate: refreshSequenceInfluencers } = useSWR(
-        sequenceId ? 'sequence_steps' : null,
+        sequenceId ? 'sequence_influencers' : null,
         () => db.getSequenceInfluencersBySequenceId(sequenceId ?? ''),
     );
 
