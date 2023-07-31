@@ -76,9 +76,6 @@ export const SearchPageInner = () => {
         ({ searchParams }: { searchParams: any }) => {
             if (searchParams === undefined) return;
 
-            // eslint-disable-next-line no-console
-            console.log('handle search @ search-page', searchParams);
-
             const tracker = (results: any) => {
                 return track<typeof Search>({
                     event: Search,
@@ -109,8 +106,6 @@ export const SearchPageInner = () => {
 
         if (searchParams.page && searchParams.page !== 0) return;
 
-        // eslint-disable-next-line no-console
-        console.log('initial track search', { event, searchParams });
         const controller = new AbortController();
 
         const tracker = async (result: any) => {

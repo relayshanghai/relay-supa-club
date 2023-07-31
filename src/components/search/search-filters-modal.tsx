@@ -72,7 +72,6 @@ export const SearchFiltersModal = ({ show, setShow, onSearch }: SearchFiltersMod
         setActiveSearch,
         setPage,
         setInfluencerLocation,
-        searchParams,
         getSearchParams,
     } = useSearch();
 
@@ -106,18 +105,10 @@ export const SearchFiltersModal = ({ show, setShow, onSearch }: SearchFiltersMod
             setPage(0);
             trackSearch('Search Filters Modal');
             setShow(false);
-
-            // eslint-disable-next-line no-console
-            console.log('handle search @ search-filters-modal', { searchParams: getSearchParams() });
             onSearch({ searchParams: getSearchParams() });
         },
         [onSearch, setShow, trackSearch, setPage, setActiveSearch, getSearchParams],
     );
-
-    useEffect(() => {
-        // eslint-disable-next-line no-console
-        console.log('searchParams @ search-filters-modal', searchParams);
-    }, [searchParams]);
 
     useEffect(() => {
         if (!audienceAge) return;
