@@ -11,5 +11,6 @@ BEGIN;
 \include ./supabase/policies/companies_update.policy.sql
 \include ./supabase/policies/campaign_creators_all.policy.sql
 \include ./supabase/policies/deny_all_policies.policy.sql
+\include ./supabase/policies/influencers_select.policy.sql
 
 COMMIT;
