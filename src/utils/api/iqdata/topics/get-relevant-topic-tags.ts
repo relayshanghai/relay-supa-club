@@ -1,6 +1,5 @@
 import type { CreatorPlatform } from 'types';
 import { apiFetch } from '../api-fetch';
-import { headers } from 'src/utils/api/iqdata/constants';
 
 export type GetRelevantTopicTagsPayload = {
     query: {
@@ -37,11 +36,7 @@ export const getRelevantTopicTags = async (payload: GetRelevantTopicTagsPayload)
 
     payload.query.q = `#${payload.query.q}`;
 
-    const response = await apiFetch<GetRelevantTopicTagsResponse>(
-        'https://socapi.icu/v2.0/api/dict/relevant-tags',
-        payload,
-        { headers },
-    );
+    const response = await apiFetch<GetRelevantTopicTagsResponse>('/dict/relevant-tags', payload);
 
     if (response && response.success === true) {
         sortByDistance(response.data);
