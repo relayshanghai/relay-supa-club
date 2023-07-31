@@ -5,7 +5,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (req.method === 'POST') {
         const { term, platform } = req.body;
 
-        const results = await fetchIqDataTopics({ req, res })(term, platform);
+        const metadata = {
+            systemCall: true,
+            action: 'api:influencer-search/topics',
+            functionName: 'fetchIqDataTopics',
+        };
+        const results = await fetchIqDataTopics({ req, res, metadata })(term, platform);
         return res.status(200).json(results);
     }
 

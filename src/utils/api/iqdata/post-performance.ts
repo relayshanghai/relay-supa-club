@@ -63,6 +63,7 @@ export const transformPostPerformanceData = (raw: PostPerformanceAndPost): PostP
 export const getPostsPerformanceDataByCampaign = async (
     campaignId: string,
     profileId: string,
+    context?: ServerContext,
 ): Promise<PostPerformanceData[]> => {
     const existingPerformanceData = await getPostsPerformancesByCampaign(campaignId, profileId);
 
@@ -75,7 +76,7 @@ export const getPostsPerformanceDataByCampaign = async (
         const { id, updated_at, platform, url } = post;
         if (!platform || !url || !updated_at || new Date(updated_at) < oneDayAgo) {
             try {
-                const newPerformanceData = await fetchPostPerformanceData(platform, url);
+                const newPerformanceData = await fetchPostPerformanceData(platform, url, context);
                 const updateData: PostsPerformanceUpdate = {
                     id,
                     likes_total: newPerformanceData.likeCount,

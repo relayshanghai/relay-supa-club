@@ -97,6 +97,9 @@ const postHandler: NextApiHandler = async (req: NextApiRequest, res: NextApiResp
                     url,
                     campaign: body.campaign_id,
                     creator: body.creator_id,
+                    systemCall: true,
+                    action: 'api:influencer/posts',
+                    functionName: 'processURL',
                 },
             });
 

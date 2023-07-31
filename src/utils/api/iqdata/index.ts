@@ -1,3 +1,4 @@
+import { forensicTrack } from './../forensicTrack';
 import { headers } from 'src/utils/api/iqdata/constants';
 import { handleResError } from 'src/utils/fetcher';
 import type { CreatorPlatform, CreatorReport, CreatorSearchResult } from 'types';
@@ -16,7 +17,6 @@ export type ServerContext = {
         [key: string]: any;
     };
 };
-
 export const withServerContextIqdata = (fetchFunction: (...args: any[]) => any) => {
     return (context?: ServerContext) => {
         return (...args: any[]) => {
@@ -39,6 +39,7 @@ export const withServerContext = (fetchFunction: (args: any) => any) => {
  */
 export const iqDataFetch = async <T = any>(path: string, options: RequestInit & { context?: ServerContext } = {}) => {
     const { context, ...strippedOptions } = options;
+    context && forensicTrack(context);
 
     const res = await fetch(IQDATA_URL + path, {
         ...strippedOptions,

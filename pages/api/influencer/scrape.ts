@@ -29,7 +29,9 @@ const getHandler: NextApiHandler = async (req: NextApiRequest, res: NextApiRespo
     const metadata = {
         platform,
         platform_id,
-        action: 'influencer-scrape',
+        systemCall: true,
+        action: 'api:influencer/scrape',
+        functionName: 'fetchReport',
     };
 
     const report = await fetchReport(platform_id, platform, { req, res, metadata });

@@ -1,6 +1,7 @@
 import type { CreatorPlatform } from 'types';
-import { apiFetch } from '../api-fetch';
 import { headers } from 'src/utils/api/iqdata/constants';
+import { apiFetch } from '../api-fetch';
+import type { ServerContext } from '..';
 
 export type GetRelevantTopicTagsPayload = {
     query: {
@@ -30,7 +31,7 @@ const sortByDistance = (tags: TopicTensorData[]) => {
     });
 };
 
-export const getRelevantTopicTags = async (payload: GetRelevantTopicTagsPayload) => {
+export const getRelevantTopicTags = async (payload: GetRelevantTopicTagsPayload, context?: ServerContext) => {
     if (!payload.query.q) {
         throw new Error(`q in payload query is required`);
     }
@@ -39,7 +40,7 @@ export const getRelevantTopicTags = async (payload: GetRelevantTopicTagsPayload)
 
     const response = await apiFetch<GetRelevantTopicTagsResponse>(
         'https://socapi.icu/v2.0/api/dict/relevant-tags',
-        payload,
+        { ...payload, context },
         { headers },
     );
 

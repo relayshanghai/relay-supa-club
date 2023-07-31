@@ -5,9 +5,17 @@ import { getRelevantTopicTags } from 'src/utils/api/iqdata/topics/get-relevant-t
 const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     const { term, limit, platform } = req.body;
 
-    const results = await getRelevantTopicTags({
-        query: { q: term, limit, platform },
-    });
+    const metadata = {
+        action: 'api:topics/tensor',
+        functionName: 'getRelevantTopicTags',
+    };
+
+    const results = await getRelevantTopicTags(
+        {
+            query: { q: term, limit, platform },
+        },
+        { req, res, metadata },
+    );
 
     return res.status(200).json(results);
 };

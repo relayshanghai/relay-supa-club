@@ -53,20 +53,11 @@ export const logRateLimitError = async (action: string, context: ServerContext) 
         ],
     };
 
-    if (reqBody.blocks[1].fields && context.metadata) {
-        const metadata = JSON.stringify(context.metadata);
-
-        reqBody.blocks[1].fields.push({
-            type: 'mrkdwn',
-            text: `*Extra Context:*\n\`${metadata}\``,
-        });
-    }
-
     ALTERT_INCOMING_WEBHOOK_URL && (await sendSlackMessage(ALTERT_INCOMING_WEBHOOK_URL, reqBody));
 };
 
 export const logDailyTokensError = async (action: string, context: ServerContext) => {
-    const supabase = createServerSupabaseClient<DatabaseWithCustomTypes>(context);
+    const supabase = createServerSupabaseClient<DatabaseWithCustomTypes>({ req: context.req, res: context.res });
     const { user_id, company_id, fullname, email } = await getUserSession(supabase)();
 
     const reqBody: SlackMessage = {
@@ -110,15 +101,6 @@ export const logDailyTokensError = async (action: string, context: ServerContext
             },
         ],
     };
-
-    if (reqBody.blocks[1].fields && context.metadata) {
-        const metadata = JSON.stringify(context.metadata);
-
-        reqBody.blocks[1].fields.push({
-            type: 'mrkdwn',
-            text: `*Extra Context:*\n\`${metadata}\``,
-        });
-    }
 
     ALTERT_INCOMING_WEBHOOK_URL && (await sendSlackMessage(ALTERT_INCOMING_WEBHOOK_URL, reqBody));
 };

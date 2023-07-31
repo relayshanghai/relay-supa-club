@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { recordReportUsage } from 'src/utils/api/db/calls/usages';
@@ -37,12 +38,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 return res.status(httpCodes.BAD_REQUEST).json({ error: 'Invalid request' });
 
             try {
-                const reportMetadata = await fetchReportsMetadata({ req, res })(platform, creator_id);
+                const fetchReportsMetadataMetadata = {
+                    action: 'api:creators/report',
+                    functionName: 'fetchReportsMetadata',
+                };
+                const reportMetadata = await fetchReportsMetadata({ req, res, metadata: fetchReportsMetadataMetadata })(
+                    platform,
+                    creator_id,
+                );
+
                 if (!reportMetadata.results || reportMetadata.results.length === 0) throw new Error('No reports found');
                 const report_id = reportMetadata.results[0].id;
                 if (!report_id) throw new Error('No report ID found');
                 const createdAt = reportMetadata.results[0].created_at;
-                const data = await fetchReport({ req, res })(report_id);
+
+                const fetchReportMetadata = {
+                    action: 'api:creators/report',
+                    functionName: 'fetchReport',
+                };
+                const data = await fetchReport({ req, res, metadata: fetchReportMetadata })(report_id);
                 if (!data.success) throw new Error('Failed to find report');
 
                 const { error: recordError } = await recordReportUsage(company_id, user_id, creator_id);
@@ -59,7 +73,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
                 return res.status(httpCodes.OK).json({ ...data, createdAt });
             } catch (error) {
-                const data = await requestNewReport({ req, res })(platform, creator_id);
+                const newReportMetadata = {
+                    action: 'api:creators/report',
+                    functionName: 'requestNewReport',
+                };
+                const data = await requestNewReport({ req, res, metadata: newReportMetadata })(platform, creator_id);
                 if (!data.success) throw new Error('Failed to request new report');
 
                 const { error: recordError } = await recordReportUsage(company_id, user_id, creator_id);
