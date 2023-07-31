@@ -6,7 +6,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const { term, platform } = req.body;
 
         const metadata = {
-            systemCall: true,
             action: 'api:influencer-search/topics',
             functionName: 'fetchIqDataTopics',
         };

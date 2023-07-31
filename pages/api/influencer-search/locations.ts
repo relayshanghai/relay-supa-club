@@ -8,7 +8,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const { term } = req.body;
 
         const metadata = {
-            systemCall: true,
             action: 'api:influencer-search/locations',
             functionName: 'fetchIqDataGeos',
         };

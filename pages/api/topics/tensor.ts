@@ -6,6 +6,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     const { term, limit, platform } = req.body;
 
     const metadata = {
+        systemCall: true,
         action: 'api:topics/tensor',
         functionName: 'getRelevantTopicTags',
     };
