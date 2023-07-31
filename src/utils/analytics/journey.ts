@@ -62,6 +62,10 @@ export const abort = (journeys: JourneyCollection) => (payload?: any) => {
 
     removeItem(`${JOURNEY_STORAGE_KEY}.${item.id}`);
 
+    const index = getItem<JourneyIndex>(`${JOURNEY_STORAGE_KEY}.__index`) ?? [];
+    const filtered = index.filter((i) => i.id !== item.id);
+    setItem(`${JOURNEY_STORAGE_KEY}.__index`, filtered);
+
     const { onAbort } = journeys[item.name]();
 
     if (onAbort) {
