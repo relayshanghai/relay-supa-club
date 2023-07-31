@@ -1,4 +1,4 @@
-export interface UpdateMessagePutRequestBody {
+export interface AccountAccountMessagePut {
     flags?: Flags;
     labels?: Flags;
 }

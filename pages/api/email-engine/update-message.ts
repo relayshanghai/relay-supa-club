@@ -5,16 +5,16 @@ import { ApiHandler } from 'src/utils/api-handler';
 import { updateMessage } from 'src/utils/api/email-engine';
 import type {
     UpdateMessagePutResponseBody,
-    UpdateMessagePutRequestBody,
+    AccountAccountMessagePut,
 } from 'types/email-engine/account-account-message-put';
 
-export type UpdateMessagePostRequestBody = UpdateMessagePutRequestBody & {
+export type UpdateMessagePutRequestBody = AccountAccountMessagePut & {
     account: string;
     messageId: string;
 };
 
 const putHandler: NextApiHandler = async (req, res) => {
-    const { account, messageId, ...body } = req.body as UpdateMessagePostRequestBody;
+    const { account, messageId, ...body } = req.body as UpdateMessagePutRequestBody;
 
     const result: UpdateMessagePutResponseBody = await updateMessage(body, account, messageId);
     return res.status(httpCodes.OK).json(result);

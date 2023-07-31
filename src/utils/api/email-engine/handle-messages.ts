@@ -6,7 +6,7 @@ import type { ListEmailsPostRequestBody, ListEmailsPostResponseBody } from 'page
 import type { GetEmailPostRequestBody, GetEmailPostResponseBody } from 'pages/api/email-engine/email-text';
 import type { SendEmailResponseBody } from 'types/email-engine/account-account-submit-post';
 import type { ReplyEmailPostRequestBody } from 'pages/api/email-engine/send-email';
-import type { UpdateMessagePostRequestBody } from 'pages/api/email-engine/update-message';
+import type { UpdateMessagePutRequestBody } from 'pages/api/email-engine/update-message';
 import type { UpdateMessagePutResponseBody } from 'types/email-engine/account-account-message-put';
 
 export const getInBoxMessages = async () => {
@@ -74,7 +74,7 @@ export const sendReply = async (replyBody: ReplyEmailPostRequestBody['body']) =>
 };
 
 export const updateMessageAsSeen = async (messageId: string) => {
-    const body: UpdateMessagePostRequestBody = {
+    const body: UpdateMessagePutRequestBody = {
         account: testAccount,
         messageId: messageId,
         flags: {

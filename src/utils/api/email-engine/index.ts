@@ -13,7 +13,7 @@ import type { AccountAccountMessageGet } from 'types/email-engine/account-accoun
 import type { OutboxGet } from 'types/email-engine/outbox-get';
 import type { OutboxQueueidDelete } from 'types/email-engine/outbox-queueid-delete';
 import type {
-    UpdateMessagePutRequestBody,
+    AccountAccountMessagePut,
     UpdateMessagePutResponseBody,
 } from 'types/email-engine/account-account-message-put';
 
@@ -87,7 +87,7 @@ export const getMessage = async (account: string, messageId: string, textType: T
 export const getEmailText = async (account: string, emailId: string, textType: TextType = '*') =>
     await emailEngineApiFetch<AccountAccountTextTextGetResponse>(getEmailTextPath(account, emailId, textType));
 
-export const updateMessage = async (body: UpdateMessagePutRequestBody, account: string, messageId: string) =>
+export const updateMessage = async (body: AccountAccountMessagePut, account: string, messageId: string) =>
     await emailEngineApiFetch<UpdateMessagePutResponseBody>(updateEmailPath(account, messageId), {
         method: 'PUT',
         body,
