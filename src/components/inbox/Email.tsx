@@ -32,7 +32,7 @@ export const Email = ({ message }: { message: SearchResponseMessage }) => {
     }, [content, getText, loading, message]);
 
     return (
-        <div>
+        <div className="h-full">
             <h3 className={`mb-2 text-lg font-bold`}>{message.subject}</h3>
             {loading ? (
                 <p>Loading...</p>
