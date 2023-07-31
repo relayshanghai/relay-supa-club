@@ -11,20 +11,21 @@ import type { FetchCreatorsFilteredParams} from 'src/utils/api/iqdata/transforms
 import { ztype } from 'src/utils/zod';
 
 const PostRequestBody = z.object({
-    event_id: z.string().optional(),
-    snapshot_id: z.string().optional(),
     event: eventKeys,
     event_at: z.string().optional().default(now),
     payload: z.object({
+        event_id: z.string().optional(),
+        snapshot_id: z.string().optional(),
         parameters: ztype<FetchCreatorsFilteredParams>(),
     }),
 });
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
-    const { event_id, snapshot_id, event, event_at, payload } = PostRequestBody.parse(req.body);
+    const { event, event_at, payload } = PostRequestBody.parse(req.body);
+    const { event_id, snapshot_id, ..._payload } = payload
     let snapshot = null;
 
-    const result = await createTrack({ req, res })(events[event], { ...payload, event_id, event_at });
+    const result = await createTrack({ req, res })(events[event], { ..._payload, event_id, event_at });
 
     // @todo move to copySnapshot
     if (snapshot_id) {
