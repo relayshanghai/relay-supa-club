@@ -1,4 +1,3 @@
-import { forensicTrack } from './../forensicTrack';
 import { headers } from 'src/utils/api/iqdata/constants';
 import { handleResError } from 'src/utils/fetcher';
 import type { CreatorPlatform, CreatorReport, CreatorSearchResult } from 'types';
@@ -39,7 +38,9 @@ export const withServerContext = (fetchFunction: (args: any) => any) => {
  */
 export const iqDataFetch = async <T = any>(path: string, options: RequestInit & { context?: ServerContext } = {}) => {
     const { context, ...strippedOptions } = options;
-    context && forensicTrack(context);
+
+    const stackTrace = new Error().stack;
+    const caller = stackTrace?.split('\n')[2].trim().split(' ')[1];
 
     const res = await fetch(IQDATA_URL + path, {
         ...strippedOptions,
@@ -49,7 +50,7 @@ export const iqDataFetch = async <T = any>(path: string, options: RequestInit & 
         },
     });
 
-    await handleResError(res, path, context);
+    await handleResError(res, path, context, caller);
     const json = await res.json();
     return json as T;
 };

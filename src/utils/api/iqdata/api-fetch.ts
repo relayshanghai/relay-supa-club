@@ -9,18 +9,23 @@ import { forensicTrack } from '../forensicTrack';
  * For fetching IQData API
  */
 export const apiFetch = async <T extends object>(url: string, payload: ApiPayload, options: RequestInit = {}) => {
+    const stackTrace = new Error().stack;
+    const caller = stackTrace?.split('\n')[2].trim().split(' ')[1];
+
     const { context, ...strippedPayload } = payload;
-    context && forensicTrack(context);
     const content = await apiFetchOriginal<T>(IQDATA_URL + url, strippedPayload, {
         ...options,
         headers,
     });
+
     if (context && content && 'status' in content && 'error' in content) {
         if (content.status === 429) {
             logRateLimitError(url, context);
+            forensicTrack(context, caller);
         }
         if (content.error === 'daily_tokens_limit_exceeded') {
             logDailyTokensError(url, context);
+            forensicTrack(context, caller);
         }
     }
     return content;
