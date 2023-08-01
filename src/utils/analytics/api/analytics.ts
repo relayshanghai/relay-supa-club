@@ -10,10 +10,10 @@ import { insertReportSnapshot } from 'src/utils/api/db/calls';
 import { v4 } from 'uuid';
 import { ANALYTICS_HEADER_NAME } from '../constants';
 import { getOrInsertSearchParameter } from 'src/utils/api/db/calls/search-parameters';
-import crypto from 'crypto';
 import { SearchInfluencersPayload } from 'src/utils/api/iqdata/influencers/search-influencers-payload';
 import type { ApiPayload } from 'src/utils/api/types';
 import { isJson } from 'src/utils/json';
+import { hasher } from 'node-object-hash';
 
 type SessionIds = {
     session_id?: string;
@@ -204,8 +204,7 @@ export const createSearchParameter = (db: SupabaseClient) => async (payload: Api
     const parsedPayload = SearchInfluencersPayload.parse(payload);
     const { context: _, ...data } = parsedPayload;
 
-    const payloadString = JSON.stringify(parsedPayload);
-    const hash = crypto.createHash('sha256').update(payloadString).digest('hex');
+    const hash = hasher().hash(parsedPayload);
 
     if (isJson(data)) {
         return await getOrInsertSearchParameter(db)({ hash, data });
