@@ -562,8 +562,10 @@ export interface Database {
       influencer_social_profiles: {
         Row: {
           created_at: string | null
+          email: string | null
           id: string
           influencer_id: string
+          name: string | null
           platform: string
           reference_id: string
           url: string
@@ -571,8 +573,10 @@ export interface Database {
         }
         Insert: {
           created_at?: string | null
+          email?: string | null
           id?: string
           influencer_id: string
+          name?: string | null
           platform: string
           reference_id: string
           url: string
@@ -580,8 +584,10 @@ export interface Database {
         }
         Update: {
           created_at?: string | null
+          email?: string | null
           id?: string
           influencer_id?: string
+          name?: string | null
           platform?: string
           reference_id?: string
           url?: string
@@ -1004,7 +1010,7 @@ export interface Database {
           email: string | null
           funnel_status: string
           id: string
-          influencer_id: string
+          influencer_social_profile_id: string
           next_step: string | null
           rate_amount: number | null
           rate_currency: string | null
@@ -1024,7 +1030,7 @@ export interface Database {
           email?: string | null
           funnel_status: string
           id?: string
-          influencer_id: string
+          influencer_social_profile_id: string
           next_step?: string | null
           rate_amount?: number | null
           rate_currency?: string | null
@@ -1044,7 +1050,7 @@ export interface Database {
           email?: string | null
           funnel_status?: string
           id?: string
-          influencer_id?: string
+          influencer_social_profile_id?: string
           next_step?: string | null
           rate_amount?: number | null
           rate_currency?: string | null
@@ -1070,9 +1076,9 @@ export interface Database {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "sequence_influencers_influencer_id_fkey"
-            columns: ["influencer_id"]
-            referencedRelation: "influencers"
+            foreignKeyName: "sequence_influencers_influencer_social_profile_id_fkey"
+            columns: ["influencer_social_profile_id"]
+            referencedRelation: "influencer_social_profiles"
             referencedColumns: ["id"]
           },
           {
@@ -1281,6 +1287,10 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
+      is_activated_account: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
       is_company_member: {
         Args: {
           target_company_id: string

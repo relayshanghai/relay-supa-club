@@ -7,6 +7,7 @@ export type ApiHandlerParams = {
     getHandler?: NextApiHandler;
     postHandler?: NextApiHandler;
     deleteHandler?: NextApiHandler;
+    putHandler?: NextApiHandler;
 };
 
 export type RelayErrorOptions = {
@@ -114,6 +115,9 @@ export const ApiHandler =
 
         if (req.method === 'POST' && params.postHandler !== undefined) {
             return await exceptionHandler<T>(params.postHandler)(req, res);
+        }
+        if (req.method === 'PUT' && params.putHandler !== undefined) {
+            return await exceptionHandler<T>(params.putHandler)(req, res);
         }
 
         if (req.method === 'DELETE' && params.deleteHandler !== undefined) {
