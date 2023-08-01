@@ -6,7 +6,7 @@ ALTER TABLE "public"."influencer_social_profiles" ADD COLUMN "name" text;
 
 ALTER TABLE "public"."sequence_influencers" DROP COLUMN "influencer_id";
 
-ALTER TABLE "public"."sequence_influencers" ADD COLUMN "influencer_social_profile_id" uuid;
+ALTER TABLE "public"."sequence_influencers" ADD COLUMN "influencer_social_profile_id" uuid NOT NULL;
 
 ALTER TABLE "public"."sequence_influencers" ENABLE ROW LEVEL SECURITY;
 

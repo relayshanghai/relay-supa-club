@@ -7,7 +7,7 @@ interface SequenceRowProps {
 }
 
 const SequenceRow: React.FC<SequenceRowProps> = ({ sequenceInfluencer }) => {
-    const { influencerSocialProfile } = useInfluencerSocialProfile(sequenceInfluencer.influencer_id);
+    const { influencerSocialProfile } = useInfluencerSocialProfile(sequenceInfluencer.influencer_social_profile_id);
     const { sequenceSteps } = useSequenceSteps(sequenceInfluencer.sequence_id);
     const currentStep = sequenceSteps?.find((step) => step.step_number === sequenceInfluencer.sequence_step);
     return (

@@ -888,7 +888,7 @@ export interface Database {
           email: string | null
           funnel_status: string
           id: string
-          influencer_id: string
+          influencer_social_profile_id: string
           next_step: string | null
           rate_amount: number | null
           rate_currency: string | null
@@ -908,7 +908,7 @@ export interface Database {
           email?: string | null
           funnel_status: string
           id?: string
-          influencer_id: string
+          influencer_social_profile_id: string
           next_step?: string | null
           rate_amount?: number | null
           rate_currency?: string | null
@@ -928,7 +928,7 @@ export interface Database {
           email?: string | null
           funnel_status?: string
           id?: string
-          influencer_id?: string
+          influencer_social_profile_id?: string
           next_step?: string | null
           rate_amount?: number | null
           rate_currency?: string | null
@@ -954,9 +954,9 @@ export interface Database {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "sequence_influencers_influencer_id_fkey"
-            columns: ["influencer_id"]
-            referencedRelation: "influencers"
+            foreignKeyName: "sequence_influencers_influencer_social_profile_id_fkey"
+            columns: ["influencer_social_profile_id"]
+            referencedRelation: "influencer_social_profiles"
             referencedColumns: ["id"]
           },
           {
