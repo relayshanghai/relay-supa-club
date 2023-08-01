@@ -30,16 +30,13 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     const { platform, body } = prepareFetchCreatorsFiltered(searchParams);
-    const metadata = {
-        action: 'api:influencer-search',
-        functionName: 'searchInfluencers',
-    };
+
     const results = await searchInfluencers(
         {
             query: { platform },
             body,
         },
-        { req, res, metadata },
+        { req, res },
     );
 
     if (results === undefined) {

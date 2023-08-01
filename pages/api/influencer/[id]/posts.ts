@@ -24,13 +24,7 @@ const patchCampaignCreatorWithoutInfluencerSocial = async (
         throw new Error(`Cannot patch influencer: ${creator.creator_id}, ${creator.platform}`);
     }
 
-    const metadata = {
-        systemCall: true,
-        action: `api:influencer/${creator.id}/posts`,
-        functionName: 'fetchReport',
-    };
-
-    const report = await fetchReport(creator.creator_id, creator.platform, context && { ...context, metadata });
+    const report = await fetchReport(creator.creator_id, creator.platform, context && { ...context });
 
     if (!report) {
         throw new Error(`Cannot fetch report for influencer: ${creator.creator_id}, ${creator.platform}`);
@@ -72,11 +66,7 @@ const getHandler: NextApiHandler = async (req: NextApiRequest, res: NextApiRespo
     }
 
     if (!creator.influencer_social_profiles_id) {
-        const metadata = {
-            creator,
-            action: 'influencer-posts',
-        };
-        creator = await patchCampaignCreatorWithoutInfluencerSocial(creator, { req, res, metadata });
+        creator = await patchCampaignCreatorWithoutInfluencerSocial(creator, { req, res });
     }
 
     const posts = await _getInfluencerPostsBySocialProfile(creator.influencer_social_profiles_id);

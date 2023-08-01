@@ -30,16 +30,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             });
         }
 
-        const metadata = {
-            systemCall: true,
-            action: 'api:post-performance/by-campaign',
-            functionName: 'getPostsPerformanceDataByCampaign',
-        };
-
         const results: PostsPerformanceByCampaignGetResponse = await getPostsPerformanceDataByCampaign(
             campaignId,
             profileId,
-            { req, res, metadata },
+            { req, res },
         );
 
         return res.status(httpCodes.OK).json(results);

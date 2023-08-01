@@ -93,14 +93,6 @@ const postHandler: NextApiHandler = async (req: NextApiRequest, res: NextApiResp
             const result = await processURL(url, body.campaign_id, body.creator_id, {
                 req,
                 res,
-                metadata: {
-                    url,
-                    campaign: body.campaign_id,
-                    creator: body.creator_id,
-                    systemCall: true,
-                    action: 'api:influencer/posts',
-                    functionName: 'processURL',
-                },
             });
 
             data.successful.push({

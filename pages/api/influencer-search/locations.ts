@@ -7,12 +7,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (req.method === 'POST') {
         const { term } = req.body;
 
-        const metadata = {
-            action: 'api:influencer-search/locations',
-            functionName: 'fetchIqDataGeos',
-        };
-
-        const results = await fetchIqDataGeos({ req, res, metadata })(term);
+        const results = await fetchIqDataGeos({ req, res })(term);
 
         // Filter out Taiwan and Hong Kong in the location results from iqData and replace with China (Taiwan) and China (Hong Kong)
         const filteredResults = results?.map((result: { title: string; name: string }) => {
