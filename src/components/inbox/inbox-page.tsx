@@ -15,6 +15,7 @@ import {
     updateMessageAsSeen,
 } from 'src/utils/api/email-engine/handle-messages';
 import { useMessages } from 'src/hooks/use-message';
+import { GMAIL_SENT_SPECIAL_USE_FLAG } from 'src/utils/api/email-engine/prototype-mocks';
 
 export const InboxPage = () => {
     const [messages, setMessages] = useState<MessagesGetMessage[]>([]);
@@ -79,7 +80,7 @@ export const InboxPage = () => {
             return;
         }
         const unSeenMessages = selectedMessages.filter((message) => {
-            return !message.flags.includes('\\Seen');
+            return !message.flags.includes(GMAIL_SENT_SPECIAL_USE_FLAG);
         });
         unSeenMessages.forEach(async (message) => {
             await updateMessageAsSeen(message.id);
