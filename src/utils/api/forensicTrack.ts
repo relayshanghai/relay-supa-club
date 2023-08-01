@@ -1,14 +1,17 @@
+import { getUserSession } from './analytics';
 import { serverLogger } from '../logger-server';
 import callsites from 'callsites';
 import type { ServerContext } from './iqdata';
+import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
+import type { DatabaseWithCustomTypes } from 'types';
 
-export const forensicTrack = async (_context?: ServerContext, _caller?: string) => {
+export const forensicTrack = async (context: ServerContext, _caller?: string) => {
     const calls = await callsites();
     const sentryPayload = calls.map((call) => {
         return {
-            evalOrigin: call.getEvalOrigin(),
             lineNumber: call.getLineNumber(),
             columnNumber: call.getColumnNumber(),
+            evalOrigin: call.getEvalOrigin(),
             fileName: call.getFileName(),
             functionName: call.getFunctionName(),
             function: call.getFunction(),
@@ -22,5 +25,8 @@ export const forensicTrack = async (_context?: ServerContext, _caller?: string) 
         };
     });
 
-    serverLogger(sentryPayload, 'error', true);
+    const supabase = createServerSupabaseClient<DatabaseWithCustomTypes>(context);
+    const { user_id, company_id, fullname, email } = await getUserSession(supabase)();
+
+    serverLogger({ user_id, company_id, fullname, email, ...sentryPayload }, 'error', true);
 };
