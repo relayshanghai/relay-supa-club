@@ -38,14 +38,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 return res.status(httpCodes.BAD_REQUEST).json({ error: 'Invalid request' });
 
             try {
-                const fetchReportsMetadataMetadata = {
-                    action: 'api:creators/report',
-                    functionName: 'fetchReportsMetadata',
-                };
-                const reportMetadata = await fetchReportsMetadata({ req, res, metadata: fetchReportsMetadataMetadata })(
-                    platform,
-                    creator_id,
-                );
+                const reportMetadata = await fetchReportsMetadata({
+                    req,
+                    res,
+                    metadata: {
+                        action: 'api:creators/report',
+                        functionName: 'fetchReportsMetadata',
+                    },
+                })(platform, creator_id);
 
                 if (!reportMetadata.results || reportMetadata.results.length === 0) throw new Error('No reports found');
                 const report_id = reportMetadata.results[0].id;
