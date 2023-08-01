@@ -21,6 +21,10 @@ export const scrapeInfluencerPost = async (url: string, context?: ServerContext)
         throw new Error(`Cannot determine platform from given URL: ${url}`);
     }
 
+    if (context && context.metadata) {
+        context.metadata = { ...context.metadata, platform, action: 'fetchPostPerformanceData' };
+    }
+
     const scrape = (await fetchPostPerformanceData(platform, url, context)) as ScrapeData;
 
     const { influencer: influencer_platform_id, ...result } = scrape;
@@ -43,6 +47,10 @@ export const scrapeInfluencerPost = async (url: string, context?: ServerContext)
     const socialProfile: InfluencerSocialProfileRow | null = await getInfluencer(influencer_platform_id);
 
     if (socialProfile === null) {
+        if (context && context.metadata) {
+            context.metadata = { ...context.metadata, influencer_platform_id, action: 'fetchReport' };
+        }
+
         const report = await fetchReport(context)(influencer_platform_id, platform);
 
         if (!report) {

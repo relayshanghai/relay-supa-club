@@ -74,6 +74,10 @@ export const useReport: UseReport = ({ platform, creator_id }: { platform: Creat
                 } else setErrorMessage(t('creators.failedToFetchReport') || '');
             }
         },
+        {
+            revalidateOnFocus: false,
+            revalidateOnReconnect: false,
+        },
     );
     const { report, createdAt } = data || {};
     // mutate, refresh stale caches
