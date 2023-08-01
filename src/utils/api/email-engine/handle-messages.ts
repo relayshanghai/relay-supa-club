@@ -1,5 +1,10 @@
 import type { MessagesGetMessage } from 'types/email-engine/account-account-messages-get';
-import { GMAIL_INBOX, GMAIL_SENT, testAccount } from 'src/utils/api/email-engine/prototype-mocks';
+import {
+    GMAIL_INBOX,
+    GMAIL_SENT,
+    GMAIL_SENT_SPECIAL_USE_FLAG,
+    testAccount,
+} from 'src/utils/api/email-engine/prototype-mocks';
 import { nextFetch } from 'src/utils/fetcher';
 import type { EmailSearchPostRequestBody, EmailSearchPostResponseBody } from 'pages/api/email-engine/search';
 import type { GetEmailPostRequestBody, GetEmailPostResponseBody } from 'pages/api/email-engine/email-text';
@@ -65,7 +70,7 @@ export const updateMessageAsSeen = async (messageId: string) => {
         account: testAccount,
         messageId: messageId,
         flags: {
-            add: ['\\Seen'],
+            add: [GMAIL_SENT_SPECIAL_USE_FLAG],
         },
     };
 
