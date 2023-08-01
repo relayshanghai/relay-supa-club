@@ -2,7 +2,7 @@ import { serverLogger } from '../logger-server';
 import callsites from 'callsites';
 import type { ServerContext } from './iqdata';
 
-export const forensicTrack = async (_context: ServerContext, _caller?: string) => {
+export const forensicTrack = async (_context?: ServerContext, _caller?: string) => {
     const calls = await callsites();
     const sentryPayload = calls.map((call) => {
         return {
