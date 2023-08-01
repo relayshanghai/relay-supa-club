@@ -1,11 +1,11 @@
-import type { SequenceInfluencer } from 'src/utils/api/email-engine/prototype-mocks';
+import type { SequenceInfluencer } from 'src/utils/api/db';
 import SequenceRow from './sequence-row';
 
 interface SequenceTableProps {
-    influencers: SequenceInfluencer[];
+    sequenceInfluencers: SequenceInfluencer[];
 }
 
-const SequenceTable: React.FC<SequenceTableProps> = ({ influencers }) => {
+const SequenceTable: React.FC<SequenceTableProps> = ({ sequenceInfluencers }) => {
     return (
         <table className="border-collapse border border-gray-300">
             <thead>
@@ -17,8 +17,8 @@ const SequenceTable: React.FC<SequenceTableProps> = ({ influencers }) => {
                 </tr>
             </thead>
             <tbody>
-                {influencers.map((influencer) => (
-                    <SequenceRow key={influencer.id} influencer={influencer} />
+                {sequenceInfluencers.map((influencer) => (
+                    <SequenceRow key={influencer.id} sequenceInfluencer={influencer} />
                 ))}
             </tbody>
         </table>

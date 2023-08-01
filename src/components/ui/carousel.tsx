@@ -20,12 +20,10 @@ export default function Carousel({ slides, autoSlide = false, autoSlideInterval 
 
     const prevSlide = () => {
         setCurrIndex((currIndex) => (currIndex === 0 ? slides?.length - 1 : currIndex - 1));
-        trackEvent(CAROUSEL('click to go to previous slide'));
     };
     const nextSlide = useCallback(() => {
         setCurrIndex((currIndex) => (currIndex === slides?.length - 1 ? 0 : currIndex + 1));
-        trackEvent(CAROUSEL('click to go to next slide'));
-    }, [slides?.length, trackEvent]);
+    }, [slides?.length]);
 
     useEffect(() => {
         if (!autoSlide) return;
@@ -50,13 +48,19 @@ export default function Carousel({ slides, autoSlide = false, autoSlideInterval 
 
                 <div className="absolute inset-0 flex items-center justify-between p-3">
                     <button
-                        onClick={prevSlide}
+                        onClick={() => {
+                            prevSlide();
+                            trackEvent(CAROUSEL('click to go to previous slide'));
+                        }}
                         className="hidden rounded-full bg-white/50 p-1 text-gray-800 shadow hover:bg-white group-hover:block"
                     >
                         <ChevronLeft className="h-6 w-6 stroke-gray-400" />
                     </button>
                     <button
-                        onClick={nextSlide}
+                        onClick={() => {
+                            nextSlide();
+                            trackEvent(CAROUSEL('click to go to next slide'));
+                        }}
                         className="hidden rounded-full bg-white/50 p-1 text-gray-800 shadow hover:bg-white group-hover:block"
                     >
                         <ChevronRight className="h-6 w-6 stroke-gray-400" />

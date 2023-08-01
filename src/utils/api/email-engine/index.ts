@@ -12,6 +12,10 @@ import type { AccountAccountMailboxesGetResponse } from 'types/email-engine/acco
 import type { AccountAccountMessageGet } from 'types/email-engine/account-account-message-get';
 import type { OutboxGet } from 'types/email-engine/outbox-get';
 import type { OutboxQueueidDelete } from 'types/email-engine/outbox-queueid-delete';
+import type {
+    AccountAccountMessagePut,
+    UpdateMessagePutResponseBody,
+} from 'types/email-engine/account-account-message-put';
 
 // PATHS
 
@@ -28,6 +32,15 @@ const getEmailsPath = (account: string, mailboxPath: string, page = 0, pageSize 
         pageSize: String(pageSize),
         documentStore: String(documentStore),
     })}`;
+
+const getEmailPath = (account: string, messageId: string, textType: TextType, documentStore = true) =>
+    `account/${encodeURIComponent(account)}/message/${encodeURIComponent(messageId)}?${new URLSearchParams({
+        textType,
+        documentStore: String(documentStore),
+    })}`;
+
+const updateEmailPath = (account: string, messageId: string) =>
+    `account/${encodeURIComponent(account)}/message/${encodeURIComponent(messageId)}`;
 
 const getEmailTextPath = (account: string, messageId: string, textType: TextType, documentStore = true) =>
     `account/${encodeURIComponent(account)}/text/${encodeURIComponent(messageId)}?${new URLSearchParams({
@@ -68,11 +81,17 @@ export const sendEmail = async (body: SendEmailRequestBody, account: string) =>
 export const getEmails = async (account: string, mailboxPath: string) =>
     await emailEngineApiFetch<AccountAccountMessagesGet>(getEmailsPath(account, mailboxPath));
 
-export const getMessage = async (account: string, messageId: string) =>
-    await emailEngineApiFetch<AccountAccountMessageGet>(getEmailsPath(account, messageId));
+export const getMessage = async (account: string, messageId: string, textType: TextType = '*') =>
+    await emailEngineApiFetch<AccountAccountMessageGet>(getEmailPath(account, messageId, textType));
 
 export const getEmailText = async (account: string, emailId: string, textType: TextType = '*') =>
     await emailEngineApiFetch<AccountAccountTextTextGetResponse>(getEmailTextPath(account, emailId, textType));
+
+export const updateMessage = async (body: AccountAccountMessagePut, account: string, messageId: string) =>
+    await emailEngineApiFetch<UpdateMessagePutResponseBody>(updateEmailPath(account, messageId), {
+        method: 'PUT',
+        body,
+    });
 
 export const searchMailbox = async (
     account: string,

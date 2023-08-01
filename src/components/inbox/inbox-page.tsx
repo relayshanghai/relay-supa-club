@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Fuse from 'fuse.js';
 import { Layout } from '../layout';
 import type { MessagesGetMessage } from 'types/email-engine/account-account-messages-get';
@@ -10,45 +10,30 @@ import toast from 'react-hot-toast';
 import { Spinner } from '../icons';
 import { CorrespondenceSection } from './correspondence-section';
 import {
-    getInBoxMessages,
     getInboxThreadMessages,
     getSentThreadMessages,
+    updateMessageAsSeen,
 } from 'src/utils/api/email-engine/handle-messages';
+import { useMessages } from 'src/hooks/use-message';
+import { GMAIL_SENT_SPECIAL_USE_FLAG } from 'src/utils/api/email-engine/prototype-mocks';
 
 export const InboxPage = () => {
     const [messages, setMessages] = useState<MessagesGetMessage[]>([]);
     const [searchResults, setSearchResults] = useState<MessagesGetMessage[]>([]);
-    const [loadingMessages, setLoadingMessages] = useState(false);
-    const [getMessagesError, setGetMessagesError] = useState('');
-    const [pages, setPages] = useState(0);
-
     const [selectedMessages, setSelectedMessages] = useState<EmailSearchPostResponseBody['messages'] | null>(null);
     const [loadingSelectedMessages, setLoadingSelectedMessages] = useState(false);
     const [getSelectedMessagesError, setGetSelectedMessagesError] = useState('');
     const [selectedTab, setSelectedTab] = useState('new');
     const [searchTerm, setSearchTerm] = useState<string>('');
 
-    const getMessages = useCallback(async () => {
-        setLoadingMessages(true);
-        setGetMessagesError('');
-        try {
-            const { messages, pages } = await getInBoxMessages();
-            setMessages(messages);
-            setPages(pages);
-        } catch (error: any) {
-            clientLogger(error, 'error');
-            setGetMessagesError(error.message);
-            throw error.message;
-        } finally {
-            setLoadingMessages(false);
-        }
-    }, []);
+    const { inboxMessages, isLoading, refreshInboxMessages } = useMessages();
 
     useEffect(() => {
-        if (!loadingMessages && pages === 0 && messages.length === 0) {
-            getMessages();
+        if (!inboxMessages) {
+            return;
         }
-    }, [getMessages, loadingMessages, messages.length, pages]);
+        setMessages(inboxMessages);
+    }, [inboxMessages]);
 
     const filteredMessages = useMemo(() => {
         if (selectedTab === 'new') {
@@ -81,7 +66,6 @@ export const InboxPage = () => {
                 return new Date(a.date).getTime() - new Date(b.date).getTime();
             });
             setSelectedMessages(threadMessages);
-            // console.log({ sentThreadMessages }, { inboxThreadMessages });
             setLoadingSelectedMessages(false);
         } catch (error: any) {
             clientLogger(error, 'error');
@@ -91,16 +75,29 @@ export const InboxPage = () => {
         setLoadingSelectedMessages(false);
     };
 
+    useEffect(() => {
+        if (!selectedMessages) {
+            return;
+        }
+        const unSeenMessages = selectedMessages.filter((message) => {
+            return !message.flags.includes(GMAIL_SENT_SPECIAL_USE_FLAG);
+        });
+        unSeenMessages.forEach(async (message) => {
+            await updateMessageAsSeen(message.id);
+            refreshInboxMessages();
+        });
+    }, [refreshInboxMessages, selectedMessages]);
+
     return (
         <Layout>
             <div className="flex h-full">
-                {loadingMessages ? (
+                {isLoading ? (
                     <div className="flex w-full items-center justify-center">
                         <Spinner className="h-6 w-6 fill-primary-600 text-primary-200" />
                     </div>
                 ) : (
                     <>
-                        {messages.length === 0 && !loadingMessages && !getMessagesError && <p>No messages</p>}
+                        {messages.length === 0 && !isLoading && <p>No messages</p>}
                         <div className="h-full w-2/5 overflow-auto">
                             {messages.length > 0 && (
                                 <>
