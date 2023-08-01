@@ -81,9 +81,6 @@ export const InboxPage = () => {
         const unSeenMessages = selectedMessages.filter((message) => {
             return !message.flags.includes('\\Seen');
         });
-        if (unSeenMessages.length === 0) {
-            return;
-        }
         unSeenMessages.forEach(async (message) => {
             await updateMessageAsSeen(message.id);
             refreshInboxMessages();
