@@ -946,6 +946,7 @@ export interface Database {
           created_at: string | null
           event_id: string | null
           id: string
+          parameters_id: string | null
           profile_id: string | null
           snapshot: Json
         }
@@ -954,6 +955,7 @@ export interface Database {
           created_at?: string | null
           event_id?: string | null
           id?: string
+          parameters_id?: string | null
           profile_id?: string | null
           snapshot: Json
         }
@@ -962,6 +964,7 @@ export interface Database {
           created_at?: string | null
           event_id?: string | null
           id?: string
+          parameters_id?: string | null
           profile_id?: string | null
           snapshot?: Json
         }
@@ -976,6 +979,12 @@ export interface Database {
             foreignKeyName: "search_snapshots_event_id_fkey"
             columns: ["event_id"]
             referencedRelation: "tracking_events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "search_snapshots_parameter_id_fkey"
+            columns: ["parameters_id"]
+            referencedRelation: "search_parameters"
             referencedColumns: ["id"]
           },
           {
