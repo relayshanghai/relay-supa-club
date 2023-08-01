@@ -11,6 +11,10 @@ BEGIN;
 \include ./supabase/policies/companies_update.policy.sql
 \include ./supabase/policies/campaign_creators_all.policy.sql
 \include ./supabase/policies/deny_all_policies.policy.sql
-\include ./supabase/policies/influencers_select.policy.sql
+\include ./supabase/policies/influencer_social_profiles_all.policy.sql
+\include ./supabase/policies/addresses_all.policy.sql
+\include ./supabase/policies/sequence_influencers_all.policy.sql
+\include ./supabase/policies/sequence_steps_all.policy.sql
+\include ./supabase/policies/sequences_all.policy.sql
 
 COMMIT;
