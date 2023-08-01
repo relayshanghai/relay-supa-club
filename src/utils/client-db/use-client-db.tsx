@@ -15,7 +15,7 @@ import type { DBQuery } from '../types';
 import { getSequenceByIdCall, getSequencesByCompanyIdCall, updateSequenceCall } from './sequences';
 import { getSequenceStepsBySequenceIdCall, updateSequenceStepCall } from './sequence_steps';
 import { getSequenceInfluencersBySequenceIdCall, updateSequenceInfluencerCall } from './sequences_influencers';
-import { getInfluencerByIdCall } from './influencers';
+import { getInfluencerSocialProfileByIdCall } from './influencers';
 
 export const useSupabase = () => useSupabaseClient<DatabaseWithCustomTypes>();
 
@@ -59,7 +59,7 @@ export const useClientDb = () => {
         getSequenceInfluencersBySequenceId: getSequenceInfluencersBySequenceIdCall(supabaseClient),
         updateSequenceInfluencer: updateSequenceInfluencerCall(supabaseClient),
 
-        // influencers
-        getInfluencerById: getInfluencerByIdCall(supabaseClient),
+        // influencer_social_profiles
+        getInfluencerSocialProfileById: getInfluencerSocialProfileByIdCall(supabaseClient),
     };
 };
