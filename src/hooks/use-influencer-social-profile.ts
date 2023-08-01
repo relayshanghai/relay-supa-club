@@ -4,13 +4,13 @@ import { useClientDb } from 'src/utils/client-db/use-client-db';
 
 export const useInfluencerSocialProfile = (id?: string) => {
     const db = useClientDb();
-    const { data: influencerSocialProfile, mutate: refreshInfluencer } = useSWR(
+    const { data: influencerSocialProfile, mutate: refreshInfluencerSocialProfile } = useSWR(
         id ? [id, 'influencer-social-profile'] : null,
         ([id]) => db.getInfluencerSocialProfileById(id),
     );
 
     return {
         influencerSocialProfile,
-        refreshInfluencer,
+        refreshInfluencerSocialProfile,
     };
 };
