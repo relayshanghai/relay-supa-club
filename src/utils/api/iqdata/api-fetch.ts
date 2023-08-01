@@ -21,11 +21,11 @@ export const apiFetch = async <T extends object>(url: string, payload: ApiPayloa
     if (context && content && 'status' in content && 'error' in content) {
         if (content.status === 429) {
             logRateLimitError(url, context);
-            forensicTrack(context, caller);
+            forensicTrack(context, 'rate_limit_error', caller);
         }
         if (content.error === 'daily_tokens_limit_exceeded') {
             logDailyTokensError(url, context);
-            forensicTrack(context, caller);
+            forensicTrack(context, 'daily_tokens_limit_exceeded', caller);
         }
     }
     return content;

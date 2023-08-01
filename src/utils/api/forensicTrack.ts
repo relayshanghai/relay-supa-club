@@ -5,7 +5,7 @@ import type { ServerContext } from './iqdata';
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
 import type { DatabaseWithCustomTypes } from 'types';
 
-export const forensicTrack = async (context: ServerContext, _caller?: string) => {
+export const forensicTrack = async (context: ServerContext, error: string, _caller?: string) => {
     const calls = await callsites();
     const sentryPayload = calls.map((call) => {
         return {
@@ -24,9 +24,9 @@ export const forensicTrack = async (context: ServerContext, _caller?: string) =>
             isToplevel: call.isToplevel(),
         };
     });
-
-    const supabase = createServerSupabaseClient<DatabaseWithCustomTypes>(context);
+    const { metadata, ...strippedContext } = context;
+    const supabase = createServerSupabaseClient<DatabaseWithCustomTypes>(strippedContext);
     const { user_id, company_id, fullname, email } = await getUserSession(supabase)();
 
-    serverLogger({ user_id, company_id, fullname, email, ...sentryPayload }, 'error', true);
+    serverLogger({ user_id, company_id, fullname, email, metadata, ...sentryPayload }, 'error', true, error);
 };
