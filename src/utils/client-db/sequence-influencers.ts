@@ -2,9 +2,21 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import type { DatabaseWithCustomTypes } from 'types';
 import type { SequenceInfluencerUpdate } from '../api/db';
 
+export const getSequenceInfluencerByIdCall =
+    (supabaseClient: SupabaseClient<DatabaseWithCustomTypes>) => async (id: string) => {
+        if (!id) {
+            throw new Error('No id provided');
+        }
+        const { data, error } = await supabaseClient.from('sequence_influencers').select('*').eq('id', id).single();
+        if (error) throw error;
+        return data;
+    };
+
 export const getSequenceInfluencersBySequenceIdCall =
     (supabaseClient: SupabaseClient<DatabaseWithCustomTypes>) => async (sequenceId: string) => {
-        if (!sequenceId) return;
+        if (!sequenceId) {
+            throw new Error('No sequenceId provided');
+        }
         const { data, error } = await supabaseClient
             .from('sequence_influencers')
             .select('*')
@@ -20,6 +32,7 @@ export const updateSequenceInfluencerCall =
             .from('sequence_influencers')
             .update(update)
             .eq('id', update.id)
+            .select()
             .single();
         if (error) throw error;
         return data;

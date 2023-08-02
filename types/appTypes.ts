@@ -5,6 +5,7 @@ import type {
     CompanyTable,
     InfluencerSocialProfilesTable,
     ProfilesTable,
+    SequenceEmailsTable,
     SequenceInfluencersTable,
     SequenceStepsTable,
     UsagesTable,
@@ -106,6 +107,7 @@ export interface DatabaseWithCustomTypes extends Database {
             influencer_social_profiles: InfluencerSocialProfilesTable;
             sequence_steps: SequenceStepsTable;
             sequence_influencers: SequenceInfluencersTable;
+            sequence_email: SequenceEmailsTable;
         };
     };
 }

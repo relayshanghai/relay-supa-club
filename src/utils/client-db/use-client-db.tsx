@@ -13,9 +13,10 @@ import {
 } from './campaignCreators';
 import type { DBQuery } from '../types';
 import { getSequenceByIdCall, getSequencesByCompanyIdCall, updateSequenceCall } from './sequences';
-import { getSequenceStepsBySequenceIdCall, updateSequenceStepCall } from './sequence_steps';
-import { getSequenceInfluencersBySequenceIdCall, updateSequenceInfluencerCall } from './sequences_influencers';
+import { getSequenceStepsBySequenceIdCall, updateSequenceStepCall } from './sequence-steps';
+import { getSequenceInfluencersBySequenceIdCall, updateSequenceInfluencerCall } from './sequence-influencers';
 import { getInfluencerSocialProfileByIdCall } from './influencers';
+import { getSequenceEmailsBySequenceCall, updateSequenceEmailCall } from './sequence-emails';
 
 export const useSupabase = () => useSupabaseClient<DatabaseWithCustomTypes>();
 
@@ -58,6 +59,10 @@ export const useClientDb = () => {
         // sequence_influencers
         getSequenceInfluencersBySequenceId: getSequenceInfluencersBySequenceIdCall(supabaseClient),
         updateSequenceInfluencer: updateSequenceInfluencerCall(supabaseClient),
+
+        // sequence_influencers_sequence_steps
+        getSequenceEmailsBySequence: getSequenceEmailsBySequenceCall(supabaseClient),
+        updateSequenceEmail: updateSequenceEmailCall(supabaseClient),
 
         // influencer_social_profiles
         getInfluencerSocialProfileById: getInfluencerSocialProfileByIdCall(supabaseClient),

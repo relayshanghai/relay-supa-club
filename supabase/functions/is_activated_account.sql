@@ -5,6 +5,6 @@ LANGUAGE plpgsql
 SECURITY DEFINER
 AS $$
     BEGIN
-    RETURN (SELECT company_id FROM profiles WHERE id = auth.uid()) = 'active' OR (SELECT company_id FROM profiles WHERE id = auth.uid()) = 'trial';
+    RETURN (SELECT subscription_status FROM companies WHERE id = (SELECT company_id FROM profiles WHERE id = auth.uid())) = 'active' OR (SELECT subscription_status FROM companies WHERE id = (SELECT company_id FROM profiles WHERE id = auth.uid())) = 'trial';
     END;
   $$;

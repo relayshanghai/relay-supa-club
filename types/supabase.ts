@@ -879,6 +879,55 @@ export interface Database {
           }
         ]
       }
+      sequence_email: {
+        Row: {
+          created_at: string
+          email_delivery_status: string | null
+          email_message_id: string | null
+          email_send_at: string | null
+          email_tracking_status: string | null
+          id: string
+          sequence_influencer_id: string
+          sequence_step_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email_delivery_status?: string | null
+          email_message_id?: string | null
+          email_send_at?: string | null
+          email_tracking_status?: string | null
+          id?: string
+          sequence_influencer_id: string
+          sequence_step_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email_delivery_status?: string | null
+          email_message_id?: string | null
+          email_send_at?: string | null
+          email_tracking_status?: string | null
+          id?: string
+          sequence_influencer_id?: string
+          sequence_step_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sequence_email_sequence_influencer_id_fkey"
+            columns: ["sequence_influencer_id"]
+            referencedRelation: "sequence_influencers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sequence_email_sequence_step_id_fkey"
+            columns: ["sequence_step_id"]
+            referencedRelation: "sequence_steps"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       sequence_influencers: {
         Row: {
           added_by: string
@@ -970,10 +1019,6 @@ export interface Database {
       sequence_steps: {
         Row: {
           created_at: string
-          email_delivery_status: string | null
-          email_id: string | null
-          email_send_at: string | null
-          email_tracking_status: string | null
           id: string
           name: string | null
           params: string[]
@@ -985,10 +1030,6 @@ export interface Database {
         }
         Insert: {
           created_at?: string
-          email_delivery_status?: string | null
-          email_id?: string | null
-          email_send_at?: string | null
-          email_tracking_status?: string | null
           id?: string
           name?: string | null
           params?: string[]
@@ -1000,10 +1041,6 @@ export interface Database {
         }
         Update: {
           created_at?: string
-          email_delivery_status?: string | null
-          email_id?: string | null
-          email_send_at?: string | null
-          email_tracking_status?: string | null
           id?: string
           name?: string | null
           params?: string[]
