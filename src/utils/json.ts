@@ -1,6 +1,6 @@
 import type { Json } from 'types/supabase';
 
-type JsonParseArgs = [text: string, reviver?: Parameters<typeof JSON.parse>[1], throwOnerror?: boolean];
+type JsonParseArgs = [text: string, reviver?: Parameters<typeof JSON.parse>[1], throwOnError?: boolean];
 
 /**
  * Parse JSON strings
