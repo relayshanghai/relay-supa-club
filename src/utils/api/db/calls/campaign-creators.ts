@@ -1,11 +1,7 @@
-import type { SupabaseClient } from '@supabase/supabase-js';
-import type { DatabaseWithCustomTypes } from 'types';
-import type { CampaignCreatorDB } from '../types';
-
-type CampaignCreatorUpdate = DatabaseWithCustomTypes['public']['Tables']['campaign_creators']['Update'];
+import type { CampaignCreatorDB, CampaignCreatorDBUpdate, RelayDatabase } from '../types';
 
 export const getCampaignCreator =
-    (db: SupabaseClient<DatabaseWithCustomTypes>) =>
+    (db: RelayDatabase) =>
     async (id: string): Promise<CampaignCreatorDB | null> => {
         const response = await db.from('campaign_creators').select().eq('id', id).maybeSingle();
 
@@ -17,8 +13,8 @@ export const getCampaignCreator =
     };
 
 export const updateCampaignCreator =
-    (db: SupabaseClient<DatabaseWithCustomTypes>) =>
-    async (id: string, data: CampaignCreatorUpdate): Promise<CampaignCreatorDB> => {
+    (db: RelayDatabase) =>
+    async (id: string, data: CampaignCreatorDBUpdate): Promise<CampaignCreatorDB> => {
         const response = await db.from('campaign_creators').update(data).eq('id', id).select().single();
 
         if (response.error) {

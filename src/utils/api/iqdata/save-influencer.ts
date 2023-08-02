@@ -1,12 +1,11 @@
-import type { CreatorReport, DatabaseWithCustomTypes } from 'types';
+import type { CreatorReport } from 'types';
 import {
     insertInfluencer as insertInfluencerToDb,
     insertInfluencerSocialProfile as insertInfluencerSocialProfileToDb,
 } from '../db/calls/influencers-insert';
 import { mapIqdataProfileToInfluencer, mapIqdataProfileToInfluencerSocialProfile } from './extract-influencer';
 import { compose } from '../../compose';
-import type { InfluencerRow, InfluencerSocialProfileRow } from '../db';
-import type { SupabaseClient } from '@supabase/supabase-js';
+import type { InfluencerRow, InfluencerSocialProfileRow, RelayDatabase } from '../db';
 
 const addInfluencerToSocialProfile = (influencer: InfluencerRow) => {
     return (user_profile: CreatorReport['user_profile']) => {
@@ -14,23 +13,22 @@ const addInfluencerToSocialProfile = (influencer: InfluencerRow) => {
     };
 };
 
-const insertSocialProfileFromIqdataProfile =
-    (db: SupabaseClient<DatabaseWithCustomTypes>) => (user_profile: CreatorReport['user_profile']) => {
-        return async (getInfluencer: Promise<InfluencerRow>): Promise<[InfluencerRow, InfluencerSocialProfileRow]> => {
-            const influencer = await getInfluencer;
+const insertSocialProfileFromIqdataProfile = (db: RelayDatabase) => (user_profile: CreatorReport['user_profile']) => {
+    return async (getInfluencer: Promise<InfluencerRow>): Promise<[InfluencerRow, InfluencerSocialProfileRow]> => {
+        const influencer = await getInfluencer;
 
-            const insertInfluencerSocialProfileToDbFromIqdataProfile = compose(
-                insertInfluencerSocialProfileToDb(db),
-                addInfluencerToSocialProfile(influencer),
-                mapIqdataProfileToInfluencerSocialProfile,
-            );
-            const socialProfile = await insertInfluencerSocialProfileToDbFromIqdataProfile(user_profile);
-            return [influencer, socialProfile];
-        };
+        const insertInfluencerSocialProfileToDbFromIqdataProfile = compose(
+            insertInfluencerSocialProfileToDb(db),
+            addInfluencerToSocialProfile(influencer),
+            mapIqdataProfileToInfluencerSocialProfile,
+        );
+        const socialProfile = await insertInfluencerSocialProfileToDbFromIqdataProfile(user_profile);
+        return [influencer, socialProfile];
     };
+};
 
 export const saveInfluencer =
-    (db: SupabaseClient<DatabaseWithCustomTypes>) =>
+    (db: RelayDatabase) =>
     async (data: CreatorReport): Promise<[InfluencerRow, InfluencerSocialProfileRow] | [null, null]> => {
         const insertInfluencerFromIqdataProfile = compose(
             insertSocialProfileFromIqdataProfile(db)(data.user_profile),

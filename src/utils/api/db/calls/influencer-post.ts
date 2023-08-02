@@ -1,9 +1,7 @@
-import type { SupabaseClient } from '@supabase/supabase-js';
-import type { DatabaseWithCustomTypes } from 'types';
-import type { InfluencerPostInsert, InfluencerPostRow } from '../types';
+import type { InfluencerPostInsert, InfluencerPostRow, RelayDatabase } from '../types';
 
 export const insertInfluencerPost =
-    (db: SupabaseClient<DatabaseWithCustomTypes>) =>
+    (db: RelayDatabase) =>
     async (data: InfluencerPostInsert): Promise<InfluencerPostRow> => {
         const influencerPost = await db.from('influencer_posts').insert(data).select().single();
 
@@ -15,7 +13,7 @@ export const insertInfluencerPost =
     };
 
 export const deleteInfluencerPost =
-    (db: SupabaseClient<DatabaseWithCustomTypes>) =>
+    (db: RelayDatabase) =>
     async (id: string): Promise<InfluencerPostRow | null> => {
         const influencerPost = await db
             .from('influencer_posts')
@@ -34,7 +32,7 @@ export const deleteInfluencerPost =
     };
 
 export const getInfluencerPostsBySocialProfile =
-    (db: SupabaseClient<DatabaseWithCustomTypes>) =>
+    (db: RelayDatabase) =>
     async (influencer_social_profile_id: string | null): Promise<InfluencerPostRow[]> => {
         const influencerPost = await db
             .from('influencer_posts')
