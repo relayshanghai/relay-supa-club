@@ -5,7 +5,7 @@ import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
 import type { DatabaseWithCustomTypes } from 'types';
 import { getJourney } from 'src/utils/analytics/api/journey';
 import { now } from 'src/utils/datetime';
-import { insertSearchSnapshot } from 'src/utils/api/db/calls/search_snapshots';
+import { insertSearchSnapshot } from 'src/utils/api/db/calls/search-snapshots';
 import { insertReportSnapshot } from 'src/utils/api/db/calls';
 import { v4 } from 'uuid';
 import { ANALYTICS_HEADER_NAME } from '../constants';

@@ -6,8 +6,8 @@ import { now } from 'src/utils/datetime';
 import { createTrack } from 'src/utils/analytics/api/analytics';
 import events, { eventKeys } from 'src/utils/analytics/events';
 import { db } from 'src/utils/supabase-client';
-import { getSearchSnapshot, insertSearchSnapshot, updateSearchSnapshot } from 'src/utils/api/db/calls/search_snapshots';
-import type { FetchCreatorsFilteredParams} from 'src/utils/api/iqdata/transforms';
+import { getSearchSnapshot, insertSearchSnapshot, updateSearchSnapshot } from 'src/utils/api/db/calls/search-snapshots';
+import type { FetchCreatorsFilteredParams } from 'src/utils/api/iqdata/transforms';
 import { ztype } from 'src/utils/zod';
 
 const PostRequestBody = z.object({
@@ -22,7 +22,7 @@ const PostRequestBody = z.object({
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     const { event, event_at, payload } = PostRequestBody.parse(req.body);
-    const { event_id, snapshot_id, ..._payload } = payload
+    const { event_id, snapshot_id, ..._payload } = payload;
     let snapshot = null;
 
     const result = await createTrack({ req, res })(events[event], { ..._payload, event_id, event_at });
