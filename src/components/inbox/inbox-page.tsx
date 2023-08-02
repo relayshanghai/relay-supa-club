@@ -98,7 +98,7 @@ export const InboxPage = () => {
                 ) : (
                     <>
                         {messages.length === 0 && !isLoading && <p>No messages</p>}
-                        <div className="h-full w-2/5 overflow-auto">
+                        <div className="h-full w-[240px] overflow-auto">
                             {messages.length > 0 && (
                                 <>
                                     <ToolBar
@@ -123,7 +123,7 @@ export const InboxPage = () => {
                                 </>
                             )}
                         </div>
-                        <div className="h-full w-3/5 overflow-auto">
+                        <div className="h-full flex-grow overflow-auto">
                             {selectedMessages ? (
                                 <CorrespondenceSection
                                     selectedMessages={selectedMessages}

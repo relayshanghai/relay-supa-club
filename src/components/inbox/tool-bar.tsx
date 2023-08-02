@@ -1,5 +1,6 @@
 import type { ChangeEvent, Dispatch, SetStateAction } from 'react';
 import { debounce } from 'src/utils/debounce';
+import { Slash } from '../icons';
 
 export const ToolBar = ({
     selectedTab,
@@ -23,34 +24,35 @@ export const ToolBar = ({
     const tabs = [
         {
             value: 'new',
-            name: 'NEW',
+            name: 'New',
         },
         {
             value: 'inbox',
-            name: 'INBOX',
+            name: 'Inbox',
         },
     ];
 
     return (
         <div className=" space-y-4 border-b-2 border-r-2 border-tertiary-200 p-3">
-            <div className="flex justify-around text-sm font-semibold text-gray-600">
-                {tabs.map((tab) => (
+            <div className="flex justify-center text-sm font-semibold text-gray-600">
+                {tabs.map((tab, index) => (
                     <div
                         key={tab.value}
                         onClick={() => handleTabChange(tab)}
-                        className={`cursor-pointer hover:text-primary-500 ${
+                        className={` flex cursor-pointer items-center justify-center hover:text-primary-500 ${
                             selectedTab === tab.value &&
                             'text-primary-500 underline decoration-current decoration-2 underline-offset-2'
                         }`}
                     >
-                        {tab.name}
+                        <div>{tab.name}</div>
+                        {index !== tabs.length - 1 && <Slash className="mx-2 h-4 w-4 font-bold" />}
                     </div>
                 ))}
             </div>
             <div className="px-3">
                 <input
                     className="block w-full appearance-none rounded-md border border-gray-200 bg-white px-3 py-2 text-gray-600 placeholder-gray-400 ring-1 ring-gray-900 ring-opacity-5 placeholder:text-xs focus:outline-none"
-                    placeholder="Search for name, email or content"
+                    placeholder="Search"
                     id="influencer-search"
                     onChange={(e) => {
                         handleInputChange(e);
