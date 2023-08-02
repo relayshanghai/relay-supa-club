@@ -23,7 +23,7 @@ export const InboxPage = () => {
     const [selectedMessages, setSelectedMessages] = useState<EmailSearchPostResponseBody['messages'] | null>(null);
     const [loadingSelectedMessages, setLoadingSelectedMessages] = useState(false);
     const [getSelectedMessagesError, setGetSelectedMessagesError] = useState('');
-    const [selectedTab, setSelectedTab] = useState('new');
+    const [selectedTab, setSelectedTab] = useState('inbox');
     const [searchTerm, setSearchTerm] = useState<string>('');
 
     const { inboxMessages, isLoading, refreshInboxMessages } = useMessages();
@@ -126,6 +126,7 @@ export const InboxPage = () => {
                         <div className="h-full flex-grow overflow-auto">
                             {selectedMessages ? (
                                 <CorrespondenceSection
+                                    //TODO: add selectedSequenceInfluencers
                                     selectedMessages={selectedMessages}
                                     loadingSelectedMessages={loadingSelectedMessages}
                                 />

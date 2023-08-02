@@ -6,6 +6,7 @@ import { ReplayEditor } from './replay-editor';
 import { useState } from 'react';
 import { sendReply } from 'src/utils/api/email-engine/handle-messages';
 import { clientLogger } from 'src/utils/logger-client';
+import { EmailHeader } from './email-header';
 
 export const CorrespondenceSection = ({
     selectedMessages,
@@ -36,20 +37,21 @@ export const CorrespondenceSection = ({
     };
 
     return (
-        <div className="h-full p-3">
+        <div className="h-full">
             {loadingSelectedMessages ? (
                 <div className="flex h-full items-center justify-center">
                     <Spinner className="h-6 w-6 fill-primary-600 text-primary-200" />
                 </div>
             ) : (
                 <div className="flex h-full flex-col overflow-y-auto">
+                    <EmailHeader messages={selectedMessages} />
                     {selectedMessages.length > 1 ? (
                         <Threads messages={selectedMessages} />
                     ) : (
                         <>{selectedMessages.length > 0 && <Email message={selectedMessages[0]} />}</>
                     )}
 
-                    <div className="justify-self-end">
+                    <div className="justify-self-end p-3">
                         <ReplayEditor
                             replyMessage={replyMessage}
                             setReplyMessage={setReplyMessage}
