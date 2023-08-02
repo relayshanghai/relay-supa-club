@@ -8,7 +8,7 @@ import events, { eventKeys } from 'src/utils/analytics/events';
 import { db } from 'src/utils/supabase-client';
 import { getSearchSnapshot, insertSearchSnapshot, updateSearchSnapshot } from 'src/utils/api/db/calls/search-snapshots';
 import type { FetchCreatorsFilteredParams } from 'src/utils/api/iqdata/transforms';
-import { ztype } from 'src/utils/zod';
+import { zType } from 'src/utils/zod';
 
 const PostRequestBody = z.object({
     event: eventKeys,
@@ -16,7 +16,7 @@ const PostRequestBody = z.object({
     payload: z.object({
         event_id: z.string().optional(),
         snapshot_id: z.string().optional(),
-        parameters: ztype<FetchCreatorsFilteredParams>(),
+        parameters: zType<FetchCreatorsFilteredParams>(),
     }),
 });
 

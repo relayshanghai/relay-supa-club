@@ -11,9 +11,9 @@ import { z } from 'zod';
  *
  *  @see https://zod.dev/?id=type-inference for more info regarding __Type Inference__
  */
-export type zinfer<T extends ZodType, X extends 'o' | 'i' = 'i'> = X extends 'i' ? z.input<T> : z.infer<T>;
+export type zInfer<T extends ZodType, X extends 'o' | 'i' = 'i'> = X extends 'i' ? z.input<T> : z.infer<T>;
 
 /**
  * Create a Zod Type from custom type
  */
-export const ztype = <T>() => z.any() as z.ZodType<T>;
+export const zType = <T>() => z.any() as z.ZodType<T>;
