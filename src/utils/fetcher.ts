@@ -3,6 +3,7 @@ import { ANALYTICS_COOKIE_ANON } from './analytics/constants';
 import { ANALYTICS_HEADER_NAME } from './analytics/constants';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { logRateLimitError, logDailyTokensError } from 'src/utils/api/slack/handle-alerts';
+import { forensicTrack } from './api/forensicTrack';
 
 interface ResponseWithError extends Response {
     success?: boolean;
@@ -23,9 +24,11 @@ export const handleResError = async (
         if (context) {
             if (res.status === 429) {
                 await logRateLimitError(action, context);
+                forensicTrack(context, 'rate_limit_error');
             }
             if (json.error === 'daily_tokens_limit_exceeded') {
                 await logDailyTokensError(action, context);
+                forensicTrack(context, 'daily_tokens_limit_exceeded');
             }
         }
         if (json?.error) throw new Error(typeof json.error === 'string' ? json.error : JSON.stringify(json.error));

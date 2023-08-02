@@ -47,6 +47,8 @@ const trackAndSnap = async (
 
 export type CreatorsReportGetResponse = CreatorReport & { createdAt: string };
 
+// Disabling complexity linting error as fixing this will require a large refactor
+// eslint-disable-next-line complexity
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'GET') {
         const catchInfluencer = async (data: CreatorReport) => {
@@ -63,11 +65,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 return res.status(httpCodes.BAD_REQUEST).json({ error: 'Invalid request' });
 
             try {
-                const reportMetadata = await fetchReportsMetadata({ req, res })(platform, creator_id);
+                const reportMetadata = await fetchReportsMetadata({
+                    req,
+                    res,
+                })(platform, creator_id);
+
                 if (!reportMetadata.results || reportMetadata.results.length === 0) throw new Error('No reports found');
                 const report_id = reportMetadata.results[0].id;
                 if (!report_id) throw new Error('No report ID found');
                 const createdAt = reportMetadata.results[0].created_at;
+
                 const data = await fetchReport({ req, res })(report_id);
                 if (!data.success) throw new Error('Failed to find report');
 

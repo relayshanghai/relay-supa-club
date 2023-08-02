@@ -5,9 +5,12 @@ import { getRelevantTopicTags } from 'src/utils/api/iqdata/topics/get-relevant-t
 const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     const { term, limit, platform } = req.body;
 
-    const results = await getRelevantTopicTags({
-        query: { q: term, limit, platform },
-    });
+    const results = await getRelevantTopicTags(
+        {
+            query: { q: term, limit, platform },
+        },
+        { req, res },
+    );
 
     return res.status(200).json(results);
 };

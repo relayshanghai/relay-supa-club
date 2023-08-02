@@ -9,9 +9,14 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 export const ApiPayload = z.object({
     context: z
-        .object<{ req: z.ZodType<NextApiRequest>; res: z.ZodType<NextApiResponse> }>({
+        .object<{
+            req: z.ZodType<NextApiRequest>;
+            res: z.ZodType<NextApiResponse>;
+            metadata: z.ZodOptional<z.ZodRecord>;
+        }>({
             req: z.any(),
             res: z.any(),
+            metadata: z.record(z.any()).optional(),
         })
         .optional(),
     path: z.record(z.any()).optional(),
