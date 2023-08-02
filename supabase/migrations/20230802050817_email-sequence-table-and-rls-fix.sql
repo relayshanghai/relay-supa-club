@@ -21,7 +21,7 @@ ALTER TABLE "public"."sequence_steps" DROP COLUMN "email_send_at";
 
 ALTER TABLE "public"."sequence_steps" DROP COLUMN "email_tracking_status";
 
-CREATE UNIQUE INDEX sequence_email_pkey ON public.sequence_email USING btree(id);
+CREATE UNIQUE INDEX sequence_email_pkey ON public.sequence_email USING btree (id);
 
 ALTER TABLE "public"."sequence_email" ADD CONSTRAINT "sequence_email_pkey" PRIMARY KEY USING INDEX "sequence_email_pkey";
 

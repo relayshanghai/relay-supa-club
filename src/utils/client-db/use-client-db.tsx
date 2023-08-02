@@ -1,4 +1,3 @@
-import type { SupabaseClient } from '@supabase/auth-helpers-react';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import type { DatabaseWithCustomTypes } from 'types';
 import { getCampaignsCall, createCampaignCall, updateCampaignCall } from './campaigns';
@@ -20,9 +19,9 @@ import { getSequenceEmailsBySequenceCall, updateSequenceEmailCall } from './sequ
 
 export const useSupabase = () => useSupabaseClient<DatabaseWithCustomTypes>();
 
-export const useDB = <T extends (db: SupabaseClient<DatabaseWithCustomTypes>) => any>(query: DBQuery<T>) => {
+export const useDB = <T extends DBQuery<(...args: any) => any>>(query: DBQuery<ReturnType<T>>) => {
     const supabase = useSupabase();
-    return (...args: Parameters<ReturnType<T>>) => query(supabase)(...args);
+    return query(supabase);
 };
 
 export const useClientDb = () => {

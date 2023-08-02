@@ -38,8 +38,6 @@ export type CompanyTable = Database['public']['Tables']['companies'] & {
     };
 };
 
-export type RelayDatabase = SupabaseClient<DatabaseWithCustomTypes>;
-
 export type CompanyDB = CompanyTable['Row'];
 export type CompanyDBUpdate = CompanyTable['Update'];
 export type CompanyDBInsert = CompanyTable['Insert'];
@@ -201,3 +199,13 @@ export type InfluencerSocialProfilesTable = Database['public']['Tables']['influe
         reference_id: InfluencerSocialProfileReferenceId;
     };
 };
+
+/**
+ * Supabase client instance with custom database
+ */
+export type RelayDatabase = SupabaseClient<DatabaseWithCustomTypes>;
+
+export type TrackingEvents = Database['public']['Tables']['tracking_events'];
+export type SearchSnapshots = Database['public']['Tables']['search_snapshots'];
+export type ReportSnapshots = Database['public']['Tables']['report_snapshots'];
+export type SearchParameters = Database['public']['Tables']['search_parameters'];

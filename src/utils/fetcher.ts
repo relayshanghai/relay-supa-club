@@ -1,3 +1,6 @@
+import { getItem } from '@analytics/storage-utils';
+import { ANALYTICS_COOKIE_ANON } from './analytics/constants';
+import { ANALYTICS_HEADER_NAME } from './analytics/constants';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { logRateLimitError, logDailyTokensError } from 'src/utils/api/slack/handle-alerts';
 import { forensicTrack } from './api/forensicTrack';
@@ -83,10 +86,12 @@ export const nextFetchWithQueries = async <Q extends Record<string, string>, T =
     queries: Q,
     options: RequestInit = {},
 ) => {
+    const anonymous_id = getItem(ANALYTICS_COOKIE_ANON);
     const url = new URL('/api/' + path, window.location.origin);
     for (const key in queries) {
-        if (queries.hasOwnProperty(key)) url.searchParams.set(key, queries[key].toString());
+        if (queries.hasOwnProperty(key)) url.searchParams.set(key, queries[key]?.toString());
     }
+    options.headers = { ...options.headers, [ANALYTICS_HEADER_NAME]: anonymous_id };
     const res = await fetch(url.toString(), options);
     await handleResError(res, path);
     const json = await res.json();

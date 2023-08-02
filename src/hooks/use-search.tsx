@@ -1,6 +1,6 @@
 import type { InfluencerPostRequest, InfluencerPostResponse } from 'pages/api/influencer-search';
 import type { Dispatch, PropsWithChildren, SetStateAction } from 'react';
-import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { createContext, useContext, useEffect, useRef, useState, useCallback } from 'react';
 import { usageErrors } from 'src/errors/usages';
 import { hasCustomError } from 'src/utils/errors';
 import { nextFetch } from 'src/utils/fetcher';
@@ -11,6 +11,7 @@ import type {
     CreatorSearchTag,
     AudienceAgeRangeWeighted,
     AudienceGenderWeighted,
+    SearchResultMetadata,
 } from 'types';
 import { useUser } from './use-user';
 import useSWR from 'swr';
@@ -69,6 +70,7 @@ export interface ISearchContext {
     setActiveSearch: (activeSearch: boolean) => void;
     searchParams: FetchCreatorsFilteredParams | undefined;
     setSearchParams: (searchParams: FetchCreatorsFilteredParams | undefined) => void;
+    getSearchParams: () => FetchCreatorsFilteredParams | undefined;
 }
 
 export const SearchContext = createContext<ISearchContext>({
@@ -120,6 +122,7 @@ export const SearchContext = createContext<ISearchContext>({
     setActiveSearch: () => null,
     searchParams: undefined,
     setSearchParams: () => null,
+    getSearchParams: () => undefined,
 });
 
 export const useSearch = () => useContext(SearchContext);
@@ -128,6 +131,19 @@ export const useSearchResults = (page: number) => {
     const { profile } = useUser();
     const { company } = useCompany();
     const ref = useRef<any>();
+
+    type SearchResults = {
+        results: InfluencerPostResponse['accounts'];
+        resultsTotal: InfluencerPostResponse['total'];
+        __metadata: SearchResultMetadata['__metadata'];
+    };
+
+    /**
+     * Function to run after SWR request finished "loading"
+     */
+    const [onLoad, setOnLoad] = useState<(_data: SearchResults | undefined) => void>(
+        () => (_data: SearchResults | undefined) => null,
+    );
 
     const { setUsageExceeded, setLoading, setActiveSearch, searchParams } = useSearch();
 
@@ -147,59 +163,19 @@ export const useSearchResults = (page: number) => {
                 const signal = controller.signal;
                 ref.current = controller;
 
-                const {
-                    tags,
-                    platform,
-                    username,
-                    text,
-                    keywords,
-                    text_tags,
-                    influencerLocation,
-                    audienceLocation,
-                    resultsPerPageLimit,
-                    audience,
-                    audienceAge,
-                    audienceGender,
-                    views,
-                    gender,
-                    engagement,
-                    lastPost,
-                    contactInfo,
-                    only_recommended: onlyRecommended,
-                    recommendedInfluencers,
-                } = searchParams;
-
                 const companyId = company?.id || profile.company_id;
                 if (!companyId) {
                     throw new Error('No company');
                 }
 
                 const body: InfluencerPostRequest = {
-                    tags,
-                    platform,
-                    text,
-                    keywords,
-                    text_tags,
-                    username,
-                    influencerLocation,
-                    audienceLocation,
-                    resultsPerPageLimit,
-                    page,
-                    audience,
-                    audienceAge,
-                    audienceGender,
-                    views,
-                    gender,
-                    engagement,
-                    lastPost,
-                    contactInfo,
-                    only_recommended: onlyRecommended,
+                    ...searchParams,
                     company_id: companyId,
                     user_id: profile?.id,
-                    recommendedInfluencers,
+                    page,
                 };
 
-                const res = await nextFetch<InfluencerPostResponse>(path, {
+                const res = await nextFetch<InfluencerPostResponse & SearchResultMetadata>(path, {
                     method: 'post',
                     signal,
                     body,
@@ -208,7 +184,8 @@ export const useSearchResults = (page: number) => {
                 if (!res?.accounts) {
                     throw new Error('no accounts in results');
                 }
-                return { results: res?.accounts, resultsTotal: res?.total };
+
+                return { results: res?.accounts, resultsTotal: res?.total, __metadata: res.__metadata };
             } catch (error: any) {
                 if (hasCustomError(error, usageErrors)) {
                     setUsageExceeded(true);
@@ -228,6 +205,12 @@ export const useSearchResults = (page: number) => {
         },
     );
 
+    // wait for swr to finish loading
+    useEffect(() => {
+        if (!data || isLoading === true) return;
+        onLoad(data);
+    }, [onLoad, isLoading, data]);
+
     useEffect(() => {
         if (error) {
             setLoading(false);
@@ -246,6 +229,9 @@ export const useSearchResults = (page: number) => {
         isValidating,
         noResults,
         mutate,
+        metadata: data?.__metadata,
+        onLoad,
+        setOnLoad,
     };
 };
 
@@ -280,6 +266,54 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
     const { data: recommendedInfluencers } = useSWR(featRecommended() ? 'recommended-influencers' : null, (path) =>
         nextFetch<RecommendedInfluencersGetResponse>(path),
     );
+
+    const getSearchParams = useCallback((): typeof searchParams & {
+        hashtags: string[];
+        onlyRecommended: boolean;
+        activeSearch: boolean;
+    } => {
+        return {
+            page,
+            tags,
+            text,
+            keywords,
+            hashtags,
+            username,
+            influencerLocation,
+            views,
+            audience,
+            gender,
+            engagement,
+            lastPost,
+            contactInfo,
+            audienceLocation,
+            audienceAge,
+            audienceGender,
+            platform,
+            onlyRecommended,
+            activeSearch,
+        };
+    }, [
+        page,
+        tags,
+        text,
+        keywords,
+        hashtags,
+        username,
+        influencerLocation,
+        views,
+        audience,
+        gender,
+        engagement,
+        lastPost,
+        contactInfo,
+        audienceLocation,
+        audienceAge,
+        audienceGender,
+        platform,
+        onlyRecommended,
+        activeSearch,
+    ]);
 
     return (
         <SearchContext.Provider
@@ -331,6 +365,7 @@ export const SearchProvider = ({ children }: PropsWithChildren) => {
                 setActiveSearch,
                 searchParams,
                 setSearchParams,
+                getSearchParams,
             }}
         >
             {children}

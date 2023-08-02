@@ -19,11 +19,13 @@ export default function CampaignModalCard({
     creator,
     platform,
     campaignCreators,
+    track,
 }: {
     campaign: CampaignDB;
     creator: CreatorUserProfile | null;
     platform: CreatorPlatform;
     campaignCreators: CampaignCreatorBasicInfo[];
+    track: (campaign: string) => void;
 }) {
     const supabase = useSupabaseClient();
     const { addCreatorToCampaign, loading, refreshCampaignCreators } = useCampaignCreators({
@@ -53,6 +55,8 @@ export default function CampaignModalCard({
                 added_by_id: profile.id,
             });
             toast.success(t('campaigns.modal.addedSuccessfully'));
+            campaign && track(campaign.id);
+
             trackEvent(CAMPAIGN_MODAL_CARD('added creator to campaign'), {
                 creator: creator?.username || creator?.fullname || creator?.user_id,
                 campaign: campaign?.id,

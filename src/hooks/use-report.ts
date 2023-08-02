@@ -9,6 +9,7 @@ import type { CreatorPlatform, CreatorReport } from 'types';
 import { useUser } from './use-user';
 import useSWR from 'swr';
 import { useCompany } from './use-company';
+import type { eventKeys } from 'src/utils/analytics/events';
 
 //The transform function is not used now, as the image proxy issue is handled directly where calls for the image.But this is left for future refactor. TODO:Ticket V2-181
 // const transformReport = (report: CreatorReport, platform: string) => {
@@ -31,7 +32,14 @@ export const reportIsStale = (createdAt: string) => {
     const diff = now.getTime() - createdAtDate.getTime();
     return diff > 59 * 24 * 60 * 60 * 1000;
 };
-export type UseReport = ({ platform, creator_id }: { platform: CreatorPlatform; creator_id: string }) => {
+export type UseReport = ({
+    platform,
+    creator_id,
+}: {
+    platform: CreatorPlatform;
+    creator_id: string;
+    track?: eventKeys;
+}) => {
     loading: boolean;
     report: CreatorReport | undefined;
     reportCreatedAt: string | undefined;
@@ -39,7 +47,15 @@ export type UseReport = ({ platform, creator_id }: { platform: CreatorPlatform; 
     usageExceeded: boolean;
 };
 
-export const useReport: UseReport = ({ platform, creator_id }: { platform: CreatorPlatform; creator_id: string }) => {
+export const useReport: UseReport = ({
+    platform,
+    creator_id,
+    track,
+}: {
+    platform: CreatorPlatform;
+    creator_id: string;
+    track?: eventKeys;
+}) => {
     const [errorMessage, setErrorMessage] = useState('');
     const [usageExceeded, setUsageExceeded] = useState(false);
     const { t } = useTranslation();
@@ -60,6 +76,7 @@ export const useReport: UseReport = ({ platform, creator_id }: { platform: Creat
                     creator_id,
                     company_id,
                     user_id,
+                    track,
                 });
 
                 if (!report.success) throw new Error('Failed to fetch report');

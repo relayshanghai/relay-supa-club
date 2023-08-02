@@ -3,6 +3,8 @@ import { imgProxy } from 'src/utils/fetcher';
 import type { CreatorPlatform, CreatorReport } from 'types';
 import { Button } from '../button';
 import { SocialMediaIcon } from '../common/social-media-icon';
+import { useAnalytics } from '../analytics/analytics-provider';
+import { AnalyzeOpenExternalSocialProfile } from 'src/utils/analytics/events';
 
 export const TitleSection = ({
     user_profile,
@@ -13,7 +15,11 @@ export const TitleSection = ({
     onAddToCampaign: (selectedCreatorUserId: string) => void;
     platform: CreatorPlatform;
 }) => {
+    const { track } = useAnalytics();
     const { t } = useTranslation();
+    const trackOpenLink = () => {
+        track(AnalyzeOpenExternalSocialProfile, { url: user_profile.url });
+    };
     return (
         <div className="p-6">
             <div className="flex items-center">
@@ -36,6 +42,7 @@ export const TitleSection = ({
                         target="_blank"
                         rel="noopener noreferrer"
                         className="cursor-pointer text-sm text-primary-500 duration-300 hover:text-primary-700"
+                        onClick={trackOpenLink}
                     >
                         {t('creators.show.openLink')}
                     </a>
