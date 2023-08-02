@@ -361,7 +361,7 @@ OR REPLACE FUNCTION create_sequence_influencer(
   company_id UUID,
   sequence_id UUID,
   added_by UUID,
-  influencer_id UUID,
+  influencer_social_profile_id UUID,
   email TEXT
 ) RETURNS RECORD SECURITY DEFINER LANGUAGE plpgsql AS $$
     DECLARE
@@ -377,7 +377,7 @@ OR REPLACE FUNCTION create_sequence_influencer(
           added_by,
           email,
           funnel_status,
-          influencer_id,
+          influencer_social_profile_id,
           next_step,
           rate_amount,
           rate_currency,
@@ -397,7 +397,7 @@ OR REPLACE FUNCTION create_sequence_influencer(
           added_by,
           email,
           'To Contact',
-          influencer_id,
+          influencer_social_profile_id,
           'next_step',
           543,
           'USD',
@@ -450,7 +450,9 @@ CREATE OR REPLACE FUNCTION create_influencer_social_profile(
   _platform TEXT,
   _influencer_id UUID,
   _reference_id TEXT,
-  _username TEXT
+  _username TEXT,
+  _name TEXT,
+  _email TEXT
 ) RETURNS RECORD SECURITY DEFINER LANGUAGE plpgsql AS $$
 DECLARE
   _row RECORD;
@@ -462,7 +464,9 @@ BEGIN
     influencer_id,
     reference_id,
     username,
-    created_at
+    created_at,
+    name,
+    email
   )
   VALUES (
     uuid_generate_v4(),
@@ -471,7 +475,9 @@ BEGIN
     _influencer_id,
     _reference_id,
     _username,
-    now()
+    now(),
+    _name,
+    _email
   )
   RETURNING * INTO _row;
   RETURN _row;
@@ -585,6 +591,7 @@ DECLARE
   _influencer_social_profile_alice_1 RECORD;
   _influencer_social_profile_bob_1 RECORD;
   _influencer_social_profile_bob_2 RECORD;
+  _influencer_social_profile_charlie_1 RECORD;
   _influencer_post_alice_1 RECORD;
   _influencer_post_alice_2 RECORD;
   _influencer_post_alice_3 RECORD;
@@ -684,28 +691,43 @@ BEGIN
     'instagram',
     _influencer_alice.id,
     'iqdata_1',
-    'alice1'
+    'alice1',
+    'Alice Anderson',
+    'alice.anderson@example.com'
   );
   _influencer_social_profile_bob_1 := create_influencer_social_profile(
     'https://instagram.com/bob1',
     'instagram',
     _influencer_bob.id,
     'iqdata_2',
-    'bob1'
+    'bob1',
+    'Bob-Recommended Brown',
+    'bob.brown@example.com'
   );
   _influencer_social_profile_bob_2 := create_influencer_social_profile(
     'https://youtube.com/bob2',
     'youtube',
     _influencer_bob.id,
     'iqdata_3',
-    'bob2'
+    'bob2',
+    'Bob-Recommended Brown',
+    'bob.brown@example.com'    
+  );
+  _influencer_social_profile_charlie_1 := create_influencer_social_profile(
+    'https://instagram.com/charlie1',
+    'instagram',
+    _influencer_charlie.id,
+    'iqdata_4',
+    'charlie1',
+    'Charlie Charles',
+    'charlie.charles@example.com'    
   );
 
   PERFORM create_sequence_influencer(
     _company_test.id,
     _sequence_beauty_for_all.id,
     _profile_william.id,
-    _influencer_alice.id,
+    _influencer_social_profile_alice_1.id,
     'influencer_alice@example.com'
   );
 
@@ -713,7 +735,7 @@ BEGIN
     _company_test.id,
     _sequence_beauty_for_all.id,
     _profile_william.id,
-    _influencer_bob.id,
+    _influencer_social_profile_bob_2.id,
     'influencer_bob@example.com'
   );
 
@@ -721,7 +743,7 @@ BEGIN
     _company_test.id,
     _sequence_beauty_for_all.id,
     _profile_william.id,
-    _influencer_charlie.id,
+    _influencer_social_profile_charlie_1.id,
     'influencer_charlie@example.com'
   );    
 

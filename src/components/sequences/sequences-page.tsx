@@ -1,83 +1,35 @@
-import type { Sequence, SequenceInfluencer } from 'src/utils/api/email-engine/prototype-mocks';
-import { mockInfluencers, mockSequence, testAccount } from 'src/utils/api/email-engine/prototype-mocks';
 import { Layout } from '../layout';
 import SequenceTable from './sequence-table';
+import { testAccount } from 'src/utils/api/email-engine/prototype-mocks';
 import { Button } from '../button';
-import type { SendEmailPostRequestBody } from 'pages/api/email-engine/send-email';
-import { nextFetch } from 'src/utils/fetcher';
+
 import { clientLogger } from 'src/utils/logger-client';
 import { SequenceStats } from './sequence-stats';
 import { useUser } from 'src/hooks/use-user';
 import { useCompany } from 'src/hooks/use-company';
+import { useSequences } from 'src/hooks/use-sequences';
+import { useSequenceInfluencers } from 'src/hooks/use-sequence_influencers';
+import { useSequence } from 'src/hooks/use-sequence';
 
-
-const sendEmail = async (
-    account: string,
-    toEmail: string,
-    template: string,
-    sendAt: string,
-    params: Record<string, string>,
-) => {
-    try {
-        const body: SendEmailPostRequestBody = {
-            account,
-            to: [{ address: toEmail }],
-            subject: 'testing Email Sequence',
-            template,
-            render: {
-                format: 'html',
-                params,
-            },
-            trackingEnabled: true,
-            sendAt,
-        };
-        return await nextFetch('email-engine/send-email', {
-            method: 'POST',
-            body,
-        });
-    } catch (error: any) {
-        clientLogger(error, 'error');
-        return error.message;
-    }
-};
-/** TODO: move 'send sequence' to the sever, because the emails need to be sent sequentially, not in parallel, so if the user navigates away it could cause some emails to be unsent. */
-const sendSequence = async (
-    account: string,
-    sequence: Sequence,
-    influencer: SequenceInfluencer,
-    params: Record<string, string>,
-) => {
-    const results = [];
-    for (const step of sequence.steps) {
-        const sendAt = new Date();
-        //add the step's waitTimeHrs to the sendAt date
-        sendAt.setHours(sendAt.getHours() + step.waitTimeHrs);
-        const { templateId } = step;
-        const res = await sendEmail(account, influencer.email, templateId, sendAt.toISOString(), params);
-        results.push({
-            ...res,
-            ...influencer,
-            sendAt,
-        });
-    }
-    return results;
-};
 export const SequencesPage = () => {
     const { profile } = useUser();
     const { company } = useCompany();
-    const sequence = mockSequence;
-    const influencers = mockInfluencers;
+    const { sequences } = useSequences();
+    const { sequence, sendSequence } = useSequence(sequences?.[0]?.id);
+    const { sequenceInfluencers } = useSequenceInfluencers(sequence?.id);
 
     const handleStartSequence = async () => {
+        // update sequence - autostart - true.
         const allResults = [];
-        for (const influencer of influencers) {
+        if (!sequenceInfluencers) {
+            return;
+        }
+        for (const influencer of sequenceInfluencers) {
             const params = {
                 companyName: company?.name ?? '',
                 outreachPersonName: profile?.first_name ?? '',
-                channel: influencer.channel,
-                platform: influencer.platform,
             };
-            const results = await sendSequence(testAccount, sequence, influencer, params);
+            const results = await sendSequence(testAccount, influencer, params);
             allResults.push(results);
         }
         clientLogger(allResults);
@@ -89,8 +41,9 @@ export const SequencesPage = () => {
                 <SequenceStats />
                 <Button onClick={handleStartSequence} className="w-fit self-end">
                     Start
+                    {/* If autostart=== true... started */}
                 </Button>
-                <SequenceTable influencers={influencers} />
+                {sequenceInfluencers && <SequenceTable sequenceInfluencers={sequenceInfluencers} />}
             </div>
         </Layout>
     );

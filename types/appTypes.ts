@@ -5,6 +5,8 @@ import type {
     CompanyTable,
     InfluencerSocialProfilesTable,
     ProfilesTable,
+    SequenceInfluencersTable,
+    SequenceStepsTable,
     UsagesTable,
 } from 'src/utils/api/db';
 import type Stripe from 'stripe';
@@ -102,6 +104,8 @@ export interface DatabaseWithCustomTypes extends Database {
             campaign_creators: CampaignCreatorsTable;
             profiles: ProfilesTable;
             influencer_social_profiles: InfluencerSocialProfilesTable;
+            sequence_steps: SequenceStepsTable;
+            sequence_influencers: SequenceInfluencersTable;
         };
     };
 }
