@@ -33,6 +33,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         const results: PostsPerformanceByCampaignGetResponse = await getPostsPerformanceDataByCampaign(
             campaignId,
             profileId,
+            { req, res },
         );
 
         return res.status(httpCodes.OK).json(results);

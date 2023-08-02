@@ -8,7 +8,7 @@ import {
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 export type ApiPayload = {
-    context?: { req: NextApiRequest; res: NextApiResponse };
+    context?: { req: NextApiRequest; res: NextApiResponse; metadata?: { [key: string]: any } };
     path?: {
         [key: string]: any;
     };

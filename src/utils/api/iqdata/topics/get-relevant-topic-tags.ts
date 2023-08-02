@@ -1,5 +1,6 @@
 import type { CreatorPlatform } from 'types';
 import { apiFetch } from '../api-fetch';
+import type { ServerContext } from '..';
 
 export type GetRelevantTopicTagsPayload = {
     query: {
@@ -29,14 +30,14 @@ const sortByDistance = (tags: TopicTensorData[]) => {
     });
 };
 
-export const getRelevantTopicTags = async (payload: GetRelevantTopicTagsPayload) => {
+export const getRelevantTopicTags = async (payload: GetRelevantTopicTagsPayload, context?: ServerContext) => {
     if (!payload.query.q) {
         throw new Error(`q in payload query is required`);
     }
 
     payload.query.q = `#${payload.query.q}`;
 
-    const response = await apiFetch<GetRelevantTopicTagsResponse>('/dict/relevant-tags', payload);
+    const response = await apiFetch<GetRelevantTopicTagsResponse>('/dict/relevant-tags', { ...payload, context });
 
     if (response && response.success === true) {
         sortByDistance(response.data);
