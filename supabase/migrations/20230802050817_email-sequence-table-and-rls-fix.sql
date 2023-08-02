@@ -7,7 +7,7 @@ CREATE TABLE "public"."sequence_email" (
   "email_delivery_status" text,
   "email_tracking_status" text,
   "sequence_influencer_id" uuid NOT NULL,
-  "sequence_step_id" uuid
+  "sequence_step_id" uuid NOT NULL
 );
 
 

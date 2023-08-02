@@ -888,7 +888,7 @@ export interface Database {
           email_tracking_status: string | null
           id: string
           sequence_influencer_id: string
-          sequence_step_id: string | null
+          sequence_step_id: string
           updated_at: string
         }
         Insert: {
@@ -899,7 +899,7 @@ export interface Database {
           email_tracking_status?: string | null
           id?: string
           sequence_influencer_id: string
-          sequence_step_id?: string | null
+          sequence_step_id: string
           updated_at?: string
         }
         Update: {
@@ -910,7 +910,7 @@ export interface Database {
           email_tracking_status?: string | null
           id?: string
           sequence_influencer_id?: string
-          sequence_step_id?: string | null
+          sequence_step_id?: string
           updated_at?: string
         }
         Relationships: [
