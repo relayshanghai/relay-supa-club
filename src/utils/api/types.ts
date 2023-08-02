@@ -7,19 +7,6 @@ import {
 } from './iqdata/influencers/search-influencers-payload';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-export type _ApiPayload = {
-    context?: { req: NextApiRequest; res: NextApiResponse };
-    path?: {
-        [key: string]: any;
-    };
-    query?: {
-        [key: string]: any;
-    };
-    body?: {
-        [key: string]: any;
-    };
-};
-
 export const ApiPayload = z.object({
     context: z
         .object<{ req: z.ZodType<NextApiRequest>; res: z.ZodType<NextApiResponse> }>({
