@@ -155,23 +155,29 @@ const handleFailed = async (event: WebhookMessageFailed, res: NextApiResponse) =
 };
 
 const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
-    const sequenceEmail = await getSequenceEmailByMessageId(event.data.messageId);
-    const update: SequenceEmailUpdate = {
-        ...sequenceEmail,
-        email_delivery_status: 'Delivered',
-    };
-    await updateSequenceEmail(update);
+    try {
+        const sequenceEmail = await getSequenceEmailByMessageId(event.data.messageId); // if there is no matching sequenceEmail, this is a regular email, not a sequenced email and this will throw an error
 
-    const sequenceInfluencer = await getSequenceInfluencerById(sequenceEmail.sequence_influencer_id);
+        const update: SequenceEmailUpdate = {
+            ...sequenceEmail,
+            email_delivery_status: 'Delivered',
+        };
+        await updateSequenceEmail(update);
 
-    const sequenceInfluencerUpdate: SequenceInfluencerUpdate = {
-        ...sequenceInfluencer,
-        sequence_step: sequenceInfluencer.sequence_step + 1,
-    };
-    await updateSequenceInfluencer(sequenceInfluencerUpdate);
+        const sequenceInfluencer = await getSequenceInfluencerById(sequenceEmail.sequence_influencer_id);
 
-    await supabaseLogger({ type: 'email-webhook', data: { event, update, sequenceInfluencerUpdate } as any });
-    return res.status(httpCodes.OK).json({});
+        const sequenceInfluencerUpdate: SequenceInfluencerUpdate = {
+            ...sequenceInfluencer,
+            sequence_step: sequenceInfluencer.sequence_step + 1,
+        };
+        await updateSequenceInfluencer(sequenceInfluencerUpdate);
+
+        await supabaseLogger({ type: 'email-webhook', data: { event, update, sequenceInfluencerUpdate } as any });
+        return res.status(httpCodes.OK).json({});
+    } catch (error) {
+        await supabaseLogger({ type: 'email-webhook', data: { event, error } as any });
+        return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
+    }
 };
 
 const handleOtherWebhook = async (event: WebhookEvent, res: NextApiResponse) => {
