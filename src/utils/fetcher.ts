@@ -15,18 +15,17 @@ export const handleResError = async (
     res: ResponseWithError,
     action: string,
     context?: { req: NextApiRequest; res: NextApiResponse },
-    caller?: string,
 ) => {
     if (!res.status.toString().startsWith('2')) {
         const json = await res.json();
         if (context) {
             if (res.status === 429) {
                 await logRateLimitError(action, context);
-                forensicTrack(context, 'rate_limit_error', caller);
+                forensicTrack(context, 'rate_limit_error');
             }
             if (json.error === 'daily_tokens_limit_exceeded') {
                 await logDailyTokensError(action, context);
-                forensicTrack(context, 'daily_tokens_limit_exceeded', caller);
+                forensicTrack(context, 'daily_tokens_limit_exceeded');
             }
         }
         if (json?.error) throw new Error(typeof json.error === 'string' ? json.error : JSON.stringify(json.error));

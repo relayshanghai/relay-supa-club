@@ -40,9 +40,6 @@ export const withServerContext = (fetchFunction: (args: any) => any) => {
 export const iqDataFetch = async <T = any>(path: string, options: RequestInit & { context?: ServerContext } = {}) => {
     const { context, ...strippedOptions } = options;
 
-    const stackTrace = new Error().stack;
-    const caller = stackTrace?.split('\n')[2].trim().split(' ')[1];
-
     const res = await fetch(IQDATA_URL + path, {
         ...strippedOptions,
         headers: {
@@ -51,7 +48,7 @@ export const iqDataFetch = async <T = any>(path: string, options: RequestInit & 
         },
     });
 
-    await handleResError(res, path, context, caller);
+    await handleResError(res, path, context);
     const json = await res.json();
     return json as T;
 };

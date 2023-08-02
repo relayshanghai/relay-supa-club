@@ -5,7 +5,7 @@ import type { ServerContext } from './iqdata';
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
 import type { DatabaseWithCustomTypes } from 'types';
 
-export const forensicTrack = async (context: ServerContext, error: string, _caller?: string) => {
+export const forensicTrack = async (context: ServerContext, error: string) => {
     const calls = await callsites();
     const sentryPayload = calls.map((call) => {
         return {

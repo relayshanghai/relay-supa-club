@@ -9,9 +9,6 @@ import { forensicTrack } from '../forensicTrack';
  * For fetching IQData API
  */
 export const apiFetch = async <T extends object>(url: string, payload: ApiPayload, options: RequestInit = {}) => {
-    const stackTrace = new Error().stack;
-    const caller = stackTrace?.split('\n')[2].trim().split(' ')[1];
-
     const { context, ...strippedPayload } = payload;
     const content = await apiFetchOriginal<T>(IQDATA_URL + url, strippedPayload, {
         ...options,
@@ -21,11 +18,11 @@ export const apiFetch = async <T extends object>(url: string, payload: ApiPayloa
     if (context && content && 'status' in content && 'error' in content) {
         if (content.status === 429) {
             logRateLimitError(url, context);
-            forensicTrack(context, 'rate_limit_error', caller);
+            forensicTrack(context, 'rate_limit_error');
         }
         if (content.error === 'daily_tokens_limit_exceeded') {
             logDailyTokensError(url, context);
-            forensicTrack(context, 'daily_tokens_limit_exceeded', caller);
+            forensicTrack(context, 'daily_tokens_limit_exceeded');
         }
     }
     return content;
