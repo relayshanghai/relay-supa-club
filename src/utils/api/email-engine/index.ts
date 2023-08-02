@@ -98,7 +98,7 @@ export const searchMailbox = async (
     search: MailboxSearchOptions,
     mailboxPath: string,
     page = 0,
-    pageSize = 20,
+    pageSize = 100, //entries per page
 ) => {
     const body: AccountAccountSearchPostRequestBody = { search };
     return await emailEngineApiFetch<AccountAccountSearchPost>(
