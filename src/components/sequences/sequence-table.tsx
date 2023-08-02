@@ -22,7 +22,8 @@ const SequenceTable: React.FC<SequenceTableProps> = ({ sequenceInfluencers, allS
                 {sequenceInfluencers.map((influencer) => {
                     const step = sequenceSteps.find((step) => step.step_number === influencer.sequence_step);
                     const sequenceEmail = allSequenceEmails?.find(
-                        (sis) => sis.sequence_influencer_id === influencer.id && sis.sequence_step_id === step?.id,
+                        (email) =>
+                            email.sequence_influencer_id === influencer.id && email.sequence_step_id === step?.id,
                     );
 
                     return (

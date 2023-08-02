@@ -30,7 +30,7 @@ export const SequencesPage = () => {
         }
         for (const sequenceInfluencer of sequenceInfluencers) {
             const sequenceEmails = allSequenceEmails?.filter(
-                (sis) => sis.sequence_influencer_id === sequenceInfluencer.id,
+                (email) => email.sequence_influencer_id === sequenceInfluencer.id,
             );
             if (!sequenceEmails) {
                 allResults.push('no email for sequenceInfluencer: ' + sequenceInfluencer.id);
