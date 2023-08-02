@@ -71,15 +71,11 @@ export type Sequence = Database['public']['Tables']['sequences']['Row'];
 export type SequenceInsert = Database['public']['Tables']['sequences']['Insert'];
 export type SequenceUpdate = Database['public']['Tables']['sequences']['Update'];
 
-export type EmailDeliveryStatus = 'Scheduled' | 'Delivered' | 'Replied' | 'Bounced';
-export type EmailTrackingStatus = 'Opened' | 'Link Clicked';
 type SequenceStepDetailedTypes = {
     /** Int, first step = 0 */
     step_number: number;
     /** The params to be passed to the template. e.g. 'companyName' */
     params: string[];
-    email_delivery_status: EmailDeliveryStatus;
-    email_tracking_status: EmailTrackingStatus;
 };
 
 export type SequenceStepsTable = Database['public']['Tables']['sequence_steps'] & {
@@ -91,6 +87,23 @@ export type SequenceStepsTable = Database['public']['Tables']['sequence_steps'] 
 export type SequenceStep = SequenceStepsTable['Row'];
 export type SequenceStepInsert = SequenceStepsTable['Insert'];
 export type SequenceStepUpdate = SequenceStepsTable['Update'];
+
+export type EmailDeliveryStatus = 'Scheduled' | 'Delivered' | 'Replied' | 'Bounced' | 'Failed';
+export type EmailTrackingStatus = 'Opened' | 'Link Clicked';
+type SequenceEmailDetailedTypes = {
+    email_delivery_status: EmailDeliveryStatus;
+    email_tracking_status: EmailTrackingStatus;
+};
+
+export type SequenceEmailsTable = Database['public']['Tables']['sequence_email'] & {
+    Row: Database['public']['Tables']['sequence_email']['Row'] & SequenceEmailDetailedTypes;
+    Insert: Database['public']['Tables']['sequence_email']['Insert'] & SequenceEmailDetailedTypes;
+    Update: Database['public']['Tables']['sequence_email']['Update'] & SequenceEmailDetailedTypes;
+};
+
+export type SequenceEmail = SequenceEmailsTable['Row'];
+export type SequenceEmailInsert = SequenceEmailsTable['Insert'];
+export type SequenceEmailUpdate = SequenceEmailsTable['Update'];
 
 /** Ignored means it has gone through the whole sequence with no reply (+ 7 days) */
 export type FunnelStatus =

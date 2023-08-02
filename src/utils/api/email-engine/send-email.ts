@@ -1,4 +1,4 @@
-import type { SendEmailPostRequestBody } from 'pages/api/email-engine/send-email';
+import type { SendEmailPostRequestBody, SendEmailPostResponseBody } from 'pages/api/email-engine/send-email';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
 
@@ -8,7 +8,7 @@ export const sendEmail = async (
     template: string,
     sendAt: string,
     params: Record<string, string>,
-) => {
+): Promise<{ error: string } | SendEmailPostResponseBody> => {
     try {
         const body: SendEmailPostRequestBody = {
             account,
@@ -22,12 +22,12 @@ export const sendEmail = async (
             trackingEnabled: true,
             sendAt,
         };
-        return await nextFetch('email-engine/send-email', {
+        return await nextFetch<SendEmailPostResponseBody>('email-engine/send-email', {
             method: 'POST',
             body,
         });
     } catch (error: any) {
         clientLogger(error, 'error');
-        return error.message;
+        return { error: error.message };
     }
 };
