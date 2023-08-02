@@ -24,7 +24,7 @@ export const ToolBar = ({
     const tabs = [
         {
             value: 'new',
-            name: 'New',
+            name: 'Unread',
         },
         {
             value: 'inbox',
@@ -33,15 +33,14 @@ export const ToolBar = ({
     ];
 
     return (
-        <div className=" space-y-4 border-b-2 border-r-2 border-tertiary-200 p-3">
-            <div className="flex justify-center text-sm font-semibold text-gray-600">
+        <div className="flex flex-col items-start space-y-3 border-b-2 border-r-2 border-tertiary-200 p-4 text-sm">
+            <div className="flex justify-start font-semibold text-gray-600">
                 {tabs.map((tab, index) => (
                     <div
                         key={tab.value}
                         onClick={() => handleTabChange(tab)}
                         className={` flex cursor-pointer items-center justify-center hover:text-primary-500 ${
-                            selectedTab === tab.value &&
-                            'text-primary-500 underline decoration-current decoration-2 underline-offset-2'
+                            selectedTab === tab.value && 'text-gray-800'
                         }`}
                     >
                         <div>{tab.name}</div>
@@ -49,16 +48,14 @@ export const ToolBar = ({
                     </div>
                 ))}
             </div>
-            <div className="px-3">
-                <input
-                    className="block w-full appearance-none rounded-md border border-gray-200 bg-white px-3 py-2 text-gray-600 placeholder-gray-400 ring-1 ring-gray-900 ring-opacity-5 placeholder:text-xs focus:outline-none"
-                    placeholder="Search"
-                    id="influencer-search"
-                    onChange={(e) => {
-                        handleInputChange(e);
-                    }}
-                />
-            </div>
+            <input
+                className="w-full appearance-none rounded-md border border-gray-200 bg-white px-3 py-2 text-gray-600 placeholder-gray-500 ring-1 ring-gray-900 ring-opacity-5 focus:outline-none"
+                placeholder="Search"
+                id="influencer-search"
+                onChange={(e) => {
+                    handleInputChange(e);
+                }}
+            />
         </div>
     );
 };

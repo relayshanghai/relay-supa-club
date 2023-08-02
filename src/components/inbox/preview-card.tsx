@@ -13,7 +13,7 @@ export const PreviewCard = ({
     return (
         <div
             onClick={() => handleGetThreadEmails(message)}
-            className={`group flex h-24 cursor-pointer items-center justify-between border-b-2 border-tertiary-200 p-3 duration-200 hover:bg-tertiary-200 hover:bg-opacity-50 ${
+            className={`group flex h-24 cursor-pointer items-center justify-between border-b-2 border-tertiary-200 p-3 duration-200 hover:bg-tertiary-200 hover:bg-opacity-50 focus:bg-primary-200 ${
                 loadingSelectedMessages && 'disabled'
             }`}
         >
