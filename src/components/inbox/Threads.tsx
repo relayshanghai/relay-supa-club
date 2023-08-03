@@ -1,11 +1,11 @@
 import type { SearchResponseMessage } from 'types/email-engine/account-account-search-post';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { clientLogger } from 'src/utils/logger-client';
-import dateFormat from 'src/utils/dateFormat';
 import { getMessageText } from 'src/utils/api/email-engine/handle-messages';
 import { cleanEmailBody } from 'src/utils/clean-html';
 import { testEmail } from 'src/utils/api/email-engine/prototype-mocks';
 import CommentCardsSkeleton from '../campaigns/comment-cards-skeleton';
+import { useTranslation } from 'react-i18next';
 
 export interface ThreadMessage {
     subject: string;
@@ -19,7 +19,9 @@ export interface ThreadMessage {
 export const Threads = ({ messages }: { messages: SearchResponseMessage[] }) => {
     const [threadMessages, setThreadMessages] = useState<ThreadMessage[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
+
     const endOfThread = useRef<null | HTMLDivElement>(null);
+    const { i18n } = useTranslation();
 
     const scrollToBottom = () => {
         endOfThread.current?.scrollIntoView({ behavior: 'smooth' });
@@ -73,21 +75,31 @@ export const Threads = ({ messages }: { messages: SearchResponseMessage[] }) => 
                     {threadMessages.map((message) => (
                         <div
                             key={message.id}
-                            className={`w-2/3 whitespace-normal rounded-md border border-primary-200 px-3 py-2 ${
-                                message.isMe ? 'self-end bg-primary-100 bg-opacity-70' : 'self-start'
-                            }`}
+                            className={`flex w-[31.25rem] flex-col ${message.isMe ? 'self-end' : 'self-start'}`}
                         >
-                            <div className="mb-3 flex flex-wrap justify-between">
-                                <div className="text-sm font-semibold text-gray-700">{message.from}</div>
-                                <div className="text-xs">{dateFormat(message.date, 'isoDateTime', true, true)}</div>
-                            </div>
-                            <div className="mb-2 text-xs font-semibold text-gray-500">{message.subject}</div>
                             <div
-                                className="text-xs"
-                                dangerouslySetInnerHTML={{
-                                    __html: cleanEmailBody(message.text),
-                                }}
-                            />
+                                className={`whitespace-normal rounded-md border border-primary-200 px-3 py-2 ${
+                                    message.isMe ? ' bg-primary-100 bg-opacity-70' : ''
+                                }`}
+                            >
+                                <div className="mb-3 flex flex-wrap justify-between">
+                                    <div className="text-sm font-semibold text-gray-700">{message.from}</div>
+                                </div>
+                                <div
+                                    className="text-xs"
+                                    dangerouslySetInnerHTML={{
+                                        __html: cleanEmailBody(message.text),
+                                    }}
+                                />
+                            </div>
+                            <div className={`${message.isMe ? 'self-end' : 'self-start'} mt-3 text-xs text-gray-400`}>
+                                {new Date(message.date).toLocaleDateString(i18n.language, {
+                                    year: 'numeric',
+                                    month: 'short',
+                                    day: 'numeric',
+                                })}{' '}
+                                {new Date(message.date).toLocaleTimeString(i18n.language)}
+                            </div>
                         </div>
                     ))}
                     <div ref={endOfThread} />

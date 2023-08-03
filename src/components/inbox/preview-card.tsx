@@ -1,4 +1,4 @@
-import dateFormat from 'src/utils/dateFormat';
+import { useTranslation } from 'react-i18next';
 import type { MessagesGetMessage } from 'types/email-engine/account-account-messages-get';
 
 export const PreviewCard = ({
@@ -10,6 +10,8 @@ export const PreviewCard = ({
     handleGetThreadEmails: (message: MessagesGetMessage) => Promise<void>;
     loadingSelectedMessages: boolean;
 }) => {
+    const { i18n } = useTranslation();
+
     return (
         <div
             onClick={() => handleGetThreadEmails(message)}
@@ -28,7 +30,14 @@ export const PreviewCard = ({
                     <div className={`truncate font-bold ${message.unseen && 'text-primary-500'}`}>
                         {message.subject}
                     </div>
-                    <div className="font-base ml-2 min-w-fit">{dateFormat(message.date, 'isoDate', true, true)} </div>
+                    <div className="font-base ml-2 min-w-fit">
+                        {' '}
+                        {new Date(message.date).toLocaleDateString(i18n.language, {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric',
+                        })}{' '}
+                    </div>
                 </div>
                 <div className="flex items-center justify-between text-xs text-tertiary-400">
                     {/* TODO: add preview text after document store is implemented V2-578 */}
