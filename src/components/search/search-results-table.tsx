@@ -5,7 +5,7 @@ import type { CreatorSearchAccountObject } from 'types';
 import { Button } from '../button';
 import { SkeletonSearchResultRow } from '../common/skeleton-search-result-row';
 import { SearchResultRow } from './search-result-row';
-import type { CampaignCreatorBasicInfo } from 'src/utils/client-db/campaignCreators';
+import type { CampaignCreatorBasicInfo } from 'src/utils/api/db/calls/campaignCreators';
 
 export interface SearchResultsTableProps {
     setShowCampaignListModal: (show: boolean) => void;
@@ -19,6 +19,7 @@ export interface SearchResultsTableProps {
     error: any;
 }
 
+// eslint-disable-next-line complexity
 export const SearchResultsTable = ({
     setShowCampaignListModal,
     setSelectedCreator,

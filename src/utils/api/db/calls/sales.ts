@@ -1,4 +1,4 @@
-import type { RelayDatabase } from '../api/db';
+import type { RelayDatabase } from '..';
 
 export type SalesType = {
     campaign_id: string;

@@ -10,7 +10,7 @@ import { clientLogger } from 'src/utils/logger-client';
 import { useUser } from 'src/hooks/use-user';
 import { isMissing } from 'src/utils/utils';
 import { useCampaignCreators } from 'src/hooks/use-campaign-creators';
-import type { CampaignCreatorBasicInfo } from 'src/utils/client-db/campaignCreators';
+import type { CampaignCreatorBasicInfo } from 'src/utils/api/db/calls/campaignCreators';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { CAMPAIGN_MODAL_CARD } from 'src/utils/rudderstack/event-names';
 

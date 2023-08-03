@@ -1,21 +1,25 @@
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import type { DatabaseWithCustomTypes } from 'types';
-import { getCampaignsCall, createCampaignCall, updateCampaignCall } from './campaigns';
-import { getProfileByIdCall } from './profiles';
-import { getCompanyByIdCall } from './companies';
+
+import { getCompanyByIdCall } from '../api/db/calls/companies';
 import {
     deleteCampaignCreatorCall,
     getAllCampaignCreatorsByCampaignIdsCall,
     getCampaignCreatorsCall,
     insertCampaignCreatorCall,
     updateCampaignCreatorCall,
-} from './campaignCreators';
+} from '../api/db/calls/campaignCreators';
 import type { DBQuery } from '../types';
-import { getSequenceByIdCall, getSequencesByCompanyIdCall, updateSequenceCall } from './sequences';
-import { getSequenceStepsBySequenceIdCall, updateSequenceStepCall } from './sequence-steps';
-import { getSequenceInfluencersBySequenceIdCall, updateSequenceInfluencerCall } from './sequence-influencers';
-import { getInfluencerSocialProfileByIdCall } from './influencers';
-import { getSequenceEmailsBySequenceCall, updateSequenceEmailCall } from './sequence-emails';
+import { getSequenceEmailsBySequenceCall, updateSequenceEmailCall } from '../api/db/calls/sequence-emails';
+import {
+    getSequenceInfluencersBySequenceIdCall,
+    updateSequenceInfluencerCall,
+} from '../api/db/calls/sequence-influencers';
+import { getSequenceStepsBySequenceIdCall, updateSequenceStepCall } from '../api/db/calls/sequence-steps';
+import { getSequencesByCompanyIdCall, getSequenceByIdCall, updateSequenceCall } from '../api/db/calls/sequences';
+import { getInfluencerSocialProfileByIdCall } from '../api/db/calls/influencers';
+import { getProfileByIdCall } from '../api/db';
+import { createCampaignCall, getCampaignsCall, updateCampaignCall } from '../api/db/calls/campaigns';
 
 export const useSupabase = () => useSupabaseClient<DatabaseWithCustomTypes>();
 
@@ -24,6 +28,9 @@ export const useDB = <T extends DBQuery<(...args: any) => any>>(query: DBQuery<R
     return query(supabase);
 };
 
+/**
+ * TO BE DEPRECATED. Don't add new calls here, just add the call to the api/db/calls folder and use the `useDB()` hook in the component.
+ */
 export const useClientDb = () => {
     const supabaseClient = useSupabaseClient<DatabaseWithCustomTypes>();
     return {

@@ -1,10 +1,10 @@
 import Link from 'next/link';
-import type { CampaignDB } from 'src/utils/client-db/campaigns';
 import { useTranslation } from 'react-i18next';
 import type { CreatorPlatform, CreatorUserProfile } from 'types';
 import CampaignModalCard from './campaigns/campaign-modal-card';
 import { Modal } from './modal';
-import type { CampaignCreatorBasicInfo } from 'src/utils/client-db/campaignCreators';
+import type { CampaignCreatorBasicInfo } from 'src/utils/api/db/calls/campaignCreators';
+import type { CampaignDB } from 'src/utils/api/db';
 
 export const AddToCampaignModal = ({
     show,

@@ -1,5 +1,5 @@
 import { supabase } from 'src/utils/supabase-client';
-import type { InfluencerRow, InfluencerSocialProfileRow } from '../types';
+import type { InfluencerRow, InfluencerSocialProfileRow, RelayDatabase } from '../types';
 
 export const getInfluencerById = async (id: string): Promise<InfluencerRow | null> => {
     const influencer = await supabase
@@ -34,4 +34,12 @@ export const getInfluencerSocialProfileByReferenceId = async (
     }
 
     return socialProfile.data;
+};
+
+export const getInfluencerSocialProfileByIdCall = (supabaseClient: RelayDatabase) => async (id: string) => {
+    if (!id) return;
+    const { data, error } = await supabaseClient.from('influencer_social_profiles').select('*').eq('id', id).single();
+
+    if (error) throw error;
+    return data;
 };

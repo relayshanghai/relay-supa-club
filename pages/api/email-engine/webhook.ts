@@ -5,9 +5,8 @@ import type { SequenceEmailUpdate, SequenceInfluencerUpdate } from 'src/utils/ap
 import { supabaseLogger } from 'src/utils/api/db';
 import { deleteEmailFromOutbox, getOutbox } from 'src/utils/api/email-engine';
 import { GMAIL_SENT_SPECIAL_USE_FLAG } from 'src/utils/api/email-engine/prototype-mocks';
-import { getSequenceEmailByMessageIdCall, updateSequenceEmailCall } from 'src/utils/client-db/sequence-emails';
+import { getSequenceEmailByMessageIdCall, updateSequenceEmailCall } from 'src/utils/api/db/calls/sequence-emails';
 
-import { getSequenceInfluencerByIdCall, updateSequenceInfluencerCall } from 'src/utils/client-db/sequence-influencers';
 import { db } from 'src/utils/supabase-client';
 
 import type { SendEmailRequestBody, SendEmailResponseBody } from 'types/email-engine/account-account-submit-post';
@@ -19,6 +18,10 @@ import type { WebhookMessageNew } from 'types/email-engine/webhook-message-new';
 import type { WebhookMessageSent } from 'types/email-engine/webhook-message-sent.ts';
 import type { WebhookTrackClick } from 'types/email-engine/webhook-track-click';
 import type { WebhookTrackOpen } from 'types/email-engine/webhook-track-open';
+import {
+    getSequenceInfluencerByIdCall,
+    updateSequenceInfluencerCall,
+} from 'src/utils/api/db/calls/sequence-influencers';
 
 export type SendEmailPostRequestBody = SendEmailRequestBody & {
     account: string;

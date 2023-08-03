@@ -1,4 +1,4 @@
-import type { RelayDatabase, SequenceInfluencerUpdate } from '../api/db';
+import type { RelayDatabase, SequenceInfluencerUpdate } from '../types';
 
 export const getSequenceInfluencerByIdCall = (supabaseClient: RelayDatabase) => async (id: string) => {
     if (!id) {
