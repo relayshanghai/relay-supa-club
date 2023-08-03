@@ -51,7 +51,7 @@ export const CorrespondenceSection = ({
                         <>{selectedMessages.length > 0 && <Email message={selectedMessages[0]} />}</>
                     )}
 
-                    <div className="justify-self-end p-3">
+                    <div className="justify-self-end px-6 pb-4">
                         <ReplayEditor
                             replyMessage={replyMessage}
                             setReplyMessage={setReplyMessage}

@@ -67,7 +67,7 @@ export const Threads = ({ messages }: { messages: SearchResponseMessage[] }) => 
     }, [threadMessages]);
 
     return (
-        <div className="h-full overflow-y-auto p-3">
+        <div className="h-full overflow-y-auto p-6">
             {loading ? (
                 <CommentCardsSkeleton />
             ) : (
@@ -78,12 +78,12 @@ export const Threads = ({ messages }: { messages: SearchResponseMessage[] }) => 
                             className={`flex w-[31.25rem] flex-col ${message.isMe ? 'self-end' : 'self-start'}`}
                         >
                             <div
-                                className={`whitespace-normal rounded-md border border-primary-200 px-3 py-2 ${
+                                className={`whitespace-normal rounded-md border border-primary-200 p-4 ${
                                     message.isMe ? ' bg-primary-100 bg-opacity-70' : ''
                                 }`}
                             >
                                 <div
-                                    className="text-xs"
+                                    className="text-sm"
                                     dangerouslySetInnerHTML={{
                                         __html: cleanEmailBody(message.text),
                                     }}

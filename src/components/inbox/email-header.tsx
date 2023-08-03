@@ -60,8 +60,9 @@ export const EmailHeader = ({ messages }: { messages: SearchResponseMessage[] })
                         </>
                     ))}
                 </div>
+
                 <div className="mt-2 flex items-center space-x-2 truncate text-xs">
-                    <div className="self-start">CC: </div>
+                    {ccInfo.length > 0 && <div className="self-start">CC: </div>}
                     <div className="flex flex-col">
                         {ccInfo.map((cc) => (
                             <>
