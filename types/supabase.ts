@@ -1319,6 +1319,36 @@ export interface Database {
           }
         ]
       }
+      vercel_logs: {
+        Row: {
+          data: Json | null
+          deployment_id: string | null
+          id: string
+          message: string | null
+          source: string | null
+          timestamp: string | null
+          type: string | null
+        }
+        Insert: {
+          data?: Json | null
+          deployment_id?: string | null
+          id: string
+          message?: string | null
+          source?: string | null
+          timestamp?: string | null
+          type?: string | null
+        }
+        Update: {
+          data?: Json | null
+          deployment_id?: string | null
+          id?: string
+          message?: string | null
+          source?: string | null
+          timestamp?: string | null
+          type?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -1343,6 +1373,10 @@ export interface Database {
       is_relay_employee: {
         Args: Record<PropertyKey, never>
         Returns: boolean
+      }
+      rotate_vercel_logs: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
       }
     }
     Enums: {
