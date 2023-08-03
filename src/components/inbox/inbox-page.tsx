@@ -16,6 +16,7 @@ import {
 } from 'src/utils/api/email-engine/handle-messages';
 import { useMessages } from 'src/hooks/use-message';
 import { GMAIL_SEEN_SPECIAL_USE_FLAG } from 'src/utils/api/email-engine/prototype-mocks';
+import { useTranslation } from 'react-i18next';
 
 export const InboxPage = () => {
     const [messages, setMessages] = useState<MessagesGetMessage[]>([]);
@@ -27,6 +28,7 @@ export const InboxPage = () => {
     const [searchTerm, setSearchTerm] = useState<string>('');
 
     const { inboxMessages, isLoading, refreshInboxMessages } = useMessages();
+    const { t } = useTranslation();
 
     useEffect(() => {
         if (!inboxMessages) {
@@ -88,6 +90,14 @@ export const InboxPage = () => {
         });
     }, [refreshInboxMessages, selectedMessages]);
 
+    //Show the first message in the list when the page loads by default
+    useEffect(() => {
+        if (!selectedMessages && messages.length > 0) {
+            handleGetThreadEmails(messages[0]);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [messages]);
+
     return (
         <Layout>
             <div className="flex h-full">
@@ -97,7 +107,7 @@ export const InboxPage = () => {
                     </div>
                 ) : (
                     <>
-                        {messages.length === 0 && !isLoading && <p>No messages</p>}
+                        {messages.length === 0 && !isLoading && <p>{t('inbox.noMessagesInMailbox')}</p>}
                         <div className="h-full w-[240px] overflow-auto">
                             {messages.length > 0 && (
                                 <>
@@ -124,16 +134,12 @@ export const InboxPage = () => {
                             )}
                         </div>
                         <div className="h-full flex-grow overflow-auto">
-                            {selectedMessages ? (
+                            {selectedMessages && (
                                 <CorrespondenceSection
                                     //TODO: add selectedSequenceInfluencers
                                     selectedMessages={selectedMessages}
                                     loadingSelectedMessages={loadingSelectedMessages}
                                 />
-                            ) : (
-                                <div className="font-sm flex h-full items-center justify-center text-gray-500">
-                                    No message has been selected yet.
-                                </div>
                             )}
                         </div>
                     </>

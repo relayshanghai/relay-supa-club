@@ -1,6 +1,7 @@
 import type { ChangeEvent, Dispatch, SetStateAction } from 'react';
 import { debounce } from 'src/utils/debounce';
 import { Slash } from '../icons';
+import { useTranslation } from 'react-i18next';
 
 export const ToolBar = ({
     selectedTab,
@@ -12,6 +13,8 @@ export const ToolBar = ({
     searchTerm: string;
     setSearchTerm: Dispatch<SetStateAction<string>>;
 }) => {
+    const { t } = useTranslation();
+
     const handleTabChange = (tab: { value: string; name: string }) => {
         if (tab.value === selectedTab) return;
         setSelectedTab(tab.value);
@@ -24,11 +27,11 @@ export const ToolBar = ({
     const tabs = [
         {
             value: 'new',
-            name: 'Unread',
+            name: t('inbox.unread'),
         },
         {
             value: 'inbox',
-            name: 'Inbox',
+            name: t('inbox.inbox'),
         },
     ];
 
@@ -50,7 +53,7 @@ export const ToolBar = ({
             </div>
             <input
                 className="w-full appearance-none rounded-md border border-gray-200 bg-white px-3 py-2 text-gray-600 placeholder-gray-500 ring-1 ring-gray-900 ring-opacity-5 focus:outline-none"
-                placeholder="Search"
+                placeholder={t('inbox.searchPlaceholder') as string}
                 id="influencer-search"
                 onChange={(e) => {
                     handleInputChange(e);
