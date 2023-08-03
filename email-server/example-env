@@ -2,7 +2,11 @@
 
 SMTP_SERVER_PASSWORD=asdfasdf
 SERVICE_URL=http://localhost:4000
-WEBHOOK_URL=https://app.relay.club/api/email-engine/webhook
+# dev
+WEBHOOK_URL=http://host.docker.internal:3000/api/email-engine/webhook
+
+# prod
+# WEBHOOK_URL=https://app.relay.club/api/email-engine/webhook
 # Port should match ES_PORT
 DOCUMENT_STORE_URL=http://elasticsearch:9200
 DOCUMENT_STORE_USERNAME=elastic
