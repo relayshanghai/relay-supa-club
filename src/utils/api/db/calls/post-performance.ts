@@ -1,5 +1,5 @@
 import { supabase } from 'src/utils/supabase-client';
-import { getProfileById } from './profiles';
+import { getProfileById } from './profiles-no-client';
 import type { PostsPerformance, PostsPerformanceInsert, PostsPerformanceUpdate, RelayDatabase } from '../types';
 import type { CreatorPlatform } from 'types';
 

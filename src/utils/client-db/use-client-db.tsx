@@ -18,8 +18,8 @@ import {
 import { getSequenceStepsBySequenceIdCall, updateSequenceStepCall } from '../api/db/calls/sequence-steps';
 import { getSequencesByCompanyIdCall, getSequenceByIdCall, updateSequenceCall } from '../api/db/calls/sequences';
 import { getInfluencerSocialProfileByIdCall } from '../api/db/calls/influencers';
-import { getProfileByIdCall } from '../api/db';
 import { createCampaignCall, getCampaignsCall, updateCampaignCall } from '../api/db/calls/campaigns';
+import { getProfileByIdCall } from '../api/db/calls/profiles';
 
 export const useSupabase = () => useSupabaseClient<DatabaseWithCustomTypes>();
 
