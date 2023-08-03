@@ -1,4 +1,5 @@
-import { supabase } from 'src/utils/supabase-client';
+// 'no-client' means that the functions are not wrapping the client in a higher order function, so that the client needs to be imported here, meaning these calls can only be used by the backend.
+import { supabase } from 'src/utils/supabase-client'; // TODO: refactor calls so that we do not need to import supabase here. https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/721
 import type { AccountRole } from 'types';
 import type { ProfileDBUpdate, ProfileDBInsert } from '../types';
 
