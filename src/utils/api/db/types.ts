@@ -209,3 +209,4 @@ export type TrackingEvents = Database['public']['Tables']['tracking_events'];
 export type SearchSnapshots = Database['public']['Tables']['search_snapshots'];
 export type ReportSnapshots = Database['public']['Tables']['report_snapshots'];
 export type SearchParameters = Database['public']['Tables']['search_parameters'];
+export type VercelLogs = Database['public']['Tables']['vercel_logs'];
