@@ -1,15 +1,17 @@
 import useSWR from 'swr';
 
-import { useClientDb } from 'src/utils/client-db/use-client-db';
+import { useClientDb, useDB } from 'src/utils/client-db/use-client-db';
 import type {
     SequenceInfluencer,
     SequenceEmail,
     SequenceEmailUpdate,
     SequenceInfluencerUpdate,
     SequenceStep,
+    SequenceUpdate,
 } from 'src/utils/api/db';
 import { useSequenceSteps } from './use-sequence-steps';
 import { sendEmail } from 'src/utils/api/email-engine/send-email';
+import { updateSequenceCall } from 'src/utils/api/db/calls/sequences';
 
 export /** TODO: move this 'send sequence' to the sever, because the emails need to be sent sequentially, not in parallel, so if the user navigates away it could cause some emails to be unsent. */
 const sendSequence = async ({
@@ -71,16 +73,24 @@ const sendSequence = async ({
 
 export const useSequence = (sequenceId?: string) => {
     const db = useClientDb();
-    const { data: sequence, mutate: refreshSequences } = useSWR(
+    const { data: sequence, mutate: refreshSequence } = useSWR(
         sequenceId ? [sequenceId, 'sequences'] : null,
         ([sequenceId]) => db.getSequenceById(sequenceId),
     );
     const { sequenceSteps } = useSequenceSteps(sequence?.id);
 
+    const updateSequenceDBCall = useDB<typeof updateSequenceCall>(updateSequenceCall);
+    const updateSequence = async (update: SequenceUpdate & { id: string }) => {
+        const res = await updateSequenceDBCall(update);
+        refreshSequence();
+        return res;
+    };
+
     return {
         sequence,
-        refreshSequences,
+        refreshSequence,
         sendSequence,
         sequenceSteps,
+        updateSequence,
     };
 };
