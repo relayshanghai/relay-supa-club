@@ -10,9 +10,12 @@ import { useSequences } from 'src/hooks/use-sequences';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { useSequence } from 'src/hooks/use-sequence';
 
-import { Spinner } from '../icons';
+import { Brackets, Spinner } from '../icons';
 import { useSequenceEmails } from 'src/hooks/use-sequence-emails';
 import { Switch } from '../library';
+import { Button } from '../button';
+import { useState } from 'react';
+import { TemplateVariablesModal } from './template-variables-modal';
 
 export const SequencesPage = () => {
     const { profile } = useUser();
@@ -65,11 +68,20 @@ export const SequencesPage = () => {
         }
     };
 
+    const [showUpdateTemplateVariables, setShowUpdateTemplateVariables] = useState(false);
+    const handleOpenUpdateTemplateVariables = () => {
+        setShowUpdateTemplateVariables(true);
+    };
+
     return (
         <Layout>
-            <div className="flex flex-col space-x-4 space-y-4 p-4">
-                <div className="flex">
-                    <h1 className="mr-4 text-2xl font-semibold text-gray-800">{sequence?.name}</h1>
+            <TemplateVariablesModal
+                visible={showUpdateTemplateVariables}
+                onClose={() => setShowUpdateTemplateVariables(false)}
+            />
+            <div className="flex flex-col space-y-4 p-4">
+                <div className="flex w-full">
+                    <h1 className="mr-4 self-center text-2xl font-semibold text-gray-800">{sequence?.name}</h1>
                     <Switch
                         checked={sequence?.auto_start ?? false}
                         afterLabel="Auto-start"
@@ -77,6 +89,10 @@ export const SequencesPage = () => {
                             handleAutostartToggle(e.target.checked);
                         }}
                     />
+                    <Button onClick={handleOpenUpdateTemplateVariables} variant="secondary" className="ml-auto flex">
+                        <Brackets className="mr-2" />
+                        <p className="self-center">Update template variables</p>
+                    </Button>
                 </div>
                 <SequenceStats />
 
