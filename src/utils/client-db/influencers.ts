@@ -1,15 +1,9 @@
-import type { SupabaseClient } from '@supabase/supabase-js';
-import type { DatabaseWithCustomTypes } from 'types';
+import type { RelayDatabase } from '../api/db';
 
-export const getInfluencerSocialProfileByIdCall =
-    (supabaseClient: SupabaseClient<DatabaseWithCustomTypes>) => async (id: string) => {
-        if (!id) return;
-        const { data, error } = await supabaseClient
-            .from('influencer_social_profiles')
-            .select('*')
-            .eq('id', id)
-            .single();
+export const getInfluencerSocialProfileByIdCall = (supabaseClient: RelayDatabase) => async (id: string) => {
+    if (!id) return;
+    const { data, error } = await supabaseClient.from('influencer_social_profiles').select('*').eq('id', id).single();
 
-        if (error) throw error;
-        return data;
-    };
+    if (error) throw error;
+    return data;
+};

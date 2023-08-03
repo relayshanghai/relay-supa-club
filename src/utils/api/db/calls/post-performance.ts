@@ -1,8 +1,7 @@
 import { supabase } from 'src/utils/supabase-client';
 import { getProfileById } from './profiles';
-import type { PostsPerformance, PostsPerformanceInsert, PostsPerformanceUpdate } from '../types';
-import type { CreatorPlatform, DatabaseWithCustomTypes } from 'types';
-import type { SupabaseClient } from '@supabase/supabase-js';
+import type { PostsPerformance, PostsPerformanceInsert, PostsPerformanceUpdate, RelayDatabase } from '../types';
+import type { CreatorPlatform } from 'types';
 
 export type PostPerformanceAndPost = PostsPerformanceUpdate & {
     platform: CreatorPlatform;
@@ -75,7 +74,7 @@ export const updatePostPerformance = async (data: PostsPerformanceUpdate) => {
 };
 
 export const insertPostPerformance =
-    (db: SupabaseClient<DatabaseWithCustomTypes>) =>
+    (db: RelayDatabase) =>
     async (data: PostsPerformanceInsert): Promise<PostsPerformance> => {
         data.created_at = new Date().toISOString();
 

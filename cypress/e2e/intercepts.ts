@@ -4,11 +4,10 @@ import influencerSearch from '../../src/mocks/api/influencer-search/searchByInfl
 import keywordSearch from '../../src/mocks/api/influencer-search/keywordSearchAlligators.json';
 import keywordSearchMonkeys from '../../src/mocks/api/influencer-search/keywordSearchMonkeys.json';
 
-import type { SupabaseClient } from '@supabase/supabase-js';
 import { createClient } from '@supabase/supabase-js';
 import type { DatabaseWithCustomTypes } from 'types';
 import type { InfluencerPostRequest } from 'pages/api/influencer-search';
-import type { UsagesDBInsert } from 'src/utils/api/db';
+import type { RelayDatabase, UsagesDBInsert } from 'src/utils/api/db';
 import { ulid } from 'ulid';
 export { cocomelon, defaultLandingPageInfluencerSearch };
 
@@ -18,7 +17,7 @@ const now = new Date();
 const twoMonthsAgo = new Date(now.getUTCFullYear(), now.getUTCMonth() - 2, now.getUTCDate());
 const oneMonthFromNow = new Date(now.getUTCFullYear(), now.getUTCMonth() + 1, now.getUTCDate());
 
-const resetUsages = (supabase: SupabaseClient<DatabaseWithCustomTypes>) => {
+const resetUsages = (supabase: RelayDatabase) => {
     supabase.from('usages').delete().neq('created_at', new Date(0).toISOString());
 };
 
@@ -28,7 +27,9 @@ export const setupIntercepts = () => {
     const supabaseServiceKey = Cypress.env('SUPABASE_SERVICE_KEY') || '';
     if (!supabaseServiceKey) throw new Error('SUPABASE_SERVICE_KEY not set');
 
-    const supabase = createClient<DatabaseWithCustomTypes>(supabaseUrl, supabaseServiceKey, { auth: { persistSession: false } });
+    const supabase = createClient<DatabaseWithCustomTypes>(supabaseUrl, supabaseServiceKey, {
+        auth: { persistSession: false },
+    });
     resetUsages(supabase);
     // IQData intercepts
     cy.intercept('/api/creators/report*', (req) => {
@@ -212,7 +213,9 @@ export const addPostIntercept = () => {
     const supabaseServiceKey = Cypress.env('SUPABASE_SERVICE_KEY') || '';
     if (!supabaseServiceKey) throw new Error('SUPABASE_SERVICE_KEY not set');
 
-    const supabase = createClient<DatabaseWithCustomTypes>(supabaseUrl, supabaseServiceKey, { auth: { persistSession: false } });
+    const supabase = createClient<DatabaseWithCustomTypes>(supabaseUrl, supabaseServiceKey, {
+        auth: { persistSession: false },
+    });
     const mockPostData = {
         title: 'initial post title',
         postedDate: new Date('2021-09-01').toISOString(),

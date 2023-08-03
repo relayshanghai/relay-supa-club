@@ -1,6 +1,4 @@
-import type { SupabaseClient } from '@supabase/supabase-js';
-import type { CampaignDB, CampaignCreatorDB, CampaignDBInsert, CampaignDBUpdate } from '../api/db';
-import type { DatabaseWithCustomTypes } from 'types';
+import type { CampaignDB, CampaignCreatorDB, CampaignDBInsert, CampaignDBUpdate, RelayDatabase } from '../api/db';
 
 export type { CampaignDB };
 
@@ -9,7 +7,7 @@ export type CampaignWithCreators = CampaignDB & {
 };
 
 export const getCampaignsCall =
-    (supabaseClient: SupabaseClient<DatabaseWithCustomTypes>) =>
+    (supabaseClient: RelayDatabase) =>
     async (companyId?: string | null): Promise<CampaignDB[]> => {
         if (!companyId) {
             return [];
@@ -22,7 +20,7 @@ export const getCampaignsCall =
     };
 
 export const createCampaignCall =
-    (supabaseClient: SupabaseClient<DatabaseWithCustomTypes>) =>
+    (supabaseClient: RelayDatabase) =>
     async (input: Omit<CampaignDBInsert, 'company_id'>, companyId?: string | null): Promise<CampaignDB> => {
         if (!companyId) {
             throw new Error('No company ID found');
@@ -47,7 +45,7 @@ export const createCampaignCall =
     };
 
 export const updateCampaignCall =
-    (supabaseClient: SupabaseClient<DatabaseWithCustomTypes>) =>
+    (supabaseClient: RelayDatabase) =>
     async (input: CampaignDBUpdate): Promise<CampaignDB> => {
         const { id: _filter_out, ...rest } = input;
         if (!input.company_id) {

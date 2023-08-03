@@ -1,10 +1,9 @@
-import type { CreatorPlatform, DatabaseWithCustomTypes } from 'types';
+import type { CreatorPlatform } from 'types';
 import { fetchPostPerformanceData } from './api/iqdata/post-performance';
 import { extractPlatformFromURL } from './extract-platform-from-url';
 import type { ScrapeData } from './scraper/types';
 import { db } from './supabase-client';
-import type { SupabaseClient } from '@supabase/supabase-js';
-import type { InfluencerSocialProfileRow } from './api/db';
+import type { InfluencerSocialProfileRow, RelayDatabase } from './api/db';
 import { saveInfluencer } from './save-influencer';
 import type { ServerContext } from './api/iqdata';
 import { fetchReportWithContext as fetchReport } from './api/iqdata';
@@ -30,7 +29,7 @@ export const scrapeInfluencerPost = async (url: string, context?: ServerContext)
     const { influencer: influencer_platform_id, ...result } = scrape;
 
     // @todo refactor querys that are not (db: SupabaseClient) => async () => Promise<any>
-    const getInfluencer = db((db: SupabaseClient<DatabaseWithCustomTypes>) => async (referenceId) => {
+    const getInfluencer = db((db: RelayDatabase) => async (referenceId) => {
         const { data, error } = await db
             .from('influencer_social_profiles')
             .select()
