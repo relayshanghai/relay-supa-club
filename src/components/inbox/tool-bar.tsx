@@ -36,7 +36,7 @@ export const ToolBar = ({
     ];
 
     return (
-        <div className="flex flex-col items-start space-y-3 border-b-2 border-r-2 border-tertiary-200 p-4 text-sm">
+        <div className="flex flex-col items-start space-y-3 border-b-2 border-r-2 border-tertiary-200 px-4 py-6 text-sm">
             <div className="flex justify-start font-semibold text-gray-600">
                 {tabs.map((tab, index) => (
                     <div
