@@ -82,9 +82,6 @@ export const Threads = ({ messages }: { messages: SearchResponseMessage[] }) => 
                                     message.isMe ? ' bg-primary-100 bg-opacity-70' : ''
                                 }`}
                             >
-                                <div className="mb-3 flex flex-wrap justify-between">
-                                    <div className="text-sm font-semibold text-gray-700">{message.from}</div>
-                                </div>
                                 <div
                                     className="text-xs"
                                     dangerouslySetInnerHTML={{
