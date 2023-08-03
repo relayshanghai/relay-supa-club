@@ -1,4 +1,4 @@
-import type { RelayDatabase, SequenceUpdate } from '../api/db';
+import type { RelayDatabase, SequenceUpdate } from '../types';
 
 export const getSequencesByCompanyIdCall = (supabaseClient: RelayDatabase) => async (companyId: string) => {
     if (!companyId) return;

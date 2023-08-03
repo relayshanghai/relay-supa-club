@@ -15,7 +15,7 @@ import { Badge, Tooltip } from '../library';
 import { SkeletonSearchResultRow } from '../common/skeleton-search-result-row';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { isRecommendedInfluencer } from 'src/utils/utils';
-import type { CampaignCreatorBasicInfo } from 'src/utils/client-db/campaignCreators';
+import type { CampaignCreatorBasicInfo } from 'src/utils/api/db/calls/campaignCreators';
 import { useAtom } from 'jotai';
 import { clientRoleAtom } from 'src/atoms/client-role-atom';
 import { SearchOpenExternalSocialProfile } from 'src/utils/analytics/events';

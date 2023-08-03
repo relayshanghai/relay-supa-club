@@ -2,7 +2,7 @@ import type { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { ApiHandler } from 'src/utils/api-handler';
 import type { InfluencerSocialProfileRow } from 'src/utils/api/db';
-import { getInfluencerSocialProfileByReferenceId } from 'src/utils/api/db/calls/influencers';
+import { getInfluencerSocialProfileByReferenceId } from 'src/utils/api/db/calls/influencers-no-client';
 import { fetchReport } from 'src/utils/api/iqdata/fetch-report';
 import { serverLogger } from 'src/utils/logger-server';
 import { saveInfluencer } from 'src/utils/save-influencer';

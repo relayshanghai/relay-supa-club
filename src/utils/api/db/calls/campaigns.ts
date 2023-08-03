@@ -1,4 +1,4 @@
-import type { CampaignDB, CampaignCreatorDB, CampaignDBInsert, CampaignDBUpdate, RelayDatabase } from '../api/db';
+import type { CampaignDB, CampaignCreatorDB, RelayDatabase, CampaignDBInsert, CampaignDBUpdate } from '../types';
 
 export type { CampaignDB };
 

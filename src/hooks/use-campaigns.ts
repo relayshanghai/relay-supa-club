@@ -3,7 +3,7 @@ import useSWR from 'swr';
 import { useClientDb, useDB } from 'src/utils/client-db/use-client-db';
 import { useCompany } from './use-company';
 import type { CampaignDB, CampaignDBInsert } from 'src/utils/api/db/types';
-import { getSales } from 'src/utils/client-db/sales';
+import { getSales } from 'src/utils/api/db/calls/sales';
 
 /**
  * Hook to fetch campaigns and create/update campaigns
