@@ -18,6 +18,7 @@ import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
 import Link from 'next/link';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { SIGNUP_WIZARD } from 'src/utils/rudderstack/event-names';
+import { Button } from '../button';
 
 export interface SignUpValidationErrors {
     firstName: string;
@@ -288,8 +289,8 @@ const SignUpPage = ({
                         </FormWizard>
                     ),
             )}
-            <div className="pt-20">
-                {currentStep === 5 && (
+            {currentStep === 5 ? (
+                <div className="pt-20 text-center">
                     <button type="button" className="text-sm text-gray-500" onClick={logout}>
                         {t('login.stuckHereTryAgain1')}
                         <Link
@@ -301,8 +302,19 @@ const SignUpPage = ({
                         </Link>
                         {t('login.stuckHereTryAgain2')}
                     </button>
-                )}
-            </div>
+                </div>
+            ) : (
+                <div className="mb-2 mt-6 text-center">
+                    <p className="inline text-sm text-gray-500">
+                        {t('login.alreadyHaveAnAccount')}{' '}
+                        <Link href="/login" className="inline cursor-pointer text-primary-500 hover:text-primary-700">
+                            <Button variant="secondary" className="ml-2 px-1 pb-1 pt-1 text-xs">
+                                {t('login.logIn')}
+                            </Button>
+                        </Link>
+                    </p>
+                </div>
+            )}
         </div>
     );
 };
