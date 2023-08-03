@@ -1,4 +1,3 @@
-// import type { SequenceInfluencer } from 'src/utils/api/db';
 import { useEffect, useState } from 'react';
 import type { SearchResponseMessage } from 'types/email-engine/account-account-search-post';
 
@@ -42,7 +41,7 @@ export const EmailHeader = ({ messages }: { messages: SearchResponseMessage[] })
     }, [messages]);
 
     return (
-        <div className="flex w-full items-center justify-between border-b-2 border-tertiary-200 px-3 py-6">
+        <div className="flex w-full items-center justify-between border-b-2 border-tertiary-200 px-4 py-6">
             <div className="flex flex-col">
                 <div className="text-2xl font-semibold text-primary-500">
                     @<span className="text-gray-700">influencer_handle</span>
@@ -51,19 +50,26 @@ export const EmailHeader = ({ messages }: { messages: SearchResponseMessage[] })
                     {messages[0]?.subject || 'subject'}
                 </div>
             </div>
-            <div className='text-gray-600" flex flex-col items-center'>
-                {ccInitials.map((name) => (
-                    <>
-                        <div className=" inline-flex h-11 w-11 items-center justify-center rounded-full border-2 bg-gray-100">
-                            {name}
-                        </div>
-                    </>
-                ))}
-                {ccInfo.map((cc) => (
-                    <>
-                        <div className="truncate text-xs">{cc.name}</div>
-                    </>
-                ))}
+            <div className="flex flex-col items-center text-gray-500">
+                <div className="flex -space-x-2">
+                    {ccInitials.map((name) => (
+                        <>
+                            <div className="inline-flex h-[2.875rem] w-[2.875rem] items-center justify-center rounded-full bg-gray-100 font-medium leading-none ring-2 ring-white">
+                                {name}
+                            </div>
+                        </>
+                    ))}
+                </div>
+                <div className="mt-2 flex items-center space-x-2 truncate text-xs">
+                    <div className="self-start">CC: </div>
+                    <div className="flex flex-col">
+                        {ccInfo.map((cc) => (
+                            <>
+                                <div>{cc.name ?? cc.email}</div>
+                            </>
+                        ))}
+                    </div>
+                </div>
             </div>
         </div>
     );
