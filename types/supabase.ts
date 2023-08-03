@@ -1374,6 +1374,10 @@ export interface Database {
         Args: Record<PropertyKey, never>
         Returns: boolean
       }
+      rotate_vercel_logs: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
