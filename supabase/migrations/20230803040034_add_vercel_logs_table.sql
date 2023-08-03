@@ -4,7 +4,7 @@ CREATE TABLE "public"."vercel_logs" (
   "type" text,
   "source" text,
   "deployment_id" text,
-  "timestamp" timestamp without time zone,
+  "timestamp" timestamp without time zone DEFAULT now(),
   "data" jsonb
 );
 
