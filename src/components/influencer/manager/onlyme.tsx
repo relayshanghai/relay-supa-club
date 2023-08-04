@@ -1,9 +1,9 @@
 import React from 'react';
 
-export const Actions = () => {
+export const OnlyMe = () => {
     return (
         <div className="flex flex-col">
-            <p>Actions</p>
+            <p>OnlyMe</p>
         </div>
     );
 };

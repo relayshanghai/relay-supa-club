@@ -17,7 +17,6 @@ export const CollabStatus = () => {
 
     return (
         <div className="flex flex-col">
-            <p>Collab Status</p>
             <SelectMultipleDropdown show={showDropdown} setShow={setShow} options={['option1', 'option2']} />
         </div>
     );

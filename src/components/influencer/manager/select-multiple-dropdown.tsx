@@ -15,7 +15,7 @@ export const SelectMultipleDropdown = ({
     useEffect(() => {
         const handleOutsideClick = (event: MouseEvent) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-                setShow(false);
+                setShow();
             }
         };
 
@@ -42,23 +42,25 @@ export const SelectMultipleDropdown = ({
 
     return (
         <div className="relative w-full" ref={dropdownRef}>
-            <div className="flex cursor-pointer flex-col border-2" onClick={toggleOptions}>
+            <div className="flex cursor-pointer flex-row border-2" onClick={toggleOptions}>
                 {selectedOptions.length > 0 ? (
-                    selectedOptions.map((selectedOption, index) => <p key={index}>{selectedOption}</p>)
+                    selectedOptions.map((selectedOption, index) => (
+                        <p key={index} className="rounded-xl border-2 border-primary-500 bg-primary-200 px-2">
+                            {selectedOption}
+                        </p>
+                    ))
                 ) : (
                     <p>Select filter</p>
                 )}
             </div>
-            {show && (
-                <div className="absolute mt-2 rounded-xl border bg-white shadow-lg">
-                    {options.map((option, index) => (
-                        <label key={index} className="block cursor-pointer hover:bg-primary-600 hover:text-slate-300">
-                            <input type="checkbox" value={option} onClick={() => handleOptionToggle(option)} />
-                            {option}
-                        </label>
-                    ))}
-                </div>
-            )}
+            <div className={`${!show && 'hidden'} absolute mt-2 rounded-xl border bg-white shadow-lg`}>
+                {options.map((option, index) => (
+                    <label key={index} className="block cursor-pointer hover:bg-primary-600 hover:text-slate-300">
+                        <input type="checkbox" value={option} onClick={() => handleOptionToggle(option)} />
+                        {option}
+                    </label>
+                ))}
+            </div>
         </div>
     );
 };

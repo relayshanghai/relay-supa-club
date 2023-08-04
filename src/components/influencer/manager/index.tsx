@@ -1,23 +1,21 @@
 import React from 'react';
 import { SearchComponent } from './search-component';
 import { CollabStatus } from './collab-status';
-import { Tags } from './tags';
-import { LastUpdated } from './last-updated';
-import { Actions } from './actions';
+import { OnlyMe } from './onlyme';
 
 const Manager = () => {
     return (
-        <div className="flex flex-col">
-            <div>
-                <h1>KOL Manager</h1>
+        <div className="m-4 flex flex-col">
+            <div className="my-4 text-3xl font-semibold">
+                <h1>Influencer Manager</h1>
             </div>
-            <SearchComponent />
             {/* Filters */}
             <div className="flex flex-row justify-between">
-                <CollabStatus />
-                <Tags />
-                <LastUpdated />
-                <Actions />
+                <div className="flex flex-row justify-between">
+                    <SearchComponent />
+                    <CollabStatus />
+                </div>
+                <OnlyMe />
             </div>
             {/* Table */}
         </div>
