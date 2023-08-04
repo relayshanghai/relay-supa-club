@@ -33,15 +33,15 @@ export const fetchPostPerformanceData = async (
         rudderstack.track({
             event: IQDATA_GET_YOUTUBE_VIDEO_INFO,
             onTrack: (params) => {
-                if (!params.server_context.metadata?.influencer_id || !params.server_context.metadata?.campaign_id) {
+                if (!params.server_context.metadata?.influencer_id && !params.server_context.metadata?.campaign_id) {
                     return false;
                 }
 
                 return {
                     platform,
                     url,
-                    influencer_id: params.server_context.metadata?.influencer_id,
-                    campaign_id: params.server_context.metadata?.campaign_id,
+                    influencer_id: params.server_context.metadata.influencer_id,
+                    campaign_id: params.server_context.metadata.campaign_id,
                     paid: true,
                     // @note real cost is found in iqdata's x-token-cost header
                     cost: 0.001,
@@ -56,15 +56,15 @@ export const fetchPostPerformanceData = async (
         rudderstack.track({
             event: IQDATA_GET_TIKTOK_MEDIA_INFO,
             onTrack: (params) => {
-                if (!params.server_context.metadata?.influencer_id || !params.server_context.metadata?.campaign_id) {
+                if (!params.server_context.metadata?.influencer_id && !params.server_context.metadata?.campaign_id) {
                     return false;
                 }
 
                 return {
                     platform,
                     url,
-                    influencer_id: params.server_context.metadata?.influencer_id,
-                    campaign_id: params.server_context.metadata?.campaign_id,
+                    influencer_id: params.server_context.metadata.influencer_id,
+                    campaign_id: params.server_context.metadata.campaign_id,
                     paid: true,
                     cost: 0.001,
                 };
