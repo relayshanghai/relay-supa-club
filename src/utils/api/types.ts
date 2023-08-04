@@ -7,18 +7,24 @@ import {
 } from './iqdata/influencers/search-influencers-payload';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-export type ApiPayload = {
-    context?: { req: NextApiRequest; res: NextApiResponse; metadata?: { [key: string]: any } };
-    path?: {
-        [key: string]: any;
-    };
-    query?: {
-        [key: string]: any;
-    };
-    body?: {
-        [key: string]: any;
-    };
-};
+export const ApiPayload = z.object({
+    context: z
+        .object<{
+            req: z.ZodType<NextApiRequest>;
+            res: z.ZodType<NextApiResponse>;
+            metadata: z.ZodOptional<z.ZodRecord>;
+        }>({
+            req: z.any(),
+            res: z.any(),
+            metadata: z.record(z.any()).optional(),
+        })
+        .optional(),
+    path: z.record(z.any()).optional(),
+    query: z.record(z.any()).optional(),
+    body: z.record(z.any()).optional(),
+});
+
+export type ApiPayload = z.infer<typeof ApiPayload>;
 
 export const Platform = z.union([z.literal('youtube'), z.literal('tiktok'), z.literal('instagram')]);
 

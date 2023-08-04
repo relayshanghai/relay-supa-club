@@ -1,5 +1,4 @@
-import type { SupabaseClient } from '@supabase/supabase-js';
-import type { DatabaseWithCustomTypes } from 'types';
+import type { RelayDatabase } from '..';
 
 export type SalesType = {
     campaign_id: string;
@@ -11,7 +10,7 @@ export type RowType = {
     amount: number;
 };
 
-export const addSales = (db: SupabaseClient<DatabaseWithCustomTypes>) => async (body: SalesType) => {
+export const addSales = (db: RelayDatabase) => async (body: SalesType) => {
     const { error } = await db.from('sales').insert(body);
 
     if (error) {
@@ -19,7 +18,7 @@ export const addSales = (db: SupabaseClient<DatabaseWithCustomTypes>) => async (
     }
 };
 
-export const getSales = (db: SupabaseClient<DatabaseWithCustomTypes>) => async (companyId: string) => {
+export const getSales = (db: RelayDatabase) => async (companyId: string) => {
     if (companyId.length <= 0) throw 'Company ID missing!';
 
     const { data, error } = await db.from('sales').select('amount').eq('company_id', companyId);
@@ -33,7 +32,7 @@ export const getSales = (db: SupabaseClient<DatabaseWithCustomTypes>) => async (
     return totalAmount;
 };
 
-export const deleteSales = (db: SupabaseClient<DatabaseWithCustomTypes>) => async (companyId: string) => {
+export const deleteSales = (db: RelayDatabase) => async (companyId: string) => {
     if (companyId.length <= 0) throw 'Company ID missing!';
 
     const { error } = await db.from('sales').delete().eq('company_id', companyId);

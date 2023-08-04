@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Button } from 'src/components/button';
 import { SearchProvider, useSearch, useSearchResults } from 'src/hooks/use-search';
 import { numberFormatter } from 'src/utils/formatter';
@@ -19,13 +19,19 @@ import ClientRoleWarning from './client-role-warning';
 import { useAllCampaignCreators } from 'src/hooks/use-all-campaign-creators';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { SearchCreators } from './search-creators';
+import { startJourney } from 'src/utils/analytics/journey';
+import { useAnalytics } from '../analytics/analytics-provider';
+import { SearchAddToCampaign, SearchDefault } from 'src/utils/analytics/events';
+import { Search } from 'src/utils/analytics/events';
 import { SEARCH_RESULT } from 'src/utils/rudderstack/event-names';
+import { useTrackEvent } from './use-track-event';
 // import { featRecommended } from 'src/constants/feature-flags';
 
 export const SearchPageInner = () => {
     const { t } = useTranslation();
     const {
         platform,
+        searchParams,
         setSearchParams,
         // recommendedInfluencers,
         // onlyRecommended,
@@ -54,11 +60,88 @@ export const SearchPageInner = () => {
         error,
         isValidating,
         loading: resultsLoading,
+        metadata,
+        setOnLoad,
     } = useSearchResults(0);
+
+    const { track: trackAnalytics } = useAnalytics();
+    const { track } = useTrackEvent();
+
+    const [rendered, setRendered] = useState(false);
+
+    /**
+     * Handle the SearchOptions.onSearch event
+     */
+    const handleSearch = useCallback(
+        ({ searchParams }: { searchParams: any }) => {
+            if (searchParams === undefined) return;
+
+            const tracker = (results: any) => {
+                return track<typeof Search>({
+                    event: Search,
+                    payload: {
+                        event_id: results.__metadata?.event_id,
+                        snapshot_id: results.__metadata?.snapshot_id,
+                        parameters_id: results.__metadata?.parameters_id,
+                        parameters: searchParams,
+                        page: searchParams.page,
+                    },
+                });
+            };
+
+            setOnLoad(() => tracker);
+
+            // @note this triggers the search api call
+            setSearchParams(searchParams);
+        },
+        [track, setSearchParams, setOnLoad],
+    );
+
+    /**
+     * Tracks a SearchDefault event on render
+     */
+    useEffect(() => {
+        if (rendered === true) return;
+
+        if (metadata === undefined || searchParams === undefined) return;
+
+        if (searchParams.page && searchParams.page !== 0) return;
+
+        const controller = new AbortController();
+
+        const tracker = async (result: any) => {
+            return track<typeof SearchDefault>({
+                event: SearchDefault,
+                controller,
+                payload: {
+                    event_id: result.__metadata?.event_id,
+                    snapshot_id: result.__metadata?.snapshot_id,
+                    parameters_id: result.__metadata?.parameters_id,
+                    parameters: searchParams,
+                    page: searchParams.page,
+                },
+            }).then((response) => {
+                if (response && !controller.signal.aborted) {
+                    setRendered(true);
+                }
+                return response;
+            });
+        };
+
+        setOnLoad(() => tracker);
+
+        return () => controller.abort();
+    }, [track, setOnLoad, searchParams, metadata, rendered]);
 
     const [showAlreadyAddedModal, setShowAlreadyAddedModal] = useState(false);
 
+    // Automatically start a journey on render
+    useEffect(() => {
+        startJourney('search');
+    }, []);
+
     // TODO:comment out the related codes when feat recommended is ready
+    // @note: this causes rerender, searchParams value should be initiated in the useState
     useEffect(() => {
         setSearchParams({
             page: 0,
@@ -102,11 +185,11 @@ export const SearchPageInner = () => {
             <div className="flex justify-between">
                 <SelectPlatform />
                 <div className="w-fit">
-                    <SearchCreators platform={platform} />
+                    <SearchCreators platform={platform} onSearch={handleSearch} />
                 </div>
             </div>
 
-            <SearchOptions setPage={setPage} setShowFiltersModal={setShowFiltersModal} />
+            <SearchOptions setPage={setPage} setShowFiltersModal={setShowFiltersModal} onSearch={handleSearch} />
 
             <div className="flex items-center justify-between">
                 <div className="text-sm font-medium">{`${t('creators.resultsPrefix')} ${numberFormatter(
@@ -135,6 +218,7 @@ export const SearchPageInner = () => {
                                 setShowCampaignListModal={setShowCampaignListModal}
                                 setShowAlreadyAddedModal={setShowAlreadyAddedModal}
                                 allCampaignCreators={allCampaignCreators}
+                                trackSearch={track}
                             />
                         ))}
                     </>
@@ -144,7 +228,8 @@ export const SearchPageInner = () => {
             {!noResults && (
                 <Button
                     onClick={async () => {
-                        setPage(page + 1);
+                        const nextPage = page + 1;
+                        setPage(nextPage);
                         trackEvent(SEARCH_RESULT('load more'));
                     }}
                 >
@@ -161,6 +246,14 @@ export const SearchPageInner = () => {
                 }}
                 campaigns={campaigns}
                 allCampaignCreators={allCampaignCreators}
+                track={(campaign: string) => {
+                    // @todo ideally we would want this to use useTrackEvent.track
+                    selectedCreator &&
+                        trackAnalytics(SearchAddToCampaign, {
+                            creator: selectedCreator.account.user_profile,
+                            campaign: campaign,
+                        });
+                }}
             />
 
             <InfluencerAlreadyAddedModal
@@ -172,7 +265,7 @@ export const SearchPageInner = () => {
                 allCampaignCreators={allCampaignCreators}
             />
 
-            <SearchFiltersModal show={filterModalOpen} setShow={setShowFiltersModal} />
+            <SearchFiltersModal show={filterModalOpen} setShow={setShowFiltersModal} onSearch={handleSearch} />
         </div>
     );
 };

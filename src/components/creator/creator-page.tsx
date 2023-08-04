@@ -16,10 +16,18 @@ import { useCampaigns } from 'src/hooks/use-campaigns';
 import { useAllCampaignCreators } from 'src/hooks/use-all-campaign-creators';
 import { InfluencerAlreadyAddedModal } from '../influencer-already-added';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { useAnalytics } from '../analytics/analytics-provider';
+import { AnalyzeAddToCampaign } from 'src/utils/analytics/events';
+import { SearchAnalyzeInfluencer } from 'src/utils/analytics/events';
+import type { eventKeys } from 'src/utils/analytics/events';
 import { ANALYZE_PAGE } from 'src/utils/rudderstack/event-names';
 
 export const CreatorPage = ({ creator_id, platform }: { creator_id: string; platform: CreatorPlatform }) => {
-    const { loading, report, reportCreatedAt, errorMessage } = useReport({ platform, creator_id });
+    const { loading, report, reportCreatedAt, errorMessage } = useReport({
+        platform,
+        creator_id,
+        track: SearchAnalyzeInfluencer.eventName as eventKeys,
+    });
 
     const [showCampaignListModal, setShowCampaignListModal] = useState(false);
     const [showAlreadyAddedModal, setShowAlreadyAddedModal] = useState(false);
@@ -28,6 +36,7 @@ export const CreatorPage = ({ creator_id, platform }: { creator_id: string; plat
     const { campaigns } = useCampaigns({});
     const { allCampaignCreators } = useAllCampaignCreators(campaigns);
     const { trackEvent } = useRudderstack();
+    const { track } = useAnalytics();
 
     const addToCampaign = async (selectedCreatorUserId: string) => {
         let isAlreadyInCampaign = false;
@@ -66,6 +75,13 @@ export const CreatorPage = ({ creator_id, platform }: { creator_id: string; plat
                 }}
                 campaigns={campaigns}
                 allCampaignCreators={allCampaignCreators}
+                track={(campaign: string) => {
+                    report &&
+                        track(AnalyzeAddToCampaign, {
+                            creator: report.user_profile,
+                            campaign: campaign,
+                        });
+                }}
             />
             <InfluencerAlreadyAddedModal
                 show={showAlreadyAddedModal}

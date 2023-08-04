@@ -10,7 +10,7 @@ import { clientLogger } from 'src/utils/logger-client';
 import { useUser } from 'src/hooks/use-user';
 import { isMissing } from 'src/utils/utils';
 import { useCampaignCreators } from 'src/hooks/use-campaign-creators';
-import type { CampaignCreatorBasicInfo } from 'src/utils/client-db/campaignCreators';
+import type { CampaignCreatorBasicInfo } from 'src/utils/api/db/calls/campaignCreators';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { CAMPAIGN_MODAL_CARD } from 'src/utils/rudderstack/event-names';
 
@@ -19,11 +19,13 @@ export default function CampaignModalCard({
     creator,
     platform,
     campaignCreators,
+    track,
 }: {
     campaign: CampaignDB;
     creator: CreatorUserProfile | null;
     platform: CreatorPlatform;
     campaignCreators: CampaignCreatorBasicInfo[];
+    track: (campaign: string) => void;
 }) {
     const supabase = useSupabaseClient();
     const { addCreatorToCampaign, loading, refreshCampaignCreators } = useCampaignCreators({
@@ -53,6 +55,8 @@ export default function CampaignModalCard({
                 added_by_id: profile.id,
             });
             toast.success(t('campaigns.modal.addedSuccessfully'));
+            campaign && track(campaign.id);
+
             trackEvent(CAMPAIGN_MODAL_CARD('added creator to campaign'), {
                 creator: creator?.username || creator?.fullname || creator?.user_id,
                 campaign: campaign?.id,

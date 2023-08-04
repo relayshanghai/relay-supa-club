@@ -38,8 +38,6 @@ export type CompanyTable = Database['public']['Tables']['companies'] & {
     };
 };
 
-export type RelayDatabase = SupabaseClient<DatabaseWithCustomTypes>;
-
 export type CompanyDB = CompanyTable['Row'];
 export type CompanyDBUpdate = CompanyTable['Update'];
 export type CompanyDBInsert = CompanyTable['Insert'];
@@ -71,15 +69,11 @@ export type Sequence = Database['public']['Tables']['sequences']['Row'];
 export type SequenceInsert = Database['public']['Tables']['sequences']['Insert'];
 export type SequenceUpdate = Database['public']['Tables']['sequences']['Update'];
 
-export type EmailDeliveryStatus = 'Scheduled' | 'Delivered' | 'Replied' | 'Bounced';
-export type EmailTrackingStatus = 'Opened' | 'Link Clicked';
 type SequenceStepDetailedTypes = {
     /** Int, first step = 0 */
     step_number: number;
     /** The params to be passed to the template. e.g. 'companyName' */
     params: string[];
-    email_delivery_status: EmailDeliveryStatus;
-    email_tracking_status: EmailTrackingStatus;
 };
 
 export type SequenceStepsTable = Database['public']['Tables']['sequence_steps'] & {
@@ -91,6 +85,23 @@ export type SequenceStepsTable = Database['public']['Tables']['sequence_steps'] 
 export type SequenceStep = SequenceStepsTable['Row'];
 export type SequenceStepInsert = SequenceStepsTable['Insert'];
 export type SequenceStepUpdate = SequenceStepsTable['Update'];
+
+export type EmailDeliveryStatus = 'Scheduled' | 'Delivered' | 'Replied' | 'Bounced' | 'Failed';
+export type EmailTrackingStatus = 'Opened' | 'Link Clicked';
+type SequenceEmailDetailedTypes = {
+    email_delivery_status: EmailDeliveryStatus;
+    email_tracking_status: EmailTrackingStatus;
+};
+
+export type SequenceEmailsTable = Database['public']['Tables']['sequence_email'] & {
+    Row: Database['public']['Tables']['sequence_email']['Row'] & SequenceEmailDetailedTypes;
+    Insert: Database['public']['Tables']['sequence_email']['Insert'] & SequenceEmailDetailedTypes;
+    Update: Database['public']['Tables']['sequence_email']['Update'] & SequenceEmailDetailedTypes;
+};
+
+export type SequenceEmail = SequenceEmailsTable['Row'];
+export type SequenceEmailInsert = SequenceEmailsTable['Insert'];
+export type SequenceEmailUpdate = SequenceEmailsTable['Update'];
 
 /** Ignored means it has gone through the whole sequence with no reply (+ 7 days) */
 export type FunnelStatus =
@@ -188,3 +199,14 @@ export type InfluencerSocialProfilesTable = Database['public']['Tables']['influe
         reference_id: InfluencerSocialProfileReferenceId;
     };
 };
+
+/**
+ * Supabase client instance with custom database
+ */
+export type RelayDatabase = SupabaseClient<DatabaseWithCustomTypes>;
+
+export type TrackingEvents = Database['public']['Tables']['tracking_events'];
+export type SearchSnapshots = Database['public']['Tables']['search_snapshots'];
+export type ReportSnapshots = Database['public']['Tables']['report_snapshots'];
+export type SearchParameters = Database['public']['Tables']['search_parameters'];
+export type VercelLogs = Database['public']['Tables']['vercel_logs'];

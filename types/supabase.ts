@@ -842,6 +842,52 @@ export interface Database {
           }
         ]
       }
+      report_snapshots: {
+        Row: {
+          company_id: string | null
+          created_at: string | null
+          event_id: string | null
+          id: string
+          profile_id: string | null
+          snapshot: Json
+        }
+        Insert: {
+          company_id?: string | null
+          created_at?: string | null
+          event_id?: string | null
+          id?: string
+          profile_id?: string | null
+          snapshot: Json
+        }
+        Update: {
+          company_id?: string | null
+          created_at?: string | null
+          event_id?: string | null
+          id?: string
+          profile_id?: string | null
+          snapshot?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_snapshots_company_id_fkey"
+            columns: ["company_id"]
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "report_snapshots_event_id_fkey"
+            columns: ["event_id"]
+            referencedRelation: "tracking_events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "report_snapshots_profile_id_fkey"
+            columns: ["profile_id"]
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       sales: {
         Row: {
           amount: number
@@ -875,6 +921,131 @@ export interface Database {
             foreignKeyName: "sales_company_id_fkey"
             columns: ["company_id"]
             referencedRelation: "companies"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      search_parameters: {
+        Row: {
+          created_at: string | null
+          data: Json
+          hash: string
+          id: string
+        }
+        Insert: {
+          created_at?: string | null
+          data: Json
+          hash: string
+          id?: string
+        }
+        Update: {
+          created_at?: string | null
+          data?: Json
+          hash?: string
+          id?: string
+        }
+        Relationships: []
+      }
+      search_snapshots: {
+        Row: {
+          company_id: string | null
+          created_at: string | null
+          event_id: string | null
+          id: string
+          parameters_id: string | null
+          profile_id: string | null
+          snapshot: Json
+        }
+        Insert: {
+          company_id?: string | null
+          created_at?: string | null
+          event_id?: string | null
+          id?: string
+          parameters_id?: string | null
+          profile_id?: string | null
+          snapshot: Json
+        }
+        Update: {
+          company_id?: string | null
+          created_at?: string | null
+          event_id?: string | null
+          id?: string
+          parameters_id?: string | null
+          profile_id?: string | null
+          snapshot?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "search_snapshots_company_id_fkey"
+            columns: ["company_id"]
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "search_snapshots_event_id_fkey"
+            columns: ["event_id"]
+            referencedRelation: "tracking_events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "search_snapshots_parameter_id_fkey"
+            columns: ["parameters_id"]
+            referencedRelation: "search_parameters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "search_snapshots_profile_id_fkey"
+            columns: ["profile_id"]
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      sequence_email: {
+        Row: {
+          created_at: string
+          email_delivery_status: string | null
+          email_message_id: string | null
+          email_send_at: string | null
+          email_tracking_status: string | null
+          id: string
+          sequence_influencer_id: string
+          sequence_step_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email_delivery_status?: string | null
+          email_message_id?: string | null
+          email_send_at?: string | null
+          email_tracking_status?: string | null
+          id?: string
+          sequence_influencer_id: string
+          sequence_step_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email_delivery_status?: string | null
+          email_message_id?: string | null
+          email_send_at?: string | null
+          email_tracking_status?: string | null
+          id?: string
+          sequence_influencer_id?: string
+          sequence_step_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sequence_email_sequence_influencer_id_fkey"
+            columns: ["sequence_influencer_id"]
+            referencedRelation: "sequence_influencers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sequence_email_sequence_step_id_fkey"
+            columns: ["sequence_step_id"]
+            referencedRelation: "sequence_steps"
             referencedColumns: ["id"]
           }
         ]
@@ -970,10 +1141,6 @@ export interface Database {
       sequence_steps: {
         Row: {
           created_at: string
-          email_delivery_status: string | null
-          email_id: string | null
-          email_send_at: string | null
-          email_tracking_status: string | null
           id: string
           name: string | null
           params: string[]
@@ -985,10 +1152,6 @@ export interface Database {
         }
         Insert: {
           created_at?: string
-          email_delivery_status?: string | null
-          email_id?: string | null
-          email_send_at?: string | null
-          email_tracking_status?: string | null
           id?: string
           name?: string | null
           params?: string[]
@@ -1000,10 +1163,6 @@ export interface Database {
         }
         Update: {
           created_at?: string
-          email_delivery_status?: string | null
-          email_id?: string | null
-          email_send_at?: string | null
-          email_tracking_status?: string | null
           id?: string
           name?: string | null
           params?: string[]
@@ -1056,6 +1215,70 @@ export interface Database {
           }
         ]
       }
+      tracking_events: {
+        Row: {
+          anonymous_id: string | null
+          company_id: string | null
+          created_at: string | null
+          data: Json | null
+          event: string
+          event_at: string | null
+          id: string
+          journey_id: string | null
+          journey_type: string | null
+          profile_id: string | null
+          session_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          anonymous_id?: string | null
+          company_id?: string | null
+          created_at?: string | null
+          data?: Json | null
+          event: string
+          event_at?: string | null
+          id?: string
+          journey_id?: string | null
+          journey_type?: string | null
+          profile_id?: string | null
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          anonymous_id?: string | null
+          company_id?: string | null
+          created_at?: string | null
+          data?: Json | null
+          event?: string
+          event_at?: string | null
+          id?: string
+          journey_id?: string | null
+          journey_type?: string | null
+          profile_id?: string | null
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tracking_events_company_id_fkey"
+            columns: ["company_id"]
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tracking_events_profile_id_fkey"
+            columns: ["profile_id"]
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tracking_events_user_id_fkey"
+            columns: ["user_id"]
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       usages: {
         Row: {
           company_id: string
@@ -1096,6 +1319,36 @@ export interface Database {
           }
         ]
       }
+      vercel_logs: {
+        Row: {
+          data: Json | null
+          deployment_id: string | null
+          id: string
+          message: string | null
+          source: string | null
+          timestamp: string | null
+          type: string | null
+        }
+        Insert: {
+          data?: Json | null
+          deployment_id?: string | null
+          id: string
+          message?: string | null
+          source?: string | null
+          timestamp?: string | null
+          type?: string | null
+        }
+        Update: {
+          data?: Json | null
+          deployment_id?: string | null
+          id?: string
+          message?: string | null
+          source?: string | null
+          timestamp?: string | null
+          type?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -1120,6 +1373,10 @@ export interface Database {
       is_relay_employee: {
         Args: Record<PropertyKey, never>
         Returns: boolean
+      }
+      rotate_vercel_logs: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
       }
     }
     Enums: {

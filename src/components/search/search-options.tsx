@@ -6,7 +6,8 @@ import { Button } from '../button';
 import SearchTopics from './search-topics';
 import { Tooltip } from '../library';
 // import { featRecommended } from 'src/constants/feature-flags';
-import { useCallback, useEffect, useState } from 'react';
+import { startJourney } from 'src/utils/analytics/journey';
+import { useState, useCallback } from 'react';
 import WordCloudComponent from '../wordcloud';
 import SearchKeywords from './search-keywords';
 import SearchHashtags from './search-hashtags';
@@ -16,36 +17,22 @@ import { useSearchTrackers } from '../rudder/searchui-rudder-calls';
 export const SearchOptions = ({
     setPage,
     setShowFiltersModal,
+    onSearch,
 }: {
     setPage: (page: number) => void;
     setShowFiltersModal: (show: boolean) => void;
+    onSearch: (...args: any[]) => any;
 }) => {
     const {
         platform,
         tags,
-        text,
         setTopicTags,
-        influencerLocation,
-        audienceLocation,
-        audience,
-        audienceAge,
-        audienceGender,
-        views,
-        gender,
-        engagement,
-        lastPost,
-        username,
-        contactInfo,
-        // onlyRecommended,
-        // setOnlyRecommended,
-        // recommendedInfluencers,
-        activeSearch,
         setActiveSearch,
-        setSearchParams,
         keywords,
         setKeywords,
         hashtags,
         setHashtags,
+        getSearchParams,
     } = useSearch();
     const [keywordInput, setKeywordInput] = useState<string>('');
     const [hashTagInput, setHashTagInput] = useState<string>('');
@@ -53,63 +40,26 @@ export const SearchOptions = ({
     const { t } = useTranslation();
     const { trackSearch, trackKeyword, trackOpenFilterModal, trackHashtags, trackTopics } = useSearchTrackers();
 
-    const handleSearch = (e: any) => {
-        keywordInput.length > 0 && setKeywords(keywordInput);
-        trackKeyword({
-            keyword: keywordInput,
-        });
-        setKeywordInput('');
-        e.preventDefault();
-        setActiveSearch(true);
-        setPage(0);
-        trackSearch('Search Options');
-    };
-    // TODO:comment out the related codes when feat recommended is ready
-    useEffect(() => {
-        if (activeSearch) {
-            setSearchParams({
-                platform,
-                tags,
-                text,
-                username,
-                keywords,
-                text_tags: hashtags.join(' '),
-                influencerLocation,
-                views,
-                audience,
-                gender,
-                engagement,
-                lastPost,
-                contactInfo,
-                audienceLocation,
-                audienceAge,
-                audienceGender,
-                // recommendedInfluencers: featRecommended() ? recommendedInfluencers : [],
-                // only_recommended: featRecommended() ? onlyRecommended : false,
-            });
-        }
-    }, [
-        activeSearch,
-        platform,
-        // onlyRecommended,
-        setSearchParams,
-        text,
-        tags,
-        keywords,
-        hashtags,
-        username,
-        influencerLocation,
-        views,
-        audience,
-        gender,
-        engagement,
-        lastPost,
-        contactInfo,
-        audienceLocation,
-        audienceAge,
-        audienceGender,
-        // recommendedInfluencers,
-    ]);
+    const handleSearch = useCallback(
+        (e: any) => {
+            if (keywordInput.length > 0) {
+                setKeywords(keywordInput);
+                trackKeyword({
+                    keyword: keywordInput,
+                });
+                setKeywordInput('');
+            }
+
+            e.preventDefault();
+            setActiveSearch(true);
+            setPage(0);
+            trackSearch('Search Options');
+
+            startJourney('search');
+            onSearch({ searchParams: getSearchParams() });
+        },
+        [keywordInput, onSearch, setActiveSearch, setKeywords, setPage, trackKeyword, trackSearch, getSearchParams],
+    );
 
     const handleKeywordsBlur = useCallback(
         (v: string | null) => {

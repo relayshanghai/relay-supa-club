@@ -4,6 +4,7 @@ export const GMAIL_SENT = '[Gmail]/Sent Mail';
 export const GMAIL_ALL_MAIL = '[Gmail]/All Mail';
 
 export const GMAIL_SENT_SPECIAL_USE_FLAG = '\\Sent';
+export const GMAIL_SEEN_SPECIAL_USE_FLAG = '\\Seen';
 
 export const testAccount = 'fyasv5klfoioc1hx'; // relayemailertest@gmail.com
 export const testEmail = 'relayemailertest@gmail.com';
