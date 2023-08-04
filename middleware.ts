@@ -173,7 +173,8 @@ export async function middleware(req: NextRequest) {
         if (
             req.nextUrl.pathname.includes('email-engine') ||
             req.nextUrl.pathname.includes('sequences') ||
-            req.nextUrl.pathname.includes('inbox')
+            req.nextUrl.pathname.includes('inbox') ||
+            req.nextUrl.pathname.includes('influencer-manager')
         ) {
             return NextResponse.rewrite('/404', { status: httpCodes.NOT_FOUND });
         }

@@ -49,12 +49,12 @@ export const SelectMultipleDropdown = ({
                 className="flex cursor-pointer appearance-none flex-row items-center justify-between rounded-md border border-gray-200 bg-white px-3 py-1 font-medium text-gray-400 ring-1 ring-gray-900 ring-opacity-5 focus:border-primary-500 focus:border-transparent focus:outline-none focus:ring-0 focus:ring-primary-500 sm:text-sm"
                 onClick={toggleOptions}
             >
-                <div className="flex w-24 flex-row gap-2 sm:w-52">
+                <div className="flex w-24 flex-row gap-2 sm:w-52 sm:min-w-fit">
                     {selectedOptions.length > 0 ? (
                         selectedOptions.map((selectedOption, index) => (
                             <p
                                 key={index}
-                                className={`rounded font-medium ${options[selectedOption].color} px-2 py-1.5`}
+                                className={`rounded font-medium ${options[selectedOption].color} whitespace-nowrap px-2 py-1.5`}
                             >
                                 {options[selectedOption].label}
                             </p>
