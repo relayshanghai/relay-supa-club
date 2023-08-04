@@ -71,6 +71,7 @@ function loginTestUser(
     cy.log(email);
     cy.visit('/login');
     cy.contains('Welcome back!'); // wait for login page load
+    cy.contains('Email');
     cy.get('input[type="email"]').type(email);
     cy.get('input[type="password"]').type(Cypress.env('TEST_USER_PASSWORD'));
     cy.get('form').get('button').contains('Log in').click();
