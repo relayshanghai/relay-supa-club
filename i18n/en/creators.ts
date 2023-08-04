@@ -178,6 +178,9 @@ const creators = {
         influencers: 'Influencers',
         real: 'Real',
     },
+    cancel: 'Cancel',
+    sequence: 'Sequence',
+    addToSequenceNotes: 'Influencers added to this sequence will receive emails automatically from',
 };
 
 export default creators;

@@ -166,11 +166,16 @@ const creators = {
             audienceLocation: '我们通过分析最近视频中的位置标签、文本、简介和标题来确定这一点',
             language: '我们通过最近发布内容的文字来判断',
         },
+        audienceGenderAge: '粉丝性别年龄',
         mass_followers: '批量关注账号',
         suspicious: '可疑',
         influencers: 'KOL',
         real: '真实',
-        audienceGenderAge: '粉丝性别年龄',
     },
+    cancel: '取消',
+    sequence: '序列',
+    //translate: 'Influencers added to this sequence will receive emails automatically from'
+    translate: 'KOL 将自动收到来自',
+    addToSequenceNotes: '加入序列的 KOL 将收到自动发送的邮件，开始发送时间为 ',
 };
 export default creators;

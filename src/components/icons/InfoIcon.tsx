@@ -1,6 +1,6 @@
 import type { SVGProps } from 'react';
 
-const PlusIcon = ({ className, ...props }: SVGProps<SVGSVGElement>) => (
+const InfoIcon = ({ className, ...props }: SVGProps<SVGSVGElement>) => (
     <svg
         viewBox="0 0 21 20"
         fill="none"
@@ -16,4 +16,4 @@ const PlusIcon = ({ className, ...props }: SVGProps<SVGSVGElement>) => (
         />
     </svg>
 );
-export default PlusIcon;
+export default InfoIcon;
