@@ -10,6 +10,7 @@ import type { CreatorSearchResult } from 'types';
 import { createSearchParameter, createSearchSnapshot } from 'src/utils/analytics/api/analytics';
 import { v4 } from 'uuid';
 import { db } from 'src/utils/supabase-client';
+import { IQDATA_SEARCH_INFLUENCERS, rudderstack } from 'src/utils/rudderstack';
 
 export type InfluencerPostRequest = FetchCreatorsFilteredParams & {
     company_id: string;
@@ -38,6 +39,22 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         query: { platform },
         body,
     };
+
+    await rudderstack.identify({ req, res });
+
+    rudderstack.track({
+        event: IQDATA_SEARCH_INFLUENCERS,
+        onTrack: (data) => {
+            if (data.total === undefined) return false;
+
+            return {
+                total: data.total,
+                shown_accounts: data.shown_accounts,
+                paid: true,
+                cost: data.cost,
+            };
+        },
+    });
 
     const results = await searchInfluencers(parameters, { req, res });
 
