@@ -4,6 +4,7 @@ import { headers } from 'src/utils/api/iqdata/constants';
 import { apiFetch as apiFetchOriginal } from '../api-fetch';
 import { logDailyTokensError, logRateLimitError } from '../slack/handle-alerts';
 import { forensicTrack } from '../forensicTrack';
+import { rudderstack } from 'src/utils/rudderstack';
 
 /**
  * For fetching IQData API
@@ -15,6 +16,9 @@ export const apiFetch = async <T extends object>(url: string, payload: ApiPayloa
         headers,
     });
 
+    await rudderstack.send(content);
+
+    // @note refactor. content should return the Response object itself
     if (context && content && 'status' in content && 'error' in content) {
         if (content.status === 429) {
             logRateLimitError(url, context);

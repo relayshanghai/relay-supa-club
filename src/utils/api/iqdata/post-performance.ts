@@ -7,6 +7,7 @@ import { scrapeTiktokUrl } from 'src/utils/scraper/scrape-tiktok-url';
 import { scrapeYoutubeUrl } from 'src/utils/scraper/scrape-youtube-url';
 import type { CreatorPlatform } from 'types';
 import type { ServerContext } from '.';
+import { IQDATA_GET_TIKTOK_MEDIA_INFO, IQDATA_GET_YOUTUBE_VIDEO_INFO, rudderstack } from 'src/utils/rudderstack';
 
 export type PostPerformanceData = {
     id: string;
@@ -29,10 +30,47 @@ export const fetchPostPerformanceData = async (
     }
 
     if (platform === 'youtube') {
+        rudderstack.track({
+            event: IQDATA_GET_YOUTUBE_VIDEO_INFO,
+            onTrack: (params) => {
+                if (!params.server_context.metadata?.influencer_id || !params.server_context.metadata?.campaign_id) {
+                    return false;
+                }
+
+                return {
+                    platform,
+                    url,
+                    influencer_id: params.server_context.metadata?.influencer_id,
+                    campaign_id: params.server_context.metadata?.campaign_id,
+                    paid: true,
+                    // @note real cost is found in iqdata's x-token-cost header
+                    cost: 0.001,
+                };
+            },
+        });
+
         return await scrapeYoutubeUrl(url, context);
     }
 
     if (platform === 'tiktok') {
+        rudderstack.track({
+            event: IQDATA_GET_TIKTOK_MEDIA_INFO,
+            onTrack: (params) => {
+                if (!params.server_context.metadata?.influencer_id || !params.server_context.metadata?.campaign_id) {
+                    return false;
+                }
+
+                return {
+                    platform,
+                    url,
+                    influencer_id: params.server_context.metadata?.influencer_id,
+                    campaign_id: params.server_context.metadata?.campaign_id,
+                    paid: true,
+                    cost: 0.001,
+                };
+            },
+        });
+
         return await scrapeTiktokUrl(url, context);
     }
 

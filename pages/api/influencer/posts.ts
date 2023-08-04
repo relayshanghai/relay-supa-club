@@ -5,6 +5,7 @@ import { getCampaignCreator } from 'src/utils/api/db/calls/campaign-creators';
 import { updateCampaignCreator } from 'src/utils/api/db/calls/campaign-creators';
 import type { ServerContext } from 'src/utils/api/iqdata';
 import { serverLogger } from 'src/utils/logger-server';
+import { rudderstack } from 'src/utils/rudderstack';
 import { saveInfluencerPost } from 'src/utils/save-influencer-post';
 import { savePostPerformance } from 'src/utils/save-post-performance';
 import { scrapeInfluencerPost } from 'src/utils/scrape-influencer-post';
@@ -87,6 +88,15 @@ const postHandler: NextApiHandler = async (req: NextApiRequest, res: NextApiResp
     };
 
     const body = req.body as InfluencerPostRequestBody;
+
+    await rudderstack.identify({
+        req,
+        res,
+        metadata: {
+            campaign_id: body.campaign_id,
+            influencer_id: body.creator_id,
+        },
+    });
 
     for (const url of body.urls) {
         try {
