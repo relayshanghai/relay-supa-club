@@ -12,12 +12,17 @@ import { useSequence } from 'src/hooks/use-sequence';
 
 import { Brackets, Spinner } from '../icons';
 import { useSequenceEmails } from 'src/hooks/use-sequence-emails';
-import { Switch } from '../library';
+import type { TabsProps } from '../library';
+import { Badge, Switch, Tabs } from '../library';
 import { Button } from '../button';
 import { useState } from 'react';
 import { TemplateVariablesModal } from './template-variables-modal';
+import { useTranslation } from 'react-i18next';
+import type { SequenceInfluencer } from 'src/utils/api/db';
 
 export const SequencesPage = () => {
+    const { t } = useTranslation();
+
     const { profile } = useUser();
     const { company } = useCompany();
     const { sequences } = useSequences(); // later we won't use this, the sequence id will be passed down from the index page.
@@ -73,6 +78,44 @@ export const SequencesPage = () => {
         setShowUpdateTemplateVariables(true);
     };
 
+    const needsAttentionInfluencers = sequenceInfluencers?.filter(
+        (influencer) => influencer.funnel_status === 'To Contact',
+    );
+    const inSequenceInfluencers = sequenceInfluencers?.filter(
+        (influencer) => influencer.funnel_status === 'In Sequence',
+    );
+    const ignoredInfluencers = sequenceInfluencers?.filter((influencer) => influencer.funnel_status === 'Ignored');
+
+    const tabs: TabsProps<SequenceInfluencer['funnel_status']>['tabs'] = [
+        {
+            label: 'sequences.needsAttention',
+            value: 'To Contact',
+            afterElement:
+                needsAttentionInfluencers?.length && needsAttentionInfluencers?.length > 0 ? (
+                    <Badge roundSize={5}>{needsAttentionInfluencers?.length}</Badge>
+                ) : null,
+        },
+        {
+            label: 'sequences.inSequence',
+            value: 'In Sequence',
+            afterElement:
+                inSequenceInfluencers?.length && inSequenceInfluencers?.length > 0 ? (
+                    <Badge roundSize={5}>{inSequenceInfluencers?.length}</Badge>
+                ) : null,
+        },
+        {
+            label: 'sequences.ignored',
+            value: 'Ignored',
+            afterElement:
+                ignoredInfluencers?.length && ignoredInfluencers?.length > 0 ? (
+                    <Badge roundSize={5}>{ignoredInfluencers?.length}</Badge>
+                ) : null,
+        },
+    ];
+    const [currentTab, setCurrentTab] = useState(tabs[0].value);
+
+    const currentTabInfluencers = sequenceInfluencers?.filter((influencer) => influencer.funnel_status === currentTab);
+
     return (
         <Layout>
             <TemplateVariablesModal
@@ -91,14 +134,15 @@ export const SequencesPage = () => {
                     />
                     <Button onClick={handleOpenUpdateTemplateVariables} variant="secondary" className="ml-auto flex">
                         <Brackets className="mr-2" />
-                        <p className="self-center">Update template variables</p>
+                        <p className="self-center">{t('sequences.updateTemplateVariables')}</p>
                     </Button>
                 </div>
                 <SequenceStats />
+                <Tabs tabs={tabs} currentTab={currentTab} setCurrentTab={setCurrentTab} />
 
-                {sequenceInfluencers && sequenceSteps ? (
+                {currentTabInfluencers && sequenceSteps ? (
                     <SequenceTable
-                        sequenceInfluencers={sequenceInfluencers}
+                        sequenceInfluencers={currentTabInfluencers}
                         allSequenceEmails={allSequenceEmails}
                         sequenceSteps={sequenceSteps}
                     />

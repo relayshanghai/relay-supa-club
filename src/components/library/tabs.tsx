@@ -1,11 +1,11 @@
 import { useTranslation } from 'react-i18next';
-export interface TabsProps {
-    currentTab: string;
-    setCurrentTab: (value: string) => void;
-    tabs: { label: string; value: string; afterElement?: React.ReactNode }[];
+export interface TabsProps<T> {
+    currentTab: T;
+    setCurrentTab: (value: T) => void;
+    tabs: { label: string; value: T; afterElement?: React.ReactNode }[];
 }
 
-export const Tabs = ({ currentTab, setCurrentTab, tabs }: TabsProps) => {
+export function Tabs<T = string>({ currentTab, setCurrentTab, tabs }: TabsProps<T>) {
     const { t } = useTranslation();
 
     return (
@@ -28,4 +28,4 @@ export const Tabs = ({ currentTab, setCurrentTab, tabs }: TabsProps) => {
             </div>
         </div>
     );
-};
+}
