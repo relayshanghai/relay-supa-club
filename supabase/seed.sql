@@ -356,7 +356,8 @@ OR REPLACE FUNCTION create_sequence_influencer(
   sequence_id UUID,
   added_by UUID,
   influencer_social_profile_id UUID,
-  email TEXT
+  email TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
 ) RETURNS RECORD SECURITY DEFINER LANGUAGE plpgsql AS $$
     DECLARE
       _row RECORD;
@@ -384,7 +385,7 @@ OR REPLACE FUNCTION create_sequence_influencer(
       VALUES
         (
           uuid_generate_v4(),
-          now(),
+          created_at,
           now(),
           company_id,
           sequence_id,
@@ -726,7 +727,8 @@ BEGIN
     _sequence_beauty_for_all.id,
     _profile_william.id,
     _influencer_social_profile_bob_2.id,
-    'influencer_bob@example.com'
+    'influencer_bob@example.com',
+    '2020-01-01 00:00:00.000000+00'
   );
 
   PERFORM create_sequence_influencer(
@@ -734,7 +736,8 @@ BEGIN
     _sequence_beauty_for_all.id,
     _profile_william.id,
     _influencer_social_profile_charlie_1.id,
-    'influencer_charlie@example.com'
+    'influencer_charlie@example.com',
+    '2030-01-01 00:00:00.000000+00'
   );    
 
   -- Influencer 3 will have no social profiles so we can handle this edge case

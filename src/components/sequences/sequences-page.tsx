@@ -145,6 +145,7 @@ export const SequencesPage = () => {
                         sequenceInfluencers={currentTabInfluencers}
                         allSequenceEmails={allSequenceEmails}
                         sequenceSteps={sequenceSteps}
+                        currentTab={currentTab}
                     />
                 ) : (
                     <Spinner className="mx-auto mt-10 h-10 w-10 fill-primary-600 text-white" />
