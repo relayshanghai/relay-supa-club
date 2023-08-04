@@ -12,6 +12,8 @@ import guidePage from './guide';
 import signup from './signup';
 import filters from './filters';
 import tooltips from './tooltips';
+import inbox from './inbox';
+import sequences from './sequences';
 
 const translations = {
     translation: {
@@ -29,6 +31,8 @@ const translations = {
         guidePage,
         signup,
         tooltips,
+        inbox,
+        sequences,
     },
 };
 export default translations;

@@ -4,5 +4,6 @@ BEGIN;
 \include ./supabase/functions/is_company_member.sql
 \include ./supabase/functions/is_company_member_of_campaign.sql
 \include ./supabase/functions/is_activated_account.sql
+\include ./supabase/functions/rotate_vercel_logs.sql
 
 COMMIT;

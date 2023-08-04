@@ -5,6 +5,7 @@ import type {
     CompanyTable,
     InfluencerSocialProfilesTable,
     ProfilesTable,
+    SequenceEmailsTable,
     SequenceInfluencersTable,
     SequenceStepsTable,
     UsagesTable,
@@ -106,9 +107,24 @@ export interface DatabaseWithCustomTypes extends Database {
             influencer_social_profiles: InfluencerSocialProfilesTable;
             sequence_steps: SequenceStepsTable;
             sequence_influencers: SequenceInfluencersTable;
+            sequence_email: SequenceEmailsTable;
         };
     };
 }
 
 export const CompanySize = z.union([z.literal('small'), z.literal('medium'), z.literal('large'), z.null()]);
 export type CompanySize = z.infer<typeof CompanySize>;
+
+/**
+ * Contains an object that holds the event_id and snapshot_id
+ *
+ *  This serves as a workaround for the cached search results
+ *  by passing around ids between the frontend and backend
+ */
+export type SearchResultMetadata = {
+    __metadata?: {
+        event_id: string;
+        snapshot_id: string;
+        parameters_id: string;
+    };
+};

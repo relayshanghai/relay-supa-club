@@ -1,7 +1,6 @@
 import { supabase } from 'src/utils/supabase-client';
-import type { DatabaseWithCustomTypes, SubscriptionStatus } from 'types';
-import type { CompanyDB, CompanyDBInsert, CompanyDBUpdate } from '../types';
-import type { SupabaseClient } from '@supabase/supabase-js';
+import type { SubscriptionStatus } from 'types';
+import type { CompanyDB, CompanyDBInsert, CompanyDBUpdate, RelayDatabase } from '../types';
 
 export const getCompanyCusId = (companyId: string) =>
     supabase.from('companies').select('cus_id').eq('id', companyId).single();
@@ -118,7 +117,7 @@ export const getTeammatesByCompanyId = async (companyId: string) => {
     return data;
 };
 
-export const findCompaniesByNames = (db: SupabaseClient<DatabaseWithCustomTypes>) => async (name: string) => {
+export const findCompaniesByNames = (db: RelayDatabase) => async (name: string) => {
     const { data, error } = await db.from('companies').select().ilike('name', name);
 
     if (error) {

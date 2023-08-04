@@ -15,6 +15,7 @@ import { Provider as JotaiProvider } from 'jotai';
 import ChatwootProvider from 'src/components/chatwoot/chatwoot-provider';
 import chatwootConfig from 'chatwoot.config';
 import { useTranslation } from 'react-i18next';
+import { AnalyticsProvider } from 'src/components/analytics/analytics-provider';
 import Script from 'next/script';
 
 function MyApp({
@@ -91,17 +92,19 @@ function MyApp({
             </Head>
 
             <SessionContextProvider supabaseClient={supabaseClient} initialSession={pageProps.initialSession}>
-                <CacheProvider>
-                    <UserProvider>
-                        <ChatwootProvider {...chatwootConfig} locale={lang}>
-                            <JotaiProvider>
-                                <CompanyProvider>
-                                    <Component {...pageProps} />
-                                </CompanyProvider>
-                            </JotaiProvider>
-                        </ChatwootProvider>
-                    </UserProvider>
-                </CacheProvider>
+                <AnalyticsProvider>
+                    <CacheProvider>
+                        <UserProvider>
+                            <ChatwootProvider {...chatwootConfig} locale={lang}>
+                                <JotaiProvider>
+                                    <CompanyProvider>
+                                        <Component {...pageProps} />
+                                    </CompanyProvider>
+                                </JotaiProvider>
+                            </ChatwootProvider>
+                        </UserProvider>
+                    </CacheProvider>
+                </AnalyticsProvider>
             </SessionContextProvider>
             <Toaster />
         </>

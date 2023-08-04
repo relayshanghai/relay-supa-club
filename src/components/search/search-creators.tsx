@@ -7,13 +7,19 @@ import { debounce } from 'src/utils/debounce';
 import { Search, Spinner } from '../icons';
 import { useSearchTrackers } from '../rudder/searchui-rudder-calls';
 
-export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
-    const [searchTerm, setSearchTerm] = useState<string | ''>();
+export const SearchCreators = ({
+    platform,
+    onSearch,
+}: {
+    platform: CreatorPlatform;
+    onSearch: (params: any) => void;
+}) => {
+    const [searchTerm, setSearchTerm] = useState('');
     const [spinnerLoading, setSpinnerLoading] = useState(false);
     const { t } = useTranslation();
     const { trackSearchInfluencer, trackSearch } = useSearchTrackers();
 
-    const { setPlatform, setUsername, setText, setActiveSearch, setPage } = useSearch();
+    const { setPlatform, setUsername, setText, setActiveSearch, setPage, getSearchParams } = useSearch();
 
     // Disabling the exhaustive-deps rule because we need to use the debounce function and we already know the required dependencies.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -49,7 +55,8 @@ export const SearchCreators = ({ platform }: { platform: CreatorPlatform }) => {
     const handleSubmit = useCallback(() => {
         searchInfluencer(searchTerm);
         handleSearch();
-    }, [searchTerm, searchInfluencer, handleSearch]);
+        onSearch({ searchParams: getSearchParams() });
+    }, [searchTerm, searchInfluencer, handleSearch, onSearch, getSearchParams]);
 
     return (
         <div className="group relative flex w-full flex-col font-medium">

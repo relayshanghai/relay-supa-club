@@ -1,11 +1,23 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { fetchIqDataGeosWithContext as fetchIqDataGeos } from 'src/utils/api/iqdata';
+import { IQDATA_LIST_GEOLOCATIONS, rudderstack } from 'src/utils/rudderstack';
 import { chinaFilter } from 'src/utils/utils';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
         const { term } = req.body;
+
+        await rudderstack.identify({ req, res });
+
+        rudderstack.track({
+            event: IQDATA_LIST_GEOLOCATIONS,
+            onTrack: () => {
+                return {
+                    term,
+                };
+            },
+        });
 
         const results = await fetchIqDataGeos({ req, res })(term);
 

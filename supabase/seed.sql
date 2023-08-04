@@ -316,9 +316,7 @@ OR REPLACE FUNCTION create_sequence_steps(
   params TEXT[],
   template_id TEXT,
   step_number NUMERIC,
-  wait_time_hours NUMERIC,
-  email_delivery_status TEXT,
-  email_tracking_status TEXT
+  wait_time_hours NUMERIC
 ) RETURNS RECORD SECURITY DEFINER LANGUAGE plpgsql AS $$
     DECLARE
       _row RECORD;
@@ -333,9 +331,7 @@ OR REPLACE FUNCTION create_sequence_steps(
           params,
           template_id,
           step_number,
-          wait_time_hours,
-          email_delivery_status,
-          email_tracking_status
+          wait_time_hours
         )
       VALUES
         (
@@ -347,9 +343,7 @@ OR REPLACE FUNCTION create_sequence_steps(
           params,
           template_id,
           step_number,
-          wait_time_hours,
-          email_delivery_status,
-          email_tracking_status
+          wait_time_hours
         )
       RETURNING * INTO _row;
       RETURN _row;
@@ -641,9 +635,7 @@ BEGIN
     ],
     'AAABiYr-poEAAAAC',
     0,
-    0,
-    'Scheduled',
-    NULL
+    0
   );
 
   PERFORM create_sequence_steps(
@@ -654,9 +646,7 @@ BEGIN
     ],
     'AAABiYsMUIAAAAAD',
     1,
-    1,
-    'Delivered',
-    'Opened'
+    1
   );
 
   PERFORM create_campaign_creator(

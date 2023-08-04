@@ -15,7 +15,7 @@ import { AddPostModal } from './add-post-modal';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { CampaignSalesModal } from './campaign-sales-modal';
 import { useDB } from 'src/utils/client-db/use-client-db';
-import { addSales } from 'src/utils/client-db/sales';
+import { addSales } from 'src/utils/api/db/calls/sales';
 import { INFLUENCER_TABLE } from 'src/utils/rudderstack/event-names';
 
 export interface CreatorsOutreachProps {

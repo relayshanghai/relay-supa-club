@@ -7,6 +7,10 @@ import type { FetchCreatorsFilteredParams } from 'src/utils/api/iqdata/transform
 import { prepareFetchCreatorsFiltered } from 'src/utils/api/iqdata/transforms';
 import { hasCustomSearchParams } from 'src/utils/usagesHelpers';
 import type { CreatorSearchResult } from 'types';
+import { createSearchParameter, createSearchSnapshot } from 'src/utils/analytics/api/analytics';
+import { v4 } from 'uuid';
+import { db } from 'src/utils/supabase-client';
+import { IQDATA_SEARCH_INFLUENCERS, rudderstack } from 'src/utils/rudderstack';
 
 export type InfluencerPostRequest = FetchCreatorsFilteredParams & {
     company_id: string;
@@ -31,17 +35,50 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const { platform, body } = prepareFetchCreatorsFiltered(searchParams);
 
-    const results = await searchInfluencers(
-        {
-            query: { platform },
-            body,
+    const parameters = {
+        query: { platform },
+        body,
+    };
+
+    await rudderstack.identify({ req, res });
+
+    rudderstack.track({
+        event: IQDATA_SEARCH_INFLUENCERS,
+        onTrack: (data) => {
+            if (data.total === undefined) return false;
+
+            return {
+                total: data.total,
+                shown_accounts: data.shown_accounts,
+                paid: true,
+                cost: data.cost,
+            };
         },
-        { req, res },
-    );
+    });
+
+    const results = await searchInfluencers(parameters, { req, res });
 
     if (results === undefined) {
         throw new RelayError('Cannot search influencers');
     }
+
+    const parameter = await db<typeof createSearchParameter>(createSearchParameter)(parameters);
+
+    const snapshot = await createSearchSnapshot(
+        { req, res },
+        {
+            parameters_id: parameter.id,
+            parameters,
+            results,
+        },
+    );
+
+    // @see /types/appTypes/SearchResultMetadata
+    results.__metadata = {
+        event_id: v4(),
+        snapshot_id: snapshot.id,
+        parameters_id: parameter.id,
+    };
 
     return res.status(httpCodes.OK).json(results);
 };

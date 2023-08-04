@@ -1,5 +1,5 @@
 import type { CreatorReport } from 'types';
-import { getInfluencerById, getInfluencerSocialProfileByReferenceId } from '../db/calls/influencers';
+import { getInfluencerById, getInfluencerSocialProfileByReferenceId } from '../db/calls/influencers-no-client';
 import { extractInfluencerReferenceId } from './extract-influencer';
 import { compose } from '../../compose';
 import type { InfluencerRow, InfluencerSocialProfileRow } from '../db';

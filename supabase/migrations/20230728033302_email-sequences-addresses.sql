@@ -86,17 +86,17 @@ ALTER TABLE "public"."influencer_posts" ADD COLUMN "sequence_influencer_id" uuid
 
 ALTER TABLE "public"."usages" ALTER COLUMN "id" SET DEFAULT gen_random_uuid();
 
-CREATE UNIQUE INDEX addresses_pkey ON public.addresses USING btree(id);
+CREATE UNIQUE INDEX addresses_pkey ON public.addresses USING btree (id);
 
-CREATE UNIQUE INDEX product_pkey ON public.products USING btree(id);
+CREATE UNIQUE INDEX product_pkey ON public.products USING btree (id);
 
-CREATE UNIQUE INDEX sequence_influencer_pkey ON public.sequence_influencers USING btree(id);
+CREATE UNIQUE INDEX sequence_influencer_pkey ON public.sequence_influencers USING btree (id);
 
-CREATE UNIQUE INDEX sequence_steps_pkey ON public.sequence_steps USING btree(id);
+CREATE UNIQUE INDEX sequence_steps_pkey ON public.sequence_steps USING btree (id);
 
-CREATE UNIQUE INDEX sequences1_id_key ON public.sequences USING btree(id);
+CREATE UNIQUE INDEX sequences1_id_key ON public.sequences USING btree (id);
 
-CREATE UNIQUE INDEX sequences1_pkey ON public.sequences USING btree(id);
+CREATE UNIQUE INDEX sequences1_pkey ON public.sequences USING btree (id);
 
 ALTER TABLE "public"."addresses" ADD CONSTRAINT "addresses_pkey" PRIMARY KEY USING INDEX "addresses_pkey";
 

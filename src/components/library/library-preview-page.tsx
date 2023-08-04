@@ -5,7 +5,7 @@ import { Input } from '../input';
 const Badges = () => (
     <div className="m-5">
         <h2 className="text-lg font-bold"> Badges</h2>
-        <p>Primary, Solid, Rounded, 3 sizes, squished Chinese for no wrap test </p>
+        <p>Solid 3 sizes, squished Chinese for no wrap test </p>
         <div className="m-5 flex flex-wrap space-x-3 bg-slate-100 p-5">
             <library.Badge size="small">Small</library.Badge>
 
@@ -16,6 +16,22 @@ const Badges = () => (
             <div className="w-3">
                 <library.Badge size="medium">中文</library.Badge>
             </div>
+        </div>
+        <p>
+            Soft 3, fully rounded, 3 sizes. For fully round you need to specifically set a height and width. around 5
+            for one number and 8 for 2
+        </p>
+        <div className="m-5 flex flex-wrap space-x-3 bg-slate-100 p-5">
+            <library.Badge variant="soft" roundSize={5}>
+                1
+            </library.Badge>
+            <library.Badge variant="soft" roundSize={8}>
+                22
+            </library.Badge>
+
+            <library.Badge variant="soft" roundSize={10}>
+                123
+            </library.Badge>
         </div>
     </div>
 );
@@ -119,6 +135,40 @@ const Inputs = () => {
     );
 };
 
+const Tabs = () => {
+    const [currentTab, setCurrentTab] = useState('tab1');
+    const tabs = [
+        {
+            label: 'Tab 1',
+            value: 'tab1',
+            afterElement: (
+                <library.Badge variant="soft" roundSize={5}>
+                    3
+                </library.Badge>
+            ),
+        },
+        {
+            label: 'Tab 2',
+            value: 'tab2',
+            afterElement: (
+                <library.Badge variant="soft" roundSize={5}>
+                    33
+                </library.Badge>
+            ),
+        },
+        { label: 'Tab 3', value: 'tab3' },
+    ];
+    return (
+        <div className="m-5">
+            <h2 className="text-lg font-bold"> Tabs</h2>
+            <p>default </p>
+            <div className="m-5 flex flex-wrap space-x-8 bg-slate-100 p-5">
+                <library.Tabs currentTab={currentTab} tabs={tabs} setCurrentTab={setCurrentTab} />
+            </div>
+        </div>
+    );
+};
+
 const LibraryPage = () => (
     <>
         <Badges />
@@ -126,6 +176,7 @@ const LibraryPage = () => (
         <Switches />
         <ProgressBars />
         <Inputs />
+        <Tabs />
     </>
 );
 

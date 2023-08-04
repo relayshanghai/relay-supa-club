@@ -3,6 +3,7 @@ import { clientLogger } from 'src/utils/logger-client';
 import { cleanEmailBody } from 'src/utils/clean-html';
 import type { SearchResponseMessage } from 'types/email-engine/account-account-search-post';
 import { getMessageText } from 'src/utils/api/email-engine/handle-messages';
+import { Spinner } from '../icons';
 
 export const Email = ({ message }: { message: SearchResponseMessage }) => {
     const [content, setContent] = useState('');
@@ -31,10 +32,12 @@ export const Email = ({ message }: { message: SearchResponseMessage }) => {
     }, [content, getText, loading, message]);
 
     return (
-        <div className="h-full">
+        <div className="h-full p-3">
             <h3 className={`mb-2 text-lg font-bold`}>{message.subject}</h3>
             {loading ? (
-                <p>Loading...</p>
+                <div className="flex h-full items-center justify-center">
+                    <Spinner className="h-6 w-6 fill-primary-600 text-primary-200" />
+                </div>
             ) : (
                 <div
                     className="overflow-y-auto"
