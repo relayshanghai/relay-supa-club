@@ -16,12 +16,16 @@ export const EmailHeader = ({ messages }: { messages: SearchResponseMessage[] })
 
     const getCCNameInitials = (messages: SearchResponseMessage[]) => {
         setCcInitials([]);
-        const ccNames = messages.flatMap((message) =>
-            (message.cc ?? [])
-                .map((cc) => cc.name.split(' '))
-                .map((n) => n[0].toUpperCase())
-                .join(''),
-        );
+        const ccNames = messages
+            .map((message) =>
+                (message.cc ?? []).map((cc) =>
+                    cc.name
+                        .split(' ')
+                        .map((n) => n[0].toUpperCase())
+                        .join(''),
+                ),
+            )
+            .flat();
         setCcInitials(ccNames);
     };
 
@@ -41,7 +45,7 @@ export const EmailHeader = ({ messages }: { messages: SearchResponseMessage[] })
                     {messages[0]?.subject || 'subject'}
                 </div>
             </div>
-            <div className="flex flex-col items-center text-gray-500">
+            <div className="flex flex-col items-center justify-center text-gray-500">
                 <div className="flex -space-x-2">
                     {ccInitials.map((name) => (
                         <>
@@ -52,7 +56,7 @@ export const EmailHeader = ({ messages }: { messages: SearchResponseMessage[] })
                     ))}
                 </div>
 
-                <div className="mt-2 flex items-center space-x-2 truncate text-xs">
+                <div className="mt-2 flex items-center space-x-2 truncate px-3 text-xs">
                     {ccInfo.length > 0 && <div className="self-start">CC: </div>}
                     <div className="flex w-32 space-x-2 overflow-y-auto">
                         {ccInfo.map((cc) => (
