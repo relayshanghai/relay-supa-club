@@ -136,7 +136,7 @@ export const InboxPage = () => {
                         <div className="h-full flex-grow overflow-auto">
                             {selectedMessages && (
                                 <CorrespondenceSection
-                                    //TODO: add selectedSequenceInfluencers
+                                    // TODO: add selectedSequenceInfluencers
                                     selectedMessages={selectedMessages}
                                     loadingSelectedMessages={loadingSelectedMessages}
                                 />

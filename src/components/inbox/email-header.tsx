@@ -2,35 +2,26 @@ import { useEffect, useState } from 'react';
 import type { SearchResponseMessage } from 'types/email-engine/account-account-search-post';
 
 export const EmailHeader = ({ messages }: { messages: SearchResponseMessage[] }) => {
-    //TODO: pass selected sequence influencer as another pram
+    // TODO: pass selected sequence influencer as another pram
     const [ccInfo, setCcInfo] = useState<{ name: string; email: string }[]>([]);
     const [ccInitials, setCcInitials] = useState<string[]>([]);
 
     const getCCInfo = (messages: SearchResponseMessage[]) => {
         setCcInfo([]);
-        const ccInfo: { name: string; email: string }[] = [];
-        messages.forEach((message) => {
-            if (message.cc) {
-                message.cc.forEach((cc) => {
-                    ccInfo.push({ name: cc.name, email: cc.address });
-                });
-            }
-        });
+        const ccInfo = messages.flatMap((message) =>
+            (message.cc ?? []).map((cc) => ({ name: cc.name, email: cc.address })),
+        );
         setCcInfo(ccInfo);
     };
 
     const getCCNameInitials = (messages: SearchResponseMessage[]) => {
         setCcInitials([]);
-        const ccNames: string[] = [];
-        messages.forEach((message) => {
-            if (message.cc) {
-                message.cc.forEach((cc) => {
-                    const splitName = cc.name.split(' ');
-                    const initials = splitName.map((n) => n[0].toUpperCase());
-                    ccNames.push(initials.join(''));
-                });
-            }
-        });
+        const ccNames = messages.flatMap((message) =>
+            (message.cc ?? [])
+                .map((cc) => cc.name.split(' '))
+                .map((n) => n[0].toUpperCase())
+                .join(''),
+        );
         setCcInitials(ccNames);
     };
 
