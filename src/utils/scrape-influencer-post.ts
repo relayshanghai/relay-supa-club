@@ -6,7 +6,7 @@ import { db } from './supabase-client';
 import type { InfluencerSocialProfileRow, RelayDatabase } from './api/db';
 import { saveInfluencer } from './save-influencer';
 import type { ServerContext } from './api/iqdata';
-import { fetchReportWithContext as fetchReport } from './api/iqdata';
+import { fetchReport } from './api/iqdata/fetch-report';
 
 type ScrapeDataWithInfluencer = Omit<ScrapeData, 'influencer'> & {
     influencer: InfluencerSocialProfileRow;
@@ -50,7 +50,7 @@ export const scrapeInfluencerPost = async (url: string, context?: ServerContext)
             context.metadata = { ...context.metadata, influencer_platform_id, action: 'fetchReport' };
         }
 
-        const report = await fetchReport(context)(influencer_platform_id, platform);
+        const report = await fetchReport(influencer_platform_id, platform, context);
 
         if (!report) {
             throw new Error(`Cannot fetch report for influencer: ${influencer_platform_id}, ${platform}`);
