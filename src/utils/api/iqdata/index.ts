@@ -25,8 +25,8 @@ export const withServerContextIqdata = (fetchFunction: (...args: any[]) => any) 
     };
 };
 
-export const withServerContext = (fetchFunction: (args: any) => any) => {
-    return (args: any, context?: ServerContext) => {
+export const withServerContext = <T extends (args: any) => any>(fetchFunction: T) => {
+    return (args: Parameters<T>[0], context?: ServerContext) => {
         return fetchFunction({ ...args, context });
     };
 };
@@ -117,11 +117,11 @@ export const fetchYoutubeVideoInfo = async (videoUrl: string, context?: ServerCo
 export const fetchTiktokVideoInfo = async (videoUrl: string, context?: ServerContext) =>
     await iqDataFetch<TikTokVideoDataRaw>(`raw/tt/user/media?${new URLSearchParams({ url: videoUrl })}`, { context });
 
-export const fetchIqDataLookalikeByAudienceWithContext = withServerContextIqdata(fetchIqDataLookalikeByAudience);
-export const fetchIqDataLookalikeByInfluencerWithContext = withServerContextIqdata(fetchIqDataLookalikeByInfluencer);
+// export const fetchIqDataLookalikeByAudienceWithContext = withServerContextIqdata(fetchIqDataLookalikeByAudience);
+// export const fetchIqDataLookalikeByInfluencerWithContext = withServerContextIqdata(fetchIqDataLookalikeByInfluencer);
 export const fetchIqDataTopicsWithContext = withServerContextIqdata(fetchIqDataTopics);
 export const fetchIqDataGeosWithContext = withServerContextIqdata(fetchIqDataGeos);
-export const fetchCreatorsFilteredWithContext = withServerContextIqdata(fetchCreatorsFiltered);
+// export const fetchCreatorsFilteredWithContext = withServerContextIqdata(fetchCreatorsFiltered);
 export const requestNewReportWithContext = withServerContextIqdata(requestNewReport);
 export const fetchReportWithContext = withServerContextIqdata(fetchReport);
 export const fetchReportsMetadataWithContext = withServerContextIqdata(fetchReportsMetadata);
