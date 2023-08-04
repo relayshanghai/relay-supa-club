@@ -2,6 +2,7 @@ import React from 'react';
 import { SearchComponent } from './search-component';
 import { CollabStatus } from './collab-status';
 import { OnlyMe } from './onlyme';
+import { Table } from './table';
 
 const Manager = () => {
     return (
@@ -11,13 +12,14 @@ const Manager = () => {
             </div>
             {/* Filters */}
             <div className="flex flex-row justify-between">
-                <div className="flex flex-row justify-between">
+                <div className="flex flex-row gap-5">
                     <SearchComponent />
                     <CollabStatus />
                 </div>
                 <OnlyMe />
             </div>
             {/* Table */}
+            <Table />
         </div>
     );
 };

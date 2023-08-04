@@ -17,7 +17,7 @@ export const Tags = () => {
     return (
         <div className="flex flex-col">
             <p>Tags</p>
-            <SelectMultipleDropdown show={showDropdown} setShow={setShow} options={['tag1', 'tag2']} />
+            <SelectMultipleDropdown text={'Tags'} show={showDropdown} setShow={setShow} options={['tag1', 'tag2']} />
         </div>
     );
 };
