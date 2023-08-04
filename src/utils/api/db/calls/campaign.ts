@@ -7,7 +7,12 @@ import type {
     CampaignNotesInsertDB,
     CampaignNotesDB,
     ProfileDB,
+    CampaignCreatorDB,
+    CampaignDB,
 } from '../types';
+export type CampaignWithCreators = CampaignDB & {
+    campaign_creators: CampaignCreatorDB[];
+};
 
 export type CampaignNotesWithProfiles = CampaignNotesDB & {
     profiles: Pick<ProfileDB, 'id' | 'first_name' | 'last_name'>;

@@ -12,6 +12,9 @@ services:
             - redis
             - elasticsearch
             # - kibana
+        # For local development,
+        extra_hosts:
+            - 'host.docker.internal:host-gateway'
         environment:
             # Configuration to EmailEngine can be passed via environment variables
             # For full list see https://github.com/postalsys/emailengine#config-mapping

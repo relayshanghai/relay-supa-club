@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { addSales, deleteSales, getSales } from 'src/utils/client-db/sales';
+import { addSales, deleteSales, getSales } from 'src/utils/api/db/calls/sales';
 import { useDB } from 'src/utils/client-db/use-client-db';
 
 const SalesTestComponent = (data: { companyID: string; campaignID: string; amount: number }) => {

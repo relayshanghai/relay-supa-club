@@ -1,3 +1,4 @@
+import { useCallback, useEffect } from 'react';
 import { Menu } from '@headlessui/react';
 import { PlusCircleIcon } from '@heroicons/react/24/solid';
 import Link from 'next/link';
@@ -9,22 +10,27 @@ import useAboveScreenWidth from 'src/hooks/use-above-screen-width';
 import { useSearch, useSearchResults } from 'src/hooks/use-search';
 import { imgProxy } from 'src/utils/fetcher';
 import { decimalToPercent, numberFormatter } from 'src/utils/formatter';
-import type { CreatorSearchAccountObject } from 'types';
+import type { CreatorPlatform, CreatorSearchAccountObject } from 'types';
 import { Badge, Tooltip } from '../library';
 import { SkeletonSearchResultRow } from '../common/skeleton-search-result-row';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { isRecommendedInfluencer } from 'src/utils/utils';
-
-import type { CampaignCreatorBasicInfo } from 'src/utils/client-db/campaignCreators';
+import type { CampaignCreatorBasicInfo } from 'src/utils/api/db/calls/campaignCreators';
 import { useAtom } from 'jotai';
 import { clientRoleAtom } from 'src/atoms/client-role-atom';
+import { SearchOpenExternalSocialProfile } from 'src/utils/analytics/events';
+import { useAnalytics } from '../analytics/analytics-provider';
+import { SearchLoadMoreResults } from 'src/utils/analytics/events';
 import { SEARCH_RESULT_ROW } from 'src/utils/rudderstack/event-names';
+import type { track } from './use-track-event';
+
 export interface SearchResultRowProps {
     creator: CreatorSearchAccountObject;
     setSelectedCreator: (creator: CreatorSearchAccountObject) => void;
     setShowCampaignListModal: (show: boolean) => void;
     setShowAlreadyAddedModal: (show: boolean) => void;
     allCampaignCreators?: CampaignCreatorBasicInfo[];
+    trackSearch?: track;
 }
 export interface MoreResultsRowsProps extends Omit<SearchResultRowProps, 'creator'> {
     page: number;
@@ -36,10 +42,35 @@ export const MoreResultsRows = ({
     setSelectedCreator,
     setShowAlreadyAddedModal,
     allCampaignCreators,
+    trackSearch,
 }: MoreResultsRowsProps) => {
     const { t } = useTranslation();
-    const { resultsPerPageLimit } = useSearch();
-    const { results, loading, error } = useSearchResults(page);
+    const { resultsPerPageLimit, searchParams } = useSearch();
+    const { results, loading, error, setOnLoad } = useSearchResults(page);
+
+    useEffect(() => {
+        if (!trackSearch || page === 0 || searchParams === undefined) return;
+
+        const controller = new AbortController();
+
+        const tracker = (result: any) => {
+            trackSearch<typeof SearchLoadMoreResults>({
+                event: SearchLoadMoreResults,
+                controller,
+                payload: {
+                    event_id: result.__metadata?.event_id,
+                    snapshot_id: result.__metadata?.snapshot_id,
+                    parameters_id: result.__metadata?.parameters_id,
+                    parameters: searchParams,
+                    page: searchParams.page ?? 0,
+                },
+            });
+        };
+
+        setOnLoad(() => tracker);
+
+        return () => controller.abort();
+    }, [trackSearch, searchParams, page, setOnLoad]);
 
     if (error)
         return (
@@ -78,6 +109,8 @@ export const MoreResultsRows = ({
     return null;
 };
 
+// @todo refactor complexity
+// eslint-disable-next-line complexity
 export const SearchResultRow = ({
     creator,
     setShowCampaignListModal,
@@ -88,6 +121,7 @@ export const SearchResultRow = ({
     const { t } = useTranslation();
     const { platform, recommendedInfluencers } = useSearch();
     const { trackEvent } = useRudderstack();
+    const { track } = useAnalytics();
     const {
         username,
         custom_name,
@@ -128,6 +162,23 @@ export const SearchResultRow = ({
     const desktop = useAboveScreenWidth(500);
     const [clientRoleData] = useAtom(clientRoleAtom);
     const inActAsMode = clientRoleData.companyId?.length > 0;
+
+    const analyzeInfluencer = useCallback(
+        (args: { platform: CreatorPlatform; user_id: string }) => {
+            const { platform, user_id } = args;
+            trackEvent(SEARCH_RESULT_ROW('open report'), { platform, user_id });
+        },
+        [trackEvent],
+    );
+
+    const openSocialProfile = useCallback(
+        (args: { url: string }) => {
+            const { url } = args;
+            track(SearchOpenExternalSocialProfile, { url });
+            trackEvent(SEARCH_RESULT_ROW('open social link'), { url });
+        },
+        [track, trackEvent],
+    );
 
     return (
         <tr className="group hover:bg-primary-100">
@@ -176,7 +227,7 @@ export const SearchResultRow = ({
                         href={`/influencer/${platform}/${user_id}`}
                         target={inActAsMode ? '_self' : '_blank'}
                         rel="noopener noreferrer"
-                        onClick={() => trackEvent(SEARCH_RESULT_ROW('open report'), { platform, user_id })}
+                        onClick={() => analyzeInfluencer({ platform, user_id })}
                         data-testid={`analyze-button/${user_id}`}
                     >
                         <Button className="flex flex-row items-center" variant="secondary">
@@ -196,7 +247,7 @@ export const SearchResultRow = ({
                     {url && (
                         <Link href={url} target="_blank" rel="noopener noreferrer">
                             <Button
-                                onClick={() => trackEvent(SEARCH_RESULT_ROW('open social link'), { url })}
+                                onClick={() => openSocialProfile({ url })}
                                 data-testid={`open-influencer-link-button/${user_id}`}
                             >
                                 <ShareLink className="w-5 fill-current text-white" />
@@ -239,9 +290,7 @@ export const SearchResultRow = ({
                                                 className={`${
                                                     active ? 'bg-violet-500 text-white' : 'text-gray-900'
                                                 } group flex w-full items-center justify-center rounded-md px-2 py-2 text-sm`}
-                                                onClick={() =>
-                                                    trackEvent(SEARCH_RESULT_ROW('open report'), { platform, user_id })
-                                                }
+                                                onClick={() => analyzeInfluencer({ platform, user_id })}
                                             >
                                                 {t('creators.analyzeProfile')}
                                             </button>
@@ -254,9 +303,7 @@ export const SearchResultRow = ({
                                         <Menu.Item>
                                             {({ active }) => (
                                                 <button
-                                                    onClick={() =>
-                                                        trackEvent(SEARCH_RESULT_ROW('open social link'), { url })
-                                                    }
+                                                    onClick={() => openSocialProfile({ url })}
                                                     className={`${
                                                         active ? 'bg-violet-500 text-white' : 'text-gray-900'
                                                     } group flex w-full items-center justify-center rounded-md px-2 py-2 text-sm`}

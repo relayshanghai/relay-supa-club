@@ -1,5 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { CampaignDB, CampaignCreatorDB, CampaignCreatorDBInsert, CampaignCreatorDBUpdate } from '../api/db';
+import type { CampaignDB, CampaignCreatorDB, CampaignCreatorDBInsert, CampaignCreatorDBUpdate } from '..';
 import type { CreatorPlatform, DatabaseWithCustomTypes } from 'types';
 
 export type CampaignWithCreators = CampaignDB & {

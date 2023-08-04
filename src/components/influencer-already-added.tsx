@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { ModalWithButtons } from './modal-with-buttons';
 import type { CampaignDB } from 'src/utils/api/db';
-import type { CampaignCreatorBasicInfo } from 'src/utils/client-db/campaignCreators';
+import type { CampaignCreatorBasicInfo } from 'src/utils/api/db/calls/campaignCreators';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { ALREADY_ADDED_MODAL } from 'src/utils/rudderstack/event-names';
 

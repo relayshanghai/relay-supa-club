@@ -1,5 +1,5 @@
 import { vi, describe, it, expect } from 'vitest';
-import * as influencersModule from './api/db/calls/influencers';
+import * as influencersModule from './api/db/calls/influencers-no-client';
 import { getInfluencer } from './get-influencer';
 import type { CreatorReport } from '../../types';
 import type { InfluencerSocialProfileRow, InfluencerRow } from './api/db';
