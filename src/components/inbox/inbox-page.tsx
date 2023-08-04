@@ -15,7 +15,8 @@ import {
     updateMessageAsSeen,
 } from 'src/utils/api/email-engine/handle-messages';
 import { useMessages } from 'src/hooks/use-message';
-import { GMAIL_SENT_SPECIAL_USE_FLAG } from 'src/utils/api/email-engine/prototype-mocks';
+import { GMAIL_SEEN_SPECIAL_USE_FLAG } from 'src/utils/api/email-engine/prototype-mocks';
+import { useTranslation } from 'react-i18next';
 
 export const InboxPage = () => {
     const [messages, setMessages] = useState<MessagesGetMessage[]>([]);
@@ -23,10 +24,11 @@ export const InboxPage = () => {
     const [selectedMessages, setSelectedMessages] = useState<EmailSearchPostResponseBody['messages'] | null>(null);
     const [loadingSelectedMessages, setLoadingSelectedMessages] = useState(false);
     const [getSelectedMessagesError, setGetSelectedMessagesError] = useState('');
-    const [selectedTab, setSelectedTab] = useState('new');
+    const [selectedTab, setSelectedTab] = useState('inbox');
     const [searchTerm, setSearchTerm] = useState<string>('');
 
     const { inboxMessages, isLoading, refreshInboxMessages } = useMessages();
+    const { t } = useTranslation();
 
     useEffect(() => {
         if (!inboxMessages) {
@@ -80,13 +82,21 @@ export const InboxPage = () => {
             return;
         }
         const unSeenMessages = selectedMessages.filter((message) => {
-            return !message.flags.includes(GMAIL_SENT_SPECIAL_USE_FLAG);
+            return !message.flags.includes(GMAIL_SEEN_SPECIAL_USE_FLAG);
         });
         unSeenMessages.forEach(async (message) => {
             await updateMessageAsSeen(message.id);
             refreshInboxMessages();
         });
     }, [refreshInboxMessages, selectedMessages]);
+
+    //Show the first message in the list when the page loads by default
+    useEffect(() => {
+        if (!selectedMessages && messages.length > 0) {
+            handleGetThreadEmails(messages[0]);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [messages]);
 
     return (
         <Layout>
@@ -97,8 +107,8 @@ export const InboxPage = () => {
                     </div>
                 ) : (
                     <>
-                        {messages.length === 0 && !isLoading && <p>No messages</p>}
-                        <div className="h-full w-2/5 overflow-auto">
+                        {messages.length === 0 && !isLoading && <p>{t('inbox.noMessagesInMailbox')}</p>}
+                        <div className="h-full w-[240px] overflow-auto">
                             {messages.length > 0 && (
                                 <>
                                     <ToolBar
@@ -123,16 +133,13 @@ export const InboxPage = () => {
                                 </>
                             )}
                         </div>
-                        <div className="h-full w-3/5 overflow-auto">
-                            {selectedMessages ? (
+                        <div className="h-full flex-grow overflow-auto">
+                            {selectedMessages && (
                                 <CorrespondenceSection
+                                    // TODO: add selectedSequenceInfluencers
                                     selectedMessages={selectedMessages}
                                     loadingSelectedMessages={loadingSelectedMessages}
                                 />
-                            ) : (
-                                <div className="font-sm flex h-full items-center justify-center text-gray-500">
-                                    No message has been selected yet.
-                                </div>
                             )}
                         </div>
                     </>

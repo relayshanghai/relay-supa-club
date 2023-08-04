@@ -2,7 +2,7 @@ import type { MessagesGetMessage } from 'types/email-engine/account-account-mess
 import {
     GMAIL_INBOX,
     GMAIL_SENT,
-    GMAIL_SENT_SPECIAL_USE_FLAG,
+    GMAIL_SEEN_SPECIAL_USE_FLAG,
     testAccount,
 } from 'src/utils/api/email-engine/prototype-mocks';
 import { nextFetch } from 'src/utils/fetcher';
@@ -70,7 +70,7 @@ export const updateMessageAsSeen = async (messageId: string) => {
         account: testAccount,
         messageId: messageId,
         flags: {
-            add: [GMAIL_SENT_SPECIAL_USE_FLAG],
+            add: [GMAIL_SEEN_SPECIAL_USE_FLAG],
         },
     };
 
