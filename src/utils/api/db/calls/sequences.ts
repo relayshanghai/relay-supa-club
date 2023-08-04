@@ -15,8 +15,9 @@ export const getSequenceByIdCall = (supabaseClient: RelayDatabase) => async (id:
     return data;
 };
 
-export const updateSequenceCall = (supabaseClient: RelayDatabase) => async (update: SequenceUpdate) => {
-    const { data, error } = await supabaseClient.from('sequences').update(update).eq('id', update.id).single();
-    if (error) throw error;
-    return data;
-};
+export const updateSequenceCall =
+    (supabaseClient: RelayDatabase) => async (update: SequenceUpdate & { id: string }) => {
+        const { data, error } = await supabaseClient.from('sequences').update(update).eq('id', update.id).single();
+        if (error) throw error;
+        return data;
+    };
