@@ -33,6 +33,7 @@ const creators = {
     close: '取消',
     usageExceeded: '搜索次数已达上限',
     resultsPerPage: '每页结果',
+    addToSequence: '添加到序列',
     modal: {
         viewFullProfile: '查看完整信息',
     },

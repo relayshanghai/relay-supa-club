@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
 import { DotsHorizontal, ShareLink } from 'src/components/icons';
-import { featRecommended } from 'src/constants/feature-flags';
+import { featEmail, featRecommended } from 'src/constants/feature-flags';
 import useAboveScreenWidth from 'src/hooks/use-above-screen-width';
 import { useSearch, useSearchResults } from 'src/hooks/use-search';
 import { imgProxy } from 'src/utils/fetcher';
@@ -235,14 +235,25 @@ export const SearchResultRow = ({
                         </Button>
                     </Link>
 
-                    <Button
-                        onClick={addToCampaign}
-                        className="flex items-center gap-1"
-                        data-testid={`add-to-campaign-button/${user_id}`}
-                    >
-                        <PlusCircleIcon className="w-5" />
-                        <span className="">{t('creators.addToCampaign')}</span>
-                    </Button>
+                    {featEmail() ? (
+                        <Button
+                            // onClick={addToCampaign}
+                            className="flex items-center gap-1"
+                            // data-testid={`add-to-sequence-button/${user_id}`}
+                        >
+                            <PlusCircleIcon className="w-5" />
+                            <span className="">{t('creators.addToSequence')}</span>
+                        </Button>
+                    ) : (
+                        <Button
+                            onClick={addToCampaign}
+                            className="flex items-center gap-1"
+                            data-testid={`add-to-campaign-button/${user_id}`}
+                        >
+                            <PlusCircleIcon className="w-5" />
+                            <span className="">{t('creators.addToCampaign')}</span>
+                        </Button>
+                    )}
 
                     {url && (
                         <Link href={url} target="_blank" rel="noopener noreferrer">
