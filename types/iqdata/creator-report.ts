@@ -164,7 +164,7 @@ interface ReportInfo {
 
 // interface Filter {}
 
-interface UserProfile {
+export interface UserProfile {
     type: CreatorPlatform;
     user_id: string;
     username: string;

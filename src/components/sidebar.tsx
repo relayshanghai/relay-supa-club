@@ -6,12 +6,14 @@ import useAboveScreenWidth from 'src/hooks/use-above-screen-width';
 import EmailOutline from './icons/EmailOutline';
 import { useUser } from 'src/hooks/use-user';
 import { Compass, FourSquare, Account, Team, PieChart, Guide, Send, Engagements, ProfilePlus } from './icons';
+import { BoltIcon } from '@heroicons/react/24/outline';
 import { Title } from './title';
 import { useTranslation } from 'react-i18next';
 import { featEmail } from 'src/constants/feature-flags';
 
 const links = {
     discover: '/dashboard',
+    boostbot: '/boostbot',
     influencer: '/influencer',
     campaigns: '/campaigns',
     aiEmailGenerator: '/ai-email-generator',
@@ -43,6 +45,8 @@ const ActiveLink = ({ href, children }: { href: string; children: ReactNode }) =
                 <Compass height={18} width={18} className="mr-4 stroke-inherit" />
             )}
 
+            {href === links.boostbot && <BoltIcon height={18} width={18} className="mr-4" />}
+
             {href === links.campaigns && <FourSquare height={18} width={18} className="mr-4 stroke-inherit" />}
 
             {href === links.aiEmailGenerator && <EmailOutline height={18} width={18} className="mr-4 stroke-inherit" />}
@@ -73,6 +77,7 @@ const NavBarInner = ({ loggedIn, isRelayEmployee }: { loggedIn: boolean | null; 
             </div>
             <div className="mt-8 flex flex-col space-y-4">
                 <ActiveLink href={links.discover}>{t('navbar.discover')}</ActiveLink>
+                <ActiveLink href={links.boostbot}>{t('navbar.boostbot')}</ActiveLink>
                 <ActiveLink href={links.campaigns}>{t('navbar.campaigns')}</ActiveLink>
                 <ActiveLink href={links.aiEmailGenerator}>{t('navbar.aiEmailGenerator')}</ActiveLink>
                 <ActiveLink href={links.performance}>{t('navbar.performance')}</ActiveLink>
