@@ -52,6 +52,8 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
                 shown_accounts: data.shown_accounts,
                 paid: true,
                 cost: data.cost,
+                platform,
+                page: searchParams.page,
             };
         },
     });
