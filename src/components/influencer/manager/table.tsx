@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { InfluencerRow } from './influencer-row';
 
 const tableColumns = [
@@ -10,39 +10,62 @@ const tableColumns = [
     { header: 'inbox', type: 'link', name: 'inbox' },
 ];
 
-const influencersList = [
-    {
-        id: 1,
-        info: {
-            name: 'Kylie Jenner',
-            handle: '@kylie',
-        },
-        collabstatus: 'negotiating',
-        manager: 'Sophia',
-        tags: ['fashion', 'beauty'],
-        lastupdated: '2 days ago',
-        unread: true,
-    },
-    {
-        id: 2,
-        info: {
-            name: 'Kylie Jenner',
-            handle: '@kylie',
-        },
-        collabstatus: 'negotiating',
-        manager: 'Mikaela',
-        tags: ['fashion', 'beauty'],
-        lastupdated: '2 days ago',
-    },
-];
-
 export const Table = () => {
+    // const [selectedAll, setSelectedAll] = useState<boolean>(false);
+    const [influencersList, _setInfluencersList] = useState([
+        {
+            id: '1',
+            info: {
+                name: 'Kylie Jenner',
+                handle: '@kylie',
+            },
+            collabstatus: 'negotiating',
+            manager: 'Sophia',
+            tags: ['fashion', 'beauty'],
+            lastupdated: '2 days ago',
+            unread: true,
+            checked: false,
+        },
+        {
+            id: '2',
+            info: {
+                name: 'Kylie Jenner',
+                handle: '@kylie',
+            },
+            collabstatus: 'negotiating',
+            manager: 'Mikaela',
+            tags: ['fashion', 'beauty'],
+            lastupdated: '2 days ago',
+            checked: false,
+        },
+    ]);
+
+    // const handleCheckboxChange = (id: string) => {
+    //     const updatedCheckboxes = influencersList.map((checkbox) =>
+    //       checkbox.id === id ? { ...checkbox, checked: !checkbox.checked } : checkbox
+    //     );
+    //     setInfluencersList(updatedCheckboxes);
+    //     setSelectedAll(updatedCheckboxes.every((checkbox) => checkbox.checked));
+    // };
+
+    //   const handleCheckAll = () => {
+    //     const updatedCheckboxes = influencersList.map((checkbox) => ({
+    //       ...checkbox,
+    //       checked: !selectedAll,
+    //     }));
+    //     setInfluencersList(updatedCheckboxes);
+    //     setSelectedAll(!selectedAll);
+    //   };
+
     return (
         <div>
             <div className="mt-6 overflow-auto">
                 <table className="w-full table-auto divide-y divide-gray-200 overflow-y-visible bg-white ">
                     <thead>
                         <tr>
+                            {/* <th>
+                                <input className="appearance-none display-none rounded border-gray-300 checked:text-primary-500" type='checkbox' checked={selectedAll} onChange={handleCheckAll} />
+                            </th> */}
                             {tableColumns.map((column) => (
                                 <th
                                     key={column.header}

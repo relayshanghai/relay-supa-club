@@ -6,13 +6,17 @@ import { InboxIcon } from 'src/components/icons';
 interface InfluencerRowProps {
     index: number;
     creator: any;
+    onCheckboxChange?: () => void;
 }
 
 export const InfluencerRow = ({ index, creator }: InfluencerRowProps) => {
     const { collabstatus, info, manager, tags, lastupdated, unread } = creator;
     return (
         <tr key={creator.id + index} className="group cursor-default text-sm  hover:bg-primary-50">
-            <td className="whitespace-nowrap px-6 py-2 font-medium text-gray-900">
+            {/* <td className="whitespace-nowrap items-center text-center display-none">
+                <input className="appearance-none rounded border-gray-300 checked:text-primary-500" checked={checked} onChange={onCheckboxChange} type='checkbox' />
+            </td> */}
+            <td className="whitespace-nowrap px-6 py-2 font-medium">
                 <div className="flex flex-row items-center gap-2">
                     <div>
                         <img className="inline-block h-14 w-14 bg-slate-300" src={info.image} alt="" />
