@@ -30,18 +30,23 @@ const generateFiltersMixpanelPayload = (
     const textTagsValue = body.filter?.text_tags
         ? (body.filter?.text_tags).filter((v) => !!v.value).map((v) => v.value)
         : [];
+
     const audienceGeoCodes = searchParams.audienceLocation
         ? searchParams.audienceLocation.map((v) => v.country.code)
         : [];
+
     const geoCodes = searchParams.influencerLocation ? searchParams.influencerLocation.map((v) => v.country.code) : [];
+
     const engagementRate = body.filter?.engagement_rate
         ? `${body.filter?.engagement_rate?.operator}${body.filter?.engagement_rate}`
         : null;
 
+    const relevance = body.filter?.relevance ? body.filter?.relevance.value.split(' ') : null;
+
     const filters = {
         filter_keywords: body.filter?.keywords || null,
         filter_text: body.filter?.text || null,
-        filter_relevance: body.filter?.relevance?.value || null,
+        filter_relevance: relevance,
         filter_gender: body.filter?.gender?.code || null,
         filter_audienceGender: body.filter?.audience_gender?.code || null,
         filter_username: body.filter?.username || null,
