@@ -38,8 +38,8 @@ export const SelectMultipleDropdown = ({
             ref={detailsRef}
             className="relative flex w-32 min-w-fit cursor-pointer select-none appearance-none flex-row items-center justify-between gap-2 rounded-md border border-gray-200 bg-white font-medium text-gray-400 ring-1 ring-gray-900 ring-opacity-5 focus:border-primary-500 focus:border-transparent focus:outline-none focus:ring-0 focus:ring-primary-500 sm:w-64 sm:text-sm"
         >
-            <summary className={`flex min-w-full flex-row items-center justify-between gap-2 px-3 py-1`}>
-                <div className="flex flex-row items-center gap-2">
+            <summary className={`flex h-full min-w-full flex-row items-center justify-between gap-2`}>
+                <div className="flex flex-row items-center gap-2 px-3 py-1">
                     <FilterFunnel className="h-4 w-4 stroke-slate-500" />
                     {selectedOptions.length > 0 ? (
                         selectedOptions.map((selectedOption, index) => (
@@ -55,11 +55,14 @@ export const SelectMultipleDropdown = ({
                     )}
                 </div>
                 {selectedOptions.length > 0 ? (
-                    <p onClick={resetSelection} className="px-1 text-lg font-semibold">
+                    <p
+                        onClick={resetSelection}
+                        className="flex h-full items-center px-3 text-lg font-semibold hover:bg-slate-200"
+                    >
                         x
                     </p>
                 ) : (
-                    <ChevronDown className="h-6 w-6 flex-shrink-0" />
+                    <ChevronDown className="mr-2 h-6 w-6 flex-shrink-0" />
                 )}
             </summary>
             <ul className="absolute mt-2 w-full select-none rounded-lg border bg-white text-sm shadow-lg">
