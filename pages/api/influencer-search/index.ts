@@ -11,12 +11,59 @@ import { createSearchParameter, createSearchSnapshot } from 'src/utils/analytics
 import { v4 } from 'uuid';
 import { db } from 'src/utils/supabase-client';
 import { IQDATA_SEARCH_INFLUENCERS, rudderstack } from 'src/utils/rudderstack';
+import type { SearchInfluencersPayload } from 'src/utils/api/iqdata/influencers/search-influencers-payload';
+import type { z } from 'zod';
 
 export type InfluencerPostRequest = FetchCreatorsFilteredParams & {
     company_id: string;
     user_id: string;
 };
 export type InfluencerPostResponse = CreatorSearchResult;
+
+// eslint-disable-next-line complexity
+const generateFiltersMixpanelPayload = (
+    body: z.input<typeof SearchInfluencersPayload>['body'],
+    searchParams: FetchCreatorsFilteredParams,
+) => {
+    if (!body) return {};
+
+    const textTagsValue = body.filter?.text_tags
+        ? (body.filter?.text_tags).filter((v) => !!v.value).map((v) => v.value)
+        : [];
+    const audienceGeoCodes = searchParams.audienceLocation
+        ? searchParams.audienceLocation.map((v) => v.country.code)
+        : [];
+    const geoCodes = searchParams.influencerLocation ? searchParams.influencerLocation.map((v) => v.country.code) : [];
+    const engagementRate = body.filter?.engagement_rate
+        ? `${body.filter?.engagement_rate?.operator}${body.filter?.engagement_rate}`
+        : null;
+
+    const filters = {
+        filter_keywords: body.filter?.keywords || null,
+        filter_text: body.filter?.text || null,
+        filter_relevance: body.filter?.relevance?.value || null,
+        filter_gender: body.filter?.gender?.code || null,
+        filter_audienceGender: body.filter?.audience_gender?.code || null,
+        filter_username: body.filter?.username || null,
+        filter_views_min: body.filter?.views?.left_number || null,
+        filter_views_max: body.filter?.views?.right_number || null,
+        filter_reelsPlays_min: body.filter?.reels_plays?.left_number || null,
+        filter_reelsPlays_max: body.filter?.reels_plays?.right_number || null,
+        filter_followers_min: body.filter?.followers?.left_number || null,
+        filter_followers_max: body.filter?.followers?.right_number || null,
+        filter_lastPosted: body.filter?.last_posted || null,
+        filter_age_min: body.filter?.age?.left_number || null,
+        filter_age_max: body.filter?.age?.right_number || null,
+        filter_audienceAge_min: body.filter?.audience_age_range?.right_number || null,
+        filter_audienceAge_max: body.filter?.audience_age_range?.right_number || null,
+        filter_engagementRate: engagementRate,
+        filter_textTags: textTagsValue.length > 0 ? textTagsValue : null,
+        filter_audienceGeo: audienceGeoCodes.length > 0 ? audienceGeoCodes : null,
+        filter_geo: geoCodes.length > 0 ? geoCodes : null,
+    };
+
+    return filters;
+};
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     const { company_id, user_id, ...searchParams } = req.body as InfluencerPostRequest;
@@ -46,6 +93,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         event: IQDATA_SEARCH_INFLUENCERS,
         onTrack: (data) => {
             if (data.total === undefined) return false;
+            const filters = body ? generateFiltersMixpanelPayload(body, searchParams) : {};
 
             return {
                 total: data.total,
@@ -54,6 +102,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
                 cost: data.cost,
                 platform,
                 page: searchParams.page,
+                ...filters,
             };
         },
     });
