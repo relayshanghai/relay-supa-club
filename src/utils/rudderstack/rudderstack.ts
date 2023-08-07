@@ -6,6 +6,7 @@ import type { DatabaseWithCustomTypes } from 'types';
 import { getUserSession } from '../api/analytics';
 import type { z } from 'zod';
 import type { eventKeys } from '.';
+import { serverLogger } from '../logger-server';
 
 export type RudderBackend = Analytics;
 
@@ -91,7 +92,12 @@ export class Rudderstack {
         if (process.env.NEXT_PUBLIC_CI) return;
 
         if (this.context && this.context.event !== params.event) {
-            throw new Error(`Cannot track ${params.event}. Already tracking event: ${this.context.event}`);
+            serverLogger(
+                `Cannot track "${params.event}" event. Already tracking event: ${this.context.event}`,
+                'error',
+                true,
+            );
+            return;
         }
 
         if (this.context && this.context.event === params.event) {

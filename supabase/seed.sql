@@ -356,7 +356,9 @@ OR REPLACE FUNCTION create_sequence_influencer(
   sequence_id UUID,
   added_by UUID,
   influencer_social_profile_id UUID,
-  email TEXT
+  email TEXT,
+  funnel_status TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
 ) RETURNS RECORD SECURITY DEFINER LANGUAGE plpgsql AS $$
     DECLARE
       _row RECORD;
@@ -384,13 +386,13 @@ OR REPLACE FUNCTION create_sequence_influencer(
       VALUES
         (
           uuid_generate_v4(),
-          now(),
+          created_at,
           now(),
           company_id,
           sequence_id,
           added_by,
           email,
-          'To Contact',
+          funnel_status,
           influencer_social_profile_id,
           'next_step',
           543,
@@ -576,16 +578,22 @@ DECLARE
   _profile_william RECORD;
   _profile_christopher RECORD;
   _campaign_beauty_for_all RECORD;
-  _sequence_beauty_for_all RECORD;
+  _sequence_general RECORD;
   _campaign_gaming RECORD;
   _profile_relay_employee RECORD;
   _influencer_alice RECORD;
   _influencer_bob RECORD;
   _influencer_charlie RECORD;
+  _influencer_daniel RECORD;
+  _influencer_felicia RECORD;
+  _influencer_georgia RECORD;
   _influencer_social_profile_alice_1 RECORD;
   _influencer_social_profile_bob_1 RECORD;
   _influencer_social_profile_bob_2 RECORD;
   _influencer_social_profile_charlie_1 RECORD;
+  _influencer_social_profile_daniel_1 RECORD;
+  _influencer_social_profile_felicia_1 RECORD;
+  _influencer_social_profile_georgia_1 RECORD;
   _influencer_post_alice_1 RECORD;
   _influencer_post_alice_2 RECORD;
   _influencer_post_alice_3 RECORD;
@@ -622,13 +630,13 @@ BEGIN
     ARRAY['beauty','inclusivity','makeup','diversity','confidence']
   );
 
-  _sequence_beauty_for_all := create_sequence(
+  _sequence_general := create_sequence(
     _company_test.id,
-    'Beauty for All Skin Tones'
+    'General collaboration'
   );
 
   PERFORM create_sequence_steps(
-    _sequence_beauty_for_all.id,
+    _sequence_general.id,
     'Outreach Email',
     ARRAY[
       'platform', 'channel', 'companyName', 'outreachPersonName'
@@ -639,7 +647,7 @@ BEGIN
   );
 
   PERFORM create_sequence_steps(
-    _sequence_beauty_for_all.id,
+    _sequence_general.id,
     'Follow Up Email 1',
     ARRAY[
       'channel', 'companyName', 'outreachPersonName'
@@ -676,66 +684,141 @@ BEGIN
     '780 Elm Street',
     'https://example.com/avatar3'
   );
+  _influencer_daniel := create_influencer(
+    'Daniel Davis',
+    'daniel.davis@example.com',
+    '480 Elm Street',
+    'https://example.com/avatar4'
+  );
+  _influencer_felicia := create_influencer(
+    'Felicia Franklin',
+    'felicia.franklin@example.com',
+    '420 Elm Street',
+    'https://example.com/avatar5'
+  );  
+  _influencer_georgia := create_influencer(
+    'Georgia Green',
+    'georgia.green@example.com',
+    '240 Elm Street',
+    'https://example.com/avatar6'
+  );
   _influencer_social_profile_alice_1 := create_influencer_social_profile(
     'https://instagram.com/alice1',
     'instagram',
     _influencer_alice.id,
-    'iqdata_1',
+    'iqdata:1',
     'alice1',
-    'Alice Anderson',
-    'alice.anderson@example.com'
+    _influencer_alice.name,
+    _influencer_alice.email
   );
   _influencer_social_profile_bob_1 := create_influencer_social_profile(
     'https://instagram.com/bob1',
     'instagram',
     _influencer_bob.id,
-    'iqdata_2',
+    'iqdata:2',
     'bob1',
-    'Bob-Recommended Brown',
-    'bob.brown@example.com'
+    _influencer_bob.name,
+    _influencer_bob.email
   );
   _influencer_social_profile_bob_2 := create_influencer_social_profile(
     'https://youtube.com/bob2',
     'youtube',
     _influencer_bob.id,
-    'iqdata_3',
+    'iqdata:3',
     'bob2',
-    'Bob-Recommended Brown',
-    'bob.brown@example.com'    
+    _influencer_bob.name,
+    _influencer_bob.email   
   );
   _influencer_social_profile_charlie_1 := create_influencer_social_profile(
     'https://instagram.com/charlie1',
     'instagram',
     _influencer_charlie.id,
-    'iqdata_4',
+    'iqdata:4',
     'charlie1',
-    'Charlie Charles',
-    'charlie.charles@example.com'    
+    _influencer_charlie.name,
+    _influencer_charlie.email   
+  );
+  _influencer_social_profile_daniel_1 := create_influencer_social_profile(
+    'https://instagram.com/daniel1',
+    'instagram',
+    _influencer_daniel.id,
+    'iqdata:5',
+    'daniel1',
+    _influencer_daniel.name,
+    _influencer_daniel.email
+  );
+  _influencer_social_profile_felicia_1 := create_influencer_social_profile(
+    'https://instagram.com/felicia1',
+    'instagram',
+    _influencer_felicia.id,
+    'iqdata:6',
+    'felicia1',
+    _influencer_felicia.name,
+    _influencer_felicia.email
+  );
+  _influencer_social_profile_georgia_1 := create_influencer_social_profile(
+    'https://instagram.com/georgia1',
+    'instagram',
+    _influencer_georgia.id,
+    'iqdata:7',
+    'georgia1',
+    _influencer_georgia.name,
+    _influencer_georgia.email
   );
 
   PERFORM create_sequence_influencer(
     _company_test.id,
-    _sequence_beauty_for_all.id,
+    _sequence_general.id,
     _profile_william.id,
     _influencer_social_profile_alice_1.id,
-    'influencer_alice@example.com'
+    _influencer_social_profile_alice_1.email,
+    'To Contact'
   );
 
   PERFORM create_sequence_influencer(
     _company_test.id,
-    _sequence_beauty_for_all.id,
+    _sequence_general.id,
     _profile_william.id,
     _influencer_social_profile_bob_2.id,
-    'influencer_bob@example.com'
+    _influencer_social_profile_bob_2.email,
+    'To Contact',
+    '2020-01-01 00:00:00.000000+00'
   );
 
   PERFORM create_sequence_influencer(
     _company_test.id,
-    _sequence_beauty_for_all.id,
+    _sequence_general.id,
     _profile_william.id,
     _influencer_social_profile_charlie_1.id,
-    'influencer_charlie@example.com'
+    _influencer_social_profile_charlie_1.email,
+    'To Contact',
+    '2030-01-01 00:00:00.000000+00'
   );    
+
+  PERFORM create_sequence_influencer(
+    _company_test.id,
+    _sequence_general.id,
+    _profile_william.id,
+    _influencer_social_profile_daniel_1.id,
+    _influencer_social_profile_daniel_1.email,
+    'In Sequence'
+  );  
+  PERFORM create_sequence_influencer(
+    _company_test.id,
+    _sequence_general.id,
+    _profile_william.id,
+    _influencer_social_profile_felicia_1.id,
+    _influencer_social_profile_felicia_1.email,
+    'In Sequence'
+  );       
+  PERFORM create_sequence_influencer(
+    _company_test.id,
+    _sequence_general.id,
+    _profile_william.id,
+    _influencer_social_profile_georgia_1.id,
+    _influencer_social_profile_georgia_1.email,
+    'Ignored'
+  ); 
 
   -- Influencer 3 will have no social profiles so we can handle this edge case
 

@@ -55,6 +55,9 @@ export type FetchCreatorsFilteredParams = {
     only_recommended?: boolean;
     recommendedInfluencers?: string[];
     text_tags?: string;
+    // @todo may need refactor from frontend to avoid confusion
+    // hashtags are also text_tags, you can find this in SearchOptions component
+    hashtags?: string[];
 };
 
 // eslint-disable-next-line complexity
@@ -173,8 +176,11 @@ export const prepareFetchCreatorsFiltered = ({
         body.filter.keywords = keywordsFilter(params.keywords);
     }
 
-    if (params.text_tags) {
-        body.filter.text_tags = textTagsFilter(params.text_tags);
+    if (params.text_tags || params.hashtags) {
+        let text = params.text_tags ? params.text_tags : '';
+        text += params.hashtags ? params.hashtags.join(' ') : text;
+
+        body.filter.text_tags = textTagsFilter(text);
     }
 
     if (actionsFilterKeys.some((k) => body.filter && k in body.filter)) {
