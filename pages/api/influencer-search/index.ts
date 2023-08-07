@@ -59,7 +59,7 @@ const generateFiltersMixpanelPayload = (
         filter_lastPosted: body.filter?.last_posted || undefined,
         filter_age_min: body.filter?.age?.left_number || undefined,
         filter_age_max: body.filter?.age?.right_number || undefined,
-        filter_audienceAge_min: body.filter?.audience_age_range?.right_number || undefined,
+        filter_audienceAge_min: body.filter?.audience_age_range?.left_number || undefined,
         filter_audienceAge_max: body.filter?.audience_age_range?.right_number || undefined,
         filter_engagementRate: engagementRate,
         filter_textTags: textTagsValue.length > 0 ? textTagsValue : undefined,
