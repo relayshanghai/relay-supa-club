@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 import { usageErrors } from 'src/errors/usages';
 import { serverLogger } from 'src/utils/logger-server';
 import { supabase } from 'src/utils/supabase-client';
@@ -7,7 +8,7 @@ import { getSubscription } from '../../stripe/helpers';
 import type { UsagesDBInsert } from '../types';
 import { updateCompanySubscriptionStatus } from './company';
 import { getCurrentMonthPeriod } from 'src/utils/usagesHelpers';
-
+// this checks if the subscription is expired
 const handleCurrentPeriodExpired = async (companyId: string) => {
     const subscription = await getSubscription(companyId);
     if (!subscription) {

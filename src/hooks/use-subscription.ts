@@ -24,6 +24,7 @@ export const useSubscription = () => {
                 id: company?.id ?? '',
             }),
     );
+    // payment method is here.
     const { data: paymentMethods, mutate: refreshPaymentMethods } = useSWR(
         company?.id ? 'subscriptions/payment-method' : null,
         async (path) =>

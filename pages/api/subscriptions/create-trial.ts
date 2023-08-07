@@ -81,6 +81,7 @@ const postHandler: NextApiHandler = async (req, res) => {
     const createParams: Stripe.SubscriptionCreateParams = {
         customer: customerId,
         items: [{ price: priceId }],
+        // change this I think.
         payment_behavior: 'default_incomplete',
         payment_settings: { save_default_payment_method: 'on_subscription' },
         default_payment_method: paymentMethodId || undefined,

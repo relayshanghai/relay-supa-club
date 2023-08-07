@@ -80,6 +80,7 @@ describe('Main pages happy paths', () => {
         cy.contains('We won’t charge your card until the free trial ends!');
 
         cy.iframe('iframe[title="Secure payment input frame"]').within(() => {
+            // make sure this still works.
             cy.contains('Country', { timeout: 10000 });
             cy.get('input[autocomplete="billing cc-number"]').type('4242424242424242');
             cy.get('input[autocomplete="billing cc-exp"]').type('1227');
@@ -244,7 +245,7 @@ describe('Main pages happy paths', () => {
 
         // campaigns are listed in order of most recently added/edited.
         cy.wait(5000); // wait for campaign to be added to db
-        cy.getByTestId('campaign-cards-container').children().should('have.length', 2)
+        cy.getByTestId('campaign-cards-container').children().should('have.length', 2);
         cy.getByTestId('campaign-cards-container', { timeout: 60000 }).children().first().contains('My Campaign');
         cy.getByTestId('campaign-cards-container').children().first().next().contains('Beauty for All Skin Tones');
 

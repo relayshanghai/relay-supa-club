@@ -79,6 +79,8 @@ const OnboardPaymentSectionInner = ({ priceId }: OnboardPaymentSectionProps) => 
         if (!stripe || !elements || !company?.cus_id || !company.id) return;
         setLoading(true);
         try {
+            // change this to a 'create customer elements flow.
+            // or just use the stripe sdk to create a customer so we don't need this whole page (until add payment)
             const { error, setupIntent } = await stripe.confirmSetup({
                 elements,
                 confirmParams: {
@@ -100,6 +102,7 @@ const OnboardPaymentSectionInner = ({ priceId }: OnboardPaymentSectionProps) => 
                 customerId: company.cus_id,
                 companyId: company.id,
                 priceId: priceId,
+                // get rid of this I think
                 paymentMethodId:
                     typeof setupIntent?.payment_method === 'string'
                         ? setupIntent.payment_method

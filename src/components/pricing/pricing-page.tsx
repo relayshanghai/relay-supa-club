@@ -38,7 +38,7 @@ export const PricingPage = ({ page = 'upgrade' }: { page?: 'upgrade' | 'landing'
     const { createSubscription } = useSubscription();
 
     const prices = usePrices();
-
+    // this confirm modal will need to check for payment method and show the `onboard-payment-section`
     const openConfirmModal = (priceTier: ActiveSubscriptionTier, period: ActiveSubscriptionPeriod, priceId: string) => {
         setConfirmModalData({ priceTier, period, priceId, price: prices[period][priceTier] });
     };

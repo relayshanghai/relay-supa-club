@@ -107,6 +107,7 @@ const checkOnboardingStatus = async (
                 return NextResponse.redirect(redirectUrl);
             } else return res;
         }
+        // get rid of this clause
     } else if (subscriptionStatus === 'awaiting_payment_method') {
         // allow the endpoints payment onboarding page requires
         if (req.nextUrl.pathname.includes('/api/company') || req.nextUrl.pathname.includes('/api/subscriptions')) {

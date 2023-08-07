@@ -284,7 +284,7 @@ const SignUpPage = ({
                                     onNext={onNext}
                                 />
                             )}
-
+                            {/* Move this to pricing page, buy now button if they don't have a payment method. */}
                             {currentStep === 5 && <OnboardPaymentSection priceId={selectedPriceId} />}
                         </FormWizard>
                     ),
