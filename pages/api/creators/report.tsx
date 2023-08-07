@@ -20,6 +20,7 @@ import {
     IQDATA_LIST_REPORTS,
     rudderstack,
 } from 'src/utils/rudderstack';
+import { usageErrors } from 'src/errors/usages';
 
 export type CreatorsReportGetQueries = {
     platform: CreatorPlatform;
@@ -148,6 +149,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
                 const { error: recordError } = await recordReportUsage(company_id, user_id, creator_id);
                 if (recordError) {
+                    if (Object.values(usageErrors).includes(recordError)) {
+                        return res.status(httpCodes.BAD_REQUEST).json({ error: recordError });
+                    }
                     serverLogger(recordError, 'error');
                     return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
                 }
