@@ -36,7 +36,7 @@ export const SelectMultipleDropdown = ({
     return (
         <details
             ref={detailsRef}
-            className="relative flex w-52 min-w-fit cursor-pointer select-none appearance-none flex-row items-center justify-between gap-2 rounded-md border border-gray-200 bg-white font-medium text-gray-400 ring-1 ring-gray-900 ring-opacity-5 focus:border-primary-500 focus:border-transparent focus:outline-none focus:ring-0 focus:ring-primary-500 sm:text-sm"
+            className="relative flex w-32 min-w-fit cursor-pointer select-none appearance-none flex-row items-center justify-between gap-2 rounded-md border border-gray-200 bg-white font-medium text-gray-400 ring-1 ring-gray-900 ring-opacity-5 focus:border-primary-500 focus:border-transparent focus:outline-none focus:ring-0 focus:ring-primary-500 sm:w-64 sm:text-sm"
         >
             <summary className={`flex min-w-full flex-row items-center justify-between gap-2 px-3 py-1`}>
                 {selectedOptions.length > 0 ? (
@@ -80,7 +80,9 @@ export const SelectMultipleDropdown = ({
                                         setSelectedOptions(selectedOptions.filter((o) => o !== option));
                                     }}
                                 />
-                                <p>{options[option].label}</p>
+                                <p className={`${options[option].color} whitespace-nowrap rounded-md px-3 py-2`}>
+                                    {options[option].label}
+                                </p>
                             </div>
                             <p>{options[option].value}</p>
                         </label>
