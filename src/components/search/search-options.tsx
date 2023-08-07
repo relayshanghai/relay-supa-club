@@ -70,10 +70,14 @@ export const SearchOptions = ({
                 trackTopics({ tags: [] }); // <- @note track clearing topics?
             }
 
+            // @todo will cause an empty text_tag/hashtag item in the filter
+            setHashtags([]);
+            setHashTagInput('');
+
             setKeywords(keyword);
             trackKeyword({ keyword }); // <- @note should track only on search
         },
-        [setKeywords, trackKeyword, trackTopics, setTopicTags, tags],
+        [setKeywords, trackKeyword, trackTopics, setTopicTags, tags, setHashtags],
     );
 
     return (
@@ -119,6 +123,8 @@ export const SearchOptions = ({
                                 }}
                                 onSetTopics={(topics) => {
                                     setTopicTags(topics);
+                                    setHashtags([]);
+                                    setHashTagInput('');
                                     trackTopics({ tags: topics });
                                 }}
                             />
@@ -169,6 +175,8 @@ export const SearchOptions = ({
                                 platform={platform}
                                 onSetHashtags={(hashtags) => {
                                     setHashtags(hashtags);
+                                    setKeywordInput('');
+                                    setKeywords('');
                                     trackHashtags({ hashtags: hashtags });
                                 }}
                                 onChangeTopics={() => {
