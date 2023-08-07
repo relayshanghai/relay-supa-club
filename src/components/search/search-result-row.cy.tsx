@@ -36,6 +36,7 @@ const setupProps = () => {
         setShowCampaignListModal: cy.stub(),
         setShowAlreadyAddedModal: cy.stub(),
         setCampaignsWithCreator: cy.stub(),
+        setShowSequenceListModal: cy.stub(),
     };
 };
 

@@ -34,7 +34,7 @@ export const PriceDetailsCard = ({
                         })}{' '}
                         {info && (
                             <div className="group absolute right-0 top-1 h-4 w-4 ">
-                                <InfoIcon />
+                                <InfoIcon className="cursor-pointer text-gray-300 duration-300 group-hover:text-gray-600" />
 
                                 <p className="absolute bottom-full right-0 z-50 hidden w-40 rounded-md bg-white p-5 text-xs shadow-lg duration-300 group-hover:flex">
                                     {t('pricing.' + info)}
