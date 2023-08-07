@@ -1,4 +1,4 @@
-import type { RelayDatabase, SequenceInfluencerUpdate } from '../types';
+import type { RelayDatabase, SequenceInfluencerUpdate, SequenceInfluencerInsert } from '../types';
 
 export const getSequenceInfluencerByIdCall = (supabaseClient: RelayDatabase) => async (id: string) => {
     if (!id) {
@@ -27,6 +27,13 @@ export const updateSequenceInfluencerCall =
             .eq('id', update.id)
             .select()
             .single();
+        if (error) throw error;
+        return data;
+    };
+
+export const createSequenceInfluencerCall =
+    (supabaseClient: RelayDatabase) => async (sequenceInfluencer: SequenceInfluencerInsert) => {
+        const { data, error } = await supabaseClient.from('sequence_influencers').insert(sequenceInfluencer).single();
         if (error) throw error;
         return data;
     };

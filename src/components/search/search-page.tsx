@@ -238,7 +238,15 @@ export const SearchPageInner = () => {
                 </Button>
             )}
 
-            {featEmail() && <AddToSequenceModal show={showSequenceListModal} setShow={setShowSequenceListModal} />}
+            {featEmail() && (
+                <AddToSequenceModal
+                    show={showSequenceListModal}
+                    setShow={setShowSequenceListModal}
+                    selectedCreator={{
+                        ...selectedCreator?.account.user_profile,
+                    }}
+                />
+            )}
 
             <AddToCampaignModal
                 show={showCampaignListModal}
