@@ -141,17 +141,19 @@ export const SequencesPage = () => {
                 <SequenceStats
                     totalInfluencers={sequenceInfluencers?.length || 0}
                     openRate={
-                        allSequenceEmails?.filter(
+                        (allSequenceEmails?.filter(
                             (email) =>
                                 email.email_tracking_status === 'Link Clicked' ||
                                 email.email_tracking_status === 'Opened',
-                        ).length || 0
+                        ).length || 1) / (allSequenceEmails?.length || 1)
                     }
                     replyRate={
-                        allSequenceEmails?.filter((email) => email.email_delivery_status === 'Replied').length || 0
+                        (allSequenceEmails?.filter((email) => email.email_delivery_status === 'Replied').length || 1) /
+                        (allSequenceEmails?.length || 1)
                     }
                     bounceRate={
-                        allSequenceEmails?.filter((email) => email.email_delivery_status === 'Bounced').length || 0
+                        (allSequenceEmails?.filter((email) => email.email_delivery_status === 'Bounced').length || 1) /
+                        (allSequenceEmails?.length || 1)
                     }
                 />
                 <Tabs tabs={tabs} currentTab={currentTab} setCurrentTab={setCurrentTab} />

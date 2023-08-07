@@ -9,12 +9,17 @@ import {
     MessageXCircleOutline,
     TeamOutline,
 } from '../icons';
+import { decimalToPercent } from 'src/utils/formatter';
 export interface SequenceStatsProps {
     totalInfluencers: number;
+    /** percentage in decimal from 0 to 1 (.10 = 10%) */
     openRate: number;
+    /** percentage in decimal from 0 to 1 (.10 = 10%) */
     replyRate: number;
+    /** percentage in decimal from 0 to 1 (.10 = 10%) */
     bounceRate: number;
 }
+
 export const SequenceStats = ({ totalInfluencers, openRate, replyRate, bounceRate }: SequenceStatsProps) => {
     const { t } = useTranslation();
     const stats: StatCardProps[] = [
@@ -27,31 +32,41 @@ export const SequenceStats = ({ totalInfluencers, openRate, replyRate, bounceRat
         {
             name: t('sequences.openRate'),
             tooltip: t('sequences.openRateTooltip'),
-            value: openRate.toString(),
+            value: decimalToPercent(openRate, 0) ?? '0',
             largeIcon: <EmailOpenOutline />,
-            smallIcon: <CheckCircleOutline className="text-green-500" />,
+            smallIcon: (
+                <div className="flex h-4 w-5 items-center justify-center bg-green-50 p-1 text-green-500">
+                    <CheckCircleOutline className="h-3 w-3" />
+                </div>
+            ),
         },
         {
             name: t('sequences.replyRate'),
             tooltip: t('sequences.replyRateTooltip'),
-            value: replyRate.toString(),
+            value: decimalToPercent(replyRate, 0) ?? '0',
             largeIcon: <MessageDotsCircleOutline />,
-            smallIcon: <CheckCircleOutline className="text-green-500" />,
+            smallIcon: (
+                <div className="flex h-4 w-5 items-center justify-center bg-green-50 p-1 text-green-500">
+                    <CheckCircleOutline className="h-3 w-3" />
+                </div>
+            ),
         },
         {
             name: t('sequences.bounceRate'),
             tooltip: t('sequences.bounceRateTooltip'),
-            value: bounceRate.toString(),
+            value: decimalToPercent(bounceRate, 0) ?? '0',
             largeIcon: <MessageXCircleOutline />,
-            smallIcon: <AlertCircleOutline className="text-red-500" />,
+            smallIcon: (
+                <div className="flex h-4 w-5 items-center justify-center bg-red-50 p-1 text-red-500">
+                    <AlertCircleOutline className="h-3 w-3" />
+                </div>
+            ),
         },
     ];
     return (
-        <div className="flex flex-wrap justify-around rounded-lg bg-white px-12 py-8 shadow-sm">
+        <div className="flex flex-wrap justify-between gap-6 pb-8">
             {stats.map((stat) => (
-                <div key={stat.name}>
-                    <StatCard {...stat} />
-                </div>
+                <StatCard {...stat} key={stat.name} />
             ))}
         </div>
     );
