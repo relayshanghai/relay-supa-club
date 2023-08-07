@@ -39,32 +39,32 @@ const generateFiltersMixpanelPayload = (
 
     const engagementRate = body.filter?.engagement_rate
         ? `${body.filter?.engagement_rate?.operator}${body.filter?.engagement_rate}`
-        : null;
+        : undefined;
 
-    const relevance = body.filter?.relevance ? body.filter?.relevance.value.split(' ') : null;
+    const relevance = body.filter?.relevance ? body.filter?.relevance.value.split(' ') : undefined;
 
     const filters = {
-        filter_keywords: body.filter?.keywords || null,
-        filter_text: body.filter?.text || null,
+        filter_keywords: body.filter?.keywords || undefined,
+        filter_text: body.filter?.text || undefined,
         filter_relevance: relevance,
-        filter_gender: body.filter?.gender?.code || null,
-        filter_audienceGender: body.filter?.audience_gender?.code || null,
-        filter_username: body.filter?.username || null,
-        filter_views_min: body.filter?.views?.left_number || null,
-        filter_views_max: body.filter?.views?.right_number || null,
-        filter_reelsPlays_min: body.filter?.reels_plays?.left_number || null,
-        filter_reelsPlays_max: body.filter?.reels_plays?.right_number || null,
-        filter_followers_min: body.filter?.followers?.left_number || null,
-        filter_followers_max: body.filter?.followers?.right_number || null,
-        filter_lastPosted: body.filter?.last_posted || null,
-        filter_age_min: body.filter?.age?.left_number || null,
-        filter_age_max: body.filter?.age?.right_number || null,
-        filter_audienceAge_min: body.filter?.audience_age_range?.right_number || null,
-        filter_audienceAge_max: body.filter?.audience_age_range?.right_number || null,
+        filter_gender: body.filter?.gender?.code || undefined,
+        filter_audienceGender: body.filter?.audience_gender?.code || undefined,
+        filter_username: body.filter?.username || undefined,
+        filter_views_min: body.filter?.views?.left_number || undefined,
+        filter_views_max: body.filter?.views?.right_number || undefined,
+        filter_reelsPlays_min: body.filter?.reels_plays?.left_number || undefined,
+        filter_reelsPlays_max: body.filter?.reels_plays?.right_number || undefined,
+        filter_followers_min: body.filter?.followers?.left_number || undefined,
+        filter_followers_max: body.filter?.followers?.right_number || undefined,
+        filter_lastPosted: body.filter?.last_posted || undefined,
+        filter_age_min: body.filter?.age?.left_number || undefined,
+        filter_age_max: body.filter?.age?.right_number || undefined,
+        filter_audienceAge_min: body.filter?.audience_age_range?.right_number || undefined,
+        filter_audienceAge_max: body.filter?.audience_age_range?.right_number || undefined,
         filter_engagementRate: engagementRate,
-        filter_textTags: textTagsValue.length > 0 ? textTagsValue : null,
-        filter_audienceGeo: audienceGeoCodes.length > 0 ? audienceGeoCodes : null,
-        filter_geo: geoCodes.length > 0 ? geoCodes : null,
+        filter_textTags: textTagsValue.length > 0 ? textTagsValue : undefined,
+        filter_audienceGeo: audienceGeoCodes.length > 0 ? audienceGeoCodes : undefined,
+        filter_geo: geoCodes.length > 0 ? geoCodes : undefined,
     };
 
     return filters;
