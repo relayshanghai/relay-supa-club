@@ -93,10 +93,10 @@ type SequenceEmailDetailedTypes = {
     email_tracking_status: EmailTrackingStatus;
 };
 
-export type SequenceEmailsTable = Database['public']['Tables']['sequence_email'] & {
-    Row: Database['public']['Tables']['sequence_email']['Row'] & SequenceEmailDetailedTypes;
-    Insert: Database['public']['Tables']['sequence_email']['Insert'] & SequenceEmailDetailedTypes;
-    Update: Database['public']['Tables']['sequence_email']['Update'] & SequenceEmailDetailedTypes;
+export type SequenceEmailsTable = Database['public']['Tables']['sequence_emails'] & {
+    Row: Database['public']['Tables']['sequence_emails']['Row'] & SequenceEmailDetailedTypes;
+    Insert: Database['public']['Tables']['sequence_emails']['Insert'] & SequenceEmailDetailedTypes;
+    Update: Database['public']['Tables']['sequence_emails']['Update'] & SequenceEmailDetailedTypes;
 };
 
 export type SequenceEmail = SequenceEmailsTable['Row'];
