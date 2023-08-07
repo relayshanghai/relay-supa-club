@@ -181,6 +181,7 @@ const creators = {
     cancel: 'Cancel',
     sequence: 'Sequence',
     addToSequenceNotes: 'Influencers added to this sequence will receive emails automatically from',
+    noSequence: 'No sequence created yet',
 };
 
 export default creators;

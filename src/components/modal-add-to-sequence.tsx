@@ -3,12 +3,16 @@ import { Modal } from './modal';
 import { Button } from './button';
 import { InfoIcon } from './icons';
 import { useState } from 'react';
+import { useSequences } from 'src/hooks/use-sequences';
 
 export const AddToSequenceModal = ({ show, setShow }: { show: boolean; setShow: (show: boolean) => void }) => {
     const [selectedSequence, setSelectedSequence] = useState('');
     const { i18n, t } = useTranslation();
+
+    const { sequences } = useSequences();
+
     const handleAddToSequence = () => {
-        // TODO: add to sequence call
+        // TODO: update sequence call
         //eslint-disable-next-line
         console.log(selectedSequence);
         //TODO: add toaster for success and error
@@ -32,8 +36,9 @@ export const AddToSequenceModal = ({ show, setShow }: { show: boolean; setShow: 
                             value={selectedSequence || ''}
                             className="-ml-1 mr-2.5 w-full cursor-pointer appearance-none rounded-md border border-gray-200 p-2 font-medium text-gray-500 outline-none"
                         >
-                            <option>General collaboration sequence</option>
-                            <option>Sequence name placeholder 2</option>
+                            {sequences?.map((sequence) => (
+                                <option key={sequence.id}>{sequence.name}</option>
+                            ))}
                         </select>
                     </div>
 

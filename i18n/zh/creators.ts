@@ -177,5 +177,6 @@ const creators = {
     //translate: 'Influencers added to this sequence will receive emails automatically from'
     translate: 'KOL 将自动收到来自',
     addToSequenceNotes: '加入序列的 KOL 将收到自动发送的邮件，开始发送时间为 ',
+    noSequence: '没有创建序列',
 };
 export default creators;
