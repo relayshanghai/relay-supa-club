@@ -1,7 +1,7 @@
 import type { RelayDatabase, SequenceEmailUpdate } from '../types';
 
 export const getSequenceEmailsBySequenceCall = (supabaseClient: RelayDatabase) => async (sequenceId: string) => {
-    if (!sequenceId) return;
+    if (!sequenceId) return [];
     const { data, error } = await supabaseClient.from('sequence_emails').select('*').eq('sequence_id', sequenceId);
 
     if (error) throw error;
