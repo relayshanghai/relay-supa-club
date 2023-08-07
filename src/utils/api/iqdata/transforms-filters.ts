@@ -77,7 +77,7 @@ export const recommendedInfluencersFilter = (influencers: string[]) => {
 };
 
 export const textTagsFilter = (s: string) => {
-    const tags = s.split(' ');
+    const tags = s.trim().split(' ');
 
     return tags.reduce<SearchInfluencersTextTagsFilter[]>((o, value) => {
         return [...o, { type: 'hashtag', value }];
