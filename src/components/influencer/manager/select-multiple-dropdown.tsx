@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ChevronDown } from 'src/components/icons';
+import { ChevronDown, FilterFunnel } from 'src/components/icons';
 
 export const SelectMultipleDropdown = ({
     text,
@@ -39,18 +39,21 @@ export const SelectMultipleDropdown = ({
             className="relative flex w-32 min-w-fit cursor-pointer select-none appearance-none flex-row items-center justify-between gap-2 rounded-md border border-gray-200 bg-white font-medium text-gray-400 ring-1 ring-gray-900 ring-opacity-5 focus:border-primary-500 focus:border-transparent focus:outline-none focus:ring-0 focus:ring-primary-500 sm:w-64 sm:text-sm"
         >
             <summary className={`flex min-w-full flex-row items-center justify-between gap-2 px-3 py-1`}>
-                {selectedOptions.length > 0 ? (
-                    selectedOptions.map((selectedOption, index) => (
-                        <p
-                            key={index}
-                            className={`rounded font-medium ${options[selectedOption].color} whitespace-nowrap px-2 py-1.5`}
-                        >
-                            {options[selectedOption].label}
-                        </p>
-                    ))
-                ) : (
-                    <p className="px-2 py-1.5">{text}</p>
-                )}
+                <div className="flex flex-row items-center gap-2">
+                    <FilterFunnel className="h-4 w-4 stroke-slate-500" />
+                    {selectedOptions.length > 0 ? (
+                        selectedOptions.map((selectedOption, index) => (
+                            <p
+                                key={index}
+                                className={`rounded text-xs font-medium ${options[selectedOption].color} whitespace-nowrap px-2 py-2`}
+                            >
+                                {options[selectedOption].label}
+                            </p>
+                        ))
+                    ) : (
+                        <p className="px-2 py-1.5">{text}</p>
+                    )}
+                </div>
                 {selectedOptions.length > 0 ? (
                     <p onClick={resetSelection} className="px-1 text-lg font-semibold">
                         x
@@ -80,7 +83,9 @@ export const SelectMultipleDropdown = ({
                                         setSelectedOptions(selectedOptions.filter((o) => o !== option));
                                     }}
                                 />
-                                <p className={`${options[option].color} whitespace-nowrap rounded-md px-3 py-2`}>
+                                <p
+                                    className={`${options[option].color} whitespace-nowrap rounded-md px-3 py-2 text-xs`}
+                                >
                                     {options[option].label}
                                 </p>
                             </div>

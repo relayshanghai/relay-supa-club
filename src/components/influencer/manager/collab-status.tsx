@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { SelectMultipleDropdown } from './select-multiple-dropdown';
 
-const collabOptions = {
+export const collabOptions = {
     negotiating: {
         label: 'Negotiating',
         value: 10,
@@ -17,8 +17,8 @@ const collabOptions = {
         value: 30,
         color: 'bg-yellow-100 text-yellow-500',
     },
-    recieved: {
-        label: 'Recieved',
+    received: {
+        label: 'Received',
         value: 40,
         color: 'bg-green-100 text-green-500',
     },
@@ -56,7 +56,7 @@ export const CollabStatus = () => {
     return (
         <div className="flex w-full flex-col">
             <SelectMultipleDropdown
-                text={'Collab Status'}
+                text={'Filter by status'}
                 show={showDropdown}
                 setShow={setShow}
                 options={collabOptions}

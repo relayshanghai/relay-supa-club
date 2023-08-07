@@ -60,3 +60,5 @@ export { default as Question } from './Question';
 export { default as ProfilePlus } from './ProfilePlus';
 export { default as Slash } from './Slash';
 export { default as Brackets } from './Brackets';
+export { default as FilterFunnel } from './FilterFunnel';
+export { default as InboxIcon } from './InboxIcon';
