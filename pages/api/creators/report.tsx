@@ -14,7 +14,7 @@ import { db } from 'src/utils/supabase-client';
 import events, { SearchAnalyzeInfluencer } from 'src/utils/analytics/events';
 import { createReportSnapshot, createTrack } from 'src/utils/analytics/api/analytics';
 import type { eventKeys } from 'src/utils/analytics/events';
-import type { InfluencerSocialProfileRow } from 'src/utils/api/db';
+import type { InfluencerRow, InfluencerSocialProfileRow } from 'src/utils/api/db';
 
 export type CreatorsReportGetQueries = {
     platform: CreatorPlatform;
@@ -47,16 +47,15 @@ const trackAndSnap = async (
 };
 
 export type CreatorsReportGetResponse = CreatorReport & { createdAt: string } & {
-    influencerSocialData: InfluencerSocialProfileRow;
-};
+    influencer: InfluencerRow;
+} & { socialProfile: InfluencerSocialProfileRow };
 
 // Disabling complexity linting error as fixing this will require a large refactor
 // eslint-disable-next-line complexity
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'GET') {
         const catchInfluencer = async (data: CreatorReport) => {
-            const [influencer] = await getInfluencer(data);
-
+            const [influencer, socialProfile] = await getInfluencer(data);
             if (influencer === null) {
                 try {
                     await db<typeof saveInfluencer>(saveInfluencer)(data);
@@ -64,7 +63,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     serverLogger(error, 'error', true);
                 }
             }
-            return influencer;
+            return { influencer, socialProfile };
         };
 
         try {
@@ -77,26 +76,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     req,
                     res,
                 })(platform, creator_id);
-
                 if (!reportMetadata.results || reportMetadata.results.length === 0) throw new Error('No reports found');
                 const report_id = reportMetadata.results[0].id;
                 if (!report_id) throw new Error('No report ID found');
                 const createdAt = reportMetadata.results[0].created_at;
-
                 const data = await fetchReport({ req, res })(report_id);
                 if (!data.success) throw new Error('Failed to find report');
-
                 const { error: recordError } = await recordReportUsage(company_id, user_id, creator_id);
                 if (recordError) {
                     serverLogger(recordError, 'error');
                     return res.status(httpCodes.BAD_REQUEST).json({ error: recordError });
                 }
 
-                const influencerSocialData = await catchInfluencer(data);
+                const { influencer, socialProfile } = await catchInfluencer(data);
 
                 await trackAndSnap(track, req, res, events, data);
 
-                return res.status(httpCodes.OK).json({ ...data, createdAt, influencerSocialData });
+                return res.status(httpCodes.OK).json({ ...data, createdAt, influencer, socialProfile });
             } catch (error) {
                 const data = await requestNewReport({ req, res })(platform, creator_id);
                 if (!data.success) throw new Error('Failed to request new report');
@@ -107,11 +103,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
                 }
 
-                await catchInfluencer(data);
+                const { influencer, socialProfile } = await catchInfluencer(data);
 
                 await trackAndSnap(track, req, res, events, data);
 
-                return res.status(httpCodes.OK).json(data);
+                return res.status(httpCodes.OK).json({ ...data, influencer, socialProfile });
             }
         } catch (error) {
             serverLogger(error, 'error');

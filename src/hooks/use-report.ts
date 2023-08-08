@@ -10,7 +10,7 @@ import { useUser } from './use-user';
 import useSWR from 'swr';
 import { useCompany } from './use-company';
 import type { eventKeys } from 'src/utils/analytics/events';
-import type { InfluencerSocialProfileRow } from 'src/utils/api/db';
+import type { InfluencerRow, InfluencerSocialProfileRow } from 'src/utils/api/db';
 
 //The transform function is not used now, as the image proxy issue is handled directly where calls for the image.But this is left for future refactor. TODO:Ticket V2-181
 // const transformReport = (report: CreatorReport, platform: string) => {
@@ -44,7 +44,8 @@ export type UseReport = ({
     loading: boolean;
     report: CreatorReport | undefined;
     reportCreatedAt: string | undefined;
-    influencerSocialData: InfluencerSocialProfileRow | undefined;
+    influencer: InfluencerRow | undefined;
+    socialProfile: InfluencerSocialProfileRow | undefined;
     errorMessage: string;
     usageExceeded: boolean;
 };
@@ -70,7 +71,7 @@ export const useReport: UseReport = ({
             : null,
         async ([path, platform, creator_id, company_id, user_id]) => {
             try {
-                const { createdAt, influencerSocialData, ...report } = await nextFetchWithQueries<
+                const { createdAt, influencer, socialProfile, ...report } = await nextFetchWithQueries<
                     CreatorsReportGetQueries,
                     CreatorsReportGetResponse
                 >(path, {
@@ -84,7 +85,7 @@ export const useReport: UseReport = ({
                 if (!report.success) throw new Error('Failed to fetch report');
                 // const transformed = transformReport(report, platform);
                 setErrorMessage('');
-                return { createdAt, report, influencerSocialData };
+                return { createdAt, report, influencer, socialProfile };
             } catch (error: any) {
                 clientLogger(error, 'error');
                 if (hasCustomError(error, usageErrors)) {
@@ -98,9 +99,10 @@ export const useReport: UseReport = ({
             revalidateOnReconnect: false,
         },
     );
-    const { report, createdAt, influencerSocialData } = data || {};
+    const { report, createdAt, influencer, socialProfile } = data || {};
+
     // mutate, refresh stale caches
-    if (report && createdAt && reportIsStale(createdAt) && influencerSocialData) {
+    if (report && createdAt && reportIsStale(createdAt) && influencer) {
         mutate();
     }
 
@@ -110,6 +112,7 @@ export const useReport: UseReport = ({
         reportCreatedAt: createdAt,
         errorMessage,
         usageExceeded,
-        influencerSocialData,
+        influencer,
+        socialProfile,
     };
 };

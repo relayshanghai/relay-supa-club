@@ -1,9 +1,9 @@
 import { useTranslation } from 'react-i18next';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { Modal } from './modal';
 import { Button } from './button';
-import { InfoIcon } from './icons';
+import { InfoIcon, Spinner } from './icons';
 import { useSequences } from 'src/hooks/use-sequences';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import type { Sequence } from 'src/utils/api/db';
@@ -22,13 +22,15 @@ export const AddToSequenceModal = ({
     selectedCreator: CreatorUserProfile;
     platform: CreatorPlatform;
 }) => {
+    // TODO: need to also add the case if already added to the sequence logic here
     const { i18n, t } = useTranslation();
     const { sequences } = useSequences();
-    const { influencerSocialData } = useReport({ platform, creator_id: selectedCreator.user_id || '' });
+
     const [selectedSequence, setSelectedSequence] = useState<Sequence | null>(sequences?.[0] ?? null);
+    const [loading, setLoading] = useState<boolean>(false);
+
+    const { socialProfile } = useReport({ platform, creator_id: selectedCreator.user_id || '' });
     const { createSequenceInfluencer } = useSequenceInfluencers(selectedSequence?.id);
-    // console.log(selectedCreator);
-    // console.log(influencerSocialData.id);
 
     const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         if (!sequences) {
@@ -37,23 +39,27 @@ export const AddToSequenceModal = ({
         const selectedSequenceObject = sequences?.find((sequence) => sequence.name === e.target.value) ?? null;
         setSelectedSequence(selectedSequenceObject);
     };
-    const handleAddToSequence = async () => {
+
+    const handleAddToSequence = useCallback(async () => {
+        setLoading(true);
         if (!selectedSequence) {
             throw new Error('Missing selectedSequence');
         }
-        if (!influencerSocialData?.id) {
-            throw new Error('Missing influencerSocialData');
+        // TODO: if it is a new report, socialProfile takes time to be created, handle this case
+        if (!socialProfile?.id) {
+            throw new Error('Missing influencer_id');
         }
         try {
-            const res = await createSequenceInfluencer(influencerSocialData?.id);
-            //eslint-disable-next-line
-            console.log(res);
+            await createSequenceInfluencer(socialProfile?.id);
             toast.success('Added to sequence successfully');
         } catch (error) {
             clientLogger(error);
             toast.error('An error occurred, please try again');
+        } finally {
+            setLoading(false);
+            setShow(false);
         }
-    };
+    }, [createSequenceInfluencer, selectedSequence, setShow, socialProfile?.id]);
 
     return (
         <Modal
@@ -91,9 +97,15 @@ export const AddToSequenceModal = ({
                     <Button variant="secondary" onClick={() => setShow(false)}>
                         {t('creators.cancel')}
                     </Button>
-                    <Button onClick={handleAddToSequence} type="submit">
-                        {t('creators.addToSequence')}
-                    </Button>
+                    {loading ? (
+                        <Button>
+                            <Spinner className="h-5 w-5 fill-primary-500 text-white" />
+                        </Button>
+                    ) : (
+                        <Button onClick={handleAddToSequence} type="submit">
+                            {t('creators.addToSequence')}
+                        </Button>
+                    )}
                 </div>
             </div>
         </Modal>
