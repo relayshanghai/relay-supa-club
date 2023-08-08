@@ -81,5 +81,18 @@ describe('outreach', () => {
             .within(() => {
                 cy.contains('Charlie Charles');
             });
+
+        // can edit email
+        cy.contains('Add email').should('not.exist');
+        cy.contains('alice.anderson@example.com').click();
+        cy.getByTestId('table-inline-input-add email').clear();
+        cy.get('button[type=submit]').click();
+        cy.contains('Add email').should('exist').click();
+        cy.getByTestId('table-inline-input-add email').type('new-email@example.com');
+        cy.get('button[type=submit]').click();
+        cy.contains('Add email').should('not.exist');
+        cy.contains('new-email@example.com').click();
+        cy.getByTestId('table-inline-input-add email').clear().type('alice.anderson@example.com'); // reset so you can run the test again if need be
+        cy.get('button[type=submit]').click();
     });
 });

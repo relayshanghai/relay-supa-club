@@ -44,6 +44,7 @@ const TableInlineInputWithRef = (
                         }}
                     >
                         <input
+                            data-testid={`table-inline-input-${textPromptForMissingValue.toLowerCase()}`}
                             type={type}
                             value={inputValue}
                             onChange={(e) => setInputValue(e.target.value)}
