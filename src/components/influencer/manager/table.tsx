@@ -17,7 +17,7 @@ export const Table = () => {
             id: '1',
             info: {
                 name: 'Kylie Jenner',
-                handle: '@kylie',
+                handle: 'kylie',
             },
             collabstatus: 'negotiating',
             manager: 'Sophia',
@@ -30,7 +30,7 @@ export const Table = () => {
             id: '2',
             info: {
                 name: 'Kylie Jenner',
-                handle: '@kylie',
+                handle: 'kylie',
             },
             collabstatus: 'negotiating',
             manager: 'Mikaela',

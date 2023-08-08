@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { collabOptions } from './collab-status';
 import { InboxIcon } from 'src/components/icons';
+import { imgProxy } from 'src/utils/fetcher';
 
 interface InfluencerRowProps {
     index: number;
@@ -20,7 +21,7 @@ export const InfluencerRow = ({ index, influencer }: InfluencerRowProps) => {
                     <div>
                         <img
                             className="inline-block h-14 w-14 bg-slate-300"
-                            src={info.image}
+                            src={imgProxy(info.image)}
                             alt={`influencer-avatar-${info.name}`}
                         />
                     </div>
@@ -32,7 +33,7 @@ export const InfluencerRow = ({ index, influencer }: InfluencerRowProps) => {
                             rel="noopener noreferrer"
                             target="_blank"
                         >
-                            {info.handle}
+                            @{info.handle}
                         </Link>
                     </div>
                 </div>
