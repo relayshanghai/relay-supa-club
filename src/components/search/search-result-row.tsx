@@ -164,7 +164,7 @@ export const SearchResultRow = ({
     };
 
     const addToSequence = () => {
-        // TODO: add to sequence call
+        setSelectedCreator(creator);
         setShowSequenceListModal(true);
     };
 

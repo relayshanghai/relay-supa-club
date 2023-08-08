@@ -6,7 +6,6 @@ import Head from 'next/head';
 import { MetricsSection } from './creator-metrics-section';
 import { PopularPostsSection } from './creator-popular-posts';
 import CreatorSkeleton from './creator-skeleton';
-
 import { useReport } from 'src/hooks/use-report';
 import { AddToCampaignModal } from '../modal-add-to-campaign';
 import { useTranslation } from 'react-i18next';

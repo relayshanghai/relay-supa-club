@@ -16,21 +16,20 @@ export const useSequenceInfluencers = (sequenceId?: string) => {
     );
 
     const createSequenceInfluencerDBCall = useDB<typeof createSequenceInfluencerCall>(createSequenceInfluencerCall);
-    const createSequenceInfluencer = async (insert: SequenceInfluencerInsert) => {
+    const createSequenceInfluencer = async (influencerSocialProfileId: string) => {
         if (!sequenceId) throw new Error('No sequenceId provided');
         if (!profile?.company_id) throw new Error('No profile found');
         try {
-            const body: SequenceInfluencerInsert = {
-                ...insert,
+            const insert: SequenceInfluencerInsert = {
                 added_by: profile.id,
                 company_id: profile.company_id,
                 sequence_id: sequenceId,
-                // influencer_social_profile_id: ??,
+                influencer_social_profile_id: influencerSocialProfileId,
                 sequence_step: 0,
                 tags: [],
                 funnel_status: 'To Contact',
             };
-            const res = await createSequenceInfluencerDBCall(body);
+            const res = await createSequenceInfluencerDBCall(insert);
             return res;
         } catch (error) {
             clientLogger(error, 'error');

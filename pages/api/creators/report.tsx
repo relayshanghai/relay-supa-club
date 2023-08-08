@@ -58,7 +58,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const [influencer] = await getInfluencer(data);
 
             if (influencer === null) {
-                await db<typeof saveInfluencer>(saveInfluencer)(data);
+                try {
+                    await db<typeof saveInfluencer>(saveInfluencer)(data);
+                } catch (error) {
+                    serverLogger(error, 'error', true);
+                }
             }
             return influencer;
         };
@@ -88,16 +92,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     return res.status(httpCodes.BAD_REQUEST).json({ error: recordError });
                 }
 
-                try {
-                    const influencerSocialData = await catchInfluencer(data);
-                    return res.status(httpCodes.OK).json({ influencerSocialData });
-                } catch (error) {
-                    serverLogger(error, 'error', true);
-                }
+                const influencerSocialData = await catchInfluencer(data);
 
                 await trackAndSnap(track, req, res, events, data);
 
-                return res.status(httpCodes.OK).json({ ...data, createdAt });
+                return res.status(httpCodes.OK).json({ ...data, createdAt, influencerSocialData });
             } catch (error) {
                 const data = await requestNewReport({ req, res })(platform, creator_id);
                 if (!data.success) throw new Error('Failed to request new report');
@@ -108,12 +107,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
                 }
 
-                try {
-                    const influencerSocialData = await catchInfluencer(data);
-                    return res.status(httpCodes.OK).json({ influencerSocialData });
-                } catch (error) {
-                    serverLogger(error, 'error', true);
-                }
+                await catchInfluencer(data);
 
                 await trackAndSnap(track, req, res, events, data);
 

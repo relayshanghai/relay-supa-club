@@ -1,29 +1,34 @@
 import { useTranslation } from 'react-i18next';
+import { useState } from 'react';
+import { toast } from 'react-hot-toast';
 import { Modal } from './modal';
 import { Button } from './button';
 import { InfoIcon } from './icons';
-import { useState } from 'react';
 import { useSequences } from 'src/hooks/use-sequences';
-// import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
+import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import type { Sequence } from 'src/utils/api/db';
 import { clientLogger } from 'src/utils/logger-client';
-import { toast } from 'react-hot-toast';
-import type { CreatorUserProfile } from 'types';
+import type { CreatorPlatform, CreatorUserProfile } from 'types';
+import { useReport } from 'src/hooks/use-report';
 
 export const AddToSequenceModal = ({
     show,
     setShow,
     selectedCreator,
+    platform,
 }: {
     show: boolean;
     setShow: (show: boolean) => void;
-    selectedCreator: CreatorUserProfile | null;
+    selectedCreator: CreatorUserProfile;
+    platform: CreatorPlatform;
 }) => {
-    const [selectedSequence, setSelectedSequence] = useState<Sequence | null>(null);
     const { i18n, t } = useTranslation();
-
     const { sequences } = useSequences();
-    // const { createSequenceInfluencer } = useSequenceInfluencers();
+    const { influencerSocialData } = useReport({ platform, creator_id: selectedCreator.user_id || '' });
+    const [selectedSequence, setSelectedSequence] = useState<Sequence | null>(sequences?.[0] ?? null);
+    const { createSequenceInfluencer } = useSequenceInfluencers(selectedSequence?.id);
+    // console.log(selectedCreator);
+    // console.log(influencerSocialData.id);
 
     const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         if (!sequences) {
@@ -34,12 +39,15 @@ export const AddToSequenceModal = ({
     };
     const handleAddToSequence = async () => {
         if (!selectedSequence) {
-            return;
+            throw new Error('Missing selectedSequence');
+        }
+        if (!influencerSocialData?.id) {
+            throw new Error('Missing influencerSocialData');
         }
         try {
+            const res = await createSequenceInfluencer(influencerSocialData?.id);
             //eslint-disable-next-line
-            console.log(selectedCreator?.user_id, selectedSequence?.id);
-            // await createSequenceInfluencer(selectedSequence?.id);
+            console.log(res);
             toast.success('Added to sequence successfully');
         } catch (error) {
             clientLogger(error);
@@ -83,7 +91,7 @@ export const AddToSequenceModal = ({
                     <Button variant="secondary" onClick={() => setShow(false)}>
                         {t('creators.cancel')}
                     </Button>
-                    <Button onClick={() => handleAddToSequence()} type="submit">
+                    <Button onClick={handleAddToSequence} type="submit">
                         {t('creators.addToSequence')}
                     </Button>
                 </div>

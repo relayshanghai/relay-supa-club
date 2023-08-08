@@ -245,6 +245,7 @@ export const SearchPageInner = () => {
                     selectedCreator={{
                         ...selectedCreator?.account.user_profile,
                     }}
+                    platform={platform}
                 />
             )}
 
