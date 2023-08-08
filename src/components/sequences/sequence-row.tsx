@@ -9,7 +9,6 @@ import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { useState } from 'react';
 import { TableInlineInput } from '../library/table-inline-input';
 import { Button } from '../button';
-import { useSequenceSteps } from 'src/hooks/use-sequence-steps';
 
 interface SequenceRowProps {
     sequenceInfluencer: SequenceInfluencer;
@@ -27,7 +26,6 @@ const getStatus = (sequenceEmail: SequenceEmail | undefined) =>
 const SequenceRow: React.FC<SequenceRowProps> = ({ sequenceInfluencer, sequenceEmail, sequenceSteps, currentTab }) => {
     const { influencerSocialProfile } = useInfluencerSocialProfile(sequenceInfluencer.influencer_social_profile_id);
     const { updateSequenceInfluencer } = useSequenceInfluencers(sequenceInfluencer?.sequence_id);
-    const {} = useSequenceSteps();
     const { i18n } = useTranslation();
     const [email, setEmail] = useState(sequenceInfluencer.email ?? '');
 
