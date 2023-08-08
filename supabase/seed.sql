@@ -2,7 +2,9 @@ BEGIN;
 
 -- seed helpers
 CREATE
-OR REPLACE FUNCTION create_supabase_user(email TEXT, _first_name TEXT, _last_name TEXT) RETURNS UUID SECURITY DEFINER AS $$
+OR REPLACE FUNCTION create_supabase_user(
+  email TEXT, _first_name TEXT, _last_name TEXT
+) RETURNS UUID SECURITY DEFINER AS $$
   DECLARE
     user_id UUID;
   BEGIN
@@ -480,6 +482,44 @@ BEGIN
 END;
 $$;
 
+CREATE OR REPLACE FUNCTION create_sequence_email(
+  _sequence_id UUID,
+  _sequence_influencer_id UUID,
+  _sequence_step_id UUID,
+  _email_delivery_status TEXT DEFAULT null,
+  _email_tracking_status TEXT DEFAULT null,
+  _email_send_at TIMESTAMP WITH TIME ZONE DEFAULT null,
+  _updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+) RETURNS RECORD SECURITY DEFINER LANGUAGE plpgsql AS $$
+DECLARE
+  _row RECORD;
+BEGIN
+  INSERT INTO sequence_emails (
+    id,
+    created_at,
+    updated_at,
+    sequence_id,
+    sequence_influencer_id,
+    sequence_step_id,
+    email_delivery_status,
+    email_tracking_status,
+    email_send_at
+  )
+  VALUES (
+    uuid_generate_v4(),
+    now(),
+    _updated_at,
+    _sequence_id,
+    _sequence_influencer_id,
+    _sequence_step_id,
+    _email_delivery_status,
+    _email_tracking_status,
+    _email_send_at
+  )
+  RETURNING * INTO _row;
+  RETURN _row;
+END;
+$$;
 
 CREATE OR REPLACE FUNCTION create_influencer_post(
   _url TEXT,
@@ -599,6 +639,11 @@ DECLARE
   _influencer_post_alice_3 RECORD;
   _influencer_post_bob_1 RECORD;
   _influencer_post_bob_2 RECORD;
+  _sequence_step_outreach RECORD;
+  _sequence_step_follow_up_1 RECORD;
+  _sequence_influencer_daniel RECORD;
+  _sequence_influencer_felicia RECORD;
+  _sequence_influencer_georgia RECORD;
 BEGIN
   -- Test Company
   _company_test := create_company('Blue Moonlight Stream Enterprises', 'https://blue-moonlight-stream.com', 'active');
@@ -635,7 +680,7 @@ BEGIN
     'General collaboration'
   );
 
-  PERFORM create_sequence_steps(
+  _sequence_step_outreach := create_sequence_steps(
     _sequence_general.id,
     'Outreach Email',
     ARRAY[
@@ -646,7 +691,7 @@ BEGIN
     0
   );
 
-  PERFORM create_sequence_steps(
+  _sequence_step_follow_up_1 := create_sequence_steps(
     _sequence_general.id,
     'Follow Up Email 1',
     ARRAY[
@@ -795,7 +840,7 @@ BEGIN
     '2030-01-01 00:00:00.000000+00'
   );    
 
-  PERFORM create_sequence_influencer(
+  _sequence_influencer_daniel := create_sequence_influencer(
     _company_test.id,
     _sequence_general.id,
     _profile_william.id,
@@ -803,7 +848,7 @@ BEGIN
     _influencer_social_profile_daniel_1.email,
     'In Sequence'
   );  
-  PERFORM create_sequence_influencer(
+  _sequence_influencer_felicia := create_sequence_influencer(
     _company_test.id,
     _sequence_general.id,
     _profile_william.id,
@@ -811,7 +856,7 @@ BEGIN
     _influencer_social_profile_felicia_1.email,
     'In Sequence'
   );       
-  PERFORM create_sequence_influencer(
+  _sequence_influencer_georgia := create_sequence_influencer(
     _company_test.id,
     _sequence_general.id,
     _profile_william.id,
@@ -819,6 +864,60 @@ BEGIN
     _influencer_social_profile_georgia_1.email,
     'Ignored'
   ); 
+
+  PERFORM create_sequence_email(
+    _sequence_general.id,    
+    _sequence_influencer_daniel.id,
+    _sequence_step_outreach.id,
+    'Scheduled',
+    null,
+    '2024-08-01 00:00:00.000000+00'
+  );
+
+  PERFORM create_sequence_email(
+    _sequence_general.id,
+    _sequence_influencer_daniel.id,
+    _sequence_step_follow_up_1.id,
+    'Scheduled',
+    null,
+    '2024-08-02 00:00:00.000000+00'
+  );
+
+  PERFORM create_sequence_email(
+    _sequence_general.id,
+    _sequence_influencer_felicia.id,
+    _sequence_step_outreach.id,
+    'Delivered',
+    null,
+    '2024-08-01 01:00:00.000000+00'
+  );
+
+  PERFORM create_sequence_email(
+    _sequence_general.id,
+    _sequence_influencer_felicia.id,
+    _sequence_step_follow_up_1.id,
+    'Delivered',
+    'Opened',
+    '2024-08-02 01:00:00.000000+00'
+  );
+
+  PERFORM create_sequence_email(
+    _sequence_general.id,
+    _sequence_influencer_georgia.id,
+    _sequence_step_outreach.id,
+    'Delivered',
+    'Link Clicked',
+    '2024-08-01 02:00:00.000000+00'
+  );
+
+  PERFORM create_sequence_email(
+    _sequence_general.id,
+    _sequence_influencer_georgia.id,
+    _sequence_step_outreach.id,
+    'Bounced',
+    null,
+    '2024-08-02 02:00:00.000000+00'
+  );
 
   -- Influencer 3 will have no social profiles so we can handle this edge case
 
@@ -949,4 +1048,5 @@ DROP FUNCTION IF EXISTS create_posts_performance;
 DROP FUNCTION IF EXISTS create_sequence;
 DROP FUNCTION IF EXISTS create_sequence_influencer;
 DROP FUNCTION IF EXISTS create_sequence_steps;
+DROP FUNCTION IF EXISTS create_sequence_email;
 COMMIT;

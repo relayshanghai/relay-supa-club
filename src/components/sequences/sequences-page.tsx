@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 import { Layout } from '../layout';
 import SequenceTable from './sequence-table';
 import { testAccount } from 'src/utils/api/email-engine/prototype-mocks';
@@ -137,7 +138,24 @@ export const SequencesPage = () => {
                         <p className="self-center">{t('sequences.updateTemplateVariables')}</p>
                     </Button>
                 </div>
-                <SequenceStats />
+                <SequenceStats
+                    totalInfluencers={sequenceInfluencers?.length || 0}
+                    openRate={
+                        (allSequenceEmails?.filter(
+                            (email) =>
+                                email.email_tracking_status === 'Link Clicked' ||
+                                email.email_tracking_status === 'Opened',
+                        ).length || 1) / (allSequenceEmails?.length || 1)
+                    }
+                    replyRate={
+                        (allSequenceEmails?.filter((email) => email.email_delivery_status === 'Replied').length || 1) /
+                        (allSequenceEmails?.length || 1)
+                    }
+                    bounceRate={
+                        (allSequenceEmails?.filter((email) => email.email_delivery_status === 'Bounced').length || 1) /
+                        (allSequenceEmails?.length || 1)
+                    }
+                />
                 <Tabs tabs={tabs} currentTab={currentTab} setCurrentTab={setCurrentTab} />
 
                 {currentTabInfluencers && sequenceSteps ? (
