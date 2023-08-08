@@ -26,7 +26,11 @@ export const InfluencerRow = ({ index, influencer }: InfluencerRowProps) => {
                     </div>
                     <div className="flex flex-col">
                         <p className="font-semibold text-primary-600">{info.name}</p>
-                        <Link className="cursor-pointer font-semibold text-gray-500" href={info.handle}>
+                        <Link
+                            className="cursor-pointer font-semibold text-gray-500"
+                            href={info.handle}
+                            rel="noopener noreferrer"
+                        >
                             {info.handle}
                         </Link>
                     </div>
