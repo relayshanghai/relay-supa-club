@@ -1,4 +1,3 @@
-import React from 'react';
 import { SearchComponent } from './search-component';
 import { CollabStatus } from './collab-status';
 import { OnlyMe } from './onlyme';

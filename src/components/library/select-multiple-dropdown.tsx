@@ -1,18 +1,30 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ChevronDown, FilterFunnel } from 'src/components/icons';
+
+export type MultipleDropdownObject = {
+    [key: string]: {
+        label: string;
+        value?: number;
+        style?: string;
+    };
+};
 
 export const SelectMultipleDropdown = ({
     text,
     options,
+    selectedOptions,
+    setSelectedOptions,
 }: {
     text: string;
-    show: boolean;
-    setShow: (show?: boolean) => void;
-    options: any;
+    options: MultipleDropdownObject;
+    selectedOptions: string[];
+    setSelectedOptions: React.Dispatch<React.SetStateAction<string[]>>;
 }) => {
-    const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
-    const detailsRef = useRef<HTMLDetailsElement>(null);
+    const detailsRef = useRef<HTMLDetailsElement>(null); // Tracks the details element in the returned JSX
+    const { t } = useTranslation();
 
+    // Collapses the details bar if the clicked event is not a child of the details element
     const collapseDetails = (event: any) => {
         const detailsTarget = event.target as Node;
         const detailsCurrent = detailsRef.current;
@@ -25,6 +37,8 @@ export const SelectMultipleDropdown = ({
         setSelectedOptions([]);
     };
 
+    // Adding event listeners to the document (onBlur will not work as clicking a non-focusable element,
+    // returns null and does not allow us to check whether it is a child of an element)
     useEffect(() => {
         document.addEventListener('mousedown', collapseDetails);
 
@@ -40,12 +54,12 @@ export const SelectMultipleDropdown = ({
         >
             <summary className={`flex h-full min-w-full flex-row items-center justify-between gap-2`}>
                 <div className="flex flex-row items-center gap-2 px-3 py-1">
-                    <FilterFunnel className="h-4 w-4 stroke-slate-500" />
+                    <FilterFunnel className="h-4 w-4 flex-shrink-0 stroke-slate-500" />
                     {selectedOptions.length > 0 ? (
-                        selectedOptions.map((selectedOption, index) => (
+                        selectedOptions.map((selectedOption, _index) => (
                             <p
-                                key={index}
-                                className={`rounded text-xs font-medium ${options[selectedOption].color} whitespace-nowrap px-2 py-2`}
+                                key={selectedOption}
+                                className={`rounded text-xs font-medium ${options[selectedOption].style} whitespace-nowrap px-2 py-2`}
                             >
                                 {options[selectedOption].label}
                             </p>
@@ -87,7 +101,7 @@ export const SelectMultipleDropdown = ({
                                     }}
                                 />
                                 <p
-                                    className={`${options[option].color} whitespace-nowrap rounded-md px-3 py-2 text-xs`}
+                                    className={`${options[option].style} whitespace-nowrap rounded-md px-3 py-2 text-xs`}
                                 >
                                     {options[option].label}
                                 </p>
@@ -98,7 +112,7 @@ export const SelectMultipleDropdown = ({
                 ))}
                 <li className="p-2">
                     <label onClick={resetSelection} className="cursor-pointer text-center">
-                        <p className="rounded-lg border-2 border-gray-200 px-4 py-2">Clear Filters</p>
+                        <p className="rounded-lg border-2 border-gray-200 px-4 py-2">{t('filters.clearButton')}</p>
                     </label>
                 </li>
             </ul>

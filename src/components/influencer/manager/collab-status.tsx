@@ -1,65 +1,54 @@
-import React, { useCallback, useState } from 'react';
-import { SelectMultipleDropdown } from './select-multiple-dropdown';
+import { useState } from 'react';
+import { SelectMultipleDropdown } from '../../library/select-multiple-dropdown';
 
 export const collabOptions = {
     negotiating: {
         label: 'Negotiating',
         value: 10,
-        color: 'bg-blue-100 text-blue-500',
+        style: 'bg-blue-100 text-blue-500',
     },
     confirmed: {
         label: 'Confirmed',
         value: 20,
-        color: 'bg-primary-100 text-primary-500',
+        style: 'bg-primary-100 text-primary-500',
     },
     shipped: {
         label: 'Shipped',
         value: 30,
-        color: 'bg-yellow-100 text-yellow-500',
+        style: 'bg-yellow-100 text-yellow-500',
     },
     received: {
         label: 'Received',
         value: 40,
-        color: 'bg-green-100 text-green-500',
+        style: 'bg-green-100 text-green-500',
     },
     contentApproval: {
         label: 'Content Approval',
         value: 50,
-        color: 'bg-pink-100 text-pink-500',
+        style: 'bg-pink-100 text-pink-500',
     },
     posted: {
         label: 'Posted',
         value: 60,
-        color: 'bg-cyan-100 text-cyan-500',
+        style: 'bg-cyan-100 text-cyan-500',
     },
     rejected: {
         label: 'Rejected',
         value: 70,
-        color: 'bg-red-100 text-red-500',
+        style: 'bg-red-100 text-red-500',
     },
 };
 
 export const CollabStatus = () => {
-    const [showDropdown, setShowDropdown] = useState<boolean>(false);
-
-    const setShow = useCallback(
-        (show?: boolean) => {
-            if (show !== undefined) {
-                setShowDropdown(show);
-                return;
-            }
-            setShowDropdown(!showDropdown);
-        },
-        [showDropdown],
-    );
+    const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
 
     return (
         <div className="flex w-full flex-col">
             <SelectMultipleDropdown
                 text={'Filter by status'}
-                show={showDropdown}
-                setShow={setShow}
                 options={collabOptions}
+                selectedOptions={selectedOptions}
+                setSelectedOptions={setSelectedOptions}
             />
         </div>
     );

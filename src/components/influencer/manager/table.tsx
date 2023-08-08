@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { InfluencerRow } from './influencer-row';
 
-const tableColumns = [
+const mockTableColumns = [
     { header: 'name', type: 'name', name: 'name' },
     { header: 'collabstatus', type: 'collabstatus', name: 'collabstatus' },
     { header: 'manager', type: 'manager', name: 'manager' },
@@ -66,7 +66,7 @@ export const Table = () => {
                             {/* <th>
                                 <input className="appearance-none display-none rounded border-gray-300 checked:text-primary-500" type='checkbox' checked={selectedAll} onChange={handleCheckAll} />
                             </th> */}
-                            {tableColumns.map((column) => (
+                            {mockTableColumns.map((column) => (
                                 <th
                                     key={column.header}
                                     className="whitespace-nowrap bg-white px-6 py-3 text-left text-xs font-normal tracking-wider text-gray-500"
@@ -79,15 +79,15 @@ export const Table = () => {
                     <tbody className="divide-y divide-gray-200 bg-white">
                         {influencersList.length === 0 && (
                             <tr>
-                                <td colSpan={tableColumns.length + 1} className="px-6 py-4">
+                                <td colSpan={mockTableColumns.length + 1} className="px-6 py-4">
                                     <div className="flex justify-center">
                                         <p className="text-sm text-gray-500">No Influencers...</p>
                                     </div>
                                 </td>
                             </tr>
                         )}
-                        {influencersList.map((creator, index) => (
-                            <InfluencerRow key={creator.id} creator={creator} index={index} />
+                        {influencersList.map((influencer, index) => (
+                            <InfluencerRow key={influencer.id} influencer={influencer} index={index} />
                         ))}
                     </tbody>
                 </table>

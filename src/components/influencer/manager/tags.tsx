@@ -1,23 +1,28 @@
-import React, { useCallback, useState } from 'react';
-import { SelectMultipleDropdown } from './select-multiple-dropdown';
+import { useState } from 'react';
+import { SelectMultipleDropdown } from '../../library/select-multiple-dropdown';
+
+const tags = {
+    fashion: {
+        label: 'Fashion',
+        style: 'bg-primary-100 text-primary-500 border border-primary-500',
+    },
+    beauty: {
+        label: 'Beauty',
+        style: 'bg-primary-100 text-primary-500 border border-primary-500',
+    },
+};
 
 export const Tags = () => {
-    const [showDropdown, setShowDropdown] = useState<boolean>(false);
-
-    const setShow = useCallback(
-        (show?: boolean) => {
-            if (show !== undefined) {
-                setShowDropdown(show);
-                return;
-            }
-            setShowDropdown(!showDropdown);
-        },
-        [showDropdown],
-    );
+    const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
     return (
         <div className="flex flex-col">
             <p>Tags</p>
-            <SelectMultipleDropdown text={'Tags'} show={showDropdown} setShow={setShow} options={['tag1', 'tag2']} />
+            <SelectMultipleDropdown
+                text={'Tags'}
+                selectedOptions={selectedOptions}
+                setSelectedOptions={setSelectedOptions}
+                options={tags}
+            />
         </div>
     );
 };

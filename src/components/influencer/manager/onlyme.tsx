@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Switch } from 'src/components/library';
 
 export const OnlyMe = () => {
