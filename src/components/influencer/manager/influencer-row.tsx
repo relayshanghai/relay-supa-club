@@ -30,6 +30,7 @@ export const InfluencerRow = ({ index, influencer }: InfluencerRowProps) => {
                             className="cursor-pointer font-semibold text-gray-500"
                             href={info.handle}
                             rel="noopener noreferrer"
+                            target="_blank"
                         >
                             {info.handle}
                         </Link>
