@@ -8,6 +8,7 @@ const navbar = {
     guide: 'Guide',
     sequences: 'Sequences',
     inbox: 'Inbox',
+    influencerManager: 'Influencer Manager',
 };
 
 export default navbar;
