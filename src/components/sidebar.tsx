@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import useAboveScreenWidth from 'src/hooks/use-above-screen-width';
 import EmailOutline from './icons/EmailOutline';
 import { useUser } from 'src/hooks/use-user';
-import { Compass, FourSquare, Account, Team, PieChart, Guide, Send, Engagements } from './icons';
+import { Compass, FourSquare, Account, Team, PieChart, Guide, Send, Engagements, ProfilePlus } from './icons';
 import { Title } from './title';
 import { useTranslation } from 'react-i18next';
 import { featEmail } from 'src/constants/feature-flags';
@@ -21,8 +21,10 @@ const links = {
     guide: '/guide',
     sequences: '/sequences',
     inbox: '/inbox',
+    influencerManager: 'influencer-manager',
 };
 
+// eslint-disable-next-line complexity
 const ActiveLink = ({ href, children }: { href: string; children: ReactNode }) => {
     const router = useRouter();
 
@@ -55,6 +57,7 @@ const ActiveLink = ({ href, children }: { href: string; children: ReactNode }) =
 
             {href === links.sequences && <Send height={18} width={18} className="mr-4 stroke-inherit" />}
             {href === links.inbox && <Engagements height={18} width={18} className="mr-4 stroke-inherit" />}
+            {href === links.influencerManager && <ProfilePlus height={18} width={18} className="mr-4 stroke-inherit" />}
             {children}
         </Link>
     );
@@ -77,6 +80,7 @@ const NavBarInner = ({ loggedIn, isRelayEmployee }: { loggedIn: boolean | null; 
                 <ActiveLink href="/guide">{t('navbar.guide')}</ActiveLink>
                 {featEmail() && <ActiveLink href={links.sequences}>{t('navbar.sequences')}</ActiveLink>}
                 {featEmail() && <ActiveLink href={links.inbox}>{t('navbar.inbox')}</ActiveLink>}
+                {featEmail() && <ActiveLink href={links.influencerManager}>{t('navbar.influencerManager')}</ActiveLink>}
             </div>
             {isRelayEmployee && (
                 <div className="mt-8 flex flex-col space-y-4">

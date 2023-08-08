@@ -169,6 +169,43 @@ const Tabs = () => {
     );
 };
 
+const SelectMultipleDropdowns = () => {
+    const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
+
+    const options = {
+        option1: {
+            label: 'Option 1',
+            value: 10,
+            style: 'bg-blue-100 text-blue-500',
+        },
+        option2: {
+            label: 'Option 2',
+            style: 'bg-primary-100 text-primary-500',
+        },
+        option3: {
+            label: 'Option 3',
+            value: 30,
+        },
+    };
+
+    return (
+        <div className="m-5">
+            <h2 className="text-lg font-bold"> Select Multiple Dropdown</h2>
+            <p>Click to expand </p>
+            <p>Input options have to have label elements. Value and Style optional </p>
+            <p>Styled and unstyled options available </p>
+            <div className="m-5 flex flex-wrap space-x-8 bg-slate-100 p-5">
+                <library.SelectMultipleDropdown
+                    text="sample"
+                    options={options}
+                    selectedOptions={selectedOptions}
+                    setSelectedOptions={setSelectedOptions}
+                />
+            </div>
+        </div>
+    );
+};
+
 const LibraryPage = () => (
     <>
         <Badges />
@@ -177,6 +214,7 @@ const LibraryPage = () => (
         <ProgressBars />
         <Inputs />
         <Tabs />
+        <SelectMultipleDropdowns />
     </>
 );
 
