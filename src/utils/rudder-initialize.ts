@@ -1,6 +1,6 @@
 import { clientLogger } from './logger-client';
 
-const disabled = process.env.NEXT_PUBLIC_CI === 'true' || process.env.NEXT_PUBLIC_DISABLE_RUDDERSTACK === 'true';
+const disabled = process.env.NEXT_PUBLIC_ENABLE_RUDDERSTACK !== 'true';
 
 const turnOffRudderInDev = () => {
     window.rudder = {

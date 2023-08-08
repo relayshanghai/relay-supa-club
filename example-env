@@ -92,5 +92,5 @@ NEXT_PUBLIC_GOOGLE_ANALYTICS=G-xxxxx
 EMAIL_ENGINE_API_URL="https://email.relay.club"
 EMAIL_ENGINE_API_KEY=asdfasdf
 
-# Disable rudderstack
-NEXT_PUBLIC_DISABLE_RUDDERSTACK=true
+# Enable rudderstack
+NEXT_PUBLIC_ENABLE_RUDDERSTACK=true

@@ -7,7 +7,7 @@ import { getUserSession } from '../api/analytics';
 import type { z } from 'zod';
 import type { eventKeys } from '.';
 import { serverLogger } from '../logger-server';
-const disabled = process.env.NEXT_PUBLIC_CI === 'true' || process.env.NEXT_PUBLIC_DISABLE_RUDDERSTACK === 'true';
+const disabled = process.env.NEXT_PUBLIC_ENABLE_RUDDERSTACK !== 'true';
 
 export type RudderBackend = Analytics;
 
