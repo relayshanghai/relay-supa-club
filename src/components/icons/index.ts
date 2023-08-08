@@ -52,10 +52,12 @@ export { default as ArrowRightOnRectangle } from './ArrowRightOnRectangle';
 export { default as Guide } from './Guide';
 export { default as ChevronLeft } from './ChevronLeft';
 export { default as ChevronRight } from './ChevronRight';
+export { default as ChevronDown } from './ChevronDown';
 export { default as CheckIcon } from './CheckIcon';
 export { default as CrossIcon } from './CrossIcon';
 export { default as PlusIcon } from './PlusIcon';
 export { default as Question } from './Question';
+export { default as ProfilePlus } from './ProfilePlus';
 export { default as Slash } from './Slash';
 export { default as Brackets } from './Brackets';
 export { default as TeamOutline } from './TeamOutline';
@@ -64,3 +66,5 @@ export { default as MessageDotsCircleOutline } from './MessageDotsCircleOutline'
 export { default as MessageXCircleOutline } from './MessageXCircleOutline';
 export { default as CheckCircleOutline } from './CheckCircleOutline';
 export { default as AlertCircleOutline } from './AlertCircleOutline';
+export { default as FilterFunnel } from './FilterFunnel';
+export { default as InboxIcon } from './InboxIcon';
