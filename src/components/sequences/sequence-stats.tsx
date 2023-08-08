@@ -32,7 +32,7 @@ export const SequenceStats = ({ totalInfluencers, openRate, replyRate, bounceRat
         {
             name: t('sequences.openRate'),
             tooltip: t('sequences.openRateTooltip'),
-            value: decimalToPercent(openRate, 0) ?? '0',
+            value: decimalToPercent(openRate, 0) ?? '0%',
             largeIcon: <EmailOpenOutline />,
             smallIcon: (
                 <div className="flex h-4 w-5 items-center justify-center bg-green-50 p-1 text-green-500">
@@ -43,7 +43,7 @@ export const SequenceStats = ({ totalInfluencers, openRate, replyRate, bounceRat
         {
             name: t('sequences.replyRate'),
             tooltip: t('sequences.replyRateTooltip'),
-            value: decimalToPercent(replyRate, 0) ?? '0',
+            value: decimalToPercent(replyRate, 0) ?? '0%',
             largeIcon: <MessageDotsCircleOutline />,
             smallIcon: (
                 <div className="flex h-4 w-5 items-center justify-center bg-green-50 p-1 text-green-500">
@@ -54,7 +54,7 @@ export const SequenceStats = ({ totalInfluencers, openRate, replyRate, bounceRat
         {
             name: t('sequences.bounceRate'),
             tooltip: t('sequences.bounceRateTooltip'),
-            value: decimalToPercent(bounceRate, 0) ?? '0',
+            value: decimalToPercent(bounceRate, 0) ?? '0%',
             largeIcon: <MessageXCircleOutline />,
             smallIcon: (
                 <div className="flex h-4 w-5 items-center justify-center bg-red-50 p-1 text-red-500">
