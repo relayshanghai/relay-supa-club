@@ -65,7 +65,7 @@ export const AddToSequenceModal = ({
                             value={selectedSequence?.name}
                             className="-ml-1 mr-2.5 w-full cursor-pointer appearance-none rounded-md border border-gray-200 p-2 font-medium text-gray-500 outline-none"
                         >
-                            {sequences?.length === 0 && <option>{t('creators.noSequences')}</option>}
+                            {sequences?.length === 0 && <option>{t('creators.noSequence')}</option>}
                             {sequences?.map((sequence) => (
                                 <option key={sequence.id}>{sequence.name}</option>
                             ))}

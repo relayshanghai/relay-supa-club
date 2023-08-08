@@ -14,6 +14,7 @@ import { db } from 'src/utils/supabase-client';
 import events, { SearchAnalyzeInfluencer } from 'src/utils/analytics/events';
 import { createReportSnapshot, createTrack } from 'src/utils/analytics/api/analytics';
 import type { eventKeys } from 'src/utils/analytics/events';
+import type { InfluencerSocialProfileRow } from 'src/utils/api/db';
 
 export type CreatorsReportGetQueries = {
     platform: CreatorPlatform;
@@ -45,7 +46,9 @@ const trackAndSnap = async (
     );
 };
 
-export type CreatorsReportGetResponse = CreatorReport & { createdAt: string };
+export type CreatorsReportGetResponse = CreatorReport & { createdAt: string } & {
+    influencerSocialData: InfluencerSocialProfileRow;
+};
 
 // Disabling complexity linting error as fixing this will require a large refactor
 // eslint-disable-next-line complexity
@@ -57,6 +60,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             if (influencer === null) {
                 await db<typeof saveInfluencer>(saveInfluencer)(data);
             }
+            return influencer;
         };
 
         try {
@@ -85,7 +89,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 }
 
                 try {
-                    await catchInfluencer(data);
+                    const influencerSocialData = await catchInfluencer(data);
+                    return res.status(httpCodes.OK).json({ influencerSocialData });
                 } catch (error) {
                     serverLogger(error, 'error', true);
                 }
@@ -104,7 +109,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 }
 
                 try {
-                    await catchInfluencer(data);
+                    const influencerSocialData = await catchInfluencer(data);
+                    return res.status(httpCodes.OK).json({ influencerSocialData });
                 } catch (error) {
                     serverLogger(error, 'error', true);
                 }
