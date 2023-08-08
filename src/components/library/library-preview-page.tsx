@@ -109,6 +109,7 @@ const ProgressBars = () => {
 };
 
 const Inputs = () => {
+    const [value, setValue] = useState('');
     return (
         <div className="m-5">
             <h2 className="text-lg font-bold"> Inputs</h2>
@@ -131,6 +132,16 @@ const Inputs = () => {
                     <Input label="label" type="password" placeholder="password" value="" />
                 </div>
             </div>
+            <h2 className="text-lg font-bold"> Table Input</h2>
+            <table>
+                <tr>
+                    <library.TableInlineInput
+                        value={value}
+                        onSubmit={(newValue) => setValue(newValue)}
+                        textPromptForMissingValue="Enter a value"
+                    />
+                </tr>
+            </table>
         </div>
     );
 };

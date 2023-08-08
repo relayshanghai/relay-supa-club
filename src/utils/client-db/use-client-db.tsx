@@ -11,10 +11,7 @@ import {
 } from '../api/db/calls/campaignCreators';
 import type { DBQuery } from '../types';
 import { getSequenceEmailsBySequenceCall, updateSequenceEmailCall } from '../api/db/calls/sequence-emails';
-import {
-    getSequenceInfluencersBySequenceIdCall,
-    updateSequenceInfluencerCall,
-} from '../api/db/calls/sequence-influencers';
+import { getSequenceInfluencersBySequenceIdCall } from '../api/db/calls/sequence-influencers';
 import { getSequenceStepsBySequenceIdCall, updateSequenceStepCall } from '../api/db/calls/sequence-steps';
 import { getSequencesByCompanyIdCall, getSequenceByIdCall, updateSequenceCall } from '../api/db/calls/sequences';
 import { getInfluencerSocialProfileByIdCall } from '../api/db/calls/influencers';
@@ -64,7 +61,6 @@ export const useClientDb = () => {
 
         // sequence_influencers
         getSequenceInfluencersBySequenceId: getSequenceInfluencersBySequenceIdCall(supabaseClient),
-        updateSequenceInfluencer: updateSequenceInfluencerCall(supabaseClient),
 
         // sequence_influencers_sequence_steps
         getSequenceEmailsBySequence: getSequenceEmailsBySequenceCall(supabaseClient),

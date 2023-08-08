@@ -11,5 +11,19 @@ const sequences = {
     openRateTooltip: 'Open rate tooltip',
     replyRateTooltip: 'Reply rate tooltip',
     bounceRateTooltip: 'Bounce rate tooltip',
+    columns: {
+        name: '姓名',
+        email: '邮箱',
+        influencerTopics: 'KOL主题',
+        dateAdded: '添加日期',
+        sequenceActions: '序列操作',
+        currentStep: '当前步骤',
+        status: '状态',
+        sendTime: '发送时间',
+        nextEmailPreview: '下一封邮件预览',
+        lastEmailSent: '上一封邮件发送',
+        restartSequence: '重新开始序列',
+    },
+    addEmail: 'Add email',
 };
 export default sequences;
