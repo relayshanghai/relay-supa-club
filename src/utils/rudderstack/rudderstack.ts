@@ -7,6 +7,7 @@ import { getUserSession } from '../api/analytics';
 import type { z } from 'zod';
 import type { eventKeys } from '.';
 import { serverLogger } from '../logger-server';
+const disabled = process.env.NEXT_PUBLIC_CI === 'true' || process.env.NEXT_PUBLIC_DISABLE_RUDDERSTACK === 'true';
 
 export type RudderBackend = Analytics;
 
@@ -74,7 +75,7 @@ export class Rudderstack {
      * @todo put in (server-side) middleware
      */
     async identify(context: ServerContext) {
-        if (this.session || process.env.NEXT_PUBLIC_CI) return;
+        if (this.session || disabled) return;
 
         const supabase = createServerSupabaseClient<DatabaseWithCustomTypes>(context);
         const session = await getUserSession(supabase)();
@@ -89,7 +90,7 @@ export class Rudderstack {
 
     // @todo support multiple tracking
     track(params: RudderstackContext) {
-        if (process.env.NEXT_PUBLIC_CI) return;
+        if (disabled) return;
 
         if (this.context && this.context.event !== params.event) {
             serverLogger(

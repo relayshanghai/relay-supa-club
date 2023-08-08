@@ -1,5 +1,7 @@
 import { clientLogger } from './logger-client';
 
+const disabled = process.env.NEXT_PUBLIC_CI === 'true' || process.env.NEXT_PUBLIC_DISABLE_RUDDERSTACK === 'true';
+
 const turnOffRudderInDev = () => {
     window.rudder = {
         load: () => null,
@@ -23,7 +25,7 @@ const turnOffRudderInDev = () => {
 };
 
 export async function rudderInitialized() {
-    if (process.env.NEXT_PUBLIC_CI === 'true') {
+    if (disabled) {
         return turnOffRudderInDev();
     }
     //these keys are for RudderStack App-Frontend Source, if we need to add new source we need to add new keys
