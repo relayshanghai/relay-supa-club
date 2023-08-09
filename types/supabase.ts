@@ -561,6 +561,7 @@ export interface Database {
       }
       influencer_social_profiles: {
         Row: {
+          avatar_url: string | null
           created_at: string | null
           email: string | null
           id: string
@@ -572,6 +573,7 @@ export interface Database {
           username: string
         }
         Insert: {
+          avatar_url?: string | null
           created_at?: string | null
           email?: string | null
           id?: string
@@ -583,6 +585,7 @@ export interface Database {
           username: string
         }
         Update: {
+          avatar_url?: string | null
           created_at?: string | null
           email?: string | null
           id?: string
@@ -1001,7 +1004,7 @@ export interface Database {
           }
         ]
       }
-      sequence_email: {
+      sequence_emails: {
         Row: {
           created_at: string
           email_delivery_status: string | null
@@ -1009,6 +1012,7 @@ export interface Database {
           email_send_at: string | null
           email_tracking_status: string | null
           id: string
+          sequence_id: string | null
           sequence_influencer_id: string
           sequence_step_id: string
           updated_at: string
@@ -1020,6 +1024,7 @@ export interface Database {
           email_send_at?: string | null
           email_tracking_status?: string | null
           id?: string
+          sequence_id?: string | null
           sequence_influencer_id: string
           sequence_step_id: string
           updated_at?: string
@@ -1031,19 +1036,26 @@ export interface Database {
           email_send_at?: string | null
           email_tracking_status?: string | null
           id?: string
+          sequence_id?: string | null
           sequence_influencer_id?: string
           sequence_step_id?: string
           updated_at?: string
         }
         Relationships: [
           {
-            foreignKeyName: "sequence_email_sequence_influencer_id_fkey"
+            foreignKeyName: "sequence_emails_sequence_id_fkey"
+            columns: ["sequence_id"]
+            referencedRelation: "sequences"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sequence_emails_sequence_influencer_id_fkey"
             columns: ["sequence_influencer_id"]
             referencedRelation: "sequence_influencers"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "sequence_email_sequence_step_id_fkey"
+            foreignKeyName: "sequence_emails_sequence_step_id_fkey"
             columns: ["sequence_step_id"]
             referencedRelation: "sequence_steps"
             referencedColumns: ["id"]

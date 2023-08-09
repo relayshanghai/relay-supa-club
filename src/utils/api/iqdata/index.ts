@@ -7,6 +7,7 @@ import { prepareFetchCreatorsFiltered } from './transforms';
 import type { TikTokVideoDataRaw } from 'types/iqdata/tiktok-video-info';
 import type { YoutubeVideoDataRaw } from 'types/iqdata/youtube-video-info';
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { rudderstack } from 'src/utils/rudderstack';
 
 export const IQDATA_URL = 'https://socapi.icu/v2.0/api/';
 
@@ -25,8 +26,8 @@ export const withServerContextIqdata = (fetchFunction: (...args: any[]) => any) 
     };
 };
 
-export const withServerContext = (fetchFunction: (args: any) => any) => {
-    return (args: any, context?: ServerContext) => {
+export const withServerContext = <T extends (args: any) => any>(fetchFunction: T) => {
+    return (args: Parameters<T>[0], context?: ServerContext) => {
         return fetchFunction({ ...args, context });
     };
 };
@@ -50,6 +51,8 @@ export const iqDataFetch = async <T = any>(path: string, options: RequestInit & 
 
     await handleResError(res, path, context);
     const json = await res.json();
+
+    await rudderstack.send(json);
     return json as T;
 };
 
@@ -117,11 +120,11 @@ export const fetchYoutubeVideoInfo = async (videoUrl: string, context?: ServerCo
 export const fetchTiktokVideoInfo = async (videoUrl: string, context?: ServerContext) =>
     await iqDataFetch<TikTokVideoDataRaw>(`raw/tt/user/media?${new URLSearchParams({ url: videoUrl })}`, { context });
 
-export const fetchIqDataLookalikeByAudienceWithContext = withServerContextIqdata(fetchIqDataLookalikeByAudience);
-export const fetchIqDataLookalikeByInfluencerWithContext = withServerContextIqdata(fetchIqDataLookalikeByInfluencer);
+// export const fetchIqDataLookalikeByAudienceWithContext = withServerContextIqdata(fetchIqDataLookalikeByAudience);
+// export const fetchIqDataLookalikeByInfluencerWithContext = withServerContextIqdata(fetchIqDataLookalikeByInfluencer);
 export const fetchIqDataTopicsWithContext = withServerContextIqdata(fetchIqDataTopics);
 export const fetchIqDataGeosWithContext = withServerContextIqdata(fetchIqDataGeos);
-export const fetchCreatorsFilteredWithContext = withServerContextIqdata(fetchCreatorsFiltered);
+// export const fetchCreatorsFilteredWithContext = withServerContextIqdata(fetchCreatorsFiltered);
 export const requestNewReportWithContext = withServerContextIqdata(requestNewReport);
 export const fetchReportWithContext = withServerContextIqdata(fetchReport);
 export const fetchReportsMetadataWithContext = withServerContextIqdata(fetchReportsMetadata);
