@@ -1,6 +1,9 @@
 import useSWR from 'swr';
 import { useClientDb, useDB } from 'src/utils/client-db/use-client-db';
-import { createSequenceInfluencerCall, updateSequenceInfluencerCall } from 'src/utils/api/db/calls/sequence-influencers';
+import {
+    createSequenceInfluencerCall,
+    updateSequenceInfluencerCall,
+} from 'src/utils/api/db/calls/sequence-influencers';
 import type { SequenceInfluencerInsert, SequenceInfluencerUpdate } from 'src/utils/api/db';
 import { useUser } from 'src/hooks/use-user';
 import { clientLogger } from 'src/utils/logger-client';
@@ -33,7 +36,8 @@ export const useSequenceInfluencers = (sequenceId?: string) => {
         } catch (error) {
             clientLogger(error, 'error');
         }
-      
+    };
+
     const updateSequenceInfluencerDBCall = useDB(updateSequenceInfluencerCall);
     const updateSequenceInfluencer = async (update: SequenceInfluencerUpdate) => {
         const res = await updateSequenceInfluencerDBCall(update);
@@ -41,7 +45,6 @@ export const useSequenceInfluencers = (sequenceId?: string) => {
         refreshSequenceInfluencers();
 
         return res;
-
     };
 
     return {

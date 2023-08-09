@@ -45,18 +45,17 @@ export const AddToSequenceModal = ({
         if (!selectedSequence) {
             throw new Error('Missing selectedSequence');
         }
-        if (!socialProfileId) {
-            throw new Error('Missing socialProfileId');
-        }
-        try {
-            await createSequenceInfluencer(socialProfileId);
-            toast.success(t('creators.addToSequenceSuccess'));
-        } catch (error) {
-            clientLogger(error);
-            toast.error(t('creators.addToSequenceError'));
-        } finally {
-            setLoading(false);
-            setShow(false);
+        if (socialProfileId) {
+            try {
+                await createSequenceInfluencer(socialProfileId);
+                toast.success(t('creators.addToSequenceSuccess'));
+            } catch (error) {
+                clientLogger(error);
+                toast.error(t('creators.addToSequenceError'));
+            } finally {
+                setLoading(false);
+                setShow(false);
+            }
         }
     }, [createSequenceInfluencer, selectedSequence, setShow, socialProfileId, t]);
 
