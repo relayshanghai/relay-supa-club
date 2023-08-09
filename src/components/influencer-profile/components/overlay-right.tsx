@@ -27,7 +27,7 @@ export const OverlayRight = ({ children, ...props }: Props) => {
     return (
         <>
             <div
-                className={`${overlayCls} fixed right-0 top-0 z-[60] h-full w-full max-w-md transform bg-white transition-all duration-300`}
+                className={`${overlayCls} fixed right-0 top-0 z-[60] h-full w-full max-w-md transform overflow-auto bg-white transition-all duration-300`}
                 tabIndex={-1}
             >
                 <div className="float-right flex px-3 py-3">

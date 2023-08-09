@@ -3,7 +3,13 @@ import { OverlayRight } from 'src/components/influencer-profile/components/overl
 import { ProfileScreen } from 'src/components/influencer-profile/screens/profile-screen';
 
 export default function ComponentStage() {
-    const [isOverlayOpen, setIsOverlayOpen] = useState(false);
+    const [isOverlayOpen, setIsOverlayOpen] = useState(true);
+    const [profile] = useState({
+        username: 'TastyChef',
+        platform: 'instagram',
+        name: "D'Jon Curtis",
+        avatar: 'https://api.dicebear.com/6.x/open-peeps/svg?seed=TastyChef&size=96',
+    });
 
     const toggleOverlay = useCallback(() => {
         setIsOverlayOpen((s) => !s);
@@ -27,7 +33,14 @@ export default function ComponentStage() {
                     console.log('overlay opened!');
                 }}
             >
-                <ProfileScreen />
+                <ProfileScreen
+                    profile={profile}
+                    onCancel={() => toggleOverlay()}
+                    onUpdate={(data) => {
+                        // eslint-disable-next-line no-console
+                        console.log('update!', data);
+                    }}
+                />
             </OverlayRight>
         </>
     );

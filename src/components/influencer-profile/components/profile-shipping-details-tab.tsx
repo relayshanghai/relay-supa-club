@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { ShippingDetailsCityInput } from './shipping-details-city-input';
 import { ShippingDetailsCountryInput } from './shipping-details-country-input';
 import { ShippingDetailsFullAddressInput } from './shipping-details-full-address-input';
@@ -42,15 +42,15 @@ export const ProfileShippingDetailsTab = (props: Props) => {
         };
     });
 
-    const handleUpdate = useCallback((k: string, v: string) => {
-        setData((state) => {
-            return { ...state, [k]: v };
-        });
-    }, []);
-
-    useEffect(() => {
-        props.onUpdate && props.onUpdate(data);
-    }, [data, props]);
+    const handleUpdate = useCallback(
+        (k: string, v: string) => {
+            setData((state) => {
+                return { ...state, [k]: v };
+            });
+            props.onUpdate && props.onUpdate(data);
+        },
+        [data, props],
+    );
 
     return (
         <>

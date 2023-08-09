@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { CollabAffiliateLinkInput } from './collab-affiliate-link-input';
 import { CollabFeeInput } from './collab-fee-input';
 import { CollabScheduledPostDateInput } from './collab-scheduled-post-date-input';
@@ -6,7 +6,7 @@ import { CollabVideoDetailsInput } from './collab-video-details-input';
 import { OutreachCollabStatusInput } from './outreach-collab-status-input';
 import { OutreachNotesInput } from './outreach-notes-input';
 
-export type ProfileNotesDetails = {
+export type ProfileNotes = {
     collabStatus: string;
     notes: string;
     fee: string;
@@ -16,8 +16,8 @@ export type ProfileNotesDetails = {
 };
 
 type Props = {
-    onUpdate?: (data: ProfileNotesDetails) => void;
-    value?: Partial<ProfileNotesDetails>;
+    onUpdate?: (data: ProfileNotes) => void;
+    value?: Partial<ProfileNotes>;
 };
 
 export const ProfileNotesTab = (props: Props) => {
@@ -33,15 +33,15 @@ export const ProfileNotesTab = (props: Props) => {
         };
     });
 
-    const handleUpdate = useCallback((k: string, v: string) => {
-        setData((state) => {
-            return { ...state, [k]: v };
-        });
-    }, []);
-
-    useEffect(() => {
-        props.onUpdate && props.onUpdate(data);
-    }, [data, props]);
+    const handleUpdate = useCallback(
+        (k: string, v: string) => {
+            setData((state) => {
+                return { ...state, [k]: v };
+            });
+            props.onUpdate && props.onUpdate(data);
+        },
+        [data, props],
+    );
 
     return (
         <>
