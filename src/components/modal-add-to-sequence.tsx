@@ -25,11 +25,12 @@ export const AddToSequenceModal = ({
     // TODO: need to also add the case if already added to the sequence logic here V2-730
     const { i18n, t } = useTranslation();
     const { sequences } = useSequences();
+    const { socialProfile } = useReport({ platform, creator_id: selectedCreator.user_id || '' });
 
     const [selectedSequence, setSelectedSequence] = useState<Sequence | null>(sequences?.[0] ?? null);
     const [loading, setLoading] = useState<boolean>(false);
-    const [socialProfileId, setSocialProfileId] = useState<string | null>(null);
-    const { socialProfile } = useReport({ platform, creator_id: selectedCreator.user_id || '' });
+    const [socialProfileId, setSocialProfileId] = useState(() => socialProfile?.id ?? null);
+
     const { createSequenceInfluencer } = useSequenceInfluencers(selectedSequence?.id);
 
     const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
