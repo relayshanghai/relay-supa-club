@@ -1,8 +1,6 @@
-import EmailOutlineColored from 'src/components/icons/EmailOutlineColored';
 import type { DetailedHTMLProps, HTMLAttributes } from 'react';
-import React, { useMemo } from 'react';
-import TiktokNoBg from 'src/components/icons/TiktokNoBg';
-import YoutubeNoBg from 'src/components/icons/YoutubeNoBg';
+import { useMemo } from 'react';
+import { EmailOutlineColored, TiktokNoBg, YoutubeNoBg } from 'src/components/icons';
 
 // @note probably exists already
 export type Profile = {
