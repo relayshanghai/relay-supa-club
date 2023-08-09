@@ -2,17 +2,42 @@ import Link from 'next/link';
 import { collabOptions } from './collab-status';
 import { InboxIcon } from 'src/components/icons';
 import { imgProxy } from 'src/utils/fetcher';
+import { useCallback } from 'react';
 
-interface InfluencerRowProps {
+export type InfluencerRowProps = {
     index: number;
     influencer: any;
     onCheckboxChange?: () => void;
-}
+    onRowClick?: (data: InfluencerRowProps['influencer']) => void;
+};
 
-export const InfluencerRow = ({ index, influencer }: InfluencerRowProps) => {
+export const InfluencerRow = ({ index, influencer, ...props }: InfluencerRowProps) => {
     const { collabstatus, info, manager, tags, lastupdated, unread } = influencer;
+
+    const handleRowClick = useCallback(
+        (influencer: InfluencerRowProps['influencer']) => {
+            // eslint-disable-next-line no-console
+            console.log('row clicked');
+            props.onRowClick && props.onRowClick(influencer);
+        },
+        [props],
+    );
+
+    const handleInboxClick = useCallback(
+        (e: any) => {
+            e.stopPropagation();
+            // eslint-disable-next-line no-console
+            console.log('inbox clicked', influencer.id);
+        },
+        [influencer],
+    );
+
     return (
-        <tr key={influencer.id + index} className="group cursor-default text-sm  hover:bg-primary-50">
+        <tr
+            onClick={() => handleRowClick(influencer)}
+            key={influencer.id + index}
+            className="group cursor-default text-sm  hover:bg-primary-50"
+        >
             {/* <td className="whitespace-nowrap items-center text-center display-none">
                 <input className="appearance-none rounded border-gray-300 checked:text-primary-500" checked={checked} onChange={onCheckboxChange} type='checkbox' />
             </td> */}
@@ -61,7 +86,10 @@ export const InfluencerRow = ({ index, influencer }: InfluencerRowProps) => {
             </td>
             <td className="whitespace-nowrap px-6 py-4 font-medium text-gray-600">{lastupdated}</td>
             <td className="whitespace-nowrap py-4 pl-6">
-                <div className="relative w-fit cursor-pointer rounded-md border-2 border-primary-500 px-4 py-2">
+                <div
+                    onClick={handleInboxClick}
+                    className="relative w-fit cursor-pointer rounded-md border-2 border-primary-500 px-4 py-2"
+                >
                     <InboxIcon className="h-6 w-6 stroke-primary-500" />
                     {unread && <div className="absolute -right-2 -top-2 h-4 w-4 rounded-full bg-red-500" />}
                 </div>
