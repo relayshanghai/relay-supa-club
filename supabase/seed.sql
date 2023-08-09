@@ -360,6 +360,7 @@ OR REPLACE FUNCTION create_sequence_influencer(
   influencer_social_profile_id UUID,
   email TEXT,
   funnel_status TEXT,
+  sequence_step NUMERIC DEFAULT 0,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
 ) RETURNS RECORD SECURITY DEFINER LANGUAGE plpgsql AS $$
     DECLARE
@@ -401,7 +402,7 @@ OR REPLACE FUNCTION create_sequence_influencer(
           'USD',
           'real_full_name',
           '2027-01-01 00:00:00.000000+00',
-          0,
+          sequence_step,
           ARRAY['tag1', 'tag2'],
           'video_details'           
         )
@@ -450,7 +451,8 @@ CREATE OR REPLACE FUNCTION create_influencer_social_profile(
   _reference_id TEXT,
   _username TEXT,
   _name TEXT,
-  _email TEXT
+  _email TEXT,
+  _avatar_url TEXT DEFAULT 'https://image-cache.relay.club/?link=https://yt3.googleusercontent.com/ytc/AOPolaSe-ifBRtdfb67uDM8kaHdhdPdQny-MaSRdBfT2NA=s480-c-k-c0x00ffffff-no-rj'
 ) RETURNS RECORD SECURITY DEFINER LANGUAGE plpgsql AS $$
 DECLARE
   _row RECORD;
@@ -464,7 +466,8 @@ BEGIN
     username,
     created_at,
     name,
-    email
+    email,
+    avatar_url
   )
   VALUES (
     uuid_generate_v4(),
@@ -475,7 +478,8 @@ BEGIN
     _username,
     now(),
     _name,
-    _email
+    _email,
+    _avatar_url
   )
   RETURNING * INTO _row;
   RETURN _row;
@@ -827,6 +831,7 @@ BEGIN
     _influencer_social_profile_bob_2.id,
     _influencer_social_profile_bob_2.email,
     'To Contact',
+    0,
     '2020-01-01 00:00:00.000000+00'
   );
 
@@ -837,6 +842,7 @@ BEGIN
     _influencer_social_profile_charlie_1.id,
     _influencer_social_profile_charlie_1.email,
     'To Contact',
+    0,
     '2030-01-01 00:00:00.000000+00'
   );    
 
@@ -854,7 +860,8 @@ BEGIN
     _profile_william.id,
     _influencer_social_profile_felicia_1.id,
     _influencer_social_profile_felicia_1.email,
-    'In Sequence'
+    'In Sequence',
+    1
   );       
   _sequence_influencer_georgia := create_sequence_influencer(
     _company_test.id,
@@ -862,7 +869,8 @@ BEGIN
     _profile_william.id,
     _influencer_social_profile_georgia_1.id,
     _influencer_social_profile_georgia_1.email,
-    'Ignored'
+    'Ignored',
+    1
   ); 
 
   PERFORM create_sequence_email(
@@ -913,7 +921,7 @@ BEGIN
   PERFORM create_sequence_email(
     _sequence_general.id,
     _sequence_influencer_georgia.id,
-    _sequence_step_outreach.id,
+    _sequence_step_follow_up_1.id,
     'Bounced',
     null,
     '2024-08-02 02:00:00.000000+00'
