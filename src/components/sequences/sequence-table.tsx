@@ -1,5 +1,7 @@
 import type { SequenceInfluencer, SequenceEmail, SequenceStep } from 'src/utils/api/db';
 import SequenceRow from './sequence-row';
+import { useTranslation } from 'react-i18next';
+import { sequenceColumns } from './constants';
 
 interface SequenceTableProps {
     sequenceInfluencers: SequenceInfluencer[];
@@ -7,6 +9,7 @@ interface SequenceTableProps {
     sequenceSteps: SequenceStep[];
     currentTab: SequenceInfluencer['funnel_status'];
 }
+
 const sortInfluencers = (currentTab: SequenceInfluencer['funnel_status'], influencers?: SequenceInfluencer[]) => {
     if (currentTab === 'To Contact') {
         influencers?.sort((a, b) => {
@@ -20,18 +23,28 @@ const sortInfluencers = (currentTab: SequenceInfluencer['funnel_status'], influe
 
     return influencers;
 };
-const SequenceTable: React.FC<SequenceTableProps> = ({ sequenceInfluencers, allSequenceEmails, sequenceSteps }) => {
+const SequenceTable: React.FC<SequenceTableProps> = ({
+    sequenceInfluencers,
+    allSequenceEmails,
+    sequenceSteps,
+    currentTab,
+}) => {
     const sortedInfluencers = sortInfluencers('To Contact', sequenceInfluencers);
+    const { t } = useTranslation();
 
+    const columns = sequenceColumns(currentTab);
     return (
         <table className="border-collapse border border-gray-300">
             <thead>
-                <tr className="bg-gray-100">
-                    <th className="border-b px-4 py-2">Name</th>
-                    <th className="border-b px-4 py-2">Email</th>
-                    <th className="border-b px-4 py-2">Sequence Step</th>
-                    <th className="border-b px-4 py-2">Date added</th>
-                    <th className="border-b px-4 py-2">Status</th>
+                <tr>
+                    {columns.map((column) => (
+                        <th
+                            key={column}
+                            className="whitespace-nowrap bg-white px-6 py-3 text-left text-xs font-normal tracking-wider text-gray-500"
+                        >
+                            {t(`sequences.columns.${column}`)}
+                        </th>
+                    ))}
                 </tr>
             </thead>
             <tbody>
@@ -47,6 +60,8 @@ const SequenceTable: React.FC<SequenceTableProps> = ({ sequenceInfluencers, allS
                             key={influencer.id}
                             sequenceInfluencer={influencer}
                             sequenceEmail={sequenceEmail}
+                            sequenceSteps={sequenceSteps}
+                            currentTab={currentTab}
                         />
                     );
                 })}

@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 import { t } from 'i18next';
 import Link from 'next/link';
 import { useRef, useState } from 'react';

@@ -11,5 +11,19 @@ const sequences = {
     openRateTooltip: 'Open rate tooltip',
     replyRateTooltip: 'Reply rate tooltip',
     bounceRateTooltip: 'Bounce rate tooltip',
+    columns: {
+        name: 'Name',
+        email: 'Email',
+        influencerTopics: 'Influencer topics',
+        dateAdded: 'Date added',
+        sequenceActions: 'Sequence actions',
+        currentStep: 'Current step',
+        status: 'Status',
+        sendTime: 'Send time',
+        nextEmailPreview: 'Next email preview',
+        lastEmailSent: 'Last email sent',
+        restartSequence: 'Restart sequence',
+    },
+    addEmail: 'Add email',
 };
 export default sequences;

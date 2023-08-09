@@ -17,7 +17,10 @@ export const mapIqdataProfileToInfluencer = (
 
 export const mapIqdataProfileToInfluencerSocialProfile = (
     userProfile: CreatorReport['user_profile'],
-): Pick<InfluencerSocialProfileInsert, 'url' | 'username' | 'platform' | 'reference_id' | 'name' | 'email'> => {
+): Pick<
+    InfluencerSocialProfileInsert,
+    'url' | 'username' | 'platform' | 'reference_id' | 'name' | 'email' | 'avatar_url'
+> => {
     const contacts = userProfile.contacts || [];
     const email = contacts.find((v: any) => v.type === 'email') || { value: null };
     return {
@@ -27,6 +30,7 @@ export const mapIqdataProfileToInfluencerSocialProfile = (
         reference_id: `iqdata:${userProfile.user_id}`,
         name: userProfile.fullname || userProfile.username || userProfile.handle || userProfile.custom_name || '',
         email: email.value,
+        avatar_url: userProfile.picture,
     };
 };
 
