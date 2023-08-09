@@ -1,7 +1,10 @@
 import useSWR from 'swr';
 
 import { useClientDb, useDB } from 'src/utils/client-db/use-client-db';
-import { updateSequenceInfluencerCall } from 'src/utils/api/db/calls/sequence-influencers';
+import {
+    deleteSequenceInfluencerCall,
+    updateSequenceInfluencerCall,
+} from 'src/utils/api/db/calls/sequence-influencers';
 import type { SequenceInfluencerUpdate } from 'src/utils/api/db';
 
 export const useSequenceInfluencers = (sequenceId?: string) => {
@@ -14,9 +17,14 @@ export const useSequenceInfluencers = (sequenceId?: string) => {
     const updateSequenceInfluencerDBCall = useDB(updateSequenceInfluencerCall);
     const updateSequenceInfluencer = async (update: SequenceInfluencerUpdate) => {
         const res = await updateSequenceInfluencerDBCall(update);
-
         refreshSequenceInfluencers();
+        return res;
+    };
 
+    const deleteSequenceInfluencerDBCall = useDB(deleteSequenceInfluencerCall);
+    const deleteSequenceInfluencer = async (id: string) => {
+        const res = await deleteSequenceInfluencerDBCall(id);
+        refreshSequenceInfluencers();
         return res;
     };
 
@@ -24,5 +32,6 @@ export const useSequenceInfluencers = (sequenceId?: string) => {
         sequenceInfluencers,
         updateSequenceInfluencer,
         refreshSequenceInfluencers,
+        deleteSequenceInfluencer,
     };
 };

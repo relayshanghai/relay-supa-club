@@ -68,3 +68,4 @@ export { default as CheckCircleOutline } from './CheckCircleOutline';
 export { default as AlertCircleOutline } from './AlertCircleOutline';
 export { default as FilterFunnel } from './FilterFunnel';
 export { default as InboxIcon } from './InboxIcon';
+export { default as DeleteOutline } from './DeleteOutline';
