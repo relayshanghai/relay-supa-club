@@ -611,6 +611,41 @@ BEGIN
 END;
 $$;
 
+CREATE OR REPLACE FUNCTION create_template_variable(
+  _sequence_id UUID,
+  _key TEXT,
+  _name TEXT,
+  _value TEXT DEFAULT '',
+  _required BOOLEAN DEFAULT true
+) RETURNS RECORD SECURITY DEFINER LANGUAGE plpgsql AS $$
+DECLARE
+  _row RECORD;
+BEGIN
+  INSERT INTO template_variables (
+    id,
+    created_at,
+    updated_at,
+    key,
+    name,
+    value,
+    sequence_id,
+    required
+  )
+  VALUES (
+    uuid_generate_v4(),
+    now(),
+    now(),
+    _key,
+    _name,
+    _value,
+    _sequence_id,
+    _required
+  )
+  RETURNING * INTO _row;
+  RETURN _row;
+END;
+$$;
+
 -- seed data
 DO $$
 DECLARE
@@ -872,7 +907,6 @@ BEGIN
     null,
     '2024-08-01 00:00:00.000000+00'
   );
-
   PERFORM create_sequence_email(
     _sequence_general.id,
     _sequence_influencer_daniel.id,
@@ -881,7 +915,6 @@ BEGIN
     null,
     '2024-08-02 00:00:00.000000+00'
   );
-
   PERFORM create_sequence_email(
     _sequence_general.id,
     _sequence_influencer_felicia.id,
@@ -890,7 +923,6 @@ BEGIN
     null,
     '2024-08-01 01:00:00.000000+00'
   );
-
   PERFORM create_sequence_email(
     _sequence_general.id,
     _sequence_influencer_felicia.id,
@@ -899,7 +931,6 @@ BEGIN
     'Opened',
     '2024-08-02 01:00:00.000000+00'
   );
-
   PERFORM create_sequence_email(
     _sequence_general.id,
     _sequence_influencer_georgia.id,
@@ -908,7 +939,6 @@ BEGIN
     'Link Clicked',
     '2024-08-01 02:00:00.000000+00'
   );
-
   PERFORM create_sequence_email(
     _sequence_general.id,
     _sequence_influencer_georgia.id,
@@ -916,6 +946,48 @@ BEGIN
     'Bounced',
     null,
     '2024-08-02 02:00:00.000000+00'
+  );
+
+  PERFORM create_template_variable(
+    _sequence_general.id,
+    'marketingManagerName',
+    'Marketing Manager Name',
+    'Vivian'
+  );
+  PERFORM create_template_variable(
+    _sequence_general.id,
+    'brandName',
+    'Brand Name',
+    'Blue Moonlight Stream Industries'
+  );
+  PERFORM create_template_variable(
+    _sequence_general.id,
+    'productName',
+    'Product Name',
+    'Widget X'
+  );
+  PERFORM create_template_variable(
+    _sequence_general.id,
+    'productDescription',
+    'Product Description'
+  );
+  PERFORM create_template_variable(
+    _sequence_general.id,
+    'productFeatures',
+    'Product Features',
+    'Your Product Features'
+  );
+  PERFORM create_template_variable(
+    _sequence_general.id,
+    'productLink',
+    'Product Link',
+    'https://example.com/product'
+  );
+  PERFORM create_template_variable(
+    _sequence_general.id,
+    'influencerNiche',
+    'Influencer Niche',
+    'Consumer Electronics'
   );
 
   -- Influencer 3 will have no social profiles so we can handle this edge case
@@ -1048,4 +1120,5 @@ DROP FUNCTION IF EXISTS create_sequence;
 DROP FUNCTION IF EXISTS create_sequence_influencer;
 DROP FUNCTION IF EXISTS create_sequence_steps;
 DROP FUNCTION IF EXISTS create_sequence_email;
+DROP FUNCTION IF EXISTS create_template_variable;
 COMMIT;

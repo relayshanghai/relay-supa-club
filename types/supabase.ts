@@ -1227,7 +1227,7 @@ export interface Database {
       template_variables: {
         Row: {
           created_at: string
-          id: number
+          id: string
           key: string
           name: string
           required: boolean
@@ -1237,7 +1237,7 @@ export interface Database {
         }
         Insert: {
           created_at?: string
-          id?: number
+          id?: string
           key: string
           name: string
           required?: boolean
@@ -1247,7 +1247,7 @@ export interface Database {
         }
         Update: {
           created_at?: string
-          id?: number
+          id?: string
           key?: string
           name?: string
           required?: boolean
