@@ -182,6 +182,8 @@ const creators = {
     sequence: 'Sequence',
     addToSequenceNotes: 'Influencers added to this sequence will receive emails automatically from',
     noSequence: 'No sequence created yet',
+    addToSequenceSuccess: 'Influencer added to sequence successfully',
+    addToSequenceError: 'Error adding influencer to sequence',
 };
 
 export default creators;

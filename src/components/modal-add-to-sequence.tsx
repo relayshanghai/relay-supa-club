@@ -50,15 +50,15 @@ export const AddToSequenceModal = ({
         }
         try {
             await createSequenceInfluencer(socialProfileId);
-            toast.success('Added to sequence successfully');
+            toast.success(t('creators.addToSequenceSuccess'));
         } catch (error) {
             clientLogger(error);
-            toast.error('An error occurred, please try again');
+            toast.error(t('creators.addToSequenceError'));
         } finally {
             setLoading(false);
             setShow(false);
         }
-    }, [createSequenceInfluencer, selectedSequence, setShow, socialProfileId]);
+    }, [createSequenceInfluencer, selectedSequence, setShow, socialProfileId, t]);
 
     useEffect(() => {
         if (socialProfile?.id) {

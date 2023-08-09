@@ -178,5 +178,7 @@ const creators = {
     translate: 'KOL 将自动收到来自',
     addToSequenceNotes: '加入序列的 KOL 将收到自动发送的邮件，开始发送时间为 ',
     noSequence: '没有创建序列',
+    addToSequenceSuccess: ' KOL 已成功加入序列',
+    addToSequenceError: '加入序列失败,请稍候重试',
 };
 export default creators;
