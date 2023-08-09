@@ -27,5 +27,12 @@ const sequences = {
     },
     addEmail: '添加邮件',
     newSequence: '新建序列',
+    indexColumns: {
+        sequence: '序列',
+        influencers: 'KOL',
+        openRate: '打开率',
+        manager: '经理',
+        product: '产品',
+    },
 };
 export default sequences;

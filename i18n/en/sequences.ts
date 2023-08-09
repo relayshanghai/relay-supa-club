@@ -27,5 +27,12 @@ const sequences = {
     },
     addEmail: 'Add email',
     newSequence: 'New sequence',
+    indexColumns: {
+        sequence: 'Sequence',
+        influencers: 'Influencers',
+        openRate: 'Open rate',
+        manager: 'Manager',
+        product: 'Product',
+    },
 };
 export default sequences;

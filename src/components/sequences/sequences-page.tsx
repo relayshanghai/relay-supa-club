@@ -1,5 +1,4 @@
 /* eslint-disable complexity */
-import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import { useSequences } from 'src/hooks/use-sequences';
 import { useState } from 'react';
@@ -10,6 +9,7 @@ import { Button } from '../button';
 // import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 // import { useSequenceEmails } from 'src/hooks/use-sequence-emails';
 import { CreateSequenceModal } from './create-sequence-modal';
+import SequencesTable from './sequences-table';
 
 export const SequencesPage = () => {
     const { t } = useTranslation();
@@ -59,14 +59,7 @@ export const SequencesPage = () => {
                     }
                 /> */}
 
-                {/* TODO: create a sequencesTable component */}
-                <ul>
-                    {sequences?.map((sequence) => (
-                        <li key={sequence.id}>
-                            <Link href={`/sequences/${sequence.id}`}>{sequence.name}</Link>
-                        </li>
-                    ))}
-                </ul>
+                <SequencesTable sequences={sequences} />
             </div>
         </Layout>
     );
