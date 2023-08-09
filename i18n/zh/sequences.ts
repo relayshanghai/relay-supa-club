@@ -1,4 +1,5 @@
 const sequences = {
+    sequences: '全部序列',
     updateTemplateVariables: '更新邮模版件参数',
     needsAttention: '等待处理',
     inSequence: '序列中',
@@ -25,5 +26,6 @@ const sequences = {
         restartSequence: '重新开始序列',
     },
     addEmail: '添加邮件',
+    newSequence: '新建序列',
 };
 export default sequences;

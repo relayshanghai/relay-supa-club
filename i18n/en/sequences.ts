@@ -1,4 +1,5 @@
 const sequences = {
+    sequences: 'Sequences',
     updateTemplateVariables: 'Update template variables',
     needsAttention: 'Needs attention',
     inSequence: 'In sequence',
@@ -25,5 +26,6 @@ const sequences = {
         restartSequence: 'Restart sequence',
     },
     addEmail: 'Add email',
+    newSequence: 'New sequence',
 };
 export default sequences;

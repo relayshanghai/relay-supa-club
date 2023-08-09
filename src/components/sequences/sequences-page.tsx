@@ -1,145 +1,47 @@
 /* eslint-disable complexity */
-import { Layout } from '../layout';
-import SequenceTable from './sequence-table';
-import { testAccount } from 'src/utils/api/email-engine/prototype-mocks';
-
-import { clientLogger } from 'src/utils/logger-client';
-import { SequenceStats } from './sequence-stats';
-import { useUser } from 'src/hooks/use-user';
-import { useCompany } from 'src/hooks/use-company';
-import { useSequences } from 'src/hooks/use-sequences';
-import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
-import { useSequence } from 'src/hooks/use-sequence';
-
-import { Brackets, Spinner } from '../icons';
-import { useSequenceEmails } from 'src/hooks/use-sequence-emails';
-import type { TabsProps } from '../library';
-import { Badge, Switch, Tabs } from '../library';
-import { Button } from '../button';
-import { useState } from 'react';
-import { TemplateVariablesModal } from './template-variables-modal';
+import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
-import type { SequenceInfluencer } from 'src/utils/api/db';
+import { useSequences } from 'src/hooks/use-sequences';
+import { useState } from 'react';
+import { Layout } from '../layout';
+import { Plus } from '../icons';
+import { Button } from '../button';
+// import { SequenceStats } from './sequence-stats';
+// import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
+// import { useSequenceEmails } from 'src/hooks/use-sequence-emails';
+import { CreateSequenceModal } from './create-sequence-modal';
 
 export const SequencesPage = () => {
     const { t } = useTranslation();
+    const { sequences } = useSequences();
+    // const { sequenceInfluencers } = useSequenceInfluencers(sequence?.id);
+    // const { sequenceEmails: allSequenceEmails } = useSequenceEmails(sequence?.id);
+    const [showCreateSequenceModal, setShowCreateSequenceModal] = useState<boolean>(false);
 
-    const { profile } = useUser();
-    const { company } = useCompany();
-    const { sequences } = useSequences(); // later we won't use this, the sequence id will be passed down from the index page.
-    const { sequence, sendSequence, sequenceSteps, updateSequence } = useSequence(sequences?.[0]?.id);
-    const { sequenceInfluencers, updateSequenceInfluencer } = useSequenceInfluencers(sequence?.id);
-    const { sequenceEmails: allSequenceEmails, updateSequenceEmail } = useSequenceEmails(sequence?.id);
-
-    const handleStartSequence = async () => {
-        // update sequence - autostart - true.
-        const allResults = [];
-        if (!sequenceInfluencers || !sequenceSteps) {
-            return;
-        }
-        for (const sequenceInfluencer of sequenceInfluencers) {
-            const sequenceEmails = allSequenceEmails?.filter(
-                (email) => email.sequence_influencer_id === sequenceInfluencer.id,
-            );
-            if (!sequenceEmails) {
-                allResults.push('no email for sequenceInfluencer: ' + sequenceInfluencer.id);
-                continue;
-            }
-            const params = {
-                companyName: company?.name ?? '',
-                outreachPersonName: profile?.first_name ?? '',
-            };
-            const results = await sendSequence({
-                account: testAccount,
-                sequenceInfluencer,
-                sequenceEmails,
-                params,
-                sequenceSteps,
-                updateSequenceEmail,
-                updateSequenceInfluencer,
-            });
-            allResults.push(results);
-        }
-        clientLogger(allResults);
+    const handleOpenCreateSequenceModal = () => {
+        setShowCreateSequenceModal(true);
     };
 
-    const handleAutostartToggle = async (checked: boolean) => {
-        if (!sequence) {
-            return;
-        }
-        await updateSequence({ id: sequence.id, auto_start: checked });
-        if (checked) {
-            // TODO: This is not the final logic
-            await handleStartSequence();
-        }
-    };
-
-    const [showUpdateTemplateVariables, setShowUpdateTemplateVariables] = useState(false);
-    const handleOpenUpdateTemplateVariables = () => {
-        setShowUpdateTemplateVariables(true);
-    };
-
-    const needsAttentionInfluencers = sequenceInfluencers?.filter(
-        (influencer) => influencer.funnel_status === 'To Contact',
-    );
-    const inSequenceInfluencers = sequenceInfluencers?.filter(
-        (influencer) => influencer.funnel_status === 'In Sequence',
-    );
-    const ignoredInfluencers = sequenceInfluencers?.filter((influencer) => influencer.funnel_status === 'Ignored');
-
-    const tabs: TabsProps<SequenceInfluencer['funnel_status']>['tabs'] = [
-        {
-            label: 'sequences.needsAttention',
-            value: 'To Contact',
-            afterElement:
-                needsAttentionInfluencers?.length && needsAttentionInfluencers?.length > 0 ? (
-                    <Badge roundSize={5}>{needsAttentionInfluencers?.length}</Badge>
-                ) : null,
-        },
-        {
-            label: 'sequences.inSequence',
-            value: 'In Sequence',
-            afterElement:
-                inSequenceInfluencers?.length && inSequenceInfluencers?.length > 0 ? (
-                    <Badge roundSize={5}>{inSequenceInfluencers?.length}</Badge>
-                ) : null,
-        },
-        {
-            label: 'sequences.ignored',
-            value: 'Ignored',
-            afterElement:
-                ignoredInfluencers?.length && ignoredInfluencers?.length > 0 ? (
-                    <Badge roundSize={5}>{ignoredInfluencers?.length}</Badge>
-                ) : null,
-        },
-    ];
-    const [currentTab, setCurrentTab] = useState(tabs[0].value);
-
-    const currentTabInfluencers = sequenceInfluencers?.filter((influencer) => influencer.funnel_status === currentTab);
+    // TODO: get all sequenceInfluencers from all sequences.
+    // TODO: get all sequenceEmails from all sequences.
 
     return (
         <Layout>
-            <TemplateVariablesModal
-                visible={showUpdateTemplateVariables}
-                onClose={() => setShowUpdateTemplateVariables(false)}
-            />
+            <CreateSequenceModal visible={showCreateSequenceModal} onClose={() => setShowCreateSequenceModal(false)} />
             <div className="flex flex-col space-y-4 p-4">
                 <div className="flex w-full">
-                    <h1 className="mr-4 self-center text-2xl font-semibold text-gray-800">{sequence?.name}</h1>
-                    <Switch
-                        checked={sequence?.auto_start ?? false}
-                        afterLabel="Auto-start"
-                        onChange={(e) => {
-                            handleAutostartToggle(e.target.checked);
-                        }}
-                    />
-                    <Button onClick={handleOpenUpdateTemplateVariables} variant="secondary" className="ml-auto flex">
-                        <Brackets className="mr-2" />
-                        <p className="self-center">{t('sequences.updateTemplateVariables')}</p>
+                    <h1 className="mr-4 self-center text-2xl font-semibold text-gray-800">
+                        {t('sequences.sequences')}
+                    </h1>
+
+                    <Button onClick={handleOpenCreateSequenceModal} className="ml-auto flex">
+                        <Plus className="mr-2 h-4 w-4 flex-shrink-0" />
+                        <p className="self-center">{t('sequences.newSequence')}</p>
                     </Button>
                 </div>
-                <SequenceStats
-                    totalInfluencers={sequenceInfluencers?.length || 0}
+                {/* TODO: update the sequenceStats component with real data */}
+                {/* <SequenceStats
+                    totalInfluencers={allSequenceInfluencers?.length || 0}
                     openRate={
                         (allSequenceEmails?.filter(
                             (email) =>
@@ -155,19 +57,16 @@ export const SequencesPage = () => {
                         (allSequenceEmails?.filter((email) => email.email_delivery_status === 'Bounced').length || 1) /
                         (allSequenceEmails?.length || 1)
                     }
-                />
-                <Tabs tabs={tabs} currentTab={currentTab} setCurrentTab={setCurrentTab} />
+                /> */}
 
-                {currentTabInfluencers && sequenceSteps ? (
-                    <SequenceTable
-                        sequenceInfluencers={currentTabInfluencers}
-                        allSequenceEmails={allSequenceEmails}
-                        sequenceSteps={sequenceSteps}
-                        currentTab={currentTab}
-                    />
-                ) : (
-                    <Spinner className="mx-auto mt-10 h-10 w-10 fill-primary-600 text-white" />
-                )}
+                {/* TODO: create a sequencesTable component */}
+                <ul>
+                    {sequences?.map((sequence) => (
+                        <li key={sequence.id}>
+                            <Link href={`/sequences/${sequence.id}`}>{sequence.name}</Link>
+                        </li>
+                    ))}
+                </ul>
             </div>
         </Layout>
     );
