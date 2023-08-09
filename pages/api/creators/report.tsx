@@ -56,7 +56,8 @@ const trackAndSnap = async (
 
 export type CreatorsReportGetResponse = CreatorReport & { createdAt: string } & {
     influencer: InfluencerRow;
-} & { socialProfile: InfluencerSocialProfileRow };
+    socialProfile: InfluencerSocialProfileRow;
+};
 
 // Disabling complexity linting error as fixing this will require a large refactor
 // eslint-disable-next-line complexity
@@ -66,7 +67,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const [influencer, socialProfile] = await getInfluencer(data);
             if (influencer === null) {
                 try {
-                    await db<typeof saveInfluencer>(saveInfluencer)(data);
+                    const [influencer, socialProfile] = await db<typeof saveInfluencer>(saveInfluencer)(data);
+                    return { influencer, socialProfile };
                 } catch (error) {
                     serverLogger(error, 'error', true);
                 }
