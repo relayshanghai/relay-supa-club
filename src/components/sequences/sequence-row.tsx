@@ -9,6 +9,7 @@ import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { useState } from 'react';
 import { TableInlineInput } from '../library/table-inline-input';
 import { Button } from '../button';
+import { DeleteOutline } from '../icons';
 
 interface SequenceRowProps {
     sequenceInfluencer: SequenceInfluencer;
@@ -25,7 +26,9 @@ const getStatus = (sequenceEmail: SequenceEmail | undefined) =>
 
 const SequenceRow: React.FC<SequenceRowProps> = ({ sequenceInfluencer, sequenceEmail, sequenceSteps, currentTab }) => {
     const { influencerSocialProfile } = useInfluencerSocialProfile(sequenceInfluencer.influencer_social_profile_id);
-    const { updateSequenceInfluencer } = useSequenceInfluencers(sequenceInfluencer?.sequence_id);
+    const { updateSequenceInfluencer, deleteSequenceInfluencer } = useSequenceInfluencers(
+        sequenceInfluencer?.sequence_id,
+    );
     const { i18n } = useTranslation();
     const [email, setEmail] = useState(sequenceInfluencer.email ?? '');
 
@@ -88,11 +91,16 @@ const SequenceRow: React.FC<SequenceRowProps> = ({ sequenceInfluencer, sequenceE
                         })}
                     </td>
 
-                    <td className="whitespace-nowrap px-6 py-4 text-gray-600">
+                    <td className="flex items-center whitespace-nowrap px-6 py-4 text-gray-600">
                         {/* TODO */}
                         <Button>Send</Button>
                         {/* <Button>Template</Button> */}
-                        {/* <Button>Delete</Button> */}
+                        <button
+                            onClick={() => deleteSequenceInfluencer(sequenceInfluencer.id)}
+                            data-testid="delete-influencer-button"
+                        >
+                            <DeleteOutline className="ml-4 h-6 w-6 text-gray-300" />
+                        </button>
                     </td>
                 </>
             )}
@@ -112,9 +120,10 @@ const SequenceRow: React.FC<SequenceRowProps> = ({ sequenceInfluencer, sequenceE
                         {/* TODO */}
                         <Button>Preview email</Button>
                     </td>
-                    <td>
-                        {/* TODO */}
-                        <Button>Delete</Button>
+                    <td className="flex items-center px-6 py-4">
+                        <button onClick={() => deleteSequenceInfluencer(sequenceInfluencer.id)}>
+                            <DeleteOutline data-testid="delete-influencer-button" className="h-6 w-6 text-gray-300" />
+                        </button>
                     </td>
                 </>
             )}
@@ -129,7 +138,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({ sequenceInfluencer, sequenceE
                     </td>
                     {/* TODO: add colors and icons for each status */}
                     <td className="whitespace-nowrap px-6 py-4 text-gray-600">{getStatus(sequenceEmail)}</td>
-                    <td className="whitespace-nowrap px-6 py-4 text-gray-600">
+                    <td className=" whitespace-nowrap px-6 py-4 text-gray-600">
                         {/* TODO */}
                         <Button>Restart</Button>
                     </td>

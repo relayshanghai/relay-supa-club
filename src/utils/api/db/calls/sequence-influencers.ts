@@ -37,3 +37,9 @@ export const createSequenceInfluencerCall =
         if (error) throw error;
         return data;
     };
+
+export const deleteSequenceInfluencerCall = (supabaseClient: RelayDatabase) => async (id: string) => {
+    const { error } = await supabaseClient.from('sequence_influencers').delete().eq('id', id);
+    if (error) throw error;
+};
+
