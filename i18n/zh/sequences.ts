@@ -24,6 +24,6 @@ const sequences = {
         lastEmailSent: '上一封邮件发送',
         restartSequence: '重新开始序列',
     },
-    addEmail: 'Add email',
+    addEmail: '添加邮件',
 };
 export default sequences;
