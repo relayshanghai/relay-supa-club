@@ -4,7 +4,6 @@ import { ChevronDown, FilterFunnel } from 'src/components/icons';
 
 export type MultipleDropdownObject = {
     [key: string]: {
-        label: string;
         value?: number;
         style?: string;
     };
@@ -61,7 +60,7 @@ export const SelectMultipleDropdown = ({
                                 key={selectedOption}
                                 className={`rounded text-xs font-medium ${options[selectedOption].style} whitespace-nowrap px-2 py-2`}
                             >
-                                {options[selectedOption].label}
+                                {selectedOption}
                             </p>
                         ))
                     ) : (
@@ -103,7 +102,7 @@ export const SelectMultipleDropdown = ({
                                 <p
                                     className={`${options[option].style} whitespace-nowrap rounded-md px-3 py-2 text-xs`}
                                 >
-                                    {options[option].label}
+                                    {option}
                                 </p>
                             </div>
                             <p>{options[option].value}</p>

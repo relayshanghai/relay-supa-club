@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Search } from 'src/components/icons';
+import type { SequenceInfluencer } from 'src/utils/api/db';
 
-export const SearchComponent = () => {
+export const SearchComponent = ({ _influencers }: { _influencers?: SequenceInfluencer[] }) => {
     const [searchTerm, setSearchTerm] = useState('');
     return (
         <div

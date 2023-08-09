@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { InfluencerRow } from './influencer-row';
+import type { SequenceInfluencer } from 'src/utils/api/db';
 
 const mockTableColumns = [
     { header: 'name', type: 'name', name: 'name' },
@@ -10,35 +11,8 @@ const mockTableColumns = [
     { header: 'inbox', type: 'link', name: 'inbox' },
 ];
 
-export const Table = () => {
+export const Table = ({ influencers }: { influencers?: SequenceInfluencer[] }) => {
     // const [selectedAll, setSelectedAll] = useState<boolean>(false);
-    const [influencersList, _setInfluencersList] = useState([
-        {
-            id: '1',
-            info: {
-                name: 'Kylie Jenner',
-                handle: 'kylie',
-            },
-            collabstatus: 'negotiating',
-            manager: 'Sophia',
-            tags: ['fashion', 'beauty'],
-            lastupdated: '2 days ago',
-            unread: true,
-            checked: false,
-        },
-        {
-            id: '2',
-            info: {
-                name: 'Kylie Jenner',
-                handle: 'kylie',
-            },
-            collabstatus: 'negotiating',
-            manager: 'Mikaela',
-            tags: ['fashion', 'beauty'],
-            lastupdated: '2 days ago',
-            checked: false,
-        },
-    ]);
 
     // const handleCheckboxChange = (id: string) => {
     //     const updatedCheckboxes = influencersList.map((checkbox) =>
@@ -77,7 +51,7 @@ export const Table = () => {
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200 bg-white">
-                        {influencersList.length === 0 && (
+                        {influencers?.length === 0 && (
                             <tr>
                                 <td colSpan={mockTableColumns.length + 1} className="px-6 py-4">
                                     <div className="flex justify-center">
@@ -86,7 +60,7 @@ export const Table = () => {
                                 </td>
                             </tr>
                         )}
-                        {influencersList.map((influencer, index) => (
+                        {influencers?.map((influencer, index) => (
                             <InfluencerRow key={influencer.id} influencer={influencer} index={index} />
                         ))}
                     </tbody>
