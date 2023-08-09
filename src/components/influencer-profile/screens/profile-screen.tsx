@@ -1,5 +1,5 @@
 import type { DetailedHTMLProps, HTMLAttributes } from 'react';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useState } from 'react';
 import type { ProfileNotes } from '../components/profile-notes-tab';
 import { ProfileNotesTab } from '../components/profile-notes-tab';
 import type { ProfileShippingDetails } from '../components/profile-shipping-details-tab';
@@ -28,14 +28,6 @@ export const ProfileScreen = ({ profile, value, selectedTab, onUpdate, onCancel,
     const [selected, setSelected] = useState(selectedTab ?? 'notes');
 
     const handleTabClick = (tab: Props['selectedTab']) => tab && setSelected(tab);
-
-    const notesTabCls = useMemo(() => cls(() => (selected === 'notes' ? activeTabStyles : '')), [selected]);
-    const shippingTabCls = useMemo(
-        () => cls(() => (selected === 'shipping-details' ? activeTabStyles : '')),
-        [selected],
-    );
-    const notesTabContentCls = useMemo(() => cls({ hidden: selected !== 'notes' }), [selected]);
-    const shippingTabContentCls = useMemo(() => cls({ hidden: selected !== 'shipping-details' }), [selected]);
 
     const [data, setData] = useState<Partial<ProfileValue>>(() => {
         return value ?? { notes: undefined, shippingDetails: undefined };
@@ -70,24 +62,28 @@ export const ProfileScreen = ({ profile, value, selectedTab, onUpdate, onCancel,
                 <button
                     onClick={() => handleTabClick('notes')}
                     type="button"
-                    className={`${notesTabCls} inline-flex grow basis-0 items-center justify-center gap-2 bg-transparent px-4 py-3 text-center text-sm font-medium text-gray-400`}
+                    className={`${
+                        selected === 'notes' ? activeTabStyles : ''
+                    } inline-flex grow basis-0 items-center justify-center gap-2 bg-transparent px-4 py-3 text-center text-sm font-medium text-gray-400`}
                 >
                     Notes
                 </button>
                 <button
                     onClick={() => handleTabClick('shipping-details')}
                     type="button"
-                    className={`${shippingTabCls} inline-flex grow basis-0 items-center justify-center gap-2 bg-transparent px-4 py-3 text-center text-sm font-medium text-gray-400`}
+                    className={`${
+                        selected === 'shipping-details' ? activeTabStyles : ''
+                    } inline-flex grow basis-0 items-center justify-center gap-2 bg-transparent px-4 py-3 text-center text-sm font-medium text-gray-400`}
                 >
                     Shipping Details
                 </button>
             </nav>
 
             <div className="mt-3 p-12">
-                <div className={notesTabContentCls}>
+                <div className={`${selected !== 'notes' ? 'hidden' : ''}`}>
                     <ProfileNotesTab onUpdate={handleNotesDetailsUpdate} value={data.notes} />
                 </div>
-                <div className={`${shippingTabContentCls}`}>
+                <div className={`${selected !== 'shipping-details' ? 'hidden' : ''}`}>
                     <ProfileShippingDetailsTab onUpdate={handleshippingUpdate} value={data.shippingDetails} />
                 </div>
 
