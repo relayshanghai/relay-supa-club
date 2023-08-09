@@ -2,6 +2,7 @@ import { deleteDB } from 'idb';
 import { setupIntercepts } from './intercepts';
 import { columnsIgnored, columnsInSequence, columnsNeedsAttention } from 'src/components/sequences/constants';
 import sequences from 'i18n/en/sequences';
+import { reinsertCharlie } from './helpers';
 
 describe('outreach', () => {
     beforeEach(() => {
@@ -10,7 +11,7 @@ describe('outreach', () => {
         cy.visit('/');
         cy.loginTestUser();
     });
-    it('sequence page', () => {
+    it('sequence page', async () => {
         cy.contains('Sequences').click();
 
         // Sequence title row
@@ -94,5 +95,11 @@ describe('outreach', () => {
         cy.contains('new-email@example.com').click();
         cy.getByTestId('table-inline-input-add email').clear().type('alice.anderson@example.com'); // reset so you can run the test again if need be
         cy.get('button[type=submit]').click();
+
+        // can delete influencer
+        cy.contains('Charlie Charles');
+        cy.getByTestId('delete-influencer-button').eq(2).click();
+        cy.contains('Charlie Charles').should('not.exist');
+        await reinsertCharlie(); // reinsert so you can run again easily
     });
 });
