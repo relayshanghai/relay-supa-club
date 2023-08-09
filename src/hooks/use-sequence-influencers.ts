@@ -3,10 +3,13 @@ import { useClientDb, useDB } from 'src/utils/client-db/use-client-db';
 import {
     createSequenceInfluencerCall,
     updateSequenceInfluencerCall,
+   deleteSequenceInfluencerCall,
 } from 'src/utils/api/db/calls/sequence-influencers';
 import type { SequenceInfluencerInsert, SequenceInfluencerUpdate } from 'src/utils/api/db';
 import { useUser } from 'src/hooks/use-user';
 import { clientLogger } from 'src/utils/logger-client';
+
+
 
 export const useSequenceInfluencers = (sequenceId?: string) => {
     const db = useClientDb();
@@ -41,9 +44,14 @@ export const useSequenceInfluencers = (sequenceId?: string) => {
     const updateSequenceInfluencerDBCall = useDB(updateSequenceInfluencerCall);
     const updateSequenceInfluencer = async (update: SequenceInfluencerUpdate) => {
         const res = await updateSequenceInfluencerDBCall(update);
-
         refreshSequenceInfluencers();
+        return res;
+    };
 
+    const deleteSequenceInfluencerDBCall = useDB(deleteSequenceInfluencerCall);
+    const deleteSequenceInfluencer = async (id: string) => {
+        const res = await deleteSequenceInfluencerDBCall(id);
+        refreshSequenceInfluencers();
         return res;
     };
 
@@ -52,5 +60,6 @@ export const useSequenceInfluencers = (sequenceId?: string) => {
         createSequenceInfluencer,
         updateSequenceInfluencer,
         refreshSequenceInfluencers,
+        deleteSequenceInfluencer,
     };
 };
