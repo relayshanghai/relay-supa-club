@@ -21,7 +21,7 @@ export const useSequenceInfluencers = (sequenceId?: string) => {
         return res;
     };
 
-    const deleteSequenceInfluencerDBCall = useDB(deleteSequenceInfluencerCall);
+    const deleteSequenceInfluencerDBCall = useDB<typeof deleteSequenceInfluencerCall>(deleteSequenceInfluencerCall);
     const deleteSequenceInfluencer = async (id: string) => {
         const res = await deleteSequenceInfluencerDBCall(id);
         refreshSequenceInfluencers();
