@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { Modal } from './modal';
 import { Button } from './button';
@@ -22,13 +22,13 @@ export const AddToSequenceModal = ({
     selectedCreator: CreatorUserProfile;
     platform: CreatorPlatform;
 }) => {
-    // TODO: need to also add the case if already added to the sequence logic here
+    // TODO: need to also add the case if already added to the sequence logic here V2-730
     const { i18n, t } = useTranslation();
     const { sequences } = useSequences();
 
     const [selectedSequence, setSelectedSequence] = useState<Sequence | null>(sequences?.[0] ?? null);
     const [loading, setLoading] = useState<boolean>(false);
-
+    const [socialProfileId, setSocialProfileId] = useState<string | null>(null);
     const { socialProfile } = useReport({ platform, creator_id: selectedCreator.user_id || '' });
     const { createSequenceInfluencer } = useSequenceInfluencers(selectedSequence?.id);
 
@@ -45,12 +45,11 @@ export const AddToSequenceModal = ({
         if (!selectedSequence) {
             throw new Error('Missing selectedSequence');
         }
-        // TODO: if it is a new report, socialProfile takes time to be created, handle this case
-        if (!socialProfile?.id) {
-            throw new Error('Missing influencer_id');
+        if (!socialProfileId) {
+            throw new Error('Missing socialProfileId');
         }
         try {
-            await createSequenceInfluencer(socialProfile?.id);
+            await createSequenceInfluencer(socialProfileId);
             toast.success('Added to sequence successfully');
         } catch (error) {
             clientLogger(error);
@@ -59,7 +58,13 @@ export const AddToSequenceModal = ({
             setLoading(false);
             setShow(false);
         }
-    }, [createSequenceInfluencer, selectedSequence, setShow, socialProfile?.id]);
+    }, [createSequenceInfluencer, selectedSequence, setShow, socialProfileId]);
+
+    useEffect(() => {
+        if (socialProfile?.id) {
+            setSocialProfileId(socialProfile.id);
+        }
+    }, [socialProfile]);
 
     return (
         <Modal
