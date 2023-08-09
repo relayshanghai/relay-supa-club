@@ -25,7 +25,7 @@ export const AddToSequenceModal = ({
     // TODO: need to also add the case if already added to the sequence logic here V2-730
     const { i18n, t } = useTranslation();
     const { sequences } = useSequences();
-    const { socialProfile } = useReport({ platform, creator_id: selectedCreator.user_id || '' });
+    const { socialProfile, report } = useReport({ platform, creator_id: selectedCreator.user_id || '' });
 
     const [selectedSequence, setSelectedSequence] = useState<Sequence | null>(sequences?.[0] ?? null);
     const [loading, setLoading] = useState<boolean>(false);
@@ -40,6 +40,15 @@ export const AddToSequenceModal = ({
         const selectedSequenceObject = sequences?.find((sequence) => sequence.name === e.target.value) ?? null;
         setSelectedSequence(selectedSequenceObject);
     };
+    //create a function to get the first three object's`tag`value from relevant tags array from the report into a new array
+    const getRelevantTags = useCallback(() => {
+        if (!report) {
+            return [];
+        }
+        const relevantTags = report?.user_profile.relevant_tags;
+        const tags = relevantTags?.slice(0, 3).map((tag) => tag.tag);
+        return tags;
+    }, [report]);
 
     const handleAddToSequence = useCallback(async () => {
         setLoading(true);
@@ -47,8 +56,9 @@ export const AddToSequenceModal = ({
             throw new Error('Missing selectedSequence');
         }
         if (socialProfileId) {
+            const tags = getRelevantTags();
             try {
-                await createSequenceInfluencer(socialProfileId);
+                await createSequenceInfluencer(socialProfileId, tags);
                 toast.success(t('creators.addToSequenceSuccess'));
             } catch (error) {
                 clientLogger(error);
@@ -58,7 +68,7 @@ export const AddToSequenceModal = ({
                 setShow(false);
             }
         }
-    }, [createSequenceInfluencer, selectedSequence, setShow, socialProfileId, t]);
+    }, [createSequenceInfluencer, getRelevantTags, selectedSequence, setShow, socialProfileId, t]);
 
     useEffect(() => {
         if (socialProfile?.id) {
