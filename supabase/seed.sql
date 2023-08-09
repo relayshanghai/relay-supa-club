@@ -315,7 +315,6 @@ CREATE
 OR REPLACE FUNCTION create_sequence_steps(
   sequence_id UUID,
   name TEXT,
-  params TEXT[],
   template_id TEXT,
   step_number NUMERIC,
   wait_time_hours NUMERIC
@@ -330,7 +329,6 @@ OR REPLACE FUNCTION create_sequence_steps(
           updated_at,
           sequence_id,
           name,
-          params,
           template_id,
           step_number,
           wait_time_hours
@@ -342,7 +340,6 @@ OR REPLACE FUNCTION create_sequence_steps(
           now(),
           sequence_id,
           name,
-          params,
           template_id,
           step_number,
           wait_time_hours
@@ -687,9 +684,6 @@ BEGIN
   _sequence_step_outreach := create_sequence_steps(
     _sequence_general.id,
     'Outreach Email',
-    ARRAY[
-      'platform', 'channel', 'companyName', 'outreachPersonName'
-    ],
     'AAABiYr-poEAAAAC',
     0,
     0
@@ -698,9 +692,6 @@ BEGIN
   _sequence_step_follow_up_1 := create_sequence_steps(
     _sequence_general.id,
     'Follow Up Email 1',
-    ARRAY[
-      'channel', 'companyName', 'outreachPersonName'
-    ],
     'AAABiYsMUIAAAAAD',
     1,
     1
