@@ -1,10 +1,17 @@
 import Link from 'next/link';
+import { useEffect } from 'react';
 import { useSequenceEmails } from 'src/hooks/use-sequence-emails';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
-import type { Sequence } from 'src/utils/api/db';
+import type { Sequence, SequenceEmail } from 'src/utils/api/db';
 import { decimalToPercent } from 'src/utils/formatter';
 
-export const SequencesTableRow = ({ sequence }: { sequence: Sequence }) => {
+export const SequencesTableRow = ({
+    sequence,
+    setAllEmails,
+}: {
+    sequence: Sequence;
+    setAllEmails: React.Dispatch<React.SetStateAction<SequenceEmail[]>>;
+}) => {
     const { sequenceEmails } = useSequenceEmails(sequence.id);
     const { sequenceInfluencers } = useSequenceInfluencers(sequence.id);
 
@@ -13,6 +20,14 @@ export const SequencesTableRow = ({ sequence }: { sequence: Sequence }) => {
             (email) => email.email_tracking_status === 'Link Clicked' || email.email_tracking_status === 'Opened',
         ).length || 1) / (sequenceEmails?.length || 1),
     );
+
+    useEffect(() => {
+        if (!sequenceEmails) {
+            return;
+        }
+        setAllEmails((prev) => [...prev, ...sequenceEmails]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     // TODO: add manager name
     // TODO: get product name from template variable ?

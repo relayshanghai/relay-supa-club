@@ -5,25 +5,20 @@ import { useState } from 'react';
 import { Layout } from '../layout';
 import { Plus } from '../icons';
 import { Button } from '../button';
-// import { SequenceStats } from './sequence-stats';
-// import { useSequenceEmails } from 'src/hooks/use-sequence-emails';
+import { SequenceStats } from './sequence-stats';
 import { CreateSequenceModal } from './create-sequence-modal';
 import SequencesTable from './sequences-table';
+import type { SequenceEmail } from 'src/utils/api/db';
 
 export const SequencesPage = () => {
     const { t } = useTranslation();
-    const { sequences } = useSequences();
-    // const { sequenceEmails } = useSequenceEmails(sequence?.id);
+    const { sequences, allSequenceInfluencersByCompanyId } = useSequences();
     const [showCreateSequenceModal, setShowCreateSequenceModal] = useState<boolean>(false);
-
-    // const sequenceIds = sequences ? sequences.map((sequence) => sequence.id) : null;
-    // const allSequenceEmails = sequenceIds?.map((sequenceId) => useSequenceEmails(sequenceId));
+    const [allEmails, setAllEmails] = useState<SequenceEmail[] | []>([]);
 
     const handleOpenCreateSequenceModal = () => {
         setShowCreateSequenceModal(true);
     };
-
-    // TODO: get all sequenceEmails from all sequences.
 
     return (
         <Layout>
@@ -43,27 +38,26 @@ export const SequencesPage = () => {
                         <p className="self-center">{t('sequences.newSequence')}</p>
                     </Button>
                 </div>
-                {/* TODO: update the sequenceStats component with real data */}
-                {/* <SequenceStats
+                <SequenceStats
                     totalInfluencers={allSequenceInfluencersByCompanyId?.length || 0}
                     openRate={
-                        (allSequenceEmails?.filter(
+                        (allEmails?.filter(
                             (email) =>
                                 email.email_tracking_status === 'Link Clicked' ||
                                 email.email_tracking_status === 'Opened',
-                        ).length || 1) / (allSequenceEmails?.length || 1)
+                        ).length || 1) / (allEmails?.length || 1)
                     }
                     replyRate={
-                        (allSequenceEmails?.filter((email) => email.email_delivery_status === 'Replied').length || 1) /
-                        (allSequenceEmails?.length || 1)
+                        (allEmails?.filter((email) => email.email_delivery_status === 'Replied').length || 1) /
+                        (allEmails?.length || 1)
                     }
                     bounceRate={
-                        (allSequenceEmails?.filter((email) => email.email_delivery_status === 'Bounced').length || 1) /
-                        (allSequenceEmails?.length || 1)
+                        (allEmails?.filter((email) => email.email_delivery_status === 'Bounced').length || 1) /
+                        (allEmails?.length || 1)
                     }
-                /> */}
+                />
 
-                <SequencesTable sequences={sequences} />
+                <SequencesTable sequences={sequences} setAllEmails={setAllEmails} />
             </div>
         </Layout>
     );
