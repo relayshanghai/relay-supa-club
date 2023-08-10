@@ -40,13 +40,13 @@ export const AddToSequenceModal = ({
         const selectedSequenceObject = sequences?.find((sequence) => sequence.name === e.target.value) ?? null;
         setSelectedSequence(selectedSequenceObject);
     };
-    //create a function to get the first three object's`tag`value from relevant tags array from the report into a new array
+
     const getRelevantTags = useCallback(() => {
         if (!report) {
             return [];
         }
-        const relevantTags = report?.user_profile.relevant_tags;
-        const tags = relevantTags?.slice(0, 3).map((tag) => tag.tag);
+        const relevantTags = report.user_profile.relevant_tags;
+        const tags = relevantTags.slice(0, 3).map((tag) => tag.tag);
         return tags;
     }, [report]);
 
@@ -94,7 +94,7 @@ export const AddToSequenceModal = ({
                             value={selectedSequence?.name}
                             className="-ml-1 mr-2.5 w-full cursor-pointer appearance-none rounded-md border border-gray-200 p-2 font-medium text-gray-500 outline-none"
                         >
-                            {sequences?.length === 0 && <option>{t('creators.noSequence')}</option>}
+                            {(!sequences || sequences.length === 0) && <option>{t('creators.noSequence')}</option>}
                             {sequences?.map((sequence) => (
                                 <option key={sequence.id}>{sequence.name}</option>
                             ))}

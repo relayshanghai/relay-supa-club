@@ -245,11 +245,7 @@ export const SearchResultRow = ({
                     </Link>
 
                     {featEmail() ? (
-                        <Button
-                            onClick={addToSequence}
-                            className="flex items-center gap-1"
-                            // data-testid={`add-to-sequence-button/${user_id}`}
-                        >
+                        <Button onClick={addToSequence} className="flex items-center gap-1">
                             <PlusCircleIcon className="w-5" />
                             <span className="">{t('creators.addToSequence')}</span>
                         </Button>

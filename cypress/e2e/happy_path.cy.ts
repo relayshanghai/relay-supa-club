@@ -1,5 +1,6 @@
 import { deleteDB } from 'idb';
 import { addPostIntercept, cocomelonId, setupIntercepts } from './intercepts';
+import { featEmail } from 'src/constants/feature-flags';
 
 export const randomString = (length = 8) =>
     Math.random()
@@ -132,6 +133,7 @@ describe('Main pages happy paths', () => {
 
         cy.contains('Brave Wilderness'); // the first influencer search result for alligators
     });
+
     it('can open analyze page', () => {
         setupIntercepts();
 
@@ -157,6 +159,7 @@ describe('Main pages happy paths', () => {
         cy.contains('Add this influencer to your existing campaigns');
         cy.contains('Beauty for All Skin Tones'); // this functionality is tested in campaigns page test
     });
+
     it('can use account and pricing pages', () => {
         setupIntercepts();
 
@@ -206,153 +209,155 @@ describe('Main pages happy paths', () => {
             .type('123')
             .should('have.value', 'Blue Moonlight Stream Enterprises123');
     });
-    it('can open campaigns page and manage campaign influencers', () => {
-        setupIntercepts();
-        // list, add, archive campaigns
-        // list, add, move, delete campaign influencers
+    if (!featEmail()) {
+        it('can open campaigns page and manage campaign influencers', () => {
+            setupIntercepts();
+            // list, add, archive campaigns
+            // list, add, move, delete campaign influencers
 
-        cy.loginTestUser();
-        cy.contains('Campaigns').click();
-        cy.contains('button', 'New Campaign', { timeout: 20000 }); // loads campaigns page
-        cy.url().should('include', `/campaigns`);
+            cy.loginTestUser();
+            cy.contains('Campaigns').click();
+            cy.contains('button', 'New Campaign', { timeout: 20000 }); // loads campaigns page
+            cy.url().should('include', `/campaigns`);
 
-        // campaigns listed
-        cy.contains('My Campaign').should('not.exist');
-        cy.contains('Beauty for All Skin Tones').click();
+            // campaigns listed
+            cy.contains('My Campaign').should('not.exist');
+            cy.contains('Beauty for All Skin Tones').click();
 
-        // campaign details
-        cy.contains('Campaign Launch Date', { timeout: 10000 });
-        // shows influencers
-        cy.contains('@Greg Renko');
-        cy.contains('View Contact Info');
-        cy.contains('SET India').should('not.exist');
+            // campaign details
+            cy.contains('Campaign Launch Date', { timeout: 10000 });
+            // shows influencers
+            cy.contains('@Greg Renko');
+            cy.contains('View Contact Info');
+            cy.contains('SET India').should('not.exist');
 
-        cy.go(-1);
-        cy.get('button').contains('New Campaign', { timeout: 10000 }).click();
+            cy.go(-1);
+            cy.get('button').contains('New Campaign', { timeout: 10000 }).click();
 
-        // new campaign form
-        cy.contains('Campaign Name *', { timeout: 10000 });
-        // check displays new campaign
-        cy.get('input[name=name]').type('My Campaign');
-        cy.get('button').contains('Create Campaign').click();
-        cy.wait(10000); // wait for campaign to be added to db
+            // new campaign form
+            cy.contains('Campaign Name *', { timeout: 10000 });
+            // check displays new campaign
+            cy.get('input[name=name]').type('My Campaign');
+            cy.get('button').contains('Create Campaign').click();
+            cy.wait(10000); // wait for campaign to be added to db
 
-        cy.contains('Campaign Launch Date', { timeout: 10000 });
-        cy.contains('SET India').should('not.exist');
+            cy.contains('Campaign Launch Date', { timeout: 10000 });
+            cy.contains('SET India').should('not.exist');
 
-        cy.contains('Campaigns').click();
+            cy.contains('Campaigns').click();
 
-        // campaigns are listed in order of most recently added/edited.
-        cy.wait(5000); // wait for campaign to be added to db
-        cy.getByTestId('campaign-cards-container').children().should('have.length', 2)
-        cy.getByTestId('campaign-cards-container', { timeout: 60000 }).children().first().contains('My Campaign');
-        cy.getByTestId('campaign-cards-container').children().first().next().contains('Beauty for All Skin Tones');
+            // campaigns are listed in order of most recently added/edited.
+            cy.wait(5000); // wait for campaign to be added to db
+            cy.getByTestId('campaign-cards-container').children().should('have.length', 2);
+            cy.getByTestId('campaign-cards-container', { timeout: 60000 }).children().first().contains('My Campaign');
+            cy.getByTestId('campaign-cards-container').children().first().next().contains('Beauty for All Skin Tones');
 
-        cy.contains('My Campaign').click();
+            cy.contains('My Campaign').click();
 
-        // go to search and add an influencer to campaign
-        cy.contains('Add New Influencer').click();
+            // go to search and add an influencer to campaign
+            cy.contains('Add New Influencer').click();
 
-        cy.contains('tr', 'SET India', { timeout: 30000 }).contains('Add to campaign').click(); // not sure why this is still slow
-        cy.contains('Beauty for All Skin Tones');
-        cy.getByTestId('add-creator-button:Beauty for All Skin Tones').click();
-        cy.contains('Influencer added successfully.', { timeout: 60000 });
-        cy.contains('Followers').click({ force: true }); // click out of modal
-        cy.contains('tr', 'PewDiePie').contains('Add to campaign').click();
-        cy.contains('Beauty for All Skin Tones');
-        cy.getByTestId('add-creator-button:Beauty for All Skin Tones').click();
+            cy.contains('tr', 'SET India', { timeout: 30000 }).contains('Add to campaign').click(); // not sure why this is still slow
+            cy.contains('Beauty for All Skin Tones');
+            cy.getByTestId('add-creator-button:Beauty for All Skin Tones').click();
+            cy.contains('Influencer added successfully.', { timeout: 60000 });
+            cy.contains('Followers').click({ force: true }); // click out of modal
+            cy.contains('tr', 'PewDiePie').contains('Add to campaign').click();
+            cy.contains('Beauty for All Skin Tones');
+            cy.getByTestId('add-creator-button:Beauty for All Skin Tones').click();
 
-        cy.contains('Campaigns').click({ force: true }); // hidden by modal
-        cy.contains('Influencer added successfully.', { timeout: 60000 });
-        cy.get('button').contains('New Campaign');
+            cy.contains('Campaigns').click({ force: true }); // hidden by modal
+            cy.contains('Influencer added successfully.', { timeout: 60000 });
+            cy.get('button').contains('New Campaign');
 
-        cy.contains('Beauty for All Skin Tones').click();
+            cy.contains('Beauty for All Skin Tones').click();
 
-        // edit a campaign
-        cy.contains('Edit', { timeout: 60000 }).click();
-        cy.get('textarea[name=description]').type('This campaign is about selling some stuff');
-        cy.get('input[name=product_name]').type('Gadget');
-        cy.get('input[aria-haspopup="true"]').first().click();
-        cy.contains('Books').click();
-        cy.get('input[aria-haspopup="true"]').eq(1).click();
-        cy.contains('Albania').click();
-        cy.get('input[name=budget_cents]').type('1000');
-        cy.get('input[name=promo_types]').check({ force: true });
-        cy.contains('button', 'Save Campaign').click();
+            // edit a campaign
+            cy.contains('Edit', { timeout: 60000 }).click();
+            cy.get('textarea[name=description]').type('This campaign is about selling some stuff');
+            cy.get('input[name=product_name]').type('Gadget');
+            cy.get('input[aria-haspopup="true"]').first().click();
+            cy.contains('Books').click();
+            cy.get('input[aria-haspopup="true"]').eq(1).click();
+            cy.contains('Albania').click();
+            cy.get('input[name=budget_cents]').type('1000');
+            cy.get('input[name=promo_types]').check({ force: true });
+            cy.contains('button', 'Save Campaign').click();
 
-        cy.contains('tr', 'PewDiePie', { timeout: 60000 });
-        cy.contains('tr', 'SET India', { timeout: 60000 });
-        cy.contains('tr', '@Greg Renko');
+            cy.contains('tr', 'PewDiePie', { timeout: 60000 });
+            cy.contains('tr', 'SET India', { timeout: 60000 });
+            cy.contains('tr', '@Greg Renko');
 
-        cy.contains('Campaigns').click(); // We're sure new influencers have been added, now go back and check order of campaigns
+            cy.contains('Campaigns').click(); // We're sure new influencers have been added, now go back and check order of campaigns
 
-        // Beauty for All Skin Tones should now be listed first, since we added an influencer to it
-        cy.getByTestId('campaign-cards-container').children().first().contains('Beauty for All Skin Tones');
-        cy.getByTestId('campaign-cards-container').children().first().next().contains('My Campaign');
-        cy.contains('Beauty for All Skin Tones').click();
+            // Beauty for All Skin Tones should now be listed first, since we added an influencer to it
+            cy.getByTestId('campaign-cards-container').children().first().contains('Beauty for All Skin Tones');
+            cy.getByTestId('campaign-cards-container').children().first().next().contains('My Campaign');
+            cy.contains('Beauty for All Skin Tones').click();
 
-        // influencers should be presented in order of last added/edited
-        cy.get('tr').eq(1).contains('PewDiePie'); //starts at 1 cause table head is a tr as well
-        cy.get('tr').eq(2).contains('SET India');
-        cy.get('tr').eq(3).contains('@Greg Renko');
+            // influencers should be presented in order of last added/edited
+            cy.get('tr').eq(1).contains('PewDiePie'); //starts at 1 cause table head is a tr as well
+            cy.get('tr').eq(2).contains('SET India');
+            cy.get('tr').eq(3).contains('@Greg Renko');
 
-        cy.contains('tr', 'SET India').within(() => {
+            cy.contains('tr', 'SET India').within(() => {
+                cy.getByTestId('manage-button').click();
+            });
+            cy.contains('Manage Influencer');
+            cy.get('input[id="influencer-address-input"]').type('123 Main St');
+            cy.contains('button', 'Save').click();
+            cy.contains('Beauty for All Skin Tones').click({ force: true }); // click out of modal
+
+            cy.get('tr').eq(1).contains('SET India');
+            cy.get('tr').eq(2).contains('PewDiePie');
+            cy.get('tr').eq(3).contains('@Greg Renko');
+
+            // move influencer to new campaign
+            cy.contains('tr', 'SET India').within(() => cy.getByTestId('move-influencer-button').click()); // can take
+
+            cy.getByTestId('move-influencer-button:My Campaign').click({ multiple: true });
+            cy.contains('Campaign Launch Date').click({ force: true }); // click out of modal
+            cy.contains('SET India').should('not.exist');
+            cy.contains('Campaigns').click();
+            cy.contains('My Campaign').click();
+            cy.contains('SET India');
+
+            // change influencer status, and change status tabs
+            cy.contains('tr', 'SET India').within(() =>
+                cy.getByTestId('status-dropdown').select('Contacted', { force: true }),
+            );
+            cy.contains('Influencer Information Updated', { timeout: 10000 });
+            cy.contains('SET India').should('not.exist');
+            cy.contains('Contacted 1').click();
+            cy.contains('SET India');
+
+            // add notes
             cy.getByTestId('manage-button').click();
+            cy.contains('Notes');
+            cy.getByTestId('show-influencer-notes').click();
+
+            cy.contains('Internal Comments');
+            cy.get('textarea').type('This influencer is great');
+            cy.contains('William Edward').should('not.exist'); // user name doesn't show
+
+            cy.getByTestId('submit-comment-button').click();
+            cy.contains('William Edward', { timeout: 10000 }); // user name shows
+            cy.contains('This influencer is great');
+            cy.contains('My Campaign').click({ force: true }); // hidden by modal
+
+            // delete an influencer
+            cy.getByTestId('delete-creator').click();
+            cy.contains('Influencer was deleted.');
+            cy.contains('SET India').should('not.exist');
+
+            // archive a campaign
+            cy.contains('span', 'Archive').click();
+            cy.contains('Campaigns').click();
+            cy.contains('My Campaign').should('not.exist');
+            cy.contains('Archived Campaigns').click();
+            cy.contains('My Campaign');
         });
-        cy.contains('Manage Influencer');
-        cy.get('input[id="influencer-address-input"]').type('123 Main St');
-        cy.contains('button', 'Save').click();
-        cy.contains('Beauty for All Skin Tones').click({ force: true }); // click out of modal
-
-        cy.get('tr').eq(1).contains('SET India');
-        cy.get('tr').eq(2).contains('PewDiePie');
-        cy.get('tr').eq(3).contains('@Greg Renko');
-
-        // move influencer to new campaign
-        cy.contains('tr', 'SET India').within(() => cy.getByTestId('move-influencer-button').click()); // can take
-
-        cy.getByTestId('move-influencer-button:My Campaign').click({ multiple: true });
-        cy.contains('Campaign Launch Date').click({ force: true }); // click out of modal
-        cy.contains('SET India').should('not.exist');
-        cy.contains('Campaigns').click();
-        cy.contains('My Campaign').click();
-        cy.contains('SET India');
-
-        // change influencer status, and change status tabs
-        cy.contains('tr', 'SET India').within(() =>
-            cy.getByTestId('status-dropdown').select('Contacted', { force: true }),
-        );
-        cy.contains('Influencer Information Updated', { timeout: 10000 });
-        cy.contains('SET India').should('not.exist');
-        cy.contains('Contacted 1').click();
-        cy.contains('SET India');
-
-        // add notes
-        cy.getByTestId('manage-button').click();
-        cy.contains('Notes');
-        cy.getByTestId('show-influencer-notes').click();
-
-        cy.contains('Internal Comments');
-        cy.get('textarea').type('This influencer is great');
-        cy.contains('William Edward').should('not.exist'); // user name doesn't show
-
-        cy.getByTestId('submit-comment-button').click();
-        cy.contains('William Edward', { timeout: 10000 }); // user name shows
-        cy.contains('This influencer is great');
-        cy.contains('My Campaign').click({ force: true }); // hidden by modal
-
-        // delete an influencer
-        cy.getByTestId('delete-creator').click();
-        cy.contains('Influencer was deleted.');
-        cy.contains('SET India').should('not.exist');
-
-        // archive a campaign
-        cy.contains('span', 'Archive').click();
-        cy.contains('Campaigns').click();
-        cy.contains('My Campaign').should('not.exist');
-        cy.contains('Archived Campaigns').click();
-        cy.contains('My Campaign');
-    });
+    }
 
     it('can record search usages, can manage clients as a company owner', () => {
         setupIntercepts();
