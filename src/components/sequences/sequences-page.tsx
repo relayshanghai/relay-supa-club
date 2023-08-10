@@ -29,8 +29,8 @@ export const SequencesPage = () => {
         <Layout>
             <CreateSequenceModal
                 title={t('sequences.sequenceModal') as string}
-                visible={showCreateSequenceModal}
-                onClose={() => setShowCreateSequenceModal(false)}
+                showCreateSequenceModal={showCreateSequenceModal}
+                setShowCreateSequenceModal={setShowCreateSequenceModal}
             />
             <div className="flex flex-col space-y-4 p-4">
                 <div className="flex w-full">

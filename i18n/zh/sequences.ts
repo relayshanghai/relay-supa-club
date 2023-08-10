@@ -39,5 +39,8 @@ const sequences = {
     sequenceName: '序列名称',
     product: '产品',
     outreachEmail: '外联邮件',
+    sequenceNamePlaceholder: '输入序列名称',
+    createNewSequence: '新建序列',
+    cancel: '取消',
 };
 export default sequences;

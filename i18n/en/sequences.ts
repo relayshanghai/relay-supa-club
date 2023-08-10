@@ -39,5 +39,8 @@ const sequences = {
     sequenceName: 'Sequence Name',
     product: 'Product',
     outreachEmail: 'Outreach Email',
+    sequenceNamePlaceholder: 'Enter a name for your sequence',
+    createNewSequence: 'Create new sequence',
+    cancel: 'Cancel',
 };
 export default sequences;
