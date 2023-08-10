@@ -20,15 +20,9 @@ const prepareTemplateVariables = (templateVariables: TemplateVariable[], sequenc
         sequence_id: sequenceId ?? '',
     });
     const brandName = templateVariables.find((variable) => variable.key === 'brandName') ?? blankVariable('brandName');
-    // repeat with influencerAccountName, marketingManagerName, recentVideoTitle, productName, productDescription, productFeatures, productLink, influencerNiche
-    const influencerAccountName =
-        templateVariables.find((variable) => variable.key === 'influencerAccountName') ??
-        blankVariable('influencerAccountName');
     const marketingManagerName =
         templateVariables.find((variable) => variable.key === 'marketingManagerName') ??
         blankVariable('marketingManagerName');
-    const recentVideoTitle =
-        templateVariables.find((variable) => variable.key === 'recentVideoTitle') ?? blankVariable('recentVideoTitle');
     const productName =
         templateVariables.find((variable) => variable.key === 'productName') ?? blankVariable('productName');
     const productDescription =
@@ -42,9 +36,7 @@ const prepareTemplateVariables = (templateVariables: TemplateVariable[], sequenc
         templateVariables.find((variable) => variable.key === 'influencerNiche') ?? blankVariable('influencerNiche');
     return {
         brandName,
-        influencerAccountName,
         marketingManagerName,
-        recentVideoTitle,
         productName,
         productDescription,
         productFeatures,
@@ -94,7 +86,7 @@ const VariableInput = ({
                 }`}
                 placeholder={readOnly ? t('sequences.wellHandleThisOne') ?? '' : ''}
                 value={value}
-                onChange={(e) => setKey(variableKey, e.target.value)}
+                onChange={(e) => (readOnly ? null : setKey(variableKey, e.target.value))}
             />
         </div>
     );
@@ -112,8 +104,10 @@ export const TemplateVariablesModal = ({ sequenceId, ...props }: TemplateVariabl
         if (!variables[key]) return;
         setVariables({ ...variables, [key]: { ...variables[key], value: value } });
     };
+    const [submitting, setSubmitting] = useState(false);
 
     const handleUpdate = async () => {
+        setSubmitting(true);
         try {
             const variablesArray = Object.values(variables);
             const updates: (() => Promise<void>)[] = [];
@@ -134,6 +128,7 @@ export const TemplateVariablesModal = ({ sequenceId, ...props }: TemplateVariabl
             toast.error(t('sequences.templateVariablesUpdateError'));
             clientLogger(error, 'error');
         }
+        setSubmitting(false);
     };
 
     return (
@@ -180,7 +175,9 @@ export const TemplateVariablesModal = ({ sequenceId, ...props }: TemplateVariabl
                 <Button variant="secondary" onClick={() => props.onClose(false)}>
                     {t('sequences.cancel')}
                 </Button>
-                <Button onClick={handleUpdate}>{t('sequences.updateVariables')}</Button>
+                <Button onClick={handleUpdate} disabled={submitting}>
+                    {t('sequences.updateVariables')}
+                </Button>
             </div>
         </Modal>
     );
