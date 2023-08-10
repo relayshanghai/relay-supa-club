@@ -122,6 +122,7 @@ export const SequencesPage = () => {
             <TemplateVariablesModal
                 visible={showUpdateTemplateVariables}
                 onClose={() => setShowUpdateTemplateVariables(false)}
+                sequenceId={sequence?.id}
             />
             <div className="flex flex-col space-y-4 p-4">
                 <div className="flex w-full">

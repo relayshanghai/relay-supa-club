@@ -14,6 +14,8 @@ import { db } from 'src/utils/supabase-client';
 import events, { SearchAnalyzeInfluencer } from 'src/utils/analytics/events';
 import { createReportSnapshot, createTrack } from 'src/utils/analytics/api/analytics';
 import type { eventKeys } from 'src/utils/analytics/events';
+
+import type { InfluencerRow, InfluencerSocialProfileRow } from 'src/utils/api/db';
 import {
     IQDATA_CREATE_NEW_REPORT,
     IQDATA_FETCH_REPORT_FILE,
@@ -52,18 +54,26 @@ const trackAndSnap = async (
     );
 };
 
-export type CreatorsReportGetResponse = CreatorReport & { createdAt: string };
+export type CreatorsReportGetResponse = CreatorReport & { createdAt: string } & {
+    influencer: InfluencerRow;
+    socialProfile: InfluencerSocialProfileRow;
+};
 
 // Disabling complexity linting error as fixing this will require a large refactor
 // eslint-disable-next-line complexity
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'GET') {
         const catchInfluencer = async (data: CreatorReport) => {
-            const [influencer] = await getInfluencer(data);
-
+            const [influencer, socialProfile] = await getInfluencer(data);
             if (influencer === null) {
-                await db<typeof saveInfluencer>(saveInfluencer)(data);
+                try {
+                    const [influencer, socialProfile] = await db<typeof saveInfluencer>(saveInfluencer)(data);
+                    return { influencer, socialProfile };
+                } catch (error) {
+                    serverLogger(error, 'error', true);
+                }
             }
+            return { influencer, socialProfile };
         };
 
         await rudderstack.identify({ req, res });
@@ -91,7 +101,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     req,
                     res,
                 })(platform, creator_id);
-
                 if (!reportMetadata.results || reportMetadata.results.length === 0) throw new Error('No reports found');
                 const report_id = reportMetadata.results[0].id;
                 if (!report_id) throw new Error('No report ID found');
@@ -111,22 +120,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 const data = await fetchReport({ req, res })(report_id);
 
                 if (!data.success) throw new Error('Failed to find report');
-
                 const { error: recordError } = await recordReportUsage(company_id, user_id, creator_id);
                 if (recordError) {
                     serverLogger(recordError, 'error');
                     return res.status(httpCodes.BAD_REQUEST).json({ error: recordError });
                 }
 
-                try {
-                    await catchInfluencer(data);
-                } catch (error) {
-                    serverLogger(error, 'error', true);
-                }
+                const { influencer, socialProfile } = await catchInfluencer(data);
 
                 await trackAndSnap(track, req, res, events, data);
 
-                return res.status(httpCodes.OK).json({ ...data, createdAt });
+                return res.status(httpCodes.OK).json({ ...data, createdAt, influencer, socialProfile });
             } catch (error) {
                 rudderstack.track({
                     event: IQDATA_CREATE_NEW_REPORT,
@@ -156,15 +160,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
                 }
 
-                try {
-                    await catchInfluencer(data);
-                } catch (error) {
-                    serverLogger(error, 'error', true);
-                }
+                const { influencer, socialProfile } = await catchInfluencer(data);
 
                 await trackAndSnap(track, req, res, events, data);
 
-                return res.status(httpCodes.OK).json(data);
+                return res.status(httpCodes.OK).json({ ...data, influencer, socialProfile });
             }
         } catch (error) {
             serverLogger(error, 'error');
