@@ -209,7 +209,8 @@ describe('Main pages happy paths', () => {
             .type('123')
             .should('have.value', 'Blue Moonlight Stream Enterprises123');
     });
-    if (!featEmail()) {
+
+    if (featEmail() === false) {
         it('can open campaigns page and manage campaign influencers', () => {
             setupIntercepts();
             // list, add, archive campaigns
