@@ -25,6 +25,8 @@ import { SearchAddToCampaign, SearchDefault } from 'src/utils/analytics/events';
 import { Search } from 'src/utils/analytics/events';
 import { SEARCH_RESULT } from 'src/utils/rudderstack/event-names';
 import { useTrackEvent } from './use-track-event';
+import { AddToSequenceModal } from '../modal-add-to-sequence';
+import { featEmail } from 'src/constants/feature-flags';
 // import { featRecommended } from 'src/constants/feature-flags';
 
 export const SearchPageInner = () => {
@@ -47,6 +49,7 @@ export const SearchPageInner = () => {
     } = useSearch();
     const [filterModalOpen, setShowFiltersModal] = useState(false);
     const [showCampaignListModal, setShowCampaignListModal] = useState(false);
+    const [showSequenceListModal, setShowSequenceListModal] = useState(false);
     const [selectedCreator, setSelectedCreator] = useState<CreatorSearchAccountObject | null>(null);
     const { campaigns } = useCampaigns({});
     const { allCampaignCreators } = useAllCampaignCreators(campaigns);
@@ -188,9 +191,7 @@ export const SearchPageInner = () => {
                     <SearchCreators platform={platform} onSearch={handleSearch} />
                 </div>
             </div>
-
             <SearchOptions setPage={setPage} setShowFiltersModal={setShowFiltersModal} onSearch={handleSearch} />
-
             <div className="flex items-center justify-between">
                 <div className="text-sm font-medium">{`${t('creators.resultsPrefix')} ${numberFormatter(
                     resultsTotal,
@@ -198,11 +199,11 @@ export const SearchPageInner = () => {
                     platform === 'youtube' ? t('creators.resultsPostfixKeywords') : t('creators.resultsPostfixHashtags')
                 }`}</div>
             </div>
-
             <SearchResultsTable
                 setSelectedCreator={setSelectedCreator}
                 setShowCampaignListModal={setShowCampaignListModal}
                 setShowAlreadyAddedModal={setShowAlreadyAddedModal}
+                setShowSequenceListModal={setShowSequenceListModal}
                 allCampaignCreators={allCampaignCreators}
                 loading={resultsLoading}
                 validating={isValidating}
@@ -217,6 +218,7 @@ export const SearchPageInner = () => {
                                 setSelectedCreator={setSelectedCreator}
                                 setShowCampaignListModal={setShowCampaignListModal}
                                 setShowAlreadyAddedModal={setShowAlreadyAddedModal}
+                                setShowSequenceListModal={setShowSequenceListModal}
                                 allCampaignCreators={allCampaignCreators}
                                 trackSearch={track}
                             />
@@ -224,7 +226,6 @@ export const SearchPageInner = () => {
                     </>
                 }
             />
-
             {!noResults && (
                 <Button
                     onClick={async () => {
@@ -235,6 +236,17 @@ export const SearchPageInner = () => {
                 >
                     {t('creators.loadMore')}
                 </Button>
+            )}
+
+            {featEmail() && (
+                <AddToSequenceModal
+                    show={showSequenceListModal}
+                    setShow={setShowSequenceListModal}
+                    selectedCreator={{
+                        ...selectedCreator?.account.user_profile,
+                    }}
+                    platform={platform}
+                />
             )}
 
             <AddToCampaignModal
@@ -255,7 +267,6 @@ export const SearchPageInner = () => {
                         });
                 }}
             />
-
             <InfluencerAlreadyAddedModal
                 show={showAlreadyAddedModal}
                 setCampaignListModal={setShowCampaignListModal}
@@ -264,7 +275,6 @@ export const SearchPageInner = () => {
                 campaigns={campaigns}
                 allCampaignCreators={allCampaignCreators}
             />
-
             <SearchFiltersModal show={filterModalOpen} setShow={setShowFiltersModal} onSearch={handleSearch} />
         </div>
     );

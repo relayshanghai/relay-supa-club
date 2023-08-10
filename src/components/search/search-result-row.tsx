@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'src/components/button';
 import { DotsHorizontal, ShareLink } from 'src/components/icons';
-import { featRecommended } from 'src/constants/feature-flags';
+import { featEmail, featRecommended } from 'src/constants/feature-flags';
 import useAboveScreenWidth from 'src/hooks/use-above-screen-width';
 import { useSearch, useSearchResults } from 'src/hooks/use-search';
 import { imgProxy } from 'src/utils/fetcher';
@@ -29,6 +29,7 @@ export interface SearchResultRowProps {
     setSelectedCreator: (creator: CreatorSearchAccountObject) => void;
     setShowCampaignListModal: (show: boolean) => void;
     setShowAlreadyAddedModal: (show: boolean) => void;
+    setShowSequenceListModal: (show: boolean) => void;
     allCampaignCreators?: CampaignCreatorBasicInfo[];
     trackSearch?: track;
 }
@@ -41,6 +42,7 @@ export const MoreResultsRows = ({
     setShowCampaignListModal,
     setSelectedCreator,
     setShowAlreadyAddedModal,
+    setShowSequenceListModal,
     allCampaignCreators,
     trackSearch,
 }: MoreResultsRowsProps) => {
@@ -101,6 +103,7 @@ export const MoreResultsRows = ({
                         setSelectedCreator={setSelectedCreator}
                         setShowAlreadyAddedModal={setShowAlreadyAddedModal}
                         allCampaignCreators={allCampaignCreators}
+                        setShowSequenceListModal={setShowSequenceListModal}
                     />
                 ))}
             </>
@@ -117,6 +120,7 @@ export const SearchResultRow = ({
     setSelectedCreator,
     allCampaignCreators,
     setShowAlreadyAddedModal,
+    setShowSequenceListModal,
 }: SearchResultRowProps) => {
     const { t } = useTranslation();
     const { platform, recommendedInfluencers } = useSearch();
@@ -157,6 +161,11 @@ export const SearchResultRow = ({
             setShowCampaignListModal(true);
         }
         trackEvent(SEARCH_RESULT_ROW('add to campaign'), { platform, user_id });
+    };
+
+    const addToSequence = () => {
+        setSelectedCreator(creator);
+        setShowSequenceListModal(true);
     };
 
     const desktop = useAboveScreenWidth(500);
@@ -235,14 +244,21 @@ export const SearchResultRow = ({
                         </Button>
                     </Link>
 
-                    <Button
-                        onClick={addToCampaign}
-                        className="flex items-center gap-1"
-                        data-testid={`add-to-campaign-button/${user_id}`}
-                    >
-                        <PlusCircleIcon className="w-5" />
-                        <span className="">{t('creators.addToCampaign')}</span>
-                    </Button>
+                    {featEmail() ? (
+                        <Button onClick={addToSequence} className="flex items-center gap-1">
+                            <PlusCircleIcon className="w-5" />
+                            <span className="">{t('creators.addToSequence')}</span>
+                        </Button>
+                    ) : (
+                        <Button
+                            onClick={addToCampaign}
+                            className="flex items-center gap-1"
+                            data-testid={`add-to-campaign-button/${user_id}`}
+                        >
+                            <PlusCircleIcon className="w-5" />
+                            <span className="">{t('creators.addToCampaign')}</span>
+                        </Button>
+                    )}
 
                     {url && (
                         <Link href={url} target="_blank" rel="noopener noreferrer">
@@ -266,18 +282,33 @@ export const SearchResultRow = ({
 
                         <Menu.Items className="absolute right-0 top-0 mr-16 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                             <div className="px-1 py-1">
-                                <Menu.Item>
-                                    {({ active }) => (
-                                        <button
-                                            className={`${
-                                                active ? 'bg-violet-500 text-white' : 'text-gray-900'
-                                            } group flex w-full items-center justify-center rounded-md px-2 py-2 text-sm`}
-                                            onClick={addToCampaign}
-                                        >
-                                            {t('creators.addToCampaign')}
-                                        </button>
-                                    )}
-                                </Menu.Item>
+                                {featEmail() ? (
+                                    <Menu.Item>
+                                        {({ active }) => (
+                                            <button
+                                                className={`${
+                                                    active ? 'bg-violet-500 text-white' : 'text-gray-900'
+                                                } group flex w-full items-center justify-center rounded-md px-2 py-2 text-sm`}
+                                                onClick={addToSequence}
+                                            >
+                                                {t('creators.addToSequence')}
+                                            </button>
+                                        )}
+                                    </Menu.Item>
+                                ) : (
+                                    <Menu.Item>
+                                        {({ active }) => (
+                                            <button
+                                                className={`${
+                                                    active ? 'bg-violet-500 text-white' : 'text-gray-900'
+                                                } group flex w-full items-center justify-center rounded-md px-2 py-2 text-sm`}
+                                                onClick={addToCampaign}
+                                            >
+                                                {t('creators.addToCampaign')}
+                                            </button>
+                                        )}
+                                    </Menu.Item>
+                                )}
 
                                 <Link
                                     href={`/influencer/${platform}/${user_id}`}
