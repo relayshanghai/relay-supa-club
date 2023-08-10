@@ -6,7 +6,6 @@ import { Layout } from '../layout';
 import { Plus } from '../icons';
 import { Button } from '../button';
 // import { SequenceStats } from './sequence-stats';
-// import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 // import { useSequenceEmails } from 'src/hooks/use-sequence-emails';
 import { CreateSequenceModal } from './create-sequence-modal';
 import SequencesTable from './sequences-table';
@@ -14,7 +13,7 @@ import SequencesTable from './sequences-table';
 export const SequencesPage = () => {
     const { t } = useTranslation();
     const { sequences } = useSequences();
-    // const { sequenceInfluencers } = useSequenceInfluencers(sequence?.id);
+    // const { allSequenceInfluencersByCompanyId } = useSequences();
     // const { sequenceEmails: allSequenceEmails } = useSequenceEmails(sequence?.id);
     const [showCreateSequenceModal, setShowCreateSequenceModal] = useState<boolean>(false);
 
@@ -22,7 +21,6 @@ export const SequencesPage = () => {
         setShowCreateSequenceModal(true);
     };
 
-    // TODO: get all sequenceInfluencers from all sequences.
     // TODO: get all sequenceEmails from all sequences.
 
     return (
@@ -45,7 +43,7 @@ export const SequencesPage = () => {
                 </div>
                 {/* TODO: update the sequenceStats component with real data */}
                 {/* <SequenceStats
-                    totalInfluencers={allSequenceInfluencers?.length || 0}
+                    totalInfluencers={allSequenceInfluencersByCompanyId?.length || 0}
                     openRate={
                         (allSequenceEmails?.filter(
                             (email) =>
