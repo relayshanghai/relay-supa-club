@@ -1155,7 +1155,6 @@ export interface Database {
           created_at: string
           id: string
           name: string | null
-          params: string[]
           sequence_id: string
           step_number: number
           template_id: string
@@ -1166,7 +1165,6 @@ export interface Database {
           created_at?: string
           id?: string
           name?: string | null
-          params?: string[]
           sequence_id: string
           step_number?: number
           template_id: string
@@ -1177,7 +1175,6 @@ export interface Database {
           created_at?: string
           id?: string
           name?: string | null
-          params?: string[]
           sequence_id?: string
           step_number?: number
           template_id?: string
@@ -1223,6 +1220,46 @@ export interface Database {
             foreignKeyName: "sequences_company_id_fkey"
             columns: ["company_id"]
             referencedRelation: "companies"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      template_variables: {
+        Row: {
+          created_at: string
+          id: string
+          key: string
+          name: string
+          required: boolean
+          sequence_id: string
+          updated_at: string
+          value: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          key: string
+          name: string
+          required?: boolean
+          sequence_id: string
+          updated_at?: string
+          value: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          key?: string
+          name?: string
+          required?: boolean
+          sequence_id?: string
+          updated_at?: string
+          value?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "template_variables_sequence_id_fkey"
+            columns: ["sequence_id"]
+            referencedRelation: "sequences"
             referencedColumns: ["id"]
           }
         ]

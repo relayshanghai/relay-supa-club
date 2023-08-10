@@ -69,6 +69,20 @@ export type Sequence = Database['public']['Tables']['sequences']['Row'];
 export type SequenceInsert = Database['public']['Tables']['sequences']['Insert'];
 export type SequenceUpdate = Database['public']['Tables']['sequences']['Update'];
 
+export type TemplateVariablesTable = Database['public']['Tables']['template_variables'];
+export type TemplateVariable = TemplateVariablesTable['Row'] & {
+    /** The key to send to Email Engine in `SendEmailRequestBody.render.params`. Must match what is set in the Email Engine template. */
+    key: string;
+};
+export type TemplateVariableInsert = TemplateVariablesTable['Insert'] & {
+    /** The key to send to Email Engine in `SendEmailRequestBody.render.params`. Must match what is set in the Email Engine template. */
+    key: string;
+};
+export type TemplateVariableUpdate = TemplateVariablesTable['Update'] & {
+    /** The key to send to Email Engine in `SendEmailRequestBody.render.params`. Must match what is set in the Email Engine template. */
+    key?: string;
+};
+
 type SequenceStepDetailedTypes = {
     /** Int, first step = 0 */
     step_number: number;
