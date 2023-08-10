@@ -34,5 +34,10 @@ const sequences = {
         manager: 'Manager',
         product: 'Product',
     },
+    sequenceModal: 'Create a new sequence',
+    sequenceInfo: 'Sequence Info',
+    sequenceName: 'Sequence Name',
+    product: 'Product',
+    outreachEmail: 'Outreach Email',
 };
 export default sequences;

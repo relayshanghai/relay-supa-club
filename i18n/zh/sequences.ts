@@ -34,5 +34,10 @@ const sequences = {
         manager: '经理',
         product: '产品',
     },
+    sequenceModal: '创建新序列',
+    sequenceInfo: '序列信息',
+    sequenceName: '序列名称',
+    product: '产品',
+    outreachEmail: '外联邮件',
 };
 export default sequences;
