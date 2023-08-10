@@ -87,8 +87,9 @@ const sequences = {
     recentVideoTitle: 'Recent Video Title',
     recentVideoTitleTooltip: `No need to enter this! We will pull this
     information from the influencers report
-    to customize each email for it's recipeient!`,
+    to customize each email for it's recipient!`,
     wellHandleThisOne: `We'll handle this one!`,
+    missingRequiredTemplateVariables_variables: 'Missing required template variables: {{variables}}',
 };
 
 export default sequences;

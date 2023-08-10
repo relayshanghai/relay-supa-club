@@ -89,5 +89,6 @@ const sequences = {
     information from the influencers report
     to customize each email for it's recipeient!`,
     wellHandleThisOne: `We'll handle this one!`,
+    missingRequiredTemplateVariables_variables: 'Missing required template variables: {{variables}}',
 };
 export default sequences;
