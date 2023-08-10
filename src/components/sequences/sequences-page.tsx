@@ -13,9 +13,11 @@ import SequencesTable from './sequences-table';
 export const SequencesPage = () => {
     const { t } = useTranslation();
     const { sequences } = useSequences();
-    // const { allSequenceInfluencersByCompanyId } = useSequences();
-    // const { sequenceEmails: allSequenceEmails } = useSequenceEmails(sequence?.id);
+    // const { sequenceEmails } = useSequenceEmails(sequence?.id);
     const [showCreateSequenceModal, setShowCreateSequenceModal] = useState<boolean>(false);
+
+    // const sequenceIds = sequences ? sequences.map((sequence) => sequence.id) : null;
+    // const allSequenceEmails = sequenceIds?.map((sequenceId) => useSequenceEmails(sequenceId));
 
     const handleOpenCreateSequenceModal = () => {
         setShowCreateSequenceModal(true);

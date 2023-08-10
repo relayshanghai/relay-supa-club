@@ -1,5 +1,4 @@
 import useSWR from 'swr';
-
 import { useClientDb } from 'src/utils/client-db/use-client-db';
 
 export const useSequenceEmails = (sequenceId?: string) => {
