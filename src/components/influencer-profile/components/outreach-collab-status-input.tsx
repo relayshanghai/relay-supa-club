@@ -1,14 +1,15 @@
+import type { ComponentProps } from 'react';
 import React from 'react';
-import { TextInputComponent } from 'src/components/library/forms/text-input';
+import { CheckboxDropdown } from './checkbox-dropdown';
 
 type Props = {
     //
-} & (typeof TextInputComponent)['defaultProps'];
+} & Omit<ComponentProps<typeof CheckboxDropdown>, 'label'> & { label?: string };
 
 export const OutreachCollabStatusInput = (props: Props) => {
     return (
         <>
-            <TextInputComponent label="Collab Status" {...props} />
+            <CheckboxDropdown {...props} label="Status" options={props.options} selected={props.selected} />
         </>
     );
 };
