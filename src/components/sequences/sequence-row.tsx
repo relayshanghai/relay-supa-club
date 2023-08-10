@@ -120,6 +120,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                             position="left"
                         >
                             <Button
+                                data-testid={`send-email-button-${sequenceInfluencer.email}`}
                                 onClick={isMissingVariables ? () => setShowUpdateTemplateVariables(true) : handleStart}
                                 className={isMissingVariables ? '!border-gray-300 !bg-gray-300 !text-gray-500' : ''}
                             >
