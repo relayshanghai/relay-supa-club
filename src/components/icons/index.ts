@@ -55,7 +55,7 @@ export { default as ChevronRight } from './ChevronRight';
 export { default as ChevronDown } from './ChevronDown';
 export { default as CheckIcon } from './CheckIcon';
 export { default as CrossIcon } from './CrossIcon';
-export { default as PlusIcon } from './PlusIcon';
+export { default as InfoIcon } from './InfoIcon';
 export { default as Question } from './Question';
 export { default as ProfilePlus } from './ProfilePlus';
 export { default as Slash } from './Slash';

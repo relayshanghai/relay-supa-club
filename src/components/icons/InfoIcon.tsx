@@ -1,13 +1,7 @@
 import type { SVGProps } from 'react';
 
-const PlusIcon = ({ className, ...props }: SVGProps<SVGSVGElement>) => (
-    <svg
-        viewBox="0 0 21 20"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        className={`cursor-pointer fill-current text-gray-300 duration-300 group-hover:text-gray-600 ${className}`}
-        {...props}
-    >
+const InfoIcon = ({ className, ...props }: SVGProps<SVGSVGElement>) => (
+    <svg viewBox="0 0 21 20" xmlns="http://www.w3.org/2000/svg" className={className} {...props}>
         <path
             fillRule="evenodd"
             clipRule="evenodd"
@@ -16,4 +10,4 @@ const PlusIcon = ({ className, ...props }: SVGProps<SVGSVGElement>) => (
         />
     </svg>
 );
-export default PlusIcon;
+export default InfoIcon;

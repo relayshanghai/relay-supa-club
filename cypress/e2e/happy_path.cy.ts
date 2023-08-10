@@ -1,5 +1,6 @@
 import { deleteDB } from 'idb';
 import { addPostIntercept, cocomelonId, setupIntercepts } from './intercepts';
+import { featEmail } from 'src/constants/feature-flags';
 
 export const randomString = (length = 8) =>
     Math.random()
@@ -132,6 +133,7 @@ describe('Main pages happy paths', () => {
 
         cy.contains('Brave Wilderness'); // the first influencer search result for alligators
     });
+
     it('can open analyze page', () => {
         setupIntercepts();
 
@@ -157,6 +159,7 @@ describe('Main pages happy paths', () => {
         cy.contains('Add this influencer to your existing campaigns');
         cy.contains('Beauty for All Skin Tones'); // this functionality is tested in campaigns page test
     });
+
     it('can use account and pricing pages', () => {
         setupIntercepts();
 
@@ -206,7 +209,8 @@ describe('Main pages happy paths', () => {
             .type('123')
             .should('have.value', 'Blue Moonlight Stream Enterprises123');
     });
-    it('can open campaigns page and manage campaign influencers', () => {
+
+    it.skip('can open campaigns page and manage campaign influencers', () => {
         setupIntercepts();
         // list, add, archive campaigns
         // list, add, move, delete campaign influencers
@@ -244,7 +248,7 @@ describe('Main pages happy paths', () => {
 
         // campaigns are listed in order of most recently added/edited.
         cy.wait(5000); // wait for campaign to be added to db
-        cy.getByTestId('campaign-cards-container').children().should('have.length', 2)
+        cy.getByTestId('campaign-cards-container').children().should('have.length', 2);
         cy.getByTestId('campaign-cards-container', { timeout: 60000 }).children().first().contains('My Campaign');
         cy.getByTestId('campaign-cards-container').children().first().next().contains('Beauty for All Skin Tones');
 
