@@ -9,7 +9,13 @@ type Props = {
 export const OutreachCollabStatusInput = (props: Props) => {
     return (
         <>
-            <CheckboxDropdown {...props} label="Status" options={props.options} selected={props.selected} />
+            <CheckboxDropdown
+                {...props}
+                multiple={false}
+                label="Status"
+                options={props.options}
+                selected={props.selected}
+            />
         </>
     );
 };

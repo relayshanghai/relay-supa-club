@@ -1,4 +1,5 @@
 import { t } from 'i18next';
+import type { ReactNode } from 'react';
 import { useCallback, useMemo, useState } from 'react';
 import { ChevronDown } from 'src/components/icons';
 import type { CheckboxDropdownItemData } from './checkbox-dropdown-item';
@@ -8,14 +9,17 @@ type Props = {
     label: string;
     options: CheckboxDropdownItemData[];
     selected: string[];
-    onUpdate: (items: CheckboxDropdownItemData) => void;
+    onUpdate?: (items: CheckboxDropdownItemData) => void;
+    preIcon?: ReactNode;
+    multiple?: boolean;
 };
 
 export const CheckboxDropdown = ({ label, options, ...props }: Props) => {
+    const { multiple } = { multiple: true, ...props };
     const [selectedOptions, setSelectedOptions] = useState(() => options.filter((o) => props.selected.includes(o.id)));
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-    const resetSelection = useCallback(() => {
+    const clearSelection = useCallback(() => {
         setSelectedOptions([]);
     }, []);
 
@@ -26,9 +30,17 @@ export const CheckboxDropdown = ({ label, options, ...props }: Props) => {
         [selectedOptions],
     );
 
-    const handleItemSelect = useCallback((item: CheckboxDropdownItemData) => {
-        setSelectedOptions((s) => [...s, item]);
-    }, []);
+    const handleItemSelect = useCallback(
+        (item: CheckboxDropdownItemData) => {
+            setSelectedOptions((s) => {
+                if (!multiple) return [item];
+                return [...s, item];
+            });
+
+            if (!multiple) setIsDropdownOpen(false);
+        },
+        [multiple],
+    );
 
     const handleItemRemove = useCallback((item: CheckboxDropdownItemData) => {
         setSelectedOptions((s) => s.filter((i) => i.id !== item.id));
@@ -51,7 +63,7 @@ export const CheckboxDropdown = ({ label, options, ...props }: Props) => {
         if (selectedOptions.length > 0) {
             return (
                 <p
-                    onMouseDown={resetSelection}
+                    onMouseDown={clearSelection}
                     className="flex h-full items-center px-3 text-lg font-semibold hover:bg-slate-200"
                 >
                     x
@@ -60,7 +72,7 @@ export const CheckboxDropdown = ({ label, options, ...props }: Props) => {
         }
 
         return <ChevronDown className="mr-2 h-6 w-6 flex-shrink-0" />;
-    }, [selectedOptions.length, resetSelection]);
+    }, [selectedOptions.length, clearSelection]);
 
     const selectedItemPills = useMemo(() => {
         if (selectedOptions.length <= 0) {
@@ -93,22 +105,25 @@ export const CheckboxDropdown = ({ label, options, ...props }: Props) => {
                     onSelect={handleItemSelect}
                     onRemove={handleItemRemove}
                     isSelected={isItemSelected(option)}
+                    showCheckbox={multiple}
                 />
             );
         });
 
-        const clearButton = (
-            <li key="clear-button" className="p-2">
-                <label onClick={resetSelection} className="cursor-pointer text-center">
-                    <p className="rounded-lg border-2 border-gray-200 px-4 py-2">{t('filters.clearButton')}</p>
-                </label>
-            </li>
-        );
+        if (multiple) {
+            const clearButton = (
+                <li key="clear-button" className="p-2">
+                    <label onClick={clearSelection} className="cursor-pointer text-center">
+                        <p className="rounded-lg border-2 border-gray-200 px-4 py-2">{t('filters.clearButton')}</p>
+                    </label>
+                </li>
+            );
 
-        items.push(clearButton);
+            items.push(clearButton);
+        }
 
         return items;
-    }, [handleItemSelect, handleItemRemove, isItemSelected, options, resetSelection]);
+    }, [handleItemSelect, handleItemRemove, isItemSelected, options, clearSelection, multiple]);
 
     return (
         <details
@@ -119,9 +134,10 @@ export const CheckboxDropdown = ({ label, options, ...props }: Props) => {
         >
             <summary
                 tabIndex={0} // <- make this element focusable
-                className={`flex h-full min-w-full flex-row items-center justify-between gap-2`}
+                className={`flex h-full min-w-full flex-row items-center justify-between`}
             >
-                <div className="flex flex-row items-center gap-2 px-3 py-1">{selectedItemPills}</div>
+                {props.preIcon ? <div className="pl-2">{props.preIcon}</div> : null}
+                <div className="flex grow flex-row items-center gap-2 px-3 py-1">{selectedItemPills}</div>
                 {postIcon}
             </summary>
             <ul
