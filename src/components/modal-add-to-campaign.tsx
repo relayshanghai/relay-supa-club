@@ -24,7 +24,6 @@ export const AddToCampaignModal = ({
     track: (campaign: string) => void;
 }) => {
     const { t } = useTranslation();
-
     return (
         <Modal
             title={t('campaigns.modal.addToCampaign') || ''}

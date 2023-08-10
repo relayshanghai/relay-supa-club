@@ -11,6 +11,7 @@ export interface SearchResultsTableProps {
     setShowCampaignListModal: (show: boolean) => void;
     setSelectedCreator: (creator: CreatorSearchAccountObject) => void;
     setShowAlreadyAddedModal: (show: boolean) => void;
+    setShowSequenceListModal: (show: boolean) => void;
     allCampaignCreators?: CampaignCreatorBasicInfo[];
     results?: CreatorSearchAccountObject[];
     loading: boolean;
@@ -24,6 +25,7 @@ export const SearchResultsTable = ({
     setShowCampaignListModal,
     setSelectedCreator,
     setShowAlreadyAddedModal,
+    setShowSequenceListModal,
     allCampaignCreators,
     results,
     loading: resultsLoading,
@@ -98,6 +100,7 @@ export const SearchResultsTable = ({
                                     setShowCampaignListModal={setShowCampaignListModal}
                                     setSelectedCreator={setSelectedCreator}
                                     setShowAlreadyAddedModal={setShowAlreadyAddedModal}
+                                    setShowSequenceListModal={setShowSequenceListModal}
                                     allCampaignCreators={allCampaignCreators}
                                 />
                             ))}
