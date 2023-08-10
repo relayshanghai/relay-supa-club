@@ -1,10 +1,14 @@
 import React from 'react';
 import { TextInputComponent } from 'src/components/library/forms/text-input';
 
-export const OutreachNextStepsInput = () => {
+type Props = {
+    //
+} & (typeof TextInputComponent)['defaultProps'];
+
+export const OutreachNextStepsInput = (props: Props) => {
     return (
         <>
-            <TextInputComponent label="Next Steps" />
+            <TextInputComponent isRelative={false} label="Next Step" {...props} />
         </>
     );
 };

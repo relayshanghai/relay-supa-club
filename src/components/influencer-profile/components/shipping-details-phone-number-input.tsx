@@ -8,7 +8,7 @@ type Props = {
 export const ShippingDetailsPhoneNumberInput = (props: Props) => {
     return (
         <>
-            <TextInputComponent label="Phone Number" {...props} />
+            <TextInputComponent isRelative={false} label="Phone Number" {...props} />
         </>
     );
 };

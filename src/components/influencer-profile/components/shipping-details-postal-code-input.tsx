@@ -8,7 +8,7 @@ type Props = {
 export const ShippingDetailsPostalCodeInput = (props: Props) => {
     return (
         <>
-            <TextInputComponent label="Postal Code" {...props} />
+            <TextInputComponent isRelative={false} label="Postal Code" {...props} />
         </>
     );
 };

@@ -8,7 +8,7 @@ type Props = {
 export const CollabFeeInput = (props: Props) => {
     return (
         <>
-            <TextInputComponent label="Fee (USD)" {...props} />
+            <TextInputComponent isRelative={false} label="Fee (USD)" type="number" {...props} />
         </>
     );
 };

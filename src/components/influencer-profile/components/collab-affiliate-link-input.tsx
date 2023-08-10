@@ -8,7 +8,7 @@ type Props = {
 export const CollabAffiliateLinkInput = (props: Props) => {
     return (
         <>
-            <TextInputComponent label="Affiliate Link" {...props} />
+            <TextInputComponent isRelative={false} label="Affiliate Link" {...props} />
         </>
     );
 };

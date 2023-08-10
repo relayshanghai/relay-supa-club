@@ -8,7 +8,7 @@ type Props = {
 export const CollabVideoDetailsInput = (props: Props) => {
     return (
         <>
-            <TextInputComponent label="Video Details" {...props} />
+            <TextInputComponent isRelative={false} label="Video Details" {...props} />
         </>
     );
 };

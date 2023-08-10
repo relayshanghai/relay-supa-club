@@ -8,7 +8,7 @@ type Props = {
 export const OutreachNotesInput = (props: Props) => {
     return (
         <>
-            <TextInputComponent label="Notes" {...props} />
+            <TextInputComponent isRelative={false} label="Notes" {...props} />
         </>
     );
 };
