@@ -1,9 +1,10 @@
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronDown, FilterFunnel } from 'src/components/icons';
+import { type FunnelStatus } from 'src/utils/api/db/types';
 
 export type MultipleDropdownObject = {
-    [key: string]: {
+    [key in FunnelStatus]: {
         value?: number;
         style?: string;
     };
@@ -16,9 +17,9 @@ export const SelectMultipleDropdown = ({
     setSelectedOptions,
 }: {
     text: string;
-    options: MultipleDropdownObject;
-    selectedOptions: string[];
-    setSelectedOptions: React.Dispatch<React.SetStateAction<string[]>>;
+    options: MultipleDropdownObject | any;
+    selectedOptions: FunnelStatus[] | any[];
+    setSelectedOptions: (filters: FunnelStatus[]) => void;
 }) => {
     const detailsRef = useRef<HTMLDetailsElement>(null); // Tracks the details element in the returned JSX
     const { t } = useTranslation();
@@ -89,23 +90,25 @@ export const SelectMultipleDropdown = ({
                                 <input
                                     type="checkbox"
                                     value={option}
-                                    checked={selectedOptions.includes(option)}
+                                    checked={selectedOptions.includes(option as FunnelStatus)}
                                     className="appearance-none rounded border-gray-300 checked:text-primary-500"
                                     onChange={(e) => {
                                         if (e.target.checked) {
-                                            setSelectedOptions([...selectedOptions, option]);
+                                            setSelectedOptions([...selectedOptions, option as FunnelStatus]);
                                             return;
                                         }
                                         setSelectedOptions(selectedOptions.filter((o) => o !== option));
                                     }}
                                 />
                                 <p
-                                    className={`${options[option].style} whitespace-nowrap rounded-md px-3 py-2 text-xs`}
+                                    className={`${
+                                        options[option as FunnelStatus].style
+                                    } whitespace-nowrap rounded-md px-3 py-2 text-xs`}
                                 >
                                     {option}
                                 </p>
                             </div>
-                            <p>{options[option].value}</p>
+                            <p>{options[option as FunnelStatus].value}</p>
                         </label>
                     </li>
                 ))}

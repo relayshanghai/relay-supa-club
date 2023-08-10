@@ -450,7 +450,8 @@ CREATE OR REPLACE FUNCTION create_influencer_social_profile(
   _reference_id TEXT,
   _username TEXT,
   _name TEXT,
-  _email TEXT
+  _email TEXT,
+  _avatar_url TEXT
 ) RETURNS RECORD SECURITY DEFINER LANGUAGE plpgsql AS $$
 DECLARE
   _row RECORD;
@@ -464,7 +465,8 @@ BEGIN
     username,
     created_at,
     name,
-    email
+    email,
+    avatar_url
   )
   VALUES (
     uuid_generate_v4(),
@@ -475,7 +477,8 @@ BEGIN
     _username,
     now(),
     _name,
-    _email
+    _email,
+    _avatar_url
   )
   RETURNING * INTO _row;
   RETURN _row;
@@ -754,7 +757,8 @@ BEGIN
     'iqdata:1',
     'alice1',
     _influencer_alice.name,
-    _influencer_alice.email
+    _influencer_alice.email,
+    'https://example.com/avatar1'
   );
   _influencer_social_profile_bob_1 := create_influencer_social_profile(
     'https://instagram.com/bob1',
@@ -763,7 +767,8 @@ BEGIN
     'iqdata:2',
     'bob1',
     _influencer_bob.name,
-    _influencer_bob.email
+    _influencer_bob.email,
+    'https://example.com/avatar2'
   );
   _influencer_social_profile_bob_2 := create_influencer_social_profile(
     'https://youtube.com/bob2',
@@ -772,7 +777,8 @@ BEGIN
     'iqdata:3',
     'bob2',
     _influencer_bob.name,
-    _influencer_bob.email   
+    _influencer_bob.email,
+    'https://example.com/avatar3'
   );
   _influencer_social_profile_charlie_1 := create_influencer_social_profile(
     'https://instagram.com/charlie1',
@@ -781,7 +787,8 @@ BEGIN
     'iqdata:4',
     'charlie1',
     _influencer_charlie.name,
-    _influencer_charlie.email   
+    _influencer_charlie.email,
+    'https://example.com/avatar4'
   );
   _influencer_social_profile_daniel_1 := create_influencer_social_profile(
     'https://instagram.com/daniel1',
@@ -790,7 +797,8 @@ BEGIN
     'iqdata:5',
     'daniel1',
     _influencer_daniel.name,
-    _influencer_daniel.email
+    _influencer_daniel.email,
+    'www.example.com/avatar5'
   );
   _influencer_social_profile_felicia_1 := create_influencer_social_profile(
     'https://instagram.com/felicia1',
@@ -799,7 +807,8 @@ BEGIN
     'iqdata:6',
     'felicia1',
     _influencer_felicia.name,
-    _influencer_felicia.email
+    _influencer_felicia.email,
+    'https://example.com/avatar6'
   );
   _influencer_social_profile_georgia_1 := create_influencer_social_profile(
     'https://instagram.com/georgia1',
@@ -808,7 +817,8 @@ BEGIN
     'iqdata:7',
     'georgia1',
     _influencer_georgia.name,
-    _influencer_georgia.email
+    _influencer_georgia.email,
+    'https://example.com/avatar7'
   );
 
   PERFORM create_sequence_influencer(

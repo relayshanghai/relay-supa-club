@@ -1,22 +1,18 @@
 import Link from 'next/link';
-import { collabOptions } from '../constants';
+import { COLLABOPTIONS } from '../constants';
 import { InboxIcon } from 'src/components/icons';
 import { imgProxy } from 'src/utils/fetcher';
-import { type SequenceInfluencer } from 'src/utils/api/db';
-import { useInfluencerSocialProfile } from 'src/hooks/use-influencer-social-profile';
 import i18n from 'i18n';
-import { useProfile } from 'src/hooks/use-profile';
+import { type SequenceInfluencerManagerPage } from 'src/hooks/use-sequence-influencers';
 
 interface InfluencerRowProps {
     index: number;
-    influencer: SequenceInfluencer;
+    influencer: SequenceInfluencerManagerPage;
     onCheckboxChange?: () => void;
 }
 
 export const InfluencerRow = ({ index, influencer }: InfluencerRowProps) => {
-    const { influencer_social_profile_id, tags, updated_at, funnel_status, added_by } = influencer;
-    const { influencerSocialProfile } = useInfluencerSocialProfile(influencer_social_profile_id);
-    const { profile } = useProfile(added_by);
+    const { name, username, manager_first_name, avatar_url, url, tags, updated_at, funnel_status } = influencer;
     return (
         <tr key={influencer.id + index} className="group cursor-default text-sm  hover:bg-primary-50">
             {/* <td className="whitespace-nowrap items-center text-center display-none">
@@ -27,19 +23,19 @@ export const InfluencerRow = ({ index, influencer }: InfluencerRowProps) => {
                     <div>
                         <img
                             className="inline-block h-14 w-14 bg-slate-300"
-                            src={imgProxy(influencerSocialProfile?.url || '')}
-                            alt={`influencer-avatar-${influencerSocialProfile?.name}`}
+                            src={imgProxy(avatar_url || '')}
+                            alt={`influencer-avatar-${name}`}
                         />
                     </div>
                     <div className="flex flex-col">
-                        <p className="font-semibold text-primary-600">{influencerSocialProfile?.name}</p>
+                        <p className="font-semibold text-primary-600">{name}</p>
                         <Link
                             className="cursor-pointer font-semibold text-gray-500"
-                            href={influencerSocialProfile?.url || ''}
+                            href={url || ''}
                             rel="noopener noreferrer"
                             target="_blank"
                         >
-                            @{influencerSocialProfile?.username}
+                            @{username}
                         </Link>
                     </div>
                 </div>
@@ -47,15 +43,13 @@ export const InfluencerRow = ({ index, influencer }: InfluencerRowProps) => {
             <td className="whitespace-nowrap px-6 py-4 font-medium text-gray-900">
                 <p>
                     <p
-                        className={`rounded text-xs font-medium ${
-                            collabOptions[funnel_status as keyof typeof collabOptions].style
-                        } w-fit whitespace-nowrap px-2 py-1.5`}
+                        className={`rounded text-xs font-medium ${COLLABOPTIONS[funnel_status].style} w-fit whitespace-nowrap px-2 py-1.5`}
                     >
                         {funnel_status}
                     </p>
                 </p>
             </td>
-            <td className="whitespace-nowrap px-6 py-4 font-medium text-gray-600">{profile?.data?.first_name}</td>
+            <td className="whitespace-nowrap px-6 py-4 font-medium text-gray-600">{manager_first_name}</td>
             <td className="font-regular flex flex-row items-center gap-1 whitespace-nowrap p-6 text-xs text-gray-600">
                 {tags.map((tag: string) => {
                     return (

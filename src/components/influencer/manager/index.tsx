@@ -3,14 +3,102 @@ import { CollabStatus } from './collab-status';
 import { OnlyMe } from './onlyme';
 import { Table } from './table';
 import { useSequences } from 'src/hooks/use-sequences';
-import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
-import { useState } from 'react';
+import { type SequenceInfluencerManagerPage, useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
+import { useCallback, useEffect, useState } from 'react';
+import Fuse from 'fuse.js';
+import { useUser } from 'src/hooks/use-user';
+import { type FunnelStatus } from 'src/utils/api/db';
+import { type MultipleDropdownObject } from 'src/components/library';
+import { COLLABOPTIONS } from '../constants';
 
 const Manager = () => {
     const { sequences } = useSequences();
-    const { sequenceInfluencers } = useSequenceInfluencers(sequences?.[0]?.id);
+    const { sequenceInfluencers } = useSequenceInfluencers(
+        sequences?.map((sequence) => {
+            return sequence.id;
+        }),
+    );
 
-    const [influencers, _setInfluencers] = useState(sequenceInfluencers);
+    const { profile } = useUser();
+
+    const [influencers, setInfluencers] = useState(sequenceInfluencers);
+    const [searchTerm, setSearchTerm] = useState<string>('');
+    const [onlyMe, setOnlyMe] = useState<boolean>(false);
+    const [filterStatuses, setFilterStatuses] = useState<FunnelStatus[]>([]);
+
+    const setCollabStatusValues = (influencers: SequenceInfluencerManagerPage[], options: MultipleDropdownObject) => {
+        const collabOptionsWithValue = options;
+        Object.keys(COLLABOPTIONS).forEach((option) => {
+            collabOptionsWithValue[option as FunnelStatus] = {
+                ...options[option as FunnelStatus],
+                value: influencers?.filter((x) => x.funnel_status === option).length || 0,
+            };
+        });
+
+        return collabOptionsWithValue;
+    };
+
+    const [collabOptions, setCollabOptions] = useState(COLLABOPTIONS);
+
+    useEffect(() => {
+        if (!sequenceInfluencers) return;
+        setCollabOptions(setCollabStatusValues(sequenceInfluencers, COLLABOPTIONS));
+    }, [sequenceInfluencers]);
+
+    const handleSetSearch = useCallback(
+        (term: string) => {
+            setSearchTerm(term);
+            if (!sequenceInfluencers) {
+                return;
+            }
+            const fuse = new Fuse(sequenceInfluencers, {
+                minMatchCharLength: 1,
+                keys: ['fullname', 'username'],
+            });
+
+            if (term.length === 0) {
+                setInfluencers(sequenceInfluencers);
+                return;
+            }
+
+            setInfluencers(fuse.search(term).map((result) => result.item));
+        },
+        [sequenceInfluencers],
+    );
+
+    const handleOnlyMe = useCallback(
+        (state: boolean) => {
+            setOnlyMe(!onlyMe);
+            if (!sequenceInfluencers) {
+                return;
+            }
+
+            if (!state) {
+                setInfluencers(sequenceInfluencers);
+                return;
+            }
+
+            setInfluencers(sequenceInfluencers.filter((x) => x.manager_first_name === profile?.first_name));
+        },
+        [sequenceInfluencers, profile, onlyMe],
+    );
+
+    const handleStatus = useCallback(
+        (filters: FunnelStatus[]) => {
+            setFilterStatuses(filters);
+            if (!sequenceInfluencers) {
+                return;
+            }
+
+            if (filters.length === 0) {
+                setInfluencers(sequenceInfluencers);
+                return;
+            }
+
+            setInfluencers(sequenceInfluencers.filter((x) => filters.includes(x.funnel_status)));
+        },
+        [sequenceInfluencers, setFilterStatuses],
+    );
 
     return (
         <div className="m-8 flex flex-col">
@@ -20,10 +108,10 @@ const Manager = () => {
             {/* Filters */}
             <div className="mt-[72px] flex flex-row justify-between">
                 <div className="flex flex-row gap-5">
-                    <SearchComponent _influencers={influencers} />
-                    <CollabStatus _influencers={influencers} />
+                    <SearchComponent searchTerm={searchTerm} onSetSearch={handleSetSearch} />
+                    <CollabStatus collabOptions={collabOptions} filters={filterStatuses} onSetFilters={handleStatus} />
                 </div>
-                <OnlyMe />
+                <OnlyMe state={onlyMe} onSwitch={handleOnlyMe} />
             </div>
             {/* Table */}
             <Table influencers={influencers} />

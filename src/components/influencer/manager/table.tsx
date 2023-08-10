@@ -1,6 +1,6 @@
 import React from 'react';
 import { InfluencerRow } from './influencer-row';
-import type { SequenceInfluencer } from 'src/utils/api/db';
+import { type SequenceInfluencerManagerPage } from 'src/hooks/use-sequence-influencers';
 
 const mockTableColumns = [
     { header: 'name', type: 'name', name: 'name' },
@@ -11,7 +11,7 @@ const mockTableColumns = [
     { header: 'inbox', type: 'link', name: 'inbox' },
 ];
 
-export const Table = ({ influencers }: { influencers?: SequenceInfluencer[] }) => {
+export const Table = ({ influencers }: { influencers?: SequenceInfluencerManagerPage[] }) => {
     // const [selectedAll, setSelectedAll] = useState<boolean>(false);
 
     // const handleCheckboxChange = (id: string) => {
