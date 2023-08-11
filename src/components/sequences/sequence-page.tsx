@@ -2,7 +2,6 @@
 import { Layout } from '../layout';
 import SequenceTable from './sequence-table';
 import { testAccount } from 'src/utils/api/email-engine/prototype-mocks';
-
 import { clientLogger } from 'src/utils/logger-client';
 import { SequenceStats } from './sequence-stats';
 import { useUser } from 'src/hooks/use-user';
@@ -144,15 +143,15 @@ export const SequencePage = () => {
                             (email) =>
                                 email.email_tracking_status === 'Link Clicked' ||
                                 email.email_tracking_status === 'Opened',
-                        ).length || 1) / (allSequenceEmails?.length || 1)
+                        ).length || 0) / (allSequenceEmails?.length || 0)
                     }
                     replyRate={
-                        (allSequenceEmails?.filter((email) => email.email_delivery_status === 'Replied').length || 1) /
-                        (allSequenceEmails?.length || 1)
+                        (allSequenceEmails?.filter((email) => email.email_delivery_status === 'Replied').length || 0) /
+                        (allSequenceEmails?.length || 0)
                     }
                     bounceRate={
-                        (allSequenceEmails?.filter((email) => email.email_delivery_status === 'Bounced').length || 1) /
-                        (allSequenceEmails?.length || 1)
+                        (allSequenceEmails?.filter((email) => email.email_delivery_status === 'Bounced').length || 0) /
+                        (allSequenceEmails?.length || 0)
                     }
                 />
                 <Tabs tabs={tabs} currentTab={currentTab} setCurrentTab={setCurrentTab} />
