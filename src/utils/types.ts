@@ -1,4 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { DatabaseWithCustomTypes } from 'types';
+import type { RelayDatabase } from './api/db';
 
-export type DBQuery<T extends (...args: any) => any> = (db: SupabaseClient<DatabaseWithCustomTypes>) => T;
+export type DBQuery = (db: SupabaseClient<DatabaseWithCustomTypes> | RelayDatabase) => (...args: any) => any;

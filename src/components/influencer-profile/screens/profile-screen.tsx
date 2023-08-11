@@ -55,7 +55,7 @@ export const ProfileScreen = ({ profile, value, selectedTab, onUpdate, onCancel,
     return (
         <div {...props}>
             <div className="mb-4 h-28">
-                <ProfileHeader className="relative left-4 top-2" profile={profile} />
+                <ProfileHeader profile={profile} className="relative left-4 top-2" />
             </div>
 
             <nav className="flex space-x-2">
@@ -81,7 +81,7 @@ export const ProfileScreen = ({ profile, value, selectedTab, onUpdate, onCancel,
 
             <div className="mt-3 p-12">
                 <div className={`${selected !== 'notes' ? 'hidden' : ''}`}>
-                    <ProfileNotesTab onUpdate={handleNotesDetailsUpdate} value={data.notes} />
+                    <ProfileNotesTab profile={profile} onUpdate={handleNotesDetailsUpdate} value={data.notes} />
                 </div>
                 <div className={`${selected !== 'shipping-details' ? 'hidden' : ''}`}>
                     <ProfileShippingDetailsTab onUpdate={handleshippingUpdate} value={data.shippingDetails} />

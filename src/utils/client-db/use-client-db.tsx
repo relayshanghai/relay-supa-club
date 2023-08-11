@@ -20,9 +20,9 @@ import { getProfileByIdCall } from '../api/db/calls/profiles';
 
 export const useSupabase = () => useSupabaseClient<DatabaseWithCustomTypes>();
 
-export const useDB = <T extends DBQuery<(...args: any) => any>>(query: DBQuery<ReturnType<T>>) => {
+export const useDB = <T extends DBQuery>(query: T) => {
     const supabase = useSupabase();
-    return query(supabase);
+    return query(supabase) as ReturnType<T>;
 };
 
 /**

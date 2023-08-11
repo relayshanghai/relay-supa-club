@@ -6,6 +6,8 @@ import { CollabVideoDetailsInput } from './collab-video-details-input';
 import { OutreachCollabStatusInput } from './outreach-collab-status-input';
 import { OutreachNotesInput } from './outreach-notes-input';
 import { OutreachNextStepsInput } from './outreach-next-steps-input';
+import { CollabAddPost } from './collab-add-post';
+import type { Profile } from './profile-header';
 
 export const COLLAB_STATUS_OPTIONS = [
     {
@@ -63,6 +65,7 @@ export type ProfileNotes = {
 };
 
 type Props = {
+    profile: Profile;
     onUpdate?: (data: ProfileNotes) => void;
     value?: Partial<ProfileNotes>;
 };
@@ -128,6 +131,8 @@ export const ProfileNotesTab = (props: Props) => {
                     value={data.scheduledPostDate}
                     onInput={(e) => handleUpdate('scheduledPostDate', e.currentTarget.value)}
                 />
+
+                <CollabAddPost profile={props.profile} />
             </div>
         </>
     );
