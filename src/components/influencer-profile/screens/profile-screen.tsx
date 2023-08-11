@@ -1,4 +1,5 @@
 import type { DetailedHTMLProps, HTMLAttributes } from 'react';
+import { useEffect } from 'react';
 import { useCallback, useState } from 'react';
 import type { ProfileNotes } from '../components/profile-notes-tab';
 import { ProfileNotesTab } from '../components/profile-notes-tab';
@@ -29,6 +30,7 @@ export const ProfileScreen = ({ profile, value, selectedTab, onUpdate, onCancel,
 
     const handleTabClick = (tab: Props['selectedTab']) => tab && setSelected(tab);
 
+    // init internal state from value prop
     const [data, setData] = useState<Partial<ProfileValue>>(() => {
         return value ?? { notes: undefined, shippingDetails: undefined };
     });
@@ -39,6 +41,7 @@ export const ProfileScreen = ({ profile, value, selectedTab, onUpdate, onCancel,
         });
     }, []);
 
+    // @todo instead of internal data, use setValue from parent
     const handleshippingUpdate = useCallback((data: ProfileShippingDetails) => {
         setData((state) => {
             return { ...state, shippingDetails: data };
@@ -51,6 +54,11 @@ export const ProfileScreen = ({ profile, value, selectedTab, onUpdate, onCancel,
         },
         [onUpdate],
     );
+
+    // update internal state
+    useEffect(() => {
+        setData({ ...value });
+    }, [value]);
 
     return (
         <div {...props}>

@@ -224,3 +224,4 @@ export type SearchSnapshots = Database['public']['Tables']['search_snapshots'];
 export type ReportSnapshots = Database['public']['Tables']['report_snapshots'];
 export type SearchParameters = Database['public']['Tables']['search_parameters'];
 export type VercelLogs = Database['public']['Tables']['vercel_logs'];
+export type CampaignNotes = Database['public']['Tables']['campaign_notes'];

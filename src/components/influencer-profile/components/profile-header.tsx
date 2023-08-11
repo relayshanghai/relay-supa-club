@@ -4,6 +4,8 @@ import { EmailOutlineColored, TiktokNoBg, YoutubeNoBg } from 'src/components/ico
 
 // @note probably exists already
 export type Profile = {
+    id?: string;
+    influencer_id?: string;
     username: string;
     platform: string;
     name: string;

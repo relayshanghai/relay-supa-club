@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { CollabAffiliateLinkInput } from './collab-affiliate-link-input';
 import { CollabFeeInput } from './collab-fee-input';
 import { CollabScheduledPostDateInput } from './collab-scheduled-post-date-input';
@@ -68,7 +68,7 @@ type Props = {
 };
 
 export const ProfileNotesTab = (props: Props) => {
-    const [data, setData] = useState(() => {
+    const [data, setData] = useState<ProfileNotes>(() => {
         return {
             collabStatus: '',
             notes: '',
@@ -80,6 +80,12 @@ export const ProfileNotesTab = (props: Props) => {
             ...props.value,
         };
     });
+
+    useEffect(() => {
+        setData((s) => {
+            return { ...s, ...props.value };
+        });
+    }, [props.value]);
 
     const handleUpdate = useCallback(
         (k: string, v: any) => {
@@ -107,7 +113,7 @@ export const ProfileNotesTab = (props: Props) => {
                     value={data.nextStep}
                     onInput={(e) => handleUpdate('nextStep', e.currentTarget.value)}
                 />
-                <OutreachNotesInput value={data.notes} onInput={(e) => handleUpdate('notes', e.currentTarget.value)} />
+                <OutreachNotesInput value={data.notes} onSave={(value) => handleUpdate('notes', value)} />
 
                 <div className="h-px border border-neutral-200" />
 

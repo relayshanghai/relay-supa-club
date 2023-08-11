@@ -12,7 +12,7 @@ export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 
 }
 
 function InputWithRef(
-    { label, error, note, placeholder, type = 'text', ...rest }: InputProps,
+    { label, error, note, placeholder, type = 'text', isRelative = true, ...rest }: InputProps,
     ref: ForwardedRef<HTMLInputElement>,
 ) {
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -24,7 +24,7 @@ function InputWithRef(
                 {label}
                 {rest.required ? <span className="ml-1 text-xs text-primary-500">*</span> : null}
             </div>
-            <div className={`${rest.isRelative ? 'relative' : ''}`}>
+            <div className={`${isRelative ? 'relative' : ''}`}>
                 <input
                     ref={ref}
                     placeholder={placeholder || ''}

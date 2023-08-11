@@ -64,14 +64,12 @@ export const InfluencerRow = ({ index, influencer, ...props }: InfluencerRowProp
                 </div>
             </td>
             <td className="whitespace-nowrap px-6 py-4 font-medium text-gray-900">
-                <p>
-                    <p
-                        className={`rounded text-xs font-medium ${
-                            collabOptions[collabstatus as keyof typeof collabOptions].style
-                        } w-fit whitespace-nowrap px-2 py-1.5`}
-                    >
-                        {collabOptions[collabstatus as keyof typeof collabOptions].label}
-                    </p>
+                <p
+                    className={`rounded text-xs font-medium ${
+                        collabOptions[collabstatus as keyof typeof collabOptions].style
+                    } w-fit whitespace-nowrap px-2 py-1.5`}
+                >
+                    {collabOptions[collabstatus as keyof typeof collabOptions].label}
                 </p>
             </td>
             <td className="whitespace-nowrap px-6 py-4 font-medium text-gray-600">{manager}</td>
