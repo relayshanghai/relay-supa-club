@@ -46,11 +46,15 @@ export const InfluencerRow = ({ index, influencer, ...props }: InfluencerRowProp
             <td className="whitespace-nowrap px-6 py-2 font-medium">
                 <div className="flex flex-row items-center gap-2">
                     <div>
-                        <img
-                            className="inline-block h-14 w-14 bg-slate-300"
-                            src={imgProxy(avatar_url || '')}
-                            alt={`influencer-avatar-${name}`}
-                        />
+                        {avatar_url ? (
+                            <img
+                                className="inline-block h-14 w-14 bg-slate-300"
+                                src={imgProxy(avatar_url)}
+                                alt={`Avatar Icon for ${name}`}
+                            />
+                        ) : (
+                            <div className="inline-block h-14 w-14 items-center justify-center rounded-full bg-slate-300" />
+                        )}
                     </div>
                     <div className="flex flex-col">
                         <p className="font-semibold text-primary-600">{name}</p>

@@ -18,10 +18,9 @@ export const useSequenceInfluencers = (sequenceIds?: string[]) => {
         sequenceIds ? ['sequence_influencers', ...sequenceIds] : null,
         async () => {
             if (sequenceIds) {
-                const ret = await apiFetch('/api/sequence/influencers', {
+                return (await apiFetch('/api/sequence/influencers', {
                     body: sequenceIds,
-                });
-                return ret as SequenceInfluencerManagerPage[];
+                })) as SequenceInfluencerManagerPage[];
             }
         },
     );

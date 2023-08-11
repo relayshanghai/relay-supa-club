@@ -15,9 +15,7 @@ const parsePayloadPath = (url: string, payloadPath: ApiPayload['path']) => {
 const parsePayloadQuery = (url: string, payloadQuery: ApiPayload['query']) => {
     const urlParams = new URLSearchParams(payloadQuery).toString();
 
-    if (urlParams === '') return url;
-
-    return `${url}?${urlParams}`;
+    return urlParams === '' ? url : `${url}?${urlParams}`;
 };
 
 const parseResponse = async (response: Response) => {

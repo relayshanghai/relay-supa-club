@@ -168,7 +168,7 @@ export const SequencePage = () => {
                     }
                     replyRate={
                         (allSequenceEmails?.filter((email) => email.email_delivery_status === 'Replied').length || 0) /
-                        (allSequenceEmails?.length || 0)
+                        (allSequenceEmails?.length || 1)
                     }
                     bounceRate={
                         (allSequenceEmails?.filter((email) => email.email_delivery_status === 'Bounced').length || 0) /

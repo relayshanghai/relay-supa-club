@@ -60,7 +60,7 @@ export const Table = ({
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200 bg-white">
-                        {influencers?.length === 0 && (
+                        {influencers && influencers.length === 0 && (
                             <tr>
                                 <td colSpan={TABLE_COLUMNS.length + 1} className="px-6 py-4">
                                     <div className="flex justify-center">

@@ -24,7 +24,7 @@ const getSequenceInfluencers = async (ctx: ServerContext, sequenceId: string) =>
             );
             return {
                 ...influencer,
-                manager_first_name: managerInfo.data?.first_name,
+                manager_first_name: managerInfo?.data?.first_name,
                 name: influencerInfo?.name,
                 username: influencerInfo?.username,
                 avatar_url: influencerInfo?.avatar_url,
