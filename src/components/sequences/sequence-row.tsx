@@ -7,15 +7,20 @@ import Link from 'next/link';
 import { imgProxy } from 'src/utils/fetcher';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { useState } from 'react';
+import type { SetStateAction } from 'react';
 import { TableInlineInput } from '../library/table-inline-input';
 import { Button } from '../button';
 import { DeleteOutline } from '../icons';
+import { Tooltip } from '../library';
 
 interface SequenceRowProps {
     sequenceInfluencer: SequenceInfluencer;
     sequenceEmail?: SequenceEmail;
     sequenceSteps: SequenceStep[];
     currentTab: SequenceInfluencer['funnel_status'];
+    missingVariables: string[];
+    isMissingVariables: boolean;
+    setShowUpdateTemplateVariables: (value: SetStateAction<boolean>) => void;
 }
 
 /** use the tracking status if it is delivered */
@@ -24,7 +29,15 @@ const getStatus = (sequenceEmail: SequenceEmail | undefined) =>
         ? sequenceEmail.email_tracking_status ?? sequenceEmail.email_delivery_status
         : sequenceEmail?.email_delivery_status;
 
-const SequenceRow: React.FC<SequenceRowProps> = ({ sequenceInfluencer, sequenceEmail, sequenceSteps, currentTab }) => {
+const SequenceRow: React.FC<SequenceRowProps> = ({
+    sequenceInfluencer,
+    sequenceEmail,
+    sequenceSteps,
+    currentTab,
+    missingVariables,
+    isMissingVariables,
+    setShowUpdateTemplateVariables,
+}) => {
     const { influencerSocialProfile } = useInfluencerSocialProfile(sequenceInfluencer.influencer_social_profile_id);
     const { updateSequenceInfluencer, deleteSequenceInfluencer } = useSequenceInfluencers(
         sequenceInfluencer?.sequence_id,
@@ -38,6 +51,9 @@ const SequenceRow: React.FC<SequenceRowProps> = ({ sequenceInfluencer, sequenceE
     };
     const currentStep = sequenceSteps?.find((step) => step.step_number === sequenceInfluencer.sequence_step);
     const { t } = useTranslation();
+    const handleStart = async () => {
+        // TODO
+    };
     return (
         <tr className="border-b-2 border-gray-200 bg-white">
             <td className="whitespace-nowrap px-6 py-2">
@@ -93,7 +109,24 @@ const SequenceRow: React.FC<SequenceRowProps> = ({ sequenceInfluencer, sequenceE
 
                     <td className="flex items-center whitespace-nowrap px-6 py-4 text-gray-600">
                         {/* TODO */}
-                        <Button>Send</Button>
+                        <Tooltip
+                            content={
+                                isMissingVariables
+                                    ? t('sequences.missingRequiredTemplateVariables_variables', {
+                                          variables: missingVariables,
+                                      })
+                                    : ''
+                            }
+                            position="left"
+                        >
+                            <Button
+                                data-testid={`send-email-button-${sequenceInfluencer.email}`}
+                                onClick={isMissingVariables ? () => setShowUpdateTemplateVariables(true) : handleStart}
+                                className={isMissingVariables ? '!border-gray-300 !bg-gray-300 !text-gray-500' : ''}
+                            >
+                                Send
+                            </Button>
+                        </Tooltip>
                         {/* <Button>Template</Button> */}
                         <button
                             onClick={() => deleteSequenceInfluencer(sequenceInfluencer.id)}

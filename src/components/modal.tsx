@@ -40,10 +40,7 @@ export const Modal: React.FC<ModalProps> = ({ children, visible, onClose, title,
                             <Dialog.Panel
                                 className={`w-full ${maxWidth} transform overflow-hidden rounded-2xl bg-gray-50 p-6 text-left align-middle shadow-xl transition-all`}
                             >
-                                <Dialog.Title
-                                    as="h3"
-                                    className="my-2 text-xl font-semibold leading-6 text-tertiary-600"
-                                >
+                                <Dialog.Title as="h3" className="my-2 text-2xl font-semibold leading-6 text-gray-600">
                                     {title}
                                 </Dialog.Title>
                                 <>{children}</>
