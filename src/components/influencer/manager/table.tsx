@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { InfluencerRow } from './influencer-row';
 import { type SequenceInfluencerManagerPage } from 'src/hooks/use-sequence-influencers';
+import { Button } from 'src/components/button';
 
 const mockTableColumns = [
     { header: 'name', type: 'name', name: 'name' },
@@ -11,7 +12,10 @@ const mockTableColumns = [
     { header: 'inbox', type: 'link', name: 'inbox' },
 ];
 
+const limit = 4;
+
 export const Table = ({ influencers }: { influencers?: SequenceInfluencerManagerPage[] }) => {
+    const [page, setPage] = useState(0);
     // const [selectedAll, setSelectedAll] = useState<boolean>(false);
 
     // const handleCheckboxChange = (id: string) => {
@@ -60,11 +64,42 @@ export const Table = ({ influencers }: { influencers?: SequenceInfluencerManager
                                 </td>
                             </tr>
                         )}
-                        {influencers?.map((influencer, index) => (
+                        {influencers?.slice(page * limit, (page + 1) * limit).map((influencer, index) => (
                             <InfluencerRow key={influencer.id} influencer={influencer} index={index} />
                         ))}
                     </tbody>
                 </table>
+            </div>
+            <div className="my-4 flex items-center justify-end gap-4 font-medium">
+                <p
+                    className="cursor-pointer border-none bg-transparent text-gray-500"
+                    onClick={() => !(influencers && (page + 1) * limit <= influencers.length) && setPage(page - 1)}
+                >
+                    {`<<`} Previous
+                </p>
+                <div className="flex flex-row items-center">
+                    {influencers &&
+                        Array.from({ length: influencers.length / limit + 2 }, (_value, index) => index)
+                            .slice(1)
+                            .map((pageNumber) => {
+                                return (
+                                    <Button
+                                        disabled={page + 1 === pageNumber}
+                                        key={`button-page-${pageNumber}`}
+                                        className="border-none bg-transparent text-slate-500 hover:text-gray-200 disabled:bg-primary-500 disabled:text-gray-200"
+                                        onClick={() => setPage((pageNumber as number) - 1)}
+                                    >
+                                        {pageNumber as number}
+                                    </Button>
+                                );
+                            })}
+                </div>
+                <p
+                    className="cursor-pointer border-none bg-transparent text-gray-500"
+                    onClick={() => !(influencers && (page + 1) * limit >= influencers.length) && setPage(page + 1)}
+                >
+                    Next {`>>`}
+                </p>
             </div>
         </div>
     );
