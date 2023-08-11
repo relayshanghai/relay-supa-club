@@ -17,5 +17,6 @@ BEGIN;
 \include ./supabase/policies/sequence_steps_all.policy.sql
 \include ./supabase/policies/sequences_all.policy.sql
 \include ./supabase/policies/sequence_emails_all.policy.sql
+\include ./supabase/policies/template_variables_all.policy.sql
 
 COMMIT;

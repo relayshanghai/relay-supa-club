@@ -4,11 +4,10 @@ import influencerSearch from '../../src/mocks/api/influencer-search/searchByInfl
 import keywordSearch from '../../src/mocks/api/influencer-search/keywordSearchAlligators.json';
 import keywordSearchMonkeys from '../../src/mocks/api/influencer-search/keywordSearchMonkeys.json';
 
-import { createClient } from '@supabase/supabase-js';
-import type { DatabaseWithCustomTypes } from 'types';
 import type { InfluencerPostRequest } from 'pages/api/influencer-search';
-import type { RelayDatabase, UsagesDBInsert } from 'src/utils/api/db';
+import type { UsagesDBInsert } from 'src/utils/api/db';
 import { ulid } from 'ulid';
+import { resetUsages, supabaseClientCypress } from './helpers';
 export { cocomelon, defaultLandingPageInfluencerSearch };
 
 export const cocomelonId = cocomelon.user_profile.user_id;
@@ -17,19 +16,8 @@ const now = new Date();
 const twoMonthsAgo = new Date(now.getUTCFullYear(), now.getUTCMonth() - 2, now.getUTCDate());
 const oneMonthFromNow = new Date(now.getUTCFullYear(), now.getUTCMonth() + 1, now.getUTCDate());
 
-const resetUsages = (supabase: RelayDatabase) => {
-    supabase.from('usages').delete().neq('created_at', new Date(0).toISOString());
-};
-
 export const setupIntercepts = () => {
-    const supabaseUrl = Cypress.env('NEXT_PUBLIC_SUPABASE_URL') || '';
-    if (!supabaseUrl) throw new Error('NEXT_PUBLIC_SUPABASE_URL not set');
-    const supabaseServiceKey = Cypress.env('SUPABASE_SERVICE_KEY') || '';
-    if (!supabaseServiceKey) throw new Error('SUPABASE_SERVICE_KEY not set');
-
-    const supabase = createClient<DatabaseWithCustomTypes>(supabaseUrl, supabaseServiceKey, {
-        auth: { persistSession: false },
-    });
+    const supabase = supabaseClientCypress();
     resetUsages(supabase);
     // IQData intercepts
     cy.intercept('/api/creators/report*', (req) => {
@@ -208,14 +196,7 @@ export const setupIntercepts = () => {
 };
 
 export const addPostIntercept = () => {
-    const supabaseUrl = Cypress.env('NEXT_PUBLIC_SUPABASE_URL') || '';
-    if (!supabaseUrl) throw new Error('NEXT_PUBLIC_SUPABASE_URL not set');
-    const supabaseServiceKey = Cypress.env('SUPABASE_SERVICE_KEY') || '';
-    if (!supabaseServiceKey) throw new Error('SUPABASE_SERVICE_KEY not set');
-
-    const supabase = createClient<DatabaseWithCustomTypes>(supabaseUrl, supabaseServiceKey, {
-        auth: { persistSession: false },
-    });
+    const supabase = supabaseClientCypress();
     const mockPostData = {
         title: 'initial post title',
         postedDate: new Date('2021-09-01').toISOString(),

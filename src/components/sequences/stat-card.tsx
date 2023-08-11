@@ -10,7 +10,10 @@ export interface StatCardProps {
 }
 export const StatCard = ({ name, value, largeIcon, smallIcon, tooltip }: StatCardProps) => {
     return (
-        <div className="flex flex-auto cursor-default items-center justify-center space-y-2 rounded-lg border border-gray-200 bg-white px-6 py-2">
+        <div
+            data-testid={`stat-card-${name.toLowerCase()}`}
+            className="flex flex-auto cursor-default items-center justify-center space-y-2 rounded-lg border border-gray-200 bg-white px-6 py-2"
+        >
             <div className="mr-5 flex h-12 w-12 items-center justify-center rounded-full bg-primary-200 p-3 text-primary-700">
                 {largeIcon}
             </div>

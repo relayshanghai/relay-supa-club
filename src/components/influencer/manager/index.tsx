@@ -1,3 +1,4 @@
+import { useState, useCallback } from 'react';
 import { SearchComponent } from './search-component';
 import { CollabStatus } from './collab-status';
 import { OnlyMe } from './onlyme';
@@ -10,6 +11,8 @@ import { useUser } from 'src/hooks/use-user';
 import { type FunnelStatus } from 'src/utils/api/db';
 import { type MultipleDropdownObject } from 'src/components/library';
 import { COLLABOPTIONS } from '../constants';
+import type { InfluencerRowProps } from './influencer-row';
+import { ProfileOverlayScreen } from 'src/components/influencer-profile/screens/profile-overlay-screen';
 
 const Manager = () => {
     const { sequences } = useSequences();
@@ -25,6 +28,20 @@ const Manager = () => {
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [onlyMe, setOnlyMe] = useState<boolean>(false);
     const [filterStatuses, setFilterStatuses] = useState<FunnelStatus[]>([]);
+    const [isProfileOverlayOpen, setIsProfileOverlayOpen] = useState(false);
+    const [_influencer, setInfluencer] = useState(null);
+
+    const handleRowClick = useCallback((influencer: InfluencerRowProps['influencer']) => {
+        // eslint-disable-next-line no-console
+        console.log('on open > ', influencer);
+        setInfluencer(influencer);
+        setIsProfileOverlayOpen(true);
+    }, []);
+
+    const handleProfileUpdate = useCallback((data: any) => {
+        // eslint-disable-next-line no-console
+        console.log('on update > ', data);
+    }, []);
 
     const setCollabStatusValues = (influencers: SequenceInfluencerManagerPage[], options: MultipleDropdownObject) => {
         const collabOptionsWithValue = options;
@@ -101,21 +118,28 @@ const Manager = () => {
     );
 
     return (
-        <div className="m-8 flex flex-col">
-            <div className="my-4 text-3xl font-semibold">
-                <h1>Influencer Manager</h1>
-            </div>
-            {/* Filters */}
-            <div className="mt-[72px] flex flex-row justify-between">
-                <div className="flex flex-row gap-5">
-                    <SearchComponent searchTerm={searchTerm} onSetSearch={handleSetSearch} />
-                    <CollabStatus collabOptions={collabOptions} filters={filterStatuses} onSetFilters={handleStatus} />
+        <>
+            <div className="m-8 flex flex-col">
+                <div className="my-4 text-3xl font-semibold">
+                    <h1>Influencer Manager</h1>
                 </div>
-                <OnlyMe state={onlyMe} onSwitch={handleOnlyMe} />
+                {/* Filters */}
+                <div className="mt-[72px] flex flex-row justify-between">
+                    <div className="flex flex-row gap-5">
+                        <SearchComponent searchTerm={searchTerm} onSetSearch={handleSetSearch} />
+                        <CollabStatus collabOptions={collabOptions} filters={filterStatuses} onSetFilters={handleStatus} />
+                    </div>
+                    <OnlyMe state={onlyMe} onSwitch={handleOnlyMe} />
+                </div>
+                {/* Table */}
+                <Table influencers={influencers} />
             </div>
-            {/* Table */}
-            <Table influencers={influencers} />
-        </div>
+            <ProfileOverlayScreen
+                isOpen={isProfileOverlayOpen}
+                onClose={() => setIsProfileOverlayOpen(false)}
+                onUpdate={handleProfileUpdate}
+            />
+        </>
     );
 };
 

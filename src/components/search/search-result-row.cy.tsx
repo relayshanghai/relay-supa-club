@@ -36,11 +36,13 @@ const setupProps = () => {
         setShowCampaignListModal: cy.stub(),
         setShowAlreadyAddedModal: cy.stub(),
         setCampaignsWithCreator: cy.stub(),
+        setShowSequenceListModal: cy.stub(),
     };
 };
 
 import { SearchResultRow } from './search-result-row';
 import { worker } from '../../mocks/browser';
+import { featEmail } from 'src/constants/feature-flags';
 describe('<CreatorPage />', () => {
     before(async () => {
         worker.start();
@@ -49,7 +51,9 @@ describe('<CreatorPage />', () => {
     it('renders', () => {
         testMount(<SearchResultRow {...setupProps()} />);
         cy.contains('@instagram');
-        cy.contains('Add to campaign');
+        if (!featEmail()) {
+            cy.contains('Add to campaign');
+        }
     });
     it('shows recommended tag ', () => {
         // Note that we will need to rewrite this when we update the list of recommended creators. right now we have set the instagram platform account to be recommended
@@ -90,7 +94,7 @@ describe('<CreatorPage />', () => {
         );
         cy.contains(
             'Are those which have worked with relay.club brands in the past and are known to be open to cooperation',
-        ).should('not.exist');
+        ).should('not.be.visible');
         cy.contains('Recommended');
         // .trigger('mouseenter') should work but it doesn't
         cy.get('[data-testid=recommended-badge').click();
