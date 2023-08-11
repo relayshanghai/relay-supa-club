@@ -8,10 +8,9 @@ describe('outreach', () => {
     beforeEach(() => {
         deleteDB('app-cache');
         setupIntercepts();
-        cy.visit('/');
         cy.loginTestUser();
     });
-    it('sequence page', async () => {
+    it('sequence page', () => {
         cy.contains('Sequences').click();
 
         // Sequence title row
@@ -19,6 +18,7 @@ describe('outreach', () => {
         cy.contains('Auto-start');
         cy.contains('button', 'Update template variables');
 
+        reinsertCharlie(); // reinsert so you can run again easily
         // stats
         cy.getByTestId('stat-card-total influencers').within(() => {
             cy.contains('Total influencers');
@@ -100,7 +100,6 @@ describe('outreach', () => {
         cy.contains('Charlie Charles');
         cy.getByTestId('delete-influencer-button').eq(2).click();
         cy.contains('Charlie Charles').should('not.exist');
-        await reinsertCharlie(); // reinsert so you can run again easily
 
         // send sequence is disabled if missing template variables
         cy.contains('Missing required template variables: Product Description').should('not.be.visible');

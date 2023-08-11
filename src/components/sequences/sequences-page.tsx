@@ -36,7 +36,7 @@ export const SequencesPage = () => {
     const missingVariables = templateVariables
         ?.filter((variable) => variable.required && !variable.value)
         .map((variable) => variable.name) ?? ['Error retrieving variables'];
-    const isMissingVariables = !templateVariables || templateVariables?.length === 0 || missingVariables?.length > 0;
+    const isMissingVariables = !templateVariables || templateVariables.length === 0 || missingVariables.length > 0;
 
     const handleStartSequence = async () => {
         // update sequence - autostart - true.
