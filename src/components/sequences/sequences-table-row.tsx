@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useSequenceEmails } from 'src/hooks/use-sequence-emails';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import type { Sequence, SequenceEmail } from 'src/utils/api/db';
@@ -15,12 +15,14 @@ export const SequencesTableRow = ({
     const { sequenceEmails } = useSequenceEmails(sequence.id);
     const { sequenceInfluencers } = useSequenceInfluencers(sequence.id);
 
-    const openRate = decimalToPercent(
-        (sequenceEmails?.filter(
-            (email) => email.email_tracking_status === 'Link Clicked' || email.email_tracking_status === 'Opened',
-        ).length || 0) / (sequenceEmails?.length || 0),
-        1,
-    );
+    const openRate = useMemo(() => {
+        return decimalToPercent(
+            (sequenceEmails?.filter(
+                (email) => email.email_tracking_status === 'Link Clicked' || email.email_tracking_status === 'Opened',
+            ).length || 0) / (sequenceEmails?.length || 0),
+            1,
+        );
+    }, [sequenceEmails]);
 
     useEffect(() => {
         if (!sequenceEmails) {

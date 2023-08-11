@@ -7,14 +7,16 @@ export const useSequences = () => {
     const { company } = useCompany();
 
     const db = useClientDb();
-    const { data: sequences, mutate: refreshSequences } = useSWR(company?.id ? 'sequences' : null, () =>
-        db.getSequencesByCompanyId(company?.id ?? ''),
-    );
+
     if (!company) throw new Error('No company found');
 
+    const { data: sequences, mutate: refreshSequences } = useSWR('sequences', () =>
+        db.getSequencesByCompanyId(company.id),
+    );
+
     const getSequenceInfluencersByCompanyIdDBCall = useDB(getSequenceInfluencersByCompanyIdCall);
-    const { data: allSequenceInfluencersByCompanyId } = useSWR(company.id ? 'sequence_influencers' : null, () =>
-        getSequenceInfluencersByCompanyIdDBCall(company.id ?? ''),
+    const { data: allSequenceInfluencersByCompanyId } = useSWR('sequence_influencers', () =>
+        getSequenceInfluencersByCompanyIdDBCall(company.id),
     );
 
     return {
