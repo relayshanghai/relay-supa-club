@@ -8,10 +8,11 @@ import type {
     SequenceInfluencerUpdate,
     SequenceStep,
     SequenceUpdate,
+    SequenceInsert,
 } from 'src/utils/api/db';
 import { useSequenceSteps } from './use-sequence-steps';
 import { sendEmail } from 'src/utils/api/email-engine/send-email';
-import { updateSequenceCall } from 'src/utils/api/db/calls/sequences';
+import { createSequenceCall, deleteSequenceCall, updateSequenceCall } from 'src/utils/api/db/calls/sequences';
 
 export /** TODO: move this 'send sequence' to the sever, because the emails need to be sent sequentially, not in parallel, so if the user navigates away it could cause some emails to be unsent. */
 const sendSequence = async ({
@@ -86,11 +87,29 @@ export const useSequence = (sequenceId?: string) => {
         return res;
     };
 
+    const deleteSequenceDBCall = useDB<typeof deleteSequenceCall>(deleteSequenceCall);
+    const deleteSequence = async (id: string) => {
+        const res = await deleteSequenceDBCall(id);
+        refreshSequence();
+        return res;
+    };
+
+    const createSequenceDBCall = useDB<typeof createSequenceCall>(createSequenceCall);
+    const createSequence = async (sequence: SequenceInsert & { companyId: string }) => {
+        // create a sequence
+        // then call create default sequence steps
+        const res = await createSequenceDBCall(sequence);
+        refreshSequence();
+        return res;
+    };
+
     return {
         sequence,
         refreshSequence,
         sendSequence,
         sequenceSteps,
         updateSequence,
+        deleteSequence,
+        createSequence,
     };
 };

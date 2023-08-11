@@ -99,7 +99,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({ sequenceInfluencer, sequenceE
                             onClick={() => deleteSequenceInfluencer(sequenceInfluencer.id)}
                             data-testid="delete-influencer-button"
                         >
-                            <DeleteOutline className="ml-4 h-6 w-6 text-gray-300" />
+                            <DeleteOutline className="ml-4 h-5 w-5 text-gray-300" />
                         </button>
                     </td>
                 </>
@@ -122,7 +122,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({ sequenceInfluencer, sequenceE
                     </td>
                     <td className="flex items-center px-6 py-4">
                         <button onClick={() => deleteSequenceInfluencer(sequenceInfluencer.id)}>
-                            <DeleteOutline data-testid="delete-influencer-button" className="h-6 w-6 text-gray-300" />
+                            <DeleteOutline data-testid="delete-influencer-button" className="h-5 w-5 text-gray-300" />
                         </button>
                     </td>
                 </>

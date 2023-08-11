@@ -28,7 +28,7 @@ export const CreateSequenceModal = ({
                 <div>
                     <div className="py-2 text-xs font-semibold text-gray-500">
                         {t('sequences.sequenceName')}
-                        {'*'}
+                        {' *'}
                     </div>
                     <input
                         type="text"

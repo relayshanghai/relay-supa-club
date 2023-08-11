@@ -4,6 +4,7 @@ import { useSequenceEmails } from 'src/hooks/use-sequence-emails';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import type { Sequence, SequenceEmail } from 'src/utils/api/db';
 import { decimalToPercent } from 'src/utils/formatter';
+import { DeleteOutline } from '../icons';
 
 export const SequencesTableRow = ({
     sequence,
@@ -20,6 +21,10 @@ export const SequencesTableRow = ({
             (email) => email.email_tracking_status === 'Link Clicked' || email.email_tracking_status === 'Opened',
         ).length || 1) / (sequenceEmails?.length || 1),
     );
+
+    const deleteSequence = () => {
+        //TODO: delete sequence call
+    };
 
     useEffect(() => {
         if (!sequenceEmails) {
@@ -38,11 +43,15 @@ export const SequencesTableRow = ({
                 <td className="whitespace-nowrap px-6 py-3 text-primary-600">
                     <Link href={`/sequences/${sequence.id}`}>{sequence.name}</Link>
                 </td>
-
                 <td className="whitespace-nowrap px-6 py-3 text-gray-700">{sequenceInfluencers?.length || 0}</td>
                 <td className="whitespace-nowrap px-6 py-3 text-gray-700">{openRate}</td>
                 <td className="whitespace-nowrap px-6 py-3 text-gray-700">Mikaela</td>
                 <td className="whitespace-nowrap px-6 py-3 text-gray-700">W3</td>
+                <td className="whitespace-nowrap px-6 py-3 text-gray-700">
+                    <button onClick={deleteSequence} className="align-middle">
+                        <DeleteOutline className="h-5 w-5 text-gray-300 hover:text-primary-500" />
+                    </button>
+                </td>
             </tr>
         </>
     );
