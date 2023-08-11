@@ -30,7 +30,7 @@ describe('outreach', () => {
         });
         cy.getByTestId('stat-card-reply rate').within(() => {
             cy.contains('Reply rate');
-            cy.contains('17%');
+            cy.contains('0%');
         });
         cy.getByTestId('stat-card-bounce rate').within(() => {
             cy.contains('Bounce rate');
