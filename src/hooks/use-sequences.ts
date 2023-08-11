@@ -5,7 +5,6 @@ import { getSequenceInfluencersByCompanyIdCall } from 'src/utils/api/db/calls/se
 
 export const useSequences = () => {
     const { company } = useCompany();
-
     const db = useClientDb();
 
     if (!company) throw new Error('No company found');
@@ -14,14 +13,19 @@ export const useSequences = () => {
         db.getSequencesByCompanyId(company.id),
     );
 
-    const getSequenceInfluencersByCompanyIdDBCall = useDB(getSequenceInfluencersByCompanyIdCall);
+    const getSequenceInfluencersByCompanyIdDBCall = useDB<typeof getSequenceInfluencersByCompanyIdCall>(
+        getSequenceInfluencersByCompanyIdCall,
+    );
     const { data: allSequenceInfluencersByCompanyId } = useSWR('sequence_influencers', () =>
         getSequenceInfluencersByCompanyIdDBCall(company.id),
     );
+
+    const allSequenceIds = sequences?.map((sequence) => sequence.id);
 
     return {
         sequences,
         refreshSequences,
         allSequenceInfluencersByCompanyId,
+        allSequenceIds,
     };
 };
