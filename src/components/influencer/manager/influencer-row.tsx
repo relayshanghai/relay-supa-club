@@ -68,7 +68,7 @@ export const InfluencerRow = ({ index, influencer }: InfluencerRowProps) => {
             <td className="whitespace-nowrap py-4 pl-6">
                 <div className="relative w-fit cursor-pointer rounded-md border-2 border-primary-500 px-4 py-2">
                     <InboxIcon className="h-6 w-6 stroke-primary-500" />
-                    {<div className="absolute -right-2 -top-2 h-4 w-4 rounded-full bg-red-500" />}
+                    {/* <div className="absolute -right-2 -top-2 h-4 w-4 rounded-full bg-red-500" /> */}
                 </div>
             </td>
         </tr>

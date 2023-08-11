@@ -12,10 +12,11 @@ const mockTableColumns = [
     { header: 'inbox', type: 'link', name: 'inbox' },
 ];
 
-const limit = 4;
+const limit = 6;
 
 export const Table = ({ influencers }: { influencers?: SequenceInfluencerManagerPage[] }) => {
     const [page, setPage] = useState(0);
+    const totalPages = Math.ceil((influencers?.length || 0) / limit);
     // const [selectedAll, setSelectedAll] = useState<boolean>(false);
 
     // const handleCheckboxChange = (id: string) => {
@@ -70,35 +71,36 @@ export const Table = ({ influencers }: { influencers?: SequenceInfluencerManager
                     </tbody>
                 </table>
             </div>
-            <div className="my-4 flex items-center justify-end gap-4 font-medium">
+            <div className="m-4 flex items-center justify-end gap-4 font-medium">
                 <p
-                    className="cursor-pointer border-none bg-transparent text-gray-500"
-                    onClick={() => !(influencers && (page + 1) * limit <= influencers.length) && setPage(page - 1)}
+                    className={`cursor-pointer select-none border-none bg-transparent text-gray-500`}
+                    onClick={() => {
+                        if (page === 0) return;
+                        setPage(page - 1);
+                    }}
                 >
-                    {`<<`} Previous
+                    {'<<'} Previous
                 </p>
                 <div className="flex flex-row items-center">
-                    {influencers &&
-                        Array.from({ length: influencers.length / limit + 2 }, (_value, index) => index)
-                            .slice(1)
-                            .map((pageNumber) => {
-                                return (
-                                    <Button
-                                        disabled={page + 1 === pageNumber}
-                                        key={`button-page-${pageNumber}`}
-                                        className="border-none bg-transparent text-slate-500 hover:text-gray-200 disabled:bg-primary-500 disabled:text-gray-200"
-                                        onClick={() => setPage((pageNumber as number) - 1)}
-                                    >
-                                        {pageNumber as number}
-                                    </Button>
-                                );
-                            })}
+                    {Array.from({ length: totalPages }, (_, index) => index).map((pageNumber) => (
+                        <Button
+                            key={`button-page-${pageNumber + 1}`}
+                            disabled={page === pageNumber}
+                            className="border-none bg-transparent text-slate-500 hover:text-gray-200 disabled:bg-primary-500 disabled:text-gray-200"
+                            onClick={() => setPage(pageNumber)}
+                        >
+                            {pageNumber + 1}
+                        </Button>
+                    ))}
                 </div>
                 <p
-                    className="cursor-pointer border-none bg-transparent text-gray-500"
-                    onClick={() => !(influencers && (page + 1) * limit >= influencers.length) && setPage(page + 1)}
+                    className={`cursor-pointer select-none border-none bg-transparent text-gray-500`}
+                    onClick={() => {
+                        if (page >= totalPages - 1) return;
+                        setPage(page + 1);
+                    }}
                 >
-                    Next {`>>`}
+                    Next {'>>'}
                 </p>
             </div>
         </div>
