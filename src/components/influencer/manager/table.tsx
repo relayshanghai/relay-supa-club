@@ -5,16 +5,22 @@ import { type SequenceInfluencerManagerPage } from 'src/hooks/use-sequence-influ
 import { Button } from 'src/components/button';
 import { TABLE_LIMIT, TABLE_COLUMNS } from '../constants';
 
-export const Table = ({ influencers, onRowClick }: { influencers?: SequenceInfluencerManagerPage[], onRowClick: (data: InfluencerRowProps['influencer']) => void; }) => {
+export const Table = ({
+    influencers,
+    onRowClick,
+}: {
+    influencers?: SequenceInfluencerManagerPage[];
+    onRowClick?: (data: InfluencerRowProps['influencer']) => void;
+}) => {
     const [page, setPage] = useState(0);
     const totalPages = Math.ceil((influencers?.length || 0) / TABLE_LIMIT);
     // const [selectedAll, setSelectedAll] = useState<boolean>(false);
 
     const handleRowClick = useCallback(
         (influencer: InfluencerRowProps['influencer']) => {
-            props.onRowClick && props.onRowClick(influencer);
+            onRowClick && onRowClick(influencer);
         },
-        [props],
+        [onRowClick],
     );
 
     // const handleCheckboxChange = (id: string) => {
@@ -64,7 +70,12 @@ export const Table = ({ influencers, onRowClick }: { influencers?: SequenceInflu
                             </tr>
                         )}
                         {influencers?.slice(page * TABLE_LIMIT, (page + 1) * TABLE_LIMIT).map((influencer, index) => (
-                            <InfluencerRow onRowClick={handleRowClick} key={influencer.id} influencer={influencer} index={index} />
+                            <InfluencerRow
+                                onRowClick={handleRowClick}
+                                key={influencer.id}
+                                influencer={influencer}
+                                index={index}
+                            />
                         ))}
                     </tbody>
                 </table>

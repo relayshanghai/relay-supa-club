@@ -1,7 +1,7 @@
 import { type SequenceInfluencer } from './../utils/api/db/types';
 import useSWR from 'swr';
 import { apiFetch } from 'src/utils/api/api-fetch';
-import { useClientDb, useDB } from 'src/utils/client-db/use-client-db';
+import { useDB } from 'src/utils/client-db/use-client-db';
 import {
     createSequenceInfluencerCall,
     updateSequenceInfluencerCall,
@@ -12,7 +12,6 @@ import { useUser } from 'src/hooks/use-user';
 import { clientLogger } from 'src/utils/logger-client';
 
 export const useSequenceInfluencers = (sequenceIds?: string[]) => {
-    const db = useClientDb();
     const { profile } = useUser();
 
     const { data: sequenceInfluencers, mutate: refreshSequenceInfluencers } = useSWR(
@@ -29,13 +28,13 @@ export const useSequenceInfluencers = (sequenceIds?: string[]) => {
 
     const createSequenceInfluencerDBCall = useDB<typeof createSequenceInfluencerCall>(createSequenceInfluencerCall);
     const createSequenceInfluencer = async (influencerSocialProfileId: string, tags: string[] | []) => {
-        if (!sequenceId) throw new Error('No sequenceId provided');
+        if (!sequenceIds || sequenceIds.length > 0) throw new Error('No sequenceIds provided');
         if (!profile?.company_id) throw new Error('No profile found');
         try {
             const insert: SequenceInfluencerInsert = {
                 added_by: profile.id,
                 company_id: profile.company_id,
-                sequence_id: sequenceId,
+                sequence_id: sequenceIds[0],
                 influencer_social_profile_id: influencerSocialProfileId,
                 sequence_step: 0,
                 tags,

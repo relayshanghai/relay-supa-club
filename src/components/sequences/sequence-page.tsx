@@ -28,7 +28,7 @@ export const SequencePage = () => {
     const { company } = useCompany();
     const { sequences } = useSequences(); // later we won't use this, the sequence id will be passed down from the index page.
     const { sequence, sendSequence, sequenceSteps, updateSequence } = useSequence(sequences?.[0]?.id);
-    const { sequenceInfluencers, updateSequenceInfluencer } = useSequenceInfluencers(sequence?.id);
+    const { sequenceInfluencers, updateSequenceInfluencer } = useSequenceInfluencers(sequence && [sequence.id]);
     const { sequenceEmails: allSequenceEmails, updateSequenceEmail } = useSequenceEmails(sequence?.id);
     const { templateVariables } = useTemplateVariables(sequence?.id);
     const missingVariables = templateVariables

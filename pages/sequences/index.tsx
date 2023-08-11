@@ -1,5 +1,5 @@
-import { SequencesPage } from 'src/components/sequences/sequences-page';
+import { SequencePage } from 'src/components/sequences/sequences-page';
 
 export default function Page() {
-    return <SequencesPage />;
+    return <SequencePage />;
 }

@@ -13,7 +13,7 @@ export const SequencesTableRow = ({
     setAllEmails: React.Dispatch<React.SetStateAction<SequenceEmail[]>>;
 }) => {
     const { sequenceEmails } = useSequenceEmails(sequence.id);
-    const { sequenceInfluencers } = useSequenceInfluencers(sequence.id);
+    const { sequenceInfluencers } = useSequenceInfluencers([sequence.id]);
 
     const openRate = decimalToPercent(
         (sequenceEmails?.filter(
