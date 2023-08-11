@@ -2,21 +2,11 @@ import React, { useState } from 'react';
 import { InfluencerRow } from './influencer-row';
 import { type SequenceInfluencerManagerPage } from 'src/hooks/use-sequence-influencers';
 import { Button } from 'src/components/button';
-
-const mockTableColumns = [
-    { header: 'name', type: 'name', name: 'name' },
-    { header: 'collabstatus', type: 'collabstatus', name: 'collabstatus' },
-    { header: 'manager', type: 'manager', name: 'manager' },
-    { header: 'tags', type: 'tags', name: 'tags' },
-    { header: 'lastupdated', type: 'lastupdated', name: 'lastupdated' }, // In the Figma design feedback, Sophia changed Payment Amount to Influencer Fee as the column name.
-    { header: 'inbox', type: 'link', name: 'inbox' },
-];
-
-const limit = 6;
+import { TABLE_LIMIT, TABLE_COLUMNS } from '../constants';
 
 export const Table = ({ influencers }: { influencers?: SequenceInfluencerManagerPage[] }) => {
     const [page, setPage] = useState(0);
-    const totalPages = Math.ceil((influencers?.length || 0) / limit);
+    const totalPages = Math.ceil((influencers?.length || 0) / TABLE_LIMIT);
     // const [selectedAll, setSelectedAll] = useState<boolean>(false);
 
     // const handleCheckboxChange = (id: string) => {
@@ -45,7 +35,7 @@ export const Table = ({ influencers }: { influencers?: SequenceInfluencerManager
                             {/* <th>
                                 <input className="appearance-none display-none rounded border-gray-300 checked:text-primary-500" type='checkbox' checked={selectedAll} onChange={handleCheckAll} />
                             </th> */}
-                            {mockTableColumns.map((column) => (
+                            {TABLE_COLUMNS.map((column) => (
                                 <th
                                     key={column.header}
                                     className="whitespace-nowrap bg-white px-6 py-3 text-left text-xs font-normal tracking-wider text-gray-500"
@@ -58,14 +48,14 @@ export const Table = ({ influencers }: { influencers?: SequenceInfluencerManager
                     <tbody className="divide-y divide-gray-200 bg-white">
                         {influencers?.length === 0 && (
                             <tr>
-                                <td colSpan={mockTableColumns.length + 1} className="px-6 py-4">
+                                <td colSpan={TABLE_COLUMNS.length + 1} className="px-6 py-4">
                                     <div className="flex justify-center">
                                         <p className="text-sm text-gray-500">No Influencers...</p>
                                     </div>
                                 </td>
                             </tr>
                         )}
-                        {influencers?.slice(page * limit, (page + 1) * limit).map((influencer, index) => (
+                        {influencers?.slice(page * TABLE_LIMIT, (page + 1) * TABLE_LIMIT).map((influencer, index) => (
                             <InfluencerRow key={influencer.id} influencer={influencer} index={index} />
                         ))}
                     </tbody>
