@@ -180,29 +180,32 @@ export interface Database {
       }
       campaign_notes: {
         Row: {
-          campaign_creator_id: string
+          campaign_creator_id: string | null
           comment: string | null
           created_at: string | null
           id: string
           important: boolean
+          influencer_social_profile_id: string | null
           sequence_influencer_id: string | null
           user_id: string
         }
         Insert: {
-          campaign_creator_id: string
+          campaign_creator_id?: string | null
           comment?: string | null
           created_at?: string | null
           id?: string
           important?: boolean
+          influencer_social_profile_id?: string | null
           sequence_influencer_id?: string | null
           user_id: string
         }
         Update: {
-          campaign_creator_id?: string
+          campaign_creator_id?: string | null
           comment?: string | null
           created_at?: string | null
           id?: string
           important?: boolean
+          influencer_social_profile_id?: string | null
           sequence_influencer_id?: string | null
           user_id?: string
         }
@@ -211,6 +214,12 @@ export interface Database {
             foreignKeyName: "campaign_notes_campaign_creator_id_fkey"
             columns: ["campaign_creator_id"]
             referencedRelation: "campaign_creators"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "campaign_notes_influencer_social_profile_id_fkey"
+            columns: ["influencer_social_profile_id"]
+            referencedRelation: "influencer_social_profiles"
             referencedColumns: ["id"]
           },
           {
