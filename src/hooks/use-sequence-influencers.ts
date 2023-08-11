@@ -1,39 +1,19 @@
 import { type SequenceInfluencer } from './../utils/api/db/types';
 import useSWR from 'swr';
 import { useClientDb } from 'src/utils/client-db/use-client-db';
+import { apiFetch } from 'src/utils/api/api-fetch';
 
 export const useSequenceInfluencers = (sequenceIds?: string[]) => {
     const db = useClientDb();
-
-    const getInfluencers = async (sequenceId: string) => {
-        const influencers = await db.getSequenceInfluencersBySequenceId(sequenceId);
-        const influencersWithInfo = await Promise.all(
-            influencers.map(async (influencer) => {
-                const managerInfo = await db.getProfileById(influencer.added_by);
-                const influencerInfo = await db.getInfluencerSocialProfileById(influencer.influencer_social_profile_id);
-                return {
-                    ...influencer,
-                    manager_first_name: managerInfo.data?.first_name,
-                    name: influencerInfo?.name,
-                    username: influencerInfo?.username,
-                    avatar_url: influencerInfo?.avatar_url,
-                    url: influencerInfo?.url,
-                };
-            }),
-        );
-        return influencersWithInfo;
-    };
 
     const { data: sequenceInfluencers, mutate: refreshSequenceInfluencers } = useSWR(
         sequenceIds ? ['sequence_influencers', ...sequenceIds] : null,
         async () => {
             if (sequenceIds) {
-                const influencersPromises = sequenceIds.map(getInfluencers);
-                const influencersArrays = await Promise.all(influencersPromises);
-                const combinedInfluencers = influencersArrays.reduce((accumulator, influencers) => {
-                    return [...accumulator, ...influencers];
-                }, []);
-                return combinedInfluencers;
+                const ret = await apiFetch('/api/sequence/influencers', {
+                    body: sequenceIds,
+                });
+                return ret as SequenceInfluencerManagerPage[];
             }
         },
     );
