@@ -82,7 +82,7 @@ export const Table = ({
             </div>
             <div className="m-4 flex items-center justify-end gap-4 font-medium">
                 <p
-                    className={`cursor-pointer select-none border-none bg-transparent text-gray-500`}
+                    className={`${page !== 0 && 'cursor-pointer'} select-none border-none bg-transparent text-gray-500`}
                     onClick={() => {
                         if (page === 0) return;
                         setPage(page - 1);
@@ -103,7 +103,9 @@ export const Table = ({
                     ))}
                 </div>
                 <p
-                    className={`cursor-pointer select-none border-none bg-transparent text-gray-500`}
+                    className={`${
+                        page < totalPages - 1 && 'cursor-pointer'
+                    } select-none border-none bg-transparent text-gray-500`}
                     onClick={() => {
                         if (page >= totalPages - 1) return;
                         setPage(page + 1);
