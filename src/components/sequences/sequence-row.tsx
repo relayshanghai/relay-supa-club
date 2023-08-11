@@ -55,7 +55,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
         // TODO
     };
     return (
-        <tr>
+        <tr className="border-b-2 border-gray-200 bg-white">
             <td className="whitespace-nowrap px-6 py-2">
                 <div className="flex flex-row items-center gap-2">
                     <div>

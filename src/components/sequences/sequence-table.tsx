@@ -43,7 +43,7 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
     return (
         <table className="border-collapse border border-gray-300">
             <thead>
-                <tr>
+                <tr className="border-b-2 border-gray-200">
                     {columns.map((column) => (
                         <th
                             key={column}

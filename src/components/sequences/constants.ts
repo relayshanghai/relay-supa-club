@@ -19,3 +19,12 @@ export const sequenceColumns = (currentTab: SequenceInfluencer['funnel_status'])
         : currentTab === 'Ignored'
         ? columnsIgnored
         : [];
+
+export type SequenceIndexColumn = keyof (typeof sequences)['indexColumns'];
+export const sequencesIndexColumns: SequenceIndexColumn[] = [
+    'sequence',
+    'influencers',
+    'openRate',
+    'manager',
+    'product',
+];
