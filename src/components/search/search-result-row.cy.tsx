@@ -94,7 +94,7 @@ describe('<CreatorPage />', () => {
         );
         cy.contains(
             'Are those which have worked with relay.club brands in the past and are known to be open to cooperation',
-        ).should('not.exist');
+        ).should('not.be.visible');
         cy.contains('Recommended');
         // .trigger('mouseenter') should work but it doesn't
         cy.get('[data-testid=recommended-badge').click();

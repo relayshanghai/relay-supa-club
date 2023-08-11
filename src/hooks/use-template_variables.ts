@@ -3,9 +3,10 @@ import useSWR from 'swr';
 import { useDB } from 'src/utils/client-db/use-client-db';
 import {
     getTemplateVariablesBySequenceIdCall,
+    insertTemplateVariableCall,
     updateTemplateVariableCall,
 } from 'src/utils/api/db/calls/template-variables';
-import type { TemplateVariableUpdate } from 'src/utils/api/db';
+import type { TemplateVariableInsert, TemplateVariableUpdate } from 'src/utils/api/db';
 
 export const useTemplateVariables = (sequenceId?: string) => {
     const getTemplateVariablesBySequenceId = useDB<typeof getTemplateVariablesBySequenceIdCall>(
@@ -22,9 +23,15 @@ export const useTemplateVariables = (sequenceId?: string) => {
         refreshTemplateVariables();
     };
 
+    const insertTemplateVariableDBCall = useDB<typeof insertTemplateVariableCall>(insertTemplateVariableCall);
+    const insertTemplateVariable = async (insert: TemplateVariableInsert) => {
+        await insertTemplateVariableDBCall(insert);
+        refreshTemplateVariables();
+    };
     return {
         templateVariables,
         refreshTemplateVariables,
         updateTemplateVariable,
+        insertTemplateVariable,
     };
 };
