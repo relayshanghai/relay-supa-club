@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { InfluencerRow } from './influencer-row';
+import type { InfluencerRowProps } from './influencer-row';
 
 const mockTableColumns = [
     { header: 'name', type: 'name', name: 'name' },
@@ -10,7 +11,11 @@ const mockTableColumns = [
     { header: 'inbox', type: 'link', name: 'inbox' },
 ];
 
-export const Table = () => {
+type Props = {
+    onRowClick: (data: InfluencerRowProps['influencer']) => void;
+};
+
+export const Table = (props: Props) => {
     // const [selectedAll, setSelectedAll] = useState<boolean>(false);
     const [influencersList, _setInfluencersList] = useState([
         {
@@ -39,6 +44,13 @@ export const Table = () => {
             checked: false,
         },
     ]);
+
+    const handleRowClick = useCallback(
+        (influencer: InfluencerRowProps['influencer']) => {
+            props.onRowClick && props.onRowClick(influencer);
+        },
+        [props],
+    );
 
     // const handleCheckboxChange = (id: string) => {
     //     const updatedCheckboxes = influencersList.map((checkbox) =>
@@ -87,7 +99,12 @@ export const Table = () => {
                             </tr>
                         )}
                         {influencersList.map((influencer, index) => (
-                            <InfluencerRow key={influencer.id} influencer={influencer} index={index} />
+                            <InfluencerRow
+                                onRowClick={handleRowClick}
+                                key={influencer.id}
+                                influencer={influencer}
+                                index={index}
+                            />
                         ))}
                     </tbody>
                 </table>

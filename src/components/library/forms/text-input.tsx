@@ -8,15 +8,15 @@ type FCProps = {
     [key: string]: any;
 };
 
-const Input1: React.FunctionComponent<FCProps & InputProps> = (props) => {
+export const TextInputComponent: React.FunctionComponent<FCProps & InputProps> = (props) => {
     return <Input {...props} />;
 };
 
-const Input2: React.FunctionComponent<FCProps & TextInputUiProps> = (props) => {
+export const TextInputComponentUi: React.FunctionComponent<FCProps & TextInputUiProps> = (props) => {
     return <TextInputUi {...props} maximLength={3} />;
 };
 
-const Input3: React.FunctionComponent<FCProps> = (props) => {
+export const TextInputDefault: React.FunctionComponent<FCProps> = (props) => {
     return <input {...props} type="text" className="input-field" />;
 };
 
@@ -45,14 +45,14 @@ type TextInputProps = Props & SubInputProps;
  */
 const TextInput = ({ variant = 'input-field', ...fieldProps }: TextInputProps) => {
     if (variant === 'components-input' && isInputProps(fieldProps)) {
-        return <Input1 {...fieldProps} />;
+        return <TextInputComponent {...fieldProps} />;
     }
 
     if (variant === 'components-ui' && isTextInputUiProps(fieldProps)) {
-        return <Input2 {...fieldProps} />;
+        return <TextInputComponentUi {...fieldProps} />;
     }
 
-    return <Input3 {...fieldProps} />;
+    return <TextInputDefault {...fieldProps} />;
 };
 
 export default TextInput;
