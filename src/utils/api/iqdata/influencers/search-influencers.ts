@@ -1,7 +1,9 @@
+import type { z } from 'zod';
 import type { CreatorSearchResult, SearchResultMetadata } from 'types';
 import { apiFetch } from '../api-fetch';
 import { SearchInfluencersPayload } from './search-influencers-payload';
-import type { z } from 'zod';
+import { limiter } from 'src/utils/limiter';
+import { RelayError } from 'src/utils/api-handler';
 import { withServerContext } from '..';
 
 export const searchInfluencers = async (payload: z.input<typeof SearchInfluencersPayload>) => {
@@ -11,7 +13,25 @@ export const searchInfluencers = async (payload: z.input<typeof SearchInfluencer
         method: 'POST',
     });
 
+    if (!response) throw new RelayError('Error searching influencers');
+
     return response;
 };
 
 export const searchInfluencersWithContext = withServerContext(searchInfluencers);
+
+export const bulkSearchInfluencers = async (payloads: SearchInfluencersPayload[]) => {
+    limiter.updateSettings({ maxConcurrent: 1 });
+
+    const searchInfluencersPromises = payloads.map((payload) => limiter.schedule(() => searchInfluencers(payload)));
+    const searchInfluencersResults = await Promise.all(searchInfluencersPromises);
+    const flattenedAccounts = searchInfluencersResults
+        .map((result) => result.accounts.map((creator) => creator.account))
+        .flat();
+    const uniqueInfluencers = flattenedAccounts.filter(
+        (currentAccount, index, self) =>
+            self.findIndex((account) => account.user_profile.user_id === currentAccount.user_profile.user_id) === index,
+    );
+
+    return uniqueInfluencers;
+};

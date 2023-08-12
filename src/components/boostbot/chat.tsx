@@ -1,18 +1,25 @@
+/* eslint-disable no-console */
 // TODO: Fix all eslint warnings
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import type { Dispatch, SetStateAction } from 'react';
 import React, { useState } from 'react';
 import { SparklesIcon } from '@heroicons/react/24/solid';
 import { nextFetch } from 'src/utils/fetcher';
 import { ChatInput } from './chat-input';
 import { ChatContent } from './chat-content';
 import type { BoostbotSearchBody, BoostbotSearchResponse } from 'pages/api/boostbot/search';
+import type { Influencer } from 'pages/boostbot';
 
 export type Message = {
     sender: 'User' | 'Bot';
     content: string;
 };
 
-export function Chat() {
+interface ChatProps {
+    setInfluencers: Dispatch<SetStateAction<Influencer[]>>;
+}
+
+export const Chat: React.FC<ChatProps> = ({ setInfluencers }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [messages, setMessages] = useState<Message[]>([
         {
@@ -33,12 +40,13 @@ export function Chat() {
         setMessages([...messages, { sender: 'User', content: message }]);
         setIsLoading(true);
 
-        // const body: BoostbotSearchBody = { message };
-        // const res = await nextFetch<BoostbotSearchResponse>(`boostbot/search`, {
-        //     method: 'POST',
-        //     body,
-        // });
-        // console.log('res :>> ', res);
+        const body: BoostbotSearchBody = { message };
+        const res = await nextFetch<BoostbotSearchResponse>(`boostbot/search`, {
+            method: 'POST',
+            body,
+        });
+        setInfluencers(res.influencers.map((influencer) => influencer.user_profile));
+        console.log('res :>> ', res);
         setIsLoading(false);
     };
 
@@ -59,4 +67,4 @@ export function Chat() {
             </div>
         </div>
     );
-}
+};

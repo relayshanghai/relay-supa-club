@@ -247,4 +247,6 @@ export const SearchInfluencersPayload = z
     })
     .passthrough();
 
+export type SearchInfluencersPayload = z.infer<typeof SearchInfluencersPayload>;
+
 export type SearchInfluencersTextTagsFilter = z.infer<typeof text_tags>;

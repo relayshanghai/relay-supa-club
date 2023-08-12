@@ -1,12 +1,17 @@
 import type { CreatorPlatform } from 'types';
 import { apiFetch } from '../api-fetch';
 import type { ServerContext } from '..';
+import { RelayError } from 'src/utils/api-handler';
+import { limiter } from 'src/utils/limiter';
+
+export type GetRelevantTopicTagsParams = {
+    limit?: number;
+    platform?: CreatorPlatform;
+};
 
 export type GetRelevantTopicTagsPayload = {
-    query: {
+    query: GetRelevantTopicTagsParams & {
         q: string;
-        limit?: number;
-        platform?: CreatorPlatform;
     };
 };
 
@@ -32,16 +37,35 @@ const sortByDistance = (tags: TopicTensorData[]) => {
 
 export const getRelevantTopicTags = async (payload: GetRelevantTopicTagsPayload, context?: ServerContext) => {
     if (!payload.query.q) {
-        throw new Error(`q in payload query is required`);
+        throw new RelayError(`q in payload query is required`);
     }
 
     payload.query.q = `#${payload.query.q}`;
 
     const response = await apiFetch<GetRelevantTopicTagsResponse>('/dict/relevant-tags', { ...payload, context });
 
-    if (response && response.success === true) {
+    if (response?.success === true) {
         sortByDistance(response.data);
+        return response;
+    } else {
+        throw new RelayError('Error fetching relevant topic tags');
     }
+};
 
-    return response;
+// TODO: is the 'context?: ServerContext' parameter from function above needed here? What is it for?
+export const getBulkRelevantTopicTags = async (
+    topics: string[],
+    params: GetRelevantTopicTagsParams,
+): Promise<string[]> => {
+    const initialRelatedTopicsPromises = topics.map((topic) =>
+        limiter.schedule(() => getRelevantTopicTags({ query: { q: topic, ...params } })),
+    );
+
+    const initialRelatedTopicsResult = await Promise.all(initialRelatedTopicsPromises);
+
+    return initialRelatedTopicsResult
+        .map((result) => result.data)
+        .flat()
+        .map((topic) => topic.tag.replace('#', ''))
+        .filter((topic, index, self) => self.indexOf(topic) === index);
 };

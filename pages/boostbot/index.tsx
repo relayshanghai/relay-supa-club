@@ -18,7 +18,7 @@ const Boostbot = () => {
     return (
         <Layout>
             <div className="m-8 h-4/6 w-96">
-                <Chat />
+                <Chat setInfluencers={setInfluencers} />
             </div>
 
             <div className="p-3 pb-12">

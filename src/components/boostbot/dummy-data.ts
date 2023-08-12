@@ -12,7 +12,7 @@ export const dummyData: CreatorSearchAccountObject[] = [
                 fullname: 'Sabrina Bradley | Esthetician',
                 is_verified: true,
                 account_type: 2,
-                followers: 56092,
+                followers: 560920,
                 engagements: 2998,
                 engagement_rate: 0.05344790700991229,
             },
