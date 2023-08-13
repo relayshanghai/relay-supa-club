@@ -9,7 +9,7 @@ export const getTopicClusters = async (productDescription: string, topics: strin
     const openai = new OpenAIApi(configuration);
 
     const systemPrompt = `You are an influencer marketing expert. You help clients find relevant trending tag clusters for their product.
-Given a product description and a list of tags, return 10 diverse clusters of 4 tags each to reach a wide range of influencers, while always staying relevant to the product.
+Given a product description and a list of tags, return 5 diverse clusters of 4 tags each to reach a wide range of influencers, while always staying relevant to the product.
 Only use the provided tags. Feel free to combine and reuse them to achieve the best niches.
 
 Example product description: "Smart Fitness Tracker Watch with Heart Rate Monitoring, GPS, and Activity Tracking"
@@ -21,14 +21,9 @@ Example response:
     ["smartwatch", "wearable", "smartband", "iwatch"],
     ["heartrate", "cardiovascular", "activitytracker", "heartpumping"],
     ["gym", "strengthtraining", "motivation", "fitnessmotivation"],
-    ["running", "jogging", "cycling", "endurance"],
-    ["yoga", "sweat", "mindfulness", "flexibility"],
-    ["applewatch", "smartwatches", "techwearables", "innovation"],
-    ["steps", "calories", "tracking", "healthdata"],
-    ["performance", "recovery", "nutrition", "hybridfitness"],
 ]
 
-Only respond in JSON format with the 10 clusters as an array of arrays of 4 strings. Do not respond with any other text.`;
+Only respond in JSON format with the 5 clusters as an array of arrays of 4 strings. Do not respond with any other text.`;
 
     const userPrompt = `Product description: "${productDescription}"
 

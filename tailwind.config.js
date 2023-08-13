@@ -41,6 +41,20 @@ module.exports = {
                 },
                 'relay-purple': '#6B65AD',
             },
+            animation: {
+                float: 'float 2s ease-in-out infinite',
+                'spin-burst': 'spin-burst 4s cubic-bezier(0.3, 0.5, 0, 1) infinite',
+            },
+            keyframes: {
+                float: {
+                    '0%, 100%': { transform: 'translateY(5)' },
+                    '50%': { transform: 'translateY(-5px)' },
+                },
+                'spin-burst': {
+                    '0%, 80%': { transform: 'rotate(0deg)' },
+                    '100%': { transform: 'rotate(360deg)' },
+                },
+            },
         },
     },
     variants: {

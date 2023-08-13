@@ -2,17 +2,22 @@
 // TODO: Fix all eslint warnings
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import type { Dispatch, SetStateAction } from 'react';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { SparklesIcon } from '@heroicons/react/24/solid';
 import { nextFetch } from 'src/utils/fetcher';
 import { ChatInput } from './chat-input';
 import { ChatContent } from './chat-content';
-import type { BoostbotSearchBody, BoostbotSearchResponse } from 'pages/api/boostbot/search';
+import type { GetTopicsBody, GetTopicsResponse } from 'pages/api/boostbot/get-topics';
+import type { GetRelevantTopicsBody, GetRelevantTopicsResponse } from 'pages/api/boostbot/get-relevant-topics';
+import type { GetTopicClustersBody, GetTopicClustersResponse } from 'pages/api/boostbot/get-topic-clusters';
+import type { GetInfluencersBody, GetInfluencersResponse } from 'pages/api/boostbot/get-influencers';
 import type { Influencer } from 'pages/boostbot';
+import { clientLogger } from 'src/utils/logger-client';
 
-export type Message = {
+export type MessageType = {
     sender: 'User' | 'Bot';
-    content: string;
+    content: string | JSX.Element;
 };
 
 interface ChatProps {
@@ -20,34 +25,80 @@ interface ChatProps {
 }
 
 export const Chat: React.FC<ChatProps> = ({ setInfluencers }) => {
+    const [progress, setProgress] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
-    const [messages, setMessages] = useState<Message[]>([
+    const [progressMessages, setProgressMessages] = useState<MessageType[]>([]);
+    const [messages, setMessages] = useState<MessageType[]>([
         {
             sender: 'Bot',
             content: `Hi, welcome! Please describe your product so I can find the perfect influencers for you.`,
         },
-        {
-            sender: 'User',
-            content: `The most advanced home use LED facial mask based on light therapy with 11 different treatments for different skin conditions.`,
-        },
-        {
-            sender: 'Bot',
-            content: `Hi, welcome! Please describe your product so I can find the perfect influencers for you. Hi, welcome! Please describe your product so I can find the perfect influencers for you. Hi, welcome! Please describe your product.`,
-        },
     ]);
+    const addMessage = (message: MessageType) => setMessages((messages) => [...messages, message]);
+    const addProgressMessage = (message: MessageType) => setProgressMessages((messages) => [...messages, message]);
 
-    const onSendMessage = async (message: string) => {
-        setMessages([...messages, { sender: 'User', content: message }]);
+    useEffect(() => {
+        if (isLoading) setProgress(30);
+    }, [isLoading]);
+
+    const onSendMessage = async (productDescription: string) => {
+        addMessage({ sender: 'User', content: productDescription });
         setIsLoading(true);
 
-        const body: BoostbotSearchBody = { message };
-        const res = await nextFetch<BoostbotSearchResponse>(`boostbot/search`, {
-            method: 'POST',
-            body,
-        });
-        setInfluencers(res.influencers.map((influencer) => influencer.user_profile));
-        console.log('res :>> ', res);
-        setIsLoading(false);
+        const performFetch = async <T, B>(endpoint: string, body: B): Promise<T> => {
+            const response = await nextFetch<T>(`boostbot/${endpoint}`, {
+                method: 'POST',
+                body,
+            });
+
+            console.log('endpoint :>> ', response);
+            return response;
+        };
+
+        try {
+            const { topics } = await performFetch<GetTopicsResponse, GetTopicsBody>('get-topics', {
+                productDescription,
+            });
+            addProgressMessage({
+                sender: 'Bot',
+                content: (
+                    <>
+                        I found the following topics:{' '}
+                        {topics.slice(0, 3).map((topic) => (
+                            <p key={topic}>#{topic}</p>
+                        ))}
+                    </>
+                ),
+            });
+
+            setProgress(60);
+            const { relevantTopics } = await performFetch<GetRelevantTopicsResponse, GetRelevantTopicsBody>(
+                'get-relevant-topics',
+                { topics },
+            );
+
+            setProgress(75);
+            const { topicClusters } = await performFetch<GetTopicClustersResponse, GetTopicClustersBody>(
+                'get-topic-clusters',
+                { productDescription, topics: relevantTopics },
+            );
+            addProgressMessage({ sender: 'Bot', content: `Coming up with unique niches that match your product.` });
+
+            setProgress(90);
+            const { influencers } = await performFetch<GetInfluencersResponse, GetInfluencersBody>('get-influencers', {
+                topicClusters,
+            });
+            setProgress(100);
+            setInfluencers(influencers.map((influencer) => influencer.user_profile));
+            addProgressMessage({ sender: 'Bot', content: `${influencers.length} influencers found!` });
+        } catch (error) {
+            clientLogger(error, 'error');
+            toast.error('Error fetching boostbot influencers');
+        } finally {
+            await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait for 1s for loading animation to finish
+            setIsLoading(false);
+            setProgress(0);
+        }
     };
 
     return (
@@ -58,7 +109,12 @@ export const Chat: React.FC<ChatProps> = ({ setInfluencers }) => {
                 </h1>
             </div>
 
-            <ChatContent messages={messages} />
+            <ChatContent
+                messages={messages}
+                progressMessages={progressMessages}
+                isLoading={isLoading}
+                progress={progress}
+            />
 
             <div className="relative">
                 {/* Below is a gradient that hides the bottom of the chat */}

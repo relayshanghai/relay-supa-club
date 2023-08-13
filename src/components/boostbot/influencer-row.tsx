@@ -69,16 +69,16 @@ export const InfluencerRow = ({ influencer }: InfluencerRowProps) => {
                                 href={post.link}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="relative h-14 w-14 transition-all hover:scale-105"
+                                className="relative h-28 w-28 transition-all hover:scale-105"
                             >
                                 <img src={post.thumbnail} alt={post.text} className="h-full w-full object-cover" />
                             </Link>
                         ))
                     ) : (
                         <>
-                            <div className="h-14 w-14 bg-primary-200 blur-sm" />
-                            <div className="h-14 w-14 bg-primary-200 blur-sm" />
-                            <div className="h-14 w-14 bg-primary-200 blur-sm" />
+                            <div className="h-28 w-28 bg-primary-200 blur-sm" />
+                            <div className="h-28 w-28 bg-primary-200 blur-sm" />
+                            <div className="h-28 w-28 bg-primary-200 blur-sm" />
                         </>
                     )}
                 </div>
