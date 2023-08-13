@@ -110,10 +110,14 @@ export const Sidebar = ({
     const desktop = useAboveScreenWidth(768);
     const { profile } = useUser();
 
+    // TODO: Temporary solution to hide sidebar on boostbot page for layout testing
+    const router = useRouter();
+    const isBoostbot = router.pathname === '/boostbot';
+
     useEffect(() => {
-        if (desktop) setOpen(true);
+        if (desktop && !isBoostbot) setOpen(true);
         else setOpen(false);
-    }, [desktop, setOpen]);
+    }, [desktop, setOpen, isBoostbot]);
 
     return (
         // mask is the dark overlay that appears when the sidebar is open

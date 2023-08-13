@@ -17,11 +17,11 @@ const Boostbot = () => {
 
     return (
         <Layout>
-            <div className="m-8 h-4/6 w-96">
-                <Chat setInfluencers={setInfluencers} />
-            </div>
+            <div className="flex h-full flex-row gap-4 p-3">
+                <div className="w-80 flex-shrink-0">
+                    <Chat setInfluencers={setInfluencers} />
+                </div>
 
-            <div className="p-3 pb-12">
                 <InfluencersTable influencers={influencers} />
             </div>
         </Layout>
