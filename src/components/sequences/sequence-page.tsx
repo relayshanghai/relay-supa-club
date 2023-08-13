@@ -186,6 +186,7 @@ export const SequencePage = () => {
                         missingVariables={missingVariables}
                         isMissingVariables={isMissingVariables}
                         setShowUpdateTemplateVariables={setShowUpdateTemplateVariables}
+                        templateVariables={templateVariables ?? []}
                     />
                 ) : (
                     <Spinner className="mx-auto mt-10 h-10 w-10 fill-primary-600 text-white" />
