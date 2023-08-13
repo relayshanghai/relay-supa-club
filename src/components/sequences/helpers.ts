@@ -25,3 +25,7 @@ export const fillInTemplateVariables = (email: string, templateVariables: Templa
         })
         .join('');
 };
+
+export const replaceNewlinesAndTabs = (text: string) => {
+    return text.replace(/\n/g, '<br>').replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;');
+};

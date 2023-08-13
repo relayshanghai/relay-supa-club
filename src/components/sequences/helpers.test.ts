@@ -93,3 +93,14 @@ test('fills in template variables', () => {
         'Hey **influencerAccountName**,\r\n\r\nVivian here from Blue Moonlight Stream Industries. I watched your "**recentVideoTitle**" video, and love your content style!! 🤩\r\n\r\nEver thought about introducing your fans to Widget X? I\'ve got a feeling it\'s right up their alley. \r\n\r\n**productDescription** and boasts features like The Product Features, all for just $495! You can check it out here https://example.com/product\r\n\r\nWe’re looking to partner with 8 or so influencers in the Consumer Electronics space to get the word out about the Widget X over the next couple weeks, and would love for you to be apart of it!\r\n\r\nWe’d send you a free sample to make some content about and share with your audience, fully compensated of course.\r\n\r\nLet me know what you think! \r\n\r\nBest,  \r\n\r\nVivian';
     expect(fillInTemplateVariables(emailText, variables)).to.equal(expected);
 });
+
+const replaceNewlinesAndTabs = (text: string) => {
+    return text.replace(/\n/g, '<br>').replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;');
+};
+
+test('replaceNewlinesAndTabs', () => {
+    const example = 'Hey\n\nNice to meet you\n\tFrom relay.club with love';
+    const expected = 'Hey<br><br>Nice to meet you<br>&nbsp;&nbsp;&nbsp;&nbsp;From relay.club with love';
+
+    expect(replaceNewlinesAndTabs(example)).to.equal(expected);
+});
