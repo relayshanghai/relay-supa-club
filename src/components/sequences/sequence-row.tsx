@@ -10,8 +10,9 @@ import { useState } from 'react';
 import type { SetStateAction } from 'react';
 import { TableInlineInput } from '../library/table-inline-input';
 import { Button } from '../button';
-import { DeleteOutline } from '../icons';
+import { AlertCircleOutline, Clock, DeleteOutline, EmailOpenOutline, Send } from '../icons';
 import { Tooltip } from '../library';
+import { EMAIL_STATUS_STYLES } from './constants';
 
 interface SequenceRowProps {
     sequenceInfluencer: SequenceInfluencer;
@@ -22,6 +23,21 @@ interface SequenceRowProps {
     isMissingVariables: boolean;
     setShowUpdateTemplateVariables: (value: SetStateAction<boolean>) => void;
 }
+
+const Icons = ({ status }: { status?: string }) => {
+    switch (status) {
+        case 'Opened':
+            return <EmailOpenOutline className="h-6 w-6 stroke-blue-500" />;
+        case 'Scheduled':
+            return <Clock className="h-6 w-6 stroke-yellow-500" />;
+        case 'Bounced':
+            return <AlertCircleOutline className="h-6 w-6 stroke-red-500" />;
+        case 'Delivered':
+            return <Send className="h-6 w-6 stroke-green-500" />;
+        default:
+            return null;
+    }
+};
 
 /** use the tracking status if it is delivered */
 const getStatus = (sequenceEmail: SequenceEmail | undefined) =>
@@ -141,7 +157,16 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                 <>
                     <td className="whitespace-nowrap px-6 py-4 font-semibold text-gray-600">{currentStep?.name}</td>
                     {/* TODO: add colors and icons for each status */}
-                    <td className="whitespace-nowrap px-6 py-4 text-gray-600">{getStatus(sequenceEmail)}</td>
+                    <td className={`whitespace-nowrap px-6 py-4`}>
+                        <div
+                            className={`flex w-fit flex-row items-center justify-center gap-2 rounded-lg px-3 py-2 text-center ${
+                                EMAIL_STATUS_STYLES[getStatus(sequenceEmail) || 'Default']
+                            }`}
+                        >
+                            <Icons status={getStatus(sequenceEmail)} />
+                            {getStatus(sequenceEmail)}
+                        </div>
+                    </td>
                     <td className="whitespace-nowrap px-6 py-4 text-gray-600">
                         {sequenceEmail?.email_send_at &&
                             new Date(sequenceEmail?.email_send_at).toLocaleDateString(i18n.language, {
