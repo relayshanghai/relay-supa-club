@@ -12,7 +12,7 @@ const parsePayloadPath = (url: string, payloadPath: ApiPayload['path']) => {
     return u;
 };
 
-const parsePayloadQuery = (url: string, payloadQuery: ApiPayload['query']) => {
+const preparePayloadQuery = (url: string, payloadQuery: ApiPayload['query']) => {
     const urlParams = new URLSearchParams(payloadQuery).toString();
 
     return urlParams === '' ? url : `${url}?${urlParams}`;
@@ -54,7 +54,7 @@ const parseResponse = async (response: Response) => {
  */
 export const apiFetch = async <T = any>(url: string, payload: ApiPayload, options: RequestInit = {}) => {
     url = parsePayloadPath(url, payload.path);
-    url = parsePayloadQuery(url, payload.query);
+    url = preparePayloadQuery(url, payload.query);
 
     if (payload.body) {
         options.method = 'POST';

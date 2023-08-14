@@ -9,7 +9,7 @@ import Fuse from 'fuse.js';
 import { useUser } from 'src/hooks/use-user';
 import { type FunnelStatus } from 'src/utils/api/db';
 import { type MultipleDropdownObject } from 'src/components/library';
-import { COLLABOPTIONS } from '../constants';
+import { COLLAB_OPTIONS } from '../constants';
 import { ProfileOverlayScreen } from 'src/components/influencer-profile/screens/profile-overlay-screen';
 import { useTranslation } from 'react-i18next';
 
@@ -33,20 +33,17 @@ const Manager = () => {
     const [_influencer, setInfluencer] = useState<SequenceInfluencerManagerPage | null>(null);
 
     const handleRowClick = useCallback((influencer: SequenceInfluencerManagerPage) => {
-        // eslint-disable-next-line no-console
-        console.log('on open > ', influencer);
         setInfluencer(influencer);
         setIsProfileOverlayOpen(true);
     }, []);
 
-    const handleProfileUpdate = useCallback((data: any) => {
-        // eslint-disable-next-line no-console
-        console.log('on update > ', data);
+    const handleProfileUpdate = useCallback((_data: any) => {
+        // console.log('on update > ', data);
     }, []);
 
     const setCollabStatusValues = (influencers: SequenceInfluencerManagerPage[], options: MultipleDropdownObject) => {
         const collabOptionsWithValue = options;
-        Object.keys(COLLABOPTIONS).forEach((option) => {
+        Object.keys(COLLAB_OPTIONS).forEach((option) => {
             collabOptionsWithValue[option as FunnelStatus] = {
                 ...options[option as FunnelStatus],
                 value: influencers?.filter((x) => x.funnel_status === option).length || 0,
@@ -56,11 +53,11 @@ const Manager = () => {
         return collabOptionsWithValue;
     };
 
-    const [collabOptions, setCollabOptions] = useState(COLLABOPTIONS);
+    const [collabOptions, setCollabOptions] = useState(COLLAB_OPTIONS);
 
     useEffect(() => {
         if (!sequenceInfluencers) return;
-        setCollabOptions(setCollabStatusValues(sequenceInfluencers, COLLABOPTIONS));
+        setCollabOptions(setCollabStatusValues(sequenceInfluencers, COLLAB_OPTIONS));
     }, [sequenceInfluencers]);
 
     const handleSetSearch = useCallback(

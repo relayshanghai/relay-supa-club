@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { COLLABOPTIONS } from '../constants';
+import { COLLAB_OPTIONS } from '../constants';
 import { InboxIcon } from 'src/components/icons';
 import { imgProxy } from 'src/utils/fetcher';
 import i18n from 'i18n';
@@ -74,7 +74,7 @@ export const InfluencerRow = ({ index, influencer, ...props }: InfluencerRowProp
             <td className="whitespace-nowrap px-6 py-4 font-medium text-gray-900">
                 <p>
                     <p
-                        className={`rounded text-xs font-medium ${COLLABOPTIONS[funnel_status].style} w-fit whitespace-nowrap px-2 py-1.5`}
+                        className={`rounded text-xs font-medium ${COLLAB_OPTIONS[funnel_status].style} w-fit whitespace-nowrap px-2 py-1.5`}
                     >
                         {t(`manager.${funnel_status}`)}
                     </p>
@@ -97,7 +97,7 @@ export const InfluencerRow = ({ index, influencer, ...props }: InfluencerRowProp
                 })}
             </td>
             <td className="whitespace-nowrap py-4 pl-6">
-                <Link href={`/inbox?q=${email}`} target="_blank">
+                <Link href={encodeURIComponent(`/inbox?q=${email}`)} target="_blank">
                     <div
                         onClick={handleInboxClick}
                         className="relative w-fit cursor-pointer rounded-md border-2 border-primary-500 px-4 py-2"

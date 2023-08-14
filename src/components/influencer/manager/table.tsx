@@ -3,7 +3,7 @@ import { InfluencerRow } from './influencer-row';
 import type { InfluencerRowProps } from './influencer-row';
 import { type SequenceInfluencerManagerPage } from 'src/hooks/use-sequence-influencers';
 import { Button } from 'src/components/button';
-import { TABLE_LIMIT, TABLE_COLUMNS, COLLABOPTIONS } from '../constants';
+import { TABLE_LIMIT, TABLE_COLUMNS, COLLAB_OPTIONS } from '../constants';
 import { useTranslation } from 'react-i18next';
 
 export const Table = ({
@@ -16,7 +16,7 @@ export const Table = ({
     const [page, setPage] = useState(0);
 
     const [filteredInfluencers, _setFilteredInfluencers] = useState(
-        influencers?.filter((influencer) => Object.keys(COLLABOPTIONS).includes(influencer.funnel_status)),
+        influencers?.filter((influencer) => Object.keys(COLLAB_OPTIONS).includes(influencer.funnel_status)),
     );
     const totalPages = Math.ceil((filteredInfluencers?.length || 0) / TABLE_LIMIT);
 

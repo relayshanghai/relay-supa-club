@@ -4,14 +4,14 @@ export const TABLE_LIMIT = 6;
 
 export const TABLE_COLUMNS = [
     { header: 'name', type: 'name', name: 'name' },
-    { header: 'collabstatus', type: 'collabstatus', name: 'collabstatus' },
+    { header: 'collabStatus', type: 'collabstatus', name: 'collabstatus' },
     { header: 'manager', type: 'manager', name: 'manager' },
     { header: 'tags', type: 'tags', name: 'tags' },
-    { header: 'lastupdated', type: 'lastupdated', name: 'lastupdated' }, // In the Figma design feedback, Sophia changed Payment Amount to Influencer Fee as the column name.
+    { header: 'lastUpdated', type: 'lastupdated', name: 'lastupdated' }, // In the Figma design feedback, Sophia changed Payment Amount to Influencer Fee as the column name.
     { header: 'inbox', type: 'link', name: 'inbox' },
 ];
 
-export const COLLABOPTIONS: MultipleDropdownObject = {
+export const COLLAB_OPTIONS: MultipleDropdownObject = {
     Negotiating: {
         style: 'bg-blue-100 text-blue-500',
     },
