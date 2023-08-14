@@ -149,7 +149,7 @@ describe('outreach', () => {
 
         // can view next email preview.
         cy.contains('In sequence').click();
-        cy.contains('1st Follow-up').click();
+        cy.contains('button', '1st Follow-up').click();
         cy.getByTestId('email-preview-modal-spinner');
         cy.contains('Hope you had a chance to think about our Widget X collab. Still think we’d make a great team!', {
             timeout: 10000,
