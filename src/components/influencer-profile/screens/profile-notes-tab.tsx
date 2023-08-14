@@ -77,7 +77,7 @@ type Props = {
 export const ProfileNotesTab = ({ profile, author, ...props }: Props) => {
     const { onUpdate } = { onUpdate: () => null, ...props };
     const { state: data } = useProfileScreenContext();
-    const [, setUiState] = useUiState();
+    const [_uiState, setUiState] = useUiState();
 
     const getNotes = useAsync(async (sequence_influencer_id: string, author: string) => {
         return await apiFetch('/api/notes/influencer/{id}', {
