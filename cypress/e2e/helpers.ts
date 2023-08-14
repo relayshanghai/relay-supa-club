@@ -14,40 +14,52 @@ export const supabaseClientCypress = () => {
 };
 
 export const reinsertCharlie = async () => {
-    const supabase = supabaseClientCypress();
+    try {
+        const supabase = supabaseClientCypress();
+        const email = 'charlie.charles@example.com';
+        const { data: charlesExists } = await supabase
+            .from('sequence_influencers')
+            .select('id')
+            .match({ email })
+            .single();
+        if (charlesExists?.id) return;
 
-    const { data: testCompany } = await supabase
-        .from('companies')
-        .select('id')
-        .eq('name', 'Blue Moonlight Stream Enterprises')
-        .single();
-    const { data: testUser } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('email', 'christopher.david.thompson@blue-moonlight-stream.com')
-        .single();
-    const { data: testSequence } = await supabase
-        .from('sequences')
-        .select('id')
-        .eq('name', 'General collaboration')
-        .single();
-    const { data: charlieProfile } = await supabase
-        .from('influencer_social_profiles')
-        .select('id')
-        .eq('name', 'Charlie Charles')
-        .single();
-    const reinsert: SequenceInfluencerInsert = {
-        added_by: testUser?.id || '',
-        company_id: testCompany?.id || '',
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        sequence_id: testSequence?.id || '',
-        influencer_social_profile_id: charlieProfile?.id || '',
-        funnel_status: 'To Contact',
-        sequence_step: 0,
-        email: 'charlie.charles@example.com',
-    };
-    await supabase.from('sequence_influencers').insert(reinsert);
+        const { data: testCompany } = await supabase
+            .from('companies')
+            .select('id')
+            .eq('name', 'Blue Moonlight Stream Enterprises')
+            .single();
+        const { data: testUser } = await supabase
+            .from('profiles')
+            .select('id')
+            .eq('email', 'christopher.david.thompson@blue-moonlight-stream.com')
+            .single();
+        const { data: testSequence } = await supabase
+            .from('sequences')
+            .select('id')
+            .eq('name', 'General collaboration')
+            .single();
+        const { data: charlieProfile } = await supabase
+            .from('influencer_social_profiles')
+            .select('id')
+            .eq('name', 'Charlie Charles')
+            .single();
+        const reinsert: SequenceInfluencerInsert = {
+            added_by: testUser?.id || '',
+            company_id: testCompany?.id || '',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            sequence_id: testSequence?.id || '',
+            influencer_social_profile_id: charlieProfile?.id || '',
+            funnel_status: 'To Contact',
+            sequence_step: 0,
+            email,
+        };
+        await supabase.from('sequence_influencers').insert(reinsert);
+    } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error(error);
+    }
 };
 
 export const resetUsages = (supabase: RelayDatabase) => {

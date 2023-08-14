@@ -37,7 +37,7 @@ declare global {
     // eslint-disable-next-line @typescript-eslint/no-namespace
     namespace Cypress {
         interface Chainable {
-            getByTestId: typeof getByTestId;
+            getByTestId(selector: string, options?: Partial<Loggable & Timeoutable & Withinable>): Chainable<any>;
             loginTestUser: typeof loginTestUser;
             loginAdmin: typeof loginAdmin;
             switchToEnglish: typeof switchToEnglish;
@@ -45,15 +45,10 @@ declare global {
         }
     }
 }
-type CypressGetOptions =
-    | Partial<Cypress.Loggable & Cypress.Timeoutable & Cypress.Withinable & Cypress.Shadow>
-    | undefined;
 
-function getByTestId(selector: string, options?: CypressGetOptions) {
-    return cy.get(`[data-testid="${selector}"]`, options);
-}
-
-Cypress.Commands.add('getByTestId', getByTestId);
+Cypress.Commands.add('getByTestId', (selector, ...args) => {
+    cy.get(`[data-testid="${selector}"]`, ...args);
+});
 
 function loginTestUser(
     role: 'company_owner' | 'company_teammate' | 'relay_employee' = 'company_owner',
@@ -74,7 +69,7 @@ function loginTestUser(
     cy.contains('Email');
     cy.get('input[type="email"]').type(email);
     cy.get('input[type="password"]').type(Cypress.env('TEST_USER_PASSWORD'));
-    cy.get('form').get('button').contains('Log in').click();
+    cy.contains('button', 'Log in').click();
     cy.contains('Successfully logged in', { timeout: 10000 }); // the toast message
     cy.contains('Campaigns', { timeout: 10000 }); // dashboard page load
 }

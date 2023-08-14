@@ -45,15 +45,15 @@ export const SequencesPage = () => {
                             (email) =>
                                 email.email_tracking_status === 'Link Clicked' ||
                                 email.email_tracking_status === 'Opened',
-                        ).length || 1) / (allEmails?.length || 1)
+                        ).length || 0) / (allEmails?.length || 0)
                     }
                     replyRate={
-                        (allEmails?.filter((email) => email.email_delivery_status === 'Replied').length || 1) /
-                        (allEmails?.length || 1)
+                        (allEmails?.filter((email) => email.email_delivery_status === 'Replied').length || 0) /
+                        (allEmails?.length || 0)
                     }
                     bounceRate={
-                        (allEmails?.filter((email) => email.email_delivery_status === 'Bounced').length || 1) /
-                        (allEmails?.length || 1)
+                        (allEmails?.filter((email) => email.email_delivery_status === 'Bounced').length || 0) /
+                        (allEmails?.length || 0)
                     }
                 />
 

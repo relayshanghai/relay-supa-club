@@ -19,7 +19,8 @@ export const SequencesTableRow = ({
     const openRate = decimalToPercent(
         (sequenceEmails?.filter(
             (email) => email.email_tracking_status === 'Link Clicked' || email.email_tracking_status === 'Opened',
-        ).length || 1) / (sequenceEmails?.length || 1),
+        ).length || 0) / (sequenceEmails?.length || 0),
+        1,
     );
 
     const deleteSequence = () => {

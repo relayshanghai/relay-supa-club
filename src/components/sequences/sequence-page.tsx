@@ -2,7 +2,6 @@
 import { Layout } from '../layout';
 import SequenceTable from './sequence-table';
 import { testAccount } from 'src/utils/api/email-engine/prototype-mocks';
-
 import { clientLogger } from 'src/utils/logger-client';
 import { SequenceStats } from './sequence-stats';
 import { useUser } from 'src/hooks/use-user';
@@ -19,6 +18,8 @@ import { useState } from 'react';
 import { TemplateVariablesModal } from './template-variables-modal';
 import { useTranslation } from 'react-i18next';
 import type { SequenceInfluencer } from 'src/utils/api/db';
+import { useTemplateVariables } from 'src/hooks/use-template_variables';
+import { Tooltip } from '../library';
 
 export const SequencePage = () => {
     const { t } = useTranslation();
@@ -29,6 +30,11 @@ export const SequencePage = () => {
     const { sequence, sendSequence, sequenceSteps, updateSequence } = useSequence(sequences?.[0]?.id);
     const { sequenceInfluencers, updateSequenceInfluencer } = useSequenceInfluencers(sequence?.id);
     const { sequenceEmails: allSequenceEmails, updateSequenceEmail } = useSequenceEmails(sequence?.id);
+    const { templateVariables } = useTemplateVariables(sequence?.id);
+    const missingVariables = templateVariables
+        ?.filter((variable) => variable.required && !variable.value)
+        .map((variable) => variable.name) ?? ['Error retrieving variables'];
+    const isMissingVariables = !templateVariables || templateVariables.length === 0 || missingVariables.length > 0;
 
     const handleStartSequence = async () => {
         // update sequence - autostart - true.
@@ -125,13 +131,27 @@ export const SequencePage = () => {
             <div className="flex flex-col space-y-4 p-4">
                 <div className="flex w-full">
                     <h1 className="mr-4 self-center text-2xl font-semibold text-gray-800">{sequence?.name}</h1>
-                    <Switch
-                        checked={sequence?.auto_start ?? false}
-                        afterLabel="Auto-start"
-                        onChange={(e) => {
-                            handleAutostartToggle(e.target.checked);
-                        }}
-                    />
+                    <div onClick={() => (isMissingVariables ? setShowUpdateTemplateVariables(true) : null)}>
+                        <Tooltip
+                            content={
+                                isMissingVariables
+                                    ? t('sequences.missingRequiredTemplateVariables_variables', {
+                                          variables: missingVariables,
+                                      })
+                                    : ''
+                            }
+                            position="bottom-right"
+                        >
+                            <Switch
+                                className={`${isMissingVariables ? 'pointer-events-none' : ''}`}
+                                checked={sequence?.auto_start ?? false}
+                                afterLabel="Auto-start"
+                                onChange={(e) => {
+                                    handleAutostartToggle(e.target.checked);
+                                }}
+                            />
+                        </Tooltip>
+                    </div>
                     <Button onClick={handleOpenUpdateTemplateVariables} variant="secondary" className="ml-auto flex">
                         <Brackets className="mr-2" />
                         <p className="self-center">{t('sequences.updateTemplateVariables')}</p>
@@ -144,15 +164,15 @@ export const SequencePage = () => {
                             (email) =>
                                 email.email_tracking_status === 'Link Clicked' ||
                                 email.email_tracking_status === 'Opened',
-                        ).length || 1) / (allSequenceEmails?.length || 1)
+                        ).length || 0) / (allSequenceEmails?.length || 0)
                     }
                     replyRate={
-                        (allSequenceEmails?.filter((email) => email.email_delivery_status === 'Replied').length || 1) /
-                        (allSequenceEmails?.length || 1)
+                        (allSequenceEmails?.filter((email) => email.email_delivery_status === 'Replied').length || 0) /
+                        (allSequenceEmails?.length || 0)
                     }
                     bounceRate={
-                        (allSequenceEmails?.filter((email) => email.email_delivery_status === 'Bounced').length || 1) /
-                        (allSequenceEmails?.length || 1)
+                        (allSequenceEmails?.filter((email) => email.email_delivery_status === 'Bounced').length || 0) /
+                        (allSequenceEmails?.length || 0)
                     }
                 />
                 <Tabs tabs={tabs} currentTab={currentTab} setCurrentTab={setCurrentTab} />
@@ -163,6 +183,9 @@ export const SequencePage = () => {
                         allSequenceEmails={allSequenceEmails}
                         sequenceSteps={sequenceSteps}
                         currentTab={currentTab}
+                        missingVariables={missingVariables}
+                        isMissingVariables={isMissingVariables}
+                        setShowUpdateTemplateVariables={setShowUpdateTemplateVariables}
                     />
                 ) : (
                     <Spinner className="mx-auto mt-10 h-10 w-10 fill-primary-600 text-white" />

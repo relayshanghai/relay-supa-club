@@ -8,6 +8,7 @@ export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 
     note?: string | null;
     placeholder?: string | null;
     type?: HTMLInputTypeAttribute;
+    isRelative?: boolean; // <- toggle relative positioning
 }
 
 function InputWithRef(
@@ -23,7 +24,7 @@ function InputWithRef(
                 {label}
                 {rest.required ? <span className="ml-1 text-xs text-primary-500">*</span> : null}
             </div>
-            <div className="relative">
+            <div className={`${rest.isRelative ? 'relative' : ''}`}>
                 <input
                     ref={ref}
                     placeholder={placeholder || ''}
