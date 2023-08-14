@@ -4,6 +4,7 @@ import type { SearchResponseMessage } from 'types/email-engine/account-account-s
 export const EmailHeader = ({ messages }: { messages: SearchResponseMessage[] }) => {
     const { i18n } = useTranslation();
     const lastMessageDate = messages[messages.length - 1]?.date;
+    // TODO: connect with sequence
 
     return (
         <div className="flex w-full items-center justify-between border-b-2 border-tertiary-200 bg-primary-500 px-4 py-6 text-white">

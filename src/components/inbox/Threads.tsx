@@ -87,8 +87,14 @@ export const Threads = ({ messages }: { messages: SearchResponseMessage[] }) => 
                                 <div className="mb-3 text-sm font-medium text-gray-400">
                                     To: <span className="font-light">{message.to[0]?.address}</span>{' '}
                                 </div>
+                                {message.cc?.length > 0 && (
+                                    <div className="mb-3 text-sm font-medium text-gray-400">
+                                        cc:{' '}
+                                        <span className="font-light">{message.cc?.map((c) => c.address + ', ')}</span>{' '}
+                                    </div>
+                                )}
                             </div>
-                            <details className="p-6">
+                            <details className="px-6 py-2">
                                 <summary className="flex list-none justify-end">
                                     <div className="mr-3 font-medium text-gray-300">
                                         {' '}
