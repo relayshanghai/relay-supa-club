@@ -60,14 +60,16 @@ export const InfluencerRow = ({ index, influencer, ...props }: InfluencerRowProp
                     </div>
                     <div className="flex flex-col">
                         <p className="font-semibold text-primary-600">{name}</p>
-                        <Link
-                            className="cursor-pointer font-semibold text-gray-500"
-                            href={url || ''}
-                            rel="noopener noreferrer"
-                            target="_blank"
-                        >
-                            @{username}
-                        </Link>
+                        {url && (
+                            <Link
+                                className="cursor-pointer font-semibold text-gray-500"
+                                href={url}
+                                rel="noopener noreferrer"
+                                target="_blank"
+                            >
+                                @{username}
+                            </Link>
+                        )}
                     </div>
                 </div>
             </td>
@@ -97,16 +99,22 @@ export const InfluencerRow = ({ index, influencer, ...props }: InfluencerRowProp
                 })}
             </td>
             <td className="whitespace-nowrap py-4 pl-6">
-                <Link href={encodeURIComponent(`/inbox?q=${email}`)} target="_blank">
-                    <div
-                        onClick={handleInboxClick}
-                        className="relative w-fit cursor-pointer rounded-md border-2 border-primary-500 px-4 py-2"
+                {email && (
+                    <Link
+                        href={encodeURIComponent(`/inbox?q=${new URLSearchParams({ q: email })}`)}
+                        target="_blank"
+                        rel="noopener noreferrer"
                     >
-                        <InboxIcon className="h-6 w-6 stroke-primary-500" />
-                        {/* // TODO Add unread message indication */}
-                        {/* <div className="absolute -right-2 -top-2 h-4 w-4 rounded-full bg-red-500" /> */}
-                    </div>
-                </Link>
+                        <div
+                            onClick={handleInboxClick}
+                            className="relative w-fit cursor-pointer rounded-md border-2 border-primary-500 px-4 py-2"
+                        >
+                            <InboxIcon className="h-6 w-6 stroke-primary-500" />
+                            {/* // TODO Add unread message indication */}
+                            {/* <div className="absolute -right-2 -top-2 h-4 w-4 rounded-full bg-red-500" /> */}
+                        </div>
+                    </Link>
+                )}
             </td>
         </tr>
     );
