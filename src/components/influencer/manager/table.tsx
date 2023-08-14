@@ -14,7 +14,6 @@ export const Table = ({
     onRowClick?: (data: InfluencerRowProps['influencer']) => void;
 }) => {
     const [page, setPage] = useState(0);
-    // const [selectedAll, setSelectedAll] = useState<boolean>(false);
 
     const [filteredInfluencers, _setFilteredInfluencers] = useState(
         influencers?.filter((influencer) => Object.keys(COLLABOPTIONS).includes(influencer.funnel_status)),
@@ -29,6 +28,10 @@ export const Table = ({
         },
         [onRowClick],
     );
+
+    // TODO Add multiselect operations on the table
+
+    // const [selectedAll, setSelectedAll] = useState<boolean>(false);
 
     // const handleCheckboxChange = (id: string) => {
     //     const updatedCheckboxes = influencersList.map((checkbox) =>
@@ -53,6 +56,7 @@ export const Table = ({
                 <table className="w-full table-auto divide-y divide-gray-200 overflow-y-visible bg-white ">
                     <thead>
                         <tr>
+                            {/* // TODO Add multiselect operations on the table */}
                             {/* <th>
                                 <input className="appearance-none display-none rounded border-gray-300 checked:text-primary-500" type='checkbox' checked={selectedAll} onChange={handleCheckAll} />
                             </th> */}

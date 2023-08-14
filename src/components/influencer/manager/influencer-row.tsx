@@ -41,6 +41,7 @@ export const InfluencerRow = ({ index, influencer, ...props }: InfluencerRowProp
             key={influencer.id + index}
             className="group cursor-default text-sm  hover:bg-primary-50"
         >
+            {/* // TODO Add multiselect operations on the table */}
             {/* <td className="whitespace-nowrap items-center text-center display-none">
                 <input className="appearance-none rounded border-gray-300 checked:text-primary-500" checked={checked} onChange={onCheckboxChange} type='checkbox' />
             </td> */}
@@ -102,6 +103,7 @@ export const InfluencerRow = ({ index, influencer, ...props }: InfluencerRowProp
                         className="relative w-fit cursor-pointer rounded-md border-2 border-primary-500 px-4 py-2"
                     >
                         <InboxIcon className="h-6 w-6 stroke-primary-500" />
+                        {/* // TODO Add unread message indication */}
                         {/* <div className="absolute -right-2 -top-2 h-4 w-4 rounded-full bg-red-500" /> */}
                     </div>
                 </Link>
