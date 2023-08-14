@@ -19,7 +19,7 @@ export const CreateSequenceModal = ({
 }) => {
     const { t } = useTranslation();
     const { createSequence } = useSequence();
-    const { createDefaultSequenceStep } = useSequenceSteps();
+    const { createDefaultSequenceSteps } = useSequenceSteps();
 
     const [loading, setLoading] = useState<boolean>(false);
     const [sequenceName, setSequenceName] = useState<string>('');
@@ -32,7 +32,7 @@ export const CreateSequenceModal = ({
             if (!data) {
                 throw new Error('Failed to get sequence id');
             }
-            await createDefaultSequenceStep(data.id);
+            await createDefaultSequenceSteps(data.id);
             toast.success('Sequence created successfully');
         } catch (error) {
             clientLogger(error, 'error');

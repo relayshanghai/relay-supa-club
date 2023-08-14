@@ -18,7 +18,7 @@ export const useSequenceSteps = (sequenceId?: string) => {
     );
 
     const createSequenceStepDBCall = useDB<typeof createSequenceStepCall>(createSequenceStepCall);
-    const createDefaultSequenceStep = async (sequenceId: string) => {
+    const createDefaultSequenceSteps = async (sequenceId: string) => {
         defaultTemplates.map(async (template) => {
             const insert: SequenceStepInsert = {
                 name: template.name,
@@ -41,6 +41,6 @@ export const useSequenceSteps = (sequenceId?: string) => {
         sequenceSteps,
         refreshSequenceSteps,
         updateSequenceStep: db.updateSequenceStep,
-        createDefaultSequenceStep,
+        createDefaultSequenceSteps,
     };
 };
