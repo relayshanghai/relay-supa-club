@@ -4,8 +4,6 @@ import type { TemplateVariable } from 'src/utils/api/db';
  will leave out the missing variables and wrap them with `**variableName**`  
  */
 export const fillInTemplateVariables = (email: string, templateVariables: TemplateVariable[]) => {
-    // split all `{{` and `}}`, then look for the `params.xxx` in the templateVariables, and replace it with the value. Remove the '{{}}` if there is a variable, otherwise keep it.
-
     const splitEmail = email.split(/({{)|(}})/g);
     const filledInEmail = splitEmail.map((part) => {
         if (part?.includes('params.')) {

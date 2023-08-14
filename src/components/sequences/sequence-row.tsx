@@ -55,7 +55,6 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
     };
     const currentStep = sequenceSteps?.find((step) => step.step_number === sequenceInfluencer.sequence_step);
     const { t } = useTranslation();
-
     const handleStart = async () => {
         // TODO
     };
