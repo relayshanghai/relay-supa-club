@@ -47,7 +47,7 @@ export const AddToSequenceModal = ({
             return [];
         }
         const relevantTags = report.user_profile.relevant_tags;
-        return relevantTags.slice(0, 3).map((tag) => tag.tag);
+        return relevantTags?.slice(0, 3).map((tag) => tag.tag);
     }, [report]);
 
     const handleAddToSequence = useCallback(async () => {
