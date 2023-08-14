@@ -2,15 +2,15 @@ import { useCallback, useEffect } from 'react';
 import { useAsync } from 'src/hooks/use-async';
 import { apiFetch } from 'src/utils/api/api-fetch';
 import type { CampaignNotes } from 'src/utils/api/db';
-import { useProfileScreenContext } from '../screens/profile-screen-context';
-import { CollabAffiliateLinkInput } from './collab-affiliate-link-input';
-import { CollabFeeInput } from './collab-fee-input';
-import { CollabScheduledPostDateInput } from './collab-scheduled-post-date-input';
-import { CollabVideoDetailsInput } from './collab-video-details-input';
-import { OutreachCollabStatusInput } from './outreach-collab-status-input';
-import { OutreachNextStepsInput } from './outreach-next-steps-input';
-import { OutreachNotesInput } from './outreach-notes-input';
-import type { Profile } from './profile-header';
+import { useProfileScreenContext, useUiState } from '../screens/profile-screen-context';
+import { CollabAffiliateLinkInput } from '../components/collab-affiliate-link-input';
+import { CollabFeeInput } from '../components/collab-fee-input';
+import { CollabScheduledPostDateInput } from '../components/collab-scheduled-post-date-input';
+import { CollabVideoDetailsInput } from '../components/collab-video-details-input';
+import { OutreachCollabStatusInput } from '../components/outreach-collab-status-input';
+import { OutreachNextStepsInput } from '../components/outreach-next-steps-input';
+import { OutreachNotesInput } from '../components/outreach-notes-input';
+import type { Profile } from '../components/profile-header';
 
 export const COLLAB_STATUS_OPTIONS = [
     {
@@ -77,6 +77,7 @@ type Props = {
 export const ProfileNotesTab = ({ profile, author, ...props }: Props) => {
     const { onUpdate } = { onUpdate: () => null, ...props };
     const { state: data } = useProfileScreenContext();
+    const [, setUiState] = useUiState();
 
     const getNotes = useAsync(async (sequence_influencer_id: string, author: string) => {
         return await apiFetch('/api/notes/influencer/{id}', {
@@ -142,6 +143,11 @@ export const ProfileNotesTab = ({ profile, author, ...props }: Props) => {
                     value={data.notes.notes}
                     onUpdate={(value) => onUpdate('notes', value)}
                     onSave={handleSaveNotes}
+                    onOpenList={() =>
+                        setUiState((s) => {
+                            return { ...s, isNotesListOverlayOpen: true };
+                        })
+                    }
                 />
 
                 <div className="h-px border border-neutral-200" />

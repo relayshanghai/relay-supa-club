@@ -2,8 +2,9 @@ import { useCallback, useState } from 'react';
 import { OverlayRight } from 'src/components/influencer-profile/components/overlay-right';
 import type { ProfileValue } from 'src/components/influencer-profile/screens/profile-screen';
 import { ProfileScreen } from 'src/components/influencer-profile/screens/profile-screen';
-import { ProfileScreenProvider } from './profile-screen-context';
+import { ProfileScreenProvider, useUiState } from './profile-screen-context';
 import type { Profile } from '../components/profile-header';
+import { NotesListOverlayScreen } from './notes-list-overlay';
 
 type Props = {
     profile: Profile | null;
@@ -14,6 +15,8 @@ type Props = {
 };
 
 export const ProfileOverlayScreen = ({ profile, onOpen, ...props }: Props) => {
+    const [uiState, setUiState] = useUiState();
+
     const [initialValue] = useState({
         notes: {
             collabStatus: '',
@@ -39,17 +42,7 @@ export const ProfileOverlayScreen = ({ profile, onOpen, ...props }: Props) => {
 
     const handleClose = useCallback(() => {
         props.onClose && props.onClose();
-
-        // eslint-disable-next-line no-console
-        console.log('overlay closed!');
     }, [props]);
-
-    const handleOpen = useCallback(() => {
-        onOpen && onOpen();
-
-        // eslint-disable-next-line no-console
-        console.log('overlay opened!');
-    }, [onOpen]);
 
     const handleUpdate = useCallback(
         (data: Partial<ProfileValue>) => {
@@ -64,13 +57,22 @@ export const ProfileOverlayScreen = ({ profile, onOpen, ...props }: Props) => {
 
     return (
         <>
-            <OverlayRight isOpen={props.isOpen} onClose={handleClose} onOpen={handleOpen}>
+            <OverlayRight isOpen={props.isOpen} onClose={handleClose} onOpen={() => onOpen && onOpen()}>
                 <ProfileScreenProvider initialValue={initialValue}>
                     {profile ? (
                         <ProfileScreen profile={profile} onCancel={handleClose} onUpdate={handleUpdate} />
                     ) : null}
                 </ProfileScreenProvider>
             </OverlayRight>
+
+            <NotesListOverlayScreen
+                isOpen={uiState.isNotesListOverlayOpen}
+                onClose={() =>
+                    setUiState((s) => {
+                        return { ...s, isNotesListOverlayOpen: false };
+                    })
+                }
+            />
         </>
     );
 };

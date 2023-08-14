@@ -1,9 +1,9 @@
 import type { DetailedHTMLProps, HTMLAttributes } from 'react';
 import { useCallback, useState } from 'react';
-import type { ProfileNotes } from '../components/profile-notes-tab';
-import { ProfileNotesTab } from '../components/profile-notes-tab';
-import type { ProfileShippingDetails } from '../components/profile-shipping-details-tab';
-import { ProfileShippingDetailsTab } from '../components/profile-shipping-details-tab';
+import type { ProfileNotes } from './profile-notes-tab';
+import { ProfileNotesTab } from './profile-notes-tab';
+import type { ProfileShippingDetails } from './profile-shipping-details-tab';
+import { ProfileShippingDetailsTab } from './profile-shipping-details-tab';
 import { Button } from 'src/components/button';
 import { cls } from 'src/utils/classnames';
 import type { Profile } from '../components/profile-header';

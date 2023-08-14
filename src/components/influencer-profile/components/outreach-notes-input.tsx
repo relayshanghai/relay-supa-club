@@ -4,13 +4,16 @@ type Props = {
     value?: string;
     onSave?: (value: string) => void;
     onUpdate?: (value: string) => void;
+    onOpenList?: () => void;
 } & HTMLAttributes<HTMLDivElement>;
 
-export const OutreachNotesInput = ({ value = '', onSave, onUpdate, ...props }: Props) => {
+export const OutreachNotesInput = ({ value = '', onSave, onUpdate, onOpenList, ...props }: Props) => {
     return (
         <div {...props}>
             <label className="flex w-full flex-col text-sm text-gray-800" htmlFor="outreach-notes-input">
-                <div className="font-semibold">Notes</div>
+                <div className="font-semibold" onClick={() => onOpenList && onOpenList()}>
+                    Notes
+                </div>
             </label>
             <textarea
                 value={value}

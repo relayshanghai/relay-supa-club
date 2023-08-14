@@ -1,4 +1,4 @@
-import type { Context as ReactContext, Dispatch, PropsWithChildren, SetStateAction } from 'react';
+import type { Context as ReactContext, Dispatch, PropsWithChildren, SetStateAction, FC } from 'react';
 import { createContext, useContext, useMemo, useState } from 'react';
 
 type ContextType<T> = { state: T; setState: Dispatch<SetStateAction<T>> };
@@ -18,14 +18,33 @@ const ContainerProvider = <T = { [key: string]: any },>({ children, context: Con
     return <Context.Provider value={context}>{children}</Context.Provider>;
 };
 
+/**
+ * Helper function for dynamically creating a context provider
+ *
+ * This is meant for Container (and sub-container) components for
+ * beaming state (to avoid prop drilling) to the nearest Container of your target Presentational component
+ *
+ * [ Container 1 ]                       <- <ContainerProvider /> here
+ *        |----------------|
+ * [ Container 2 ]  [ Container 3 ]      <- useContainerContext here
+ *                         |
+ *                  [ Presentation 1 ]   <- this receives props (and triggers events)
+ *
+ * @see https://www.patterns.dev/posts/presentational-container-pattern
+ */
 export const createContainerContext = <TContext = any,>() => {
     const Context = createContext<ContextType<TContext> | undefined>(undefined);
 
-    const Provider = ({ children, initialValue }: PropsWithChildren<{ initialValue: TContext }>) => (
+    const Provider: FC<PropsWithChildren<{ initialValue: TContext }>> = ({
+        children,
+        initialValue,
+    }: PropsWithChildren<{ initialValue: TContext }>) => (
         <ContainerProvider<TContext> context={Context} initialValue={initialValue}>
             {children}
         </ContainerProvider>
     );
+
+    Provider.displayName = 'ContainerContextProvider';
 
     const useContainerContext = () => {
         const context = useContext(Context);

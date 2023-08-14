@@ -6,32 +6,40 @@ import { Table } from './table';
 import { ProfileOverlayScreen } from 'src/components/influencer-profile/screens/profile-overlay-screen';
 import type { InfluencerRowProps } from './influencer-row';
 import type { Profile } from 'src/components/influencer-profile/components/profile-header';
+import { useUiState } from 'src/components/influencer-profile/screens/profile-screen-context';
 
 const Manager = () => {
-    const [isProfileOverlayOpen, setIsProfileOverlayOpen] = useState(false);
     const [influencer, setInfluencer] = useState<Profile | null>(null);
+    const [uiState, setUiState] = useUiState();
 
-    const handleRowClick = useCallback((influencer: InfluencerRowProps['influencer']) => {
-        // eslint-disable-next-line no-console
-        console.log('on open > ', influencer);
-        setInfluencer({
-            username: 'TastyChef',
-            platform: 'instagram',
-            name: "D'Jon Curtis",
-            avatar: 'https://api.dicebear.com/6.x/open-peeps/svg?seed=TastyChef&size=96',
-        });
-        setIsProfileOverlayOpen(true);
-    }, []);
+    const handleRowClick = useCallback(
+        (_influencer: InfluencerRowProps['influencer']) => {
+            setInfluencer({
+                username: 'TastyChef',
+                platform: 'instagram',
+                name: "D'Jon Curtis",
+                avatar: 'https://api.dicebear.com/6.x/open-peeps/svg?seed=TastyChef&size=96',
+            });
+
+            setUiState((s) => {
+                return { ...s, isProfileOverlayOpen: true };
+            });
+        },
+        [setUiState],
+    );
 
     const handleProfileUpdate = useCallback((data: any) => {
         // eslint-disable-next-line no-console
-        console.log('on update > ', data);
+        console.log('@todo update influencer profile', data);
     }, []);
 
     const handleProfileOverlayClose = useCallback(() => {
-        setIsProfileOverlayOpen(false);
+        setUiState((s) => {
+            return { ...s, isProfileOverlayOpen: false };
+        });
+
         setInfluencer(null);
-    }, []);
+    }, [setUiState]);
 
     return (
         <>
@@ -52,7 +60,7 @@ const Manager = () => {
             </div>
             <ProfileOverlayScreen
                 profile={influencer}
-                isOpen={isProfileOverlayOpen}
+                isOpen={uiState.isProfileOverlayOpen}
                 onClose={handleProfileOverlayClose}
                 onUpdate={handleProfileUpdate}
             />

@@ -1,12 +1,12 @@
-import { ShippingDetailsCityInput } from './shipping-details-city-input';
-import { ShippingDetailsCountryInput } from './shipping-details-country-input';
-import { ShippingDetailsFullAddressInput } from './shipping-details-full-address-input';
-import { ShippingDetailsNameInput } from './shipping-details-name-input';
-import { ShippingDetailsPhoneNumberInput } from './shipping-details-phone-number-input';
-import { ShippingDetailsPostalCodeInput } from './shipping-details-postal-code-input';
-import { ShippingDetailsStateInput } from './shipping-details-state-input';
-import { ShippingDetailsStreetAddressInput } from './shipping-details-street-address-input';
-import { ShippingDetailsTrackingCodeInput } from './shipping-details-tracking-code-input';
+import { ShippingDetailsCityInput } from '../components/shipping-details-city-input';
+import { ShippingDetailsCountryInput } from '../components/shipping-details-country-input';
+import { ShippingDetailsFullAddressInput } from '../components/shipping-details-full-address-input';
+import { ShippingDetailsNameInput } from '../components/shipping-details-name-input';
+import { ShippingDetailsPhoneNumberInput } from '../components/shipping-details-phone-number-input';
+import { ShippingDetailsPostalCodeInput } from '../components/shipping-details-postal-code-input';
+import { ShippingDetailsStateInput } from '../components/shipping-details-state-input';
+import { ShippingDetailsStreetAddressInput } from '../components/shipping-details-street-address-input';
+import { ShippingDetailsTrackingCodeInput } from '../components/shipping-details-tracking-code-input';
 import { useProfileScreenContext } from '../screens/profile-screen-context';
 
 export type ProfileShippingDetails = {

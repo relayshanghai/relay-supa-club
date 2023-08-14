@@ -34,14 +34,14 @@ export const OverlayRight = ({ children, onOpen, ...props }: Props) => {
     return (
         <>
             <div
-                className={`${overlayCls} fixed right-0 top-0 z-[60] h-full w-full max-w-md transform overflow-auto bg-white transition-all duration-300`}
+                className={`${overlayCls} fixed right-0 top-0 z-[60] h-full w-full max-w-md transform flex-col overflow-auto bg-white transition-all duration-300`}
                 tabIndex={-1}
             >
-                <div className="float-right flex px-3 py-3">
+                <div className="flex justify-end">
                     <button
-                        onClick={() => closeOverlay()}
                         type="button"
-                        className="inline-flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-md text-gray-500 hover:text-gray-700 focus:outline-none"
+                        className="mr-3 mt-3 h-8 w-8 rounded-md text-gray-500 hover:text-gray-700 focus:outline-none"
+                        onClick={() => closeOverlay()}
                     >
                         <XMarkIcon className="h-6 w-6" />
                     </button>
