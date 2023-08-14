@@ -134,8 +134,13 @@ export const SequencePage = () => {
                     <div onClick={() => (isMissingVariables ? setShowUpdateTemplateVariables(true) : null)}>
                         <Tooltip
                             content={
+                                t('sequences.autoStartTooltip', {
+                                    variables: missingVariables,
+                                }) || ''
+                            }
+                            detail={
                                 isMissingVariables
-                                    ? t('sequences.missingRequiredTemplateVariables_variables', {
+                                    ? t('sequences.autoStartTooltipDescription', {
                                           variables: missingVariables,
                                       })
                                     : ''
@@ -145,7 +150,7 @@ export const SequencePage = () => {
                             <Switch
                                 className={`${isMissingVariables ? 'pointer-events-none' : ''}`}
                                 checked={sequence?.auto_start ?? false}
-                                afterLabel="Auto-start"
+                                afterLabel={t('sequences.autoStart') || ''}
                                 onChange={(e) => {
                                     handleAutostartToggle(e.target.checked);
                                 }}
