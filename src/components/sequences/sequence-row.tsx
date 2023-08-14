@@ -47,7 +47,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
     );
     const { i18n } = useTranslation();
     const [email, setEmail] = useState(sequenceInfluencer.email ?? '');
-    const [showEmailPreview, setShowEmailPreview] = useState(false);
+    const [showEmailPreview, setShowEmailPreview] = useState<SequenceStep[] | null>(null);
 
     const handleEmailUpdate = async (email: string) => {
         const updatedSequenceInfluencer = await updateSequenceInfluencer({ id: sequenceInfluencer.id, email });
@@ -62,9 +62,9 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
     return (
         <>
             <EmailPreviewModal
-                visible={showEmailPreview}
-                onClose={() => setShowEmailPreview(false)}
-                sequenceSteps={sequenceSteps}
+                visible={!!showEmailPreview}
+                onClose={() => setShowEmailPreview(null)}
+                sequenceSteps={showEmailPreview || []}
                 templateVariables={templateVariables}
             />
             <tr className="border-b-2 border-gray-200 bg-white">
@@ -140,7 +140,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                                     Send
                                 </Button>
                             </Tooltip>
-                            <Button className="ml-2" variant="ghost" onClick={() => setShowEmailPreview(true)}>
+                            <Button className="ml-2" variant="ghost" onClick={() => setShowEmailPreview(sequenceSteps)}>
                                 <Brackets />
                             </Button>
                             <button
@@ -155,7 +155,9 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                 )}
                 {currentTab === 'In Sequence' && (
                     <>
-                        <td className="whitespace-nowrap px-6 py-4 font-semibold text-gray-600">{currentStep?.name}</td>
+                        <td className="whitespace-nowrap px-6 py-4 align-middle font-semibold text-gray-600">
+                            {currentStep?.name}
+                        </td>
                         {/* TODO: add colors and icons for each status */}
                         <td className="whitespace-nowrap px-6 py-4 text-gray-600">{getStatus(sequenceEmail)}</td>
                         <td className="whitespace-nowrap px-6 py-4 text-gray-600">
@@ -165,15 +167,29 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                                     day: 'numeric',
                                 })}
                         </td>
-                        <td className="whitespace-nowrap px-6 py-4 text-gray-600">
-                            {/* TODO */}
-                            <Button>Preview email</Button>
-                            <button className="ml-3" onClick={() => deleteSequenceInfluencer(sequenceInfluencer.id)}>
-                                <DeleteOutline
-                                    data-testid="delete-influencer-button"
-                                    className="h-6 w-6 text-gray-300"
-                                />
-                            </button>
+                        <td className="px-6 py-4 align-middle">
+                            <div className="flex">
+                                <button
+                                    className="text-primary-600"
+                                    onClick={() =>
+                                        setShowEmailPreview(
+                                            sequenceSteps.filter(
+                                                (step) => sequenceInfluencer?.sequence_step === step.step_number,
+                                            ) || null,
+                                        )
+                                    }
+                                >
+                                    {sequenceSteps.find(
+                                        (step) => sequenceInfluencer?.sequence_step === step.step_number,
+                                    )?.name ?? '-'}
+                                </button>
+                                <button onClick={() => deleteSequenceInfluencer(sequenceInfluencer.id)}>
+                                    <DeleteOutline
+                                        data-testid="delete-influencer-button"
+                                        className="ml-3 h-6 w-6 text-gray-300"
+                                    />
+                                </button>
+                            </div>
                         </td>
                     </>
                 )}
