@@ -10,7 +10,7 @@ export async function getHandler(req: NextApiRequest, res: NextApiResponse) {
     // @todo this is usually fetched from the session
     const user_id = req.query.author;
 
-    if (!sequenceInfluencerId && !user_id) {
+    if (!sequenceInfluencerId) {
         return res.status(httpCodes.BAD_REQUEST).json({ error: 'Not found' });
     }
 
