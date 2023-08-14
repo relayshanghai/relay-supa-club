@@ -1,4 +1,4 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiHandler } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { ApiHandler } from 'src/utils/api-handler';
 import { type SequenceInfluencer } from 'src/utils/api/db';
@@ -12,7 +12,7 @@ export type SequenceInfluencerManagerPage = SequenceInfluencer & {
     url?: string;
 };
 
-const getHandler = async (req: NextApiRequest, res: NextApiResponse) => {
+const postHandler: NextApiHandler = async (req, res) => {
     const sequenceIds: string[] = req.body;
     const influencersPromises = sequenceIds.map((sequenceId) => getSequenceInfluencers({ req, res }, sequenceId));
     const influencersArrays = await Promise.all(influencersPromises);
@@ -22,4 +22,4 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(httpCodes.OK).json(combinedInfluencers);
 };
 
-export default ApiHandler({ getHandler });
+export default ApiHandler({ postHandler });

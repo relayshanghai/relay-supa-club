@@ -25,7 +25,7 @@ const Manager = () => {
 
     const { t } = useTranslation();
 
-    const [influencers, setInfluencers] = useState(sequenceInfluencers);
+    const [influencers, setInfluencers] = useState<SequenceInfluencerManagerPage[] | undefined>(sequenceInfluencers);
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [onlyMe, setOnlyMe] = useState<boolean>(false);
     const [filterStatuses, setFilterStatuses] = useState<FunnelStatus[]>([]);
@@ -46,7 +46,7 @@ const Manager = () => {
         Object.keys(COLLAB_OPTIONS).forEach((option) => {
             collabOptionsWithValue[option as FunnelStatus] = {
                 ...options[option as FunnelStatus],
-                value: influencers?.filter((x) => x.funnel_status === option).length || 0,
+                value: influencers.filter((x) => x.funnel_status === option).length || 0,
             };
         });
 
@@ -56,7 +56,9 @@ const Manager = () => {
     const [collabOptions, setCollabOptions] = useState(COLLAB_OPTIONS);
 
     useEffect(() => {
-        if (!sequenceInfluencers) return;
+        if (!sequenceInfluencers || sequenceInfluencers.length <= 0) {
+            return;
+        }
         setCollabOptions(setCollabStatusValues(sequenceInfluencers, COLLAB_OPTIONS));
     }, [sequenceInfluencers]);
 

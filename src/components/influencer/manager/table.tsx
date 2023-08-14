@@ -16,7 +16,9 @@ export const Table = ({
     const [page, setPage] = useState(0);
 
     const [filteredInfluencers, _setFilteredInfluencers] = useState(
-        influencers?.filter((influencer) => Object.keys(COLLAB_OPTIONS).includes(influencer.funnel_status)),
+        influencers && influencers.length > 0
+            ? influencers.filter((influencer) => Object.keys(COLLAB_OPTIONS).includes(influencer.funnel_status))
+            : [],
     );
     const totalPages = Math.ceil((filteredInfluencers?.length || 0) / TABLE_LIMIT);
 
@@ -71,15 +73,16 @@ export const Table = ({
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200 bg-white">
-                        {filteredInfluencers && filteredInfluencers.length === 0 && (
-                            <tr>
-                                <td colSpan={TABLE_COLUMNS.length + 1} className="px-6 py-4">
-                                    <div className="flex justify-center">
-                                        <p className="text-sm text-gray-500">No Influencers...</p>
-                                    </div>
-                                </td>
-                            </tr>
-                        )}
+                        {!filteredInfluencers ||
+                            (filteredInfluencers.length === 0 && (
+                                <tr>
+                                    <td colSpan={TABLE_COLUMNS.length + 1} className="px-6 py-4">
+                                        <div className="flex justify-center">
+                                            <p className="text-sm text-gray-500">No Influencers...</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
                         {filteredInfluencers
                             ?.slice(page * TABLE_LIMIT, (page + 1) * TABLE_LIMIT)
                             .map((influencer, index) => (

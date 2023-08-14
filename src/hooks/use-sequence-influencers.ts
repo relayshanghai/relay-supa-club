@@ -18,11 +18,11 @@ export const useSequenceInfluencers = (sequenceIds?: string[], filters?: string[
         sequenceIds ? ['sequence_influencers', ...sequenceIds] : null,
         async () => {
             if (sequenceIds) {
-                const allInfluencers = await apiFetch<SequenceInfluencerManagerPage[]>('/api/sequence/influencers', {
+                const allInfluencers = (await apiFetch<SequenceInfluencerManagerPage[]>('/api/sequence/influencers', {
                     body: sequenceIds,
-                });
+                })) as SequenceInfluencerManagerPage[];
                 return filters
-                    ? allInfluencers?.filter((influencer) => filters.includes(influencer.funnel_status))
+                    ? allInfluencers.filter((influencer) => filters.includes(influencer.funnel_status))
                     : allInfluencers;
             }
         },
