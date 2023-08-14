@@ -86,7 +86,7 @@ export const ProfileNotesTab = ({ profile, author, ...props }: Props) => {
     });
 
     const saveNote = useAsync(async (body: CampaignNotes['Insert']) => {
-        await apiFetch('/api/notes/create', { body });
+        await apiFetch('/api/notes/influencer', { body });
     });
 
     const handleSaveNotes = useCallback(
@@ -109,7 +109,7 @@ export const ProfileNotesTab = ({ profile, author, ...props }: Props) => {
         // sequence_influencer_id: profile?.id ?? '1378068d-d985-4fc7-a019-79d483d5dc1d',
         // user_id: author?.id ?? 'af5d4b21-b5c5-4849-a441-d7abbe33d612',
         getNotes.call('1378068d-d985-4fc7-a019-79d483d5dc1d', 'af5d4b21-b5c5-4849-a441-d7abbe33d612').then((notes) => {
-            const _notes = notes[0] ?? { comment: 'baaa' };
+            const _notes = notes[0] ?? { comment: '' };
 
             onUpdate('notes', _notes.comment);
             // setValue((s) => {
