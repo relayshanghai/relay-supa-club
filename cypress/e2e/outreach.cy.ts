@@ -12,6 +12,7 @@ describe('outreach', () => {
     });
     it('sequence page', () => {
         cy.contains('Sequences').click();
+        cy.contains('General collaboration').click();
 
         // Sequence title row
         cy.contains('General collaboration', { timeout: 10000 });
@@ -30,7 +31,7 @@ describe('outreach', () => {
         });
         cy.getByTestId('stat-card-reply rate').within(() => {
             cy.contains('Reply rate');
-            cy.contains('17%');
+            cy.contains('0%');
         });
         cy.getByTestId('stat-card-bounce rate').within(() => {
             cy.contains('Bounce rate');

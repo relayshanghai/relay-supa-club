@@ -20,9 +20,6 @@ export const getSequenceInfluencersBySequenceIdCall = (supabaseClient: RelayData
 };
 
 export const getSequenceInfluencersByCompanyIdCall = (supabaseClient: RelayDatabase) => async (companyId: string) => {
-    if (!companyId) {
-        throw new Error('No companyId found');
-    }
     const { data, error } = await supabaseClient.from('sequence_influencers').select('*').eq('company_id', companyId);
 
     if (error) throw error;

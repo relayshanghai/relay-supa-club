@@ -8,13 +8,13 @@ import { Button } from '../button';
 import { SequenceStats } from './sequence-stats';
 import { CreateSequenceModal } from './create-sequence-modal';
 import SequencesTable from './sequences-table';
-import type { SequenceEmail } from 'src/utils/api/db';
+import { useSequenceEmails } from 'src/hooks/use-sequence-emails';
 
 export const SequencesPage = () => {
     const { t } = useTranslation();
     const { sequences, allSequenceInfluencersByCompanyId } = useSequences();
+    const { allSequenceEmails } = useSequenceEmails();
     const [showCreateSequenceModal, setShowCreateSequenceModal] = useState<boolean>(false);
-    const [allEmails, setAllEmails] = useState<SequenceEmail[] | []>([]);
 
     const handleOpenCreateSequenceModal = () => {
         setShowCreateSequenceModal(true);
@@ -41,23 +41,23 @@ export const SequencesPage = () => {
                 <SequenceStats
                     totalInfluencers={allSequenceInfluencersByCompanyId?.length || 0}
                     openRate={
-                        (allEmails?.filter(
+                        (allSequenceEmails?.filter(
                             (email) =>
                                 email.email_tracking_status === 'Link Clicked' ||
                                 email.email_tracking_status === 'Opened',
-                        ).length || 0) / (allEmails?.length || 0)
+                        ).length || 0) / (allSequenceEmails?.length || 0)
                     }
                     replyRate={
-                        (allEmails?.filter((email) => email.email_delivery_status === 'Replied').length || 0) /
-                        (allEmails?.length || 0)
+                        (allSequenceEmails?.filter((email) => email.email_delivery_status === 'Replied').length || 0) /
+                        (allSequenceEmails?.length || 0)
                     }
                     bounceRate={
-                        (allEmails?.filter((email) => email.email_delivery_status === 'Bounced').length || 0) /
-                        (allEmails?.length || 0)
+                        (allSequenceEmails?.filter((email) => email.email_delivery_status === 'Bounced').length || 0) /
+                        (allSequenceEmails?.length || 0)
                     }
                 />
 
-                <SequencesTable sequences={sequences} setAllEmails={setAllEmails} />
+                <SequencesTable sequences={sequences} />
             </div>
         </Layout>
     );

@@ -1,15 +1,9 @@
 import { useTranslation } from 'react-i18next';
-import type { Sequence, SequenceEmail } from 'src/utils/api/db';
+import type { Sequence } from 'src/utils/api/db';
 import { sequencesIndexColumns } from './constants';
 import { SequencesTableRow } from './sequences-table-row';
 
-const SequencesTable = ({
-    sequences,
-    setAllEmails,
-}: {
-    sequences: Sequence[] | undefined;
-    setAllEmails: React.Dispatch<React.SetStateAction<SequenceEmail[]>>;
-}) => {
+const SequencesTable = ({ sequences }: { sequences: Sequence[] | undefined }) => {
     const { t } = useTranslation();
 
     return (
@@ -28,7 +22,7 @@ const SequencesTable = ({
             </thead>
             <tbody>
                 {sequences?.map((sequence) => {
-                    return <SequencesTableRow key={sequence.id} sequence={sequence} setAllEmails={setAllEmails} />;
+                    return <SequencesTableRow key={sequence.id} sequence={sequence} />;
                 })}
             </tbody>
         </table>
