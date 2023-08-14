@@ -3,6 +3,9 @@ import { Modal } from '../modal';
 import { Button } from '../button';
 import { Spinner } from '../icons';
 import { useState } from 'react';
+import { useSequence } from 'src/hooks/use-sequence';
+import { toast } from 'react-hot-toast';
+import { clientLogger } from 'src/utils/logger-client';
 
 export const CreateSequenceModal = ({
     title,
@@ -15,10 +18,24 @@ export const CreateSequenceModal = ({
 }) => {
     const { t } = useTranslation();
     //eslint-disable-next-line
+    const { createSequence } = useSequence();
     const [loading, setLoading] = useState<boolean>(false);
+    const [sequenceName, setSequenceName] = useState<string>('');
 
     const handleCreateSequence = async () => {
         //create sequence
+        setLoading(true);
+        try {
+            if (sequenceName === '') return;
+            await createSequence(sequenceName);
+            toast.success('Sequence created successfully');
+        } catch (error) {
+            clientLogger(error, 'error');
+            toast.error('Failed to create sequence, please try again later');
+        } finally {
+            setLoading(false);
+            setShowCreateSequenceModal(false);
+        }
     };
 
     return (
@@ -35,6 +52,7 @@ export const CreateSequenceModal = ({
                         required
                         className="w-full rounded-md border border-gray-200 shadow-sm placeholder:font-medium placeholder:text-gray-400 focus:border-primary-500 focus:outline-none focus:ring-primary-500"
                         placeholder={t('sequences.sequenceNamePlaceholder') as string}
+                        onChange={(e) => setSequenceName(e.target.value)}
                     />
                 </div>
                 <div className="flex justify-end space-x-3 pt-6">

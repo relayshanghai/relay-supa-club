@@ -22,12 +22,11 @@ export const updateSequenceCall =
         return data;
     };
 
-export const createSequenceCall =
-    (supabaseClient: RelayDatabase) => async (sequence: SequenceInsert & { companyId: string }) => {
-        const { data, error } = await supabaseClient.from('sequences').insert(sequence).single();
-        if (error) throw error;
-        return data;
-    };
+export const createSequenceCall = (supabaseClient: RelayDatabase) => async (sequence: SequenceInsert) => {
+    const { data, error } = await supabaseClient.from('sequences').insert(sequence).single();
+    if (error) throw error;
+    return data;
+};
 
 export const deleteSequenceCall = (supabaseClient: RelayDatabase) => async (id: string) => {
     const { error } = await supabaseClient.from('sequences').delete().eq('id', id);
