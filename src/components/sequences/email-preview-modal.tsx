@@ -35,7 +35,10 @@ export const EmailPreviewModal = ({ templateVariables, sequenceSteps, ...modalPr
                         );
                     })
                 ) : (
-                    <Spinner className="h-5 w-5 fill-primary-600 text-white" />
+                    <Spinner
+                        className="h-5 w-5 fill-primary-600 text-white"
+                        data-testid="email-preview-modal-spinner"
+                    />
                 )}
             </div>
         </Modal>

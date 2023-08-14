@@ -137,7 +137,8 @@ describe('outreach', () => {
 
         // can view all emails preview
         cy.getByTestId('show-all-email-previews-button').eq(0).click();
-        cy.contains('Hey **influencerAccountName**'); // fills in missing variables
+        cy.getByTestId('email-preview-modal-spinner');
+        cy.contains('Hey **influencerAccountName**', { timeout: 10000 }); // fills in missing variables
         cy.contains(
             'Vivian here from Blue Moonlight Stream Industries. I watched your "**recentVideoTitle**" video, and love your content style!!',
         ); // fills in variables
@@ -148,7 +149,10 @@ describe('outreach', () => {
         // can view next email preview.
         cy.contains('In sequence').click();
         cy.contains('1st Follow-up').click();
-        cy.contains('Hope you had a chance to think about our Widget X collab. Still think we’d make a great team!');
+        cy.getByTestId('email-preview-modal-spinner');
+        cy.contains('Hope you had a chance to think about our Widget X collab. Still think we’d make a great team!', {
+            timeout: 10000,
+        });
         cy.contains(
             'Vivian here from Blue Moonlight Stream Industries. I watched your "**recentVideoTitle**" video, and love your content style!!',
         ).should('not.exist'); //only shows the selected one
