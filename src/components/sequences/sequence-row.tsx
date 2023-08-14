@@ -140,7 +140,12 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                                     Send
                                 </Button>
                             </Tooltip>
-                            <Button className="ml-2" variant="ghost" onClick={() => setShowEmailPreview(sequenceSteps)}>
+                            <Button
+                                data-testid="show-all-email-previews-button"
+                                className="ml-2"
+                                variant="ghost"
+                                onClick={() => setShowEmailPreview(sequenceSteps)}
+                            >
                                 <Brackets />
                             </Button>
                             <button

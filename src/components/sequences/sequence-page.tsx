@@ -36,7 +36,7 @@ export const SequencePage = () => {
         .map((variable) => variable.name) ?? ['Error retrieving variables'];
     const isMissingVariables = !templateVariables || templateVariables.length === 0 || missingVariables.length > 0;
 
-    const handleStartSequence = async () => {
+    const _handleStartSequence = async () => {
         // update sequence - autostart - true.
         const allResults = [];
         if (!sequenceInfluencers || !sequenceSteps) {
@@ -75,7 +75,7 @@ export const SequencePage = () => {
         await updateSequence({ id: sequence.id, auto_start: checked });
         if (checked) {
             // TODO: This is not the final logic
-            await handleStartSequence();
+            // await handleStartSequence();
         }
     };
 

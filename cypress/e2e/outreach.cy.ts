@@ -14,8 +14,8 @@ describe('outreach', () => {
         cy.contains('Sequences').click();
 
         // Sequence title row
-        cy.contains('General collaboration', { timeout: 10000 });
-        cy.contains('Auto-start');
+        cy.contains('General collaboration', { timeout: 10000 }).click();
+        cy.contains('Auto-start', { timeout: 10000 });
         cy.contains('button', 'Update template variables');
 
         reinsertCharlie(); // reinsert so you can run again easily
@@ -30,7 +30,7 @@ describe('outreach', () => {
         });
         cy.getByTestId('stat-card-reply rate').within(() => {
             cy.contains('Reply rate');
-            cy.contains('17%');
+            cy.contains('0%');
         });
         cy.getByTestId('stat-card-bounce rate').within(() => {
             cy.contains('Bounce rate');
@@ -133,5 +133,24 @@ describe('outreach', () => {
         cy.contains('button', 'Update template variables').click();
         cy.get('input[id="template-variable-input-productDescription"]').clear();
         cy.contains('button', 'Update variables').click();
+        cy.contains('General collaboration').click({ force: true }); // click out of modal
+
+        // can view all emails preview
+        cy.getByTestId('show-all-email-previews-button').eq(0).click();
+        cy.contains('Hey **influencerAccountName**'); // fills in missing variables
+        cy.contains(
+            'Vivian here from Blue Moonlight Stream Industries. I watched your "**recentVideoTitle**" video, and love your content style!!',
+        ); // fills in variables
+        cy.contains('3rd Follow-up'); // shows all emails not just outreach
+        cy.contains('Hope you had a chance to think about our Widget X collab. Still think we’d make a great team!'); // shows all emails not just outreach
+        cy.contains('General collaboration').click({ force: true }); // click out of modal
+
+        // can view next email preview.
+        cy.contains('In sequence').click();
+        cy.contains('1st Follow-up').click();
+        cy.contains('Hope you had a chance to think about our Widget X collab. Still think we’d make a great team!');
+        cy.contains(
+            'Vivian here from Blue Moonlight Stream Industries. I watched your "**recentVideoTitle**" video, and love your content style!!',
+        ).should('not.exist'); //only shows the selected one
     });
 });
