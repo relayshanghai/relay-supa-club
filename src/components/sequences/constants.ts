@@ -27,4 +27,5 @@ export const sequencesIndexColumns: SequenceIndexColumn[] = [
     'openRate',
     'manager',
     'product',
+    'sequenceActions',
 ];
