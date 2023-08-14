@@ -14,11 +14,10 @@ export const CreateSequenceModal = ({
     setShowCreateSequenceModal: (showCreateSequenceModal: boolean) => void;
 }) => {
     const { t } = useTranslation();
-    //eslint-disable-next-line
-    const [loading, setLoading] = useState<boolean>(false);
+    const [loading, _setLoading] = useState<boolean>(false);
 
     const handleCreateSequence = async () => {
-        //create sequence
+        // TODO: create sequence
     };
 
     return (

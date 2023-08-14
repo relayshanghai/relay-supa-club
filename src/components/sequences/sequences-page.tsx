@@ -20,9 +20,14 @@ import { useTranslation } from 'react-i18next';
 import type { SequenceInfluencer } from 'src/utils/api/db';
 import { useTemplateVariables } from 'src/hooks/use-template_variables';
 import { Tooltip } from '../library';
+import { CreateSequenceModal } from './create-sequence-modal';
+import SequencesTable from './sequences-table';
 
 export const SequencePage = () => {
     const { t } = useTranslation();
+    const { sequences, allSequenceInfluencersByCompanyId } = useSequences();
+    const { allSequenceEmails } = useSequenceEmails();
+    const [showCreateSequenceModal, setShowCreateSequenceModal] = useState<boolean>(false);
 
     const { profile } = useUser();
     const { company } = useCompany();
@@ -176,20 +181,7 @@ export const SequencePage = () => {
                     }
                 />
                 <Tabs tabs={tabs} currentTab={currentTab} setCurrentTab={setCurrentTab} />
-
-                {currentTabInfluencers && sequenceSteps ? (
-                    <SequenceTable
-                        sequenceInfluencers={currentTabInfluencers}
-                        allSequenceEmails={allSequenceEmails}
-                        sequenceSteps={sequenceSteps}
-                        currentTab={currentTab}
-                        missingVariables={missingVariables}
-                        isMissingVariables={isMissingVariables}
-                        setShowUpdateTemplateVariables={setShowUpdateTemplateVariables}
-                    />
-                ) : (
-                    <Spinner className="mx-auto mt-10 h-10 w-10 fill-primary-600 text-white" />
-                )}
+                <SequencesTable sequences={sequences} />
             </div>
         </Layout>
     );

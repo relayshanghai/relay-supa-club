@@ -41,6 +41,7 @@ export const AddToSequenceModal = ({
         setSelectedSequence(selectedSequenceObject);
     };
 
+    // get the top 3 tags from relevant_tags of the report, then pass it to tags of sequence influencer
     const getRelevantTags = useCallback(() => {
         if (!report) {
             return [];
