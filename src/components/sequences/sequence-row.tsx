@@ -55,6 +55,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
     };
     const currentStep = sequenceSteps?.find((step) => step.step_number === sequenceInfluencer.sequence_step);
     const { t } = useTranslation();
+
     const handleStart = async () => {
         // TODO
     };
@@ -118,8 +119,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                             })}
                         </td>
 
-                        <td className="flex items-center whitespace-nowrap px-6 py-4 text-gray-600">
-                            {/* TODO */}
+                        <td className="flex min-w-min items-center whitespace-nowrap px-6 py-4 text-gray-600">
                             <Tooltip
                                 content={
                                     isMissingVariables
@@ -140,14 +140,15 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                                     Send
                                 </Button>
                             </Tooltip>
-                            <Button variant="ghost" onClick={() => setShowEmailPreview(true)}>
+                            <Button className="ml-2" variant="ghost" onClick={() => setShowEmailPreview(true)}>
                                 <Brackets />
                             </Button>
                             <button
+                                className="min-w-max"
                                 onClick={() => deleteSequenceInfluencer(sequenceInfluencer.id)}
                                 data-testid="delete-influencer-button"
                             >
-                                <DeleteOutline className="ml-4 h-6 w-6 text-gray-300" />
+                                <DeleteOutline className="ml-6 h-6 w-6 text-gray-300" />
                             </button>
                         </td>
                     </>
@@ -167,9 +168,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                         <td className="whitespace-nowrap px-6 py-4 text-gray-600">
                             {/* TODO */}
                             <Button>Preview email</Button>
-                        </td>
-                        <td className="flex items-center px-6 py-4">
-                            <button onClick={() => deleteSequenceInfluencer(sequenceInfluencer.id)}>
+                            <button className="ml-3" onClick={() => deleteSequenceInfluencer(sequenceInfluencer.id)}>
                                 <DeleteOutline
                                     data-testid="delete-influencer-button"
                                     className="h-6 w-6 text-gray-300"
