@@ -10,7 +10,7 @@ import { clientLogger } from 'src/utils/logger-client';
 
 export const SequencesTableRow = ({ sequence }: { sequence: Sequence }) => {
     const { sequenceEmails } = useSequenceEmails(sequence.id);
-    const { sequenceInfluencers, refreshSequenceInfluencers } = useSequenceInfluencers(sequence.id);
+    const { sequenceInfluencers, refreshSequenceInfluencers } = useSequenceInfluencers([sequence.id]);
     const { deleteSequence } = useSequence();
     const openRate = decimalToPercent(
         (sequenceEmails?.filter(
