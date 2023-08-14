@@ -48,6 +48,7 @@ env:
     SUPABASE_SCANNER_BUFFER_SIZE: 5mb
     NEXT_PUBLIC_GOOGLE_ANALYTICS: ${{ secrets.NEXT_PUBLIC_GOOGLE_ANALYTICS }}
     EMAIL_ENGINE_API_KEY: ${{ secrets.EMAIL_ENGINE_API_KEY }}
+    EMAIL_ENGINE_API_URL: https://email.relay.club
 
 jobs:
     component-test:
