@@ -28,7 +28,7 @@ export const SequencePage = () => {
     const { company } = useCompany();
     const { sequences } = useSequences(); // later we won't use this, the sequence id will be passed down from the index page.
     const { sequence, sendSequence, sequenceSteps, updateSequence } = useSequence(sequences?.[0]?.id);
-    const { sequenceInfluencers, updateSequenceInfluencer } = useSequenceInfluencers(sequence?.id);
+    const { sequenceInfluencers, updateSequenceInfluencer } = useSequenceInfluencers(sequence && [sequence.id]);
     const { sequenceEmails: allSequenceEmails, updateSequenceEmail } = useSequenceEmails(sequence?.id);
     const { templateVariables } = useTemplateVariables(sequence?.id);
     const missingVariables = templateVariables
@@ -97,24 +97,24 @@ export const SequencePage = () => {
             label: 'sequences.needsAttention',
             value: 'To Contact',
             afterElement:
-                needsAttentionInfluencers?.length && needsAttentionInfluencers?.length > 0 ? (
-                    <Badge roundSize={5}>{needsAttentionInfluencers?.length}</Badge>
+                needsAttentionInfluencers?.length && needsAttentionInfluencers.length > 0 ? (
+                    <Badge roundSize={5}>{needsAttentionInfluencers.length}</Badge>
                 ) : null,
         },
         {
             label: 'sequences.inSequence',
             value: 'In Sequence',
             afterElement:
-                inSequenceInfluencers?.length && inSequenceInfluencers?.length > 0 ? (
-                    <Badge roundSize={5}>{inSequenceInfluencers?.length}</Badge>
+                inSequenceInfluencers?.length && inSequenceInfluencers.length > 0 ? (
+                    <Badge roundSize={5}>{inSequenceInfluencers.length}</Badge>
                 ) : null,
         },
         {
             label: 'sequences.ignored',
             value: 'Ignored',
             afterElement:
-                ignoredInfluencers?.length && ignoredInfluencers?.length > 0 ? (
-                    <Badge roundSize={5}>{ignoredInfluencers?.length}</Badge>
+                ignoredInfluencers?.length && ignoredInfluencers.length > 0 ? (
+                    <Badge roundSize={5}>{ignoredInfluencers.length}</Badge>
                 ) : null,
         },
     ];
@@ -164,15 +164,15 @@ export const SequencePage = () => {
                             (email) =>
                                 email.email_tracking_status === 'Link Clicked' ||
                                 email.email_tracking_status === 'Opened',
-                        ).length || 0) / (allSequenceEmails?.length || 0)
+                        ).length || 0) / (allSequenceEmails?.length || 1)
                     }
                     replyRate={
                         (allSequenceEmails?.filter((email) => email.email_delivery_status === 'Replied').length || 0) /
-                        (allSequenceEmails?.length || 0)
+                        (allSequenceEmails?.length || 1)
                     }
                     bounceRate={
                         (allSequenceEmails?.filter((email) => email.email_delivery_status === 'Bounced').length || 0) /
-                        (allSequenceEmails?.length || 0)
+                        (allSequenceEmails?.length || 1)
                     }
                 />
                 <Tabs tabs={tabs} currentTab={currentTab} setCurrentTab={setCurrentTab} />

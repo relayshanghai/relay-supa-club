@@ -56,7 +56,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
 }) => {
     const { influencerSocialProfile } = useInfluencerSocialProfile(sequenceInfluencer.influencer_social_profile_id);
     const { updateSequenceInfluencer, deleteSequenceInfluencer } = useSequenceInfluencers(
-        sequenceInfluencer?.sequence_id,
+        sequenceInfluencer && [sequenceInfluencer.sequence_id],
     );
     const { i18n } = useTranslation();
     const [email, setEmail] = useState(sequenceInfluencer.email ?? '');
