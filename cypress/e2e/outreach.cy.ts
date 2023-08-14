@@ -12,6 +12,7 @@ describe('outreach', () => {
     });
     it('sequence page', () => {
         cy.contains('Sequences').click();
+        cy.contains('General collaboration').click();
 
         // Sequence title row
         cy.contains('General collaboration', { timeout: 10000 });
