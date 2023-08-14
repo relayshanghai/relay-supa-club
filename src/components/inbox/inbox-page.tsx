@@ -108,7 +108,7 @@ export const InboxPage = () => {
                 ) : (
                     <>
                         {messages.length === 0 && !isLoading && <p>{t('inbox.noMessagesInMailbox')}</p>}
-                        <div className="h-full w-[240px] overflow-auto">
+                        <div className="h-full w-[320px] overflow-auto">
                             {messages.length > 0 && (
                                 <>
                                     <ToolBar

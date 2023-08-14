@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import type { SearchResponseMessage } from 'types/email-engine/account-account-search-post';
 
 export const EmailHeader = ({ messages }: { messages: SearchResponseMessage[] }) => {
-    const { i18n } = useTranslation();
+    const { i18n, t } = useTranslation();
     const lastMessageDate = messages[messages.length - 1]?.date;
     // TODO: connect with sequence
 
@@ -11,12 +11,12 @@ export const EmailHeader = ({ messages }: { messages: SearchResponseMessage[] })
             <div className="flex flex-col">
                 <div className="mb-2 truncate px-4 text-2xl font-semibold">{messages[0]?.subject || 'subject'}</div>
                 <div className="space-y-2 pl-4 font-semibold">
-                    <div className="">Sequence:</div>
+                    <div>{t('inbox.sequence')}:</div>
                     {/* <div>Product:</div> */}
                 </div>
             </div>
             <div className="self-start px-4">
-                Last Message:{' '}
+                {t('inbox.lastMessage')}:{' '}
                 {new Date(lastMessageDate).toLocaleDateString(i18n.language, {
                     month: 'short',
                     day: 'numeric',

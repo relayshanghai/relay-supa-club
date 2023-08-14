@@ -25,7 +25,7 @@ export const Threads = ({ messages }: { messages: SearchResponseMessage[] }) => 
     const [loading, setLoading] = useState<boolean>(false);
 
     const endOfThread = useRef<null | HTMLDivElement>(null);
-    const { i18n } = useTranslation();
+    const { i18n, t } = useTranslation();
 
     const scrollToBottom = () => {
         endOfThread.current?.scrollIntoView({ behavior: 'smooth' });
@@ -84,20 +84,21 @@ export const Threads = ({ messages }: { messages: SearchResponseMessage[] }) => 
                         <div key={message.id} className="rounded-lg bg-white">
                             <div className="border-b-2 border-gray-200 p-6">
                                 <div className="mb-3 text-lg font-semibold text-gray-400">
-                                    From: <span className="text-gray-600">{message.isMe ? 'Me' : message.from}</span>{' '}
+                                    {t('inbox.from')}:{' '}
+                                    <span className="text-gray-600">{message.isMe ? 'Me' : message.from}</span>{' '}
                                 </div>
                                 <div className="mb-3 pl-2 text-sm font-medium text-gray-400">
-                                    To: <span className="font-light">{message.to[0]?.address}</span>{' '}
+                                    {t('inbox.to')}: <span className="font-light">{message.to[0]?.address}</span>{' '}
                                 </div>
                                 {message.cc?.length > 0 && (
                                     <div className="mb-3 text-sm font-medium text-gray-400">
-                                        cc:{' '}
+                                        {t('inbox.cc')}:{' '}
                                         <span className="font-light">{message.cc?.map((c) => c.address + ', ')}</span>{' '}
                                     </div>
                                 )}
                             </div>
                             <details className="group px-6 py-2" open={lastThreadMessageId === message.id}>
-                                <summary className="flex cursor-pointer list-none items-center justify-end">
+                                <summary className="flex cursor-pointer list-none items-center justify-end focus-visible:outline-none focus-visible:ring focus-visible:ring-primary-200">
                                     <div className="mr-3 font-medium text-gray-300">
                                         {' '}
                                         {new Date(message.date).toLocaleDateString(i18n.language, {
