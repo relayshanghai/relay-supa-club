@@ -11,6 +11,7 @@ import { type FunnelStatus } from 'src/utils/api/db';
 import { type MultipleDropdownObject } from 'src/components/library';
 import { COLLABOPTIONS } from '../constants';
 import { ProfileOverlayScreen } from 'src/components/influencer-profile/screens/profile-overlay-screen';
+import { useTranslation } from 'react-i18next';
 
 const Manager = () => {
     const { sequences } = useSequences();
@@ -21,6 +22,8 @@ const Manager = () => {
     );
 
     const { profile } = useUser();
+
+    const { t } = useTranslation();
 
     const [influencers, setInfluencers] = useState(sequenceInfluencers);
     const [searchTerm, setSearchTerm] = useState<string>('');
@@ -119,12 +122,16 @@ const Manager = () => {
         <>
             <div className="m-8 flex flex-col">
                 <div className="my-4 text-3xl font-semibold">
-                    <h1>Influencer Manager</h1>
+                    <h1>{t('manager.title')}</h1>
                 </div>
                 {/* Filters */}
                 <div className="mt-[72px] flex flex-row justify-between">
                     <div className="flex flex-row gap-5">
-                        <SearchComponent searchTerm={searchTerm} onSetSearch={handleSetSearch} />
+                        <SearchComponent
+                            searchTerm={searchTerm}
+                            placeholder={t('manager.search')}
+                            onSetSearch={handleSetSearch}
+                        />
                         <CollabStatus
                             collabOptions={collabOptions}
                             filters={filterStatuses}

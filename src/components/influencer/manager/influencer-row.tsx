@@ -5,6 +5,7 @@ import { imgProxy } from 'src/utils/fetcher';
 import i18n from 'i18n';
 import { type SequenceInfluencerManagerPage } from 'src/hooks/use-sequence-influencers';
 import { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export type InfluencerRowProps = {
     index: number;
@@ -15,7 +16,7 @@ export type InfluencerRowProps = {
 
 export const InfluencerRow = ({ index, influencer, ...props }: InfluencerRowProps) => {
     const { name, username, manager_first_name, avatar_url, url, tags, updated_at, funnel_status } = influencer;
-
+    const { t } = useTranslation();
     const handleRowClick = useCallback(
         (influencer: InfluencerRowProps['influencer']) => {
             // eslint-disable-next-line no-console
@@ -74,7 +75,7 @@ export const InfluencerRow = ({ index, influencer, ...props }: InfluencerRowProp
                     <p
                         className={`rounded text-xs font-medium ${COLLABOPTIONS[funnel_status].style} w-fit whitespace-nowrap px-2 py-1.5`}
                     >
-                        {funnel_status}
+                        {t(`manager.${funnel_status}`)}
                     </p>
                 </p>
             </td>

@@ -4,7 +4,7 @@ import { ChevronDown, FilterFunnel } from 'src/components/icons';
 import { type FunnelStatus } from 'src/utils/api/db/types';
 
 export type MultipleDropdownObject = {
-    [key in FunnelStatus]: {
+    [key: string]: {
         value?: number;
         style?: string;
     };
@@ -61,7 +61,7 @@ export const SelectMultipleDropdown = ({
                                 key={selectedOption}
                                 className={`rounded text-xs font-medium ${options[selectedOption].style} whitespace-nowrap px-2 py-2`}
                             >
-                                {selectedOption}
+                                {t(`manager.${selectedOption}`)}
                             </p>
                         ))
                     ) : (
@@ -105,7 +105,7 @@ export const SelectMultipleDropdown = ({
                                         options[option as FunnelStatus].style
                                     } whitespace-nowrap rounded-md px-3 py-2 text-xs`}
                                 >
-                                    {option}
+                                    {t(`manager.${option}`)}
                                 </p>
                             </div>
                             <p>{options[option as FunnelStatus].value}</p>
@@ -114,7 +114,7 @@ export const SelectMultipleDropdown = ({
                 ))}
                 <li className="p-2">
                     <label onClick={resetSelection} className="cursor-pointer text-center">
-                        <p className="rounded-lg border-2 border-gray-200 px-4 py-2">{t('filters.clearButton')}</p>
+                        <p className="rounded-lg border-2 border-gray-200 px-4 py-2">{t('manager.clearFilters')}</p>
                     </label>
                 </li>
             </ul>

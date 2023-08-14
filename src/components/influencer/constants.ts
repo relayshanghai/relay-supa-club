@@ -1,6 +1,6 @@
 import { type MultipleDropdownObject } from '../library';
 
-export const TABLE_LIMIT = 6;
+export const TABLE_LIMIT = 2;
 
 export const TABLE_COLUMNS = [
     { header: 'name', type: 'name', name: 'name' },
@@ -12,9 +12,6 @@ export const TABLE_COLUMNS = [
 ];
 
 export const COLLABOPTIONS: MultipleDropdownObject = {
-    'To Contact': {
-        style: 'bg-gray-100 text-gray-500',
-    },
     Negotiating: {
         style: 'bg-blue-100 text-blue-500',
     },
@@ -35,11 +32,5 @@ export const COLLABOPTIONS: MultipleDropdownObject = {
     },
     Rejected: {
         style: 'bg-red-100 text-red-500',
-    },
-    Ignored: {
-        style: 'bg-gray-100 text-gray-500',
-    },
-    'In Sequence': {
-        style: 'bg-gray-100 text-gray-500',
     },
 };

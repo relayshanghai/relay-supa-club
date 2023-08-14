@@ -3,7 +3,8 @@ import { InfluencerRow } from './influencer-row';
 import type { InfluencerRowProps } from './influencer-row';
 import { type SequenceInfluencerManagerPage } from 'src/hooks/use-sequence-influencers';
 import { Button } from 'src/components/button';
-import { TABLE_LIMIT, TABLE_COLUMNS } from '../constants';
+import { TABLE_LIMIT, TABLE_COLUMNS, COLLABOPTIONS } from '../constants';
+import { useTranslation } from 'react-i18next';
 
 export const Table = ({
     influencers,
@@ -13,8 +14,14 @@ export const Table = ({
     onRowClick?: (data: InfluencerRowProps['influencer']) => void;
 }) => {
     const [page, setPage] = useState(0);
-    const totalPages = Math.ceil((influencers?.length || 0) / TABLE_LIMIT);
     // const [selectedAll, setSelectedAll] = useState<boolean>(false);
+
+    const [filteredInfluencers, _setFilteredInfluencers] = useState(
+        influencers?.filter((influencer) => Object.keys(COLLABOPTIONS).includes(influencer.funnel_status)),
+    );
+    const totalPages = Math.ceil((filteredInfluencers?.length || 0) / TABLE_LIMIT);
+
+    const { t } = useTranslation();
 
     const handleRowClick = useCallback(
         (influencer: InfluencerRowProps['influencer']) => {
@@ -54,13 +61,13 @@ export const Table = ({
                                     key={column.header}
                                     className="whitespace-nowrap bg-white px-6 py-3 text-left text-xs font-normal tracking-wider text-gray-500"
                                 >
-                                    {column.header}
+                                    {t(`manager.${column.header}`)}
                                 </th>
                             ))}
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200 bg-white">
-                        {influencers && influencers.length === 0 && (
+                        {filteredInfluencers && filteredInfluencers.length === 0 && (
                             <tr>
                                 <td colSpan={TABLE_COLUMNS.length + 1} className="px-6 py-4">
                                     <div className="flex justify-center">
@@ -69,14 +76,16 @@ export const Table = ({
                                 </td>
                             </tr>
                         )}
-                        {influencers?.slice(page * TABLE_LIMIT, (page + 1) * TABLE_LIMIT).map((influencer, index) => (
-                            <InfluencerRow
-                                onRowClick={handleRowClick}
-                                key={influencer.id}
-                                influencer={influencer}
-                                index={index}
-                            />
-                        ))}
+                        {filteredInfluencers
+                            ?.slice(page * TABLE_LIMIT, (page + 1) * TABLE_LIMIT)
+                            .map((influencer, index) => (
+                                <InfluencerRow
+                                    onRowClick={handleRowClick}
+                                    key={influencer.id}
+                                    influencer={influencer}
+                                    index={index}
+                                />
+                            ))}
                     </tbody>
                 </table>
             </div>
@@ -88,7 +97,7 @@ export const Table = ({
                         setPage(page - 1);
                     }}
                 >
-                    {'<<'} Previous
+                    {'<<'} {t('manager.previous')}
                 </p>
                 <div className="flex flex-row items-center">
                     {Array.from({ length: totalPages }, (_, index) => index).map((pageNumber) => (
@@ -111,7 +120,7 @@ export const Table = ({
                         setPage(page + 1);
                     }}
                 >
-                    Next {'>>'}
+                    {t('manager.next')} {'>>'}
                 </p>
             </div>
         </div>

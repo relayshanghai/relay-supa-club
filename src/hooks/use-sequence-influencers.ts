@@ -11,16 +11,19 @@ import type { SequenceInfluencerInsert, SequenceInfluencerUpdate } from 'src/uti
 import { useUser } from 'src/hooks/use-user';
 import { clientLogger } from 'src/utils/logger-client';
 
-export const useSequenceInfluencers = (sequenceIds?: string[]) => {
+export const useSequenceInfluencers = (sequenceIds?: string[], filters?: string[]) => {
     const { profile } = useUser();
 
     const { data: sequenceInfluencers, mutate: refreshSequenceInfluencers } = useSWR(
         sequenceIds ? ['sequence_influencers', ...sequenceIds] : null,
         async () => {
             if (sequenceIds) {
-                return (await apiFetch('/api/sequence/influencers', {
+                const allInfluencers = (await apiFetch('/api/sequence/influencers', {
                     body: sequenceIds,
                 })) as SequenceInfluencerManagerPage[];
+                return filters
+                    ? allInfluencers.filter((influencer) => filters.includes(influencer.funnel_status))
+                    : allInfluencers;
             }
         },
     );
