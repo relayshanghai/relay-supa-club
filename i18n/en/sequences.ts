@@ -108,6 +108,7 @@ const sequences = {
     to customize each email for it's recipient!`,
     wellHandleThisOne: `We'll handle this one!`,
     missingRequiredTemplateVariables_variables: 'Missing required template variables: {{variables}}',
+    emailPreview: 'Email preview',
 };
 
 export default sequences;
