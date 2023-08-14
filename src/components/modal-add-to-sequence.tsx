@@ -57,7 +57,6 @@ export const AddToSequenceModal = ({
         if (socialProfileId) {
             const tags = getRelevantTags();
             setLoading(true);
-
             try {
                 await createSequenceInfluencer(socialProfileId, tags);
                 toast.success(t('creators.addToSequenceSuccess'));

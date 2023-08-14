@@ -43,6 +43,8 @@ const sequences = {
     sequenceNamePlaceholder: '为新建项目输入一个名称',
     createNewSequence: '创建',
     cancel: '取消',
+    createSequenceSuccess: '创建成功',
+    createSequenceError: '创建失败，请稍候重试',
     templateVariablesModalTitle: 'Template Variables',
     templateVariablesModalSubtitle:
         'The values you see here are what will be used to automatically customize the actual email content of your sequence emails!',
