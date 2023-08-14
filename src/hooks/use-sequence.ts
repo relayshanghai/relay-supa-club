@@ -106,9 +106,7 @@ export const useSequence = (sequenceId?: string) => {
                 name: sequenceName,
                 auto_start: false,
             };
-            const res = await createSequenceDBCall(insert);
-            // then call create default sequence steps
-            return res;
+            return await createSequenceDBCall(insert);
         } catch (error) {
             serverLogger(error, 'error');
         }

@@ -17,13 +17,18 @@ export const getSequenceByIdCall = (supabaseClient: RelayDatabase) => async (id:
 
 export const updateSequenceCall =
     (supabaseClient: RelayDatabase) => async (update: SequenceUpdate & { id: string }) => {
-        const { data, error } = await supabaseClient.from('sequences').update(update).eq('id', update.id).single();
+        const { data, error } = await supabaseClient
+            .from('sequences')
+            .update(update)
+            .eq('id', update.id)
+            .select()
+            .single();
         if (error) throw error;
         return data;
     };
 
-export const createSequenceCall = (supabaseClient: RelayDatabase) => async (sequence: SequenceInsert) => {
-    const { data, error } = await supabaseClient.from('sequences').insert(sequence).single();
+export const createSequenceCall = (supabaseClient: RelayDatabase) => async (insert: SequenceInsert) => {
+    const { data, error } = await supabaseClient.from('sequences').insert(insert).select().single();
     if (error) throw error;
     return data;
 };

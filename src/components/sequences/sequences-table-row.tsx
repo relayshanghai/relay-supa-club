@@ -5,6 +5,9 @@ import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import type { Sequence, SequenceEmail } from 'src/utils/api/db';
 import { decimalToPercent } from 'src/utils/formatter';
 import { DeleteOutline } from '../icons';
+import { toast } from 'react-hot-toast';
+import { useSequence } from 'src/hooks/use-sequence';
+import { clientLogger } from 'src/utils/logger-client';
 
 export const SequencesTableRow = ({
     sequence,
@@ -14,8 +17,8 @@ export const SequencesTableRow = ({
     setAllEmails: React.Dispatch<React.SetStateAction<SequenceEmail[]>>;
 }) => {
     const { sequenceEmails } = useSequenceEmails(sequence.id);
-    const { sequenceInfluencers } = useSequenceInfluencers(sequence.id);
-
+    const { sequenceInfluencers, refreshSequenceInfluencers } = useSequenceInfluencers(sequence.id);
+    const { deleteSequence } = useSequence();
     const openRate = decimalToPercent(
         (sequenceEmails?.filter(
             (email) => email.email_tracking_status === 'Link Clicked' || email.email_tracking_status === 'Opened',
@@ -23,8 +26,14 @@ export const SequencesTableRow = ({
         1,
     );
 
-    const deleteSequence = () => {
-        //TODO: delete sequence call
+    const handleDeleteSequence = async () => {
+        try {
+            await deleteSequence(sequence.id);
+            toast.success('Sequence deleted successfully');
+        } catch (error) {
+            clientLogger(error, 'error');
+        }
+        refreshSequenceInfluencers();
     };
 
     useEffect(() => {
@@ -49,7 +58,7 @@ export const SequencesTableRow = ({
                 <td className="whitespace-nowrap px-6 py-3 text-gray-700">Mikaela</td>
                 <td className="whitespace-nowrap px-6 py-3 text-gray-700">W3</td>
                 <td className="whitespace-nowrap px-6 py-3 text-gray-700">
-                    <button onClick={deleteSequence} className="align-middle">
+                    <button onClick={handleDeleteSequence} className="align-middle">
                         <DeleteOutline className="h-5 w-5 text-gray-300 hover:text-primary-500" />
                     </button>
                 </td>

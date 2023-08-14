@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { useSequence } from 'src/hooks/use-sequence';
 import { toast } from 'react-hot-toast';
 import { clientLogger } from 'src/utils/logger-client';
+import { useSequenceSteps } from 'src/hooks/use-sequence-steps';
 
 export const CreateSequenceModal = ({
     title,
@@ -17,17 +18,21 @@ export const CreateSequenceModal = ({
     setShowCreateSequenceModal: (showCreateSequenceModal: boolean) => void;
 }) => {
     const { t } = useTranslation();
-    //eslint-disable-next-line
     const { createSequence } = useSequence();
+    const { createDefaultSequenceStep } = useSequenceSteps();
+
     const [loading, setLoading] = useState<boolean>(false);
     const [sequenceName, setSequenceName] = useState<string>('');
 
     const handleCreateSequence = async () => {
-        //create sequence
         setLoading(true);
         try {
             if (sequenceName === '') return;
-            await createSequence(sequenceName);
+            const data = await createSequence(sequenceName);
+            if (!data) {
+                throw new Error('Failed to get sequence id');
+            }
+            await createDefaultSequenceStep(data.id);
             toast.success('Sequence created successfully');
         } catch (error) {
             clientLogger(error, 'error');
