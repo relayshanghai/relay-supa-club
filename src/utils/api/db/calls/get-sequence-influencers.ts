@@ -9,7 +9,7 @@ import type { ServerContext } from 'src/utils/api/iqdata';
 export const getSequenceInfluencers = async (ctx: ServerContext, sequenceId: string) => {
     const supabase = createServerSupabaseClient<DatabaseWithCustomTypes>(ctx);
     const influencers = await getSequenceInfluencersBySequenceId(supabase)(sequenceId);
-    const influencersWithInfo = await Promise.all(
+    return await Promise.all(
         influencers.map(async (influencer: SequenceInfluencerManagerPage) => {
             const managerInfo = await getProfileByIdCall(supabase)(influencer.added_by);
             const influencerInfo = await getInfluencerSocialProfileById(supabase)(
@@ -25,5 +25,4 @@ export const getSequenceInfluencers = async (ctx: ServerContext, sequenceId: str
             };
         }),
     );
-    return influencersWithInfo;
 };
