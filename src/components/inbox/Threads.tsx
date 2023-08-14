@@ -1,5 +1,5 @@
 import type { SearchResponseMessage } from 'types/email-engine/account-account-search-post';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { clientLogger } from 'src/utils/logger-client';
 import { getMessageText } from 'src/utils/api/email-engine/handle-messages';
 import { cleanEmailBody } from 'src/utils/clean-html';
@@ -61,6 +61,8 @@ export const Threads = ({ messages }: { messages: SearchResponseMessage[] }) => 
         }
     }, []);
 
+    const lastThreadMessageId = useMemo(() => threadMessages[threadMessages.length - 1]?.id, [threadMessages]);
+
     useEffect(() => {
         if (!loading && threadMessages.length === 0) {
             getThreadEmailText(messages);
@@ -94,8 +96,8 @@ export const Threads = ({ messages }: { messages: SearchResponseMessage[] }) => 
                                     </div>
                                 )}
                             </div>
-                            <details className="px-6 py-2">
-                                <summary className="flex list-none justify-end">
+                            <details className="px-6 py-2" open={lastThreadMessageId === message.id}>
+                                <summary className="flex cursor-pointer list-none justify-end">
                                     <div className="mr-3 font-medium text-gray-300">
                                         {' '}
                                         {new Date(message.date).toLocaleDateString(i18n.language, {
@@ -107,7 +109,7 @@ export const Threads = ({ messages }: { messages: SearchResponseMessage[] }) => 
                                             minute: 'numeric',
                                         })}
                                     </div>
-                                    <ChevronDown className="h-6 w-6 flex-none stroke-gray-400 stroke-2 text-white" />
+                                    <ChevronDown className="h-6 w-6 flex-none  stroke-gray-400 stroke-2 text-white" />
                                 </summary>
                                 <div
                                     className="text-sm"
