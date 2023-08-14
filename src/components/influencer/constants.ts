@@ -1,6 +1,6 @@
 import { type MultipleDropdownObject } from '../library';
 
-export const TABLE_LIMIT = 2;
+export const TABLE_LIMIT = 6;
 
 export const TABLE_COLUMNS = [
     { header: 'name', type: 'name', name: 'name' },
