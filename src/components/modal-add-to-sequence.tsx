@@ -51,12 +51,13 @@ export const AddToSequenceModal = ({
     }, [report]);
 
     const handleAddToSequence = useCallback(async () => {
-        setLoading(true);
         if (!selectedSequence) {
             throw new Error('Missing selectedSequence');
         }
         if (socialProfileId) {
             const tags = getRelevantTags();
+            setLoading(true);
+
             try {
                 await createSequenceInfluencer(socialProfileId, tags);
                 toast.success(t('creators.addToSequenceSuccess'));
