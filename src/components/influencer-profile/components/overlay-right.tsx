@@ -1,4 +1,5 @@
 import type { PropsWithChildren } from 'react';
+import { useState } from 'react';
 import React from 'react';
 import { useCallback, useEffect, useMemo } from 'react';
 import { XMarkIcon } from '@heroicons/react/24/solid';
@@ -10,16 +11,22 @@ type Props = PropsWithChildren<{
     onClose?: () => void;
 }>;
 
-export const OverlayRight = ({ children, ...props }: Props) => {
+export const OverlayRight = ({ children, onOpen, ...props }: Props) => {
     const { isOpen } = { isOpen: false, ...props };
+    const [isOpenLocal, setIsOpenLocal] = useState(isOpen);
 
     const closeOverlay = useCallback(() => {
         props.onClose && props.onClose();
     }, [props]);
 
+    // @note listen for update in props.isOpen and apply to local state
     useEffect(() => {
-        isOpen && props.onOpen && props.onOpen();
-    }, [isOpen, props]);
+        setIsOpenLocal((s) => (s !== isOpen ? isOpen : s));
+    }, [isOpen]);
+
+    useEffect(() => {
+        isOpenLocal && onOpen && onOpen();
+    }, [isOpenLocal, onOpen]);
 
     const overlayCls = useMemo(() => cls({ 'translate-x-full': !isOpen }), [isOpen]);
     const backdropCls = useMemo(() => cls({ hidden: !isOpen }), [isOpen]);

@@ -1,11 +1,16 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect } from 'react';
+import { useAsync } from 'src/hooks/use-async';
+import { apiFetch } from 'src/utils/api/api-fetch';
+import type { CampaignNotes } from 'src/utils/api/db';
+import { useProfileScreenContext } from '../screens/profile-screen-context';
 import { CollabAffiliateLinkInput } from './collab-affiliate-link-input';
 import { CollabFeeInput } from './collab-fee-input';
 import { CollabScheduledPostDateInput } from './collab-scheduled-post-date-input';
 import { CollabVideoDetailsInput } from './collab-video-details-input';
 import { OutreachCollabStatusInput } from './outreach-collab-status-input';
-import { OutreachNotesInput } from './outreach-notes-input';
 import { OutreachNextStepsInput } from './outreach-next-steps-input';
+import { OutreachNotesInput } from './outreach-notes-input';
+import type { Profile } from './profile-header';
 
 export const COLLAB_STATUS_OPTIONS = [
     {
@@ -63,39 +68,57 @@ export type ProfileNotes = {
 };
 
 type Props = {
-    onUpdate?: (data: ProfileNotes) => void;
-    value?: Partial<ProfileNotes>;
+    // @todo author and profile optional for now
+    author?: { id: string };
+    profile?: Profile;
+    onUpdate?: (key: keyof ProfileNotes, value: any) => void;
 };
 
-export const ProfileNotesTab = (props: Props) => {
-    const [data, setData] = useState<ProfileNotes>(() => {
-        return {
-            collabStatus: '',
-            notes: '',
-            nextStep: '',
-            fee: '',
-            videoDetails: '',
-            affiliateLink: '',
-            scheduledPostDate: '',
-            ...props.value,
-        };
+export const ProfileNotesTab = ({ profile, author, ...props }: Props) => {
+    const { onUpdate } = { onUpdate: () => null, ...props };
+    const { state: data } = useProfileScreenContext();
+
+    const getNotes = useAsync(async (sequence_influencer_id: string, author: string) => {
+        return await apiFetch('/api/notes/influencer/{id}', {
+            path: { id: sequence_influencer_id },
+            query: { author },
+        });
     });
 
-    useEffect(() => {
-        setData((s) => {
-            return { ...s, ...props.value };
-        });
-    }, [props.value]);
+    const saveNote = useAsync(async (body: CampaignNotes['Insert']) => {
+        await apiFetch('/api/notes/create', { body });
+    });
 
-    const handleUpdate = useCallback(
-        (k: string, v: any) => {
-            setData((state) => {
-                return { ...state, [k]: v };
+    const handleSaveNotes = useCallback(
+        (value: string) => {
+            saveNote.call({
+                comment: value,
+                //  @todo still no concrete profile / author shape
+                influencer_social_profile_id: profile?.influencer_id ?? '5941a215-1b36-4f60-95b1-6eea3e4b3c3b',
+                sequence_influencer_id: profile?.id ?? '1378068d-d985-4fc7-a019-79d483d5dc1d',
+                user_id: author?.id ?? 'af5d4b21-b5c5-4849-a441-d7abbe33d612',
             });
-            props.onUpdate && props.onUpdate(data);
         },
-        [data, props],
+        [author, profile, saveNote],
     );
+
+    useEffect(() => {
+        // load posts when the modal is opened
+        if (getNotes.isLoading !== null) return;
+        // influencer_social_profile_id: profile?.influencer_id ?? '5941a215-1b36-4f60-95b1-6eea3e4b3c3b',
+        // sequence_influencer_id: profile?.id ?? '1378068d-d985-4fc7-a019-79d483d5dc1d',
+        // user_id: author?.id ?? 'af5d4b21-b5c5-4849-a441-d7abbe33d612',
+        getNotes.call('1378068d-d985-4fc7-a019-79d483d5dc1d', 'af5d4b21-b5c5-4849-a441-d7abbe33d612').then((notes) => {
+            const _notes = notes[0] ?? { comment: 'baaa' };
+
+            onUpdate('notes', _notes.comment);
+            // setValue((s) => {
+            //     return { ...s, notes: { ...s.notes, notes: _notes.comment } };
+            // });
+        });
+        // @todo do some error handling
+        // .catch((e) => console.error(e))
+    }, [getNotes, onUpdate]);
 
     return (
         <>
@@ -105,15 +128,21 @@ export const ProfileNotesTab = (props: Props) => {
                 </div>
 
                 <OutreachCollabStatusInput
-                    onUpdate={(data) => handleUpdate('collabStatus', data)}
+                    onUpdate={(data) => onUpdate('collabStatus', data)}
                     options={COLLAB_STATUS_OPTIONS}
                     selected={['negotiating']}
                 />
+
                 <OutreachNextStepsInput
-                    value={data.nextStep}
-                    onInput={(e) => handleUpdate('nextStep', e.currentTarget.value)}
+                    value={data.notes.nextStep}
+                    onChange={(e) => onUpdate('nextStep', e.currentTarget.value)}
                 />
-                <OutreachNotesInput value={data.notes} onSave={(value) => handleUpdate('notes', value)} />
+
+                <OutreachNotesInput
+                    value={data.notes.notes}
+                    onUpdate={(value) => onUpdate('notes', value)}
+                    onSave={handleSaveNotes}
+                />
 
                 <div className="h-px border border-neutral-200" />
 
@@ -121,18 +150,18 @@ export const ProfileNotesTab = (props: Props) => {
                     <div className="text-base font-semibold leading-normal tracking-tight text-gray-600">Collab</div>
                 </div>
 
-                <CollabFeeInput value={data.fee} onInput={(e) => handleUpdate('fee', e.currentTarget.value)} />
+                <CollabFeeInput value={data.notes.fee} onInput={(e) => onUpdate('fee', e.currentTarget.value)} />
                 <CollabVideoDetailsInput
-                    value={data.videoDetails}
-                    onInput={(e) => handleUpdate('videoDetails', e.currentTarget.value)}
+                    value={data.notes.videoDetails}
+                    onInput={(e) => onUpdate('videoDetails', e.currentTarget.value)}
                 />
                 <CollabAffiliateLinkInput
-                    value={data.affiliateLink}
-                    onInput={(e) => handleUpdate('affiliateLink', e.currentTarget.value)}
+                    value={data.notes.affiliateLink}
+                    onInput={(e) => onUpdate('affiliateLink', e.currentTarget.value)}
                 />
                 <CollabScheduledPostDateInput
-                    value={data.scheduledPostDate}
-                    onInput={(e) => handleUpdate('scheduledPostDate', e.currentTarget.value)}
+                    value={data.notes.scheduledPostDate}
+                    onInput={(e) => onUpdate('scheduledPostDate', e.currentTarget.value)}
                 />
             </div>
         </>

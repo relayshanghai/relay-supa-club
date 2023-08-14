@@ -1,4 +1,3 @@
-import { useCallback, useEffect, useState } from 'react';
 import { ShippingDetailsCityInput } from './shipping-details-city-input';
 import { ShippingDetailsCountryInput } from './shipping-details-country-input';
 import { ShippingDetailsFullAddressInput } from './shipping-details-full-address-input';
@@ -8,6 +7,7 @@ import { ShippingDetailsPostalCodeInput } from './shipping-details-postal-code-i
 import { ShippingDetailsStateInput } from './shipping-details-state-input';
 import { ShippingDetailsStreetAddressInput } from './shipping-details-street-address-input';
 import { ShippingDetailsTrackingCodeInput } from './shipping-details-tracking-code-input';
+import { useProfileScreenContext } from '../screens/profile-screen-context';
 
 export type ProfileShippingDetails = {
     name: string;
@@ -22,73 +22,50 @@ export type ProfileShippingDetails = {
 };
 
 type Props = {
-    onUpdate?: (data: ProfileShippingDetails) => void;
-    value?: Partial<ProfileShippingDetails>;
+    onUpdate?: (key: keyof ProfileShippingDetails, value: any) => void;
 };
 
 export const ProfileShippingDetailsTab = (props: Props) => {
-    const [data, setData] = useState<ProfileShippingDetails>(() => {
-        return {
-            name: '',
-            phoneNumber: '',
-            streetAddress: '',
-            city: '',
-            state: '',
-            country: '',
-            postalCode: '',
-            trackingCode: '',
-            fullAddress: '',
-            ...props.value,
-        };
-    });
-
-    useEffect(() => {
-        setData((s) => {
-            return { ...s, ...props.value };
-        });
-    }, [props.value]);
-
-    const handleUpdate = useCallback(
-        (k: string, v: string) => {
-            setData((state) => {
-                return { ...state, [k]: v };
-            });
-            props.onUpdate && props.onUpdate(data);
-        },
-        [data, props],
-    );
+    const { onUpdate } = { onUpdate: () => null, ...props };
+    const { state: data } = useProfileScreenContext();
 
     return (
         <>
-            <ShippingDetailsNameInput value={data.name} onInput={(e) => handleUpdate('name', e.currentTarget.value)} />
+            <ShippingDetailsNameInput
+                value={data.shippingDetails.name}
+                onInput={(e) => onUpdate('name', e.currentTarget.value)}
+            />
             <ShippingDetailsPhoneNumberInput
-                value={data.phoneNumber}
-                onInput={(e) => handleUpdate('phoneNumber', e.currentTarget.value)}
+                value={data.shippingDetails.phoneNumber}
+                onInput={(e) => onUpdate('phoneNumber', e.currentTarget.value)}
             />
             <ShippingDetailsStreetAddressInput
-                value={data.streetAddress}
-                onInput={(e) => handleUpdate('streetAddress', e.currentTarget.value)}
+                value={data.shippingDetails.streetAddress}
+                onInput={(e) => onUpdate('streetAddress', e.currentTarget.value)}
             />
-            <ShippingDetailsCityInput value={data.city} onInput={(e) => handleUpdate('city', e.currentTarget.value)} />
+            <ShippingDetailsCityInput
+                value={data.shippingDetails.city}
+                onInput={(e) => onUpdate('city', e.currentTarget.value)}
+            />
             <ShippingDetailsStateInput
-                value={data.state}
-                onInput={(e) => handleUpdate('state', e.currentTarget.value)}
+                value={data.shippingDetails.state}
+                onInput={(e) => onUpdate('state', e.currentTarget.value)}
             />
             <ShippingDetailsCountryInput
-                value={data.country}
-                onInput={(e) => handleUpdate('country', e.currentTarget.value)}
+                value={data.shippingDetails.country}
+                onInput={(e) => onUpdate('country', e.currentTarget.value)}
             />
             <ShippingDetailsPostalCodeInput
-                value={data.postalCode}
-                onInput={(e) => handleUpdate('postalCode', e.currentTarget.value)}
+                value={data.shippingDetails.postalCode}
+                onInput={(e) => onUpdate('postalCode', e.currentTarget.value)}
             />
             <ShippingDetailsTrackingCodeInput
-                value={data.trackingCode}
-                onInput={(e) => handleUpdate('trackingCode', e.currentTarget.value)}
+                value={data.shippingDetails.trackingCode}
+                onInput={(e) => onUpdate('trackingCode', e.currentTarget.value)}
             />
             <ShippingDetailsFullAddressInput
-                value={data.fullAddress}
-                onInput={(e) => handleUpdate('fullAddress', e.currentTarget.value)}
+                value={data.shippingDetails.fullAddress}
+                onInput={(e) => onUpdate('fullAddress', e.currentTarget.value)}
             />
         </>
     );

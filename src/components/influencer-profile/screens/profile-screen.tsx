@@ -1,5 +1,4 @@
 import type { DetailedHTMLProps, HTMLAttributes } from 'react';
-import { useEffect } from 'react';
 import { useCallback, useState } from 'react';
 import type { ProfileNotes } from '../components/profile-notes-tab';
 import { ProfileNotesTab } from '../components/profile-notes-tab';
@@ -9,6 +8,7 @@ import { Button } from 'src/components/button';
 import { cls } from 'src/utils/classnames';
 import type { Profile } from '../components/profile-header';
 import { ProfileHeader } from '../components/profile-header';
+import { useProfileScreenContext } from './profile-screen-context';
 
 export type ProfileValue = {
     notes: ProfileNotes;
@@ -17,48 +17,44 @@ export type ProfileValue = {
 
 type Props = {
     profile: Profile;
-    value?: ProfileValue;
     selectedTab?: 'notes' | 'shipping-details';
-    onUpdate?: (data: Partial<ProfileValue>) => void;
+    onUpdate?: (data: ProfileValue) => void;
     onCancel?: () => void;
 } & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 
 const activeTabStyles = cls(['active', 'text-primary-500', 'border-b-2', 'border-b-primary-500']);
 
-export const ProfileScreen = ({ profile, value, selectedTab, onUpdate, onCancel, ...props }: Props) => {
+export const ProfileScreen = ({ profile, selectedTab, onUpdate, onCancel, ...props }: Props) => {
+    const { state, setState } = useProfileScreenContext();
+
     const [selected, setSelected] = useState(selectedTab ?? 'notes');
 
     const handleTabClick = (tab: Props['selectedTab']) => tab && setSelected(tab);
 
-    // init internal state from value prop
-    const [data, setData] = useState<Partial<ProfileValue>>(() => {
-        return value ?? { notes: undefined, shippingDetails: undefined };
-    });
+    const handleNotesDetailsUpdate = useCallback(
+        (k: string, v: any) => {
+            setState((state) => {
+                return { ...state, notes: { ...state.notes, [k]: v } };
+            });
+        },
+        [setState],
+    );
 
-    const handleNotesDetailsUpdate = useCallback((data: ProfileNotes) => {
-        setData((state) => {
-            return { ...state, notes: data };
-        });
-    }, []);
-
-    // @todo instead of internal data, use setValue from parent
-    const handleshippingUpdate = useCallback((data: ProfileShippingDetails) => {
-        setData((state) => {
-            return { ...state, shippingDetails: data };
-        });
-    }, []);
+    const handleShippingUpdate = useCallback(
+        (k: string, v: any) => {
+            setState((state) => {
+                return { ...state, notes: { ...state.notes, [k]: v } };
+            });
+        },
+        [setState],
+    );
 
     const handleUpdateClick = useCallback(
-        (data: Partial<ProfileValue>) => {
+        (data: ProfileValue) => {
             onUpdate && onUpdate(data);
         },
         [onUpdate],
     );
-
-    // update internal state
-    useEffect(() => {
-        setData({ ...value });
-    }, [value]);
 
     return (
         <div {...props}>
@@ -89,17 +85,17 @@ export const ProfileScreen = ({ profile, value, selectedTab, onUpdate, onCancel,
 
             <div className="mt-3 p-12">
                 <div className={`${selected !== 'notes' ? 'hidden' : ''}`}>
-                    <ProfileNotesTab onUpdate={handleNotesDetailsUpdate} value={data.notes} />
+                    <ProfileNotesTab onUpdate={handleNotesDetailsUpdate} />
                 </div>
                 <div className={`${selected !== 'shipping-details' ? 'hidden' : ''}`}>
-                    <ProfileShippingDetailsTab onUpdate={handleshippingUpdate} value={data.shippingDetails} />
+                    <ProfileShippingDetailsTab onUpdate={handleShippingUpdate} />
                 </div>
 
                 <div className="float-right flex">
                     <Button onClick={() => onCancel && onCancel()} variant="secondary" className="mr-2">
                         Cancel
                     </Button>
-                    <Button onClick={() => handleUpdateClick(data)}>Update Influencer Profile</Button>
+                    <Button onClick={() => handleUpdateClick(state)}>Update Influencer Profile</Button>
                 </div>
             </div>
         </div>
