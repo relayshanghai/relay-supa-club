@@ -86,7 +86,7 @@ export const Threads = ({ messages }: { messages: SearchResponseMessage[] }) => 
                                 <div className="mb-3 text-lg font-semibold text-gray-400">
                                     From: <span className="text-gray-600">{message.isMe ? 'Me' : message.from}</span>{' '}
                                 </div>
-                                <div className="mb-3 text-sm font-medium text-gray-400">
+                                <div className="mb-3 pl-2 text-sm font-medium text-gray-400">
                                     To: <span className="font-light">{message.to[0]?.address}</span>{' '}
                                 </div>
                                 {message.cc?.length > 0 && (
@@ -96,8 +96,8 @@ export const Threads = ({ messages }: { messages: SearchResponseMessage[] }) => 
                                     </div>
                                 )}
                             </div>
-                            <details className="px-6 py-2" open={lastThreadMessageId === message.id}>
-                                <summary className="flex cursor-pointer list-none justify-end">
+                            <details className="group px-6 py-2" open={lastThreadMessageId === message.id}>
+                                <summary className="flex cursor-pointer list-none items-center justify-end">
                                     <div className="mr-3 font-medium text-gray-300">
                                         {' '}
                                         {new Date(message.date).toLocaleDateString(i18n.language, {
@@ -109,7 +109,7 @@ export const Threads = ({ messages }: { messages: SearchResponseMessage[] }) => 
                                             minute: 'numeric',
                                         })}
                                     </div>
-                                    <ChevronDown className="h-6 w-6 flex-none  stroke-gray-400 stroke-2 text-white" />
+                                    <ChevronDown className="h-6 w-6 flex-none stroke-gray-400 stroke-2 text-white transition-transform group-open:-rotate-90" />
                                 </summary>
                                 <div
                                     className="text-sm"
