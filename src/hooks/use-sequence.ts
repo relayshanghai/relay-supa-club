@@ -1,5 +1,4 @@
 import useSWR from 'swr';
-
 import { useClientDb, useDB } from 'src/utils/client-db/use-client-db';
 import type {
     SequenceInfluencer,
@@ -8,10 +7,13 @@ import type {
     SequenceInfluencerUpdate,
     SequenceStep,
     SequenceUpdate,
+    SequenceInsert,
 } from 'src/utils/api/db';
 import { useSequenceSteps } from './use-sequence-steps';
 import { sendEmail } from 'src/utils/api/email-engine/send-email';
-import { updateSequenceCall } from 'src/utils/api/db/calls/sequences';
+import { createSequenceCall, deleteSequenceCall, updateSequenceCall } from 'src/utils/api/db/calls/sequences';
+import { useUser } from 'src/hooks/use-user';
+import { serverLogger } from 'src/utils/logger-server';
 
 export /** TODO: move this 'send sequence' to the sever, because the emails need to be sent sequentially, not in parallel, so if the user navigates away it could cause some emails to be unsent. */
 const sendSequence = async ({
@@ -72,6 +74,8 @@ const sendSequence = async ({
 };
 
 export const useSequence = (sequenceId?: string) => {
+    const { profile } = useUser();
+
     const db = useClientDb();
     const { data: sequence, mutate: refreshSequence } = useSWR(
         sequenceId ? [sequenceId, 'sequences'] : null,
@@ -86,11 +90,35 @@ export const useSequence = (sequenceId?: string) => {
         return res;
     };
 
+    const deleteSequenceDBCall = useDB<typeof deleteSequenceCall>(deleteSequenceCall);
+    const deleteSequence = async (id: string) => {
+        const res = await deleteSequenceDBCall(id);
+        refreshSequence();
+        return res;
+    };
+
+    const createSequenceDBCall = useDB<typeof createSequenceCall>(createSequenceCall);
+    const createSequence = async (sequenceName: string) => {
+        if (!profile?.company_id) throw new Error('No profile found');
+        try {
+            const insert: SequenceInsert = {
+                company_id: profile?.company_id,
+                name: sequenceName,
+                auto_start: false,
+            };
+            return await createSequenceDBCall(insert);
+        } catch (error) {
+            serverLogger(error, 'error');
+        }
+    };
+
     return {
         sequence,
         refreshSequence,
         sendSequence,
         sequenceSteps,
         updateSequence,
+        deleteSequence,
+        createSequence,
     };
 };

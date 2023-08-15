@@ -1,4 +1,4 @@
-import type { RelayDatabase, SequenceUpdate } from '../types';
+import type { RelayDatabase, SequenceInsert, SequenceUpdate } from '../types';
 
 export const getSequencesByCompanyIdCall = (supabaseClient: RelayDatabase) => async (companyId: string) => {
     if (!companyId) return;
@@ -17,7 +17,23 @@ export const getSequenceByIdCall = (supabaseClient: RelayDatabase) => async (id:
 
 export const updateSequenceCall =
     (supabaseClient: RelayDatabase) => async (update: SequenceUpdate & { id: string }) => {
-        const { data, error } = await supabaseClient.from('sequences').update(update).eq('id', update.id).single();
+        const { data, error } = await supabaseClient
+            .from('sequences')
+            .update(update)
+            .eq('id', update.id)
+            .select()
+            .single();
         if (error) throw error;
         return data;
     };
+
+export const createSequenceCall = (supabaseClient: RelayDatabase) => async (insert: SequenceInsert) => {
+    const { data, error } = await supabaseClient.from('sequences').insert(insert).select().single();
+    if (error) throw error;
+    return data;
+};
+
+export const deleteSequenceCall = (supabaseClient: RelayDatabase) => async (id: string) => {
+    const { error } = await supabaseClient.from('sequences').delete().eq('id', id);
+    if (error) throw error;
+};

@@ -14,6 +14,7 @@ import filters from './filters';
 import tooltips from './tooltips';
 import inbox from './inbox';
 import sequences from './sequences';
+import manager from './manager';
 
 const translations = {
     translation: {
@@ -33,6 +34,7 @@ const translations = {
         tooltips,
         inbox,
         sequences,
+        manager,
     },
 };
 export default translations;

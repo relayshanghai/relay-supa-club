@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { Modal } from './modal';
 import { Button } from './button';
-import { InfoIcon, Spinner } from './icons';
+import { Info, Spinner } from './icons';
 import { useSequences } from 'src/hooks/use-sequences';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import type { Sequence } from 'src/utils/api/db';
@@ -31,7 +31,7 @@ export const AddToSequenceModal = ({
     const [loading, setLoading] = useState<boolean>(false);
     const [socialProfileId, setSocialProfileId] = useState(() => socialProfile?.id ?? null);
 
-    const { createSequenceInfluencer } = useSequenceInfluencers(selectedSequence?.id);
+    const { createSequenceInfluencer } = useSequenceInfluencers(selectedSequence ? [selectedSequence.id] : []);
 
     const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         if (!sequences) {
@@ -41,13 +41,13 @@ export const AddToSequenceModal = ({
         setSelectedSequence(selectedSequenceObject);
     };
 
+    // get the top 3 tags from relevant_tags of the report, then pass it to tags of sequence influencer
     const getRelevantTags = useCallback(() => {
         if (!report) {
             return [];
         }
         const relevantTags = report.user_profile.relevant_tags;
-        const tags = relevantTags.slice(0, 3).map((tag) => tag.tag);
-        return tags;
+        return relevantTags.slice(0, 3).map((tag) => tag.tag);
     }, [report]);
 
     const handleAddToSequence = useCallback(async () => {
@@ -92,7 +92,7 @@ export const AddToSequenceModal = ({
                             data-testid="sequence-dropdown"
                             onChange={(e) => handleSelectChange(e)}
                             value={selectedSequence?.name}
-                            className="-ml-1 mr-2.5 w-full cursor-pointer appearance-none rounded-md border border-gray-200 p-2 font-medium text-gray-500 outline-none"
+                            className="-ml-1 mr-2.5 w-full cursor-pointer appearance-none rounded-md border border-gray-200 p-2 font-medium text-gray-500 outline-none  focus:border-primary-500 focus:ring-primary-500"
                         >
                             {(!sequences || sequences.length === 0) && <option>{t('creators.noSequence')}</option>}
                             {sequences?.map((sequence) => (
@@ -101,9 +101,9 @@ export const AddToSequenceModal = ({
                         </select>
                     </div>
 
-                    <div className="flex items-start rounded-md bg-blue-50 p-4">
-                        <InfoIcon className="mr-4 mt-1 box-border h-4 w-4 flex-none text-blue-500" />
-                        <div className="text-gray-500">
+                    <div className="flex items-start rounded-md bg-primary-50 p-4">
+                        <Info className="mr-4 mt-1 h-6 w-6 flex-none text-primary-500" />
+                        <div className="text-primary-500">
                             {t('creators.addToSequenceNotes')} {new Date().toLocaleDateString(i18n.language)}{' '}
                         </div>
                     </div>

@@ -8,17 +8,18 @@ describe('outreach', () => {
     beforeEach(() => {
         deleteDB('app-cache');
         setupIntercepts();
-        cy.visit('/');
         cy.loginTestUser();
     });
-    it('sequence page', async () => {
+    it('sequence page', () => {
         cy.contains('Sequences').click();
+        cy.contains('General collaboration').click();
 
         // Sequence title row
-        // cy.contains('General collaboration');
-        cy.contains('Auto-start', { timeout: 10000 });
+        cy.contains('General collaboration', { timeout: 10000 });
+        cy.contains('Auto-start');
         cy.contains('button', 'Update template variables');
 
+        reinsertCharlie(); // reinsert so you can run again easily
         // stats
         cy.getByTestId('stat-card-total influencers').within(() => {
             cy.contains('Total influencers');
@@ -30,7 +31,7 @@ describe('outreach', () => {
         });
         cy.getByTestId('stat-card-reply rate').within(() => {
             cy.contains('Reply rate');
-            cy.contains('17%');
+            cy.contains('0%');
         });
         cy.getByTestId('stat-card-bounce rate').within(() => {
             cy.contains('Bounce rate');
@@ -100,6 +101,38 @@ describe('outreach', () => {
         cy.contains('Charlie Charles');
         cy.getByTestId('delete-influencer-button').eq(2).click();
         cy.contains('Charlie Charles').should('not.exist');
-        await reinsertCharlie(); // reinsert so you can run again easily
+
+        // send sequence is disabled if missing template variables
+        cy.contains('Missing required template variables: Product Description').should('not.be.visible');
+        cy.getByTestId('send-email-button-bob.brown@example.com').trigger('mouseover');
+        cy.contains('Missing required template variables: Product Description');
+        cy.getByTestId('send-email-button-bob.brown@example.com').trigger('mouseout');
+        cy.contains('Missing required template variables: Product Description').should('not.be.visible');
+        cy.contains('div', 'Auto-start').within(() => {
+            cy.get('input[type=checkbox]').trigger('mouseover', { force: true });
+        });
+        cy.contains('Missing required template variables: Product Description');
+        cy.contains('div', 'Auto-start').within(() => {
+            cy.get('input[type=checkbox]').click({ force: true });
+            // clicking opens the modal
+        });
+        cy.contains('Template Variables');
+        cy.contains(
+            'The values you see here are what will be used to automatically customize the actual email content of your sequence emails!',
+        );
+        // can update template variables
+        cy.get('input[id="template-variable-input-productDescription"]').type('test description entry');
+        cy.contains('button', 'Update variables').click();
+        cy.contains('General collaboration').click({ force: true }); // click out of modal
+
+        // can send sequence
+
+        cy.getByTestId('send-email-button-bob.brown@example.com').trigger('mouseover');
+        cy.contains('Missing required template variables: Product Description').should('not.be.visible');
+
+        // reset the empty template variable so you can run the test again if need be
+        cy.contains('button', 'Update template variables').click();
+        cy.get('input[id="template-variable-input-productDescription"]').clear();
+        cy.contains('button', 'Update variables').click();
     });
 });

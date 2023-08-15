@@ -2,12 +2,16 @@ import type { SequenceInfluencer, SequenceEmail, SequenceStep } from 'src/utils/
 import SequenceRow from './sequence-row';
 import { useTranslation } from 'react-i18next';
 import { sequenceColumns } from './constants';
+import type { SetStateAction } from 'react';
 
 interface SequenceTableProps {
     sequenceInfluencers: SequenceInfluencer[];
     allSequenceEmails?: SequenceEmail[];
     sequenceSteps: SequenceStep[];
     currentTab: SequenceInfluencer['funnel_status'];
+    missingVariables: string[];
+    isMissingVariables: boolean;
+    setShowUpdateTemplateVariables: (value: SetStateAction<boolean>) => void;
 }
 
 const sortInfluencers = (currentTab: SequenceInfluencer['funnel_status'], influencers?: SequenceInfluencer[]) => {
@@ -28,6 +32,9 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
     allSequenceEmails,
     sequenceSteps,
     currentTab,
+    missingVariables,
+    isMissingVariables,
+    setShowUpdateTemplateVariables,
 }) => {
     const sortedInfluencers = sortInfluencers('To Contact', sequenceInfluencers);
     const { t } = useTranslation();
@@ -36,7 +43,7 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
     return (
         <table className="border-collapse border border-gray-300">
             <thead>
-                <tr>
+                <tr className="border-b-2 border-gray-200">
                     {columns.map((column) => (
                         <th
                             key={column}
@@ -62,6 +69,9 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
                             sequenceEmail={sequenceEmail}
                             sequenceSteps={sequenceSteps}
                             currentTab={currentTab}
+                            isMissingVariables={isMissingVariables}
+                            missingVariables={missingVariables}
+                            setShowUpdateTemplateVariables={setShowUpdateTemplateVariables}
                         />
                     );
                 })}

@@ -19,6 +19,13 @@ export const getSequenceInfluencersBySequenceIdCall = (supabaseClient: RelayData
     return data;
 };
 
+export const getSequenceInfluencersByCompanyIdCall = (supabaseClient: RelayDatabase) => async (companyId: string) => {
+    const { data, error } = await supabaseClient.from('sequence_influencers').select('*').eq('company_id', companyId);
+
+    if (error) throw error;
+    return data;
+};
+
 export const updateSequenceInfluencerCall =
     (supabaseClient: RelayDatabase) => async (update: SequenceInfluencerUpdate) => {
         const { data, error } = await supabaseClient
@@ -33,7 +40,11 @@ export const updateSequenceInfluencerCall =
 
 export const createSequenceInfluencerCall =
     (supabaseClient: RelayDatabase) => async (sequenceInfluencer: SequenceInfluencerInsert) => {
-        const { data, error } = await supabaseClient.from('sequence_influencers').insert(sequenceInfluencer).single();
+        const { data, error } = await supabaseClient
+            .from('sequence_influencers')
+            .insert(sequenceInfluencer)
+            .select()
+            .single();
         if (error) throw error;
         return data;
     };

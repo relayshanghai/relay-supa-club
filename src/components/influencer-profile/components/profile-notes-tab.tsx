@@ -13,44 +13,52 @@ export const COLLAB_STATUS_OPTIONS = [
     {
         id: 'negotiating',
         label: 'Negotiating',
-        value: 10,
         style: 'bg-blue-100 text-blue-500',
     },
     {
         id: 'confirmed',
         label: 'Confirmed',
-        value: 20,
         style: 'bg-primary-100 text-primary-500',
     },
     {
         id: 'shipped',
         label: 'Shipped',
-        value: 30,
         style: 'bg-yellow-100 text-yellow-500',
     },
     {
         id: 'received',
         label: 'Received',
-        value: 40,
         style: 'bg-green-100 text-green-500',
     },
     {
         id: 'contentApproval',
         label: 'Content Approval',
-        value: 50,
         style: 'bg-pink-100 text-pink-500',
     },
     {
         id: 'posted',
         label: 'Posted',
-        value: 60,
         style: 'bg-cyan-100 text-cyan-500',
     },
     {
         id: 'rejected',
         label: 'Rejected',
-        value: 70,
         style: 'bg-red-100 text-red-500',
+    },
+    {
+        id: 'ignored',
+        label: 'Ignored',
+        style: 'bg-gray-100 text-gray-500',
+    },
+    {
+        id: 'tocontact',
+        label: 'To Contact',
+        style: 'bg-gray-100 text-gray-500',
+    },
+    {
+        id: 'insequence',
+        label: 'In Sequence',
+        style: 'bg-gray-100 text-gray-500',
     },
 ];
 
