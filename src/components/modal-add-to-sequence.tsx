@@ -43,11 +43,11 @@ export const AddToSequenceModal = ({
 
     // get the top 3 tags from relevant_tags of the report, then pass it to tags of sequence influencer
     const getRelevantTags = useCallback(() => {
-        if (!report) {
+        if (!report || !report.user_profile.relevant_tags) {
             return [];
         }
         const relevantTags = report.user_profile.relevant_tags;
-        return relevantTags?.slice(0, 3).map((tag) => tag.tag);
+        return relevantTags.slice(0, 3).map((tag) => tag.tag);
     }, [report]);
 
     const handleAddToSequence = useCallback(async () => {

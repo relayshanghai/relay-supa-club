@@ -13,8 +13,9 @@ export const useSequenceInfluencers = (sequenceId?: string) => {
     const db = useClientDb();
     const { profile } = useUser();
 
-    const { data: sequenceInfluencers, mutate: refreshSequenceInfluencers } = useSWR('sequence_influencers', () =>
-        db.getSequenceInfluencersBySequenceId(sequenceId ?? ''),
+    const { data: sequenceInfluencers, mutate: refreshSequenceInfluencers } = useSWR(
+        [sequenceId, 'sequence_influencers'],
+        ([sequenceId]) => db.getSequenceInfluencersBySequenceId(sequenceId ?? ''),
     );
 
     const createSequenceInfluencerDBCall = useDB<typeof createSequenceInfluencerCall>(createSequenceInfluencerCall);
