@@ -115,16 +115,23 @@ export const TemplateVariablesModal = ({ sequenceId, ...props }: TemplateVariabl
     const handleUpdate = async () => {
         setSubmitting(true);
         try {
-            const updates = Object.values(variables).map((variable) => {
+            const updates: Promise<any>[] = Object.values(variables).map((variable) => {
                 const existingRecord = templateVariables?.find((v) => v.key === variable.key);
                 if (existingRecord) {
-                    return async () => await updateTemplateVariable({ ...existingRecord, value: variable.value });
+                    if (existingRecord.value === variable.value) {
+                        return Promise.resolve();
+                    }
+                    return updateTemplateVariable({ ...existingRecord, value: variable.value });
                 }
 
-                return async () => await insertTemplateVariable(variable);
+                return insertTemplateVariable(variable);
             });
 
-            await Promise.all(updates);
+            await Promise.all(updates).catch((error) => {
+                clientLogger(error, 'error');
+                throw error;
+            });
+
             toast.success(t('sequences.templateVariablesUpdated'));
         } catch (error) {
             toast.error(t('sequences.templateVariablesUpdateError'));
