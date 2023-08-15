@@ -11,9 +11,8 @@ export const fillInTemplateVariables = (email: string, templateVariables: Templa
             const variable = templateVariables.find((v) => v.key === variableName);
             if (variable?.value) {
                 return variable.value;
-            } else {
-                return `**${part.split('params.')[1].trim()}**`;
             }
+            return `**${part.split('params.')[1].trim()}**`;
         }
         return part;
     });

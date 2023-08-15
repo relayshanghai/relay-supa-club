@@ -73,19 +73,19 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                             <img
                                 className="inline-block h-14 w-14 bg-slate-300"
                                 src={imgProxy(influencerSocialProfile?.avatar_url ?? '')}
-                                alt={`influencer-avatar-${influencerSocialProfile?.name}`}
+                                alt={`Influencer avatar ${influencerSocialProfile?.name}`}
                             />
                         </div>
 
                         <div className="flex flex-col">
-                            <p className="font-semibold text-primary-600">{influencerSocialProfile?.name}</p>
+                            <p className="font-semibold text-primary-600">{influencerSocialProfile?.name ?? ''}</p>
                             <Link
                                 className="cursor-pointer font-semibold text-gray-500"
                                 href={influencerSocialProfile?.url ?? ''}
                                 rel="noopener noreferrer"
                                 target="_blank"
                             >
-                                @{influencerSocialProfile?.username}
+                                @{influencerSocialProfile?.username ?? ''}
                             </Link>
                         </div>
                     </div>
@@ -152,7 +152,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                                 onClick={() => deleteSequenceInfluencer(sequenceInfluencer.id)}
                                 data-testid="delete-influencer-button"
                             >
-                                <DeleteOutline className="ml-6 h-6 w-6 text-gray-300" />
+                                <DeleteOutline className="ml-6 h-5 w-5 text-gray-300" />
                             </button>
                         </td>
                     </>
@@ -190,7 +190,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                                 <button onClick={() => deleteSequenceInfluencer(sequenceInfluencer.id)}>
                                     <DeleteOutline
                                         data-testid="delete-influencer-button"
-                                        className="ml-3 h-6 w-6 text-gray-300"
+                                        className="ml-3 h-5 w-5 text-gray-300"
                                     />
                                 </button>
                             </div>

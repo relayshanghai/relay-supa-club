@@ -15,8 +15,7 @@ const postHandler: NextApiHandler = async (req, res) => {
 
     const result: TemplatesPostResponseBody = await Promise.all(
         templateIds.map(async (templateId) => {
-            const templateInfo = await getTemplateInfo(templateId);
-            return templateInfo;
+            return await getTemplateInfo(templateId);
         }),
     );
     return res.status(httpCodes.OK).json(result);
