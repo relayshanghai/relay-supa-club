@@ -13,6 +13,7 @@ interface SequenceTableProps {
     isMissingVariables: boolean;
     setShowUpdateTemplateVariables: (value: SetStateAction<boolean>) => void;
     templateVariables: TemplateVariable[];
+    handleStartSequence: (sequenceInfluencers: SequenceInfluencer[]) => Promise<void>;
 }
 
 const sortInfluencers = (currentTab: SequenceInfluencer['funnel_status'], influencers?: SequenceInfluencer[]) => {

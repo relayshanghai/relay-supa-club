@@ -1,11 +1,10 @@
 /* eslint-disable complexity */
 import { Layout } from '../layout';
 import SequenceTable from './sequence-table';
-import { testAccount } from 'src/utils/api/email-engine/prototype-mocks';
+
 import { clientLogger } from 'src/utils/logger-client';
 import { SequenceStats } from './sequence-stats';
-import { useUser } from 'src/hooks/use-user';
-import { useCompany } from 'src/hooks/use-company';
+
 import { useSequences } from 'src/hooks/use-sequences';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { useSequence } from 'src/hooks/use-sequence';
@@ -24,48 +23,20 @@ import { Tooltip } from '../library';
 export const SequencePage = () => {
     const { t } = useTranslation();
 
-    const { profile } = useUser();
-    const { company } = useCompany();
     const { sequences } = useSequences(); // later we won't use this, the sequence id will be passed down from the index page.
     const { sequence, sendSequence, sequenceSteps, updateSequence } = useSequence(sequences?.[0]?.id);
-    const { sequenceInfluencers, updateSequenceInfluencer } = useSequenceInfluencers(sequence && [sequence.id]);
-    const { sequenceEmails: allSequenceEmails, updateSequenceEmail } = useSequenceEmails(sequence?.id);
+    const { sequenceInfluencers } = useSequenceInfluencers(sequence && [sequence.id]);
+    const { sequenceEmails: allSequenceEmails } = useSequenceEmails(sequence?.id);
     const { templateVariables } = useTemplateVariables(sequence?.id);
     const missingVariables = templateVariables
         ?.filter((variable) => variable.required && !variable.value)
         .map((variable) => variable.name) ?? ['Error retrieving variables'];
     const isMissingVariables = !templateVariables || templateVariables.length === 0 || missingVariables.length > 0;
 
-    const _handleStartSequence = async () => {
-        // update sequence - autostart - true.
-        const allResults = [];
-        if (!sequenceInfluencers || !sequenceSteps) {
-            return;
-        }
-        for (const sequenceInfluencer of sequenceInfluencers) {
-            const sequenceEmails = allSequenceEmails?.filter(
-                (email) => email.sequence_influencer_id === sequenceInfluencer.id,
-            );
-            if (!sequenceEmails) {
-                allResults.push('no email for sequenceInfluencer: ' + sequenceInfluencer.id);
-                continue;
-            }
-            const params = {
-                companyName: company?.name ?? '',
-                outreachPersonName: profile?.first_name ?? '',
-            };
-            const results = await sendSequence({
-                account: testAccount,
-                sequenceInfluencer,
-                sequenceEmails,
-                params,
-                sequenceSteps,
-                updateSequenceEmail,
-                updateSequenceInfluencer,
-            });
-            allResults.push(results);
-        }
-        clientLogger(allResults);
+    const handleStartSequence = async (sequenceInfluencers: SequenceInfluencer[]) => {
+        // fill in the params not set by template variables
+        const results = await sendSequence(sequenceInfluencers);
+        clientLogger(results);
     };
 
     const handleAutostartToggle = async (checked: boolean) => {
@@ -73,10 +44,6 @@ export const SequencePage = () => {
             return;
         }
         await updateSequence({ id: sequence.id, auto_start: checked });
-        if (checked) {
-            // TODO: This is not the final logic
-            // await handleStartSequence();
-        }
     };
 
     const [showUpdateTemplateVariables, setShowUpdateTemplateVariables] = useState(false);
@@ -125,6 +92,7 @@ export const SequencePage = () => {
     return (
         <Layout>
             <TemplateVariablesModal
+                sequenceId={sequence?.id}
                 visible={showUpdateTemplateVariables}
                 onClose={() => setShowUpdateTemplateVariables(false)}
             />
@@ -187,6 +155,7 @@ export const SequencePage = () => {
                         isMissingVariables={isMissingVariables}
                         setShowUpdateTemplateVariables={setShowUpdateTemplateVariables}
                         templateVariables={templateVariables ?? []}
+                        handleStartSequence={handleStartSequence}
                     />
                 ) : (
                     <Spinner className="mx-auto mt-10 h-10 w-10 fill-primary-600 text-white" />
