@@ -32,7 +32,9 @@ export const useAsync = <T extends (...args: any[]) => Promise<any>>(fetcher: T)
 
     const call = useCallback(
         (...args: Parameters<T>) => {
-            if (data.isLoading === true) return request.current;
+            if (data.isLoading === true) {
+                return request.current;
+            }
 
             request.current = fetcher(...args)
                 .then((data) => {
