@@ -99,6 +99,9 @@ const sequences = {
     ”It offers a full-color touch display, sleep, exercise and blood oxygen tracking, and has a
     battery life of over 2 weeks!”
     这将会直接显示于您的电子邮件模版中。`,
+    productPrice: '产品价格',
+    productPriceTooltip: `Enter the price of your product in USD. It's better to enter as a whole number to keep your templates cleaner.
+    * We will format this value with a $ in your email templates`,
     influencer: 'KOL',
     influencerNiche: 'KOL所在领域',
     influencerNichePlaceholder: 'Productivity Hackers',
