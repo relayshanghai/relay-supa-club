@@ -32,6 +32,8 @@ const prepareTemplateVariables = (templateVariables: TemplateVariable[], sequenc
         templateVariables.find((variable) => variable.key === 'productFeatures') ?? blankVariable('productFeatures');
     const productLink =
         templateVariables.find((variable) => variable.key === 'productLink') ?? blankVariable('productLink');
+    const productPrice =
+        templateVariables.find((variable) => variable.key === 'productPrice') ?? blankVariable('productPrice');
     const influencerNiche =
         templateVariables.find((variable) => variable.key === 'influencerNiche') ?? blankVariable('influencerNiche');
     return {
@@ -41,6 +43,7 @@ const prepareTemplateVariables = (templateVariables: TemplateVariable[], sequenc
         productDescription,
         productFeatures,
         productLink,
+        productPrice,
         influencerNiche,
     };
 };
@@ -140,7 +143,10 @@ export const TemplateVariablesModal = ({ sequenceId, ...props }: TemplateVariabl
 
             <h4 className="font-semibold text-gray-700">{t('sequences.product')}</h4>
 
-            <VariableInput variableKey="productName" setKey={setKey} variables={variables} />
+            <div className="flex justify-between gap-6">
+                <VariableInput variableKey="productName" setKey={setKey} variables={variables} />
+                <VariableInput variableKey="productPrice" setKey={setKey} variables={variables} />
+            </div>
             <VariableInput variableKey="productLink" setKey={setKey} variables={variables} />
             <VariableInput variableKey="productDescription" setKey={setKey} variables={variables} />
             <VariableInput variableKey="productFeatures" setKey={setKey} variables={variables} />
