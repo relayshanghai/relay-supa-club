@@ -33,6 +33,7 @@ const sequences = {
         openRate: '打开率',
         manager: '经理',
         product: '产品',
+        sequenceActions: '序列操作',
     },
     sequenceModal: '创建新序列',
     sequenceInfo: '序列信息',

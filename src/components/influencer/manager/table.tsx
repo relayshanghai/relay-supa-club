@@ -1,56 +1,39 @@
 import React, { useState, useCallback } from 'react';
 import { InfluencerRow } from './influencer-row';
 import type { InfluencerRowProps } from './influencer-row';
+import { type SequenceInfluencerManagerPage } from 'src/hooks/use-sequence-influencers';
+import { Button } from 'src/components/button';
+import { TABLE_LIMIT, TABLE_COLUMNS, COLLAB_OPTIONS } from '../constants';
+import { useTranslation } from 'react-i18next';
 
-const mockTableColumns = [
-    { header: 'name', type: 'name', name: 'name' },
-    { header: 'collabstatus', type: 'collabstatus', name: 'collabstatus' },
-    { header: 'manager', type: 'manager', name: 'manager' },
-    { header: 'tags', type: 'tags', name: 'tags' },
-    { header: 'lastupdated', type: 'lastupdated', name: 'lastupdated' }, // In the Figma design feedback, Sophia changed Payment Amount to Influencer Fee as the column name.
-    { header: 'inbox', type: 'link', name: 'inbox' },
-];
+export const Table = ({
+    influencers,
+    onRowClick,
+}: {
+    influencers?: SequenceInfluencerManagerPage[];
+    onRowClick?: (data: InfluencerRowProps['influencer']) => void;
+}) => {
+    const [page, setPage] = useState(0);
 
-type Props = {
-    onRowClick: (data: InfluencerRowProps['influencer']) => void;
-};
+    const [filteredInfluencers, _setFilteredInfluencers] = useState(
+        influencers && influencers.length > 0
+            ? influencers.filter((influencer) => Object.keys(COLLAB_OPTIONS).includes(influencer.funnel_status))
+            : [],
+    );
+    const totalPages = Math.ceil((filteredInfluencers?.length || 0) / TABLE_LIMIT);
 
-export const Table = (props: Props) => {
-    // const [selectedAll, setSelectedAll] = useState<boolean>(false);
-    const [influencersList, _setInfluencersList] = useState([
-        {
-            id: '1',
-            info: {
-                name: 'Kylie Jenner',
-                handle: 'kylie',
-            },
-            collabstatus: 'negotiating',
-            manager: 'Sophia',
-            tags: ['fashion', 'beauty'],
-            lastupdated: '2 days ago',
-            unread: true,
-            checked: false,
-        },
-        {
-            id: '2',
-            info: {
-                name: 'Kylie Jenner',
-                handle: 'kylie',
-            },
-            collabstatus: 'negotiating',
-            manager: 'Mikaela',
-            tags: ['fashion', 'beauty'],
-            lastupdated: '2 days ago',
-            checked: false,
-        },
-    ]);
+    const { t } = useTranslation();
 
     const handleRowClick = useCallback(
         (influencer: InfluencerRowProps['influencer']) => {
-            props.onRowClick && props.onRowClick(influencer);
+            onRowClick && onRowClick(influencer);
         },
-        [props],
+        [onRowClick],
     );
+
+    // TODO Add multiselect operations on the table
+
+    // const [selectedAll, setSelectedAll] = useState<boolean>(false);
 
     // const handleCheckboxChange = (id: string) => {
     //     const updatedCheckboxes = influencersList.map((checkbox) =>
@@ -75,39 +58,77 @@ export const Table = (props: Props) => {
                 <table className="w-full table-auto divide-y divide-gray-200 overflow-y-visible bg-white ">
                     <thead>
                         <tr>
+                            {/* // TODO Add multiselect operations on the table */}
                             {/* <th>
                                 <input className="appearance-none display-none rounded border-gray-300 checked:text-primary-500" type='checkbox' checked={selectedAll} onChange={handleCheckAll} />
                             </th> */}
-                            {mockTableColumns.map((column) => (
+                            {TABLE_COLUMNS.map((column) => (
                                 <th
                                     key={column.header}
                                     className="whitespace-nowrap bg-white px-6 py-3 text-left text-xs font-normal tracking-wider text-gray-500"
                                 >
-                                    {column.header}
+                                    {t(`manager.${column.header}`)}
                                 </th>
                             ))}
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200 bg-white">
-                        {influencersList.length === 0 && (
-                            <tr>
-                                <td colSpan={mockTableColumns.length + 1} className="px-6 py-4">
-                                    <div className="flex justify-center">
-                                        <p className="text-sm text-gray-500">No Influencers...</p>
-                                    </div>
-                                </td>
-                            </tr>
-                        )}
-                        {influencersList.map((influencer, index) => (
-                            <InfluencerRow
-                                onRowClick={handleRowClick}
-                                key={influencer.id}
-                                influencer={influencer}
-                                index={index}
-                            />
-                        ))}
+                        {!filteredInfluencers ||
+                            (filteredInfluencers.length === 0 && (
+                                <tr>
+                                    <td colSpan={TABLE_COLUMNS.length + 1} className="px-6 py-4">
+                                        <div className="flex justify-center">
+                                            <p className="text-sm text-gray-500">No Influencers...</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        {filteredInfluencers
+                            ?.slice(page * TABLE_LIMIT, (page + 1) * TABLE_LIMIT)
+                            .map((influencer, index) => (
+                                <InfluencerRow
+                                    onRowClick={handleRowClick}
+                                    key={influencer.id}
+                                    influencer={influencer}
+                                    index={index}
+                                />
+                            ))}
                     </tbody>
                 </table>
+            </div>
+            <div className="m-4 flex items-center justify-end gap-4 font-medium">
+                <p
+                    className={`${page !== 0 && 'cursor-pointer'} select-none border-none bg-transparent text-gray-500`}
+                    onClick={() => {
+                        if (page === 0) return;
+                        setPage(page - 1);
+                    }}
+                >
+                    {'<<'} {t('manager.previous')}
+                </p>
+                <div className="flex flex-row items-center">
+                    {Array.from({ length: totalPages }, (_, index) => index).map((pageNumber) => (
+                        <Button
+                            key={`button-page-${pageNumber + 1}`}
+                            disabled={page === pageNumber}
+                            className="border-none bg-transparent text-slate-500 hover:text-gray-200 disabled:bg-primary-500 disabled:text-gray-200"
+                            onClick={() => setPage(pageNumber)}
+                        >
+                            {pageNumber + 1}
+                        </Button>
+                    ))}
+                </div>
+                <p
+                    className={`${
+                        page < totalPages - 1 && 'cursor-pointer'
+                    } select-none border-none bg-transparent text-gray-500`}
+                    onClick={() => {
+                        if (page >= totalPages - 1) return;
+                        setPage(page + 1);
+                    }}
+                >
+                    {t('manager.next')} {'>>'}
+                </p>
             </div>
         </div>
     );

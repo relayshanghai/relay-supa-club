@@ -33,6 +33,7 @@ const sequences = {
         openRate: 'Open rate',
         manager: 'Manager',
         product: 'Product',
+        sequenceActions: 'Sequence actions',
     },
     sequenceModal: 'Create a new sequence',
     sequenceInfo: 'Sequence Info',

@@ -1,5 +1,5 @@
-import { useState } from 'react';
 import { SelectMultipleDropdown } from '../../library/select-multiple-dropdown';
+import { type FunnelStatus } from 'src/utils/api/db/types';
 
 const tags = {
     fashion: {
@@ -12,15 +12,20 @@ const tags = {
     },
 };
 
-export const Tags = () => {
-    const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
+export const Tags = ({
+    filters,
+    onSetFilters,
+}: {
+    filters: FunnelStatus[];
+    onSetFilters: (filters: FunnelStatus[]) => void;
+}) => {
     return (
         <div className="flex flex-col">
             <p>Tags</p>
             <SelectMultipleDropdown
                 text={'Tags'}
-                selectedOptions={selectedOptions}
-                setSelectedOptions={setSelectedOptions}
+                selectedOptions={filters}
+                setSelectedOptions={onSetFilters}
                 options={tags}
             />
         </div>
