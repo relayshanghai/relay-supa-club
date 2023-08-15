@@ -30,6 +30,7 @@ const getHandler: NextApiHandler = async (req: NextApiRequest, res: NextApiRespo
             postedDate: posted_date || '',
             id,
             url,
+            performance: null,
         };
     });
 
