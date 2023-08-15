@@ -20,9 +20,6 @@ export const getSequenceInfluencersBySequenceIdCall = (supabaseClient: RelayData
 };
 
 export const getSequenceInfluencersByCompanyIdCall = (supabaseClient: RelayDatabase) => async (companyId: string) => {
-    if (!companyId) {
-        throw new Error('No companyId found');
-    }
     const { data, error } = await supabaseClient.from('sequence_influencers').select('*').eq('company_id', companyId);
 
     if (error) throw error;
@@ -43,7 +40,11 @@ export const updateSequenceInfluencerCall =
 
 export const createSequenceInfluencerCall =
     (supabaseClient: RelayDatabase) => async (sequenceInfluencer: SequenceInfluencerInsert) => {
-        const { data, error } = await supabaseClient.from('sequence_influencers').insert(sequenceInfluencer).single();
+        const { data, error } = await supabaseClient
+            .from('sequence_influencers')
+            .insert(sequenceInfluencer)
+            .select()
+            .single();
         if (error) throw error;
         return data;
     };

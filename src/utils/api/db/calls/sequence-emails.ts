@@ -19,3 +19,9 @@ export const updateSequenceEmailCall = (supabaseClient: RelayDatabase) => async 
     if (error) throw error;
     return data;
 };
+
+export const getAllSequenceEmailsCall = (supabaseClient: RelayDatabase) => async (ids: string[]) => {
+    const { data, error } = await supabaseClient.from('sequence_emails').select('*').in('sequence_id', ids);
+    if (error) throw error;
+    return data;
+};

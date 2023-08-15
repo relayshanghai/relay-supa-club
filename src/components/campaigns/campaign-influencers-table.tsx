@@ -130,7 +130,7 @@ export default function CampaignInfluencersTable({
         }
         const fuse = new Fuse(campaignCreators, {
             minMatchCharLength: 1,
-            keys: ['fullname'],
+            keys: ['fullname', 'username'],
         });
 
         if (searchTerm.length === 0) {
