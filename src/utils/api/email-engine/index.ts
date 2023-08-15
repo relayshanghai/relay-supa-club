@@ -16,6 +16,7 @@ import type {
     AccountAccountMessagePut,
     UpdateMessagePutResponseBody,
 } from 'types/email-engine/account-account-message-put';
+import type { TemplatesTemplateGetResponse } from 'types/email-engine/templates-template-get';
 
 // PATHS
 
@@ -55,6 +56,8 @@ const searchMailboxPath = (account: string, mailboxPath: string, page = 0, pageS
         pageSize: String(pageSize),
         documentStore: String(documentStore),
     })}`;
+
+const getTemplateInfoPath = (templateId: string) => `templates/template/${encodeURIComponent(templateId)}`;
 
 export const generateAuthLink = async (body: GenerateAuthLinkRequestBody) => {
     const res = await emailEngineApiFetch<GenerateAuthLinkResponse>(authLinkPath, { method: 'POST', body });
@@ -98,7 +101,7 @@ export const searchMailbox = async (
     search: MailboxSearchOptions,
     mailboxPath: string,
     page = 0,
-    pageSize = 100, //entries per page
+    pageSize = 100, // entries per page
 ) => {
     const body: AccountAccountSearchPostRequestBody = { search };
     return await emailEngineApiFetch<AccountAccountSearchPost>(
@@ -115,3 +118,6 @@ export const getOutbox = async () => await emailEngineApiFetch<OutboxGet>(outbox
 
 export const deleteEmailFromOutbox = async (queueId: string) =>
     await emailEngineApiFetch<OutboxQueueidDelete>(outboxDeletePath(queueId), { method: 'DELETE' });
+
+export const getTemplateInfo = async (templateId: string) =>
+    await emailEngineApiFetch<TemplatesTemplateGetResponse>(getTemplateInfoPath(templateId));
