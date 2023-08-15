@@ -62,8 +62,8 @@ export const CollabAddPostModal = (props: Props) => {
                     {/* @ts-ignore @todo */}
                     <Link href={props.profile.link_url || '#no-profile-platform-url'} target="_blank">
                         <div className="ml-4">
-                            {/* @ts-ignore @todo */}
                             <div className="truncate text-xs font-medium text-gray-900">
+                                {/* @ts-ignore @todo */}
                                 {props.profile.fullname ?? 'no name'}
                             </div>
                             <div className="inline-block truncate text-xs text-primary-500">
