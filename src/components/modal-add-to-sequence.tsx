@@ -31,7 +31,7 @@ export const AddToSequenceModal = ({
     const [loading, setLoading] = useState<boolean>(false);
     const [socialProfileId, setSocialProfileId] = useState(() => socialProfile?.id ?? null);
 
-    const { createSequenceInfluencer } = useSequenceInfluencers(selectedSequence?.id);
+    const { createSequenceInfluencer } = useSequenceInfluencers(selectedSequence ? [selectedSequence.id] : []);
 
     const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         if (!sequences) {
@@ -43,7 +43,7 @@ export const AddToSequenceModal = ({
 
     // get the top 3 tags from relevant_tags of the report, then pass it to tags of sequence influencer
     const getRelevantTags = useCallback(() => {
-        if (!report) {
+        if (!report || !report.user_profile.relevant_tags) {
             return [];
         }
         const relevantTags = report.user_profile.relevant_tags;
@@ -51,12 +51,12 @@ export const AddToSequenceModal = ({
     }, [report]);
 
     const handleAddToSequence = useCallback(async () => {
-        setLoading(true);
         if (!selectedSequence) {
             throw new Error('Missing selectedSequence');
         }
         if (socialProfileId) {
             const tags = getRelevantTags();
+            setLoading(true);
             try {
                 await createSequenceInfluencer(socialProfileId, tags);
                 toast.success(t('creators.addToSequenceSuccess'));
