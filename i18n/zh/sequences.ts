@@ -100,8 +100,12 @@ const sequences = {
     battery life of over 2 weeks!”
     这将会直接显示于您的电子邮件模版中。`,
     productPrice: '产品价格',
-    productPriceTooltip: `Enter the price of your product in USD. It's better to enter as a whole number to keep your templates cleaner.
-    * We will format this value with a $ in your email templates`,
+    productPriceTooltip: `
+    以美元为单位输入产品价格。
+    
+    最好输入整数，以便让模板看起来更加简洁。
+    
+    这将会直接显示于您的电子邮件模版中，单位格式为 $。`,
     influencer: 'KOL',
     influencerNiche: 'KOL所在领域',
     influencerNichePlaceholder: 'Productivity Hackers',
