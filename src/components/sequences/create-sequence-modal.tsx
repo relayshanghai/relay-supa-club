@@ -33,10 +33,10 @@ export const CreateSequenceModal = ({
                 throw new Error('Failed to get sequence id');
             }
             await createDefaultSequenceSteps(data.id);
-            toast.success('Sequence created successfully');
+            toast.success(t('sequences.createSequenceSuccess'));
         } catch (error) {
             clientLogger(error, 'error');
-            toast.error('Failed to create sequence, please try again later');
+            toast.error(t('sequences.createSequenceError'));
         } finally {
             setLoading(false);
             setShowCreateSequenceModal(false);
