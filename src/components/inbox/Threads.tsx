@@ -81,7 +81,10 @@ export const Threads = ({ messages }: { messages: SearchResponseMessage[] }) => 
             ) : (
                 <div className="flex w-full flex-col space-y-6">
                     {threadMessages.map((message) => (
-                        <div key={message.id} className="rounded-lg bg-white">
+                        <div
+                            key={message.id}
+                            className="rounded-lg bg-white shadow-sm hover:border hover:border-primary-500"
+                        >
                             <div className="border-b-2 border-gray-200 p-6">
                                 <div className="mb-3 text-lg font-semibold text-gray-400">
                                     {t('inbox.from')}:{' '}
