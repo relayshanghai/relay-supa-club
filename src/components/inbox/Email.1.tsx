@@ -14,7 +14,7 @@ export const Email = ({ message }: { message: SearchResponseMessage }) => {
     const getText = useCallback(
         async (id: string) => {
             if (!profile?.email_engine_account_id) {
-                throw new Error('No email account');
+                return;
             }
             setLoading(true);
             try {

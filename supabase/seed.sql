@@ -104,9 +104,10 @@ OR REPLACE FUNCTION create_profile(
     user_id := create_supabase_user(email, first_name, last_name);
 
     INSERT INTO profiles
-      (id, email, last_name, first_name, user_role, company_id)
+      (id, email, last_name, first_name, user_role, company_id, email_engine_account_id, sequence_send_email)
     VALUES
-      (user_id, email, last_name, first_name, _role, company_id)
+      (user_id, email, last_name, first_name, _role, company_id, 
+      '7p6sbk0gehwm59vo', 'relayemailertest@gmail.com')
     RETURNING * INTO _row;
     RETURN _row;
   END;
