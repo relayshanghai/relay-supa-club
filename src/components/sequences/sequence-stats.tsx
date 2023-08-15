@@ -25,13 +25,19 @@ export const SequenceStats = ({ totalInfluencers, openRate, replyRate, bounceRat
     const stats: StatCardProps[] = [
         {
             name: t('sequences.totalInfluencers'),
-            tooltip: t('sequences.totalInfluencersTooltip'),
+            tooltip: {
+                title: t('sequences.totalInfluencersTooltip'),
+                content: t('sequences.totalInfluencersTooltipDescription'),
+            },
             value: totalInfluencers.toString(),
             largeIcon: <TeamOutline />,
         },
         {
             name: t('sequences.openRate'),
-            tooltip: t('sequences.openRateTooltip'),
+            tooltip: {
+                title: t('sequences.openRateTooltip'),
+                content: t('sequences.openRateTooltipDescription'),
+            },
             value: decimalToPercent(openRate, 0) ?? '0%',
             largeIcon: <EmailOpenOutline />,
             smallIcon: (
@@ -42,7 +48,10 @@ export const SequenceStats = ({ totalInfluencers, openRate, replyRate, bounceRat
         },
         {
             name: t('sequences.replyRate'),
-            tooltip: t('sequences.replyRateTooltip'),
+            tooltip: {
+                title: t('sequences.replyRateTooltip'),
+                content: t('sequences.replyRateTooltipDescription'),
+            },
             value: decimalToPercent(replyRate, 0) ?? '0%',
             largeIcon: <MessageDotsCircleOutline />,
             smallIcon: (
@@ -53,7 +62,10 @@ export const SequenceStats = ({ totalInfluencers, openRate, replyRate, bounceRat
         },
         {
             name: t('sequences.bounceRate'),
-            tooltip: t('sequences.bounceRateTooltip'),
+            tooltip: {
+                title: t('sequences.bounceRateTooltip'),
+                content: t('sequences.bounceRateTooltipDescription'),
+            },
             value: decimalToPercent(bounceRate, 0) ?? '0%',
             largeIcon: <MessageXCircleOutline />,
             smallIcon: (
