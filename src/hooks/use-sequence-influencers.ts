@@ -30,7 +30,7 @@ export const useSequenceInfluencers = (sequenceIds?: string[], filters?: string[
 
     const createSequenceInfluencerDBCall = useDB<typeof createSequenceInfluencerCall>(createSequenceInfluencerCall);
     const createSequenceInfluencer = async (influencerSocialProfileId: string, tags: string[] | []) => {
-        if (!sequenceIds || sequenceIds.length > 0) throw new Error('No sequenceIds provided');
+        if (!sequenceIds || sequenceIds.length < 1) throw new Error('No sequenceIds provided');
         if (!profile?.company_id) throw new Error('No profile found');
         try {
             const insert: SequenceInfluencerInsert = {

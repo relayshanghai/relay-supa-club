@@ -10,8 +10,10 @@ import { useState } from 'react';
 import type { SetStateAction } from 'react';
 import { TableInlineInput } from '../library/table-inline-input';
 import { Button } from '../button';
-import { Brackets, DeleteOutline } from '../icons';
+import { AlertCircleOutline, Clock, EmailOpenOutline, Send, Brackets, DeleteOutline } from '../icons';
 import { Tooltip } from '../library';
+import { EMAIL_STATUS_STYLES } from './constants';
+
 import { EmailPreviewModal } from './email-preview-modal';
 
 interface SequenceRowProps {
@@ -24,6 +26,21 @@ interface SequenceRowProps {
     setShowUpdateTemplateVariables: (value: SetStateAction<boolean>) => void;
     templateVariables: TemplateVariable[];
 }
+
+const Icons = ({ status }: { status?: string }) => {
+    switch (status) {
+        case 'Opened':
+            return <EmailOpenOutline className="h-6 w-6 stroke-blue-500" />;
+        case 'Scheduled':
+            return <Clock className="h-6 w-6 stroke-yellow-500" />;
+        case 'Bounced':
+            return <AlertCircleOutline className="h-6 w-6 stroke-red-500" />;
+        case 'Delivered':
+            return <Send className="h-6 w-6 stroke-green-500" />;
+        default:
+            return null;
+    }
+};
 
 /** use the tracking status if it is delivered */
 const getStatus = (sequenceEmail: SequenceEmail | undefined) =>
@@ -206,12 +223,20 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                                     day: 'numeric',
                                 })}
                         </td>
-                        {/* TODO: add colors and icons for each status */}
-                        <td className="whitespace-nowrap px-6 py-4 text-gray-600">{getStatus(sequenceEmail)}</td>
-                        <td className=" whitespace-nowrap px-6 py-4 text-gray-600">
-                            {/* TODO */}
-                            <Button>Restart</Button>
+                        <td className={`whitespace-nowrap px-6 py-4`}>
+                            <div
+                                className={`flex w-fit flex-row items-center justify-center gap-2 rounded-lg px-3 py-2 text-center ${
+                                    EMAIL_STATUS_STYLES[getStatus(sequenceEmail) || 'Default']
+                                }`}
+                            >
+                                <Icons status={getStatus(sequenceEmail)} />
+                                {getStatus(sequenceEmail)}
+                            </div>
                         </td>
+                        {/* TODO */}
+                        {/* <td className=" whitespace-nowrap px-6 py-4 text-gray-600">
+                            <Button>Restart</Button>
+                        </td> */}
                     </>
                 )}
             </tr>

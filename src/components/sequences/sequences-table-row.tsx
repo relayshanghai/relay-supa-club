@@ -18,7 +18,6 @@ export const SequencesTableRow = ({ sequence }: { sequence: Sequence }) => {
         ).length || 0) / (sequenceEmails?.length || 1),
         0,
     );
-
     const handleDeleteSequence = async () => {
         try {
             await deleteSequence(sequence.id);
