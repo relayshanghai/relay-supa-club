@@ -13,7 +13,6 @@ import { COLLAB_OPTIONS } from '../constants';
 import { ProfileOverlayScreen } from 'src/components/influencer-profile/screens/profile-overlay-screen';
 import { useTranslation } from 'react-i18next';
 import { useUiState } from 'src/components/influencer-profile/screens/profile-screen-context';
-import influencer from 'pages/api/notes/influencer';
 
 const Manager = () => {
     const { sequences } = useSequences();
@@ -27,7 +26,7 @@ const Manager = () => {
 
     const { t } = useTranslation();
 
-    const [_influencer, setInfluencer] = useState<SequenceInfluencerManagerPage | null>(null);
+    const [influencer, setInfluencer] = useState<SequenceInfluencerManagerPage | null>(null);
     const [uiState, setUiState] = useUiState();
     const [influencers, setInfluencers] = useState<SequenceInfluencerManagerPage[] | undefined>(sequenceInfluencers);
     const [searchTerm, setSearchTerm] = useState<string>('');
