@@ -758,38 +758,38 @@ BEGIN
     'Alice Anderson',
     'alice.anderson@example.com',
     '123 Apple Street',
-    'https://example.com/avatar1',
+    'https://api.dicebear.com/6.x/open-peeps/svg?seed=alice.anderson@example.com&size=96',
     false
   );
   _influencer_bob := create_influencer(
     'Bob-Recommended Brown',
     'bob.brown@example.com',
     '456 Bell Street',
-    'https://example.com/avatar2'
+    'https://api.dicebear.com/6.x/open-peeps/svg?seed=bob.brown&size=96'
   );
   _influencer_charlie := create_influencer(
     'Charlie Charles',
     'charlie.charles@example.com',
     '780 Elm Street',
-    'https://example.com/avatar3'
+    'https://api.dicebear.com/6.x/open-peeps/svg?seed=charlie.charles&size=96'
   );
   _influencer_daniel := create_influencer(
     'Daniel Davis',
     'daniel.davis@example.com',
     '480 Elm Street',
-    'https://example.com/avatar4'
+    'https://api.dicebear.com/6.x/open-peeps/svg?seed=daniel.davis&size=96'
   );
   _influencer_felicia := create_influencer(
     'Felicia Franklin',
     'felicia.franklin@example.com',
     '420 Elm Street',
-    'https://example.com/avatar5'
+    'https://api.dicebear.com/6.x/open-peeps/svg?seed=felicia.franklin&size=96'
   );  
   _influencer_georgia := create_influencer(
     'Georgia Green',
     'georgia.green@example.com',
     '240 Elm Street',
-    'https://example.com/avatar6'
+    'https://api.dicebear.com/6.x/open-peeps/svg?seed=georgia.green&size=96'
   );
   _influencer_social_profile_alice_1 := create_influencer_social_profile(
     'https://instagram.com/alice1',
@@ -799,7 +799,7 @@ BEGIN
     'alice1',
     _influencer_alice.name,
     _influencer_alice.email,
-    'https://example.com/avatar1'
+    'https://api.dicebear.com/6.x/open-peeps/svg?seed=alice1&size=96'
   );
   _influencer_social_profile_bob_1 := create_influencer_social_profile(
     'https://instagram.com/bob1',
@@ -809,7 +809,7 @@ BEGIN
     'bob1',
     _influencer_bob.name,
     _influencer_bob.email,
-    'https://example.com/avatar2'
+    'https://api.dicebear.com/6.x/open-peeps/svg?seed=bob1&size=96'
   );
   _influencer_social_profile_bob_2 := create_influencer_social_profile(
     'https://youtube.com/bob2',
@@ -819,7 +819,7 @@ BEGIN
     'bob2',
     _influencer_bob.name,
     _influencer_bob.email,
-    'https://example.com/avatar3'
+    'https://api.dicebear.com/6.x/open-peeps/svg?seed=bob2&size=96'
   );
   _influencer_social_profile_charlie_1 := create_influencer_social_profile(
     'https://instagram.com/charlie1',
@@ -829,7 +829,7 @@ BEGIN
     'charlie1',
     _influencer_charlie.name,
     _influencer_charlie.email,
-    'https://example.com/avatar4'
+    'https://api.dicebear.com/6.x/open-peeps/svg?seed=charlie1&size=96'
   );
   _influencer_social_profile_daniel_1 := create_influencer_social_profile(
     'https://instagram.com/daniel1',
@@ -839,7 +839,7 @@ BEGIN
     'daniel1',
     _influencer_daniel.name,
     _influencer_daniel.email,
-    'www.example.com/avatar5'
+    'api.dicebear.com/6.x/open-peeps/svg?seed=daniel1&size=96'
   );
   _influencer_social_profile_felicia_1 := create_influencer_social_profile(
     'https://instagram.com/felicia1',
@@ -849,7 +849,7 @@ BEGIN
     'felicia1',
     _influencer_felicia.name,
     _influencer_felicia.email,
-    'https://example.com/avatar6'
+    'https://api.dicebear.com/6.x/open-peeps/svg?seed=felicia1&size=96'
   );
   _influencer_social_profile_georgia_1 := create_influencer_social_profile(
     'https://instagram.com/georgia1',
@@ -859,7 +859,7 @@ BEGIN
     'georgia1',
     _influencer_georgia.name,
     _influencer_georgia.email,
-    'https://example.com/avatar7'
+    'https://api.dicebear.com/6.x/open-peeps/svg?seed=georgia1&size=96'
   );
 
   PERFORM create_sequence_influencer(
@@ -868,7 +868,7 @@ BEGIN
     _profile_william.id,
     _influencer_social_profile_alice_1.id,
     _influencer_social_profile_alice_1.email,
-    'To Contact'
+    'Negotiating'
   );
 
   PERFORM create_sequence_influencer(
@@ -877,7 +877,7 @@ BEGIN
     _profile_william.id,
     _influencer_social_profile_bob_2.id,
     _influencer_social_profile_bob_2.email,
-    'To Contact',
+    'Negotiating',
     0,
     '2020-01-01 00:00:00.000000+00'
   );
@@ -888,7 +888,7 @@ BEGIN
     _profile_william.id,
     _influencer_social_profile_charlie_1.id,
     _influencer_social_profile_charlie_1.email,
-    'To Contact',
+    'Negotiating',
     0,
     '2030-01-01 00:00:00.000000+00'
   );    

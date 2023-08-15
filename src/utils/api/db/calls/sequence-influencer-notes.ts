@@ -23,6 +23,10 @@ export const saveNotesBySequenceInfluencer = (db: RelayDatabase) => async (paylo
             ? await getNotesBySequenceInfluencer(db)(payload.sequence_influencer_id, { user_id: payload.user_id })
             : null;
 
+    if (note && note.length > 0 && note[0].user_id !== payload.user_id) {
+        throw new Error('Cannot create sequence influencer note');
+    }
+
     const upsertPayload = note && note.length > 0 ? { ...payload, id: note[0].id } : { ...payload };
 
     const { data, error } = await db.from('campaign_notes').upsert(upsertPayload).select().single();

@@ -72,3 +72,4 @@ export { default as TiktokNoBg } from './TiktokNoBg';
 export { default as YoutubeNoBg } from './YoutubeNoBg';
 export { default as EmailOutlineColored } from './EmailOutlineColored';
 export { default as DeleteOutline } from './DeleteOutline';
+export { default as User } from './User';

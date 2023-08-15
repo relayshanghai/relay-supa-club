@@ -1,7 +1,4 @@
 import { useCallback, useEffect } from 'react';
-import { useAsync } from 'src/hooks/use-async';
-import { apiFetch } from 'src/utils/api/api-fetch';
-import type { CampaignNotes } from 'src/utils/api/db';
 import { useProfileScreenContext, useUiState } from '../screens/profile-screen-context';
 import { CollabAffiliateLinkInput } from '../components/collab-affiliate-link-input';
 import { CollabFeeInput } from '../components/collab-fee-input';
@@ -10,7 +7,8 @@ import { CollabVideoDetailsInput } from '../components/collab-video-details-inpu
 import { OutreachCollabStatusInput } from '../components/outreach-collab-status-input';
 import { OutreachNextStepsInput } from '../components/outreach-next-steps-input';
 import { OutreachNotesInput } from '../components/outreach-notes-input';
-import type { Profile } from '../components/profile-header';
+import type { SequenceInfluencerManagerPage } from 'src/hooks/use-sequence-influencers';
+import { useSequenceInfluencerNotes } from 'src/hooks/use-sequence-influencer-notes';
 
 export const COLLAB_STATUS_OPTIONS = [
     {
@@ -61,65 +59,45 @@ export type ProfileNotes = {
     collabStatus: string;
     notes: string;
     nextStep: string;
-    fee: string;
+    fee: string | number;
     videoDetails: string;
     affiliateLink: string;
     scheduledPostDate: string;
 };
 
 type Props = {
-    // @todo author and profile optional for now
-    author?: { id: string };
-    profile?: Profile;
+    profile: SequenceInfluencerManagerPage;
     onUpdate?: (key: keyof ProfileNotes, value: any) => void;
 };
 
-export const ProfileNotesTab = ({ profile, author, ...props }: Props) => {
+export const ProfileNotesTab = ({ profile, ...props }: Props) => {
     const { onUpdate } = { onUpdate: () => null, ...props };
     const { state: data } = useProfileScreenContext();
     const [_uiState, setUiState] = useUiState();
-
-    const getNotes = useAsync(async (sequence_influencer_id: string, author: string) => {
-        return await apiFetch('/api/notes/influencer/{id}', {
-            path: { id: sequence_influencer_id },
-            query: { author },
-        });
-    });
-
-    const saveNote = useAsync(async (body: CampaignNotes['Insert']) => {
-        await apiFetch('/api/notes/influencer', { body });
-    });
+    const { getNotes, saveNote } = useSequenceInfluencerNotes();
 
     const handleSaveNotes = useCallback(
         (value: string) => {
             saveNote.call({
                 comment: value,
-                //  @todo still no concrete profile / author shape
-                influencer_social_profile_id: profile?.influencer_id ?? '5941a215-1b36-4f60-95b1-6eea3e4b3c3b',
-                sequence_influencer_id: profile?.id ?? '1378068d-d985-4fc7-a019-79d483d5dc1d',
-                user_id: author?.id ?? 'af5d4b21-b5c5-4849-a441-d7abbe33d612',
+                influencer_social_profile_id: profile.influencer_social_profile_id,
+                sequence_influencer_id: profile.id,
             });
         },
-        [author, profile, saveNote],
+        [profile, saveNote],
     );
 
     useEffect(() => {
         // load posts when the modal is opened
         if (getNotes.isLoading !== null) return;
-        // influencer_social_profile_id: profile?.influencer_id ?? '5941a215-1b36-4f60-95b1-6eea3e4b3c3b',
-        // sequence_influencer_id: profile?.id ?? '1378068d-d985-4fc7-a019-79d483d5dc1d',
-        // user_id: author?.id ?? 'af5d4b21-b5c5-4849-a441-d7abbe33d612',
-        getNotes.call('1378068d-d985-4fc7-a019-79d483d5dc1d', 'af5d4b21-b5c5-4849-a441-d7abbe33d612').then((notes) => {
-            const _notes = notes[0] ?? { comment: '' };
 
+        getNotes.call(profile.id, { current_user_only: 1 }).then((notes) => {
+            const _notes = notes[0] ?? { comment: '' };
             onUpdate('notes', _notes.comment);
-            // setValue((s) => {
-            //     return { ...s, notes: { ...s.notes, notes: _notes.comment } };
-            // });
         });
         // @todo do some error handling
         // .catch((e) => console.error(e))
-    }, [getNotes, onUpdate]);
+    }, [getNotes, onUpdate, profile]);
 
     return (
         <>
@@ -131,7 +109,7 @@ export const ProfileNotesTab = ({ profile, author, ...props }: Props) => {
                 <OutreachCollabStatusInput
                     onUpdate={(data) => onUpdate('collabStatus', data)}
                     options={COLLAB_STATUS_OPTIONS}
-                    selected={['negotiating']}
+                    selected={[data.notes.collabStatus]}
                 />
 
                 <OutreachNextStepsInput
@@ -140,6 +118,7 @@ export const ProfileNotesTab = ({ profile, author, ...props }: Props) => {
                 />
 
                 <OutreachNotesInput
+                    disabled={getNotes.isLoading === true}
                     value={data.notes.notes}
                     onUpdate={(value) => onUpdate('notes', value)}
                     onSave={handleSaveNotes}

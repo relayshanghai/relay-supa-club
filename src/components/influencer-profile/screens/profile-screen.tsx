@@ -6,9 +6,9 @@ import type { ProfileShippingDetails } from './profile-shipping-details-tab';
 import { ProfileShippingDetailsTab } from './profile-shipping-details-tab';
 import { Button } from 'src/components/button';
 import { cls } from 'src/utils/classnames';
-import type { Profile } from '../components/profile-header';
 import { ProfileHeader } from '../components/profile-header';
 import { useProfileScreenContext } from './profile-screen-context';
+import type { SequenceInfluencerManagerPage } from 'src/hooks/use-sequence-influencers';
 
 export type ProfileValue = {
     notes: ProfileNotes;
@@ -16,7 +16,7 @@ export type ProfileValue = {
 };
 
 type Props = {
-    profile: Profile;
+    profile: SequenceInfluencerManagerPage;
     selectedTab?: 'notes' | 'shipping-details';
     onUpdate?: (data: ProfileValue) => void;
     onCancel?: () => void;
@@ -85,7 +85,7 @@ export const ProfileScreen = ({ profile, selectedTab, onUpdate, onCancel, ...pro
 
             <div className="mt-3 p-12">
                 <div className={`${selected !== 'notes' ? 'hidden' : ''}`}>
-                    <ProfileNotesTab onUpdate={handleNotesDetailsUpdate} />
+                    <ProfileNotesTab profile={profile} onUpdate={handleNotesDetailsUpdate} />
                 </div>
                 <div className={`${selected !== 'shipping-details' ? 'hidden' : ''}`}>
                     <ProfileShippingDetailsTab onUpdate={handleShippingUpdate} />

@@ -1,6 +1,8 @@
 import type { DetailedHTMLProps, HTMLAttributes } from 'react';
 import { useMemo } from 'react';
 import { EmailOutlineColored, TiktokNoBg, YoutubeNoBg } from 'src/components/icons';
+import User from 'src/components/icons/User';
+import type { SequenceInfluencerManagerPage } from 'src/hooks/use-sequence-influencers';
 
 // @note probably exists already
 export type Profile = {
@@ -13,7 +15,7 @@ export type Profile = {
 };
 
 type Props = {
-    profile: Profile;
+    profile: SequenceInfluencerManagerPage;
 } & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 
 const translatePlatform = (platform: string) => {
@@ -21,18 +23,23 @@ const translatePlatform = (platform: string) => {
     if (_platform === 'youtube') return 'YT';
     if (_platform === 'instagram') return 'IG';
     if (_platform === 'tiktok') return 'TT';
-    return platform;
+    return 'NA';
 };
 
 export const ProfileHeader = ({ profile, ...props }: Props) => {
-    const platform = useMemo(() => translatePlatform(profile.platform), [profile.platform]);
+    // @todo platform is not provided
+    const platform = useMemo(() => translatePlatform(profile.platform ?? ''), [profile.platform]);
 
     return (
         <div {...props}>
             <div className="inline-flex items-center justify-start gap-2">
                 <div className="flex items-center justify-center rounded-full bg-gray-200 bg-opacity-50">
                     <div className="flex items-center justify-center rounded-full">
-                        <img className="rounded-full" src={profile.avatar} alt="Photo" />
+                        {profile.avatar_url ? (
+                            <img className="rounded-full" src={profile.avatar_url} alt="Photo" />
+                        ) : (
+                            <User className="h-20 w-20" />
+                        )}
                     </div>
                 </div>
                 <div className="flex shrink grow basis-0 items-center justify-start self-stretch">

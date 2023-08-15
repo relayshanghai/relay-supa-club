@@ -11,14 +11,14 @@ export type InfluencerRowProps = {
     index: number;
     influencer: SequenceInfluencerManagerPage;
     onCheckboxChange?: () => void;
-    onRowClick?: (data: InfluencerRowProps['influencer']) => void;
+    onRowClick?: (data: SequenceInfluencerManagerPage) => void;
 };
 
 export const InfluencerRow = ({ index, influencer, ...props }: InfluencerRowProps) => {
     const { name, username, manager_first_name, avatar_url, url, tags, updated_at, funnel_status, email } = influencer;
     const { t } = useTranslation();
     const handleRowClick = useCallback(
-        (influencer: InfluencerRowProps['influencer']) => {
+        (influencer: SequenceInfluencerManagerPage) => {
             // eslint-disable-next-line no-console
             console.log('row clicked');
             props.onRowClick && props.onRowClick(influencer);

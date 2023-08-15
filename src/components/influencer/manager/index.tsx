@@ -34,20 +34,14 @@ const Manager = () => {
     const [filterStatuses, setFilterStatuses] = useState<FunnelStatus[]>([]);
 
     const handleRowClick = useCallback(
-        (_influencer: SequenceInfluencerManagerPage) => {
-            setInfluencer((s) => {
-                // @todo influencer is sometimes null?
-                if (!s) return s;
-
-                return {
-                    ...s,
-                    username: 'TastyChef',
-                    // @todo platform needed in influencer type
-                    platform: 'instagram',
-                    name: "D'Jon Curtis",
-                    // @todo change avatar to avatar_url
-                    avatar: 'https://api.dicebear.com/6.x/open-peeps/svg?seed=TastyChef&size=96',
-                };
+        (influencer: SequenceInfluencerManagerPage) => {
+            setInfluencer({
+                username: 'TastyChef',
+                name: "D'Jon Curtis",
+                // @todo platform needed in influencer type
+                // platform: 'instagram',
+                avatar_url: 'https://api.dicebear.com/6.x/open-peeps/svg?seed=TastyChef&size=96',
+                ...influencer,
             });
 
             setUiState((s) => {
@@ -172,8 +166,6 @@ const Manager = () => {
                 <Table influencers={influencers} onRowClick={handleRowClick} />
             </div>
             <ProfileOverlayScreen
-                // @todo influencer is now SequenceInfluencerManagerPage
-                // @ts-ignore
                 profile={influencer}
                 isOpen={uiState.isProfileOverlayOpen}
                 onClose={handleProfileOverlayClose}
