@@ -140,6 +140,8 @@ const sequences = {
     wellHandleThisOne: `We'll handle this one!`,
     missingRequiredTemplateVariables_variables: 'Missing required template variables: {{variables}}',
     emailPreview: 'Email preview',
+    emailsSentTo_number_influencers: 'Emails sent to {{number}} influencers',
+    failedToSendTo_number_influencers: 'Failed to send to {{number}} influencers',
 };
 
 export default sequences;

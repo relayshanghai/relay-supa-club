@@ -53,7 +53,7 @@ export const useSequence = (sequenceId?: string) => {
             account: testAccount,
             sequenceInfluencers,
         };
-        return await nextFetch<SequenceSendPostResponse>('sequences/send', {
+        return await nextFetch<SequenceSendPostResponse>('sequence/send', {
             method: 'POST',
             body,
         });

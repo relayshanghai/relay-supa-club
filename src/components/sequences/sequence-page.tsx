@@ -2,7 +2,6 @@
 import { Layout } from '../layout';
 import SequenceTable from './sequence-table';
 
-import { clientLogger } from 'src/utils/logger-client';
 import { SequenceStats } from './sequence-stats';
 
 import { useSequences } from 'src/hooks/use-sequences';
@@ -34,9 +33,7 @@ export const SequencePage = () => {
     const isMissingVariables = !templateVariables || templateVariables.length === 0 || missingVariables.length > 0;
 
     const handleStartSequence = async (sequenceInfluencers: SequenceInfluencer[]) => {
-        // fill in the params not set by template variables
-        const results = await sendSequence(sequenceInfluencers);
-        clientLogger(results);
+        return await sendSequence(sequenceInfluencers);
     };
 
     const handleAutostartToggle = async (checked: boolean) => {
@@ -126,7 +123,7 @@ export const SequencePage = () => {
                         </Tooltip>
                     </div>
                     <Button onClick={handleOpenUpdateTemplateVariables} variant="secondary" className="ml-auto flex">
-                        <Brackets className="mr-2" />
+                        <Brackets className="mr-2 h-6" />
                         <p className="self-center">{t('sequences.updateTemplateVariables')}</p>
                     </Button>
                 </div>
