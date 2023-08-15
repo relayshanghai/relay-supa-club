@@ -6,7 +6,7 @@ const navbar = {
     logout: '退出登录',
     performance: '数据中心',
     guide: '指南',
-    sequences: '邮件序列',
+    sequences: '邮件进程管理',
     inbox: '收件箱',
     influencerManager: 'KOL管理跟进',
 };
