@@ -31,7 +31,7 @@ export const AddToSequenceModal = ({
     const [loading, setLoading] = useState<boolean>(false);
     const [socialProfileId, setSocialProfileId] = useState(() => socialProfile?.id ?? null);
 
-    const { createSequenceInfluencer } = useSequenceInfluencers(selectedSequence?.id);
+    const { createSequenceInfluencer } = useSequenceInfluencers(selectedSequence ? [selectedSequence.id] : []);
 
     const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         if (!sequences) {

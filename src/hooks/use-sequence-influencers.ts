@@ -1,5 +1,7 @@
+import { type SequenceInfluencer } from './../utils/api/db/types';
 import useSWR from 'swr';
-import { useClientDb, useDB } from 'src/utils/client-db/use-client-db';
+import { apiFetch } from 'src/utils/api/api-fetch';
+import { useDB } from 'src/utils/client-db/use-client-db';
 import {
     createSequenceInfluencerCall,
     updateSequenceInfluencerCall,
@@ -9,24 +11,32 @@ import type { SequenceInfluencerInsert, SequenceInfluencerUpdate } from 'src/uti
 import { useUser } from 'src/hooks/use-user';
 import { clientLogger } from 'src/utils/logger-client';
 
-export const useSequenceInfluencers = (sequenceId?: string) => {
-    const db = useClientDb();
+export const useSequenceInfluencers = (sequenceIds?: string[], filters?: string[]) => {
     const { profile } = useUser();
 
     const { data: sequenceInfluencers, mutate: refreshSequenceInfluencers } = useSWR(
-        [sequenceId, 'sequence_influencers'],
-        ([sequenceId]) => db.getSequenceInfluencersBySequenceId(sequenceId ?? ''),
+        sequenceIds ? ['sequence_influencers', ...sequenceIds] : null,
+        async () => {
+            if (sequenceIds) {
+                const allInfluencers = (await apiFetch<SequenceInfluencerManagerPage[]>('/api/sequence/influencers', {
+                    body: sequenceIds,
+                })) as SequenceInfluencerManagerPage[];
+                return filters
+                    ? allInfluencers.filter((influencer) => filters.includes(influencer.funnel_status))
+                    : allInfluencers;
+            }
+        },
     );
 
     const createSequenceInfluencerDBCall = useDB<typeof createSequenceInfluencerCall>(createSequenceInfluencerCall);
     const createSequenceInfluencer = async (influencerSocialProfileId: string, tags: string[] | []) => {
-        if (!sequenceId) throw new Error('No sequenceId provided');
+        if (!sequenceIds || sequenceIds.length > 0) throw new Error('No sequenceIds provided');
         if (!profile?.company_id) throw new Error('No profile found');
         try {
             const insert: SequenceInfluencerInsert = {
                 added_by: profile.id,
                 company_id: profile.company_id,
-                sequence_id: sequenceId,
+                sequence_id: sequenceIds[0],
                 influencer_social_profile_id: influencerSocialProfileId,
                 sequence_step: 0,
                 tags,
@@ -60,4 +70,12 @@ export const useSequenceInfluencers = (sequenceId?: string) => {
         refreshSequenceInfluencers,
         deleteSequenceInfluencer,
     };
+};
+
+export type SequenceInfluencerManagerPage = SequenceInfluencer & {
+    name?: string | null;
+    manager_first_name?: string;
+    username?: string;
+    avatar_url?: string | null;
+    url?: string;
 };
