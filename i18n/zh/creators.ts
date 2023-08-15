@@ -33,7 +33,7 @@ const creators = {
     close: '取消',
     usageExceeded: '搜索次数已达上限',
     resultsPerPage: '每页结果',
-    addToSequence: '添加到序列',
+    addToSequence: '添加至邮件进程管理',
     modal: {
         viewFullProfile: '查看完整信息',
     },
@@ -173,12 +173,11 @@ const creators = {
         real: '真实',
     },
     cancel: '取消',
-    sequence: '序列',
-    //translate: 'Influencers added to this sequence will receive emails automatically from'
+    sequence: '选择项目',
     translate: 'KOL 将自动收到来自',
-    addToSequenceNotes: '加入序列的 KOL 将收到自动发送的邮件，开始发送时间为 ',
+    addToSequenceNotes: '添加到邮件进程管理的 KOL 将自动接收到电子邮件，开始时间为 ',
     noSequence: '没有创建序列',
-    addToSequenceSuccess: ' KOL 已成功加入序列',
-    addToSequenceError: '加入序列失败,请稍候重试',
+    addToSequenceSuccess: '已成功添加至进程',
+    addToSequenceError: '系统出错了，请重试',
 };
 export default creators;
