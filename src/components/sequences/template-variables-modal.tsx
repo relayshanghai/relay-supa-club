@@ -32,6 +32,8 @@ const prepareTemplateVariables = (templateVariables: TemplateVariable[], sequenc
         templateVariables.find((variable) => variable.key === 'productFeatures') ?? blankVariable('productFeatures');
     const productLink =
         templateVariables.find((variable) => variable.key === 'productLink') ?? blankVariable('productLink');
+    const productPrice =
+        templateVariables.find((variable) => variable.key === 'productPrice') ?? blankVariable('productPrice');
     const influencerNiche =
         templateVariables.find((variable) => variable.key === 'influencerNiche') ?? blankVariable('influencerNiche');
     return {
@@ -41,6 +43,7 @@ const prepareTemplateVariables = (templateVariables: TemplateVariable[], sequenc
         productDescription,
         productFeatures,
         productLink,
+        productPrice,
         influencerNiche,
     };
 };

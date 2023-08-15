@@ -1,5 +1,5 @@
 const sequences = {
-    sequences: '全部序列',
+    sequences: '邮件进程管理',
     updateTemplateVariables: '更新邮模版件参数',
     needsAttention: '等待处理',
     autoStart: '开启自动处理',
@@ -38,12 +38,12 @@ const sequences = {
     addEmail: '添加邮件',
     newSequence: '新建序列',
     indexColumns: {
-        sequence: '序列',
-        influencers: 'KOL',
+        sequence: '项目',
+        influencers: 'KOL总数',
         openRate: '打开率',
-        manager: '经理',
-        product: '产品',
-        sequenceActions: '序列操作',
+        manager: '项目负责人',
+        product: '产品名称',
+        sequenceActions: '项目操作',
     },
     sequenceModal: '创建新序列',
     sequenceInfo: '序列信息',
@@ -115,5 +115,6 @@ const sequences = {
     recentVideoTitleTooltipDescription: `无需输入！我们将从KOL报告中提取这些信息，为收件人定制每封邮件！`,
     wellHandleThisOne: `无需输入此项，我们来搞定！`,
     missingRequiredTemplateVariables_variables: 'Missing required template variables: {{variables}}',
+    emailPreview: '邮件预览',
 };
 export default sequences;

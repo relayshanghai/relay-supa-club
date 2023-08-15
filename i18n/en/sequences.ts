@@ -54,10 +54,12 @@ const sequences = {
     sequenceNamePlaceholder: 'Enter a name for your sequence',
     createNewSequence: 'Create new sequence',
     templateVariablesModalTitle: 'Set Template Variables',
+    cancel: 'Cancel',
+    createSequenceSuccess: 'Create successfully',
+    createSequenceError: 'Failed to create sequence, please try again later',
     templateVariablesModalSubtitle:
         'The values you see here are what will be used to automatically customize the actual email content of your sequence emails!',
     updateVariables: 'Update variables',
-    cancel: 'Cancel',
     templateVariablesUpdated: 'Template variables updated',
     templateVariablesUpdateError: 'Error updating template variables',
     company: 'Company',
@@ -111,6 +113,9 @@ const sequences = {
     eg. ”It offers a full-color touch display, sleep, exercise
       and blood oxygen tracking, and has a battery life  of over 2 weeks!”* We will include this value as is in your
     email templates`,
+    productPrice: 'Product Price',
+    productPriceTooltip: `Enter the price of your product in USD. It's better to enter as a whole number to keep your templates cleaner.
+    * We will format this value with a $ in your email templates`,
     influencer: 'Influencer',
     influencerNiche: 'Influencer Niche',
     influencerNichePlaceholder: 'Productivity Hackers',
@@ -134,6 +139,7 @@ const sequences = {
     to customize each email for it's recipient!`,
     wellHandleThisOne: `We'll handle this one!`,
     missingRequiredTemplateVariables_variables: 'Missing required template variables: {{variables}}',
+    emailPreview: 'Email preview',
 };
 
 export default sequences;
