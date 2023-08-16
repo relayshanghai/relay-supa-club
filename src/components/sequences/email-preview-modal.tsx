@@ -27,7 +27,7 @@ export const EmailPreviewModal = ({ templateVariables, sequenceSteps, ...modalPr
                                 <p
                                     dangerouslySetInnerHTML={{
                                         __html: replaceNewlinesAndTabs(
-                                            fillInTemplateVariables(template.content.text, templateVariables),
+                                            fillInTemplateVariables(template.content?.text ?? '', templateVariables),
                                         ),
                                     }}
                                 />
