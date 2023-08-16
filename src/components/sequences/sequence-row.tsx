@@ -87,7 +87,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                 toast.error(t('sequences.failedToSendTo_number_influencers', { number: failed.length }));
             }
         } catch (error: any) {
-            toast.error(error.message);
+            toast.error(error?.message ?? '');
         }
     };
     return (

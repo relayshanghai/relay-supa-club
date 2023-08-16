@@ -36,8 +36,8 @@ const sendAndInsertEmail = async ({
     }
     const influencerSocialProfile = await db<typeof getInfluencerSocialProfileByIdCall>(
         getInfluencerSocialProfileByIdCall,
-    )(sequenceInfluencer.id);
-    const influencerNameOrHandle = influencerSocialProfile.name || influencerSocialProfile?.username;
+    )(sequenceInfluencer.influencer_social_profile_id);
+    const influencerNameOrHandle = influencerSocialProfile.name || influencerSocialProfile.username;
     if (!influencerNameOrHandle) {
         throw new Error('No influencer name or handle');
     }
@@ -105,7 +105,7 @@ const sendSequence = async ({ account, sequenceInfluencers }: SequenceSendPostBo
         } catch (error: any) {
             results.push({
                 ...sequenceInfluencer,
-                error: error.message,
+                error: error?.message ?? '',
             });
         }
     }
