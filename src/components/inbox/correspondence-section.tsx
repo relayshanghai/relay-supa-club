@@ -2,7 +2,7 @@ import type { SearchResponseMessage } from 'types/email-engine/account-account-s
 import { Spinner } from '../icons';
 import { Email } from './Email';
 import { Threads } from './Threads';
-import { ReplayEditor } from './replay-editor';
+import { ReplyEditor } from './reply-editor';
 import { useState } from 'react';
 import { sendReply } from 'src/utils/api/email-engine/handle-messages';
 import { clientLogger } from 'src/utils/logger-client';
@@ -50,15 +50,16 @@ export const CorrespondenceSection = ({
                 </div>
             ) : (
                 <div className="flex h-full flex-col overflow-y-auto">
-                    <EmailHeader messages={selectedMessages} />
-                    {selectedMessages.length > 1 ? (
-                        <Threads messages={selectedMessages} />
-                    ) : (
-                        <>{selectedMessages.length > 0 && <Email message={selectedMessages[0]} />}</>
-                    )}
-
+                    <div className="flex-1 overflow-auto">
+                        <EmailHeader messages={selectedMessages} />
+                        {selectedMessages.length > 1 ? (
+                            <Threads messages={selectedMessages} />
+                        ) : (
+                            <>{selectedMessages.length > 0 && <Email message={selectedMessages[0]} />}</>
+                        )}
+                    </div>
                     <div className="justify-self-end px-6 pb-4">
-                        <ReplayEditor
+                        <ReplyEditor
                             replyMessage={replyMessage}
                             setReplyMessage={setReplyMessage}
                             handleSubmit={handleSubmit}

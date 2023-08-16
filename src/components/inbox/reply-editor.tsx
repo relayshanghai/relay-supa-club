@@ -3,7 +3,7 @@ import { InputTextArea } from '../textarea';
 import { useTranslation } from 'react-i18next';
 import { Send } from '../icons';
 
-export const ReplayEditor = ({
+export const ReplyEditor = ({
     replyMessage,
     setReplyMessage,
     handleSubmit,
