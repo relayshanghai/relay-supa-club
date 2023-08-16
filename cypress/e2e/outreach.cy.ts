@@ -128,7 +128,7 @@ describe('outreach', () => {
         // can send sequence
 
         cy.getByTestId('send-email-button-bob.brown@example.com').trigger('mouseover');
-        cy.contains('Missing required template variables: Product Description').should('not.be.visible');
+        cy.contains('Missing required template variables: Product Description').should('not.exist');
 
         // reset the empty template variable so you can run the test again if need be
         cy.contains('button', 'Update template variables').click();
