@@ -85,6 +85,7 @@ const checkOnboardingStatus = async (
         const allowedPaths = [
             '/',
             '/signup',
+            '/free-trial',
             '/login',
             '/account',
             '/api/subscriptions',
@@ -109,7 +110,7 @@ const checkOnboardingStatus = async (
         }
     } else if (subscriptionStatus === 'awaiting_payment_method') {
         // allow the endpoints payment onboarding page requires
-        if (req.nextUrl.pathname.includes('/api/company') || req.nextUrl.pathname.includes('/api/subscriptions')) {
+        if (req.nextUrl.pathname.includes('/api/company') || req.nextUrl.pathname.includes('/api/subscriptions') || req.nextUrl.pathname.includes('/free-trial')) {
             return res;
         }
         const curStep = new URL(req.url).searchParams.get('curStep');

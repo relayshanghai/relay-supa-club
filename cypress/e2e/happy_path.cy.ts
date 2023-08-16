@@ -1,6 +1,5 @@
 import { deleteDB } from 'idb';
 import { addPostIntercept, cocomelonId, setupIntercepts } from './intercepts';
-import { featEmail } from 'src/constants/feature-flags';
 
 export const randomString = (length = 8) =>
     Math.random()
