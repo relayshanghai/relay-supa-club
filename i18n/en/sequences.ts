@@ -126,10 +126,10 @@ const sequences = {
     “Health and Wellness”, “Tech Reviewer”
      or “Fitness”* We will include this value as is in your
     email templates`,
-    influencerNameOrHandle: 'Influencer Name (or Handle)',
-    influencerNameOrHandlePlaceholder: 'John Smith',
-    influencerNameOrHandleTooltip: `Influencer Name (or Handle)`,
-    influencerNameOrHandleTooltipDescription: `No need to enter this! We will pull this
+    influencerAccountName: 'Influencer Name (or Handle)',
+    influencerAccountNamePlaceholder: 'John Smith',
+    influencerAccountNameTooltip: `Influencer Name (or Handle)`,
+    influencerAccountNameTooltipDescription: `No need to enter this! We will pull this
     information from the influencers report
     to customize each email for it's recipeient!`,
     recentVideoTitle: 'Influencer Recent Post',
@@ -140,8 +140,8 @@ const sequences = {
     wellHandleThisOne: `We'll handle this one!`,
     missingRequiredTemplateVariables_variables: 'Missing required template variables: {{variables}}',
     emailPreview: 'Email preview',
-    emailsSentTo_number_influencers: 'Emails sent to {{number}} influencer(s)',
-    failedToSendTo_number_influencers: 'Failed to send to {{number}} influencer(s)',
+    number_emailsSuccessfullyScheduled: '{{number}} emails successfully scheduled to send',
+    number_emailsFailedToSchedule: 'Failed to submit {{number}} emails to send',
 };
 
 export default sequences;
