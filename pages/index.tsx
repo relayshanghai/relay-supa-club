@@ -1,4 +1,4 @@
-import LandingPage from './component-previews/landing-page';
+import { LandingPage } from 'src/components/signup/landing-page';
 
 export default function Index() {
     return (
