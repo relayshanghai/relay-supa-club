@@ -3,11 +3,11 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { clientLogger } from 'src/utils/logger-client';
 import { getMessageText } from 'src/utils/api/email-engine/handle-messages';
 import { cleanEmailBody } from 'src/utils/clean-html';
-import { testEmail } from 'src/utils/api/email-engine/prototype-mocks';
 import CommentCardsSkeleton from '../campaigns/comment-cards-skeleton';
 import { useTranslation } from 'react-i18next';
 import type { ReplyTo } from 'types/email-engine/account-account-message-get';
 import { ChevronDown } from '../icons';
+import { useUser } from 'src/hooks/use-user';
 
 export interface ThreadMessage {
     subject: string;
@@ -21,6 +21,7 @@ export interface ThreadMessage {
 }
 
 export const Threads = ({ messages }: { messages: SearchResponseMessage[] }) => {
+    const { profile } = useUser();
     const [threadMessages, setThreadMessages] = useState<ThreadMessage[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
 
@@ -31,35 +32,41 @@ export const Threads = ({ messages }: { messages: SearchResponseMessage[] }) => 
         endOfThread.current?.scrollIntoView({ behavior: 'smooth' });
     };
 
-    const getThreadEmailText = useCallback(async (messages: SearchResponseMessage[]) => {
-        const newThreadMessages: ThreadMessage[] = [];
-        setThreadMessages([]);
-        setLoading(true);
-        try {
-            for (const message of messages) {
-                if (!message.text.id) {
-                    throw new Error('No text id');
+    const getThreadEmailText = useCallback(
+        async (messages: SearchResponseMessage[]) => {
+            const newThreadMessages: ThreadMessage[] = [];
+            setThreadMessages([]);
+            setLoading(true);
+            try {
+                for (const message of messages) {
+                    if (!message.text.id) {
+                        throw new Error('No text id');
+                    }
+                    if (!profile?.email_engine_account_id) {
+                        throw new Error('No email account');
+                    }
+                    const { html } = await getMessageText(message.text.id, profile?.email_engine_account_id);
+                    newThreadMessages.push({
+                        subject: message.subject,
+                        id: message.id,
+                        from: message.from.name || message.from.address,
+                        to: message.to,
+                        cc: message.cc,
+                        date: message.date,
+                        text: html,
+                        isMe: message.from.address === profile?.sequence_send_email,
+                    });
                 }
-                const { html } = await getMessageText(message.text.id);
-                newThreadMessages.push({
-                    subject: message.subject,
-                    id: message.id,
-                    from: message.from.name || message.from.address,
-                    to: message.to,
-                    cc: message.cc,
-                    date: message.date,
-                    text: html,
-                    isMe: message.from.address === testEmail,
-                });
+                setThreadMessages(newThreadMessages);
+            } catch (error: any) {
+                clientLogger(error, 'error');
+                throw new Error('Error fetching thread: ' + error.message);
+            } finally {
+                setLoading(false);
             }
-            setThreadMessages(newThreadMessages);
-        } catch (error: any) {
-            clientLogger(error, 'error');
-            throw new Error('Error fetching thread: ' + error.message);
-        } finally {
-            setLoading(false);
-        }
-    }, []);
+        },
+        [profile?.email_engine_account_id, profile?.sequence_send_email],
+    );
 
     const lastThreadMessageId = useMemo(() => threadMessages[threadMessages.length - 1]?.id, [threadMessages]);
 

@@ -568,6 +568,7 @@ export interface Database {
           influencer_id: string
           name: string | null
           platform: string
+          recent_video_title: string | null
           reference_id: string
           url: string
           username: string
@@ -580,6 +581,7 @@ export interface Database {
           influencer_id: string
           name?: string | null
           platform: string
+          recent_video_title?: string | null
           reference_id: string
           url: string
           username: string
@@ -592,6 +594,7 @@ export interface Database {
           influencer_id?: string
           name?: string | null
           platform?: string
+          recent_video_title?: string | null
           reference_id?: string
           url?: string
           username?: string
@@ -799,10 +802,12 @@ export interface Database {
           company_id: string | null
           created_at: string | null
           email: string | null
+          email_engine_account_id: string | null
           first_name: string
           id: string
           last_name: string
           phone: string | null
+          sequence_send_email: string | null
           updated_at: string | null
           user_role: string | null
         }
@@ -811,10 +816,12 @@ export interface Database {
           company_id?: string | null
           created_at?: string | null
           email?: string | null
+          email_engine_account_id?: string | null
           first_name: string
           id: string
           last_name: string
           phone?: string | null
+          sequence_send_email?: string | null
           updated_at?: string | null
           user_role?: string | null
         }
@@ -823,10 +830,12 @@ export interface Database {
           company_id?: string | null
           created_at?: string | null
           email?: string | null
+          email_engine_account_id?: string | null
           first_name?: string
           id?: string
           last_name?: string
           phone?: string | null
+          sequence_send_email?: string | null
           updated_at?: string | null
           user_role?: string | null
         }

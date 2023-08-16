@@ -1,4 +1,4 @@
-import type { RelayDatabase, SequenceEmailUpdate } from '../types';
+import type { RelayDatabase, SequenceEmailInsert, SequenceEmailUpdate } from '../types';
 
 export const getSequenceEmailsBySequenceCall = (supabaseClient: RelayDatabase) => async (sequenceId: string) => {
     if (!sequenceId) return [];
@@ -20,6 +20,12 @@ export const getSequenceEmailByMessageIdCall = (db: RelayDatabase) => async (mes
 
 export const updateSequenceEmailCall = (supabaseClient: RelayDatabase) => async (update: SequenceEmailUpdate) => {
     const { data, error } = await supabaseClient.from('sequence_emails').update(update).eq('id', update.id).single();
+    if (error) throw error;
+    return data;
+};
+
+export const insertSequenceEmailCall = (supabaseClient: RelayDatabase) => async (insert: SequenceEmailInsert) => {
+    const { data, error } = await supabaseClient.from('sequence_emails').insert(insert).single();
     if (error) throw error;
     return data;
 };

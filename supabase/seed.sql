@@ -104,9 +104,10 @@ OR REPLACE FUNCTION create_profile(
     user_id := create_supabase_user(email, first_name, last_name);
 
     INSERT INTO profiles
-      (id, email, last_name, first_name, user_role, company_id)
+      (id, email, last_name, first_name, user_role, company_id, email_engine_account_id, sequence_send_email)
     VALUES
-      (user_id, email, last_name, first_name, _role, company_id)
+      (user_id, email, last_name, first_name, _role, company_id, 
+      '7p6sbk0gehwm59vo', 'relayemailertest@gmail.com')
     RETURNING * INTO _row;
     RETURN _row;
   END;
@@ -719,7 +720,7 @@ BEGIN
   _sequence_step_outreach := create_sequence_steps(
     _sequence_general.id,
     'Outreach',
-    'AAABiYr-poEAAAAC',
+    'AAABifKnqdUAAAAC',
     0,
     0
   );
@@ -727,21 +728,21 @@ BEGIN
   _sequence_step_follow_up_1 := create_sequence_steps(
     _sequence_general.id,
     '1st Follow-up',
-    'AAABiYsMUIAAAAAD',
+    'AAABifKoR7kAAAAD',
     1,
     24
   );
   _sequence_step_follow_up_1 := create_sequence_steps(
     _sequence_general.id,
     '2nd Follow-up',
-    'AAABieM0bMMAAAAE',
+    'AAABifKoR7kAAAAD',
     2,
     48
   );  
   _sequence_step_follow_up_1 := create_sequence_steps(
     _sequence_general.id,
     '3rd Follow-up',
-    'AAABieM1AhgAAAAF',
+    'AAABifKoR7kAAAAD',
     3,
     72
   );  

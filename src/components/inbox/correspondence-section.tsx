@@ -8,6 +8,7 @@ import { sendReply } from 'src/utils/api/email-engine/handle-messages';
 import { clientLogger } from 'src/utils/logger-client';
 import { EmailHeader } from './email-header';
 import { replaceNewlinesAndTabs } from '../sequences/helpers';
+import { useUser } from 'src/hooks/use-user';
 
 export const CorrespondenceSection = ({
     selectedMessages,
@@ -17,8 +18,12 @@ export const CorrespondenceSection = ({
     loadingSelectedMessages: boolean;
 }) => {
     const [replyMessage, setReplyMessage] = useState<string>('');
+    const { profile } = useUser();
 
     const handleSubmit = async (replyMessage: string) => {
+        if (!profile?.email_engine_account_id) {
+            throw new Error('No email account');
+        }
         if (replyMessage === '') {
             return;
         }
@@ -30,7 +35,7 @@ export const CorrespondenceSection = ({
             html: replaceNewlinesAndTabs(replyMessage),
         };
         try {
-            await sendReply(replyBody);
+            await sendReply(replyBody, profile?.email_engine_account_id);
             setReplyMessage('');
         } catch (error) {
             clientLogger(error, 'error');
