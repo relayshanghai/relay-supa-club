@@ -123,5 +123,7 @@ const sequences = {
     wellHandleThisOne: `无需输入此项，我们来搞定！`,
     missingRequiredTemplateVariables_variables: 'Missing required template variables: {{variables}}',
     emailPreview: '邮件预览',
+    emailsSentTo_number_influencers: '成功发送邮件给{{number}}个KOL',
+    failedToSendTo_number_influencers: '失败发送邮件给{{number}}个KOL',
 };
 export default sequences;
