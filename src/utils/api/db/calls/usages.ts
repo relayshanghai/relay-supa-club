@@ -7,6 +7,7 @@ import { getSubscription } from '../../stripe/helpers';
 import type { RelayDatabase, UsagesDBInsert } from '../types';
 import { updateCompanySubscriptionStatus } from './company';
 import { getCurrentMonthPeriod } from 'src/utils/usagesHelpers';
+import { featNewPricing } from 'src/constants/feature-flags';
 
 const handleCurrentPeriodExpired = async (companyId: string) => {
     const subscription = await getSubscription(companyId);
@@ -64,7 +65,6 @@ const recordUsage = async ({
         return { error: usageErrors.noSubscription };
     }
     const limit = Number(subscriptionLimit);
-
     const now = new Date();
 
     let subscriptionStartDate = startDate.toISOString();
@@ -78,7 +78,9 @@ const recordUsage = async ({
         subscriptionStartDate = result.subscription_current_period_start;
     }
 
-    const { thisMonthStartDate, thisMonthEndDate } = getCurrentMonthPeriod(new Date(subscriptionStartDate));
+    const { thisMonthStartDate, thisMonthEndDate } = featNewPricing()
+        ? { thisMonthStartDate: startDate, thisMonthEndDate: endDate }
+        : getCurrentMonthPeriod(new Date(subscriptionStartDate));
 
     const { data: usagesData, error: usagesError } = await supabase
         .from('usages')
@@ -173,7 +175,6 @@ export const recordSearchUsage = async (company_id: string, user_id: string) => 
     }
     const startDate = new Date(company.subscription_current_period_start);
     const endDate = new Date(company.subscription_current_period_end);
-
     return recordUsage({
         type: 'search',
         startDate,

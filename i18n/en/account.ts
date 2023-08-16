@@ -78,6 +78,8 @@ const account = {
             noPaymentMethod: 'No payment method',
             alreadySubscribed: 'Already subscribed',
         },
+        upgrade: 'Upgrade',
+        upgradeSuccess: 'Upgrade success',
     },
     invite: {
         title: 'Invite Members',

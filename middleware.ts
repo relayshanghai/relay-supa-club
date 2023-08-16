@@ -73,7 +73,11 @@ const checkOnboardingStatus = async (
         console.error('No subscription_status found, should never happen'); // because either they don't have a session, or they should be awaiting_payment or active etc
     } else if (subscriptionStatus === 'active' || subscriptionStatus === 'trial') {
         // if already signed in and has company, when navigating to index or login page, redirect to dashboard
-        if (req.nextUrl.pathname === '/' || req.nextUrl.pathname === '/login' || req.nextUrl.pathname === '/signup') {
+        if (
+            req.nextUrl.pathname === '/' ||
+            req.nextUrl.pathname === '/login' ||
+            req.nextUrl.pathname.includes('/signup')
+        ) {
             redirectUrl.pathname = '/dashboard';
             return NextResponse.redirect(redirectUrl);
         }
@@ -110,7 +114,11 @@ const checkOnboardingStatus = async (
         }
     } else if (subscriptionStatus === 'awaiting_payment_method') {
         // allow the endpoints payment onboarding page requires
-        if (req.nextUrl.pathname.includes('/api/company') || req.nextUrl.pathname.includes('/api/subscriptions') || req.nextUrl.pathname.includes('/free-trial')) {
+        if (
+            req.nextUrl.pathname.includes('/api/company') ||
+            req.nextUrl.pathname.includes('/api/subscriptions') ||
+            req.nextUrl.pathname.includes('/free-trial')
+        ) {
             return res;
         }
         const curStep = new URL(req.url).searchParams.get('curStep');
