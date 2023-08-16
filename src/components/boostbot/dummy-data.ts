@@ -12,7 +12,7 @@ export const dummyData: CreatorSearchAccountObject[] = [
                 fullname: 'Sabrina Bradley | Esthetician',
                 is_verified: true,
                 account_type: 2,
-                followers: 560920,
+                followers: 560,
                 engagements: 2998,
                 engagement_rate: 0.05344790700991229,
             },
@@ -65,7 +65,7 @@ export const dummyData: CreatorSearchAccountObject[] = [
                 fullname: 'Sabrina Bradley | Esthetician',
                 is_verified: true,
                 account_type: 2,
-                followers: 56092,
+                followers: 5609,
                 engagements: 2998,
                 engagement_rate: 0.05344790700991229,
             },
@@ -160,6 +160,271 @@ export const dummyData: CreatorSearchAccountObject[] = [
             },
         },
     },
+    {
+        account: {
+            user_profile: {
+                user_id: '20670139681',
+                username: 'sabrinatoday',
+                url: 'https://www.instagram.com/sabrinatoday/',
+                picture:
+                    'https://imgp.sptds.icu/v2?mb0KwpL92uYofJiSjDn1%2F6peL1lBwv3s%2BUvShHERlDZamZ5Z7xQIUNO094fHaxAdH%2FLi7FvrsCM8OWY3OAIdS5Bkpsv19O7aEG65JBlxAMMNrndbn2O8CiEELNhAnI%2FY',
+                fullname: 'Sabrina Bradley | Esthetician',
+                is_verified: true,
+                account_type: 2,
+                followers: 560921,
+                engagements: 2998,
+                engagement_rate: 0.05344790700991229,
+            },
+            audience_source: 'followers',
+        },
+        match: {
+            user_profile: {
+                language: {
+                    code: 'en',
+                    name: 'English',
+                },
+                geo: {
+                    country: {
+                        id: 148838,
+                        name: 'United States',
+                        code: 'US',
+                        coords: {
+                            lat: 38.89511,
+                            lon: -77.03637,
+                        },
+                    },
+                },
+                relevance: 0.9871517230139086,
+                distance: 0.21732723712921143,
+            },
+            audience_likers: {
+                data: {
+                    audience_geo: {
+                        countries: [
+                            {
+                                id: 148838,
+                                name: 'United States',
+                                code: 'US',
+                                weight: 0.2894947874899759,
+                            },
+                        ],
+                    },
+                },
+            },
+        },
+    },
+    {
+        account: {
+            user_profile: {
+                user_id: '206701396811',
+                username: 'sabrinatoday',
+                url: 'https://www.instagram.com/sabrinatoday/',
+                picture:
+                    'https://imgp.sptds.icu/v2?mb0KwpL92uYofJiSjDn1%2F6peL1lBwv3s%2BUvShHERlDZamZ5Z7xQIUNO094fHaxAdH%2FLi7FvrsCM8OWY3OAIdS5Bkpsv19O7aEG65JBlxAMMNrndbn2O8CiEELNhAnI%2FY',
+                fullname: 'Sabrina Bradley | Esthetician',
+                is_verified: true,
+                account_type: 2,
+                followers: 5639210,
+                engagements: 2998,
+                engagement_rate: 0.05344790700991229,
+            },
+            audience_source: 'followers',
+        },
+        match: {
+            user_profile: {
+                language: {
+                    code: 'en',
+                    name: 'English',
+                },
+                geo: {
+                    country: {
+                        id: 148838,
+                        name: 'United States',
+                        code: 'US',
+                        coords: {
+                            lat: 38.89511,
+                            lon: -77.03637,
+                        },
+                    },
+                },
+                relevance: 0.9871517230139086,
+                distance: 0.21732723712921143,
+            },
+            audience_likers: {
+                data: {
+                    audience_geo: {
+                        countries: [
+                            {
+                                id: 148838,
+                                name: 'United States',
+                                code: 'US',
+                                weight: 0.2894947874899759,
+                            },
+                        ],
+                    },
+                },
+            },
+        },
+    },
+    {
+        account: {
+            user_profile: {
+                user_id: '2067013968111',
+                username: 'sabrinatoday',
+                url: 'https://www.instagram.com/sabrinatoday/',
+                picture:
+                    'https://imgp.sptds.icu/v2?mb0KwpL92uYofJiSjDn1%2F6peL1lBwv3s%2BUvShHERlDZamZ5Z7xQIUNO094fHaxAdH%2FLi7FvrsCM8OWY3OAIdS5Bkpsv19O7aEG65JBlxAMMNrndbn2O8CiEELNhAnI%2FY',
+                fullname: 'Sabrina Bradley | Esthetician',
+                is_verified: true,
+                account_type: 2,
+                followers: 56392100,
+                engagements: 2998,
+                engagement_rate: 0.05344790700991229,
+            },
+            audience_source: 'followers',
+        },
+        match: {
+            user_profile: {
+                language: {
+                    code: 'en',
+                    name: 'English',
+                },
+                geo: {
+                    country: {
+                        id: 148838,
+                        name: 'United States',
+                        code: 'US',
+                        coords: {
+                            lat: 38.89511,
+                            lon: -77.03637,
+                        },
+                    },
+                },
+                relevance: 0.9871517230139086,
+                distance: 0.21732723712921143,
+            },
+            audience_likers: {
+                data: {
+                    audience_geo: {
+                        countries: [
+                            {
+                                id: 148838,
+                                name: 'United States',
+                                code: 'US',
+                                weight: 0.2894947874899759,
+                            },
+                        ],
+                    },
+                },
+            },
+        },
+    },
+    {
+        account: {
+            user_profile: {
+                user_id: '20670139681111',
+                username: 'sabrinatoday',
+                url: 'https://www.instagram.com/sabrinatoday/',
+                picture:
+                    'https://imgp.sptds.icu/v2?mb0KwpL92uYofJiSjDn1%2F6peL1lBwv3s%2BUvShHERlDZamZ5Z7xQIUNO094fHaxAdH%2FLi7FvrsCM8OWY3OAIdS5Bkpsv19O7aEG65JBlxAMMNrndbn2O8CiEELNhAnI%2FY',
+                fullname: 'Sabrina Bradley | Esthetician',
+                is_verified: true,
+                account_type: 2,
+                followers: 560921010,
+                engagements: 2998,
+                engagement_rate: 0.05344790700991229,
+            },
+            audience_source: 'followers',
+        },
+        match: {
+            user_profile: {
+                language: {
+                    code: 'en',
+                    name: 'English',
+                },
+                geo: {
+                    country: {
+                        id: 148838,
+                        name: 'United States',
+                        code: 'US',
+                        coords: {
+                            lat: 38.89511,
+                            lon: -77.03637,
+                        },
+                    },
+                },
+                relevance: 0.9871517230139086,
+                distance: 0.21732723712921143,
+            },
+            audience_likers: {
+                data: {
+                    audience_geo: {
+                        countries: [
+                            {
+                                id: 148838,
+                                name: 'United States',
+                                code: 'US',
+                                weight: 0.2894947874899759,
+                            },
+                        ],
+                    },
+                },
+            },
+        },
+    },
+    {
+        account: {
+            user_profile: {
+                user_id: '206701396811111',
+                username: 'sabrinatoday',
+                url: 'https://www.instagram.com/sabrinatoday/',
+                picture:
+                    'https://imgp.sptds.icu/v2?mb0KwpL92uYofJiSjDn1%2F6peL1lBwv3s%2BUvShHERlDZamZ5Z7xQIUNO094fHaxAdH%2FLi7FvrsCM8OWY3OAIdS5Bkpsv19O7aEG65JBlxAMMNrndbn2O8CiEELNhAnI%2FY',
+                fullname: 'Sabrina Bradley | Esthetician',
+                is_verified: true,
+                account_type: 2,
+                followers: 5609210100,
+                engagements: 2998,
+                engagement_rate: 0.05344790700991229,
+            },
+            audience_source: 'followers',
+        },
+        match: {
+            user_profile: {
+                language: {
+                    code: 'en',
+                    name: 'English',
+                },
+                geo: {
+                    country: {
+                        id: 148838,
+                        name: 'United States',
+                        code: 'US',
+                        coords: {
+                            lat: 38.89511,
+                            lon: -77.03637,
+                        },
+                    },
+                },
+                relevance: 0.9871517230139086,
+                distance: 0.21732723712921143,
+            },
+            audience_likers: {
+                data: {
+                    audience_geo: {
+                        countries: [
+                            {
+                                id: 148838,
+                                name: 'United States',
+                                code: 'US',
+                                weight: 0.2894947874899759,
+                            },
+                        ],
+                    },
+                },
+            },
+        },
+    },
 ];
 
 export const reportExample = {
@@ -190,7 +455,7 @@ export const reportExample = {
             code: 'en',
             name: 'English',
         },
-        followers: 56092,
+        followers: 56,
         posts_count: 849,
         engagements: 2998,
         engagement_rate: 0.053448,

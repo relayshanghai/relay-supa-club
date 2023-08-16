@@ -17,12 +17,12 @@ describe('numberFormatter', () => {
     });
     it('should format large numbers with abbreviations and use two decimals after zero max', () => {
         expect(numberFormatter(1000)).toBe('1K');
-        expect(numberFormatter(1000000)).toBe('1M');
-        expect(numberFormatter(1000000000)).toBe('1B');
-        expect(numberFormatter(1000000000000)).toBe('1T');
+        expect(numberFormatter(1000000)).toBe('1M+');
+        expect(numberFormatter(1000000000)).toBe('1B+');
+        expect(numberFormatter(1000000000000)).toBe('1T+');
         // decimals
         expect(numberFormatter(1222.22)).toBe('1.22K');
-        expect(numberFormatter(1333300)).toBe('1.33M');
+        expect(numberFormatter(1333300)).toBe('1.33M+');
     });
     it('should not return zero as null', () => {
         expect(numberFormatter(0)).toBe('0');
