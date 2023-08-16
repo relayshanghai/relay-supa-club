@@ -116,7 +116,7 @@ export const InboxPage = () => {
                 ) : (
                     <>
                         {messages.length === 0 && !isLoading && <p>{t('inbox.noMessagesInMailbox')}</p>}
-                        <div className="h-full w-[240px] overflow-auto">
+                        <div className="h-full w-[320px] overflow-auto">
                             {messages.length > 0 && (
                                 <>
                                     <ToolBar
@@ -128,12 +128,14 @@ export const InboxPage = () => {
                                     {searchResults.length > 0 ? (
                                         <PreviewSection
                                             messages={searchResults}
+                                            selectedMessages={selectedMessages}
                                             handleGetThreadEmails={handleGetThreadEmails}
                                             loadingSelectedMessages={loadingSelectedMessages}
                                         />
                                     ) : (
                                         <PreviewSection
                                             messages={filteredMessages}
+                                            selectedMessages={selectedMessages}
                                             handleGetThreadEmails={handleGetThreadEmails}
                                             loadingSelectedMessages={loadingSelectedMessages}
                                         />

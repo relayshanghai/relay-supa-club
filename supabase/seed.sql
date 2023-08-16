@@ -107,7 +107,7 @@ OR REPLACE FUNCTION create_profile(
       (id, email, last_name, first_name, user_role, company_id, email_engine_account_id, sequence_send_email)
     VALUES
       (user_id, email, last_name, first_name, _role, company_id, 
-      '7p6sbk0gehwm59vo', 'relayemailertest@gmail.com')
+      'e7ustgsqqvy9al6f', 'relayemailertest@gmail.com')
     RETURNING * INTO _row;
     RETURN _row;
   END;
@@ -678,6 +678,8 @@ DECLARE
   _influencer_post_bob_2 RECORD;
   _sequence_step_outreach RECORD;
   _sequence_step_follow_up_1 RECORD;
+  _sequence_step_follow_up_2 RECORD;
+  _sequence_step_follow_up_3 RECORD;
   _sequence_influencer_daniel RECORD;
   _sequence_influencer_felicia RECORD;
   _sequence_influencer_georgia RECORD;
@@ -720,7 +722,7 @@ BEGIN
   _sequence_step_outreach := create_sequence_steps(
     _sequence_general.id,
     'Outreach',
-    'AAABifKnqdUAAAAC',
+    'AAABiYr-poEAAAAC',
     0,
     0
   );
@@ -728,21 +730,21 @@ BEGIN
   _sequence_step_follow_up_1 := create_sequence_steps(
     _sequence_general.id,
     '1st Follow-up',
-    'AAABifKoR7kAAAAD',
+    'AAABiYsMUIAAAAAD',
     1,
     24
   );
-  _sequence_step_follow_up_1 := create_sequence_steps(
+  _sequence_step_follow_up_2 := create_sequence_steps(
     _sequence_general.id,
     '2nd Follow-up',
-    'AAABifKoR7kAAAAD',
+    'AAABieM0bMMAAAAE',
     2,
     48
   );  
-  _sequence_step_follow_up_1 := create_sequence_steps(
+  _sequence_step_follow_up_3 := create_sequence_steps(
     _sequence_general.id,
     '3rd Follow-up',
-    'AAABifKoR7kAAAAD',
+    'AAABieM1AhgAAAAF',
     3,
     72
   );  

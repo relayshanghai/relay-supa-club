@@ -12,10 +12,9 @@ describe('outreach', () => {
     });
     it('sequence page', () => {
         cy.contains('Sequences').click();
-        cy.contains('General collaboration').click();
+        cy.contains('General collaboration', { timeout: 10000 }).click();
 
         // Sequence title row
-        cy.contains('General collaboration', { timeout: 10000 }).click();
         cy.contains('Auto-start', { timeout: 10000 });
         cy.contains('button', 'Update template variables');
 
