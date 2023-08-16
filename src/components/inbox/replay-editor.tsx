@@ -26,7 +26,7 @@ export const ReplayEditor = ({
                 value={replyMessage}
                 onChange={(e) => handleInputChange(e)}
             />
-            <div className="absolute bottom-3 left-3 ">
+            <div className="absolute bottom-3 left-3 focus:outline-none focus:ring-2 focus:ring-primary-500">
                 <button className="px-3 py-2" type="submit" onClick={() => handleSubmit(replyMessage)}>
                     <Send className="h-4 w-4 shrink-0 stroke-gray-400 stroke-2 hover:stroke-primary-500" />
                 </button>

@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { sendReply } from 'src/utils/api/email-engine/handle-messages';
 import { clientLogger } from 'src/utils/logger-client';
 import { EmailHeader } from './email-header';
+import { replaceNewlinesAndTabs } from '../sequences/helpers';
 
 export const CorrespondenceSection = ({
     selectedMessages,
@@ -26,7 +27,7 @@ export const CorrespondenceSection = ({
                 message: selectedMessages[selectedMessages.length - 1].id,
                 action: 'reply',
             },
-            html: replyMessage,
+            html: replaceNewlinesAndTabs(replyMessage),
         };
         try {
             await sendReply(replyBody);
