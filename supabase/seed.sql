@@ -107,7 +107,7 @@ OR REPLACE FUNCTION create_profile(
       (id, email, last_name, first_name, user_role, company_id, email_engine_account_id, sequence_send_email)
     VALUES
       (user_id, email, last_name, first_name, _role, company_id, 
-      'e7ustgsqqvy9al6f', 'relayemailertest@gmail.com')
+      'e7ustgsqqvy9al6f', 'tech.relay.club@gmail.com')
     RETURNING * INTO _row;
     RETURN _row;
   END;
@@ -465,7 +465,8 @@ BEGIN
     created_at,
     name,
     email,
-    avatar_url
+    avatar_url,
+    recent_video_title
   )
   VALUES (
     uuid_generate_v4(),
@@ -477,7 +478,8 @@ BEGIN
     now(),
     _name,
     _email,
-    _avatar_url
+    _avatar_url,
+    'Recent Video Title'
   )
   RETURNING * INTO _row;
   RETURN _row;
