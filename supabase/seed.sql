@@ -719,7 +719,7 @@ BEGIN
   _sequence_step_outreach := create_sequence_steps(
     _sequence_general.id,
     'Outreach',
-    'AAABiYr-poEAAAAC',
+    'AAABifKnqdUAAAAC',
     0,
     0
   );
@@ -727,21 +727,21 @@ BEGIN
   _sequence_step_follow_up_1 := create_sequence_steps(
     _sequence_general.id,
     '1st Follow-up',
-    'AAABiYsMUIAAAAAD',
+    'AAABifKoR7kAAAAD',
     1,
     24
   );
   _sequence_step_follow_up_1 := create_sequence_steps(
     _sequence_general.id,
     '2nd Follow-up',
-    'AAABieM0bMMAAAAE',
+    'AAABifKoR7kAAAAD',
     2,
     48
   );  
   _sequence_step_follow_up_1 := create_sequence_steps(
     _sequence_general.id,
     '3rd Follow-up',
-    'AAABieM1AhgAAAAF',
+    'AAABifKoR7kAAAAD',
     3,
     72
   );  
