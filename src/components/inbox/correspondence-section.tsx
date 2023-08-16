@@ -1,6 +1,6 @@
 import type { SearchResponseMessage } from 'types/email-engine/account-account-search-post';
 import { Spinner } from '../icons';
-import { Email } from './Email.1';
+import { Email } from './Email';
 import { Threads } from './Threads';
 import { ReplayEditor } from './replay-editor';
 import { useState } from 'react';
