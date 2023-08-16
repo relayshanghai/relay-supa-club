@@ -120,12 +120,14 @@ export const InboxPage = () => {
                                     {searchResults.length > 0 ? (
                                         <PreviewSection
                                             messages={searchResults}
+                                            selectedMessages={selectedMessages}
                                             handleGetThreadEmails={handleGetThreadEmails}
                                             loadingSelectedMessages={loadingSelectedMessages}
                                         />
                                     ) : (
                                         <PreviewSection
                                             messages={filteredMessages}
+                                            selectedMessages={selectedMessages}
                                             handleGetThreadEmails={handleGetThreadEmails}
                                             loadingSelectedMessages={loadingSelectedMessages}
                                         />
