@@ -6,4 +6,5 @@ export const createSubscriptionErrors = {
     missingPriceId: 'missingPriceId',
     noPaymentMethod: 'noPaymentMethod',
     alreadySubscribed: 'alreadySubscribed',
+    termsNotChecked: 'termsNotChecked',
 };
