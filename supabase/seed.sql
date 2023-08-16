@@ -107,7 +107,7 @@ OR REPLACE FUNCTION create_profile(
       (id, email, last_name, first_name, user_role, company_id, email_engine_account_id, sequence_send_email)
     VALUES
       (user_id, email, last_name, first_name, _role, company_id, 
-      '7p6sbk0gehwm59vo', 'relayemailertest@gmail.com')
+      'e7ustgsqqvy9al6f', 'relayemailertest@gmail.com')
     RETURNING * INTO _row;
     RETURN _row;
   END;
