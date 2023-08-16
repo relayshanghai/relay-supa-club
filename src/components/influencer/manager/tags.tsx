@@ -1,5 +1,4 @@
-import { SelectMultipleDropdown } from '../../library/select-multiple-dropdown';
-import { type FunnelStatus } from 'src/utils/api/db/types';
+import { type CommonStatusType, SelectMultipleDropdown } from '../../library/select-multiple-dropdown';
 
 const tags = {
     fashion: {
@@ -16,8 +15,8 @@ export const Tags = ({
     filters,
     onSetFilters,
 }: {
-    filters: FunnelStatus[];
-    onSetFilters: (filters: FunnelStatus[]) => void;
+    filters: CommonStatusType[];
+    onSetFilters: (filters: CommonStatusType[]) => void;
 }) => {
     return (
         <div className="flex flex-col">

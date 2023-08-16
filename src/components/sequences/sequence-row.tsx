@@ -194,14 +194,16 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                         <td className="whitespace-nowrap px-6 py-4 align-middle font-semibold text-gray-600">
                             {currentStep?.name}
                         </td>
-                        <div
-                            className={`flex w-fit flex-row items-center justify-center gap-2 rounded-lg px-3 py-2 text-center ${
-                                EMAIL_STATUS_STYLES[getStatus(sequenceEmail) || 'Default']
-                            }`}
-                        >
-                            <Icons status={getStatus(sequenceEmail)} />
-                            {getStatus(sequenceEmail)}
-                        </div>
+                        <td className="whitespace-nowrap px-6 py-4 align-middle">
+                            <p
+                                className={`flex w-fit select-none flex-row items-center justify-center gap-2 rounded-lg px-3 py-2 text-center ${
+                                    EMAIL_STATUS_STYLES[getStatus(sequenceEmail) || 'Default'].style
+                                }`}
+                            >
+                                <Icons status={getStatus(sequenceEmail)} />
+                                {getStatus(sequenceEmail)}
+                            </p>
+                        </td>
                         <td className="whitespace-nowrap px-6 py-4 text-gray-600">
                             {sequenceEmail?.email_send_at &&
                                 new Date(sequenceEmail?.email_send_at).toLocaleDateString(i18n.language, {
@@ -245,14 +247,14 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                                 })}
                         </td>
                         <td className={`whitespace-nowrap px-6 py-4`}>
-                            <div
-                                className={`flex w-fit flex-row items-center justify-center gap-2 rounded-lg px-3 py-2 text-center ${
-                                    EMAIL_STATUS_STYLES[getStatus(sequenceEmail) || 'Default']
+                            <p
+                                className={`flex w-fit select-none flex-row items-center justify-center gap-2 rounded-lg px-3 py-2 text-center ${
+                                    EMAIL_STATUS_STYLES[getStatus(sequenceEmail) || 'Default'].style
                                 }`}
                             >
                                 <Icons status={getStatus(sequenceEmail)} />
                                 {getStatus(sequenceEmail)}
-                            </div>
+                            </p>
                         </td>
                         {/* TODO */}
                         {/* <td className=" whitespace-nowrap px-6 py-4 text-gray-600">

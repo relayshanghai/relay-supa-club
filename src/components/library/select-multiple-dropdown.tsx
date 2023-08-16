@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronDown, FilterFunnel } from 'src/components/icons';
-import { type FunnelStatus } from 'src/utils/api/db/types';
+import type { FunnelStatus, EmailTrackingStatus, EmailDeliveryStatus } from 'src/utils/api/db/types';
 
 export type MultipleDropdownObject = {
     [key: string]: {
@@ -9,6 +9,8 @@ export type MultipleDropdownObject = {
         style?: string;
     };
 };
+
+export type CommonStatusType = FunnelStatus | EmailDeliveryStatus | EmailTrackingStatus;
 
 export const SelectMultipleDropdown = ({
     text,
@@ -18,8 +20,8 @@ export const SelectMultipleDropdown = ({
 }: {
     text: string;
     options: MultipleDropdownObject | any;
-    selectedOptions: FunnelStatus[] | any[];
-    setSelectedOptions: (filters: FunnelStatus[]) => void;
+    selectedOptions: CommonStatusType[] | any[];
+    setSelectedOptions: (filters: CommonStatusType[]) => void;
 }) => {
     const detailsRef = useRef<HTMLDetailsElement>(null); // Tracks the details element in the returned JSX
     const { t } = useTranslation();
@@ -53,7 +55,7 @@ export const SelectMultipleDropdown = ({
             className="relative flex w-32 min-w-fit cursor-pointer select-none appearance-none flex-row items-center justify-between gap-2 rounded-md border border-gray-200 bg-white font-medium text-gray-400 ring-1 ring-gray-900 ring-opacity-5 focus:border-primary-500 focus:border-transparent focus:outline-none focus:ring-0 focus:ring-primary-500 sm:w-64 sm:text-sm"
         >
             <summary className={`flex h-full min-w-full flex-row items-center justify-between gap-2`}>
-                <div className="flex flex-row items-center gap-2 px-3 py-1">
+                <section className="flex flex-row items-center gap-2 px-3 py-1">
                     <FilterFunnel className="h-4 w-4 flex-shrink-0 stroke-slate-500" />
                     {selectedOptions.length > 0 ? (
                         selectedOptions.map((selectedOption, _index) => (
@@ -67,7 +69,7 @@ export const SelectMultipleDropdown = ({
                     ) : (
                         <p className="px-2 py-1.5">{text}</p>
                     )}
-                </div>
+                </section>
                 {selectedOptions.length > 0 ? (
                     <p
                         onClick={resetSelection}
@@ -86,7 +88,7 @@ export const SelectMultipleDropdown = ({
                             className="flex cursor-pointer flex-row items-center justify-between rounded-lg px-3 py-2 hover:bg-primary-600 hover:text-slate-100"
                             onMouseDown={(e) => e.stopPropagation()}
                         >
-                            <div className="flex flex-row items-center gap-2">
+                            <section className="flex flex-row items-center gap-2">
                                 <input
                                     type="checkbox"
                                     value={option}
@@ -107,7 +109,7 @@ export const SelectMultipleDropdown = ({
                                 >
                                     {t(`manager.${option}`)}
                                 </p>
-                            </div>
+                            </section>
                             <p>{options[option as FunnelStatus].value}</p>
                         </label>
                     </li>

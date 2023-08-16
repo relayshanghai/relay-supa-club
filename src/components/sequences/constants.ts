@@ -29,13 +29,14 @@ export const sequencesIndexColumns: SequenceIndexColumn[] = [
     'product',
     'sequenceActions',
 ];
+
 export const EMAIL_STATUS_STYLES = {
-    Scheduled: 'bg-yellow-100 text-yellow-500',
-    Delivered: 'bg-green-100 text-green-500',
-    Bounced: 'bg-red-100 text-red-500',
-    Failed: 'bg-red-100 text-red-500',
-    Replied: 'bg-yellow-100 text-red-500',
-    'Link Clicked': 'bg-gray-100 text-red-500',
-    Opened: 'bg-blue-100 text-blue-500',
-    Default: 'bg-gray-100 text-gray-500',
+    Scheduled: { style: 'bg-yellow-100 text-yellow-500' },
+    Delivered: { style: 'bg-green-100 text-green-500' },
+    Bounced: { style: 'bg-red-100 text-red-500' },
+    Failed: { style: 'bg-red-100 text-red-500' },
+    Replied: { style: 'bg-yellow-100 text-red-500' },
+    'Link Clicked': { style: 'bg-gray-100 text-red-500' },
+    Opened: { style: 'bg-blue-100 text-blue-500' },
+    Default: { style: 'bg-gray-100 text-gray-500' },
 };

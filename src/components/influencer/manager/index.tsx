@@ -7,8 +7,7 @@ import { type SequenceInfluencerManagerPage, useSequenceInfluencers } from 'src/
 import { useCallback, useEffect, useState } from 'react';
 import Fuse from 'fuse.js';
 import { useUser } from 'src/hooks/use-user';
-import { type FunnelStatus } from 'src/utils/api/db';
-import { type MultipleDropdownObject } from 'src/components/library';
+import type { CommonStatusType, MultipleDropdownObject } from 'src/components/library';
 import { COLLAB_OPTIONS } from '../constants';
 import { ProfileOverlayScreen } from 'src/components/influencer-profile/screens/profile-overlay-screen';
 import { useTranslation } from 'react-i18next';
@@ -28,7 +27,7 @@ const Manager = () => {
     const [influencers, setInfluencers] = useState<SequenceInfluencerManagerPage[] | undefined>(sequenceInfluencers);
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [onlyMe, setOnlyMe] = useState<boolean>(false);
-    const [filterStatuses, setFilterStatuses] = useState<FunnelStatus[]>([]);
+    const [filterStatuses, setFilterStatuses] = useState<CommonStatusType[]>([]);
     const [isProfileOverlayOpen, setIsProfileOverlayOpen] = useState(false);
     const [_influencer, setInfluencer] = useState<SequenceInfluencerManagerPage | null>(null);
 
@@ -44,8 +43,8 @@ const Manager = () => {
     const setCollabStatusValues = (influencers: SequenceInfluencerManagerPage[], options: MultipleDropdownObject) => {
         const collabOptionsWithValue = options;
         Object.keys(COLLAB_OPTIONS).forEach((option) => {
-            collabOptionsWithValue[option as FunnelStatus] = {
-                ...options[option as FunnelStatus],
+            collabOptionsWithValue[option as CommonStatusType] = {
+                ...options[option as CommonStatusType],
                 value: influencers.filter((x) => x.funnel_status === option).length || 0,
             };
         });
@@ -101,7 +100,7 @@ const Manager = () => {
     );
 
     const handleStatus = useCallback(
-        (filters: FunnelStatus[]) => {
+        (filters: CommonStatusType[]) => {
             setFilterStatuses(filters);
             if (!sequenceInfluencers) {
                 return;
@@ -125,7 +124,7 @@ const Manager = () => {
                 </div>
                 {/* Filters */}
                 <div className="mt-[72px] flex flex-row justify-between">
-                    <div className="flex flex-row gap-5">
+                    <section className="flex flex-row gap-5">
                         <SearchComponent
                             searchTerm={searchTerm}
                             placeholder={t('manager.search')}
@@ -136,7 +135,7 @@ const Manager = () => {
                             filters={filterStatuses}
                             onSetFilters={handleStatus}
                         />
-                    </div>
+                    </section>
                     <OnlyMe state={onlyMe} onSwitch={handleOnlyMe} />
                 </div>
                 {/* Table */}
