@@ -1,7 +1,9 @@
 import type { RelayDatabase, TemplateVariableInsert, TemplateVariableUpdate } from '../types';
 
 export const getTemplateVariablesBySequenceIdCall = (supabaseClient: RelayDatabase) => async (sequenceId: string) => {
-    if (!sequenceId) return;
+    if (!sequenceId) {
+        throw new Error('Sequence ID is required to get template variables');
+    }
     const { data, error } = await supabaseClient.from('template_variables').select('*').eq('sequence_id', sequenceId);
 
     if (error) throw error;

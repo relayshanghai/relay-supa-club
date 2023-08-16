@@ -102,15 +102,20 @@ export type SequenceStepUpdate = SequenceStepsTable['Update'];
 
 export type EmailDeliveryStatus = 'Scheduled' | 'Delivered' | 'Replied' | 'Bounced' | 'Failed';
 export type EmailTrackingStatus = 'Opened' | 'Link Clicked';
-type SequenceEmailDetailedTypes = {
-    email_delivery_status: EmailDeliveryStatus;
-    email_tracking_status: EmailTrackingStatus;
-};
 
 export type SequenceEmailsTable = Database['public']['Tables']['sequence_emails'] & {
-    Row: Database['public']['Tables']['sequence_emails']['Row'] & SequenceEmailDetailedTypes;
-    Insert: Database['public']['Tables']['sequence_emails']['Insert'] & SequenceEmailDetailedTypes;
-    Update: Database['public']['Tables']['sequence_emails']['Update'] & SequenceEmailDetailedTypes;
+    Row: Database['public']['Tables']['sequence_emails']['Row'] & {
+        email_delivery_status: EmailDeliveryStatus;
+        email_tracking_status: EmailTrackingStatus;
+    };
+    Insert: Database['public']['Tables']['sequence_emails']['Insert'] & {
+        email_delivery_status?: EmailDeliveryStatus;
+        email_tracking_status?: EmailTrackingStatus;
+    };
+    Update: Database['public']['Tables']['sequence_emails']['Update'] & {
+        email_delivery_status?: EmailDeliveryStatus;
+        email_tracking_status?: EmailTrackingStatus;
+    };
 };
 
 export type SequenceEmail = SequenceEmailsTable['Row'];

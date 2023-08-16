@@ -39,7 +39,7 @@ export const Tooltip = ({
     tooltipClasses,
 }: TooltipProps) => {
     const [isHovered, setIsHovered] = useState(false);
-
+    if (!content) return <>{children}</>;
     return (
         <div className={`relative ${className}`}>
             <div
