@@ -744,7 +744,7 @@ BEGIN
   _sequence_step_follow_up_3 := create_sequence_steps(
     _sequence_general.id,
     '3rd Follow-up',
-    'AAABifKoR7kAAAAD',
+    'AAABieM1AhgAAAAF',
     3,
     72
   );  
