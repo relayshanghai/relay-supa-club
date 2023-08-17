@@ -81,10 +81,10 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
             const failed = results.filter((result) => result.error);
             const succeeded = results.filter((result) => !result.error);
             if (succeeded.length > 0) {
-                toast.success(t('sequences.emailsSentTo_number_influencers', { number: succeeded.length }));
+                toast.success(t('sequences.number_emailsSuccessfullyScheduled', { number: succeeded.length }));
             }
             if (failed.length > 0) {
-                toast.error(t('sequences.failedToSendTo_number_influencers', { number: failed.length }));
+                toast.error(t('sequences.number_emailsFailedToSchedule', { number: failed.length }));
             }
         } catch (error: any) {
             toast.error(error?.message ?? '');
