@@ -25,7 +25,6 @@ export const searchInfluencersWithContext = withServerContext(searchInfluencers)
 export const bulkSearchInfluencers = async (payloads: SearchInfluencersPayload[]) => {
     const searchInfluencersPromises = payloads.map((payload) => limiter.schedule(() => searchInfluencers(payload)));
     const searchInfluencersResults = await Promise.all(searchInfluencersPromises);
-    console.log('searchInfluencersResults :>> ', searchInfluencersResults);
     const flattenedAccounts = searchInfluencersResults
         .map((result) => result.accounts.map((creator) => creator.account))
         .flat();

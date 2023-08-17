@@ -4,9 +4,15 @@ import { InfluencerRow } from './influencer-row';
 
 interface InfluencersTableProps {
     influencers: Influencer[];
+    handleUnlockInfluencer: (userId: string) => void;
+    loadingInfluencerIds: string[];
 }
 
-export const InfluencersTable = ({ influencers }: InfluencersTableProps) => {
+export const InfluencersTable = ({
+    influencers,
+    handleUnlockInfluencer,
+    loadingInfluencerIds,
+}: InfluencersTableProps) => {
     const { t } = useTranslation();
 
     return (
@@ -23,7 +29,12 @@ export const InfluencersTable = ({ influencers }: InfluencersTableProps) => {
 
             <tbody className="divide-y divide-gray-200 bg-white">
                 {influencers.map((influencer) => (
-                    <InfluencerRow key={influencer.user_id} influencer={influencer} />
+                    <InfluencerRow
+                        key={influencer.user_id}
+                        influencer={influencer}
+                        handleUnlockInfluencer={handleUnlockInfluencer}
+                        isLoading={loadingInfluencerIds.includes(influencer.user_id)}
+                    />
                 ))}
             </tbody>
         </table>

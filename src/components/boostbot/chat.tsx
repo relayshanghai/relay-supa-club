@@ -35,7 +35,8 @@ export const Chat: React.FC<ChatProps> = ({ setInfluencers }) => {
         },
     ]);
     const addMessage = (message: MessageType) => setMessages((messages) => [...messages, message]);
-    const addProgressMessage = (message: MessageType) => setProgressMessages((messages) => [...messages, message]);
+    const addProgressMessage = (content: MessageType['content']) =>
+        setProgressMessages((messages) => [...messages, { sender: 'Bot', content }]);
 
     useEffect(() => {
         if (isLoading) setProgress(30);
@@ -59,17 +60,8 @@ export const Chat: React.FC<ChatProps> = ({ setInfluencers }) => {
             const { topics } = await performFetch<GetTopicsResponse, GetTopicsBody>('get-topics', {
                 productDescription,
             });
-            addProgressMessage({
-                sender: 'Bot',
-                content: (
-                    <>
-                        I found the following topics:{' '}
-                        {topics.slice(0, 3).map((topic) => (
-                            <p key={topic}>#{topic}</p>
-                        ))}
-                    </>
-                ),
-            });
+            const topicList = topics.slice(0, 3).map((topic) => <p key={topic}>#{topic}</p>);
+            addProgressMessage(<>I found the following topics: {topicList}</>);
 
             setProgress(60);
             const { relevantTopics } = await performFetch<GetRelevantTopicsResponse, GetRelevantTopicsBody>(
@@ -82,7 +74,7 @@ export const Chat: React.FC<ChatProps> = ({ setInfluencers }) => {
                 'get-topic-clusters',
                 { productDescription, topics: relevantTopics },
             );
-            addProgressMessage({ sender: 'Bot', content: `Coming up with unique niches that match your product.` });
+            addProgressMessage('Coming up with unique niches that match your product.');
 
             setProgress(90);
             const { influencers } = await performFetch<GetInfluencersResponse, GetInfluencersBody>('get-influencers', {
@@ -90,7 +82,7 @@ export const Chat: React.FC<ChatProps> = ({ setInfluencers }) => {
             });
             setProgress(100);
             setInfluencers(influencers.map((influencer) => influencer.user_profile));
-            addProgressMessage({ sender: 'Bot', content: `${influencers.length} influencers found!` });
+            addProgressMessage(`${influencers.length} influencers found!`);
         } catch (error) {
             clientLogger(error, 'error');
             toast.error('Error fetching boostbot influencers');

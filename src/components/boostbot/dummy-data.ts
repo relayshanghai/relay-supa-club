@@ -4,7 +4,7 @@ export const dummyData: CreatorSearchAccountObject[] = [
     {
         account: {
             user_profile: {
-                user_id: '2067013966',
+                user_id: '2067013967',
                 username: 'sabrinatoday',
                 url: 'https://www.instagram.com/sabrinatoday/',
                 picture:
@@ -437,7 +437,7 @@ export const reportExample = {
     },
     user_profile: {
         type: 'instagram',
-        user_id: '2067013967',
+        user_id: '20670139671230',
         username: 'sabrinatoday',
         url: 'https://www.instagram.com/sabrinatoday',
         picture:

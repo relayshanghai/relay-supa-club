@@ -57,13 +57,13 @@ export const getBulkRelevantTopicTags = async (
     topics: string[],
     params: GetRelevantTopicTagsParams,
 ): Promise<string[]> => {
-    const initialRelatedTopicsPromises = topics.map((topic) =>
+    const relevantTopicTagsPromises = topics.map((topic) =>
         limiter.schedule(() => getRelevantTopicTags({ query: { q: topic, ...params } })),
     );
 
-    const initialRelatedTopicsResult = await Promise.all(initialRelatedTopicsPromises);
+    const relevantTopicTagsResult = await Promise.all(relevantTopicTagsPromises);
 
-    return initialRelatedTopicsResult
+    return relevantTopicTagsResult
         .map((result) => result.data)
         .flat()
         .map((topic) => topic.tag.replace('#', ''))

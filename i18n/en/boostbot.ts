@@ -6,6 +6,7 @@ const boostbot = {
     email: 'Email',
     followers: 'Followers',
     engagementRate: 'Engagement Rate',
+    unlockingInfluencerError: 'Unlocking influencer failed',
 };
 
 export default boostbot;

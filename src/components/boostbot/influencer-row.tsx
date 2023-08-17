@@ -1,26 +1,19 @@
 import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
 import type { Influencer } from 'pages/boostbot';
-import { Instagram } from 'src/components/icons';
+import { Instagram, Spinner } from 'src/components/icons';
 import { LockClosedIcon, LockOpenIcon, UsersIcon, ChartBarIcon } from '@heroicons/react/24/solid';
 import { decimalToPercent, numberFormatter } from 'src/utils/formatter';
 
 interface InfluencerRowProps {
     influencer: Influencer;
+    handleUnlockInfluencer: (userId: string) => void;
+    isLoading: boolean;
 }
 
-export const InfluencerRow = ({ influencer }: InfluencerRowProps) => {
+export const InfluencerRow = ({ influencer, handleUnlockInfluencer, isLoading }: InfluencerRowProps) => {
     const { t } = useTranslation();
-    const {
-        // user_id,
-        username,
-        custom_name,
-        fullname,
-        url = '',
-        picture,
-        followers,
-        engagement_rate,
-    } = influencer;
+    const { user_id, username, custom_name, fullname, url = '', picture, followers, engagement_rate } = influencer;
 
     const handle = username || custom_name || fullname || '';
     const posts = 'top_posts' in influencer && influencer.top_posts && influencer.top_posts.slice(0, 3);
@@ -107,8 +100,13 @@ export const InfluencerRow = ({ influencer }: InfluencerRowProps) => {
                     >
                         {email}
                     </a>
+                ) : isLoading ? (
+                    <Spinner className="h-6 w-6 fill-primary-500 text-white" />
                 ) : (
-                    <div className="group ml-2 table-cell p-1 pl-0 hover:cursor-pointer">
+                    <div
+                        className="group ml-2 table-cell p-1 pl-0 hover:cursor-pointer"
+                        onClick={() => handleUnlockInfluencer(user_id)}
+                    >
                         <LockClosedIcon className="h-6 w-6 fill-primary-500 group-hover:hidden" />
                         <LockOpenIcon className="relative left-[3px] hidden h-6 w-6 fill-primary-500 group-hover:block" />
                     </div>
