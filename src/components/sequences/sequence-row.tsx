@@ -2,7 +2,14 @@
 import { useTranslation } from 'react-i18next';
 import { useInfluencerSocialProfile } from 'src/hooks/use-influencer-social-profile';
 
-import type { SequenceInfluencer, SequenceEmail, SequenceStep, TemplateVariable } from 'src/utils/api/db';
+import type {
+    SequenceInfluencer,
+    SequenceEmail,
+    SequenceStep,
+    TemplateVariable,
+    EmailDeliveryStatus,
+    EmailTrackingStatus,
+} from 'src/utils/api/db';
 import Link from 'next/link';
 import { imgProxy } from 'src/utils/fetcher';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
@@ -30,7 +37,7 @@ interface SequenceRowProps {
     handleStartSequence: (sequenceInfluencers: SequenceInfluencer[]) => Promise<SequenceSendPostResponse>;
 }
 
-const Icons = ({ status }: { status?: string }) => {
+const Icons = ({ status }: { status?: EmailDeliveryStatus | EmailTrackingStatus }) => {
     switch (status) {
         case 'Opened':
             return <EmailOpenOutline className="h-6 w-6 stroke-blue-500" />;
@@ -197,7 +204,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                         <td className="whitespace-nowrap px-6 py-4 align-middle">
                             <p
                                 className={`flex w-fit select-none flex-row items-center justify-center gap-2 rounded-lg px-3 py-2 text-center ${
-                                    EMAIL_STATUS_STYLES[getStatus(sequenceEmail) || 'Default'].style
+                                    EMAIL_STATUS_STYLES[getStatus(sequenceEmail) || 'Scheduled'].style
                                 }`}
                             >
                                 <Icons status={getStatus(sequenceEmail)} />
@@ -249,7 +256,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                         <td className={`whitespace-nowrap px-6 py-4`}>
                             <p
                                 className={`flex w-fit select-none flex-row items-center justify-center gap-2 rounded-lg px-3 py-2 text-center ${
-                                    EMAIL_STATUS_STYLES[getStatus(sequenceEmail) || 'Default'].style
+                                    EMAIL_STATUS_STYLES[getStatus(sequenceEmail) || 'Scheduled'].style
                                 }`}
                             >
                                 <Icons status={getStatus(sequenceEmail)} />

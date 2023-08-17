@@ -38,5 +38,12 @@ export const EMAIL_STATUS_STYLES = {
     Replied: { style: 'bg-yellow-100 text-red-500' },
     'Link Clicked': { style: 'bg-gray-100 text-red-500' },
     Opened: { style: 'bg-blue-100 text-blue-500' },
-    Default: { style: 'bg-gray-100 text-gray-500' },
+};
+
+export const EMAIL_STEPS = {
+    Outreach: {},
+    '1st Follow Up': {},
+    '2nd Follow Up': {},
+    '3rd Follow Up': {},
+    '4th Follow Up': {},
 };

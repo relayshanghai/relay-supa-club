@@ -10,18 +10,20 @@ export type MultipleDropdownObject = {
     };
 };
 
-export type CommonStatusType = FunnelStatus | EmailDeliveryStatus | EmailTrackingStatus;
+export type CommonStatusType = FunnelStatus | EmailDeliveryStatus | EmailTrackingStatus | number;
 
 export const SelectMultipleDropdown = ({
     text,
     options,
     selectedOptions,
     setSelectedOptions,
+    translationPath,
 }: {
     text: string;
     options: MultipleDropdownObject | any;
     selectedOptions: CommonStatusType[] | any[];
     setSelectedOptions: (filters: CommonStatusType[]) => void;
+    translationPath: string;
 }) => {
     const detailsRef = useRef<HTMLDetailsElement>(null); // Tracks the details element in the returned JSX
     const { t } = useTranslation();
@@ -61,9 +63,11 @@ export const SelectMultipleDropdown = ({
                         selectedOptions.map((selectedOption, _index) => (
                             <p
                                 key={selectedOption}
-                                className={`rounded text-xs font-medium ${options[selectedOption].style} whitespace-nowrap px-2 py-2`}
+                                className={`rounded text-xs font-medium ${
+                                    options[selectedOption]?.style || ''
+                                } whitespace-nowrap px-2 py-2`}
                             >
-                                {t(`manager.${selectedOption}`)}
+                                {t(`${translationPath}.${selectedOption}`)}
                             </p>
                         ))
                     ) : (
@@ -81,7 +85,7 @@ export const SelectMultipleDropdown = ({
                     <ChevronDown className="mr-2 h-6 w-6 flex-shrink-0" />
                 )}
             </summary>
-            <ul className="absolute mt-2 w-full select-none rounded-lg border bg-white text-sm shadow-lg">
+            <ul className="absolute z-10 mt-2 w-full select-none rounded-lg border bg-white text-sm shadow-lg">
                 {Object.keys(options).map((option) => (
                     <li key={option}>
                         <label
@@ -104,13 +108,13 @@ export const SelectMultipleDropdown = ({
                                 />
                                 <p
                                     className={`${
-                                        options[option as FunnelStatus].style
+                                        options[option as CommonStatusType]?.style || ''
                                     } whitespace-nowrap rounded-md px-3 py-2 text-xs`}
                                 >
-                                    {t(`manager.${option}`)}
+                                    {t(`${translationPath}.${option}`)}
                                 </p>
                             </section>
-                            <p>{options[option as FunnelStatus].value}</p>
+                            <p>{options[option as CommonStatusType].value}</p>
                         </label>
                     </li>
                 ))}

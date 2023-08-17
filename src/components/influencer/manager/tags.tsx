@@ -26,6 +26,7 @@ export const Tags = ({
                 selectedOptions={filters}
                 setSelectedOptions={onSetFilters}
                 options={tags}
+                translationPath="manager"
             />
         </div>
     );

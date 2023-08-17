@@ -22,6 +22,7 @@ export const CollabStatus = ({
                 options={collabOptions}
                 selectedOptions={filters}
                 setSelectedOptions={onSetFilters}
+                translationPath="manager"
             />
         </div>
     );

@@ -37,6 +37,23 @@ const sequences = {
     },
     addEmail: '添加邮件',
     newSequence: '新建序列',
+    steps: {
+        filter: '按KOL联络进展筛选',
+        Outreach: '首封外联邮件',
+        '1st Follow Up': '第一次跟进',
+        '2nd Follow Up': '第二次跟进',
+        '3rd Follow Up': '第三次跟进',
+        '4th Follow Up': '第四次跟进',
+    },
+    status: {
+        Scheduled: '邮件已预约',
+        Delivered: '邮件已送达',
+        Bounced: '邮件已退回',
+        Opened: '邮件已打开',
+        Replied: '邮件已回复',
+        'Link Clicked': '邮件已点击',
+        Failed: '邮件发送失败',
+    },
     indexColumns: {
         sequence: '项目',
         influencers: 'KOL总数',

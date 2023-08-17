@@ -15,11 +15,10 @@ export const Table = ({
 }) => {
     const [page, setPage] = useState(0);
 
-    const [filteredInfluencers, _setFilteredInfluencers] = useState(
+    const filteredInfluencers =
         influencers && influencers.length > 0
             ? influencers.filter((influencer) => Object.keys(COLLAB_OPTIONS).includes(influencer.funnel_status))
-            : [],
-    );
+            : [];
     const totalPages = Math.ceil((filteredInfluencers?.length || 0) / TABLE_LIMIT);
 
     const { t } = useTranslation();
