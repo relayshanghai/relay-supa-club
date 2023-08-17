@@ -12,10 +12,9 @@ describe('outreach', () => {
     });
     it('sequence page', () => {
         cy.contains('Sequences').click();
-        cy.contains('General collaboration').click();
+        cy.contains('General collaboration', { timeout: 10000 }).click();
 
         // Sequence title row
-        cy.contains('General collaboration', { timeout: 10000 }).click();
         cy.contains('Auto-start', { timeout: 10000 });
         cy.contains('button', 'Update template variables');
 
@@ -128,7 +127,7 @@ describe('outreach', () => {
         // can send sequence
 
         cy.getByTestId('send-email-button-bob.brown@example.com').trigger('mouseover');
-        cy.contains('Missing required template variables: Product Description').should('not.be.visible');
+        cy.contains('Missing required template variables: Product Description').should('not.exist');
 
         // reset the empty template variable so you can run the test again if need be
         cy.contains('button', 'Update template variables').click();
@@ -148,7 +147,7 @@ describe('outreach', () => {
         cy.contains('General collaboration').click({ force: true }); // click out of modal
 
         // can view next email preview.
-        cy.contains('In sequence').click();
+        cy.contains('button', 'In sequence').click();
         cy.contains('button', '1st Follow-up').click();
         cy.getByTestId('email-preview-modal-spinner');
         cy.contains('Hope you had a chance to think about our Widget X collab. Still think we’d make a great team!', {

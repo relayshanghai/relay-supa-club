@@ -17,6 +17,7 @@ import {
 import { useMessages } from 'src/hooks/use-message';
 import { GMAIL_SEEN_SPECIAL_USE_FLAG } from 'src/utils/api/email-engine/prototype-mocks';
 import { useTranslation } from 'react-i18next';
+import { useUser } from 'src/hooks/use-user';
 
 export const InboxPage = () => {
     const [messages, setMessages] = useState<MessagesGetMessage[]>([]);
@@ -43,6 +44,7 @@ export const InboxPage = () => {
         }
         return messages;
     }, [messages, selectedTab]);
+    const { profile } = useUser();
 
     useEffect(() => {
         if (searchTerm === '') {
@@ -61,8 +63,11 @@ export const InboxPage = () => {
         setLoadingSelectedMessages(true);
         setGetSelectedMessagesError('');
         try {
-            const inboxThreadMessages = await getInboxThreadMessages(message);
-            const sentThreadMessages = await getSentThreadMessages(message);
+            if (!profile?.email_engine_account_id) {
+                throw new Error('No email account');
+            }
+            const inboxThreadMessages = await getInboxThreadMessages(message, profile.email_engine_account_id);
+            const sentThreadMessages = await getSentThreadMessages(message, profile.email_engine_account_id);
             const threadMessages = inboxThreadMessages.concat(sentThreadMessages);
             threadMessages.sort((a, b) => {
                 return new Date(a.date).getTime() - new Date(b.date).getTime();
@@ -85,10 +90,13 @@ export const InboxPage = () => {
             return !message.flags.includes(GMAIL_SEEN_SPECIAL_USE_FLAG);
         });
         unSeenMessages.forEach(async (message) => {
-            await updateMessageAsSeen(message.id);
+            if (!profile?.email_engine_account_id) {
+                return;
+            }
+            await updateMessageAsSeen(message.id, profile.email_engine_account_id);
             refreshInboxMessages();
         });
-    }, [refreshInboxMessages, selectedMessages]);
+    }, [refreshInboxMessages, selectedMessages, profile?.email_engine_account_id]);
 
     //Show the first message in the list when the page loads by default
     useEffect(() => {
@@ -108,7 +116,7 @@ export const InboxPage = () => {
                 ) : (
                     <>
                         {messages.length === 0 && !isLoading && <p>{t('inbox.noMessagesInMailbox')}</p>}
-                        <div className="h-full w-[240px] overflow-auto">
+                        <div className="h-full w-[320px] overflow-auto">
                             {messages.length > 0 && (
                                 <>
                                     <ToolBar
@@ -120,12 +128,14 @@ export const InboxPage = () => {
                                     {searchResults.length > 0 ? (
                                         <PreviewSection
                                             messages={searchResults}
+                                            selectedMessages={selectedMessages}
                                             handleGetThreadEmails={handleGetThreadEmails}
                                             loadingSelectedMessages={loadingSelectedMessages}
                                         />
                                     ) : (
                                         <PreviewSection
                                             messages={filteredMessages}
+                                            selectedMessages={selectedMessages}
                                             handleGetThreadEmails={handleGetThreadEmails}
                                             loadingSelectedMessages={loadingSelectedMessages}
                                         />
