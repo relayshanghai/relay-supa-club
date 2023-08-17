@@ -1,3 +1,4 @@
+import type { DefaultTemplateVariableKey } from 'src/hooks/use-template_variables';
 import { useTemplateVariables } from 'src/hooks/use-template_variables';
 import { Modal, type ModalProps } from '../modal';
 import { useTranslation } from 'react-i18next';
@@ -13,7 +14,7 @@ export interface TemplateVariablesModalProps extends Omit<ModalProps, 'children'
     sequenceId?: string;
 }
 const prepareTemplateVariables = (templateVariables: TemplateVariable[], sequenceId?: string) => {
-    const blankVariable: (key: string) => TemplateVariableInsert = (key) => ({
+    const blankVariable: (key: DefaultTemplateVariableKey) => TemplateVariableInsert = (key) => ({
         key,
         value: '',
         name: '',
@@ -47,7 +48,7 @@ const prepareTemplateVariables = (templateVariables: TemplateVariable[], sequenc
         influencerNiche,
     };
 };
-type VariableKey = keyof ReturnType<typeof prepareTemplateVariables>;
+
 const VariableInput = ({
     variableKey,
     variables,
@@ -56,9 +57,9 @@ const VariableInput = ({
     placeholder,
     readOnly,
 }: {
-    variableKey: VariableKey;
+    variableKey: DefaultTemplateVariableKey;
     variables: ReturnType<typeof prepareTemplateVariables>;
-    setKey: (key: VariableKey, value: string) => void;
+    setKey: (key: DefaultTemplateVariableKey, value: string) => void;
     tooltipLeft?: boolean;
     placeholder?: string | null;
     readOnly?: boolean;
@@ -106,7 +107,7 @@ export const TemplateVariablesModal = ({ sequenceId, ...props }: TemplateVariabl
     }, [templateVariables, sequenceId]);
     const [variables, setVariables] = useState(prepareTemplateVariables(templateVariables ?? []));
 
-    const setKey = (key: VariableKey, value: string) => {
+    const setKey = (key: DefaultTemplateVariableKey, value: string) => {
         if (!variables[key]) return;
         setVariables({ ...variables, [key]: { ...variables[key], value: value } });
     };
@@ -124,7 +125,7 @@ export const TemplateVariablesModal = ({ sequenceId, ...props }: TemplateVariabl
                     return updateTemplateVariable({ ...existingRecord, value: variable.value });
                 }
 
-                return insertTemplateVariable(variable);
+                return insertTemplateVariable([variable]);
             });
 
             await Promise.all(updates).catch((error) => {
