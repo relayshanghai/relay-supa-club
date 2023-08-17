@@ -71,6 +71,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
     const { i18n, t } = useTranslation();
     const [email, setEmail] = useState(sequenceInfluencer.email ?? '');
     const [showEmailPreview, setShowEmailPreview] = useState<SequenceStep[] | null>(null);
+    const [sendingEmail, setSendingEmail] = useState(false);
 
     const handleEmailUpdate = async (email: string) => {
         const updatedSequenceInfluencer = await updateSequenceInfluencer({ id: sequenceInfluencer.id, email });
@@ -78,6 +79,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
     };
     const currentStep = sequenceSteps?.find((step) => step.step_number === sequenceInfluencer.sequence_step);
     const handleStart = async () => {
+        setSendingEmail(true);
         try {
             const results = await handleStartSequence([sequenceInfluencer]);
             const failed = results.filter((result) => result.error);
@@ -91,6 +93,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
         } catch (error: any) {
             toast.error(error?.message ?? '');
         }
+        setSendingEmail(false);
     };
     return (
         <>
@@ -164,6 +167,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                                 position="left"
                             >
                                 <Button
+                                    disabled={!sequenceInfluencer?.email || sendingEmail}
                                     data-testid={`send-email-button-${sequenceInfluencer.email}`}
                                     onClick={
                                         isMissingVariables ? () => setShowUpdateTemplateVariables(true) : handleStart
