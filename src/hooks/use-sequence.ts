@@ -52,7 +52,7 @@ export const useSequence = (sequenceId?: string) => {
             throw new Error('No email account found');
         }
         const body: SequenceSendPostBody = {
-            account: profile?.email_engine_account_id,
+            account: profile.email_engine_account_id,
             sequenceInfluencers,
         };
         return await nextFetch<SequenceSendPostResponse>('sequence/send', {
