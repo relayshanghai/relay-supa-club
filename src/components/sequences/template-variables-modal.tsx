@@ -164,12 +164,20 @@ export const TemplateVariablesModal = ({ sequenceId, ...props }: TemplateVariabl
 
             <h4 className="font-semibold text-gray-700">{t('sequences.product')}</h4>
 
-            <VariableInput
-                variableKey="productName"
-                setKey={setKey}
-                variables={variables}
-                placeholder={t('sequences.productNamePlaceholder')}
-            />
+            <div className="flex justify-between gap-6">
+                <VariableInput
+                    variableKey="productName"
+                    setKey={setKey}
+                    variables={variables}
+                    placeholder={t('sequences.productNamePlaceholder')}
+                />
+                <VariableInput
+                    variableKey="productPrice"
+                    setKey={setKey}
+                    variables={variables}
+                    placeholder={t('sequences.productPricePlaceholder')}
+                />
+            </div>
             <VariableInput
                 variableKey="productLink"
                 setKey={setKey}

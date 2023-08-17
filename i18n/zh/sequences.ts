@@ -106,6 +106,7 @@ const sequences = {
     最好输入整数，以便让模板看起来更加简洁。
     
     这将会直接显示于您的电子邮件模版中，单位格式为 $。`,
+    productPricePlaceholder: '99.9',
     influencer: 'KOL',
     influencerNiche: 'KOL所在领域',
     influencerNichePlaceholder: 'Productivity Hackers',
