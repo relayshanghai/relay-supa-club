@@ -2,11 +2,13 @@ import type { SearchResponseMessage } from 'types/email-engine/account-account-s
 import { Spinner } from '../icons';
 import { Email } from './Email';
 import { Threads } from './Threads';
-import { ReplayEditor } from './replay-editor';
+import { ReplyEditor } from './reply-editor';
 import { useState } from 'react';
 import { sendReply } from 'src/utils/api/email-engine/handle-messages';
 import { clientLogger } from 'src/utils/logger-client';
 import { EmailHeader } from './email-header';
+import { replaceNewlinesAndTabs } from '../sequences/helpers';
+import { useUser } from 'src/hooks/use-user';
 
 export const CorrespondenceSection = ({
     selectedMessages,
@@ -16,8 +18,12 @@ export const CorrespondenceSection = ({
     loadingSelectedMessages: boolean;
 }) => {
     const [replyMessage, setReplyMessage] = useState<string>('');
+    const { profile } = useUser();
 
     const handleSubmit = async (replyMessage: string) => {
+        if (!profile?.email_engine_account_id) {
+            throw new Error('No email account');
+        }
         if (replyMessage === '') {
             return;
         }
@@ -26,10 +32,10 @@ export const CorrespondenceSection = ({
                 message: selectedMessages[selectedMessages.length - 1].id,
                 action: 'reply',
             },
-            html: replyMessage,
+            html: replaceNewlinesAndTabs(replyMessage),
         };
         try {
-            await sendReply(replyBody);
+            await sendReply(replyBody, profile?.email_engine_account_id);
             setReplyMessage('');
         } catch (error) {
             clientLogger(error, 'error');
@@ -44,15 +50,16 @@ export const CorrespondenceSection = ({
                 </div>
             ) : (
                 <div className="flex h-full flex-col overflow-y-auto">
-                    <EmailHeader messages={selectedMessages} />
-                    {selectedMessages.length > 1 ? (
-                        <Threads messages={selectedMessages} />
-                    ) : (
-                        <>{selectedMessages.length > 0 && <Email message={selectedMessages[0]} />}</>
-                    )}
-
+                    <div className="flex-1 overflow-auto">
+                        <EmailHeader messages={selectedMessages} />
+                        {selectedMessages.length > 1 ? (
+                            <Threads messages={selectedMessages} />
+                        ) : (
+                            <>{selectedMessages.length > 0 && <Email message={selectedMessages[0]} />}</>
+                        )}
+                    </div>
                     <div className="justify-self-end px-6 pb-4">
-                        <ReplayEditor
+                        <ReplyEditor
                             replyMessage={replyMessage}
                             setReplyMessage={setReplyMessage}
                             handleSubmit={handleSubmit}

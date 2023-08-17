@@ -1,12 +1,14 @@
 import type { ListEmailsPostRequestBody, ListEmailsPostResponseBody } from 'pages/api/email-engine/list-emails';
-import { GMAIL_INBOX, testAccount } from 'src/utils/api/email-engine/prototype-mocks';
+import { GMAIL_INBOX } from 'src/utils/api/email-engine/prototype-mocks';
 import { nextFetch } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
 import useSWR from 'swr';
+import { useUser } from './use-user';
 
 export const useMessages = () => {
+    const { profile } = useUser();
     const body: ListEmailsPostRequestBody = {
-        account: testAccount,
+        account: profile?.email_engine_account_id || '',
         mailboxPath: GMAIL_INBOX,
     };
 
@@ -16,7 +18,7 @@ export const useMessages = () => {
         isLoading,
         error,
     } = useSWR(
-        'email-engine/list-emails',
+        profile?.email_engine_account_id ? 'email-engine/list-emails' : null,
         () =>
             nextFetch<ListEmailsPostResponseBody>('email-engine/list-emails', {
                 method: 'POST',
