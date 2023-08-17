@@ -2,7 +2,7 @@ import type { HTMLAttributes } from 'react';
 import { Note } from './note';
 
 type Props = {
-    //
+    notes: any;
 } & HTMLAttributes<HTMLDivElement>;
 
 export const NotesList = (props: Props) => {

@@ -91,7 +91,7 @@ export const ProfileNotesTab = ({ profile, ...props }: Props) => {
         // load posts when the modal is opened
         if (getNotes.isLoading !== null) return;
 
-        getNotes.call(profile.id, { current_user_only: 1 }).then((notes) => {
+        getNotes.call(profile.id, { current_user_only: 1 }).then((notes: any) => {
             const _notes = notes[0] ?? { comment: '' };
             onUpdate('notes', _notes.comment);
         });

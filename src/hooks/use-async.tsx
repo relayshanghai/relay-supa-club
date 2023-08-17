@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback } from 'react';
+import { useCallback, useState } from 'react';
 
 /**
  * Converts async into a more reactive way
@@ -13,7 +13,10 @@ import { useRef, useState, useCallback } from 'react';
  *  - the rejected value
  *
  * `call`
- *  - calls the wrapped function and returns a Promise
+ *  - calls the wrapped function and returns a Promise. Subsequent calls should return the same promise
+ *
+ * `refresh`
+ *  - flushes internal state
  */
 export const useAsync = <T extends (...args: any[]) => Promise<any>>(fetcher: T) => {
     type Data = {
@@ -22,7 +25,8 @@ export const useAsync = <T extends (...args: any[]) => Promise<any>>(fetcher: T)
         error: any;
     };
 
-    const request = useRef<Promise<void> | ReturnType<T>>(Promise.resolve());
+    // caches each call based on the given parameters
+    const [cache] = useState(new Map());
 
     const [data, setData] = useState<Data>({
         isLoading: null,
@@ -32,16 +36,17 @@ export const useAsync = <T extends (...args: any[]) => Promise<any>>(fetcher: T)
 
     const call = useCallback(
         (...args: Parameters<T>) => {
-            if (data.isLoading === true) {
-                return request.current;
+            const key = JSON.stringify(args);
+
+            if (cache.has(key)) {
+                return cache.get(key);
             }
 
-            request.current = fetcher(...args)
+            const req = fetcher(...args)
                 .then((data) => {
                     setData((s) => {
                         return { ...s, isLoading: false, data };
                     });
-
                     return data;
                 })
                 .catch((error) => {
@@ -55,10 +60,25 @@ export const useAsync = <T extends (...args: any[]) => Promise<any>>(fetcher: T)
                 return { ...s, isLoading: true };
             });
 
-            return request.current as ReturnType<T>;
+            if (!cache.has(key)) {
+                cache.set(key, req);
+            }
+
+            return req as ReturnType<T>;
         },
-        [fetcher, data.isLoading],
+        [fetcher, cache],
     );
 
-    return { ...data, call };
+    const refresh = useCallback(() => {
+        // @todo this seems to don't mean anything now since we return the cached promise
+        setData((s) => {
+            return { ...s, isLoading: null };
+        });
+
+        // @todo clean up only associated cache if args are provided
+        //       instead of clearing the whole cache
+        cache.clear();
+    }, [setData, cache]);
+
+    return { ...data, call, refresh };
 };

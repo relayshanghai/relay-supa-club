@@ -4,7 +4,7 @@ import type { CampaignNotes } from 'src/utils/api/db';
 
 export const useSequenceInfluencerNotes = () => {
     // @todo create a filter type for getNotes
-    const getNotes = useAsync(async (sequence_influencer_id: string, filters: any) => {
+    const getNotes = useAsync(async (sequence_influencer_id: string, filters?: any) => {
         return await apiFetch('/api/notes/influencer/{id}', {
             path: { id: sequence_influencer_id },
             query: filters,

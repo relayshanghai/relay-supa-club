@@ -2,9 +2,10 @@ import { useCallback, useMemo } from 'react';
 import { OverlayRight } from 'src/components/influencer-profile/components/overlay-right';
 import type { ProfileValue } from 'src/components/influencer-profile/screens/profile-screen';
 import { ProfileScreen } from 'src/components/influencer-profile/screens/profile-screen';
-import { ProfileScreenProvider, useUiState } from './profile-screen-context';
-import { NotesListOverlayScreen } from './notes-list-overlay';
+import { useSequenceInfluencerNotes } from 'src/hooks/use-sequence-influencer-notes';
 import type { SequenceInfluencerManagerPage } from 'src/hooks/use-sequence-influencers';
+import { NotesListOverlayScreen } from './notes-list-overlay';
+import { ProfileScreenProvider, useUiState } from './profile-screen-context';
 
 type Props = {
     profile: SequenceInfluencerManagerPage | null;
@@ -16,6 +17,7 @@ type Props = {
 
 export const ProfileOverlayScreen = ({ profile, onOpen, ...props }: Props) => {
     const [uiState, setUiState] = useUiState();
+    const { getNotes } = useSequenceInfluencerNotes();
 
     const initialValue = useMemo(() => {
         if (!profile) return null;
@@ -59,6 +61,18 @@ export const ProfileOverlayScreen = ({ profile, onOpen, ...props }: Props) => {
         [props, handleClose],
     );
 
+    const handleNoteListOpen = useCallback(() => {
+        if (!profile) return;
+        getNotes.call(profile.id);
+    }, [getNotes, profile]);
+
+    const handleNoteListClose = useCallback(() => {
+        setUiState((s) => {
+            return { ...s, isNotesListOverlayOpen: false };
+        });
+        getNotes.refresh();
+    }, [getNotes, setUiState]);
+
     return (
         <>
             <OverlayRight isOpen={props.isOpen} onClose={handleClose} onOpen={() => onOpen && onOpen()}>
@@ -70,12 +84,11 @@ export const ProfileOverlayScreen = ({ profile, onOpen, ...props }: Props) => {
             </OverlayRight>
 
             <NotesListOverlayScreen
+                notes={getNotes.data}
+                isLoading={getNotes.isLoading}
                 isOpen={uiState.isNotesListOverlayOpen}
-                onClose={() =>
-                    setUiState((s) => {
-                        return { ...s, isNotesListOverlayOpen: false };
-                    })
-                }
+                onClose={handleNoteListClose}
+                onOpen={handleNoteListOpen}
             />
         </>
     );
