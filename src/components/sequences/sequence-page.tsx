@@ -18,7 +18,7 @@ import { useTranslation } from 'react-i18next';
 import type { SequenceInfluencer } from 'src/utils/api/db';
 import { useTemplateVariables } from 'src/hooks/use-template_variables';
 import { Tooltip } from '../library';
-import { EMAIL_STATUS_STYLES, EMAIL_STEPS } from './constants';
+import { EMAIL_STEPS } from './constants';
 
 export const SequencePage = () => {
     const { t } = useTranslation();
@@ -27,7 +27,6 @@ export const SequencePage = () => {
     const { sequence, sendSequence, sequenceSteps, updateSequence } = useSequence(sequences?.[0]?.id);
     const { sequenceInfluencers } = useSequenceInfluencers(sequence && [sequence.id]);
     const [filterSteps, setFilterSteps] = useState<CommonStatusType[]>([]);
-    const [filterStatuses, setFilterStatuses] = useState<CommonStatusType[]>([]);
     const [influencers, setInfluencers] = useState<SequenceInfluencerManagerPage[] | undefined>(sequenceInfluencers);
     const { sequenceEmails: allSequenceEmails } = useSequenceEmails(sequence?.id);
     const { templateVariables } = useTemplateVariables(sequence?.id);
@@ -35,30 +34,6 @@ export const SequencePage = () => {
         ?.filter((variable) => variable.required && !variable.value)
         .map((variable) => variable.name) ?? ['Error retrieving variables'];
     const isMissingVariables = !templateVariables || templateVariables.length === 0 || missingVariables.length > 0;
-
-    const handleStatus = useCallback(
-        (filters: CommonStatusType[]) => {
-            setFilterStatuses(filters);
-            if (!sequenceInfluencers) {
-                return;
-            }
-
-            if (filters.length === 0) {
-                setInfluencers(sequenceInfluencers);
-                return;
-            }
-
-            setInfluencers(
-                sequenceInfluencers.filter((x) =>
-                    filters.includes(
-                        allSequenceEmails?.find((email) => email.sequence_influencer_id === x.id)
-                            ?.email_delivery_status as CommonStatusType,
-                    ),
-                ),
-            );
-        },
-        [sequenceInfluencers, allSequenceEmails],
-    );
 
     const handleStep = useCallback(
         (filters: CommonStatusType[]) => {
@@ -133,29 +108,7 @@ export const SequencePage = () => {
 
     const currentTabInfluencers = influencers?.filter((influencer) => influencer.funnel_status === currentTab);
 
-    const [emailOptions, setEmailOptions] = useState<MultipleDropdownObject>(EMAIL_STATUS_STYLES);
     const [emailSteps, setEmailSteps] = useState<MultipleDropdownObject>(EMAIL_STEPS);
-
-    const setEmailStatusValues = useCallback(
-        (influencers: SequenceInfluencerManagerPage[], options: MultipleDropdownObject) => {
-            const emailOptionsWithValue = options;
-            Object.keys(EMAIL_STATUS_STYLES).forEach((option) => {
-                emailOptionsWithValue[option as CommonStatusType] = {
-                    ...(options[option as CommonStatusType] || {}),
-                    value:
-                        influencers.filter((x) => {
-                            return (
-                                allSequenceEmails?.find((email) => email.sequence_influencer_id === x.id)
-                                    ?.email_delivery_status === option
-                            );
-                        }).length || 0,
-                };
-            });
-
-            return emailOptionsWithValue;
-        },
-        [allSequenceEmails],
-    );
 
     const setEmailStepValues = useCallback(
         (influencers: SequenceInfluencerManagerPage[], options: MultipleDropdownObject) => {
@@ -181,8 +134,7 @@ export const SequencePage = () => {
             return;
         }
         setEmailSteps(setEmailStepValues(sequenceInfluencers, EMAIL_STEPS));
-        setEmailOptions(setEmailStatusValues(sequenceInfluencers, EMAIL_STATUS_STYLES));
-    }, [sequenceInfluencers, setEmailSteps, sequenceSteps, setEmailStepValues, setEmailStatusValues]);
+    }, [sequenceInfluencers, setEmailSteps, sequenceSteps, setEmailStepValues]);
 
     return (
         <Layout>
@@ -252,13 +204,6 @@ export const SequencePage = () => {
                         selectedOptions={filterSteps}
                         setSelectedOptions={handleStep}
                         translationPath="sequences.steps"
-                    />
-                    <SelectMultipleDropdown
-                        text={t('sequences.steps.filter')}
-                        options={emailOptions}
-                        selectedOptions={filterStatuses}
-                        setSelectedOptions={handleStatus}
-                        translationPath="sequences.status"
                     />
                 </div>
                 {currentTabInfluencers && sequenceSteps ? (
