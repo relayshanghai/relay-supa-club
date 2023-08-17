@@ -10,6 +10,7 @@ import type { Sequence } from 'src/utils/api/db';
 import { clientLogger } from 'src/utils/logger-client';
 import type { CreatorPlatform, CreatorUserProfile } from 'types';
 import { useReport } from 'src/hooks/use-report';
+import { useSequence } from 'src/hooks/use-sequence';
 
 export const AddToSequenceModal = ({
     show,
@@ -30,6 +31,7 @@ export const AddToSequenceModal = ({
     const [selectedSequence, setSelectedSequence] = useState<Sequence | null>(sequences?.[0] ?? null);
     const [loading, setLoading] = useState<boolean>(false);
     const [socialProfileId, setSocialProfileId] = useState(() => socialProfile?.id ?? null);
+    const { sendSequence } = useSequence(selectedSequence?.id);
 
     const { createSequenceInfluencer } = useSequenceInfluencers(selectedSequence ? [selectedSequence.id] : []);
 
@@ -58,7 +60,11 @@ export const AddToSequenceModal = ({
             const tags = getRelevantTags();
             setLoading(true);
             try {
-                await createSequenceInfluencer(socialProfileId, tags);
+                const sequenceInfluencer = await createSequenceInfluencer(socialProfileId, tags);
+
+                if (sequenceInfluencer.email && selectedSequence.auto_start) {
+                    await sendSequence([sequenceInfluencer]);
+                }
                 toast.success(t('creators.addToSequenceSuccess'));
             } catch (error) {
                 clientLogger(error);
@@ -68,7 +74,7 @@ export const AddToSequenceModal = ({
                 setShow(false);
             }
         }
-    }, [createSequenceInfluencer, getRelevantTags, selectedSequence, setShow, socialProfileId, t]);
+    }, [createSequenceInfluencer, getRelevantTags, selectedSequence, sendSequence, setShow, socialProfileId, t]);
 
     useEffect(() => {
         if (socialProfile?.id) {

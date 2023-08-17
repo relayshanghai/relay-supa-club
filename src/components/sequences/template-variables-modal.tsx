@@ -202,7 +202,7 @@ export const TemplateVariablesModal = ({ sequenceId, ...props }: TemplateVariabl
             <div className="flex justify-between gap-6">
                 {/* These ones are filled in using the `influencer_social_profile` so we don't have a `template_variable` DB row for them */}
                 <VariableInput
-                    variableKey={'influencerNameOrHandle' as any}
+                    variableKey={'influencerAccountName' as any}
                     setKey={setKey}
                     variables={variables}
                     readOnly

@@ -8,7 +8,7 @@ import { insertSequenceEmailCall } from 'src/utils/api/db/calls/sequence-emails'
 import { updateSequenceInfluencerCall } from 'src/utils/api/db/calls/sequence-influencers';
 import { getSequenceStepsBySequenceIdCall } from 'src/utils/api/db/calls/sequence-steps';
 import { getTemplateVariablesBySequenceIdCall } from 'src/utils/api/db/calls/template-variables';
-import { sendEmail } from 'src/utils/api/email-engine/send-email';
+import { sendTemplateEmail } from 'src/utils/api/email-engine/send-template-email';
 import { db } from 'src/utils/supabase-client';
 
 export type SequenceSendPostBody = {
@@ -37,8 +37,8 @@ const sendAndInsertEmail = async ({
     const influencerSocialProfile = await db<typeof getInfluencerSocialProfileByIdCall>(
         getInfluencerSocialProfileByIdCall,
     )(sequenceInfluencer.influencer_social_profile_id);
-    const influencerNameOrHandle = influencerSocialProfile.name || influencerSocialProfile.username;
-    if (!influencerNameOrHandle) {
+    const influencerAccountName = influencerSocialProfile.name || influencerSocialProfile.username;
+    if (!influencerAccountName) {
         throw new Error('No influencer name or handle');
     }
     const recentVideoTitle = influencerSocialProfile.recent_video_title;
@@ -46,9 +46,9 @@ const sendAndInsertEmail = async ({
         throw new Error('No recent video title');
     }
     const params = {
-        ...Object.fromEntries(templateVariables.map((variable) => [variable.name, variable.value])),
+        ...Object.fromEntries(templateVariables.map((variable) => [variable.key, variable.value])),
         // fill in the params not in the template variables
-        influencerNameOrHandle,
+        influencerAccountName,
         recentVideoTitle,
     };
     // add the step's waitTimeHrs to the sendAt date
@@ -56,12 +56,13 @@ const sendAndInsertEmail = async ({
     const sendAt = new Date();
     sendAt.setHours(sendAt.getHours() + wait_time_hours);
     const emailSendAt = sendAt.toISOString();
-    const res = await sendEmail(account, sequenceInfluencer.email, template_id, emailSendAt, params);
+
+    const res = await sendTemplateEmail(account, sequenceInfluencer.email, template_id, emailSendAt, params);
 
     if ('error' in res) {
         throw new Error(res.error);
     }
-    db<typeof insertSequenceEmailCall>(insertSequenceEmailCall)({
+    await db<typeof insertSequenceEmailCall>(insertSequenceEmailCall)({
         sequence_influencer_id: sequenceInfluencer.id,
         sequence_step_id: step.id,
         email_delivery_status: 'Scheduled',
@@ -88,11 +89,6 @@ const sendSequence = async ({ account, sequenceInfluencers }: SequenceSendPostBo
     )(sequenceId);
     for (const sequenceInfluencer of sequenceInfluencers) {
         try {
-            db<typeof updateSequenceInfluencerCall>(updateSequenceInfluencerCall)({
-                ...sequenceInfluencer,
-                funnel_status: 'In Sequence',
-                sequence_step: 0, // handleSent() in pages/api/email-engine/webhook.ts will update the step as the scheduled emails are sent
-            });
             for (const step of sequenceSteps) {
                 const result = await sendAndInsertEmail({
                     step,
@@ -102,6 +98,11 @@ const sendSequence = async ({ account, sequenceInfluencers }: SequenceSendPostBo
                 });
                 results.push(result);
             }
+            await db<typeof updateSequenceInfluencerCall>(updateSequenceInfluencerCall)({
+                ...sequenceInfluencer,
+                funnel_status: 'In Sequence',
+                sequence_step: 0, // handleSent() in pages/api/email-engine/webhook.ts will update the step as the scheduled emails are sent
+            });
         } catch (error: any) {
             results.push({
                 ...sequenceInfluencer,
