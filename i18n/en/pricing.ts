@@ -25,6 +25,7 @@ const pricing = {
     personalEmailAccount: '{{amount}} Personalized Email Account',
     amount_EmailsPerMonth: 'Can send emails up to {{amount}} influencers/month',
 
+    upgrade: 'Upgrade',
     buyNow: 'Buy Now',
     contactUs: 'Contact us',
     popular: 'POPULAR',
@@ -63,6 +64,7 @@ const pricing = {
         subTitle: 'Maximize Reach, Minimize Effort: Automated Influencer Contacts at Scale.',
     },
     saveUpTo33Percent: 'up to 33% off',
+    beta: 'BETA',
 };
 
 export default pricing;

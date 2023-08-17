@@ -25,6 +25,7 @@ const pricing = {
     personalEmailAccount: '{{amount}}个个性化电子邮件帐户',
     amount_EmailsPerMonth: '每月可向{{amount}}个KOL发送电子邮件',
 
+    upgrade: '立即升级',
     buyNow: '立即购买',
     contactUs: '联系我们',
     popular: '热门',
@@ -63,6 +64,7 @@ const pricing = {
         subTitle: 'Maximize Reach, Minimize Effort: Automated Influencer Contacts at Scale.',
     },
     saveUpTo33Percent: '高达33%折扣',
+    beta: 'BETA',
 };
 
 export default pricing;

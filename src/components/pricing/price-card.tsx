@@ -54,7 +54,12 @@ export const PriceCard = ({
                     priceTier === 'diyMax' ? 'border-primary-500' : 'border-gray-300'
                 } p-6`}
             >
-                <h1 className="text-4xl font-semibold text-gray-800">{t(`pricing.${priceTier}.title`)}</h1>
+                <h1 className="relative w-fit text-4xl font-semibold text-gray-800">
+                    {t(`pricing.${priceTier}.title`)}
+                    <p className="absolute -right-12 top-0 mr-2 text-sm font-semibold text-pink-500">
+                        {t('pricing.beta')}
+                    </p>
+                </h1>
                 <h4 className="pt-2 text-xs text-gray-500">{t(`pricing.${priceTier}.subTitle`)}</h4>
                 <h1 className="mb-4 mt-4 flex items-center pb-4 text-4xl text-gray-800" data-plan="diy">
                     {prices[period][priceTier]}
@@ -75,7 +80,7 @@ export const PriceCard = ({
                     >
                         {isCurrentPlan(priceTier, period, subscription)
                             ? t('pricing.yourCurrentPlan')
-                            : t('pricing.buyNow')}
+                            : t('pricing.upgrade')}
                     </Button>
                 )}
             </div>
