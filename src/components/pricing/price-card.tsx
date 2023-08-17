@@ -5,6 +5,7 @@ import { Button } from '../button';
 import { PriceDetailsCard } from './price-details-card';
 import type { SubscriptionGetResponse } from 'pages/api/subscriptions';
 import { useTranslation } from 'react-i18next';
+import { featNewPricing } from 'src/constants/feature-flags';
 
 const isCurrentPlan = (
     tier: ActiveSubscriptionTier,
@@ -54,13 +55,14 @@ export const PriceCard = ({
                 } p-6`}
             >
                 <h1 className="text-4xl font-semibold text-gray-800">{t(`pricing.${priceTier}.title`)}</h1>
-                <h4 className="text-xs text-gray-500">{t(`pricing.${priceTier}.subTitle`)}</h4>
-
+                <h4 className="pt-2 text-xs text-gray-500">{t(`pricing.${priceTier}.subTitle`)}</h4>
                 <h1 className="mb-4 mt-4 flex items-center pb-4 text-4xl text-gray-800" data-plan="diy">
                     {prices[period][priceTier]}
 
                     {!freeTier && (
-                        <span className="ml-1 text-sm font-semibold text-gray-500">{t('pricing.usdPerMonth')}</span>
+                        <span className="ml-1 text-sm font-semibold text-gray-500">
+                            {featNewPricing() ? t('pricing.rmbPerMonth') : t('pricing.usdPerMonth')}
+                        </span>
                     )}
                 </h1>
                 <PriceDetailsCard priceTier={priceTier} />
