@@ -199,7 +199,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                 {currentTab === 'In Sequence' && (
                     <>
                         <td className="whitespace-nowrap px-6 py-4 align-middle font-semibold text-gray-600">
-                            {currentStep?.name}
+                            {t(`sequences.steps.${currentStep?.name}`)}
                         </td>
                         <td className="whitespace-nowrap px-6 py-4 align-middle">
                             <p
