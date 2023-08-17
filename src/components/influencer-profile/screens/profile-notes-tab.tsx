@@ -9,6 +9,7 @@ import { OutreachNextStepsInput } from '../components/outreach-next-steps-input'
 import { OutreachNotesInput } from '../components/outreach-notes-input';
 import type { SequenceInfluencerManagerPage } from 'src/hooks/use-sequence-influencers';
 import { useSequenceInfluencerNotes } from 'src/hooks/use-sequence-influencer-notes';
+import type { NoteData } from '../components/note';
 
 export const COLLAB_STATUS_OPTIONS = [
     {
@@ -78,11 +79,15 @@ export const ProfileNotesTab = ({ profile, ...props }: Props) => {
 
     const handleSaveNotes = useCallback(
         (value: string) => {
-            saveNote.call({
-                comment: value,
-                influencer_social_profile_id: profile.influencer_social_profile_id,
-                sequence_influencer_id: profile.id,
-            });
+            saveNote
+                .call({
+                    comment: value,
+                    influencer_social_profile_id: profile.influencer_social_profile_id,
+                    sequence_influencer_id: profile.id,
+                })
+                .then(() => {
+                    saveNote.refresh();
+                });
         },
         [profile, saveNote],
     );
@@ -91,9 +96,9 @@ export const ProfileNotesTab = ({ profile, ...props }: Props) => {
         // load posts when the modal is opened
         if (getNotes.isLoading !== null) return;
 
-        getNotes.call(profile.id, { current_user_only: 1 }).then((notes: any) => {
-            const _notes = notes[0] ?? { comment: '' };
-            onUpdate('notes', _notes.comment);
+        getNotes.call(profile.id, { current_user_only: 1 }).then((notes: NoteData[]) => {
+            const currentNote: Partial<NoteData> = notes && notes.length > 0 ? notes[0] : { content: '' };
+            onUpdate('notes', currentNote.content);
         });
         // @todo do some error handling
         // .catch((e) => console.error(e))
@@ -118,7 +123,7 @@ export const ProfileNotesTab = ({ profile, ...props }: Props) => {
                 />
 
                 <OutreachNotesInput
-                    disabled={getNotes.isLoading === true}
+                    disabled={getNotes.isLoading === true || saveNote.isLoading === true}
                     value={data.notes.notes}
                     onUpdate={(value) => onUpdate('notes', value)}
                     onSave={handleSaveNotes}

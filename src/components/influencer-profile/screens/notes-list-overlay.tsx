@@ -2,10 +2,11 @@ import { OverlayRight } from 'src/components/influencer-profile/components/overl
 import { NotesList } from '../components/notes-list';
 import { Spinner } from 'src/components/icons';
 import { useCallback } from 'react';
+import type { NoteData } from '../components/note';
 
 type Props = {
     // @todo create type for this
-    notes: any;
+    notes: NoteData[] | null;
     isLoading?: boolean | null;
     isOpen?: boolean;
     onOpen?: () => void;
@@ -26,7 +27,7 @@ export const NotesListOverlayScreen = ({ notes, isLoading, isOpen, onOpen, ...pr
                 onClose={() => props.onClose && props.onClose()}
                 onOpen={handleNoteListOnOpen}
             >
-                {isLoading === false ? (
+                {isLoading === false && notes ? (
                     <NotesList notes={notes} />
                 ) : (
                     <Spinner className="h-5 w-5 fill-primary-600 text-white" />

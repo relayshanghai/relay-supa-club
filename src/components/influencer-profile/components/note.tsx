@@ -24,7 +24,11 @@ export const Note = ({ data, ...props }: Props) => {
         >
             <div className="inline-flex items-start justify-between gap-2.5 self-stretch">
                 <div className="flex items-center justify-start gap-2">
-                    <div className="h-6 w-6 rounded-full bg-gray-300">&nbsp;</div>
+                    <div className="h-6 w-6 rounded-full bg-gray-300">
+                        <span>
+                            <img className="rounded-full" src={data.author.avatar} alt="Photo" />
+                        </span>
+                    </div>
                     <div className="text-base font-normal leading-normal tracking-tight text-gray-500">
                         {data.author.name}
                     </div>
@@ -38,7 +42,9 @@ export const Note = ({ data, ...props }: Props) => {
                     {data.content}
                 </div>
                 <div className="inline-flex items-center justify-start gap-1">
-                    <div className="text-xs font-normal leading-none tracking-tight text-gray-500">updated_at</div>
+                    <div className="text-xs font-normal leading-none tracking-tight text-gray-500">
+                        {data.updated_at}
+                    </div>
                 </div>
             </div>
         </div>
