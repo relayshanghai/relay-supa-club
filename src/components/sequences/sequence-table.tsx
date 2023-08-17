@@ -25,7 +25,7 @@ const sortInfluencers = (
     if (currentTab === 'To Contact') {
         influencers?.sort((a, b) => {
             // most recently created at the top
-            return a.created_at < b.created_at ? -1 : 1;
+            return a.created_at < b.created_at ? 1 : -1;
         });
     }
     if (currentTab === 'In Sequence' || currentTab === 'Ignored') {
@@ -36,7 +36,7 @@ const sortInfluencers = (
                 return -1;
             }
             // most recently created at the top
-            return a_email < b_email ? -1 : 1;
+            return a_email < b_email ? 1 : -1;
         });
     }
 
