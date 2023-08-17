@@ -6,7 +6,6 @@ import { createSequenceCall, deleteSequenceCall, updateSequenceCall } from 'src/
 import { useUser } from 'src/hooks/use-user';
 import { serverLogger } from 'src/utils/logger-server';
 import type { SequenceSendPostBody, SequenceSendPostResponse } from 'pages/api/sequence/send';
-import { testAccount } from 'src/utils/api/email-engine/prototype-mocks';
 import { nextFetch } from 'src/utils/fetcher';
 
 export const useSequence = (sequenceId?: string) => {
@@ -49,8 +48,11 @@ export const useSequence = (sequenceId?: string) => {
     };
 
     const sendSequence = async (sequenceInfluencers: SequenceInfluencer[]) => {
+        if (!profile?.email_engine_account_id) {
+            throw new Error('No email account found');
+        }
         const body: SequenceSendPostBody = {
-            account: testAccount,
+            account: profile.email_engine_account_id,
             sequenceInfluencers,
         };
         return await nextFetch<SequenceSendPostResponse>('sequence/send', {

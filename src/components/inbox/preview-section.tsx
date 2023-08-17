@@ -1,12 +1,15 @@
 import type { MessagesGetMessage } from 'types/email-engine/account-account-messages-get';
 import { PreviewCard } from './preview-card';
+import type { SearchResponseMessage } from 'types/email-engine/account-account-search-post';
 
 export const PreviewSection = ({
     messages,
+    selectedMessages,
     handleGetThreadEmails,
     loadingSelectedMessages,
 }: {
     messages: MessagesGetMessage[];
+    selectedMessages: SearchResponseMessage[] | null;
     handleGetThreadEmails: (message: MessagesGetMessage) => Promise<void>;
     loadingSelectedMessages: boolean;
 }) => {
@@ -16,6 +19,7 @@ export const PreviewSection = ({
                 <div key={message.id}>
                     <PreviewCard
                         message={message}
+                        selectedMessage={selectedMessages ? selectedMessages[0] : null}
                         handleGetThreadEmails={handleGetThreadEmails}
                         loadingSelectedMessages={loadingSelectedMessages}
                     />

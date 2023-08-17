@@ -19,6 +19,8 @@ const mockProfile: IUserContext['profile'] = {
     phone: null,
     updated_at: '2021-09-01T00:00:00.000Z',
     created_at: '2021-09-01T00:00:00.000Z',
+    email_engine_account_id: 'e7ustgsqqvy9al6f',
+    sequence_send_email: 'relayemailertest@gmail.com',
 };
 
 const mockUserContext: IUserContext = {
