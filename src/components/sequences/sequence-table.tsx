@@ -22,26 +22,27 @@ const sortInfluencers = (
     influencers?: SequenceInfluencer[],
     allSequenceEmails?: SequenceEmail[],
 ) => {
-    if (currentTab === 'To Contact') {
-        influencers?.sort((a, b) => {
-            // most recently created at the top
-            return a.created_at < b.created_at ? 1 : -1;
-        });
-    }
-    if (currentTab === 'In Sequence' || currentTab === 'Ignored') {
-        influencers?.sort((a, b) => {
-            const a_email = allSequenceEmails?.find((email) => email.sequence_influencer_id === a.id)?.email_send_at;
-            const b_email = allSequenceEmails?.find((email) => email.sequence_influencer_id === b.id)?.email_send_at;
-            if (!a_email || !b_email) {
+    return influencers?.sort((a, b) => {
+        const getEmailTime = (influencerId: string) =>
+            allSequenceEmails?.find((email) => email.sequence_influencer_id === influencerId)?.email_send_at;
+
+        if (currentTab === 'To Contact') {
+            return b.created_at.localeCompare(a.created_at);
+        } else if (currentTab === 'In Sequence' || currentTab === 'Ignored') {
+            const mailTimeA = getEmailTime(a.id);
+            const mailTimeB = getEmailTime(b.id);
+
+            if (!mailTimeA || !mailTimeB) {
                 return -1;
             }
-            // most recently created at the top
-            return a_email < b_email ? 1 : -1;
-        });
-    }
 
-    return influencers;
+            return mailTimeB.localeCompare(mailTimeA);
+        }
+
+        return 0;
+    });
 };
+
 const SequenceTable: React.FC<SequenceTableProps> = ({
     sequenceInfluencers,
     allSequenceEmails,
