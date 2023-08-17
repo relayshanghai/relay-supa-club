@@ -196,10 +196,10 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                         </td>
                     </>
                 )}
-                {currentTab === 'In Sequence' && (
+                {currentTab === 'In Sequence' && currentStep && (
                     <>
                         <td className="whitespace-nowrap px-6 py-4 align-middle font-semibold text-gray-600">
-                            {t(`sequences.steps.${currentStep?.name}`)}
+                            {t(`sequences.steps.${currentStep.name}`)}
                         </td>
                         <td className="whitespace-nowrap px-6 py-4 align-middle">
                             <p
