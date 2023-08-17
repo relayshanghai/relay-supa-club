@@ -17,16 +17,28 @@ interface SequenceTableProps {
     handleStartSequence: (sequenceInfluencers: SequenceInfluencer[]) => Promise<SequenceSendPostResponse>;
 }
 
-const sortInfluencers = (currentTab: SequenceInfluencer['funnel_status'], influencers?: SequenceInfluencer[]) => {
+const sortInfluencers = (
+    currentTab: SequenceInfluencer['funnel_status'],
+    influencers?: SequenceInfluencer[],
+    allSequenceEmails?: SequenceEmail[],
+) => {
     if (currentTab === 'To Contact') {
         influencers?.sort((a, b) => {
             // most recently created at the top
             return a.created_at < b.created_at ? -1 : 1;
         });
     }
-    // TODO: sort by last email date in 'Ignored' tab https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/658
-    // TODO: sort by previous message send date in 'In-Sequence' https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/654
-    // We'll have to make a db call to check the associated email for each influencer. We already have to do this on the row level, so it is a bit inefficient to do it here as well. Later maybe we should pass down the email info from this parent instead.
+    if (currentTab === 'In Sequence' || currentTab === 'Ignored') {
+        influencers?.sort((a, b) => {
+            const a_email = allSequenceEmails?.find((email) => email.sequence_influencer_id === a.id)?.email_send_at;
+            const b_email = allSequenceEmails?.find((email) => email.sequence_influencer_id === b.id)?.email_send_at;
+            if (!a_email || !b_email) {
+                return -1;
+            }
+            // most recently created at the top
+            return a_email < b_email ? -1 : 1;
+        });
+    }
 
     return influencers;
 };
@@ -41,7 +53,7 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
     templateVariables,
     handleStartSequence,
 }) => {
-    const sortedInfluencers = sortInfluencers('To Contact', sequenceInfluencers);
+    const sortedInfluencers = sortInfluencers(currentTab, sequenceInfluencers, allSequenceEmails);
     const { t } = useTranslation();
 
     const columns = sequenceColumns(currentTab);
