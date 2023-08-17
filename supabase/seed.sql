@@ -104,9 +104,10 @@ OR REPLACE FUNCTION create_profile(
     user_id := create_supabase_user(email, first_name, last_name);
 
     INSERT INTO profiles
-      (id, email, last_name, first_name, user_role, company_id)
+      (id, email, last_name, first_name, user_role, company_id, email_engine_account_id, sequence_send_email)
     VALUES
-      (user_id, email, last_name, first_name, _role, company_id)
+      (user_id, email, last_name, first_name, _role, company_id, 
+      'e7ustgsqqvy9al6f', 'tech.relay.club@gmail.com')
     RETURNING * INTO _row;
     RETURN _row;
   END;
@@ -464,7 +465,8 @@ BEGIN
     created_at,
     name,
     email,
-    avatar_url
+    avatar_url,
+    recent_video_title
   )
   VALUES (
     uuid_generate_v4(),
@@ -476,7 +478,8 @@ BEGIN
     now(),
     _name,
     _email,
-    _avatar_url
+    _avatar_url,
+    'Recent Video Title'
   )
   RETURNING * INTO _row;
   RETURN _row;
@@ -677,6 +680,8 @@ DECLARE
   _influencer_post_bob_2 RECORD;
   _sequence_step_outreach RECORD;
   _sequence_step_follow_up_1 RECORD;
+  _sequence_step_follow_up_2 RECORD;
+  _sequence_step_follow_up_3 RECORD;
   _sequence_influencer_daniel RECORD;
   _sequence_influencer_felicia RECORD;
   _sequence_influencer_georgia RECORD;
@@ -731,14 +736,14 @@ BEGIN
     1,
     24
   );
-  _sequence_step_follow_up_1 := create_sequence_steps(
+  _sequence_step_follow_up_2 := create_sequence_steps(
     _sequence_general.id,
     '2nd Follow-up',
     'AAABieM0bMMAAAAE',
     2,
     48
   );  
-  _sequence_step_follow_up_1 := create_sequence_steps(
+  _sequence_step_follow_up_3 := create_sequence_steps(
     _sequence_general.id,
     '3rd Follow-up',
     'AAABieM1AhgAAAAF',

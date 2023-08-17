@@ -10,9 +10,13 @@ import { useState } from 'react';
 import type { SetStateAction } from 'react';
 import { TableInlineInput } from '../library/table-inline-input';
 import { Button } from '../button';
-import { Brackets, DeleteOutline } from '../icons';
+import { AlertCircleOutline, Clock, EmailOpenOutline, Send, Brackets, DeleteOutline, SendOutline } from '../icons';
 import { Tooltip } from '../library';
+import { EMAIL_STATUS_STYLES } from './constants';
+
 import { EmailPreviewModal } from './email-preview-modal';
+import type { SequenceSendPostResponse } from 'pages/api/sequence/send';
+import toast from 'react-hot-toast';
 
 interface SequenceRowProps {
     sequenceInfluencer: SequenceInfluencer;
@@ -23,7 +27,23 @@ interface SequenceRowProps {
     isMissingVariables: boolean;
     setShowUpdateTemplateVariables: (value: SetStateAction<boolean>) => void;
     templateVariables: TemplateVariable[];
+    handleStartSequence: (sequenceInfluencers: SequenceInfluencer[]) => Promise<SequenceSendPostResponse>;
 }
+
+const Icons = ({ status }: { status?: string }) => {
+    switch (status) {
+        case 'Opened':
+            return <EmailOpenOutline className="h-6 w-6 stroke-blue-500" />;
+        case 'Scheduled':
+            return <Clock className="h-6 w-6 stroke-yellow-500" />;
+        case 'Bounced':
+            return <AlertCircleOutline className="h-6 w-6 stroke-red-500" />;
+        case 'Delivered':
+            return <Send className="h-6 w-6 stroke-green-500" />;
+        default:
+            return null;
+    }
+};
 
 /** use the tracking status if it is delivered */
 const getStatus = (sequenceEmail: SequenceEmail | undefined) =>
@@ -40,12 +60,13 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
     isMissingVariables,
     setShowUpdateTemplateVariables,
     templateVariables,
+    handleStartSequence,
 }) => {
     const { influencerSocialProfile } = useInfluencerSocialProfile(sequenceInfluencer.influencer_social_profile_id);
     const { updateSequenceInfluencer, deleteSequenceInfluencer } = useSequenceInfluencers(
         sequenceInfluencer && [sequenceInfluencer.sequence_id],
     );
-    const { i18n } = useTranslation();
+    const { i18n, t } = useTranslation();
     const [email, setEmail] = useState(sequenceInfluencer.email ?? '');
     const [showEmailPreview, setShowEmailPreview] = useState<SequenceStep[] | null>(null);
 
@@ -54,9 +75,20 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
         setEmail(updatedSequenceInfluencer.email ?? '');
     };
     const currentStep = sequenceSteps?.find((step) => step.step_number === sequenceInfluencer.sequence_step);
-    const { t } = useTranslation();
     const handleStart = async () => {
-        // TODO
+        try {
+            const results = await handleStartSequence([sequenceInfluencer]);
+            const failed = results.filter((result) => result.error);
+            const succeeded = results.filter((result) => !result.error);
+            if (succeeded.length > 0) {
+                toast.success(t('sequences.number_emailsSuccessfullyScheduled', { number: succeeded.length }));
+            }
+            if (failed.length > 0) {
+                toast.error(t('sequences.number_emailsFailedToSchedule', { number: failed.length }));
+            }
+        } catch (error: any) {
+            toast.error(error?.message ?? '');
+        }
     };
     return (
         <>
@@ -136,7 +168,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                                     }
                                     className={isMissingVariables ? '!border-gray-300 !bg-gray-300 !text-gray-500' : ''}
                                 >
-                                    Send
+                                    <SendOutline className="mx-2 h-5 text-white" />
                                 </Button>
                             </Tooltip>
                             <Button
@@ -145,7 +177,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                                 variant="ghost"
                                 onClick={() => setShowEmailPreview(sequenceSteps)}
                             >
-                                <Brackets />
+                                <Brackets className="h-5 w-5" />
                             </Button>
                             <button
                                 className="min-w-max"
@@ -162,8 +194,14 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                         <td className="whitespace-nowrap px-6 py-4 align-middle font-semibold text-gray-600">
                             {currentStep?.name}
                         </td>
-                        {/* TODO: add colors and icons for each status */}
-                        <td className="whitespace-nowrap px-6 py-4 text-gray-600">{getStatus(sequenceEmail)}</td>
+                        <div
+                            className={`flex w-fit flex-row items-center justify-center gap-2 rounded-lg px-3 py-2 text-center ${
+                                EMAIL_STATUS_STYLES[getStatus(sequenceEmail) || 'Default']
+                            }`}
+                        >
+                            <Icons status={getStatus(sequenceEmail)} />
+                            {getStatus(sequenceEmail)}
+                        </div>
                         <td className="whitespace-nowrap px-6 py-4 text-gray-600">
                             {sequenceEmail?.email_send_at &&
                                 new Date(sequenceEmail?.email_send_at).toLocaleDateString(i18n.language, {
@@ -206,12 +244,20 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                                     day: 'numeric',
                                 })}
                         </td>
-                        {/* TODO: add colors and icons for each status */}
-                        <td className="whitespace-nowrap px-6 py-4 text-gray-600">{getStatus(sequenceEmail)}</td>
-                        <td className=" whitespace-nowrap px-6 py-4 text-gray-600">
-                            {/* TODO */}
-                            <Button>Restart</Button>
+                        <td className={`whitespace-nowrap px-6 py-4`}>
+                            <div
+                                className={`flex w-fit flex-row items-center justify-center gap-2 rounded-lg px-3 py-2 text-center ${
+                                    EMAIL_STATUS_STYLES[getStatus(sequenceEmail) || 'Default']
+                                }`}
+                            >
+                                <Icons status={getStatus(sequenceEmail)} />
+                                {getStatus(sequenceEmail)}
+                            </div>
                         </td>
+                        {/* TODO */}
+                        {/* <td className=" whitespace-nowrap px-6 py-4 text-gray-600">
+                            <Button>Restart</Button>
+                        </td> */}
                     </>
                 )}
             </tr>

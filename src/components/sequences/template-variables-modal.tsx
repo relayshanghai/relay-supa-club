@@ -53,12 +53,14 @@ const VariableInput = ({
     variables,
     setKey,
     tooltipLeft,
+    placeholder,
     readOnly,
 }: {
     variableKey: VariableKey;
     variables: ReturnType<typeof prepareTemplateVariables>;
     setKey: (key: VariableKey, value: string) => void;
     tooltipLeft?: boolean;
+    placeholder?: string | null;
     readOnly?: boolean;
 }) => {
     const { t } = useTranslation();
@@ -74,6 +76,7 @@ const VariableInput = ({
                 {t(`sequences.${variableKey}Tooltip`) && (
                     <Tooltip
                         content={t(`sequences.${variableKey}Tooltip`)}
+                        detail={t(`sequences.${variableKey}TooltipDescription`)}
                         tooltipClasses="max-w-xs"
                         position={tooltipLeft ? 'bottom-left' : 'bottom-right'}
                     >
@@ -87,7 +90,7 @@ const VariableInput = ({
                 className={`block w-full max-w-full appearance-none rounded-md border border-transparent bg-white px-3 py-2 text-sm placeholder-gray-400 shadow ring-1 ring-gray-300 ring-opacity-5 focus:border-primary-500 focus:outline-none focus:ring-primary-500 ${
                     readOnly && 'cursor-not-allowed focus:border-transparent focus:ring-0'
                 }`}
-                placeholder={readOnly ? t('sequences.wellHandleThisOne') ?? '' : ''}
+                placeholder={readOnly ? t('sequences.wellHandleThisOne') ?? '' : placeholder || ''}
                 value={value}
                 onChange={(e) => (readOnly ? null : setKey(variableKey, e.target.value))}
             />
@@ -112,16 +115,23 @@ export const TemplateVariablesModal = ({ sequenceId, ...props }: TemplateVariabl
     const handleUpdate = async () => {
         setSubmitting(true);
         try {
-            const updates = Object.values(variables).map((variable) => {
+            const updates: Promise<any>[] = Object.values(variables).map((variable) => {
                 const existingRecord = templateVariables?.find((v) => v.key === variable.key);
                 if (existingRecord) {
-                    return async () => await updateTemplateVariable({ ...existingRecord, value: variable.value });
+                    if (existingRecord.value === variable.value) {
+                        return Promise.resolve();
+                    }
+                    return updateTemplateVariable({ ...existingRecord, value: variable.value });
                 }
 
-                return async () => await insertTemplateVariable(variable);
+                return insertTemplateVariable(variable);
             });
 
-            await Promise.all(updates);
+            await Promise.all(updates).catch((error) => {
+                clientLogger(error, 'error');
+                throw error;
+            });
+
             toast.success(t('sequences.templateVariablesUpdated'));
         } catch (error) {
             toast.error(t('sequences.templateVariablesUpdateError'));
@@ -136,30 +146,63 @@ export const TemplateVariablesModal = ({ sequenceId, ...props }: TemplateVariabl
 
             <h4 className="mt-4 font-semibold text-gray-700">{t('sequences.company')}</h4>
             <div className="flex justify-between gap-6">
-                <VariableInput variableKey="brandName" setKey={setKey} variables={variables} />
-                <VariableInput variableKey="marketingManagerName" setKey={setKey} variables={variables} tooltipLeft />
+                <VariableInput
+                    variableKey="brandName"
+                    setKey={setKey}
+                    variables={variables}
+                    placeholder={t('sequences.brandNamePlaceholder')}
+                />
+                <VariableInput
+                    variableKey="marketingManagerName"
+                    setKey={setKey}
+                    variables={variables}
+                    tooltipLeft
+                    placeholder={t('sequences.marketingManagerNamePlaceholder')}
+                />
             </div>
             <hr className="my-4" />
 
             <h4 className="font-semibold text-gray-700">{t('sequences.product')}</h4>
 
-            <div className="flex justify-between gap-6">
-                <VariableInput variableKey="productName" setKey={setKey} variables={variables} />
-                <VariableInput variableKey="productPrice" setKey={setKey} variables={variables} />
-            </div>
-            <VariableInput variableKey="productLink" setKey={setKey} variables={variables} />
-            <VariableInput variableKey="productDescription" setKey={setKey} variables={variables} />
-            <VariableInput variableKey="productFeatures" setKey={setKey} variables={variables} />
+            <VariableInput
+                variableKey="productName"
+                setKey={setKey}
+                variables={variables}
+                placeholder={t('sequences.productNamePlaceholder')}
+            />
+            <VariableInput
+                variableKey="productLink"
+                setKey={setKey}
+                variables={variables}
+                placeholder={t('sequences.productLinkPlaceholder')}
+            />
+            <VariableInput
+                variableKey="productDescription"
+                setKey={setKey}
+                variables={variables}
+                placeholder={t('sequences.productDescriptionPlaceholder')}
+            />
+            <VariableInput
+                variableKey="productFeatures"
+                setKey={setKey}
+                variables={variables}
+                placeholder={t('sequences.productFeaturesPlaceholder')}
+            />
 
             <hr className="my-4" />
 
             <h4 className="font-semibold text-gray-700">{t('sequences.influencer')}</h4>
 
-            <VariableInput variableKey="influencerNiche" setKey={setKey} variables={variables} />
+            <VariableInput
+                variableKey="influencerNiche"
+                setKey={setKey}
+                variables={variables}
+                placeholder={t('sequences.influencerNichePlaceholder')}
+            />
             <div className="flex justify-between gap-6">
-                {/* These ones are filled in using the `influencer_social_profile` so we do'nt have a `template_variable` DB row for them */}
+                {/* These ones are filled in using the `influencer_social_profile` so we don't have a `template_variable` DB row for them */}
                 <VariableInput
-                    variableKey={'influencerNameOrHandle' as any}
+                    variableKey={'influencerAccountName' as any}
                     setKey={setKey}
                     variables={variables}
                     readOnly
