@@ -17,6 +17,7 @@ import { EMAIL_STATUS_STYLES } from './constants';
 import { EmailPreviewModal } from './email-preview-modal';
 import type { SequenceSendPostResponse } from 'pages/api/sequence/send';
 import toast from 'react-hot-toast';
+import { useUser } from 'src/hooks/use-user';
 
 interface SequenceRowProps {
     sequenceInfluencer: SequenceInfluencer;
@@ -66,6 +67,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
     const { updateSequenceInfluencer, deleteSequenceInfluencer } = useSequenceInfluencers(
         sequenceInfluencer && [sequenceInfluencer.sequence_id],
     );
+    const { profile } = useUser();
     const { i18n, t } = useTranslation();
     const [email, setEmail] = useState(sequenceInfluencer.email ?? '');
     const [showEmailPreview, setShowEmailPreview] = useState<SequenceStep[] | null>(null);
@@ -175,6 +177,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                                 data-testid="show-all-email-previews-button"
                                 className="ml-2"
                                 variant="ghost"
+                                disabled={!profile?.email_engine_account_id || !profile?.sequence_send_email}
                                 onClick={() => setShowEmailPreview(sequenceSteps)}
                             >
                                 <Brackets className="h-5 w-5" />
