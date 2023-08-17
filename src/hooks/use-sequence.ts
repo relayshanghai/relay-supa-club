@@ -7,16 +7,18 @@ import { useUser } from 'src/hooks/use-user';
 import { serverLogger } from 'src/utils/logger-server';
 import type { SequenceSendPostBody, SequenceSendPostResponse } from 'pages/api/sequence/send';
 import { nextFetch } from 'src/utils/fetcher';
+import { useSequences } from './use-sequences';
 
 export const useSequence = (sequenceId?: string) => {
     const { profile } = useUser();
 
     const db = useClientDb();
+    const { refreshSequences } = useSequences();
     const { data: sequence, mutate: refreshSequence } = useSWR(
         sequenceId ? [sequenceId, 'sequences'] : null,
         ([sequenceId]) => db.getSequenceById(sequenceId),
     );
-    const { sequenceSteps } = useSequenceSteps(sequence?.id);
+    const { sequenceSteps, refreshSequenceSteps } = useSequenceSteps(sequence?.id);
 
     const updateSequenceDBCall = useDB<typeof updateSequenceCall>(updateSequenceCall);
     const updateSequence = async (update: SequenceUpdate & { id: string }) => {
@@ -41,7 +43,10 @@ export const useSequence = (sequenceId?: string) => {
                 name: sequenceName,
                 auto_start: false,
             };
-            return await createSequenceDBCall(insert);
+            const res = await createSequenceDBCall(insert);
+            refreshSequences();
+            refreshSequenceSteps();
+            return res;
         } catch (error) {
             serverLogger(error, 'error');
         }
