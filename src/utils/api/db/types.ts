@@ -86,8 +86,6 @@ export type TemplateVariableUpdate = TemplateVariablesTable['Update'] & {
 type SequenceStepDetailedTypes = {
     /** Int, first step = 0 */
     step_number: number;
-    /** The params to be passed to the template. e.g. 'companyName' */
-    params: string[];
 };
 
 export type SequenceStepsTable = Database['public']['Tables']['sequence_steps'] & {

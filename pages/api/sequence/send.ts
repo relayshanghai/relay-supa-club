@@ -16,7 +16,7 @@ export type SequenceSendPostBody = {
     sequenceInfluencers: SequenceInfluencer[];
 };
 
-type SendResult = SequenceInfluencer & { error?: string };
+type SendResult = { stepNumber?: number; sequenceInfluencerId?: string; error?: string };
 
 export type SequenceSendPostResponse = SendResult[];
 
@@ -69,11 +69,11 @@ const sendAndInsertEmail = async ({
         email_message_id: res.messageId,
     });
 
-    return sequenceInfluencer;
+    return { sequenceInfluencerId: sequenceInfluencer.id, stepNumber: step.step_number };
 };
 
 const sendSequence = async ({ account, sequenceInfluencers }: SequenceSendPostBody) => {
-    const results = [];
+    const results: SendResult[] = [];
     if (!account || !sequenceInfluencers || sequenceInfluencers.length === 0) {
         throw new Error('Missing required parameters');
     }
@@ -105,7 +105,7 @@ const sendSequence = async ({ account, sequenceInfluencers }: SequenceSendPostBo
             });
         } catch (error: any) {
             results.push({
-                ...sequenceInfluencer,
+                sequenceInfluencerId: sequenceInfluencer.id,
                 error: error?.message ?? '',
             });
         }
