@@ -3,7 +3,7 @@ import { CollabStatus } from './collab-status';
 import { OnlyMe } from './onlyme';
 import { Table } from './table';
 import { useSequences } from 'src/hooks/use-sequences';
-import { type SequenceInfluencerManagerPage, useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
+import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { useCallback, useEffect, useState } from 'react';
 import Fuse from 'fuse.js';
 import { useUser } from 'src/hooks/use-user';
@@ -12,6 +12,7 @@ import { type MultipleDropdownObject } from 'src/components/library';
 import { COLLAB_OPTIONS } from '../constants';
 import { ProfileOverlayScreen } from 'src/components/influencer-profile/screens/profile-overlay-screen';
 import { useTranslation } from 'react-i18next';
+import { type SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 
 const Manager = () => {
     const { sequences } = useSequences();
