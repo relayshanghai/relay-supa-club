@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { Modal } from './modal';
 import { Button } from './button';
@@ -35,19 +35,19 @@ export const AddToSequenceModal = ({
     const { sequenceInfluencers, createSequenceInfluencer } = useSequenceInfluencers(
         selectedSequence ? [selectedSequence.id] : [],
     );
-    const calculateHasInfluencer = useCallback(() => {
+    const hasInfluencer = useMemo(() => {
         if (!sequenceInfluencers || !selectedSequence) {
             return false;
         }
         const selectedCreatorId = selectedCreator.user_id;
+
         const influencerSequenceIds = sequenceInfluencers
             .filter((sequenceInfluencer) => sequenceInfluencer.iqdata_id === selectedCreatorId)
             .map((sequenceInfluencer) => sequenceInfluencer.sequence_id);
 
+        if (influencerSequenceIds.length === 0) return false;
         return influencerSequenceIds.includes(selectedSequence.id);
     }, [selectedCreator, selectedSequence, sequenceInfluencers]);
-
-    const [hasInfluencer, setHasInfluencer] = useState<boolean>(calculateHasInfluencer());
 
     const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         if (!sequences) {
@@ -55,7 +55,6 @@ export const AddToSequenceModal = ({
         }
         const selectedSequenceObject = sequences?.find((sequence) => sequence.name === e.target.value) ?? null;
         setSelectedSequence(selectedSequenceObject);
-        setHasInfluencer(calculateHasInfluencer());
     };
 
     // get the top 3 tags from relevant_tags of the report, then pass it to tags of sequence influencer
@@ -138,7 +137,7 @@ export const AddToSequenceModal = ({
                             <Spinner className="h-5 w-5 fill-primary-500 text-white" />
                         </Button>
                     ) : (
-                        <Button disabled={!hasInfluencer} onClick={handleAddToSequence} type="submit">
+                        <Button disabled={hasInfluencer} onClick={handleAddToSequence} type="submit">
                             {t('creators.addToSequence')}
                         </Button>
                     )}
