@@ -3,6 +3,8 @@ import httpCodes from 'src/constants/httpCodes';
 import { serverLogger } from 'src/utils/logger-server';
 import { ZodError } from 'zod';
 
+export type ApiError = { error: any };
+
 export type ApiHandlerParams = {
     getHandler?: NextApiHandler;
     postHandler?: NextApiHandler;
@@ -85,7 +87,7 @@ const createErrorObject = (error: any) => {
 };
 
 export const exceptionHandler = <T = any>(fn: NextApiHandler<T>) => {
-    return async (req: NextApiRequest, res: NextApiResponse<T | { error: any }>) => {
+    return async (req: NextApiRequest, res: NextApiResponse<T | ApiError>) => {
         try {
             await fn(req, res);
         } catch (error) {

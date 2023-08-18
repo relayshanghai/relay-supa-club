@@ -10,6 +10,7 @@ import { OutreachNotesInput } from '../components/outreach-notes-input';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { useSequenceInfluencerNotes } from 'src/hooks/use-sequence-influencer-notes';
 import type { NoteData } from '../components/note';
+import { CollabAddPost } from '../components/collab-add-post';
 
 export const COLLAB_STATUS_OPTIONS = [
     {
@@ -153,6 +154,8 @@ export const ProfileNotesTab = ({ profile, ...props }: Props) => {
                     value={data.notes.scheduledPostDate}
                     onInput={(e) => onUpdate('scheduledPostDate', e.currentTarget.value)}
                 />
+
+                <CollabAddPost profile={profile} />
             </div>
         </>
     );

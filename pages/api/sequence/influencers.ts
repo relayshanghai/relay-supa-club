@@ -1,4 +1,4 @@
-import type { NextApiHandler } from 'next';
+import type { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { ApiHandler } from 'src/utils/api-handler';
 import { type SequenceInfluencer } from 'src/utils/api/db';
@@ -11,9 +11,19 @@ export type SequenceInfluencerManagerPage = SequenceInfluencer & {
     avatar_url?: string | null;
     url?: string;
     platform?: string;
+    manager: {
+        id: string | null;
+        company_id: string | null;
+        avatar_url?: string | null;
+        first_name: string;
+        last_name: string;
+    };
 };
 
-const postHandler: NextApiHandler = async (req, res) => {
+const postHandler: NextApiHandler = async (
+    req: NextApiRequest,
+    res: NextApiResponse<SequenceInfluencerManagerPage[]>,
+) => {
     const sequenceIds: string[] = req.body;
     const influencersPromises = sequenceIds.map((sequenceId) => getSequenceInfluencers({ req, res }, sequenceId));
     const influencersArrays = await Promise.all(influencersPromises);
