@@ -960,7 +960,7 @@ BEGIN
     _sequence_general.id,
     _sequence_influencer_felicia.id,
     _sequence_step_follow_up_1.id,
-    'd7e91ded-7a8e-37e8-6484-837e4e94c3ad@gmail.com',
+    '<d7e91ded-7a8e-37e8-6484-837e4e94c3ad@gmail.com>',
     'Delivered',
     'Opened',
     '2024-08-02 01:00:00.000000+00'

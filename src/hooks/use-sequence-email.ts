@@ -7,12 +7,9 @@ export const useSequenceEmail = (messageId?: string) => {
         getSequenceEmailByMessageIdCall,
     );
     if (!messageId) {
-        throw new Error('messageId is required');
+        throw new Error('No message id found');
     }
-    const { data: sequenceEmail } = useSWR([messageId, 'sequence_email'], () =>
-        getSequenceEmailByMessageIdDBCall(messageId),
-    );
-
+    const { data: sequenceEmail } = useSWR('sequence_email', () => getSequenceEmailByMessageIdDBCall(messageId));
     return {
         sequenceEmail,
     };
