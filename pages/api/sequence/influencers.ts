@@ -6,12 +6,12 @@ import { getSequenceInfluencers } from 'src/utils/api/db/calls/get-sequence-infl
 
 export type SequenceInfluencerManagerPage = SequenceInfluencer & {
     name?: string | null;
-    manager_first_name?: string;
-    manager_last_name?: string;
     username?: string;
     avatar_url?: string | null;
     url?: string;
     platform?: string;
+    manager_first_name?: string;
+    manager_last_name?: string;
 };
 
 const postHandler: NextApiHandler = async (req, res) => {

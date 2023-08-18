@@ -17,13 +17,13 @@ export const getSequenceInfluencers = async (ctx: ServerContext, sequenceId: str
             );
             return {
                 ...influencer,
-                manager_first_name: managerInfo?.data?.first_name,
-                manager_last_name: managerInfo?.data?.last_name,
                 name: influencerInfo?.name,
                 username: influencerInfo?.username,
                 avatar_url: influencerInfo?.avatar_url,
                 url: influencerInfo?.url,
                 platform: influencerInfo?.platform,
+                manager_first_name: managerInfo?.data?.first_name,
+                manager_last_name: managerInfo?.data?.last_name,
             };
         }),
     );
