@@ -1,10 +1,10 @@
 import React, { useState, useCallback } from 'react';
 import { InfluencerRow } from './influencer-row';
 import type { InfluencerRowProps } from './influencer-row';
-import { type SequenceInfluencerManagerPage } from 'src/hooks/use-sequence-influencers';
 import { Button } from 'src/components/button';
 import { TABLE_LIMIT, TABLE_COLUMNS, COLLAB_OPTIONS } from '../constants';
 import { useTranslation } from 'react-i18next';
+import { type SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 
 export const Table = ({
     influencers,
@@ -20,12 +20,13 @@ export const Table = ({
             ? influencers.filter((influencer) => Object.keys(COLLAB_OPTIONS).includes(influencer.funnel_status))
             : [],
     );
+
     const totalPages = Math.ceil((filteredInfluencers?.length || 0) / TABLE_LIMIT);
 
     const { t } = useTranslation();
 
     const handleRowClick = useCallback(
-        (influencer: InfluencerRowProps['influencer']) => {
+        (influencer: SequenceInfluencerManagerPage) => {
             onRowClick && onRowClick(influencer);
         },
         [onRowClick],

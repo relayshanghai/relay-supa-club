@@ -1,5 +1,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { getProfileByUser } from './db/calls/tracking_events';
+import type { ServerContext } from '../analytics/types';
+import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
 
 type SessionIds = {
     session_id?: string;
@@ -10,6 +12,9 @@ type SessionIds = {
     email?: string | null;
 };
 
+/**
+ * Get the current user session from Supabase
+ */
 export const getUserSession = (db: SupabaseClient) => async () => {
     const {
         data: { session },
@@ -32,4 +37,11 @@ export const getUserSession = (db: SupabaseClient) => async () => {
     }
 
     return data;
+};
+
+/**
+ * Gets the user session from server context
+ */
+export const getUserSessionFromServerContext = (ctx: ServerContext) => {
+    return getUserSession(createServerSupabaseClient(ctx))();
 };

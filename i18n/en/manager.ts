@@ -5,6 +5,7 @@ const manager = {
     filterTags: 'Filter by tags',
     onlyMine: 'View only mine',
     name: 'Name',
+    platform: 'Platform',
     collabStatus: 'Collab Status',
     manager: 'Manager',
     tags: 'Tags',
