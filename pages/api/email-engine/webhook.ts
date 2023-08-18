@@ -94,7 +94,7 @@ const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) =>
 
 const handleTrackClick = async (event: WebhookTrackClick, res: NextApiResponse) => {
     const sequenceStep = await getSequenceEmailByMessageId(event.data.messageId);
-    const update: SequenceEmailUpdate = { ...sequenceStep, email_tracking_status: 'Link Clicked' };
+    const update: SequenceEmailUpdate = { id: sequenceStep.id, email_tracking_status: 'Link Clicked' };
     await updateSequenceEmail(update);
     await supabaseLogger({
         type: 'email-webhook',
@@ -107,7 +107,7 @@ const handleTrackClick = async (event: WebhookTrackClick, res: NextApiResponse) 
 const handleTrackOpen = async (event: WebhookTrackOpen, res: NextApiResponse) => {
     const sequenceEmail = await getSequenceEmailByMessageId(event.data.messageId);
     const update: SequenceEmailUpdate = {
-        ...sequenceEmail,
+        id: sequenceEmail.id,
         email_tracking_status: 'Opened',
     };
     await updateSequenceEmail(update);
@@ -122,7 +122,7 @@ const handleTrackOpen = async (event: WebhookTrackOpen, res: NextApiResponse) =>
 const handleBounce = async (event: WebhookMessageBounce, res: NextApiResponse) => {
     const sequenceEmail = await getSequenceEmailByMessageId(event.data.messageId);
     const update: SequenceEmailUpdate = {
-        ...sequenceEmail,
+        id: sequenceEmail.id,
         email_delivery_status: 'Bounced',
     };
     await updateSequenceEmail(update);
@@ -138,7 +138,7 @@ const handleComplaint = async (event: WebhookMessageComplaint, res: NextApiRespo
 const handleDeliveryError = async (event: WebhookMessageDeliveryError, res: NextApiResponse) => {
     const sequenceEmail = await getSequenceEmailByMessageId(event.data.messageId);
     const update: SequenceEmailUpdate = {
-        ...sequenceEmail,
+        id: sequenceEmail.id,
         email_delivery_status: 'Failed',
     };
     await updateSequenceEmail(update);
@@ -149,7 +149,7 @@ const handleDeliveryError = async (event: WebhookMessageDeliveryError, res: Next
 const handleFailed = async (event: WebhookMessageFailed, res: NextApiResponse) => {
     const sequenceEmail = await getSequenceEmailByMessageId(event.data.messageId);
     const update: SequenceEmailUpdate = {
-        ...sequenceEmail,
+        id: sequenceEmail.id,
         email_delivery_status: 'Failed',
     };
     await updateSequenceEmail(update);
@@ -162,7 +162,7 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
         const sequenceEmail = await getSequenceEmailByMessageId(event.data.messageId); // if there is no matching sequenceEmail, this is a regular email, not a sequenced email and this will throw an error
 
         const update: SequenceEmailUpdate = {
-            ...sequenceEmail,
+            id: sequenceEmail.id,
             email_delivery_status: 'Delivered',
         };
         await updateSequenceEmail(update);
@@ -170,7 +170,7 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
         const sequenceInfluencer = await getSequenceInfluencerById(sequenceEmail.sequence_influencer_id);
 
         const sequenceInfluencerUpdate: SequenceInfluencerUpdate = {
-            ...sequenceInfluencer,
+            id: sequenceInfluencer.id,
             sequence_step: sequenceInfluencer.sequence_step + 1,
         };
         await updateSequenceInfluencer(sequenceInfluencerUpdate);
