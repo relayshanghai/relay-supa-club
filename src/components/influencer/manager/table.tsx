@@ -20,12 +20,13 @@ export const Table = ({
             ? influencers.filter((influencer) => Object.keys(COLLAB_OPTIONS).includes(influencer.funnel_status))
             : [],
     );
+
     const totalPages = Math.ceil((filteredInfluencers?.length || 0) / TABLE_LIMIT);
 
     const { t } = useTranslation();
 
     const handleRowClick = useCallback(
-        (influencer: InfluencerRowProps['influencer']) => {
+        (influencer: SequenceInfluencerManagerPage) => {
             onRowClick && onRowClick(influencer);
         },
         [onRowClick],

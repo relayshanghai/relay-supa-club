@@ -9,7 +9,11 @@ import type { CampaignNotesDB, CampaignNotesWithProfiles } from 'src/utils/api/d
 import type { CampaignNotesUpdatePutBody, CampaignNotesUpdatePutResult } from 'pages/api/notes/update';
 import type { CampaignNotesDeleteBody, CampaignNotesDeleteResponse } from 'pages/api/notes/delete';
 
-export const useNotes = ({ campaignCreatorId }: { campaignCreatorId?: string }) => {
+export const useNotes = ({ campaignCreatorId }: { campaignCreatorId?: string | null }) => {
+    if (campaignCreatorId === null) {
+        throw new Error('campaign_creator_id is required');
+    }
+
     const [loading, setLoading] = useState<boolean>(false);
     const [campaignCreatorNotes, setCampaignCreatorNotes] = useState<CampaignNotesWithProfiles[]>([]);
     const { profile } = useUser();
