@@ -11,7 +11,8 @@ import type { CommonStatusType, MultipleDropdownObject } from 'src/components/li
 import { COLLAB_OPTIONS } from '../constants';
 import { ProfileOverlayScreen } from 'src/components/influencer-profile/screens/profile-overlay-screen';
 import { useTranslation } from 'react-i18next';
-import { type SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
+import { useUiState } from 'src/components/influencer-profile/screens/profile-screen-context';
+import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 
 const Manager = () => {
     const { sequences } = useSequences();
@@ -25,6 +26,8 @@ const Manager = () => {
 
     const { t } = useTranslation();
 
+    const [influencer, setInfluencer] = useState<SequenceInfluencerManagerPage | null>(null);
+    const [uiState, setUiState] = useUiState();
     const [influencers, setInfluencers] = useState<SequenceInfluencerManagerPage[] | undefined>(sequenceInfluencers);
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [onlyMe, setOnlyMe] = useState<boolean>(false);
@@ -32,13 +35,27 @@ const Manager = () => {
     const [isProfileOverlayOpen, setIsProfileOverlayOpen] = useState(false);
     const [_influencer, setInfluencer] = useState<SequenceInfluencerManagerPage | null>(null);
 
-    const handleRowClick = useCallback((influencer: SequenceInfluencerManagerPage) => {
-        setInfluencer(influencer);
-        setIsProfileOverlayOpen(true);
-    }, []);
+    const handleRowClick = useCallback(
+        (influencer: SequenceInfluencerManagerPage) => {
+            setInfluencer({
+                username: 'TastyChef',
+                name: "D'Jon Curtis",
+                // @todo platform needed in influencer type
+                // platform: 'instagram',
+                avatar_url: 'https://api.dicebear.com/6.x/open-peeps/svg?seed=TastyChef&size=96',
+                ...influencer,
+            });
 
-    const handleProfileUpdate = useCallback((_data: any) => {
-        // console.log('on update > ', data);
+            setUiState((s) => {
+                return { ...s, isProfileOverlayOpen: true };
+            });
+        },
+        [setUiState],
+    );
+
+    const handleProfileUpdate = useCallback((data: any) => {
+        // eslint-disable-next-line no-console
+        console.log('@todo update influencer profile', data);
     }, []);
 
     const setCollabStatusValues = (influencers: SequenceInfluencerManagerPage[], options: MultipleDropdownObject) => {
@@ -117,6 +134,14 @@ const Manager = () => {
         [sequenceInfluencers, setFilterStatuses],
     );
 
+    const handleProfileOverlayClose = useCallback(() => {
+        setUiState((s) => {
+            return { ...s, isProfileOverlayOpen: false };
+        });
+
+        setInfluencer(null);
+    }, [setUiState]);
+
     return (
         <>
             <div className="m-8 flex flex-col">
@@ -143,8 +168,9 @@ const Manager = () => {
                 <Table influencers={influencers} onRowClick={handleRowClick} />
             </div>
             <ProfileOverlayScreen
-                isOpen={isProfileOverlayOpen}
-                onClose={() => setIsProfileOverlayOpen(false)}
+                profile={influencer}
+                isOpen={uiState.isProfileOverlayOpen}
+                onClose={handleProfileOverlayClose}
                 onUpdate={handleProfileUpdate}
             />
         </>

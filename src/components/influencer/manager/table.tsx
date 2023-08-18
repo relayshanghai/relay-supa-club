@@ -24,7 +24,7 @@ export const Table = ({
     const { t } = useTranslation();
 
     const handleRowClick = useCallback(
-        (influencer: InfluencerRowProps['influencer']) => {
+        (influencer: SequenceInfluencerManagerPage) => {
             onRowClick && onRowClick(influencer);
         },
         [onRowClick],
