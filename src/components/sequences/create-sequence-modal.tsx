@@ -7,6 +7,7 @@ import { useSequence } from 'src/hooks/use-sequence';
 import { toast } from 'react-hot-toast';
 import { clientLogger } from 'src/utils/logger-client';
 import { useSequenceSteps } from 'src/hooks/use-sequence-steps';
+import { useTemplateVariables } from 'src/hooks/use-template_variables';
 
 export const CreateSequenceModal = ({
     title,
@@ -20,6 +21,7 @@ export const CreateSequenceModal = ({
     const { t } = useTranslation();
     const { createSequence } = useSequence();
     const { createDefaultSequenceSteps } = useSequenceSteps();
+    const { createDefaultTemplateVariables } = useTemplateVariables();
 
     const [loading, setLoading] = useState<boolean>(false);
     const [sequenceName, setSequenceName] = useState<string>('');
@@ -33,6 +35,7 @@ export const CreateSequenceModal = ({
                 throw new Error('Failed to get sequence id');
             }
             await createDefaultSequenceSteps(data.id);
+            await createDefaultTemplateVariables(data.id);
             toast.success(t('sequences.createSequenceSuccess'));
         } catch (error) {
             clientLogger(error, 'error');
