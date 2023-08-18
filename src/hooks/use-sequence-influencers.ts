@@ -1,4 +1,3 @@
-import { type SequenceInfluencer } from './../utils/api/db/types';
 import useSWR from 'swr';
 import { apiFetch } from 'src/utils/api/api-fetch';
 import { useDB } from 'src/utils/client-db/use-client-db';
@@ -9,6 +8,7 @@ import {
 } from 'src/utils/api/db/calls/sequence-influencers';
 import type { SequenceInfluencerInsert, SequenceInfluencerUpdate } from 'src/utils/api/db';
 import { useUser } from 'src/hooks/use-user';
+import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 
 export const useSequenceInfluencers = (sequenceIds?: string[], filters?: string[]) => {
     const { profile } = useUser();
@@ -66,16 +66,4 @@ export const useSequenceInfluencers = (sequenceIds?: string[], filters?: string[
         refreshSequenceInfluencers,
         deleteSequenceInfluencer,
     };
-};
-
-export type SequenceInfluencerManagerPage = SequenceInfluencer & {
-    name?: string | null;
-    manager_first_name?: string;
-    username?: string;
-    avatar_url?: string | null;
-    url?: string;
-    // @todo platform needed in influencer type
-    platform?: string;
-    // @todo change avatar to avatar_url
-    avatar?: string | null;
 };

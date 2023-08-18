@@ -7,7 +7,7 @@ import { CollabVideoDetailsInput } from '../components/collab-video-details-inpu
 import { OutreachCollabStatusInput } from '../components/outreach-collab-status-input';
 import { OutreachNextStepsInput } from '../components/outreach-next-steps-input';
 import { OutreachNotesInput } from '../components/outreach-notes-input';
-import type { SequenceInfluencerManagerPage } from 'src/hooks/use-sequence-influencers';
+import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { useSequenceInfluencerNotes } from 'src/hooks/use-sequence-influencer-notes';
 import type { NoteData } from '../components/note';
 

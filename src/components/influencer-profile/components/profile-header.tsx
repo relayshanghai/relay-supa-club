@@ -2,7 +2,7 @@ import type { DetailedHTMLProps, HTMLAttributes } from 'react';
 import { useMemo } from 'react';
 import { EmailOutlineColored, TiktokNoBg, YoutubeNoBg } from 'src/components/icons';
 import User from 'src/components/icons/User';
-import type { SequenceInfluencerManagerPage } from 'src/hooks/use-sequence-influencers';
+import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 
 // @note probably exists already
 export type Profile = {

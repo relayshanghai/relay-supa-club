@@ -3,7 +3,7 @@ import { OverlayRight } from 'src/components/influencer-profile/components/overl
 import type { ProfileValue } from 'src/components/influencer-profile/screens/profile-screen';
 import { ProfileScreen } from 'src/components/influencer-profile/screens/profile-screen';
 import { useSequenceInfluencerNotes } from 'src/hooks/use-sequence-influencer-notes';
-import type { SequenceInfluencerManagerPage } from 'src/hooks/use-sequence-influencers';
+import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { NotesListOverlayScreen } from './notes-list-overlay';
 import { ProfileScreenProvider, useUiState } from './profile-screen-context';
 

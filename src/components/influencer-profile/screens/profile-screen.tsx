@@ -8,7 +8,7 @@ import { Button } from 'src/components/button';
 import { cls } from 'src/utils/classnames';
 import { ProfileHeader } from '../components/profile-header';
 import { useProfileScreenContext } from './profile-screen-context';
-import type { SequenceInfluencerManagerPage } from 'src/hooks/use-sequence-influencers';
+import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 
 export type ProfileValue = {
     notes: ProfileNotes;
