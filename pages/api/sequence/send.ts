@@ -9,6 +9,7 @@ import { updateSequenceInfluencerCall } from 'src/utils/api/db/calls/sequence-in
 import { getSequenceStepsBySequenceIdCall } from 'src/utils/api/db/calls/sequence-steps';
 import { getTemplateVariablesBySequenceIdCall } from 'src/utils/api/db/calls/template-variables';
 import { sendTemplateEmail } from 'src/utils/api/email-engine/send-template-email';
+import { serverLogger } from 'src/utils/logger-server';
 import { db } from 'src/utils/supabase-client';
 
 export type SequenceSendPostBody = {
@@ -72,6 +73,7 @@ const sendAndInsertEmail = async ({
     return { sequenceInfluencerId: sequenceInfluencer.id, stepNumber: step.step_number };
 };
 
+// eslint-disable-next-line complexity
 const sendSequence = async ({ account, sequenceInfluencers }: SequenceSendPostBody) => {
     const results: SendResult[] = [];
     if (!account || !sequenceInfluencers || sequenceInfluencers.length === 0) {
@@ -90,20 +92,28 @@ const sendSequence = async ({ account, sequenceInfluencers }: SequenceSendPostBo
     for (const sequenceInfluencer of sequenceInfluencers) {
         try {
             for (const step of sequenceSteps) {
-                const result = await sendAndInsertEmail({
-                    step,
-                    account,
-                    sequenceInfluencer,
-                    templateVariables,
-                });
-                results.push(result);
+                try {
+                    const result = await sendAndInsertEmail({
+                        step,
+                        account,
+                        sequenceInfluencer,
+                        templateVariables,
+                    });
+                    results.push(result);
+                } catch (error: any) {
+                    results.push({
+                        sequenceInfluencerId: sequenceInfluencer.id,
+                        error: error?.message ?? '',
+                    });
+                }
             }
             await db<typeof updateSequenceInfluencerCall>(updateSequenceInfluencerCall)({
-                ...sequenceInfluencer,
+                id: sequenceInfluencer.id,
                 funnel_status: 'In Sequence',
                 sequence_step: 0, // handleSent() in pages/api/email-engine/webhook.ts will update the step as the scheduled emails are sent
             });
         } catch (error: any) {
+            serverLogger(error, 'error');
             results.push({
                 sequenceInfluencerId: sequenceInfluencer.id,
                 error: error?.message ?? '',
