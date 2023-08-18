@@ -65,14 +65,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (req.method === 'GET') {
         const catchInfluencer = async (data: CreatorReport) => {
             const [influencer, socialProfile] = await getInfluencer(data);
-            // if (influencer === null) {
-            try {
-                const [influencer, socialProfile] = await db<typeof saveInfluencer>(saveInfluencer)(data);
-                return { influencer, socialProfile };
-            } catch (error) {
-                serverLogger(error, 'error', true);
+            if (influencer === null) {
+                try {
+                    const [influencer, socialProfile] = await db<typeof saveInfluencer>(saveInfluencer)(data);
+                    return { influencer, socialProfile };
+                } catch (error) {
+                    serverLogger(error, 'error', true);
+                }
             }
-            // }
             return { influencer, socialProfile };
         };
 
