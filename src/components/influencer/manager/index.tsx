@@ -32,8 +32,6 @@ const Manager = () => {
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [onlyMe, setOnlyMe] = useState<boolean>(false);
     const [filterStatuses, setFilterStatuses] = useState<CommonStatusType[]>([]);
-    const [isProfileOverlayOpen, setIsProfileOverlayOpen] = useState(false);
-    const [_influencer, setInfluencer] = useState<SequenceInfluencerManagerPage | null>(null);
 
     const handleRowClick = useCallback(
         (influencer: SequenceInfluencerManagerPage) => {
