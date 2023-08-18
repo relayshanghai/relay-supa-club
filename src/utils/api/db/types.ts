@@ -86,8 +86,6 @@ export type TemplateVariableUpdate = TemplateVariablesTable['Update'] & {
 type SequenceStepDetailedTypes = {
     /** Int, first step = 0 */
     step_number: number;
-    /** The params to be passed to the template. e.g. 'companyName' */
-    params: string[];
 };
 
 export type SequenceStepsTable = Database['public']['Tables']['sequence_steps'] & {
@@ -229,3 +227,4 @@ export type SearchSnapshots = Database['public']['Tables']['search_snapshots'];
 export type ReportSnapshots = Database['public']['Tables']['report_snapshots'];
 export type SearchParameters = Database['public']['Tables']['search_parameters'];
 export type VercelLogs = Database['public']['Tables']['vercel_logs'];
+export type CampaignNotes = Database['public']['Tables']['campaign_notes'];

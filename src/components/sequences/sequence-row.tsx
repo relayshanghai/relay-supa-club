@@ -17,6 +17,7 @@ import { EMAIL_STATUS_STYLES } from './constants';
 import { EmailPreviewModal } from './email-preview-modal';
 import type { SequenceSendPostResponse } from 'pages/api/sequence/send';
 import toast from 'react-hot-toast';
+import { useUser } from 'src/hooks/use-user';
 
 interface SequenceRowProps {
     sequenceInfluencer: SequenceInfluencer;
@@ -30,19 +31,12 @@ interface SequenceRowProps {
     handleStartSequence: (sequenceInfluencers: SequenceInfluencer[]) => Promise<SequenceSendPostResponse>;
 }
 
-const Icons = ({ status }: { status?: string }) => {
-    switch (status) {
-        case 'Opened':
-            return <EmailOpenOutline className="h-6 w-6 stroke-blue-500" />;
-        case 'Scheduled':
-            return <Clock className="h-6 w-6 stroke-yellow-500" />;
-        case 'Bounced':
-            return <AlertCircleOutline className="h-6 w-6 stroke-red-500" />;
-        case 'Delivered':
-            return <Send className="h-6 w-6 stroke-green-500" />;
-        default:
-            return null;
-    }
+const Icons = {
+    Opened: <EmailOpenOutline className="h-6 w-6 stroke-blue-500" />,
+    Scheduled: <Clock className="h-6 w-6 stroke-yellow-500" />,
+    Bounced: <AlertCircleOutline className="h-6 w-6 stroke-red-500" />,
+    Delivered: <Send className="h-6 w-6 stroke-green-500" />,
+    Default: <Send className="h-6 w-6 stroke-gray-500" />,
 };
 
 /** use the tracking status if it is delivered */
@@ -62,13 +56,16 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
     templateVariables,
     handleStartSequence,
 }) => {
+    const Icon = Icons[getStatus(sequenceEmail) as keyof typeof Icons] || Icons.Default;
     const { influencerSocialProfile } = useInfluencerSocialProfile(sequenceInfluencer.influencer_social_profile_id);
     const { updateSequenceInfluencer, deleteSequenceInfluencer } = useSequenceInfluencers(
         sequenceInfluencer && [sequenceInfluencer.sequence_id],
     );
+    const { profile } = useUser();
     const { i18n, t } = useTranslation();
     const [email, setEmail] = useState(sequenceInfluencer.email ?? '');
     const [showEmailPreview, setShowEmailPreview] = useState<SequenceStep[] | null>(null);
+    const [sendingEmail, setSendingEmail] = useState(false);
 
     const handleEmailUpdate = async (email: string) => {
         const updatedSequenceInfluencer = await updateSequenceInfluencer({ id: sequenceInfluencer.id, email });
@@ -76,19 +73,21 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
     };
     const currentStep = sequenceSteps?.find((step) => step.step_number === sequenceInfluencer.sequence_step);
     const handleStart = async () => {
+        setSendingEmail(true);
         try {
             const results = await handleStartSequence([sequenceInfluencer]);
             const failed = results.filter((result) => result.error);
             const succeeded = results.filter((result) => !result.error);
             if (succeeded.length > 0) {
-                toast.success(t('sequences.emailsSentTo_number_influencers', { number: succeeded.length }));
+                toast.success(t('sequences.number_emailsSuccessfullyScheduled', { number: succeeded.length }));
             }
             if (failed.length > 0) {
-                toast.error(t('sequences.failedToSendTo_number_influencers', { number: failed.length }));
+                toast.error(t('sequences.number_emailsFailedToSchedule', { number: failed.length }));
             }
         } catch (error: any) {
             toast.error(error?.message ?? '');
         }
+        setSendingEmail(false);
     };
     return (
         <>
@@ -162,6 +161,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                                 position="left"
                             >
                                 <Button
+                                    disabled={!sequenceInfluencer?.email || sendingEmail}
                                     data-testid={`send-email-button-${sequenceInfluencer.email}`}
                                     onClick={
                                         isMissingVariables ? () => setShowUpdateTemplateVariables(true) : handleStart
@@ -175,6 +175,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                                 data-testid="show-all-email-previews-button"
                                 className="ml-2"
                                 variant="ghost"
+                                disabled={!profile?.email_engine_account_id || !profile?.sequence_send_email}
                                 onClick={() => setShowEmailPreview(sequenceSteps)}
                             >
                                 <Brackets className="h-5 w-5" />
@@ -199,7 +200,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                                 EMAIL_STATUS_STYLES[getStatus(sequenceEmail) || 'Default']
                             }`}
                         >
-                            <Icons status={getStatus(sequenceEmail)} />
+                            {Icon}
                             {getStatus(sequenceEmail)}
                         </div>
                         <td className="whitespace-nowrap px-6 py-4 text-gray-600">
@@ -250,7 +251,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                                     EMAIL_STATUS_STYLES[getStatus(sequenceEmail) || 'Default']
                                 }`}
                             >
-                                <Icons status={getStatus(sequenceEmail)} />
+                                {Icon}
                                 {getStatus(sequenceEmail)}
                             </div>
                         </td>

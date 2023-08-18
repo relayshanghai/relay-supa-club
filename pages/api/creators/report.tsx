@@ -117,7 +117,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     },
                 });
 
-                const data = await fetchReport({ req, res })(report_id);
+                const data: CreatorReport = await fetchReport({ req, res })(report_id);
 
                 if (!data.success) throw new Error('Failed to find report');
                 const { error: recordError } = await recordReportUsage(company_id, user_id, creator_id);
@@ -127,6 +127,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 }
 
                 const { influencer, socialProfile } = await catchInfluencer(data);
+                // quick fix to add email and recent video title to the social profile
+                if (socialProfile) {
+                    const contacts = data.user_profile.contacts || [];
+                    const email = contacts.find((v: any) => v.type === 'email') || { value: null };
+                    await db((supabase) => async () => {
+                        supabase.from('influencer_social_profiles').update({
+                            id: socialProfile.id,
+                            recent_video_title: data.user_profile.recent_posts?.[0]?.title || '',
+                            email: email.value || null,
+                        });
+                    });
+                }
 
                 await trackAndSnap(track, req, res, events, data);
 

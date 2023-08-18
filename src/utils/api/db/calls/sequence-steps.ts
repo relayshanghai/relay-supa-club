@@ -14,8 +14,9 @@ export const updateSequenceStepCall = (supabaseClient: RelayDatabase) => async (
     return data;
 };
 
-export const createSequenceStepCall = (supabaseClient: RelayDatabase) => async (sequenceStep: SequenceStepInsert) => {
-    const { data, error } = await supabaseClient.from('sequence_steps').insert(sequenceStep);
-    if (error) throw error;
-    return data;
-};
+export const insertSequenceStepsCall =
+    (supabaseClient: RelayDatabase) => async (sequenceStep: SequenceStepInsert[]) => {
+        const { data, error } = await supabaseClient.from('sequence_steps').insert(sequenceStep);
+        if (error) throw error;
+        return data;
+    };

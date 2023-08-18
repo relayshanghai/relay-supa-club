@@ -106,6 +106,7 @@ const sequences = {
     最好输入整数，以便让模板看起来更加简洁。
     
     这将会直接显示于您的电子邮件模版中，单位格式为 $。`,
+    productPricePlaceholder: '99.9',
     influencer: 'KOL',
     influencerNiche: 'KOL所在领域',
     influencerNichePlaceholder: 'Productivity Hackers',
@@ -114,16 +115,16 @@ const sequences = {
     例如
     "Health and Wellness"、"Tech Reviewer "或 "Fitness"。
     这将会直接显示于您的电子邮件模版中。`,
-    influencerNameOrHandle: 'KOL名字（或账号）',
-    influencerNameOrHandleTooltip: `KOL名字（或账号）`,
-    influencerNameOrHandleTooltipDescription: `无需输入！我们将从KOL报告中提取这些信息，为收件人定制每封邮件！`,
+    influencerAccountName: 'KOL名字（或账号）',
+    influencerAccountNameTooltip: `KOL名字（或账号）`,
+    influencerAccountNameTooltipDescription: `无需输入！我们将从KOL报告中提取这些信息，为收件人定制每封邮件！`,
     recentVideoTitle: '最新发布内容',
     recentVideoTitleTooltip: '最新发布内容',
     recentVideoTitleTooltipDescription: `无需输入！我们将从KOL报告中提取这些信息，为收件人定制每封邮件！`,
     wellHandleThisOne: `无需输入此项，我们来搞定！`,
     missingRequiredTemplateVariables_variables: 'Missing required template variables: {{variables}}',
     emailPreview: '邮件预览',
-    emailsSentTo_number_influencers: '成功发送邮件给{{number}}个KOL',
-    failedToSendTo_number_influencers: '失败发送邮件给{{number}}个KOL',
+    number_emailsSuccessfullyScheduled: '成功提交安排{{number}}发送邮件',
+    number_emailsFailedToSchedule: '失败提交安排发{{number}}送邮件',
 };
 export default sequences;

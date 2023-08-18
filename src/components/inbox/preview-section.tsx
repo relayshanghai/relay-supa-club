@@ -13,8 +13,6 @@ export const PreviewSection = ({
     handleGetThreadEmails: (message: MessagesGetMessage) => Promise<void>;
     loadingSelectedMessages: boolean;
 }) => {
-    // console.log(selectedMessages);
-    // console.log(messages);
     return (
         <div className="h-full overflow-y-auto border-r-2 border-tertiary-200">
             {messages.map((message) => (
