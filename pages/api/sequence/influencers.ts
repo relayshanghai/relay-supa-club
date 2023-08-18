@@ -10,6 +10,7 @@ export type SequenceInfluencerManagerPage = SequenceInfluencer & {
     username?: string;
     avatar_url?: string | null;
     url?: string;
+    platform?: string;
 };
 
 const postHandler: NextApiHandler = async (req, res) => {

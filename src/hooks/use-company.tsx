@@ -48,6 +48,7 @@ export const CompanyProvider = ({ children }: PropsWithChildren) => {
     const clientRoleData = useAtomValue(clientRoleAtom);
     const companyId = clientRoleData.companyId || profile?.company_id;
 
+    // @note why not fetch it along the profile in useUser?
     const { data: company, mutate: refreshCompany } = useSWR(profile && companyId ? 'company' : null, async () => {
         const fetchedCompany = await getCompanyById(companyId);
         if (profile && fetchedCompany?.name && !company?.name) {
@@ -61,6 +62,8 @@ export const CompanyProvider = ({ children }: PropsWithChildren) => {
         }
         return fetchedCompany;
     });
+
+    // @note this will wait for profile to load and rerender for refreshCompany
     useEffect(() => {
         refreshCompany();
     }, [clientRoleData.companyId, refreshCompany]);
