@@ -111,7 +111,7 @@ const Manager = () => {
                 return;
             }
 
-            setInfluencers(sequenceInfluencers.filter((x) => x.manager_first_name === profile?.first_name));
+            setInfluencers(sequenceInfluencers.filter((x) => x.manager?.first_name === profile?.first_name));
         },
         [sequenceInfluencers, profile, onlyMe],
     );

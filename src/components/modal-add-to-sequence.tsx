@@ -23,7 +23,6 @@ export const AddToSequenceModal = ({
     selectedCreator: CreatorUserProfile;
     platform: CreatorPlatform;
 }) => {
-    // TODO: need to also add the case if already added to the sequence logic here V2-730
     const { i18n, t } = useTranslation();
     const { sequences } = useSequences();
     const { socialProfile, report } = useReport({ platform, creator_id: selectedCreator.user_id || '' });
@@ -33,7 +32,22 @@ export const AddToSequenceModal = ({
     const [socialProfileId, setSocialProfileId] = useState(() => socialProfile?.id ?? null);
     const { sendSequence } = useSequence(selectedSequence?.id);
 
-    const { createSequenceInfluencer } = useSequenceInfluencers(selectedSequence ? [selectedSequence.id] : []);
+    const { sequenceInfluencers, createSequenceInfluencer } = useSequenceInfluencers(
+        selectedSequence ? [selectedSequence.id] : [],
+    );
+    const calculateHasInfluencer = useCallback(() => {
+        if (!sequenceInfluencers || !selectedSequence) {
+            return false;
+        }
+        const selectedCreatorId = selectedCreator.user_id;
+        const influencerSequenceIds = sequenceInfluencers
+            .filter((sequenceInfluencer) => sequenceInfluencer.iqdata_id === selectedCreatorId)
+            .map((sequenceInfluencer) => sequenceInfluencer.sequence_id);
+
+        return influencerSequenceIds.includes(selectedSequence.id);
+    }, [selectedCreator, selectedSequence, sequenceInfluencers]);
+
+    const [hasInfluencer, setHasInfluencer] = useState<boolean>(calculateHasInfluencer());
 
     const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         if (!sequences) {
@@ -41,6 +55,7 @@ export const AddToSequenceModal = ({
         }
         const selectedSequenceObject = sequences?.find((sequence) => sequence.name === e.target.value) ?? null;
         setSelectedSequence(selectedSequenceObject);
+        setHasInfluencer(calculateHasInfluencer());
     };
 
     // get the top 3 tags from relevant_tags of the report, then pass it to tags of sequence influencer
@@ -123,7 +138,7 @@ export const AddToSequenceModal = ({
                             <Spinner className="h-5 w-5 fill-primary-500 text-white" />
                         </Button>
                     ) : (
-                        <Button onClick={handleAddToSequence} type="submit">
+                        <Button disabled={!hasInfluencer} onClick={handleAddToSequence} type="submit">
                             {t('creators.addToSequence')}
                         </Button>
                     )}

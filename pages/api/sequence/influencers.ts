@@ -1,12 +1,14 @@
 import type { NextApiHandler } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { ApiHandler } from 'src/utils/api-handler';
-import { type SequenceInfluencer } from 'src/utils/api/db';
+import type { ProfileDB, SequenceInfluencer } from 'src/utils/api/db';
 import { getSequenceInfluencers } from 'src/utils/api/db/calls/get-sequence-influencers';
 
 export type SequenceInfluencerManagerPage = SequenceInfluencer & {
+    influencer_id?: string;
+    iqdata_id?: string;
     name?: string | null;
-    manager_first_name?: string;
+    manager?: ProfileDB;
     username?: string;
     avatar_url?: string | null;
     url?: string;

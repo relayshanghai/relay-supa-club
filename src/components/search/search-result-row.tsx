@@ -23,6 +23,7 @@ import { useAnalytics } from '../analytics/analytics-provider';
 import { SearchLoadMoreResults } from 'src/utils/analytics/events';
 import { SEARCH_RESULT_ROW } from 'src/utils/rudderstack/event-names';
 import type { track } from './use-track-event';
+import { type SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 
 export interface SearchResultRowProps {
     creator: CreatorSearchAccountObject;
@@ -30,7 +31,9 @@ export interface SearchResultRowProps {
     setShowCampaignListModal: (show: boolean) => void;
     setShowAlreadyAddedModal: (show: boolean) => void;
     setShowSequenceListModal: (show: boolean) => void;
+    setShowAlreadyAddedSequenceModal: (show: boolean) => void;
     allCampaignCreators?: CampaignCreatorBasicInfo[];
+    allSequenceInfluencers?: SequenceInfluencerManagerPage[];
     trackSearch?: track;
 }
 export interface MoreResultsRowsProps extends Omit<SearchResultRowProps, 'creator'> {
@@ -42,8 +45,10 @@ export const MoreResultsRows = ({
     setShowCampaignListModal,
     setSelectedCreator,
     setShowAlreadyAddedModal,
+    setShowAlreadyAddedSequenceModal,
     setShowSequenceListModal,
     allCampaignCreators,
+    allSequenceInfluencers,
     trackSearch,
 }: MoreResultsRowsProps) => {
     const { t } = useTranslation();
@@ -102,7 +107,9 @@ export const MoreResultsRows = ({
                         setShowCampaignListModal={setShowCampaignListModal}
                         setSelectedCreator={setSelectedCreator}
                         setShowAlreadyAddedModal={setShowAlreadyAddedModal}
+                        setShowAlreadyAddedSequenceModal={setShowAlreadyAddedSequenceModal}
                         allCampaignCreators={allCampaignCreators}
+                        allSequenceInfluencers={allSequenceInfluencers}
                         setShowSequenceListModal={setShowSequenceListModal}
                     />
                 ))}
@@ -119,7 +126,9 @@ export const SearchResultRow = ({
     setShowCampaignListModal,
     setSelectedCreator,
     allCampaignCreators,
+    allSequenceInfluencers,
     setShowAlreadyAddedModal,
+    setShowAlreadyAddedSequenceModal,
     setShowSequenceListModal,
 }: SearchResultRowProps) => {
     const { t } = useTranslation();
@@ -165,7 +174,24 @@ export const SearchResultRow = ({
 
     const addToSequence = () => {
         setSelectedCreator(creator);
-        setShowSequenceListModal(true);
+        let isAlreadyInSequence = false;
+
+        if (allSequenceInfluencers) {
+            for (const sequenceInfluencer of allSequenceInfluencers) {
+                if (sequenceInfluencer?.iqdata_id && creator.account.user_profile.user_id) {
+                    if (sequenceInfluencer.iqdata_id === creator.account.user_profile.user_id) {
+                        isAlreadyInSequence = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (isAlreadyInSequence) {
+            setShowAlreadyAddedSequenceModal(true);
+        } else {
+            setShowSequenceListModal(true);
+        }
     };
 
     const desktop = useAboveScreenWidth(500);

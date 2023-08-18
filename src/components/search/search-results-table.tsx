@@ -6,13 +6,16 @@ import { Button } from '../button';
 import { SkeletonSearchResultRow } from '../common/skeleton-search-result-row';
 import { SearchResultRow } from './search-result-row';
 import type { CampaignCreatorBasicInfo } from 'src/utils/api/db/calls/campaignCreators';
+import { type SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 
 export interface SearchResultsTableProps {
     setShowCampaignListModal: (show: boolean) => void;
     setSelectedCreator: (creator: CreatorSearchAccountObject) => void;
     setShowAlreadyAddedModal: (show: boolean) => void;
+    setShowAlreadyAddedSequenceModal: (show: boolean) => void;
     setShowSequenceListModal: (show: boolean) => void;
     allCampaignCreators?: CampaignCreatorBasicInfo[];
+    allSequenceInfluencers?: SequenceInfluencerManagerPage[];
     results?: CreatorSearchAccountObject[];
     loading: boolean;
     validating: boolean;
@@ -26,7 +29,9 @@ export const SearchResultsTable = ({
     setSelectedCreator,
     setShowAlreadyAddedModal,
     setShowSequenceListModal,
+    setShowAlreadyAddedSequenceModal,
     allCampaignCreators,
+    allSequenceInfluencers,
     results,
     loading: resultsLoading,
     validating,
@@ -100,8 +105,10 @@ export const SearchResultsTable = ({
                                     setShowCampaignListModal={setShowCampaignListModal}
                                     setSelectedCreator={setSelectedCreator}
                                     setShowAlreadyAddedModal={setShowAlreadyAddedModal}
+                                    setShowAlreadyAddedSequenceModal={setShowAlreadyAddedSequenceModal}
                                     setShowSequenceListModal={setShowSequenceListModal}
                                     allCampaignCreators={allCampaignCreators}
+                                    allSequenceInfluencers={allSequenceInfluencers}
                                 />
                             ))}
                             {moreResults}

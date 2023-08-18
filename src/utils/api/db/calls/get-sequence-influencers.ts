@@ -17,12 +17,14 @@ export const getSequenceInfluencers = async (ctx: ServerContext, sequenceId: str
             );
             return {
                 ...influencer,
-                manager_first_name: managerInfo?.data?.first_name,
-                name: influencerInfo?.name,
-                username: influencerInfo?.username,
-                avatar_url: influencerInfo?.avatar_url,
-                url: influencerInfo?.url,
-                platform: influencerInfo?.platform,
+                manager: managerInfo,
+                influencer_id: influencerInfo.influencer_id,
+                iqdata_id: influencerInfo.reference_id.replace('iqdata:', ''),
+                name: influencerInfo.name,
+                username: influencerInfo.username,
+                avatar_url: influencerInfo.avatar_url,
+                url: influencerInfo.url,
+                platform: influencerInfo.platform,
             };
         }),
     );

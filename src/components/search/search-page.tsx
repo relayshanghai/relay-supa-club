@@ -27,6 +27,9 @@ import { SEARCH_RESULT } from 'src/utils/rudderstack/event-names';
 import { useTrackEvent } from './use-track-event';
 import { AddToSequenceModal } from '../modal-add-to-sequence';
 import { featEmail } from 'src/constants/feature-flags';
+import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
+import { useSequences } from 'src/hooks/use-sequences';
+import { InfluencerAlreadyAddedSequenceModal } from '../influencer-already-added-sequence';
 // import { featRecommended } from 'src/constants/feature-flags';
 
 export const SearchPageInner = () => {
@@ -50,9 +53,15 @@ export const SearchPageInner = () => {
     const [filterModalOpen, setShowFiltersModal] = useState(false);
     const [showCampaignListModal, setShowCampaignListModal] = useState(false);
     const [showSequenceListModal, setShowSequenceListModal] = useState(false);
+    const { sequences } = useSequences();
     const [selectedCreator, setSelectedCreator] = useState<CreatorSearchAccountObject | null>(null);
     const { campaigns } = useCampaigns({});
     const { allCampaignCreators } = useAllCampaignCreators(campaigns);
+    const { sequenceInfluencers } = useSequenceInfluencers(
+        sequences?.map((sequence) => {
+            return sequence.id;
+        }),
+    );
     const { trackEvent } = useRudderstack();
 
     const [page, setPage] = useState(0);
@@ -137,6 +146,7 @@ export const SearchPageInner = () => {
     }, [track, setOnLoad, searchParams, metadata, rendered]);
 
     const [showAlreadyAddedModal, setShowAlreadyAddedModal] = useState(false);
+    const [showAlreadyAddedSequenceModal, setShowAlreadyAddedSequenceModal] = useState(false);
 
     // Automatically start a journey on render
     useEffect(() => {
@@ -204,7 +214,9 @@ export const SearchPageInner = () => {
                 setShowCampaignListModal={setShowCampaignListModal}
                 setShowAlreadyAddedModal={setShowAlreadyAddedModal}
                 setShowSequenceListModal={setShowSequenceListModal}
+                setShowAlreadyAddedSequenceModal={setShowAlreadyAddedSequenceModal}
                 allCampaignCreators={allCampaignCreators}
+                allSequenceInfluencers={sequenceInfluencers}
                 loading={resultsLoading}
                 validating={isValidating}
                 results={firstPageSearchResults}
@@ -218,6 +230,7 @@ export const SearchPageInner = () => {
                                 setSelectedCreator={setSelectedCreator}
                                 setShowCampaignListModal={setShowCampaignListModal}
                                 setShowAlreadyAddedModal={setShowAlreadyAddedModal}
+                                setShowAlreadyAddedSequenceModal={setShowAlreadyAddedSequenceModal}
                                 setShowSequenceListModal={setShowSequenceListModal}
                                 allCampaignCreators={allCampaignCreators}
                                 trackSearch={track}
@@ -274,6 +287,14 @@ export const SearchPageInner = () => {
                 selectedCreatorUserId={selectedCreator?.account.user_profile.user_id}
                 campaigns={campaigns}
                 allCampaignCreators={allCampaignCreators}
+            />
+            <InfluencerAlreadyAddedSequenceModal
+                show={showAlreadyAddedSequenceModal}
+                setSequenceListModal={setShowSequenceListModal}
+                setShow={setShowAlreadyAddedSequenceModal}
+                selectedCreatorUserId={selectedCreator?.account.user_profile.user_id}
+                sequences={sequences}
+                allSequenceInfluencers={sequenceInfluencers}
             />
             <SearchFiltersModal show={filterModalOpen} setShow={setShowFiltersModal} onSearch={handleSearch} />
         </div>
