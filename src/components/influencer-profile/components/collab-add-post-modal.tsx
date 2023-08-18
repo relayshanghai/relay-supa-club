@@ -1,41 +1,48 @@
 import { t } from 'i18next';
 import Link from 'next/link';
+import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { useCallback, useEffect } from 'react';
 import { SocialMediaIcon } from 'src/components/common/social-media-icon';
 import { Modal } from 'src/components/modal';
 import { useInfluencers } from 'src/hooks/use-influencers';
+import { imgProxy } from 'src/utils/fetcher';
 import type { SocialMediaPlatform } from 'types';
 import type { PostUrl } from './collab-add-post-modal-form';
 import { CollabAddPostModalForm } from './collab-add-post-modal-form';
 import { InfluencerPosts } from './influencer-posts';
-import type { Profile } from './profile-header';
 
 type Props = Omit<
     {
-        profile: Profile;
+        profile: SequenceInfluencerManagerPage;
         isOpen?: boolean;
         onClose?: () => void;
     },
     'children'
 >;
 
-export const CollabAddPostModal = (props: Props) => {
+export const CollabAddPostModal = ({ profile, ...props }: Props) => {
     const { onClose } = { onClose: () => null, ...props };
-    const { getPosts } = useInfluencers();
+    const { getPosts, savePosts } = useInfluencers();
 
     useEffect(() => {
         // load posts when the modal is opened
         if (!props.isOpen || getPosts.isLoading !== null) return;
 
-        // getPosts.call('your-influencer-id')
+        getPosts.call(profile.id);
         // @todo do some error handling
         // .catch((e) => console.error(e))
-    }, [props.isOpen, getPosts]);
+    }, [props.isOpen, getPosts, profile]);
 
-    const handleSaveUrls = useCallback((urls: PostUrl[]) => {
-        // eslint-disable-next-line no-console
-        console.log('saving', urls);
-    }, []);
+    const handleSaveUrls = useCallback(
+        (urls: PostUrl[]) => {
+            savePosts.call(profile.id, urls).then(() => {
+                savePosts.refresh();
+            });
+            // @todo do some error handling
+            // .catch((e) => console.error(e))
+        },
+        [savePosts, profile],
+    );
 
     return (
         <Modal {...props} onClose={onClose} visible={props.isOpen ?? false}>
@@ -45,13 +52,16 @@ export const CollabAddPostModal = (props: Props) => {
                     <div className="relative h-10 w-10 flex-shrink-0 rounded-full bg-gray-300">
                         <img
                             className="h-10 w-10 rounded-full"
-                            // src={imgProxy(props.profile.avatar)}
-                            src={props.profile.avatar}
+                            src={
+                                profile.avatar_url
+                                    ? imgProxy(profile.avatar_url)
+                                    : `https://api.dicebear.com/6.x/open-peeps/svg?seed=${profile.username}&size=96`
+                            }
                             alt="campaign-influencer-avatar"
                         />
                         <div className="absolute bottom-0 right-0 ">
                             <SocialMediaIcon
-                                platform={props.profile.platform as SocialMediaPlatform}
+                                platform={profile.platform as SocialMediaPlatform}
                                 width={16}
                                 height={16}
                                 className="opacity-80"
@@ -59,16 +69,12 @@ export const CollabAddPostModal = (props: Props) => {
                         </div>
                     </div>
 
-                    {/* @ts-ignore @todo */}
-                    <Link href={props.profile.link_url || '#no-profile-platform-url'} target="_blank">
+                    <Link href={profile.url || '#no-profile-platform-url'} target="_blank">
                         <div className="ml-4">
                             <div className="truncate text-xs font-medium text-gray-900">
-                                {/* @ts-ignore @todo */}
-                                {props.profile.fullname ?? 'no name'}
+                                {profile.name ?? 'no name'}
                             </div>
-                            <div className="inline-block truncate text-xs text-primary-500">
-                                @{props.profile.username}
-                            </div>
+                            <div className="inline-block truncate text-xs text-primary-500">@{profile.username}</div>
                         </div>
                     </Link>
                 </div>
@@ -76,7 +82,7 @@ export const CollabAddPostModal = (props: Props) => {
 
             <div className="flex flex-col gap-y-3 px-3">
                 <h3>{t('campaigns.post.addPostUrl')}</h3>
-                <CollabAddPostModalForm onSave={handleSaveUrls} />
+                <CollabAddPostModalForm onSave={handleSaveUrls} isLoading={savePosts.isLoading} />
             </div>
 
             <h3 className="mt-10 font-bold">{t('campaigns.post.currentPosts')}</h3>

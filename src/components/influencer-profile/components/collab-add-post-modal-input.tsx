@@ -32,7 +32,7 @@ export const CollabAddPostModalInput = (props: Props) => {
             <input
                 type="text"
                 className="block w-full appearance-none rounded-md border border-transparent bg-white px-3 py-2 placeholder-gray-400 shadow ring-1 ring-gray-300 ring-opacity-5 focus:border-primary-500 focus:outline-none focus:ring-primary-500 sm:text-xs"
-                onBlur={(e) => {
+                onInput={(e) => {
                     const value = e.currentTarget.value.trim();
 
                     // don't trigger update if it's the same value

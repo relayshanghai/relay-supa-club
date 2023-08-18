@@ -1,10 +1,10 @@
-import React, { useCallback, useState } from 'react';
+import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
+import { useCallback, useState } from 'react';
 import { Button } from 'src/components/button';
 import { CollabAddPostModal } from './collab-add-post-modal';
-import type { Profile } from './profile-header';
 
 type Props = {
-    profile: Profile;
+    profile: SequenceInfluencerManagerPage;
 };
 
 export const CollabAddPost = (props: Props) => {
