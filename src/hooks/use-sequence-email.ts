@@ -9,9 +9,10 @@ export const useSequenceEmail = (messageId?: string) => {
     if (!messageId) {
         throw new Error('messageId is required');
     }
-    const { data: sequenceEmail } = useSWR([messageId, 'sequence_email'], () => {
-        getSequenceEmailByMessageIdDBCall(messageId);
-    });
+    const { data: sequenceEmail } = useSWR([messageId, 'sequence_email'], () =>
+        getSequenceEmailByMessageIdDBCall(messageId),
+    );
+
     return {
         sequenceEmail,
     };

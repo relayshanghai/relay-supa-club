@@ -19,7 +19,7 @@ export const CorrespondenceSection = ({
 }) => {
     const [replyMessage, setReplyMessage] = useState<string>('');
     const { profile } = useUser();
-    
+
     const handleSubmit = async (replyMessage: string) => {
         if (!profile?.email_engine_account_id) {
             throw new Error('No email account');
