@@ -16,8 +16,9 @@ export const updateTemplateVariableCall = (supabaseClient: RelayDatabase) => asy
     return data;
 };
 
-export const insertTemplateVariableCall = (supabaseClient: RelayDatabase) => async (insert: TemplateVariableInsert) => {
-    const { data, error } = await supabaseClient.from('template_variables').insert(insert).single();
-    if (error) throw error;
-    return data;
-};
+export const insertTemplateVariableCall =
+    (supabaseClient: RelayDatabase) => async (insert: TemplateVariableInsert[]) => {
+        const { data, error } = await supabaseClient.from('template_variables').insert(insert);
+        if (error) throw error;
+        return data;
+    };

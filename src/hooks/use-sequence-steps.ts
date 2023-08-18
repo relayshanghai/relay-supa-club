@@ -1,8 +1,7 @@
 import useSWR from 'swr';
 import { useClientDb, useDB } from 'src/utils/client-db/use-client-db';
-import { createSequenceStepCall } from 'src/utils/api/db/calls/sequence-steps';
+import { insertSequenceStepsCall } from 'src/utils/api/db/calls/sequence-steps';
 import type { SequenceStepInsert } from 'src/utils/api/db';
-import { serverLogger } from 'src/utils/logger-server';
 
 export const defaultTemplates = [
     { name: 'Outreach', id: 'AAABiYr-poEAAAAC', waitTimeHours: 0, stepNumber: 0 },
@@ -17,24 +16,16 @@ export const useSequenceSteps = (sequenceId?: string) => {
         db.getSequenceStepsBySequenceId(sequenceId ?? ''),
     );
 
-    const createSequenceStepDBCall = useDB<typeof createSequenceStepCall>(createSequenceStepCall);
+    const createSequenceStepDBCall = useDB<typeof insertSequenceStepsCall>(insertSequenceStepsCall);
     const createDefaultSequenceSteps = async (sequenceId: string) => {
-        defaultTemplates.map(async (template) => {
-            const insert: SequenceStepInsert = {
-                name: template.name,
-                sequence_id: sequenceId,
-                template_id: template.id,
-                wait_time_hours: template.waitTimeHours,
-                step_number: template.stepNumber,
-                params: [],
-            };
-            try {
-                const res = await createSequenceStepDBCall(insert);
-                return res;
-            } catch (error) {
-                serverLogger(error, 'error');
-            }
-        });
+        const insert: SequenceStepInsert[] = defaultTemplates.map(({ name, id, waitTimeHours, stepNumber }) => ({
+            name,
+            sequence_id: sequenceId,
+            template_id: id,
+            wait_time_hours: waitTimeHours,
+            step_number: stepNumber,
+        }));
+        await createSequenceStepDBCall(insert);
     };
 
     return {
