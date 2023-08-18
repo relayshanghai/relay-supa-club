@@ -2,14 +2,7 @@
 import { useTranslation } from 'react-i18next';
 import { useInfluencerSocialProfile } from 'src/hooks/use-influencer-social-profile';
 
-import type {
-    SequenceInfluencer,
-    SequenceEmail,
-    SequenceStep,
-    TemplateVariable,
-    EmailDeliveryStatus,
-    EmailTrackingStatus,
-} from 'src/utils/api/db';
+import type { SequenceInfluencer, SequenceEmail, SequenceStep, TemplateVariable } from 'src/utils/api/db';
 import Link from 'next/link';
 import { imgProxy } from 'src/utils/fetcher';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
@@ -197,20 +190,10 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                         </td>
                     </>
                 )}
-                {currentTab === 'In Sequence' && currentStep && (
+                {currentTab === 'In Sequence' && (
                     <>
                         <td className="whitespace-nowrap px-6 py-4 align-middle font-semibold text-gray-600">
-                            {t(`sequences.steps.${currentStep.name}`)}
-                        </td>
-                        <td className="whitespace-nowrap px-6 py-4 align-middle">
-                            <p
-                                className={`flex w-fit select-none flex-row items-center justify-center gap-2 rounded-lg px-3 py-2 text-center ${
-                                    EMAIL_STATUS_STYLES[getStatus(sequenceEmail) || 'Scheduled'].style
-                                }`}
-                            >
-                                <Icons status={getStatus(sequenceEmail)} />
-                                {getStatus(sequenceEmail)}
-                            </p>
+                            {currentStep?.name}
                         </td>
                         <div
                             className={`flex w-fit flex-row items-center justify-center gap-2 rounded-lg px-3 py-2 text-center ${
@@ -263,14 +246,14 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                                 })}
                         </td>
                         <td className={`whitespace-nowrap px-6 py-4`}>
-                            <p
-                                className={`flex w-fit select-none flex-row items-center justify-center gap-2 rounded-lg px-3 py-2 text-center ${
-                                    EMAIL_STATUS_STYLES[getStatus(sequenceEmail) || 'Scheduled'].style
+                            <div
+                                className={`flex w-fit flex-row items-center justify-center gap-2 rounded-lg px-3 py-2 text-center ${
+                                    EMAIL_STATUS_STYLES[getStatus(sequenceEmail) || 'Default']
                                 }`}
                             >
                                 {Icon}
                                 {getStatus(sequenceEmail)}
-                            </p>
+                            </div>
                         </td>
                         {/* TODO */}
                         {/* <td className=" whitespace-nowrap px-6 py-4 text-gray-600">

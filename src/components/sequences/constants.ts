@@ -36,8 +36,9 @@ export const EMAIL_STATUS_STYLES = {
     Bounced: { style: 'bg-red-100 text-red-500' },
     Failed: { style: 'bg-red-100 text-red-500' },
     Replied: { style: 'bg-yellow-100 text-red-500' },
-    'Link Clicked': { style: 'bg-gray-100 text-red-500' },
+    'Link Clicked': { style: 'bg-gray-100 text-blue-500' },
     Opened: { style: 'bg-blue-100 text-blue-500' },
+    Default: { style: 'bg-gray-100 text-gray-500' },
 };
 
 export const EMAIL_STEPS = {

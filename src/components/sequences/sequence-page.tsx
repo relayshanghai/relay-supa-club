@@ -17,12 +17,11 @@ import type { SequenceInfluencer } from 'src/utils/api/db';
 import { useTemplateVariables } from 'src/hooks/use-template_variables';
 import { Tooltip } from '../library';
 import { EMAIL_STEPS } from './constants';
+import { type SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 
 export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     const { t } = useTranslation();
 
-    const [filterSteps, setFilterSteps] = useState<CommonStatusType[]>([]);
-    const [influencers, setInfluencers] = useState<SequenceInfluencerManagerPage[] | undefined>(sequenceInfluencers);
     const { sequence, sendSequence, sequenceSteps, updateSequence } = useSequence(sequenceId);
     const { sequenceInfluencers } = useSequenceInfluencers(sequence && [sequenceId]);
     const { sequenceEmails: allSequenceEmails } = useSequenceEmails(sequence?.id);
@@ -31,6 +30,9 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
         ?.filter((variable) => variable.required && !variable.value)
         .map((variable) => variable.name) ?? ['Error retrieving variables'];
     const isMissingVariables = !templateVariables || templateVariables.length === 0 || missingVariables.length > 0;
+
+    const [filterSteps, setFilterSteps] = useState<CommonStatusType[]>([]);
+    const [influencers, setInfluencers] = useState<SequenceInfluencerManagerPage[] | undefined>(sequenceInfluencers);
 
     const handleStep = useCallback(
         (filters: CommonStatusType[]) => {
