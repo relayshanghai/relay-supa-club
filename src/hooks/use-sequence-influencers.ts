@@ -8,7 +8,7 @@ import {
 } from 'src/utils/api/db/calls/sequence-influencers';
 import type { SequenceInfluencerInsert, SequenceInfluencerUpdate } from 'src/utils/api/db';
 import { useUser } from 'src/hooks/use-user';
-import { type SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
+import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 
 export const useSequenceInfluencers = (sequenceIds?: string[], filters?: string[]) => {
     const { profile } = useUser();

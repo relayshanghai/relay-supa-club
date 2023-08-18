@@ -11,7 +11,7 @@ export type InfluencerRowProps = {
     index: number;
     influencer: SequenceInfluencerManagerPage;
     onCheckboxChange?: () => void;
-    onRowClick?: (data: InfluencerRowProps['influencer']) => void;
+    onRowClick?: (data: SequenceInfluencerManagerPage) => void;
 };
 
 export const InfluencerRow = ({ index, influencer, ...props }: InfluencerRowProps) => {
@@ -19,9 +19,7 @@ export const InfluencerRow = ({ index, influencer, ...props }: InfluencerRowProp
         influencer;
     const { t } = useTranslation();
     const handleRowClick = useCallback(
-        (influencer: InfluencerRowProps['influencer']) => {
-            // eslint-disable-next-line no-console
-            console.log('row clicked');
+        (influencer: SequenceInfluencerManagerPage) => {
             props.onRowClick && props.onRowClick(influencer);
         },
         [props],
@@ -78,12 +76,10 @@ export const InfluencerRow = ({ index, influencer, ...props }: InfluencerRowProp
                 <p className="font-semibold text-primary-600">{PLATFORMS[platform as keyof typeof PLATFORMS]}</p>
             </td>
             <td className="whitespace-nowrap px-6 py-4 font-medium text-gray-900">
-                <p>
-                    <p
-                        className={`rounded text-xs font-medium ${COLLAB_OPTIONS[funnel_status].style} w-fit whitespace-nowrap px-2 py-1.5`}
-                    >
-                        {t(`manager.${funnel_status}`)}
-                    </p>
+                <p
+                    className={`rounded text-xs font-medium ${COLLAB_OPTIONS[funnel_status].style} w-fit whitespace-nowrap px-2 py-1.5`}
+                >
+                    {t(`manager.${funnel_status}`)}
                 </p>
             </td>
             <td className="whitespace-nowrap px-6 py-4 font-medium text-gray-600">{manager_first_name}</td>
