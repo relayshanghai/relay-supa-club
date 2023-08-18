@@ -127,24 +127,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 }
 
                 const { influencer, socialProfile } = await catchInfluencer(data);
-                try {
-                    // quick fix to add email and recent video title to the social profile
-                    if (socialProfile) {
-                        const contacts = data.user_profile.contacts || [];
-                        const email = contacts.find((v: any) => v.type === 'email') || { value: null };
-                        await db((supabase) => async () => {
-                            supabase.from('influencer_social_profiles').update({
-                                id: socialProfile.id,
-                                recent_video_title: data.user_profile.recent_posts?.[0]?.title || '',
-                                email: email.value || null,
-                            });
+                // quick fix to add email and recent video title to the social profile
+                if (socialProfile) {
+                    const contacts = data.user_profile.contacts || [];
+                    const email = contacts.find((v: any) => v.type === 'email') || { value: null };
+                    await db((supabase) => async () => {
+                        supabase.from('influencer_social_profiles').update({
+                            id: socialProfile.id,
+                            recent_video_title: data.user_profile.recent_posts?.[0]?.title || '',
+                            email: email.value || null,
                         });
-                    }
-
-                    await trackAndSnap(track, req, res, events, data);
-                } catch (error) {
-                    serverLogger(error, 'error', true);
+                    });
                 }
+
+                await trackAndSnap(track, req, res, events, data);
 
                 return res.status(httpCodes.OK).json({ ...data, createdAt, influencer, socialProfile });
             } catch (error) {
