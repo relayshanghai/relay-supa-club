@@ -4,6 +4,7 @@ export const TABLE_LIMIT = 6;
 
 export const TABLE_COLUMNS = [
     { header: 'name', type: 'name', name: 'name' },
+    { header: 'platform', type: 'platform', name: 'platform' },
     { header: 'collabStatus', type: 'collabstatus', name: 'collabstatus' },
     { header: 'manager', type: 'manager', name: 'manager' },
     { header: 'tags', type: 'tags', name: 'tags' },
@@ -33,4 +34,10 @@ export const COLLAB_OPTIONS: MultipleDropdownObject = {
     Rejected: {
         style: 'bg-red-100 text-red-500',
     },
+};
+
+export const PLATFORMS = {
+    instagram: 'IG',
+    youtube: 'YT',
+    tiktok: 'TT',
 };

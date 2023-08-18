@@ -1,10 +1,10 @@
 import { getInfluencerSocialProfileByIdCall as getInfluencerSocialProfileById } from 'src/utils/api/db/calls/influencers';
-import { type SequenceInfluencerManagerPage } from 'src/hooks/use-sequence-influencers';
 import { getProfileByIdCall as getProfileById } from './profiles';
 import { getSequenceInfluencersBySequenceIdCall as getSequenceInfluencersBySequenceId } from 'src/utils/api/db/calls/sequence-influencers';
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
 import type { DatabaseWithCustomTypes } from 'types';
 import type { ServerContext } from 'src/utils/api/iqdata';
+import { type SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 
 export const getSequenceInfluencers = async (ctx: ServerContext, sequenceId: string) => {
     const supabase = createServerSupabaseClient<DatabaseWithCustomTypes>(ctx);
@@ -22,6 +22,7 @@ export const getSequenceInfluencers = async (ctx: ServerContext, sequenceId: str
                 username: influencerInfo?.username,
                 avatar_url: influencerInfo?.avatar_url,
                 url: influencerInfo?.url,
+                platform: influencerInfo?.platform,
             };
         }),
     );
