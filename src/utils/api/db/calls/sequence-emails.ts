@@ -9,11 +9,7 @@ export const getSequenceEmailsBySequenceCall = (supabaseClient: RelayDatabase) =
 };
 
 export const getSequenceEmailByMessageIdCall = (db: RelayDatabase) => async (messageId: string) => {
-    const { data, error } = await db
-        .from('sequence_emails')
-        .select(`*,sequences(name),sequence_influencers(id)`)
-        .eq('email_message_id', messageId)
-        .single();
+    const { data, error } = await db.from('sequence_emails').select('*').eq('email_message_id', messageId).single();
     if (error) throw error;
     return data;
 };
