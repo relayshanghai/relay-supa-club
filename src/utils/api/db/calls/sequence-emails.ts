@@ -12,7 +12,7 @@ export const getSequenceEmailByMessageIdCall = (db: RelayDatabase) => async (mes
     const { data, error } = await db
         .from('sequence_emails')
         .select(`*,sequences(name),sequence_influencers(id)`)
-        .eq('message_id', messageId)
+        .eq('email_message_id', messageId)
         .single();
     if (error) throw error;
     return data;
