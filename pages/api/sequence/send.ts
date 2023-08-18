@@ -65,6 +65,7 @@ const sendAndInsertEmail = async ({
     }
     await db<typeof insertSequenceEmailCall>(insertSequenceEmailCall)({
         sequence_influencer_id: sequenceInfluencer.id,
+        sequence_id: sequenceInfluencer.sequence_id,
         sequence_step_id: step.id,
         email_delivery_status: 'Scheduled',
         email_message_id: res.messageId,
@@ -103,7 +104,7 @@ const sendSequence = async ({ account, sequenceInfluencers }: SequenceSendPostBo
                 } catch (error: any) {
                     results.push({
                         sequenceInfluencerId: sequenceInfluencer.id,
-                        error: error?.message ?? '',
+                        error: error?.message ?? 'Something went wrong sending the email',
                     });
                 }
             }
