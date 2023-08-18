@@ -19,8 +19,6 @@ export const InfluencerRow = ({ index, influencer, ...props }: InfluencerRowProp
     const { t } = useTranslation();
     const handleRowClick = useCallback(
         (influencer: SequenceInfluencerManagerPage) => {
-            // eslint-disable-next-line no-console
-            console.log('row clicked');
             props.onRowClick && props.onRowClick(influencer);
         },
         [props],
