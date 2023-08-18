@@ -24,6 +24,7 @@ export const getSequenceInfluencers = async (ctx: ServerContext, sequenceId: str
                 platform: influencerInfo?.platform,
                 manager_first_name: managerInfo?.data?.first_name,
                 manager_last_name: managerInfo?.data?.last_name,
+                manager_avatar_url: managerInfo?.data?.avatar_url,
             };
         }),
     );
