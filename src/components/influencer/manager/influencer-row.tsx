@@ -16,6 +16,7 @@ export type InfluencerRowProps = {
 
 export const InfluencerRow = ({ index, influencer, ...props }: InfluencerRowProps) => {
     const { name, username, manager, avatar_url, url, tags, updated_at, funnel_status, email, platform } = influencer;
+
     const { t } = useTranslation();
     const handleRowClick = useCallback(
         (influencer: SequenceInfluencerManagerPage) => {

@@ -17,7 +17,7 @@ export const getSequenceInfluencers = async (ctx: ServerContext, sequenceId: str
             );
             return {
                 ...influencer,
-                manager: managerInfo,
+                manager: managerInfo.data,
                 influencer_id: influencerInfo.influencer_id,
                 iqdata_id: influencerInfo.reference_id.replace('iqdata:', ''),
                 name: influencerInfo.name,

@@ -21,7 +21,7 @@ const links = {
     guide: '/guide',
     sequences: '/sequences',
     inbox: '/inbox',
-    influencerManager: 'influencer-manager',
+    influencerManager: '/influencer-manager',
 };
 
 // eslint-disable-next-line complexity
