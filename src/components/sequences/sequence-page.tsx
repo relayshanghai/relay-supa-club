@@ -3,9 +3,7 @@ import { Layout } from '../layout';
 import SequenceTable from './sequence-table';
 
 import { SequenceStats } from './sequence-stats';
-
-import { useSequences } from 'src/hooks/use-sequences';
-import { type SequenceInfluencerManagerPage, useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
+import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { useSequence } from 'src/hooks/use-sequence';
 import { Brackets, Spinner } from '../icons';
 import { useSequenceEmails } from 'src/hooks/use-sequence-emails';
@@ -20,14 +18,13 @@ import { useTemplateVariables } from 'src/hooks/use-template_variables';
 import { Tooltip } from '../library';
 import { EMAIL_STEPS } from './constants';
 
-export const SequencePage = () => {
+export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     const { t } = useTranslation();
 
-    const { sequences } = useSequences(); // later we won't use this, the sequence id will be passed down from the index page.
-    const { sequence, sendSequence, sequenceSteps, updateSequence } = useSequence(sequences?.[0]?.id);
-    const { sequenceInfluencers } = useSequenceInfluencers(sequence && [sequence.id]);
     const [filterSteps, setFilterSteps] = useState<CommonStatusType[]>([]);
     const [influencers, setInfluencers] = useState<SequenceInfluencerManagerPage[] | undefined>(sequenceInfluencers);
+    const { sequence, sendSequence, sequenceSteps, updateSequence } = useSequence(sequenceId);
+    const { sequenceInfluencers } = useSequenceInfluencers(sequence && [sequenceId]);
     const { sequenceEmails: allSequenceEmails } = useSequenceEmails(sequence?.id);
     const { templateVariables } = useTemplateVariables(sequence?.id);
     const missingVariables = templateVariables
@@ -66,7 +63,7 @@ export const SequencePage = () => {
         if (!sequence) {
             return;
         }
-        await updateSequence({ id: sequence.id, auto_start: checked });
+        await updateSequence({ id: sequenceId, auto_start: checked });
     };
 
     const [showUpdateTemplateVariables, setShowUpdateTemplateVariables] = useState(false);

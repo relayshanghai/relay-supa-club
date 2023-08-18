@@ -1,11 +1,11 @@
 import Link from 'next/link';
-import { COLLAB_OPTIONS } from '../constants';
+import { COLLAB_OPTIONS, PLATFORMS } from '../constants';
 import { InboxIcon } from 'src/components/icons';
 import { imgProxy } from 'src/utils/fetcher';
 import i18n from 'i18n';
-import { type SequenceInfluencerManagerPage } from 'src/hooks/use-sequence-influencers';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { type SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 
 export type InfluencerRowProps = {
     index: number;
@@ -15,7 +15,8 @@ export type InfluencerRowProps = {
 };
 
 export const InfluencerRow = ({ index, influencer, ...props }: InfluencerRowProps) => {
-    const { name, username, manager_first_name, avatar_url, url, tags, updated_at, funnel_status, email } = influencer;
+    const { name, username, manager_first_name, avatar_url, url, tags, updated_at, funnel_status, email, platform } =
+        influencer;
     const { t } = useTranslation();
     const handleRowClick = useCallback(
         (influencer: InfluencerRowProps['influencer']) => {
@@ -72,6 +73,9 @@ export const InfluencerRow = ({ index, influencer, ...props }: InfluencerRowProp
                         )}
                     </div>
                 </div>
+            </td>
+            <td className="whitespace-nowrap px-6 py-4">
+                <p className="font-semibold text-primary-600">{PLATFORMS[platform as keyof typeof PLATFORMS]}</p>
             </td>
             <td className="whitespace-nowrap px-6 py-4 font-medium text-gray-900">
                 <p>

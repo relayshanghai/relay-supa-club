@@ -17,19 +17,32 @@ interface SequenceTableProps {
     handleStartSequence: (sequenceInfluencers: SequenceInfluencer[]) => Promise<SequenceSendPostResponse>;
 }
 
-const sortInfluencers = (currentTab: SequenceInfluencer['funnel_status'], influencers?: SequenceInfluencer[]) => {
-    if (currentTab === 'To Contact') {
-        influencers?.sort((a, b) => {
-            // most recently created at the top
-            return a.created_at < b.created_at ? -1 : 1;
-        });
-    }
-    // TODO: sort by last email date in 'Ignored' tab https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/658
-    // TODO: sort by previous message send date in 'In-Sequence' https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/654
-    // We'll have to make a db call to check the associated email for each influencer. We already have to do this on the row level, so it is a bit inefficient to do it here as well. Later maybe we should pass down the email info from this parent instead.
+const sortInfluencers = (
+    currentTab: SequenceInfluencer['funnel_status'],
+    influencers?: SequenceInfluencer[],
+    allSequenceEmails?: SequenceEmail[],
+) => {
+    return influencers?.sort((a, b) => {
+        const getEmailTime = (influencerId: string) =>
+            allSequenceEmails?.find((email) => email.sequence_influencer_id === influencerId)?.email_send_at;
 
-    return influencers;
+        if (currentTab === 'To Contact') {
+            return b.created_at.localeCompare(a.created_at);
+        } else if (currentTab === 'In Sequence' || currentTab === 'Ignored') {
+            const mailTimeA = getEmailTime(a.id);
+            const mailTimeB = getEmailTime(b.id);
+
+            if (!mailTimeA || !mailTimeB) {
+                return -1;
+            }
+
+            return mailTimeB.localeCompare(mailTimeA);
+        }
+
+        return 0;
+    });
 };
+
 const SequenceTable: React.FC<SequenceTableProps> = ({
     sequenceInfluencers,
     allSequenceEmails,
@@ -41,7 +54,7 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
     templateVariables,
     handleStartSequence,
 }) => {
-    const sortedInfluencers = sortInfluencers('To Contact', sequenceInfluencers);
+    const sortedInfluencers = sortInfluencers(currentTab, sequenceInfluencers, allSequenceEmails);
     const { t } = useTranslation();
 
     const columns = sequenceColumns(currentTab);

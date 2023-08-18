@@ -133,6 +133,7 @@ const sequences = {
     productPrice: 'Product Price',
     productPriceTooltip: `Enter the price of your product in USD. It's better to enter as a whole number to keep your templates cleaner.
     * We will format this value with a $ in your email templates`,
+    productPricePlaceholder: '99.9',
     influencer: 'Influencer',
     influencerNiche: 'Influencer Niche',
     influencerNichePlaceholder: 'Productivity Hackers',
