@@ -31,19 +31,12 @@ interface SequenceRowProps {
     handleStartSequence: (sequenceInfluencers: SequenceInfluencer[]) => Promise<SequenceSendPostResponse>;
 }
 
-const Icons = ({ status }: { status?: string }) => {
-    switch (status) {
-        case 'Opened':
-            return <EmailOpenOutline className="h-6 w-6 stroke-blue-500" />;
-        case 'Scheduled':
-            return <Clock className="h-6 w-6 stroke-yellow-500" />;
-        case 'Bounced':
-            return <AlertCircleOutline className="h-6 w-6 stroke-red-500" />;
-        case 'Delivered':
-            return <Send className="h-6 w-6 stroke-green-500" />;
-        default:
-            return null;
-    }
+const Icons = {
+    Opened: <EmailOpenOutline className="h-6 w-6 stroke-blue-500" />,
+    Scheduled: <Clock className="h-6 w-6 stroke-yellow-500" />,
+    Bounced: <AlertCircleOutline className="h-6 w-6 stroke-red-500" />,
+    Delivered: <Send className="h-6 w-6 stroke-green-500" />,
+    Default: <Send className="h-6 w-6 stroke-gray-500" />,
 };
 
 /** use the tracking status if it is delivered */
@@ -63,6 +56,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
     templateVariables,
     handleStartSequence,
 }) => {
+    const Icon = Icons[getStatus(sequenceEmail) as keyof typeof Icons] || Icons.Default;
     const { influencerSocialProfile } = useInfluencerSocialProfile(sequenceInfluencer.influencer_social_profile_id);
     const { updateSequenceInfluencer, deleteSequenceInfluencer } = useSequenceInfluencers(
         sequenceInfluencer && [sequenceInfluencer.sequence_id],
@@ -206,7 +200,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                                 EMAIL_STATUS_STYLES[getStatus(sequenceEmail) || 'Default']
                             }`}
                         >
-                            <Icons status={getStatus(sequenceEmail)} />
+                            {Icon}
                             {getStatus(sequenceEmail)}
                         </div>
                         <td className="whitespace-nowrap px-6 py-4 text-gray-600">
@@ -257,7 +251,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                                     EMAIL_STATUS_STYLES[getStatus(sequenceEmail) || 'Default']
                                 }`}
                             >
-                                <Icons status={getStatus(sequenceEmail)} />
+                                {Icon}
                                 {getStatus(sequenceEmail)}
                             </div>
                         </td>
