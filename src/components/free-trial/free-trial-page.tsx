@@ -33,7 +33,7 @@ const FreeTrialPage = () => {
 
     return (
         <div>
-            <h1 className="mb-2 pb-12 text-6xl">Start your free trial now</h1>
+            <h1 className="mb-2 pb-12 text-6xl">{t('signup.freeTrial.title')}</h1>
             <ul className="mb-4 pb-4">
                 <li className="pb-3">
                     <div className="flex items-center">
@@ -51,7 +51,7 @@ const FreeTrialPage = () => {
                                 d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                             />
                         </svg>
-                        BoostBot AI Search: Up to 2,000 Influencer Search Results
+                        {t('signup.freeTrial.bulletPoint1')}
                     </div>
                 </li>
                 <li className="pb-3">
@@ -70,7 +70,7 @@ const FreeTrialPage = () => {
                                 d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                             />
                         </svg>
-                        50 Influencer Profile Reports
+                        {t('signup.freeTrial.bulletPoint2')}
                     </div>
                 </li>
                 <li className="pb-3">
@@ -89,7 +89,7 @@ const FreeTrialPage = () => {
                                 d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                             />
                         </svg>
-                        Search Free for 7 days
+                        {t('signup.freeTrial.bulletPoint3')}
                     </div>
                 </li>
                 <li className="pb-3">
@@ -108,7 +108,7 @@ const FreeTrialPage = () => {
                                 d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"
                             />
                         </svg>
-                        Upgrade to &quot;Outreach Plan&quot; and start emailing influencers today!
+                        {t('signup.freeTrial.bulletPoint4')}
                     </div>
                 </li>
             </ul>
@@ -116,7 +116,7 @@ const FreeTrialPage = () => {
                 onClick={startFreeTrial}
                 className="w-full rounded border-2 px-40 py-3 text-white transition duration-300 hover:border-white hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50"
             >
-                Start free trial
+                {t('signup.freeTrial.submitButton')}
             </Button>
 
             <div className="pt-20 text-center">

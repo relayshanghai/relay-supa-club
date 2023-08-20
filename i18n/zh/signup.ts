@@ -34,5 +34,13 @@ const signup = {
     },
     alreadySignedUp: '已经注册过账号？',
     noProfileId: '找不到账户ID',
+    freeTrial: {
+        title: '现在就开始免费试用吧',
+        bulletPoint1: 'BoostBot雷宝人工智能搜索：可检索到最多2,000个匹配的红人结果',
+        bulletPoint2: '可查看50个红人的分析报告',
+        bulletPoint3: '7天的免费试用',
+        bulletPoint4: '升级至“推广计划”，即刻开始发送邮件进程，联系心仪红人',
+        submitButton: '开启免费试用',
+    },
 };
 export default signup;
