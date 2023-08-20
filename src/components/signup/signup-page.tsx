@@ -135,6 +135,7 @@ const SignUpPage = ({
                 throw new Error('Could not find profile id');
             }
             await handleCompanyCreate(formData, profileId);
+            setLoading(true);
             window.location.href = `/free-trial`;
         } else {
             setCurrentStep(currentStep + 1);
