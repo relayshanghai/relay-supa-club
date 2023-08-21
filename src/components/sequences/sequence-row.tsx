@@ -89,6 +89,10 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
         }
         setSendingEmail(false);
     };
+    const handleDeleteInfluencer = (sequenceInfluencerId: string) => {
+        deleteSequenceInfluencer(sequenceInfluencerId);
+        toast.success(t('sequences.influencerDeleted'));
+    };
     return (
         <>
             <EmailPreviewModal
@@ -182,7 +186,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                             </Button>
                             <button
                                 className="min-w-max"
-                                onClick={() => deleteSequenceInfluencer(sequenceInfluencer.id)}
+                                onClick={() => handleDeleteInfluencer(sequenceInfluencer.id)}
                                 data-testid="delete-influencer-button"
                             >
                                 <DeleteOutline className="ml-6 h-5 w-5 text-gray-300" />
@@ -226,7 +230,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                                         (step) => sequenceInfluencer?.sequence_step === step.step_number,
                                     )?.name ?? '-'}
                                 </button>
-                                <button onClick={() => deleteSequenceInfluencer(sequenceInfluencer.id)}>
+                                <button onClick={() => handleDeleteInfluencer(sequenceInfluencer.id)}>
                                     <DeleteOutline
                                         data-testid="delete-influencer-button"
                                         className="ml-3 h-5 w-5 text-gray-300"

@@ -1210,30 +1210,42 @@ export interface Database {
       }
       sequences: {
         Row: {
+          added_by: string | null
           auto_start: boolean
           company_id: string
           created_at: string
           id: string
+          manager_name: string | null
           name: string
           updated_at: string
         }
         Insert: {
+          added_by?: string | null
           auto_start?: boolean
           company_id: string
           created_at?: string
           id?: string
+          manager_name?: string | null
           name: string
           updated_at?: string
         }
         Update: {
+          added_by?: string | null
           auto_start?: boolean
           company_id?: string
           created_at?: string
           id?: string
+          manager_name?: string | null
           name?: string
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "sequences_added_by_fkey"
+            columns: ["added_by"]
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "sequences_company_id_fkey"
             columns: ["company_id"]

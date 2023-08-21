@@ -6,6 +6,7 @@ const sequences = {
     inSequence: 'In sequence',
     ignored: 'Ignored',
     totalInfluencers: 'Total influencers',
+    influencerDeleted: 'Influencer Successfully Deleted from Sequence',
     openRate: 'Open rate',
     replyRate: 'Reply rate',
     bounceRate: 'Bounce rate',

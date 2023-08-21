@@ -31,6 +31,7 @@ export const useSequence = (sequenceId?: string) => {
     const deleteSequence = async (id: string) => {
         const res = await deleteSequenceDBCall(id);
         refreshSequence();
+        refreshSequences();
         return res;
     };
 
@@ -42,6 +43,8 @@ export const useSequence = (sequenceId?: string) => {
                 company_id: profile?.company_id,
                 name: sequenceName,
                 auto_start: false,
+                added_by: profile?.id,
+                manager_name: profile.first_name,
             };
             const res = await createSequenceDBCall(insert);
             refreshSequences();

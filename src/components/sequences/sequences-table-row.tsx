@@ -39,7 +39,7 @@ export const SequencesTableRow = ({ sequence }: { sequence: Sequence }) => {
                 </td>
                 <td className="whitespace-nowrap px-6 py-3 text-gray-700">{sequenceInfluencers?.length || 0}</td>
                 <td className="whitespace-nowrap px-6 py-3 text-gray-700">{openRate}</td>
-                <td className="whitespace-nowrap px-6 py-3 text-gray-700">Mikaela</td>
+                <td className="whitespace-nowrap px-6 py-3 text-gray-700">{sequence.manager_name}</td>
                 <td className="whitespace-nowrap px-6 py-3 text-gray-700">W3</td>
                 <td className="whitespace-nowrap px-6 py-3 text-gray-700">
                     <button onClick={handleDeleteSequence} className="align-middle">
