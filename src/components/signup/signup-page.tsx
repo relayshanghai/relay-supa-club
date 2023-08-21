@@ -125,6 +125,11 @@ const SignUpPage = ({
         if (currentStep > steps.length) {
             return;
         }
+
+        if (currentStep === 2 && EMPLOYEE_EMAILS.includes(email)) {
+            await handleProfileCreate(formData);
+        }
+
         if (currentStep === 4) {
             const profileId = await handleProfileCreate(formData);
             if (!profileId) {
