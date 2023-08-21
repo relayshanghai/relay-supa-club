@@ -877,7 +877,7 @@ BEGIN
     _profile_william.id,
     _influencer_social_profile_alice_1.id,
     _influencer_social_profile_alice_1.email,
-    'Negotiating'
+    'To Contact'
   );
 
   PERFORM create_sequence_influencer(
@@ -886,7 +886,7 @@ BEGIN
     _profile_william.id,
     _influencer_social_profile_bob_2.id,
     _influencer_social_profile_bob_2.email,
-    'Negotiating',
+    'To Contact',
     0,
     '2020-01-01 00:00:00.000000+00'
   );
@@ -897,7 +897,7 @@ BEGIN
     _profile_william.id,
     _influencer_social_profile_charlie_1.id,
     _influencer_social_profile_charlie_1.email,
-    'Negotiating',
+    'To Contact',
     0,
     '2030-01-01 00:00:00.000000+00'
   );
