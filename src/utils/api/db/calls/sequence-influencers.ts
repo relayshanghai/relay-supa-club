@@ -26,11 +26,17 @@ export const getSequenceInfluencersByCompanyIdCall = (supabaseClient: RelayDatab
     return data;
 };
 
-export const getSequenceInfluencerByEmailCall = (supabaseClient: RelayDatabase) => async (email: string) => {
-    const { data, error } = await supabaseClient.from('sequence_influencers').select('*').eq('email', email).single();
-    if (error) throw error;
-    return data;
-};
+export const getSequenceInfluencerByEmailAndCompanyCall =
+    (supabaseClient: RelayDatabase) => async (email: string, companyId?: string | null) => {
+        const { data, error } = await supabaseClient
+            .from('sequence_influencers')
+            .select('*')
+            .limit(1)
+            .match({ email, company_id: companyId })
+            .single();
+        if (error) throw error;
+        return data;
+    };
 
 export const updateSequenceInfluencerCall =
     (supabaseClient: RelayDatabase) => async (update: SequenceInfluencerUpdate) => {
@@ -47,6 +53,15 @@ export const updateSequenceInfluencerCall =
 
 export const createSequenceInfluencerCall =
     (supabaseClient: RelayDatabase) => async (sequenceInfluencer: SequenceInfluencerInsert) => {
+        const { data: existingEmail } = await supabaseClient
+            .from('sequence_influencers')
+            .select('email')
+            .limit(1)
+            .match({ email: sequenceInfluencer.email, company_id: sequenceInfluencer.company_id })
+            .single();
+        if (existingEmail) {
+            throw new Error('Email already exists for this company');
+        }
         const { data, error } = await supabaseClient
             .from('sequence_influencers')
             .insert(sequenceInfluencer)

@@ -2,7 +2,7 @@ import type { NextApiHandler, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { ApiHandler } from 'src/utils/api-handler';
 import type { SequenceEmailUpdate, SequenceInfluencer, SequenceInfluencerUpdate } from 'src/utils/api/db';
-import { supabaseLogger } from 'src/utils/api/db';
+import { getProfileByEmail, supabaseLogger } from 'src/utils/api/db';
 import { deleteEmailFromOutbox, getOutbox } from 'src/utils/api/email-engine';
 import { GMAIL_SENT_SPECIAL_USE_FLAG } from 'src/utils/api/email-engine/prototype-mocks';
 import {
@@ -24,10 +24,11 @@ import type { WebhookMessageSent } from 'types/email-engine/webhook-message-sent
 import type { WebhookTrackClick } from 'types/email-engine/webhook-track-click';
 import type { WebhookTrackOpen } from 'types/email-engine/webhook-track-open';
 import {
-    getSequenceInfluencerByEmailCall,
+    getSequenceInfluencerByEmailAndCompanyCall,
     getSequenceInfluencerByIdCall,
     updateSequenceInfluencerCall,
 } from 'src/utils/api/db/calls/sequence-influencers';
+import { serverLogger } from 'src/utils/logger-server';
 
 export type SendEmailPostRequestBody = SendEmailRequestBody & {
     account: string;
@@ -53,7 +54,9 @@ const getSequenceInfluencerById = db<typeof getSequenceInfluencerByIdCall>(getSe
 
 const updateSequenceEmail = db<typeof updateSequenceEmailCall>(updateSequenceEmailCall);
 
-const getSequenceInfluencerByEmail = db<typeof getSequenceInfluencerByEmailCall>(getSequenceInfluencerByEmailCall);
+const getSequenceInfluencerByEmailAndCompany = db<typeof getSequenceInfluencerByEmailAndCompanyCall>(
+    getSequenceInfluencerByEmailAndCompanyCall,
+);
 
 const updateSequenceInfluencer = db<typeof updateSequenceInfluencerCall>(updateSequenceInfluencerCall);
 
@@ -62,22 +65,33 @@ const deleteSequenceEmailByMessageId = db<typeof deleteSequenceEmailByMessageIdC
 );
 
 const deleteScheduledEmail = async (event: WebhookMessageNew) => {
-    const outbox = await getOutbox();
-    // If there is a sequenced email in the outbox to this address, cancel it
-    if (outbox.messages.some((message) => message.envelope.to.includes(event.data.from.address))) {
-        const message = outbox.messages.find((message) => message.envelope.to.includes(event.data.from.address));
-        if (!message) {
-            return;
+    try {
+        const outbox = await getOutbox();
+        // If there is a sequenced email in the outbox to this address, cancel it
+        if (outbox.messages.some((message) => message.envelope.to.includes(event.data.from.address))) {
+            const message = outbox.messages.find((message) => message.envelope.to.includes(event.data.from.address));
+            if (!message) {
+                return;
+            }
+            const { deleted } = await deleteEmailFromOutbox(message.queueId);
+
+            await deleteSequenceEmailByMessageId(message.messageId);
+
+            await supabaseLogger({
+                type: 'email-webhook',
+                data: event as any,
+                message: `${deleted ? 'canceled' : 'failed to cancel'} email to: ${JSON.stringify(
+                    message.envelope.to,
+                )}`,
+            });
         }
-        const { deleted } = await deleteEmailFromOutbox(message.queueId);
-
-        await deleteSequenceEmailByMessageId(message.messageId);
-
+    } catch (error) {
         await supabaseLogger({
             type: 'email-webhook',
             data: event as any,
-            message: `${deleted ? 'canceled' : 'failed to cancel'} email to: ${JSON.stringify(message.envelope.to)}`,
+            message: `failed to cancel an email to: ${event.data.from.address}`,
         });
+        serverLogger(error, 'error');
     }
 };
 const handleReply = async (sequenceInfluencer: SequenceInfluencer, event: WebhookMessageNew) => {
@@ -131,12 +145,25 @@ const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) =>
         return res.status(httpCodes.OK).json({});
     }
     try {
-        const sequenceInfluencer = await getSequenceInfluencerByEmail(event.data.from.address);
+        // the to address is our platform's user
+        const { data: ourUser, error } = await getProfileByEmail(event.data.to[0].address);
+        if (error) {
+            await supabaseLogger({
+                type: 'email-webhook',
+                data: event as any,
+                message: `newMessage ourUser error: ${error.message}`,
+            });
+            return res.status(httpCodes.OK).json({});
+        }
+        const sequenceInfluencer = await getSequenceInfluencerByEmailAndCompany(
+            event.data.from.address,
+            ourUser?.company_id,
+        );
         if (!sequenceInfluencer) {
             await supabaseLogger({
                 type: 'email-webhook',
                 data: event as any,
-                message: `newMessage from: ${event.data.from.address}`,
+                message: `newMessage sequenceInfluencer not found from: ${event.data.from.address}`,
             });
             return res.status(httpCodes.OK).json({});
         }
