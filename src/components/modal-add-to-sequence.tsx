@@ -137,7 +137,12 @@ export const AddToSequenceModal = ({
                             <Spinner className="h-5 w-5 fill-primary-500 text-white" />
                         </Button>
                     ) : (
-                        <Button disabled={hasInfluencer} onClick={handleAddToSequence} type="submit">
+                        <Button
+                            disabled={hasInfluencer}
+                            data-testid={`add-to-sequence:${selectedSequence?.name}`}
+                            onClick={handleAddToSequence}
+                            type="submit"
+                        >
                             {t('creators.addToSequence')}
                         </Button>
                     )}

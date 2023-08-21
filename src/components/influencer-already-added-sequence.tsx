@@ -35,7 +35,7 @@ export const InfluencerAlreadyAddedSequenceModal = ({
 
     return (
         <ModalWithButtons
-            title={t('campaigns.modal.addToCampaign') || ''}
+            title={t('creators.addToSequence') || ''}
             visible={show}
             onClose={() => {
                 setShow(false);
@@ -52,7 +52,7 @@ export const InfluencerAlreadyAddedSequenceModal = ({
         >
             <div className="flex flex-col gap-2">
                 <p>
-                    {`${t('sequences.modal.influencerAlreadyAdded')} ${sequencesWithInfluencer
+                    {`${t('sequences.influencerAlreadyAdded')} ${sequencesWithInfluencer
                         ?.map((sequence) => sequence)
                         .join(', ')}`}
                 </p>
