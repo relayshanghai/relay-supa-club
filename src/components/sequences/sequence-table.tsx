@@ -75,16 +75,24 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
                 </thead>
                 <tbody>
                     {sortedInfluencers?.map((influencer) => {
-                        const step = sequenceSteps.find((step) => step.step_number === influencer.sequence_step);
-                        const sequenceEmail = sequenceEmails?.find(
-                            (email) =>
-                                email.sequence_influencer_id === influencer.id && email.sequence_step_id === step?.id,
+                        const influencerEmails = sequenceEmails?.filter(
+                            (email) => email.sequence_influencer_id === influencer.id,
                         );
+                        const lastStep = sequenceSteps.find(
+                            (step) => step.step_number === influencer.sequence_step - 1,
+                        );
+                        const nextStep = sequenceSteps.find((step) => step.step_number === influencer.sequence_step);
+                        const lastEmail = influencerEmails?.find((email) => email.sequence_step_id === lastStep?.id);
+                        const nextEmail = influencerEmails?.find((email) => email.sequence_step_id === nextStep?.id);
+
                         return (
                             <SequenceRow
                                 key={influencer.id}
                                 sequenceInfluencer={influencer}
-                                sequenceEmail={sequenceEmail}
+                                lastEmail={lastEmail}
+                                nextEmail={nextEmail}
+                                lastStep={lastStep}
+                                nextStep={nextStep}
                                 sequenceSteps={sequenceSteps}
                                 currentTab={currentTab}
                                 isMissingVariables={isMissingVariables}
