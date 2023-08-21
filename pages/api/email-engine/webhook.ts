@@ -2,7 +2,7 @@ import type { NextApiHandler, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { ApiHandler } from 'src/utils/api-handler';
 import type { SequenceEmailUpdate, SequenceInfluencer, SequenceInfluencerUpdate } from 'src/utils/api/db';
-import { getProfileByEmail, supabaseLogger } from 'src/utils/api/db';
+import { getProfileBySequenceSendEmail, supabaseLogger } from 'src/utils/api/db';
 import { deleteEmailFromOutbox, getOutbox } from 'src/utils/api/email-engine';
 import { GMAIL_SENT_SPECIAL_USE_FLAG } from 'src/utils/api/email-engine/prototype-mocks';
 import {
@@ -145,8 +145,7 @@ const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) =>
         return res.status(httpCodes.OK).json({});
     }
     try {
-        // the to address is our platform's user
-        const { data: ourUser, error } = await getProfileByEmail(event.data.to[0].address);
+        const { data: ourUser, error } = await getProfileBySequenceSendEmail(event.data.to[0].address);
         if (error) {
             await supabaseLogger({
                 type: 'email-webhook',
