@@ -11,7 +11,7 @@
     "date": "2023-08-21T04:27:50.000Z",
     "from": {
       "name": "tech",
-      "address": "tech@relay.club"
+      "address": "bob.brown@example.com"
     },
     "path": "[Gmail]/All Mail",
     "size": 16800,
@@ -26,14 +26,14 @@
     "labels": ["\\Important", "\\Inbox"],
     "sender": {
       "name": "tech",
-      "address": "tech@relay.club"
+      "address": "bob.brown@example.com"
     },
     "unseen": true,
     "emailId": "1774811427591030037",
     "replyTo": [
       {
         "name": "tech",
-        "address": "tech@relay.club"
+        "address": "bob.brown@example.com"
       }
     ],
     "subject": "Re: Paid Collab with Rolex 🤝",
