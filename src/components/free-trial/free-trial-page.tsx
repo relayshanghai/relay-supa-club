@@ -1,10 +1,12 @@
 import { useCompany } from 'src/hooks/use-company';
+import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { useUser } from 'src/hooks/use-user';
 import { useTranslation } from 'react-i18next';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { SIGNUP_WIZARD } from 'src/utils/rudderstack/event-names';
 import { Button } from '../button';
+import { Spinner } from '../icons';
 import Link from 'next/link';
 
 const FreeTrialPage = () => {
@@ -13,8 +15,10 @@ const FreeTrialPage = () => {
     const router = useRouter();
     const { logout } = useUser();
     const { trackEvent } = useRudderstack();
+    const [loading, setLoading] = useState(false);
 
     const startFreeTrial = async () => {
+        setLoading(true);
         const response = await fetch('/api/subscriptions/create-trial-without-payment-intent', {
             method: 'POST',
             headers: {
@@ -114,9 +118,10 @@ const FreeTrialPage = () => {
             </ul>
             <Button
                 onClick={startFreeTrial}
+                disabled={loading}
                 className="w-full rounded border-2 px-40 py-3 text-white transition duration-300 hover:border-white hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50"
             >
-                {t('signup.freeTrial.submitButton')}
+                {loading ? <Spinner className="h-5 w-full fill-primary-600" /> : t('signup.freeTrial.submitButton')}
             </Button>
 
             <div className="pt-20 text-center">
