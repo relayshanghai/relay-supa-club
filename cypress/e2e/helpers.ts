@@ -82,7 +82,7 @@ export const insertSequenceEmails = async (supabase: RelayDatabase, sequenceInfl
                 sequence_id: sequenceInfluencer.sequence_id,
                 sequence_step_id: step.id,
                 email_delivery_status: 'Scheduled',
-                email_message_id: `${sequenceInfluencer.email}${step.step_number.toString()}`, // will match the messageId in the mocks email-engine/webhooks/message-sent etc
+                email_message_id: `${sequenceInfluencer.email}${step.step_number}`, // will match the messageId in the mocks email-engine/webhooks/message-sent etc
             });
             results.push({ sequenceInfluencerId: sequenceInfluencer.id, step: step.step_number });
         }
@@ -98,7 +98,7 @@ export const resetSequenceEmails = async () => {
     const supabase = supabaseClientCypress();
     // delete any emails with message_id which string includes 'example.com' (from the mocks)
 
-    await supabase.from('sequence_emails').delete().like('email_message_id', '%example.com%');
+    await supabase.from('sequence_emails').delete().like('email_message_id', '%@example.com%');
 
     const { data: influencers } = await supabase
         .from('sequence_influencers')

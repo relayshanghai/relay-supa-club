@@ -198,19 +198,19 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                 {currentTab === 'In Sequence' && (
                     <>
                         <td className="whitespace-nowrap px-6 py-4 align-middle font-semibold text-gray-600">
-                            {lastStep?.name}
+                            {lastStep?.name ?? ''}
                         </td>
-                        <div
+                        <td
                             className={`flex w-fit flex-row items-center justify-center gap-2 rounded-lg px-3 py-2 text-center ${
                                 EMAIL_STATUS_STYLES[getStatus(lastEmail || nextEmail) || 'Default']
                             }`}
                         >
                             {Icons[getStatus(lastEmail || nextEmail) as keyof typeof Icons] || Icons.Default}
                             {getStatus(lastEmail || nextEmail)}
-                        </div>
+                        </td>
                         <td className="whitespace-nowrap px-6 py-4 text-gray-600">
                             {lastEmail?.email_send_at &&
-                                new Date(lastEmail?.email_send_at).toLocaleDateString(i18n.language, {
+                                new Date(lastEmail.email_send_at).toLocaleDateString(i18n.language, {
                                     month: 'short',
                                     day: 'numeric',
                                 })}
@@ -237,7 +237,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                     <>
                         <td className="whitespace-nowrap px-6 py-4 text-gray-600">
                             {lastEmail?.email_send_at &&
-                                new Date(lastEmail?.email_send_at).toLocaleDateString(i18n.language, {
+                                new Date(lastEmail.email_send_at).toLocaleDateString(i18n.language, {
                                     month: 'short',
                                     day: 'numeric',
                                 })}
