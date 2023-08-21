@@ -31,4 +31,5 @@ export const EMPLOYEE_EMAILS = [
     'thatsonmars1@gmail.com',
     'eric@conocenti.com', // TODO: remove access when his audit is done
     'allaine@relay.club',
+    'kristian@relay.club',
 ];
