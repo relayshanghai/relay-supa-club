@@ -6,6 +6,7 @@ import { supabaseLogger } from 'src/utils/api/db';
 import { deleteEmailFromOutbox, getOutbox } from 'src/utils/api/email-engine';
 import { GMAIL_SENT_SPECIAL_USE_FLAG } from 'src/utils/api/email-engine/prototype-mocks';
 import {
+    deleteSequenceEmailByMessageIdCall,
     getSequenceEmailByMessageIdCall,
     getSequenceEmailsBySequenceInfluencerCall,
     updateSequenceEmailCall,
@@ -27,7 +28,6 @@ import {
     getSequenceInfluencerByIdCall,
     updateSequenceInfluencerCall,
 } from 'src/utils/api/db/calls/sequence-influencers';
-import { getSequenceStepsBySequenceIdCall } from 'src/utils/api/db/calls/sequence-steps';
 
 export type SendEmailPostRequestBody = SendEmailRequestBody & {
     account: string;
@@ -57,7 +57,9 @@ const getSequenceInfluencerByEmail = db<typeof getSequenceInfluencerByEmailCall>
 
 const updateSequenceInfluencer = db<typeof updateSequenceInfluencerCall>(updateSequenceInfluencerCall);
 
-const getSequenceStepsBySequenceId = db<typeof getSequenceStepsBySequenceIdCall>(getSequenceStepsBySequenceIdCall);
+const deleteSequenceEmailByMessageId = db<typeof deleteSequenceEmailByMessageIdCall>(
+    deleteSequenceEmailByMessageIdCall,
+);
 
 const deleteScheduledEmailIfReplied = async (event: WebhookMessageNew) => {
     const outbox = await getOutbox();
@@ -69,6 +71,8 @@ const deleteScheduledEmailIfReplied = async (event: WebhookMessageNew) => {
         }
         const { deleted } = await deleteEmailFromOutbox(message.queueId);
 
+        await deleteSequenceEmailByMessageId(message.messageId);
+
         await supabaseLogger({
             type: 'email-webhook',
             data: event as any,
@@ -76,33 +80,28 @@ const deleteScheduledEmailIfReplied = async (event: WebhookMessageNew) => {
         });
     }
 };
-
+/** By this point, outgoing emails should have been deleted in `deleteScheduledEmailIfReplied`. This will update the remaining emails to "replied" and the influencer to "negotiating" */
 const updateIfReply = async (event: WebhookMessageNew, res: NextApiResponse) => {
     const sequenceInfluencer = await getSequenceInfluencerByEmail(event.data.from.address);
     if (!sequenceInfluencer) {
         return;
     }
-
     const sequenceEmails = await getSequenceEmailsBySequenceInfluencer(sequenceInfluencer.id);
-    const sequenceSteps = await getSequenceStepsBySequenceId(sequenceInfluencer.sequence_id);
+    const emailUpdates: SequenceEmailUpdate[] = sequenceEmails.map((sequenceEmail) => ({
+        id: sequenceEmail.id,
+        email_delivery_status: 'Replied',
+    }));
 
-    const currentStep = sequenceSteps?.find((step) => step.step_number === sequenceInfluencer.sequence_step);
-
-    const lastEmail = sequenceEmails?.find((email) => email.sequence_step_id === currentStep?.id);
-
-    if (!lastEmail) {
-        return;
+    for (const emailUpdate of emailUpdates) {
+        await updateSequenceEmail(emailUpdate);
     }
-
-    const emailUpdate: SequenceEmailUpdate = { id: lastEmail.id, email_delivery_status: 'Replied' };
-    await updateSequenceEmail(emailUpdate);
 
     const influencerUpdate: SequenceInfluencerUpdate = { id: sequenceInfluencer.id, funnel_status: 'Negotiating' };
     await updateSequenceInfluencer(influencerUpdate);
 
     await supabaseLogger({
         type: 'email-webhook',
-        data: { event, emailUpdate, influencerUpdate } as any,
+        data: { event, emailUpdates, influencerUpdate } as any,
         message: `reply from: ${event.data.from.address}`,
     });
     return res.status(httpCodes.OK).json({});

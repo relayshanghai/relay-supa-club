@@ -44,3 +44,8 @@ export const getAllSequenceEmailsCall = (supabaseClient: RelayDatabase) => async
     if (error) throw error;
     return data;
 };
+
+export const deleteSequenceEmailByMessageIdCall = (supabaseClient: RelayDatabase) => async (messageId: string) => {
+    const { error } = await supabaseClient.from('sequence_emails').delete().eq('email_message_id', messageId);
+    if (error) throw error;
+};
