@@ -1,17 +1,18 @@
 import type { NextApiHandler } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { ApiHandler } from 'src/utils/api-handler';
-import { type SequenceInfluencer } from 'src/utils/api/db';
+import { type ProfileDB, type SequenceInfluencer } from 'src/utils/api/db';
 import { getSequenceInfluencers } from 'src/utils/api/db/calls/get-sequence-influencers';
 
 export type SequenceInfluencerManagerPage = SequenceInfluencer & {
+    iqdata_id?: string;
+    influencer_id?: string;
+    manager?: ProfileDB;
     name?: string | null;
     username?: string;
     avatar_url?: string | null;
     url?: string;
     platform?: string;
-    manager_first_name?: string;
-    manager_last_name?: string;
 };
 
 const postHandler: NextApiHandler = async (req, res) => {

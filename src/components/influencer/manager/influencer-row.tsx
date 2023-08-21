@@ -15,8 +15,7 @@ export type InfluencerRowProps = {
 };
 
 export const InfluencerRow = ({ index, influencer, ...props }: InfluencerRowProps) => {
-    const { name, username, manager_first_name, avatar_url, url, tags, updated_at, funnel_status, email, platform } =
-        influencer;
+    const { name, username, manager, avatar_url, url, tags, updated_at, funnel_status, email, platform } = influencer;
     const { t } = useTranslation();
     const handleRowClick = useCallback(
         (influencer: SequenceInfluencerManagerPage) => {
@@ -82,7 +81,7 @@ export const InfluencerRow = ({ index, influencer, ...props }: InfluencerRowProp
                     {t(`manager.${funnel_status}`)}
                 </p>
             </td>
-            <td className="whitespace-nowrap px-6 py-4 font-medium text-gray-600">{manager_first_name}</td>
+            <td className="whitespace-nowrap px-6 py-4 font-medium text-gray-600">{manager?.first_name}</td>
             <td className="font-regular flex flex-row items-center gap-1 whitespace-nowrap p-6 text-xs text-gray-600">
                 {tags.map((tag: string) => {
                     return (
