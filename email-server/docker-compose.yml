@@ -55,6 +55,7 @@ services:
             - 'discovery.type=single-node'
             - 'ES_JAVA_OPTS=-Xms512m -Xmx512m'
             - 'ELASTIC_PASSWORD=${ELASTIC_PASSWORD}'
+            - 'xpack.security.enabled=${XPACK_SECURITY_ENABLED}'
         ports:
             - ${ES_PORT}:${ES_PORT}
         volumes:
