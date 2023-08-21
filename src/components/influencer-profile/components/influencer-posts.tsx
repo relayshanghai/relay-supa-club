@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { Spinner } from 'src/components/icons';
 import { InfluencerPostRow } from './influencer-post-row';
-import type { PostInfo } from 'pages/api/influencer/posts';
+import type { PostInfo } from 'pages/api/influencer/[id]/posts-by-influencer';
 
 type Props = {
     isLoading?: boolean | null;

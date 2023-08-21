@@ -485,7 +485,7 @@ export interface Database {
       }
       influencer_posts: {
         Row: {
-          campaign_id: string
+          campaign_id: string | null
           created_at: string | null
           deleted_at: string | null
           description: string | null
@@ -504,7 +504,7 @@ export interface Database {
           url: string
         }
         Insert: {
-          campaign_id: string
+          campaign_id?: string | null
           created_at?: string | null
           deleted_at?: string | null
           description?: string | null
@@ -523,7 +523,7 @@ export interface Database {
           url: string
         }
         Update: {
-          campaign_id?: string
+          campaign_id?: string | null
           created_at?: string | null
           deleted_at?: string | null
           description?: string | null

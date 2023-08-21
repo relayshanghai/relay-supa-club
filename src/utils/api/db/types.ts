@@ -192,9 +192,6 @@ export type PostsPerformance = PostsPerformanceTable['Row'];
 export type PostsPerformanceInsert = PostsPerformanceTable['Insert'];
 export type PostsPerformanceUpdate = PostsPerformanceTable['Update'];
 
-export type InfluencerPostInsert = Database['public']['Tables']['influencer_posts']['Insert'];
-export type InfluencerPostRow = Database['public']['Tables']['influencer_posts']['Row'];
-
 export type InfluencerInsert = Database['public']['Tables']['influencers']['Insert'];
 export type InfluencerRow = Database['public']['Tables']['influencers']['Row'];
 
@@ -228,3 +225,4 @@ export type ReportSnapshots = Database['public']['Tables']['report_snapshots'];
 export type SearchParameters = Database['public']['Tables']['search_parameters'];
 export type VercelLogs = Database['public']['Tables']['vercel_logs'];
 export type CampaignNotes = Database['public']['Tables']['campaign_notes'];
+export type InfluencerPosts = Database['public']['Tables']['influencer_posts'];

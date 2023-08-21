@@ -7,9 +7,9 @@ import { Modal } from 'src/components/modal';
 import { useInfluencers } from 'src/hooks/use-influencers';
 import { imgProxy } from 'src/utils/fetcher';
 import type { SocialMediaPlatform } from 'types';
-import type { PostUrl } from './collab-add-post-modal-form';
 import { CollabAddPostModalForm } from './collab-add-post-modal-form';
 import { InfluencerPosts } from './influencer-posts';
+import type { PostUrl } from 'pages/api/influencer/[id]/posts-by-influencer';
 
 type Props = Omit<
     {
@@ -34,18 +34,26 @@ export const CollabAddPostModal = ({ profile, ...props }: Props) => {
     }, [props.isOpen, getPosts, profile]);
 
     const handleSaveUrls = useCallback(
-        (urls: PostUrl[]) => {
-            savePosts.call(profile.id, urls).then(() => {
+        (urls: PostUrl[], setUrls: (urls: PostUrl[]) => void) => {
+            savePosts.call(profile.id, urls).then((res) => {
                 savePosts.refresh();
+                getPosts.refresh().call(profile.id);
+
+                if (res.failed.length > 0) {
+                    setUrls(res.failed);
+                }
             });
-            // @todo do some error handling
-            // .catch((e) => console.error(e))
         },
-        [savePosts, profile],
+        [savePosts, getPosts, profile],
     );
 
+    const handleModalClose = useCallback(() => {
+        getPosts.refresh();
+        onClose();
+    }, [getPosts, onClose]);
+
     return (
-        <Modal {...props} onClose={onClose} visible={props.isOpen ?? false}>
+        <Modal {...props} onClose={handleModalClose} visible={props.isOpen ?? false}>
             <div className="mb-10 flex justify-between">
                 <h2 className="text-xl font-semibold text-gray-700">{t('campaigns.post.title')}</h2>
                 <div className="flex items-center">

@@ -1,6 +1,6 @@
 import { t } from 'i18next';
 import { useState } from 'react';
-import type { PostUrl } from './collab-add-post-modal-form';
+import type { PostUrl } from 'pages/api/influencer/[id]/posts-by-influencer';
 
 function isValidUrl(url: string): boolean {
     if (!url) return true;

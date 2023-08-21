@@ -4,16 +4,11 @@ import { useCallback, useMemo, useState } from 'react';
 import { Button } from 'src/components/button';
 import { Spinner } from 'src/components/icons';
 import { CollabAddPostModalInput } from './collab-add-post-modal-input';
-
-export type PostUrl = {
-    value: string;
-    id: string;
-    error: string | null;
-};
+import type { PostUrl } from 'pages/api/influencer/[id]/posts-by-influencer';
 
 type Props = {
     isLoading?: boolean | null;
-    onSave?: (urls: PostUrl[]) => void;
+    onSave?: (urls: PostUrl[], setUrls: (urls: PostUrl[]) => void) => void;
 };
 
 const isDuplicate = (url: string, urls: string[]) => {
@@ -54,7 +49,7 @@ export const CollabAddPostModalForm = ({ isLoading, ...props }: Props) => {
 
     const handleSave = useCallback(() => {
         if (validUrls.length > 0 && props.onSave) {
-            props.onSave && props.onSave(validUrls);
+            props.onSave && props.onSave(validUrls, (urls: PostUrl[]) => setUrls(urls));
         }
     }, [props, validUrls]);
 
@@ -75,7 +70,11 @@ export const CollabAddPostModalForm = ({ isLoading, ...props }: Props) => {
             {urlFields}
 
             <div className="ml-auto flex gap-x-3">
-                <Button disabled={validUrls.length !== urls.length} variant="secondary" onClick={handleNewUrlField}>
+                <Button
+                    disabled={validUrls.length !== urls.length || !!isLoading}
+                    variant="secondary"
+                    onClick={handleNewUrlField}
+                >
                     {t('campaigns.post.addAnotherPost')}
                 </Button>
 
