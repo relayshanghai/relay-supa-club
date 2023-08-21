@@ -4,6 +4,7 @@ import { columnsIgnored, columnsInSequence, columnsNeedsAttention } from 'src/co
 import sequences from 'i18n/en/sequences';
 import { reinsertCharlie, resetSequenceEmails } from './helpers';
 import messageSent from '../../src/mocks/email-engine/webhooks/message-sent.json';
+import messageNewReply from '../../src/mocks/email-engine/webhooks/message-new-reply.json';
 
 describe('outreach', () => {
     beforeEach(() => {
@@ -174,7 +175,7 @@ describe('outreach', () => {
             cy.contains('Scheduled');
         });
 
-        // send a replied webhook request
+        // send a message sent webhook request
         cy.request({
             method: 'POST',
             url: '/api/email-engine/webhook',
@@ -186,5 +187,18 @@ describe('outreach', () => {
         cy.contains('tr', 'Bob-Recommended Brown').within(() => {
             cy.contains('Delivered', { timeout: 10000 });
         });
+
+        // send a replied webhook request
+        cy.request({
+            method: 'POST',
+            url: '/api/email-engine/webhook',
+            body: JSON.parse(JSON.stringify(messageNewReply)),
+        });
+        cy.reload(); // todo: remove this when we get push updates
+        cy.contains('button', 'In sequence').click();
+        // influencer has been moved to the manage influencers page
+        cy.contains('Bob-Recommended Brown').should('not.exist');
+        cy.contains('Influencer Manager').click();
+        cy.contains('Bob-Recommended Brown');
     });
 });

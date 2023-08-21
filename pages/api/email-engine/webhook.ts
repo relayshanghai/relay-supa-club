@@ -1,7 +1,7 @@
 import type { NextApiHandler, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { ApiHandler } from 'src/utils/api-handler';
-import type { SequenceEmailUpdate, SequenceInfluencerUpdate } from 'src/utils/api/db';
+import type { SequenceEmailUpdate, SequenceInfluencer, SequenceInfluencerUpdate } from 'src/utils/api/db';
 import { supabaseLogger } from 'src/utils/api/db';
 import { deleteEmailFromOutbox, getOutbox } from 'src/utils/api/email-engine';
 import { GMAIL_SENT_SPECIAL_USE_FLAG } from 'src/utils/api/email-engine/prototype-mocks';
@@ -61,7 +61,7 @@ const deleteSequenceEmailByMessageId = db<typeof deleteSequenceEmailByMessageIdC
     deleteSequenceEmailByMessageIdCall,
 );
 
-const deleteScheduledEmailIfReplied = async (event: WebhookMessageNew) => {
+const deleteScheduledEmail = async (event: WebhookMessageNew) => {
     const outbox = await getOutbox();
     // If there is a sequenced email in the outbox to this address, cancel it
     if (outbox.messages.some((message) => message.envelope.to.includes(event.data.from.address))) {
@@ -80,31 +80,25 @@ const deleteScheduledEmailIfReplied = async (event: WebhookMessageNew) => {
         });
     }
 };
-/** By this point, outgoing emails should have been deleted in `deleteScheduledEmailIfReplied`. This will update the remaining emails to "replied" and the influencer to "negotiating" */
-const updateIfReply = async (event: WebhookMessageNew, res: NextApiResponse) => {
-    const sequenceInfluencer = await getSequenceInfluencerByEmail(event.data.from.address);
-    if (!sequenceInfluencer) {
-        return;
-    }
+const handleReply = async (sequenceInfluencer: SequenceInfluencer, event: WebhookMessageNew) => {
+    await deleteScheduledEmail(event);
+    // Outgoing emails should have been deleted in `deleteScheduledEmailIfReplied`. This will update the remaining emails to "replied" and the influencer to "negotiating
     const sequenceEmails = await getSequenceEmailsBySequenceInfluencer(sequenceInfluencer.id);
     const emailUpdates: SequenceEmailUpdate[] = sequenceEmails.map((sequenceEmail) => ({
         id: sequenceEmail.id,
         email_delivery_status: 'Replied',
     }));
-
     for (const emailUpdate of emailUpdates) {
         await updateSequenceEmail(emailUpdate);
     }
 
     const influencerUpdate: SequenceInfluencerUpdate = { id: sequenceInfluencer.id, funnel_status: 'Negotiating' };
     await updateSequenceInfluencer(influencerUpdate);
-
     await supabaseLogger({
         type: 'email-webhook',
         data: { event, emailUpdates, influencerUpdate } as any,
         message: `reply from: ${event.data.from.address}`,
     });
-    return res.status(httpCodes.OK).json({});
 };
 
 const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) => {
@@ -113,15 +107,18 @@ const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) =>
         // TODO: find a more general, non-hardcoded way to do this that will work for non-gmail providers.
         return res.status(httpCodes.OK).json({});
     }
-
-    await deleteScheduledEmailIfReplied(event);
-    await updateIfReply(event, res);
-
-    await supabaseLogger({
-        type: 'email-webhook',
-        data: event as any,
-        message: `newMessage (not reply) from: ${event.data.from.address}`,
-    });
+    try {
+        const sequenceInfluencer = await getSequenceInfluencerByEmail(event.data.from.address);
+        if (!sequenceInfluencer) {
+            await supabaseLogger({
+                type: 'email-webhook',
+                data: event as any,
+                message: `newMessage from: ${event.data.from.address}`,
+            });
+            return res.status(httpCodes.OK).json({});
+        }
+        await handleReply(sequenceInfluencer, event);
+    } catch (error) {}
 
     return res.status(httpCodes.OK).json({});
 };
