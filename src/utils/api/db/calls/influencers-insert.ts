@@ -7,6 +7,8 @@ import type {
     InfluencerSocialProfileRow,
     InfluencerInsert,
     InfluencerSocialProfileInsert,
+    RelayDatabase,
+    InfluencerSocialProfilesTable,
 } from '../types';
 import type { Database } from 'types/supabase';
 
@@ -32,4 +34,53 @@ export const insertInfluencerSocialProfile =
         }
 
         return socialProfile.data[0];
+    };
+
+export const getInfluencerById =
+    (db: RelayDatabase) =>
+    async (id: string): Promise<InfluencerRow | null> => {
+        const influencer = await db
+            .from('influencers')
+            .select()
+            .match({
+                id,
+            })
+            .maybeSingle();
+
+        if (influencer.error) {
+            throw influencer.error;
+        }
+
+        return influencer.data;
+    };
+
+// @todo remove no-client version
+export const getInfluencerSocialProfileByReferenceId =
+    (db: RelayDatabase) =>
+    async (referenceId: string): Promise<InfluencerSocialProfileRow | null> => {
+        const socialProfile = await db
+            .from('influencer_social_profiles')
+            .select()
+            .match({
+                reference_id: referenceId,
+            })
+            .maybeSingle();
+
+        if (socialProfile.error) {
+            throw socialProfile.error;
+        }
+
+        return socialProfile.data;
+    };
+
+export const updateInfluencerSocialProfile =
+    (db: RelayDatabase) =>
+    async (id: string, data: InfluencerSocialProfilesTable['Update']): Promise<InfluencerSocialProfileRow> => {
+        const socialProfile = await db.from('influencer_social_profiles').update(data).eq('id', id).select().single();
+
+        if (socialProfile.error) {
+            throw socialProfile.error;
+        }
+
+        return socialProfile.data;
     };
