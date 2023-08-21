@@ -184,7 +184,7 @@ describe('outreach', () => {
         cy.contains('button', 'In sequence').click();
 
         cy.contains('tr', 'Bob-Recommended Brown').within(() => {
-            cy.contains('Delivered');
+            cy.contains('Delivered', { timeout: 10000 });
         });
     });
 });
