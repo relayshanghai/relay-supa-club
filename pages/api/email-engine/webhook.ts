@@ -76,11 +76,18 @@ const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) =>
         return res.status(httpCodes.OK).json({});
     }
     const outbox = await getOutbox();
-    // if there is a sequenced email in the outbox to this address, cancel it
-
     // check if there is a message in the outbox to this address
+    // if there is a sequenced email in the outbox to this address, cancel it and update the sequence step
     if (outbox.messages.some((message) => message.envelope.to.includes(event.data.from.address))) {
         await deleteScheduledEmailIfReplied(event);
+        const sequenceStep = await getSequenceEmailByMessageId(event.data.messageId);
+        const update: SequenceEmailUpdate = { id: sequenceStep.id, email_delivery_status: 'Replied' };
+        await updateSequenceEmail(update);
+        await supabaseLogger({
+            type: 'email-webhook',
+            data: { event, update } as any,
+            message: `new reply from: ${event.data.from.address}`,
+        });
     } else {
         await supabaseLogger({
             type: 'email-webhook',
