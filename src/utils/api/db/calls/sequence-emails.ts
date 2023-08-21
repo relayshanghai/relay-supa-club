@@ -15,6 +15,7 @@ export const getSequenceEmailByMessageIdCall = (db: RelayDatabase) => async (mes
 };
 
 export const updateSequenceEmailCall = (supabaseClient: RelayDatabase) => async (update: SequenceEmailUpdate) => {
+    update.updated_at = new Date().toISOString();
     const { data, error } = await supabaseClient.from('sequence_emails').update(update).eq('id', update.id).single();
     if (error) throw error;
     return data;

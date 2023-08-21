@@ -28,6 +28,7 @@ export const getSequenceInfluencersByCompanyIdCall = (supabaseClient: RelayDatab
 
 export const updateSequenceInfluencerCall =
     (supabaseClient: RelayDatabase) => async (update: SequenceInfluencerUpdate) => {
+        update.updated_at = new Date().toISOString();
         const { data, error } = await supabaseClient
             .from('sequence_influencers')
             .update(update)
