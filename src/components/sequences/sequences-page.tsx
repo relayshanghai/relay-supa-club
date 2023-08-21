@@ -41,19 +41,26 @@ export const SequencesPage = () => {
                 <SequenceStats
                     totalInfluencers={allSequenceInfluencersByCompanyId?.length || 0}
                     openRate={
-                        (allSequenceEmails?.filter(
-                            (email) =>
-                                email.email_tracking_status === 'Link Clicked' ||
-                                email.email_tracking_status === 'Opened',
-                        ).length || 0) / (allSequenceEmails?.length || 1)
+                        ((allSequenceEmails &&
+                            allSequenceEmails?.length > 0 &&
+                            allSequenceEmails?.filter(
+                                (email) =>
+                                    email.email_tracking_status === 'Link Clicked' ||
+                                    email.email_tracking_status === 'Opened',
+                            ).length) ||
+                            0) / (allSequenceEmails?.length || 1)
                     }
                     replyRate={
-                        (allSequenceEmails?.filter((email) => email.email_delivery_status === 'Replied').length || 0) /
-                        (allSequenceEmails?.length || 1)
+                        ((allSequenceEmails &&
+                            allSequenceEmails.length > 0 &&
+                            allSequenceEmails?.filter((email) => email.email_delivery_status === 'Replied').length) ||
+                            0) / (allSequenceEmails?.length || 1)
                     }
                     bounceRate={
-                        (allSequenceEmails?.filter((email) => email.email_delivery_status === 'Bounced').length || 0) /
-                        (allSequenceEmails?.length || 1)
+                        ((allSequenceEmails &&
+                            allSequenceEmails.length > 0 &&
+                            allSequenceEmails?.filter((email) => email.email_delivery_status === 'Bounced').length) ||
+                            0) / (allSequenceEmails?.length || 1)
                     }
                 />
 
