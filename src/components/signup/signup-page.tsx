@@ -122,11 +122,8 @@ const SignUpPage = ({
     };
 
     const onNext = async () => {
-        if (currentStep === steps.length + 1) {
+        if (currentStep > steps.length) {
             return;
-        }
-        if (currentStep === 2 && EMPLOYEE_EMAILS.includes(email)) {
-            await handleProfileCreate(formData);
         }
         if (currentStep === 4) {
             const profileId = await handleProfileCreate(formData);
@@ -134,10 +131,12 @@ const SignUpPage = ({
                 toast.error(t('signup.noProfileId'));
                 throw new Error('Could not find profile id');
             }
-            await handleCompanyCreate(formData, profileId);
-            setLoading(true);
-            window.location.href = `/free-trial`;
-        } else {
+            const result = await handleCompanyCreate(formData, profileId);
+            if (result === 'success') {
+                setLoading(true);
+                await router.push('/free-trial');
+            }
+        } else if (currentStep < 4) {
             setCurrentStep(currentStep + 1);
         }
         trackEvent(SIGNUP_WIZARD(`step-${currentStep}`), {
@@ -207,8 +206,9 @@ const SignUpPage = ({
             const signupCompanyRes = await createCompany(data);
             if (!signupCompanyRes?.cus_id) {
                 throw new Error('no cus_id, error creating company');
+            } else {
+                return 'success';
             }
-            setCurrentStep(currentStep + 1);
         } catch (e: any) {
             clientLogger(e, 'error');
             if (hasCustomError(e, CompanyErrors)) {
