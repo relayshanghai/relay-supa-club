@@ -249,6 +249,7 @@ export type SendEmailPostResponseBody = SendEmailResponseBody;
 const postHandler: NextApiHandler = async (req, res) => {
     // TODO: use a signing secret from the email client to authenticate the request
     const body = req.body as WebhookEvent;
+    await supabaseLogger({ type: 'email-webhook', data: body as any, message: `incoming: ${body.event}` });
     switch (body.event) {
         case 'messageNew':
             return handleNewEmail(body, res);
