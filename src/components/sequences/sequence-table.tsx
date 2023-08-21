@@ -27,7 +27,8 @@ const sortInfluencers = (
             sequenceEmails?.find((email) => email.sequence_influencer_id === influencerId)?.email_send_at;
 
         if (currentTab === 'To Contact') {
-            return b.created_at.localeCompare(a.created_at);
+            return a.created_at.localeCompare(b.created_at);
+            // this must be wrong
         } else if (currentTab === 'In Sequence' || currentTab === 'Ignored') {
             const mailTimeA = getEmailTime(a.id);
             const mailTimeB = getEmailTime(b.id);
