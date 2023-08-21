@@ -126,12 +126,20 @@ const handleBounce = async (event: WebhookMessageBounce, res: NextApiResponse) =
         email_delivery_status: 'Bounced',
     };
     await updateSequenceEmail(update);
-    await supabaseLogger({ type: 'email-webhook', data: { event, update } as any });
+    await supabaseLogger({
+        type: 'email-webhook',
+        data: { event, update } as any,
+        message: `bounce messageId: ${event.data.messageId}`,
+    });
     return res.status(httpCodes.OK).json({});
 };
 
 const handleComplaint = async (event: WebhookMessageComplaint, res: NextApiResponse) => {
-    await supabaseLogger({ type: 'email-webhook', data: event as any });
+    await supabaseLogger({
+        type: 'email-webhook',
+        data: event as any,
+        message: `complaint complaintMessage: ${event.data.complaintMessage}`,
+    });
     return res.status(httpCodes.OK).json({});
 };
 
@@ -142,7 +150,11 @@ const handleDeliveryError = async (event: WebhookMessageDeliveryError, res: Next
         email_delivery_status: 'Failed',
     };
     await updateSequenceEmail(update);
-    await supabaseLogger({ type: 'email-webhook', data: { event, update } as any });
+    await supabaseLogger({
+        type: 'email-webhook',
+        data: { event, update } as any,
+        message: `deliveryError error: ${event.data.error}`,
+    });
     return res.status(httpCodes.OK).json({});
 };
 
@@ -153,14 +165,17 @@ const handleFailed = async (event: WebhookMessageFailed, res: NextApiResponse) =
         email_delivery_status: 'Failed',
     };
     await updateSequenceEmail(update);
-    await supabaseLogger({ type: 'email-webhook', data: { event, update } as any });
+    await supabaseLogger({
+        type: 'email-webhook',
+        data: { event, update } as any,
+        message: `failed error: ${event.data.error}`,
+    });
     return res.status(httpCodes.OK).json({});
 };
 
 const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
     try {
         const sequenceEmail = await getSequenceEmailByMessageId(event.data.messageId); // if there is no matching sequenceEmail, this is a regular email, not a sequenced email and this will throw an error
-
         const update: SequenceEmailUpdate = {
             id: sequenceEmail.id,
             email_delivery_status: 'Delivered',
@@ -175,16 +190,24 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
         };
         await updateSequenceInfluencer(sequenceInfluencerUpdate);
 
-        await supabaseLogger({ type: 'email-webhook', data: { event, update, sequenceInfluencerUpdate } as any });
+        await supabaseLogger({
+            type: 'email-webhook',
+            data: { event, update, sequenceInfluencerUpdate } as any,
+            message: `sent to: ${event.data.envelope.to}`,
+        });
         return res.status(httpCodes.OK).json({});
-    } catch (error) {
-        await supabaseLogger({ type: 'email-webhook', data: { event, error } as any });
+    } catch (error: any) {
+        await supabaseLogger({
+            type: 'email-webhook',
+            data: { event, error } as any,
+            message: `error sending to: ${event.data.envelope.to}. error: ${error?.message}`,
+        });
         return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
     }
 };
 
 const handleOtherWebhook = async (event: WebhookEvent, res: NextApiResponse) => {
-    await supabaseLogger({ type: 'email-webhook', data: event as any });
+    await supabaseLogger({ type: 'email-webhook', data: event as any, message: `otherWebhook event: ${event.event}` });
     return res.status(httpCodes.OK).json({});
 };
 
