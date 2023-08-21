@@ -5,7 +5,11 @@ import type { SequenceEmailUpdate, SequenceInfluencerUpdate } from 'src/utils/ap
 import { supabaseLogger } from 'src/utils/api/db';
 import { deleteEmailFromOutbox, getOutbox } from 'src/utils/api/email-engine';
 import { GMAIL_SENT_SPECIAL_USE_FLAG } from 'src/utils/api/email-engine/prototype-mocks';
-import { getSequenceEmailByMessageIdCall, updateSequenceEmailCall } from 'src/utils/api/db/calls/sequence-emails';
+import {
+    getSequenceEmailByMessageIdCall,
+    getSequenceEmailsBySequenceInfluencerCall,
+    updateSequenceEmailCall,
+} from 'src/utils/api/db/calls/sequence-emails';
 
 import { db } from 'src/utils/supabase-client';
 
@@ -19,9 +23,11 @@ import type { WebhookMessageSent } from 'types/email-engine/webhook-message-sent
 import type { WebhookTrackClick } from 'types/email-engine/webhook-track-click';
 import type { WebhookTrackOpen } from 'types/email-engine/webhook-track-open';
 import {
+    getSequenceInfluencerByEmailCall,
     getSequenceInfluencerByIdCall,
     updateSequenceInfluencerCall,
 } from 'src/utils/api/db/calls/sequence-influencers';
+import { getSequenceStepsBySequenceIdCall } from 'src/utils/api/db/calls/sequence-steps';
 
 export type SendEmailPostRequestBody = SendEmailRequestBody & {
     account: string;
@@ -39,11 +45,19 @@ export type WebhookEvent =
 
 const getSequenceEmailByMessageId = db<typeof getSequenceEmailByMessageIdCall>(getSequenceEmailByMessageIdCall);
 
+const getSequenceEmailsBySequenceInfluencer = db<typeof getSequenceEmailsBySequenceInfluencerCall>(
+    getSequenceEmailsBySequenceInfluencerCall,
+);
+
 const getSequenceInfluencerById = db<typeof getSequenceInfluencerByIdCall>(getSequenceInfluencerByIdCall);
 
 const updateSequenceEmail = db<typeof updateSequenceEmailCall>(updateSequenceEmailCall);
 
+const getSequenceInfluencerByEmail = db<typeof getSequenceInfluencerByEmailCall>(getSequenceInfluencerByEmailCall);
+
 const updateSequenceInfluencer = db<typeof updateSequenceInfluencerCall>(updateSequenceInfluencerCall);
+
+const getSequenceStepsBySequenceId = db<typeof getSequenceStepsBySequenceIdCall>(getSequenceStepsBySequenceIdCall);
 
 const deleteScheduledEmailIfReplied = async (event: WebhookMessageNew) => {
     const outbox = await getOutbox();
@@ -60,13 +74,38 @@ const deleteScheduledEmailIfReplied = async (event: WebhookMessageNew) => {
             data: event as any,
             message: `${deleted ? 'canceled' : 'failed to cancel'} email to: ${JSON.stringify(message.envelope.to)}`,
         });
-    } else {
-        await supabaseLogger({
-            type: 'email-webhook',
-            data: event as any,
-            message: `newMessage from: ${event.data.from.address}`,
-        });
     }
+};
+
+const updateIfReply = async (event: WebhookMessageNew, res: NextApiResponse) => {
+    const sequenceInfluencer = await getSequenceInfluencerByEmail(event.data.from.address);
+    if (!sequenceInfluencer) {
+        return;
+    }
+
+    const sequenceEmails = await getSequenceEmailsBySequenceInfluencer(sequenceInfluencer.id);
+    const sequenceSteps = await getSequenceStepsBySequenceId(sequenceInfluencer.sequence_id);
+
+    const currentStep = sequenceSteps?.find((step) => step.step_number === sequenceInfluencer.sequence_step);
+
+    const lastEmail = sequenceEmails?.find((email) => email.sequence_step_id === currentStep?.id);
+
+    if (!lastEmail) {
+        return;
+    }
+
+    const emailUpdate: SequenceEmailUpdate = { id: lastEmail.id, email_delivery_status: 'Replied' };
+    await updateSequenceEmail(emailUpdate);
+
+    const influencerUpdate: SequenceInfluencerUpdate = { id: sequenceInfluencer.id, funnel_status: 'Negotiating' };
+    await updateSequenceInfluencer(influencerUpdate);
+
+    await supabaseLogger({
+        type: 'email-webhook',
+        data: { event, emailUpdate, influencerUpdate } as any,
+        message: `reply from: ${event.data.from.address}`,
+    });
+    return res.status(httpCodes.OK).json({});
 };
 
 const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) => {
@@ -75,33 +114,22 @@ const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) =>
         // TODO: find a more general, non-hardcoded way to do this that will work for non-gmail providers.
         return res.status(httpCodes.OK).json({});
     }
-    const outbox = await getOutbox();
-    // check if there is a message in the outbox to this address
-    // if there is a sequenced email in the outbox to this address, cancel it and update the sequence step
-    if (outbox.messages.some((message) => message.envelope.to.includes(event.data.from.address))) {
-        await deleteScheduledEmailIfReplied(event);
-        const sequenceStep = await getSequenceEmailByMessageId(event.data.messageId);
-        const update: SequenceEmailUpdate = { id: sequenceStep.id, email_delivery_status: 'Replied' };
-        await updateSequenceEmail(update);
-        await supabaseLogger({
-            type: 'email-webhook',
-            data: { event, update } as any,
-            message: `new reply from: ${event.data.from.address}`,
-        });
-    } else {
-        await supabaseLogger({
-            type: 'email-webhook',
-            data: event as any,
-            message: `newMessage from: ${event.data.from.address}`,
-        });
-    }
+
+    await deleteScheduledEmailIfReplied(event);
+    await updateIfReply(event, res);
+
+    await supabaseLogger({
+        type: 'email-webhook',
+        data: event as any,
+        message: `newMessage (not reply) from: ${event.data.from.address}`,
+    });
 
     return res.status(httpCodes.OK).json({});
 };
 
 const handleTrackClick = async (event: WebhookTrackClick, res: NextApiResponse) => {
-    const sequenceStep = await getSequenceEmailByMessageId(event.data.messageId);
-    const update: SequenceEmailUpdate = { id: sequenceStep.id, email_tracking_status: 'Link Clicked' };
+    const sequenceEmail = await getSequenceEmailByMessageId(event.data.messageId);
+    const update: SequenceEmailUpdate = { id: sequenceEmail.id, email_tracking_status: 'Link Clicked' };
     await updateSequenceEmail(update);
     await supabaseLogger({
         type: 'email-webhook',

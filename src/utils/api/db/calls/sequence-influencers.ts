@@ -26,6 +26,12 @@ export const getSequenceInfluencersByCompanyIdCall = (supabaseClient: RelayDatab
     return data;
 };
 
+export const getSequenceInfluencerByEmailCall = (supabaseClient: RelayDatabase) => async (email: string) => {
+    const { data, error } = await supabaseClient.from('sequence_influencers').select('*').eq('email', email).single();
+    if (error) throw error;
+    return data;
+};
+
 export const updateSequenceInfluencerCall =
     (supabaseClient: RelayDatabase) => async (update: SequenceInfluencerUpdate) => {
         update.updated_at = new Date().toISOString();
