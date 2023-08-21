@@ -108,11 +108,15 @@ const sendSequence = async ({ account, sequenceInfluencers }: SequenceSendPostBo
                     });
                 }
             }
-            await db<typeof updateSequenceInfluencerCall>(updateSequenceInfluencerCall)({
-                id: sequenceInfluencer.id,
-                funnel_status: 'In Sequence',
-                sequence_step: 0, // handleSent() in pages/api/email-engine/webhook.ts will update the step as the scheduled emails are sent
-            });
+            // update the sequence influencer to be in the sequence if the outreach (email 0) was sent successfully
+            const outreachResult = results.find((result) => result.stepNumber === 0);
+            if (outreachResult && !outreachResult.error) {
+                await db<typeof updateSequenceInfluencerCall>(updateSequenceInfluencerCall)({
+                    id: sequenceInfluencer.id,
+                    funnel_status: 'In Sequence',
+                    sequence_step: 0, // handleSent() in pages/api/email-engine/webhook.ts will update the step as the scheduled emails are sent
+                });
+            }
         } catch (error: any) {
             serverLogger(error, 'error');
             results.push({
