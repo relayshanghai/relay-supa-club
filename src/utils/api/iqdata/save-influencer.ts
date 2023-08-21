@@ -2,8 +2,15 @@ import type { CreatorReport } from 'types';
 import {
     insertInfluencer as insertInfluencerToDb,
     insertInfluencerSocialProfile as insertInfluencerSocialProfileToDb,
+    getInfluencerSocialProfileByReferenceId,
+    getInfluencerById,
+    updateInfluencerSocialProfile,
 } from '../db/calls/influencers-insert';
-import { mapIqdataProfileToInfluencer, mapIqdataProfileToInfluencerSocialProfile } from './extract-influencer';
+import {
+    extractInfluencerReferenceId,
+    mapIqdataProfileToInfluencer,
+    mapIqdataProfileToInfluencerSocialProfile,
+} from './extract-influencer';
 import { compose } from '../../compose';
 import type { InfluencerRow, InfluencerSocialProfileRow, RelayDatabase } from '../db';
 
@@ -30,6 +37,23 @@ const insertSocialProfileFromIqdataProfile = (db: RelayDatabase) => (user_profil
 export const saveInfluencer =
     (db: RelayDatabase) =>
     async (data: CreatorReport): Promise<[InfluencerRow, InfluencerSocialProfileRow] | [null, null]> => {
+        const referenceId = extractInfluencerReferenceId(data['user_profile']);
+        const existingSocialProfile = await getInfluencerSocialProfileByReferenceId(db)(referenceId);
+        let existingInfluencer = null;
+
+        if (existingSocialProfile) {
+            existingInfluencer = await getInfluencerById(db)(existingSocialProfile.influencer_id);
+        }
+
+        if (existingInfluencer && existingSocialProfile) {
+            const updatedSocialProfile = await updateInfluencerSocialProfile(db)(
+                existingSocialProfile.id,
+                mapIqdataProfileToInfluencerSocialProfile(data['user_profile']),
+            );
+
+            return [existingInfluencer, updatedSocialProfile];
+        }
+
         const insertInfluencerFromIqdataProfile = compose(
             insertSocialProfileFromIqdataProfile(db)(data.user_profile),
             insertInfluencerToDb(db),
