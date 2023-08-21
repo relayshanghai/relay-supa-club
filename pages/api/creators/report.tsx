@@ -6,7 +6,6 @@ import {
     fetchReportsMetadataWithContext as fetchReportsMetadata,
     requestNewReportWithContext as requestNewReport,
 } from 'src/utils/api/iqdata';
-import { getInfluencer } from 'src/utils/get-influencer';
 import { serverLogger } from 'src/utils/logger-server';
 import { saveInfluencer } from 'src/utils/save-influencer';
 import type { CreatorPlatform, CreatorReport } from 'types';
@@ -64,16 +63,14 @@ export type CreatorsReportGetResponse = CreatorReport & { createdAt: string } & 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'GET') {
         const catchInfluencer = async (data: CreatorReport) => {
-            const [influencer, socialProfile] = await getInfluencer(data);
-            if (influencer === null) {
-                try {
-                    const [influencer, socialProfile] = await db<typeof saveInfluencer>(saveInfluencer)(data);
-                    return { influencer, socialProfile };
-                } catch (error) {
-                    serverLogger(error, 'error', true);
-                }
+            try {
+                const [influencer, socialProfile] = await db<typeof saveInfluencer>(saveInfluencer)(data);
+                return { influencer, socialProfile };
+            } catch (error) {
+                serverLogger(error, 'error', true);
             }
-            return { influencer, socialProfile };
+
+            return { influencer: null, socialProfile: null };
         };
 
         await rudderstack.identify({ req, res });
@@ -127,18 +124,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 }
 
                 const { influencer, socialProfile } = await catchInfluencer(data);
-                // quick fix to add email and recent video title to the social profile
-                if (socialProfile) {
-                    const contacts = data.user_profile.contacts || [];
-                    const email = contacts.find((v: any) => v.type === 'email') || { value: null };
-                    await db((supabase) => async () => {
-                        supabase.from('influencer_social_profiles').update({
-                            id: socialProfile.id,
-                            recent_video_title: data.user_profile.recent_posts?.[0]?.title || '',
-                            email: email.value || null,
-                        });
-                    });
-                }
 
                 await trackAndSnap(track, req, res, events, data);
 
