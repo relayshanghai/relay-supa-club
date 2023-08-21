@@ -152,6 +152,7 @@ describe('outreach', () => {
         cy.contains(
             'Vivian here from Blue Moonlight Stream Industries. I watched your "**recentVideoTitle**" video, and love your content style!!',
         ).should('not.exist'); //only shows the selected one
+        cy.contains('button', 'Needs attention').click({ force: true });
 
         // WEBHOOKS TEST
         // send the sequence, then manually send the webhooks to the next app and check the influencers status changes
