@@ -2,11 +2,15 @@ import { deleteDB } from 'idb';
 import { setupIntercepts } from './intercepts';
 import { columnsIgnored, columnsInSequence, columnsNeedsAttention } from 'src/components/sequences/constants';
 import sequences from 'i18n/en/sequences';
-import { reinsertCharlie } from './helpers';
+import { reinsertCharlie, resetSequenceEmails } from './helpers';
+import messageSent from '../../src/mocks/email-engine/webhooks/message-sent.json';
 
+const sequenceInfluencerEmails = ['alice.anderson@example.com', 'bob.brown@example.com', 'charlie.charles@example.com'];
 describe('outreach', () => {
     beforeEach(() => {
         deleteDB('app-cache');
+        reinsertCharlie(); // reinsert so you can run again easily
+        resetSequenceEmails(sequenceInfluencerEmails);
         setupIntercepts();
         cy.loginTestUser();
     });
@@ -18,7 +22,6 @@ describe('outreach', () => {
         cy.contains('Auto-start', { timeout: 10000 });
         cy.contains('button', 'Update template variables');
 
-        reinsertCharlie(); // reinsert so you can run again easily
         // stats
         cy.getByTestId('stat-card-total influencers').within(() => {
             cy.contains('Total influencers');
@@ -125,15 +128,8 @@ describe('outreach', () => {
         cy.contains('General collaboration').click({ force: true }); // click out of modal
 
         // can send sequence
-
         cy.getByTestId('send-email-button-bob.brown@example.com').trigger('mouseover');
         cy.contains('Missing required template variables: Product Description').should('not.exist');
-
-        // reset the empty template variable so you can run the test again if need be
-        cy.contains('button', 'Update template variables').click();
-        cy.get('input[id="template-variable-input-productDescription"]').clear();
-        cy.contains('button', 'Update variables').click();
-        cy.contains('General collaboration').click({ force: true }); // click out of modal
 
         // can view all emails preview
         cy.getByTestId('show-all-email-previews-button').eq(0).click();
@@ -156,5 +152,36 @@ describe('outreach', () => {
         cy.contains(
             'Vivian here from Blue Moonlight Stream Industries. I watched your "**recentVideoTitle**" video, and love your content style!!',
         ).should('not.exist'); //only shows the selected one
+
+        // WEBHOOKS TEST
+        // send the sequence, then manually send the webhooks to the next app and check the influencers status changes
+
+        cy.getByTestId('send-email-button-bob.brown@example.com').click();
+
+        cy.contains('4 emails successfully scheduled to send', { timeout: 10000 }); //shows success toast
+
+        // reset the empty template variable so you can run the test again if need be
+        cy.contains('button', 'Update template variables').click();
+        cy.get('input[id="template-variable-input-productDescription"]').clear();
+        cy.contains('button', 'Update variables').click();
+        cy.contains('General collaboration').click({ force: true }); // click out of modal
+
+        cy.reload(); // todo: remove when we can get status updates relfecting more quickly
+        // bob has been moved to 'in sequence' tab
+        cy.contains('Bob-Recommended Brown').should('not.exist', { timeout: 10000 });
+        cy.contains('button', 'In sequence').click();
+        cy.contains('tr', 'Bob-Recommended Brown').within(() => {
+            cy.contains('Scheduled');
+        });
+
+        // send a replied webhook request
+        cy.request({
+            method: 'POST',
+            url: '/api/email-engine/webhook',
+            body: JSON.stringify(messageSent),
+        });
+        cy.contains('tr', 'Bob-Recommended Brown').within(() => {
+            cy.contains('Delivered');
+        });
     });
 });

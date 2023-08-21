@@ -28,7 +28,6 @@ const sortInfluencers = (
 
         if (currentTab === 'To Contact') {
             return a.created_at.localeCompare(b.created_at);
-            // this must be wrong
         } else if (currentTab === 'In Sequence' || currentTab === 'Ignored') {
             const mailTimeA = getEmailTime(a.id);
             const mailTimeB = getEmailTime(b.id);

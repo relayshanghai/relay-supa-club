@@ -3,10 +3,10 @@
     "queueId": "18a1658082cb9740718",
     "envelope": {
       "to": ["tech@relay.club"],
-      "from": "tech.relay.club@gmail.com"
+      "from": "bob.brown@example.com"
     },
     "response": "250 2.0.0 OK  1692591986 r6-20020a62e406000000b006749c22d079sm5130625pfh.167 - gsmtp",
-    "messageId": "<66945873-ae25-8adc-e305-615c2ec9fc39@gmail.com>"
+    "messageId": "bob.brown@example.com0"
   },
   "date": "2023-08-21T04:26:26.973Z",
   "event": "messageSent",
