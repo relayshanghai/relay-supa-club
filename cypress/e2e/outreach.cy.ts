@@ -5,12 +5,11 @@ import sequences from 'i18n/en/sequences';
 import { reinsertCharlie, resetSequenceEmails } from './helpers';
 import messageSent from '../../src/mocks/email-engine/webhooks/message-sent.json';
 
-const sequenceInfluencerEmails = ['alice.anderson@example.com', 'bob.brown@example.com', 'charlie.charles@example.com'];
 describe('outreach', () => {
     beforeEach(() => {
         deleteDB('app-cache');
         reinsertCharlie(); // reinsert so you can run again easily
-        resetSequenceEmails(sequenceInfluencerEmails);
+        resetSequenceEmails();
         setupIntercepts();
         cy.loginTestUser();
     });
@@ -179,8 +178,11 @@ describe('outreach', () => {
         cy.request({
             method: 'POST',
             url: '/api/email-engine/webhook',
-            body: JSON.stringify(messageSent),
+            body: JSON.parse(JSON.stringify(messageSent)),
         });
+        cy.reload(); // todo: remove this when we get push updates
+        cy.contains('button', 'In sequence').click();
+
         cy.contains('tr', 'Bob-Recommended Brown').within(() => {
             cy.contains('Delivered');
         });

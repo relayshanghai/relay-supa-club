@@ -4,6 +4,8 @@ import influencerSearch from '../../src/mocks/api/influencer-search/searchByInfl
 import keywordSearch from '../../src/mocks/api/influencer-search/keywordSearchAlligators.json';
 import keywordSearchMonkeys from '../../src/mocks/api/influencer-search/keywordSearchMonkeys.json';
 import topicTensorMock from '../../src/mocks/api/topics/tensor.json';
+import templatesMock from '../../src/mocks/api/email-engine/templates.json';
+import oneTemplateMock from '../../src/mocks/api/email-engine/one-template.json';
 
 import type { InfluencerPostRequest } from 'pages/api/influencer-search';
 import type { SequenceInfluencer, UsagesDBInsert } from 'src/utils/api/db';
@@ -201,6 +203,17 @@ export const setupIntercepts = () => {
         const { sequenceInfluencers } = body;
         const results = await insertSequenceEmails(supabase, sequenceInfluencers);
         req.reply({ body: results });
+    });
+
+    cy.intercept('/api/email-engine/templates', (req) => {
+        const body = req.body as { templateIds: string[] };
+        if (body.templateIds.length === 1) {
+            return req.reply({ body: oneTemplateMock, delay: 1000 });
+        } else if (body.templateIds.length > 1) {
+            return req.reply({ body: templatesMock, delay: 1000 });
+        } else {
+            return req.reply({ body: {}, delay: 1000 });
+        }
     });
 };
 

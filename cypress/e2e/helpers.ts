@@ -4,6 +4,8 @@ import type { DatabaseWithCustomTypes } from 'types';
 import { updateSequenceInfluencerCall } from 'src/utils/api/db/calls/sequence-influencers';
 import { insertSequenceEmailCall } from 'src/utils/api/db/calls/sequence-emails';
 import { getSequenceStepsBySequenceIdCall } from 'src/utils/api/db/calls/sequence-steps';
+export const bobEmail = 'bob.brown@example.com';
+export const sequenceInfluencerEmails = ['alice.anderson@example.com', bobEmail, 'charlie.charles@example.com'];
 
 export const supabaseClientCypress = () => {
     const supabaseUrl = Cypress.env('NEXT_PUBLIC_SUPABASE_URL') || '';
@@ -80,7 +82,7 @@ export const insertSequenceEmails = async (supabase: RelayDatabase, sequenceInfl
                 sequence_id: sequenceInfluencer.sequence_id,
                 sequence_step_id: step.id,
                 email_delivery_status: 'Scheduled',
-                email_message_id: sequenceInfluencer.email ?? '' + step.step_number, // will match the messageId in the mocks email-engine/webhooks/message-sent etc
+                email_message_id: `${sequenceInfluencer.email}${step.step_number.toString()}`, // will match the messageId in the mocks email-engine/webhooks/message-sent etc
             });
             results.push({ sequenceInfluencerId: sequenceInfluencer.id, step: step.step_number });
         }
@@ -92,11 +94,12 @@ export const insertSequenceEmails = async (supabase: RelayDatabase, sequenceInfl
         return results;
     }
 };
-export const resetSequenceEmails = async (sequenceInfluencerEmails: string[]) => {
+export const resetSequenceEmails = async () => {
     const supabase = supabaseClientCypress();
-    const indexes = [0, 1, 2, 3, 4]; //above we create the message_id by adding an index to the email.
-    const messageIds = sequenceInfluencerEmails.map((email) => indexes.map((index) => email + index)).flat();
-    supabase.from('sequence_emails').delete().in('email_message_id', messageIds);
+    // delete any emails with message_id which string includes 'example.com' (from the mocks)
+
+    await supabase.from('sequence_emails').delete().like('email_message_id', '%example.com%');
+
     const { data: influencers } = await supabase
         .from('sequence_influencers')
         .select('id')
