@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
 import type { Influencer } from 'pages/boostbot';
-import { Instagram, Spinner } from 'src/components/icons';
+import { Instagram, Youtube, Tiktok, Spinner } from 'src/components/icons';
 import { LockClosedIcon, LockOpenIcon, UsersIcon, ChartBarIcon } from '@heroicons/react/24/solid';
 import { decimalToPercent, numberFormatter } from 'src/utils/formatter';
 
@@ -20,6 +20,7 @@ export const InfluencerRow = ({ influencer, handleUnlockInfluencer, isLoading }:
     const email =
         'contacts' in influencer &&
         influencer.contacts.find((contact) => contact.type === 'email')?.formatted_value.toLowerCase();
+    const Icon = url.includes('youtube') ? Youtube : url.includes('tiktok') ? Tiktok : Instagram;
 
     return (
         <tr className="transition-all hover:bg-primary-100">
@@ -30,7 +31,7 @@ export const InfluencerRow = ({ influencer, handleUnlockInfluencer, isLoading }:
                     rel="noopener noreferrer"
                     className="table-cell text-primary-500 transition-all hover:scale-110"
                 >
-                    <Instagram className="h-8 w-8" />
+                    <Icon className="h-8 w-8" />
                 </Link>
             </td>
 

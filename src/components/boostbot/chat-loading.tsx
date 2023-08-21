@@ -37,7 +37,7 @@ const ChatLoading = ({ progress }: { progress: number }) => {
                     cy={RADIUS}
                 />
                 <circle
-                    className="origin-center -rotate-90 transition-[stroke-dashoffset] duration-500"
+                    className="origin-center -rotate-90 transition-[stroke-dashoffset] duration-[1500ms]"
                     stroke="url(#blue-purple-gradient)"
                     fill="transparent"
                     strokeDasharray={`${circumference} ${circumference}`}

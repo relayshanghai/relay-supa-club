@@ -223,9 +223,11 @@ export const filter = z
         lang: lang.optional(),
     });
 
+export const platform_enum = z.enum(['instagram', 'youtube', 'tiktok']).default('youtube');
+
 export const query = z.object({
     auto_unhide: z.number().or(z.boolean()).default(1),
-    platform: z.enum(['instagram', 'youtube', 'tiktok']).default('youtube'),
+    platform: platform_enum,
 });
 
 export const body = z.object({

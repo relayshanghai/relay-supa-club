@@ -1,19 +1,13 @@
-/* eslint-disable no-console */
-// TODO: Fix all eslint warnings
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import type { Dispatch, SetStateAction } from 'react';
 import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { SparklesIcon } from '@heroicons/react/24/solid';
-import { nextFetch } from 'src/utils/fetcher';
 import { ChatInput } from './chat-input';
 import { ChatContent } from './chat-content';
-import type { GetTopicsBody, GetTopicsResponse } from 'pages/api/boostbot/get-topics';
-import type { GetRelevantTopicsBody, GetRelevantTopicsResponse } from 'pages/api/boostbot/get-relevant-topics';
-import type { GetTopicClustersBody, GetTopicClustersResponse } from 'pages/api/boostbot/get-topic-clusters';
-import type { GetInfluencersBody, GetInfluencersResponse } from 'pages/api/boostbot/get-influencers';
 import type { Influencer } from 'pages/boostbot';
 import { clientLogger } from 'src/utils/logger-client';
+import { useBoostbot } from 'src/hooks/use-boostbot';
+import type { CreatorPlatform } from 'types';
 
 export type MessageType = {
     sender: 'User' | 'Bot';
@@ -25,6 +19,7 @@ interface ChatProps {
 }
 
 export const Chat: React.FC<ChatProps> = ({ setInfluencers }) => {
+    const { getTopics, getRelevantTopics, getTopicClusters, getInfluencers } = useBoostbot();
     const [progress, setProgress] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
     const [progressMessages, setProgressMessages] = useState<MessageType[]>([]);
@@ -39,48 +34,35 @@ export const Chat: React.FC<ChatProps> = ({ setInfluencers }) => {
         setProgressMessages((messages) => [...messages, { sender: 'Bot', content }]);
 
     useEffect(() => {
-        if (isLoading) setProgress(30);
+        if (isLoading) setProgress(15);
     }, [isLoading]);
 
     const onSendMessage = async (productDescription: string) => {
         addMessage({ sender: 'User', content: productDescription });
         setIsLoading(true);
 
-        const performFetch = async <T, B>(endpoint: string, body: B): Promise<T> => {
-            const response = await nextFetch<T>(`boostbot/${endpoint}`, {
-                method: 'POST',
-                body,
-            });
-
-            console.log('endpoint :>> ', response);
-            return response;
-        };
-
         try {
-            const { topics } = await performFetch<GetTopicsResponse, GetTopicsBody>('get-topics', {
-                productDescription,
-            });
+            const topics = await getTopics(productDescription);
             const topicList = topics.slice(0, 3).map((topic) => <p key={topic}>#{topic}</p>);
             addProgressMessage(<>I found the following topics: {topicList}</>);
+            setProgress(40);
 
+            const getInfluencersForPlatform = async ({ platform }: { platform: CreatorPlatform }) => {
+                const relevantTopics = await getRelevantTopics({ topics, platform });
+                const topicClusters = await getTopicClusters({ productDescription, topics: relevantTopics });
+                const influencers = await getInfluencers({ topicClusters, platform });
+
+                return influencers;
+            };
+
+            const instagramInfluencers = await getInfluencersForPlatform({ platform: 'instagram' });
             setProgress(60);
-            const { relevantTopics } = await performFetch<GetRelevantTopicsResponse, GetRelevantTopicsBody>(
-                'get-relevant-topics',
-                { topics },
-            );
-
-            setProgress(75);
-            const { topicClusters } = await performFetch<GetTopicClustersResponse, GetTopicClustersBody>(
-                'get-topic-clusters',
-                { productDescription, topics: relevantTopics },
-            );
-            addProgressMessage('Coming up with unique niches that match your product.');
-
-            setProgress(90);
-            const { influencers } = await performFetch<GetInfluencersResponse, GetInfluencersBody>('get-influencers', {
-                topicClusters,
-            });
+            const tiktokInfluencers = await getInfluencersForPlatform({ platform: 'tiktok' });
+            setProgress(80);
+            const youtubeInfluencers = await getInfluencersForPlatform({ platform: 'youtube' });
             setProgress(100);
+            const influencers = [...instagramInfluencers, ...tiktokInfluencers, ...youtubeInfluencers];
+
             setInfluencers(influencers.map((influencer) => influencer.user_profile));
             addProgressMessage(`${influencers.length} influencers found!`);
         } catch (error) {

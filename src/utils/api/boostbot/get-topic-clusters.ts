@@ -20,7 +20,7 @@ Example response:
     ["health", "wellness", "nutrition", "healthylifestyle"],
     ["smartwatch", "wearable", "smartband", "iwatch"],
     ["heartrate", "cardiovascular", "activitytracker", "heartpumping"],
-    ["gym", "strengthtraining", "motivation", "fitnessmotivation"],
+    ["gym", "strengthtraining", "motivation", "fitnessmotivation"]
 ]
 
 Only respond in JSON format with the 5 clusters as an array of arrays of 4 strings. Do not respond with any other text.`;
@@ -39,9 +39,14 @@ Available tags: [${topics.map((topic) => `"${topic}"`).join(', ')}]`;
 
     try {
         const topicClustersString = chatCompletion?.data?.choices[0]?.message?.content as string;
-        const topicClusters = JSON.parse(topicClustersString);
+        const fixedString = topicClustersString
+            .replace(/[“”]/g, '"') // fix quotation marks
+            .replace(/[\u0000-\u001F\u007F-\u009F]/g, '') // remove control characters
+            .replace(/,\s*]/g, ']') // remove trailing commas
+            .replace(/,\s*}/g, '}'); // remove trailing commas
+        const topicClusters = JSON.parse(fixedString);
         return topicClusters;
-    } catch (e) {
-        throw new RelayError('Invalid topic clusters response from OpenAI');
+    } catch (e: any) {
+        throw new RelayError('Invalid topic clusters response from OpenAI', e);
     }
 };

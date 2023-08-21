@@ -3,11 +3,15 @@ import type { CreatorPlatform } from 'types';
 import type { CreatorsReportGetQueries, CreatorsReportGetResponse } from 'pages/api/creators/report';
 import { useUser } from './use-user';
 import { useCompany } from './use-company';
-import { nextFetchWithQueries } from 'src/utils/fetcher';
+import { nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
 import { limiter } from 'src/utils/limiter';
 import type { eventKeys } from 'src/utils/analytics/events';
 import { SearchAnalyzeInfluencer } from 'src/utils/analytics/events';
+import type { GetTopicsBody, GetTopicsResponse } from 'pages/api/boostbot/get-topics';
+import type { GetRelevantTopicsBody, GetRelevantTopicsResponse } from 'pages/api/boostbot/get-relevant-topics';
+import type { GetTopicClustersBody, GetTopicClustersResponse } from 'pages/api/boostbot/get-topic-clusters';
+import type { GetInfluencersBody, GetInfluencersResponse } from 'pages/api/boostbot/get-influencers';
 
 export const useBoostbot = () => {
     const { profile } = useUser();
@@ -47,7 +51,71 @@ export const useBoostbot = () => {
         [profile, company],
     );
 
+    const performFetch = async <T, B>(endpoint: string, body: B): Promise<T> => {
+        try {
+            const response = await nextFetch<T>(`boostbot/${endpoint}`, {
+                method: 'POST',
+                body,
+            });
+
+            // eslint-disable-next-line no-console
+            console.log('endpoint :>> ', response);
+            return response;
+        } catch (error) {
+            clientLogger(error, 'error');
+            throw error;
+        }
+    };
+
+    const getTopics = useCallback(async (productDescription: string) => {
+        const { topics } = await performFetch<GetTopicsResponse, GetTopicsBody>('get-topics', {
+            productDescription,
+        });
+
+        return topics;
+    }, []);
+
+    const getRelevantTopics = useCallback(
+        async ({ topics, platform }: { topics: string[]; platform: CreatorPlatform }) => {
+            const { relevantTopics } = await performFetch<GetRelevantTopicsResponse, GetRelevantTopicsBody>(
+                'get-relevant-topics',
+                { topics, platform },
+            );
+
+            return relevantTopics;
+        },
+        [],
+    );
+
+    const getTopicClusters = useCallback(
+        async ({ productDescription, topics }: { productDescription: string; topics: string[] }) => {
+            const { topicClusters } = await performFetch<GetTopicClustersResponse, GetTopicClustersBody>(
+                'get-topic-clusters',
+                { productDescription, topics },
+            );
+
+            return topicClusters;
+        },
+        [],
+    );
+
+    const getInfluencers = useCallback(
+        async ({ topicClusters, platform }: { topicClusters: string[][]; platform: CreatorPlatform }) => {
+            const { influencers } = await performFetch<GetInfluencersResponse, GetInfluencersBody>('get-influencers', {
+                topicClusters,
+                platform,
+            });
+
+            return influencers;
+        },
+        [],
+    );
+
     return {
+        getTopics,
+        getRelevantTopics,
+        getTopicClusters,
+        getInfluencers,
         unlockInfluencers,
     };
 };
