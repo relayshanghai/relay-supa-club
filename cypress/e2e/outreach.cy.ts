@@ -13,14 +13,16 @@ describe('outreach', () => {
     it('already added to sequence modal', () => {
         cy.contains('Discover').click();
         cy.contains('tr', 'PewDiePie').contains('Add to Sequence').click();
-        cy.contains('General collaboration', { timeout: 3000 });
-        cy.contains('button', 'Add to Sequence', {timeout: 5000}).click();
-
+        cy.get('[data-testid="sequence-dropdown"]').should('be.visible').should('have.focus').select('General collaboration');
+        cy.wait(10000)
+        cy.get('[data-testid="add-to-sequence-modal"]').click();
         cy.contains('tr', 'PewDiePie').contains('Add to Sequence').click();
         cy.contains('Influencer has already been added to the sequence(s): General collaboration');
         cy.contains('button', 'Add Anyway').click();
-        cy.contains('button', 'Add to Sequence', {timeout: 5000}).should('be.disabled');
+        cy.get('[data-testid="sequence-dropdown"]').should('be.visible').should('have.focus');
+        cy.get('[data-testid="add-to-sequence-modal"]').should('be.disabled');
     })
+    
     it('sequence page', () => {
         cy.contains('Sequences').click();
         cy.contains('General collaboration', { timeout: 10000 }).click();

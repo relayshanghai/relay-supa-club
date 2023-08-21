@@ -32,7 +32,7 @@ export const AddToSequenceModal = ({
     const [socialProfileId, setSocialProfileId] = useState(() => socialProfile?.id ?? null);
     const { sendSequence } = useSequence(selectedSequence?.id);
 
-    const { sequenceInfluencers, createSequenceInfluencer } = useSequenceInfluencers(
+    const { sequenceInfluencers, refreshSequenceInfluencers, createSequenceInfluencer } = useSequenceInfluencers(
         selectedSequence ? [selectedSequence.id] : [],
     );
     const hasInfluencer = useMemo(() => {
@@ -87,8 +87,18 @@ export const AddToSequenceModal = ({
                 setLoading(false);
                 setShow(false);
             }
+            refreshSequenceInfluencers();
         }
-    }, [createSequenceInfluencer, getRelevantTags, selectedSequence, sendSequence, setShow, socialProfileId, t]);
+    }, [
+        createSequenceInfluencer,
+        getRelevantTags,
+        selectedSequence,
+        sendSequence,
+        setShow,
+        socialProfileId,
+        t,
+        refreshSequenceInfluencers,
+    ]);
 
     useEffect(() => {
         if (socialProfile?.id) {
@@ -128,7 +138,7 @@ export const AddToSequenceModal = ({
                         </div>
                     </div>
                 </div>
-                <div className="flex justify-end space-x-3 p-6">
+                <section className="flex justify-end space-x-3 p-6">
                     <Button variant="secondary" onClick={() => setShow(false)}>
                         {t('creators.cancel')}
                     </Button>
@@ -139,14 +149,14 @@ export const AddToSequenceModal = ({
                     ) : (
                         <Button
                             disabled={hasInfluencer}
-                            data-testid={`add-to-sequence:${selectedSequence?.name}`}
+                            data-testid={`add-to-sequence-modal`}
                             onClick={handleAddToSequence}
                             type="submit"
                         >
                             {t('creators.addToSequence')}
                         </Button>
                     )}
-                </div>
+                </section>
             </div>
         </Modal>
     );
