@@ -82,17 +82,40 @@ const deleteScheduledEmail = async (event: WebhookMessageNew) => {
 };
 const handleReply = async (sequenceInfluencer: SequenceInfluencer, event: WebhookMessageNew) => {
     await deleteScheduledEmail(event);
-    // Outgoing emails should have been deleted in `deleteScheduledEmailIfReplied`. This will update the remaining emails to "replied" and the influencer to "negotiating
+    // Outgoing emails should have been deleted. This will update the remaining emails to "replied" and the influencer to "negotiating
     const sequenceEmails = await getSequenceEmailsBySequenceInfluencer(sequenceInfluencer.id);
+    await supabaseLogger({
+        type: 'email-webhook',
+        data: { sequenceEmails } as any,
+        message: `reply from: sequenceEmails`,
+    });
     const emailUpdates: SequenceEmailUpdate[] = sequenceEmails.map((sequenceEmail) => ({
         id: sequenceEmail.id,
         email_delivery_status: 'Replied',
     }));
+    await supabaseLogger({
+        type: 'email-webhook',
+        data: { emailUpdates } as any,
+        message: `reply from: emailUpdates`,
+    });
     for (const emailUpdate of emailUpdates) {
-        await updateSequenceEmail(emailUpdate);
+        try {
+            await updateSequenceEmail(emailUpdate);
+        } catch (error) {
+            await supabaseLogger({
+                type: 'email-webhook',
+                data: { error } as any,
+                message: `reply from: updateSequenceEmail error`,
+            });
+        }
     }
 
     const influencerUpdate: SequenceInfluencerUpdate = { id: sequenceInfluencer.id, funnel_status: 'Negotiating' };
+    await supabaseLogger({
+        type: 'email-webhook',
+        data: { influencerUpdate } as any,
+        message: `reply from: influencerUpdate`,
+    });
     await updateSequenceInfluencer(influencerUpdate);
     await supabaseLogger({
         type: 'email-webhook',
