@@ -73,8 +73,16 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
     const [sendingEmail, setSendingEmail] = useState(false);
 
     const handleEmailUpdate = async (email: string) => {
-        const updatedSequenceInfluencer = await updateSequenceInfluencer({ id: sequenceInfluencer.id, email });
-        setEmail(updatedSequenceInfluencer.email ?? '');
+        try {
+            const updatedSequenceInfluencer = await updateSequenceInfluencer({
+                id: sequenceInfluencer.id,
+                email,
+                company_id: profile?.company_id ?? '', // If updating the email, also pass in the company_id so we can check if the email already exists for this company
+            });
+            setEmail(updatedSequenceInfluencer.email ?? '');
+        } catch (error: any) {
+            toast.error(error?.message ?? 'Something went wrong');
+        }
     };
 
     const handleStart = async () => {
