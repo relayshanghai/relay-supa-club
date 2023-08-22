@@ -1,37 +1,49 @@
+import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { getInfluencerSocialProfileByIdCall as getInfluencerSocialProfileById } from 'src/utils/api/db/calls/influencers';
-import { getProfileByIdCall as getProfileById } from './profiles';
 import { getSequenceInfluencersBySequenceIdCall as getSequenceInfluencersBySequenceId } from 'src/utils/api/db/calls/sequence-influencers';
-import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
-import type { DatabaseWithCustomTypes } from 'types';
-import type { ServerContext } from 'src/utils/api/iqdata';
+import type { RelayDatabase, SequenceInfluencersTable } from '../types';
+import { getAddressByInfluencer } from './addresses';
+import { getProfileByIdCall as getProfileById } from './profiles';
+import { getSequenceInfluencerByIdCall } from './sequence-influencers';
 
-export const getSequenceInfluencers = async (ctx: ServerContext, sequenceId: string) => {
-    const supabase = createServerSupabaseClient<DatabaseWithCustomTypes>(ctx);
-    const influencers = await getSequenceInfluencersBySequenceId(supabase)(sequenceId);
-    return await Promise.all(
-        influencers.map(async (influencer) => {
-            const { data: managerInfo } = await getProfileById(supabase)(influencer.added_by);
+// @note gets sequence influencers by sequence
+export const getSequenceInfluencers = (db: RelayDatabase) => async (sequenceId: string) => {
+    const influencers = await getSequenceInfluencersBySequenceId(db)(sequenceId);
+    const queries = influencers.map(getSequenceInfluencer(db));
 
-            const influencerInfo = await getInfluencerSocialProfileById(supabase)(
-                influencer.influencer_social_profile_id,
-            );
-
-            return {
-                ...influencer,
-                manager_first_name: managerInfo?.first_name,
-                name: influencerInfo?.name,
-                username: influencerInfo?.username,
-                avatar_url: influencerInfo?.avatar_url,
-                url: influencerInfo?.url,
-                platform: influencerInfo?.platform,
-                manager: {
-                    id: managerInfo?.id ?? null,
-                    avatar_url: managerInfo?.avatar_url,
-                    company_id: managerInfo?.company_id ?? null,
-                    first_name: managerInfo?.first_name ?? 'No',
-                    last_name: managerInfo?.last_name ?? 'Name',
-                },
-            };
-        }),
-    );
+    return Promise.all(queries);
 };
+
+export const getSequenceInfluencer =
+    (db: RelayDatabase) =>
+    async (id: string | SequenceInfluencersTable['Row']): Promise<SequenceInfluencerManagerPage> => {
+        const sequenceInfluencer = typeof id === 'string' ? await getSequenceInfluencerByIdCall(db)(id) : id;
+
+        const { data: manager } = await getProfileById(db)(sequenceInfluencer.added_by);
+
+        const influencer = await getInfluencerSocialProfileById(db)(sequenceInfluencer.influencer_social_profile_id);
+
+        const address = await getAddressByInfluencer(db)(sequenceInfluencer.influencer_social_profile_id);
+
+        if (!manager || !influencer) {
+            throw new Error('Sequence influencer not found');
+        }
+
+        return {
+            ...sequenceInfluencer,
+            manager_first_name: manager?.first_name,
+            name: influencer.name,
+            username: influencer.username,
+            avatar_url: influencer.avatar_url,
+            url: influencer.url,
+            platform: influencer.platform,
+            address,
+            manager: {
+                id: manager.id,
+                avatar_url: manager.avatar_url,
+                company_id: manager.company_id,
+                first_name: manager.first_name,
+                last_name: manager.last_name,
+            },
+        };
+    };

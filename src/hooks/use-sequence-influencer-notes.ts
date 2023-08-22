@@ -1,10 +1,13 @@
-import { apiFetch } from 'src/utils/api/api-fetch';
-import { useAsync } from './use-async';
-import type { CampaignNotes } from 'src/utils/api/db';
-import type { NoteData } from 'src/components/influencer-profile/components/note';
-import { formatDate } from 'src/utils/datetime';
 import type { ApiResponse } from 'pages/api/notes/influencer/[id]';
+import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
+import type { ProfileValue } from 'pages/api/sequence/influencers/[id]';
+import type { NoteData } from 'src/components/influencer-profile/components/note';
+import { apiFetch } from 'src/utils/api/api-fetch';
+import type { CampaignNotes } from 'src/utils/api/db';
+import { formatDate } from 'src/utils/datetime';
 import { isApiError } from 'src/utils/is-api-error';
+import type { z } from 'zod';
+import { useAsync } from './use-async';
 
 export const useSequenceInfluencerNotes = () => {
     // @todo create a filter type for getNotes
@@ -43,11 +46,31 @@ export const useSequenceInfluencerNotes = () => {
     });
 
     const saveNote = useAsync(async (body: Omit<CampaignNotes['Insert'], 'user_id'>) => {
-        await apiFetch('/api/notes/influencer', { body });
+        return await apiFetch('/api/notes/influencer', { body });
     });
+
+    const saveSequenceInfluencer = useAsync(
+        async (sequence_influencer_id: string, body: z.input<typeof ProfileValue>) => {
+            return await apiFetch<SequenceInfluencerManagerPage>('/api/sequence/influencers/{id}', {
+                path: { id: sequence_influencer_id },
+                body,
+            }).then((res) => {
+                // @note this should never happen unless aborted by signals
+                //       we're just satisfying apiFetch
+                if (res === undefined) throw new Error('Something went wrong');
+
+                if (isApiError(res)) {
+                    throw new Error(res.error);
+                }
+
+                return res;
+            });
+        },
+    );
 
     return {
         getNotes,
         saveNote,
+        saveSequenceInfluencer,
     };
 };

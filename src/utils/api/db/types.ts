@@ -226,3 +226,4 @@ export type SearchParameters = Database['public']['Tables']['search_parameters']
 export type VercelLogs = Database['public']['Tables']['vercel_logs'];
 export type CampaignNotes = Database['public']['Tables']['campaign_notes'];
 export type InfluencerPosts = Database['public']['Tables']['influencer_posts'];
+export type Addresses = Database['public']['Tables']['addresses'];

@@ -1,14 +1,14 @@
+import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import type { DetailedHTMLProps, HTMLAttributes } from 'react';
 import { useCallback, useState } from 'react';
-import type { ProfileNotes } from './profile-notes-tab';
-import { ProfileNotesTab } from './profile-notes-tab';
-import type { ProfileShippingDetails } from './profile-shipping-details-tab';
-import { ProfileShippingDetailsTab } from './profile-shipping-details-tab';
 import { Button } from 'src/components/button';
 import { cls } from 'src/utils/classnames';
 import { ProfileHeader } from '../components/profile-header';
+import type { ProfileNotes } from './profile-notes-tab';
+import { ProfileNotesTab } from './profile-notes-tab';
 import { useProfileScreenContext } from './profile-screen-context';
-import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
+import type { ProfileShippingDetails } from './profile-shipping-details-tab';
+import { ProfileShippingDetailsTab } from './profile-shipping-details-tab';
 
 export type ProfileValue = {
     notes: ProfileNotes;
@@ -43,7 +43,7 @@ export const ProfileScreen = ({ profile, selectedTab, onUpdate, onCancel, ...pro
     const handleShippingUpdate = useCallback(
         (k: string, v: any) => {
             setState((state) => {
-                return { ...state, notes: { ...state.notes, [k]: v } };
+                return { ...state, shippingDetails: { ...state.shippingDetails, [k]: v } };
             });
         },
         [setState],
