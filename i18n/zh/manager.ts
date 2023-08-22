@@ -5,6 +5,7 @@ const manager = {
     filterTags: '按标签筛选',
     onlyMine: '仅查看我联系的KOL',
     name: 'KOL名称',
+    platform: '平台',
     collabStatus: '合作状态',
     manager: '负责人',
     tags: '标签',

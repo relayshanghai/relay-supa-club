@@ -11,13 +11,15 @@ export const getTemplateVariablesBySequenceIdCall = (supabaseClient: RelayDataba
 };
 
 export const updateTemplateVariableCall = (supabaseClient: RelayDatabase) => async (update: TemplateVariableUpdate) => {
+    update.updated_at = new Date().toISOString();
     const { data, error } = await supabaseClient.from('template_variables').update(update).eq('id', update.id).single();
     if (error) throw error;
     return data;
 };
 
-export const insertTemplateVariableCall = (supabaseClient: RelayDatabase) => async (insert: TemplateVariableInsert) => {
-    const { data, error } = await supabaseClient.from('template_variables').insert(insert).single();
-    if (error) throw error;
-    return data;
-};
+export const insertTemplateVariableCall =
+    (supabaseClient: RelayDatabase) => async (insert: TemplateVariableInsert[]) => {
+        const { data, error } = await supabaseClient.from('template_variables').insert(insert);
+        if (error) throw error;
+        return data;
+    };

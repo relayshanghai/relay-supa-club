@@ -4,7 +4,6 @@ import SequenceTable from './sequence-table';
 
 import { SequenceStats } from './sequence-stats';
 
-import { useSequences } from 'src/hooks/use-sequences';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { useSequence } from 'src/hooks/use-sequence';
 import { Brackets, Spinner } from '../icons';
@@ -19,14 +18,13 @@ import type { SequenceInfluencer } from 'src/utils/api/db';
 import { useTemplateVariables } from 'src/hooks/use-template_variables';
 import { Tooltip } from '../library';
 
-export const SequencePage = () => {
+export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     const { t } = useTranslation();
 
-    const { sequences } = useSequences(); // later we won't use this, the sequence id will be passed down from the index page.
-    const { sequence, sendSequence, sequenceSteps, updateSequence } = useSequence(sequences?.[0]?.id);
-    const { sequenceInfluencers } = useSequenceInfluencers(sequence && [sequence.id]);
-    const { sequenceEmails: allSequenceEmails } = useSequenceEmails(sequence?.id);
-    const { templateVariables } = useTemplateVariables(sequence?.id);
+    const { sequence, sendSequence, sequenceSteps, updateSequence } = useSequence(sequenceId);
+    const { sequenceInfluencers } = useSequenceInfluencers(sequence && [sequenceId]);
+    const { sequenceEmails } = useSequenceEmails(sequenceId);
+    const { templateVariables } = useTemplateVariables(sequenceId);
     const missingVariables = templateVariables
         ?.filter((variable) => variable.required && !variable.value)
         .map((variable) => variable.name) ?? ['Error retrieving variables'];
@@ -40,7 +38,7 @@ export const SequencePage = () => {
         if (!sequence) {
             return;
         }
-        await updateSequence({ id: sequence.id, auto_start: checked });
+        await updateSequence({ id: sequenceId, auto_start: checked });
     };
 
     const [showUpdateTemplateVariables, setShowUpdateTemplateVariables] = useState(false);
@@ -89,7 +87,7 @@ export const SequencePage = () => {
     return (
         <Layout>
             <TemplateVariablesModal
-                sequenceId={sequence?.id}
+                sequenceId={sequenceId}
                 visible={showUpdateTemplateVariables}
                 onClose={() => setShowUpdateTemplateVariables(false)}
             />
@@ -130,19 +128,19 @@ export const SequencePage = () => {
                 <SequenceStats
                     totalInfluencers={sequenceInfluencers?.length || 0}
                     openRate={
-                        (allSequenceEmails?.filter(
+                        (sequenceEmails?.filter(
                             (email) =>
                                 email.email_tracking_status === 'Link Clicked' ||
                                 email.email_tracking_status === 'Opened',
-                        ).length || 0) / (allSequenceEmails?.length || 1)
+                        ).length || 0) / (sequenceEmails?.length || 1)
                     }
                     replyRate={
-                        (allSequenceEmails?.filter((email) => email.email_delivery_status === 'Replied').length || 0) /
-                        (allSequenceEmails?.length || 1)
+                        (sequenceEmails?.filter((email) => email.email_delivery_status === 'Replied').length || 0) /
+                        (sequenceEmails?.length || 1)
                     }
                     bounceRate={
-                        (allSequenceEmails?.filter((email) => email.email_delivery_status === 'Bounced').length || 0) /
-                        (allSequenceEmails?.length || 1)
+                        (sequenceEmails?.filter((email) => email.email_delivery_status === 'Bounced').length || 0) /
+                        (sequenceEmails?.length || 1)
                     }
                 />
                 <Tabs tabs={tabs} currentTab={currentTab} setCurrentTab={setCurrentTab} />
@@ -150,7 +148,7 @@ export const SequencePage = () => {
                 {currentTabInfluencers && sequenceSteps ? (
                     <SequenceTable
                         sequenceInfluencers={currentTabInfluencers}
-                        allSequenceEmails={allSequenceEmails}
+                        sequenceEmails={sequenceEmails}
                         sequenceSteps={sequenceSteps}
                         currentTab={currentTab}
                         missingVariables={missingVariables}

@@ -106,7 +106,7 @@ OR REPLACE FUNCTION create_profile(
     INSERT INTO profiles
       (id, email, last_name, first_name, user_role, company_id, email_engine_account_id, sequence_send_email)
     VALUES
-      (user_id, email, last_name, first_name, _role, company_id, 
+      (user_id, email, last_name, first_name, _role, company_id,
       'e7ustgsqqvy9al6f', 'tech.relay.club@gmail.com')
     RETURNING * INTO _row;
     RETURN _row;
@@ -382,7 +382,7 @@ OR REPLACE FUNCTION create_sequence_influencer(
           scheduled_post_date,
           sequence_step,
           tags,
-          video_details 
+          video_details
         )
       VALUES
         (
@@ -402,7 +402,7 @@ OR REPLACE FUNCTION create_sequence_influencer(
           '2027-01-01 00:00:00.000000+00',
           sequence_step,
           ARRAY['tag1', 'tag2'],
-          'video_details'           
+          'video_details'
         )
       RETURNING * INTO _row;
       RETURN _row;
@@ -490,6 +490,7 @@ CREATE OR REPLACE FUNCTION create_sequence_email(
   _sequence_id UUID,
   _sequence_influencer_id UUID,
   _sequence_step_id UUID,
+  _email_message_id TEXT DEFAULT null,
   _email_delivery_status TEXT DEFAULT null,
   _email_tracking_status TEXT DEFAULT null,
   _email_send_at TIMESTAMP WITH TIME ZONE DEFAULT null,
@@ -505,6 +506,7 @@ BEGIN
     sequence_id,
     sequence_influencer_id,
     sequence_step_id,
+    email_message_id,
     email_delivery_status,
     email_tracking_status,
     email_send_at
@@ -516,9 +518,11 @@ BEGIN
     _sequence_id,
     _sequence_influencer_id,
     _sequence_step_id,
+    _email_message_id,
     _email_delivery_status,
     _email_tracking_status,
     _email_send_at
+
   )
   RETURNING * INTO _row;
   RETURN _row;
@@ -742,14 +746,14 @@ BEGIN
     'AAABieM0bMMAAAAE',
     2,
     48
-  );  
+  );
   _sequence_step_follow_up_3 := create_sequence_steps(
     _sequence_general.id,
     '3rd Follow-up',
     'AAABieM1AhgAAAAF',
     3,
     72
-  );  
+  );
 
   PERFORM create_campaign_creator(
     _campaign_beauty_for_all.id,
@@ -763,38 +767,38 @@ BEGIN
     'Alice Anderson',
     'alice.anderson@example.com',
     '123 Apple Street',
-    'https://example.com/avatar1',
+    'https://api.dicebear.com/6.x/open-peeps/svg?seed=alice.anderson@example.com&size=96',
     false
   );
   _influencer_bob := create_influencer(
     'Bob-Recommended Brown',
     'bob.brown@example.com',
     '456 Bell Street',
-    'https://example.com/avatar2'
+    'https://api.dicebear.com/6.x/open-peeps/svg?seed=bob.brown&size=96'
   );
   _influencer_charlie := create_influencer(
     'Charlie Charles',
     'charlie.charles@example.com',
     '780 Elm Street',
-    'https://example.com/avatar3'
+    'https://api.dicebear.com/6.x/open-peeps/svg?seed=charlie.charles&size=96'
   );
   _influencer_daniel := create_influencer(
     'Daniel Davis',
     'daniel.davis@example.com',
     '480 Elm Street',
-    'https://example.com/avatar4'
+    'https://api.dicebear.com/6.x/open-peeps/svg?seed=daniel.davis&size=96'
   );
   _influencer_felicia := create_influencer(
     'Felicia Franklin',
     'felicia.franklin@example.com',
     '420 Elm Street',
-    'https://example.com/avatar5'
+    'https://api.dicebear.com/6.x/open-peeps/svg?seed=felicia.franklin&size=96'
   );  
   _influencer_georgia := create_influencer(
     'Georgia Green',
     'georgia.green@example.com',
     '240 Elm Street',
-    'https://example.com/avatar6'
+    'https://api.dicebear.com/6.x/open-peeps/svg?seed=georgia.green&size=96'
   );
   _influencer_social_profile_alice_1 := create_influencer_social_profile(
     'https://instagram.com/alice1',
@@ -804,7 +808,7 @@ BEGIN
     'alice1',
     _influencer_alice.name,
     _influencer_alice.email,
-    'https://example.com/avatar1'
+    'https://api.dicebear.com/6.x/open-peeps/svg?seed=alice1&size=96'
   );
   _influencer_social_profile_bob_1 := create_influencer_social_profile(
     'https://instagram.com/bob1',
@@ -814,7 +818,7 @@ BEGIN
     'bob1',
     _influencer_bob.name,
     _influencer_bob.email,
-    'https://example.com/avatar2'
+    'https://api.dicebear.com/6.x/open-peeps/svg?seed=bob1&size=96'
   );
   _influencer_social_profile_bob_2 := create_influencer_social_profile(
     'https://youtube.com/bob2',
@@ -824,7 +828,7 @@ BEGIN
     'bob2',
     _influencer_bob.name,
     _influencer_bob.email,
-    'https://example.com/avatar3'
+    'https://api.dicebear.com/6.x/open-peeps/svg?seed=bob2&size=96'
   );
   _influencer_social_profile_charlie_1 := create_influencer_social_profile(
     'https://instagram.com/charlie1',
@@ -834,7 +838,7 @@ BEGIN
     'charlie1',
     _influencer_charlie.name,
     _influencer_charlie.email,
-    'https://example.com/avatar4'
+    'https://api.dicebear.com/6.x/open-peeps/svg?seed=charlie1&size=96'
   );
   _influencer_social_profile_daniel_1 := create_influencer_social_profile(
     'https://instagram.com/daniel1',
@@ -844,7 +848,7 @@ BEGIN
     'daniel1',
     _influencer_daniel.name,
     _influencer_daniel.email,
-    'www.example.com/avatar5'
+    'api.dicebear.com/6.x/open-peeps/svg?seed=daniel1&size=96'
   );
   _influencer_social_profile_felicia_1 := create_influencer_social_profile(
     'https://instagram.com/felicia1',
@@ -854,7 +858,7 @@ BEGIN
     'felicia1',
     _influencer_felicia.name,
     _influencer_felicia.email,
-    'https://example.com/avatar6'
+    'https://api.dicebear.com/6.x/open-peeps/svg?seed=felicia1&size=96'
   );
   _influencer_social_profile_georgia_1 := create_influencer_social_profile(
     'https://instagram.com/georgia1',
@@ -864,7 +868,7 @@ BEGIN
     'georgia1',
     _influencer_georgia.name,
     _influencer_georgia.email,
-    'https://example.com/avatar7'
+    'https://api.dicebear.com/6.x/open-peeps/svg?seed=georgia1&size=96'
   );
 
   PERFORM create_sequence_influencer(
@@ -896,7 +900,7 @@ BEGIN
     'To Contact',
     0,
     '2030-01-01 00:00:00.000000+00'
-  );    
+  );
 
   _sequence_influencer_daniel := create_sequence_influencer(
     _company_test.id,
@@ -905,7 +909,7 @@ BEGIN
     _influencer_social_profile_daniel_1.id,
     _influencer_social_profile_daniel_1.email,
     'In Sequence'
-  );  
+  );
   _sequence_influencer_felicia := create_sequence_influencer(
     _company_test.id,
     _sequence_general.id,
@@ -914,7 +918,7 @@ BEGIN
     _influencer_social_profile_felicia_1.email,
     'In Sequence',
     1
-  );       
+  );
   _sequence_influencer_georgia := create_sequence_influencer(
     _company_test.id,
     _sequence_general.id,
@@ -923,20 +927,22 @@ BEGIN
     _influencer_social_profile_georgia_1.email,
     'Ignored',
     1
-  ); 
+  );
 
   PERFORM create_sequence_email(
-    _sequence_general.id,    
+    _sequence_general.id,
     _sequence_influencer_daniel.id,
     _sequence_step_outreach.id,
     'Scheduled',
     null,
-    '2024-08-01 00:00:00.000000+00'
+    '2024-08-01 00:00:00.000000+00',
+    null
   );
   PERFORM create_sequence_email(
     _sequence_general.id,
     _sequence_influencer_daniel.id,
     _sequence_step_follow_up_1.id,
+    null,
     'Scheduled',
     null,
     '2024-08-02 00:00:00.000000+00'
@@ -945,6 +951,7 @@ BEGIN
     _sequence_general.id,
     _sequence_influencer_felicia.id,
     _sequence_step_outreach.id,
+    null,
     'Delivered',
     null,
     '2024-08-01 01:00:00.000000+00'
@@ -953,6 +960,7 @@ BEGIN
     _sequence_general.id,
     _sequence_influencer_felicia.id,
     _sequence_step_follow_up_1.id,
+    '<d7e91ded-7a8e-37e8-6484-837e4e94c3ad@gmail.com>',
     'Delivered',
     'Opened',
     '2024-08-02 01:00:00.000000+00'
@@ -961,6 +969,7 @@ BEGIN
     _sequence_general.id,
     _sequence_influencer_georgia.id,
     _sequence_step_outreach.id,
+    null,
     'Delivered',
     'Link Clicked',
     '2024-08-01 02:00:00.000000+00'
@@ -969,6 +978,7 @@ BEGIN
     _sequence_general.id,
     _sequence_influencer_georgia.id,
     _sequence_step_follow_up_1.id,
+    null,
     'Bounced',
     null,
     '2024-08-02 02:00:00.000000+00'
@@ -1014,7 +1024,7 @@ BEGIN
     'productPrice',
     'Product Price',
     '450'
-  );  
+  );
   PERFORM create_template_variable(
     _sequence_general.id,
     'influencerNiche',

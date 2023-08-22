@@ -14,7 +14,6 @@ export const PreviewCard = ({
     loadingSelectedMessages: boolean;
 }) => {
     const { i18n } = useTranslation();
-    // console.log(selectedMessage?.id === message.id);
 
     return (
         <div

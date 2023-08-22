@@ -17,6 +17,7 @@ export const getSequenceByIdCall = (supabaseClient: RelayDatabase) => async (id:
 
 export const updateSequenceCall =
     (supabaseClient: RelayDatabase) => async (update: SequenceUpdate & { id: string }) => {
+        update.updated_at = new Date().toISOString();
         const { data, error } = await supabaseClient
             .from('sequences')
             .update(update)
