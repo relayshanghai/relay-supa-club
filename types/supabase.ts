@@ -17,6 +17,7 @@ export interface Database {
           country: string
           created_at: string
           id: string
+          influencer_social_profile_id: string | null
           name: string
           phone_number: string | null
           postal_code: string
@@ -31,6 +32,7 @@ export interface Database {
           country: string
           created_at?: string
           id?: string
+          influencer_social_profile_id?: string | null
           name: string
           phone_number?: string | null
           postal_code: string
@@ -45,6 +47,7 @@ export interface Database {
           country?: string
           created_at?: string
           id?: string
+          influencer_social_profile_id?: string | null
           name?: string
           phone_number?: string | null
           postal_code?: string
@@ -52,7 +55,14 @@ export interface Database {
           tracking_code?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "addresses_influencer_social_profile_id_fkey"
+            columns: ["influencer_social_profile_id"]
+            referencedRelation: "influencer_social_profiles"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       campaign_creators: {
         Row: {
