@@ -34,12 +34,12 @@ const TableInlineInputWithRef = (
             className="relative flex w-full cursor-pointer justify-between rounded border border-gray-300 px-4 py-2 text-xs text-gray-900 hover:text-primary-500"
             onClick={() => setEditing(true)}
         >
-            <div className={`${editing ? 'hidden' : ''}`}>
+            <div className={`${editing || submitting ? 'hidden' : ''}`}>
                 {value || (
                     <div className="cursor-pointer text-red-400 hover:text-red-600">{textPromptForMissingValue}</div>
                 )}
             </div>
-            {editing && (
+            {(editing || submitting) && (
                 <div
                     ref={ref}
                     onClick={(e) => e.stopPropagation()}
@@ -70,6 +70,7 @@ const TableInlineInputWithRef = (
                                 <Confirm className="h-4 w-4 rounded-md fill-current text-white" />
                             </button>
                             <button
+                                type="button"
                                 data-testid="table-inline-input-cancel"
                                 disabled={submitting}
                                 onClick={() => setEditing(false)}
