@@ -46,7 +46,11 @@ export const SequencesTableRow = ({ sequence }: { sequence: Sequence }) => {
                     {templateVariables?.find((variable) => variable.key === 'productName')?.value ?? '--'}
                 </td>
                 <td className="whitespace-nowrap px-6 py-3 text-gray-700">
-                    <button onClick={handleDeleteSequence} className="align-middle">
+                    <button
+                        onClick={handleDeleteSequence}
+                        className="align-middle"
+                        data-testid={`delete-sequence:${sequence.name}`}
+                    >
                         <DeleteOutline className="h-5 w-5 text-gray-300 hover:text-primary-500" />
                     </button>
                 </td>
