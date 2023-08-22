@@ -259,17 +259,6 @@ export const SearchResultRow = ({
                             <span className="">{t('creators.addToCampaign')}</span>
                         </Button>
                     )}
-
-                    {url && (
-                        <Link href={url} target="_blank" rel="noopener noreferrer">
-                            <Button
-                                onClick={() => openSocialProfile({ url })}
-                                data-testid={`open-influencer-link-button/${user_id}`}
-                            >
-                                <ShareLink className="w-5 fill-current text-white" />
-                            </Button>
-                        </Link>
-                    )}
                 </div>
 
                 <div className="flex flex-col items-center justify-center gap-1 lg:hidden">
