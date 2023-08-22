@@ -56,11 +56,11 @@ const pricing = {
         subTitle: 'Check out what we can offer',
     },
     discovery: {
-        title: 'Discovery',
+        title: 'DISCOVERY',
         subTitle: 'From AI Search to Sales: Discover Influencers that Drive E-commerce Success.',
     },
     outreach: {
-        title: 'Outreach',
+        title: 'OUTREACH',
         subTitle: 'Maximize Reach, Minimize Effort: Automated Influencer Contacts at Scale.',
     },
     saveUpTo33Percent: 'up to 33% off',

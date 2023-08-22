@@ -7,7 +7,10 @@ export const PlanDetails = () => {
 
     return (
         <div className="flex h-[450px] max-w-sm flex-col rounded-md bg-white p-6">
-            <div className="mt-10 pr-4 text-5xl font-semibold">{t(`pricing.${priceTier}.title`)}</div>
+            <h1 className="relative mt-10 w-fit text-4xl font-semibold text-gray-800">
+                {t(`pricing.${priceTier}.title`)}
+                <p className="absolute -right-12 top-0 mr-2 text-sm font-semibold text-pink-500">{t('pricing.beta')}</p>
+            </h1>
             <p className="text-wrap mt-4 text-xs text-gray-500">{t(`pricing.${priceTier}.subTitle`)}</p>
             <h3 className="mb-3 mt-12 inline text-4xl font-semibold text-gray-700">
                 {priceTier === 'discovery' ? '¥299' : '¥880'}
