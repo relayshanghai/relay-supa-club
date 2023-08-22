@@ -175,9 +175,7 @@ export const SearchResultRow = ({
     const addToSequence = () => {
         setSelectedCreator(creator);
         const isAlreadyInSequence = allSequenceInfluencers?.some(
-            ({ sequence_id, iqdata_id }) =>
-                sequence_id === creator.account.user_profile.user_id &&
-                iqdata_id === creator.account.user_profile.user_id,
+            ({ iqdata_id }) => iqdata_id === creator.account.user_profile.user_id,
         );
 
         if (isAlreadyInSequence) {

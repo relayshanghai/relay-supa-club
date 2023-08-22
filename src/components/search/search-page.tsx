@@ -286,7 +286,6 @@ export const SearchPageInner = () => {
             />
             <InfluencerAlreadyAddedSequenceModal
                 show={showAlreadyAddedSequenceModal}
-                setSequenceListModal={setShowSequenceListModal}
                 setShow={setShowAlreadyAddedSequenceModal}
                 selectedCreatorUserId={selectedCreator?.account.user_profile.user_id}
                 sequences={sequences}
