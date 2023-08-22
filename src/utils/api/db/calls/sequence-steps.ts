@@ -9,6 +9,7 @@ export const getSequenceStepsBySequenceIdCall = (supabaseClient: RelayDatabase) 
 };
 
 export const updateSequenceStepCall = (supabaseClient: RelayDatabase) => async (update: SequenceStepUpdate) => {
+    update.updated_at = new Date().toISOString();
     const { data, error } = await supabaseClient.from('sequence_steps').update(update).eq('id', update.id).single();
     if (error) throw error;
     return data;

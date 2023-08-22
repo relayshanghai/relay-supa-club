@@ -102,3 +102,5 @@ export const isMissing = (...values: unknown[]) => values.findIndex((value) => !
 
 export const isRecommendedInfluencer = (recommendedInfluencers: string[], platform: string, user_id: string) =>
     recommendedInfluencers.includes(`${platform}/${user_id}`);
+
+export const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));

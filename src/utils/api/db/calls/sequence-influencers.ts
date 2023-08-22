@@ -26,8 +26,38 @@ export const getSequenceInfluencersByCompanyIdCall = (supabaseClient: RelayDatab
     return data;
 };
 
+export const getSequenceInfluencerByEmailAndCompanyCall =
+    (supabaseClient: RelayDatabase) => async (email: string, companyId?: string | null) => {
+        const { data, error } = await supabaseClient
+            .from('sequence_influencers')
+            .select('*')
+            .limit(1)
+            .match({ email, company_id: companyId })
+            .single();
+        if (error) throw error;
+        return data;
+    };
+
+/**
+ * If updating the email, also pass in the company_id so we can check if the email already exists for this company
+ */
 export const updateSequenceInfluencerCall =
     (supabaseClient: RelayDatabase) => async (update: SequenceInfluencerUpdate) => {
+        update.updated_at = new Date().toISOString();
+        if (update.email) {
+            if (!update.company_id) {
+                throw new Error('Must provide a company id when updating email');
+            }
+            const { data: existingEmail } = await supabaseClient
+                .from('sequence_influencers')
+                .select('email')
+                .limit(1)
+                .match({ email: update.email, company_id: update.company_id })
+                .single();
+            if (existingEmail) {
+                throw new Error('Email already exists for this company');
+            }
+        }
         const { data, error } = await supabaseClient
             .from('sequence_influencers')
             .update(update)
@@ -40,6 +70,15 @@ export const updateSequenceInfluencerCall =
 
 export const createSequenceInfluencerCall =
     (supabaseClient: RelayDatabase) => async (sequenceInfluencer: SequenceInfluencerInsert) => {
+        const { data: existingEmail } = await supabaseClient
+            .from('sequence_influencers')
+            .select('email')
+            .limit(1)
+            .match({ email: sequenceInfluencer.email, company_id: sequenceInfluencer.company_id })
+            .single();
+        if (existingEmail) {
+            throw new Error('Email already exists for this company');
+        }
         const { data, error } = await supabaseClient
             .from('sequence_influencers')
             .insert(sequenceInfluencer)
