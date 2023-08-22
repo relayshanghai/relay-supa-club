@@ -7,10 +7,12 @@ import { DeleteOutline } from '../icons';
 import { toast } from 'react-hot-toast';
 import { useSequence } from 'src/hooks/use-sequence';
 import { clientLogger } from 'src/utils/logger-client';
+import { useTemplateVariables } from 'src/hooks/use-template_variables';
 
 export const SequencesTableRow = ({ sequence }: { sequence: Sequence }) => {
     const { sequenceEmails } = useSequenceEmails(sequence.id);
     const { sequenceInfluencers, refreshSequenceInfluencers } = useSequenceInfluencers([sequence.id]);
+    const { templateVariables } = useTemplateVariables(sequence.id);
     const { deleteSequence } = useSequence();
     const openRate = decimalToPercent(
         (sequenceEmails?.filter(
@@ -39,8 +41,10 @@ export const SequencesTableRow = ({ sequence }: { sequence: Sequence }) => {
                 </td>
                 <td className="whitespace-nowrap px-6 py-3 text-gray-700">{sequenceInfluencers?.length || 0}</td>
                 <td className="whitespace-nowrap px-6 py-3 text-gray-700">{openRate}</td>
-                <td className="whitespace-nowrap px-6 py-3 text-gray-700">{sequence.manager_name}</td>
-                <td className="whitespace-nowrap px-6 py-3 text-gray-700">W3</td>
+                <td className="whitespace-nowrap px-6 py-3 text-gray-700">{sequence.manager_first_name}</td>
+                <td className="whitespace-nowrap px-6 py-3 text-gray-700">
+                    {templateVariables?.find((variable) => variable.key === 'productName')?.value ?? '--'}
+                </td>
                 <td className="whitespace-nowrap px-6 py-3 text-gray-700">
                     <button onClick={handleDeleteSequence} className="align-middle">
                         <DeleteOutline className="h-5 w-5 text-gray-300 hover:text-primary-500" />

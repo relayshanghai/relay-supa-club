@@ -14,6 +14,18 @@ describe('outreach', () => {
         setupIntercepts();
         cy.loginTestUser();
     });
+    it('can create new sequence', () => {
+        cy.contains('Sequences').click();
+        cy.contains('New sequence', { timeout: 10000 }).click();
+        cy.get('input[placeholder="Enter a name for your sequence"]').type("New Sequence Test");
+        cy.contains('button','Create new sequence').click();
+        cy.contains('New Sequence Test').click();
+        cy.contains('button', 'Update template variables').click();
+        cy.get('input[id="template-variable-input-productName"]').clear().type('Test Product');
+        cy.contains('button', 'Update variables').click();
+        cy.contains('Sequences').click();
+        cy.contains('tr', 'New Sequence Test').contains('Test Product');
+    })
     it('sequence page', () => {
         cy.contains('Sequences').click();
         cy.contains('General collaboration', { timeout: 10000 }).click();

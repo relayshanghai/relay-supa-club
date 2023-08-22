@@ -43,8 +43,8 @@ export const useSequence = (sequenceId?: string) => {
                 company_id: profile?.company_id,
                 name: sequenceName,
                 auto_start: false,
-                added_by: profile?.id,
-                manager_name: profile.first_name,
+                manager_id: profile?.id,
+                manager_first_name: profile.first_name,
             };
             const res = await createSequenceDBCall(insert);
             refreshSequences();
