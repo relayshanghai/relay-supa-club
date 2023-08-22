@@ -21,7 +21,10 @@ import { useUser } from 'src/hooks/use-user';
 
 interface SequenceRowProps {
     sequenceInfluencer: SequenceInfluencer;
-    sequenceEmail?: SequenceEmail;
+    lastEmail?: SequenceEmail;
+    nextEmail?: SequenceEmail;
+    lastStep?: SequenceStep;
+    nextStep?: SequenceStep;
     sequenceSteps: SequenceStep[];
     currentTab: SequenceInfluencer['funnel_status'];
     missingVariables: string[];
@@ -47,7 +50,10 @@ const getStatus = (sequenceEmail: SequenceEmail | undefined) =>
 
 const SequenceRow: React.FC<SequenceRowProps> = ({
     sequenceInfluencer,
-    sequenceEmail,
+    lastEmail,
+    nextEmail,
+    lastStep,
+    nextStep,
     sequenceSteps,
     currentTab,
     missingVariables,
@@ -56,7 +62,6 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
     templateVariables,
     handleStartSequence,
 }) => {
-    const Icon = Icons[getStatus(sequenceEmail) as keyof typeof Icons] || Icons.Default;
     const { influencerSocialProfile } = useInfluencerSocialProfile(sequenceInfluencer.influencer_social_profile_id);
     const { updateSequenceInfluencer, deleteSequenceInfluencer } = useSequenceInfluencers(
         sequenceInfluencer && [sequenceInfluencer.sequence_id],
@@ -71,7 +76,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
         const updatedSequenceInfluencer = await updateSequenceInfluencer({ id: sequenceInfluencer.id, email });
         setEmail(updatedSequenceInfluencer.email ?? '');
     };
-    const currentStep = sequenceSteps?.find((step) => step.step_number === sequenceInfluencer.sequence_step);
+
     const handleStart = async () => {
         setSendingEmail(true);
         try {
@@ -193,19 +198,19 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                 {currentTab === 'In Sequence' && (
                     <>
                         <td className="whitespace-nowrap px-6 py-4 align-middle font-semibold text-gray-600">
-                            {currentStep?.name}
+                            {lastStep?.name ?? ''}
                         </td>
-                        <div
+                        <td
                             className={`flex w-fit flex-row items-center justify-center gap-2 rounded-lg px-3 py-2 text-center ${
-                                EMAIL_STATUS_STYLES[getStatus(sequenceEmail) || 'Default']
+                                EMAIL_STATUS_STYLES[getStatus(lastEmail || nextEmail) || 'Default']
                             }`}
                         >
-                            {Icon}
-                            {getStatus(sequenceEmail)}
-                        </div>
+                            {Icons[getStatus(lastEmail || nextEmail) as keyof typeof Icons] || Icons.Default}
+                            {getStatus(lastEmail || nextEmail)}
+                        </td>
                         <td className="whitespace-nowrap px-6 py-4 text-gray-600">
-                            {sequenceEmail?.email_send_at &&
-                                new Date(sequenceEmail?.email_send_at).toLocaleDateString(i18n.language, {
+                            {lastEmail?.email_send_at &&
+                                new Date(lastEmail.email_send_at).toLocaleDateString(i18n.language, {
                                     month: 'short',
                                     day: 'numeric',
                                 })}
@@ -214,17 +219,9 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                             <div className="flex">
                                 <button
                                     className="text-primary-600"
-                                    onClick={() =>
-                                        setShowEmailPreview(
-                                            sequenceSteps.filter(
-                                                (step) => sequenceInfluencer?.sequence_step === step.step_number,
-                                            ) || null,
-                                        )
-                                    }
+                                    onClick={() => setShowEmailPreview(nextStep ? [nextStep] : [])}
                                 >
-                                    {sequenceSteps.find(
-                                        (step) => sequenceInfluencer?.sequence_step === step.step_number,
-                                    )?.name ?? '-'}
+                                    {nextStep?.name ?? '-'}
                                 </button>
                                 <button onClick={() => deleteSequenceInfluencer(sequenceInfluencer.id)}>
                                     <DeleteOutline
@@ -239,8 +236,8 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                 {currentTab === 'Ignored' && (
                     <>
                         <td className="whitespace-nowrap px-6 py-4 text-gray-600">
-                            {sequenceEmail?.email_send_at &&
-                                new Date(sequenceEmail?.email_send_at).toLocaleDateString(i18n.language, {
+                            {lastEmail?.email_send_at &&
+                                new Date(lastEmail.email_send_at).toLocaleDateString(i18n.language, {
                                     month: 'short',
                                     day: 'numeric',
                                 })}
@@ -248,11 +245,11 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                         <td className={`whitespace-nowrap px-6 py-4`}>
                             <div
                                 className={`flex w-fit flex-row items-center justify-center gap-2 rounded-lg px-3 py-2 text-center ${
-                                    EMAIL_STATUS_STYLES[getStatus(sequenceEmail) || 'Default']
+                                    EMAIL_STATUS_STYLES[getStatus(lastEmail) || 'Default']
                                 }`}
                             >
-                                {Icon}
-                                {getStatus(sequenceEmail)}
+                                {Icons[getStatus(lastEmail) as keyof typeof Icons] || Icons.Default}
+                                {getStatus(lastEmail)}
                             </div>
                         </td>
                         {/* TODO */}

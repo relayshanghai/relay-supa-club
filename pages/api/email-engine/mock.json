@@ -1,0 +1,31 @@
+{
+  "data": {
+    "id": "AAAAAQAAAGQ",
+    "to": [{ "name": "tech.relay.club@gmail.com", "address": "tech.relay.club@gmail.com" }],
+    "uid": 100,
+    "date": "2023-08-21T13:40:08.000Z",
+    "from": { "name": "Jacob Cohen-Rosenthal", "address": "jacob@relay.club" },
+    "path": "[Gmail]/All Mail",
+    "size": 17044,
+    "text": { "id": "AAAAAQAAAGSTkaExkaEykA", "encodedSize": { "html": 4570, "plain": 1314 } },
+    "flags": [],
+    "labels": ["\\Important", "\\Inbox"],
+    "sender": { "name": "Jacob Cohen-Rosenthal", "address": "jacob@relay.club" },
+    "unseen": true,
+    "emailId": "1774846175670921759",
+    "replyTo": [{ "name": "Jacob Cohen-Rosenthal", "address": "jacob@relay.club" }],
+    "subject": "Re: Paid Collab with Rolex 🤝",
+    "threadId": "1774846090092553194",
+    "inReplyTo": "<d8024961-9596-f650-80f3-9f62bea14f30@gmail.com>",
+    "messageId": "<SN7PR14MB7073D34E2F412EC65D691275CA1EA@SN7PR14MB7073.namprd14.prod.outlook.com>",
+    "specialUse": "\\All",
+    "seemsLikeNew": true,
+    "messageSpecialUse": "\\Inbox"
+  },
+  "date": "2023-08-21T13:40:29.607Z",
+  "path": "[Gmail]/All Mail",
+  "event": "messageNew",
+  "account": "e7ustgsqqvy9al6f",
+  "serviceUrl": "https://email.relay.club",
+  "specialUse": "\\All"
+}

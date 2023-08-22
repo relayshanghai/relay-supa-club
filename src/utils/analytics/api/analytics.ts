@@ -73,7 +73,10 @@ export const createTrack = <T extends TrackedEvent>(ctx: ServerContext) => {
                 ..._payload,
             },
             anonymous_id,
-            ...sessionIds,
+            session_id: sessionIds.session_id,
+            user_id: sessionIds.user_id,
+            profile_id: sessionIds.profile_id,
+            company_id: sessionIds.company_id,
         };
 
         return await event<typeof trigger>(trigger, eventPayload);
