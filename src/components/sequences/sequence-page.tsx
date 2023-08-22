@@ -24,8 +24,8 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
 
     const { sequence, sendSequence, sequenceSteps, updateSequence } = useSequence(sequenceId);
     const { sequenceInfluencers } = useSequenceInfluencers(sequence && [sequenceId]);
-    const { sequenceEmails: allSequenceEmails } = useSequenceEmails(sequence?.id);
-    const { templateVariables } = useTemplateVariables(sequence?.id);
+    const { sequenceEmails } = useSequenceEmails(sequenceId);
+    const { templateVariables } = useTemplateVariables(sequenceId);
     const missingVariables = templateVariables
         ?.filter((variable) => variable.required && !variable.value)
         .map((variable) => variable.name) ?? ['Error retrieving variables'];
@@ -137,7 +137,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     return (
         <Layout>
             <TemplateVariablesModal
-                sequenceId={sequence?.id}
+                sequenceId={sequenceId}
                 visible={showUpdateTemplateVariables}
                 onClose={() => setShowUpdateTemplateVariables(false)}
             />
@@ -178,19 +178,19 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                 <SequenceStats
                     totalInfluencers={influencers?.length || 0}
                     openRate={
-                        (allSequenceEmails?.filter(
+                        (sequenceEmails?.filter(
                             (email) =>
                                 email.email_tracking_status === 'Link Clicked' ||
                                 email.email_tracking_status === 'Opened',
-                        ).length || 0) / (allSequenceEmails?.length || 1)
+                        ).length || 0) / (sequenceEmails?.length || 1)
                     }
                     replyRate={
-                        (allSequenceEmails?.filter((email) => email.email_delivery_status === 'Replied').length || 0) /
-                        (allSequenceEmails?.length || 1)
+                        (sequenceEmails?.filter((email) => email.email_delivery_status === 'Replied').length || 0) /
+                        (sequenceEmails?.length || 1)
                     }
                     bounceRate={
-                        (allSequenceEmails?.filter((email) => email.email_delivery_status === 'Bounced').length || 0) /
-                        (allSequenceEmails?.length || 1)
+                        (sequenceEmails?.filter((email) => email.email_delivery_status === 'Bounced').length || 0) /
+                        (sequenceEmails?.length || 1)
                     }
                 />
                 <Tabs tabs={tabs} currentTab={currentTab} setCurrentTab={setCurrentTab} />
@@ -207,7 +207,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                 {currentTabInfluencers && sequenceSteps ? (
                     <SequenceTable
                         sequenceInfluencers={currentTabInfluencers}
-                        allSequenceEmails={allSequenceEmails}
+                        sequenceEmails={sequenceEmails}
                         sequenceSteps={sequenceSteps}
                         currentTab={currentTab}
                         missingVariables={missingVariables}

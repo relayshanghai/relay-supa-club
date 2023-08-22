@@ -24,4 +24,7 @@ export const getUserRole = (userId: string) => supabase.from('profiles').select(
 
 export const getProfileByEmail = (email: string) => supabase.from('profiles').select().eq('email', email).single();
 
+export const getProfileBySequenceSendEmail = (email: string) =>
+    supabase.from('profiles').select().limit(1).eq('sequence_send_email', email).single();
+
 export const getProfileById = (id: string) => supabase.from('profiles').select().eq('id', id).single();
