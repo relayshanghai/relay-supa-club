@@ -102,6 +102,7 @@ describe('outreach', () => {
         // can delete influencer
         cy.contains('Charlie Charles');
         cy.getByTestId('delete-influencer-button').eq(2).click();
+        cy.contains('Influencer successfully deleted from sequence')
         cy.contains('Charlie Charles').should('not.exist');
 
         // send sequence is disabled if missing template variables
