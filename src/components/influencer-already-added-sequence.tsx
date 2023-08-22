@@ -23,12 +23,10 @@ export const InfluencerAlreadyAddedSequenceModal = ({
     const { t } = useTranslation();
 
     const filterForSelectedSequence = (sequence: Sequence) => {
-        const sequenceInfluencers = allSequenceInfluencers?.filter(
+        const sequenceInfluencers = (allSequenceInfluencers ?? []).filter(
             (sequenceInfluencer) => sequenceInfluencer.sequence_id === sequence.id,
         );
-        return sequenceInfluencers?.some(
-            (sequenceInfluencer) => sequenceInfluencer.iqdata_id === selectedCreatorUserId,
-        );
+        return sequenceInfluencers.some((sequenceInfluencer) => sequenceInfluencer.iqdata_id === selectedCreatorUserId);
     };
     const sequencesWithInfluencer = sequences?.filter(filterForSelectedSequence).map((sequence) => sequence.name);
     const { trackEvent } = useRudderstack();
@@ -45,17 +43,12 @@ export const InfluencerAlreadyAddedSequenceModal = ({
             okButtonText={t('campaigns.modal.addAnyway') || ''}
             onOkay={() => {
                 setShow(false);
-                // setCampaignListModal(true);
                 setSequenceListModal(true);
                 trackEvent(ALREADY_ADDED_MODAL('click add anyway'));
             }}
         >
             <div className="flex flex-col gap-2">
-                <p>
-                    {`${t('sequences.influencerAlreadyAdded')} ${sequencesWithInfluencer
-                        ?.map((sequence) => sequence)
-                        .join(', ')}`}
-                </p>
+                <p>{`${t('sequences.influencerAlreadyAdded')} ${(sequencesWithInfluencer ?? []).join(', ')}`}</p>
             </div>
         </ModalWithButtons>
     );

@@ -24,13 +24,13 @@ export const AddToSequenceModal = ({
     platform: CreatorPlatform;
 }) => {
     const { i18n, t } = useTranslation();
-    const { sequences } = useSequences();
+    const { sequences, refreshSequences } = useSequences();
     const { socialProfile, report } = useReport({ platform, creator_id: selectedCreator.user_id || '' });
 
-    const [selectedSequence, setSelectedSequence] = useState<Sequence | null>(sequences?.[0] ?? null);
+    const [selectedSequence, setSelectedSequence] = useState<Sequence | undefined>(sequences && sequences[0]);
     const [loading, setLoading] = useState<boolean>(false);
     const [socialProfileId, setSocialProfileId] = useState(() => socialProfile?.id ?? null);
-    const { sendSequence } = useSequence(selectedSequence?.id);
+    const { sendSequence, refreshSequence } = useSequence(selectedSequence?.id);
 
     const { sequenceInfluencers, refreshSequenceInfluencers, createSequenceInfluencer } = useSequenceInfluencers(
         selectedSequence ? [selectedSequence.id] : [],
@@ -39,21 +39,23 @@ export const AddToSequenceModal = ({
         if (!sequenceInfluencers || !selectedSequence) {
             return false;
         }
-        const selectedCreatorId = selectedCreator.user_id;
 
-        const influencerSequenceIds = sequenceInfluencers
-            .filter((sequenceInfluencer) => sequenceInfluencer.iqdata_id === selectedCreatorId)
-            .map((sequenceInfluencer) => sequenceInfluencer.sequence_id);
-
-        if (influencerSequenceIds.length === 0) return false;
-        return influencerSequenceIds.includes(selectedSequence.id);
+        return sequenceInfluencers.some(
+            ({ sequence_id, iqdata_id }) =>
+                sequence_id === selectedSequence.id && iqdata_id === selectedCreator.user_id,
+        );
     }, [selectedCreator, selectedSequence, sequenceInfluencers]);
+
+    useEffect(() => {
+        if (!sequences || selectedSequence) return;
+        setSelectedSequence(sequences[0]);
+    }, [sequences, selectedSequence]);
 
     const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         if (!sequences) {
             return;
         }
-        const selectedSequenceObject = sequences?.find((sequence) => sequence.name === e.target.value) ?? null;
+        const selectedSequenceObject = sequences?.find((sequence) => sequence.name === e.target.value);
         setSelectedSequence(selectedSequenceObject);
     };
 
@@ -87,6 +89,8 @@ export const AddToSequenceModal = ({
                 setLoading(false);
                 setShow(false);
             }
+            refreshSequences();
+            refreshSequence();
             refreshSequenceInfluencers();
         }
     }, [
@@ -98,6 +102,8 @@ export const AddToSequenceModal = ({
         socialProfileId,
         t,
         refreshSequenceInfluencers,
+        refreshSequence,
+        refreshSequences,
     ]);
 
     useEffect(() => {
@@ -149,7 +155,7 @@ export const AddToSequenceModal = ({
                     ) : (
                         <Button
                             disabled={hasInfluencer}
-                            data-testid={`add-to-sequence-modal`}
+                            data-testid="add-to-sequence-modal"
                             onClick={handleAddToSequence}
                             type="submit"
                         >

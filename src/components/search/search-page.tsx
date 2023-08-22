@@ -57,11 +57,7 @@ export const SearchPageInner = () => {
     const [selectedCreator, setSelectedCreator] = useState<CreatorSearchAccountObject | null>(null);
     const { campaigns } = useCampaigns({});
     const { allCampaignCreators } = useAllCampaignCreators(campaigns);
-    const { sequenceInfluencers } = useSequenceInfluencers(
-        sequences?.map((sequence) => {
-            return sequence.id;
-        }),
-    );
+    const { sequenceInfluencers } = useSequenceInfluencers(sequences?.map((sequence) => sequence.id));
     const { trackEvent } = useRudderstack();
 
     const [page, setPage] = useState(0);

@@ -174,18 +174,11 @@ export const SearchResultRow = ({
 
     const addToSequence = () => {
         setSelectedCreator(creator);
-        let isAlreadyInSequence = false;
-
-        if (allSequenceInfluencers) {
-            for (const sequenceInfluencer of allSequenceInfluencers) {
-                if (sequenceInfluencer?.iqdata_id && creator.account.user_profile.user_id) {
-                    if (sequenceInfluencer.iqdata_id === creator.account.user_profile.user_id) {
-                        isAlreadyInSequence = true;
-                        break;
-                    }
-                }
-            }
-        }
+        const isAlreadyInSequence = allSequenceInfluencers?.some(
+            ({ sequence_id, iqdata_id }) =>
+                sequence_id === creator.account.user_profile.user_id &&
+                iqdata_id === creator.account.user_profile.user_id,
+        );
 
         if (isAlreadyInSequence) {
             setShowAlreadyAddedSequenceModal(true);
