@@ -6,6 +6,7 @@ import { PriceDetailsCard } from './price-details-card';
 import type { SubscriptionGetResponse } from 'pages/api/subscriptions';
 import { useTranslation } from 'react-i18next';
 import { featNewPricing } from 'src/constants/feature-flags';
+import { useRouter } from 'next/router';
 
 const isCurrentPlan = (
     tier: ActiveSubscriptionTier,
@@ -46,7 +47,15 @@ export const PriceCard = ({
     const prices = usePrices();
     const { subscription } = useSubscription();
     const freeTier = priceTier === 'free';
+    const router = useRouter();
 
+    const handleUpgradeClicked = () => {
+        if (featNewPricing()) {
+            router.push('/payments');
+        } else {
+            openConfirmModal(priceTier, period, PRICE_IDS[period][priceTier]);
+        }
+    };
     return (
         <div className="w-full  p-4 transition-all ease-in-out hover:-translate-y-3 md:w-1/2 lg:w-1/3">
             <div
@@ -74,7 +83,7 @@ export const PriceCard = ({
 
                 {!landingPage && (
                     <Button
-                        onClick={() => openConfirmModal(priceTier, period, PRICE_IDS[period][priceTier])}
+                        onClick={handleUpgradeClicked}
                         disabled={disableButton(priceTier, period, subscription)}
                         className="mt-auto"
                     >

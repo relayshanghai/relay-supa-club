@@ -56,12 +56,12 @@ const pricing = {
         subTitle: '查看我们可以提供什么',
     },
     discovery: {
-        title: 'Discovery',
-        subTitle: 'From AI Search to Sales: Discover Influencers that Drive E-commerce Success.',
+        title: '探索方案',
+        subTitle: 'AI搜索助力销售增长：立即开始探索方案，寻找驱动电商销售增长的红人',
     },
     outreach: {
-        title: 'Outreach',
-        subTitle: 'Maximize Reach, Minimize Effort: Automated Influencer Contacts at Scale.',
+        title: '拓展方案',
+        subTitle: '费时少，收效大：自动化邮件进程，大批量联系和管理红人',
     },
     saveUpTo33Percent: '高达33%折扣',
     beta: 'BETA',
