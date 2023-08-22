@@ -1,0 +1,126 @@
+{
+  "success": true,
+  "data": [
+    {
+      "tag": "influencer",
+      "distance": 0,
+      "freq": 10.667419331814033,
+      "tag_cnt": 42934
+    },
+    {
+      "tag": "influencers",
+      "distance": 0.18125426769256592,
+      "freq": 9.352620879232953,
+      "tag_cnt": 11529
+    },
+    {
+      "tag": "content creator",
+      "distance": 0.28999829292297363,
+      "freq": 9.979892883738533,
+      "tag_cnt": 21588
+    },
+    {
+      "tag": "social media influencer",
+      "distance": 0.30981385707855225,
+      "freq": 7.742835955430749,
+      "tag_cnt": 2305
+    },
+    {
+      "tag": "influncer",
+      "distance": 0.31183135509490967,
+      "freq": 5.983936280687191,
+      "tag_cnt": 397
+    },
+    {
+      "tag": "influencer marketing",
+      "distance": 0.3212919235229492,
+      "freq": 8.324093761450404,
+      "tag_cnt": 4122
+    },
+    {
+      "tag": "instagram influencer",
+      "distance": 0.34691059589385986,
+      "freq": 7.586803535162581,
+      "tag_cnt": 1972
+    },
+    {
+      "tag": "infuencer",
+      "distance": 0.3886389136314392,
+      "freq": 5.5134287461649825,
+      "tag_cnt": 248
+    },
+    {
+      "tag": "contentcreator",
+      "distance": 0.3920072913169861,
+      "freq": 8.512381634419015,
+      "tag_cnt": 4976
+    },
+    {
+      "tag": "beauty influencer",
+      "distance": 0.3952382802963257,
+      "freq": 7.3632795869630385,
+      "tag_cnt": 1577
+    },
+    {
+      "tag": "tiktoker",
+      "distance": 0.39816927909851074,
+      "freq": 9.857653016192328,
+      "tag_cnt": 19104
+    },
+    {
+      "tag": "digital influencer",
+      "distance": 0.4076263904571533,
+      "freq": 7.4073177104694174,
+      "tag_cnt": 1648
+    },
+    {
+      "tag": "youtube influencer",
+      "distance": 0.4155820608139038,
+      "freq": 6.059123195581797,
+      "tag_cnt": 428
+    },
+    {
+      "tag": "micro influencer",
+      "distance": 0.41779524087905884,
+      "freq": 6.329720905522696,
+      "tag_cnt": 561
+    },
+    {
+      "tag": "microinfluencer",
+      "distance": 0.42037510871887207,
+      "freq": 6.0063531596017325,
+      "tag_cnt": 406
+    },
+    {
+      "tag": "influencermarketing",
+      "distance": 0.42210209369659424,
+      "freq": 5.993961427306569,
+      "tag_cnt": 401
+    },
+    {
+      "tag": "blogger",
+      "distance": 0.4225414991378784,
+      "freq": 11.203910795415128,
+      "tag_cnt": 73417
+    },
+    {
+      "tag": "influencing",
+      "distance": 0.4252554774284363,
+      "freq": 5.834810737062605,
+      "tag_cnt": 342
+    },
+    {
+      "tag": "fashion influencer",
+      "distance": 0.42733287811279297,
+      "freq": 6.878326468291325,
+      "tag_cnt": 971
+    },
+    {
+      "tag": "vlogger",
+      "distance": 0.42776989936828613,
+      "freq": 11.80110741246366,
+      "tag_cnt": 133400
+    }
+  ],
+  "status": 200
+}
