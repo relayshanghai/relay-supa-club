@@ -18,6 +18,7 @@ import { EmailPreviewModal } from './email-preview-modal';
 import type { SequenceSendPostResponse } from 'pages/api/sequence/send';
 import toast from 'react-hot-toast';
 import { useUser } from 'src/hooks/use-user';
+import { DeleteFromSequenceModal } from '../modal-delete-from-sequence';
 
 interface SequenceRowProps {
     sequenceInfluencer: SequenceInfluencer;
@@ -67,6 +68,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
         sequenceInfluencer && [sequenceInfluencer.sequence_id],
     );
     const { profile } = useUser();
+    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const { i18n, t } = useTranslation();
     const [email, setEmail] = useState(sequenceInfluencer.email ?? '');
     const [showEmailPreview, setShowEmailPreview] = useState<SequenceStep[] | null>(null);
@@ -199,7 +201,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                             </Button>
                             <button
                                 className="min-w-max"
-                                onClick={() => handleDeleteInfluencer(sequenceInfluencer.id)}
+                                onClick={() => setShowDeleteConfirmation(true)}
                                 data-testid="delete-influencer-button"
                             >
                                 <DeleteOutline className="ml-6 h-5 w-5 text-gray-300" />
@@ -271,6 +273,12 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                     </>
                 )}
             </tr>
+            <DeleteFromSequenceModal
+                show={showDeleteConfirmation}
+                setShow={setShowDeleteConfirmation}
+                deleteInfluencer={handleDeleteInfluencer}
+                sequenceId={sequenceInfluencer.id}
+            />
         </>
     );
 };
