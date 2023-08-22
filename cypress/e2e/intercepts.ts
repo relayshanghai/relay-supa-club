@@ -3,11 +3,14 @@ import defaultLandingPageInfluencerSearch from '../../src/mocks/api/influencer-s
 import influencerSearch from '../../src/mocks/api/influencer-search/searchByInfluencerGRTR.json';
 import keywordSearch from '../../src/mocks/api/influencer-search/keywordSearchAlligators.json';
 import keywordSearchMonkeys from '../../src/mocks/api/influencer-search/keywordSearchMonkeys.json';
+import topicTensorMock from '../../src/mocks/api/topics/tensor.json';
+import templatesMock from '../../src/mocks/api/email-engine/templates.json';
+import oneTemplateMock from '../../src/mocks/api/email-engine/one-template.json';
 
 import type { InfluencerPostRequest } from 'pages/api/influencer-search';
-import type { UsagesDBInsert } from 'src/utils/api/db';
+import type { SequenceInfluencer, UsagesDBInsert } from 'src/utils/api/db';
 import { ulid } from 'ulid';
-import { resetUsages, supabaseClientCypress } from './helpers';
+import { insertSequenceEmails, resetUsages, supabaseClientCypress } from './helpers';
 export { cocomelon, defaultLandingPageInfluencerSearch };
 
 export const cocomelonId = cocomelon.user_profile.user_id;
@@ -68,6 +71,7 @@ export const setupIntercepts = () => {
             });
         }
     });
+    cy.intercept('/api/topics/tensor', { body: topicTensorMock });
     cy.intercept('/api/influencer-search/topics*', (req) => {
         const body = req.body;
         if (body.term === 'alligators') {
@@ -192,6 +196,24 @@ export const setupIntercepts = () => {
                 },
             },
         },
+    });
+
+    cy.intercept('/api/sequence/send', async (req) => {
+        const body = req.body as { account: string; sequenceInfluencers: SequenceInfluencer[] };
+        const { sequenceInfluencers } = body;
+        const results = await insertSequenceEmails(supabase, sequenceInfluencers);
+        req.reply({ body: results });
+    });
+
+    cy.intercept('/api/email-engine/templates', (req) => {
+        const body = req.body as { templateIds: string[] };
+        if (body.templateIds.length === 1) {
+            return req.reply({ body: oneTemplateMock, delay: 1000 });
+        } else if (body.templateIds.length > 1) {
+            return req.reply({ body: templatesMock, delay: 1000 });
+        } else {
+            return req.reply({ body: {}, delay: 1000 });
+        }
     });
 };
 
