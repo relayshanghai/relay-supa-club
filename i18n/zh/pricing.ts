@@ -21,7 +21,7 @@ const pricing = {
     campaignManagementTool: '项目管理工具',
     amount_AIGeneratedEmailTemplates: '{{amount}}个AI生成的电子邮件模板',
     fullCustomerService: '完整的客户服务',
-    boostBotSearchAndNormalSearch: 'BoostBot AI搜索和传统搜索',
+    boostBotSearchAndNormalSearch: 'BoostBot AI搜索 + 传统搜索',
     personalEmailAccount: '{{amount}}个个性化电子邮件帐户',
     amount_EmailsPerMonth: '每月可向{{amount}}个KOL发送电子邮件',
 

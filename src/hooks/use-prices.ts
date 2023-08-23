@@ -1,3 +1,4 @@
+import type { NewSubscriptionPricesGetResponse } from 'pages/api/subscriptions/new-prices';
 import type { SubscriptionPricesGetResponse } from 'pages/api/subscriptions/prices';
 import {
     STRIPE_PRICE_MONTHLY_DISCOVERY,
@@ -106,12 +107,16 @@ export const usePrices = () => {
             const res = await nextFetch<SubscriptionPricesGetResponse>('subscriptions/prices');
             const { diy, diyMax } = res;
             // TODO: get discovery and outreach prices from Stripe prices
+            const { discovery, outreach } = await nextFetch<NewSubscriptionPricesGetResponse>(
+                'subscriptions/new-prices',
+            );
+
             const monthly = {
                 diy: formatPrice(diy.prices.monthly, diy.currency, 'monthly'),
                 diyMax: formatPrice(diyMax.prices.monthly, diyMax.currency, 'monthly'),
                 free: '$0',
-                discovery: '299',
-                outreach: '880',
+                discovery: formatPrice(discovery.prices.monthly, discovery.currency, 'monthly'),
+                outreach: formatPrice(outreach.prices.monthly, outreach.currency, 'monthly'),
             };
             const quarterly = {
                 diy: formatPrice(diy.prices.quarterly, diy.currency, 'quarterly'),

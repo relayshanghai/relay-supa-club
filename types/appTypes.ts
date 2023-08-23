@@ -48,6 +48,17 @@ export type RelayPlan = {
     };
 };
 
+export type NewRelayPlan = {
+    currency: string;
+    prices: {
+        monthly: string;
+    };
+    profiles: string;
+    searches: string;
+    priceIds: {
+        monthly: string;
+    };
+};
 export interface RelayPlanStripeProduct extends Stripe.Product {
     metadata: RelayAccountPlanMetadata;
 }
