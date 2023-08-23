@@ -1,0 +1,52 @@
+[
+  {
+    "likeCount": 123,
+    "commentCount": 789,
+    "viewCount": 456,
+    "sales": 250,
+    "updatedAt": "2023-08-21T10:26:20.487017+00:00",
+    "platform": "instagram",
+    "url": "https://instagram.com/alice/posts/1",
+    "id": "d140e422-2319-4793-b5e7-520dc99635b9"
+  },
+  {
+    "likeCount": 1230,
+    "commentCount": 7890,
+    "viewCount": 4560,
+    "sales": 2500,
+    "updatedAt": "2023-01-01T00:00:00+00:00",
+    "platform": "instagram",
+    "url": "https://instagram.com/alice/posts/2",
+    "id": "76da7138-3c96-4e25-b458-40b6f028f4be"
+  },
+  {
+    "likeCount": 0,
+    "commentCount": 0,
+    "viewCount": 0,
+    "sales": 0,
+    "updatedAt": "2023-01-02T00:00:00+00:00",
+    "platform": "instagram",
+    "url": "https://instagram.com/alice/posts/3",
+    "id": "f2136356-54eb-4e84-a6da-470c00fc28d3"
+  },
+  {
+    "likeCount": 12300,
+    "commentCount": 78900,
+    "viewCount": 45600,
+    "sales": 25000,
+    "updatedAt": "2023-01-03T00:00:00+00:00",
+    "platform": "instagram",
+    "url": "https://instagram.com/bob/posts/1",
+    "id": "9bdba724-540f-48d3-be4e-8875066de6d0"
+  },
+  {
+    "likeCount": 12301,
+    "commentCount": 78901,
+    "viewCount": 45601,
+    "sales": 25001,
+    "updatedAt": "2023-01-04T00:00:00+00:00",
+    "platform": "youtube",
+    "url": "https://youtube.com/bob/posts/1",
+    "id": "2878a066-3916-4160-b9a6-6d77a4ff2707"
+  }
+]
