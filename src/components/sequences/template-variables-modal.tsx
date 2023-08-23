@@ -139,6 +139,7 @@ export const TemplateVariablesModal = ({ sequenceId, ...props }: TemplateVariabl
             clientLogger(error, 'error');
         }
         setSubmitting(false);
+        props.onClose(false);
     };
 
     return (

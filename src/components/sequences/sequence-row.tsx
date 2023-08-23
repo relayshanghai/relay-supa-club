@@ -102,6 +102,10 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
         }
         setSendingEmail(false);
     };
+    const handleDeleteInfluencer = (sequenceInfluencerId: string) => {
+        deleteSequenceInfluencer(sequenceInfluencerId);
+        toast.success(t('sequences.influencerDeleted'));
+    };
     return (
         <>
             <EmailPreviewModal
@@ -162,7 +166,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                             })}
                         </td>
 
-                        <td className="flex min-w-min items-center whitespace-nowrap px-6 py-4 text-gray-600">
+                        <td className="mr-4 flex min-w-min items-center justify-start whitespace-nowrap px-6 py-4 text-gray-600 md:mr-0">
                             <Tooltip
                                 content={
                                     isMissingVariables
@@ -195,10 +199,10 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                             </Button>
                             <button
                                 className="min-w-max"
-                                onClick={() => deleteSequenceInfluencer(sequenceInfluencer.id)}
+                                onClick={() => handleDeleteInfluencer(sequenceInfluencer.id)}
                                 data-testid="delete-influencer-button"
                             >
-                                <DeleteOutline className="ml-6 h-5 w-5 text-gray-300" />
+                                <DeleteOutline className="mr-4 h-5 w-5 text-gray-300 md:ml-6 lg:mr-0" />
                             </button>
                         </td>
                     </>
@@ -231,7 +235,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                                 >
                                     {nextStep?.name ?? '-'}
                                 </button>
-                                <button onClick={() => deleteSequenceInfluencer(sequenceInfluencer.id)}>
+                                <button onClick={() => handleDeleteInfluencer(sequenceInfluencer.id)}>
                                     <DeleteOutline
                                         data-testid="delete-influencer-button"
                                         className="ml-3 h-5 w-5 text-gray-300"
