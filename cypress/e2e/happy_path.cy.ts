@@ -1,16 +1,13 @@
 import { deleteDB } from 'idb';
-import { addPostIntercept, cocomelonId, setupIntercepts } from './intercepts';
-import { featEmail } from 'src/constants/feature-flags';
+import { cocomelonId, setupIntercepts } from './intercepts';
+import { insertPostIntercept } from './intercepts';
 
 export const randomString = (length = 8) =>
     Math.random()
         .toString(36)
         .substring(2, length + 2);
 
-describe('Main pages happy paths', () => {
-    beforeEach(async () => {
-        await deleteDB('app-cache');
-    });
+describe('Login and signup', () => {
     it('Landing page works, has both languages, and links to signup', () => {
         cy.visit('/');
         cy.contains('relay.club可以帮助');
@@ -97,9 +94,15 @@ describe('Main pages happy paths', () => {
         // redirects to dashboard on success
         cy.url().should('include', '/dashboard', { timeout: 30000 });
     });
-    it('can search for an influencer', () => {
-        setupIntercepts();
+});
 
+describe('Main pages happy paths', () => {
+    beforeEach(() => {
+        deleteDB('app-cache');
+        setupIntercepts();
+    });
+
+    it('can search for an influencer', () => {
         cy.loginTestUser();
         // cy.get('input[type="checkbox').uncheck({ force: true }); // turn off the Recommended Only
         // wait for search results
@@ -116,8 +119,6 @@ describe('Main pages happy paths', () => {
         cy.contains('GRTR');
     });
     it('can search for a topic', () => {
-        setupIntercepts();
-
         cy.loginTestUser();
 
         cy.getByTestId('search-topics').within(() => {
@@ -135,8 +136,6 @@ describe('Main pages happy paths', () => {
     });
 
     it('can open analyze page', () => {
-        setupIntercepts();
-
         cy.loginTestUser();
 
         cy.getByTestId(`search-result-row-buttons/${cocomelonId}`).click({
@@ -161,8 +160,6 @@ describe('Main pages happy paths', () => {
     });
 
     it('can use account and pricing pages', () => {
-        setupIntercepts();
-
         cy.loginTestUser();
         cy.contains('My Account').click();
         cy.contains('Subscription', { timeout: 10000 }); // loads account page
@@ -194,8 +191,6 @@ describe('Main pages happy paths', () => {
         cy.contains('button', 'Subscribe').should('not.exist');
     });
     it('can open ai email generator', () => {
-        setupIntercepts();
-
         // not actually testing functionality of the email generator. Just making sure the page opens.
         cy.loginTestUser();
         cy.contains('AI Email Generator').click();
@@ -211,7 +206,6 @@ describe('Main pages happy paths', () => {
     });
 
     it.skip('can open campaigns page and manage campaign influencers', () => {
-        setupIntercepts();
         // list, add, archive campaigns
         // list, add, move, delete campaign influencers
 
@@ -359,7 +353,6 @@ describe('Main pages happy paths', () => {
     });
 
     it('can record search usages, can manage clients as a company owner', () => {
-        setupIntercepts();
         cy.loginAdmin();
 
         cy.contains('My Account').click();
@@ -458,8 +451,6 @@ describe('Main pages happy paths', () => {
     });
     /** works on local... 🤷‍♂️ */
     it.skip('can log out', () => {
-        setupIntercepts();
-
         cy.loginTestUser();
         cy.getByTestId('layout-account-menu').click();
         cy.contains('Log Out').click();
@@ -469,10 +460,11 @@ describe('Main pages happy paths', () => {
         // pre-populates email with original email
         cy.get('input[type="email"]').should('have.value', Cypress.env('TEST_USER_EMAIL_COMPANY_OWNER'));
     });
-    it('Can add post URLs to campaign influencers and see their posts performance updated on the performance page', () => {
-        addPostIntercept();
-        // check 'before' performance page totals
+    //TODO: come back and fix this after sequences epic is done. We aren't sure how sequences will relate to this performance page.
+    it.skip('Can add post URLs to campaign influencers and see their posts performance updated on the performance page', () => {
+        insertPostIntercept();
         cy.loginTestUser();
+        // check 'before' performance page totals
         cy.contains('Performance').click();
         cy.contains('All campaigns', { timeout: 20000 });
         cy.contains('div', 'Likes').within(() => {
