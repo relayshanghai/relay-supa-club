@@ -14,7 +14,7 @@ interface DataTablePaginationProps<TData> {
 // TODO: Add translations once we settle on what elements to include
 export function DataTablePagination<TData>({ table }: DataTablePaginationProps<TData>) {
     return (
-        <div className="flex items-center justify-between border-t p-2">
+        <div className="flex items-center justify-between">
             <div className="text-muted-foreground flex-1 text-sm">
                 {table.getFilteredSelectedRowModel().rows.length} of {table.getFilteredRowModel().rows.length}{' '}
                 influencer(s) selected.

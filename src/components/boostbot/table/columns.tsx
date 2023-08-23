@@ -29,7 +29,7 @@ export const columns: ColumnDef<Influencer>[] = [
                 <>
                     <Link href={url} target="_blank" rel="noopener noreferrer" className="group table-cell text-sm">
                         <div className="flex flex-col gap-0.5">
-                            <div className="relative mb-2 h-24 w-24 transition-all group-hover:scale-105">
+                            <div className="relative mb-2 h-20 w-20 transition-all group-hover:scale-105">
                                 <img className="h-full w-full rounded-full object-cover" src={picture} alt={handle} />
                                 <Icon className="absolute -right-2 bottom-1 h-8 w-8" />
                             </div>
@@ -47,7 +47,7 @@ export const columns: ColumnDef<Influencer>[] = [
                         </div>
                     </Link>
 
-                    <p className="mt-2">{topicsList}</p>
+                    <p className="mt-2 text-xs">{topicsList}</p>
                 </>
             );
         },
@@ -188,7 +188,7 @@ export const columns: ColumnDef<Influencer>[] = [
             <label className="flex cursor-pointer gap-1">
                 <input
                     type="checkbox"
-                    className="checkbox mr-0"
+                    className="checkbox mr-0 border-gray-400"
                     checked={table.getIsAllPageRowsSelected()}
                     aria-label={table.options.meta?.translation('boostbot.selectAll')}
                     onChange={(e) => table.toggleAllPageRowsSelected(!!e.target.checked)}
@@ -199,7 +199,7 @@ export const columns: ColumnDef<Influencer>[] = [
         cell: ({ row, table }) => (
             <input
                 type="checkbox"
-                className="checkbox mr-0"
+                className="checkbox mr-0 border-gray-400"
                 checked={row.getIsSelected()}
                 aria-label={table.options.meta?.translation('boostbot.selectRow')}
                 onChange={(e) => row.toggleSelected(!!e.target.checked)}

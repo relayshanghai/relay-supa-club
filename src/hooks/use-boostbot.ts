@@ -58,6 +58,7 @@ export const useBoostbot = () => {
                 body,
             });
 
+            // TODO: remove log when done testing
             // eslint-disable-next-line no-console
             console.log('endpoint :>> ', response);
             return response;

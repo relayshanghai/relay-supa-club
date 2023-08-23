@@ -1,3 +1,5 @@
+// TODO: Fix eslint warnings after testing is done
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import type { Dispatch, SetStateAction } from 'react';
 import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
@@ -16,9 +18,10 @@ export type MessageType = {
 
 interface ChatProps {
     setInfluencers: Dispatch<SetStateAction<Influencer[]>>;
+    sendToOutreach: () => void;
 }
 
-export const Chat: React.FC<ChatProps> = ({ setInfluencers }) => {
+export const Chat: React.FC<ChatProps> = ({ setInfluencers, sendToOutreach }) => {
     const { getTopics, getRelevantTopics, getTopicClusters, getInfluencers } = useBoostbot();
     const [progress, setProgress] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
@@ -57,13 +60,14 @@ export const Chat: React.FC<ChatProps> = ({ setInfluencers }) => {
 
             const instagramInfluencers = await getInfluencersForPlatform({ platform: 'instagram' });
             setProgress(60);
-            const tiktokInfluencers = await getInfluencersForPlatform({ platform: 'tiktok' });
+            // const tiktokInfluencers = await getInfluencersForPlatform({ platform: 'tiktok' });
             setProgress(80);
-            const youtubeInfluencers = await getInfluencersForPlatform({ platform: 'youtube' });
+            // const youtubeInfluencers = await getInfluencersForPlatform({ platform: 'youtube' });
             setProgress(100);
-            const influencers = [...instagramInfluencers, ...tiktokInfluencers, ...youtubeInfluencers];
+            const influencers = [...instagramInfluencers];
+            // const influencers = [...instagramInfluencers, ...tiktokInfluencers, ...youtubeInfluencers];
 
-            setInfluencers(influencers.map((influencer) => influencer.user_profile));
+            setInfluencers(influencers);
             addProgressMessage(`${influencers.length} influencers found!`);
         } catch (error) {
             clientLogger(error, 'error');

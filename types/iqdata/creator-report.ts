@@ -249,6 +249,7 @@ interface Stat {
     comments?: number;
     views?: number;
     shares?: number;
+    plays?: number;
 }
 
 export interface CreatorReportContact {
