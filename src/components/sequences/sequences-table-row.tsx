@@ -30,9 +30,6 @@ export const SequencesTableRow = ({ sequence }: { sequence: Sequence }) => {
         refreshSequenceInfluencers();
     };
 
-    // TODO: add manager name
-    // TODO: get product name from template variable?
-
     return (
         <>
             <tr className="border-b-2 border-gray-200 bg-white">

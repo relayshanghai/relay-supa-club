@@ -7,7 +7,7 @@ const SequencesTable = ({ sequences }: { sequences: Sequence[] | undefined }) =>
     const { t } = useTranslation();
 
     return (
-        <table className="border-collapse">
+        <table className="w-full border-collapse">
             <thead>
                 <tr className="border-b-2 border-gray-200">
                     {sequencesIndexColumns.map((column) => (

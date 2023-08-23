@@ -168,7 +168,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                             })}
                         </td>
 
-                        <td className="flex min-w-min items-center whitespace-nowrap px-6 py-4 text-gray-600">
+                        <td className="mr-4 flex min-w-min items-center justify-start whitespace-nowrap px-6 py-4 text-gray-600 md:mr-0">
                             <Tooltip
                                 content={
                                     isMissingVariables
@@ -204,7 +204,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                                 onClick={() => setShowDeleteConfirmation(true)}
                                 data-testid="delete-influencer-button"
                             >
-                                <DeleteOutline className="ml-6 h-5 w-5 text-gray-300" />
+                                <DeleteOutline className="mr-4 h-5 w-5 text-gray-300 md:ml-6 lg:mr-0" />
                             </button>
                         </td>
                     </>
