@@ -6,6 +6,7 @@ const sequences = {
     inSequence: '序列中',
     ignored: '被忽略',
     totalInfluencers: 'KOL总数',
+    influencerDeleted: 'KOL已成功从序列中删除',
     openRate: '打开率',
     replyRate: '回复率',
     bounceRate: '退信率',
