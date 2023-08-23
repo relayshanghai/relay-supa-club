@@ -1,5 +1,5 @@
 import type { NewSubscriptionPricesGetResponse } from 'pages/api/subscriptions/new-prices';
-import type { SubscriptionPricesGetResponse } from 'pages/api/subscriptions/prices';
+// import type { SubscriptionPricesGetResponse } from 'pages/api/subscriptions/prices';
 import {
     STRIPE_PRICE_MONTHLY_DISCOVERY,
     STRIPE_PRICE_MONTHLY_DIY,
@@ -94,6 +94,12 @@ export const formatPrice = (price: string, currency: string, period: 'monthly' |
             currency: 'USD',
             maximumFractionDigits: 0,
         }).format(roundedPrice);
+    if (currency === 'cny')
+        return new Intl.NumberFormat('cn-Zh', {
+            style: 'currency',
+            currency: 'CNY',
+            maximumFractionDigits: 0,
+        }).format(roundedPrice);
     // not sure what other currencies we will handle and if we can pass them directly to Intl.NumberFormat so this is a placeholder until we know
     return `${roundedPrice} ${currency}`;
 };
@@ -104,23 +110,28 @@ export const usePrices = () => {
     };
     const { data: prices } = useSWR('prices', async () => {
         try {
-            const res = await nextFetch<SubscriptionPricesGetResponse>('subscriptions/prices');
-            const { diy, diyMax } = res;
+            //TODO: turn off for test, turn on before submit
+            // const res = await nextFetch<SubscriptionPricesGetResponse>('subscriptions/prices');
+            // const { diy, diyMax } = res;
             // TODO: get discovery and outreach prices from Stripe prices
             const { discovery, outreach } = await nextFetch<NewSubscriptionPricesGetResponse>(
                 'subscriptions/new-prices',
             );
 
             const monthly = {
-                diy: formatPrice(diy.prices.monthly, diy.currency, 'monthly'),
-                diyMax: formatPrice(diyMax.prices.monthly, diyMax.currency, 'monthly'),
+                // diy: formatPrice(diy.prices.monthly, diy.currency, 'monthly'),
+                // diyMax: formatPrice(diyMax.prices.monthly, diyMax.currency, 'monthly'),
+                diy: '',
+                diyMax: '',
                 free: '$0',
-                discovery: formatPrice(discovery.prices.monthly, discovery.currency, 'monthly'),
-                outreach: formatPrice(outreach.prices.monthly, outreach.currency, 'monthly'),
+                discovery: discovery.prices.monthly,
+                outreach: outreach.prices.monthly,
             };
             const quarterly = {
-                diy: formatPrice(diy.prices.quarterly, diy.currency, 'quarterly'),
-                diyMax: formatPrice(diyMax.prices.quarterly, diyMax.currency, 'quarterly'),
+                // diy: formatPrice(diy.prices.quarterly, diy.currency, 'quarterly'),
+                // diyMax: formatPrice(diyMax.prices.quarterly, diyMax.currency, 'quarterly'),
+                diy: '',
+                diyMax: '',
                 free: '$0',
                 discovery: '',
                 outreach: '',

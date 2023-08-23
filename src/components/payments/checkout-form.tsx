@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
-import { PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import { useStripe, useElements } from '@stripe/react-stripe-js';
 
 export default function CheckoutForm() {
     const stripe = useStripe();
@@ -8,6 +8,38 @@ export default function CheckoutForm() {
 
     const [message, setMessage] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
+
+    useEffect(() => {
+        if (!stripe) {
+            return;
+        }
+
+        const clientSecret = new URLSearchParams(window.location.search).get('payment_intent_client_secret');
+
+        if (!clientSecret) {
+            return;
+        }
+
+        stripe.retrievePaymentIntent(clientSecret).then(({ paymentIntent }) => {
+            if (!paymentIntent) {
+                throw new Error('no payment intent found');
+            }
+            switch (paymentIntent.status) {
+                case 'succeeded':
+                    setMessage('Payment succeeded!');
+                    break;
+                case 'processing':
+                    setMessage('Your payment is processing.');
+                    break;
+                case 'requires_payment_method':
+                    setMessage('Your payment was not successful, please try again.');
+                    break;
+                default:
+                    setMessage('Something went wrong.');
+                    break;
+            }
+        });
+    }, [stripe]);
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -44,7 +76,7 @@ export default function CheckoutForm() {
 
     return (
         <form id="payment-form" onSubmit={(e) => handleSubmit(e)}>
-            <PaymentElement id="payment-element" />
+            {/* <PaymentElement id="payment-element" /> */}
             <button disabled={isLoading || !stripe || !elements} id="submit">
                 <span id="button-text">
                     {isLoading ? (

@@ -1,15 +1,23 @@
 import type { NextApiHandler } from 'next';
+import httpCodes from 'src/constants/httpCodes';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
+import { serverLogger } from 'src/utils/logger-server';
 
 export const getHandler: NextApiHandler = async (req, res) => {
-    // const { items } = req.body;
-    //create a PaymentIntent with the priceId and currency
-    const paymentIntent = await stripeClient.paymentIntents.create({
-        amount: 1000,
-        currency: 'cny',
-        metadata: { integration_check: 'accept_a_payment' },
-    });
-    res.send({
-        clientSecret: paymentIntent.client_secret,
-    });
+    if (req.method === 'POST')
+        try {
+            const paymentIntent = await stripeClient.paymentIntents.create({
+                amount: 299,
+                currency: 'cny',
+                automatic_payment_methods: {
+                    enabled: true,
+                },
+            });
+            res.send({
+                clientSecret: paymentIntent.client_secret,
+            });
+        } catch (err) {
+            serverLogger(err, 'error', true);
+            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({ error: 'unable to create payment intent' });
+        }
 };
