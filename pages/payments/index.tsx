@@ -3,6 +3,6 @@ import { PlanDetails } from 'src/components/payments/plan-details';
 import LoginSignupLayout from 'src/components/SignupLayout';
 
 export default function PaymentPage() {
-    //replace setPriceId with selected price id from pricing section page
+    //pass the selected plan to PlanDetails
     return <LoginSignupLayout left={<PlanDetails />} right={<AddPaymentsSection />} />;
 }

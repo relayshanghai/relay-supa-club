@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { PriceDetailsCard } from '../pricing/price-details-card';
 
 export const PlanDetails = () => {
+    //TODO: how to pass the selected plan to PlanDetails
     const priceTier = 'discovery';
     const { t } = useTranslation();
 

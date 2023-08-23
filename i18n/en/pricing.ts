@@ -21,7 +21,7 @@ const pricing = {
     campaignManagementTool: 'Campaign Management Tool',
     amount_AIGeneratedEmailTemplates: '{{amount}} AI Generated Email Templates',
     fullCustomerService: 'Full Customer Service',
-    boostBotSearchAndNormalSearch: 'BoostBot AI Search and Traditional Search',
+    boostBotSearchAndNormalSearch: 'BoostBot AI Search + Traditional Search',
     personalEmailAccount: '{{amount}} Personalized Email Account',
     amount_EmailsPerMonth: 'Can send emails up to {{amount}} influencers/month',
 
