@@ -1,7 +1,8 @@
 import type { NextApiHandler } from 'next';
-import httpCodes from 'src/constants/httpCodes';
-import { getInvitesByCompany } from 'src/utils/api/db';
-import type { InvitesDB } from 'src/utils/api/db/types';
+import httpCodes from '../../../src/constants/httpCodes';
+import { getInvitesByCompanyCall } from '../../../src/utils/api/db/calls/invites';
+import type { InvitesDB } from '../../../src/utils/api/db/types';
+import { db } from 'src/utils/supabase-client';
 
 export type InvitesGetQueries = {
     /** company id */
@@ -18,7 +19,7 @@ const invites: NextApiHandler = async (req, res) => {
     if (!id) {
         return res.status(httpCodes.BAD_REQUEST).json({});
     }
-    const invites = await getInvitesByCompany(id);
+    const invites = await db(getInvitesByCompanyCall)(id);
     const result: InvitesGetResponse = invites;
 
     return res.status(httpCodes.OK).json(result);

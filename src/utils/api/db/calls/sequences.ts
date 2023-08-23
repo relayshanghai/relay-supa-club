@@ -17,6 +17,7 @@ export const getSequenceByIdCall = (supabaseClient: RelayDatabase) => async (id:
 
 export const updateSequenceCall =
     (supabaseClient: RelayDatabase) => async (update: SequenceUpdate & { id: string }) => {
+        update.updated_at = new Date().toISOString();
         const { data, error } = await supabaseClient
             .from('sequences')
             .update(update)
@@ -34,6 +35,8 @@ export const createSequenceCall = (supabaseClient: RelayDatabase) => async (inse
 };
 
 export const deleteSequenceCall = (supabaseClient: RelayDatabase) => async (id: string) => {
+    const { error: stepDeleteError } = await supabaseClient.from('sequence_steps').delete().eq('sequence_id', id);
+    if (stepDeleteError) throw stepDeleteError;
     const { error } = await supabaseClient.from('sequences').delete().eq('id', id);
     if (error) throw error;
 };

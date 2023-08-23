@@ -137,7 +137,7 @@ const Inputs = () => {
                 <tr>
                     <library.TableInlineInput
                         value={value}
-                        onSubmit={(newValue) => setValue(newValue)}
+                        onSubmit={async (newValue) => setValue(newValue)}
                         textPromptForMissingValue="Enter a value"
                     />
                 </tr>

@@ -21,7 +21,10 @@ import { useUser } from 'src/hooks/use-user';
 
 interface SequenceRowProps {
     sequenceInfluencer: SequenceInfluencer;
-    sequenceEmail?: SequenceEmail;
+    lastEmail?: SequenceEmail;
+    nextEmail?: SequenceEmail;
+    lastStep?: SequenceStep;
+    nextStep?: SequenceStep;
     sequenceSteps: SequenceStep[];
     currentTab: SequenceInfluencer['funnel_status'];
     missingVariables: string[];
@@ -47,7 +50,10 @@ const getStatus = (sequenceEmail: SequenceEmail | undefined) =>
 
 const SequenceRow: React.FC<SequenceRowProps> = ({
     sequenceInfluencer,
-    sequenceEmail,
+    lastEmail,
+    nextEmail,
+    lastStep,
+    nextStep,
     sequenceSteps,
     currentTab,
     missingVariables,
@@ -56,7 +62,6 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
     templateVariables,
     handleStartSequence,
 }) => {
-    const Icon = Icons[getStatus(sequenceEmail) as keyof typeof Icons] || Icons.Default;
     const { influencerSocialProfile } = useInfluencerSocialProfile(sequenceInfluencer.influencer_social_profile_id);
     const { updateSequenceInfluencer, deleteSequenceInfluencer } = useSequenceInfluencers(
         sequenceInfluencer && [sequenceInfluencer.sequence_id],
@@ -68,10 +73,18 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
     const [sendingEmail, setSendingEmail] = useState(false);
 
     const handleEmailUpdate = async (email: string) => {
-        const updatedSequenceInfluencer = await updateSequenceInfluencer({ id: sequenceInfluencer.id, email });
-        setEmail(updatedSequenceInfluencer.email ?? '');
+        try {
+            const updatedSequenceInfluencer = await updateSequenceInfluencer({
+                id: sequenceInfluencer.id,
+                email,
+                company_id: profile?.company_id ?? '', // If updating the email, also pass in the company_id so we can check if the email already exists for this company
+            });
+            setEmail(updatedSequenceInfluencer.email ?? '');
+        } catch (error: any) {
+            toast.error(error?.message ?? 'Something went wrong');
+        }
     };
-    const currentStep = sequenceSteps?.find((step) => step.step_number === sequenceInfluencer.sequence_step);
+
     const handleStart = async () => {
         setSendingEmail(true);
         try {
@@ -88,6 +101,10 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
             toast.error(error?.message ?? '');
         }
         setSendingEmail(false);
+    };
+    const handleDeleteInfluencer = (sequenceInfluencerId: string) => {
+        deleteSequenceInfluencer(sequenceInfluencerId);
+        toast.success(t('sequences.influencerDeleted'));
     };
     return (
         <>
@@ -149,7 +166,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                             })}
                         </td>
 
-                        <td className="flex min-w-min items-center whitespace-nowrap px-6 py-4 text-gray-600">
+                        <td className="mr-4 flex min-w-min items-center justify-start whitespace-nowrap px-6 py-4 text-gray-600 md:mr-0">
                             <Tooltip
                                 content={
                                     isMissingVariables
@@ -182,10 +199,10 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                             </Button>
                             <button
                                 className="min-w-max"
-                                onClick={() => deleteSequenceInfluencer(sequenceInfluencer.id)}
+                                onClick={() => handleDeleteInfluencer(sequenceInfluencer.id)}
                                 data-testid="delete-influencer-button"
                             >
-                                <DeleteOutline className="ml-6 h-5 w-5 text-gray-300" />
+                                <DeleteOutline className="mr-4 h-5 w-5 text-gray-300 md:ml-6 lg:mr-0" />
                             </button>
                         </td>
                     </>
@@ -193,19 +210,19 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                 {currentTab === 'In Sequence' && (
                     <>
                         <td className="whitespace-nowrap px-6 py-4 align-middle font-semibold text-gray-600">
-                            {currentStep?.name}
+                            {lastStep?.name ?? ''}
                         </td>
-                        <div
+                        <td
                             className={`flex w-fit flex-row items-center justify-center gap-2 rounded-lg px-3 py-2 text-center ${
-                                EMAIL_STATUS_STYLES[getStatus(sequenceEmail) || 'Default']
+                                EMAIL_STATUS_STYLES[getStatus(lastEmail || nextEmail) || 'Default']
                             }`}
                         >
-                            {Icon}
-                            {getStatus(sequenceEmail)}
-                        </div>
+                            {Icons[getStatus(lastEmail || nextEmail) as keyof typeof Icons] || Icons.Default}
+                            {getStatus(lastEmail || nextEmail)}
+                        </td>
                         <td className="whitespace-nowrap px-6 py-4 text-gray-600">
-                            {sequenceEmail?.email_send_at &&
-                                new Date(sequenceEmail?.email_send_at).toLocaleDateString(i18n.language, {
+                            {lastEmail?.email_send_at &&
+                                new Date(lastEmail.email_send_at).toLocaleDateString(i18n.language, {
                                     month: 'short',
                                     day: 'numeric',
                                 })}
@@ -214,19 +231,11 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                             <div className="flex">
                                 <button
                                     className="text-primary-600"
-                                    onClick={() =>
-                                        setShowEmailPreview(
-                                            sequenceSteps.filter(
-                                                (step) => sequenceInfluencer?.sequence_step === step.step_number,
-                                            ) || null,
-                                        )
-                                    }
+                                    onClick={() => setShowEmailPreview(nextStep ? [nextStep] : [])}
                                 >
-                                    {sequenceSteps.find(
-                                        (step) => sequenceInfluencer?.sequence_step === step.step_number,
-                                    )?.name ?? '-'}
+                                    {nextStep?.name ?? '-'}
                                 </button>
-                                <button onClick={() => deleteSequenceInfluencer(sequenceInfluencer.id)}>
+                                <button onClick={() => handleDeleteInfluencer(sequenceInfluencer.id)}>
                                     <DeleteOutline
                                         data-testid="delete-influencer-button"
                                         className="ml-3 h-5 w-5 text-gray-300"
@@ -239,8 +248,8 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                 {currentTab === 'Ignored' && (
                     <>
                         <td className="whitespace-nowrap px-6 py-4 text-gray-600">
-                            {sequenceEmail?.email_send_at &&
-                                new Date(sequenceEmail?.email_send_at).toLocaleDateString(i18n.language, {
+                            {lastEmail?.email_send_at &&
+                                new Date(lastEmail.email_send_at).toLocaleDateString(i18n.language, {
                                     month: 'short',
                                     day: 'numeric',
                                 })}
@@ -248,11 +257,11 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                         <td className={`whitespace-nowrap px-6 py-4`}>
                             <div
                                 className={`flex w-fit flex-row items-center justify-center gap-2 rounded-lg px-3 py-2 text-center ${
-                                    EMAIL_STATUS_STYLES[getStatus(sequenceEmail) || 'Default']
+                                    EMAIL_STATUS_STYLES[getStatus(lastEmail) || 'Default']
                                 }`}
                             >
-                                {Icon}
-                                {getStatus(sequenceEmail)}
+                                {Icons[getStatus(lastEmail) as keyof typeof Icons] || Icons.Default}
+                                {getStatus(lastEmail)}
                             </div>
                         </td>
                         {/* TODO */}
