@@ -1,5 +1,6 @@
 import { deleteDB } from 'idb';
 import { cocomelonId, setupIntercepts } from './intercepts';
+import { insertPostIntercept } from './intercepts';
 
 export const randomString = (length = 8) =>
     Math.random()
@@ -9,6 +10,7 @@ export const randomString = (length = 8) =>
 describe('Main pages happy paths', () => {
     beforeEach(async () => {
         await deleteDB('app-cache');
+        setupIntercepts();
     });
     it('Landing page works, has both languages, and links to signup', () => {
         cy.visit('/');
@@ -97,8 +99,6 @@ describe('Main pages happy paths', () => {
         cy.url().should('include', '/dashboard', { timeout: 30000 });
     });
     it('can search for an influencer', () => {
-        setupIntercepts();
-
         cy.loginTestUser();
         // cy.get('input[type="checkbox').uncheck({ force: true }); // turn off the Recommended Only
         // wait for search results
@@ -115,8 +115,6 @@ describe('Main pages happy paths', () => {
         cy.contains('GRTR');
     });
     it('can search for a topic', () => {
-        setupIntercepts();
-
         cy.loginTestUser();
 
         cy.getByTestId('search-topics').within(() => {
@@ -134,8 +132,6 @@ describe('Main pages happy paths', () => {
     });
 
     it('can open analyze page', () => {
-        setupIntercepts();
-
         cy.loginTestUser();
 
         cy.getByTestId(`search-result-row-buttons/${cocomelonId}`).click({
@@ -160,8 +156,6 @@ describe('Main pages happy paths', () => {
     });
 
     it('can use account and pricing pages', () => {
-        setupIntercepts();
-
         cy.loginTestUser();
         cy.contains('My Account').click();
         cy.contains('Subscription', { timeout: 10000 }); // loads account page
@@ -193,8 +187,6 @@ describe('Main pages happy paths', () => {
         cy.contains('button', 'Subscribe').should('not.exist');
     });
     it('can open ai email generator', () => {
-        setupIntercepts();
-
         // not actually testing functionality of the email generator. Just making sure the page opens.
         cy.loginTestUser();
         cy.contains('AI Email Generator').click();
@@ -210,7 +202,6 @@ describe('Main pages happy paths', () => {
     });
 
     it.skip('can open campaigns page and manage campaign influencers', () => {
-        setupIntercepts();
         // list, add, archive campaigns
         // list, add, move, delete campaign influencers
 
@@ -358,7 +349,6 @@ describe('Main pages happy paths', () => {
     });
 
     it('can record search usages, can manage clients as a company owner', () => {
-        setupIntercepts();
         cy.loginAdmin();
 
         cy.contains('My Account').click();
@@ -457,8 +447,6 @@ describe('Main pages happy paths', () => {
     });
     /** works on local... 🤷‍♂️ */
     it.skip('can log out', () => {
-        setupIntercepts();
-
         cy.loginTestUser();
         cy.getByTestId('layout-account-menu').click();
         cy.contains('Log Out').click();
@@ -470,6 +458,7 @@ describe('Main pages happy paths', () => {
     });
     it('Can add post URLs to campaign influencers and see their posts performance updated on the performance page', () => {
         // check 'before' performance page totals
+        insertPostIntercept();
         cy.loginTestUser();
         cy.contains('Performance').click();
         cy.contains('All campaigns', { timeout: 20000 });

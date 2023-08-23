@@ -217,6 +217,15 @@ export const setupIntercepts = () => {
         }
     });
 
+    cy.intercept('post-performance/by-post', {
+        body: postPerformance,
+    });
+    cy.intercept('post-performance/by-campaign', {
+        body: postPerformance,
+    });
+};
+
+export const insertPostIntercept = () => {
     const mockPostData = {
         title: 'initial post title',
         postedDate: new Date('2021-09-01').toISOString(),
@@ -225,6 +234,8 @@ export const setupIntercepts = () => {
     };
 
     cy.intercept('POST', '/api/influencer/posts', async (req) => {
+        const supabase = supabaseClientCypress();
+
         const { data: campaign } = await supabase
             .from('campaigns')
             .select('*')
@@ -264,9 +275,5 @@ export const setupIntercepts = () => {
         await supabase.from('posts_performance').insert(updateData).eq('id', updateData.id).single();
 
         req.reply({ body: { successful: [mockPostData], failed: [] } });
-    });
-
-    cy.intercept('post-performance', {
-        body: postPerformance,
     });
 };
