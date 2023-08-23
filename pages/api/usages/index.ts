@@ -1,7 +1,8 @@
 import type { NextApiHandler } from 'next';
 import httpCodes from '../../../src/constants/httpCodes';
-import { getUsagesByCompany } from '../../../src/utils/api/db';
+import { getUsagesByCompanyCall } from '../../../src/utils/api/db/calls/usages';
 import type { UsageType } from '../../../types';
+import { db } from 'src/utils/supabase-client';
 
 export type UsagesGetQueries = {
     /** company id */
@@ -25,7 +26,7 @@ const usages: NextApiHandler = async (req, res) => {
     if (!id) {
         return res.status(httpCodes.BAD_REQUEST).json({});
     }
-    const usages = await getUsagesByCompany(id, startDate, endDate);
+    const usages = await db(getUsagesByCompanyCall)(id, startDate, endDate);
     const result: UsagesGetResponse = usages;
 
     return res.status(httpCodes.OK).json(result);
