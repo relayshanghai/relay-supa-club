@@ -34,6 +34,10 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     const [filterSteps, setFilterSteps] = useState<CommonStatusType[]>([]);
     const [influencers, setInfluencers] = useState<SequenceInfluencerManagerPage[] | undefined>(sequenceInfluencers);
 
+    useEffect(() => {
+        if (!influencers || influencers.length === 0) setInfluencers(sequenceInfluencers);
+    }, [sequenceInfluencers, influencers]);
+
     const handleStep = useCallback(
         (filters: CommonStatusType[]) => {
             setFilterSteps(filters);
@@ -46,20 +50,13 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                 return;
             }
 
-            const sequenceInfluencerNeeded = sequenceInfluencers.filter((sequenceInfluencer) => {
-                const foundInfluencer = sequenceSteps?.find(
-                    (step) => step.step_number === sequenceInfluencer.sequence_step,
-                )?.name as CommonStatusType;
-                if (!foundInfluencer) {
-                    return false;
-                }
-                filters.includes(foundInfluencer);
-            });
-            if (sequenceInfluencerNeeded.length === 0) {
-                setInfluencers([]);
-                return;
-            }
-            setInfluencers(sequenceInfluencerNeeded);
+            setInfluencers(
+                sequenceInfluencers.filter((x) =>
+                    filters.includes(
+                        sequenceSteps?.find((step) => step.step_number === x.sequence_step)?.name as CommonStatusType,
+                    ),
+                ),
+            );
         },
         [sequenceInfluencers, sequenceSteps],
     );
