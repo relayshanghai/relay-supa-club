@@ -1224,6 +1224,8 @@ export interface Database {
           company_id: string
           created_at: string
           id: string
+          manager_first_name: string | null
+          manager_id: string | null
           name: string
           updated_at: string
         }
@@ -1232,6 +1234,8 @@ export interface Database {
           company_id: string
           created_at?: string
           id?: string
+          manager_first_name?: string | null
+          manager_id?: string | null
           name: string
           updated_at?: string
         }
@@ -1240,6 +1244,8 @@ export interface Database {
           company_id?: string
           created_at?: string
           id?: string
+          manager_first_name?: string | null
+          manager_id?: string | null
           name?: string
           updated_at?: string
         }
@@ -1248,6 +1254,12 @@ export interface Database {
             foreignKeyName: "sequences_company_id_fkey"
             columns: ["company_id"]
             referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sequences_manager_id_fkey"
+            columns: ["manager_id"]
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           }
         ]
