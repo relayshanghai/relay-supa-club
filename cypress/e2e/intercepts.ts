@@ -6,6 +6,7 @@ import keywordSearchMonkeys from '../../src/mocks/api/influencer-search/keywordS
 import topicTensorMock from '../../src/mocks/api/topics/tensor.json';
 import templatesMock from '../../src/mocks/api/email-engine/templates.json';
 import oneTemplateMock from '../../src/mocks/api/email-engine/one-template.json';
+import postPerformance from '../../src/mocks/api/post-performance/by-campaign.json';
 
 import type { InfluencerPostRequest } from 'pages/api/influencer-search';
 import type { SequenceInfluencer, UsagesDBInsert } from 'src/utils/api/db';
@@ -215,10 +216,16 @@ export const setupIntercepts = () => {
             return req.reply({ body: {}, delay: 1000 });
         }
     });
+
+    cy.intercept('/api/post-performance/by-post', {
+        body: postPerformance,
+    });
+    cy.intercept('/api/post-performance/by-campaign', {
+        body: postPerformance,
+    });
 };
 
-export const addPostIntercept = () => {
-    const supabase = supabaseClientCypress();
+export const insertPostIntercept = () => {
     const mockPostData = {
         title: 'initial post title',
         postedDate: new Date('2021-09-01').toISOString(),
@@ -227,6 +234,8 @@ export const addPostIntercept = () => {
     };
 
     cy.intercept('POST', '/api/influencer/posts', async (req) => {
+        const supabase = supabaseClientCypress();
+
         const { data: campaign } = await supabase
             .from('campaigns')
             .select('*')

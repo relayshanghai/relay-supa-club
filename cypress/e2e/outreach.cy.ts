@@ -14,6 +14,23 @@ describe('outreach', () => {
         setupIntercepts();
         cy.loginTestUser();
     });
+    it('can create new sequence', () => {
+        cy.contains('Sequences').click();
+        cy.contains('New sequence', { timeout: 10000 }).click();
+        cy.get('input[placeholder="Enter a name for your sequence"]').type("New Sequence Test");
+        cy.contains('button','Create new sequence').click();
+        cy.contains('New Sequence Test').click();
+        cy.contains('button', 'Update template variables').click();
+        cy.get('input[id="template-variable-input-productName"]').clear().type('Test Product');
+        cy.contains('button', 'Update variables').click();
+        cy.contains('The values you see here are what will be used to automatically customize the actual email content of your sequence emails!').should('not.exist');
+        cy.contains('Template variables updated');
+        cy.contains('Sequences').click();
+        cy.contains('tr', 'New Sequence Test').contains('Test Product');
+        //cleanup
+        cy.getByTestId('delete-sequence:New Sequence Test').click();
+        cy.contains('tr', 'New Sequence Test').should('not.exist');
+    })
     it('sequence page', () => {
         cy.contains('Sequences').click();
         cy.contains('General collaboration', { timeout: 10000 }).click();
@@ -102,6 +119,7 @@ describe('outreach', () => {
         // can delete influencer
         cy.contains('Charlie Charles');
         cy.getByTestId('delete-influencer-button').eq(2).click();
+        cy.contains('Influencer successfully deleted from sequence')
         cy.contains('Charlie Charles').should('not.exist');
 
         // send sequence is disabled if missing template variables
