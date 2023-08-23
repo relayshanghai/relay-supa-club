@@ -215,10 +215,7 @@ export const setupIntercepts = () => {
             return req.reply({ body: {}, delay: 1000 });
         }
     });
-};
 
-export const addPostIntercept = () => {
-    const supabase = supabaseClientCypress();
     const mockPostData = {
         title: 'initial post title',
         postedDate: new Date('2021-09-01').toISOString(),

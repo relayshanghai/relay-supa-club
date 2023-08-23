@@ -1,6 +1,5 @@
 import { deleteDB } from 'idb';
-import { addPostIntercept, cocomelonId, setupIntercepts } from './intercepts';
-import { featEmail } from 'src/constants/feature-flags';
+import { cocomelonId, setupIntercepts } from './intercepts';
 
 export const randomString = (length = 8) =>
     Math.random()
@@ -470,7 +469,6 @@ describe('Main pages happy paths', () => {
         cy.get('input[type="email"]').should('have.value', Cypress.env('TEST_USER_EMAIL_COMPANY_OWNER'));
     });
     it('Can add post URLs to campaign influencers and see their posts performance updated on the performance page', () => {
-        addPostIntercept();
         // check 'before' performance page totals
         cy.loginTestUser();
         cy.contains('Performance').click();
