@@ -180,7 +180,7 @@ const Tabs = () => {
     );
 };
 
-const SelectMultipleDropdowns = () => {
+export const SelectMultipleDropdowns = () => {
     const [selectedOptions, setSelectedOptions] = useState<library.CommonStatusType[]>([]);
 
     const options = {

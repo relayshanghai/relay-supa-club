@@ -43,8 +43,8 @@ export const EMAIL_STATUS_STYLES = {
 
 export const EMAIL_STEPS = {
     Outreach: {},
-    '1st Follow-Up': {},
-    '2nd Follow-Up': {},
-    '3rd Follow-Up': {},
-    '4th Follow-Up': {},
+    '1st Follow-up': {},
+    '2nd Follow-up': {},
+    '3rd Follow-up': {},
+    '4th Follow-up': {},
 };

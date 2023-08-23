@@ -46,13 +46,20 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                 return;
             }
 
-            setInfluencers(
-                sequenceInfluencers.filter((x) =>
-                    filters.includes(
-                        sequenceSteps?.find((step) => step.step_number === x.sequence_step)?.name as CommonStatusType,
-                    ),
-                ),
-            );
+            const sequenceInfluencerNeeded = sequenceInfluencers.filter((sequenceInfluencer) => {
+                const foundInfluencer = sequenceSteps?.find(
+                    (step) => step.step_number === sequenceInfluencer.sequence_step,
+                )?.name as CommonStatusType;
+                if (!foundInfluencer) {
+                    return false;
+                }
+                filters.includes(foundInfluencer);
+            });
+            if (sequenceInfluencerNeeded.length === 0) {
+                setInfluencers([]);
+                return;
+            }
+            setInfluencers(sequenceInfluencerNeeded);
         },
         [sequenceInfluencers, sequenceSteps],
     );
@@ -176,7 +183,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                     </Button>
                 </div>
                 <SequenceStats
-                    totalInfluencers={influencers?.length || 0}
+                    totalInfluencers={influencers?.length ?? 0}
                     openRate={
                         (sequenceEmails?.filter(
                             (email) =>

@@ -735,21 +735,21 @@ BEGIN
 
   _sequence_step_follow_up_1 := create_sequence_steps(
     _sequence_general.id,
-    '1st Follow-Up',
+    '1st Follow-up',
     'AAABiYsMUIAAAAAD',
     1,
     24
   );
   _sequence_step_follow_up_2 := create_sequence_steps(
     _sequence_general.id,
-    '2nd Follow-Up',
+    '2nd Follow-up',
     'AAABieM0bMMAAAAE',
     2,
     48
   );
   _sequence_step_follow_up_3 := create_sequence_steps(
     _sequence_general.id,
-    '3rd Follow-Up',
+    '3rd Follow-up',
     'AAABieM1AhgAAAAF',
     3,
     72
