@@ -51,7 +51,7 @@ export const PriceCard = ({
 
     const handleUpgradeClicked = () => {
         if (featNewPricing()) {
-            router.push('/payments');
+            router.push(`/payments?plan=${priceTier}`);
         } else {
             openConfirmModal(priceTier, period, PRICE_IDS[period][priceTier]);
         }
