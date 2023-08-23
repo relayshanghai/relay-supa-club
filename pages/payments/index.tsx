@@ -4,5 +4,5 @@ import LoginSignupLayout from 'src/components/SignupLayout';
 
 export default function PaymentPage() {
     //pass the selected plan to PlanDetails
-    return <LoginSignupLayout left={<PlanDetails />} right={<AddPaymentsSection />} />;
+    return <LoginSignupLayout leftBgColor="bg-white" left={<PlanDetails />} right={<AddPaymentsSection />} />;
 }

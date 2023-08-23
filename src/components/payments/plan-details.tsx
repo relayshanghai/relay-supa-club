@@ -7,7 +7,7 @@ export const PlanDetails = () => {
     const { t } = useTranslation();
 
     return (
-        <div className="flex h-[450px] max-w-sm flex-col rounded-md bg-white p-6">
+        <div className="flex h-[450px] max-w-sm flex-col rounded-lg border-2 border-gray-300 bg-white p-6">
             <h1 className="relative mt-10 w-fit text-4xl font-semibold text-gray-800">
                 {t(`pricing.${priceTier}.title`)}
                 <p className="absolute -right-12 top-0 mr-2 text-sm font-semibold text-pink-500">{t('pricing.beta')}</p>
