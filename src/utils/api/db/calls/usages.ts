@@ -4,7 +4,7 @@ import { supabase } from 'src/utils/supabase-client';
 import { unixEpochToISOString } from 'src/utils/utils';
 import type { UsageType } from 'types';
 import { getSubscription } from '../../stripe/helpers';
-import type { UsagesDBInsert } from '../types';
+import type { RelayDatabase, UsagesDBInsert } from '../types';
 import { updateCompanySubscriptionStatus } from './company';
 import { getCurrentMonthPeriod } from 'src/utils/usagesHelpers';
 
@@ -42,6 +42,7 @@ const handleCurrentPeriodExpired = async (companyId: string) => {
     return { subscription_current_period_start, subscription_current_period_end };
 };
 
+// eslint-disable-next-line complexity
 const recordUsage = async ({
     type,
     startDate,
@@ -218,23 +219,24 @@ export const recordAiEmailGeneratorUsage = async (company_id: string, user_id: s
     });
 };
 
-export const getUsagesByCompany = async (companyId: string, startDate?: string, endDate?: string) => {
-    if (!startDate || !endDate) {
-        const { data, error } = await supabase.from('usages').select('type, created_at').eq('company_id', companyId);
+export const getUsagesByCompanyCall =
+    (db: RelayDatabase) => async (companyId: string, startDate?: string, endDate?: string) => {
+        if (!startDate || !endDate) {
+            const { data, error } = await db.from('usages').select('type, created_at').eq('company_id', companyId);
+            if (error) {
+                throw new Error(error.message);
+            }
+            return data;
+        }
+
+        const { data, error } = await supabase
+            .from('usages')
+            .select('type, created_at')
+            .eq('company_id', companyId)
+            .gt('created_at', startDate)
+            .lte('created_at', endDate);
         if (error) {
             throw new Error(error.message);
         }
         return data;
-    }
-
-    const { data, error } = await supabase
-        .from('usages')
-        .select('type, created_at')
-        .eq('company_id', companyId)
-        .gt('created_at', startDate)
-        .lte('created_at', endDate);
-    if (error) {
-        throw new Error(error.message);
-    }
-    return data;
-};
+    };
