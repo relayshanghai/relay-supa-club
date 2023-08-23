@@ -27,7 +27,7 @@ export const SequencesPage = () => {
                 showCreateSequenceModal={showCreateSequenceModal}
                 setShowCreateSequenceModal={setShowCreateSequenceModal}
             />
-            <div className="flex flex-col space-y-4 p-4">
+            <div className="flex flex-col space-y-4 p-6">
                 <div className="flex w-full">
                     <h1 className="mr-4 self-center text-2xl font-semibold text-gray-800">
                         {t('sequences.sequences')}
