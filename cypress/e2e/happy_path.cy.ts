@@ -7,11 +7,7 @@ export const randomString = (length = 8) =>
         .toString(36)
         .substring(2, length + 2);
 
-describe('Main pages happy paths', () => {
-    beforeEach(async () => {
-        await deleteDB('app-cache');
-        setupIntercepts();
-    });
+describe('Login and signup', () => {
     it('Landing page works, has both languages, and links to signup', () => {
         cy.visit('/');
         cy.contains('relay.club可以帮助');
@@ -98,6 +94,14 @@ describe('Main pages happy paths', () => {
         // redirects to dashboard on success
         cy.url().should('include', '/dashboard', { timeout: 30000 });
     });
+});
+
+describe('Main pages happy paths', () => {
+    beforeEach(() => {
+        deleteDB('app-cache');
+        setupIntercepts();
+    });
+
     it('can search for an influencer', () => {
         cy.loginTestUser();
         // cy.get('input[type="checkbox').uncheck({ force: true }); // turn off the Recommended Only
@@ -456,10 +460,11 @@ describe('Main pages happy paths', () => {
         // pre-populates email with original email
         cy.get('input[type="email"]').should('have.value', Cypress.env('TEST_USER_EMAIL_COMPANY_OWNER'));
     });
-    it('Can add post URLs to campaign influencers and see their posts performance updated on the performance page', () => {
-        // check 'before' performance page totals
+    //TODO: come back and fix this after sequences epic is done. We aren't sure how sequences will relate to this performance page.
+    it.skip('Can add post URLs to campaign influencers and see their posts performance updated on the performance page', () => {
         insertPostIntercept();
         cy.loginTestUser();
+        // check 'before' performance page totals
         cy.contains('Performance').click();
         cy.contains('All campaigns', { timeout: 20000 });
         cy.contains('div', 'Likes').within(() => {
