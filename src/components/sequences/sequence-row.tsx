@@ -196,7 +196,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                             <button
                                 className="min-w-max"
                                 onClick={() => deleteSequenceInfluencer(sequenceInfluencer.id)}
-                                data-testid="delete-influencer-button"
+                                data-testid={`delete-influencer-button`}
                             >
                                 <DeleteOutline className="ml-6 h-5 w-5 text-gray-300" />
                             </button>

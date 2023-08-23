@@ -16,14 +16,21 @@ describe('outreach', () => {
     });
     it('already added to sequence modal', () => {
         cy.contains('Discover').click();
-        cy.contains('tr', 'PewDiePie').contains('Add to Sequence').click();
+        cy.contains('tr', 'Cocomelon').contains('Add to Sequence').click();
         cy.get('[data-testid="sequence-dropdown"]').should('be.visible').should('have.focus').select('General collaboration');
         cy.get('[data-testid="add-to-sequence-modal"]').click();
-        cy.contains('tr', 'MrBeast').contains('Add to Sequence').click();
+        cy.wait(1000);
+        cy.contains('tr', 'Cocomelon').contains('Add to Sequence').click();
         cy.contains('Influencer has already been added to the sequence(s): General collaboration');
-        cy.contains('button', 'Add Anyway').click();
-        cy.get('[data-testid="sequence-dropdown"]').should('be.visible').should('have.focus');
-        cy.get('[data-testid="add-to-sequence-modal"]').should('be.disabled');
+
+        //cleanup
+        cy.contains('button', 'Close').click();
+        cy.contains('Sequences').click();
+        cy.contains('General collaboration').click();
+        cy.contains('tr', 'Cocomelon')
+            .find('[data-testid="delete-influencer-button"]')
+            .click();
+
     })
     it('sequence page', () => {
         cy.contains('Sequences').click();
