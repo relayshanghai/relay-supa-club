@@ -217,10 +217,10 @@ export const setupIntercepts = () => {
         }
     });
 
-    cy.intercept('post-performance/by-post', {
+    cy.intercept('/api/post-performance/by-post', {
         body: postPerformance,
     });
-    cy.intercept('post-performance/by-campaign', {
+    cy.intercept('/api/post-performance/by-campaign', {
         body: postPerformance,
     });
 };
