@@ -1,7 +1,7 @@
 import type { NextApiHandler } from 'next';
-import httpCodes from 'src/constants/httpCodes';
-import { getInvitesByCompany } from 'src/utils/api/db';
-import type { InvitesDB } from 'src/utils/api/db/types';
+import httpCodes from '../../../src/constants/httpCodes';
+import { getInvitesByCompany } from '../../../src/utils/api/db';
+import type { InvitesDB } from '../../../src/utils/api/db/types';
 
 export type InvitesGetQueries = {
     /** company id */
