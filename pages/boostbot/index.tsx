@@ -4,10 +4,11 @@ import { useTranslation } from 'react-i18next';
 import type { UserProfile, CreatorAccount } from 'types';
 import { Layout } from 'src/components/layout';
 import { Chat } from 'src/components/boostbot/chat';
-import { InfluencersTable } from 'src/components/boostbot/influencer-table';
 import { dummyData, reportExample } from 'src/components/boostbot/dummy-data';
 import { useBoostbot } from 'src/hooks/use-boostbot';
 import { clientLogger } from 'src/utils/logger-client';
+import { columns } from 'src/components/boostbot/table/columns';
+import { InfluencersTable } from 'src/components/boostbot/table/influencers-table';
 
 export type Influencer = UserProfile | CreatorAccount;
 
@@ -15,7 +16,6 @@ const Boostbot = () => {
     const { t } = useTranslation();
     const { unlockInfluencers } = useBoostbot();
 
-    const [loadingInfluencerIds, setLoadingInfluencerIds] = useState<string[]>([]);
     const [influencers, setInfluencers] = useState<Influencer[]>([
         { ...reportExample.user_profile },
         ...dummyData.map((result) => ({
@@ -51,9 +51,11 @@ const Boostbot = () => {
                 </div>
 
                 <InfluencersTable
-                    influencers={influencers}
-                    handleUnlockInfluencer={handleUnlockInfluencer}
-                    loadingInfluencerIds={loadingInfluencerIds}
+                    columns={columns}
+                    data={influencers}
+                    selectedInfluencers={selectedInfluencers}
+                    setSelectedInfluencers={setSelectedInfluencers}
+                    meta={{ handleUnlockInfluencer, translation: t }}
                 />
             </div>
         </Layout>

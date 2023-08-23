@@ -1,12 +1,14 @@
 const boostbot = {
-    platform: 'Platform',
     account: 'Account',
-    posts: 'Posts',
-    stats: 'Stats',
+    details: 'Details',
     email: 'Email',
     followers: 'Followers',
-    engagementRate: 'Engagement Rate',
+    unlockInfluencer: 'Unlock influencer',
     unlockingInfluencerError: 'Unlocking influencer failed',
+    noResults: 'No results',
+    outreach: 'Outreach',
+    selectAll: 'Select all',
+    selectRow: 'Select row',
 };
 
 export default boostbot;
