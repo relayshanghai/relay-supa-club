@@ -39,10 +39,10 @@ const sequences = {
     steps: {
         filter: 'Filter by current step',
         Outreach: 'Outreach',
-        '1st Follow Up': '1st Follow Up',
-        '2nd Follow Up': '2nd Follow Up',
-        '3rd Follow Up': '3rd Follow Up',
-        '4th Follow Up': '4th Follow Up',
+        '1st Follow-Up': '1st Follow-Up',
+        '2nd Follow-Up': '2nd Follow-Up',
+        '3rd Follow-Up': '3rd Follow-Up',
+        '4th Follow-Up': '4th Follow-Up',
     },
     status: {
         Scheduled: 'Scheduled',

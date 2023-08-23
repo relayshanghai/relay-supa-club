@@ -40,10 +40,10 @@ const sequences = {
     steps: {
         filter: '按KOL联络进展筛选',
         Outreach: '首封外联邮件',
-        '1st Follow Up': '第一次跟进',
-        '2nd Follow Up': '第二次跟进',
-        '3rd Follow Up': '第三次跟进',
-        '4th Follow Up': '第四次跟进',
+        '1st Follow-Up': '第一次跟进',
+        '2nd Follow-Up': '第二次跟进',
+        '3rd Follow-Up': '第三次跟进',
+        '4th Follow-Up': '第四次跟进',
     },
     status: {
         Scheduled: '邮件已预约',
