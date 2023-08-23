@@ -6,6 +6,7 @@ import keywordSearchMonkeys from '../../src/mocks/api/influencer-search/keywordS
 import topicTensorMock from '../../src/mocks/api/topics/tensor.json';
 import templatesMock from '../../src/mocks/api/email-engine/templates.json';
 import oneTemplateMock from '../../src/mocks/api/email-engine/one-template.json';
+import postPerformance from '../../src/mocks/api/post-performance/by-campaign.json';
 
 import type { InfluencerPostRequest } from 'pages/api/influencer-search';
 import type { SequenceInfluencer, UsagesDBInsert } from 'src/utils/api/db';
@@ -263,5 +264,9 @@ export const setupIntercepts = () => {
         await supabase.from('posts_performance').insert(updateData).eq('id', updateData.id).single();
 
         req.reply({ body: { successful: [mockPostData], failed: [] } });
+    });
+
+    cy.intercept('post-performance', {
+        body: postPerformance,
     });
 };
