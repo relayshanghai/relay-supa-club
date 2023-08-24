@@ -5,6 +5,7 @@ import { Button } from '../button';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 import { useCompany } from 'src/hooks/use-company';
+import toast from 'react-hot-toast';
 
 export default function CheckoutForm() {
     const stripe = useStripe();
@@ -48,16 +49,16 @@ export default function CheckoutForm() {
             }
             switch (paymentIntent.status) {
                 case 'succeeded':
-                    setMessage('Payment succeeded!');
+                    toast('Payment succeeded!');
                     break;
                 case 'processing':
                     setMessage('Your payment is processing.');
                     break;
                 case 'requires_payment_method':
-                    setMessage('Your payment was not successful, please try again.');
+                    toast('Your payment was not successful, please try again.');
                     break;
                 default:
-                    setMessage('Something went wrong.');
+                    toast('Something went wrong.');
                     break;
             }
         });
@@ -66,7 +67,23 @@ export default function CheckoutForm() {
     const handleSubmit = async () => {
         if (!stripe || !elements || !company?.cus_id || !company.id) return;
         setIsLoading(true);
+
+        const { error } = await stripe.confirmPayment({
+            elements,
+            confirmParams: {
+                // Make sure to change this to your payment completion page
+                return_url: 'http://localhost:3000/account',
+            },
+        });
+
+        if (error.type === 'card_error' || error.type === 'validation_error') {
+            setMessage(error.message || 'card or validation error.');
+        } else {
+            setMessage('An unexpected error occurred.');
+        }
+
         //TODO: update subscription when submit
+        setIsLoading(false);
     };
 
     return (
@@ -77,6 +94,7 @@ export default function CheckoutForm() {
                     setFormReady(e.complete);
                 }}
             />
+
             <Button
                 disabled={isLoading || !stripe || !elements || !formReady}
                 id="submit"

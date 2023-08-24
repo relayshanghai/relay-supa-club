@@ -36,7 +36,7 @@ export const AddPaymentsSection = ({ priceTier }: { priceTier: newActiveSubscrip
         setLoading(true);
         try {
             const body = {
-                amount: parseInt(selectedPrice.prices.monthly),
+                amount: parseInt(selectedPrice.prices.monthly) * 100, //zeroDecimal see https://stripe.com/docs/currencies#zero-decimal
                 currency: selectedPrice.currency,
             };
             const data = await nextFetch('subscriptions/create-payment-intent', { method: 'POST', body });
@@ -54,7 +54,12 @@ export const AddPaymentsSection = ({ priceTier }: { priceTier: newActiveSubscrip
 
     const options: StripeElementsOptions = {
         clientSecret,
-        appearance: { theme: 'stripe' },
+        appearance: {
+            theme: 'stripe',
+            variables: {
+                colorPrimary: '#8B5CF6', //primary-500 see tailwind.config.js
+            },
+        },
         locale: i18n.language.includes('en') ? 'en' : 'zh',
     };
 
