@@ -26,11 +26,13 @@ const Boostbot = () => {
     useEffect(() => {
         const chatwoot = (window as WindowChatwoot).$chatwoot;
         if (chatwoot) {
-            chatwoot.toggleBubbleVisibility('hide');
+            try {
+                chatwoot.toggleBubbleVisibility('hide');
 
-            return () => {
-                chatwoot.toggleBubbleVisibility('show');
-            };
+                return () => {
+                    chatwoot.toggleBubbleVisibility('show');
+                };
+            } catch {}
         }
     }, []);
 
