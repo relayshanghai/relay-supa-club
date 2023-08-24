@@ -14,7 +14,13 @@ export type GetRelevantTopicsBody = z.input<typeof GetRelevantTopicsBody>;
 export type GetRelevantTopicsResponse = { relevantTopics: string[] };
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
-    const { topics, platform } = req.body;
+    const result = GetRelevantTopicsBody.safeParse(req.body);
+
+    if (!result.success) {
+        return res.status(httpCodes.BAD_REQUEST).json(result.error.format());
+    }
+
+    const { topics, platform } = result.data;
     const relevantTopics = await getBulkRelevantTopicTags(topics, { limit: 10, platform });
 
     return res.status(httpCodes.OK).json({ relevantTopics });

@@ -1,5 +1,6 @@
 import { Configuration, OpenAIApi } from 'openai';
 import { RelayError } from 'src/utils/api-handler';
+import { serverLogger } from 'src/utils/logger-server';
 
 const configuration = new Configuration({
     apiKey: process.env.OPENAI_API_KEY,
@@ -29,6 +30,7 @@ Only respond with a comma separated list of 10 tags.`;
         .map((topic) => topic.trim());
 
     if (!topics) {
+        serverLogger(chatCompletion, 'error');
         throw new RelayError('No topics returned from OpenAI');
     }
 

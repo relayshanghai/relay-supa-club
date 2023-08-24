@@ -12,7 +12,13 @@ export type GetTopicsBody = z.input<typeof GetTopicsBody>;
 export type GetTopicsResponse = { topics: string[] };
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
-    const topics = await getTopics(req.body.productDescription);
+    const result = GetTopicsBody.safeParse(req.body);
+
+    if (!result.success) {
+        return res.status(httpCodes.BAD_REQUEST).json(result.error.format());
+    }
+
+    const topics = await getTopics(result.data.productDescription);
 
     return res.status(httpCodes.OK).json({ topics });
 };

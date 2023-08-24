@@ -40,9 +40,7 @@ export const useBoostbot = () => {
                     );
                 });
 
-                const influencersResult = await Promise.all(influencersPromises);
-
-                return influencersResult;
+                return await Promise.all(influencersPromises);
             } catch (error) {
                 clientLogger(error, 'error');
                 throw error;
@@ -53,14 +51,11 @@ export const useBoostbot = () => {
 
     const performFetch = async <T, B>(endpoint: string, body: B): Promise<T> => {
         try {
-            const response = await nextFetch<T>(`boostbot/${endpoint}`, {
-                method: 'POST',
-                body,
-            });
+            const response = await nextFetch<T>(`boostbot/${endpoint}`, { method: 'POST', body });
 
             // TODO: remove log when done testing
             // eslint-disable-next-line no-console
-            console.log('endpoint :>> ', response);
+            console.log('endpoint, response :>> ', endpoint, response);
             return response;
         } catch (error) {
             clientLogger(error, 'error');

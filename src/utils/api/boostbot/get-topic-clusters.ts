@@ -1,5 +1,6 @@
 import { Configuration, OpenAIApi } from 'openai';
 import { RelayError } from 'src/utils/api-handler';
+import { serverLogger } from 'src/utils/logger-server';
 
 const configuration = new Configuration({
     apiKey: process.env.OPENAI_API_KEY,
@@ -45,8 +46,10 @@ Available tags: [${topics.map((topic) => `"${topic}"`).join(', ')}]`;
             .replace(/,\s*]/g, ']') // remove trailing commas
             .replace(/,\s*}/g, '}'); // remove trailing commas
         const topicClusters = JSON.parse(fixedString);
+
         return topicClusters;
-    } catch (e: any) {
-        throw new RelayError('Invalid topic clusters response from OpenAI', e);
+    } catch (error: any) {
+        serverLogger(error, 'error');
+        throw new RelayError('Invalid topic clusters response from OpenAI');
     }
 };
