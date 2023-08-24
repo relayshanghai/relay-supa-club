@@ -40,10 +40,10 @@ export const useSequence = (sequenceId?: string) => {
         if (!profile?.company_id) throw new Error('No profile found');
         try {
             const insert: SequenceInsert = {
-                company_id: profile?.company_id,
+                company_id: profile.company_id,
                 name: sequenceName,
                 auto_start: false,
-                manager_id: profile?.id,
+                manager_id: profile.id,
                 manager_first_name: profile.first_name,
             };
             const res = await createSequenceDBCall(insert);
