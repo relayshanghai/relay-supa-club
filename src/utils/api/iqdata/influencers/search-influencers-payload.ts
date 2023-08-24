@@ -125,6 +125,13 @@ export const audience_gender = z.object({
     weight: z.number().optional(),
 });
 
+// prettier-ignore
+const lang_code_enum = z.enum(["en", "es", "pt", "fr", "ar", "ru", "it", "de", "fa", "id", "tr", "ja", "pl", "th", "zh", "hi", "ms", "uk", "ko", "nl", "arz", "ne", "az", "pa", "gu", "sv", "kk", "he", "ro", "ckb", "cs", "vi", "ur", "mr", "ky", "hu", "el", "ml", "bn", "ca", "fi", "no", "da", "bg", "sr", "sw", "hr", "sq", "tl", "sk", "ta", "sh", "sl", "ps", "mk", "km", "kn", "hy", "uz", "gl", "ce", "af", "azb", "lt", "ceb", "si", "et", "tg", "tt", "as", "pnb", "ka", "bs", "lv", "lo", "te", "am", "my", "mn", "is", "sah", "mzn", "ku", "sd", "or", "gd", "fy", "so", "be", "war", "als", "mhr", "ie", "ba", "tk", "ia", "nds", "jv", "dv", "jbo", "ug", "gn", "bo", "nap", "ilo", "mg", "su", "ga", "io", "lez", "min", "ht", "kw", "bh", "new", "yue", "ast", "mai", "yi", "cv", "pms", "hsb", "sa", "sco", "bar", "xmf", "pam", "xh", "krc", "lrc", "zu", "bpy", "wuu", "rw", "mrj", "gv", "os", "cbk", "eml", "lmo", "gom", "myv", "rm", "li", "scn", "kv", "bcl", "bxr", "av", "vep", "sc", "xal", "tyv", "nah", "diq", "mwl", "yo", "dty", "vec", "vls", "dsb", "pfl", "co", "frr", "rue"]);
+
+const lang = z.object({
+    code: lang_code_enum,
+});
+
 export const views = z.object({
     left_number: z.number().optional(),
     right_number: z.number().optional(),
@@ -213,11 +220,14 @@ export const filter = z
         audience_gender: audience_gender.optional(),
         with_contact: with_contact.array().optional(),
         actions: actions.array().optional(),
+        lang: lang.optional(),
     });
+
+export const platform_enum = z.enum(['instagram', 'youtube', 'tiktok']).default('youtube');
 
 export const query = z.object({
     auto_unhide: z.number().or(z.boolean()).default(1),
-    platform: z.string().default('youtube'),
+    platform: platform_enum,
 });
 
 export const body = z.object({
@@ -238,5 +248,7 @@ export const SearchInfluencersPayload = z
         body: body.optional(),
     })
     .passthrough();
+
+export type SearchInfluencersPayload = z.infer<typeof SearchInfluencersPayload>;
 
 export type SearchInfluencersTextTagsFilter = z.infer<typeof text_tags>;
