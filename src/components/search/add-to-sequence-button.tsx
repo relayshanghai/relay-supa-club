@@ -55,27 +55,31 @@ export const AddToSequenceButton = ({
                     <span className="">{t('creators.addToSequence')}</span>
                 </Button>
             )}
-            <InfluencerAlreadyAddedSequenceModal
-                visible={showAlreadyAddedSequenceModal}
-                onClose={() => {
-                    if (setShowMenu) {
-                        setShowMenu(false);
-                    }
-                    setShowAlreadyAddedSequenceModal(false);
-                }}
-                alreadyAddedSequence={alreadyAddedSequence?.sequenceName || ''}
-            />
-            <AddToSequenceModal
-                show={showAddToSequenceModal}
-                setShow={(show) => {
-                    if (setShowMenu) {
-                        setShowMenu(show);
-                    }
-                    setShowAddToSequenceModal(show);
-                }}
-                creatorProfile={creatorProfile}
-                platform={platform}
-            />
+            {showAlreadyAddedSequenceModal && (
+                <InfluencerAlreadyAddedSequenceModal
+                    visible={showAlreadyAddedSequenceModal}
+                    onClose={() => {
+                        if (setShowMenu) {
+                            setShowMenu(false);
+                        }
+                        setShowAlreadyAddedSequenceModal(false);
+                    }}
+                    alreadyAddedSequence={alreadyAddedSequence?.sequenceName || ''}
+                />
+            )}
+            {showAddToSequenceModal && (
+                <AddToSequenceModal
+                    show={showAddToSequenceModal}
+                    setShow={(show) => {
+                        if (setShowMenu) {
+                            setShowMenu(show);
+                        }
+                        setShowAddToSequenceModal(show);
+                    }}
+                    creatorProfile={creatorProfile}
+                    platform={platform}
+                />
+            )}
         </>
     );
 };
