@@ -23,7 +23,7 @@ export const useAllSequenceInfluencersIqDataIdAndSequenceName = () => {
     );
     const allSequenceInfluencersIqDataIdsAndSequenceNames: AllSequenceInfluencersIqDataIdsAndSequenceNames[] =
         data?.map((influencer) => ({
-            iqdata_id: influencer.iqdata_id ?? '',
+            iqdata_id: influencer.iqdata_id,
             sequenceName: influencer.sequences?.name,
         })) ?? [];
     return {
