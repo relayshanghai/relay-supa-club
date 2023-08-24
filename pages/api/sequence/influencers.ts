@@ -1,16 +1,16 @@
 import type { NextApiHandler } from 'next';
-import httpCodes from 'src/constants/httpCodes';
-import { ApiHandler } from 'src/utils/api-handler';
-import { type SequenceInfluencer } from 'src/utils/api/db';
-import { getSequenceInfluencers } from 'src/utils/api/db/calls/get-sequence-influencers';
+import httpCodes from '../../../src/constants/httpCodes';
+import { ApiHandler } from '../../../src/utils/api-handler';
+import { type SequenceInfluencer } from '../../../src/utils/api/db';
+import { getSequenceInfluencers } from '../../../src/utils/api/db/calls/get-sequence-influencers';
 
 export type SequenceInfluencerManagerPage = SequenceInfluencer & {
-    name?: string | null;
-    manager_first_name?: string;
-    username?: string;
-    avatar_url?: string | null;
-    url?: string;
-    platform?: string;
+    name: string;
+    manager_first_name: string;
+    username: string;
+    avatar_url: string | null;
+    url: string;
+    platform: string;
 };
 
 const postHandler: NextApiHandler = async (req, res) => {
