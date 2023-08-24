@@ -5,7 +5,6 @@ import { Button } from '../button';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 import { useCompany } from 'src/hooks/use-company';
-// import { useSubscription } from 'src/hooks/use-subscription';
 
 export default function CheckoutForm() {
     const stripe = useStripe();
@@ -13,21 +12,12 @@ export default function CheckoutForm() {
     const router = useRouter();
     const { t } = useTranslation();
     const { company } = useCompany();
-    // const { subscription } = useSubscription();
 
     const [message, setMessage] = useState<string | null>(null);
     const [success, _setSuccess] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [formReady, setFormReady] = useState(false);
     const [redirect, _setRedirect] = useState(false);
-
-    // const handleSuccess = useCallback(() => {
-    //     setSuccess(true);
-    //     setIsLoading(false);
-    //     setRedirect(true);
-    //     // Set success, and then wait for a second before redirecting to account page.
-    //     // This can allow some time for the button to show the success state.
-    // }, []);
 
     useEffect(() => {
         let timer: any;

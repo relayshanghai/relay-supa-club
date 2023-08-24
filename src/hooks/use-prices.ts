@@ -1,5 +1,5 @@
 import type { NewSubscriptionPricesGetResponse } from 'pages/api/subscriptions/new-prices';
-// import type { SubscriptionPricesGetResponse } from 'pages/api/subscriptions/prices';
+import type { SubscriptionPricesGetResponse } from 'pages/api/subscriptions/prices';
 import {
     STRIPE_PRICE_MONTHLY_DISCOVERY,
     STRIPE_PRICE_MONTHLY_DIY,
@@ -94,12 +94,6 @@ export const formatPrice = (price: string, currency: string, period: 'monthly' |
             currency: 'USD',
             maximumFractionDigits: 0,
         }).format(roundedPrice);
-    if (currency === 'cny')
-        return new Intl.NumberFormat('cn-Zh', {
-            style: 'currency',
-            currency: 'CNY',
-            maximumFractionDigits: 0,
-        }).format(roundedPrice);
     // not sure what other currencies we will handle and if we can pass them directly to Intl.NumberFormat so this is a placeholder until we know
     return `${roundedPrice} ${currency}`;
 };
@@ -110,28 +104,18 @@ export const usePrices = () => {
     };
     const { data: prices } = useSWR('prices', async () => {
         try {
-            //TODO: turn off for test, turn on before submit
-            // const res = await nextFetch<SubscriptionPricesGetResponse>('subscriptions/prices');
-            // const { diy, diyMax } = res;
-            // TODO: get discovery and outreach prices from Stripe prices
-            const { discovery, outreach } = await nextFetch<NewSubscriptionPricesGetResponse>(
-                'subscriptions/new-prices',
-            );
-
+            const res = await nextFetch<SubscriptionPricesGetResponse>('subscriptions/prices');
+            const { diy, diyMax } = res;
             const monthly = {
-                // diy: formatPrice(diy.prices.monthly, diy.currency, 'monthly'),
-                // diyMax: formatPrice(diyMax.prices.monthly, diyMax.currency, 'monthly'),
-                diy: '',
-                diyMax: '',
+                diy: formatPrice(diy.prices.monthly, diy.currency, 'monthly'),
+                diyMax: formatPrice(diyMax.prices.monthly, diyMax.currency, 'monthly'),
                 free: '$0',
-                discovery: discovery.prices.monthly,
-                outreach: outreach.prices.monthly,
+                discovery: '299',
+                outreach: '880',
             };
             const quarterly = {
-                // diy: formatPrice(diy.prices.quarterly, diy.currency, 'quarterly'),
-                // diyMax: formatPrice(diyMax.prices.quarterly, diyMax.currency, 'quarterly'),
-                diy: '',
-                diyMax: '',
+                diy: formatPrice(diy.prices.quarterly, diy.currency, 'quarterly'),
+                diyMax: formatPrice(diyMax.prices.quarterly, diyMax.currency, 'quarterly'),
                 free: '$0',
                 discovery: '',
                 outreach: '',
@@ -147,4 +131,34 @@ export const usePrices = () => {
         }
     });
     return prices ? prices : pricesBlank;
+};
+
+//current create a new use hook for new prices as the old one are not found in the test mode of our Stripe account, they were in another Stripe account which was a legacy issue
+export const useNewPrices = () => {
+    const pricesBlank = {
+        discovery: {
+            currency: 'cny',
+            prices: { monthly: '299' },
+            profiles: '',
+            searches: '',
+            priceIds: { monthly: '' },
+        },
+        outreach: {
+            currency: 'cny',
+            prices: { monthly: '800' },
+            profiles: '',
+            searches: '',
+            priceIds: { monthly: '' },
+        },
+    };
+
+    const { data: newPrices } = useSWR('new-prices', async () => {
+        try {
+            const newPrices = await nextFetch<NewSubscriptionPricesGetResponse>('subscriptions/new-prices');
+            return newPrices;
+        } catch (error) {
+            clientLogger(error, 'error');
+        }
+    });
+    return newPrices ? newPrices : pricesBlank;
 };
