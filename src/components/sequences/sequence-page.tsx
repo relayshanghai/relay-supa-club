@@ -23,7 +23,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     const { t } = useTranslation();
 
     const { sequence, sendSequence, sequenceSteps, updateSequence } = useSequence(sequenceId);
-    const { sequenceInfluencers, refreshSequenceInfluencers } = useSequenceInfluencers(sequence && [sequenceId]);
+    const { sequenceInfluencers } = useSequenceInfluencers(sequence && [sequenceId]);
     const { sequenceEmails } = useSequenceEmails(sequenceId);
     const { templateVariables } = useTemplateVariables(sequenceId);
     const missingVariables = templateVariables
@@ -35,10 +35,8 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     const [influencers, setInfluencers] = useState<SequenceInfluencerManagerPage[] | undefined>(sequenceInfluencers);
 
     useEffect(() => {
-        if (!influencers || (influencers.length === 0 && filterSteps.length === 0)) {
-            setInfluencers(sequenceInfluencers);
-        }
-    }, [sequenceInfluencers, influencers, refreshSequenceInfluencers, filterSteps]);
+        setInfluencers(sequenceInfluencers);
+    }, [sequenceInfluencers]);
 
     const handleStep = useCallback(
         (filters: CommonStatusType[]) => {
