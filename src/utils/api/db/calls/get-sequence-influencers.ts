@@ -1,12 +1,12 @@
-import { getInfluencerSocialProfileByIdCall as getInfluencerSocialProfileById } from 'src/utils/api/db/calls/influencers';
-import { getSequenceInfluencersBySequenceIdCall as getSequenceInfluencersBySequenceId } from 'src/utils/api/db/calls/sequence-influencers';
+import { getInfluencerSocialProfileByIdCall as getInfluencerSocialProfileById } from '../../../../utils/api/db/calls/influencers';
+import { getSequenceInfluencersBySequenceIdCall as getSequenceInfluencersBySequenceId } from '../../../../utils/api/db/calls/sequence-influencers';
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
 import type { DatabaseWithCustomTypes } from 'types';
-import type { ServerContext } from 'src/utils/api/iqdata';
+import type { ServerContext } from '../../../../utils/api/iqdata';
 import { type SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { getSequenceByIdCall } from './sequences';
-import { db } from 'src/utils/supabase-client';
-import { serverLogger } from 'src/utils/logger-server';
+import { db } from '../../../../utils/supabase-client';
+import { serverLogger } from '../../../../utils/logger-server';
 
 export const getSequenceInfluencers = async (ctx: ServerContext, sequenceId: string) => {
     const supabase = createServerSupabaseClient<DatabaseWithCustomTypes>(ctx);
