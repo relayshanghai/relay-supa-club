@@ -13,6 +13,7 @@ export interface AddToSequenceButtonProps {
     allSequenceInfluencersIqDataIdsAndSequenceNames: AllSequenceInfluencersIqDataIdsAndSequenceNames[];
     creatorProfile: CreatorAccount;
     platform: CreatorPlatform;
+    setShowMenu?: (show: boolean) => void;
 }
 
 export const AddToSequenceButton = ({
@@ -21,6 +22,7 @@ export const AddToSequenceButton = ({
     allSequenceInfluencersIqDataIdsAndSequenceNames,
     creatorProfile,
     platform,
+    setShowMenu,
 }: AddToSequenceButtonProps) => {
     const { t } = useTranslation();
     const [showAlreadyAddedSequenceModal, setShowAlreadyAddedSequenceModal] = useState(false);
@@ -55,12 +57,22 @@ export const AddToSequenceButton = ({
             )}
             <InfluencerAlreadyAddedSequenceModal
                 visible={showAlreadyAddedSequenceModal}
-                onClose={() => setShowAlreadyAddedSequenceModal(false)}
+                onClose={() => {
+                    if (setShowMenu) {
+                        setShowMenu(false);
+                    }
+                    setShowAlreadyAddedSequenceModal(false);
+                }}
                 alreadyAddedSequence={alreadyAddedSequence?.sequenceName || ''}
             />
             <AddToSequenceModal
                 show={showAddToSequenceModal}
-                setShow={setShowAddToSequenceModal}
+                setShow={(show) => {
+                    if (setShowMenu) {
+                        setShowMenu(show);
+                    }
+                    setShowAddToSequenceModal(show);
+                }}
                 creatorProfile={creatorProfile}
                 platform={platform}
             />

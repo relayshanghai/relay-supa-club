@@ -105,7 +105,7 @@ export const AddToSequenceModal = ({
                 setShow(false);
             }}
         >
-            <div>
+            <div onClick={(e) => e.stopPropagation()}>
                 <div className="space-y-4 p-6">
                     <div>
                         <div className="mb-2 font-semibold text-gray-800">{t('creators.sequence')}</div>
