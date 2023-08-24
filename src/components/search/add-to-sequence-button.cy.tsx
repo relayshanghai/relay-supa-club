@@ -2,7 +2,6 @@
 // @ts-check
 import React from 'react';
 import { testMount } from '../../utils/cypress-app-wrapper';
-import { worker } from '../../mocks/browser';
 import type { AddToSequenceButtonProps } from './add-to-sequence-button';
 import { AddToSequenceButton } from './add-to-sequence-button';
 import type * as types from '../../../types';
@@ -20,9 +19,6 @@ const props: AddToSequenceButtonProps = {
 };
 
 describe('<AddToSequenceButton />', () => {
-    before(async () => {
-        worker.start();
-    });
     it('shows add to sequence modal if creator profile user_id does not match list of already added sequence influencers', () => {
         testMount(<AddToSequenceButton {...props} />);
         cy.contains('button', 'Add to sequence').click();
