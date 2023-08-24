@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import useAboveScreenWidth from 'src/hooks/use-above-screen-width';
 import EmailOutline from './icons/EmailOutline';
 import { useUser } from 'src/hooks/use-user';
-import { Compass, FourSquare, Account, Team, PieChart, Guide, Send, Engagements, ProfilePlus } from './icons';
+import { Compass, FourSquare, Account, Team, Guide, Send, Engagements, ProfilePlus, BarGraph } from './icons';
 import { Title } from './title';
 import { useTranslation } from 'react-i18next';
 import { featEmail } from 'src/constants/feature-flags';
@@ -51,7 +51,7 @@ const ActiveLink = ({ href, children }: { href: string; children: ReactNode }) =
 
             {href === links.admin && <Team height={18} width={18} className="mr-4 stroke-inherit" />}
 
-            {href === links.performance && <PieChart height={18} width={18} className="mr-4 stroke-inherit" />}
+            {href === links.performance && <BarGraph height={18} width={18} className="mr-4 stroke-inherit" />}
 
             {href === links.guide && <Guide height={18} width={18} className="mr-4 stroke-inherit" />}
 
@@ -73,14 +73,14 @@ const NavBarInner = ({ loggedIn, isRelayEmployee }: { loggedIn: boolean | null; 
             </div>
             <div className="mt-8 flex flex-col space-y-4">
                 <ActiveLink href={links.discover}>{t('navbar.discover')}</ActiveLink>
-                <ActiveLink href={links.campaigns}>{t('navbar.campaigns')}</ActiveLink>
-                <ActiveLink href={links.aiEmailGenerator}>{t('navbar.aiEmailGenerator')}</ActiveLink>
-                <ActiveLink href={links.performance}>{t('navbar.performance')}</ActiveLink>
-                {loggedIn && <ActiveLink href="/account">{t('navbar.account')}</ActiveLink>}
-                <ActiveLink href="/guide">{t('navbar.guide')}</ActiveLink>
                 {featEmail() && <ActiveLink href={links.sequences}>{t('navbar.sequences')}</ActiveLink>}
                 {featEmail() && <ActiveLink href={links.inbox}>{t('navbar.inbox')}</ActiveLink>}
                 {featEmail() && <ActiveLink href={links.influencerManager}>{t('navbar.influencerManager')}</ActiveLink>}
+                {!featEmail() && <ActiveLink href={links.campaigns}>{t('navbar.campaigns')}</ActiveLink>}
+                <ActiveLink href={links.performance}>{t('navbar.performance')}</ActiveLink>
+                <ActiveLink href={links.aiEmailGenerator}>{t('navbar.aiEmailGenerator')}</ActiveLink>
+                <ActiveLink href="/guide">{t('navbar.guide')}</ActiveLink>
+                {loggedIn && <ActiveLink href="/account">{t('navbar.account')}</ActiveLink>}
             </div>
             {isRelayEmployee && (
                 <div className="mt-8 flex flex-col space-y-4">
