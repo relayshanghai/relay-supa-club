@@ -577,6 +577,7 @@ export interface Database {
           influencer_id: string
           name: string | null
           platform: string
+          recent_post_url: string | null
           recent_video_title: string | null
           reference_id: string
           url: string
@@ -590,6 +591,7 @@ export interface Database {
           influencer_id: string
           name?: string | null
           platform: string
+          recent_post_url?: string | null
           recent_video_title?: string | null
           reference_id: string
           url: string
@@ -603,6 +605,7 @@ export interface Database {
           influencer_id?: string
           name?: string | null
           platform?: string
+          recent_post_url?: string | null
           recent_video_title?: string | null
           reference_id?: string
           url?: string
