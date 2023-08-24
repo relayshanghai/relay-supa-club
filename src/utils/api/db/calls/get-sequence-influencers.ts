@@ -1,10 +1,9 @@
-import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
+import { type SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { getInfluencerSocialProfileByIdCall as getInfluencerSocialProfileById } from 'src/utils/api/db/calls/influencers';
-import { getSequenceInfluencersBySequenceIdCall as getSequenceInfluencersBySequenceId } from 'src/utils/api/db/calls/sequence-influencers';
+import { getSequenceInfluencerByIdCall, getSequenceInfluencersBySequenceIdCall as getSequenceInfluencersBySequenceId } from 'src/utils/api/db/calls/sequence-influencers';
 import type { RelayDatabase, SequenceInfluencersTable } from '../types';
 import { getAddressByInfluencer } from './addresses';
 import { getProfileByIdCall as getProfileById } from './profiles';
-import { getSequenceInfluencerByIdCall } from './sequence-influencers';
 
 // @note gets sequence influencers by sequence
 export const getSequenceInfluencers = (db: RelayDatabase) => async (sequenceId: string) => {
@@ -12,7 +11,7 @@ export const getSequenceInfluencers = (db: RelayDatabase) => async (sequenceId: 
     const queries = influencers.map(getSequenceInfluencer(db));
 
     return Promise.all(queries);
-};
+}
 
 export const getSequenceInfluencer =
     (db: RelayDatabase) =>
