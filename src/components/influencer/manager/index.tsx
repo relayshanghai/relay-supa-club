@@ -7,13 +7,14 @@ import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { useCallback, useEffect, useState } from 'react';
 import Fuse from 'fuse.js';
 import { useUser } from 'src/hooks/use-user';
-import { type FunnelStatus } from 'src/utils/api/db';
+import type { FunnelStatus } from 'src/utils/api/db';
 import { type MultipleDropdownObject } from 'src/components/library';
 import { COLLAB_OPTIONS } from '../constants';
 import { ProfileOverlayScreen } from 'src/components/influencer-profile/screens/profile-overlay-screen';
 import { useTranslation } from 'react-i18next';
 import { useUiState } from 'src/components/influencer-profile/screens/profile-screen-context';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
+import { filterByMe } from './helpers';
 
 const Manager = () => {
     const { sequences } = useSequences();
@@ -36,14 +37,7 @@ const Manager = () => {
 
     const handleRowClick = useCallback(
         (influencer: SequenceInfluencerManagerPage) => {
-            setInfluencer({
-                username: 'TastyChef',
-                name: "D'Jon Curtis",
-                // @todo platform needed in influencer type
-                // platform: 'instagram',
-                avatar_url: 'https://api.dicebear.com/6.x/open-peeps/svg?seed=TastyChef&size=96',
-                ...influencer,
-            });
+            setInfluencer(influencer);
 
             setUiState((s) => {
                 return { ...s, isProfileOverlayOpen: true };
@@ -102,7 +96,7 @@ const Manager = () => {
     const handleOnlyMe = useCallback(
         (state: boolean) => {
             setOnlyMe(!onlyMe);
-            if (!sequenceInfluencers) {
+            if (!sequenceInfluencers || !profile || !sequences) {
                 return;
             }
 
@@ -111,9 +105,9 @@ const Manager = () => {
                 return;
             }
 
-            setInfluencers(sequenceInfluencers.filter((x) => x.manager_first_name === profile?.first_name));
+            setInfluencers(filterByMe(sequenceInfluencers, profile, sequences));
         },
-        [sequenceInfluencers, profile, onlyMe],
+        [onlyMe, sequenceInfluencers, profile, sequences],
     );
 
     const handleStatus = useCallback(
