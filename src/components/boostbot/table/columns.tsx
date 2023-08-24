@@ -198,10 +198,11 @@ export const columns: ColumnDef<Influencer>[] = [
             // />
             return (
                 <button
+                    className="flex h-6 w-6"
                     onClick={removeInfluencer}
                     aria-label={table.options.meta?.translation('boostbot.removeInfluencer')}
                 >
-                    <XMarkIcon className="h-6 w-6 fill-red-300 transition-all hover:scale-105 hover:fill-red-400" />
+                    <XMarkIcon className="h-full w-full flex-shrink-0 fill-red-300 transition-all hover:scale-105 hover:fill-red-400" />
                 </button>
             );
         },
