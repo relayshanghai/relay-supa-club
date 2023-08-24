@@ -28,20 +28,20 @@ export const AddToSequenceModal = ({
     const { sequences } = useSequences();
     const { socialProfile, report } = useReport({ platform, creator_id: creatorProfile.user_id || '' });
 
-    const [selectedSequence, setSelectedSequence] = useState<Sequence | null>(sequences?.[0] ?? null);
+    const [sequence, setSequence] = useState<Sequence | null>(sequences?.[0] ?? null);
     const [loading, setLoading] = useState<boolean>(false);
     const [socialProfileId, setSocialProfileId] = useState(() => socialProfile?.id ?? null);
-    const { sendSequence } = useSequence(selectedSequence?.id);
+    const { sendSequence } = useSequence(sequence?.id);
     const { refresh: refreshSequenceInfluencers } = useAllSequenceInfluencersIqDataIdAndSequenceName();
 
-    const { createSequenceInfluencer } = useSequenceInfluencers(selectedSequence ? [selectedSequence.id] : []);
+    const { createSequenceInfluencer } = useSequenceInfluencers(sequence ? [sequence.id] : []);
 
     const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         if (!sequences) {
             return;
         }
         const selectedSequenceObject = sequences?.find((sequence) => sequence.name === e.target.value) ?? null;
-        setSelectedSequence(selectedSequenceObject);
+        setSequence(selectedSequenceObject);
     };
 
     // get the top 3 tags from relevant_tags of the report, then pass it to tags of sequence influencer
@@ -54,7 +54,7 @@ export const AddToSequenceModal = ({
     }, [report]);
 
     const handleAddToSequence = useCallback(async () => {
-        if (!selectedSequence) {
+        if (!sequence) {
             throw new Error('Missing selectedSequence');
         }
         if (!creatorProfile.user_id) {
@@ -71,7 +71,7 @@ export const AddToSequenceModal = ({
                 );
                 refreshSequenceInfluencers();
 
-                if (sequenceInfluencer.email && selectedSequence.auto_start) {
+                if (sequenceInfluencer.email && sequence.auto_start) {
                     await sendSequence([sequenceInfluencer]);
                 }
                 toast.success(t('creators.addToSequenceSuccess'));
@@ -87,7 +87,7 @@ export const AddToSequenceModal = ({
         createSequenceInfluencer,
         creatorProfile.user_id,
         getRelevantTags,
-        selectedSequence,
+        sequence,
         sendSequence,
         setShow,
         socialProfileId,
@@ -109,44 +109,42 @@ export const AddToSequenceModal = ({
                 setShow(false);
             }}
         >
-            <div onClick={(e) => e.stopPropagation()}>
-                <div className="space-y-4 p-6">
-                    <div>
-                        <div className="mb-2 font-semibold text-gray-800">{t('creators.sequence')}</div>
-                        <select
-                            data-testid="sequence-dropdown"
-                            onChange={(e) => handleSelectChange(e)}
-                            value={selectedSequence?.name}
-                            className="-ml-1 mr-2.5 w-full cursor-pointer appearance-none rounded-md border border-gray-200 p-2 font-medium text-gray-500 outline-none  focus:border-primary-500 focus:ring-primary-500"
-                        >
-                            {(!sequences || sequences.length === 0) && <option>{t('creators.noSequence')}</option>}
-                            {sequences?.map((sequence) => (
-                                <option key={sequence.id}>{sequence.name}</option>
-                            ))}
-                        </select>
-                    </div>
+            <div className="space-y-4 p-6">
+                <div>
+                    <div className="mb-2 font-semibold text-gray-800">{t('creators.sequence')}</div>
+                    <select
+                        data-testid="sequence-dropdown"
+                        onChange={(e) => handleSelectChange(e)}
+                        value={sequence?.name}
+                        className="-ml-1 mr-2.5 w-full cursor-pointer appearance-none rounded-md border border-gray-200 p-2 font-medium text-gray-500 outline-none  focus:border-primary-500 focus:ring-primary-500"
+                    >
+                        {(!sequences || sequences.length === 0) && <option>{t('creators.noSequence')}</option>}
+                        {sequences?.map((sequence) => (
+                            <option key={sequence.id}>{sequence.name}</option>
+                        ))}
+                    </select>
+                </div>
 
-                    <div className="flex items-start rounded-md bg-primary-50 p-4">
-                        <Info className="mr-4 mt-1 h-6 w-6 flex-none text-primary-500" />
-                        <div className="text-primary-500">
-                            {t('creators.addToSequenceNotes')} {new Date().toLocaleDateString(i18n.language)}{' '}
-                        </div>
+                <div className="flex items-start rounded-md bg-primary-50 p-4">
+                    <Info className="mr-4 mt-1 h-6 w-6 flex-none text-primary-500" />
+                    <div className="text-primary-500">
+                        {t('creators.addToSequenceNotes')} {new Date().toLocaleDateString(i18n.language)}{' '}
                     </div>
                 </div>
-                <div className="flex justify-end space-x-3 p-6">
-                    <Button variant="secondary" onClick={() => setShow(false)}>
-                        {t('creators.cancel')}
+            </div>
+            <div className="flex justify-end space-x-3 p-6">
+                <Button variant="secondary" onClick={() => setShow(false)}>
+                    {t('creators.cancel')}
+                </Button>
+                {loading ? (
+                    <Button>
+                        <Spinner className="h-5 w-5 fill-primary-500 text-white" />
                     </Button>
-                    {loading ? (
-                        <Button>
-                            <Spinner className="h-5 w-5 fill-primary-500 text-white" />
-                        </Button>
-                    ) : (
-                        <Button onClick={handleAddToSequence} type="submit">
-                            {t('creators.addToSequence')}
-                        </Button>
-                    )}
-                </div>
+                ) : (
+                    <Button onClick={handleAddToSequence} type="submit">
+                        {t('creators.addToSequence')}
+                    </Button>
+                )}
             </div>
         </Modal>
     );
