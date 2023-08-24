@@ -144,6 +144,7 @@ const sequences = {
     emailPreview: 'Email preview',
     number_emailsSuccessfullyScheduled: '{{number}} emails successfully scheduled to send',
     number_emailsFailedToSchedule: 'Failed to submit {{number}} emails to send',
+    influencerAlreadyAdded_sequence: 'Influencer has already been added to sequence: {{sequence}} ',
 };
 
 export default sequences;

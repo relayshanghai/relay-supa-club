@@ -24,13 +24,16 @@ import { SearchLoadMoreResults } from 'src/utils/analytics/events';
 import { SEARCH_RESULT_ROW } from 'src/utils/rudderstack/event-names';
 import type { track } from './use-track-event';
 
+import type { AllSequenceInfluencersIqDataIdsAndSequenceNames } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
+import { AddToSequenceButton } from './add-to-sequence-button';
+
 export interface SearchResultRowProps {
     creator: CreatorSearchAccountObject;
     setSelectedCreator: (creator: CreatorSearchAccountObject) => void;
     setShowCampaignListModal: (show: boolean) => void;
     setShowAlreadyAddedModal: (show: boolean) => void;
-    setShowSequenceListModal: (show: boolean) => void;
     allCampaignCreators?: CampaignCreatorBasicInfo[];
+    allSequenceInfluencersIqDataIdsAndSequenceNames?: AllSequenceInfluencersIqDataIdsAndSequenceNames[];
     trackSearch?: track;
 }
 export interface MoreResultsRowsProps extends Omit<SearchResultRowProps, 'creator'> {
@@ -42,8 +45,8 @@ export const MoreResultsRows = ({
     setShowCampaignListModal,
     setSelectedCreator,
     setShowAlreadyAddedModal,
-    setShowSequenceListModal,
     allCampaignCreators,
+    allSequenceInfluencersIqDataIdsAndSequenceNames,
     trackSearch,
 }: MoreResultsRowsProps) => {
     const { t } = useTranslation();
@@ -103,7 +106,9 @@ export const MoreResultsRows = ({
                         setSelectedCreator={setSelectedCreator}
                         setShowAlreadyAddedModal={setShowAlreadyAddedModal}
                         allCampaignCreators={allCampaignCreators}
-                        setShowSequenceListModal={setShowSequenceListModal}
+                        allSequenceInfluencersIqDataIdsAndSequenceNames={
+                            allSequenceInfluencersIqDataIdsAndSequenceNames
+                        }
                     />
                 ))}
             </>
@@ -119,8 +124,8 @@ export const SearchResultRow = ({
     setShowCampaignListModal,
     setSelectedCreator,
     allCampaignCreators,
+    allSequenceInfluencersIqDataIdsAndSequenceNames,
     setShowAlreadyAddedModal,
-    setShowSequenceListModal,
 }: SearchResultRowProps) => {
     const { t } = useTranslation();
     const { platform, recommendedInfluencers } = useSearch();
@@ -161,11 +166,6 @@ export const SearchResultRow = ({
             setShowCampaignListModal(true);
         }
         trackEvent(SEARCH_RESULT_ROW('add to campaign'), { platform, user_id });
-    };
-
-    const addToSequence = () => {
-        setSelectedCreator(creator);
-        setShowSequenceListModal(true);
     };
 
     const desktop = useAboveScreenWidth(500);
@@ -245,10 +245,13 @@ export const SearchResultRow = ({
                     </Link>
 
                     {featEmail() ? (
-                        <Button onClick={addToSequence} className="flex items-center gap-1">
-                            <PlusCircleIcon className="w-5" />
-                            <span className="">{t('creators.addToSequence')}</span>
-                        </Button>
+                        <AddToSequenceButton
+                            creatorProfile={creator.account.user_profile}
+                            allSequenceInfluencersIqDataIdsAndSequenceNames={
+                                allSequenceInfluencersIqDataIdsAndSequenceNames ?? []
+                            }
+                            platform={platform}
+                        />
                     ) : (
                         <Button
                             onClick={addToCampaign}
@@ -274,14 +277,15 @@ export const SearchResultRow = ({
                                 {featEmail() ? (
                                     <Menu.Item>
                                         {({ active }) => (
-                                            <button
-                                                className={`${
-                                                    active ? 'bg-violet-500 text-white' : 'text-gray-900'
-                                                } group flex w-full items-center justify-center rounded-md px-2 py-2 text-sm`}
-                                                onClick={addToSequence}
-                                            >
-                                                {t('creators.addToSequence')}
-                                            </button>
+                                            <AddToSequenceButton
+                                                inMenu
+                                                active={active}
+                                                creatorProfile={creator.account.user_profile}
+                                                allSequenceInfluencersIqDataIdsAndSequenceNames={
+                                                    allSequenceInfluencersIqDataIdsAndSequenceNames ?? []
+                                                }
+                                                platform={platform}
+                                            />
                                         )}
                                     </Menu.Item>
                                 ) : (

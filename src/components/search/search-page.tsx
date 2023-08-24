@@ -25,8 +25,8 @@ import { SearchAddToCampaign, SearchDefault } from 'src/utils/analytics/events';
 import { Search } from 'src/utils/analytics/events';
 import { SEARCH_RESULT } from 'src/utils/rudderstack/event-names';
 import { useTrackEvent } from './use-track-event';
-import { AddToSequenceModal } from '../modal-add-to-sequence';
-import { featEmail } from 'src/constants/feature-flags';
+
+import { SequenceInfluencersIqDataIdAndSequenceName } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
 // import { featRecommended } from 'src/constants/feature-flags';
 
 export const SearchPageInner = () => {
@@ -49,10 +49,10 @@ export const SearchPageInner = () => {
     } = useSearch();
     const [filterModalOpen, setShowFiltersModal] = useState(false);
     const [showCampaignListModal, setShowCampaignListModal] = useState(false);
-    const [showSequenceListModal, setShowSequenceListModal] = useState(false);
     const [selectedCreator, setSelectedCreator] = useState<CreatorSearchAccountObject | null>(null);
     const { campaigns } = useCampaigns({});
     const { allCampaignCreators } = useAllCampaignCreators(campaigns);
+    const { allSequenceInfluencersIqDataIdsAndSequenceNames } = SequenceInfluencersIqDataIdAndSequenceName();
     const { trackEvent } = useRudderstack();
 
     const [page, setPage] = useState(0);
@@ -203,8 +203,8 @@ export const SearchPageInner = () => {
                 setSelectedCreator={setSelectedCreator}
                 setShowCampaignListModal={setShowCampaignListModal}
                 setShowAlreadyAddedModal={setShowAlreadyAddedModal}
-                setShowSequenceListModal={setShowSequenceListModal}
                 allCampaignCreators={allCampaignCreators}
+                allSequenceInfluencersIqDataIdsAndSequenceNames={allSequenceInfluencersIqDataIdsAndSequenceNames}
                 loading={resultsLoading}
                 validating={isValidating}
                 results={firstPageSearchResults}
@@ -218,7 +218,6 @@ export const SearchPageInner = () => {
                                 setSelectedCreator={setSelectedCreator}
                                 setShowCampaignListModal={setShowCampaignListModal}
                                 setShowAlreadyAddedModal={setShowAlreadyAddedModal}
-                                setShowSequenceListModal={setShowSequenceListModal}
                                 allCampaignCreators={allCampaignCreators}
                                 trackSearch={track}
                             />
@@ -236,17 +235,6 @@ export const SearchPageInner = () => {
                 >
                     {t('creators.loadMore')}
                 </Button>
-            )}
-
-            {featEmail() && (
-                <AddToSequenceModal
-                    show={showSequenceListModal}
-                    setShow={setShowSequenceListModal}
-                    selectedCreator={{
-                        ...selectedCreator?.account.user_profile,
-                    }}
-                    platform={platform}
-                />
             )}
 
             <AddToCampaignModal
@@ -275,6 +263,7 @@ export const SearchPageInner = () => {
                 campaigns={campaigns}
                 allCampaignCreators={allCampaignCreators}
             />
+
             <SearchFiltersModal show={filterModalOpen} setShow={setShowFiltersModal} onSearch={handleSearch} />
         </div>
     );

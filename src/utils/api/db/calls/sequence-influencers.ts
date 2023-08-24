@@ -26,6 +26,17 @@ export const getSequenceInfluencersByCompanyIdCall = (supabaseClient: RelayDatab
     return data;
 };
 
+export const getSequenceInfluencersIqDataIdAndSequenceNameBySequenceIdCall =
+    (supabaseClient: RelayDatabase) => async (sequenceIds: string[]) => {
+        const { data, error } = await supabaseClient
+            .from('sequence_influencers')
+            .select('iqdata_id, sequences(name)')
+            .in('sequence_id', sequenceIds);
+
+        if (error) throw error;
+        return data;
+    };
+
 export const getSequenceInfluencerByEmailAndCompanyCall =
     (supabaseClient: RelayDatabase) => async (email: string, companyId?: string | null) => {
         const { data, error } = await supabaseClient
