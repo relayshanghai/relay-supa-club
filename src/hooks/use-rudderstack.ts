@@ -1,7 +1,7 @@
-import type { apiObject } from 'rudder-sdk-js';
-import type { ProfileDB } from 'src/utils/api/db';
-import { rudderInitialized } from 'src/utils/rudder-initialize';
 import { useCallback } from 'react';
+import type { apiObject } from 'rudder-sdk-js';
+import type { ProfileDB, ProfilesTable } from 'src/utils/api/db';
+import { rudderInitialized } from 'src/utils/rudder-initialize';
 
 //There are more traits properties, but we only need these for now. Ref: https://www.rudderstack.com/docs/event-spec/standard-events/identify/#identify-traits
 export interface IdentityTraits extends apiObject {
@@ -22,11 +22,31 @@ export interface PageProperties extends apiObject {
     search?: string;
 }
 
+export const profileToIdentifiable = (profile: ProfilesTable['Row']) => {
+    const { id, email, first_name, last_name, company_id, user_role } = profile;
+    const traits = {
+        email: email || '',
+        firstName: first_name,
+        lastName: last_name,
+        userRole: user_role || '',
+        company: {
+            id: company_id || '',
+        },
+    };
+
+    return { id, traits };
+}
+
 export const useRudderstack = () => {
     const identifyUser = useCallback(async (userId: string, traits: IdentityTraits) => {
         if (!window.rudder) {
             await rudderInitialized();
         }
+
+        if (window.rudder.getUserId() === userId) {
+            return;
+        }
+
         window.rudder.identify(userId, traits);
     }, []);
 
@@ -53,18 +73,9 @@ export const useRudderstack = () => {
 
     const identifyFromProfile = useCallback(
         (profile: ProfileDB) => {
-            if (profile) {
-                const { id, email, first_name, last_name, company_id, user_role } = profile;
-                identifyUser(id, {
-                    email: email || '',
-                    firstName: first_name,
-                    lastName: last_name,
-                    userRole: user_role || '',
-                    company: {
-                        id: company_id || '',
-                    },
-                });
-            }
+            if (!profile) return;
+            const { id, traits } = profileToIdentifiable(profile)
+            identifyUser(id, traits);
         },
         [identifyUser],
     );

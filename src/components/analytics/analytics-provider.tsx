@@ -1,16 +1,13 @@
-import type { Session } from '@supabase/auth-helpers-react';
-import { useSessionContext } from '@supabase/auth-helpers-react';
+import { Session, useSessionContext, useSupabaseClient } from '@supabase/auth-helpers-react';
 import type { AnalyticsInstance, AnalyticsPlugin } from 'analytics';
 import { Analytics } from 'analytics';
 import type { PropsWithChildren } from 'react';
-import { useContext } from 'react';
-import { createContext } from 'react';
-import { useEffect } from 'react';
-import { useState } from 'react';
-import { AnalyticsProvider as BaseAnalyticsProvider } from 'use-analytics';
+import { createContext, useContext, useEffect, useState } from 'react';
+import { profileToIdentifiable } from 'src/hooks/use-rudderstack';
 import { useSession } from 'src/hooks/use-session';
-import { SupabasePlugin } from '../../utils/analytics/plugins/analytics-plugin-supabase';
 import { createTrack } from 'src/utils/analytics/analytics';
+import { AnalyticsProvider as BaseAnalyticsProvider } from 'use-analytics';
+import { SupabasePlugin } from '../../utils/analytics/plugins/analytics-plugin-supabase';
 
 export const AnalyticsContext = createContext<
     | {
@@ -42,7 +39,7 @@ type AnalyticsProviderProps = PropsWithChildren;
 export const AnalyticsProvider = ({ children }: AnalyticsProviderProps) => {
     const { supabaseClient: client } = useSessionContext();
 
-    const { session } = useSession();
+    const { session, profile } = useSession();
 
     const [analytics] = useState(() => initAnalytics([SupabasePlugin({ client })]));
 
@@ -54,12 +51,19 @@ export const AnalyticsProvider = ({ children }: AnalyticsProviderProps) => {
             analytics.identify(session.user.id);
         }
 
+        if (profile !== null) {
+            const { id, traits } = profileToIdentifiable(profile)
+            // console.log("[rudderstack] identify", id, traits)
+            window.rudder.identify(id, traits)
+            // console.log(">", window.rudder.getUserId(), window.rudder.getUserTraits())
+        }
+
         if (session === null) {
             // @todo do not reset since it clears anon id
             //       should we track users after logging out?
             // analytics.reset();
         }
-    }, [session, analytics]);
+    }, [session, profile, analytics]);
 
     return (
         <BaseAnalyticsProvider instance={analytics}>
