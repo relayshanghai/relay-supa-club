@@ -26,12 +26,12 @@ export const getSequenceInfluencersByCompanyIdCall = (supabaseClient: RelayDatab
     return data;
 };
 
-export const getSequenceInfluencersIqDataIdAndSequenceNameBySequenceIdCall =
-    (supabaseClient: RelayDatabase) => async (sequenceIds: string[]) => {
+export const getSequenceInfluencersIqDataIdAndSequenceNameByCompanyIdCall =
+    (supabaseClient: RelayDatabase) => async (companyId: string) => {
         const { data, error } = await supabaseClient
             .from('sequence_influencers')
             .select('iqdata_id, sequences(name)')
-            .in('sequence_id', sequenceIds);
+            .eq('company_id', companyId);
 
         if (error) throw error;
         return data;

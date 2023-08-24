@@ -1,8 +1,8 @@
 import { useDB } from 'src/utils/client-db/use-client-db';
 
-import { useSequences } from './use-sequences';
-import { getSequenceInfluencersIqDataIdAndSequenceNameBySequenceIdCall } from 'src/utils/api/db/calls/sequence-influencers';
+import { getSequenceInfluencersIqDataIdAndSequenceNameByCompanyIdCall } from 'src/utils/api/db/calls/sequence-influencers';
 import useSWR from 'swr';
+import { useUser } from './use-user';
 
 /**
  * Because our search page only uses these two bits of information to determine if an influencer has already been added to a sequence, we don't need to get the full influencer and sequence objects
@@ -13,13 +13,13 @@ export type AllSequenceInfluencersIqDataIdsAndSequenceNames = {
 };
 
 export const useAllSequenceInfluencersIqDataIdAndSequenceName = () => {
-    const { sequences } = useSequences();
-    const fetchCall = useDB<typeof getSequenceInfluencersIqDataIdAndSequenceNameBySequenceIdCall>(
-        getSequenceInfluencersIqDataIdAndSequenceNameBySequenceIdCall,
+    const { profile } = useUser();
+    const fetchCall = useDB<typeof getSequenceInfluencersIqDataIdAndSequenceNameByCompanyIdCall>(
+        getSequenceInfluencersIqDataIdAndSequenceNameByCompanyIdCall,
     );
     const { data, mutate: refresh } = useSWR(
-        sequences ? [sequences, 'allSequenceInfluencersIqDataIdsAndSequenceNames'] : null,
-        ([sequences]) => fetchCall(sequences.map((sequence) => sequence.id)),
+        profile?.company_id ? [profile.company_id, 'allSequenceInfluencersIqDataIdsAndSequenceNames'] : null,
+        ([companyId]) => fetchCall(companyId),
     );
     const allSequenceInfluencersIqDataIdsAndSequenceNames: AllSequenceInfluencersIqDataIdsAndSequenceNames[] =
         data?.map((influencer) => ({
