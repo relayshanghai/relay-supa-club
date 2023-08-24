@@ -97,7 +97,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     .json({ error: createSubscriptionErrors.unableToActivateSubscription });
             }
 
-            // free trial follows DIY prices
+            // free trial follows DIY prices and Discovery prices on new pricing
             const price = (await stripeClient.prices.retrieve(
                 featNewPricing() ? discoveryTrialPriceId : diyTrialPriceId,
                 {
