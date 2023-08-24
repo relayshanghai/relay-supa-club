@@ -26,7 +26,7 @@ import { Search } from 'src/utils/analytics/events';
 import { SEARCH_RESULT } from 'src/utils/rudderstack/event-names';
 import { useTrackEvent } from './use-track-event';
 
-import { SequenceInfluencersIqDataIdAndSequenceName } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
+import { useAllSequenceInfluencersIqDataIdAndSequenceName } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
 // import { featRecommended } from 'src/constants/feature-flags';
 
 export const SearchPageInner = () => {
@@ -52,7 +52,7 @@ export const SearchPageInner = () => {
     const [selectedCreator, setSelectedCreator] = useState<CreatorSearchAccountObject | null>(null);
     const { campaigns } = useCampaigns({});
     const { allCampaignCreators } = useAllCampaignCreators(campaigns);
-    const { allSequenceInfluencersIqDataIdsAndSequenceNames } = SequenceInfluencersIqDataIdAndSequenceName();
+    const { allSequenceInfluencersIqDataIdsAndSequenceNames } = useAllSequenceInfluencersIqDataIdAndSequenceName();
     const { trackEvent } = useRudderstack();
 
     const [page, setPage] = useState(0);

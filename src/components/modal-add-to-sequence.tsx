@@ -11,6 +11,7 @@ import { clientLogger } from 'src/utils/logger-client';
 import type { CreatorPlatform, CreatorUserProfile } from 'types';
 import { useReport } from 'src/hooks/use-report';
 import { useSequence } from 'src/hooks/use-sequence';
+import { useAllSequenceInfluencersIqDataIdAndSequenceName } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
 
 export const AddToSequenceModal = ({
     show,
@@ -31,6 +32,7 @@ export const AddToSequenceModal = ({
     const [loading, setLoading] = useState<boolean>(false);
     const [socialProfileId, setSocialProfileId] = useState(() => socialProfile?.id ?? null);
     const { sendSequence } = useSequence(selectedSequence?.id);
+    const { refresh: refreshSequenceInfluencers } = useAllSequenceInfluencersIqDataIdAndSequenceName();
 
     const { createSequenceInfluencer } = useSequenceInfluencers(selectedSequence ? [selectedSequence.id] : []);
 
@@ -67,6 +69,7 @@ export const AddToSequenceModal = ({
                     tags,
                     creatorProfile.user_id,
                 );
+                refreshSequenceInfluencers();
 
                 if (sequenceInfluencer.email && selectedSequence.auto_start) {
                     await sendSequence([sequenceInfluencer]);
@@ -89,6 +92,7 @@ export const AddToSequenceModal = ({
         setShow,
         socialProfileId,
         t,
+        refreshSequenceInfluencers,
     ]);
 
     useEffect(() => {

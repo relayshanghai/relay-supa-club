@@ -12,12 +12,12 @@ export type AllSequenceInfluencersIqDataIdsAndSequenceNames = {
     sequenceName?: string;
 };
 
-export const SequenceInfluencersIqDataIdAndSequenceName = () => {
+export const useAllSequenceInfluencersIqDataIdAndSequenceName = () => {
     const { sequences } = useSequences();
     const fetchCall = useDB<typeof getSequenceInfluencersIqDataIdAndSequenceNameBySequenceIdCall>(
         getSequenceInfluencersIqDataIdAndSequenceNameBySequenceIdCall,
     );
-    const { data } = useSWR(
+    const { data, mutate: refresh } = useSWR(
         sequences ? [sequences, 'allSequenceInfluencersIqDataIdsAndSequenceNames'] : null,
         ([sequences]) => fetchCall(sequences.map((sequence) => sequence.id)),
     );
@@ -28,5 +28,6 @@ export const SequenceInfluencersIqDataIdAndSequenceName = () => {
         })) ?? [];
     return {
         allSequenceInfluencersIqDataIdsAndSequenceNames,
+        refresh,
     };
 };
