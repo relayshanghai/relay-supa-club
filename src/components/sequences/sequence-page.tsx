@@ -35,7 +35,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     const [influencers, setInfluencers] = useState<SequenceInfluencerManagerPage[] | undefined>(sequenceInfluencers);
 
     useEffect(() => {
-        if (!influencers || influencers.length === 0 || filterSteps.length === 0) {
+        if (!influencers || (influencers.length === 0 && filterSteps.length === 0)) {
             setInfluencers(sequenceInfluencers);
         }
     }, [sequenceInfluencers, influencers, refreshSequenceInfluencers, filterSteps]);
@@ -52,13 +52,12 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                 return;
             }
 
-            setInfluencers(
-                sequenceInfluencers.filter((x) =>
-                    filters.includes(
-                        sequenceSteps?.find((step) => step.step_number === x.sequence_step)?.name as CommonStatusType,
-                    ),
-                ),
-            );
+            const filteredInfluencers = sequenceInfluencers.filter((x) => {
+                const step = sequenceSteps?.find((step) => step.step_number === x.sequence_step - 1);
+                return step && step.name && filters.includes(step.name as CommonStatusType);
+            });
+
+            setInfluencers(filteredInfluencers);
         },
         [sequenceInfluencers, sequenceSteps],
     );
