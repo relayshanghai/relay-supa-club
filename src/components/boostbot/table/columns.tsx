@@ -8,7 +8,7 @@ import {
     HandThumbUpIcon,
     ChatBubbleLeftIcon,
     Bars3BottomLeftIcon,
-    EnvelopeIcon,
+    // EnvelopeIcon,
     XMarkIcon,
 } from '@heroicons/react/24/solid';
 import type { Influencer } from 'pages/boostbot';
@@ -57,9 +57,9 @@ export const columns: ColumnDef<Influencer>[] = [
             const influencer = row.original;
             const posts = 'top_posts' in influencer && influencer.top_posts && influencer.top_posts.slice(0, 3);
             const description = 'description' in influencer && influencer.description;
-            const email =
-                'contacts' in influencer &&
-                influencer.contacts.find((contact) => contact.type === 'email')?.formatted_value.toLowerCase();
+            // const email =
+            //     'contacts' in influencer &&
+            //     influencer.contacts.find((contact) => contact.type === 'email')?.formatted_value.toLowerCase();
             const topicsList = influencer.topics.map((topic) => `#${topic}`).join(', ');
 
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -135,12 +135,12 @@ export const columns: ColumnDef<Influencer>[] = [
 
                     <div className="border-b border-gray-200" />
                     <p className="ml-2 text-xs">{topicsList}</p>
-
+                    {/*
                     {email ? (
                         <div className="flex items-center gap-1 text-primary-500">
                             <EnvelopeIcon className="h-4 w-4 flex-shrink-0" /> {email}
                         </div>
-                    ) : null}
+                    ) : null} */}
                 </div>
             );
         },
