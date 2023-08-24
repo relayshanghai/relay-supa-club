@@ -2,8 +2,16 @@ import useSWR from 'swr';
 import { useClientDb, useDB } from 'src/utils/client-db/use-client-db';
 import { insertSequenceStepsCall } from 'src/utils/api/db/calls/sequence-steps';
 import type { SequenceStepInsert } from 'src/utils/api/db';
+import type { InfluencerStepTypes } from 'types';
 
-export const defaultTemplates = [
+type defaultTemplateType = {
+    name: InfluencerStepTypes;
+    id: string;
+    waitTimeHours: number;
+    stepNumber: number;
+};
+
+export const defaultTemplates: defaultTemplateType[] = [
     { name: 'Outreach', id: 'AAABiYr-poEAAAAC', waitTimeHours: 0, stepNumber: 0 },
     { name: '1st Follow-up', id: 'AAABiYsMUIAAAAAD', waitTimeHours: 1, stepNumber: 1 },
     { name: '2nd Follow-up', id: 'AAABieM0bMMAAAAE', waitTimeHours: 48, stepNumber: 2 },

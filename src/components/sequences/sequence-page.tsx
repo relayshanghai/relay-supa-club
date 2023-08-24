@@ -54,7 +54,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
 
             const filteredInfluencers = sequenceInfluencers.filter((x) => {
                 const step = sequenceSteps?.find((step) => step.step_number === x.sequence_step - 1);
-                return step && step.name && filters.includes(step.name as CommonStatusType);
+                return step && step.name && filters.includes(step.name);
             });
 
             setInfluencers(filteredInfluencers);

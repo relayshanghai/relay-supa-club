@@ -1,3 +1,5 @@
+import type { InfluencerStepTypes } from "./appTypes"
+
 export type Json =
   | string
   | number
@@ -1172,7 +1174,7 @@ export interface Database {
         Row: {
           created_at: string
           id: string
-          name: string | null
+          name: InfluencerStepTypes | null
           sequence_id: string
           step_number: number
           template_id: string

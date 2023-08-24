@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronDown, FilterFunnel } from 'src/components/icons';
 import type { FunnelStatus, EmailTrackingStatus, EmailDeliveryStatus } from 'src/utils/api/db/types';
+import type { InfluencerStepTypes } from 'types';
 
 export type MultipleDropdownObject = {
     [key: string]: {
@@ -10,7 +11,7 @@ export type MultipleDropdownObject = {
     };
 };
 
-export type CommonStatusType = FunnelStatus | EmailDeliveryStatus | EmailTrackingStatus | number;
+export type CommonStatusType = FunnelStatus | EmailDeliveryStatus | EmailTrackingStatus | InfluencerStepTypes | number;
 
 export const SelectMultipleDropdown = ({
     text,
