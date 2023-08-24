@@ -4,8 +4,6 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import type { ProfilesTable } from 'src/utils/api/db/types';
 import type { DatabaseWithCustomTypes } from 'types';
 
-// type Session | null = Session | null
-
 type useSessionParams = {
     onClear?: () => void;
     onReady?: (session: Session | null) => void;

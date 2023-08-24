@@ -3,7 +3,7 @@ import type { AnalyticsInstance, AnalyticsPlugin } from 'analytics';
 import { Analytics } from 'analytics';
 import type { PropsWithChildren } from 'react';
 import { createContext, useContext, useEffect, useState } from 'react';
-import { profileToIdentifiable } from 'src/hooks/use-rudderstack';
+import { profileToIdentifiable, useRudder } from 'src/hooks/use-rudderstack';
 import { useSession } from 'src/hooks/use-session';
 import { createTrack } from 'src/utils/analytics/analytics';
 import { AnalyticsProvider as BaseAnalyticsProvider } from 'use-analytics';
@@ -39,11 +39,18 @@ type AnalyticsProviderProps = PropsWithChildren;
 export const AnalyticsProvider = ({ children }: AnalyticsProviderProps) => {
     const { supabaseClient: client } = useSessionContext();
 
+    const rudderstack = useRudder();
     const { session, profile } = useSession();
 
     const [analytics] = useState(() => initAnalytics([SupabasePlugin({ client })]));
-
     const [track] = useState(() => createTrack(analytics));
+
+    useEffect(() => {
+        if (profile !== null && rudderstack) {
+            const { id, traits } = profileToIdentifiable(profile)
+            rudderstack.identify(id, traits)
+        }
+    }, [rudderstack, profile])
 
     // set analytics identity
     useEffect(() => {
@@ -51,19 +58,12 @@ export const AnalyticsProvider = ({ children }: AnalyticsProviderProps) => {
             analytics.identify(session.user.id);
         }
 
-        if (profile !== null) {
-            const { id, traits } = profileToIdentifiable(profile)
-            // console.log("[rudderstack] identify", id, traits)
-            window.rudder.identify(id, traits)
-            // console.log(">", window.rudder.getUserId(), window.rudder.getUserTraits())
-        }
-
         if (session === null) {
             // @todo do not reset since it clears anon id
             //       should we track users after logging out?
             // analytics.reset();
         }
-    }, [session, profile, analytics]);
+    }, [session, analytics]);
 
     return (
         <BaseAnalyticsProvider instance={analytics}>

@@ -1,59 +1,15 @@
 /* eslint-disable complexity */
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { useSequenceEmails } from 'src/hooks/use-sequence-emails';
 import { useSequences } from 'src/hooks/use-sequences';
-import { useSession } from 'src/hooks/use-session';
-import { rudderInitialized } from 'src/utils/rudder-initialize';
 import { Button } from '../button';
 import { Plus } from '../icons';
 import { Layout } from '../layout';
 import { CreateSequenceModal } from './create-sequence-modal';
 import { SequenceStats } from './sequence-stats';
 import SequencesTable from './sequences-table';
-
-const useRudderstackTrack = () => {
-    const isTracking = useRef(false);
-    // const [rudder, setRudder] = useState(() => rudderInitialized())
-    // const { session, profile } = useSession();
-
-    useEffect(() => {
-        // console.log("reload rudder", window.rudder)
-        if (window.rudder) return;
-
-        rudderInitialized().then(() => {
-            // console.log("rudder loaded")
-            // setRudder(window.rudder)
-        })
-    }, [])
-
-
-    // const [identity] = useState(() => {
-    //     return {
-    //         id: window.rudder.getUserId(),
-    //         traits: window.rudder.getUserTraits(),
-    //     }
-    // })
-
-    const track = useCallback(() => {
-        // if (identity.id === '') {
-        //     console.log("no identity", identity, window.rudder.getUserId())
-        //     // return;
-        // }
-        if (isTracking.current === true) return;
-
-        isTracking.current = true
-        // console.log("track started")
-        // console.log("track started", window.rudder.getUserId(), window.rudder.getUserTraits(), "<<<")
-
-        window.rudder.track("TEST:useRudderstackTrack", (...args) => {
-            // console.log("track finished", args)
-            isTracking.current = false
-        })
-    }, [])
-
-    return { track }
-}
 
 export const SequencesPage = () => {
     const { t } = useTranslation();
@@ -68,7 +24,8 @@ export const SequencesPage = () => {
     const { track } = useRudderstackTrack()
 
     useEffect(() => {
-        track()
+        const { abort } = track("TEST:Outreach Open Sequences Page")
+        return abort;
     }, [track])
 
     return (

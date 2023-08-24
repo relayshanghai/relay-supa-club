@@ -1,19 +1,20 @@
-import { SearchComponent } from './search-component';
-import { CollabStatus } from './collab-status';
-import { OnlyMe } from './onlyme';
-import { Table } from './table';
-import { useSequences } from 'src/hooks/use-sequences';
-import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
-import { useCallback, useEffect, useState } from 'react';
 import Fuse from 'fuse.js';
+import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
+import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { ProfileOverlayScreen } from 'src/components/influencer-profile/screens/profile-overlay-screen';
+import { useUiState } from 'src/components/influencer-profile/screens/profile-screen-context';
+import { type MultipleDropdownObject } from 'src/components/library';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
+import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
+import { useSequences } from 'src/hooks/use-sequences';
 import { useUser } from 'src/hooks/use-user';
 import { type FunnelStatus } from 'src/utils/api/db';
-import { type MultipleDropdownObject } from 'src/components/library';
 import { COLLAB_OPTIONS } from '../constants';
-import { ProfileOverlayScreen } from 'src/components/influencer-profile/screens/profile-overlay-screen';
-import { useTranslation } from 'react-i18next';
-import { useUiState } from 'src/components/influencer-profile/screens/profile-screen-context';
-import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
+import { CollabStatus } from './collab-status';
+import { OnlyMe } from './onlyme';
+import { SearchComponent } from './search-component';
+import { Table } from './table';
 
 const Manager = () => {
     const { sequences } = useSequences();
@@ -33,6 +34,13 @@ const Manager = () => {
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [onlyMe, setOnlyMe] = useState<boolean>(false);
     const [filterStatuses, setFilterStatuses] = useState<FunnelStatus[]>([]);
+
+    const { track } = useRudderstackTrack()
+
+    useEffect(() => {
+        const { abort } = track("TEST:Outreach Open Inbox Page")
+        return abort;
+    }, [track])
 
     const handleRowClick = useCallback(
         (influencer: SequenceInfluencerManagerPage) => {

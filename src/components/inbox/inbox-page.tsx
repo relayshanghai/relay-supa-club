@@ -1,23 +1,24 @@
-import { useEffect, useMemo, useState } from 'react';
 import Fuse from 'fuse.js';
-import { Layout } from '../layout';
-import type { MessagesGetMessage } from 'types/email-engine/account-account-messages-get';
 import type { EmailSearchPostResponseBody } from 'pages/api/email-engine/search';
-import { clientLogger } from 'src/utils/logger-client';
-import { ToolBar } from './tool-bar';
-import { PreviewSection } from './preview-section';
+import { useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
-import { Spinner } from '../icons';
-import { CorrespondenceSection } from './correspondence-section';
+import { useTranslation } from 'react-i18next';
+import { useMessages } from 'src/hooks/use-message';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
+import { useUser } from 'src/hooks/use-user';
 import {
     getInboxThreadMessages,
     getSentThreadMessages,
     updateMessageAsSeen,
 } from 'src/utils/api/email-engine/handle-messages';
-import { useMessages } from 'src/hooks/use-message';
 import { GMAIL_SEEN_SPECIAL_USE_FLAG } from 'src/utils/api/email-engine/prototype-mocks';
-import { useTranslation } from 'react-i18next';
-import { useUser } from 'src/hooks/use-user';
+import { clientLogger } from 'src/utils/logger-client';
+import type { MessagesGetMessage } from 'types/email-engine/account-account-messages-get';
+import { Spinner } from '../icons';
+import { Layout } from '../layout';
+import { CorrespondenceSection } from './correspondence-section';
+import { PreviewSection } from './preview-section';
+import { ToolBar } from './tool-bar';
 
 export const InboxPage = () => {
     const [messages, setMessages] = useState<MessagesGetMessage[]>([]);
@@ -30,6 +31,13 @@ export const InboxPage = () => {
 
     const { inboxMessages, isLoading, refreshInboxMessages } = useMessages();
     const { t } = useTranslation();
+
+    const { track } = useRudderstackTrack()
+
+    useEffect(() => {
+        const { abort } = track("TEST:Outreach Open Inbox Page")
+        return abort;
+    }, [track])
 
     useEffect(() => {
         if (!inboxMessages) {

@@ -26,8 +26,14 @@ const turnOffRudderInDev = () => {
 
 export async function rudderInitialized() {
     if (disabled) {
-        return turnOffRudderInDev();
+        // return turnOffRudderInDev();
     }
+
+    if (window.rudder) {
+        // console.log("You already got the rudder, dude.")
+        return window.rudder
+    }
+
     //these keys are for RudderStack App-Frontend Source, if we need to add new source we need to add new keys
     const WRITE_KEY = process.env.NEXT_PUBLIC_RUDDERSTACK_APP_WRITE_KEY;
     const DATA_PLANE_URL = process.env.NEXT_PUBLIC_RUDDERSTACK_APP_DATA_PLANE_URL;
@@ -37,9 +43,20 @@ export async function rudderInitialized() {
         throw new Error('RudderStack keys not set');
     }
 
-    window.rudder = await import('rudder-sdk-js');
-    const rudder = (window.rudder = window.rudder || []);
-    rudder.load(WRITE_KEY, DATA_PLANE_URL, {
-        integrations: { All: true }, // load call options
-    });
+    const rudder = await import('rudder-sdk-js').then((rudder) => {
+        if (window.rudder) {
+            // console.log("Nope, no more ruddering for you son.")
+            return window.rudder
+        }
+
+        rudder.load(WRITE_KEY, DATA_PLANE_URL, {
+            integrations: { All: true }, // load call options
+        });
+
+        // console.log("Here's the rudder, ma boy!")
+        window.rudder = rudder
+        return rudder
+    })
+
+    return rudder
 }

@@ -1,5 +1,5 @@
-import { useCallback } from 'react';
-import type { apiObject } from 'rudder-sdk-js';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import type { apiObject, apiOptions } from 'rudder-sdk-js';
 import type { ProfileDB, ProfilesTable } from 'src/utils/api/db';
 import { rudderInitialized } from 'src/utils/rudder-initialize';
 
@@ -22,6 +22,63 @@ export interface PageProperties extends apiObject {
     search?: string;
 }
 
+
+type RudderstackMessageType<TProps=any, TTraits=any> = {
+    channel: string,
+    context: {
+        app: {
+            name: string,
+            namespace: string,
+            version: string
+        },
+        traits: TTraits,
+        library: {
+            name: string,
+            version: string
+        },
+        userAgent: string,
+        device: string | null,
+        network: string | null,
+        os: {
+            name: string,
+            version: string
+        },
+        locale: string, // ISO 639-1
+        screen: {
+            density: number,
+            width: number,
+            height: number,
+            innerWidth: number,
+            innerHeight: number
+        },
+        sessionId: number | string,
+        campaign: any,
+        page: {
+            path: string,
+            referrer: string | "$direct"
+            referring_domain: string,
+            search: string,
+            title: string,
+            url: string,
+            tab_url: string,
+            initial_referrer: string | "$direct",
+            initial_referring_domain: string
+        }
+    },
+    type: string, // possibly rudderstack event types
+    messageId: string, // uuid
+    originalTimestamp: string, // ISO date
+    anonymousId: string, // uuid
+    userId: string, // uuid
+    event: string,
+    properties: TProps,
+    user_properties: any,
+    integrations: {
+        All: boolean
+    },
+    sentAt: string // ISO date
+}
+
 export const profileToIdentifiable = (profile: ProfilesTable['Row']) => {
     const { id, email, first_name, last_name, company_id, user_role } = profile;
     const traits = {
@@ -39,36 +96,24 @@ export const profileToIdentifiable = (profile: ProfilesTable['Row']) => {
 
 export const useRudderstack = () => {
     const identifyUser = useCallback(async (userId: string, traits: IdentityTraits) => {
-        if (!window.rudder) {
-            await rudderInitialized();
-        }
+        const rudder = await rudderInitialized();
 
-        if (window.rudder.getUserId() === userId) {
-            return;
-        }
-
-        window.rudder.identify(userId, traits);
+        rudder.identify(userId, traits);
     }, []);
 
     const pageView = useCallback(async (pageName: string, properties?: PageProperties) => {
-        if (!window.rudder) {
-            await rudderInitialized();
-        }
-        window.rudder.page(pageName, properties);
+        const rudder = await rudderInitialized();
+        rudder.page(pageName, properties);
     }, []);
 
     const trackEvent = useCallback(async (eventName: string, properties?: apiObject) => {
-        if (!window.rudder) {
-            await rudderInitialized();
-        }
-        window.rudder.track(eventName, properties);
+        const rudder = await rudderInitialized();
+        rudder.track(eventName, properties);
     }, []);
 
     const group = useCallback(async (groupId: string, traits?: apiObject) => {
-        if (!window.rudder) {
-            await rudderInitialized();
-        }
-        window.rudder.group(groupId, traits);
+        const rudder = await rudderInitialized();
+        rudder.group(groupId, traits);
     }, []);
 
     const identifyFromProfile = useCallback(
@@ -88,3 +133,50 @@ export const useRudderstack = () => {
         group,
     };
 };
+
+export const useRudder = () => {
+    const [rudder, setRudder] = useState(() => typeof window !== "undefined" ? window.rudder : null)
+
+    useEffect(() => {
+        rudderInitialized().then((rudder) => {
+            setRudder(rudder)
+        })
+    }, [])
+
+    return rudder
+}
+
+type RudderstackTrackResolveType = RudderstackMessageType[] | null | Error
+type PromiseExecutor = (...args: Parameters<ConstructorParameters<typeof Promise<RudderstackTrackResolveType>>[0]>) => void
+
+export const useRudderstackTrack = () => {
+    const isAborted = useRef(false);
+    const rudder = useRudder();
+
+    const track = useCallback(<T extends apiObject>(event: string, properties?: T, options?: apiOptions) => {
+        const abort = () => {
+            isAborted.current = true
+        }
+
+        const executor: PromiseExecutor = function(resolve, reject) {
+            if (!rudder) {
+                return reject(new Error("Rudderstack not loaded"))
+            }
+
+            if (isAborted.current === true) {
+                return resolve(null)
+            }
+
+            rudder.track(event, properties, options, (...args: RudderstackMessageType[]) => {
+                resolve(args)
+                return args
+            })
+        }
+
+        const request = new Promise<RudderstackTrackResolveType>(executor)
+
+        return { request, abort }
+    }, [rudder])
+
+    return { track }
+}
