@@ -1090,7 +1090,7 @@ export interface Database {
           funnel_status: string
           id: string
           influencer_social_profile_id: string
-          iqdata_id: string | null
+          iqdata_id: string
           next_step: string | null
           rate_amount: number | null
           rate_currency: string | null
@@ -1111,7 +1111,7 @@ export interface Database {
           funnel_status: string
           id?: string
           influencer_social_profile_id: string
-          iqdata_id?: string | null
+          iqdata_id: string
           next_step?: string | null
           rate_amount?: number | null
           rate_currency?: string | null
@@ -1132,7 +1132,7 @@ export interface Database {
           funnel_status?: string
           id?: string
           influencer_social_profile_id?: string
-          iqdata_id?: string | null
+          iqdata_id?: string
           next_step?: string | null
           rate_amount?: number | null
           rate_currency?: string | null
