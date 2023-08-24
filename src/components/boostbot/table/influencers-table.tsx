@@ -18,6 +18,7 @@ declare module '@tanstack/react-table' {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     interface TableMeta<TData extends RowData> {
         handleUnlockInfluencer: (userId: string) => void;
+        removeInfluencer: (userId: string) => void;
         translation: TFunction<'translation', undefined, 'translation'>;
     }
 }

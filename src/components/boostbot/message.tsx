@@ -11,7 +11,7 @@ const Message: React.FC<MessageProps> = ({ message }) => {
             : 'ml-6 border border-slate-300 text-slate-600 bg-slate-50 rounded-br-none';
 
     return (
-        <div className={`mb-4 break-words rounded-lg px-4 py-2 text-sm shadow-md ${messageClass}`}>
+        <div className={`mb-4 inline-block break-words rounded-lg px-4 py-2 text-sm shadow-md ${messageClass}`}>
             {message.content}
         </div>
     );

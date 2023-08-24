@@ -62,6 +62,10 @@ const Boostbot = () => {
         }
     };
 
+    const removeInfluencer = (userId: string) => {
+        setInfluencers((prevInfluencers) => prevInfluencers.filter((influencer) => influencer.user_id !== userId));
+    };
+
     const sendToOutreach = async () => {
         try {
             // From array of influencers, create a new array of influencers with only the selected influencers
@@ -89,7 +93,7 @@ const Boostbot = () => {
                     data={influencers}
                     selectedInfluencers={selectedInfluencers}
                     setSelectedInfluencers={setSelectedInfluencers}
-                    meta={{ handleUnlockInfluencer, translation: t }}
+                    meta={{ handleUnlockInfluencer, removeInfluencer, translation: t }}
                 />
             </div>
         </Layout>
