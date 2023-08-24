@@ -127,5 +127,13 @@ const sequences = {
     emailPreview: '邮件预览',
     number_emailsSuccessfullyScheduled: '成功提交安排{{number}}发送邮件',
     number_emailsFailedToSchedule: '失败提交安排发{{number}}送邮件',
+    steps: {
+        filter: '按KOL联络进展筛选',
+        Outreach: '首封外联邮件',
+        '1st Follow-up': '第一次跟进',
+        '2nd Follow-up': '第二次跟进',
+        '3rd Follow-up': '第三次跟进',
+        '4th Follow-up': '第四次跟进',
+    },
 };
 export default sequences;
