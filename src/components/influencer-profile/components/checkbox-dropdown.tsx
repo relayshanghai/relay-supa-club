@@ -1,6 +1,6 @@
 import { t } from 'i18next';
 import type { ReactNode } from 'react';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ChevronDown } from 'src/components/icons';
 import type { CheckboxDropdownItemData } from './checkbox-dropdown-item';
 import { CheckboxDropdownItem } from './checkbox-dropdown-item';
@@ -16,12 +16,16 @@ type Props = {
 
 export const CheckboxDropdown = ({ label, options, onUpdate, ...props }: Props) => {
     const { multiple } = { multiple: true, ...props };
-    const [selectedOptions] = useState(() => options.filter((o) => props.selected.includes(o.id)));
+    const [selectedOptions, setSelectedOptions] = useState(() => options.filter((o) => props.selected.includes(o.id)));
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
     const clearSelection = useCallback(() => {
         onUpdate && onUpdate([])
     }, [onUpdate]);
+
+    useEffect(() => {
+        setSelectedOptions((s) => options.filter((o) => props.selected.includes(o.id)))
+    }, [options, props.selected])
 
     const isItemSelected = useCallback(
         (item: CheckboxDropdownItemData) => {
