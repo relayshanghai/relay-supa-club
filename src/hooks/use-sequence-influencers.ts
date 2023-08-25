@@ -28,7 +28,11 @@ export const useSequenceInfluencers = (sequenceIds?: string[], filters?: string[
     );
 
     const createSequenceInfluencerDBCall = useDB<typeof createSequenceInfluencerCall>(createSequenceInfluencerCall);
-    const createSequenceInfluencer = async (influencerSocialProfileId: string, tags: string[] | []) => {
+    const createSequenceInfluencer = async (
+        influencerSocialProfileId: string,
+        tags: string[],
+        iqDataUserProfileId: string,
+    ) => {
         if (!sequenceIds || sequenceIds.length < 1) throw new Error('No sequenceIds provided');
         if (!profile?.company_id) throw new Error('No profile found');
 
@@ -40,6 +44,7 @@ export const useSequenceInfluencers = (sequenceIds?: string[], filters?: string[
             sequence_step: 0,
             tags,
             funnel_status: 'To Contact',
+            iqdata_id: iqDataUserProfileId,
         };
         const res = await createSequenceInfluencerDBCall(insert);
         return res;

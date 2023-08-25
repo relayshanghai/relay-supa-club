@@ -75,3 +75,5 @@ export { default as DeleteOutline } from './DeleteOutline';
 export { default as User } from './User';
 export { default as Clock } from './Clock';
 export { default as SendOutline } from './SendOutline';
+export { default as BarGraph } from './BarGraph';
+export { default as Thunder } from './Thunder';

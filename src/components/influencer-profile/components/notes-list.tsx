@@ -38,9 +38,17 @@ export const NotesList = ({ notes, ...props }: Props) => {
         });
     }, [createDates, notes]);
 
+    const emptyNoteBlocks = <div>No Notes</div>;
+
     return (
-        <div className="flex flex-grow flex-col gap-9" {...props}>
-            {noteBlocks}
-        </div>
+        <>
+            {noteBlocks.length > 0 ? (
+                <div className="flex flex-grow flex-col gap-9" {...props}>
+                    {noteBlocks}
+                </div>
+            ) : (
+                <div className="flex justify-center">{emptyNoteBlocks}</div>
+            )}
+        </>
     );
 };

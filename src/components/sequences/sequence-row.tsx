@@ -18,6 +18,7 @@ import { EmailPreviewModal } from './email-preview-modal';
 import type { SequenceSendPostResponse } from 'pages/api/sequence/send';
 import toast from 'react-hot-toast';
 import { useUser } from 'src/hooks/use-user';
+import { DeleteFromSequenceModal } from '../modal-delete-from-sequence';
 
 interface SequenceRowProps {
     sequenceInfluencer: SequenceInfluencer;
@@ -67,6 +68,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
         sequenceInfluencer && [sequenceInfluencer.sequence_id],
     );
     const { profile } = useUser();
+    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const { i18n, t } = useTranslation();
     const [email, setEmail] = useState(sequenceInfluencer.email ?? '');
     const [showEmailPreview, setShowEmailPreview] = useState<SequenceStep[] | null>(null);
@@ -199,7 +201,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                             </Button>
                             <button
                                 className="min-w-max"
-                                onClick={() => handleDeleteInfluencer(sequenceInfluencer.id)}
+                                onClick={() => setShowDeleteConfirmation(true)}
                                 data-testid="delete-influencer-button"
                             >
                                 <DeleteOutline className="mr-4 h-5 w-5 text-gray-300 md:ml-6 lg:mr-0" />
@@ -213,12 +215,16 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                             {lastStep?.name ?? ''}
                         </td>
                         <td
-                            className={`flex w-fit flex-row items-center justify-center gap-2 rounded-lg px-3 py-2 text-center ${
-                                EMAIL_STATUS_STYLES[getStatus(lastEmail || nextEmail) || 'Default']
-                            }`}
+                            className={`mt-4 flex w-fit flex-row gap-2 whitespace-nowrap px-6 text-center align-middle`}
                         >
-                            {Icons[getStatus(lastEmail || nextEmail) as keyof typeof Icons] || Icons.Default}
-                            {getStatus(lastEmail || nextEmail)}
+                            <span
+                                className={`flex flex-row gap-2 rounded-lg px-3 py-2 ${
+                                    EMAIL_STATUS_STYLES[getStatus(lastEmail || nextEmail) || 'Default'].style
+                                }`}
+                            >
+                                {Icons[getStatus(lastEmail || nextEmail) as keyof typeof Icons] || Icons.Default}
+                                {getStatus(lastEmail || nextEmail)}
+                            </span>
                         </td>
                         <td className="whitespace-nowrap px-6 py-4 text-gray-600">
                             {lastEmail?.email_send_at &&
@@ -271,6 +277,12 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                     </>
                 )}
             </tr>
+            <DeleteFromSequenceModal
+                show={showDeleteConfirmation}
+                setShow={setShowDeleteConfirmation}
+                deleteInfluencer={handleDeleteInfluencer}
+                sequenceId={sequenceInfluencer.id}
+            />
         </>
     );
 };

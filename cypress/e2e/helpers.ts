@@ -59,6 +59,7 @@ export const reinsertCharlie = async () => {
             funnel_status: 'To Contact',
             sequence_step: 0,
             email,
+            iqdata_id: '123',
         };
         await supabase.from('sequence_influencers').insert(reinsert);
     } catch (error) {

@@ -37,6 +37,23 @@ const sequences = {
         lastEmailSent: 'Last email sent',
         restartSequence: 'Restart sequence',
     },
+    steps: {
+        filter: 'Filter by current step',
+        Outreach: 'Outreach',
+        '1st Follow-up': '1st Follow-up',
+        '2nd Follow-up': '2nd Follow-up',
+        '3rd Follow-up': '3rd Follow-up',
+        '4th Follow-up': '4th Follow-up',
+    },
+    status: {
+        Scheduled: 'Scheduled',
+        Delivered: 'Delivered',
+        Bounced: 'Bounced',
+        Opened: 'Opened',
+        Replied: 'Replied',
+        'Link Clicked': 'Link Clicked',
+        Failed: 'Failed',
+    },
     addEmail: 'Add email',
     newSequence: 'New sequence',
     indexColumns: {
@@ -152,6 +169,14 @@ const sequences = {
         '3rd Follow-up': '3rd Follow-up',
         '4th Follow-up': '4th Follow-up',
     },
+    delete: {
+        title: 'Delete influencer from sequence?',
+        description:
+            "Deleting the influencer will remove them from the sequence, and cancel any future messages. You'll have to re-add them if you change your mind.",
+        cancel: 'Cancel',
+        okay: 'Yes, delete them',
+    },
+    influencerAlreadyAdded_sequence: 'Influencer has already been added to sequence: {{sequence}} ',
 };
 
 export default sequences;
