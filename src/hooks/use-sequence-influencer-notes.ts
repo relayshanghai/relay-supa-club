@@ -4,12 +4,15 @@ import type {
 } from 'pages/api/notes/influencer';
 import type {
     GetSequenceInfluencerNotesRequest,
-    GetSequenceInfluencerNotesResponse,
+    GetSequenceInfluencerNotesResponse
 } from 'pages/api/notes/influencer/[id]';
+import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
+import type { ProfileValue } from 'pages/api/sequence/influencers/[id]';
 import type { NoteData } from 'src/components/influencer-profile/components/note';
 import { apiFetch } from 'src/utils/api/api-fetch';
 import { formatDate } from 'src/utils/datetime';
 import { isApiError } from 'src/utils/is-api-error';
+import type { z } from 'zod';
 import { useAsync } from './use-async';
 
 export const useSequenceInfluencerNotes = () => {
@@ -41,9 +44,13 @@ export const useSequenceInfluencerNotes = () => {
 
                         return {
                             author: {
-                                id: note.profiles.id,
-                                avatar: `https://api.dicebear.com/6.x/open-peeps/svg?seed=${note.profiles.id}@example.com&size=96`,
-                                name: `${note.profiles.first_name} ${note.profiles.last_name}`,
+                                // @note profiles here is the manager
+                                id: note.profiles ? note.profiles.id : '',
+                                avatar:
+                                    note.profiles && note.profiles.avatar_url
+                                        ? note.profiles.avatar_url
+                                        : `https://api.dicebear.com/6.x/open-peeps/svg?seed=relay-manager-no-name@example.com&size=96`,
+                                name: note.profiles ? `${note.profiles.first_name} ${note.profiles.last_name}` : 'No Name',
                             },
                             content: note.comment ?? '',
                             id: note.id,
@@ -66,8 +73,24 @@ export const useSequenceInfluencerNotes = () => {
         );
     });
 
+    const saveSequenceInfluencer = useAsync(
+        async (sequence_influencer_id: string, body: z.input<typeof ProfileValue>) => {
+            return await apiFetch<SequenceInfluencerManagerPage>('/api/sequence/influencers/{id}', {
+                path: { id: sequence_influencer_id },
+                body,
+            }).then((res) => {
+                if (isApiError(res.content)) {
+                    throw new Error(res.content.error);
+                }
+
+                return res.content;
+            });
+        },
+    );
+
     return {
         getNotes,
         saveNote,
+        saveSequenceInfluencer,
     };
 };

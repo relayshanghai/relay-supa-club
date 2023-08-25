@@ -36,6 +36,8 @@ export const createApiRequest = <T extends { [k in 'path' | 'query' | 'body']?: 
 
 export type ApiResponse<T> = T | ApiError;
 
+export type ApiError = { error: any };
+
 export type ApiHandlerParams = {
     getHandler?: NextApiHandler;
     postHandler?: NextApiHandler;

@@ -21,5 +21,6 @@ export const db = <T extends DBQuery>(query: T) => {
     const supabase = createClient<DatabaseWithCustomTypes>(supabaseUrl, supabaseServiceKey, {
         auth: { persistSession: false },
     });
+
     return query(supabase) as ReturnType<T>;
 };
