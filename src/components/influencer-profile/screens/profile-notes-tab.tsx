@@ -114,7 +114,10 @@ export const ProfileNotesTab = ({ profile, ...props }: Props) => {
                 </div>
 
                 <OutreachCollabStatusInput
-                    onUpdate={(data) => onUpdate('collabStatus', data)}
+                    onUpdate={(items) => {
+                        const selected = items.length > 0 ? items[0].id: data.notes.collabStatus
+                        onUpdate('collabStatus', selected)
+                    }}
                     options={COLLAB_STATUS_OPTIONS}
                     selected={[data.notes.collabStatus]}
                 />

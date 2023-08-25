@@ -9,19 +9,19 @@ type Props = {
     label: string;
     options: CheckboxDropdownItemData[];
     selected: string[];
-    onUpdate?: (items: CheckboxDropdownItemData) => void;
+    onUpdate?: (items: CheckboxDropdownItemData[]) => void;
     preIcon?: ReactNode;
     multiple?: boolean;
 };
 
-export const CheckboxDropdown = ({ label, options, ...props }: Props) => {
+export const CheckboxDropdown = ({ label, options, onUpdate, ...props }: Props) => {
     const { multiple } = { multiple: true, ...props };
-    const [selectedOptions, setSelectedOptions] = useState(() => options.filter((o) => props.selected.includes(o.id)));
+    const [selectedOptions] = useState(() => options.filter((o) => props.selected.includes(o.id)));
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
     const clearSelection = useCallback(() => {
-        setSelectedOptions([]);
-    }, []);
+        onUpdate && onUpdate([])
+    }, [onUpdate]);
 
     const isItemSelected = useCallback(
         (item: CheckboxDropdownItemData) => {
@@ -32,19 +32,18 @@ export const CheckboxDropdown = ({ label, options, ...props }: Props) => {
 
     const handleItemSelect = useCallback(
         (item: CheckboxDropdownItemData) => {
-            setSelectedOptions((s) => {
-                if (!multiple) return [item];
-                return [...s, item];
-            });
+            if (selectedOptions.length <= 0) return;
+            const selected = multiple ? [...selectedOptions, item] : [item]
+            onUpdate && onUpdate(selected)
 
             if (!multiple) setIsDropdownOpen(false);
         },
-        [multiple],
+        [multiple, onUpdate, selectedOptions],
     );
 
     const handleItemRemove = useCallback((item: CheckboxDropdownItemData) => {
-        setSelectedOptions((s) => s.filter((i) => i.id !== item.id));
-    }, []);
+        onUpdate && onUpdate(selectedOptions.filter((i) => i.id !== item.id))
+    }, [onUpdate, selectedOptions]);
 
     const handleBlur = useCallback((e: any) => {
         // check if focused element is child of <details />
