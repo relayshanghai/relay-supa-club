@@ -3,20 +3,21 @@ import { Layout } from '../layout';
 import SequenceTable from './sequence-table';
 
 import { SequenceStats } from './sequence-stats';
-
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { useSequence } from 'src/hooks/use-sequence';
 import { Brackets, Spinner } from '../icons';
 import { useSequenceEmails } from 'src/hooks/use-sequence-emails';
-import type { TabsProps } from '../library';
-import { Badge, Switch, Tabs } from '../library';
+import type { CommonStatusType, MultipleDropdownObject, TabsProps } from '../library';
+import { Badge, SelectMultipleDropdown, Switch, Tabs } from '../library';
 import { Button } from '../button';
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { TemplateVariablesModal } from './template-variables-modal';
 import { useTranslation } from 'react-i18next';
 import type { SequenceInfluencer } from 'src/utils/api/db';
 import { useTemplateVariables } from 'src/hooks/use-template_variables';
 import { Tooltip } from '../library';
+import { EMAIL_STEPS } from './constants';
+import { type SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 
 export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     const { t } = useTranslation();
@@ -29,6 +30,35 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
         ?.filter((variable) => variable.required && !variable.value)
         .map((variable) => variable.name) ?? ['Error retrieving variables'];
     const isMissingVariables = !templateVariables || templateVariables.length === 0 || missingVariables.length > 0;
+
+    const [filterSteps, setFilterSteps] = useState<CommonStatusType[]>([]);
+    const [influencers, setInfluencers] = useState<SequenceInfluencerManagerPage[] | undefined>(sequenceInfluencers);
+
+    useEffect(() => {
+        setInfluencers(sequenceInfluencers);
+    }, [sequenceInfluencers]);
+
+    const handleStep = useCallback(
+        (filters: CommonStatusType[]) => {
+            setFilterSteps(filters);
+            if (!sequenceInfluencers) {
+                return;
+            }
+
+            if (filters.length === 0) {
+                setInfluencers(sequenceInfluencers);
+                return;
+            }
+
+            const filteredInfluencers = sequenceInfluencers.filter((x) => {
+                const step = sequenceSteps?.find((step) => step.step_number === x.sequence_step - 1);
+                return step && step.name && filters.includes(step.name as CommonStatusType);
+            });
+
+            setInfluencers(filteredInfluencers);
+        },
+        [sequenceInfluencers, sequenceSteps],
+    );
 
     const handleStartSequence = async (sequenceInfluencers: SequenceInfluencer[]) => {
         return await sendSequence(sequenceInfluencers);
@@ -46,13 +76,9 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
         setShowUpdateTemplateVariables(true);
     };
 
-    const needsAttentionInfluencers = sequenceInfluencers?.filter(
-        (influencer) => influencer.funnel_status === 'To Contact',
-    );
-    const inSequenceInfluencers = sequenceInfluencers?.filter(
-        (influencer) => influencer.funnel_status === 'In Sequence',
-    );
-    const ignoredInfluencers = sequenceInfluencers?.filter((influencer) => influencer.funnel_status === 'Ignored');
+    const needsAttentionInfluencers = influencers?.filter((influencer) => influencer.funnel_status === 'To Contact');
+    const inSequenceInfluencers = influencers?.filter((influencer) => influencer.funnel_status === 'In Sequence');
+    const ignoredInfluencers = influencers?.filter((influencer) => influencer.funnel_status === 'Ignored');
 
     const tabs: TabsProps<SequenceInfluencer['funnel_status']>['tabs'] = [
         {
@@ -82,7 +108,34 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     ];
     const [currentTab, setCurrentTab] = useState(tabs[0].value);
 
-    const currentTabInfluencers = sequenceInfluencers?.filter((influencer) => influencer.funnel_status === currentTab);
+    const currentTabInfluencers = influencers?.filter((influencer) => influencer.funnel_status === currentTab);
+
+    const [emailSteps, setEmailSteps] = useState<MultipleDropdownObject>(EMAIL_STEPS);
+
+    const setEmailStepValues = useCallback(
+        (influencers: SequenceInfluencerManagerPage[], options: MultipleDropdownObject) => {
+            const emailOptionsWithValue = options;
+            Object.keys(EMAIL_STEPS).forEach((option) => {
+                emailOptionsWithValue[option as CommonStatusType] = {
+                    ...(options[option as CommonStatusType] || {}),
+                    value: influencers.filter((x) => {
+                        const step = sequenceSteps?.find((step) => step.step_number === x.sequence_step);
+                        return step?.name === option;
+                    }).length,
+                };
+            });
+
+            return emailOptionsWithValue;
+        },
+        [sequenceSteps],
+    );
+
+    useEffect(() => {
+        if (!sequenceInfluencers || sequenceInfluencers.length <= 0 || !sequenceSteps) {
+            return;
+        }
+        setEmailSteps(setEmailStepValues(sequenceInfluencers, EMAIL_STEPS));
+    }, [sequenceInfluencers, setEmailSteps, sequenceSteps, setEmailStepValues]);
 
     return (
         <Layout>
@@ -126,7 +179,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                     </Button>
                 </div>
                 <SequenceStats
-                    totalInfluencers={sequenceInfluencers?.length || 0}
+                    totalInfluencers={influencers?.length ?? 0}
                     openRate={
                         (sequenceEmails?.filter(
                             (email) =>
@@ -145,6 +198,15 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                 />
                 <Tabs tabs={tabs} currentTab={currentTab} setCurrentTab={setCurrentTab} />
 
+                <div className="flex flex-row gap-4">
+                    <SelectMultipleDropdown
+                        text={t('sequences.steps.filter')}
+                        options={emailSteps}
+                        selectedOptions={filterSteps}
+                        setSelectedOptions={handleStep}
+                        translationPath="sequences.steps"
+                    />
+                </div>
                 {currentTabInfluencers && sequenceSteps ? (
                     <SequenceTable
                         sequenceInfluencers={currentTabInfluencers}
