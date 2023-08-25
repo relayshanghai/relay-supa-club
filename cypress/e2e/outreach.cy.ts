@@ -31,7 +31,7 @@ describe('outreach', () => {
         cy.getByTestId('delete-sequence:New Sequence Test').click();
         cy.contains('tr', 'New Sequence Test').should('not.exist');
     })
-    it.only('sequence page', () => {
+    it('sequence page', () => {
         cy.contains('Sequences').click();
         cy.contains('General collaboration', { timeout: 10000 }).click();
 
