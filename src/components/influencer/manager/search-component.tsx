@@ -10,7 +10,7 @@ export const SearchComponent = ({
     onSetSearch: (term: string) => void;
 }) => {
     return (
-        <div
+        <section
             className={`relative flex flex-row items-center rounded-md border border-gray-200 bg-white text-gray-900 ring-1 ring-gray-900 ring-opacity-5 focus:border-primary-500 focus:outline-none focus:ring-primary-500 sm:text-sm`}
         >
             <Search className="absolute left-2 top-2 h-6 w-6 fill-gray-500" />
@@ -21,6 +21,6 @@ export const SearchComponent = ({
                 onChange={(e) => onSetSearch(e.target.value)}
                 value={searchTerm}
             />
-        </div>
+        </section>
     );
 };

@@ -1,6 +1,9 @@
 import { useTranslation } from 'react-i18next';
-import { type MultipleDropdownObject, SelectMultipleDropdown } from '../../library/select-multiple-dropdown';
-import { type FunnelStatus } from 'src/utils/api/db';
+import {
+    type MultipleDropdownObject,
+    SelectMultipleDropdown,
+    type CommonStatusType,
+} from '../../library/select-multiple-dropdown';
 
 export const CollabStatus = ({
     collabOptions,
@@ -8,8 +11,8 @@ export const CollabStatus = ({
     onSetFilters,
 }: {
     collabOptions: MultipleDropdownObject;
-    filters: FunnelStatus[];
-    onSetFilters: (filters: FunnelStatus[]) => void;
+    filters: CommonStatusType[];
+    onSetFilters: (filters: CommonStatusType[]) => void;
 }) => {
     const { t } = useTranslation();
     return (
@@ -19,6 +22,7 @@ export const CollabStatus = ({
                 options={collabOptions}
                 selectedOptions={filters}
                 setSelectedOptions={onSetFilters}
+                translationPath="manager"
             />
         </div>
     );

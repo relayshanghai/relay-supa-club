@@ -30,7 +30,9 @@ export const getSequenceInfluencer =
 
         return {
             ...sequenceInfluencer,
-            manager_first_name: manager?.first_name,
+            iqdata_id: influencer.reference_id.replace('iqdata:', ''),
+            influencer_id: influencer.id,
+            manager_first_name: manager?.first_name ?? '',
             name: influencer.name,
             username: influencer.username,
             avatar_url: influencer.avatar_url,

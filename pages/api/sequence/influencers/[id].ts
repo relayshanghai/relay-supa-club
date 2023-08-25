@@ -123,6 +123,7 @@ const postHandler: NextApiHandler = async (
 
         return res.status(httpCodes.OK).json({
             ...sequenceInfluencer,
+            manager_first_name: manager.first_name,
             address,
             manager,
         });
