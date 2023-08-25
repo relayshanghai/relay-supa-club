@@ -77,11 +77,6 @@ export const apiFetch = async <TRes = any, TReq extends ApiPayload = any>(
         return new Error(err);
     });
 
-    if (response instanceof Error && response.name === 'AbortError') {
-        // @todo this should be predictable
-        return;
-    }
-
     if (response instanceof Error) {
         throw response;
     }
