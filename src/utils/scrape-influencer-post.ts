@@ -1,15 +1,19 @@
 import type { CreatorPlatform } from 'types';
+import type { InfluencerSocialProfileRow, RelayDatabase } from './api/db';
+import type { ServerContext } from './api/iqdata';
 import { fetchPostPerformanceData } from './api/iqdata/post-performance';
 import { extractPlatformFromURL } from './extract-platform-from-url';
 import type { ScrapeData } from './scraper/types';
 import { db } from './supabase-client';
-import type { InfluencerSocialProfileRow, RelayDatabase } from './api/db';
-import { saveInfluencer } from './save-influencer';
-import type { ServerContext } from './api/iqdata';
-import { fetchReport } from './api/iqdata/fetch-report';
 
 type ScrapeDataWithInfluencer = Omit<ScrapeData, 'influencer'> & {
+    /**
+     * The influencer social profile
+     */
     influencer: InfluencerSocialProfileRow;
+    /**
+     * The influencer's id in that platform
+     */
     influencer_platform_id: string;
 };
 
@@ -29,7 +33,7 @@ export const scrapeInfluencerPost = async (url: string, context?: ServerContext)
     const { influencer: influencer_platform_id, ...result } = scrape;
 
     // @todo refactor querys that are not (db: SupabaseClient) => async () => Promise<any>
-    const getInfluencer = db((db: RelayDatabase) => async (referenceId) => {
+    const getInfluencer = db((db: RelayDatabase) => async (referenceId: string) => {
         const { data, error } = await db
             .from('influencer_social_profiles')
             .select()
@@ -46,23 +50,26 @@ export const scrapeInfluencerPost = async (url: string, context?: ServerContext)
     const socialProfile: InfluencerSocialProfileRow | null = await getInfluencer(influencer_platform_id);
 
     if (socialProfile === null) {
-        if (context && context.metadata) {
-            context.metadata = { ...context.metadata, influencer_platform_id, action: 'fetchReport' };
-        }
+        throw new Error(`Cannot determine influencer from given URL: ${url}`);
 
-        const report = await fetchReport(influencer_platform_id, platform, context);
+        // @todo this seems to create duplicate rows in influencer_social
+        // if (context && context.metadata) {
+        //     context.metadata = { ...context.metadata, influencer_platform_id, action: 'fetchReport' };
+        // }
 
-        if (!report) {
-            throw new Error(`Cannot fetch report for influencer: ${influencer_platform_id}, ${platform}`);
-        }
+        // const report = await fetchReport(influencer_platform_id, platform, context);
 
-        const [_, socialProfile] = await db<typeof saveInfluencer>(saveInfluencer)(report);
+        // if (!report) {
+        //     throw new Error(`Cannot fetch report for influencer: ${influencer_platform_id}, ${platform}`);
+        // }
 
-        if (socialProfile === null) {
-            throw new Error(`Cannot determine influencer from given URL: ${url}`);
-        }
+        // const [_, socialProfile] = await db<typeof saveInfluencer>(saveInfluencer)(report);
 
-        return { ...result, influencer: socialProfile, influencer_platform_id };
+        // if (socialProfile === null) {
+        //     throw new Error(`Cannot determine influencer from given URL: ${url}`);
+        // }
+
+        // return { ...result, influencer: socialProfile, influencer_platform_id };
     }
 
     return { ...result, influencer: socialProfile, influencer_platform_id };

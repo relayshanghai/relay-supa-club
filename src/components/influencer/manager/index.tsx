@@ -1,23 +1,23 @@
-import { SearchComponent } from './search-component';
-import { CollabStatus } from './collab-status';
-import { OnlyMe } from './onlyme';
-import { Table } from './table';
-import { useSequences } from 'src/hooks/use-sequences';
-import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
-import { useCallback, useEffect, useState } from 'react';
 import Fuse from 'fuse.js';
-import { useUser } from 'src/hooks/use-user';
-import { type FunnelStatus } from 'src/utils/api/db';
-import { type MultipleDropdownObject } from 'src/components/library';
-import { COLLAB_OPTIONS } from '../constants';
-import { ProfileOverlayScreen } from 'src/components/influencer-profile/screens/profile-overlay-screen';
-import { useTranslation } from 'react-i18next';
-import { useUiState } from 'src/components/influencer-profile/screens/profile-screen-context';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
+import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { ProfileOverlayScreen } from 'src/components/influencer-profile/screens/profile-overlay-screen';
+import { useUiState } from 'src/components/influencer-profile/screens/profile-screen-context';
+import type { CommonStatusType, MultipleDropdownObject } from 'src/components/library';
+import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
+import { useSequences } from 'src/hooks/use-sequences';
+import { useUser } from 'src/hooks/use-user';
+import { COLLAB_OPTIONS } from '../constants';
+import { CollabStatus } from './collab-status';
+import { filterByMe } from './helpers';
+import { OnlyMe } from './onlyme';
+import { SearchComponent } from './search-component';
+import { Table } from './table';
 
 const Manager = () => {
     const { sequences } = useSequences();
-    const { sequenceInfluencers } = useSequenceInfluencers(
+    const { sequenceInfluencers, refreshSequenceInfluencers } = useSequenceInfluencers(
         sequences?.map((sequence) => {
             return sequence.id;
         }),
@@ -32,18 +32,11 @@ const Manager = () => {
     const [influencers, setInfluencers] = useState<SequenceInfluencerManagerPage[] | undefined>(sequenceInfluencers);
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [onlyMe, setOnlyMe] = useState<boolean>(false);
-    const [filterStatuses, setFilterStatuses] = useState<FunnelStatus[]>([]);
+    const [filterStatuses, setFilterStatuses] = useState<CommonStatusType[]>([]);
 
     const handleRowClick = useCallback(
         (influencer: SequenceInfluencerManagerPage) => {
-            setInfluencer({
-                username: 'TastyChef',
-                name: "D'Jon Curtis",
-                // @todo platform needed in influencer type
-                // platform: 'instagram',
-                avatar_url: 'https://api.dicebear.com/6.x/open-peeps/svg?seed=TastyChef&size=96',
-                ...influencer,
-            });
+            setInfluencer(influencer);
 
             setUiState((s) => {
                 return { ...s, isProfileOverlayOpen: true };
@@ -52,16 +45,15 @@ const Manager = () => {
         [setUiState],
     );
 
-    const handleProfileUpdate = useCallback((data: any) => {
-        // eslint-disable-next-line no-console
-        console.log('@todo update influencer profile', data);
-    }, []);
+    const handleProfileUpdate = useCallback(() => {
+        refreshSequenceInfluencers()
+    }, [refreshSequenceInfluencers]);
 
     const setCollabStatusValues = (influencers: SequenceInfluencerManagerPage[], options: MultipleDropdownObject) => {
         const collabOptionsWithValue = options;
         Object.keys(COLLAB_OPTIONS).forEach((option) => {
-            collabOptionsWithValue[option as FunnelStatus] = {
-                ...options[option as FunnelStatus],
+            collabOptionsWithValue[option as CommonStatusType] = {
+                ...options[option as CommonStatusType],
                 value: influencers.filter((x) => x.funnel_status === option).length || 0,
             };
         });
@@ -102,7 +94,7 @@ const Manager = () => {
     const handleOnlyMe = useCallback(
         (state: boolean) => {
             setOnlyMe(!onlyMe);
-            if (!sequenceInfluencers) {
+            if (!sequenceInfluencers || !profile || !sequences) {
                 return;
             }
 
@@ -111,13 +103,13 @@ const Manager = () => {
                 return;
             }
 
-            setInfluencers(sequenceInfluencers.filter((x) => x.manager_first_name === profile?.first_name));
+            setInfluencers(filterByMe(sequenceInfluencers, profile, sequences));
         },
-        [sequenceInfluencers, profile, onlyMe],
+        [onlyMe, sequenceInfluencers, profile, sequences],
     );
 
     const handleStatus = useCallback(
-        (filters: FunnelStatus[]) => {
+        (filters: CommonStatusType[]) => {
             setFilterStatuses(filters);
             if (!sequenceInfluencers) {
                 return;
@@ -149,7 +141,7 @@ const Manager = () => {
                 </div>
                 {/* Filters */}
                 <div className="mt-[72px] flex flex-row justify-between">
-                    <div className="flex flex-row gap-5">
+                    <section className="flex flex-row gap-5">
                         <SearchComponent
                             searchTerm={searchTerm}
                             placeholder={t('manager.search')}
@@ -160,7 +152,7 @@ const Manager = () => {
                             filters={filterStatuses}
                             onSetFilters={handleStatus}
                         />
-                    </div>
+                    </section>
                     <OnlyMe state={onlyMe} onSwitch={handleOnlyMe} />
                 </div>
                 {/* Table */}

@@ -143,7 +143,7 @@ describe('outreach', () => {
             'The values you see here are what will be used to automatically customize the actual email content of your sequence emails!',
         );
         // can update template variables
-        cy.get('input[id="template-variable-input-productDescription"]').type('test description entry');
+        cy.get('textarea[id="template-variable-input-productDescription"]').type('test description entry');
         cy.contains('button', 'Update variables').click();
         cy.contains('General collaboration').click({ force: true }); // click out of modal
 
@@ -183,7 +183,7 @@ describe('outreach', () => {
 
         // reset the empty template variable so you can run the test again if need be
         cy.contains('button', 'Update template variables').click();
-        cy.get('input[id="template-variable-input-productDescription"]').clear();
+        cy.get('textarea[id="template-variable-input-productDescription"]').clear();
         cy.contains('button', 'Update variables').click();
         cy.contains('General collaboration').click({ force: true }); // click out of modal
 
