@@ -21,16 +21,19 @@ export const getSequenceInfluencers = async (ctx: ServerContext, sequenceId: str
             );
             results.push({
                 ...influencer,
+                iqdata_id: influencerInfo.reference_id.replace('iqdata:', ''),
+                influencer_id: influencerInfo.influencer_id,
+                name: influencerInfo?.name,
+                username: influencerInfo?.username,
+                avatar_url: influencerInfo?.avatar_url,
+                url: influencerInfo?.url,
                 manager_first_name: sequence.manager_first_name || '',
-                name: influencerInfo.name || influencerInfo.username,
-                username: influencerInfo.username,
-                avatar_url: influencerInfo.avatar_url,
-                url: influencerInfo.url,
                 platform: influencerInfo?.platform,
             });
         } catch (error) {
-            serverLogger(error, 'error');
+            serverLogger(influencer, 'error', true, 'Error getting sequence influencer');
         }
     }
+
     return results;
 };
