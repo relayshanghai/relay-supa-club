@@ -1,6 +1,7 @@
 /* eslint-disable complexity */
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useAllSequenceInfluencersCountByCompany } from 'src/hooks/use-all-sequence-influencers-by-company-id';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { useSequenceEmails } from 'src/hooks/use-sequence-emails';
 import { useSequences } from 'src/hooks/use-sequences';
@@ -13,7 +14,8 @@ import SequencesTable from './sequences-table';
 
 export const SequencesPage = () => {
     const { t } = useTranslation();
-    const { sequences, allSequenceInfluencersByCompanyId } = useSequences();
+    const { sequences } = useSequences();
+    const { allSequenceInfluencersCount } = useAllSequenceInfluencersCountByCompany();
     const { allSequenceEmails } = useSequenceEmails();
     const [showCreateSequenceModal, setShowCreateSequenceModal] = useState<boolean>(false);
 
@@ -47,7 +49,7 @@ export const SequencesPage = () => {
                     </Button>
                 </div>
                 <SequenceStats
-                    totalInfluencers={allSequenceInfluencersByCompanyId?.length || 0}
+                    totalInfluencers={allSequenceInfluencersCount}
                     openRate={
                         ((allSequenceEmails &&
                             allSequenceEmails?.length > 0 &&

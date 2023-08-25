@@ -1,7 +1,8 @@
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronDown, FilterFunnel } from 'src/components/icons';
-import { type FunnelStatus } from 'src/utils/api/db/types';
+import type { FunnelStatus, EmailTrackingStatus, EmailDeliveryStatus } from 'src/utils/api/db/types';
+import type { InfluencerStepTypes } from 'types';
 
 export type MultipleDropdownObject = {
     [key: string]: {
@@ -10,16 +11,20 @@ export type MultipleDropdownObject = {
     };
 };
 
+export type CommonStatusType = FunnelStatus | EmailDeliveryStatus | EmailTrackingStatus | InfluencerStepTypes | number;
+
 export const SelectMultipleDropdown = ({
     text,
     options,
     selectedOptions,
     setSelectedOptions,
+    translationPath,
 }: {
     text: string;
     options: MultipleDropdownObject | any;
-    selectedOptions: FunnelStatus[] | any[];
-    setSelectedOptions: (filters: FunnelStatus[]) => void;
+    selectedOptions: CommonStatusType[] | any[];
+    setSelectedOptions: (filters: CommonStatusType[]) => void;
+    translationPath: string;
 }) => {
     const detailsRef = useRef<HTMLDetailsElement>(null); // Tracks the details element in the returned JSX
     const { t } = useTranslation();
@@ -53,21 +58,23 @@ export const SelectMultipleDropdown = ({
             className="relative flex w-32 min-w-fit cursor-pointer select-none appearance-none flex-row items-center justify-between gap-2 rounded-md border border-gray-200 bg-white font-medium text-gray-400 ring-1 ring-gray-900 ring-opacity-5 focus:border-primary-500 focus:border-transparent focus:outline-none focus:ring-0 focus:ring-primary-500 sm:w-64 sm:text-sm"
         >
             <summary className={`flex h-full min-w-full flex-row items-center justify-between gap-2`}>
-                <div className="flex flex-row items-center gap-2 px-3 py-1">
+                <section className="flex flex-row items-center gap-2 px-3 py-1">
                     <FilterFunnel className="h-4 w-4 flex-shrink-0 stroke-slate-500" />
                     {selectedOptions.length > 0 ? (
                         selectedOptions.map((selectedOption, _index) => (
                             <p
                                 key={selectedOption}
-                                className={`rounded text-xs font-medium ${options[selectedOption].style} whitespace-nowrap px-2 py-2`}
+                                className={`rounded text-xs font-medium ${
+                                    options[selectedOption]?.style || ''
+                                } whitespace-nowrap px-2 py-2`}
                             >
-                                {t(`manager.${selectedOption}`)}
+                                {t(`${translationPath}.${selectedOption}`)}
                             </p>
                         ))
                     ) : (
                         <p className="px-2 py-1.5">{text}</p>
                     )}
-                </div>
+                </section>
                 {selectedOptions.length > 0 ? (
                     <p
                         onClick={resetSelection}
@@ -79,14 +86,14 @@ export const SelectMultipleDropdown = ({
                     <ChevronDown className="mr-2 h-6 w-6 flex-shrink-0" />
                 )}
             </summary>
-            <ul className="absolute mt-2 w-full select-none rounded-lg border bg-white text-sm shadow-lg">
+            <ul className="absolute z-10 mt-2 w-full select-none rounded-lg border bg-white text-sm shadow-lg">
                 {Object.keys(options).map((option) => (
                     <li key={option}>
                         <label
                             className="flex cursor-pointer flex-row items-center justify-between rounded-lg px-3 py-2 hover:bg-primary-600 hover:text-slate-100"
                             onMouseDown={(e) => e.stopPropagation()}
                         >
-                            <div className="flex flex-row items-center gap-2">
+                            <section className="flex flex-row items-center gap-2">
                                 <input
                                     type="checkbox"
                                     value={option}
@@ -102,13 +109,13 @@ export const SelectMultipleDropdown = ({
                                 />
                                 <p
                                     className={`${
-                                        options[option as FunnelStatus].style
+                                        options[option as CommonStatusType]?.style || ''
                                     } whitespace-nowrap rounded-md px-3 py-2 text-xs`}
                                 >
-                                    {t(`manager.${option}`)}
+                                    {t(`${translationPath}.${option}`)}
                                 </p>
-                            </div>
-                            <p>{options[option as FunnelStatus].value}</p>
+                            </section>
+                            <p>{options[option as CommonStatusType].value}</p>
                         </label>
                     </li>
                 ))}

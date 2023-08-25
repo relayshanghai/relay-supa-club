@@ -180,8 +180,8 @@ const Tabs = () => {
     );
 };
 
-const SelectMultipleDropdowns = () => {
-    const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
+export const SelectMultipleDropdowns = () => {
+    const [selectedOptions, setSelectedOptions] = useState<library.CommonStatusType[]>([]);
 
     const options = {
         option1: {
@@ -210,7 +210,10 @@ const SelectMultipleDropdowns = () => {
                     text="sample"
                     options={options}
                     selectedOptions={selectedOptions}
-                    setSelectedOptions={setSelectedOptions}
+                    setSelectedOptions={(options) => {
+                        setSelectedOptions(options);
+                    }}
+                    translationPath="manager"
                 />
             </div>
         </div>

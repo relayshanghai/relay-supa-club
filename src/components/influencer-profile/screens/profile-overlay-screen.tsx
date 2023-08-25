@@ -69,13 +69,13 @@ export const ProfileOverlayScreen = ({ profile, onOpen, ...props }: Props) => {
             handleClose();
             if (profile === null) return;
 
-            props.onUpdate && props.onUpdate(data);
-
             saveSequenceInfluencer.call(profile.id, data).then((profile) => {
                 // @note updates local state without additional query
                 //       this will cause issue showing previous state though
                 setLocalProfile(mapProfileToFormData(profile));
                 saveSequenceInfluencer.refresh();
+
+                props.onUpdate && props.onUpdate(data);
             });
         },
         [profile, props, handleClose, saveSequenceInfluencer, mapProfileToFormData, setLocalProfile],

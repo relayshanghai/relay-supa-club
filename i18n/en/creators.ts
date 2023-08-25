@@ -36,7 +36,7 @@ const creators = {
     close: 'Close',
     usageExceeded: 'Search limit exceeded',
     resultsPerPage: 'Results per page',
-    addToSequence: 'Add to Sequence',
+    addToSequence: 'Add to sequence',
     modal: {
         viewFullProfile: 'View Full Profile',
     },

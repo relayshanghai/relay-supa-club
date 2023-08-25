@@ -98,7 +98,7 @@ export const ProfileNotesTab = ({ profile, ...props }: Props) => {
         // load posts when the modal is opened
         if (getNotes.isLoading !== null) return;
 
-        getNotes.call(profile.id, { current_user_only: 1 }).then((notes: NoteData[]) => {
+        getNotes.call(profile.id, { current_user_only: true }).then((notes: NoteData[]) => {
             const currentNote: Partial<NoteData> = notes && notes.length > 0 ? notes[0] : { content: '' };
             onUpdate('notes', currentNote.content);
         });
@@ -114,7 +114,10 @@ export const ProfileNotesTab = ({ profile, ...props }: Props) => {
                 </div>
 
                 <OutreachCollabStatusInput
-                    onUpdate={(data) => onUpdate('collabStatus', data)}
+                    onUpdate={(items) => {
+                        const selected = items.length > 0 ? items[0].id: data.notes.collabStatus
+                        onUpdate('collabStatus', selected)
+                    }}
                     options={COLLAB_STATUS_OPTIONS}
                     selected={[data.notes.collabStatus]}
                 />

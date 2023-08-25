@@ -8,7 +8,7 @@ export interface ModalProps {
     onClose: () => void;
     children: JSX.Element | JSX.Element[];
     closeButtonText?: string;
-    okButtonText?: string;
+    okButtonText?: string | JSX.Element;
     onOkay?: () => void;
 }
 

@@ -38,6 +38,23 @@ const sequences = {
     },
     addEmail: '添加邮件',
     newSequence: '新建序列',
+    steps: {
+        filter: '按KOL联络进展筛选',
+        Outreach: '首封外联邮件',
+        '1st Follow-up': '第一次跟进',
+        '2nd Follow-up': '第二次跟进',
+        '3rd Follow-up': '第三次跟进',
+        '4th Follow-up': '第四次跟进',
+    },
+    status: {
+        Scheduled: '邮件已预约',
+        Delivered: '邮件已送达',
+        Bounced: '邮件已退回',
+        Opened: '邮件已打开',
+        Replied: '邮件已回复',
+        'Link Clicked': '邮件已点击',
+        Failed: '邮件发送失败',
+    },
     indexColumns: {
         sequence: '项目',
         influencers: 'KOL总数',
@@ -127,5 +144,13 @@ const sequences = {
     emailPreview: '邮件预览',
     number_emailsSuccessfullyScheduled: '成功提交安排{{number}}发送邮件',
     number_emailsFailedToSchedule: '失败提交安排发{{number}}送邮件',
+    delete: {
+        title: '是否把KOL从此邮件进程管理项目中移除？',
+        description:
+            '此操作将把KOL从此邮件进程管理项目中移除，并不再向TA发送后续的信息。完成操作后如需要再次添加该KOL，须重新将TA添加至邮件进程管理项目中。',
+        cancel: '取消',
+        okay: '确认移除',
+    },
+    influencerAlreadyAdded_sequence: 'KOL已经添加到序列: {{sequence}}',
 };
 export default sequences;
