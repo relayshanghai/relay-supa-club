@@ -134,6 +134,16 @@ const NavBarInner = ({
                             {t('navbar.guide')}
                         </p>
                     </ActiveLink>
+                    {isRelayEmployee && (
+                        <div className="flex flex-col space-y-4 pt-8">
+                            <h2 className={`${open ? 'ml-6' : 'text-center text-xs'}`}>ADMIN</h2>
+                            <ActiveLink href={links.admin}>
+                                <p className={`whitespace-nowrap text-sm ${open && desktop ? 'relative' : 'hidden'}`}>
+                                    Clients
+                                </p>
+                            </ActiveLink>
+                        </div>
+                    )}
                 </section>
                 {loggedIn && profileFirstName && (
                     <ActiveLink href="/account">
@@ -156,12 +166,6 @@ const NavBarInner = ({
                     </ActiveLink>
                 )}
             </div>
-            {isRelayEmployee && (
-                <div className="flex flex-col space-y-4 pt-8">
-                    <h2 className="ml-6">ADMIN</h2>
-                    <ActiveLink href={links.admin}>Clients</ActiveLink>
-                </div>
-            )}
         </>
     );
 };

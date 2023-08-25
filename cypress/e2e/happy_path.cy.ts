@@ -161,7 +161,7 @@ describe('Main pages happy paths', () => {
 
     it('can use account and pricing pages', () => {
         cy.loginTestUser();
-        cy.contains('My Account').click();
+        cy.contains('William Edward').click();
         cy.contains('Subscription', { timeout: 10000 }); // loads account page
 
         cy.url().should('include', `/account`);
@@ -355,7 +355,7 @@ describe('Main pages happy paths', () => {
     it('can record search usages, can manage clients as a company owner', () => {
         cy.loginAdmin();
 
-        cy.contains('My Account').click();
+        cy.contains('Jacob').click();
         cy.contains('Usage limits', { timeout: 30000 });
         cy.contains('https://relay.club', { timeout: 20000 });
         cy.contains('https://blue-moonlight-stream.com').should('not.exist');
@@ -381,7 +381,7 @@ describe('Main pages happy paths', () => {
         cy.getByTestId('search-spinner').should('not.exist');
         cy.contains('button', 'Search').click();
 
-        cy.contains('My Account').click();
+        cy.contains('Jacob').click();
         cy.contains('Usage limits', { timeout: 30000 });
         cy.contains('https://relay.club');
 
@@ -412,7 +412,7 @@ describe('Main pages happy paths', () => {
         cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises'); // check that warning persists
 
         // can see client's search totals
-        cy.contains('My Account').click();
+        cy.contains('Jacob').click();
         cy.contains('https://blue-moonlight-stream.com', { timeout: 20000 });
         cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises'); // check that warning persists
         cy.contains('tr', 'Searches').within(() => {
@@ -431,7 +431,7 @@ describe('Main pages happy paths', () => {
         cy.contains('button', 'Search').click();
 
         // Check that search total increased
-        cy.contains('My Account').click();
+        cy.contains('Jacob').click();
         cy.contains('https://blue-moonlight-stream.com');
         cy.contains('td', '1', { timeout: 30000 }); // wait for count to update
         cy.contains('tr', 'Searches').within(() => {
@@ -445,7 +445,7 @@ describe('Main pages happy paths', () => {
         cy.contains('Close', { timeout: 1000 }).click();
         cy.contains('You are acting on behalf of company: Blue Moonlight Stream Enterprises').should('not.exist');
 
-        cy.contains('My Account').click();
+        cy.contains('Jacob').click();
         cy.contains('https://blue-moonlight-stream.com').should('not.exist');
         cy.contains('https://relay.club');
     });
