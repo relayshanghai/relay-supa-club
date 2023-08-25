@@ -161,14 +161,6 @@ const sequences = {
     emailPreview: 'Email preview',
     number_emailsSuccessfullyScheduled: '{{number}} emails successfully scheduled to send',
     number_emailsFailedToSchedule: 'Failed to submit {{number}} emails to send',
-    steps: {
-        filter: 'Filter by current step',
-        Outreach: 'Outreach',
-        '1st Follow-up': '1st Follow-up',
-        '2nd Follow-up': '2nd Follow-up',
-        '3rd Follow-up': '3rd Follow-up',
-        '4th Follow-up': '4th Follow-up',
-    },
     delete: {
         title: 'Delete influencer from sequence?',
         description:

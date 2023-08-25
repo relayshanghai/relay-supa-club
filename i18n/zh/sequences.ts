@@ -38,14 +38,6 @@ const sequences = {
     },
     addEmail: '添加邮件',
     newSequence: '新建序列',
-    steps: {
-        filter: '按KOL联络进展筛选',
-        Outreach: '首封外联邮件',
-        '1st Follow-up': '第一次跟进',
-        '2nd Follow-up': '第二次跟进',
-        '3rd Follow-up': '第三次跟进',
-        '4th Follow-up': '第四次跟进',
-    },
     status: {
         Scheduled: '邮件已预约',
         Delivered: '邮件已送达',
