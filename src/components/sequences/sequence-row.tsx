@@ -213,12 +213,16 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                             {lastStep?.name ?? ''}
                         </td>
                         <td
-                            className={`flex w-fit flex-row items-center justify-center gap-2 rounded-lg px-3 py-2 text-center ${
-                                EMAIL_STATUS_STYLES[getStatus(lastEmail || nextEmail) || 'Default']
-                            }`}
+                            className={`mt-4 flex w-fit flex-row gap-2 whitespace-nowrap px-6 text-center align-middle`}
                         >
-                            {Icons[getStatus(lastEmail || nextEmail) as keyof typeof Icons] || Icons.Default}
-                            {getStatus(lastEmail || nextEmail)}
+                            <span
+                                className={`flex flex-row gap-2 rounded-lg px-3 py-2 ${
+                                    EMAIL_STATUS_STYLES[getStatus(lastEmail || nextEmail) || 'Default'].style
+                                }`}
+                            >
+                                {Icons[getStatus(lastEmail || nextEmail) as keyof typeof Icons] || Icons.Default}
+                                {getStatus(lastEmail || nextEmail)}
+                            </span>
                         </td>
                         <td className="whitespace-nowrap px-6 py-4 text-gray-600">
                             {lastEmail?.email_send_at &&
