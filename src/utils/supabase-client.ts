@@ -13,7 +13,7 @@ export const supabase = createClient<DatabaseWithCustomTypes>(supabaseUrl, supab
     auth: { persistSession: false },
 });
 
-export const db = <T extends DBQuery<(...args: any) => any>>(query: DBQuery<ReturnType<T>>) => {
+export const db = <T extends DBQuery>(query: T) => {
     if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_KEY) {
         throw new Error('Supabase URL or service key is not set');
     }
@@ -21,5 +21,5 @@ export const db = <T extends DBQuery<(...args: any) => any>>(query: DBQuery<Retu
     const supabase = createClient<DatabaseWithCustomTypes>(supabaseUrl, supabaseServiceKey, {
         auth: { persistSession: false },
     });
-    return query(supabase);
+    return query(supabase) as ReturnType<T>;
 };

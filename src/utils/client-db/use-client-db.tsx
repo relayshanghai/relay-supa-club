@@ -1,7 +1,6 @@
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import type { DatabaseWithCustomTypes } from 'types';
 
-import { getCompanyByIdCall } from '../api/db/calls/companies';
 import {
     deleteCampaignCreatorCall,
     getAllCampaignCreatorsByCampaignIdsCall,
@@ -9,19 +8,20 @@ import {
     insertCampaignCreatorCall,
     updateCampaignCreatorCall,
 } from '../api/db/calls/campaignCreators';
-import type { DBQuery } from '../types';
+import { createCampaignCall, getCampaignsCall, updateCampaignCall } from '../api/db/calls/campaigns';
+import { getCompanyByIdCall } from '../api/db/calls/companies';
+import { getInfluencerSocialProfileByIdCall } from '../api/db/calls/influencers';
+import { getProfileByIdCall } from '../api/db/calls/profiles';
 import { getSequenceInfluencersBySequenceIdCall } from '../api/db/calls/sequence-influencers';
 import { getSequenceStepsBySequenceIdCall, updateSequenceStepCall } from '../api/db/calls/sequence-steps';
-import { getSequencesByCompanyIdCall, getSequenceByIdCall, updateSequenceCall } from '../api/db/calls/sequences';
-import { getInfluencerSocialProfileByIdCall } from '../api/db/calls/influencers';
-import { createCampaignCall, getCampaignsCall, updateCampaignCall } from '../api/db/calls/campaigns';
-import { getProfileByIdCall } from '../api/db/calls/profiles';
+import { getSequenceByIdCall, getSequencesByCompanyIdCall, updateSequenceCall } from '../api/db/calls/sequences';
+import type { DBQuery } from '../types';
 
 export const useSupabase = () => useSupabaseClient<DatabaseWithCustomTypes>();
 
-export const useDB = <T extends DBQuery<(...args: any) => any>>(query: DBQuery<ReturnType<T>>) => {
+export const useDB = <T extends DBQuery>(query: T) => {
     const supabase = useSupabase();
-    return query(supabase);
+    return query(supabase) as ReturnType<T>;
 };
 
 /**

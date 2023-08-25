@@ -1,15 +1,15 @@
+import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { useCallback, useEffect } from 'react';
-import { useProfileScreenContext, useUiState } from '../screens/profile-screen-context';
+import { useSequenceInfluencerNotes } from 'src/hooks/use-sequence-influencer-notes';
 import { CollabAffiliateLinkInput } from '../components/collab-affiliate-link-input';
 import { CollabFeeInput } from '../components/collab-fee-input';
 import { CollabScheduledPostDateInput } from '../components/collab-scheduled-post-date-input';
 import { CollabVideoDetailsInput } from '../components/collab-video-details-input';
+import type { NoteData } from '../components/note';
 import { OutreachCollabStatusInput } from '../components/outreach-collab-status-input';
 import { OutreachNextStepsInput } from '../components/outreach-next-steps-input';
 import { OutreachNotesInput } from '../components/outreach-notes-input';
-import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
-import { useSequenceInfluencerNotes } from 'src/hooks/use-sequence-influencer-notes';
-import type { NoteData } from '../components/note';
+import { useProfileScreenContext, useUiState } from '../screens/profile-screen-context';
 
 export const COLLAB_STATUS_OPTIONS = [
     {
@@ -96,7 +96,7 @@ export const ProfileNotesTab = ({ profile, ...props }: Props) => {
         // load posts when the modal is opened
         if (getNotes.isLoading !== null) return;
 
-        getNotes.call(profile.id, { current_user_only: 1 }).then((notes: NoteData[]) => {
+        getNotes.call(profile.id, { current_user_only: true }).then((notes: NoteData[]) => {
             const currentNote: Partial<NoteData> = notes && notes.length > 0 ? notes[0] : { content: '' };
             onUpdate('notes', currentNote.content);
         });
