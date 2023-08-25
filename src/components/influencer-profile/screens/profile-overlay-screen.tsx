@@ -16,7 +16,6 @@ type Props = {
 };
 
 const mapProfileToNotes = (profile: SequenceInfluencerManagerPage) => {
-    console.log(">>>>", profile)
     return {
         collabStatus: profile?.funnel_status ?? '', // profile.funnel_status (toLowerCase)
         nextStep: profile?.next_step ?? '', // profile.next_step
