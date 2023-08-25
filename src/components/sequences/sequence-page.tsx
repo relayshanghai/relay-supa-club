@@ -143,6 +143,8 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                 sequenceId={sequenceId}
                 visible={showUpdateTemplateVariables}
                 onClose={() => setShowUpdateTemplateVariables(false)}
+                sequenceSteps={sequenceSteps || []}
+                templateVariables={templateVariables ?? []}
             />
             <div className="flex flex-col space-y-4 p-4">
                 <div className="flex w-full">
