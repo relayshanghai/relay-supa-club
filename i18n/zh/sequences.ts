@@ -127,5 +127,6 @@ const sequences = {
     emailPreview: '邮件预览',
     number_emailsSuccessfullyScheduled: '成功提交安排{{number}}发送邮件',
     number_emailsFailedToSchedule: '失败提交安排发{{number}}送邮件',
+    influencerAlreadyAdded_sequence: 'KOL已经添加到序列: {{sequence}}',
 };
 export default sequences;

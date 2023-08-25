@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Menu } from '@headlessui/react';
 import { PlusCircleIcon } from '@heroicons/react/24/solid';
 import Link from 'next/link';
@@ -24,13 +24,16 @@ import { SearchLoadMoreResults } from 'src/utils/analytics/events';
 import { SEARCH_RESULT_ROW } from 'src/utils/rudderstack/event-names';
 import type { track } from './use-track-event';
 
+import type { AllSequenceInfluencersIqDataIdsAndSequenceNames } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
+import { AddToSequenceButton } from './add-to-sequence-button';
+
 export interface SearchResultRowProps {
     creator: CreatorSearchAccountObject;
     setSelectedCreator: (creator: CreatorSearchAccountObject) => void;
     setShowCampaignListModal: (show: boolean) => void;
     setShowAlreadyAddedModal: (show: boolean) => void;
-    setShowSequenceListModal: (show: boolean) => void;
     allCampaignCreators?: CampaignCreatorBasicInfo[];
+    allSequenceInfluencersIqDataIdsAndSequenceNames?: AllSequenceInfluencersIqDataIdsAndSequenceNames[];
     trackSearch?: track;
 }
 export interface MoreResultsRowsProps extends Omit<SearchResultRowProps, 'creator'> {
@@ -42,8 +45,8 @@ export const MoreResultsRows = ({
     setShowCampaignListModal,
     setSelectedCreator,
     setShowAlreadyAddedModal,
-    setShowSequenceListModal,
     allCampaignCreators,
+    allSequenceInfluencersIqDataIdsAndSequenceNames,
     trackSearch,
 }: MoreResultsRowsProps) => {
     const { t } = useTranslation();
@@ -103,7 +106,9 @@ export const MoreResultsRows = ({
                         setSelectedCreator={setSelectedCreator}
                         setShowAlreadyAddedModal={setShowAlreadyAddedModal}
                         allCampaignCreators={allCampaignCreators}
-                        setShowSequenceListModal={setShowSequenceListModal}
+                        allSequenceInfluencersIqDataIdsAndSequenceNames={
+                            allSequenceInfluencersIqDataIdsAndSequenceNames
+                        }
                     />
                 ))}
             </>
@@ -119,8 +124,8 @@ export const SearchResultRow = ({
     setShowCampaignListModal,
     setSelectedCreator,
     allCampaignCreators,
+    allSequenceInfluencersIqDataIdsAndSequenceNames,
     setShowAlreadyAddedModal,
-    setShowSequenceListModal,
 }: SearchResultRowProps) => {
     const { t } = useTranslation();
     const { platform, recommendedInfluencers } = useSearch();
@@ -163,11 +168,6 @@ export const SearchResultRow = ({
         trackEvent(SEARCH_RESULT_ROW('add to campaign'), { platform, user_id });
     };
 
-    const addToSequence = () => {
-        setSelectedCreator(creator);
-        setShowSequenceListModal(true);
-    };
-
     const desktop = useAboveScreenWidth(500);
     const [clientRoleData] = useAtom(clientRoleAtom);
     const inActAsMode = clientRoleData.companyId?.length > 0;
@@ -188,6 +188,8 @@ export const SearchResultRow = ({
         },
         [track, trackEvent],
     );
+
+    const [showMenu, setShowMenu] = useState(false);
 
     return (
         <tr className="group hover:bg-primary-100">
@@ -245,10 +247,13 @@ export const SearchResultRow = ({
                     </Link>
 
                     {featEmail() ? (
-                        <Button onClick={addToSequence} className="flex items-center gap-1">
-                            <PlusCircleIcon className="w-5" />
-                            <span className="">{t('creators.addToSequence')}</span>
-                        </Button>
+                        <AddToSequenceButton
+                            creatorProfile={creator.account.user_profile}
+                            allSequenceInfluencersIqDataIdsAndSequenceNames={
+                                allSequenceInfluencersIqDataIdsAndSequenceNames ?? []
+                            }
+                            platform={platform}
+                        />
                     ) : (
                         <Button
                             onClick={addToCampaign}
@@ -264,77 +269,93 @@ export const SearchResultRow = ({
                 <div className="flex flex-col items-center justify-center gap-1 lg:hidden">
                     <Menu as="div" className="relative inline-block text-left">
                         <Menu.Button as="div" data-testid={`search-result-row-buttons/${user_id}`}>
-                            <Button>
+                            <Button onClick={() => setShowMenu(true)}>
                                 <DotsHorizontal />
                             </Button>
                         </Menu.Button>
 
-                        <Menu.Items className="absolute right-0 top-0 mr-16 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                            <div className="px-1 py-1">
-                                {featEmail() ? (
-                                    <Menu.Item>
-                                        {({ active }) => (
-                                            <button
-                                                className={`${
-                                                    active ? 'bg-violet-500 text-white' : 'text-gray-900'
-                                                } group flex w-full items-center justify-center rounded-md px-2 py-2 text-sm`}
-                                                onClick={addToSequence}
-                                            >
-                                                {t('creators.addToSequence')}
-                                            </button>
-                                        )}
-                                    </Menu.Item>
-                                ) : (
-                                    <Menu.Item>
-                                        {({ active }) => (
-                                            <button
-                                                className={`${
-                                                    active ? 'bg-violet-500 text-white' : 'text-gray-900'
-                                                } group flex w-full items-center justify-center rounded-md px-2 py-2 text-sm`}
-                                                onClick={addToCampaign}
-                                            >
-                                                {t('creators.addToCampaign')}
-                                            </button>
-                                        )}
-                                    </Menu.Item>
-                                )}
-
-                                <Link
-                                    href={`/influencer/${platform}/${user_id}`}
-                                    target="_blank"
-                                    data-testid={`analyze-button/${user_id}`}
-                                >
-                                    <Menu.Item>
-                                        {({ active }) => (
-                                            <button
-                                                className={`${
-                                                    active ? 'bg-violet-500 text-white' : 'text-gray-900'
-                                                } group flex w-full items-center justify-center rounded-md px-2 py-2 text-sm`}
-                                                onClick={() => analyzeInfluencer({ platform, user_id })}
-                                            >
-                                                {t('creators.analyzeProfile')}
-                                            </button>
-                                        )}
-                                    </Menu.Item>
-                                </Link>
-
-                                {url && (
-                                    <Link href={url} target="_blank" rel="noopener noreferrer">
+                        <Menu.Items
+                            className="absolute right-0 top-0 mr-16 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                            static
+                        >
+                            {showMenu && (
+                                <div className="px-1 py-1">
+                                    {featEmail() ? (
+                                        <Menu.Item>
+                                            {({ active }) => (
+                                                <AddToSequenceButton
+                                                    inMenu
+                                                    active={active}
+                                                    creatorProfile={creator.account.user_profile}
+                                                    allSequenceInfluencersIqDataIdsAndSequenceNames={
+                                                        allSequenceInfluencersIqDataIdsAndSequenceNames ?? []
+                                                    }
+                                                    platform={platform}
+                                                    setShowMenu={setShowMenu}
+                                                />
+                                            )}
+                                        </Menu.Item>
+                                    ) : (
                                         <Menu.Item>
                                             {({ active }) => (
                                                 <button
-                                                    onClick={() => openSocialProfile({ url })}
                                                     className={`${
                                                         active ? 'bg-violet-500 text-white' : 'text-gray-900'
                                                     } group flex w-full items-center justify-center rounded-md px-2 py-2 text-sm`}
+                                                    onClick={() => {
+                                                        addToCampaign();
+                                                        setShowMenu(false);
+                                                    }}
                                                 >
-                                                    <ShareLink className="w-5 fill-current" />
+                                                    {t('creators.addToCampaign')}
+                                                </button>
+                                            )}
+                                        </Menu.Item>
+                                    )}
+
+                                    <Link
+                                        href={`/influencer/${platform}/${user_id}`}
+                                        target="_blank"
+                                        data-testid={`analyze-button/${user_id}`}
+                                    >
+                                        <Menu.Item>
+                                            {({ active }) => (
+                                                <button
+                                                    className={`${
+                                                        active ? 'bg-violet-500 text-white' : 'text-gray-900'
+                                                    } group flex w-full items-center justify-center rounded-md px-2 py-2 text-sm`}
+                                                    onClick={() => {
+                                                        analyzeInfluencer({ platform, user_id });
+                                                        setShowMenu(false);
+                                                    }}
+                                                >
+                                                    {t('creators.analyzeProfile')}
                                                 </button>
                                             )}
                                         </Menu.Item>
                                     </Link>
-                                )}
-                            </div>
+
+                                    {url && (
+                                        <Link href={url} target="_blank" rel="noopener noreferrer">
+                                            <Menu.Item>
+                                                {({ active }) => (
+                                                    <button
+                                                        onClick={() => {
+                                                            openSocialProfile({ url });
+                                                            setShowMenu(false);
+                                                        }}
+                                                        className={`${
+                                                            active ? 'bg-violet-500 text-white' : 'text-gray-900'
+                                                        } group flex w-full items-center justify-center rounded-md px-2 py-2 text-sm`}
+                                                    >
+                                                        <ShareLink className="w-5 fill-current" />
+                                                    </button>
+                                                )}
+                                            </Menu.Item>
+                                        </Link>
+                                    )}
+                                </div>
+                            )}
                         </Menu.Items>
                     </Menu>
                 </div>

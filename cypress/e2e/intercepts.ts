@@ -12,6 +12,7 @@ import type { InfluencerPostRequest } from 'pages/api/influencer-search';
 import type { SequenceInfluencer, UsagesDBInsert } from 'src/utils/api/db';
 import { ulid } from 'ulid';
 import { insertSequenceEmails, resetUsages, supabaseClientCypress } from './helpers';
+import { SUPABASE_URL_CYPRESS } from '../../src/mocks/browser';
 export { cocomelon, defaultLandingPageInfluencerSearch };
 
 export const cocomelonId = cocomelon.user_profile.user_id;
@@ -222,6 +223,9 @@ export const setupIntercepts = () => {
     });
     cy.intercept('/api/post-performance/by-campaign', {
         body: postPerformance,
+    });
+    cy.intercept(`${SUPABASE_URL_CYPRESS}/sequence_influencers*`, {
+        body: [],
     });
 };
 
