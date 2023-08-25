@@ -80,54 +80,43 @@ const NavBarInner = ({
     desktop: boolean;
 }) => {
     const { t } = useTranslation();
+    const sidebarState = open && desktop ? 'visible' : 'hidden';
 
     return (
         <>
-            <div className={`pt-5`}>
+            <div className="pt-5">
                 <Title open={open && desktop} />
             </div>
             <div className="flex h-full flex-col justify-between gap-4 pt-8">
                 <section className="flex flex-col gap-4">
                     <ActiveLink href={links.discover}>
-                        <p className={`whitespace-nowrap text-sm ${open && desktop ? 'visible' : 'hidden'}`}>
-                            {t('navbar.discover')}
-                        </p>
+                        <p className={`whitespace-nowrap text-sm ${sidebarState}`}>{t('navbar.discover')}</p>
                     </ActiveLink>
                     {featEmail() && (
                         <ActiveLink href={links.sequences}>
-                            <p className={`whitespace-nowrap text-sm ${open && desktop ? 'visible' : 'hidden'}`}>
-                                {t('navbar.sequences')}
-                            </p>
+                            <p className={`whitespace-nowrap text-sm ${sidebarState}`}>{t('navbar.sequences')}</p>
                         </ActiveLink>
                     )}
                     {featEmail() && (
                         <ActiveLink href={links.inbox}>
-                            <p className={`whitespace-nowrap text-sm ${open && desktop ? 'visible' : 'hidden'}`}>
-                                {t('navbar.inbox')}
-                            </p>
+                            <p className={`whitespace-nowrap text-sm ${sidebarState}`}>{t('navbar.inbox')}</p>
                         </ActiveLink>
                     )}
                     {featEmail() && (
                         <ActiveLink href={links.influencerManager}>
-                            <p className={`whitespace-nowrap text-sm ${open && desktop ? 'visible' : 'hidden'}`}>
+                            <p className={`whitespace-nowrap text-sm ${sidebarState}`}>
                                 {t('navbar.influencerManager')}
                             </p>
                         </ActiveLink>
                     )}
                     <ActiveLink href={links.campaigns}>
-                        <p className={`whitespace-nowrap text-sm ${open && desktop ? 'visible' : 'hidden'}`}>
-                            {t('navbar.campaigns')}
-                        </p>
+                        <p className={`whitespace-nowrap text-sm ${sidebarState}`}>{t('navbar.campaigns')}</p>
                     </ActiveLink>
                     <ActiveLink href={links.performance}>
-                        <p className={`whitespace-nowrap text-sm ${open && desktop ? 'visible' : 'hidden'}`}>
-                            {t('navbar.performance')}
-                        </p>
+                        <p className={`whitespace-nowrap text-sm ${sidebarState}`}>{t('navbar.performance')}</p>
                     </ActiveLink>
                     <ActiveLink href={links.aiEmailGenerator}>
-                        <p className={`whitespace-nowrap text-sm ${open && desktop ? 'visible' : 'hidden'}`}>
-                            {t('navbar.aiEmailGenerator')}
-                        </p>
+                        <p className={`whitespace-nowrap text-sm ${sidebarState}`}>{t('navbar.aiEmailGenerator')}</p>
                     </ActiveLink>
                     <ActiveLink href="/guide">
                         <p className={`whitespace-nowrap text-sm ${open && desktop ? 'relative' : 'hidden'}`}>
@@ -151,16 +140,14 @@ const NavBarInner = ({
                             <div className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-400 p-2 text-lg">
                                 {profileFirstName[0]}
                             </div>
-                            <div
-                                className={`flex flex-col whitespace-nowrap text-xs ${
-                                    open && desktop ? 'visible' : 'hidden'
-                                }`}
-                            >
+                            <div className={`flex flex-col whitespace-nowrap text-xs ${sidebarState}`}>
                                 <p className="font-semibold">{profileFirstName}</p>
-                                <p className="font-light">
-                                    Discover beta!
-                                    <span className="align-super text-[8px] text-primary-500">Upgrade</span>
-                                </p>
+                                {featEmail() && (
+                                    <p className="font-light">
+                                        Discover beta!
+                                        <span className="p-1 align-super text-[8px] text-primary-500">Upgrade</span>
+                                    </p>
+                                )}
                             </div>
                         </div>
                     </ActiveLink>
