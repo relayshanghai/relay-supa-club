@@ -119,6 +119,8 @@ describe('outreach', () => {
         // can delete influencer
         cy.contains('Charlie Charles');
         cy.getByTestId('delete-influencer-button').eq(2).click();
+        cy.contains("Deleting the influencer will remove them from the sequence, and cancel any future messages. You'll have to re-add them if you change your mind.");
+        cy.contains('button', 'Yes, delete them').click();
         cy.contains('Influencer successfully deleted from sequence')
         cy.contains('Charlie Charles').should('not.exist');
 
