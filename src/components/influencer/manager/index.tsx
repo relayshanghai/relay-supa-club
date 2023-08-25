@@ -1,23 +1,23 @@
-import { SearchComponent } from './search-component';
-import { CollabStatus } from './collab-status';
-import { OnlyMe } from './onlyme';
-import { Table } from './table';
-import { useSequences } from 'src/hooks/use-sequences';
-import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
-import { useCallback, useEffect, useState } from 'react';
 import Fuse from 'fuse.js';
-import { useUser } from 'src/hooks/use-user';
-import type { CommonStatusType, MultipleDropdownObject } from 'src/components/library';
-import { COLLAB_OPTIONS } from '../constants';
-import { ProfileOverlayScreen } from 'src/components/influencer-profile/screens/profile-overlay-screen';
-import { useTranslation } from 'react-i18next';
-import { useUiState } from 'src/components/influencer-profile/screens/profile-screen-context';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
+import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { ProfileOverlayScreen } from 'src/components/influencer-profile/screens/profile-overlay-screen';
+import { useUiState } from 'src/components/influencer-profile/screens/profile-screen-context';
+import type { CommonStatusType, MultipleDropdownObject } from 'src/components/library';
+import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
+import { useSequences } from 'src/hooks/use-sequences';
+import { useUser } from 'src/hooks/use-user';
+import { COLLAB_OPTIONS } from '../constants';
+import { CollabStatus } from './collab-status';
 import { filterByMe } from './helpers';
+import { OnlyMe } from './onlyme';
+import { SearchComponent } from './search-component';
+import { Table } from './table';
 
 const Manager = () => {
     const { sequences } = useSequences();
-    const { sequenceInfluencers } = useSequenceInfluencers(
+    const { sequenceInfluencers, refreshSequenceInfluencers } = useSequenceInfluencers(
         sequences?.map((sequence) => {
             return sequence.id;
         }),
@@ -45,10 +45,9 @@ const Manager = () => {
         [setUiState],
     );
 
-    const handleProfileUpdate = useCallback((data: any) => {
-        // eslint-disable-next-line no-console
-        console.log('@todo update influencer profile', data);
-    }, []);
+    const handleProfileUpdate = useCallback(() => {
+        refreshSequenceInfluencers()
+    }, [refreshSequenceInfluencers]);
 
     const setCollabStatusValues = (influencers: SequenceInfluencerManagerPage[], options: MultipleDropdownObject) => {
         const collabOptionsWithValue = options;

@@ -72,6 +72,7 @@ export const apiFetch = async <T = any>(url: string, payload: ApiPayload, option
     });
 
     if (response instanceof Error && response.name === 'AbortError') {
+        // @todo this should be predictable
         return;
     }
 

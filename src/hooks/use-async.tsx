@@ -35,7 +35,7 @@ export const useAsync = <T extends (...args: any[]) => Promise<any>>(fetcher: T)
     });
 
     const call = useCallback(
-        (...args: Parameters<T>) => {
+        (...args: Parameters<T>): Promise<Awaited<ReturnType<T>>> => {
             const key = JSON.stringify(args);
 
             if (cache.has(key)) {
@@ -64,7 +64,7 @@ export const useAsync = <T extends (...args: any[]) => Promise<any>>(fetcher: T)
                 cache.set(key, req);
             }
 
-            return req as ReturnType<T>;
+            return req;
         },
         [fetcher, cache],
     );
@@ -78,7 +78,9 @@ export const useAsync = <T extends (...args: any[]) => Promise<any>>(fetcher: T)
         // @todo clean up only associated cache if args are provided
         //       instead of clearing the whole cache
         cache.clear();
-    }, [setData, cache]);
+
+        return { call };
+    }, [setData, cache, call]);
 
     return { ...data, call, refresh };
 };
