@@ -20,12 +20,10 @@ export const useSequenceEmails = (sequenceId?: string) => {
         ([sequenceId]) => getSequenceEmailsBySequenceDBCall(sequenceId),
     );
 
-    if (!allSequenceIds) {
-        throw new Error('No sequence ids found');
-    }
     const getAllSequenceEmailsDBCall = useDB<typeof getAllSequenceEmailsCall>(getAllSequenceEmailsCall);
-    const { data: allSequenceEmails } = useSWR([allSequenceIds, 'sequence_email'], ([allSequenceIds]) =>
-        getAllSequenceEmailsDBCall(allSequenceIds),
+    const { data: allSequenceEmails } = useSWR(
+        allSequenceIds ? [allSequenceIds, 'sequence_email'] : null,
+        ([allSequenceIds]) => getAllSequenceEmailsDBCall(allSequenceIds),
     );
 
     return {

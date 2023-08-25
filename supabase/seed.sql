@@ -382,7 +382,8 @@ OR REPLACE FUNCTION create_sequence_influencer(
           scheduled_post_date,
           sequence_step,
           tags,
-          video_details
+          video_details,
+          iqdata_id
         )
       VALUES
         (
@@ -402,7 +403,8 @@ OR REPLACE FUNCTION create_sequence_influencer(
           '2027-01-01 00:00:00.000000+00',
           sequence_step,
           ARRAY['tag1', 'tag2'],
-          'video_details'
+          'video_details',
+          'iqdata_id'
         )
       RETURNING * INTO _row;
       RETURN _row;

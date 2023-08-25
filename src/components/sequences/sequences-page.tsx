@@ -9,10 +9,12 @@ import { SequenceStats } from './sequence-stats';
 import { CreateSequenceModal } from './create-sequence-modal';
 import SequencesTable from './sequences-table';
 import { useSequenceEmails } from 'src/hooks/use-sequence-emails';
+import { useAllSequenceInfluencersCountByCompany } from 'src/hooks/use-all-sequence-influencers-by-company-id';
 
 export const SequencesPage = () => {
     const { t } = useTranslation();
-    const { sequences, allSequenceInfluencersByCompanyId } = useSequences();
+    const { sequences } = useSequences();
+    const { allSequenceInfluencersCount } = useAllSequenceInfluencersCountByCompany();
     const { allSequenceEmails } = useSequenceEmails();
     const [showCreateSequenceModal, setShowCreateSequenceModal] = useState<boolean>(false);
 
@@ -39,7 +41,7 @@ export const SequencesPage = () => {
                     </Button>
                 </div>
                 <SequenceStats
-                    totalInfluencers={allSequenceInfluencersByCompanyId?.length || 0}
+                    totalInfluencers={allSequenceInfluencersCount}
                     openRate={
                         ((allSequenceEmails &&
                             allSequenceEmails?.length > 0 &&

@@ -6,13 +6,14 @@ import { Button } from '../button';
 import { SkeletonSearchResultRow } from '../common/skeleton-search-result-row';
 import { SearchResultRow } from './search-result-row';
 import type { CampaignCreatorBasicInfo } from 'src/utils/api/db/calls/campaignCreators';
+import type { AllSequenceInfluencersIqDataIdsAndSequenceNames } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
 
 export interface SearchResultsTableProps {
     setShowCampaignListModal: (show: boolean) => void;
     setSelectedCreator: (creator: CreatorSearchAccountObject) => void;
     setShowAlreadyAddedModal: (show: boolean) => void;
-    setShowSequenceListModal: (show: boolean) => void;
     allCampaignCreators?: CampaignCreatorBasicInfo[];
+    allSequenceInfluencersIqDataIdsAndSequenceNames?: AllSequenceInfluencersIqDataIdsAndSequenceNames[];
     results?: CreatorSearchAccountObject[];
     loading: boolean;
     validating: boolean;
@@ -25,8 +26,8 @@ export const SearchResultsTable = ({
     setShowCampaignListModal,
     setSelectedCreator,
     setShowAlreadyAddedModal,
-    setShowSequenceListModal,
     allCampaignCreators,
+    allSequenceInfluencersIqDataIdsAndSequenceNames,
     results,
     loading: resultsLoading,
     validating,
@@ -100,8 +101,10 @@ export const SearchResultsTable = ({
                                     setShowCampaignListModal={setShowCampaignListModal}
                                     setSelectedCreator={setSelectedCreator}
                                     setShowAlreadyAddedModal={setShowAlreadyAddedModal}
-                                    setShowSequenceListModal={setShowSequenceListModal}
                                     allCampaignCreators={allCampaignCreators}
+                                    allSequenceInfluencersIqDataIdsAndSequenceNames={
+                                        allSequenceInfluencersIqDataIdsAndSequenceNames
+                                    }
                                 />
                             ))}
                             {moreResults}
