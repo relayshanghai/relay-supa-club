@@ -9,6 +9,7 @@ import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { useSequences } from 'src/hooks/use-sequences';
 import { useUser } from 'src/hooks/use-user';
+import { OpenInfluencerManagerPage } from 'src/utils/analytics/events';
 import { COLLAB_OPTIONS } from '../constants';
 import { CollabStatus } from './collab-status';
 import { filterByMe } from './helpers';
@@ -37,8 +38,10 @@ const Manager = () => {
 
     const { track } = useRudderstackTrack()
 
+
+
     useEffect(() => {
-        const { abort } = track("TEST:Outreach Open Inbox Page")
+        const { abort } = track(OpenInfluencerManagerPage)
         return abort;
     }, [track])
 

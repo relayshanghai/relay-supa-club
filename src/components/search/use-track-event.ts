@@ -1,5 +1,5 @@
-import type events from 'src/utils/analytics/events';
 import { useCallback } from 'react';
+import type events from 'src/utils/analytics/events';
 import { useAnalytics } from '../analytics/analytics-provider';
 
 export const useTrackEvent = () => {
@@ -13,7 +13,7 @@ export const useTrackEvent = () => {
 
     const track = useCallback(
         <T extends (...args: any[]) => any = any>({ event, payload, controller }: TrackEventParams<T>) => {
-            return _track<TrackEventParams<typeof event>['event']>(event, payload, { __abort: controller });
+            return _track(event, payload, { __abort: controller });
         },
         [_track],
     );

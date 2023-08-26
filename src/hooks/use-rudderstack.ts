@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { apiObject, apiOptions } from 'rudder-sdk-js';
+import type { payloads } from 'src/utils/analytics/events';
+import type { TrackedEvent, TriggerEvent } from 'src/utils/analytics/types';
 import type { ProfileDB, ProfilesTable } from 'src/utils/api/db';
 import { rudderInitialized } from 'src/utils/rudder-initialize';
 
@@ -153,7 +155,7 @@ export const useRudderstackTrack = () => {
     const isAborted = useRef(false);
     const rudder = useRudder();
 
-    const track = useCallback(<T extends apiObject>(event: string, properties?: T, options?: apiOptions) => {
+    const track = useCallback(<E extends TrackedEvent>(event: E, properties?: payloads[E['eventName']], options?: apiOptions) => {
         const abort = () => {
             isAborted.current = true
         }
@@ -167,10 +169,14 @@ export const useRudderstackTrack = () => {
                 return resolve(null)
             }
 
-            rudder.track(event, properties, options, (...args: RudderstackMessageType[]) => {
-                resolve(args)
-                return args
-            })
+            const trigger: TriggerEvent = (eventName, payload) => {
+                rudder.track(eventName, payload, options, (...args: RudderstackMessageType[]) => {
+                    resolve(args)
+                    return args
+                })
+            }
+
+            event(trigger, properties)
         }
 
         const request = new Promise<RudderstackTrackResolveType>(executor)

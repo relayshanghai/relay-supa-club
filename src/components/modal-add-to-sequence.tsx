@@ -1,17 +1,19 @@
-import { useTranslation } from 'react-i18next';
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
-import { Modal } from './modal';
-import { Button } from './button';
-import { Info, Spinner } from './icons';
-import { useSequences } from 'src/hooks/use-sequences';
+import { useTranslation } from 'react-i18next';
+import { useAllSequenceInfluencersIqDataIdAndSequenceName } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
+import { useReport } from 'src/hooks/use-report';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
+import { useSequence } from 'src/hooks/use-sequence';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
+import { useSequences } from 'src/hooks/use-sequences';
+import { AddInfluencerToSequence } from 'src/utils/analytics/events';
 import type { Sequence } from 'src/utils/api/db';
 import { clientLogger } from 'src/utils/logger-client';
 import type { CreatorPlatform, CreatorUserProfile } from 'types';
-import { useReport } from 'src/hooks/use-report';
-import { useSequence } from 'src/hooks/use-sequence';
-import { useAllSequenceInfluencersIqDataIdAndSequenceName } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
+import { Button } from './button';
+import { Info, Spinner } from './icons';
+import { Modal } from './modal';
 
 export const AddToSequenceModal = ({
     show,
@@ -26,6 +28,7 @@ export const AddToSequenceModal = ({
 }) => {
     const { i18n, t } = useTranslation();
     const { sequences } = useSequences();
+    const { track } = useRudderstackTrack();
     const { socialProfile, report } = useReport({ platform, creator_id: creatorProfile.user_id || '' });
 
     const [sequence, setSequence] = useState<Sequence | null>(sequences?.[0] ?? null);
@@ -55,9 +58,25 @@ export const AddToSequenceModal = ({
 
     const handleAddToSequence = useCallback(async () => {
         if (!sequence) {
+            track(AddInfluencerToSequence, {
+                influencer_id: socialProfileId,
+                sequence_id: null,
+                sequence_influencer_id: null,
+                is_success: false,
+                is_sequence_autostart: null,
+                extra_info: { error: "Missing sequence" }
+            })
             throw new Error('Missing selectedSequence');
         }
         if (!creatorProfile.user_id) {
+            track(AddInfluencerToSequence, {
+                influencer_id: socialProfileId,
+                sequence_id: sequence.id,
+                sequence_influencer_id: null,
+                is_success: false,
+                is_sequence_autostart: null,
+                extra_info: { error: "Missing user_id from user_profile" }
+            })
             throw new Error('Missing creator.user_id');
         }
         if (socialProfileId) {
@@ -75,15 +94,33 @@ export const AddToSequenceModal = ({
                     await sendSequence([sequenceInfluencer]);
                 }
                 toast.success(t('creators.addToSequenceSuccess'));
+
+                track(AddInfluencerToSequence, {
+                    influencer_id: socialProfileId,
+                    sequence_id: sequence.id,
+                    sequence_influencer_id: sequenceInfluencer.id,
+                    is_success: true,
+                    is_sequence_autostart: sequence.auto_start,
+                })
             } catch (error) {
                 clientLogger(error);
                 toast.error(t('creators.addToSequenceError'));
+
+                track(AddInfluencerToSequence, {
+                    influencer_id: socialProfileId,
+                    sequence_id: sequence.id,
+                    sequence_influencer_id: null,
+                    is_success: false,
+                    is_sequence_autostart: null,
+                    extra_info: { error: String(error) }
+                })
             } finally {
                 setLoading(false);
                 setShow(false);
             }
         }
     }, [
+        track,
         createSequenceInfluencer,
         creatorProfile.user_id,
         getRelevantTags,

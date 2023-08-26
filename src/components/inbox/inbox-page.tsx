@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useMessages } from 'src/hooks/use-message';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { useUser } from 'src/hooks/use-user';
+import { OpenInboxPage } from 'src/utils/analytics/events';
 import {
     getInboxThreadMessages,
     getSentThreadMessages,
@@ -35,7 +36,7 @@ export const InboxPage = () => {
     const { track } = useRudderstackTrack()
 
     useEffect(() => {
-        const { abort } = track("TEST:Outreach Open Inbox Page")
+        const { abort } = track(OpenInboxPage)
         return abort;
     }, [track])
 
