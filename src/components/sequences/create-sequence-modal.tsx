@@ -1,11 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { useSequence } from 'src/hooks/use-sequence';
 import { useSequenceSteps } from 'src/hooks/use-sequence-steps';
 import { useTemplateVariables } from 'src/hooks/use-template_variables';
-import { useUser } from 'src/hooks/use-user';
 import { CreateSequence } from 'src/utils/analytics/events';
 import { clientLogger } from 'src/utils/logger-client';
 import { Button } from '../button';

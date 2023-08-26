@@ -1,4 +1,5 @@
-import { Session, useSessionContext, useSupabaseClient } from '@supabase/auth-helpers-react';
+import type { Session } from '@supabase/auth-helpers-react';
+import { useSessionContext } from '@supabase/auth-helpers-react';
 import type { AnalyticsInstance, AnalyticsPlugin } from 'analytics';
 import { Analytics } from 'analytics';
 import type { PropsWithChildren } from 'react';

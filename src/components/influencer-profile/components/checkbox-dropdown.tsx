@@ -24,7 +24,7 @@ export const CheckboxDropdown = ({ label, options, onUpdate, ...props }: Props) 
     }, [onUpdate]);
 
     useEffect(() => {
-        setSelectedOptions((s) => options.filter((o) => props.selected.includes(o.id)))
+        setSelectedOptions(() => options.filter((o) => props.selected.includes(o.id)))
     }, [options, props.selected])
 
     const isItemSelected = useCallback(
