@@ -11,9 +11,16 @@ import {
 } from './analyze-open_external_social_profile';
 import type { AddInfluencerToSequencePayload } from './outreach/add-influencer-to-sequence';
 import { AddInfluencerToSequence, OUTREACH_ADD_INFLUENCER_TO_SEQUENCE } from './outreach/add-influencer-to-sequence';
-import { OUTREACH_OPEN_INBOX_PAGE, OpenInboxPage, OpenInboxPagePayload } from './outreach/open-inbox-page';
-import { OUTREACH_OPEN_INFLUENCER_MANAGER_PAGE, OpenInfluencerManagerPage, OpenInfluencerManagerPagePayload } from './outreach/open-influencer-manager-page';
-import { OUTREACH_OPEN_SEQUENCES_PAGE, OpenSequencesPage, OpenSequencesPagePayload } from './outreach/open-sequences-page';
+import type { CreateSequencePayload } from './outreach/create-sequence';
+import { CreateSequence, OUTREACH_CREATE_SEQUENCE } from './outreach/create-sequence';
+import type { OpenInboxPagePayload } from './outreach/open-inbox-page';
+import { OUTREACH_OPEN_INBOX_PAGE, OpenInboxPage } from './outreach/open-inbox-page';
+import type { OpenInfluencerManagerPagePayload } from './outreach/open-influencer-manager-page';
+import { OUTREACH_OPEN_INFLUENCER_MANAGER_PAGE, OpenInfluencerManagerPage } from './outreach/open-influencer-manager-page';
+import type { OpenSequencesPagePayload } from './outreach/open-sequences-page';
+import { OUTREACH_OPEN_SEQUENCES_PAGE, OpenSequencesPage } from './outreach/open-sequences-page';
+import type { StartSequenceForInfluencerPayload } from './outreach/start-sequence-for-influencer';
+import { OUTREACH_START_SEQUENCE_FOR_INFLUENCER, StartSequenceForInfluencer } from './outreach/start-sequence-for-influencer';
 import type { SearchPayload } from './search';
 import { SEARCH as SEARCH_KEY, Search } from './search';
 import type { SearchAddToCampaignPayload } from './search-add_to_campaign';
@@ -44,7 +51,9 @@ export {
     AddInfluencerToSequence,
     OpenSequencesPage,
     OpenInboxPage,
-    OpenInfluencerManagerPage
+    OpenInfluencerManagerPage,
+    CreateSequence,
+    StartSequenceForInfluencer,
 };
 
 export const events: { [k in eventKeys]: TrackedEvent } = {
@@ -60,6 +69,8 @@ export const events: { [k in eventKeys]: TrackedEvent } = {
     [OUTREACH_OPEN_SEQUENCES_PAGE]: OpenSequencesPage,
     [OUTREACH_OPEN_INBOX_PAGE]: OpenInboxPage,
     [OUTREACH_OPEN_INFLUENCER_MANAGER_PAGE]: OpenInfluencerManagerPage,
+    [OUTREACH_CREATE_SEQUENCE]: CreateSequence,
+    [OUTREACH_START_SEQUENCE_FOR_INFLUENCER]: StartSequenceForInfluencer,
 };
 
 export type payloads = {
@@ -75,6 +86,8 @@ export type payloads = {
     [OUTREACH_OPEN_SEQUENCES_PAGE]: OpenSequencesPagePayload,
     [OUTREACH_OPEN_INBOX_PAGE]: OpenInboxPagePayload,
     [OUTREACH_OPEN_INFLUENCER_MANAGER_PAGE]: OpenInfluencerManagerPagePayload,
+    [OUTREACH_CREATE_SEQUENCE]: CreateSequencePayload,
+    [OUTREACH_START_SEQUENCE_FOR_INFLUENCER]: StartSequenceForInfluencerPayload
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -92,6 +105,8 @@ export const eventKeys = z.union([
     z.literal(OUTREACH_OPEN_SEQUENCES_PAGE),
     z.literal(OUTREACH_OPEN_INBOX_PAGE),
     z.literal(OUTREACH_OPEN_INFLUENCER_MANAGER_PAGE),
+    z.literal(OUTREACH_CREATE_SEQUENCE),
+    z.literal(OUTREACH_START_SEQUENCE_FOR_INFLUENCER),
 ]);
 
 export type eventKeys = z.infer<typeof eventKeys>;

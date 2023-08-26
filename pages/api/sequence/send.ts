@@ -17,7 +17,7 @@ export type SequenceSendPostBody = {
     sequenceInfluencers: SequenceInfluencer[];
 };
 
-type SendResult = { stepNumber?: number; sequenceInfluencerId?: string; error?: string };
+export type SendResult = { stepNumber?: number; sequenceInfluencerId?: string; error?: string };
 
 export type SequenceSendPostResponse = SendResult[];
 
