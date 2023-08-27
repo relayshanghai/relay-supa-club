@@ -70,7 +70,7 @@ const Boostbot = () => {
             }
         } catch (error) {
             clientLogger(error, 'error');
-            toast.error(t('boostbot.unlockingInfluencerError'));
+            toast.error(t('boostbot.error.influencerUnlock'));
         } finally {
             setInfluencerLoading(userId, false);
         }
@@ -91,7 +91,7 @@ const Boostbot = () => {
             console.log('userIds to send :>> ', userIdsToSend);
         } catch (error) {
             clientLogger(error, 'error');
-            toast.error(t('boostbot.sendToOutreachError'));
+            toast.error(t('boostbot.error.influencerToOutreach'));
         }
     };
 

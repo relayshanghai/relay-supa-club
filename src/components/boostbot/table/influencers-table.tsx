@@ -19,7 +19,7 @@ declare module '@tanstack/react-table' {
     interface TableMeta<TData extends RowData> {
         handleUnlockInfluencer: (userId: string) => void;
         removeInfluencer: (userId: string) => void;
-        translation: TFunction<'translation', undefined, 'translation'>;
+        t: TFunction<'translation', undefined, 'translation'>;
     }
 }
 
@@ -58,7 +58,7 @@ export function InfluencersTable<TData, TValue>({
                             <TableRow key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => {
                                     return (
-                                        <TableHead key={header.id}>
+                                        <TableHead className="text-center" key={header.id}>
                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(header.column.columnDef.header, header.getContext())}
@@ -82,7 +82,7 @@ export function InfluencersTable<TData, TValue>({
                         ) : (
                             <TableRow>
                                 <TableCell colSpan={columns.length} className="h-24 text-center">
-                                    {meta.translation('boostbot.noResults')}
+                                    {meta.t('boostbot.chat.noResults')}
                                 </TableCell>
                             </TableRow>
                         )}

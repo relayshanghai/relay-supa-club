@@ -6,7 +6,6 @@ import {
     UsersIcon,
     EyeIcon,
     HandThumbUpIcon,
-    ChatBubbleLeftIcon,
     Bars3BottomLeftIcon,
     // EnvelopeIcon,
     XMarkIcon,
@@ -18,7 +17,7 @@ import { Instagram, Youtube, Tiktok, Spinner } from 'src/components/icons';
 export const columns: ColumnDef<Influencer>[] = [
     {
         id: 'account',
-        header: ({ table }) => table.options.meta?.translation('boostbot.account'),
+        header: ({ table }) => table.options.meta?.t('boostbot.table.account'),
         cell: ({ row, table }) => {
             const influencer = row.original;
             const { username, custom_name, fullname, url = '', picture, followers } = influencer;
@@ -27,7 +26,7 @@ export const columns: ColumnDef<Influencer>[] = [
 
             return (
                 <>
-                    <Link href={url} target="_blank" rel="noopener noreferrer" className="group text-sm">
+                    <Link href={url} target="_blank" rel="noopener noreferrer" className="group text-xs">
                         <div className="flex flex-col items-center gap-0.5">
                             <div className="relative mb-2 h-20 w-20 transition-all group-hover:scale-105">
                                 <img className="h-full w-full rounded-full object-cover" src={picture} alt={handle} />
@@ -39,7 +38,7 @@ export const columns: ColumnDef<Influencer>[] = [
                             </span>
                             <p
                                 className="flex items-center gap-1 text-base text-gray-900"
-                                title={table.options.meta?.translation('boostbot.followers')}
+                                title={table.options.meta?.t('boostbot.table.followers')}
                             >
                                 <UsersIcon className="h-5 w-5 flex-shrink-0 fill-slate-700" />
                                 {numberFormatter(followers) ?? '-'}
@@ -51,15 +50,12 @@ export const columns: ColumnDef<Influencer>[] = [
         },
     },
     {
-        id: 'details',
-        header: ({ table }) => table.options.meta?.translation('boostbot.details'),
+        id: 'topPosts',
+        header: ({ table }) => table.options.meta?.t('boostbot.table.topPosts'),
         cell: ({ row, table }) => {
             const influencer = row.original;
             const posts = 'top_posts' in influencer && influencer.top_posts && influencer.top_posts.slice(0, 3);
             const description = 'description' in influencer && influencer.description;
-            // const email =
-            //     'contacts' in influencer &&
-            //     influencer.contacts.find((contact) => contact.type === 'email')?.formatted_value.toLowerCase();
             const topicsList = influencer.topics.map((topic) => `#${topic}`).join(', ');
 
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -87,17 +83,13 @@ export const columns: ColumnDef<Influencer>[] = [
                                         />
                                     </div>
                                     <div className="flex justify-between p-2 text-xs">
-                                        <div className="flex flex-col items-center gap-0.5">
+                                        <div className="flex items-center gap-0.5">
                                             <EyeIcon className="h-3 w-3 flex-shrink-0 fill-slate-700" />
                                             {numberFormatter(post.stat.plays || post.stat.views) ?? '-'}
                                         </div>
-                                        <div className="flex flex-col items-center gap-1">
+                                        <div className="flex items-center gap-1">
                                             <HandThumbUpIcon className="h-3 w-3 flex-shrink-0 fill-slate-700" />
                                             {numberFormatter(post.stat.likes) ?? '-'}
-                                        </div>
-                                        <div className="flex flex-col items-center gap-1">
-                                            <ChatBubbleLeftIcon className="h-3 w-3 flex-shrink-0 fill-slate-700" />
-                                            {numberFormatter(post.stat.comments) ?? '-'}
                                         </div>
                                     </div>
                                 </Link>
@@ -108,7 +100,7 @@ export const columns: ColumnDef<Influencer>[] = [
                                 // <button
                                 // className="group relative ml-2 flex gap-2 p-1 pl-0 hover:cursor-pointer"
                                 // onClick={unlockInfluencer}
-                                // aria-label={table.options.meta?.translation('boostbot.unlockInfluencer')}
+                                // aria-label={table.options.meta?.t('boostbot.table.unlockInfluencer')}
                             >
                                 <div className="h-40 w-40 bg-primary-200 blur-sm" />
                                 <div className="h-40 w-40 bg-primary-200 blur-sm" />
@@ -135,20 +127,13 @@ export const columns: ColumnDef<Influencer>[] = [
 
                     <div className="border-b border-gray-200" />
                     <p className="ml-2 text-xs">{topicsList}</p>
-                    {/*
-                    {email ? (
-                        <div className="flex items-center gap-1 text-primary-500">
-                            <EnvelopeIcon className="h-4 w-4 flex-shrink-0" /> {email}
-                        </div>
-                    ) : null} */}
                 </div>
             );
         },
     },
-    // TODO: remove after settling on format
     {
         id: 'email',
-        header: ({ table }) => table.options.meta?.translation('boostbot.email'),
+        header: ({ table }) => table.options.meta?.t('boostbot.table.email'),
         cell: ({ row, table }) => {
             const influencer = row.original;
 
@@ -156,10 +141,9 @@ export const columns: ColumnDef<Influencer>[] = [
                 table.options.meta?.handleUnlockInfluencer(influencer.user_id);
             };
 
-            const email = 'sabrina@skinbysabrina.com';
-            // const email =
-            //     'contacts' in influencer &&
-            //     influencer.contacts.find((contact) => contact.type === 'email')?.formatted_value.toLowerCase();
+            const email =
+                'contacts' in influencer &&
+                influencer.contacts.find((contact) => contact.type === 'email')?.formatted_value.toLowerCase();
 
             return (
                 <div>
@@ -171,7 +155,7 @@ export const columns: ColumnDef<Influencer>[] = [
                         <button
                             className="group ml-2 table-cell p-1 pl-0 hover:cursor-pointer"
                             onClick={unlockInfluencer}
-                            aria-label={table.options.meta?.translation('boostbot.unlockInfluencer')}
+                            aria-label={table.options.meta?.t('boostbot.table.unlockInfluencer')}
                         >
                             <LockClosedIcon className="h-6 w-6 fill-primary-500 group-hover:hidden" />
                             <LockOpenIcon className="relative left-[3px] hidden h-6 w-6 fill-primary-500 group-hover:block" />
@@ -189,18 +173,11 @@ export const columns: ColumnDef<Influencer>[] = [
                 table.options.meta?.removeInfluencer(row.original.user_id);
             };
 
-            // <input
-            //     type="checkbox"
-            //     className="checkbox mr-0 border-gray-400"
-            //     checked={row.getIsSelected()}
-            //     aria-label={table.options.meta?.translation('boostbot.selectRow')}
-            //     onChange={(e) => row.toggleSelected(!!e.target.checked)}
-            // />
             return (
                 <button
                     className="flex h-6 w-6"
                     onClick={removeInfluencer}
-                    aria-label={table.options.meta?.translation('boostbot.removeInfluencer')}
+                    aria-label={table.options.meta?.t('boostbot.table.removeInfluencer')}
                 >
                     <XMarkIcon className="h-full w-full flex-shrink-0 fill-red-300 transition-all hover:scale-105 hover:fill-red-400" />
                 </button>

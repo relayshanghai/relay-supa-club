@@ -1,15 +1,24 @@
 const boostbot = {
-    account: 'Account',
-    details: 'Details',
-    email: 'Email',
-    followers: 'Followers',
-    unlockInfluencer: 'Unlock influencer',
-    unlockingInfluencerError: 'Unlocking influencer failed',
-    removeInfluencer: 'Remove influencer',
-    noResults: 'No results',
-    outreach: 'Outreach',
-    selectAll: 'Select all',
-    selectRow: 'Select row',
+    chat: {
+        introMessage: 'Hi, welcome! Please describe your product so I can find the perfect influencers for you.',
+        foundFollowingTopics: 'I found the following topics',
+        influencersFound: 'influencers found',
+        sendPlaceholder: 'Send a product description...',
+    },
+    table: {
+        followers: 'Followers',
+        account: 'Account',
+        topPosts: 'Top Posts',
+        email: 'Email',
+        unlockInfluencer: 'Unlock influencer',
+        removeInfluencer: 'Remove influencer',
+        noResults: 'No results',
+    },
+    error: {
+        influencerSearch: 'Error fetching Boostbot influencers',
+        influencerUnlock: 'Unlocking influencer failed',
+        influencerToOutreach: 'Adding influencer to outreach failed',
+    },
 };
 
 export default boostbot;

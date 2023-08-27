@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import type { Dispatch, SetStateAction } from 'react';
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
 import { SparklesIcon } from '@heroicons/react/24/solid';
 import { ChatInput } from './chat-input';
@@ -17,11 +18,19 @@ export type MessageType = {
 };
 
 interface ChatProps {
+    influencers: Influencer[];
     setInfluencers: Dispatch<SetStateAction<Influencer[]>>;
-    sendToOutreach: () => void;
+    handlePageToUnlock: () => void;
+    handlePageToOutreach: () => void;
 }
 
-export const Chat: React.FC<ChatProps> = ({ setInfluencers, sendToOutreach }) => {
+export const Chat: React.FC<ChatProps> = ({
+    influencers,
+    setInfluencers,
+    handlePageToUnlock,
+    handlePageToOutreach,
+}) => {
+    const { t } = useTranslation();
     const { getTopics, getRelevantTopics, getTopicClusters, getInfluencers } = useBoostbot();
     const [progress, setProgress] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
@@ -29,9 +38,16 @@ export const Chat: React.FC<ChatProps> = ({ setInfluencers, sendToOutreach }) =>
     const [messages, setMessages] = useState<MessageType[]>([
         {
             sender: 'Bot',
-            content: `Hi, welcome! Please describe your product so I can find the perfect influencers for you.`,
+            content:
+                t('boostbot.chat.introMessage') ??
+                'Hi, welcome! Please describe your product so I can find the perfect influencers for you.',
         },
     ]);
+    const showButtons = influencers.length > 0 && !isLoading;
+    // TODO: either like this^ or actually have a state object/array like "currentButtons" and change the state accordingly,
+    // like when influencers are loaded, set two buttons.. new influencer starting to load, make empty for the time being,
+    // after processing unlock or whatever, set new ones.
+
     const addMessage = (message: MessageType) => setMessages((messages) => [...messages, message]);
     const addProgressMessage = (content: MessageType['content']) =>
         setProgressMessages((messages) => [...messages, { sender: 'Bot', content }]);
@@ -47,7 +63,11 @@ export const Chat: React.FC<ChatProps> = ({ setInfluencers, sendToOutreach }) =>
         try {
             const topics = await getTopics(productDescription);
             const topicList = topics.slice(0, 3).map((topic) => <p key={topic}>#{topic}</p>);
-            addProgressMessage(<>I found the following topics: {topicList}</>);
+            addProgressMessage(
+                <>
+                    {t('boostbot.chat.foundFollowingTopics')}: {topicList}
+                </>,
+            );
             setProgress(40);
 
             const getInfluencersForPlatform = async ({ platform }: { platform: CreatorPlatform }) => {
@@ -68,10 +88,10 @@ export const Chat: React.FC<ChatProps> = ({ setInfluencers, sendToOutreach }) =>
             // const influencers = [...instagramInfluencers, ...tiktokInfluencers, ...youtubeInfluencers];
 
             setInfluencers(influencers);
-            addProgressMessage(`${influencers.length} influencers found!`);
+            addProgressMessage(`${influencers.length} ${t('boostbot.chat.influencersFound')}!`);
         } catch (error) {
             clientLogger(error, 'error');
-            toast.error('Error fetching boostbot influencers');
+            toast.error(t('boostbot.error.influencerSearch'));
         } finally {
             await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait for 1s for loading animation to finish
             setIsLoading(false);
@@ -92,6 +112,8 @@ export const Chat: React.FC<ChatProps> = ({ setInfluencers, sendToOutreach }) =>
                 progressMessages={progressMessages}
                 isLoading={isLoading}
                 progress={progress}
+                handlePageToUnlock={handlePageToUnlock}
+                handlePageToOutreach={handlePageToOutreach}
             />
 
             <div className="relative">
