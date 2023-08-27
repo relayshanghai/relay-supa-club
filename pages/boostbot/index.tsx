@@ -1,6 +1,6 @@
 // TODO: Fix eslint warnings after testing is done
 /* eslint-disable no-console */
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import type { UserProfile } from 'types';
@@ -12,7 +12,6 @@ import { useBoostbot } from 'src/hooks/use-boostbot';
 import { clientLogger } from 'src/utils/logger-client';
 import { columns } from 'src/components/boostbot/table/columns';
 import { InfluencersTable } from 'src/components/boostbot/table/influencers-table';
-import type { WindowChatwoot } from 'src/utils/chatwoot/types';
 
 export type Influencer = (UserProfile | CreatorAccountWithTopics) & {
     isLoading?: boolean;
@@ -22,19 +21,6 @@ export type Influencer = (UserProfile | CreatorAccountWithTopics) & {
 const Boostbot = () => {
     const { t } = useTranslation();
     const { unlockInfluencers } = useBoostbot();
-
-    useEffect(() => {
-        const chatwoot = (window as WindowChatwoot).$chatwoot;
-        if (chatwoot) {
-            try {
-                chatwoot.toggleBubbleVisibility('hide');
-
-                return () => {
-                    chatwoot.toggleBubbleVisibility('show');
-                };
-            } catch {}
-        }
-    }, []);
 
     const [influencers, setInfluencers] = useState<Influencer[]>([
         { ...reportExample.user_profile },
