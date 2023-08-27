@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import type { TrackedEvent } from '../types';
 import type { AnalyzeAddToCampaignPayload } from './analyze-add_to_campaign';
 import { ANALYZE_ADD_TO_CAMPAIGN, AnalyzeAddToCampaign } from './analyze-add_to_campaign';
 import type {
@@ -13,6 +12,8 @@ import type { AddInfluencerToSequencePayload } from './outreach/add-influencer-t
 import { AddInfluencerToSequence, OUTREACH_ADD_INFLUENCER_TO_SEQUENCE } from './outreach/add-influencer-to-sequence';
 import type { CreateSequencePayload } from './outreach/create-sequence';
 import { CreateSequence, OUTREACH_CREATE_SEQUENCE } from './outreach/create-sequence';
+import type { EmailSentPayload } from './outreach/email-sent';
+import { EmailSent, OUTREACH_EMAIL_SENT } from './outreach/email-sent';
 import type { OpenInboxPagePayload } from './outreach/open-inbox-page';
 import { OUTREACH_OPEN_INBOX_PAGE, OpenInboxPage } from './outreach/open-inbox-page';
 import type { OpenInfluencerManagerPagePayload } from './outreach/open-influencer-manager-page';
@@ -54,9 +55,10 @@ export {
     OpenInfluencerManagerPage,
     CreateSequence,
     StartSequenceForInfluencer,
+    EmailSent,
 };
 
-export const events: { [k in eventKeys]: TrackedEvent } = {
+export const events = {
     [SEARCH_KEY]: Search,
     [SEARCH_DEFAULT]: SearchDefault,
     [SEARCH_LOAD_MORE_RESULTS]: SearchLoadMoreResults,
@@ -71,6 +73,7 @@ export const events: { [k in eventKeys]: TrackedEvent } = {
     [OUTREACH_OPEN_INFLUENCER_MANAGER_PAGE]: OpenInfluencerManagerPage,
     [OUTREACH_CREATE_SEQUENCE]: CreateSequence,
     [OUTREACH_START_SEQUENCE_FOR_INFLUENCER]: StartSequenceForInfluencer,
+    [OUTREACH_EMAIL_SENT]: EmailSent,
 };
 
 export type payloads = {
@@ -87,7 +90,8 @@ export type payloads = {
     [OUTREACH_OPEN_INBOX_PAGE]: OpenInboxPagePayload,
     [OUTREACH_OPEN_INFLUENCER_MANAGER_PAGE]: OpenInfluencerManagerPagePayload,
     [OUTREACH_CREATE_SEQUENCE]: CreateSequencePayload,
-    [OUTREACH_START_SEQUENCE_FOR_INFLUENCER]: StartSequenceForInfluencerPayload
+    [OUTREACH_START_SEQUENCE_FOR_INFLUENCER]: StartSequenceForInfluencerPayload,
+    [OUTREACH_EMAIL_SENT]: EmailSentPayload,
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -107,6 +111,7 @@ export const eventKeys = z.union([
     z.literal(OUTREACH_OPEN_INFLUENCER_MANAGER_PAGE),
     z.literal(OUTREACH_CREATE_SEQUENCE),
     z.literal(OUTREACH_START_SEQUENCE_FOR_INFLUENCER),
+    z.literal(OUTREACH_EMAIL_SENT),
 ]);
 
 export type eventKeys = z.infer<typeof eventKeys>;

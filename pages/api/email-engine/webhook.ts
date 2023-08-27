@@ -3,17 +3,26 @@ import httpCodes from 'src/constants/httpCodes';
 import { ApiHandler } from 'src/utils/api-handler';
 import type { SequenceEmailUpdate, SequenceInfluencer, SequenceInfluencerUpdate } from 'src/utils/api/db';
 import { getProfileBySequenceSendEmail, supabaseLogger } from 'src/utils/api/db';
-import { deleteEmailFromOutbox, getOutbox } from 'src/utils/api/email-engine';
-import { GMAIL_SENT_SPECIAL_USE_FLAG } from 'src/utils/api/email-engine/prototype-mocks';
 import {
     deleteSequenceEmailByMessageIdCall,
     getSequenceEmailByMessageIdCall,
     getSequenceEmailsBySequenceInfluencerCall,
     updateSequenceEmailCall,
 } from 'src/utils/api/db/calls/sequence-emails';
+import { deleteEmailFromOutbox, getOutbox } from 'src/utils/api/email-engine';
+import { GMAIL_SENT_SPECIAL_USE_FLAG } from 'src/utils/api/email-engine/prototype-mocks';
 
 import { db } from 'src/utils/supabase-client';
 
+import { EmailSent } from 'src/utils/analytics/events';
+import { EmailSentPayload } from 'src/utils/analytics/events/outreach/email-sent';
+import {
+    getSequenceInfluencerByEmailAndCompanyCall,
+    getSequenceInfluencerByIdCall,
+    updateSequenceInfluencerCall,
+} from 'src/utils/api/db/calls/sequence-influencers';
+import { serverLogger } from 'src/utils/logger-server';
+import { rudderstack, track } from 'src/utils/rudderstack/rudderstack';
 import type { SendEmailRequestBody, SendEmailResponseBody } from 'types/email-engine/account-account-submit-post';
 import type { WebhookMessageBounce } from 'types/email-engine/webhook-message-bounce';
 import type { WebhookMessageComplaint } from 'types/email-engine/webhook-message-complaint';
@@ -23,12 +32,6 @@ import type { WebhookMessageNew } from 'types/email-engine/webhook-message-new';
 import type { WebhookMessageSent } from 'types/email-engine/webhook-message-sent.ts';
 import type { WebhookTrackClick } from 'types/email-engine/webhook-track-click';
 import type { WebhookTrackOpen } from 'types/email-engine/webhook-track-open';
-import {
-    getSequenceInfluencerByEmailAndCompanyCall,
-    getSequenceInfluencerByIdCall,
-    updateSequenceInfluencerCall,
-} from 'src/utils/api/db/calls/sequence-influencers';
-import { serverLogger } from 'src/utils/logger-server';
 
 export type SendEmailPostRequestBody = SendEmailRequestBody & {
     account: string;
@@ -254,8 +257,21 @@ const handleFailed = async (event: WebhookMessageFailed, res: NextApiResponse) =
 };
 
 const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
+    const trackData: Omit<EmailSentPayload, 'is_success'> = {
+        sequence_email_id: null,
+        sequence_id: null,
+        sequence_influencer_id: null,
+        influencer_id: null,
+        sequence_step: null,
+    }
+
     try {
         const sequenceEmail = await getSequenceEmailByMessageId(event.data.messageId); // if there is no matching sequenceEmail, this is a regular email, not a sequenced email and this will throw an error
+
+        trackData.sequence_email_id = sequenceEmail.id
+        trackData.sequence_id = sequenceEmail.sequence_id
+        trackData.sequence_influencer_id = sequenceEmail.sequence_influencer_id
+
         const update: SequenceEmailUpdate = {
             id: sequenceEmail.id,
             email_delivery_status: 'Delivered',
@@ -264,11 +280,19 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
 
         const sequenceInfluencer = await getSequenceInfluencerById(sequenceEmail.sequence_influencer_id);
 
+        trackData.influencer_id = sequenceInfluencer.influencer_social_profile_id
+        trackData.sequence_step = sequenceInfluencer.sequence_step + 1
+
         const sequenceInfluencerUpdate: SequenceInfluencerUpdate = {
             id: sequenceInfluencer.id,
             sequence_step: sequenceInfluencer.sequence_step + 1,
         };
         await updateSequenceInfluencer(sequenceInfluencerUpdate);
+
+        track(rudderstack.getClient())(EmailSent, {
+            ...trackData,
+            is_success: true,
+        })
 
         await supabaseLogger({
             type: 'email-webhook',
@@ -277,6 +301,11 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
         });
         return res.status(httpCodes.OK).json({});
     } catch (error: any) {
+        track(rudderstack.getClient())(EmailSent, {
+            ...trackData,
+            is_success: false,
+        })
+
         await supabaseLogger({
             type: 'email-webhook',
             data: { event, error } as any,
