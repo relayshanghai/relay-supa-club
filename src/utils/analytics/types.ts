@@ -2,7 +2,7 @@ import type { AnalyticsPlugin } from 'analytics';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { z } from 'zod';
 import { timestamp } from '../datetime';
-import type { eventKeys } from './events';
+import type { eventKeys, payloads } from './events';
 
 export type AnalyticsEventParam<T = any> = {
     abort: () => void;
@@ -114,3 +114,8 @@ export type TrackedEvent = {
  * Event payload that optionally expects an event_at property
  */
 export type EventPayload<T = { [key: string]: any }> = { event_at?: string } & T;
+
+/**
+ * Signature for functions that would want to track an event
+ */
+export type TrackEvent = <E extends TrackedEvent>(event: E, payload: payloads[E['eventName']]) => any

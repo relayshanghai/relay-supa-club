@@ -1,11 +1,12 @@
-import Analytics from '@rudderstack/rudder-sdk-node';
 import type { constructorOptions } from '@rudderstack/rudder-sdk-node';
-import type { ServerContext } from '../api/iqdata';
+import Analytics from '@rudderstack/rudder-sdk-node';
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
 import type { DatabaseWithCustomTypes } from 'types';
-import { getUserSession } from '../api/analytics';
 import type { z } from 'zod';
 import type { eventKeys } from '.';
+import type { TrackEvent, TriggerEvent } from '../analytics/types';
+import { getUserSession } from '../api/analytics';
+import type { ServerContext } from '../api/iqdata';
 import { serverLogger } from '../logger-server';
 const disabled = process.env.NEXT_PUBLIC_ENABLE_RUDDERSTACK !== 'true';
 
@@ -23,6 +24,21 @@ export const createClient = (writeKey?: string, dataPlane?: string, options?: co
         dataPlaneUrl: dataPlane ?? process.env.RUDDERSTACK_APP_DATA_PLANE_URL,
         ...options,
     });
+
+/**
+ * Track function that supports events in /src/utils/analytic/events
+ * @note ideally, we will move all tracking events there
+ */
+export const track: (r: RudderBackend) => TrackEvent = (rudder) => (event, payload) => {
+    const trigger: TriggerEvent = (eventName, payload) => {
+        rudder.track({
+            event: eventName,
+            properties: payload,
+        });
+    }
+
+    return event(trigger, payload)
+}
 
 const client = Symbol('Rudderstack Client');
 
@@ -72,6 +88,7 @@ export class Rudderstack {
     }
 
     /**
+     * Identifies the current user for the incoming event to be tracked
      * @todo put in (server-side) middleware
      */
     async identify(context: ServerContext) {
@@ -88,7 +105,10 @@ export class Rudderstack {
         this.serverContext = context;
     }
 
-    // @todo support multiple tracking
+    /**
+     * Starts tracking an event
+     * @todo support multiple tracking
+     */
     track(params: RudderstackContext) {
         if (disabled) return;
 
@@ -114,10 +134,9 @@ export class Rudderstack {
         this.context = params;
     }
 
-    getContext() {
-        return this.context;
-    }
-
+    /**
+     * Sends the tracked event to rudderstaack
+     */
     async send(payload?: ServerContext['metadata']) {
         if (this.session === null || this.serverContext === null || this.context === null) {
             return;
