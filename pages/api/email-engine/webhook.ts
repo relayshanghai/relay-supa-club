@@ -209,6 +209,14 @@ const handleBounce = async (event: WebhookMessageBounce, res: NextApiResponse) =
         email_delivery_status: 'Bounced',
     };
     await updateSequenceEmail(update);
+
+    track(rudderstack.getClient())(EmailFailed, {
+        account_id: event.account,
+        sequence_email_id: sequenceEmail.id,
+        error_type: 'bounced',
+        extra_info: event.data
+    })
+
     await supabaseLogger({
         type: 'email-webhook',
         data: { event, update } as any,
@@ -233,6 +241,14 @@ const handleDeliveryError = async (event: WebhookMessageDeliveryError, res: Next
         email_delivery_status: 'Failed',
     };
     await updateSequenceEmail(update);
+
+    track(rudderstack.getClient())(EmailFailed, {
+        account_id: event.account,
+        sequence_email_id: sequenceEmail.id,
+        error_type: 'failed',
+        extra_info: event.data
+    })
+
     await supabaseLogger({
         type: 'email-webhook',
         data: { event, update } as any,
@@ -252,7 +268,8 @@ const handleFailed = async (event: WebhookMessageFailed, res: NextApiResponse) =
     track(rudderstack.getClient())(EmailFailed, {
         account_id: event.account,
         sequence_email_id: sequenceEmail.id,
-        extra_info: { error: event.data.error }
+        error_type: 'quit',
+        extra_info: event.data
     })
 
     await supabaseLogger({

@@ -5,6 +5,11 @@ export const OUTREACH_EMAIL_FAILED = 'TEST:outreach-EMAIL_FAILED';
 export type EmailFailedPayload = EventPayload<{
     account_id: string
     sequence_email_id: string | null
+    // Error types:
+    //  - quit: https://emailengine.app/webhooks#messagefailed
+    //  - failed: https://emailengine.app/webhooks#messageDeliveryError
+    //  - bounced: https://emailengine.app/webhooks#messageBounce
+    error_type: 'quit' | 'bounced' | 'failed'
     extra_info?: any
 }>;
 
