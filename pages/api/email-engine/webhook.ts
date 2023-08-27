@@ -14,8 +14,9 @@ import { GMAIL_SENT_SPECIAL_USE_FLAG } from 'src/utils/api/email-engine/prototyp
 
 import { db } from 'src/utils/supabase-client';
 
-import { EmailClicked, EmailComplaint, EmailFailed, EmailOpened, EmailSent } from 'src/utils/analytics/events';
-import { EmailSentPayload } from 'src/utils/analytics/events/outreach/email-sent';
+import { EmailClicked, EmailComplaint, EmailFailed, EmailOpened, EmailReply, EmailSent } from 'src/utils/analytics/events';
+import type { EmailReplyPayload } from 'src/utils/analytics/events/outreach/email-reply';
+import type { EmailSentPayload } from 'src/utils/analytics/events/outreach/email-sent';
 import {
     getSequenceInfluencerByEmailAndCompanyCall,
     getSequenceInfluencerByIdCall,
@@ -142,6 +143,14 @@ const handleReply = async (sequenceInfluencer: SequenceInfluencer, event: Webhoo
 };
 
 const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) => {
+    const trackData: Omit<EmailReplyPayload, 'is_success'> = {
+        account_id: event.account,
+        sequence_influencer_id: null,
+        influencer_id: null,
+        sequence_step: null,
+        extra_info: event.data,
+    }
+
     if (event.data.messageSpecialUse === GMAIL_SENT_SPECIAL_USE_FLAG) {
         // For some reason, sent mail also shows up in `messageNew`, so filter them out.
         // TODO: find a more general, non-hardcoded way to do this that will work for non-gmail providers.
@@ -150,6 +159,11 @@ const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) =>
     try {
         const { data: ourUser, error } = await getProfileBySequenceSendEmail(event.data.to[0].address);
         if (error) {
+            track(rudderstack.getClient())(EmailReply, {
+                ...trackData,
+                is_success: false,
+            })
+
             await supabaseLogger({
                 type: 'email-webhook',
                 data: event as any,
@@ -162,6 +176,11 @@ const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) =>
             ourUser?.company_id,
         );
         if (!sequenceInfluencer) {
+            track(rudderstack.getClient())(EmailReply, {
+                ...trackData,
+                is_success: false,
+            })
+
             await supabaseLogger({
                 type: 'email-webhook',
                 data: event as any,
@@ -169,8 +188,23 @@ const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) =>
             });
             return res.status(httpCodes.OK).json({});
         }
+
+        trackData.sequence_influencer_id = sequenceInfluencer.id;
+        trackData.influencer_id = sequenceInfluencer.influencer_social_profile_id;
+        trackData.sequence_step = sequenceInfluencer.sequence_step;
+
         await handleReply(sequenceInfluencer, event);
-    } catch (error) {}
+
+        track(rudderstack.getClient())(EmailReply, {
+            ...trackData,
+            is_success: true,
+        })
+    } catch (error) {
+        track(rudderstack.getClient())(EmailReply, {
+            ...trackData,
+            is_success: false,
+        })
+    }
 
     return res.status(httpCodes.OK).json({});
 };

@@ -12,10 +12,16 @@ import type { AddInfluencerToSequencePayload } from './outreach/add-influencer-t
 import { AddInfluencerToSequence, OUTREACH_ADD_INFLUENCER_TO_SEQUENCE } from './outreach/add-influencer-to-sequence';
 import type { CreateSequencePayload } from './outreach/create-sequence';
 import { CreateSequence, OUTREACH_CREATE_SEQUENCE } from './outreach/create-sequence';
-import { EmailClicked, EmailClickedPayload, OUTREACH_EMAIL_CLICKED } from './outreach/email-clicked';
-import { EmailComplaint, EmailComplaintPayload, OUTREACH_EMAIL_COMPLAINT } from './outreach/email-complaint';
-import { EmailFailed, EmailFailedPayload, OUTREACH_EMAIL_FAILED } from './outreach/email-failed';
-import { EmailOpened, EmailOpenedPayload, OUTREACH_EMAIL_OPENED } from './outreach/email-opened';
+import type { EmailClickedPayload } from './outreach/email-clicked';
+import { EmailClicked, OUTREACH_EMAIL_CLICKED } from './outreach/email-clicked';
+import type { EmailComplaintPayload } from './outreach/email-complaint';
+import { EmailComplaint, OUTREACH_EMAIL_COMPLAINT } from './outreach/email-complaint';
+import type { EmailFailedPayload } from './outreach/email-failed';
+import { EmailFailed, OUTREACH_EMAIL_FAILED } from './outreach/email-failed';
+import type { EmailOpenedPayload } from './outreach/email-opened';
+import { EmailOpened, OUTREACH_EMAIL_OPENED } from './outreach/email-opened';
+import type { EmailReplyPayload } from './outreach/email-reply';
+import { EmailReply, OUTREACH_EMAIL_REPLY } from './outreach/email-reply';
 import type { EmailSentPayload } from './outreach/email-sent';
 import { EmailSent, OUTREACH_EMAIL_SENT } from './outreach/email-sent';
 import type { OpenInboxPagePayload } from './outreach/open-inbox-page';
@@ -64,6 +70,7 @@ export {
     EmailComplaint,
     EmailOpened,
     EmailClicked,
+    EmailReply,
 };
 
 export const events = {
@@ -86,6 +93,7 @@ export const events = {
     [OUTREACH_EMAIL_COMPLAINT]: EmailComplaint,
     [OUTREACH_EMAIL_OPENED]: EmailOpened,
     [OUTREACH_EMAIL_CLICKED]: EmailClicked,
+    [OUTREACH_EMAIL_REPLY]: EmailReply,
 };
 
 export type payloads = {
@@ -108,6 +116,7 @@ export type payloads = {
     [OUTREACH_EMAIL_COMPLAINT]: EmailComplaintPayload,
     [OUTREACH_EMAIL_OPENED]: EmailOpenedPayload,
     [OUTREACH_EMAIL_CLICKED]: EmailClickedPayload,
+    [OUTREACH_EMAIL_REPLY]: EmailReplyPayload,
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -132,6 +141,7 @@ export const eventKeys = z.union([
     z.literal(OUTREACH_EMAIL_COMPLAINT),
     z.literal(OUTREACH_EMAIL_OPENED),
     z.literal(OUTREACH_EMAIL_CLICKED),
+    z.literal(OUTREACH_EMAIL_REPLY),
 ]);
 
 export type eventKeys = z.infer<typeof eventKeys>;
