@@ -12,6 +12,7 @@ import type { AddInfluencerToSequencePayload } from './outreach/add-influencer-t
 import { AddInfluencerToSequence, OUTREACH_ADD_INFLUENCER_TO_SEQUENCE } from './outreach/add-influencer-to-sequence';
 import type { CreateSequencePayload } from './outreach/create-sequence';
 import { CreateSequence, OUTREACH_CREATE_SEQUENCE } from './outreach/create-sequence';
+import { EmailClicked, EmailClickedPayload, OUTREACH_EMAIL_CLICKED } from './outreach/email-clicked';
 import { EmailComplaint, EmailComplaintPayload, OUTREACH_EMAIL_COMPLAINT } from './outreach/email-complaint';
 import { EmailFailed, EmailFailedPayload, OUTREACH_EMAIL_FAILED } from './outreach/email-failed';
 import { EmailOpened, EmailOpenedPayload, OUTREACH_EMAIL_OPENED } from './outreach/email-opened';
@@ -62,6 +63,7 @@ export {
     EmailFailed,
     EmailComplaint,
     EmailOpened,
+    EmailClicked,
 };
 
 export const events = {
@@ -83,6 +85,7 @@ export const events = {
     [OUTREACH_EMAIL_FAILED]: EmailFailed,
     [OUTREACH_EMAIL_COMPLAINT]: EmailComplaint,
     [OUTREACH_EMAIL_OPENED]: EmailOpened,
+    [OUTREACH_EMAIL_CLICKED]: EmailClicked,
 };
 
 export type payloads = {
@@ -104,6 +107,7 @@ export type payloads = {
     [OUTREACH_EMAIL_FAILED]: EmailFailedPayload,
     [OUTREACH_EMAIL_COMPLAINT]: EmailComplaintPayload,
     [OUTREACH_EMAIL_OPENED]: EmailOpenedPayload,
+    [OUTREACH_EMAIL_CLICKED]: EmailClickedPayload,
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -127,6 +131,7 @@ export const eventKeys = z.union([
     z.literal(OUTREACH_EMAIL_FAILED),
     z.literal(OUTREACH_EMAIL_COMPLAINT),
     z.literal(OUTREACH_EMAIL_OPENED),
+    z.literal(OUTREACH_EMAIL_CLICKED),
 ]);
 
 export type eventKeys = z.infer<typeof eventKeys>;

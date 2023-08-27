@@ -14,7 +14,7 @@ import { GMAIL_SENT_SPECIAL_USE_FLAG } from 'src/utils/api/email-engine/prototyp
 
 import { db } from 'src/utils/supabase-client';
 
-import { EmailComplaint, EmailFailed, EmailOpened, EmailSent } from 'src/utils/analytics/events';
+import { EmailClicked, EmailComplaint, EmailFailed, EmailOpened, EmailSent } from 'src/utils/analytics/events';
 import { EmailSentPayload } from 'src/utils/analytics/events/outreach/email-sent';
 import {
     getSequenceInfluencerByEmailAndCompanyCall,
@@ -179,6 +179,13 @@ const handleTrackClick = async (event: WebhookTrackClick, res: NextApiResponse) 
     const sequenceEmail = await getSequenceEmailByMessageId(event.data.messageId);
     const update: SequenceEmailUpdate = { id: sequenceEmail.id, email_tracking_status: 'Link Clicked' };
     await updateSequenceEmail(update);
+
+    track(rudderstack.getClient())(EmailClicked, {
+        account_id: event.account,
+        sequence_email_id: sequenceEmail.id,
+        extra_info: event.data
+    })
+
     await supabaseLogger({
         type: 'email-webhook',
         data: { event, update } as any,
