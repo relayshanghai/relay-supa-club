@@ -3,6 +3,7 @@ import type { EventPayload, TriggerEvent } from '../../types';
 export const OUTREACH_EMAIL_SENT = 'TEST:outreach-email_sent';
 
 export type EmailSentPayload = EventPayload<{
+    account_id: string,
     influencer_id: string | null,
     sequence_id: string | null,
     // @note sequence_step seems to mean the number of times outreach is retried
