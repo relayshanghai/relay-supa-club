@@ -1,6 +1,24 @@
 import type { CreatorReport } from 'types';
 import type { InfluencerInsert, InfluencerSocialProfileInsert } from '../db';
 
+const trimTitle = (title: string, max_length = 40) => {
+    if (title.length <= max_length) {
+        return title;
+    }
+
+    const tokens = title.split(' ')
+    const accumulator = []
+    let length = 0
+
+    for (const token of tokens) {
+        length += token.length
+        if (length >= max_length) break;
+        accumulator.push(token)
+    }
+
+    return accumulator.join(' ').trim() + "..."
+}
+
 export const mapIqdataProfileToInfluencer = (
     userProfile: CreatorReport['user_profile'],
 ): Pick<InfluencerInsert, 'name' | 'email' | 'avatar_url'> => {
@@ -32,7 +50,7 @@ export const mapIqdataProfileToInfluencerSocialProfile = (
         name: userProfile.fullname || userProfile.username || userProfile.handle || userProfile.custom_name || '',
         email: email.value,
         avatar_url: userProfile.picture,
-        recent_video_title: userProfile.recent_posts?.[0]?.title ?? userProfile.recent_posts?.[0]?.text ?? '',
+        recent_video_title: trimTitle(userProfile.recent_posts?.[0]?.title ?? userProfile.recent_posts?.[0]?.text ?? ''),
         recent_post_url: userProfile.recent_posts?.[0]?.link ?? ''
     };
 };
