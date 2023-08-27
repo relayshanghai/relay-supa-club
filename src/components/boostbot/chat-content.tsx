@@ -9,9 +9,18 @@ interface ChatContentProps {
     progressMessages: MessageType[];
     isLoading: boolean;
     progress: number;
+    handlePageToUnlock: () => void;
+    handlePageToOutreach: () => void;
 }
 
-export const ChatContent: React.FC<ChatContentProps> = ({ messages, progressMessages, isLoading, progress }) => {
+export const ChatContent: React.FC<ChatContentProps> = ({
+    messages,
+    progressMessages,
+    isLoading,
+    progress,
+    handlePageToUnlock,
+    handlePageToOutreach,
+}) => {
     const chatBottomRef = useRef<null | HTMLDivElement>(null);
 
     useEffect(() => {
@@ -32,8 +41,10 @@ export const ChatContent: React.FC<ChatContentProps> = ({ messages, progressMess
 
             {progressMessages.length > 0 && !isLoading ? (
                 <>
-                    <Button className="mb-2">Unlock influencers on current page</Button>
-                    <Button>Email influencers on current page</Button>
+                    <Button onClick={handlePageToUnlock} className="mb-2">
+                        Unlock influencers on current page
+                    </Button>
+                    <Button onClick={handlePageToOutreach}>Email influencers on current page</Button>
                 </>
             ) : null}
 

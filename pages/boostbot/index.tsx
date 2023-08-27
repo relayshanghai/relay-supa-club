@@ -12,6 +12,7 @@ import { useBoostbot } from 'src/hooks/use-boostbot';
 import { clientLogger } from 'src/utils/logger-client';
 import { columns } from 'src/components/boostbot/table/columns';
 import { InfluencersTable } from 'src/components/boostbot/table/influencers-table';
+import InitialLogoScreen from 'src/components/boostbot/initial-logo-screen';
 
 export type Influencer = (UserProfile | CreatorAccountWithTopics) & {
     isLoading?: boolean;
@@ -21,14 +22,27 @@ export type Influencer = (UserProfile | CreatorAccountWithTopics) & {
 const Boostbot = () => {
     const { t } = useTranslation();
     const { unlockInfluencers } = useBoostbot();
+    const [isInitialLogoScreen, setIsInitialLogoScreen] = useState(true);
 
     const [influencers, setInfluencers] = useState<Influencer[]>([
         { ...reportExample.user_profile },
         ...dummyData.map((result) => ({
             ...result.account.user_profile,
         })),
+        ...dummyData.map((result, index) => ({
+            ...result.account.user_profile,
+            user_id: result.account.user_profile.user_id + index + 'a',
+        })),
+        ...dummyData.map((result, index) => ({
+            ...result.account.user_profile,
+            user_id: result.account.user_profile.user_id + index + 'b',
+        })),
+        ...dummyData.map((result, index) => ({
+            ...result.account.user_profile,
+            user_id: result.account.user_profile.user_id + index + 'c',
+        })),
     ]);
-    const [selectedInfluencers, setSelectedInfluencers] = useState({});
+    const [currentPageInfluencers, setCurrentPageInfluencers] = useState<Influencer[]>([]);
 
     const setInfluencerLoading = (userId: string, isLoading: boolean) => {
         setInfluencers((prevInfluencers) =>
@@ -66,12 +80,37 @@ const Boostbot = () => {
         setInfluencers((prevInfluencers) => prevInfluencers.filter((influencer) => influencer.user_id !== userId));
     };
 
-    const sendToOutreach = async () => {
+    const handlePageToUnlock = async () => {
+        const userIdsToUnlock = currentPageInfluencers.map((influencer) => influencer.user_id);
+
+        userIdsToUnlock.forEach((userId) => setInfluencerLoading(userId, true));
+
         try {
-            // From array of influencers, create a new array of influencers with only the selected influencers
-            const userIdsToSend = Object.keys(selectedInfluencers).map(
-                (influencerIndex) => influencers[Number(influencerIndex)].user_id,
-            );
+            const response = await unlockInfluencers(userIdsToUnlock);
+            const unlockedInfluencers = response?.map((result) => result.user_profile);
+
+            if (unlockedInfluencers) {
+                unlockedInfluencers.forEach((newInfluencerData) => {
+                    setInfluencers((prevInfluencers) =>
+                        prevInfluencers.map((influencer) =>
+                            influencer.user_id === newInfluencerData.user_id
+                                ? { ...newInfluencerData, topics: influencer.topics }
+                                : influencer,
+                        ),
+                    );
+                });
+            }
+        } catch (error) {
+            clientLogger(error, 'error');
+            toast.error(t('boostbot.error.influencerUnlock'));
+        } finally {
+            userIdsToUnlock.forEach((userId) => setInfluencerLoading(userId, false));
+        }
+    };
+
+    const handlePageToOutreach = async () => {
+        try {
+            const userIdsToSend = currentPageInfluencers.map((influencer) => influencer.user_id);
 
             // TODO: Add send to outreach functionality
             console.log('userIds to send :>> ', userIdsToSend);
@@ -85,16 +124,25 @@ const Boostbot = () => {
         <Layout>
             <div className="flex h-full flex-row gap-4 p-3">
                 <div className="w-80 flex-shrink-0">
-                    <Chat setInfluencers={setInfluencers} sendToOutreach={sendToOutreach} />
+                    <Chat
+                        influencers={influencers}
+                        setInfluencers={setInfluencers}
+                        handlePageToUnlock={handlePageToUnlock}
+                        handlePageToOutreach={handlePageToOutreach}
+                        setIsInitialLogoScreen={setIsInitialLogoScreen}
+                    />
                 </div>
 
-                <InfluencersTable
-                    columns={columns}
-                    data={influencers}
-                    selectedInfluencers={selectedInfluencers}
-                    setSelectedInfluencers={setSelectedInfluencers}
-                    meta={{ handleUnlockInfluencer, removeInfluencer, translation: t }}
-                />
+                {isInitialLogoScreen ? (
+                    <InitialLogoScreen />
+                ) : (
+                    <InfluencersTable
+                        columns={columns}
+                        data={influencers}
+                        setCurrentPageInfluencers={setCurrentPageInfluencers}
+                        meta={{ handleUnlockInfluencer, removeInfluencer, t }}
+                    />
+                )}
             </div>
         </Layout>
     );

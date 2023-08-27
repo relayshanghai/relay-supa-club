@@ -1,6 +1,6 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, type Dispatch, type SetStateAction } from 'react';
 import type { TFunction } from 'i18next';
-import type { ColumnDef, OnChangeFn, RowData, RowSelectionState, TableMeta } from '@tanstack/react-table';
+import type { ColumnDef, RowData, TableMeta } from '@tanstack/react-table';
 import { flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } from '@tanstack/react-table';
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from 'src/components/library';
@@ -9,8 +9,7 @@ import { DataTablePagination } from './pagination';
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
     data: TData[];
-    selectedInfluencers: RowSelectionState;
-    setSelectedInfluencers: OnChangeFn<RowSelectionState>;
+    setCurrentPageInfluencers: Dispatch<SetStateAction<TData[]>>;
     meta: TableMeta<TData>;
 }
 
@@ -26,8 +25,7 @@ declare module '@tanstack/react-table' {
 export function InfluencersTable<TData, TValue>({
     data,
     columns,
-    selectedInfluencers,
-    setSelectedInfluencers,
+    setCurrentPageInfluencers,
     meta,
 }: DataTableProps<TData, TValue>) {
     const tableRef = useRef<null | HTMLDivElement>(null);
@@ -37,14 +35,25 @@ export function InfluencersTable<TData, TValue>({
         meta,
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
-        onRowSelectionChange: setSelectedInfluencers,
-        state: { rowSelection: selectedInfluencers },
+        autoResetPageIndex: false,
     });
-
     const page = table.getState().pagination.pageIndex;
+
+    // Handle current table page state. Allows us to send the current page of influencers outreach/generate report.
     useEffect(() => {
         tableRef.current?.scrollIntoView(true);
-    }, [page]);
+
+        const currentPageInfluencers = table.getRowModel().rows?.map((row) => row.original) ?? [];
+        setCurrentPageInfluencers(currentPageInfluencers);
+    }, [page, table, setCurrentPageInfluencers]);
+
+    // Handle table pagination reset when for example new influencers are loaded. But not when individual ones are unlocked/removed.
+    useEffect(() => {
+        const setFirstPage = () => table.setPageIndex(0);
+        document.addEventListener('influencerTableSetFirstPage', setFirstPage);
+
+        return () => document.removeEventListener('influencerTableSetFirstPage', setFirstPage);
+    }, [table]);
 
     return (
         <div className="relative h-full w-full overflow-scroll">
@@ -82,7 +91,7 @@ export function InfluencersTable<TData, TValue>({
                         ) : (
                             <TableRow>
                                 <TableCell colSpan={columns.length} className="h-24 text-center">
-                                    {meta.t('boostbot.chat.noResults')}
+                                    {meta.t('boostbot.table.noResults')}
                                 </TableCell>
                             </TableRow>
                         )}

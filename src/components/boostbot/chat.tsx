@@ -20,6 +20,7 @@ export type MessageType = {
 interface ChatProps {
     influencers: Influencer[];
     setInfluencers: Dispatch<SetStateAction<Influencer[]>>;
+    setIsInitialLogoScreen: Dispatch<SetStateAction<boolean>>;
     handlePageToUnlock: () => void;
     handlePageToOutreach: () => void;
 }
@@ -27,6 +28,7 @@ interface ChatProps {
 export const Chat: React.FC<ChatProps> = ({
     influencers,
     setInfluencers,
+    setIsInitialLogoScreen,
     handlePageToUnlock,
     handlePageToOutreach,
 }) => {
@@ -88,7 +90,9 @@ export const Chat: React.FC<ChatProps> = ({
             // const influencers = [...instagramInfluencers, ...tiktokInfluencers, ...youtubeInfluencers];
 
             setInfluencers(influencers);
+            setIsInitialLogoScreen(false);
             addProgressMessage(`${influencers.length} ${t('boostbot.chat.influencersFound')}!`);
+            document.dispatchEvent(new Event('influencerTableSetFirstPage'));
         } catch (error) {
             clientLogger(error, 'error');
             toast.error(t('boostbot.error.influencerSearch'));
