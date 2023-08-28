@@ -31,7 +31,7 @@ export const createClient = (writeKey?: string, dataPlane?: string, options?: co
  */
 export const track: (r: RudderBackend, u: SessionIds['user_id']) => TrackEvent = (rudder, user_id) => (event, payload) => {
     if (!user_id) {
-        throw new Error("Rudderstack event has no identity")
+        throw new Error(`Rudderstack event "${event.eventName}" has no identity`)
     }
 
     const trigger: TriggerEvent = (eventName, payload) => {
@@ -95,6 +95,7 @@ export class Rudderstack {
     /**
      * Identifies the current user for the incoming event to be tracked
      * @todo put in (server-side) middleware
+     * @todo decouple from supabase
      */
     async identify(context: ServerContext) {
         if (this.session || disabled) return;
@@ -108,6 +109,16 @@ export class Rudderstack {
 
         this.session = session;
         this.serverContext = context;
+    }
+
+    async identifyWithProfile(userId: string) {
+        this.getClient().identify({
+            userId
+        });
+
+        this.session = {
+            user_id: userId
+        }
     }
 
     getIdentity() {

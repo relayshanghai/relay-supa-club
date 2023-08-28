@@ -1,6 +1,6 @@
 import type { NextApiHandler, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
-import { ApiHandler } from 'src/utils/api-handler';
+import { ApiHandler, RelayError } from 'src/utils/api-handler';
 import type { SequenceEmailUpdate, SequenceInfluencer, SequenceInfluencerUpdate } from 'src/utils/api/db';
 import { getProfileBySequenceSendEmail, supabaseLogger } from 'src/utils/api/db';
 import {
@@ -17,6 +17,7 @@ import { db } from 'src/utils/supabase-client';
 import { EmailClicked, EmailComplaint, EmailFailed, EmailOpened, EmailReply, EmailSent } from 'src/utils/analytics/events';
 import type { EmailReplyPayload } from 'src/utils/analytics/events/outreach/email-reply';
 import type { EmailSentPayload } from 'src/utils/analytics/events/outreach/email-sent';
+import { getProfileByEmailEngineAccountQuery } from 'src/utils/api/db/calls/profiles';
 import {
     getSequenceInfluencerByEmailAndCompanyCall,
     getSequenceInfluencerByIdCall,
@@ -402,6 +403,17 @@ export type SendEmailPostResponseBody = SendEmailResponseBody;
 const postHandler: NextApiHandler = async (req, res) => {
     // TODO: use a signing secret from the email client to authenticate the request
     const body = req.body as WebhookEvent;
+
+    const profile = await db(getProfileByEmailEngineAccountQuery)(body.account)
+
+    if (!profile) {
+        throw new RelayError(`No account associated with "${body.account}"`, 500, {
+            shouldLog: true,
+            sendToSentry: true
+        })
+    }
+
+    rudderstack.identifyWithProfile(profile.id)
 
     console.log("[EE-WEBHOOK]", req.body)
 
