@@ -23,7 +23,7 @@ type Props = {
     onCancel?: () => void;
 } & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 
-const activeTabStyles = cls(['active', 'text-primary-500', 'border-b-2', 'border-b-primary-500']);
+export const activeTabStyles = cls(['active', 'text-primary-500', 'border-b-2', 'border-b-primary-500']);
 
 export const ProfileScreen = ({ profile, selectedTab, onUpdate, onCancel, ...props }: Props) => {
     const { state, setState } = useProfileScreenContext();
