@@ -12,7 +12,7 @@ export const OutreachCollabStatusInput = (props: Props) => {
             <CheckboxDropdown
                 {...props}
                 multiple={false}
-                label="Status"
+                label={props.label || 'Collab Status'}
                 options={props.options}
                 selected={props.selected}
             />

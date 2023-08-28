@@ -60,14 +60,14 @@ export const ProfileHeader = ({ profile, ...props }: Props) => {
                             </div>
                             <div className="flex flex-col items-start justify-center pl-7">
                                 <div className="text-lg font-semibold tracking-tight text-gray-400">{profile.name}</div>
-                                <div className="inline-flex items-center justify-start gap-2.5">
+                                <div className="mt-1 inline-flex items-center justify-start gap-2.5">
                                     <span className="relative h-3.5 w-3.5">
                                         <EmailOutlineColored />
                                     </span>
                                     <span className="relative h-3.5 w-3.5">
                                         <TiktokNoBg />
                                     </span>
-                                    <span className="relative mt-1 h-3.5 w-3.5">
+                                    <span className="relative h-3.5 w-3.5">
                                         <YoutubeNoBg />
                                     </span>
                                 </div>
