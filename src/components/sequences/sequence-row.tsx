@@ -64,7 +64,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
     handleStartSequence,
 }) => {
     const { influencerSocialProfile } = useInfluencerSocialProfile(sequenceInfluencer.influencer_social_profile_id);
-    const { updateSequenceInfluencer, deleteSequenceInfluencer } = useSequenceInfluencers(
+    const { updateSequenceInfluencer, deleteSequenceInfluencer, refreshSequenceInfluencers } = useSequenceInfluencers(
         sequenceInfluencer && [sequenceInfluencer.sequence_id],
     );
     const { profile } = useUser();
@@ -106,6 +106,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
     };
     const handleDeleteInfluencer = async (sequenceInfluencerId: string) => {
         await deleteSequenceInfluencer(sequenceInfluencerId);
+        await refreshSequenceInfluencers();
         toast.success(t('sequences.influencerDeleted'));
     };
     return (
