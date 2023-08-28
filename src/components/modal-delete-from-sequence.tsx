@@ -3,10 +3,6 @@ import { ModalWithButtons } from './modal-with-buttons';
 import { Spinner } from './icons';
 import { useTranslation } from 'react-i18next';
 
-function timeout(ms: number) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
 export const DeleteFromSequenceModal = ({
     show,
     setShow,
@@ -38,7 +34,6 @@ export const DeleteFromSequenceModal = ({
             onOkay={async () => {
                 setLoading(true);
                 await deleteInfluencer(sequenceId);
-                await timeout(50000000);
                 setLoading(false);
                 setShow(false);
             }}
