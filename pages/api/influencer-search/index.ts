@@ -1,17 +1,17 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
-import { ApiHandler, RelayError } from 'src/utils/api-handler';
+import { createSearchParameter, createSearchSnapshot } from 'src/utils/analytics/api/analytics';
+import { ApiHandler } from 'src/utils/api-handler';
 import { recordSearchUsage } from 'src/utils/api/db/calls/usages';
 import { searchInfluencersWithContext as searchInfluencers } from 'src/utils/api/iqdata/influencers/search-influencers';
+import type { SearchInfluencersPayload } from 'src/utils/api/iqdata/influencers/search-influencers-payload';
 import type { FetchCreatorsFilteredParams } from 'src/utils/api/iqdata/transforms';
 import { prepareFetchCreatorsFiltered } from 'src/utils/api/iqdata/transforms';
+import { IQDATA_SEARCH_INFLUENCERS, rudderstack } from 'src/utils/rudderstack';
+import { db } from 'src/utils/supabase-client';
 import { hasCustomSearchParams } from 'src/utils/usagesHelpers';
 import type { CreatorSearchResult } from 'types';
-import { createSearchParameter, createSearchSnapshot } from 'src/utils/analytics/api/analytics';
 import { v4 } from 'uuid';
-import { db } from 'src/utils/supabase-client';
-import { IQDATA_SEARCH_INFLUENCERS, rudderstack } from 'src/utils/rudderstack';
-import type { SearchInfluencersPayload } from 'src/utils/api/iqdata/influencers/search-influencers-payload';
 import type { z } from 'zod';
 
 export type InfluencerPostRequest = FetchCreatorsFilteredParams & {
@@ -113,10 +113,6 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     });
 
     const results = await searchInfluencers(parameters, { req, res });
-
-    if (results === undefined) {
-        throw new RelayError('Cannot search influencers');
-    }
 
     const parameter = await db<typeof createSearchParameter>(createSearchParameter)(parameters);
 

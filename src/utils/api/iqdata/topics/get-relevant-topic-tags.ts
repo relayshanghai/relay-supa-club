@@ -1,6 +1,6 @@
 import type { CreatorPlatform } from 'types';
-import { apiFetch } from '../api-fetch';
 import type { ServerContext } from '..';
+import { apiFetch } from '../api-fetch';
 
 export type GetRelevantTopicTagsPayload = {
     query: {
@@ -39,9 +39,9 @@ export const getRelevantTopicTags = async (payload: GetRelevantTopicTagsPayload,
 
     const response = await apiFetch<GetRelevantTopicTagsResponse>('/dict/relevant-tags', { ...payload, context });
 
-    if (response && response.success === true) {
-        sortByDistance(response.data);
+    if (response.content.success === true) {
+        sortByDistance(response.content.data);
     }
 
-    return response;
+    return response.content;
 };

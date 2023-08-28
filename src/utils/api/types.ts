@@ -5,26 +5,18 @@ import {
     gender_code,
     last_posted,
 } from './iqdata/influencers/search-influencers-payload';
-import type { NextApiRequest, NextApiResponse } from 'next';
 
 export const ApiPayload = z.object({
-    context: z
-        .object<{
-            req: z.ZodType<NextApiRequest>;
-            res: z.ZodType<NextApiResponse>;
-            metadata: z.ZodOptional<z.ZodRecord>;
-        }>({
-            req: z.any(),
-            res: z.any(),
-            metadata: z.record(z.any()).optional(),
-        })
-        .optional(),
     path: z.record(z.any()).optional(),
     query: z.record(z.any()).optional(),
     body: z.record(z.any()).optional(),
 });
 
-export type ApiPayload = z.infer<typeof ApiPayload>;
+export type ApiPayload<TPath = Record<string, any>, TQuery = Record<string, any>, TBody = Record<string, any>> = {
+    path?: TPath;
+    query?: TQuery;
+    body?: TBody;
+};
 
 export const Platform = z.union([z.literal('youtube'), z.literal('tiktok'), z.literal('instagram')]);
 
