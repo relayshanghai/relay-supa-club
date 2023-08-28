@@ -15,7 +15,7 @@ const GetInfluencersBody = z.object({
 
 export type CreatorAccountWithTopics = CreatorAccount & { topics: string[] };
 export type GetInfluencersBody = z.input<typeof GetInfluencersBody>;
-export type GetInfluencersResponse = { influencers: CreatorAccountWithTopics[] };
+export type GetInfluencersResponse = CreatorAccountWithTopics[];
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     const result = GetInfluencersBody.safeParse(req.body);
@@ -34,12 +34,12 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
             result.accounts.map((creator) => ({ ...creator.account.user_profile, topics: topicClusters[index] })),
         )
         .flat();
-    const uniqueInfluencers = flattenedAccounts.filter(
+    const uniqueInfluencers: GetInfluencersResponse = flattenedAccounts.filter(
         (currentAccount, index, self) =>
             self.findIndex((account) => account.user_id === currentAccount.user_id) === index,
     );
 
-    return res.status(httpCodes.OK).json({ influencers: uniqueInfluencers });
+    return res.status(httpCodes.OK).json(uniqueInfluencers);
 };
 
 export default ApiHandler({ postHandler });

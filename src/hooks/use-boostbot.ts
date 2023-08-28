@@ -63,47 +63,38 @@ export const useBoostbot = () => {
         }
     };
 
-    const getTopics = useCallback(async (productDescription: string) => {
-        const { topics } = await performFetch<GetTopicsResponse, GetTopicsBody>('get-topics', {
-            productDescription,
-        });
-
-        return topics;
-    }, []);
+    const getTopics = useCallback(
+        async (productDescription: string) =>
+            await performFetch<GetTopicsResponse, GetTopicsBody>('get-topics', {
+                productDescription,
+            }),
+        [],
+    );
 
     const getRelevantTopics = useCallback(
-        async ({ topics, platform }: { topics: string[]; platform: CreatorPlatform }) => {
-            const { relevantTopics } = await performFetch<GetRelevantTopicsResponse, GetRelevantTopicsBody>(
-                'get-relevant-topics',
-                { topics, platform },
-            );
-
-            return relevantTopics;
-        },
+        async ({ topics, platform }: { topics: string[]; platform: CreatorPlatform }) =>
+            await performFetch<GetRelevantTopicsResponse, GetRelevantTopicsBody>('get-relevant-topics', {
+                topics,
+                platform,
+            }),
         [],
     );
 
     const getTopicClusters = useCallback(
-        async ({ productDescription, topics }: { productDescription: string; topics: string[] }) => {
-            const { topicClusters } = await performFetch<GetTopicClustersResponse, GetTopicClustersBody>(
-                'get-topic-clusters',
-                { productDescription, topics },
-            );
-
-            return topicClusters;
-        },
+        async ({ productDescription, topics }: { productDescription: string; topics: string[] }) =>
+            await performFetch<GetTopicClustersResponse, GetTopicClustersBody>('get-topic-clusters', {
+                productDescription,
+                topics,
+            }),
         [],
     );
 
     const getInfluencers = useCallback(
-        async ({ topicClusters, platform }: { topicClusters: string[][]; platform: CreatorPlatform }) => {
-            const { influencers } = await performFetch<GetInfluencersResponse, GetInfluencersBody>('get-influencers', {
+        async ({ topicClusters, platform }: { topicClusters: string[][]; platform: CreatorPlatform }) =>
+            await performFetch<GetInfluencersResponse, GetInfluencersBody>('get-influencers', {
                 topicClusters,
                 platform,
-            });
-
-            return influencers;
-        },
+            }),
         [],
     );
 

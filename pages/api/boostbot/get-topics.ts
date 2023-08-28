@@ -9,7 +9,7 @@ const GetTopicsBody = z.object({
 });
 
 export type GetTopicsBody = z.input<typeof GetTopicsBody>;
-export type GetTopicsResponse = { topics: string[] };
+export type GetTopicsResponse = string[];
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     const result = GetTopicsBody.safeParse(req.body);
@@ -18,9 +18,9 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         return res.status(httpCodes.BAD_REQUEST).json(result.error.format());
     }
 
-    const topics = await getTopics(result.data.productDescription);
+    const topics: GetTopicsResponse = await getTopics(result.data.productDescription);
 
-    return res.status(httpCodes.OK).json({ topics });
+    return res.status(httpCodes.OK).json(topics);
 };
 
 export default ApiHandler({ postHandler });
