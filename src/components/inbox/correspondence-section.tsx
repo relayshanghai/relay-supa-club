@@ -1,21 +1,24 @@
-import type { SearchResponseMessage } from 'types/email-engine/account-account-search-post';
-import { Spinner } from '../icons';
-import { Email } from './Email';
-import { Threads } from './Threads';
-import { ReplyEditor } from './reply-editor';
 import { useState } from 'react';
+import { useUser } from 'src/hooks/use-user';
 import { sendReply } from 'src/utils/api/email-engine/handle-messages';
 import { clientLogger } from 'src/utils/logger-client';
-import { EmailHeader } from './email-header';
+import type { SearchResponseMessage } from 'types/email-engine/account-account-search-post';
+import { Spinner } from '../icons';
 import { replaceNewlinesAndTabs } from '../sequences/helpers';
-import { useUser } from 'src/hooks/use-user';
+import { Email } from './Email';
+import type { ThreadMessage } from './Threads';
+import { Threads } from './Threads';
+import { EmailHeader } from './email-header';
+import { ReplyEditor } from './reply-editor';
 
 export const CorrespondenceSection = ({
     selectedMessages,
     loadingSelectedMessages,
+    onInfluencerClick,
 }: {
     selectedMessages: SearchResponseMessage[];
     loadingSelectedMessages: boolean;
+    onInfluencerClick?: (message: ThreadMessage['from']) => void;
 }) => {
     const [replyMessage, setReplyMessage] = useState<string>('');
     const { profile } = useUser();
@@ -53,7 +56,7 @@ export const CorrespondenceSection = ({
                     <div className="flex-1 overflow-auto">
                         <EmailHeader messages={selectedMessages} />
                         {selectedMessages.length > 1 ? (
-                            <Threads messages={selectedMessages} />
+                            <Threads messages={selectedMessages} onInfluencerClick={onInfluencerClick} />
                         ) : (
                             <>{selectedMessages.length > 0 && <Email message={selectedMessages[0]} />}</>
                         )}
