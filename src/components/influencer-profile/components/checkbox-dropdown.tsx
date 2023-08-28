@@ -20,12 +20,12 @@ export const CheckboxDropdown = ({ label, options, onUpdate, ...props }: Props) 
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
     const clearSelection = useCallback(() => {
-        onUpdate && onUpdate([])
+        onUpdate && onUpdate([]);
     }, [onUpdate]);
 
-    useEffect(() => {
-        setSelectedOptions(() => options.filter((o) => props.selected.includes(o.id)))
-    }, [options, props.selected])
+    useEffect(() => 
+        setSelectedOptions(() => options.filter((o) => props.selected.includes(o.id)));
+    }, [options, props.selected]);
 
     const isItemSelected = useCallback(
         (item: CheckboxDropdownItemData) => {
@@ -37,17 +37,20 @@ export const CheckboxDropdown = ({ label, options, onUpdate, ...props }: Props) 
     const handleItemSelect = useCallback(
         (item: CheckboxDropdownItemData) => {
             if (selectedOptions.length <= 0) return;
-            const selected = multiple ? [...selectedOptions, item] : [item]
-            onUpdate && onUpdate(selected)
+            const selected = multiple ? [...selectedOptions, item] : [item];
+            onUpdate && onUpdate(selected);
 
             if (!multiple) setIsDropdownOpen(false);
         },
         [multiple, onUpdate, selectedOptions],
     );
 
-    const handleItemRemove = useCallback((item: CheckboxDropdownItemData) => {
-        onUpdate && onUpdate(selectedOptions.filter((i) => i.id !== item.id))
-    }, [onUpdate, selectedOptions]);
+    const handleItemRemove = useCallback(
+        (item: CheckboxDropdownItemData) => {
+            onUpdate && onUpdate(selectedOptions.filter((i) => i.id !== item.id));
+        },
+        [onUpdate, selectedOptions],
+    );
 
     const handleBlur = useCallback((e: any) => {
         // check if focused element is child of <details />

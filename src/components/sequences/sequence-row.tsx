@@ -38,11 +38,11 @@ interface SequenceRowProps {
 }
 
 const Icons = {
-    Opened: <EmailOpenOutline className="h-6 w-6 stroke-blue-500" />,
-    Scheduled: <Clock className="h-6 w-6 stroke-yellow-500" />,
-    Bounced: <AlertCircleOutline className="h-6 w-6 stroke-red-500" />,
-    Delivered: <Send className="h-6 w-6 stroke-green-500" />,
-    Default: <Send className="h-6 w-6 stroke-gray-500" />,
+    Opened: <EmailOpenOutline className="h-4 w-4 stroke-blue-500" />,
+    Scheduled: <Clock className="h-4 w-4 stroke-yellow-500" />,
+    Bounced: <AlertCircleOutline className="h-4 w-4 stroke-red-500" />,
+    Delivered: <Send className="h-4 w-4 stroke-green-500" />,
+    Default: <Send className="h-4 w-4 stroke-gray-500" />,
 };
 
 /** use the tracking status if it is delivered */
@@ -139,7 +139,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                 sequenceSteps={showEmailPreview || []}
                 templateVariables={templateVariables}
             />
-            <tr className="border-b-2 border-gray-200 bg-white">
+            <tr className="border-b-2 border-gray-200 bg-white text-sm">
                 <td className="whitespace-nowrap px-6 py-2">
                     <div className="flex flex-row items-center gap-2">
                         <div>
@@ -237,11 +237,9 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                         <td className="whitespace-nowrap px-6 py-4 align-middle font-semibold text-gray-600">
                             {lastStep?.name ?? ''}
                         </td>
-                        <td
-                            className={`mt-4 flex w-fit flex-row gap-2 whitespace-nowrap px-6 text-center align-middle`}
-                        >
+                        <td className="whitespace-nowrap px-6 py-4 align-middle">
                             <span
-                                className={`flex flex-row gap-2 rounded-lg px-3 py-2 ${
+                                className={`flex w-fit flex-row items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm ${
                                     EMAIL_STATUS_STYLES[getStatus(lastEmail || nextEmail) || 'Default'].style
                                 }`}
                             >
