@@ -1,7 +1,7 @@
 // TODO: Fix eslint warnings after testing is done
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import type { Dispatch, SetStateAction } from 'react';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
 import { SparklesIcon } from '@heroicons/react/24/solid';
@@ -11,6 +11,12 @@ import type { Influencer } from 'pages/boostbot';
 import { clientLogger } from 'src/utils/logger-client';
 import { useBoostbot } from 'src/hooks/use-boostbot';
 import type { CreatorPlatform } from 'types';
+
+export type ProgressType = {
+    topics: string[];
+    isMidway: boolean;
+    totalFound: number | null;
+};
 
 export type MessageType = {
     sender: 'User' | 'Bot';
@@ -37,7 +43,7 @@ export const Chat: React.FC<ChatProps> = ({
     const { getTopics, getRelevantTopics, getTopicClusters, getInfluencers } = useBoostbot({
         abortSignal: abortController.signal,
     });
-    const [progress, setProgress] = useState(0);
+    const [progress, setProgress] = useState<ProgressType>({ topics: [], isMidway: false, totalFound: null });
     const [isLoading, setIsLoading] = useState(false);
     const [progressMessages, setProgressMessages] = useState<MessageType[]>([]);
     const [messages, setMessages] = useState<MessageType[]>([
@@ -62,23 +68,13 @@ export const Chat: React.FC<ChatProps> = ({
     const addProgressMessage = (content: MessageType['content']) =>
         setProgressMessages((messages) => [...messages, { sender: 'Bot', content }]);
 
-    useEffect(() => {
-        if (isLoading) setProgress(15);
-    }, [isLoading]);
-
     const onSendMessage = async (productDescription: string) => {
         addMessage({ sender: 'User', content: productDescription });
         setIsLoading(true);
 
         try {
             const topics = await getTopics(productDescription);
-            const topicList = topics.slice(0, 3).map((topic) => <p key={topic}>#{topic}</p>);
-            addProgressMessage(
-                <>
-                    {t('boostbot.chat.foundFollowingTopics')}: {topicList}
-                </>,
-            );
-            setProgress(40);
+            setProgress((prevProgress) => ({ ...prevProgress, topics }));
 
             const getInfluencersForPlatform = async ({ platform }: { platform: CreatorPlatform }) => {
                 const relevantTopics = await getRelevantTopics({ topics, platform });
@@ -89,13 +85,13 @@ export const Chat: React.FC<ChatProps> = ({
             };
 
             const instagramInfluencers = await getInfluencersForPlatform({ platform: 'instagram' });
-            setProgress(60);
+            setProgress((prevProgress) => ({ ...prevProgress, isMidway: true }));
+
             // const tiktokInfluencers = await getInfluencersForPlatform({ platform: 'tiktok' });
-            setProgress(80);
             // const youtubeInfluencers = await getInfluencersForPlatform({ platform: 'youtube' });
-            setProgress(100);
             const influencers = [...instagramInfluencers];
             // const influencers = [...instagramInfluencers, ...tiktokInfluencers, ...youtubeInfluencers];
+            setProgress((prevProgress) => ({ ...prevProgress, influencers: influencers.length }));
 
             setInfluencers(influencers);
             setIsInitialLogoScreen(false);
@@ -111,7 +107,6 @@ export const Chat: React.FC<ChatProps> = ({
             }
         } finally {
             setIsLoading(false);
-            setProgress(0);
         }
     };
 

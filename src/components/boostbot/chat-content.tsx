@@ -1,16 +1,17 @@
 import { useEffect, useRef } from 'react';
-import type { MessageType } from './chat';
-import ChatLoading from './chat-loading';
-import Message from './message';
-import { Button } from 'src/components/button';
-import { StopIcon } from '@heroicons/react/24/solid';
 import { useTranslation } from 'react-i18next';
+import { StopIcon } from '@heroicons/react/24/solid';
+import { Button } from 'src/components/button';
+import type { MessageType } from './chat';
+import Message from './message';
+import ChatProgress from './chat-progress';
+import type { ProgressType } from 'src/components/boostbot/chat';
 
 interface ChatContentProps {
     messages: MessageType[];
     progressMessages: MessageType[];
     isLoading: boolean;
-    progress: number;
+    progress: ProgressType;
     handlePageToUnlock: () => void;
     handlePageToOutreach: () => void;
     stopBoostbot: () => void;
@@ -38,7 +39,7 @@ export const ChatContent: React.FC<ChatContentProps> = ({
                 <Message key={index} message={message} />
             ))}
 
-            {isLoading ? <ChatLoading progress={progress} /> : null}
+            {isLoading && <ChatProgress progress={progress} />}
 
             {progressMessages.map((message, index) => (
                 <Message key={index} message={message} />
