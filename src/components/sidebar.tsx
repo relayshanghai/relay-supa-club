@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import useAboveScreenWidth from 'src/hooks/use-above-screen-width';
 import EmailOutline from './icons/EmailOutline';
 import { useUser } from 'src/hooks/use-user';
-import { Compass, FourSquare, Team, Guide, Send, Engagements, ProfilePlus, BarGraph } from './icons';
+import { Compass, FourSquare, Team, Guide, Send, Engagements, ProfilePlus, BarGraph, Thunder } from './icons';
 import { Title } from './title';
 import { useTranslation } from 'react-i18next';
 import { featEmail } from 'src/constants/feature-flags';
@@ -22,6 +22,7 @@ const links = {
     sequences: '/sequences',
     inbox: '/inbox',
     influencerManager: '/influencer-manager',
+    boostbot: '/boostbot',
 };
 
 // eslint-disable-next-line complexity
@@ -35,13 +36,15 @@ const ActiveLink = ({ href, children }: { href: string; children: ReactNode }) =
     return (
         <Link
             href={href}
-            className={`flex items-center overflow-hidden border-l-4 stroke-gray-800 py-2 pl-4 text-sm transition hover:stroke-primary-700 hover:text-primary-700 ${
+            className={`flex items-center overflow-hidden border-l-4 stroke-gray-400 py-2 pl-4 text-sm font-semibold text-gray-400 transition hover:stroke-primary-700 hover:text-primary-700 ${
                 isRouteActive ? 'border-l-4 border-primary-500 stroke-primary-500 text-primary-500' : ''
             }`}
         >
             {(href === links.influencer || href === links.discover) && (
                 <Compass height={18} width={18} className="my-0.5 mr-4 stroke-inherit" />
             )}
+
+            {href === links.boostbot && <Thunder height={18} width={18} className="my-0.5 mr-4 stroke-inherit" />}
 
             {href === links.campaigns && <FourSquare height={18} width={18} className="my-0.5 mr-4 stroke-inherit" />}
 
@@ -92,6 +95,9 @@ const NavBarInner = ({
                     <ActiveLink href={links.discover}>
                         <p className={`whitespace-nowrap text-sm ${sidebarState}`}>{t('navbar.discover')}</p>
                     </ActiveLink>
+                    <ActiveLink href={links.boostbot}>
+                        <p className={`whitespace-nowrap text-sm ${sidebarState}`}>{t('navbar.boostbot')}</p>
+                    </ActiveLink>
                     {featEmail() && (
                         <ActiveLink href={links.sequences}>
                             <p className={`whitespace-nowrap text-sm ${sidebarState}`}>{t('navbar.sequences')}</p>
@@ -109,15 +115,16 @@ const NavBarInner = ({
                             </p>
                         </ActiveLink>
                     )}
-                    <ActiveLink href={links.campaigns}>
-                        <p className={`whitespace-nowrap text-sm ${sidebarState}`}>{t('navbar.campaigns')}</p>
-                    </ActiveLink>
-                    <ActiveLink href={links.performance}>
-                        <p className={`whitespace-nowrap text-sm ${sidebarState}`}>{t('navbar.performance')}</p>
-                    </ActiveLink>
-                    <ActiveLink href={links.aiEmailGenerator}>
-                        <p className={`whitespace-nowrap text-sm ${sidebarState}`}>{t('navbar.aiEmailGenerator')}</p>
-                    </ActiveLink>
+                    {!featEmail() && (
+                        <ActiveLink href={links.campaigns}>
+                            <p className={`whitespace-nowrap text-sm ${sidebarState}`}>{t('navbar.campaigns')}</p>
+                        </ActiveLink>
+                    )}
+                    {!featEmail() && (
+                        <ActiveLink href={links.performance}>
+                            <p className={`whitespace-nowrap text-sm ${sidebarState}`}>{t('navbar.performance')}</p>
+                        </ActiveLink>
+                    )}
                     <ActiveLink href="/guide">
                         <p className={`whitespace-nowrap text-sm ${open && desktop ? 'relative' : 'hidden'}`}>
                             {t('navbar.guide')}
@@ -137,11 +144,11 @@ const NavBarInner = ({
                 {loggedIn && profileFirstName && (
                     <ActiveLink href="/account">
                         <div className="-ml-1.5 mb-4 flex flex-row items-center gap-4">
-                            <div className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-400 p-2 text-lg">
+                            <div className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 p-2 text-lg text-gray-800">
                                 {profileFirstName[0]}
                             </div>
                             <div className={`flex flex-col whitespace-nowrap text-xs ${sidebarState}`}>
-                                <p className="font-semibold">{profileFirstName}</p>
+                                <p className="font-semibold text-gray-800">{profileFirstName}</p>
                                 {featEmail() && (
                                     <p className="font-light">
                                         Discover beta!
