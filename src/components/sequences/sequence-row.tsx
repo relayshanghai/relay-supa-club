@@ -104,8 +104,8 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
         }
         setSendingEmail(false);
     };
-    const handleDeleteInfluencer = (sequenceInfluencerId: string) => {
-        deleteSequenceInfluencer(sequenceInfluencerId);
+    const handleDeleteInfluencer = async (sequenceInfluencerId: string) => {
+        await deleteSequenceInfluencer(sequenceInfluencerId);
         toast.success(t('sequences.influencerDeleted'));
     };
     return (
