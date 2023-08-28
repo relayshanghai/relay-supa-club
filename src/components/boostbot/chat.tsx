@@ -32,8 +32,11 @@ export const Chat: React.FC<ChatProps> = ({
     handlePageToUnlock,
     handlePageToOutreach,
 }) => {
+    const [abortController, setAbortController] = useState(new AbortController());
     const { t } = useTranslation();
-    const { getTopics, getRelevantTopics, getTopicClusters, getInfluencers } = useBoostbot();
+    const { getTopics, getRelevantTopics, getTopicClusters, getInfluencers } = useBoostbot({
+        abortSignal: abortController.signal,
+    });
     const [progress, setProgress] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
     const [progressMessages, setProgressMessages] = useState<MessageType[]>([]);
@@ -49,6 +52,11 @@ export const Chat: React.FC<ChatProps> = ({
     // TODO: either like this^ or actually have a state object/array like "currentButtons" and change the state accordingly,
     // like when influencers are loaded, set two buttons.. new influencer starting to load, make empty for the time being,
     // after processing unlock or whatever, set new ones.
+
+    const stopBoostbot = () => {
+        abortController.abort();
+        setAbortController(new AbortController());
+    };
 
     const addMessage = (message: MessageType) => setMessages((messages) => [...messages, message]);
     const addProgressMessage = (content: MessageType['content']) =>
@@ -93,11 +101,15 @@ export const Chat: React.FC<ChatProps> = ({
             setIsInitialLogoScreen(false);
             addProgressMessage(`${influencers.length} ${t('boostbot.chat.influencersFound')}!`);
             document.dispatchEvent(new Event('influencerTableSetFirstPage'));
-        } catch (error) {
-            clientLogger(error, 'error');
-            toast.error(t('boostbot.error.influencerSearch'));
-        } finally {
             await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait for 1s for loading animation to finish
+        } catch (error) {
+            if (error instanceof Error && error.name === 'AbortError') {
+                toast.success(t('boostbot.chat.stopped'));
+            } else {
+                clientLogger(error, 'error');
+                toast.error(t('boostbot.error.influencerSearch'));
+            }
+        } finally {
             setIsLoading(false);
             setProgress(0);
         }
@@ -118,6 +130,7 @@ export const Chat: React.FC<ChatProps> = ({
                 progress={progress}
                 handlePageToUnlock={handlePageToUnlock}
                 handlePageToOutreach={handlePageToOutreach}
+                stopBoostbot={stopBoostbot}
             />
 
             <div className="relative">

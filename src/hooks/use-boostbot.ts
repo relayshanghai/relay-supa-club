@@ -13,7 +13,11 @@ import type { GetRelevantTopicsBody, GetRelevantTopicsResponse } from 'pages/api
 import type { GetTopicClustersBody, GetTopicClustersResponse } from 'pages/api/boostbot/get-topic-clusters';
 import type { GetInfluencersBody, GetInfluencersResponse } from 'pages/api/boostbot/get-influencers';
 
-export const useBoostbot = () => {
+type UseBoostbotProps = {
+    abortSignal?: AbortController['signal'];
+};
+
+export const useBoostbot = ({ abortSignal }: UseBoostbotProps) => {
     const { profile } = useUser();
     const { company } = useCompany();
 
@@ -49,26 +53,33 @@ export const useBoostbot = () => {
         [profile, company],
     );
 
-    const performFetch = async <T, B>(endpoint: string, body: B): Promise<T> => {
-        try {
-            const response = await nextFetch<T>(`boostbot/${endpoint}`, { method: 'POST', body });
+    const performFetch = useCallback(
+        async <T, B>(endpoint: string, body: B): Promise<T> => {
+            try {
+                const response = await nextFetch<T>(`boostbot/${endpoint}`, {
+                    signal: abortSignal,
+                    method: 'POST',
+                    body,
+                });
 
-            // TODO: remove log when done testing
-            // eslint-disable-next-line no-console
-            console.log('endpoint, response :>> ', endpoint, response);
-            return response;
-        } catch (error) {
-            clientLogger(error, 'error');
-            throw error;
-        }
-    };
+                // TODO: remove log when done testing
+                // eslint-disable-next-line no-console
+                console.log('endpoint, response :>> ', endpoint, response);
+                return response;
+            } catch (error) {
+                clientLogger(error, 'error');
+                throw error;
+            }
+        },
+        [abortSignal],
+    );
 
     const getTopics = useCallback(
         async (productDescription: string) =>
             await performFetch<GetTopicsResponse, GetTopicsBody>('get-topics', {
                 productDescription,
             }),
-        [],
+        [performFetch],
     );
 
     const getRelevantTopics = useCallback(
@@ -77,7 +88,7 @@ export const useBoostbot = () => {
                 topics,
                 platform,
             }),
-        [],
+        [performFetch],
     );
 
     const getTopicClusters = useCallback(
@@ -86,7 +97,7 @@ export const useBoostbot = () => {
                 productDescription,
                 topics,
             }),
-        [],
+        [performFetch],
     );
 
     const getInfluencers = useCallback(
@@ -95,7 +106,7 @@ export const useBoostbot = () => {
                 topicClusters,
                 platform,
             }),
-        [],
+        [performFetch],
     );
 
     return {

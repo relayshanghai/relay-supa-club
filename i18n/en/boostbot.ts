@@ -4,6 +4,8 @@ const boostbot = {
         foundFollowingTopics: 'I found the following topics',
         influencersFound: 'influencers found',
         sendPlaceholder: 'Send a product description...',
+        stop: 'Stop Boostbot',
+        stopped: 'Boostbot stopped',
     },
     table: {
         followers: 'Followers',

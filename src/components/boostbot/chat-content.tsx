@@ -3,6 +3,8 @@ import type { MessageType } from './chat';
 import ChatLoading from './chat-loading';
 import Message from './message';
 import { Button } from 'src/components/button';
+import { StopIcon } from '@heroicons/react/24/solid';
+import { useTranslation } from 'react-i18next';
 
 interface ChatContentProps {
     messages: MessageType[];
@@ -11,6 +13,7 @@ interface ChatContentProps {
     progress: number;
     handlePageToUnlock: () => void;
     handlePageToOutreach: () => void;
+    stopBoostbot: () => void;
 }
 
 export const ChatContent: React.FC<ChatContentProps> = ({
@@ -20,7 +23,9 @@ export const ChatContent: React.FC<ChatContentProps> = ({
     progress,
     handlePageToUnlock,
     handlePageToOutreach,
+    stopBoostbot,
 }) => {
+    const { t } = useTranslation();
     const chatBottomRef = useRef<null | HTMLDivElement>(null);
 
     useEffect(() => {
@@ -28,7 +33,7 @@ export const ChatContent: React.FC<ChatContentProps> = ({
     }, [messages, progressMessages]);
 
     return (
-        <div className="relative flex-grow overflow-auto px-4 py-3 pb-6">
+        <div className="relative flex flex-grow flex-col overflow-auto px-4 py-3 pb-6">
             {messages.map((message, index) => (
                 <Message key={index} message={message} />
             ))}
@@ -46,6 +51,12 @@ export const ChatContent: React.FC<ChatContentProps> = ({
                     </Button>
                     <Button onClick={handlePageToOutreach}>Email influencers on current page</Button>
                 </>
+            ) : null}
+
+            {isLoading ? (
+                <Button onClick={stopBoostbot} className="mb-2 flex items-center gap-1 self-center">
+                    <StopIcon className="inline h-5 w-5" /> {t('boostbot.chat.stop')}
+                </Button>
             ) : null}
 
             <div className="relative top-10" ref={chatBottomRef} />
