@@ -1,13 +1,13 @@
-import type { SearchResponseMessage } from 'types/email-engine/account-account-search-post';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { clientLogger } from 'src/utils/logger-client';
+import { useTranslation } from 'react-i18next';
+import { useUser } from 'src/hooks/use-user';
 import { getMessageText } from 'src/utils/api/email-engine/handle-messages';
 import { cleanEmailBody } from 'src/utils/clean-html';
-import CommentCardsSkeleton from '../campaigns/comment-cards-skeleton';
-import { useTranslation } from 'react-i18next';
+import { clientLogger } from 'src/utils/logger-client';
 import type { ReplyTo } from 'types/email-engine/account-account-message-get';
+import type { SearchResponseMessage } from 'types/email-engine/account-account-search-post';
+import CommentCardsSkeleton from '../campaigns/comment-cards-skeleton';
 import { ChevronDown } from '../icons';
-import { useUser } from 'src/hooks/use-user';
 
 export interface ThreadMessage {
     subject: string;
@@ -20,7 +20,7 @@ export interface ThreadMessage {
     isMe?: boolean;
 }
 
-export const Threads = ({ messages }: { messages: SearchResponseMessage[] }) => {
+export const Threads = ({ messages, onInfluencerClick }: { messages: SearchResponseMessage[], onInfluencerClick?: (message: ThreadMessage['from']) => void; }) => {
     const { profile } = useUser();
     const [threadMessages, setThreadMessages] = useState<ThreadMessage[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
@@ -93,9 +93,11 @@ export const Threads = ({ messages }: { messages: SearchResponseMessage[] }) => 
                             className="rounded-lg bg-white shadow-sm hover:border hover:border-primary-500"
                         >
                             <div className="border-b-2 border-gray-200 p-6">
-                                <div className="mb-3 text-lg font-semibold text-gray-400">
+                                <div className="mb-3 text-lg font-semibold text-gray-400 cursor-pointer" onClick={() => {
+                                    onInfluencerClick && onInfluencerClick(message.from)
+                                }}>
                                     {t('inbox.from')}:{' '}
-                                    <span className="text-gray-600">{message.isMe ? 'Me' : message.from}</span>{' '}
+                                    <span className="text-gray-600 hover:underline hover:underline-offset-4">{message.isMe ? 'Me' : message.from}</span>{' '}
                                 </div>
                                 <div className="mb-3 pl-2 text-sm font-medium text-gray-400">
                                     {t('inbox.to')}: <span className="font-light">{message.to[0]?.address}</span>{' '}
