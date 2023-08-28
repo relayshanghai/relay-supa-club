@@ -14,7 +14,7 @@ describe('outreach', () => {
         setupIntercepts();
         cy.loginTestUser();
     });
-    it.only('can create new sequence. Can delete sequence', () => {
+    it('can create new sequence. Can delete sequence', () => {
         cy.contains('Sequences').click();
         cy.contains('New sequence', { timeout: 10000 }).click();
         cy.get('input[placeholder="Enter a name for your sequence"]').type('New Sequence Test');
