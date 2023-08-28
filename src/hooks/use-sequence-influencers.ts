@@ -2,9 +2,11 @@ import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influence
 import { useUser } from 'src/hooks/use-user';
 import { apiFetch } from 'src/utils/api/api-fetch';
 import type { SequenceInfluencerInsert, SequenceInfluencerUpdate } from 'src/utils/api/db';
+import { getInfluencerSocialProfileByIdCall } from 'src/utils/api/db/calls/influencers';
 import {
     createSequenceInfluencerCall,
     deleteSequenceInfluencerCall,
+    getSequenceInfluencerByIdCall,
     updateSequenceInfluencerCall,
 } from 'src/utils/api/db/calls/sequence-influencers';
 import { useDB } from 'src/utils/client-db/use-client-db';
@@ -28,6 +30,8 @@ export const useSequenceInfluencers = (sequenceIds?: string[], filters?: string[
     );
 
     const createSequenceInfluencerDBCall = useDB<typeof createSequenceInfluencerCall>(createSequenceInfluencerCall);
+    const getInfluencer = useDB(getInfluencerSocialProfileByIdCall);
+
     const createSequenceInfluencer = async (
         influencerSocialProfileId: string,
         tags: string[],
@@ -36,11 +40,14 @@ export const useSequenceInfluencers = (sequenceIds?: string[], filters?: string[
         if (!sequenceIds || sequenceIds.length < 1) throw new Error('No sequenceIds provided');
         if (!profile?.company_id) throw new Error('No profile found');
 
+        const influencer = await getInfluencer(influencerSocialProfileId)
+
         const insert: SequenceInfluencerInsert = {
             added_by: profile.id,
             company_id: profile.company_id,
             sequence_id: sequenceIds[0],
-            influencer_social_profile_id: influencerSocialProfileId,
+            influencer_social_profile_id: influencer.id,
+            email: influencer.email,
             sequence_step: 0,
             tags,
             funnel_status: 'To Contact',
