@@ -110,7 +110,8 @@ const sequences = {
     battery life of over 2 weeks!”
     这将会直接显示于您的电子邮件模版中。`,
     productPrice: '产品价格',
-    productPriceTooltip: `
+    productPriceTooltip: '产品价格',
+    productPriceTooltipDescription: `
     以美元为单位输入产品价格。
     
     最好输入整数，以便让模板看起来更加简洁。
