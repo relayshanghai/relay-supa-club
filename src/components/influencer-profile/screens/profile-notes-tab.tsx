@@ -12,48 +12,42 @@ import { OutreachCollabStatusInput } from '../components/outreach-collab-status-
 import { OutreachNextStepsInput } from '../components/outreach-next-steps-input';
 import { OutreachNotesInput } from '../components/outreach-notes-input';
 import { useProfileScreenContext, useUiState } from '../screens/profile-screen-context';
+import { useTranslation } from 'react-i18next';
 
 export const COLLAB_STATUS_OPTIONS = [
     {
         id: 'Negotiating',
         label: 'Negotiating',
-        value: 10,
         style: 'bg-blue-100 text-blue-500',
     },
     {
         id: 'Confirmed',
         label: 'Confirmed',
-        value: 20,
         style: 'bg-primary-100 text-primary-500',
     },
     {
         id: 'Shipped',
         label: 'Shipped',
-        value: 30,
         style: 'bg-yellow-100 text-yellow-500',
     },
     {
         id: 'Received',
         label: 'Received',
-        value: 40,
         style: 'bg-green-100 text-green-500',
     },
     {
         id: 'Content Approval',
         label: 'Content Approval',
-        value: 50,
         style: 'bg-pink-100 text-pink-500',
     },
     {
         id: 'Posted',
         label: 'Posted',
-        value: 60,
         style: 'bg-cyan-100 text-cyan-500',
     },
     {
         id: 'Rejected',
         label: 'Rejected',
-        value: 70,
         style: 'bg-red-100 text-red-500',
     },
 ];
@@ -73,8 +67,10 @@ type Props = {
     onUpdate?: (key: keyof ProfileNotes, value: any) => void;
 };
 
+// eslint-disable-next-line complexity
 export const ProfileNotesTab = ({ profile, ...props }: Props) => {
     const { onUpdate } = { onUpdate: () => null, ...props };
+    const { t } = useTranslation();
     const { state: data } = useProfileScreenContext();
     const [_uiState, setUiState] = useUiState();
     const { getNotes, saveNote } = useSequenceInfluencerNotes();
@@ -110,24 +106,32 @@ export const ProfileNotesTab = ({ profile, ...props }: Props) => {
         <>
             <div className="grid grid-flow-row auto-rows-max gap-2">
                 <div className="inline-flex items-center justify-between gap-2.5">
-                    <div className="text-base font-semibold leading-normal tracking-tight text-gray-600">Outreach</div>
+                    <div className="text-xl font-semibold leading-normal tracking-tight text-gray-600">
+                        {t('profile.outreach') || 'Outreach'}
+                    </div>
                 </div>
 
                 <OutreachCollabStatusInput
+                    label={t('profile.collabStatus') || 'Collab'}
                     onUpdate={(items) => {
-                        const selected = items.length > 0 ? items[0].id: data.notes.collabStatus
-                        onUpdate('collabStatus', selected)
+                        const selected = items.length > 0 ? items[0].id : data.notes.collabStatus;
+                        onUpdate('collabStatus', selected);
                     }}
                     options={COLLAB_STATUS_OPTIONS}
                     selected={[data.notes.collabStatus]}
                 />
 
                 <OutreachNextStepsInput
+                    label={t('profile.nextStep') || 'Next Step'}
+                    placeholder={t('profile.nextStepPlaceholder')}
                     value={data.notes.nextStep}
                     onChange={(e) => onUpdate('nextStep', e.currentTarget.value)}
                 />
 
                 <OutreachNotesInput
+                    label={t('profile.notes')}
+                    placeholder={t('profile.notesPlaceholder') || 'Write notes'}
+                    buttonText={t('profile.addNoteButton')}
                     disabled={getNotes.isLoading === true || saveNote.isLoading === true}
                     value={data.notes.notes}
                     onUpdate={(value) => onUpdate('notes', value)}
@@ -142,24 +146,39 @@ export const ProfileNotesTab = ({ profile, ...props }: Props) => {
                 <div className="h-px border border-neutral-200" />
 
                 <div className="inline-flex items-center justify-between gap-2.5">
-                    <div className="text-base font-semibold leading-normal tracking-tight text-gray-600">Collab</div>
+                    <div className="text-xl font-semibold leading-normal tracking-tight text-gray-600">
+                        {t('profile.collab') || 'Collab'}
+                    </div>
                 </div>
 
-                <CollabFeeInput value={data.notes.fee} onInput={(e) => onUpdate('fee', e.currentTarget.value)} />
+                <CollabFeeInput
+                    label={t('profile.fee') || 'Fee (USD)'}
+                    value={data.notes.fee}
+                    onInput={(e) => onUpdate('fee', e.currentTarget.value)}
+                />
                 <CollabVideoDetailsInput
+                    label={t('profile.videoDetails') || 'Video Details'}
+                    placeholder={t('profile.videoDetailsPlaceholder')}
                     value={data.notes.videoDetails}
                     onInput={(e) => onUpdate('videoDetails', e.currentTarget.value)}
                 />
                 <CollabAffiliateLinkInput
+                    label={t('profile.affiliateLink') || 'Affiliate Link'}
+                    placeholder={t('profile.affiliateLinkPlaceholder')}
                     value={data.notes.affiliateLink}
                     onInput={(e) => onUpdate('affiliateLink', e.currentTarget.value)}
                 />
                 <CollabScheduledPostDateInput
+                    label={t('profile.scheduledPostDate') || 'Scheduled Post Date'}
                     value={data.notes.scheduledPostDate}
                     onInput={(e) => onUpdate('scheduledPostDate', e.currentTarget.value)}
                 />
 
-                <CollabAddPost profile={profile} />
+                <CollabAddPost
+                    label={t('profile.posts') || 'Post'}
+                    buttonText={t('profile.addPostButton') || 'Add Post'}
+                    profile={profile}
+                />
             </div>
         </>
     );

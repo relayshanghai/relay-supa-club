@@ -9,6 +9,7 @@ import { ProfileNotesTab } from './profile-notes-tab';
 import { useProfileScreenContext } from './profile-screen-context';
 import type { ProfileShippingDetails } from './profile-shipping-details-tab';
 import { ProfileShippingDetailsTab } from './profile-shipping-details-tab';
+import { useTranslation } from 'react-i18next';
 
 export type ProfileValue = {
     notes: ProfileNotes;
@@ -30,6 +31,8 @@ export const ProfileScreen = ({ profile, selectedTab, onUpdate, onCancel, ...pro
     const [selected, setSelected] = useState(selectedTab ?? 'notes');
 
     const handleTabClick = (tab: Props['selectedTab']) => tab && setSelected(tab);
+
+    const { t } = useTranslation();
 
     const handleNotesDetailsUpdate = useCallback(
         (k: string, v: any) => {
@@ -70,7 +73,7 @@ export const ProfileScreen = ({ profile, selectedTab, onUpdate, onCancel, ...pro
                         selected === 'notes' ? activeTabStyles : ''
                     } inline-flex grow basis-0 items-center justify-center gap-2 bg-transparent px-4 py-3 text-center text-sm font-medium text-gray-400`}
                 >
-                    Notes
+                    {t('profile.notesTab')}
                 </button>
                 <button
                     onClick={() => handleTabClick('shipping-details')}
@@ -79,11 +82,11 @@ export const ProfileScreen = ({ profile, selectedTab, onUpdate, onCancel, ...pro
                         selected === 'shipping-details' ? activeTabStyles : ''
                     } inline-flex grow basis-0 items-center justify-center gap-2 bg-transparent px-4 py-3 text-center text-sm font-medium text-gray-400`}
                 >
-                    Shipping Details
+                    {t('profile.shippingDetailsTab')}
                 </button>
             </nav>
 
-            <div className="mt-3 p-12">
+            <div className="p-8">
                 <div className={`${selected !== 'notes' ? 'hidden' : ''}`}>
                     <ProfileNotesTab profile={profile} onUpdate={handleNotesDetailsUpdate} />
                 </div>
@@ -93,9 +96,9 @@ export const ProfileScreen = ({ profile, selectedTab, onUpdate, onCancel, ...pro
 
                 <div className="float-right flex">
                     <Button onClick={() => onCancel && onCancel()} variant="secondary" className="mr-2">
-                        Cancel
+                        {t('creators.cancel')}
                     </Button>
-                    <Button onClick={() => handleUpdateClick(state)}>Update Influencer Profile</Button>
+                    <Button onClick={() => handleUpdateClick(state)}>{t('profile.updateProfileButton')}</Button>
                 </div>
             </div>
         </div>
