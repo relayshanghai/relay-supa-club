@@ -11,10 +11,11 @@ export const getTopics = async (productDescription: string): Promise<string[]> =
 
     const systemPrompt = `You are an influencer marketing expert. You help clients find relevant trending tags for their product. Based on a product description, return 10 biggest relevant youtube/instagram/tiktok tags to reach the widest audience. Make sure each tag individually is related to the product.
 
+The description can be in various languages, but only return your response tags in English!
 Example description: The most advanced home use LED facial mask based on light therapy with 11 different treatments for different skin conditions.
 Example response: #skincare, #beauty, #facial, #facialtreatment, #facialmask, #LEDtherapy, #skinhealth, #selfcare, #glowingskin, #homemasktherapy
 
-Only respond with a comma separated list of 10 tags.`;
+Only respond with a comma separated list of 10 English tags.`;
 
     const chatCompletion = await openai.createChatCompletion({
         model: 'gpt-3.5-turbo',
