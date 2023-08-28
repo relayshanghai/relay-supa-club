@@ -14,25 +14,7 @@ describe('outreach', () => {
         setupIntercepts();
         cy.loginTestUser();
     });
-    it('can create new sequence. Can delete sequence', () => {
-        cy.contains('Sequences').click();
-        cy.contains('New sequence', { timeout: 10000 }).click();
-        cy.get('input[placeholder="Enter a name for your sequence"]').type('New Sequence Test');
-        cy.contains('button', 'Create new sequence').click();
-        cy.contains('New Sequence Test').click();
-        cy.contains('button', 'Update template variables').click();
-        cy.get('input[id="template-variable-input-productName"]').clear().type('Test Product');
-        cy.contains('button', 'Update variables').click();
-        cy.contains(
-            'The values you see here are what will be used to automatically customize the actual email content of your sequence emails!',
-        ).should('not.exist');
-        cy.contains('Template variables updated');
-        cy.contains('Sequences').click();
-        cy.contains('tr', 'New Sequence Test').contains('Test Product');
-        // cleanup and test delete
-        cy.getByTestId('delete-sequence:New Sequence Test').click();
-        cy.contains('tr', 'New Sequence Test').should('not.exist');
-    });
+
     it('sequence page', () => {
         cy.contains('Sequences').click();
         cy.contains('General collaboration', { timeout: 10000 }).click();
@@ -224,5 +206,24 @@ describe('outreach', () => {
         cy.contains('Bob-Recommended Brown').should('not.exist');
         cy.contains('Influencer Manager').click();
         cy.contains('Bob-Recommended Brown');
+    });
+    it('can create new sequence. Can delete sequence', () => {
+        cy.contains('Sequences').click();
+        cy.contains('New sequence', { timeout: 10000 }).click();
+        cy.get('input[placeholder="Enter a name for your sequence"]').type('New Sequence Test');
+        cy.contains('button', 'Create new sequence').click();
+        cy.contains('New Sequence Test').click();
+        cy.contains('button', 'Update template variables').click();
+        cy.get('input[id="template-variable-input-productName"]').clear().type('Test Product');
+        cy.contains('button', 'Update variables').click();
+        cy.contains(
+            'The values you see here are what will be used to automatically customize the actual email content of your sequence emails!',
+        ).should('not.exist');
+        cy.contains('Template variables updated');
+        cy.contains('Sequences').click();
+        cy.contains('tr', 'New Sequence Test').contains('Test Product');
+        // cleanup and test delete
+        cy.getByTestId('delete-sequence:New Sequence Test').click();
+        cy.contains('tr', 'New Sequence Test').should('not.exist');
     });
 });
