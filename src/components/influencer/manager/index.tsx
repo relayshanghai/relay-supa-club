@@ -38,8 +38,6 @@ const Manager = () => {
 
     const { track } = useRudderstackTrack()
 
-
-
     useEffect(() => {
         const { abort } = track(OpenInfluencerManagerPage)
         return abort;

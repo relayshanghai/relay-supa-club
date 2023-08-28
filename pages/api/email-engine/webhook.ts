@@ -252,25 +252,31 @@ const handleTrackOpen = async (event: WebhookTrackOpen, res: NextApiResponse) =>
 };
 
 const handleBounce = async (event: WebhookMessageBounce, res: NextApiResponse) => {
-    const sequenceEmail = await getSequenceEmailByMessageId(event.data.messageId);
-    const update: SequenceEmailUpdate = {
-        id: sequenceEmail.id,
-        email_delivery_status: 'Bounced',
-    };
-    await updateSequenceEmail(update);
+    try {
+        const sequenceEmail = await getSequenceEmailByMessageId(event.data.messageId);
+        const update: SequenceEmailUpdate = {
+            id: sequenceEmail.id,
+            email_delivery_status: 'Bounced',
+        };
 
-    track(rudderstack.getClient(), rudderstack.getIdentity())(EmailFailed, {
-        account_id: event.account,
-        sequence_email_id: sequenceEmail.id,
-        error_type: 'bounced',
-        extra_info: event.data
-    })
+        await updateSequenceEmail(update);
 
-    await supabaseLogger({
-        type: 'email-webhook',
-        data: { event, update } as any,
-        message: `bounce messageId: ${event.data.messageId}`,
-    });
+        track(rudderstack.getClient(), rudderstack.getIdentity())(EmailFailed, {
+            account_id: event.account,
+            sequence_email_id: sequenceEmail.id,
+            error_type: 'bounced',
+            extra_info: event.data
+        })
+
+        await supabaseLogger({
+            type: 'email-webhook',
+            data: { event, update } as any,
+            message: `bounce messageId: ${event.data.messageId}`,
+        });
+    } catch {
+        // @note sequence email is missing; probably deleted manually.
+    }
+
     return res.status(httpCodes.OK).json({});
 };
 
@@ -288,48 +294,59 @@ const handleComplaint = async (event: WebhookMessageComplaint, res: NextApiRespo
 };
 
 const handleDeliveryError = async (event: WebhookMessageDeliveryError, res: NextApiResponse) => {
-    const sequenceEmail = await getSequenceEmailByMessageId(event.data.messageId);
-    const update: SequenceEmailUpdate = {
-        id: sequenceEmail.id,
-        email_delivery_status: 'Failed',
-    };
-    await updateSequenceEmail(update);
+    try {
+        const sequenceEmail = await getSequenceEmailByMessageId(event.data.messageId);
+        const update: SequenceEmailUpdate = {
+            id: sequenceEmail.id,
+            email_delivery_status: 'Failed',
+        };
 
-    track(rudderstack.getClient(), rudderstack.getIdentity())(EmailFailed, {
-        account_id: event.account,
-        sequence_email_id: sequenceEmail.id,
-        error_type: 'failed',
-        extra_info: event.data
-    })
+        await updateSequenceEmail(update);
 
-    await supabaseLogger({
-        type: 'email-webhook',
-        data: { event, update } as any,
-        message: `deliveryError error: ${event.data.error}`,
-    });
+        track(rudderstack.getClient(), rudderstack.getIdentity())(EmailFailed, {
+            account_id: event.account,
+            sequence_email_id: sequenceEmail.id,
+            error_type: 'failed',
+            extra_info: event.data
+        })
+
+        await supabaseLogger({
+            type: 'email-webhook',
+            data: { event, update } as any,
+            message: `deliveryError error: ${event.data.error}`,
+        });
+    } catch {
+        // @note sequence email is missing; probably deleted manually.
+    }
     return res.status(httpCodes.OK).json({});
 };
 
 const handleFailed = async (event: WebhookMessageFailed, res: NextApiResponse) => {
-    const sequenceEmail = await getSequenceEmailByMessageId(event.data.messageId);
-    const update: SequenceEmailUpdate = {
-        id: sequenceEmail.id,
-        email_delivery_status: 'Failed',
-    };
-    await updateSequenceEmail(update);
+    try {
+        const sequenceEmail = await getSequenceEmailByMessageId(event.data.messageId);
+        const update: SequenceEmailUpdate = {
+            id: sequenceEmail.id,
+            email_delivery_status: 'Failed',
+        };
 
-    track(rudderstack.getClient(), rudderstack.getIdentity())(EmailFailed, {
-        account_id: event.account,
-        sequence_email_id: sequenceEmail.id,
-        error_type: 'quit',
-        extra_info: event.data
-    })
+        await updateSequenceEmail(update);
 
-    await supabaseLogger({
-        type: 'email-webhook',
-        data: { event, update } as any,
-        message: `failed error: ${event.data.error}`,
-    });
+        track(rudderstack.getClient(), rudderstack.getIdentity())(EmailFailed, {
+            account_id: event.account,
+            sequence_email_id: sequenceEmail.id,
+            error_type: 'quit',
+            extra_info: event.data
+        })
+
+        await supabaseLogger({
+            type: 'email-webhook',
+            data: { event, update } as any,
+            message: `failed error: ${event.data.error}`,
+        });
+    } catch {
+        // @note sequence email is missing; probably deleted manually.
+    }
+
     return res.status(httpCodes.OK).json({});
 };
 
@@ -399,23 +416,29 @@ const handleOtherWebhook = async (event: WebhookEvent, res: NextApiResponse) => 
     return res.status(httpCodes.OK).json({});
 };
 
+const identifyWebhook = async (body: WebhookEvent) => {
+    try {
+        const profile = await db(getProfileByEmailEngineAccountQuery)(body.account)
+
+        if (!profile) {
+            throw new RelayError(`No account associated with "${body.account}"`, 500, {
+                shouldLog: true,
+                sendToSentry: true
+            })
+        }
+
+        rudderstack.identifyWithProfile(profile.id)
+    } catch (e) {
+        throw e;
+    }
+}
+
 export type SendEmailPostResponseBody = SendEmailResponseBody;
 const postHandler: NextApiHandler = async (req, res) => {
     // TODO: use a signing secret from the email client to authenticate the request
     const body = req.body as WebhookEvent;
 
-    const profile = await db(getProfileByEmailEngineAccountQuery)(body.account)
-
-    if (!profile) {
-        throw new RelayError(`No account associated with "${body.account}"`, 500, {
-            shouldLog: true,
-            sendToSentry: true
-        })
-    }
-
-    rudderstack.identifyWithProfile(profile.id)
-
-    console.log("[EE-WEBHOOK]", req.body)
+    await identifyWebhook(body)
 
     await supabaseLogger({ type: 'email-webhook', data: body as any, message: `incoming: ${body.event}` });
     switch (body.event) {
