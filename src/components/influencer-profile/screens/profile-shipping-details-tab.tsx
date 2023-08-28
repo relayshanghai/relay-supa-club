@@ -35,54 +35,54 @@ export const ProfileShippingDetailsTab = (props: Props) => {
         <>
             <p className="mb-2 text-xl font-semibold text-gray-600">{t('profile.shippingDetails')}</p>
             <ShippingDetailsNameInput
-                label={t('profile.name') || 'Name'}
+                label={t('profile.name') as string}
                 placeholder="D’Jan Curtis"
                 value={data.shippingDetails.name}
                 onInput={(e) => onUpdate('name', e.currentTarget.value)}
             />
             <ShippingDetailsPhoneNumberInput
-                label={t('profile.phoneNumber') || 'Phone Number'}
+                label={t('profile.phoneNumber') as string}
                 placeholder="1-433-3453456"
                 value={data.shippingDetails.phoneNumber}
                 onInput={(e) => onUpdate('phoneNumber', e.currentTarget.value)}
             />
             <ShippingDetailsStreetAddressInput
-                label={t('profile.streetAddress') || 'Street Address'}
+                label={t('profile.streetAddress') as string}
                 placeholder="755 Roosevelt Street"
                 value={data.shippingDetails.streetAddress}
                 onInput={(e) => onUpdate('streetAddress', e.currentTarget.value)}
             />
             <ShippingDetailsCityInput
-                label={t('profile.city') || 'City'}
+                label={t('profile.city') as string}
                 placeholder="New York"
                 value={data.shippingDetails.city}
                 onInput={(e) => onUpdate('city', e.currentTarget.value)}
             />
             <ShippingDetailsStateInput
-                label={t('profile.state') || 'State'}
+                label={t('profile.state') as string}
                 placeholder="New York"
                 value={data.shippingDetails.state}
                 onInput={(e) => onUpdate('state', e.currentTarget.value)}
             />
             <ShippingDetailsCountryInput
-                label={t('profile.country') || 'Country'}
+                label={t('profile.country') as string}
                 placeholder="United States"
                 value={data.shippingDetails.country}
                 onInput={(e) => onUpdate('country', e.currentTarget.value)}
             />
             <ShippingDetailsPostalCodeInput
-                label={t('profile.postalCode') || 'Postal Code'}
+                label={t('profile.postalCode') as string}
                 placeholder="14450"
                 value={data.shippingDetails.postalCode}
                 onInput={(e) => onUpdate('postalCode', e.currentTarget.value)}
             />
             <ShippingDetailsTrackingCodeInput
-                label={t('profile.trackingCode') || 'Tracking Code'}
+                label={t('profile.trackingCode') as string}
                 value={data.shippingDetails.trackingCode}
                 onInput={(e) => onUpdate('trackingCode', e.currentTarget.value)}
             />
             <ShippingDetailsFullAddressInput
-                label={t('profile.fullAddress') || 'Full Address'}
+                label={t('profile.fullAddress') as string}
                 value={data.shippingDetails.fullAddress}
                 onInput={(e) => onUpdate('fullAddress', e.currentTarget.value)}
             />

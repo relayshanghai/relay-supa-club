@@ -112,7 +112,7 @@ export const ProfileNotesTab = ({ profile, ...props }: Props) => {
                 </div>
 
                 <OutreachCollabStatusInput
-                    label={t('profile.collabStatus') || 'Collab'}
+                    label={t('profile.collabStatus') as string}
                     onUpdate={(items) => {
                         const selected = items.length > 0 ? items[0].id : data.notes.collabStatus;
                         onUpdate('collabStatus', selected);
@@ -122,7 +122,7 @@ export const ProfileNotesTab = ({ profile, ...props }: Props) => {
                 />
 
                 <OutreachNextStepsInput
-                    label={t('profile.nextStep') || 'Next Step'}
+                    label={t('profile.nextStep') as string}
                     placeholder={t('profile.nextStepPlaceholder')}
                     value={data.notes.nextStep}
                     onChange={(e) => onUpdate('nextStep', e.currentTarget.value)}
@@ -130,7 +130,7 @@ export const ProfileNotesTab = ({ profile, ...props }: Props) => {
 
                 <OutreachNotesInput
                     label={t('profile.notes')}
-                    placeholder={t('profile.notesPlaceholder') || 'Write notes'}
+                    placeholder={t('profile.notesPlaceholder') as string}
                     buttonText={t('profile.addNoteButton')}
                     disabled={getNotes.isLoading === true || saveNote.isLoading === true}
                     value={data.notes.notes}
@@ -157,25 +157,25 @@ export const ProfileNotesTab = ({ profile, ...props }: Props) => {
                     onInput={(e) => onUpdate('fee', e.currentTarget.value)}
                 />
                 <CollabVideoDetailsInput
-                    label={t('profile.videoDetails') || 'Video Details'}
+                    label={t('profile.videoDetails') as string}
                     placeholder={t('profile.videoDetailsPlaceholder')}
                     value={data.notes.videoDetails}
                     onInput={(e) => onUpdate('videoDetails', e.currentTarget.value)}
                 />
                 <CollabAffiliateLinkInput
-                    label={t('profile.affiliateLink') || 'Affiliate Link'}
+                    label={t('profile.affiliateLink') as string}
                     placeholder={t('profile.affiliateLinkPlaceholder')}
                     value={data.notes.affiliateLink}
                     onInput={(e) => onUpdate('affiliateLink', e.currentTarget.value)}
                 />
                 <CollabScheduledPostDateInput
-                    label={t('profile.scheduledPostDate') || 'Scheduled Post Date'}
+                    label={t('profile.scheduledPostDate')}
                     value={data.notes.scheduledPostDate}
                     onInput={(e) => onUpdate('scheduledPostDate', e.currentTarget.value)}
                 />
 
                 <CollabAddPost
-                    label={t('profile.posts') || 'Post'}
+                    label={t('profile.posts')}
                     buttonText={t('profile.addPostButton') || 'Add Post'}
                     profile={profile}
                 />
