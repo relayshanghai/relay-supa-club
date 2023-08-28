@@ -214,7 +214,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                         <td className="whitespace-nowrap px-6 py-4 align-middle font-semibold text-gray-600">
                             {lastStep?.name ?? ''}
                         </td>
-                        <td className={`whitespace-nowrap px-6 py-4 align-middle`}>
+                        <td className="whitespace-nowrap px-6 py-4 align-middle">
                             <span
                                 className={`flex w-fit flex-row items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm ${
                                     EMAIL_STATUS_STYLES[getStatus(lastEmail || nextEmail) || 'Default'].style
