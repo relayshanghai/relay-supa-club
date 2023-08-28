@@ -31,49 +31,21 @@ export const isNumeric = (v: any): v is number => {
 export const boolish = () => {
     const o = z.union([z.string(), z.number(), z.boolean(), z.null(), z.undefined()])
 
-    const refined = o.refine((v) => {
-        if (typeof v === "boolean") {
-            return true;
-        }
-
-        if (v === null || v === undefined) {
-            return true;
-        }
-
-        if (isNumeric(v) && (Number(v) === 0 || Number(v) === 1)) {
-            return true;
-        }
-
-        const allowedStrings = ["true", "false", "0", "1"]
-
-        if (typeof v === "string" && allowedStrings.includes(v.toLowerCase())) {
-            return true;
-        }
-
-        return false;
+    return o.refine((v) => {
+        return v === "true"
+            || v ===  "1"
+            || v === 1
+            || v === true
+            || v === "false"
+            || v ===  "0"
+            || v === 0
+            || v === false
+            || v === null
+            || v === undefined;
     }).transform((v) => {
-        if (typeof v === "boolean") {
-            return v;
-        }
-
-        if (v === null || v === undefined) {
-            return false;
-        }
-
-        if (typeof v === "string" && ["true", "1"].includes(v.toLowerCase())) {
-            return true;
-        }
-
-        if (typeof v === "string" && ["false", "0"].includes(v.toLowerCase())) {
-            return false;
-        }
-
-        if (isNumeric(v) && [0, 1].includes(Number(v))) {
-            return Boolean(Number(v))
-        }
-
-        return Boolean(v)
-    })
-
-    return refined
+        return v === "true"
+            || v ===  "1"
+            || v === 1
+            || v === true;
+    });
 }
