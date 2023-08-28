@@ -5,7 +5,7 @@ import type { DatabaseWithCustomTypes } from 'types';
 import type { z } from 'zod';
 import type { eventKeys } from '.';
 import type { TrackEvent, TriggerEvent } from '../analytics/types';
-import { getUserSession } from '../api/analytics';
+import { SessionIds, getUserSession } from '../api/analytics';
 import type { ServerContext } from '../api/iqdata';
 import { serverLogger } from '../logger-server';
 const disabled = process.env.NEXT_PUBLIC_ENABLE_RUDDERSTACK !== 'true';
@@ -29,9 +29,14 @@ export const createClient = (writeKey?: string, dataPlane?: string, options?: co
  * Track function that supports events in /src/utils/analytic/events
  * @note ideally, we will move all tracking events there
  */
-export const track: (r: RudderBackend) => TrackEvent = (rudder) => (event, payload) => {
+export const track: (r: RudderBackend, u: SessionIds['user_id']) => TrackEvent = (rudder, user_id) => (event, payload) => {
+    if (!user_id) {
+        throw new Error("Rudderstack event has no identity")
+    }
+
     const trigger: TriggerEvent = (eventName, payload) => {
         rudder.track({
+            userId: user_id,
             event: eventName,
             properties: payload,
         });
@@ -103,6 +108,10 @@ export class Rudderstack {
 
         this.session = session;
         this.serverContext = context;
+    }
+
+    getIdentity() {
+        return this.session?.user_id
     }
 
     /**
