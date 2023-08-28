@@ -8,6 +8,7 @@ import {
     ANALYZE_OPEN_EXTERNAL_SOCIAL_PROFILE,
     AnalyzeOpenExternalSocialProfile
 } from './analyze-open_external_social_profile';
+import { BOOSTBOT_ANALYZE_INFLUENCER, BoostbotAnalyzeInfluencer, BoostbotAnalyzeInfluencerPayload } from './boostbot-analyze-influencer';
 import type { AddInfluencerToSequencePayload } from './outreach/add-influencer-to-sequence';
 import { AddInfluencerToSequence, OUTREACH_ADD_INFLUENCER_TO_SEQUENCE } from './outreach/add-influencer-to-sequence';
 import type { CreateSequencePayload } from './outreach/create-sequence';
@@ -94,6 +95,7 @@ export const events = {
     [OUTREACH_EMAIL_OPENED]: EmailOpened,
     [OUTREACH_EMAIL_CLICKED]: EmailClicked,
     [OUTREACH_EMAIL_REPLY]: EmailReply,
+    [BOOSTBOT_ANALYZE_INFLUENCER]: BoostbotAnalyzeInfluencer,
 };
 
 export type payloads = {
@@ -117,6 +119,7 @@ export type payloads = {
     [OUTREACH_EMAIL_OPENED]: EmailOpenedPayload,
     [OUTREACH_EMAIL_CLICKED]: EmailClickedPayload,
     [OUTREACH_EMAIL_REPLY]: EmailReplyPayload,
+    [BOOSTBOT_ANALYZE_INFLUENCER]: BoostbotAnalyzeInfluencerPayload,
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -142,6 +145,7 @@ export const eventKeys = z.union([
     z.literal(OUTREACH_EMAIL_OPENED),
     z.literal(OUTREACH_EMAIL_CLICKED),
     z.literal(OUTREACH_EMAIL_REPLY),
+    z.literal(BOOSTBOT_ANALYZE_INFLUENCER),
 ]);
 
 export type eventKeys = z.infer<typeof eventKeys>;
