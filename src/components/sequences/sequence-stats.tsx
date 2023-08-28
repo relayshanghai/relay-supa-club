@@ -65,6 +65,7 @@ export const SequenceStats = ({ totalInfluencers, openRate, replyRate, bounceRat
             tooltip: {
                 title: t('sequences.bounceRateTooltip'),
                 content: t('sequences.bounceRateTooltipDescription'),
+                position: 'bottom-left',
             },
             value: decimalToPercent(bounceRate, 0) ?? '0%',
             largeIcon: <MessageXCircleOutline />,
