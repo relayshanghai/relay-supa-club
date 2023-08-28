@@ -169,6 +169,9 @@ const sequences = {
         okay: 'Yes, delete them',
     },
     influencerAlreadyAdded_sequence: 'Influencer has already been added to sequence: {{sequence}} ',
+    deleteConfirm: 'Are you sure you want to delete?',
+    deleteSuccess: 'Successfully deleted.',
+    deleteFail: 'Failed to delete.',
 };
 
 export default sequences;
