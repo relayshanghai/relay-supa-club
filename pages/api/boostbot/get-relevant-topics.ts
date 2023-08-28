@@ -11,7 +11,7 @@ const GetRelevantTopicsBody = z.object({
 });
 
 export type GetRelevantTopicsBody = z.input<typeof GetRelevantTopicsBody>;
-export type GetRelevantTopicsResponse = { relevantTopics: string[] };
+export type GetRelevantTopicsResponse = string[];
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     const result = GetRelevantTopicsBody.safeParse(req.body);
@@ -21,9 +21,9 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     const { topics, platform } = result.data;
-    const relevantTopics = await getBulkRelevantTopicTags(topics, { limit: 10, platform });
+    const relevantTopics: GetRelevantTopicsResponse = await getBulkRelevantTopicTags(topics, { limit: 10, platform });
 
-    return res.status(httpCodes.OK).json({ relevantTopics });
+    return res.status(httpCodes.OK).json(relevantTopics);
 };
 
 export default ApiHandler({ postHandler });

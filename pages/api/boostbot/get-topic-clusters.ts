@@ -10,7 +10,7 @@ const GetTopicClustersBody = z.object({
 });
 
 export type GetTopicClustersBody = z.input<typeof GetTopicClustersBody>;
-export type GetTopicClustersResponse = { topicClusters: string[][] };
+export type GetTopicClustersResponse = string[][];
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     const result = GetTopicClustersBody.safeParse(req.body);
@@ -20,9 +20,9 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     const { productDescription, topics } = result.data;
-    const topicClusters = await getTopicClusters(productDescription, topics);
+    const topicClusters: GetTopicClustersResponse = await getTopicClusters(productDescription, topics);
 
-    return res.status(httpCodes.OK).json({ topicClusters });
+    return res.status(httpCodes.OK).json(topicClusters);
 };
 
 export default ApiHandler({ postHandler });
