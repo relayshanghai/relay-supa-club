@@ -4,7 +4,7 @@ export const getNotesBySequenceInfluencer =
     (db: RelayDatabase) => async (sequence_influencer_id: string, filter: { user_id?: string }) => {
         let query = db
             .from('campaign_notes')
-            .select('*, profiles(id, first_name, last_name)')
+            .select('*, profiles(id, first_name, last_name, avatar_url)')
             .eq('sequence_influencer_id', sequence_influencer_id);
 
         if (filter.user_id) {

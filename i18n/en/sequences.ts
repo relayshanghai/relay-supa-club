@@ -161,6 +161,13 @@ const sequences = {
     emailPreview: 'Email preview',
     number_emailsSuccessfullyScheduled: '{{number}} emails successfully scheduled to send',
     number_emailsFailedToSchedule: 'Failed to submit {{number}} emails to send',
+    delete: {
+        title: 'Delete influencer from sequence?',
+        description:
+            "Deleting the influencer will remove them from the sequence, and cancel any future messages. You'll have to re-add them if you change your mind.",
+        cancel: 'Cancel',
+        okay: 'Yes, delete them',
+    },
     influencerAlreadyAdded_sequence: 'Influencer has already been added to sequence: {{sequence}} ',
 };
 

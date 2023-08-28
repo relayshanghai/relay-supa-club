@@ -1,20 +1,20 @@
-import type { ServerContext, TrackedEvent } from '../types';
-import type { SupabaseClient } from '@supabase/supabase-js';
-import { getTrackingEvent, insertTrackingEvent } from 'src/utils/api/db/calls/tracking_events';
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
-import type { DatabaseWithCustomTypes } from 'types';
+import type { SupabaseClient } from '@supabase/supabase-js';
+import { hasher } from 'node-object-hash';
 import { getJourney } from 'src/utils/analytics/api/journey';
-import { now } from 'src/utils/datetime';
-import { insertSearchSnapshot } from 'src/utils/api/db/calls/search-snapshots';
+import { getUserSession } from 'src/utils/api/analytics';
 import { insertReportSnapshot } from 'src/utils/api/db/calls';
-import { v4 } from 'uuid';
-import { ANALYTICS_HEADER_NAME } from '../constants';
 import { getOrInsertSearchParameter } from 'src/utils/api/db/calls/search-parameters';
+import { insertSearchSnapshot } from 'src/utils/api/db/calls/search-snapshots';
+import { getTrackingEvent, insertTrackingEvent } from 'src/utils/api/db/calls/tracking_events';
 import { SearchInfluencersPayload } from 'src/utils/api/iqdata/influencers/search-influencers-payload';
 import type { ApiPayload } from 'src/utils/api/types';
+import { now } from 'src/utils/datetime';
 import { isJson } from 'src/utils/json';
-import { hasher } from 'node-object-hash';
-import { getUserSession } from 'src/utils/api/analytics';
+import type { DatabaseWithCustomTypes } from 'types';
+import { v4 } from 'uuid';
+import { ANALYTICS_HEADER_NAME } from '../constants';
+import type { ServerContext, TrackedEvent } from '../types';
 
 export const getAnonId = (ctx: ServerContext) => {
     if (ANALYTICS_HEADER_NAME in ctx.req.headers) {
@@ -173,8 +173,9 @@ export const createReportSnapshot = async (ctx: ServerContext, payload: CreateAn
 };
 
 export const createSearchParameter = (db: SupabaseClient) => async (payload: ApiPayload) => {
-    const parsedPayload = SearchInfluencersPayload.parse(payload);
-    const { context: _, ...data } = parsedPayload;
+    const parsedPayload = SearchInfluencersPayload.passthrough().parse(payload);
+    const { path, query, body } = parsedPayload;
+    const data = { path, query, body };
 
     const hash = hasher().hash(parsedPayload);
 

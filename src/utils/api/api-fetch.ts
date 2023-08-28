@@ -18,20 +18,17 @@ const preparePayloadQuery = (url: string, payloadQuery: ApiPayload['query']) => 
     return urlParams === '' ? url : `${url}?${urlParams}`;
 };
 
-const parseResponse = async (response: Response) => {
-    let content = null;
+const parseResponse = async <T = any>(res: Response): Promise<T> => {
+    const response = res.clone();
+
+    if (response.bodyUsed) {
+        throw new Error('Cannot read response. Body already used');
+    }
 
     const contentType = response.headers.get('content-type') || '';
 
-    if (!response.bodyUsed && contentType.indexOf('application/json') !== -1) {
-        content = await response.json();
-
-        // @todo fix status key patching
-        if (Array.isArray(content)) {
-            return content;
-        }
-
-        content = { ...content, status: response.status };
+    if (contentType.indexOf('application/json') !== -1) {
+        return await response.json();
     }
 
     // @note leaving this here for iqdata endpoints that return gzip, in-case we need it in the future
@@ -42,17 +39,27 @@ const parseResponse = async (response: Response) => {
     //     content = JSON.parse(`[${content}]`);
     // }
 
-    if (!response.bodyUsed && contentType.indexOf('application/json') === -1) {
-        content = await response.text();
-    }
+    // always parse as "text" by default
+    return (await response.text()) as T;
+};
 
-    return content;
+const unwrapResponse = async <T = any>(res: Response): Promise<Response & { content: T }> => {
+    const content = await parseResponse<T>(res);
+
+    return {
+        ...res,
+        content,
+    };
 };
 
 /**
  * For fetching API's externally or internally
  */
-export const apiFetch = async <T = any>(url: string, payload: ApiPayload, options: RequestInit = {}) => {
+export const apiFetch = async <TRes = any, TReq extends ApiPayload = any>(
+    url: string,
+    payload: TReq,
+    options: RequestInit = {},
+) => {
     url = parsePayloadPath(url, payload.path);
     url = preparePayloadQuery(url, payload.query);
 
@@ -67,17 +74,14 @@ export const apiFetch = async <T = any>(url: string, payload: ApiPayload, option
 
     const response = await fetch(url, options).catch((err) => {
         if (err instanceof Error) return err;
-
         return new Error(err);
     });
-
-    if (response instanceof Error && response.name === 'AbortError') {
-        return;
-    }
 
     if (response instanceof Error) {
         throw response;
     }
 
-    return parseResponse(response) as T;
+    const unwrapped = await unwrapResponse<TRes>(response);
+
+    return unwrapped;
 };

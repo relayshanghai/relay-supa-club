@@ -1,6 +1,6 @@
 import type { CreatorPlatform } from 'types';
-import { apiFetch } from '../api-fetch';
 import type { ServerContext } from '..';
+import { apiFetch } from '../api-fetch';
 import { RelayError } from 'src/utils/api-handler';
 import { limiter } from 'src/utils/limiter';
 
@@ -44,15 +44,15 @@ export const getRelevantTopicTags = async (payload: GetRelevantTopicTagsPayload,
 
     const response = await apiFetch<GetRelevantTopicTagsResponse>('/dict/relevant-tags', { ...payload, context });
 
-    if (response?.success === true) {
-        sortByDistance(response.data);
-        return response;
+    if (response.content.success === true) {
+        sortByDistance(response.content.data);
     } else {
         throw new RelayError('Error fetching relevant topic tags');
     }
+
+    return response.content;
 };
 
-// TODO: is the 'context?: ServerContext' parameter from function above needed here? What is it for?
 export const getBulkRelevantTopicTags = async (
     topics: string[],
     params: GetRelevantTopicTagsParams,

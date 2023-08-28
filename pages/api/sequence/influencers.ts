@@ -1,27 +1,41 @@
-import type { NextApiHandler } from 'next';
-import httpCodes from 'src/constants/httpCodes';
+import type { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
+import { default as httpCodes } from 'src/constants/httpCodes';
 import { ApiHandler } from 'src/utils/api-handler';
-import { type SequenceInfluencer } from 'src/utils/api/db';
+import type { Addresses, SequenceInfluencer } from 'src/utils/api/db';
 import { getSequenceInfluencers } from 'src/utils/api/db/calls/get-sequence-influencers';
+import { db } from 'src/utils/supabase-client';
 
 export type SequenceInfluencerManagerPage = SequenceInfluencer & {
     iqdata_id?: string;
     influencer_id?: string;
     name?: string | null;
+    manager_first_name: string;
     username?: string;
     avatar_url?: string | null;
     url?: string;
     platform?: string;
-    manager_first_name: string;
+    address?: Addresses['Update'] | null;
+    manager: {
+        id: string | null;
+        company_id: string | null;
+        avatar_url?: string | null;
+        first_name: string;
+        last_name: string;
+    };
 };
 
-const postHandler: NextApiHandler = async (req, res) => {
+const postHandler: NextApiHandler = async (
+    req: NextApiRequest,
+    res: NextApiResponse<SequenceInfluencerManagerPage[]>,
+) => {
     const sequenceIds: string[] = req.body;
-    const influencersPromises = sequenceIds.map((sequenceId) => getSequenceInfluencers({ req, res }, sequenceId));
+    const influencersPromises = sequenceIds.map(db(getSequenceInfluencers));
     const influencersArrays = await Promise.all(influencersPromises);
+
     const combinedInfluencers = influencersArrays.reduce((accumulator, influencers) => {
         return [...accumulator, ...influencers];
-    }, []);
+    }, [] as SequenceInfluencerManagerPage[]);
+
     return res.status(httpCodes.OK).json(combinedInfluencers);
 };
 

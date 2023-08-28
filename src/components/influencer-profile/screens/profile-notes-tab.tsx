@@ -1,55 +1,57 @@
+import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { useCallback, useEffect } from 'react';
-import { useProfileScreenContext, useUiState } from '../screens/profile-screen-context';
+import { useSequenceInfluencerNotes } from 'src/hooks/use-sequence-influencer-notes';
+import type { FunnelStatus } from 'src/utils/api/db';
+import { CollabAddPost } from '../components/collab-add-post';
 import { CollabAffiliateLinkInput } from '../components/collab-affiliate-link-input';
 import { CollabFeeInput } from '../components/collab-fee-input';
 import { CollabScheduledPostDateInput } from '../components/collab-scheduled-post-date-input';
 import { CollabVideoDetailsInput } from '../components/collab-video-details-input';
+import type { NoteData } from '../components/note';
 import { OutreachCollabStatusInput } from '../components/outreach-collab-status-input';
 import { OutreachNextStepsInput } from '../components/outreach-next-steps-input';
 import { OutreachNotesInput } from '../components/outreach-notes-input';
-import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
-import { useSequenceInfluencerNotes } from 'src/hooks/use-sequence-influencer-notes';
-import type { NoteData } from '../components/note';
+import { useProfileScreenContext, useUiState } from '../screens/profile-screen-context';
 
 export const COLLAB_STATUS_OPTIONS = [
     {
-        id: 'negotiating',
+        id: 'Negotiating',
         label: 'Negotiating',
         value: 10,
         style: 'bg-blue-100 text-blue-500',
     },
     {
-        id: 'confirmed',
+        id: 'Confirmed',
         label: 'Confirmed',
         value: 20,
         style: 'bg-primary-100 text-primary-500',
     },
     {
-        id: 'shipped',
+        id: 'Shipped',
         label: 'Shipped',
         value: 30,
         style: 'bg-yellow-100 text-yellow-500',
     },
     {
-        id: 'received',
+        id: 'Received',
         label: 'Received',
         value: 40,
         style: 'bg-green-100 text-green-500',
     },
     {
-        id: 'contentApproval',
+        id: 'Content Approval',
         label: 'Content Approval',
         value: 50,
         style: 'bg-pink-100 text-pink-500',
     },
     {
-        id: 'posted',
+        id: 'Posted',
         label: 'Posted',
         value: 60,
         style: 'bg-cyan-100 text-cyan-500',
     },
     {
-        id: 'rejected',
+        id: 'Rejected',
         label: 'Rejected',
         value: 70,
         style: 'bg-red-100 text-red-500',
@@ -57,7 +59,7 @@ export const COLLAB_STATUS_OPTIONS = [
 ];
 
 export type ProfileNotes = {
-    collabStatus: string;
+    collabStatus: FunnelStatus;
     notes: string;
     nextStep: string;
     fee: string | number;
@@ -96,7 +98,7 @@ export const ProfileNotesTab = ({ profile, ...props }: Props) => {
         // load posts when the modal is opened
         if (getNotes.isLoading !== null) return;
 
-        getNotes.call(profile.id, { current_user_only: 1 }).then((notes: NoteData[]) => {
+        getNotes.call(profile.id, { current_user_only: true }).then((notes: NoteData[]) => {
             const currentNote: Partial<NoteData> = notes && notes.length > 0 ? notes[0] : { content: '' };
             onUpdate('notes', currentNote.content);
         });
@@ -112,7 +114,10 @@ export const ProfileNotesTab = ({ profile, ...props }: Props) => {
                 </div>
 
                 <OutreachCollabStatusInput
-                    onUpdate={(data) => onUpdate('collabStatus', data)}
+                    onUpdate={(items) => {
+                        const selected = items.length > 0 ? items[0].id: data.notes.collabStatus
+                        onUpdate('collabStatus', selected)
+                    }}
                     options={COLLAB_STATUS_OPTIONS}
                     selected={[data.notes.collabStatus]}
                 />
@@ -153,6 +158,8 @@ export const ProfileNotesTab = ({ profile, ...props }: Props) => {
                     value={data.notes.scheduledPostDate}
                     onInput={(e) => onUpdate('scheduledPostDate', e.currentTarget.value)}
                 />
+
+                <CollabAddPost profile={profile} />
             </div>
         </>
     );

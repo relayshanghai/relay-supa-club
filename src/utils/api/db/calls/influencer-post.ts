@@ -1,8 +1,8 @@
-import type { InfluencerPostInsert, InfluencerPostRow, RelayDatabase } from '../types';
+import type { InfluencerPosts, RelayDatabase } from '../types';
 
 export const insertInfluencerPost =
     (db: RelayDatabase) =>
-    async (data: InfluencerPostInsert): Promise<InfluencerPostRow> => {
+    async (data: InfluencerPosts['Insert']): Promise<InfluencerPosts['Row']> => {
         const influencerPost = await db.from('influencer_posts').insert(data).select().single();
 
         if (influencerPost.error) {
@@ -14,7 +14,7 @@ export const insertInfluencerPost =
 
 export const deleteInfluencerPost =
     (db: RelayDatabase) =>
-    async (id: string): Promise<InfluencerPostRow | null> => {
+    async (id: string): Promise<InfluencerPosts['Row'] | null> => {
         const influencerPost = await db
             .from('influencer_posts')
             .update({
@@ -33,7 +33,7 @@ export const deleteInfluencerPost =
 
 export const getInfluencerPostsBySocialProfile =
     (db: RelayDatabase) =>
-    async (influencer_social_profile_id: string | null): Promise<InfluencerPostRow[]> => {
+    async (influencer_social_profile_id: string | null): Promise<InfluencerPosts['Row'][]> => {
         const influencerPost = await db
             .from('influencer_posts')
             .select()
