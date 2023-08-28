@@ -1,21 +1,27 @@
 import Fuse from 'fuse.js';
 import type { EmailSearchPostResponseBody } from 'pages/api/email-engine/search';
-import { useEffect, useMemo, useState } from 'react';
-import toast from 'react-hot-toast';
+import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { default as toast } from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { useMessages } from 'src/hooks/use-message';
 import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { useUser } from 'src/hooks/use-user';
 import { OpenInboxPage } from 'src/utils/analytics/events';
+import { getSequenceInfluencer as baseGetSequenceInfluencer } from 'src/utils/api/db/calls/get-sequence-influencers';
+import { getSequenceInfluencerByEmailAndCompanyCall } from 'src/utils/api/db/calls/sequence-influencers';
 import {
     getInboxThreadMessages,
     getSentThreadMessages,
     updateMessageAsSeen,
 } from 'src/utils/api/email-engine/handle-messages';
 import { GMAIL_SEEN_SPECIAL_USE_FLAG } from 'src/utils/api/email-engine/prototype-mocks';
+import { useDB } from 'src/utils/client-db/use-client-db';
 import { clientLogger } from 'src/utils/logger-client';
 import type { MessagesGetMessage } from 'types/email-engine/account-account-messages-get';
 import { Spinner } from '../icons';
+import { ProfileOverlayScreen } from '../influencer-profile/screens/profile-overlay-screen';
+import { useUiState } from '../influencer-profile/screens/profile-screen-context';
 import { Layout } from '../layout';
 import { CorrespondenceSection } from './correspondence-section';
 import { PreviewSection } from './preview-section';
@@ -29,6 +35,7 @@ export const InboxPage = () => {
     const [getSelectedMessagesError, setGetSelectedMessagesError] = useState('');
     const [selectedTab, setSelectedTab] = useState('inbox');
     const [searchTerm, setSearchTerm] = useState<string>('');
+    const [sequenceInfluencer, setSequenceInfluencer] = useState<SequenceInfluencerManagerPage | null>(null)
 
     const { inboxMessages, isLoading, refreshInboxMessages } = useMessages();
     const { t } = useTranslation();
@@ -67,7 +74,7 @@ export const InboxPage = () => {
         setSearchResults(results.map((result) => result.item));
     }, [filteredMessages, searchTerm]);
 
-    const handleGetThreadEmails = async (message: MessagesGetMessage) => {
+    const handleGetThreadEmails = useCallback(async (message: MessagesGetMessage) => {
         setSelectedMessages([]);
         setLoadingSelectedMessages(true);
         setGetSelectedMessagesError('');
@@ -89,7 +96,39 @@ export const InboxPage = () => {
             toast(getSelectedMessagesError);
         }
         setLoadingSelectedMessages(false);
-    };
+    }, [getSelectedMessagesError, profile?.email_engine_account_id]);
+
+    const getSequenceInfluencerByEmailAndCompany = useDB(getSequenceInfluencerByEmailAndCompanyCall)
+    const getSequenceInfluencer = useDB(baseGetSequenceInfluencer)
+    const [uiState, setUiState] = useUiState();
+
+    const handleInfluencerClick = useCallback(() => {
+        if (!sequenceInfluencer) return;
+        setUiState((s) => {
+            return { ...s, isProfileOverlayOpen: true };
+        });
+    }, [setUiState, sequenceInfluencer])
+
+    const handleSelectPreviewCard = useCallback(async (message: MessagesGetMessage) => {
+        if (!profile) return;
+        try {
+            const influencer = await getSequenceInfluencerByEmailAndCompany(message.from.address, profile.company_id)
+            const influencerFull = await getSequenceInfluencer(influencer.id)
+            setSequenceInfluencer(influencerFull)
+        // @note avoid try..catch hell. influencer should have been a monad
+        } catch (error) {}
+    }, [profile, getSequenceInfluencer, getSequenceInfluencerByEmailAndCompany])
+
+    const handleProfileOverlayClose = useCallback(() => {
+        setUiState((s) => {
+            return { ...s, isProfileOverlayOpen: false };
+        });
+    }, [setUiState]);
+
+    const handleProfileUpdate = useCallback(() => {
+        // @todo profile updated!
+        // console.log("Update profile")
+    }, []);
 
     useEffect(() => {
         if (!selectedMessages) {
@@ -111,9 +150,9 @@ export const InboxPage = () => {
     useEffect(() => {
         if (!selectedMessages && messages.length > 0) {
             handleGetThreadEmails(messages[0]);
+            handleSelectPreviewCard(messages[0])
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [messages]);
+    }, [messages, handleGetThreadEmails, handleSelectPreviewCard, selectedMessages]);
 
     return (
         <Layout>
@@ -140,6 +179,7 @@ export const InboxPage = () => {
                                             selectedMessages={selectedMessages}
                                             handleGetThreadEmails={handleGetThreadEmails}
                                             loadingSelectedMessages={loadingSelectedMessages}
+                                            onSelect={handleSelectPreviewCard}
                                         />
                                     ) : (
                                         <PreviewSection
@@ -147,6 +187,7 @@ export const InboxPage = () => {
                                             selectedMessages={selectedMessages}
                                             handleGetThreadEmails={handleGetThreadEmails}
                                             loadingSelectedMessages={loadingSelectedMessages}
+                                            onSelect={handleSelectPreviewCard}
                                         />
                                     )}
                                 </>
@@ -158,9 +199,16 @@ export const InboxPage = () => {
                                     // TODO: add selectedSequenceInfluencers
                                     selectedMessages={selectedMessages}
                                     loadingSelectedMessages={loadingSelectedMessages}
+                                    onInfluencerClick={handleInfluencerClick}
                                 />
                             )}
                         </div>
+                        <ProfileOverlayScreen
+                            profile={sequenceInfluencer}
+                            isOpen={uiState.isProfileOverlayOpen}
+                            onClose={handleProfileOverlayClose}
+                            onUpdate={handleProfileUpdate}
+                        />
                     </>
                 )}
             </div>
