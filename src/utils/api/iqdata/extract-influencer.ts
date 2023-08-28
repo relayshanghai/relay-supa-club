@@ -12,8 +12,8 @@ const trimTitle = (title: string, max_length = 40) => {
 
     for (const token of tokens) {
         length += token.length
-        if (length >= max_length) break;
         accumulator.push(token)
+        if (length >= max_length) break;
     }
 
     return accumulator.join(' ').trim() + "..."
