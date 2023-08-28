@@ -25,7 +25,9 @@
     "testid",
     "tiktok",
     "upsert",
-    "wechat"
+    "wechat",
+    "boostbot",
+    "openai"
   ],
   "sqlfluff.dialect": "postgres",
   "sqlfluff.executablePath": "sqlfluff",
