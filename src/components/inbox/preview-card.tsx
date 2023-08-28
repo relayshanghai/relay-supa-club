@@ -7,17 +7,22 @@ export const PreviewCard = ({
     selectedMessage,
     handleGetThreadEmails,
     loadingSelectedMessages,
+    onSelect,
 }: {
     message: MessagesGetMessage;
     selectedMessage: SearchResponseMessage | null;
     handleGetThreadEmails: (message: MessagesGetMessage) => Promise<void>;
     loadingSelectedMessages: boolean;
+    onSelect?: (message: MessagesGetMessage) => void;
 }) => {
     const { i18n } = useTranslation();
 
     return (
         <div
-            onClick={() => handleGetThreadEmails(message)}
+            onClick={() => {
+                onSelect && onSelect(message)
+                handleGetThreadEmails(message)
+            }}
             className={`${
                 selectedMessage?.id === message.id
                     ? 'border-2  border-primary-500  text-primary-500'
