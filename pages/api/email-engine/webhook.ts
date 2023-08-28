@@ -407,6 +407,9 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
             data: { event, error } as any,
             message: `error sending to: ${event.data.envelope.to}. error: ${error?.message}`,
         });
+
+        // @todo replying from inbox is not associated with a sequence email
+        // this will cause a 500 which will cause EE to resend this webhook every time
         return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
     }
 };
