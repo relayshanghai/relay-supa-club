@@ -20,12 +20,12 @@ export const CheckboxDropdown = ({ label, options, onUpdate, ...props }: Props) 
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
     const clearSelection = useCallback(() => {
-        onUpdate && onUpdate([])
+        onUpdate && onUpdate([]);
     }, [onUpdate]);
 
     useEffect(() => {
-        setSelectedOptions((s) => options.filter((o) => props.selected.includes(o.id)))
-    }, [options, props.selected])
+        setSelectedOptions(() => options.filter((option) => props.selected.includes(option.id)));
+    }, [options, props.selected]);
 
     const isItemSelected = useCallback(
         (item: CheckboxDropdownItemData) => {
@@ -37,17 +37,20 @@ export const CheckboxDropdown = ({ label, options, onUpdate, ...props }: Props) 
     const handleItemSelect = useCallback(
         (item: CheckboxDropdownItemData) => {
             if (selectedOptions.length <= 0) return;
-            const selected = multiple ? [...selectedOptions, item] : [item]
-            onUpdate && onUpdate(selected)
+            const selected = multiple ? [...selectedOptions, item] : [item];
+            onUpdate && onUpdate(selected);
 
             if (!multiple) setIsDropdownOpen(false);
         },
         [multiple, onUpdate, selectedOptions],
     );
 
-    const handleItemRemove = useCallback((item: CheckboxDropdownItemData) => {
-        onUpdate && onUpdate(selectedOptions.filter((i) => i.id !== item.id))
-    }, [onUpdate, selectedOptions]);
+    const handleItemRemove = useCallback(
+        (item: CheckboxDropdownItemData) => {
+            onUpdate && onUpdate(selectedOptions.filter((i) => i.id !== item.id));
+        },
+        [onUpdate, selectedOptions],
+    );
 
     const handleBlur = useCallback((e: any) => {
         // check if focused element is child of <details />
@@ -63,19 +66,15 @@ export const CheckboxDropdown = ({ label, options, onUpdate, ...props }: Props) 
     }, []);
 
     const postIcon = useMemo(() => {
-        if (selectedOptions.length > 0) {
-            return (
-                <p
-                    onMouseDown={clearSelection}
-                    className="flex h-full items-center px-3 text-lg font-semibold hover:bg-slate-200"
-                >
-                    x
-                </p>
-            );
-        }
-
-        return <ChevronDown className="mr-2 h-6 w-6 flex-shrink-0" />;
-    }, [selectedOptions.length, clearSelection]);
+        return (
+            <p
+                onMouseDown={clearSelection}
+                className="flex h-full items-center pl-3 text-lg font-semibold hover:bg-slate-200"
+            >
+                <ChevronDown className="mr-2 h-6 w-6 flex-shrink-0" />
+            </p>
+        );
+    }, [clearSelection]);
 
     const selectedItemPills = useMemo(() => {
         if (selectedOptions.length <= 0) {
@@ -85,7 +84,7 @@ export const CheckboxDropdown = ({ label, options, onUpdate, ...props }: Props) 
         return selectedOptions.map((item) => {
             return (
                 <p key={item.id} className={`rounded text-xs font-medium ${item.style} whitespace-nowrap px-2 py-2`}>
-                    {item.label}
+                    {t(`manager.${item.label}`)}
                 </p>
             );
         });
@@ -95,8 +94,9 @@ export const CheckboxDropdown = ({ label, options, onUpdate, ...props }: Props) 
         const items = options.map((option) => {
             const label = (
                 <>
-                    <p className={`${option.style} whitespace-nowrap rounded-md px-3 py-2 text-xs`}>{option.label}</p>
-                    <p>{option.value}</p>
+                    <p className={`${option.style} whitespace-nowrap rounded-md px-3 py-2 text-xs`}>
+                        {t(`manager.${option.label}`)}
+                    </p>
                 </>
             );
 
@@ -129,33 +129,36 @@ export const CheckboxDropdown = ({ label, options, onUpdate, ...props }: Props) 
     }, [handleItemSelect, handleItemRemove, isItemSelected, options, clearSelection, multiple]);
 
     return (
-        <details
-            open={isDropdownOpen}
-            onClick={handleDropdownOpen}
-            onBlur={handleBlur}
-            className="relative flex w-32 min-w-fit cursor-pointer select-none appearance-none flex-row items-center justify-between gap-2 rounded-md border border-gray-200 bg-white font-medium text-gray-400 ring-1 ring-gray-900 ring-opacity-5 focus:border-primary-500 focus:border-transparent focus:outline-none focus:ring-0 focus:ring-primary-500 sm:w-64 sm:text-sm"
-        >
-            <summary
-                tabIndex={0} // <- make this element focusable
-                className={`flex h-full min-w-full flex-row items-center justify-between`}
+        <>
+            <p className="text-sm font-semibold text-gray-500">{label}</p>
+            <details
+                open={isDropdownOpen}
+                onClick={handleDropdownOpen}
+                onBlur={handleBlur}
+                className="relative flex w-32 min-w-fit cursor-pointer select-none appearance-none flex-row items-center justify-between gap-2 rounded-md border border-gray-200 bg-white font-medium text-gray-400 ring-1 ring-gray-900 ring-opacity-5 focus:border-primary-500 focus:border-transparent focus:outline-none focus:ring-0 focus:ring-primary-500 sm:w-64 sm:text-sm"
             >
-                {props.preIcon ? <div className="pl-2">{props.preIcon}</div> : null}
-                <div className="flex grow flex-row items-center gap-2 px-3 py-1">{selectedItemPills}</div>
-                {postIcon}
-            </summary>
-            <ul
-                tabIndex={0} // <- make this element focusable
-                onClick={(e) => {
-                    // prevent the click from reaching <details />
-                    e.stopPropagation();
+                <summary
+                    tabIndex={0} // <- make this element focusable
+                    className={`flex h-full min-w-full flex-row items-center justify-between`}
+                >
+                    {props.preIcon ? <div className="pl-2">{props.preIcon}</div> : null}
+                    <div className="flex grow flex-row items-center gap-2 px-3 py-1">{selectedItemPills}</div>
+                    {postIcon}
+                </summary>
+                <ul
+                    tabIndex={0} // <- make this element focusable
+                    onClick={(e) => {
+                        // prevent the click from reaching <details />
+                        e.stopPropagation();
 
-                    // prevent the click event from retriggering since we are preventing it from bubbling up
-                    e.preventDefault();
-                }}
-                className="label-sm absolute mt-0.5 w-full select-none rounded-lg border bg-white shadow-lg"
-            >
-                {items}
-            </ul>
-        </details>
+                        // prevent the click event from retriggering since we are preventing it from bubbling up
+                        e.preventDefault();
+                    }}
+                    className="label-sm absolute mt-0.5 w-full select-none rounded-lg border bg-white shadow-lg"
+                >
+                    {items}
+                </ul>
+            </details>
+        </>
     );
 };

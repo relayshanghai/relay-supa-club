@@ -132,7 +132,8 @@ const sequences = {
       and blood oxygen tracking, and has a battery life  of over 2 weeks!”* We will include this value as is in your
     email templates`,
     productPrice: 'Product Price',
-    productPriceTooltip: `Enter the price of your product in USD. It's better to enter as a whole number to keep your templates cleaner.
+    productPriceTooltip: 'Product Price',
+    productPriceTooltipDescription: `Enter the price of your product in USD. It's better to enter as a whole number to keep your templates cleaner.
     * We will format this value with a $ in your email templates`,
     productPricePlaceholder: '99.9',
     influencer: 'Influencer',
@@ -169,6 +170,9 @@ const sequences = {
         okay: 'Yes, delete them',
     },
     influencerAlreadyAdded_sequence: 'Influencer has already been added to sequence: {{sequence}} ',
+    deleteConfirm: 'Are you sure you want to delete?',
+    deleteSuccess: 'Successfully deleted.',
+    deleteFail: 'Failed to delete.',
 };
 
 export default sequences;

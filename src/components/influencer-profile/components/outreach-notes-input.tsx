@@ -2,6 +2,8 @@ import type { InputHTMLAttributes } from 'react';
 import { ArrowRightOnRectangle, Spinner } from 'src/components/icons';
 
 type Props = {
+    label: string;
+    buttonText: string;
     value?: string;
     onSave?: (value: string) => void;
     onUpdate?: (value: string) => void;
@@ -9,13 +11,21 @@ type Props = {
     disabled?: boolean;
 } & InputHTMLAttributes<HTMLTextAreaElement>;
 
-export const OutreachNotesInput = ({ value = '', onSave, onUpdate, onOpenList, ...props }: Props) => {
+export const OutreachNotesInput = ({
+    buttonText,
+    label,
+    value = '',
+    onSave,
+    onUpdate,
+    onOpenList,
+    ...props
+}: Props) => {
     return (
         <div>
-            <label className="flex w-full cursor-pointer flex-col text-sm text-gray-800" htmlFor="outreach-notes-input">
+            <label className="flex w-full cursor-pointer flex-col text-sm text-gray-500" htmlFor="outreach-notes-input">
                 <div className="flex items-center gap-1 font-semibold" onClick={() => onOpenList && onOpenList()}>
-                    <span>Notes</span>
-                    <ArrowRightOnRectangle className="h-4 w-4" />
+                    <span>{label}</span>
+                    <ArrowRightOnRectangle className="h-4 w-4 stroke-primary-500" />
                 </div>
             </label>
             <div className="my-2">
@@ -36,8 +46,8 @@ export const OutreachNotesInput = ({ value = '', onSave, onUpdate, onOpenList, .
                     onClick={() => onSave && onSave(value)}
                     className="group text-center text-sm font-medium leading-tight tracking-tight text-violet-500"
                 >
-                    <div className="inline-flex h-9 w-[250.50px] items-center justify-center gap-1 rounded-md border border-violet-500 px-4 py-2 group-disabled:border-slate-300 group-disabled:bg-slate-200 group-disabled:text-slate-300">
-                        {!props.disabled ? 'Add Note' : <Spinner className="h-5 w-5 fill-primary-600 text-white" />}
+                    <div className="inline-flex items-center justify-center gap-1 rounded-md border border-violet-500 px-4 py-2 group-disabled:border-slate-300 group-disabled:bg-slate-200 group-disabled:text-slate-300">
+                        {!props.disabled ? buttonText : <Spinner className="h-5 w-5 fill-primary-600 text-white" />}
                     </div>
                 </button>
             </div>
