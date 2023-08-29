@@ -12,7 +12,8 @@ import { InfluencersTable } from 'src/components/boostbot/table/influencers-tabl
 import { Layout } from 'src/components/layout';
 import { useBoostbot } from 'src/hooks/use-boostbot';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
-import { OpenBoostbotPage } from 'src/utils/analytics/events';
+import { OpenBoostbotPage, UnlockInfluencers } from 'src/utils/analytics/events';
+import type { UnlockInfluencersPayload } from 'src/utils/analytics/events/boostbot/unlock-influencer';
 import { clientLogger } from 'src/utils/logger-client';
 import type { UserProfile } from 'types';
 
@@ -23,7 +24,7 @@ export type Influencer = (UserProfile | CreatorAccountWithTopics) & {
 
 const Boostbot = () => {
     const { t } = useTranslation();
-    const { unlockInfluencers } = useBoostbot({});
+    const { unlockInfluencers } = useBoostbot({ abortSignal: undefined });
     const [isInitialLogoScreen, setIsInitialLogoScreen] = useState(true);
     const { trackEvent: track } = useRudderstack();
 
@@ -67,23 +68,36 @@ const Boostbot = () => {
             const newInfluencerData = response?.[0]?.user_profile;
 
             if (newInfluencerData) {
-                setInfluencers((prevInfluencers) =>
-                    prevInfluencers.map((influencer) =>
-                        influencer.user_id === userId
-                            ? { ...newInfluencerData, topics: influencer.topics }
-                            : influencer,
-                    ),
-                );
+                setInfluencers((prevInfluencers) => {
+                        const influencer = prevInfluencers.find((i) => i.user_id === userId);
 
-                track("TEST:boostbot-unlock_influencer");
-                // product description, influencer per topic, topics, is_success
+                        const payload: UnlockInfluencersPayload = {
+                            influencer_ids: [userId],
+                            topics: influencer?.topics ?? [],
+                            is_all: false,
+                            is_success: true,
+                        }
+                        track(UnlockInfluencers.eventName, payload);
+
+                        return prevInfluencers.map((influencer) =>
+                            influencer.user_id === userId
+                                ? { ...newInfluencerData, topics: influencer.topics }
+                                : influencer
+                        )
+                    }
+                );
             }
         } catch (error) {
             clientLogger(error, 'error');
             toast.error(t('boostbot.error.influencerUnlock'));
 
-            track("TEST:boostbot-unlock_influencer");
-            // product description, influencer, topics, is_success
+            const payload: UnlockInfluencersPayload = {
+                influencer_ids: [userId],
+                topics: [],
+                is_all: false,
+                is_success: false,
+            }
+            track(UnlockInfluencers.eventName, payload);
         } finally {
             setInfluencerLoading(userId, false);
         }
@@ -103,25 +117,43 @@ const Boostbot = () => {
             const unlockedInfluencers = response?.map((result) => result.user_profile);
 
             if (unlockedInfluencers) {
+                const payload: UnlockInfluencersPayload = {
+                    influencer_ids: [],
+                    topics: [],
+                    is_all: true,
+                    is_success: true,
+                }
+
                 unlockedInfluencers.forEach((newInfluencerData) => {
-                    setInfluencers((prevInfluencers) =>
-                        prevInfluencers.map((influencer) =>
+                    setInfluencers((prevInfluencers) => {
+                        const influencer = prevInfluencers.find((i) => i.user_id === newInfluencerData.user_id);
+
+                        if (influencer) {
+                            payload.influencer_ids.push(influencer.user_id)
+                            payload.topics.push(...influencer.topics)
+                        }
+
+                        return prevInfluencers.map((influencer) =>
                             influencer.user_id === newInfluencerData.user_id
                                 ? { ...newInfluencerData, topics: influencer.topics }
                                 : influencer,
-                        ),
-                    );
+                        )
+                    });
                 });
 
-                track("TEST:boostbot-unlock_influencer");
-                // product description, influencer, topics, is_success
+                track(UnlockInfluencers.eventName, payload);
             }
         } catch (error) {
             clientLogger(error, 'error');
             toast.error(t('boostbot.error.influencerUnlock'));
 
-            track("TEST:boostbot-unlock_influencer");
-            // product description, influencer, topics, is_success
+            const payload: UnlockInfluencersPayload = {
+                influencer_ids: userIdsToUnlock,
+                topics: [],
+                is_all: true,
+                is_success: false
+            }
+            track(UnlockInfluencers.eventName, payload);
         } finally {
             userIdsToUnlock.forEach((userId) => setInfluencerLoading(userId, false));
         }
