@@ -44,6 +44,8 @@ module.exports = {
             animation: {
                 float: 'float 2s ease-in-out infinite',
                 'spin-burst': 'spin-burst 4s cubic-bezier(0.3, 0.5, 0, 1) infinite',
+                'fade-in-from-left': 'fade-in-from-left 0.7s ease-in-out',
+                'fade-in-from-top': 'fade-in-from-top 0.7s ease-in-out',
             },
             keyframes: {
                 float: {
@@ -53,6 +55,14 @@ module.exports = {
                 'spin-burst': {
                     '0%, 80%': { transform: 'rotate(0deg)' },
                     '100%': { transform: 'rotate(360deg)' },
+                },
+                'fade-in-from-left': {
+                    '0%': { transform: 'translateX(-10px)', opacity: '0' },
+                    '100%': { transform: 'translateX(0px)', opacity: '1' },
+                },
+                'fade-in-from-top': {
+                    '0%': { transform: 'translateY(-10px)', opacity: '0' },
+                    '100%': { transform: 'translateY(0px)', opacity: '1' },
                 },
             },
         },
