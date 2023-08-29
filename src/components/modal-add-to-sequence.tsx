@@ -9,6 +9,7 @@ import { useSequence } from 'src/hooks/use-sequence';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { useSequences } from 'src/hooks/use-sequences';
 import { AddInfluencerToSequence } from 'src/utils/analytics/events';
+import { AddInfluencerToSequencePayload } from 'src/utils/analytics/events/outreach/add-influencer-to-sequence';
 import type { Sequence } from 'src/utils/api/db';
 import { clientLogger } from 'src/utils/logger-client';
 import type { CreatorPlatform, CreatorUserProfile } from 'types';
@@ -103,6 +104,15 @@ export const AddToSequenceModal = ({
         }
         const tags = getRelevantTags();
         setSubmitting(true);
+
+        const trackingPayload: AddInfluencerToSequencePayload = {
+            influencer_id: socialProfile.id,
+            sequence_id: sequence.id,
+            sequence_influencer_id: null,
+            is_success: true,
+            is_sequence_autostart: sequence.auto_start,
+        }
+
         try {
             const sequenceInfluencer = await createSequenceInfluencer(
                 socialProfile.id,
@@ -110,6 +120,7 @@ export const AddToSequenceModal = ({
                 creatorProfile.user_id,
                 socialProfile?.email,
             );
+            trackingPayload.sequence_influencer_id = sequenceInfluencer.id;
             refreshSequenceInfluencers();
 
             if (sequenceInfluencer.email && sequence.auto_start) {
@@ -117,30 +128,18 @@ export const AddToSequenceModal = ({
             }
 
             toast.success(t('creators.addToSequenceSuccess'));
-
-            track(AddInfluencerToSequence, {
-                influencer_id: socialProfile.id,
-                sequence_id: sequence.id,
-                sequence_influencer_id: sequenceInfluencer.id,
-                is_success: true,
-                is_sequence_autostart: sequence.auto_start,
-            })
         } catch (error) {
             clientLogger(error);
             toast.error(t('creators.addToSequenceError'));
 
-            track(AddInfluencerToSequence, {
-                influencer_id: socialProfile.id,
-                sequence_id: sequence.id,
-                sequence_influencer_id: null,
-                is_success: false,
-                is_sequence_autostart: null,
-                extra_info: { error: String(error) }
-            })
+            trackingPayload.is_success = false
+            trackingPayload.extra_info = { error: String(error) }
         } finally {
             setSubmitting(false);
             setShow(false);
         }
+
+        track(AddInfluencerToSequence, trackingPayload);
     }, [
         track,
         createSequenceInfluencer,
