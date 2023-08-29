@@ -6,6 +6,8 @@ import { ProfileScreen } from 'src/components/influencer-profile/screens/profile
 import { useSequenceInfluencerNotes } from 'src/hooks/use-sequence-influencer-notes';
 import { NotesListOverlayScreen } from './notes-list-overlay';
 import { ProfileScreenProvider, useUiState } from './profile-screen-context';
+import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
+import { useSequences } from 'src/hooks/use-sequences';
 
 type Props = {
     profile: SequenceInfluencerManagerPage | null;
@@ -44,15 +46,28 @@ const mapProfileToShippingDetails = (profile: SequenceInfluencerManagerPage) => 
 export const ProfileOverlayScreen = ({ profile, onOpen, ...props }: Props) => {
     const [uiState, setUiState] = useUiState();
     const { getNotes, saveSequenceInfluencer } = useSequenceInfluencerNotes();
+    const { sequences } = useSequences();
+    const { sequenceInfluencers, refreshSequenceInfluencers } = useSequenceInfluencers(
+        sequences?.map((sequence) => sequence.id),
+    );
 
-    const mapProfileToFormData = useCallback((p: typeof profile) => {
-        if (!p) return null;
-
-        return {
-            notes: mapProfileToNotes(p),
-            shippingDetails: mapProfileToShippingDetails(p),
-        };
-    }, []);
+    const mapProfileToFormData = useCallback(
+        (p: typeof profile) => {
+            if (!p || !sequenceInfluencers) return null;
+            const updatedInfluencerIndex = sequenceInfluencers.findIndex((influencer) => influencer.id === p.id);
+            const newInfluencers = [
+                ...sequenceInfluencers.slice(0, updatedInfluencerIndex),
+                { ...p },
+                ...sequenceInfluencers.slice(updatedInfluencerIndex + 1),
+            ];
+            refreshSequenceInfluencers(newInfluencers);
+            return {
+                notes: mapProfileToNotes(p),
+                shippingDetails: mapProfileToShippingDetails(p),
+            };
+        },
+        [refreshSequenceInfluencers, sequenceInfluencers],
+    );
 
     const [initialValue, setLocalProfile] = useState<ProfileValue | null>(() => mapProfileToFormData(profile));
 
