@@ -86,8 +86,6 @@ export type TemplateVariableUpdate = TemplateVariablesTable['Update'] & {
 type SequenceStepDetailedTypes = {
     /** Int, first step = 0 */
     step_number: number;
-    /** The params to be passed to the template. e.g. 'companyName' */
-    params: string[];
 };
 
 export type SequenceStepsTable = Database['public']['Tables']['sequence_steps'] & {
@@ -102,15 +100,20 @@ export type SequenceStepUpdate = SequenceStepsTable['Update'];
 
 export type EmailDeliveryStatus = 'Scheduled' | 'Delivered' | 'Replied' | 'Bounced' | 'Failed';
 export type EmailTrackingStatus = 'Opened' | 'Link Clicked';
-type SequenceEmailDetailedTypes = {
-    email_delivery_status: EmailDeliveryStatus;
-    email_tracking_status: EmailTrackingStatus;
-};
 
 export type SequenceEmailsTable = Database['public']['Tables']['sequence_emails'] & {
-    Row: Database['public']['Tables']['sequence_emails']['Row'] & SequenceEmailDetailedTypes;
-    Insert: Database['public']['Tables']['sequence_emails']['Insert'] & SequenceEmailDetailedTypes;
-    Update: Database['public']['Tables']['sequence_emails']['Update'] & SequenceEmailDetailedTypes;
+    Row: Database['public']['Tables']['sequence_emails']['Row'] & {
+        email_delivery_status: EmailDeliveryStatus;
+        email_tracking_status: EmailTrackingStatus;
+    };
+    Insert: Database['public']['Tables']['sequence_emails']['Insert'] & {
+        email_delivery_status?: EmailDeliveryStatus;
+        email_tracking_status?: EmailTrackingStatus;
+    };
+    Update: Database['public']['Tables']['sequence_emails']['Update'] & {
+        email_delivery_status?: EmailDeliveryStatus;
+        email_tracking_status?: EmailTrackingStatus;
+    };
 };
 
 export type SequenceEmail = SequenceEmailsTable['Row'];
@@ -189,9 +192,6 @@ export type PostsPerformance = PostsPerformanceTable['Row'];
 export type PostsPerformanceInsert = PostsPerformanceTable['Insert'];
 export type PostsPerformanceUpdate = PostsPerformanceTable['Update'];
 
-export type InfluencerPostInsert = Database['public']['Tables']['influencer_posts']['Insert'];
-export type InfluencerPostRow = Database['public']['Tables']['influencer_posts']['Row'];
-
 export type InfluencerInsert = Database['public']['Tables']['influencers']['Insert'];
 export type InfluencerRow = Database['public']['Tables']['influencers']['Row'];
 
@@ -224,3 +224,6 @@ export type SearchSnapshots = Database['public']['Tables']['search_snapshots'];
 export type ReportSnapshots = Database['public']['Tables']['report_snapshots'];
 export type SearchParameters = Database['public']['Tables']['search_parameters'];
 export type VercelLogs = Database['public']['Tables']['vercel_logs'];
+export type CampaignNotes = Database['public']['Tables']['campaign_notes'];
+export type InfluencerPosts = Database['public']['Tables']['influencer_posts'];
+export type Addresses = Database['public']['Tables']['addresses'];

@@ -6,6 +6,9 @@ import { saveInfluencer } from './save-influencer';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
 vi.mock('./api/db/calls/influencers-insert', () => ({
+    getInfluencerSocialProfileByReferenceId: vi.fn(() => async (_: string) => {
+        return null;
+    }),
     insertInfluencer: vi.fn(() => async (_: any) => {
         return { ..._, id: 1 };
     }),

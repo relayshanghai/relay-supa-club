@@ -40,13 +40,15 @@ env:
     NEXT_PUBLIC_CI: true
     NEXT_PUBLIC_CHATWOOT_WEBSITE_TOKEN: ${{ vars.NEXT_PUBLIC_CHATWOOT_WEBSITE_TOKEN }}
     CHATWOOT_WEBHOOK_TOKEN: ${{ vars.CHATWOOT_WEBHOOK_TOKEN }}
-    APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
+    APIFY_TOKEN: APIFY_TOKEN
     NEXT_PUBLIC_RUDDERSTACK_APP_WRITE_KEY: ${{ secrets.NEXT_PUBLIC_RUDDERSTACK_APP_WRITE_KEY }}
     NEXT_PUBLIC_RUDDERSTACK_APP_DATA_PLANE_URL: ${{ secrets.NEXT_PUBLIC_RUDDERSTACK_APP_DATA_PLANE_URL }}
     RUDDERSTACK_APP_WRITE_KEY: ${{ secrets.RUDDERSTACK_APP_WRITE_KEY }}
     RUDDERSTACK_APP_DATA_PLANE_URL: ${{ secrets.RUDDERSTACK_APP_DATA_PLANE_URL }}
     SUPABASE_SCANNER_BUFFER_SIZE: 5mb
     NEXT_PUBLIC_GOOGLE_ANALYTICS: ${{ secrets.NEXT_PUBLIC_GOOGLE_ANALYTICS }}
+    EMAIL_ENGINE_API_KEY: ${{ secrets.EMAIL_ENGINE_API_KEY }}
+    EMAIL_ENGINE_API_URL: https://email.relay.club
 
 jobs:
     component-test:
@@ -118,7 +120,7 @@ jobs:
                   ./supabase/db.sh db_test
 
             - name: Use Node.js ${{ matrix.node-version }}
-              uses: actions/setup-node@v1
+              uses: actions/setup-node@v3
               with:
                   node-version: ${{ matrix.node-version }}
 

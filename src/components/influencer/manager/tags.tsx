@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import { SelectMultipleDropdown } from '../../library/select-multiple-dropdown';
+import { type CommonStatusType, SelectMultipleDropdown } from '../../library/select-multiple-dropdown';
 
 const tags = {
     fashion: {
@@ -12,16 +11,22 @@ const tags = {
     },
 };
 
-export const Tags = () => {
-    const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
+export const Tags = ({
+    filters,
+    onSetFilters,
+}: {
+    filters: CommonStatusType[];
+    onSetFilters: (filters: CommonStatusType[]) => void;
+}) => {
     return (
         <div className="flex flex-col">
             <p>Tags</p>
             <SelectMultipleDropdown
                 text={'Tags'}
-                selectedOptions={selectedOptions}
-                setSelectedOptions={setSelectedOptions}
+                selectedOptions={filters}
+                setSelectedOptions={onSetFilters}
                 options={tags}
+                translationPath="manager"
             />
         </div>
     );

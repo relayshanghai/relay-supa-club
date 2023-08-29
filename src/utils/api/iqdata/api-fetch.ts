@@ -1,17 +1,22 @@
-import type { ApiPayload } from '../types';
-import { IQDATA_URL } from '.';
 import { headers } from 'src/utils/api/iqdata/constants';
-import { apiFetch as apiFetchOriginal } from '../api-fetch';
-import { logDailyTokensError, logRateLimitError } from '../slack/handle-alerts';
-import { forensicTrack } from '../forensicTrack';
 import { rudderstack } from 'src/utils/rudderstack';
+import type { ServerContext } from '.';
+import { IQDATA_URL } from '.';
+import { apiFetch as apiFetchOriginal } from '../api-fetch';
+import { forensicTrack } from '../forensicTrack';
+import { logDailyTokensError, logRateLimitError } from '../slack/handle-alerts';
+import type { ApiPayload } from '../types';
 
 /**
  * For fetching IQData API
  */
-export const apiFetch = async <T extends object>(url: string, payload: ApiPayload, options: RequestInit = {}) => {
+export const apiFetch = async <TRes = any, TReq extends ApiPayload = any>(
+    url: string,
+    payload: TReq & { context?: ServerContext },
+    options: RequestInit = {},
+) => {
     const { context, ...strippedPayload } = payload;
-    const content = await apiFetchOriginal<T>(IQDATA_URL + url, strippedPayload, {
+    const content = await apiFetchOriginal<TRes, Omit<TReq, 'context'>>(IQDATA_URL + url, strippedPayload, {
         ...options,
         headers,
     });

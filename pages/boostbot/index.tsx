@@ -21,7 +21,7 @@ export type Influencer = (UserProfile | CreatorAccountWithTopics) & {
 
 const Boostbot = () => {
     const { t } = useTranslation();
-    const { unlockInfluencers } = useBoostbot();
+    const { unlockInfluencers } = useBoostbot({});
     const [isInitialLogoScreen, setIsInitialLogoScreen] = useState(true);
 
     const [influencers, setInfluencers] = useState<Influencer[]>([

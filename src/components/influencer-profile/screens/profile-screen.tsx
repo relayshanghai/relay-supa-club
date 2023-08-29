@@ -1,13 +1,15 @@
+import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import type { DetailedHTMLProps, HTMLAttributes } from 'react';
 import { useCallback, useState } from 'react';
-import type { ProfileNotes } from '../components/profile-notes-tab';
-import { ProfileNotesTab } from '../components/profile-notes-tab';
-import type { ProfileShippingDetails } from '../components/profile-shipping-details-tab';
-import { ProfileShippingDetailsTab } from '../components/profile-shipping-details-tab';
 import { Button } from 'src/components/button';
 import { cls } from 'src/utils/classnames';
-import type { Profile } from '../components/profile-header';
 import { ProfileHeader } from '../components/profile-header';
+import type { ProfileNotes } from './profile-notes-tab';
+import { ProfileNotesTab } from './profile-notes-tab';
+import { useProfileScreenContext } from './profile-screen-context';
+import type { ProfileShippingDetails } from './profile-shipping-details-tab';
+import { ProfileShippingDetailsTab } from './profile-shipping-details-tab';
+import { useTranslation } from 'react-i18next';
 
 export type ProfileValue = {
     notes: ProfileNotes;
@@ -15,38 +17,43 @@ export type ProfileValue = {
 };
 
 type Props = {
-    profile: Profile;
-    value?: ProfileValue;
+    profile: SequenceInfluencerManagerPage;
     selectedTab?: 'notes' | 'shipping-details';
-    onUpdate?: (data: Partial<ProfileValue>) => void;
+    onUpdate?: (data: ProfileValue) => void;
     onCancel?: () => void;
 } & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 
-const activeTabStyles = cls(['active', 'text-primary-500', 'border-b-2', 'border-b-primary-500']);
+export const activeTabStyles = cls(['active', 'text-primary-500', 'border-b-2', 'border-b-primary-500']);
 
-export const ProfileScreen = ({ profile, value, selectedTab, onUpdate, onCancel, ...props }: Props) => {
+export const ProfileScreen = ({ profile, selectedTab, onUpdate, onCancel, ...props }: Props) => {
+    const { state, setState } = useProfileScreenContext();
+
     const [selected, setSelected] = useState(selectedTab ?? 'notes');
 
     const handleTabClick = (tab: Props['selectedTab']) => tab && setSelected(tab);
 
-    const [data, setData] = useState<Partial<ProfileValue>>(() => {
-        return value ?? { notes: undefined, shippingDetails: undefined };
-    });
+    const { t } = useTranslation();
 
-    const handleNotesDetailsUpdate = useCallback((data: ProfileNotes) => {
-        setData((state) => {
-            return { ...state, notes: data };
-        });
-    }, []);
+    const handleNotesDetailsUpdate = useCallback(
+        (k: string, v: any) => {
+            setState((state) => {
+                return { ...state, notes: { ...state.notes, [k]: v } };
+            });
+        },
+        [setState],
+    );
 
-    const handleshippingUpdate = useCallback((data: ProfileShippingDetails) => {
-        setData((state) => {
-            return { ...state, shippingDetails: data };
-        });
-    }, []);
+    const handleShippingUpdate = useCallback(
+        (k: string, v: any) => {
+            setState((state) => {
+                return { ...state, shippingDetails: { ...state.shippingDetails, [k]: v } };
+            });
+        },
+        [setState],
+    );
 
     const handleUpdateClick = useCallback(
-        (data: Partial<ProfileValue>) => {
+        (data: ProfileValue) => {
             onUpdate && onUpdate(data);
         },
         [onUpdate],
@@ -55,7 +62,7 @@ export const ProfileScreen = ({ profile, value, selectedTab, onUpdate, onCancel,
     return (
         <div {...props}>
             <div className="mb-4 h-28">
-                <ProfileHeader className="relative left-4 top-2" profile={profile} />
+                <ProfileHeader profile={profile} className="relative left-4 top-2" />
             </div>
 
             <nav className="flex space-x-2">
@@ -66,7 +73,7 @@ export const ProfileScreen = ({ profile, value, selectedTab, onUpdate, onCancel,
                         selected === 'notes' ? activeTabStyles : ''
                     } inline-flex grow basis-0 items-center justify-center gap-2 bg-transparent px-4 py-3 text-center text-sm font-medium text-gray-400`}
                 >
-                    Notes
+                    {t('profile.notesTab')}
                 </button>
                 <button
                     onClick={() => handleTabClick('shipping-details')}
@@ -75,23 +82,23 @@ export const ProfileScreen = ({ profile, value, selectedTab, onUpdate, onCancel,
                         selected === 'shipping-details' ? activeTabStyles : ''
                     } inline-flex grow basis-0 items-center justify-center gap-2 bg-transparent px-4 py-3 text-center text-sm font-medium text-gray-400`}
                 >
-                    Shipping Details
+                    {t('profile.shippingDetailsTab')}
                 </button>
             </nav>
 
-            <div className="mt-3 p-12">
+            <div className="p-8">
                 <div className={`${selected !== 'notes' ? 'hidden' : ''}`}>
-                    <ProfileNotesTab onUpdate={handleNotesDetailsUpdate} value={data.notes} />
+                    <ProfileNotesTab profile={profile} onUpdate={handleNotesDetailsUpdate} />
                 </div>
                 <div className={`${selected !== 'shipping-details' ? 'hidden' : ''}`}>
-                    <ProfileShippingDetailsTab onUpdate={handleshippingUpdate} value={data.shippingDetails} />
+                    <ProfileShippingDetailsTab onUpdate={handleShippingUpdate} />
                 </div>
 
                 <div className="float-right flex">
                     <Button onClick={() => onCancel && onCancel()} variant="secondary" className="mr-2">
-                        Cancel
+                        {t('creators.cancel')}
                     </Button>
-                    <Button onClick={() => handleUpdateClick(data)}>Update Influencer Profile</Button>
+                    <Button onClick={() => handleUpdateClick(state)}>{t('profile.updateProfileButton')}</Button>
                 </div>
             </div>
         </div>

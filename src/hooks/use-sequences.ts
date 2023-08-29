@@ -1,25 +1,23 @@
 import useSWR from 'swr';
 import { useCompany } from './use-company';
-import { useClientDb, useDB } from 'src/utils/client-db/use-client-db';
-import { getSequenceInfluencersByCompanyIdCall } from 'src/utils/api/db/calls/sequence-influencers';
+import { useClientDb } from 'src/utils/client-db/use-client-db';
+
+import { useMemo } from 'react';
 
 export const useSequences = () => {
     const { company } = useCompany();
-
     const db = useClientDb();
-    const { data: sequences, mutate: refreshSequences } = useSWR(company?.id ? 'sequences' : null, () =>
-        db.getSequencesByCompanyId(company?.id ?? ''),
-    );
-    if (!company) throw new Error('No company found');
 
-    const getSequenceInfluencersByCompanyIdDBCall = useDB(getSequenceInfluencersByCompanyIdCall);
-    const { data: allSequenceInfluencersByCompanyId } = useSWR(company.id ? 'sequence_influencers' : null, () =>
-        getSequenceInfluencersByCompanyIdDBCall(company.id ?? ''),
+    const { data: sequences, mutate: refreshSequences } = useSWR(
+        company?.id ? [company.id, 'sequences'] : null,
+        ([companyId]) => db.getSequencesByCompanyId(companyId),
+        { revalidateOnFocus: false, revalidateIfStale: false },
     );
 
+    const allSequenceIds = useMemo(() => sequences?.map((sequence) => sequence.id), [sequences]);
     return {
         sequences,
         refreshSequences,
-        allSequenceInfluencersByCompanyId,
+        allSequenceIds,
     };
 };

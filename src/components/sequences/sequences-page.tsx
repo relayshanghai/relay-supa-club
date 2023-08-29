@@ -8,13 +8,15 @@ import { Button } from '../button';
 import { SequenceStats } from './sequence-stats';
 import { CreateSequenceModal } from './create-sequence-modal';
 import SequencesTable from './sequences-table';
-import type { SequenceEmail } from 'src/utils/api/db';
+import { useSequenceEmails } from 'src/hooks/use-sequence-emails';
+import { useAllSequenceInfluencersCountByCompany } from 'src/hooks/use-all-sequence-influencers-by-company-id';
 
 export const SequencesPage = () => {
     const { t } = useTranslation();
-    const { sequences, allSequenceInfluencersByCompanyId } = useSequences();
+    const { sequences } = useSequences();
+    const { allSequenceInfluencersCount } = useAllSequenceInfluencersCountByCompany();
+    const { allSequenceEmails } = useSequenceEmails();
     const [showCreateSequenceModal, setShowCreateSequenceModal] = useState<boolean>(false);
-    const [allEmails, setAllEmails] = useState<SequenceEmail[] | []>([]);
 
     const handleOpenCreateSequenceModal = () => {
         setShowCreateSequenceModal(true);
@@ -27,7 +29,7 @@ export const SequencesPage = () => {
                 showCreateSequenceModal={showCreateSequenceModal}
                 setShowCreateSequenceModal={setShowCreateSequenceModal}
             />
-            <div className="flex flex-col space-y-4 p-4">
+            <div className="flex flex-col space-y-4 p-6">
                 <div className="flex w-full">
                     <h1 className="mr-4 self-center text-2xl font-semibold text-gray-800">
                         {t('sequences.sequences')}
@@ -39,25 +41,32 @@ export const SequencesPage = () => {
                     </Button>
                 </div>
                 <SequenceStats
-                    totalInfluencers={allSequenceInfluencersByCompanyId?.length || 0}
+                    totalInfluencers={allSequenceInfluencersCount}
                     openRate={
-                        (allEmails?.filter(
-                            (email) =>
-                                email.email_tracking_status === 'Link Clicked' ||
-                                email.email_tracking_status === 'Opened',
-                        ).length || 0) / (allEmails?.length || 0)
+                        ((allSequenceEmails &&
+                            allSequenceEmails?.length > 0 &&
+                            allSequenceEmails?.filter(
+                                (email) =>
+                                    email.email_tracking_status === 'Link Clicked' ||
+                                    email.email_tracking_status === 'Opened',
+                            ).length) ||
+                            0) / (allSequenceEmails?.length || 1)
                     }
                     replyRate={
-                        (allEmails?.filter((email) => email.email_delivery_status === 'Replied').length || 0) /
-                        (allEmails?.length || 0)
+                        ((allSequenceEmails &&
+                            allSequenceEmails.length > 0 &&
+                            allSequenceEmails?.filter((email) => email.email_delivery_status === 'Replied').length) ||
+                            0) / (allSequenceEmails?.length || 1)
                     }
                     bounceRate={
-                        (allEmails?.filter((email) => email.email_delivery_status === 'Bounced').length || 0) /
-                        (allEmails?.length || 0)
+                        ((allSequenceEmails &&
+                            allSequenceEmails.length > 0 &&
+                            allSequenceEmails?.filter((email) => email.email_delivery_status === 'Bounced').length) ||
+                            0) / (allSequenceEmails?.length || 1)
                     }
                 />
 
-                <SequencesTable sequences={sequences} setAllEmails={setAllEmails} />
+                <SequencesTable sequences={sequences} />
             </div>
         </Layout>
     );

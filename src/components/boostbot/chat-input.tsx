@@ -60,7 +60,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading }
                 onClick={handleSendMessage}
                 disabled={isLoading}
             >
-                {isLoading ? <Spinner className="h-4 w-4 fill-primary-900" /> : <Send className="h-4 w-4" />}
+                {isLoading ? <Spinner className="h-4 w-4 fill-primary-900" /> : <Send className="h-4 w-4 fill-white" />}
             </button>
         </div>
     );

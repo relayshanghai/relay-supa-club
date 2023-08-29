@@ -1,11 +1,14 @@
 import Link from 'next/link';
 import type { DetailedHTMLProps, HTMLAttributes, PropsWithChildren } from 'react';
 import { useState } from 'react';
+
+export type ToolTipPositionUnion = 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'left' | 'right';
+
 interface Props extends DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLSpanElement> {
     content: string;
     detail?: string | null;
     children: React.ReactNode;
-    position?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'left' | 'right';
+    position?: ToolTipPositionUnion;
     link?: string | null;
     linkText?: string | null;
     highlight?: string | null;
@@ -39,7 +42,7 @@ export const Tooltip = ({
     tooltipClasses,
 }: TooltipProps) => {
     const [isHovered, setIsHovered] = useState(false);
-
+    if (!content) return <>{children}</>;
     return (
         <div className={`relative ${className}`}>
             <div

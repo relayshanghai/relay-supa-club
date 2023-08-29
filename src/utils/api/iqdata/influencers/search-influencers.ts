@@ -1,20 +1,23 @@
-import type { z } from 'zod';
 import type { CreatorSearchResult, SearchResultMetadata } from 'types';
+import type { z } from 'zod';
+import type { ServerContext } from '..';
+import { withServerContext } from '..';
 import { apiFetch } from '../api-fetch';
 import { SearchInfluencersPayload } from './search-influencers-payload';
-import { RelayError } from 'src/utils/api-handler';
-import { withServerContext } from '..';
 
-export const searchInfluencers = async (payload: z.input<typeof SearchInfluencersPayload>) => {
-    const parsedPayload = SearchInfluencersPayload.parse(payload);
+type SearchInfluencersPayloadInput = z.input<typeof SearchInfluencersPayload>;
 
-    const response = await apiFetch<CreatorSearchResult & SearchResultMetadata>('/search/newv1', parsedPayload, {
-        method: 'POST',
-    });
+export const searchInfluencers = async (payload: SearchInfluencersPayloadInput, context?: ServerContext) => {
+    // set type since passthrough breaks the typing
+    const parsedPayload: z.infer<typeof SearchInfluencersPayload> =
+        SearchInfluencersPayload.passthrough().parse(payload);
 
-    if (!response) throw new RelayError('Error searching influencers');
+    const response = await apiFetch<
+        CreatorSearchResult & SearchResultMetadata,
+        SearchInfluencersPayloadInput & { context?: ServerContext }
+    >('/search/newv1', { ...parsedPayload, context }, { method: 'POST' });
 
-    return response;
+    return response.content;
 };
 
 export const searchInfluencersWithContext = withServerContext(searchInfluencers);

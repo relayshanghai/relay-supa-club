@@ -137,7 +137,7 @@ const Inputs = () => {
                 <tr>
                     <library.TableInlineInput
                         value={value}
-                        onSubmit={(newValue) => setValue(newValue)}
+                        onSubmit={async (newValue) => setValue(newValue)}
                         textPromptForMissingValue="Enter a value"
                     />
                 </tr>
@@ -180,8 +180,8 @@ const Tabs = () => {
     );
 };
 
-const SelectMultipleDropdowns = () => {
-    const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
+export const SelectMultipleDropdowns = () => {
+    const [selectedOptions, setSelectedOptions] = useState<library.CommonStatusType[]>([]);
 
     const options = {
         option1: {
@@ -210,7 +210,10 @@ const SelectMultipleDropdowns = () => {
                     text="sample"
                     options={options}
                     selectedOptions={selectedOptions}
-                    setSelectedOptions={setSelectedOptions}
+                    setSelectedOptions={(options) => {
+                        setSelectedOptions(options);
+                    }}
+                    translationPath="manager"
                 />
             </div>
         </div>

@@ -4,26 +4,34 @@ import { cleanEmailBody } from 'src/utils/clean-html';
 import type { SearchResponseMessage } from 'types/email-engine/account-account-search-post';
 import { getMessageText } from 'src/utils/api/email-engine/handle-messages';
 import { Spinner } from '../icons';
+import { useUser } from 'src/hooks/use-user';
 
 export const Email = ({ message }: { message: SearchResponseMessage }) => {
     const [content, setContent] = useState('');
     const [loading, setLoading] = useState(false);
+    const { profile } = useUser();
 
-    const getText = useCallback(async (id: string) => {
-        setLoading(true);
-        try {
-            const { html } = await getMessageText(id);
-            if (!html) {
-                throw new Error('No html returned');
+    const getText = useCallback(
+        async (id: string) => {
+            if (!profile?.email_engine_account_id) {
+                return;
             }
-            setContent(html);
-        } catch (error: any) {
-            clientLogger(error, 'error');
-            throw new Error('Error fetching email: ' + error.message);
-        } finally {
-            setLoading(false);
-        }
-    }, []);
+            setLoading(true);
+            try {
+                const { html } = await getMessageText(id, profile.email_engine_account_id);
+                if (!html) {
+                    throw new Error('No html returned');
+                }
+                setContent(html);
+            } catch (error: any) {
+                clientLogger(error, 'error');
+                throw new Error('Error fetching email: ' + error.message);
+            } finally {
+                setLoading(false);
+            }
+        },
+        [profile?.email_engine_account_id],
+    );
 
     useEffect(() => {
         if (message.text.id && !loading && !content) {

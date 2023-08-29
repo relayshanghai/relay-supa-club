@@ -17,6 +17,7 @@ export interface Database {
           country: string
           created_at: string
           id: string
+          influencer_social_profile_id: string | null
           name: string
           phone_number: string | null
           postal_code: string
@@ -31,6 +32,7 @@ export interface Database {
           country: string
           created_at?: string
           id?: string
+          influencer_social_profile_id?: string | null
           name: string
           phone_number?: string | null
           postal_code: string
@@ -45,6 +47,7 @@ export interface Database {
           country?: string
           created_at?: string
           id?: string
+          influencer_social_profile_id?: string | null
           name?: string
           phone_number?: string | null
           postal_code?: string
@@ -52,7 +55,14 @@ export interface Database {
           tracking_code?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "addresses_influencer_social_profile_id_fkey"
+            columns: ["influencer_social_profile_id"]
+            referencedRelation: "influencer_social_profiles"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       campaign_creators: {
         Row: {
@@ -180,29 +190,32 @@ export interface Database {
       }
       campaign_notes: {
         Row: {
-          campaign_creator_id: string
+          campaign_creator_id: string | null
           comment: string | null
           created_at: string | null
           id: string
           important: boolean
+          influencer_social_profile_id: string | null
           sequence_influencer_id: string | null
           user_id: string
         }
         Insert: {
-          campaign_creator_id: string
+          campaign_creator_id?: string | null
           comment?: string | null
           created_at?: string | null
           id?: string
           important?: boolean
+          influencer_social_profile_id?: string | null
           sequence_influencer_id?: string | null
           user_id: string
         }
         Update: {
-          campaign_creator_id?: string
+          campaign_creator_id?: string | null
           comment?: string | null
           created_at?: string | null
           id?: string
           important?: boolean
+          influencer_social_profile_id?: string | null
           sequence_influencer_id?: string | null
           user_id?: string
         }
@@ -211,6 +224,12 @@ export interface Database {
             foreignKeyName: "campaign_notes_campaign_creator_id_fkey"
             columns: ["campaign_creator_id"]
             referencedRelation: "campaign_creators"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "campaign_notes_influencer_social_profile_id_fkey"
+            columns: ["influencer_social_profile_id"]
+            referencedRelation: "influencer_social_profiles"
             referencedColumns: ["id"]
           },
           {
@@ -476,7 +495,7 @@ export interface Database {
       }
       influencer_posts: {
         Row: {
-          campaign_id: string
+          campaign_id: string | null
           created_at: string | null
           deleted_at: string | null
           description: string | null
@@ -495,7 +514,7 @@ export interface Database {
           url: string
         }
         Insert: {
-          campaign_id: string
+          campaign_id?: string | null
           created_at?: string | null
           deleted_at?: string | null
           description?: string | null
@@ -514,7 +533,7 @@ export interface Database {
           url: string
         }
         Update: {
-          campaign_id?: string
+          campaign_id?: string | null
           created_at?: string | null
           deleted_at?: string | null
           description?: string | null
@@ -568,6 +587,8 @@ export interface Database {
           influencer_id: string
           name: string | null
           platform: string
+          recent_post_url: string | null
+          recent_video_title: string | null
           reference_id: string
           url: string
           username: string
@@ -580,6 +601,8 @@ export interface Database {
           influencer_id: string
           name?: string | null
           platform: string
+          recent_post_url?: string | null
+          recent_video_title?: string | null
           reference_id: string
           url: string
           username: string
@@ -592,6 +615,8 @@ export interface Database {
           influencer_id?: string
           name?: string | null
           platform?: string
+          recent_post_url?: string | null
+          recent_video_title?: string | null
           reference_id?: string
           url?: string
           username?: string
@@ -799,10 +824,12 @@ export interface Database {
           company_id: string | null
           created_at: string | null
           email: string | null
+          email_engine_account_id: string | null
           first_name: string
           id: string
           last_name: string
           phone: string | null
+          sequence_send_email: string | null
           updated_at: string | null
           user_role: string | null
         }
@@ -811,10 +838,12 @@ export interface Database {
           company_id?: string | null
           created_at?: string | null
           email?: string | null
+          email_engine_account_id?: string | null
           first_name: string
           id: string
           last_name: string
           phone?: string | null
+          sequence_send_email?: string | null
           updated_at?: string | null
           user_role?: string | null
         }
@@ -823,10 +852,12 @@ export interface Database {
           company_id?: string | null
           created_at?: string | null
           email?: string | null
+          email_engine_account_id?: string | null
           first_name?: string
           id?: string
           last_name?: string
           phone?: string | null
+          sequence_send_email?: string | null
           updated_at?: string | null
           user_role?: string | null
         }
@@ -1072,6 +1103,7 @@ export interface Database {
           funnel_status: string
           id: string
           influencer_social_profile_id: string
+          iqdata_id: string
           next_step: string | null
           rate_amount: number | null
           rate_currency: string | null
@@ -1092,6 +1124,7 @@ export interface Database {
           funnel_status: string
           id?: string
           influencer_social_profile_id: string
+          iqdata_id: string
           next_step?: string | null
           rate_amount?: number | null
           rate_currency?: string | null
@@ -1112,6 +1145,7 @@ export interface Database {
           funnel_status?: string
           id?: string
           influencer_social_profile_id?: string
+          iqdata_id?: string
           next_step?: string | null
           rate_amount?: number | null
           rate_currency?: string | null
@@ -1196,6 +1230,8 @@ export interface Database {
           company_id: string
           created_at: string
           id: string
+          manager_first_name: string | null
+          manager_id: string | null
           name: string
           updated_at: string
         }
@@ -1204,6 +1240,8 @@ export interface Database {
           company_id: string
           created_at?: string
           id?: string
+          manager_first_name?: string | null
+          manager_id?: string | null
           name: string
           updated_at?: string
         }
@@ -1212,6 +1250,8 @@ export interface Database {
           company_id?: string
           created_at?: string
           id?: string
+          manager_first_name?: string | null
+          manager_id?: string | null
           name?: string
           updated_at?: string
         }
@@ -1220,6 +1260,12 @@ export interface Database {
             foreignKeyName: "sequences_company_id_fkey"
             columns: ["company_id"]
             referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sequences_manager_id_fkey"
+            columns: ["manager_id"]
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           }
         ]

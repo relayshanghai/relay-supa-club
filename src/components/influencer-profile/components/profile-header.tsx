@@ -1,9 +1,13 @@
 import type { DetailedHTMLProps, HTMLAttributes } from 'react';
 import { useMemo } from 'react';
 import { EmailOutlineColored, TiktokNoBg, YoutubeNoBg } from 'src/components/icons';
+import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
+import { imgProxy } from 'src/utils/fetcher';
 
 // @note probably exists already
 export type Profile = {
+    id?: string;
+    influencer_id?: string;
     username: string;
     platform: string;
     name: string;
@@ -11,7 +15,7 @@ export type Profile = {
 };
 
 type Props = {
-    profile: Profile;
+    profile: SequenceInfluencerManagerPage;
 } & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 
 const translatePlatform = (platform: string) => {
@@ -19,18 +23,27 @@ const translatePlatform = (platform: string) => {
     if (_platform === 'youtube') return 'YT';
     if (_platform === 'instagram') return 'IG';
     if (_platform === 'tiktok') return 'TT';
-    return platform;
+    return 'NA';
 };
 
 export const ProfileHeader = ({ profile, ...props }: Props) => {
-    const platform = useMemo(() => translatePlatform(profile.platform), [profile.platform]);
+    // @todo platform is not provided
+    const platform = useMemo(() => translatePlatform(profile.platform ?? ''), [profile.platform]);
 
     return (
         <div {...props}>
             <div className="inline-flex items-center justify-start gap-2">
                 <div className="flex items-center justify-center rounded-full bg-gray-200 bg-opacity-50">
-                    <div className="flex items-center justify-center rounded-full">
-                        <img className="rounded-full" src={profile.avatar} alt="Photo" />
+                    <div className="flex h-24 w-24 items-center justify-center rounded-full">
+                        {profile.avatar_url ? (
+                            <img className="rounded-full" src={imgProxy(profile.avatar_url)} alt="Photo" />
+                        ) : (
+                            <img
+                                className="rounded-full"
+                                src={`https://api.dicebear.com/6.x/open-peeps/svg?seed=${profile.username}&size=96`}
+                                alt="Photo"
+                            />
+                        )}
                     </div>
                 </div>
                 <div className="flex shrink grow basis-0 items-center justify-start self-stretch">
@@ -47,14 +60,14 @@ export const ProfileHeader = ({ profile, ...props }: Props) => {
                             </div>
                             <div className="flex flex-col items-start justify-center pl-7">
                                 <div className="text-lg font-semibold tracking-tight text-gray-400">{profile.name}</div>
-                                <div className="inline-flex items-center justify-start gap-2.5">
+                                <div className="mt-1 inline-flex items-center justify-start gap-2.5">
                                     <span className="relative h-3.5 w-3.5">
                                         <EmailOutlineColored />
                                     </span>
                                     <span className="relative h-3.5 w-3.5">
                                         <TiktokNoBg />
                                     </span>
-                                    <span className="relative mt-1 h-3.5 w-3.5">
+                                    <span className="relative h-3.5 w-3.5">
                                         <YoutubeNoBg />
                                     </span>
                                 </div>

@@ -1,47 +1,167 @@
-import { useState, useCallback } from 'react';
-import { SearchComponent } from './search-component';
-import { CollabStatus } from './collab-status';
-import { OnlyMe } from './onlyme';
-import { Table } from './table';
+import Fuse from 'fuse.js';
+import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
+import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ProfileOverlayScreen } from 'src/components/influencer-profile/screens/profile-overlay-screen';
-import type { InfluencerRowProps } from './influencer-row';
+import { useUiState } from 'src/components/influencer-profile/screens/profile-screen-context';
+import type { CommonStatusType, MultipleDropdownObject } from 'src/components/library';
+import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
+import { useSequences } from 'src/hooks/use-sequences';
+import { useUser } from 'src/hooks/use-user';
+import { COLLAB_OPTIONS } from '../constants';
+import { CollabStatus } from './collab-status';
+import { filterByMe } from './helpers';
+import { OnlyMe } from './onlyme';
+import { SearchComponent } from './search-component';
+import { Table } from './table';
 
 const Manager = () => {
-    const [isProfileOverlayOpen, setIsProfileOverlayOpen] = useState(false);
-    const [_influencer, setInfluencer] = useState(null);
+    const { sequences } = useSequences();
+    const { sequenceInfluencers, refreshSequenceInfluencers } = useSequenceInfluencers(
+        sequences?.map((sequence) => {
+            return sequence.id;
+        }),
+    );
 
-    const handleRowClick = useCallback((influencer: InfluencerRowProps['influencer']) => {
-        // eslint-disable-next-line no-console
-        console.log('on open > ', influencer);
-        setInfluencer(influencer);
-        setIsProfileOverlayOpen(true);
-    }, []);
+    const { profile } = useUser();
 
-    const handleProfileUpdate = useCallback((data: any) => {
-        // eslint-disable-next-line no-console
-        console.log('on update > ', data);
-    }, []);
+    const { t } = useTranslation();
+
+    const [influencer, setInfluencer] = useState<SequenceInfluencerManagerPage | null>(null);
+    const [uiState, setUiState] = useUiState();
+    const [influencers, setInfluencers] = useState<SequenceInfluencerManagerPage[] | undefined>(sequenceInfluencers);
+    const [searchTerm, setSearchTerm] = useState<string>('');
+    const [onlyMe, setOnlyMe] = useState<boolean>(false);
+    const [filterStatuses, setFilterStatuses] = useState<CommonStatusType[]>([]);
+
+    const handleRowClick = useCallback(
+        (influencer: SequenceInfluencerManagerPage) => {
+            setInfluencer(influencer);
+
+            setUiState((s) => {
+                return { ...s, isProfileOverlayOpen: true };
+            });
+        },
+        [setUiState],
+    );
+
+    const handleProfileUpdate = useCallback(() => {
+        refreshSequenceInfluencers()
+    }, [refreshSequenceInfluencers]);
+
+    const setCollabStatusValues = (influencers: SequenceInfluencerManagerPage[], options: MultipleDropdownObject) => {
+        const collabOptionsWithValue = options;
+        Object.keys(COLLAB_OPTIONS).forEach((option) => {
+            collabOptionsWithValue[option as CommonStatusType] = {
+                ...options[option as CommonStatusType],
+                value: influencers.filter((x) => x.funnel_status === option).length || 0,
+            };
+        });
+
+        return collabOptionsWithValue;
+    };
+
+    const [collabOptions, setCollabOptions] = useState(COLLAB_OPTIONS);
+
+    useEffect(() => {
+        if (!sequenceInfluencers || sequenceInfluencers.length <= 0) {
+            return;
+        }
+        setCollabOptions(setCollabStatusValues(sequenceInfluencers, COLLAB_OPTIONS));
+    }, [sequenceInfluencers]);
+
+    const handleSetSearch = useCallback(
+        (term: string) => {
+            setSearchTerm(term);
+            if (!sequenceInfluencers) {
+                return;
+            }
+            const fuse = new Fuse(sequenceInfluencers, {
+                minMatchCharLength: 1,
+                keys: ['fullname', 'username'],
+            });
+
+            if (term.length === 0) {
+                setInfluencers(sequenceInfluencers);
+                return;
+            }
+
+            setInfluencers(fuse.search(term).map((result) => result.item));
+        },
+        [sequenceInfluencers],
+    );
+
+    const handleOnlyMe = useCallback(
+        (state: boolean) => {
+            setOnlyMe(!onlyMe);
+            if (!sequenceInfluencers || !profile || !sequences) {
+                return;
+            }
+
+            if (!state) {
+                setInfluencers(sequenceInfluencers);
+                return;
+            }
+
+            setInfluencers(filterByMe(sequenceInfluencers, profile, sequences));
+        },
+        [onlyMe, sequenceInfluencers, profile, sequences],
+    );
+
+    const handleStatus = useCallback(
+        (filters: CommonStatusType[]) => {
+            setFilterStatuses(filters);
+            if (!sequenceInfluencers) {
+                return;
+            }
+
+            if (filters.length === 0) {
+                setInfluencers(sequenceInfluencers);
+                return;
+            }
+
+            setInfluencers(sequenceInfluencers.filter((x) => filters.includes(x.funnel_status)));
+        },
+        [sequenceInfluencers, setFilterStatuses],
+    );
+
+    const handleProfileOverlayClose = useCallback(() => {
+        setUiState((s) => {
+            return { ...s, isProfileOverlayOpen: false };
+        });
+
+        setInfluencer(null);
+    }, [setUiState]);
 
     return (
         <>
             <div className="m-8 flex flex-col">
                 <div className="my-4 text-3xl font-semibold">
-                    <h1>Influencer Manager</h1>
+                    <h1>{t('manager.title')}</h1>
                 </div>
                 {/* Filters */}
                 <div className="mt-[72px] flex flex-row justify-between">
-                    <div className="flex flex-row gap-5">
-                        <SearchComponent />
-                        <CollabStatus />
-                    </div>
-                    <OnlyMe />
+                    <section className="flex flex-row gap-5">
+                        <SearchComponent
+                            searchTerm={searchTerm}
+                            placeholder={t('manager.search')}
+                            onSetSearch={handleSetSearch}
+                        />
+                        <CollabStatus
+                            collabOptions={collabOptions}
+                            filters={filterStatuses}
+                            onSetFilters={handleStatus}
+                        />
+                    </section>
+                    <OnlyMe state={onlyMe} onSwitch={handleOnlyMe} />
                 </div>
                 {/* Table */}
-                <Table onRowClick={handleRowClick} />
+                <Table influencers={influencers} onRowClick={handleRowClick} />
             </div>
             <ProfileOverlayScreen
-                isOpen={isProfileOverlayOpen}
-                onClose={() => setIsProfileOverlayOpen(false)}
+                profile={influencer}
+                isOpen={uiState.isProfileOverlayOpen}
+                onClose={handleProfileOverlayClose}
                 onUpdate={handleProfileUpdate}
             />
         </>

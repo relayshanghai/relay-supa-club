@@ -1,7 +1,8 @@
 import { supabase } from 'src/utils/supabase-client';
+import type { RelayDatabase } from '../types';
 
-export const getInvitesByCompany = async (companyId: string) => {
-    const { data, error } = await supabase.from('invites').select().eq('company_id', companyId);
+export const getInvitesByCompanyCall = (db: RelayDatabase) => async (companyId: string) => {
+    const { data, error } = await db.from('invites').select().eq('company_id', companyId);
     if (error) throw error;
     return data;
 };

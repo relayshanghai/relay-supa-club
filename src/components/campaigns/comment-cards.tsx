@@ -41,7 +41,7 @@ export default function CommentCards({ currentCreator }: { currentCreator: Campa
             if (filterImportant) {
                 setFilteredMessages(campaignCreatorNotes.filter((note) => note.important === true));
             } else {
-                setFilteredMessages(campaignCreatorNotes);
+                setFilteredMessages(campaignCreatorNotes.filter((note) => note.campaign_creator_id));
             }
         };
         if (campaignCreatorNotes) {

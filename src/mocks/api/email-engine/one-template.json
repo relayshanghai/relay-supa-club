@@ -1,0 +1,17 @@
+[
+  {
+    "account": null,
+    "id": "AAABiYsMUIAAAAAD",
+    "name": "1st Follow-up",
+    "description": "",
+    "format": "html",
+    "created": "2023-07-25T03:16:27.392Z",
+    "updated": "2023-08-11T06:06:05.061Z",
+    "content": {
+      "subject": "Quick Nudge on {{ params.brandName }} Collab 🤔",
+      "html": "",
+      "text": "Hey {{ params.influencerAccountName }},\r\n\r\nJust floating this to the top of your inbox 🎈\r\n\r\nHope you had a chance to think about our {{  params.productName }} collab. Still think we’d make a great team!\r\n\r\nWould love to hear your thoughts!\r\n\r\nCheers,\r\n\r\n{{ params.marketingManagerName }}",
+      "previewText": ""
+    }
+  }
+]

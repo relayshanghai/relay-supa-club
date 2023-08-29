@@ -1,9 +1,13 @@
 import type { ReactElement } from 'react';
 import { Info } from '../icons';
-import { Tooltip } from '../library';
+import { type ToolTipPositionUnion, Tooltip } from '../library';
 export interface StatCardProps {
     name: string;
-    tooltip?: string | null;
+    tooltip?: {
+        title: string;
+        content: string;
+        position?: ToolTipPositionUnion;
+    };
     value: string;
     largeIcon: ReactElement;
     smallIcon?: ReactElement;
@@ -21,7 +25,12 @@ export const StatCard = ({ name, value, largeIcon, smallIcon, tooltip }: StatCar
                 <div className="flex">
                     <h3 className="font-medium">{name}</h3>
                     {tooltip && (
-                        <Tooltip content={tooltip} className="w-fit">
+                        <Tooltip
+                            content={tooltip.title}
+                            detail={tooltip.content}
+                            position={tooltip.position ?? 'bottom-right'}
+                            className="w-fit"
+                        >
                             <Info className="ml-2 h-3 w-3 text-gray-300" />
                         </Tooltip>
                     )}

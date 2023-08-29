@@ -3,14 +3,14 @@ import React from 'react';
 import dateFormat from 'src/utils/dateFormat';
 
 type Props = {
-    //
+    label: string;
 } & InputHTMLAttributes<HTMLInputElement>;
 
 export const CollabScheduledPostDateInput = (props: Props) => {
     return (
         <>
-            <label className="flex w-full flex-col text-sm text-gray-800">
-                <div className="font-semibold">Scheduled Post Date</div>
+            <label className="flex w-full flex-col text-sm text-gray-500">
+                <div className="font-semibold">{props.label}</div>
                 <div>
                     <input
                         value={dateFormat(String(props.value ?? ''), 'isoDate', true, true)}

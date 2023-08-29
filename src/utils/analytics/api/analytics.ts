@@ -1,57 +1,26 @@
-import type { ServerContext, TrackedEvent } from '../types';
-import type { SupabaseClient } from '@supabase/supabase-js';
-import { getProfileByUser, getTrackingEvent, insertTrackingEvent } from 'src/utils/api/db/calls/tracking_events';
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
-import type { DatabaseWithCustomTypes } from 'types';
+import type { SupabaseClient } from '@supabase/supabase-js';
+import { hasher } from 'node-object-hash';
 import { getJourney } from 'src/utils/analytics/api/journey';
-import { now } from 'src/utils/datetime';
-import { insertSearchSnapshot } from 'src/utils/api/db/calls/search-snapshots';
+import { getUserSession } from 'src/utils/api/analytics';
 import { insertReportSnapshot } from 'src/utils/api/db/calls';
-import { v4 } from 'uuid';
-import { ANALYTICS_HEADER_NAME } from '../constants';
 import { getOrInsertSearchParameter } from 'src/utils/api/db/calls/search-parameters';
+import { insertSearchSnapshot } from 'src/utils/api/db/calls/search-snapshots';
+import { getTrackingEvent, insertTrackingEvent } from 'src/utils/api/db/calls/tracking_events';
 import { SearchInfluencersPayload } from 'src/utils/api/iqdata/influencers/search-influencers-payload';
 import type { ApiPayload } from 'src/utils/api/types';
+import { now } from 'src/utils/datetime';
 import { isJson } from 'src/utils/json';
-import { hasher } from 'node-object-hash';
-
-type SessionIds = {
-    session_id?: string;
-    user_id?: string;
-    profile_id?: string;
-    company_id?: string | null;
-};
+import type { DatabaseWithCustomTypes } from 'types';
+import { v4 } from 'uuid';
+import { ANALYTICS_HEADER_NAME } from '../constants';
+import type { ServerContext, TrackedEvent } from '../types';
 
 export const getAnonId = (ctx: ServerContext) => {
     if (ANALYTICS_HEADER_NAME in ctx.req.headers) {
         const id = ctx.req.headers[ANALYTICS_HEADER_NAME];
         return Array.isArray(id) ? id[0] : id;
     }
-};
-
-/**
- * Get the current user session from Supabase
- */
-export const getUserSession = (db: SupabaseClient) => async () => {
-    const {
-        data: { session },
-        error: _error_session,
-    } = await db.auth.getSession();
-
-    const data: SessionIds = {};
-
-    if (session !== null) {
-        const profile = await getProfileByUser(db)(session.user);
-
-        // @ts-ignore session.user.session_id is not included in the User type
-        data.session_id = session.user.session_id;
-        data.user_id = session.user.id;
-        // @todo profile.id is user.id
-        data.profile_id = profile.id;
-        data.company_id = profile.company_id;
-    }
-
-    return data;
 };
 
 /**
@@ -104,7 +73,10 @@ export const createTrack = <T extends TrackedEvent>(ctx: ServerContext) => {
                 ..._payload,
             },
             anonymous_id,
-            ...sessionIds,
+            session_id: sessionIds.session_id,
+            user_id: sessionIds.user_id,
+            profile_id: sessionIds.profile_id,
+            company_id: sessionIds.company_id,
         };
 
         return await event<typeof trigger>(trigger, eventPayload);
@@ -201,8 +173,9 @@ export const createReportSnapshot = async (ctx: ServerContext, payload: CreateAn
 };
 
 export const createSearchParameter = (db: SupabaseClient) => async (payload: ApiPayload) => {
-    const parsedPayload = SearchInfluencersPayload.parse(payload);
-    const { context: _, ...data } = parsedPayload;
+    const parsedPayload = SearchInfluencersPayload.passthrough().parse(payload);
+    const { path, query, body } = parsedPayload;
+    const data = { path, query, body };
 
     const hash = hasher().hash(parsedPayload);
 

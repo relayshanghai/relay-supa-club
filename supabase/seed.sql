@@ -104,9 +104,10 @@ OR REPLACE FUNCTION create_profile(
     user_id := create_supabase_user(email, first_name, last_name);
 
     INSERT INTO profiles
-      (id, email, last_name, first_name, user_role, company_id)
+      (id, email, last_name, first_name, user_role, company_id, email_engine_account_id, sequence_send_email)
     VALUES
-      (user_id, email, last_name, first_name, _role, company_id)
+      (user_id, email, last_name, first_name, _role, company_id,
+      'e7ustgsqqvy9al6f', 'tech.relay.club@gmail.com')
     RETURNING * INTO _row;
     RETURN _row;
   END;
@@ -381,7 +382,8 @@ OR REPLACE FUNCTION create_sequence_influencer(
           scheduled_post_date,
           sequence_step,
           tags,
-          video_details 
+          video_details,
+          iqdata_id
         )
       VALUES
         (
@@ -401,7 +403,8 @@ OR REPLACE FUNCTION create_sequence_influencer(
           '2027-01-01 00:00:00.000000+00',
           sequence_step,
           ARRAY['tag1', 'tag2'],
-          'video_details'           
+          'video_details',
+          'iqdata_id'
         )
       RETURNING * INTO _row;
       RETURN _row;
@@ -464,7 +467,8 @@ BEGIN
     created_at,
     name,
     email,
-    avatar_url
+    avatar_url,
+    recent_video_title
   )
   VALUES (
     uuid_generate_v4(),
@@ -476,7 +480,8 @@ BEGIN
     now(),
     _name,
     _email,
-    _avatar_url
+    _avatar_url,
+    'Recent Video Title'
   )
   RETURNING * INTO _row;
   RETURN _row;
@@ -487,6 +492,7 @@ CREATE OR REPLACE FUNCTION create_sequence_email(
   _sequence_id UUID,
   _sequence_influencer_id UUID,
   _sequence_step_id UUID,
+  _email_message_id TEXT DEFAULT null,
   _email_delivery_status TEXT DEFAULT null,
   _email_tracking_status TEXT DEFAULT null,
   _email_send_at TIMESTAMP WITH TIME ZONE DEFAULT null,
@@ -502,6 +508,7 @@ BEGIN
     sequence_id,
     sequence_influencer_id,
     sequence_step_id,
+    email_message_id,
     email_delivery_status,
     email_tracking_status,
     email_send_at
@@ -513,9 +520,11 @@ BEGIN
     _sequence_id,
     _sequence_influencer_id,
     _sequence_step_id,
+    _email_message_id,
     _email_delivery_status,
     _email_tracking_status,
     _email_send_at
+
   )
   RETURNING * INTO _row;
   RETURN _row;
@@ -677,6 +686,8 @@ DECLARE
   _influencer_post_bob_2 RECORD;
   _sequence_step_outreach RECORD;
   _sequence_step_follow_up_1 RECORD;
+  _sequence_step_follow_up_2 RECORD;
+  _sequence_step_follow_up_3 RECORD;
   _sequence_influencer_daniel RECORD;
   _sequence_influencer_felicia RECORD;
   _sequence_influencer_georgia RECORD;
@@ -718,7 +729,7 @@ BEGIN
 
   _sequence_step_outreach := create_sequence_steps(
     _sequence_general.id,
-    'Outreach Email',
+    'Outreach',
     'AAABiYr-poEAAAAC',
     0,
     0
@@ -726,10 +737,24 @@ BEGIN
 
   _sequence_step_follow_up_1 := create_sequence_steps(
     _sequence_general.id,
-    'Follow Up Email 1',
+    '1st Follow-up',
     'AAABiYsMUIAAAAAD',
     1,
-    1
+    24
+  );
+  _sequence_step_follow_up_2 := create_sequence_steps(
+    _sequence_general.id,
+    '2nd Follow-up',
+    'AAABieM0bMMAAAAE',
+    2,
+    48
+  );
+  _sequence_step_follow_up_3 := create_sequence_steps(
+    _sequence_general.id,
+    '3rd Follow-up',
+    'AAABieM1AhgAAAAF',
+    3,
+    72
   );
 
   PERFORM create_campaign_creator(
@@ -744,38 +769,38 @@ BEGIN
     'Alice Anderson',
     'alice.anderson@example.com',
     '123 Apple Street',
-    'https://example.com/avatar1',
+    '',
     false
   );
   _influencer_bob := create_influencer(
     'Bob-Recommended Brown',
     'bob.brown@example.com',
     '456 Bell Street',
-    'https://example.com/avatar2'
+    ''
   );
   _influencer_charlie := create_influencer(
     'Charlie Charles',
     'charlie.charles@example.com',
     '780 Elm Street',
-    'https://example.com/avatar3'
+    ''
   );
   _influencer_daniel := create_influencer(
     'Daniel Davis',
     'daniel.davis@example.com',
     '480 Elm Street',
-    'https://example.com/avatar4'
+    ''
   );
   _influencer_felicia := create_influencer(
     'Felicia Franklin',
     'felicia.franklin@example.com',
     '420 Elm Street',
-    'https://example.com/avatar5'
+    ''
   );  
   _influencer_georgia := create_influencer(
     'Georgia Green',
     'georgia.green@example.com',
     '240 Elm Street',
-    'https://example.com/avatar6'
+    ''
   );
   _influencer_social_profile_alice_1 := create_influencer_social_profile(
     'https://instagram.com/alice1',
@@ -784,7 +809,8 @@ BEGIN
     'iqdata:1',
     'alice1',
     _influencer_alice.name,
-    _influencer_alice.email
+    _influencer_alice.email,
+    null
   );
   _influencer_social_profile_bob_1 := create_influencer_social_profile(
     'https://instagram.com/bob1',
@@ -793,7 +819,8 @@ BEGIN
     'iqdata:2',
     'bob1',
     _influencer_bob.name,
-    _influencer_bob.email
+    _influencer_bob.email,
+    null
   );
   _influencer_social_profile_bob_2 := create_influencer_social_profile(
     'https://youtube.com/bob2',
@@ -802,7 +829,8 @@ BEGIN
     'iqdata:3',
     'bob2',
     _influencer_bob.name,
-    _influencer_bob.email   
+    _influencer_bob.email,
+    null
   );
   _influencer_social_profile_charlie_1 := create_influencer_social_profile(
     'https://instagram.com/charlie1',
@@ -811,7 +839,8 @@ BEGIN
     'iqdata:4',
     'charlie1',
     _influencer_charlie.name,
-    _influencer_charlie.email   
+    _influencer_charlie.email,
+    null
   );
   _influencer_social_profile_daniel_1 := create_influencer_social_profile(
     'https://instagram.com/daniel1',
@@ -820,7 +849,8 @@ BEGIN
     'iqdata:5',
     'daniel1',
     _influencer_daniel.name,
-    _influencer_daniel.email
+    _influencer_daniel.email,
+    null
   );
   _influencer_social_profile_felicia_1 := create_influencer_social_profile(
     'https://instagram.com/felicia1',
@@ -829,7 +859,8 @@ BEGIN
     'iqdata:6',
     'felicia1',
     _influencer_felicia.name,
-    _influencer_felicia.email
+    _influencer_felicia.email,
+    null
   );
   _influencer_social_profile_georgia_1 := create_influencer_social_profile(
     'https://instagram.com/georgia1',
@@ -838,7 +869,8 @@ BEGIN
     'iqdata:7',
     'georgia1',
     _influencer_georgia.name,
-    _influencer_georgia.email
+    _influencer_georgia.email,
+    null
   );
 
   PERFORM create_sequence_influencer(
@@ -870,7 +902,7 @@ BEGIN
     'To Contact',
     0,
     '2030-01-01 00:00:00.000000+00'
-  );    
+  );
 
   _sequence_influencer_daniel := create_sequence_influencer(
     _company_test.id,
@@ -879,7 +911,7 @@ BEGIN
     _influencer_social_profile_daniel_1.id,
     _influencer_social_profile_daniel_1.email,
     'In Sequence'
-  );  
+  );
   _sequence_influencer_felicia := create_sequence_influencer(
     _company_test.id,
     _sequence_general.id,
@@ -888,7 +920,7 @@ BEGIN
     _influencer_social_profile_felicia_1.email,
     'In Sequence',
     1
-  );       
+  );
   _sequence_influencer_georgia := create_sequence_influencer(
     _company_test.id,
     _sequence_general.id,
@@ -897,20 +929,22 @@ BEGIN
     _influencer_social_profile_georgia_1.email,
     'Ignored',
     1
-  ); 
+  );
 
   PERFORM create_sequence_email(
-    _sequence_general.id,    
+    _sequence_general.id,
     _sequence_influencer_daniel.id,
     _sequence_step_outreach.id,
     'Scheduled',
     null,
-    '2024-08-01 00:00:00.000000+00'
+    '2024-08-01 00:00:00.000000+00',
+    null
   );
   PERFORM create_sequence_email(
     _sequence_general.id,
     _sequence_influencer_daniel.id,
     _sequence_step_follow_up_1.id,
+    null,
     'Scheduled',
     null,
     '2024-08-02 00:00:00.000000+00'
@@ -919,6 +953,7 @@ BEGIN
     _sequence_general.id,
     _sequence_influencer_felicia.id,
     _sequence_step_outreach.id,
+    null,
     'Delivered',
     null,
     '2024-08-01 01:00:00.000000+00'
@@ -927,6 +962,7 @@ BEGIN
     _sequence_general.id,
     _sequence_influencer_felicia.id,
     _sequence_step_follow_up_1.id,
+    '<d7e91ded-7a8e-37e8-6484-837e4e94c3ad@gmail.com>',
     'Delivered',
     'Opened',
     '2024-08-02 01:00:00.000000+00'
@@ -935,6 +971,7 @@ BEGIN
     _sequence_general.id,
     _sequence_influencer_georgia.id,
     _sequence_step_outreach.id,
+    null,
     'Delivered',
     'Link Clicked',
     '2024-08-01 02:00:00.000000+00'
@@ -943,6 +980,7 @@ BEGIN
     _sequence_general.id,
     _sequence_influencer_georgia.id,
     _sequence_step_follow_up_1.id,
+    null,
     'Bounced',
     null,
     '2024-08-02 02:00:00.000000+00'
@@ -982,6 +1020,12 @@ BEGIN
     'productLink',
     'Product Link',
     'https://example.com/product'
+  );
+  PERFORM create_template_variable(
+    _sequence_general.id,
+    'productPrice',
+    'Product Price',
+    '450'
   );
   PERFORM create_template_variable(
     _sequence_general.id,

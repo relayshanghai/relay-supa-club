@@ -3,6 +3,11 @@ import { Modal } from '../modal';
 import { Button } from '../button';
 import { Spinner } from '../icons';
 import { useState } from 'react';
+import { useSequence } from 'src/hooks/use-sequence';
+import { toast } from 'react-hot-toast';
+import { clientLogger } from 'src/utils/logger-client';
+import { useSequenceSteps } from 'src/hooks/use-sequence-steps';
+import { useTemplateVariables } from 'src/hooks/use-template_variables';
 
 export const CreateSequenceModal = ({
     title,
@@ -14,11 +19,31 @@ export const CreateSequenceModal = ({
     setShowCreateSequenceModal: (showCreateSequenceModal: boolean) => void;
 }) => {
     const { t } = useTranslation();
-    //eslint-disable-next-line
+    const { createSequence } = useSequence();
+    const { createDefaultSequenceSteps } = useSequenceSteps();
+    const { createDefaultTemplateVariables } = useTemplateVariables();
+
     const [loading, setLoading] = useState<boolean>(false);
+    const [sequenceName, setSequenceName] = useState<string>('');
 
     const handleCreateSequence = async () => {
-        //create sequence
+        setLoading(true);
+        try {
+            if (sequenceName === '') return;
+            const data = await createSequence(sequenceName);
+            if (!data) {
+                throw new Error('Failed to get sequence id');
+            }
+            await createDefaultSequenceSteps(data.id);
+            await createDefaultTemplateVariables(data.id);
+            toast.success(t('sequences.createSequenceSuccess'));
+        } catch (error) {
+            clientLogger(error, 'error');
+            toast.error(t('sequences.createSequenceError'));
+        } finally {
+            setLoading(false);
+            setShowCreateSequenceModal(false);
+        }
     };
 
     return (
@@ -28,13 +53,14 @@ export const CreateSequenceModal = ({
                 <div>
                     <div className="py-2 text-xs font-semibold text-gray-500">
                         {t('sequences.sequenceName')}
-                        {'*'}
+                        {' *'}
                     </div>
                     <input
                         type="text"
                         required
                         className="w-full rounded-md border border-gray-200 shadow-sm placeholder:font-medium placeholder:text-gray-400 focus:border-primary-500 focus:outline-none focus:ring-primary-500"
                         placeholder={t('sequences.sequenceNamePlaceholder') as string}
+                        onChange={(e) => setSequenceName(e.target.value)}
                     />
                 </div>
                 <div className="flex justify-end space-x-3 pt-6">

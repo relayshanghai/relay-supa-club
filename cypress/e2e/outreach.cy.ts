@@ -2,23 +2,43 @@ import { deleteDB } from 'idb';
 import { setupIntercepts } from './intercepts';
 import { columnsIgnored, columnsInSequence, columnsNeedsAttention } from 'src/components/sequences/constants';
 import sequences from 'i18n/en/sequences';
-import { reinsertCharlie } from './helpers';
+import { reinsertCharlie, resetSequenceEmails } from './helpers';
+import messageSent from '../../src/mocks/email-engine/webhooks/message-sent.json';
+import messageNewReply from '../../src/mocks/email-engine/webhooks/message-new-reply.json';
 
 describe('outreach', () => {
     beforeEach(() => {
         deleteDB('app-cache');
+        reinsertCharlie(); // reinsert so you can run again easily
+        resetSequenceEmails();
         setupIntercepts();
         cy.loginTestUser();
     });
+    it('can create new sequence', () => {
+        cy.contains('Sequences').click();
+        cy.contains('New sequence', { timeout: 10000 }).click();
+        cy.get('input[placeholder="Enter a name for your sequence"]').type("New Sequence Test");
+        cy.contains('button','Create new sequence').click();
+        cy.contains('New Sequence Test').click();
+        cy.contains('button', 'Update template variables').click();
+        cy.get('input[id="template-variable-input-productName"]').clear().type('Test Product');
+        cy.contains('button', 'Update variables').click();
+        cy.contains('The values you see here are what will be used to automatically customize the actual email content of your sequence emails!').should('not.exist');
+        cy.contains('Template variables updated');
+        cy.contains('Sequences').click();
+        cy.contains('tr', 'New Sequence Test').contains('Test Product');
+        //cleanup
+        cy.getByTestId('delete-sequence:New Sequence Test').click();
+        cy.contains('tr', 'New Sequence Test').should('not.exist');
+    })
     it('sequence page', () => {
         cy.contains('Sequences').click();
+        cy.contains('General collaboration', { timeout: 10000 }).click();
 
         // Sequence title row
-        cy.contains('General collaboration', { timeout: 10000 });
-        cy.contains('Auto-start');
+        cy.contains('Auto-start', { timeout: 10000 });
         cy.contains('button', 'Update template variables');
 
-        reinsertCharlie(); // reinsert so you can run again easily
         // stats
         cy.getByTestId('stat-card-total influencers').within(() => {
             cy.contains('Total influencers');
@@ -30,7 +50,7 @@ describe('outreach', () => {
         });
         cy.getByTestId('stat-card-reply rate').within(() => {
             cy.contains('Reply rate');
-            cy.contains('17%');
+            cy.contains('0%');
         });
         cy.getByTestId('stat-card-bounce rate').within(() => {
             cy.contains('Bounce rate');
@@ -99,6 +119,9 @@ describe('outreach', () => {
         // can delete influencer
         cy.contains('Charlie Charles');
         cy.getByTestId('delete-influencer-button').eq(2).click();
+        cy.contains("Deleting the influencer will remove them from the sequence, and cancel any future messages. You'll have to re-add them if you change your mind.");
+        cy.contains('button', 'Yes, delete them').click();
+        cy.contains('Influencer successfully deleted from sequence')
         cy.contains('Charlie Charles').should('not.exist');
 
         // send sequence is disabled if missing template variables
@@ -120,18 +143,83 @@ describe('outreach', () => {
             'The values you see here are what will be used to automatically customize the actual email content of your sequence emails!',
         );
         // can update template variables
-        cy.get('input[id="template-variable-input-productDescription"]').type('test description entry');
+        cy.get('textarea[id="template-variable-input-productDescription"]').type('test description entry');
+        cy.contains('test description entry is available for just $450');
         cy.contains('button', 'Update variables').click();
         cy.contains('General collaboration').click({ force: true }); // click out of modal
 
         // can send sequence
-
         cy.getByTestId('send-email-button-bob.brown@example.com').trigger('mouseover');
-        cy.contains('Missing required template variables: Product Description').should('not.be.visible');
+        cy.contains('Missing required template variables: Product Description').should('not.exist');
+
+        // can view all emails preview
+        cy.getByTestId('show-all-email-previews-button').eq(0).click();
+        //TODO: cy.getByTestId('email-preview-modal-spinner');
+        cy.contains('Hey **influencerAccountName**', { timeout: 10000 }); // fills in missing variables
+        cy.contains(
+            'Vivian here from Blue Moonlight Stream Industries. I watched your "**recentVideoTitle**" video, and love your content style!!',
+        ); // fills in variables
+        cy.contains('3rd Follow-up'); // shows all emails not just outreach
+        cy.contains('Hope you had a chance to think about our Widget X collab. Still think we’d make a great team!'); // shows all emails not just outreach
+        cy.contains('General collaboration').click({ force: true }); // click out of modal
+
+        // can view next email preview.
+        cy.contains('button', 'In sequence').click();
+        cy.contains('button', '1st Follow-up').click();
+        // cy.getByTestId('email-preview-modal-spinner');
+        cy.contains('Hope you had a chance to think about our Widget X collab. Still think we’d make a great team!', {
+            timeout: 10000,
+        });
+        cy.contains(
+            'Vivian here from Blue Moonlight Stream Industries. I watched your "**recentVideoTitle**" video, and love your content style!!',
+        ).should('not.exist'); //only shows the selected one
+        cy.contains('button', 'Needs attention').click({ force: true });
+
+        // WEBHOOKS TEST
+        // send the sequence, then manually send the webhooks to the next app and check the influencers status changes
+
+        cy.getByTestId('send-email-button-bob.brown@example.com').click();
+
+        cy.contains('4 emails successfully scheduled to send', { timeout: 10000 }); //shows success toast
 
         // reset the empty template variable so you can run the test again if need be
         cy.contains('button', 'Update template variables').click();
-        cy.get('input[id="template-variable-input-productDescription"]').clear();
+        cy.get('textarea[id="template-variable-input-productDescription"]').clear();
         cy.contains('button', 'Update variables').click();
+        cy.contains('General collaboration').click({ force: true }); // click out of modal
+
+        cy.reload(); // todo: remove when we can get status updates relfecting more quickly
+        // bob has been moved to 'in sequence' tab
+        cy.contains('Bob-Recommended Brown').should('not.exist', { timeout: 10000 });
+        cy.contains('button', 'In sequence').click();
+        cy.contains('tr', 'Bob-Recommended Brown').within(() => {
+            cy.contains('Scheduled');
+        });
+
+        // send a message sent webhook request
+        cy.request({
+            method: 'POST',
+            url: '/api/email-engine/webhook',
+            body: JSON.parse(JSON.stringify(messageSent)),
+        });
+        cy.reload(); // todo: remove this when we get push updates
+        cy.contains('button', 'In sequence').click();
+
+        cy.contains('tr', 'Bob-Recommended Brown').within(() => {
+            cy.contains('Delivered', { timeout: 10000 });
+        });
+
+        // send a replied webhook request
+        cy.request({
+            method: 'POST',
+            url: '/api/email-engine/webhook',
+            body: JSON.parse(JSON.stringify(messageNewReply)),
+        });
+        cy.reload(); // todo: remove this when we get push updates
+        cy.contains('button', 'In sequence').click();
+        // influencer has been moved to the manage influencers page
+        cy.contains('Bob-Recommended Brown').should('not.exist');
+        cy.contains('Influencer Manager').click();
+        cy.contains('Bob-Recommended Brown');
     });
 });

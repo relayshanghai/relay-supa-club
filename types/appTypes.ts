@@ -91,6 +91,8 @@ export type InfluencerOutreachStatus =
     | 'rejected'
     | 'ignored';
 
+export type InfluencerStepTypes = 'Outreach' | '1st Follow-up' | '2nd Follow-up' | '3rd Follow-up' | '4th Follow-up';
+
 /**
  * relay expert is a relay employee assigned to the company to act on their behalf. Their usages are counted against the company's usages.
  * relay_employee is an admin super user who can see all of the campaigns and companies.

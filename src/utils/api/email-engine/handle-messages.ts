@@ -1,10 +1,5 @@
 import type { MessagesGetMessage } from 'types/email-engine/account-account-messages-get';
-import {
-    GMAIL_INBOX,
-    GMAIL_SENT,
-    GMAIL_SEEN_SPECIAL_USE_FLAG,
-    testAccount,
-} from 'src/utils/api/email-engine/prototype-mocks';
+import { GMAIL_INBOX, GMAIL_SENT, GMAIL_SEEN_SPECIAL_USE_FLAG } from 'src/utils/api/email-engine/prototype-mocks';
 import { nextFetch } from 'src/utils/fetcher';
 import type { EmailSearchPostRequestBody, EmailSearchPostResponseBody } from 'pages/api/email-engine/search';
 import type { GetEmailPostRequestBody, GetEmailPostResponseBody } from 'pages/api/email-engine/email-text';
@@ -13,9 +8,9 @@ import type { ReplyEmailPostRequestBody } from 'pages/api/email-engine/send-emai
 import type { UpdateMessagePutRequestBody } from 'pages/api/email-engine/update-message';
 import type { UpdateMessagePutResponseBody } from 'types/email-engine/account-account-message-put';
 
-export const getInboxThreadMessages = async (message: MessagesGetMessage) => {
+export const getInboxThreadMessages = async (message: MessagesGetMessage, account: string) => {
     const body: EmailSearchPostRequestBody = {
-        account: testAccount,
+        account,
         mailboxPath: GMAIL_INBOX,
         search: {
             threadId: message.threadId,
@@ -28,9 +23,9 @@ export const getInboxThreadMessages = async (message: MessagesGetMessage) => {
     return inboxThreadMessages;
 };
 
-export const getSentThreadMessages = async (message: MessagesGetMessage) => {
+export const getSentThreadMessages = async (message: MessagesGetMessage, account: string) => {
     const body: EmailSearchPostRequestBody = {
-        account: testAccount,
+        account,
         mailboxPath: GMAIL_SENT,
         search: {
             threadId: message.threadId,
@@ -44,9 +39,9 @@ export const getSentThreadMessages = async (message: MessagesGetMessage) => {
     return sentThreadMessages;
 };
 
-export const getMessageText = async (textId: string) => {
+export const getMessageText = async (textId: string, account: string) => {
     const body: GetEmailPostRequestBody = {
-        account: testAccount,
+        account,
         textId: textId,
     };
     const { plain, html } = await nextFetch<GetEmailPostResponseBody>('email-engine/email-text', {
@@ -56,18 +51,18 @@ export const getMessageText = async (textId: string) => {
     return { plain, html };
 };
 
-export const sendReply = async (replyBody: ReplyEmailPostRequestBody['body']) => {
+export const sendReply = async (replyBody: ReplyEmailPostRequestBody['body'], account: string) => {
     const body = {
-        account: testAccount,
+        account,
         ...replyBody,
     };
     const res = await nextFetch<SendEmailResponseBody>('email-engine/send-email', { method: 'POST', body });
     return res;
 };
 
-export const updateMessageAsSeen = async (messageId: string) => {
+export const updateMessageAsSeen = async (messageId: string, account: string) => {
     const body: UpdateMessagePutRequestBody = {
-        account: testAccount,
+        account,
         messageId: messageId,
         flags: {
             add: [GMAIL_SEEN_SPECIAL_USE_FLAG],
