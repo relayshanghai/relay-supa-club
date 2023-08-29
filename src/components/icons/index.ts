@@ -77,5 +77,5 @@ export { default as Clock } from './Clock';
 export { default as SendOutline } from './SendOutline';
 export { default as BarGraph } from './BarGraph';
 export { default as Thunder } from './Thunder';
-export { default as Boostbot_default } from './Boostbot_default';
-export { default as Boostbot_selected } from './Boostbot_selected';
+export { default as BoostbotDefault } from './Boostbot_default';
+export { default as BoostbotSelected } from './Boostbot_selected';

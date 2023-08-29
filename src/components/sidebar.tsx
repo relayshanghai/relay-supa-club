@@ -2,30 +2,42 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import type { MutableRefObject, ReactNode } from 'react';
 import useAboveScreenWidth from 'src/hooks/use-above-screen-width';
-import EmailOutline from './icons/EmailOutline';
 import { useUser } from 'src/hooks/use-user';
-import { Compass, Team, Guide, Send, Engagements, ProfilePlus, BarGraph } from './icons';
+import {
+    Compass,
+    Team,
+    Guide,
+    Send,
+    Engagements,
+    ProfilePlus,
+    BarGraph,
+    BoostbotDefault,
+    BoostbotSelected,
+} from './icons';
 import { Title } from './title';
 import { useTranslation } from 'react-i18next';
 import { featEmail } from 'src/constants/feature-flags';
 import { Button } from './button';
-import BoostbotDefault from './icons/Boostbot_default';
-import BoostbotSelected from './icons/Boostbot_selected';
 
-const links = {
-    discover: '/dashboard',
-    influencer: '/influencer',
-    campaigns: '/campaigns',
-    aiEmailGenerator: '/ai-email-generator',
-    account: '/account',
-    admin: '/admin/clients',
-    performance: '/performance',
-    guide: '/guide',
-    sequences: '/sequences',
-    inbox: '/inbox',
-    influencerManager: '/influencer-manager',
-    boostbot: '/boostbot',
-};
+const links: Record<string, (root: string) => JSX.Element> = {
+    '/dashboard': (_pathRoot: string) => <Compass height={18} width={18} className="my-0.5 stroke-inherit" />,
+    '/influencer': (_pathRoot: string) => <Compass height={18} width={18} className="my-0.5 stroke-inherit" />,
+    '/account': (_pathRoot: string) => <Team height={18} width={18} className="my-0.5 stroke-inherit" />,
+    '/admin/clients': (_pathRoot: string) => <Team height={18} width={18} className="my-0.5 stroke-inherit" />,
+    '/performance': (_pathRoot: string) => <BarGraph height={18} width={18} className="my-0.5 stroke-inherit" />,
+    '/guide': (_pathRoot: string) => <Guide height={18} width={18} className="my-0.5 stroke-inherit" />,
+    '/sequences': (_pathRoot: string) => <Send height={18} width={18} className="my-0.5 stroke-inherit" />,
+    '/inbox': (_pathRoot: string) => <Engagements height={18} width={18} className="my-0.5 stroke-inherit" />,
+    '/influencer-manager': (_pathRoot: string) => (
+        <ProfilePlus height={18} width={18} className="my-0.5 stroke-inherit" />
+    ),
+    '/boostbot': (pathRoot: string) => {
+        if (pathRoot === '/boostbot') {
+            return <BoostbotSelected height={18} width={18} className="my-0.5 stroke-inherit" />;
+        }
+        return <BoostbotDefault height={18} width={18} className="my-0.5 stroke-inherit" />;
+    },
+} as const;
 
 // eslint-disable-next-line complexity
 const ActiveLink = ({ href, children }: { href: string; children: ReactNode }) => {
@@ -42,32 +54,7 @@ const ActiveLink = ({ href, children }: { href: string; children: ReactNode }) =
                 isRouteActive ? 'border-primary-500 stroke-primary-500 text-primary-500' : 'border-transparent'
             }`}
         >
-            {(href === links.influencer || href === links.discover) && (
-                <Compass height={18} width={18} className="my-0.5 stroke-inherit" />
-            )}
-
-            {href === links.boostbot &&
-                (pathRoot === links.boostbot ? (
-                    <BoostbotSelected height={18} width={18} className="my-0.5 stroke-inherit" />
-                ) : (
-                    <BoostbotDefault height={18} width={18} className="my-0.5 stroke-inherit" />
-                ))}
-
-            {href === links.aiEmailGenerator && (
-                <EmailOutline height={18} width={18} className="my-0.5 stroke-inherit" />
-            )}
-
-            {href === links.admin && <Team height={18} width={18} className="my-0.5 stroke-inherit" />}
-
-            {href === links.performance && <BarGraph height={18} width={18} className="my-0.5 stroke-inherit" />}
-
-            {href === links.guide && <Guide height={18} width={18} className="my-0.5 stroke-inherit" />}
-
-            {href === links.sequences && <Send height={18} width={18} className="my-0.5 stroke-inherit" />}
-            {href === links.inbox && <Engagements height={18} width={18} className="my-0.5 stroke-inherit" />}
-            {href === links.influencerManager && (
-                <ProfilePlus height={18} width={18} className="my-0.5 stroke-inherit" />
-            )}
+            {links[href](pathRoot) ?? null}
             {children}
         </Link>
     );
@@ -107,36 +94,31 @@ const NavBarInner = ({
             </div>
             <div className="flex h-full flex-col justify-between gap-4 pt-8">
                 <section className="flex flex-col gap-4">
-                    <ActiveLink href={links.discover}>
+                    <ActiveLink href="/dashboard">
                         <p className={`ml-2 whitespace-nowrap text-sm ${sidebarState}`}>{t('navbar.discover')}</p>
                     </ActiveLink>
-                    <ActiveLink href={links.boostbot}>
+                    <ActiveLink href="/boostbot">
                         <p className={`ml-2 whitespace-nowrap text-sm ${sidebarState}`}>{t('navbar.boostbot')}</p>
                     </ActiveLink>
                     {featEmail() && (
-                        <ActiveLink href={links.sequences}>
-                            <p className={`whitespace-nowra ml-2 text-sm ${sidebarState}`}>{t('navbar.sequences')}</p>
+                        <ActiveLink href={'/sequences'}>
+                            <p className={`ml-2 whitespace-nowrap text-sm ${sidebarState}`}>{t('navbar.sequences')}</p>
                         </ActiveLink>
                     )}
                     {featEmail() && (
-                        <ActiveLink href={links.inbox}>
+                        <ActiveLink href="/inbox">
                             <p className={`ml-2 whitespace-nowrap text-sm ${sidebarState}`}>{t('navbar.inbox')}</p>
                         </ActiveLink>
                     )}
                     {featEmail() && (
-                        <ActiveLink href={links.influencerManager}>
+                        <ActiveLink href="/influencer-manager">
                             <p className={`ml-2 whitespace-nowrap text-sm ${sidebarState}`}>
                                 {t('navbar.influencerManager')}
                             </p>
                         </ActiveLink>
                     )}
                     {!featEmail() && (
-                        <ActiveLink href={links.campaigns}>
-                            <p className={`ml-2 whitespace-nowrap text-sm ${sidebarState}`}>{t('navbar.campaigns')}</p>
-                        </ActiveLink>
-                    )}
-                    {!featEmail() && (
-                        <ActiveLink href={links.performance}>
+                        <ActiveLink href="/performance">
                             <p className={`ml-2 whitespace-nowrap text-sm ${sidebarState}`}>
                                 {t('navbar.performance')}
                             </p>
@@ -150,7 +132,7 @@ const NavBarInner = ({
                     {isRelayEmployee && (
                         <div className="flex flex-col space-y-4 pt-8">
                             <h2 className={`${open ? 'ml-6' : 'text-center text-xs'}`}>ADMIN</h2>
-                            <ActiveLink href={links.admin}>
+                            <ActiveLink href="/admin/clients">
                                 <p
                                     className={`ml-2 whitespace-nowrap text-sm ${
                                         open && desktop ? 'relative' : 'hidden'
