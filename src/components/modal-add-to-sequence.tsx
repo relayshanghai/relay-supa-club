@@ -79,17 +79,6 @@ export const AddToSequenceModal = ({
             })
             throw new Error('Missing selectedSequence');
         }
-        if (!creatorProfile.user_id) {
-            track(AddInfluencerToSequence, {
-                influencer_id: null,
-                sequence_id: sequence.id,
-                sequence_influencer_id: null,
-                is_success: false,
-                is_sequence_autostart: null,
-                extra_info: { error: "Missing user_id from user_profile" }
-            })
-            throw new Error('Missing creator.user_id');
-        }
         if (!socialProfile?.id) {
             track(AddInfluencerToSequence, {
                 influencer_id: null,
@@ -100,6 +89,17 @@ export const AddToSequenceModal = ({
                 extra_info: { error: "Missing socialProfileId" }
             })
             throw new Error('Missing socialProfileId');
+        }
+        if (!creatorProfile.user_id) {
+            track(AddInfluencerToSequence, {
+                influencer_id: socialProfile.id,
+                sequence_id: sequence.id,
+                sequence_influencer_id: null,
+                is_success: false,
+                is_sequence_autostart: null,
+                extra_info: { error: "Missing user_id from user_profile" }
+            })
+            throw new Error('Missing creator.user_id');
         }
         const tags = getRelevantTags();
         setSubmitting(true);
