@@ -1,18 +1,18 @@
-// TODO: Fix eslint warnings after testing is done
-/* eslint-disable no-console */
-import { useState } from 'react';
+import type { CreatorAccountWithTopics } from 'pages/api/boostbot/get-influencers';
+import { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
-import type { UserProfile } from 'types';
-import type { CreatorAccountWithTopics } from 'pages/api/boostbot/get-influencers';
-import { Layout } from 'src/components/layout';
 import { Chat } from 'src/components/boostbot/chat';
-import { dummyData, reportExample } from 'src/components/boostbot/dummy-data';
-import { useBoostbot } from 'src/hooks/use-boostbot';
-import { clientLogger } from 'src/utils/logger-client';
+import InitialLogoScreen from 'src/components/boostbot/initial-logo-screen';
 import { columns } from 'src/components/boostbot/table/columns';
 import { InfluencersTable } from 'src/components/boostbot/table/influencers-table';
-import InitialLogoScreen from 'src/components/boostbot/initial-logo-screen';
+import { Layout } from 'src/components/layout';
+import { useBoostbot } from 'src/hooks/use-boostbot';
+import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { OpenBoostbotPage, UnlockInfluencers } from 'src/utils/analytics/events';
+import type { UnlockInfluencersPayload } from 'src/utils/analytics/events/boostbot/unlock-influencer';
+import { clientLogger } from 'src/utils/logger-client';
+import type { UserProfile } from 'types';
 
 export type Influencer = (UserProfile | CreatorAccountWithTopics) & {
     isLoading?: boolean;
@@ -21,27 +21,15 @@ export type Influencer = (UserProfile | CreatorAccountWithTopics) & {
 
 const Boostbot = () => {
     const { t } = useTranslation();
-    const { unlockInfluencers } = useBoostbot({});
+    const { unlockInfluencers } = useBoostbot({ abortSignal: undefined });
     const [isInitialLogoScreen, setIsInitialLogoScreen] = useState(true);
+    const { trackEvent: track } = useRudderstack();
 
-    const [influencers, setInfluencers] = useState<Influencer[]>([
-        { ...reportExample.user_profile },
-        ...dummyData.map((result) => ({
-            ...result.account.user_profile,
-        })),
-        ...dummyData.map((result, index) => ({
-            ...result.account.user_profile,
-            user_id: result.account.user_profile.user_id + index + 'a',
-        })),
-        ...dummyData.map((result, index) => ({
-            ...result.account.user_profile,
-            user_id: result.account.user_profile.user_id + index + 'b',
-        })),
-        ...dummyData.map((result, index) => ({
-            ...result.account.user_profile,
-            user_id: result.account.user_profile.user_id + index + 'c',
-        })),
-    ]);
+    useEffect(() => {
+        track(OpenBoostbotPage.eventName);
+    }, [track]);
+
+    const [influencers, setInfluencers] = useState<Influencer[]>([]);
     const [currentPageInfluencers, setCurrentPageInfluencers] = useState<Influencer[]>([]);
 
     const setInfluencerLoading = (userId: string, isLoading: boolean) => {
@@ -52,29 +40,58 @@ const Boostbot = () => {
         );
     };
 
-    const handleUnlockInfluencer = async (userId: string) => {
-        setInfluencerLoading(userId, true);
+    const handleUnlockInfluencers = async (userIds: string[]) => {
+        userIds.forEach((userId) => setInfluencerLoading(userId, true));
 
         try {
-            const response = await unlockInfluencers([userId]);
-            const newInfluencerData = response?.[0]?.user_profile;
+            const response = await unlockInfluencers(userIds);
+            const unlockedInfluencers = response?.map((result) => result.user_profile);
 
-            if (newInfluencerData) {
-                setInfluencers((prevInfluencers) =>
-                    prevInfluencers.map((influencer) =>
-                        influencer.user_id === userId
-                            ? { ...newInfluencerData, topics: influencer.topics }
-                            : influencer,
-                    ),
-                );
+            if (unlockedInfluencers) {
+                const payload: UnlockInfluencersPayload = {
+                    influencer_ids: [],
+                    topics: [],
+                    is_all: true,
+                    is_success: true,
+                };
+
+                unlockedInfluencers.forEach((newInfluencerData) => {
+                    setInfluencers((prevInfluencers) => {
+                        const influencer = prevInfluencers.find((i) => i.user_id === newInfluencerData.user_id);
+
+                        if (influencer) {
+                            payload.influencer_ids.push(influencer.user_id);
+                            payload.topics.push(...influencer.topics);
+                        }
+
+                        return prevInfluencers.map((influencer) =>
+                            influencer.user_id === newInfluencerData.user_id
+                                ? { ...newInfluencerData, topics: influencer.topics }
+                                : influencer,
+                        );
+                    });
+                });
             }
+
+            return response;
         } catch (error) {
             clientLogger(error, 'error');
             toast.error(t('boostbot.error.influencerUnlock'));
+
+            const payload: UnlockInfluencersPayload = {
+                influencer_ids: userIds,
+                topics: [],
+                is_all: true,
+                is_success: false,
+                extra_info: { error: String(error) },
+            };
+            track(UnlockInfluencers.eventName, payload);
         } finally {
-            setInfluencerLoading(userId, false);
+            userIds.forEach((userId) => setInfluencerLoading(userId, false));
         }
     };
+
+    const handleUnlockInfluencer = async (userId: string) => handleUnlockInfluencers([userId]);
 
     const removeInfluencer = (userId: string) => {
         setInfluencers((prevInfluencers) => prevInfluencers.filter((influencer) => influencer.user_id !== userId));
@@ -82,41 +99,22 @@ const Boostbot = () => {
 
     const handlePageToUnlock = async () => {
         const userIdsToUnlock = currentPageInfluencers.map((influencer) => influencer.user_id);
-
-        userIdsToUnlock.forEach((userId) => setInfluencerLoading(userId, true));
-
-        try {
-            const response = await unlockInfluencers(userIdsToUnlock);
-            const unlockedInfluencers = response?.map((result) => result.user_profile);
-
-            if (unlockedInfluencers) {
-                unlockedInfluencers.forEach((newInfluencerData) => {
-                    setInfluencers((prevInfluencers) =>
-                        prevInfluencers.map((influencer) =>
-                            influencer.user_id === newInfluencerData.user_id
-                                ? { ...newInfluencerData, topics: influencer.topics }
-                                : influencer,
-                        ),
-                    );
-                });
-            }
-        } catch (error) {
-            clientLogger(error, 'error');
-            toast.error(t('boostbot.error.influencerUnlock'));
-        } finally {
-            userIdsToUnlock.forEach((userId) => setInfluencerLoading(userId, false));
-        }
+        return await handleUnlockInfluencers(userIdsToUnlock);
     };
 
     const handlePageToOutreach = async () => {
         try {
-            const userIdsToSend = currentPageInfluencers.map((influencer) => influencer.user_id);
+            // const userIdsToSend = currentPageInfluencers.map((influencer) => influencer.user_id);
 
             // TODO: Add send to outreach functionality
-            console.log('userIds to send :>> ', userIdsToSend);
+            // console.log('userIds to send :>> ', userIdsToSend);
+
+            track('TEST:boostbot-send_influencer_to_outreach');
         } catch (error) {
             clientLogger(error, 'error');
             toast.error(t('boostbot.error.influencerToOutreach'));
+
+            track('TEST:boostbot-send_influencer_to_outreach');
         }
     };
 

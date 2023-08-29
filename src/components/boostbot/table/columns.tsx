@@ -7,7 +7,6 @@ import {
     EyeIcon,
     HandThumbUpIcon,
     Bars3BottomLeftIcon,
-    // EnvelopeIcon,
     XMarkIcon,
 } from '@heroicons/react/24/solid';
 import type { Influencer } from 'pages/boostbot';
@@ -52,16 +51,11 @@ export const columns: ColumnDef<Influencer>[] = [
     {
         id: 'topPosts',
         header: ({ table }) => table.options.meta?.t('boostbot.table.topPosts'),
-        cell: ({ row, table }) => {
+        cell: ({ row }) => {
             const influencer = row.original;
             const posts = 'top_posts' in influencer && influencer.top_posts && influencer.top_posts.slice(0, 3);
             const description = 'description' in influencer && influencer.description;
             const topicsList = influencer.topics.map((topic) => `#${topic}`).join(', ');
-
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            const unlockInfluencer = () => {
-                table.options.meta?.handleUnlockInfluencer(influencer.user_id);
-            };
 
             return (
                 <div className="flex flex-col gap-4">
@@ -95,27 +89,11 @@ export const columns: ColumnDef<Influencer>[] = [
                                 </Link>
                             ))
                         ) : (
-                            <div
-                                className="group relative ml-2 flex gap-2 p-1 pl-0"
-                                // <button
-                                // className="group relative ml-2 flex gap-2 p-1 pl-0 hover:cursor-pointer"
-                                // onClick={unlockInfluencer}
-                                // aria-label={table.options.meta?.t('boostbot.table.unlockInfluencer')}
-                            >
+                            <>
                                 <div className="h-40 w-40 bg-primary-200 blur-sm" />
                                 <div className="h-40 w-40 bg-primary-200 blur-sm" />
                                 <div className="h-40 w-40 bg-primary-200 blur-sm" />
-                                {/* <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-                                    {influencer.isLoading ? (
-                                        <Spinner className="h-8 w-8 fill-primary-500 text-white" />
-                                    ) : (
-                                        <>
-                                            <LockClosedIcon className="h-8 w-8 fill-primary-500 group-hover:hidden" />
-                                            <LockOpenIcon className="relative left-[4px] hidden h-8 w-8 fill-primary-500 group-hover:block" />
-                                        </>
-                                    )}
-                                </div> */}
-                            </div>
+                            </>
                         )}
                     </div>
 
