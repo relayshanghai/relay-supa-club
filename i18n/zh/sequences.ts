@@ -15,9 +15,10 @@ const sequences = {
     totalInfluencersTooltip: 'KOL总数',
     totalInfluencersTooltipDescription:
         '这是您添加到邮件进程管理器的所有KOL数量，包括需要急需回复、联络中和未回复的KOL。',
-    outreachPlanUpgradeTooltip: 'Only available on Outreach plan',
-    outreachPlanUpgradeTooltipDescription:
-        'This feature is only available for users currently on an Outreach plan.If you’d like access to our automated emails, intelligent templates, the Influencer Manager and our custom in-platform email inbox please reach out to our sales manager Amy on WeChat or at amy.hu@relay.club',
+    outreachPlanUpgradeTooltip: '仅限拓展方案用户使用',
+    outreachPlanUpgradeTooltipDescription: `此功能仅适用于当前使用拓展方案的付费用户。
+
+    如果您希望使用我们的邮件进程管理、智能邮件模板、KOL管理跟进以及定制的平台内电子邮箱功能，请通过微信联系我们的销售经理Amy，或发送邮件至 amy.hu@relay.club咨询拓展方案。`,
     openRateTooltip: '邮件打开率',
     openRateTooltipDescription:
         '已发送的邮件中被打开查看邮件占比。由于某些电子邮件客户端禁用外部跟踪，这个数字可能不是百分之百的准确。',
