@@ -4,6 +4,7 @@ import {
     ANALYZE_OPEN_EXTERNAL_SOCIAL_PROFILE,
     AnalyzeOpenExternalSocialProfile
 } from './analyze-open_external_social_profile';
+import { BOOSTBOT_RECOMMEND_INFLUENCERS, RecommendInfluencers } from './boostbot-recommend-influencers';
 import { BOOSTBOT_OPEN_BOOSTBOT_PAGE, OpenBoostbotPage } from './boostbot/open-boostbot-page';
 import { BOOSTBOT_UNLOCK_INFLUENCERS, UnlockInfluencers } from './boostbot/unlock-influencer';
 import { SEARCH as SEARCH_KEY, Search } from './search';
@@ -26,6 +27,7 @@ export {
     SearchOpenExternalSocialProfile,
     AnalyzeOpenExternalSocialProfile,
     OpenBoostbotPage,
+    RecommendInfluencers,
     UnlockInfluencers,
 };
 
@@ -39,6 +41,7 @@ export const events = {
     [ANALYZE_ADD_TO_CAMPAIGN]: AnalyzeAddToCampaign,
     [ANALYZE_OPEN_EXTERNAL_SOCIAL_PROFILE]: AnalyzeOpenExternalSocialProfile,
     [BOOSTBOT_OPEN_BOOSTBOT_PAGE]: OpenBoostbotPage,
+    [BOOSTBOT_RECOMMEND_INFLUENCERS]: RecommendInfluencers,
     [BOOSTBOT_UNLOCK_INFLUENCERS]: UnlockInfluencers,
 };
 
@@ -52,6 +55,7 @@ export const eventKeys = z.union([
     z.literal(ANALYZE_ADD_TO_CAMPAIGN),
     z.literal(ANALYZE_OPEN_EXTERNAL_SOCIAL_PROFILE),
     z.literal(BOOSTBOT_OPEN_BOOSTBOT_PAGE),
+    z.literal(BOOSTBOT_RECOMMEND_INFLUENCERS),
     z.literal(BOOSTBOT_UNLOCK_INFLUENCERS),
 ]);
 

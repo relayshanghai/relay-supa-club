@@ -8,6 +8,8 @@ import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { useBoostbot } from 'src/hooks/use-boostbot';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { RecommendInfluencers } from 'src/utils/analytics/events';
+import { RecommendInfluencersPayload } from 'src/utils/analytics/events/boostbot-recommend-influencers';
 import { clientLogger } from 'src/utils/logger-client';
 import type { CreatorPlatform } from 'types';
 import { ChatContent } from './chat-content';
@@ -74,20 +76,33 @@ export const Chat: React.FC<ChatProps> = ({
     const onSendMessage = async (productDescription: string) => {
         addMessage({ sender: 'User', content: productDescription });
         setIsLoading(true);
+        const platform = 'instagram';
+
+        const payload: RecommendInfluencersPayload = {
+            query: productDescription,
+            topics_generated: [],
+            valid_topics: [],
+            recommended_influencers: [],
+            platform,
+            is_success: true,
+        }
 
         try {
             const topics = await getTopics(productDescription);
+            payload.topics_generated = topics;
             setProgress((prevProgress) => ({ ...prevProgress, topics }));
 
             const getInfluencersForPlatform = async ({ platform }: { platform: CreatorPlatform }) => {
                 const relevantTopics = await getRelevantTopics({ topics, platform });
+                payload.valid_topics = relevantTopics;
                 const topicClusters = await getTopicClusters({ productDescription, topics: relevantTopics });
                 const influencers = await getInfluencers({ topicClusters, platform });
+                payload.recommended_influencers = influencers.map((i) => i.user_id);
 
                 return influencers;
             };
 
-            const instagramInfluencers = await getInfluencersForPlatform({ platform: 'instagram' });
+            const instagramInfluencers = await getInfluencersForPlatform({ platform });
             setProgress((prevProgress) => ({ ...prevProgress, isMidway: true }));
 
             // const tiktokInfluencers = await getInfluencersForPlatform({ platform: 'tiktok' });
@@ -95,10 +110,6 @@ export const Chat: React.FC<ChatProps> = ({
             const influencers = [...instagramInfluencers];
             // const influencers = [...instagramInfluencers, ...tiktokInfluencers, ...youtubeInfluencers];
             setProgress((prevProgress) => ({ ...prevProgress, influencers: influencers.length }));
-
-            track("TEST:boostbot-send_product_description");
-            // product description, influencers per topic, topics, is_success
-
             setInfluencers(influencers);
             setIsInitialLogoScreen(false);
             addProgressMessage(`${influencers.length} ${t('boostbot.chat.influencersFound')}!`);
@@ -108,8 +119,8 @@ export const Chat: React.FC<ChatProps> = ({
             if (error instanceof Error && error.name === 'AbortError') {
                 toast.success(t('boostbot.chat.stopped'));
             } else {
-                track("TEST:boostbot-send_product_description");
-                // product description, influencers per topic, topics, is_success
+                payload.is_success = false;
+                payload.extra_info = { error: String(error) };
 
                 clientLogger(error, 'error');
                 toast.error(t('boostbot.error.influencerSearch'));
@@ -117,6 +128,8 @@ export const Chat: React.FC<ChatProps> = ({
         } finally {
             setIsLoading(false);
         }
+
+        track(RecommendInfluencers.eventName, payload);
     };
 
     return (
