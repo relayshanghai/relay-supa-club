@@ -1,18 +1,20 @@
 // TODO: Fix eslint warnings after testing is done
 /* eslint-disable no-console */
-import { useState } from 'react';
+import type { CreatorAccountWithTopics } from 'pages/api/boostbot/get-influencers';
+import { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
-import type { UserProfile } from 'types';
-import type { CreatorAccountWithTopics } from 'pages/api/boostbot/get-influencers';
-import { Layout } from 'src/components/layout';
 import { Chat } from 'src/components/boostbot/chat';
 import { dummyData, reportExample } from 'src/components/boostbot/dummy-data';
-import { useBoostbot } from 'src/hooks/use-boostbot';
-import { clientLogger } from 'src/utils/logger-client';
+import InitialLogoScreen from 'src/components/boostbot/initial-logo-screen';
 import { columns } from 'src/components/boostbot/table/columns';
 import { InfluencersTable } from 'src/components/boostbot/table/influencers-table';
-import InitialLogoScreen from 'src/components/boostbot/initial-logo-screen';
+import { Layout } from 'src/components/layout';
+import { useBoostbot } from 'src/hooks/use-boostbot';
+import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { OpenBoostbotPage } from 'src/utils/analytics/events';
+import { clientLogger } from 'src/utils/logger-client';
+import type { UserProfile } from 'types';
 
 export type Influencer = (UserProfile | CreatorAccountWithTopics) & {
     isLoading?: boolean;
@@ -23,6 +25,11 @@ const Boostbot = () => {
     const { t } = useTranslation();
     const { unlockInfluencers } = useBoostbot({});
     const [isInitialLogoScreen, setIsInitialLogoScreen] = useState(true);
+    const { trackEvent: track } = useRudderstack();
+
+    useEffect(() => {
+        track(OpenBoostbotPage.eventName)
+    }, [track])
 
     const [influencers, setInfluencers] = useState<Influencer[]>([
         { ...reportExample.user_profile },
@@ -67,10 +74,16 @@ const Boostbot = () => {
                             : influencer,
                     ),
                 );
+
+                track("TEST:boostbot-unlock_influencer");
+                // product description, influencer per topic, topics, is_success
             }
         } catch (error) {
             clientLogger(error, 'error');
             toast.error(t('boostbot.error.influencerUnlock'));
+
+            track("TEST:boostbot-unlock_influencer");
+            // product description, influencer, topics, is_success
         } finally {
             setInfluencerLoading(userId, false);
         }
@@ -99,10 +112,16 @@ const Boostbot = () => {
                         ),
                     );
                 });
+
+                track("TEST:boostbot-unlock_influencer");
+                // product description, influencer, topics, is_success
             }
         } catch (error) {
             clientLogger(error, 'error');
             toast.error(t('boostbot.error.influencerUnlock'));
+
+            track("TEST:boostbot-unlock_influencer");
+            // product description, influencer, topics, is_success
         } finally {
             userIdsToUnlock.forEach((userId) => setInfluencerLoading(userId, false));
         }
@@ -114,9 +133,15 @@ const Boostbot = () => {
 
             // TODO: Add send to outreach functionality
             console.log('userIds to send :>> ', userIdsToSend);
+
+            track("TEST:boostbot-send_influencer_to_outreach");
+            // product description, influencer, topics, is_success
         } catch (error) {
             clientLogger(error, 'error');
             toast.error(t('boostbot.error.influencerToOutreach'));
+
+            track("TEST:boostbot-send_influencer_to_outreach");
+            // product description, influencer, topics, is_success
         }
     };
 

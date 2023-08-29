@@ -1,18 +1,19 @@
 import { z } from 'zod';
-import { SEARCH as SEARCH_KEY, Search } from './search';
-import { SEARCH_DEFAULT, SearchDefault } from './search-default';
-import { SEARCH_ANALYZE_INFLUENCER, SearchAnalyzeInfluencer } from './search-analyze-influencer';
-import { SEARCH_LOAD_MORE_RESULTS, SearchLoadMoreResults } from './search-load_more_results';
-import {
-    SEARCH_OPEN_EXTERNAL_SOCIAL_PROFILE,
-    SearchOpenExternalSocialProfile,
-} from './search-open_external_social_profile';
-import { SEARCH_ADD_TO_CAMPAIGN, SearchAddToCampaign } from './search-add_to_campaign';
 import { ANALYZE_ADD_TO_CAMPAIGN, AnalyzeAddToCampaign } from './analyze-add_to_campaign';
 import {
     ANALYZE_OPEN_EXTERNAL_SOCIAL_PROFILE,
     AnalyzeOpenExternalSocialProfile,
 } from './analyze-open_external_social_profile';
+import { BOOSTBOT_OPEN_BOOSTBOT_PAGE, OpenBoostbotPage } from './boostbot/open-boostbot-page';
+import { SEARCH as SEARCH_KEY, Search } from './search';
+import { SEARCH_ADD_TO_CAMPAIGN, SearchAddToCampaign } from './search-add_to_campaign';
+import { SEARCH_ANALYZE_INFLUENCER, SearchAnalyzeInfluencer } from './search-analyze-influencer';
+import { SEARCH_DEFAULT, SearchDefault } from './search-default';
+import { SEARCH_LOAD_MORE_RESULTS, SearchLoadMoreResults } from './search-load_more_results';
+import {
+    SEARCH_OPEN_EXTERNAL_SOCIAL_PROFILE,
+    SearchOpenExternalSocialProfile,
+} from './search-open_external_social_profile';
 
 export {
     Search,
@@ -23,6 +24,7 @@ export {
     SearchAnalyzeInfluencer,
     SearchOpenExternalSocialProfile,
     AnalyzeOpenExternalSocialProfile,
+    OpenBoostbotPage,
 };
 
 export const events = {
@@ -34,6 +36,7 @@ export const events = {
     [SEARCH_ADD_TO_CAMPAIGN]: SearchAddToCampaign,
     [ANALYZE_ADD_TO_CAMPAIGN]: AnalyzeAddToCampaign,
     [ANALYZE_OPEN_EXTERNAL_SOCIAL_PROFILE]: AnalyzeOpenExternalSocialProfile,
+    [BOOSTBOT_OPEN_BOOSTBOT_PAGE]: OpenBoostbotPage,
 };
 
 export const eventKeys = z.union([
@@ -45,6 +48,7 @@ export const eventKeys = z.union([
     z.literal(SEARCH_ADD_TO_CAMPAIGN),
     z.literal(ANALYZE_ADD_TO_CAMPAIGN),
     z.literal(ANALYZE_OPEN_EXTERNAL_SOCIAL_PROFILE),
+    z.literal(BOOSTBOT_OPEN_BOOSTBOT_PAGE),
 ]);
 
 export type eventKeys = z.infer<typeof eventKeys>;
