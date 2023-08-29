@@ -128,7 +128,7 @@ export const columns: ColumnDef<Influencer>[] = [
                     {email ? (
                         <div className="flex items-center gap-1 break-all text-xs text-primary-500">{email}</div>
                     ) : influencer.isLoading ? (
-                        <Spinner className="h-6 w-6 fill-primary-500 text-white" />
+                        <Spinner className="h-6 w-6 fill-primary-500 text-primary-200" />
                     ) : (
                         <button
                             className="group ml-2 table-cell p-1 pl-0 hover:cursor-pointer"

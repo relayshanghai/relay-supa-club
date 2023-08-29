@@ -23,32 +23,27 @@ export const useBoostbot = ({ abortSignal }: UseBoostbotProps) => {
 
     const unlockInfluencers = useCallback(
         async (influencerIds: string[]) => {
-            try {
-                if (!company?.id || !profile?.id) throw new Error('No company or profile found');
+            if (!company?.id || !profile?.id) throw new Error('No company or profile found');
 
-                const influencersPromises = influencerIds.map((influencerId) => {
-                    const reportQuery = {
-                        // TODO: Right now only handling instagram, make platform dynamic
-                        platform: 'instagram' as CreatorPlatform,
-                        creator_id: influencerId,
-                        company_id: company.id,
-                        user_id: profile.id,
-                        track: SearchAnalyzeInfluencer.eventName as eventKeys,
-                    };
+            const influencersPromises = influencerIds.map((influencerId) => {
+                const reportQuery = {
+                    // TODO: Right now only handling instagram, make platform dynamic
+                    platform: 'instagram' as CreatorPlatform,
+                    creator_id: influencerId,
+                    company_id: company.id,
+                    user_id: profile.id,
+                    track: SearchAnalyzeInfluencer.eventName as eventKeys,
+                };
 
-                    return limiter.schedule(() =>
-                        nextFetchWithQueries<CreatorsReportGetQueries, CreatorsReportGetResponse>(
-                            'creators/report',
-                            reportQuery,
-                        ),
-                    );
-                });
+                return limiter.schedule(() =>
+                    nextFetchWithQueries<CreatorsReportGetQueries, CreatorsReportGetResponse>(
+                        'creators/report',
+                        reportQuery,
+                    ),
+                );
+            });
 
-                return await Promise.all(influencersPromises);
-            } catch (error) {
-                clientLogger(error, 'error');
-                throw error;
-            }
+            return await Promise.all(influencersPromises);
         },
         [profile, company],
     );

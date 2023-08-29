@@ -13,13 +13,13 @@ const ChatProgress = ({ progress }: ChatProgressProps) => {
 
     const renderIcon = (isDone: boolean) =>
         isDone ? (
-            <CheckIcon className="!h-5 !w-5 flex-shrink-0 fill-primary-600 text-white" />
+            <CheckIcon className="h-5 w-5 flex-shrink-0 text-primary-600" />
         ) : (
-            <Spinner className="h-5 w-5 flex-shrink-0 fill-primary-600 text-white" />
+            <Spinner className="h-5 w-5 flex-shrink-0 fill-primary-600 text-primary-200" />
         );
 
     return (
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 text-sm">
             <div className="flex flex-row gap-2">
                 {renderIcon(isFirstDone)}
                 Generating topics and niches
