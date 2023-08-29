@@ -7,6 +7,7 @@ import { Tooltip } from '../library';
 import { useTranslation } from 'react-i18next';
 import { Question } from '../icons';
 import { useSearchTrackers } from '../rudder/searchui-rudder-calls';
+import { clientLogger } from 'src/utils/logger-client';
 
 type DistanceType = {
     text: string;
@@ -84,19 +85,24 @@ const WordCloudComponent = ({ tags, platform, updateTags }: WordCloudProps) => {
     useEffect(() => {
         const term = tags.length > 0 ? tags[0].tag : 'influencer';
         const setWordArray = async () => {
-            const body = {
-                term,
-                limit: 20,
-                platform,
-            };
-            const res = await nextFetch('topics/tensor', {
-                method: 'post',
-                body,
-            });
+            try {
+                const body = {
+                    term,
+                    limit: 20,
+                    platform,
+                };
+                const res = await nextFetch('topics/tensor', {
+                    method: 'post',
+                    body,
+                });
 
-            setWords(getWordElements(res.data));
-            setWordsDistance(getWordDistances(res.data));
+                setWords(getWordElements(res.data));
+                setWordsDistance(getWordDistances(res.data));
+            } catch (error) {
+                clientLogger(error, 'error');
+            }
         };
+
         setWordArray();
     }, [tags, platform]);
 
