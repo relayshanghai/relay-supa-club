@@ -4,8 +4,8 @@ import {
     ANALYZE_OPEN_EXTERNAL_SOCIAL_PROFILE,
     AnalyzeOpenExternalSocialProfile
 } from './analyze-open_external_social_profile';
-import { BOOSTBOT_RECOMMEND_INFLUENCERS, RecommendInfluencers } from './boostbot-recommend-influencers';
 import { BOOSTBOT_OPEN_BOOSTBOT_PAGE, OpenBoostbotPage } from './boostbot/open-boostbot-page';
+import { BOOSTBOT_RECOMMEND_INFLUENCERS, RecommendInfluencers } from './boostbot/recommend-influencers';
 import { BOOSTBOT_UNLOCK_INFLUENCERS, UnlockInfluencers } from './boostbot/unlock-influencer';
 import { SEARCH as SEARCH_KEY, Search } from './search';
 import { SEARCH_ADD_TO_CAMPAIGN, SearchAddToCampaign } from './search-add_to_campaign';
