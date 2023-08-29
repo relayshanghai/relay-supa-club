@@ -24,6 +24,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
 
     const { sequence, sendSequence, sequenceSteps, updateSequence } = useSequence(sequenceId);
     const { sequenceInfluencers } = useSequenceInfluencers(sequence && [sequenceId]);
+
     const { sequenceEmails } = useSequenceEmails(sequenceId);
     const { templateVariables } = useTemplateVariables(sequenceId);
     const missingVariables = templateVariables
@@ -111,6 +112,10 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     const currentTabInfluencers = influencers?.filter((influencer) => influencer.funnel_status === currentTab);
 
     const [emailSteps, setEmailSteps] = useState<MultipleDropdownObject>(EMAIL_STEPS);
+
+    const handleSetInfluencers = useCallback((influencersToSet: SequenceInfluencerManagerPage[] | undefined) => {
+        setInfluencers(influencersToSet);
+    }, []);
 
     const setEmailStepValues = useCallback(
         (influencers: SequenceInfluencerManagerPage[], options: MultipleDropdownObject) => {
@@ -212,6 +217,8 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                 {currentTabInfluencers && sequenceSteps ? (
                     <SequenceTable
                         sequenceInfluencers={currentTabInfluencers}
+                        setInfluencers={handleSetInfluencers}
+                        allInfluencers={influencers}
                         sequenceEmails={sequenceEmails}
                         sequenceSteps={sequenceSteps}
                         currentTab={currentTab}
