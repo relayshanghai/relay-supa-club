@@ -44,7 +44,7 @@ export const Tooltip = ({
     const [isHovered, setIsHovered] = useState(false);
     if (!content) return <>{children}</>;
     return (
-        <div className={`relative ${className}`}>
+        <div className={`${className}`}>
             <div
                 className="cursor-pointer"
                 onMouseOver={() => setIsHovered(true)}
@@ -52,21 +52,23 @@ export const Tooltip = ({
             >
                 {children}
             </div>
-            <div
-                className={`absolute flex ${isHovered ? 'flex' : 'hidden'} ${positionClass(
-                    position,
-                )} z-50 w-auto rounded bg-gray-800 ${tooltipClasses}`}
-                role="tooltip"
-            >
-                <div className="flex w-max max-w-2xl flex-col justify-evenly gap-2 rounded-md p-4 leading-4 shadow-lg">
-                    <p className="text-md my-2 font-semibold text-gray-100">{content}</p>
-                    {detail && <p className="text-sm font-normal text-gray-200">{detail}</p>}
-                    {highlight && <p className="text-sm font-medium italic text-gray-200">{highlight}</p>}
-                    {link && linkText && (
-                        <Link className="font-normal text-primary-400" href={link}>
-                            {linkText}
-                        </Link>
-                    )}
+            <div className="relative z-50">
+                <div
+                    className={`absolute ${isHovered ? 'flex' : 'hidden'}  ${positionClass(
+                        position,
+                    )} rounded bg-gray-800 ${tooltipClasses}`}
+                    role="tooltip"
+                >
+                    <div className="w-max max-w-md whitespace-normal rounded-md p-4 shadow-lg">
+                        <p className="my-2 text-lg font-semibold leading-6 text-gray-100">{content}</p>
+                        {detail && <p className="text-sm font-normal leading-6 text-gray-200">{detail}</p>}
+                        {highlight && <p className="text-sm font-medium italic text-gray-200">{highlight}</p>}
+                        {link && linkText && (
+                            <Link className="font-normal text-primary-400" href={link}>
+                                {linkText}
+                            </Link>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>
