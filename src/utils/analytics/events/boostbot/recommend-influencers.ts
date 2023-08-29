@@ -1,4 +1,4 @@
-import type { TriggerEvent } from '../types';
+import type { TriggerEvent } from '../../types';
 
 export const BOOSTBOT_RECOMMEND_INFLUENCERS = 'TEST:boostbot-recommend_influencers';
 
