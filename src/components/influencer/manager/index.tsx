@@ -46,7 +46,7 @@ const Manager = () => {
     );
 
     const handleProfileUpdate = useCallback(() => {
-        refreshSequenceInfluencers()
+        refreshSequenceInfluencers();
     }, [refreshSequenceInfluencers]);
 
     const setCollabStatusValues = (influencers: SequenceInfluencerManagerPage[], options: MultipleDropdownObject) => {
@@ -67,6 +67,7 @@ const Manager = () => {
         if (!sequenceInfluencers || sequenceInfluencers.length <= 0) {
             return;
         }
+        setInfluencers(sequenceInfluencers);
         setCollabOptions(setCollabStatusValues(sequenceInfluencers, COLLAB_OPTIONS));
     }, [sequenceInfluencers]);
 
