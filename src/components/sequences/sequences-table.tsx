@@ -5,7 +5,7 @@ import { SequencesTableRow } from './sequences-table-row';
 
 const SequencesTable = ({ sequences }: { sequences: Sequence[] | undefined }) => {
     const { t } = useTranslation();
-
+    const sequencesWithoutDeleted = sequences?.filter((sequence) => !sequence.deleted);
     return (
         <table className="w-full border-collapse">
             <thead>
@@ -21,7 +21,7 @@ const SequencesTable = ({ sequences }: { sequences: Sequence[] | undefined }) =>
                 </tr>
             </thead>
             <tbody>
-                {sequences?.map((sequence) => {
+                {sequencesWithoutDeleted?.map((sequence) => {
                     return <SequencesTableRow key={sequence.id} sequence={sequence} />;
                 })}
             </tbody>

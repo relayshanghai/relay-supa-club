@@ -95,7 +95,9 @@ OR REPLACE FUNCTION create_profile(
   email TEXT,
   first_name TEXT,
   last_name TEXT,
-  _role TEXT
+  _role TEXT,
+  _email_engine_account TEXT DEFAULT null,
+  _email_engine_email TEXT DEFAULT null
 ) RETURNS RECORD SECURITY DEFINER LANGUAGE plpgsql AS $$
   DECLARE
     user_id UUID;
@@ -106,8 +108,7 @@ OR REPLACE FUNCTION create_profile(
     INSERT INTO profiles
       (id, email, last_name, first_name, user_role, company_id, email_engine_account_id, sequence_send_email)
     VALUES
-      (user_id, email, last_name, first_name, _role, company_id,
-      'e7ustgsqqvy9al6f', 'tech.relay.club@gmail.com')
+      (user_id, email, last_name, first_name, _role, company_id, _email_engine_account, _email_engine_email)
     RETURNING * INTO _row;
     RETURN _row;
   END;
@@ -284,7 +285,9 @@ $$;
 CREATE
 OR REPLACE FUNCTION create_sequence(
   company_id UUID,
-  name TEXT
+  name TEXT,
+  manager_first_name TEXT,
+  manager_id UUID
 ) RETURNS RECORD SECURITY DEFINER LANGUAGE plpgsql AS $$
     DECLARE
       _row RECORD;
@@ -296,7 +299,9 @@ OR REPLACE FUNCTION create_sequence(
           updated_at,
           company_id,
           name,
-          auto_start
+          auto_start,
+          manager_first_name,
+          manager_id
         )
       VALUES
         (
@@ -305,7 +310,9 @@ OR REPLACE FUNCTION create_sequence(
           now(),
           company_id,
           name,
-          false
+          false,
+          manager_first_name,
+          manager_id
         )
       RETURNING * INTO _row;
       RETURN _row;
@@ -452,7 +459,8 @@ CREATE OR REPLACE FUNCTION create_influencer_social_profile(
   _username TEXT,
   _name TEXT,
   _email TEXT,
-  _avatar_url TEXT DEFAULT 'https://image-cache.relay.club/?link=https://yt3.googleusercontent.com/ytc/AOPolaSe-ifBRtdfb67uDM8kaHdhdPdQny-MaSRdBfT2NA=s480-c-k-c0x00ffffff-no-rj'
+  _avatar_url TEXT DEFAULT 'https://image-cache.relay.club/?link=https://yt3.googleusercontent.com/ytc/AOPolaSe-ifBRtdfb67uDM8kaHdhdPdQny-MaSRdBfT2NA=s480-c-k-c0x00ffffff-no-rj',
+  _recent_video_title TEXT DEFAULT 'Recent Video Title'
 ) RETURNS RECORD SECURITY DEFINER LANGUAGE plpgsql AS $$
 DECLARE
   _row RECORD;
@@ -481,7 +489,7 @@ BEGIN
     _name,
     _email,
     _avatar_url,
-    'Recent Video Title'
+    _recent_video_title
   )
   RETURNING * INTO _row;
   RETURN _row;
@@ -672,6 +680,9 @@ DECLARE
   _influencer_daniel RECORD;
   _influencer_felicia RECORD;
   _influencer_georgia RECORD;
+  _influencer_pewdiepie RECORD;
+  _influencer_mrbeast RECORD;
+  _influencer_cocomelon RECORD;
   _influencer_social_profile_alice_1 RECORD;
   _influencer_social_profile_bob_1 RECORD;
   _influencer_social_profile_bob_2 RECORD;
@@ -679,6 +690,9 @@ DECLARE
   _influencer_social_profile_daniel_1 RECORD;
   _influencer_social_profile_felicia_1 RECORD;
   _influencer_social_profile_georgia_1 RECORD;
+  _influencer_social_profile_pewdiepie RECORD;
+  _influencer_social_profile_mrbeast RECORD;
+  _influencer_social_profile_cocomelon RECORD;
   _influencer_post_alice_1 RECORD;
   _influencer_post_alice_2 RECORD;
   _influencer_post_alice_3 RECORD;
@@ -702,14 +716,18 @@ BEGIN
     'william.edward.douglas@blue-moonlight-stream.com',
     'William Edward',
     'Douglas',
-    'company_owner'
+    'company_owner',
+    'e7ustgsqqvy9al6f',
+    'tech.relay.club@gmail.com'
   );
   _profile_christopher := create_profile(
     _company_test.id,
     'christopher.david.thompson@blue-moonlight-stream.com',
     'Christopher David',
     'Thompson',
-    'company_teammate'
+    'company_teammate',
+    null,
+    null
   );
 
   _campaign_beauty_for_all := create_campaign(
@@ -724,7 +742,9 @@ BEGIN
 
   _sequence_general := create_sequence(
     _company_test.id,
-    'General collaboration'
+    'General collaboration',
+    _profile_william.first_name,
+    _profile_william.id
   );
 
   _sequence_step_outreach := create_sequence_steps(
@@ -802,6 +822,25 @@ BEGIN
     '240 Elm Street',
     ''
   );
+  _influencer_pewdiepie := create_influencer(
+    'PewDiePie',
+    'tech+pewdiepie@relay.club',
+    null,
+    'https://yt3.googleusercontent.com/5oUY3tashyxfqsjO5SGhjT4dus8FkN9CsAHwXWISFrdPYii1FudD4ICtLfuCw6-THJsJbgoY=s480-c-k-c0x00ffffff-no-rj'
+  );
+  _influencer_mrbeast := create_influencer(
+    'MrBeast',
+    'tech+mrbeast@relay.club',
+    null,
+    'https://yt3.googleusercontent.com/ytc/AOPolaSqRAadc5Tv116Y-UfQ--ZLK3bFTep0ZH1_aoLlTA=s480-c-k-c0x00ffffff-no-rj'
+  );
+  _influencer_cocomelon := create_influencer(
+    'Cocomelon - Nursery Rhymes',
+    'bounce@gmail.com',
+    null,
+    'https://yt3.googleusercontent.com/ytc/AOPolaRxd0DEuTsFcyk0wEHdVMk4r7nZhv_7A3AgQ7ndUA=s480-c-k-c0x00ffffff-no-rj'
+  );
+
   _influencer_social_profile_alice_1 := create_influencer_social_profile(
     'https://instagram.com/alice1',
     'instagram',
@@ -871,6 +910,39 @@ BEGIN
     _influencer_georgia.name,
     _influencer_georgia.email,
     null
+  );
+  _influencer_social_profile_pewdiepie := create_influencer_social_profile(
+    'https://www.youtube.com/channel/UC-lHJZR3Gqxm24_Vd_AJ5Yw',
+    'youtube',
+    _influencer_pewdiepie.id,
+    'iqdata:UC-lHJZR3Gqxm24_Vd_AJ5Yw',
+    'PewDiePie',
+    _influencer_pewdiepie.name,
+    _influencer_pewdiepie.email,
+    _influencer_pewdiepie.avatar_url,
+    'Recent Video Title - Pewdiepie'
+  );
+  _influencer_social_profile_mrbeast := create_influencer_social_profile(
+    'https://www.youtube.com/channel/UCX6OQ3DkcsbYNE6H8uQQuVA',
+    'youtube',
+    _influencer_mrbeast.id,
+    'iqdata:UCX6OQ3DkcsbYNE6H8uQQuVA',
+    'MrBeast6000',
+    _influencer_mrbeast.name,
+    _influencer_mrbeast.email,
+    _influencer_mrbeast.avatar_url,
+    'Recent Video Title - MrBeast'
+  );
+  _influencer_social_profile_cocomelon := create_influencer_social_profile(
+    'https://www.youtube.com/channel/UCbCmjCuTUZos6Inko4u57UQ',
+    'youtube',
+    _influencer_cocomelon.id,
+    'iqdata:UCbCmjCuTUZos6Inko4u57UQ',
+    'checkgate',
+    _influencer_cocomelon.name,
+    _influencer_cocomelon.email,
+    _influencer_cocomelon.avatar_url,
+    'Recent Video Title - Cocomelon'
   );
 
   PERFORM create_sequence_influencer(
@@ -1136,7 +1208,7 @@ BEGIN
     ARRAY['gaming','technology','highperformance','graphics','sound']
   );
 
-  _profile_relay_employee := create_profile(_company_relay.id, 'jacob@relay.club', 'Jacob', 'Cool', 'relay_employee');
+  _profile_relay_employee := create_profile(_company_relay.id, 'jacob@relay.club', 'Jacob', 'Cool', 'relay_employee', null, null);
 
   PERFORM create_campaign_creator(
     _campaign_gaming.id,

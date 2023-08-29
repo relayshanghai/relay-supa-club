@@ -367,17 +367,15 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
         trackData.sequence_email_id = sequenceEmail.id
         trackData.sequence_id = sequenceEmail.sequence_id
         trackData.sequence_influencer_id = sequenceEmail.sequence_influencer_id
+        const sequenceInfluencer = await getSequenceInfluencerById(sequenceEmail.sequence_influencer_id);
+        trackData.influencer_id = sequenceInfluencer.influencer_social_profile_id
+        trackData.sequence_step = sequenceInfluencer.sequence_step + 1
 
         const update: SequenceEmailUpdate = {
             id: sequenceEmail.id,
             email_delivery_status: 'Delivered',
         };
         await updateSequenceEmail(update);
-
-        const sequenceInfluencer = await getSequenceInfluencerById(sequenceEmail.sequence_influencer_id);
-
-        trackData.influencer_id = sequenceInfluencer.influencer_social_profile_id
-        trackData.sequence_step = sequenceInfluencer.sequence_step + 1
 
         const sequenceInfluencerUpdate: SequenceInfluencerUpdate = {
             id: sequenceInfluencer.id,
@@ -395,7 +393,6 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
             data: { event, update, sequenceInfluencerUpdate } as any,
             message: `sent to: ${event.data.envelope.to}`,
         });
-        return res.status(httpCodes.OK).json({});
     } catch (error: any) {
         track(rudderstack.getClient(), rudderstack.getIdentity())(EmailSent, {
             ...trackData,
@@ -412,6 +409,8 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
         // this will cause a 500 which will cause EE to resend this webhook every time
         return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
     }
+
+    return res.status(httpCodes.OK).json({});
 };
 
 const handleOtherWebhook = async (event: WebhookEvent, res: NextApiResponse) => {

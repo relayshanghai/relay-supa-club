@@ -1229,6 +1229,7 @@ export interface Database {
           auto_start: boolean
           company_id: string
           created_at: string
+          deleted: boolean
           id: string
           manager_first_name: string | null
           manager_id: string | null
@@ -1239,6 +1240,7 @@ export interface Database {
           auto_start?: boolean
           company_id: string
           created_at?: string
+          deleted?: boolean
           id?: string
           manager_first_name?: string | null
           manager_id?: string | null
@@ -1249,6 +1251,7 @@ export interface Database {
           auto_start?: boolean
           company_id?: string
           created_at?: string
+          deleted?: boolean
           id?: string
           manager_first_name?: string | null
           manager_id?: string | null

@@ -15,6 +15,7 @@ import tooltips from './tooltips';
 import inbox from './inbox';
 import sequences from './sequences';
 import manager from './manager';
+import profile from './profile';
 
 const translations = {
     translation: {
@@ -35,6 +36,7 @@ const translations = {
         inbox,
         sequences,
         manager,
+        profile,
     },
 };
 export default translations;
