@@ -125,7 +125,12 @@ export const Chat: React.FC<ChatProps> = ({
 
             setInfluencers(influencers);
             setIsInitialLogoScreen(false);
-            addMessage({ sender: 'Bot', content: `${influencers.length} ${t('boostbot.chat.influencersFound')}` });
+            addMessage({
+                sender: 'Bot',
+                content: `${t('boostbot.chat.influencersFoundA')} ${influencers.length} ${t(
+                    'boostbot.chat.influencersFoundB',
+                )}`,
+            });
             document.dispatchEvent(new Event('influencerTableSetFirstPage'));
             track(RecommendInfluencers.eventName, payload);
         } catch (error) {

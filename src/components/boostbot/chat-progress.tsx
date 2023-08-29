@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Spinner, CheckIcon } from 'src/components/icons';
 import type { ProgressType } from 'src/components/boostbot/chat';
 
@@ -6,6 +7,7 @@ type ChatProgressProps = {
 };
 
 const ChatProgress = ({ progress }: ChatProgressProps) => {
+    const { t } = useTranslation();
     const { topics, isMidway, totalFound } = progress;
     const isFirstDone = topics.length > 0;
     const isSecondDone = isMidway;
@@ -41,20 +43,16 @@ const ChatProgress = ({ progress }: ChatProgressProps) => {
 
     return (
         <div className="mb-4 flex flex-col gap-2 text-sm">
-            {renderStep(isFirstDone, 'Generating topics and niches', `${topics.slice(0, 5).join(', ')}, ...`)}
+            {renderStep(isFirstDone, t('boostbot.chat.progress.step1'), `${topics.slice(0, 5).join(', ')}, ...`)}
 
             {isFirstDone &&
-                renderStep(
-                    isSecondDone,
-                    'Browsing through millions of influencers in our database',
-                    'several thousand influencers found',
-                )}
+                renderStep(isSecondDone, t('boostbot.chat.progress.step2'), t('boostbot.chat.progress.step2B'))}
 
             {isSecondDone &&
                 renderStep(
                     isThirdDone,
-                    'Handpicking the best KOLs based on followers, engagements, location, etc.',
-                    `${totalFound} influencers selected`,
+                    t('boostbot.chat.progress.step3'),
+                    `${totalFound} ${t('boostbot.chat.progress.step3B')}`,
                 )}
         </div>
     );

@@ -12,7 +12,7 @@ const Message: React.FC<MessageProps> = ({ message }) => {
 
     return (
         <div
-            className={`mb-4 inline-block max-w-[85%] break-words rounded-lg px-4 py-2 text-sm shadow-md ${messageClass}`}
+            className={`mb-4 inline-block max-w-[85%] whitespace-pre-wrap break-words rounded-lg px-4 py-2 text-sm shadow-md ${messageClass}`}
         >
             {message.content as string | JSX.Element}
         </div>
