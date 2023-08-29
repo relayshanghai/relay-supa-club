@@ -41,7 +41,7 @@ export const mapIqdataProfileToInfluencerSocialProfile = (
     'url' | 'username' | 'platform' | 'reference_id' | 'name' | 'email' | 'avatar_url' | 'recent_video_title' | 'recent_post_url'
 > => {
     const contacts = userProfile.contacts || [];
-    const email = contacts.find((v: any) => v.type === 'email') || { value: null };
+    const email = contacts.find((v: any) => v.type === 'email') || { value: undefined };
     return {
         url: userProfile.url,
         username: userProfile.username || userProfile.handle || userProfile.custom_name || '',
