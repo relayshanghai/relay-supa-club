@@ -19,12 +19,9 @@ import type { SequenceSendPostResponse } from 'pages/api/sequence/send';
 import toast from 'react-hot-toast';
 import { useUser } from 'src/hooks/use-user';
 import { DeleteFromSequenceModal } from '../modal-delete-from-sequence';
-import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 
 interface SequenceRowProps {
     sequenceInfluencer: SequenceInfluencer;
-    setInfluencers: (influencersToSet: SequenceInfluencerManagerPage[] | undefined) => void;
-    allInfluencers: SequenceInfluencerManagerPage[] | undefined;
     lastEmail?: SequenceEmail;
     nextEmail?: SequenceEmail;
     lastStep?: SequenceStep;
@@ -54,8 +51,6 @@ const getStatus = (sequenceEmail: SequenceEmail | undefined) =>
 
 const SequenceRow: React.FC<SequenceRowProps> = ({
     sequenceInfluencer,
-    setInfluencers,
-    allInfluencers,
     lastEmail,
     nextEmail,
     lastStep,
@@ -69,9 +64,8 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
     handleStartSequence,
 }) => {
     const { influencerSocialProfile } = useInfluencerSocialProfile(sequenceInfluencer.influencer_social_profile_id);
-    const { updateSequenceInfluencer, deleteSequenceInfluencer, refreshSequenceInfluencers } = useSequenceInfluencers(
-        sequenceInfluencer && [sequenceInfluencer.sequence_id],
-    );
+    const { sequenceInfluencers, updateSequenceInfluencer, deleteSequenceInfluencer, refreshSequenceInfluencers } =
+        useSequenceInfluencers(sequenceInfluencer && [sequenceInfluencer.sequence_id]);
     const { profile } = useUser();
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const { i18n, t } = useTranslation();
@@ -111,8 +105,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
     };
     const handleDeleteInfluencer = (sequenceInfluencerId: string) => {
         deleteSequenceInfluencer(sequenceInfluencerId);
-        refreshSequenceInfluencers();
-        setInfluencers(allInfluencers?.filter((influencer) => influencer.id !== sequenceInfluencerId));
+        refreshSequenceInfluencers(sequenceInfluencers?.filter((influencer) => influencer.id !== sequenceInfluencerId));
         toast.success(t('sequences.influencerDeleted'));
     };
     return (

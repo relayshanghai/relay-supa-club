@@ -113,10 +113,6 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
 
     const [emailSteps, setEmailSteps] = useState<MultipleDropdownObject>(EMAIL_STEPS);
 
-    const handleSetInfluencers = useCallback((influencersToSet: SequenceInfluencerManagerPage[] | undefined) => {
-        setInfluencers(influencersToSet);
-    }, []);
-
     const setEmailStepValues = useCallback(
         (influencers: SequenceInfluencerManagerPage[], options: MultipleDropdownObject) => {
             const emailOptionsWithValue = options;
@@ -217,8 +213,6 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                 {currentTabInfluencers && sequenceSteps ? (
                     <SequenceTable
                         sequenceInfluencers={currentTabInfluencers}
-                        setInfluencers={handleSetInfluencers}
-                        allInfluencers={influencers}
                         sequenceEmails={sequenceEmails}
                         sequenceSteps={sequenceSteps}
                         currentTab={currentTab}

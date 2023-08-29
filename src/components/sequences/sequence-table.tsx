@@ -4,12 +4,9 @@ import { useTranslation } from 'react-i18next';
 import { sequenceColumns } from './constants';
 import type { SetStateAction } from 'react';
 import type { SequenceSendPostResponse } from 'pages/api/sequence/send';
-import { type SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 
 interface SequenceTableProps {
     sequenceInfluencers: SequenceInfluencer[];
-    setInfluencers: (influencersToSet: SequenceInfluencerManagerPage[] | undefined) => void;
-    allInfluencers?: SequenceInfluencerManagerPage[];
     sequenceEmails?: SequenceEmail[];
     sequenceSteps: SequenceStep[];
     currentTab: SequenceInfluencer['funnel_status'];
@@ -48,8 +45,6 @@ const sortInfluencers = (
 
 const SequenceTable: React.FC<SequenceTableProps> = ({
     sequenceInfluencers,
-    setInfluencers,
-    allInfluencers,
     sequenceEmails,
     sequenceSteps,
     currentTab,
@@ -94,8 +89,6 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
                             <SequenceRow
                                 key={influencer.id}
                                 sequenceInfluencer={influencer}
-                                allInfluencers={allInfluencers}
-                                setInfluencers={setInfluencers}
                                 lastEmail={lastEmail}
                                 nextEmail={nextEmail}
                                 lastStep={lastStep}
