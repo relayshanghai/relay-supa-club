@@ -96,6 +96,7 @@ const Boostbot = () => {
                 topics: [],
                 is_all: false,
                 is_success: false,
+                extra_info: { error: String(error) },
             }
             track(UnlockInfluencers.eventName, payload);
         } finally {
@@ -151,7 +152,8 @@ const Boostbot = () => {
                 influencer_ids: userIdsToUnlock,
                 topics: [],
                 is_all: true,
-                is_success: false
+                is_success: false,
+                extra_info: { error: String(error) },
             }
             track(UnlockInfluencers.eventName, payload);
         } finally {

@@ -7,6 +7,7 @@ export type UnlockInfluencersPayload = EventPayload<{
     topics: string[],
     is_all: boolean,
     is_success: boolean,
+    extra_info?: any
 }>;
 
 export const UnlockInfluencers = (trigger: TriggerEvent<UnlockInfluencersPayload>, payload?: UnlockInfluencersPayload) =>
