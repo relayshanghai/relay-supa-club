@@ -270,7 +270,7 @@ export const TemplateVariablesModal = ({ sequenceId, ...props }: TemplateVariabl
                             readOnly
                         />
                         <VariableInput
-                            variableKey={'recentVideoTitle' as any}
+                            variableKey={'recentPostTitle' as any}
                             setKey={setKey}
                             variables={variables}
                             readOnly
