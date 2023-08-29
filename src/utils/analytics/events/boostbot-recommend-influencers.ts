@@ -7,7 +7,6 @@ export type RecommendInfluencersPayload = {
     topics_generated: string[],
     valid_topics: string[],
     recommended_influencers: string[],
-    platform: string,
     is_success: boolean,
     extra_info?: any,
 };
