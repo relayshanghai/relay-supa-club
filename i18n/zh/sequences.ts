@@ -153,5 +153,8 @@ const sequences = {
         okay: '确认移除',
     },
     influencerAlreadyAdded_sequence: 'KOL已经添加到序列: {{sequence}}',
+    deleteConfirm: '确认删除？',
+    deleteSuccess: '删除成功',
+    deleteFail: '删除失败',
 };
 export default sequences;
