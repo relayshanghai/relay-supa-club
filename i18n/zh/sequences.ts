@@ -38,14 +38,6 @@ const sequences = {
     },
     addEmail: '添加邮件',
     newSequence: '新建序列',
-    steps: {
-        filter: '按KOL联络进展筛选',
-        Outreach: '首封外联邮件',
-        '1st Follow-up': '第一次跟进',
-        '2nd Follow-up': '第二次跟进',
-        '3rd Follow-up': '第三次跟进',
-        '4th Follow-up': '第四次跟进',
-    },
     status: {
         Scheduled: '邮件已预约',
         Delivered: '邮件已送达',
@@ -118,7 +110,8 @@ const sequences = {
     battery life of over 2 weeks!”
     这将会直接显示于您的电子邮件模版中。`,
     productPrice: '产品价格',
-    productPriceTooltip: `
+    productPriceTooltip: '产品价格',
+    productPriceTooltipDescription: `
     以美元为单位输入产品价格。
     
     最好输入整数，以便让模板看起来更加简洁。
@@ -144,6 +137,14 @@ const sequences = {
     emailPreview: '邮件预览',
     number_emailsSuccessfullyScheduled: '成功提交安排{{number}}发送邮件',
     number_emailsFailedToSchedule: '失败提交安排发{{number}}送邮件',
+    steps: {
+        filter: '按KOL联络进展筛选',
+        Outreach: '首封外联邮件',
+        '1st Follow-up': '第一次跟进',
+        '2nd Follow-up': '第二次跟进',
+        '3rd Follow-up': '第三次跟进',
+        '4th Follow-up': '第四次跟进',
+    },
     delete: {
         title: '是否把KOL从此邮件进程管理项目中移除？',
         description:
@@ -152,5 +153,8 @@ const sequences = {
         okay: '确认移除',
     },
     influencerAlreadyAdded_sequence: 'KOL已经添加到序列: {{sequence}}',
+    deleteConfirm: '确认删除？',
+    deleteSuccess: '删除成功',
+    deleteFail: '删除失败',
 };
 export default sequences;
