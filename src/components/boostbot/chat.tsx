@@ -76,14 +76,12 @@ export const Chat: React.FC<ChatProps> = ({
     const onSendMessage = async (productDescription: string) => {
         addMessage({ sender: 'User', content: productDescription });
         setIsLoading(true);
-        const platform = 'instagram';
 
         const payload: RecommendInfluencersPayload = {
             query: productDescription,
             topics_generated: [],
             valid_topics: [],
             recommended_influencers: [],
-            platform,
             is_success: true,
         }
 
@@ -94,15 +92,15 @@ export const Chat: React.FC<ChatProps> = ({
 
             const getInfluencersForPlatform = async ({ platform }: { platform: CreatorPlatform }) => {
                 const relevantTopics = await getRelevantTopics({ topics, platform });
-                payload.valid_topics = relevantTopics;
+                payload.valid_topics.push(...relevantTopics);
                 const topicClusters = await getTopicClusters({ productDescription, topics: relevantTopics });
                 const influencers = await getInfluencers({ topicClusters, platform });
-                payload.recommended_influencers = influencers.map((i) => i.user_id);
+                payload.recommended_influencers.push(...influencers.map((i) => i.user_id));
 
                 return influencers;
             };
 
-            const instagramInfluencers = await getInfluencersForPlatform({ platform });
+            const instagramInfluencers = await getInfluencersForPlatform({ platform: 'instagram' });
             setProgress((prevProgress) => ({ ...prevProgress, isMidway: true }));
 
             // const tiktokInfluencers = await getInfluencersForPlatform({ platform: 'tiktok' });
@@ -115,6 +113,7 @@ export const Chat: React.FC<ChatProps> = ({
             addProgressMessage(`${influencers.length} ${t('boostbot.chat.influencersFound')}!`);
             document.dispatchEvent(new Event('influencerTableSetFirstPage'));
             await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait for 1s for loading animation to finish
+            track(RecommendInfluencers.eventName, payload);
         } catch (error) {
             if (error instanceof Error && error.name === 'AbortError') {
                 toast.success(t('boostbot.chat.stopped'));
@@ -124,12 +123,12 @@ export const Chat: React.FC<ChatProps> = ({
 
                 clientLogger(error, 'error');
                 toast.error(t('boostbot.error.influencerSearch'));
+
+                track(RecommendInfluencers.eventName, payload);
             }
         } finally {
             setIsLoading(false);
         }
-
-        track(RecommendInfluencers.eventName, payload);
     };
 
     return (
