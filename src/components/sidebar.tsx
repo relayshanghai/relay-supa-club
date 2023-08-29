@@ -1,15 +1,16 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import type { MutableRefObject, ReactNode } from 'react';
-import { useEffect } from 'react';
 import useAboveScreenWidth from 'src/hooks/use-above-screen-width';
 import EmailOutline from './icons/EmailOutline';
 import { useUser } from 'src/hooks/use-user';
-import { Compass, FourSquare, Team, Guide, Send, Engagements, ProfilePlus, BarGraph, Thunder } from './icons';
+import { Compass, Team, Guide, Send, Engagements, ProfilePlus, BarGraph } from './icons';
 import { Title } from './title';
 import { useTranslation } from 'react-i18next';
 import { featEmail } from 'src/constants/feature-flags';
 import { Button } from './button';
+import BoostbotDefault from './icons/Boostbot_default';
+import BoostbotSelected from './icons/Boostbot_selected';
 
 const links = {
     discover: '/dashboard',
@@ -30,7 +31,7 @@ const links = {
 const ActiveLink = ({ href, children }: { href: string; children: ReactNode }) => {
     const router = useRouter();
 
-    const pathRoot = router.pathname; // /dashboard/influencers => dashboard
+    const pathRoot = router.pathname === '/' ? '/' : `/${router.pathname.split('/')[1]}`; // /dashboard/influencers => dashboard
 
     const isRouteActive = pathRoot === href;
 
@@ -45,9 +46,12 @@ const ActiveLink = ({ href, children }: { href: string; children: ReactNode }) =
                 <Compass height={18} width={18} className="my-0.5 stroke-inherit" />
             )}
 
-            {href === links.boostbot && <Thunder height={18} width={18} className="my-0.5 stroke-inherit" />}
-
-            {href === links.campaigns && <FourSquare height={18} width={18} className="my-0.5 stroke-inherit" />}
+            {href === links.boostbot &&
+                (pathRoot === links.boostbot ? (
+                    <BoostbotSelected height={18} width={18} className="my-0.5 stroke-inherit" />
+                ) : (
+                    <BoostbotDefault height={18} width={18} className="my-0.5 stroke-inherit" />
+                ))}
 
             {href === links.aiEmailGenerator && (
                 <EmailOutline height={18} width={18} className="my-0.5 stroke-inherit" />
@@ -98,7 +102,7 @@ const NavBarInner = ({
 
     return (
         <>
-            <div className="pt-5">
+            <div className="pt-2">
                 <Title open={open && desktop} />
             </div>
             <div className="flex h-full flex-col justify-between gap-4 pt-8">
@@ -169,7 +173,7 @@ const NavBarInner = ({
                             {profileFirstName[0]}
                             {accountMenuOpen && (
                                 <div
-                                    className="border-gray absolute bottom-[120%] left-[100%] z-20 flex w-fit origin-top-right flex-col overflow-hidden rounded-md border border-opacity-40 bg-white shadow-lg"
+                                    className="border-gray absolute bottom-[120%] left-[100%] flex w-fit origin-top-right flex-col overflow-hidden rounded-md border border-opacity-40 bg-white shadow-lg"
                                     ref={accountMenuRef}
                                 >
                                     <Link
@@ -230,20 +234,15 @@ export const Sidebar = ({
     const desktop = useAboveScreenWidth(768);
     const { profile } = useUser();
 
-    useEffect(() => {
-        if (desktop) setOpen(true);
-        else setOpen(false);
-    }, [desktop, setOpen]);
-
     return (
         // mask is the dark overlay that appears when the sidebar is open
-        <nav className="h-full">
+        <nav className="z-10 h-full">
             <div
-                className={`pointer-events-none fixed inset-0 z-50 opacity-0 transition-all`}
+                className={`pointer-events-none fixed inset-0 opacity-0 transition-all`}
                 onClick={() => setOpen(false)}
             />
             <div
-                className={`inset-y-0 left-0 z-50 ${
+                className={`inset-y-0 left-0 ${
                     open ? 'w-64' : 'w-16'
                 } flex h-full transform flex-col border-r border-gray-100 bg-white transition-all`}
             >

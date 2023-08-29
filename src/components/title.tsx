@@ -10,8 +10,8 @@ export const Title = ({ size = 'default', open }: TitleProps) => {
     return (
         <Link className={`flex ${open ? 'justify-start' : 'justify-center'} md:self-start ${sizeClass}`} href="/">
             <div className={`flex cursor-pointer items-center ${open ? 'pl-5' : 'px-4'} font-poppins`}>
-                <div className="poppins text-2xl font-extrabold tracking-wide text-tertiary-600">
-                    <span className={`${!open && 'text-3xl text-relay-purple'}`}>r</span>
+                <div className="poppins text-3xl font-extrabold tracking-wide text-tertiary-600">
+                    <span className={`${!open && 'text-relay-purple'}`}>r</span>
                     {open && (
                         <>
                             elay<span className="text-relay-purple">.</span>club

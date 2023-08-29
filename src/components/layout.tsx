@@ -44,7 +44,7 @@ export const Layout = ({ children }: any) => {
     const accountMenuButtonRef = useRef(null);
     useOnOutsideClick(accountMenuRef, () => setAccountMenuOpen(false), accountMenuButtonRef);
     const { trackEvent } = useRudderstack();
-    const [sideBarOpen, setSideBarOpen] = useState(true);
+    const [sideBarOpen, setSideBarOpen] = useState(false);
 
     return (
         <div className="fixed flex h-screen w-screen">
@@ -70,7 +70,7 @@ export const Layout = ({ children }: any) => {
                             variant="neutral"
                             className="flex items-center p-4 hover:text-primary-500"
                         >
-                            <HamburgerMenu height={24} width={24} />
+                            <HamburgerMenu className="h-5 w-5 stroke-gray-400" />
                         </Button>
 
                         {/*  */}
