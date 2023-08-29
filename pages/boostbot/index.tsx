@@ -169,13 +169,11 @@ const Boostbot = () => {
             console.log('userIds to send :>> ', userIdsToSend);
 
             track("TEST:boostbot-send_influencer_to_outreach");
-            // product description, influencer, topics, is_success
         } catch (error) {
             clientLogger(error, 'error');
             toast.error(t('boostbot.error.influencerToOutreach'));
 
             track("TEST:boostbot-send_influencer_to_outreach");
-            // product description, influencer, topics, is_success
         }
     };
 
