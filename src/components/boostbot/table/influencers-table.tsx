@@ -45,7 +45,7 @@ export function InfluencersTable<TData, TValue>({
 
         const currentPageInfluencers = table.getRowModel().rows?.map((row) => row.original) ?? [];
         setCurrentPageInfluencers(currentPageInfluencers);
-    }, [page, table, setCurrentPageInfluencers]);
+    }, [page, table, setCurrentPageInfluencers, data]);
 
     // Handle table pagination reset when for example new influencers are loaded. But not when individual ones are unlocked/removed.
     useEffect(() => {
