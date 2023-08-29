@@ -717,8 +717,8 @@ BEGIN
     'William Edward',
     'Douglas',
     'company_owner',
-    'e7ustgsqqvy9al6f',
-    'tech.relay.club@gmail.com'
+    'nqnwq6g9ooqhfexa',
+    'test@boostbot.ai'
   );
   _profile_christopher := create_profile(
     _company_test.id,
