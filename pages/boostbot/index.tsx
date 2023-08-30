@@ -9,13 +9,14 @@ import { InfluencersTable } from 'src/components/boostbot/table/influencers-tabl
 import { Layout } from 'src/components/layout';
 import { useBoostbot } from 'src/hooks/use-boostbot';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
-import { OpenBoostbotPage, UnlockInfluencers } from 'src/utils/analytics/events';
+import { useSequence } from 'src/hooks/use-sequence';
+import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
+import { useSequences } from 'src/hooks/use-sequences';
+import { OpenBoostbotPage, SendInfluencersToOutreach, UnlockInfluencers } from 'src/utils/analytics/events';
+import { SendInfluencersToOutreachPayload } from 'src/utils/analytics/events/boostbot/send-influencers-to-outreach';
 import type { UnlockInfluencersPayload } from 'src/utils/analytics/events/boostbot/unlock-influencer';
 import { clientLogger } from 'src/utils/logger-client';
 import type { UserProfile } from 'types';
-import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
-import { useSequences } from 'src/hooks/use-sequences';
-import { useSequence } from 'src/hooks/use-sequence';
 
 export type Influencer = (UserProfile | CreatorAccountWithTopics) & {
     isLoading?: boolean;
@@ -110,14 +111,26 @@ const Boostbot = () => {
     };
 
     const handlePageToOutreach = async () => {
+        const trackingPayload: SendInfluencersToOutreachPayload = {
+            influencer_ids: [],
+            topics: [],
+            is_multiple: null,
+            is_success: true,
+        };
+
         try {
             const unlockedInfluencers = await handlePageToUnlock();
+            trackingPayload.is_multiple = unlockedInfluencers ? unlockedInfluencers.length > 1 : null;
+
             if (!unlockedInfluencers) throw new Error('Error unlocking influencers');
 
             const sequenceInfluencerPromises = unlockedInfluencers.map((influencer) => {
                 const socialProfileId = influencer.socialProfile.id;
                 const tags = influencer.user_profile.relevant_tags.slice(0, 3).map((tag) => tag.tag);
                 const creatorProfileId = influencer.user_profile.user_id;
+
+                trackingPayload.influencer_ids.push(creatorProfileId)
+                trackingPayload.topics.push(...influencer.user_profile.relevant_tags.map((v) => v.tag))
 
                 return createSequenceInfluencer(socialProfileId, tags, creatorProfileId);
             });
@@ -126,14 +139,18 @@ const Boostbot = () => {
             const sendSequencePromises = sequenceInfluencers.map((influencer) => sendSequence([influencer]));
             await Promise.all(sendSequencePromises);
             toast.success(t('boostbot.success.influencersToOutreach'));
-
-            track('TEST:boostbot-send_influencer_to_outreach');
         } catch (error) {
             clientLogger(error, 'error');
             toast.error(t('boostbot.error.influencersToOutreach'));
 
-            track('TEST:boostbot-send_influencer_to_outreach');
+            trackingPayload.is_success = false;
+            trackingPayload.extra_info = { error: String(error) };
         }
+
+        // @ts-ignore bypasses apiObject type requirement of is_multiple.
+        // Needs `null` for it to show in mixpanel without explicitly
+        // saying that it is multiple or not
+        track(SendInfluencersToOutreach.eventName, trackingPayload);
     };
 
     return (
