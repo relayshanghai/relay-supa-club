@@ -11,14 +11,14 @@ export const EmailHeader = ({ messages }: { messages: SearchResponseMessage[] })
         <div className="flex w-full items-center justify-between border-b-2 border-tertiary-200 bg-primary-500 px-4 py-6 text-white">
             <div className="flex flex-col">
                 <div className="mb-2 truncate px-4 text-2xl font-semibold">{messages[0]?.subject || 'subject'}</div>
-                {sequenceEmail && sequenceEmail.sequences ?
-                <div className="space-y-2 pl-4 font-semibold">
-                    <div>
-                        {t('inbox.sequence')}: {sequenceEmail.sequences.name}
+                {sequenceEmail && sequenceEmail.sequences ? (
+                    <div className="space-y-2 pl-4 font-semibold">
+                        <div>
+                            {t('inbox.sequence')}: {sequenceEmail.sequences.name}
+                        </div>
+                        {/* <div>Product:</div> */}
                     </div>
-                    {/* <div>Product:</div> */}
-                </div>
-                : null }
+                ) : null}
             </div>
             <div className="self-start px-4">
                 {t('inbox.lastMessage')}:{' '}

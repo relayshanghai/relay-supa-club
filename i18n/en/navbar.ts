@@ -1,11 +1,11 @@
 const navbar = {
     campaigns: 'Campaigns',
     discover: 'Discover',
-    boostbot: 'BoostBot (Beta)',
     aiEmailGenerator: 'AI Email Generator',
     account: 'My Account',
     logout: 'Log Out',
     performance: 'Performance',
+    boostbot: 'BoostBot Search',
     guide: 'Guide',
     sequences: 'Sequences',
     inbox: 'Inbox',

@@ -13,6 +13,9 @@ import { OpenBoostbotPage, UnlockInfluencers } from 'src/utils/analytics/events'
 import type { UnlockInfluencersPayload } from 'src/utils/analytics/events/boostbot/unlock-influencer';
 import { clientLogger } from 'src/utils/logger-client';
 import type { UserProfile } from 'types';
+import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
+import { useSequences } from 'src/hooks/use-sequences';
+import { useSequence } from 'src/hooks/use-sequence';
 
 export type Influencer = (UserProfile | CreatorAccountWithTopics) & {
     isLoading?: boolean;
@@ -24,6 +27,10 @@ const Boostbot = () => {
     const { unlockInfluencers } = useBoostbot({ abortSignal: undefined });
     const [isInitialLogoScreen, setIsInitialLogoScreen] = useState(true);
     const { trackEvent: track } = useRudderstack();
+    const { sequences } = useSequences();
+    const boostbotSequenceId = sequences?.find((sequence) => sequence.name === 'General collaboration')?.id ?? '';
+    const { createSequenceInfluencer } = useSequenceInfluencers([boostbotSequenceId]);
+    const { sendSequence } = useSequence(boostbotSequenceId);
 
     useEffect(() => {
         track(OpenBoostbotPage.eventName);
@@ -99,15 +106,27 @@ const Boostbot = () => {
 
     const handlePageToOutreach = async () => {
         try {
-            // const userIdsToSend = currentPageInfluencers.map((influencer) => influencer.user_id);
+            const unlockedInfluencers = await handlePageToUnlock();
+            if (!unlockedInfluencers) throw new Error('Error unlocking influencers');
 
-            // TODO: Add send to outreach functionality
-            // console.log('userIds to send :>> ', userIdsToSend);
+            const sequenceInfluencerPromises = unlockedInfluencers.map((influencer) => {
+                const socialProfileId = influencer.socialProfile.id;
+                const tags = influencer.user_profile.relevant_tags.slice(0, 3).map((tag) => tag.tag);
+                const creatorProfileId = influencer.user_profile.user_id;
+                const socialProfileEmail = influencer.socialProfile.email;
+
+                return createSequenceInfluencer(socialProfileId, tags, creatorProfileId, socialProfileEmail);
+            });
+            const sequenceInfluencers = await Promise.all(sequenceInfluencerPromises);
+
+            const sendSequencePromises = sequenceInfluencers.map((influencer) => sendSequence([influencer]));
+            await Promise.all(sendSequencePromises);
+            toast.success(t('boostbot.success.influencersToOutreach'));
 
             track('TEST:boostbot-send_influencer_to_outreach');
         } catch (error) {
             clientLogger(error, 'error');
-            toast.error(t('boostbot.error.influencerToOutreach'));
+            toast.error(t('boostbot.error.influencersToOutreach'));
 
             track('TEST:boostbot-send_influencer_to_outreach');
         }
@@ -123,6 +142,7 @@ const Boostbot = () => {
                         handlePageToUnlock={handlePageToUnlock}
                         handlePageToOutreach={handlePageToOutreach}
                         setIsInitialLogoScreen={setIsInitialLogoScreen}
+                        handleUnlockInfluencers={handleUnlockInfluencers}
                     />
                 </div>
 
