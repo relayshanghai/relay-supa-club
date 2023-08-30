@@ -15,4 +15,4 @@ export const SearchDefault = (trigger: TriggerEvent<SearchDefaultPayload>, paylo
 
 export type SearchDefault = typeof SearchDefault;
 
-SearchDefault.eventName = SEARCH_DEFAULT;
+SearchDefault.eventName = <typeof SEARCH_DEFAULT>SEARCH_DEFAULT;

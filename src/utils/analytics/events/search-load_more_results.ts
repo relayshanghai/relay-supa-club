@@ -15,4 +15,4 @@ export const SearchLoadMoreResults = (trigger: TriggerEvent, value?: SearchLoadM
 
 export type SearchLoadMoreResults = typeof SearchLoadMoreResults;
 
-SearchLoadMoreResults.eventName = SEARCH_LOAD_MORE_RESULTS;
+SearchLoadMoreResults.eventName = <typeof SEARCH_LOAD_MORE_RESULTS>SEARCH_LOAD_MORE_RESULTS;
