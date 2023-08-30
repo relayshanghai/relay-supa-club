@@ -10,9 +10,15 @@ const sequences = {
     openRate: '打开率',
     replyRate: '回复率',
     bounceRate: '退信率',
+    sequenceSendTooltip: '发送序列邮件',
+    sequenceSendTooltipDescription: '这将会安排发送您的序列邮件给这位KOL。',
     totalInfluencersTooltip: 'KOL总数',
     totalInfluencersTooltipDescription:
         '这是您添加到邮件进程管理器的所有KOL数量，包括需要急需回复、联络中和未回复的KOL。',
+    outreachPlanUpgradeTooltip: '仅限拓展方案用户使用',
+    outreachPlanUpgradeTooltipDescription: `此功能仅适用于当前使用拓展方案的付费用户。
+
+    如果您希望使用我们的邮件进程管理、智能邮件模板、KOL管理跟进以及定制的平台内电子邮箱功能，请通过微信联系我们的销售经理Amy，或发送邮件至 amy.hu@relay.club咨询拓展方案。`,
     openRateTooltip: '邮件打开率',
     openRateTooltipDescription:
         '已发送的邮件中被打开查看邮件占比。由于某些电子邮件客户端禁用外部跟踪，这个数字可能不是百分之百的准确。',
@@ -98,17 +104,6 @@ const sequences = {
     产品介绍：“The Mi Band 8 is our latest affordable smart watch
     and fitness tracker.”
     这将会直接显示于您的电子邮件模版中。`,
-    productFeatures: '产品亮点',
-    productFeaturesPlaceholder: `It offers a full-color touch display,  sleep, exercise and blood oxygen tracking and has a battery life of over 2 weeks!`,
-    productFeaturesTooltip: '产品亮点',
-    productFeaturesTooltipDescription: `描述您的产品最重要或最亮点的功能，让KOL了解您的产品与众不同之处。
-    描述您的产品最重要或最亮点的功能，让KOL了解您的产品与众不同之处。
-    以 "It offers"、"It can "或 "With "开头。
-
-    例如
-    ”It offers a full-color touch display, sleep, exercise and blood oxygen tracking, and has a
-    battery life of over 2 weeks!”
-    这将会直接显示于您的电子邮件模版中。`,
     productPrice: '产品价格',
     productPriceTooltip: '产品价格',
     productPriceTooltipDescription: `
@@ -133,7 +128,8 @@ const sequences = {
     recentPostTitleTooltip: '最新发布内容',
     recentPostTitleTooltipDescription: `无需输入！我们将从KOL报告中提取这些信息，为收件人定制每封邮件！`,
     wellHandleThisOne: `无需输入此项，我们来搞定！`,
-    missingRequiredTemplateVariables_variables: 'Missing required template variables: {{variables}}',
+    missingRequiredTemplateVariables: '缺少必填的邮件模版参数',
+    missingRequiredTemplateVariables_variables: '缺少必填的邮件模版参数: {{variables}}',
     emailPreview: '邮件预览',
     number_emailsSuccessfullyScheduled: '成功提交安排{{number}}发送邮件',
     number_emailsFailedToSchedule: '失败提交安排发{{number}}送邮件',

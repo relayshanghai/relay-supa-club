@@ -111,15 +111,15 @@ describe('outreach', () => {
         cy.contains('Charlie Charles').should('not.exist');
 
         // send sequence is disabled if missing template variables
-        cy.contains('Missing required template variables: Product Description').should('not.be.visible');
+        cy.contains('Missing required template variables: **Product Description**').should('not.be.visible');
         cy.getByTestId('send-email-button-bob.brown@example.com').trigger('mouseover');
-        cy.contains('Missing required template variables: Product Description');
+        cy.contains('Missing required template variables: **Product Description**');
         cy.getByTestId('send-email-button-bob.brown@example.com').trigger('mouseout');
-        cy.contains('Missing required template variables: Product Description').should('not.be.visible');
+        cy.contains('Missing required template variables: **Product Description**').should('not.be.visible');
         cy.contains('div', 'Auto-start').within(() => {
             cy.get('input[type=checkbox]').trigger('mouseover', { force: true });
         });
-        cy.contains('Missing required template variables: Product Description');
+        cy.contains('Missing required template variables: **Product Description**');
         cy.contains('div', 'Auto-start').within(() => {
             cy.get('input[type=checkbox]').click({ force: true });
             // clicking opens the modal
@@ -136,7 +136,7 @@ describe('outreach', () => {
 
         // can send sequence
         cy.getByTestId('send-email-button-bob.brown@example.com').trigger('mouseover');
-        cy.contains('Missing required template variables: Product Description').should('not.exist');
+        cy.contains('Missing required template variables: **Product Description**').should('not.exist');
 
         // can view all emails preview
         cy.getByTestId('show-all-email-previews-button').eq(0).click();

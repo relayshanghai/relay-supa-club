@@ -47,16 +47,6 @@ const variables: TemplateVariable[] = [
         required: true,
     },
     {
-        id: '74dcd760-bee0-449c-a696-8f0112263619',
-        created_at: '2023-08-11T04:22:24.39152+00:00',
-        updated_at: '2023-08-11T04:22:24.39152+00:00',
-        name: 'Product Features',
-        value: 'The Product Features',
-        key: 'productFeatures',
-        sequence_id: '6de3e960-92b0-41bf-a4fe-e56454f20490',
-        required: true,
-    },
-    {
         id: '498500aa-1315-4ea2-935d-7a524766c7cf',
         created_at: '2023-08-11T04:22:24.39152+00:00',
         updated_at: '2023-08-11T04:22:24.39152+00:00',

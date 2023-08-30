@@ -1083,12 +1083,6 @@ BEGIN
   );
   PERFORM create_template_variable(
     _sequence_general.id,
-    'productFeatures',
-    'Product Features',
-    'Your Product Features'
-  );
-  PERFORM create_template_variable(
-    _sequence_general.id,
     'productLink',
     'Product Link',
     'https://example.com/product'
