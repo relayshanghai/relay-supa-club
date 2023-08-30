@@ -101,6 +101,8 @@ const account = {
         cancelling: '取消中...',
         subscriptionCancelled: '订阅已取消',
     },
+    planIsReady: '您已成功订阅！',
+    redirectingMsg: '3秒后将自动跳转页面',
 };
 
 export default account;
