@@ -23,13 +23,13 @@ export const OverlayRight = ({ children, isOpen = false, onOpen, ...props }: Pro
         }
     }, [isOpen, onOpen]);
 
-    const overlayCls = useMemo(() => cls({ 'translate-x-full': !isOpen }), [isOpen]);
-    const backdropCls = useMemo(() => cls({ hidden: !isOpen }), [isOpen]);
+    const overlayClass = useMemo(() => cls({ 'translate-x-full': !isOpen }), [isOpen]);
+    const backdropClass = useMemo(() => cls({ hidden: !isOpen }), [isOpen]);
 
     return (
         <>
             <div
-                className={`${overlayCls} fixed right-0 top-0 z-[60] h-full w-full ${
+                className={`${overlayClass} fixed right-0 top-0 z-[60] h-full w-full ${
                     router.pathname.includes('influencer-manager') ? 'max-w-4xl' : 'max-w-md'
                 } transform flex-col overflow-auto bg-white transition-all duration-300`}
                 tabIndex={-1}
@@ -48,7 +48,7 @@ export const OverlayRight = ({ children, isOpen = false, onOpen, ...props }: Pro
 
             <div
                 onClick={() => closeOverlay()}
-                className={`${backdropCls} duration hs-overlay-backdrop fixed inset-0 z-50 bg-gray-400 bg-opacity-80 transition dark:bg-opacity-80`}
+                className={`${backdropClass} duration hs-overlay-backdrop fixed inset-0 z-50 bg-gray-400 bg-opacity-80 transition dark:bg-opacity-80`}
             />
         </>
     );
