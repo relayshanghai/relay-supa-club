@@ -26,11 +26,10 @@ const turnOffRudderInDev = () => {
 
 export async function rudderInitialized() {
     if (disabled) {
-        // return turnOffRudderInDev();
+        turnOffRudderInDev();
     }
 
     if (window.rudder) {
-        // console.log("You already got the rudder, dude.")
         return window.rudder
     }
 
@@ -45,7 +44,6 @@ export async function rudderInitialized() {
 
     const rudder = await import('rudder-sdk-js').then((rudder) => {
         if (window.rudder) {
-            // console.log("Nope, no more ruddering for you son.")
             return window.rudder
         }
 
@@ -53,7 +51,6 @@ export async function rudderInitialized() {
             integrations: { All: true }, // load call options
         });
 
-        // console.log("Here's the rudder, ma boy!")
         window.rudder = rudder
         return rudder
     })

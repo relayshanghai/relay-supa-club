@@ -8,7 +8,8 @@ import {
     ANALYZE_OPEN_EXTERNAL_SOCIAL_PROFILE,
     AnalyzeOpenExternalSocialProfile
 } from './analyze-open_external_social_profile';
-import { BOOSTBOT_ANALYZE_INFLUENCER, BoostbotAnalyzeInfluencer, BoostbotAnalyzeInfluencerPayload } from './boostbot-analyze-influencer';
+import type { BoostbotAnalyzeInfluencerPayload } from './boostbot-analyze-influencer';
+import { BOOSTBOT_ANALYZE_INFLUENCER, BoostbotAnalyzeInfluencer } from './boostbot-analyze-influencer';
 import type { AddInfluencerToSequencePayload } from './outreach/add-influencer-to-sequence';
 import { AddInfluencerToSequence, OUTREACH_ADD_INFLUENCER_TO_SEQUENCE } from './outreach/add-influencer-to-sequence';
 import type { CreateSequencePayload } from './outreach/create-sequence';
