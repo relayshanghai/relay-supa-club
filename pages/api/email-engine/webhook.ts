@@ -64,25 +64,33 @@ const deleteSequenceEmailByMessageId = db<typeof deleteSequenceEmailByMessageIdC
     deleteSequenceEmailByMessageIdCall,
 );
 
-const deleteScheduledEmail = async (event: WebhookMessageNew) => {
+const deleteScheduledEmails = async (sequenceInfluencer: SequenceInfluencer, event: WebhookMessageNew) => {
     try {
+        // we only want to delete emails that are for sequence_steps/sequence_emails that are connected to the `to` (our) user's company. Otherwise this will delete emails of other users to this same influencer.
+        const sequenceEmails = await getSequenceEmailsBySequenceInfluencer(sequenceInfluencer.id);
         const outbox = await getOutbox();
-        // If there is a sequenced email in the outbox to this address, cancel it
+        // If there are any scheduled emails in the outbox to this address, cancel them
         if (outbox.messages.some((message) => message.envelope.to.includes(event.data.from.address))) {
-            const message = outbox.messages.find((message) => message.envelope.to.includes(event.data.from.address));
-            if (!message) {
+            const messages = outbox.messages.filter(
+                (message) =>
+                    message.envelope.to.includes(event.data.from.address) &&
+                    sequenceEmails.some((sequenceEmail) => sequenceEmail.email_message_id === message.messageId), // Outbox is global to all users so we need to filter down to only the messages that are for this user by checking if the message is in the sequenceEmails
+            );
+            if (messages.length === 0) {
                 return;
             }
-            const { deleted } = await deleteEmailFromOutbox(message.queueId);
+            messages.forEach(async (message) => {
+                const { deleted } = await deleteEmailFromOutbox(message.queueId);
 
-            await deleteSequenceEmailByMessageId(message.messageId);
+                await deleteSequenceEmailByMessageId(message.messageId);
 
-            await supabaseLogger({
-                type: 'email-webhook',
-                data: event as any,
-                message: `${deleted ? 'canceled' : 'failed to cancel'} email to: ${JSON.stringify(
-                    message.envelope.to,
-                )}`,
+                await supabaseLogger({
+                    type: 'email-webhook',
+                    data: event as any,
+                    message: `${deleted ? 'canceled' : 'failed to cancel'} email to: ${JSON.stringify(
+                        message.envelope.to,
+                    )}`,
+                });
             });
         }
     } catch (error) {
@@ -95,8 +103,8 @@ const deleteScheduledEmail = async (event: WebhookMessageNew) => {
     }
 };
 const handleReply = async (sequenceInfluencer: SequenceInfluencer, event: WebhookMessageNew) => {
-    await deleteScheduledEmail(event);
-    // Outgoing emails should have been deleted. This will update the remaining emails to "replied" and the influencer to "negotiating
+    await deleteScheduledEmails(sequenceInfluencer, event);
+    // Outgoing emails should have been deleted. This will update the remaining emails to "replied" and the influencer to "negotiating"
     const sequenceEmails = await getSequenceEmailsBySequenceInfluencer(sequenceInfluencer.id);
     await supabaseLogger({
         type: 'email-webhook',
@@ -156,7 +164,7 @@ const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) =>
         }
         const sequenceInfluencer = await getSequenceInfluencerByEmailAndCompany(
             event.data.from.address,
-            ourUser?.company_id,
+            ourUser.company_id,
         );
         if (!sequenceInfluencer) {
             await supabaseLogger({
@@ -166,8 +174,15 @@ const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) =>
             });
             return res.status(httpCodes.OK).json({});
         }
+        // if there is a sequenceInfluencer, this is a reply to a sequenced email
         await handleReply(sequenceInfluencer, event);
-    } catch (error) {}
+    } catch (error: any) {
+        await supabaseLogger({
+            type: 'email-webhook',
+            data: event as any,
+            message: `newMessage uncaught error: ${error?.message}`,
+        });
+    }
 
     return res.status(httpCodes.OK).json({});
 };
