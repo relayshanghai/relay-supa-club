@@ -9,4 +9,4 @@ export const AnalyzeAddToCampaign = (trigger: TriggerEvent, value?: AnalyzeAddTo
 
 export type AnalyzeAddToCampaign = typeof AnalyzeAddToCampaign;
 
-AnalyzeAddToCampaign.eventName = ANALYZE_ADD_TO_CAMPAIGN;
+AnalyzeAddToCampaign.eventName = <typeof ANALYZE_ADD_TO_CAMPAIGN>ANALYZE_ADD_TO_CAMPAIGN;

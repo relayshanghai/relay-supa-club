@@ -9,4 +9,4 @@ export const BoostbotAnalyzeInfluencer = (trigger: TriggerEvent, value?: Boostbo
 
 export type BoostbotAnalyzeInfluencer = typeof BoostbotAnalyzeInfluencer;
 
-BoostbotAnalyzeInfluencer.eventName = BOOSTBOT_ANALYZE_INFLUENCER;
+BoostbotAnalyzeInfluencer.eventName = <typeof BOOSTBOT_ANALYZE_INFLUENCER>BOOSTBOT_ANALYZE_INFLUENCER;
