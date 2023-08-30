@@ -50,25 +50,25 @@ const Boostbot = () => {
     const handleUnlockInfluencers = async (userIds: string[]) => {
         userIds.forEach((userId) => setInfluencerLoading(userId, true));
 
+        const trackingPayload: UnlockInfluencersPayload = {
+            influencer_ids: [],
+            topics: [],
+            is_multiple: userIds.length > 1,
+            is_success: true,
+        };
+
         try {
             const response = await unlockInfluencers(userIds);
             const unlockedInfluencers = response?.map((result) => result.user_profile);
 
             if (unlockedInfluencers) {
-                const payload: UnlockInfluencersPayload = {
-                    influencer_ids: [],
-                    topics: [],
-                    is_all: true,
-                    is_success: true,
-                };
-
                 unlockedInfluencers.forEach((newInfluencerData) => {
                     setInfluencers((prevInfluencers) => {
                         const influencer = prevInfluencers.find((i) => i.user_id === newInfluencerData.user_id);
 
                         if (influencer) {
-                            payload.influencer_ids.push(influencer.user_id);
-                            payload.topics.push(...influencer.topics);
+                            trackingPayload.influencer_ids.push(influencer.user_id);
+                            trackingPayload.topics.push(...influencer.topics);
                         }
 
                         return prevInfluencers.map((influencer) =>
@@ -85,15 +85,10 @@ const Boostbot = () => {
             clientLogger(error, 'error');
             toast.error(t('boostbot.error.influencerUnlock'));
 
-            const payload: UnlockInfluencersPayload = {
-                influencer_ids: userIds,
-                topics: [],
-                is_all: true,
-                is_success: false,
-                extra_info: { error: String(error) },
-            };
-            track(UnlockInfluencers.eventName, payload);
+            trackingPayload.is_success = false;
+            trackingPayload.extra_info = { error: String(error) };
         } finally {
+            track(UnlockInfluencers.eventName, trackingPayload);
             userIds.forEach((userId) => setInfluencerLoading(userId, false));
         }
     };

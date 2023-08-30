@@ -16,4 +16,4 @@ export const RecommendInfluencers = (trigger: TriggerEvent, value?: RecommendInf
 
 export type RecommendInfluencers = typeof RecommendInfluencers;
 
-RecommendInfluencers.eventName = BOOSTBOT_RECOMMEND_INFLUENCERS;
+RecommendInfluencers.eventName = <typeof BOOSTBOT_RECOMMEND_INFLUENCERS>BOOSTBOT_RECOMMEND_INFLUENCERS;
