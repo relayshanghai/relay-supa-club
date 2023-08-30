@@ -10,6 +10,7 @@ import type { ProgressType } from './chat';
 interface ChatContentProps {
     messages: MessageType[];
     isLoading: boolean;
+    isBoostbotLoading: boolean;
     shouldShowButtons: boolean;
     handlePageToUnlock: () => void;
     handlePageToOutreach: () => void;
@@ -19,6 +20,7 @@ interface ChatContentProps {
 export const ChatContent: React.FC<ChatContentProps> = ({
     messages,
     isLoading,
+    isBoostbotLoading,
     shouldShowButtons,
     handlePageToUnlock,
     handlePageToOutreach,
@@ -43,10 +45,12 @@ export const ChatContent: React.FC<ChatContentProps> = ({
 
             {shouldShowButtons && (
                 <div className="z-10">
-                    <Button onClick={handlePageToUnlock} className="mb-2">
+                    <Button onClick={handlePageToUnlock} className="mb-2" disabled={isBoostbotLoading}>
                         {t('boostbot.chat.unlockPage')}
                     </Button>
-                    <Button onClick={handlePageToOutreach}>{t('boostbot.chat.outreachPage')}</Button>
+                    <Button onClick={handlePageToOutreach} disabled={isBoostbotLoading}>
+                        {t('boostbot.chat.outreachPage')}
+                    </Button>
                 </div>
             )}
 

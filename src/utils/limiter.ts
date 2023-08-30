@@ -2,11 +2,11 @@ import Bottleneck from 'bottleneck';
 import { serverLogger } from 'src/utils/logger-server';
 import { clientLogger } from 'src/utils/logger-client';
 
-// limited to 7 requests per second to be slightly below the 10 request per second IQData limit
-const REQUEST_INTERVAL = 1000 / 7;
+const REQUEST_INTERVAL = 1000 / 5;
+const MAX_CONCURRENT = 5;
 const RETRY_LIMIT = 10;
 
-const limiter = new Bottleneck({ minTime: REQUEST_INTERVAL });
+const limiter = new Bottleneck({ minTime: REQUEST_INTERVAL, maxConcurrent: MAX_CONCURRENT });
 
 limiter.on('failed', async (error, jobInfo) => {
     const { retryCount, options } = jobInfo;

@@ -13,6 +13,7 @@ import type { CreatorPlatform } from 'types';
 import { ChatContent } from './chat-content';
 import { ChatInput } from './chat-input';
 import type { CreatorsReportGetResponse } from 'pages/api/creators/report';
+import { limiter } from 'src/utils/limiter';
 
 export type ProgressType = {
     topics: string[];
@@ -32,7 +33,7 @@ interface ChatProps {
     setIsInitialLogoScreen: Dispatch<SetStateAction<boolean>>;
     handlePageToUnlock: () => void;
     handlePageToOutreach: () => void;
-    handleUnlockInfluencers: (userIds: string[]) => Promise<CreatorsReportGetResponse[] | undefined>;
+    handleUnlockInfluencers: (influencers: Influencer[]) => Promise<CreatorsReportGetResponse[] | undefined>;
 }
 
 export const Chat: React.FC<ChatProps> = ({
@@ -119,16 +120,18 @@ export const Chat: React.FC<ChatProps> = ({
                 return influencers;
             };
 
-            const instagramInfluencers = await getInfluencersForPlatform({ platform: 'instagram' });
+            const platforms: CreatorPlatform[] = ['youtube', 'tiktok', 'instagram'];
+            const parallelSearchPromises = platforms.map((platform) =>
+                limiter.schedule(() => getInfluencersForPlatform({ platform })),
+            );
+            const influencersResult = await Promise.all(parallelSearchPromises);
+            const influencers = influencersResult.flat().filter((i) => !!i.url);
+
             updateProgress({ topics, isMidway: true, totalFound: null });
-
-            const tiktokInfluencers = await getInfluencersForPlatform({ platform: 'tiktok' });
-            // const youtubeInfluencers = await getInfluencersForPlatform({ platform: 'youtube' });
-            const influencers = [...instagramInfluencers, ...tiktokInfluencers];
-            // const influencers = [...instagramInfluencers, ...tiktokInfluencers, ...youtubeInfluencers];
-
             setInfluencers(influencers);
+
             await handleUnlockInfluencers(influencers.slice(0, 3));
+
             updateProgress({ topics, isMidway: true, totalFound: influencers.length });
             setIsInitialLogoScreen(false);
             addMessage({
@@ -171,6 +174,7 @@ export const Chat: React.FC<ChatProps> = ({
                 handlePageToUnlock={chatPageToUnlock}
                 handlePageToOutreach={chatPageToOutreach}
                 stopBoostbot={stopBoostbot}
+                isBoostbotLoading={isBoostbotLoading}
             />
 
             <div className="relative">
