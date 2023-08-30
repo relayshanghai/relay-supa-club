@@ -24,6 +24,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
 
     const { sequence, sendSequence, sequenceSteps, updateSequence } = useSequence(sequenceId);
     const { sequenceInfluencers } = useSequenceInfluencers(sequence && [sequenceId]);
+
     const { sequenceEmails } = useSequenceEmails(sequenceId);
     const { templateVariables } = useTemplateVariables(sequenceId);
     const missingVariables = templateVariables
