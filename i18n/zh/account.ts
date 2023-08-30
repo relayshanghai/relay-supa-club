@@ -78,6 +78,8 @@ const account = {
             noPaymentMethod: '没有付款方式',
             alreadySubscribed: '已订阅',
         },
+        upgrade: '升级订阅',
+        upgradeSuccess: '升级成功',
     },
     invite: {
         title: '邀请成员加入',

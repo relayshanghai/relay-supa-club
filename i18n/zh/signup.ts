@@ -41,10 +41,10 @@ const signup = {
         bulletPoint3: '7天的免费试用',
         bulletPoint4: '升级至“推广计划”，即刻开始发送邮件进程，联系心仪红人',
         submitButton: '开启免费试用',
-        termsAndConditionCheckboxLabel: '我同意 ',
-        termsAndConditionClickableText: '条款和条件',
+        termsAndConditionCheckboxLabel: '我确认 ',
+        termsAndConditionClickableText: '已阅读并同意网站的使用条款和隐私政策。',
         termsAndCondition: {
-            title: 'RELAY.CLUB 条款和条件',
+            title: 'RELAY.CLUB 使用条款和隐私政策',
             point1Title: '1. 简介',
             point1Description:
                 '欢迎来到 relay.club ("我们", "我们的" 或 "我们")。通过注册免费试用或付费订阅 ("服务")，您同意受以下服务条款和条件的约束。',
