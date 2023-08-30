@@ -2,6 +2,7 @@ import type { HTMLAttributes } from 'react';
 import { useMemo } from 'react';
 import type { NoteData } from './note';
 import { Note } from './note';
+import i18n from 'i18n';
 
 type Props = {
     notes: NoteData[];
@@ -30,7 +31,11 @@ export const NotesList = ({ notes, ...props }: Props) => {
             return (
                 <div key={createDate} className="flex flex-col gap-4">
                     <div className="text-base font-semibold leading-normal tracking-tight text-gray-700">
-                        {createDate}
+                        {new Date(createDate).toLocaleDateString(i18n.language, {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric',
+                        })}
                     </div>
                     <div className="flex flex-col gap-4">{noteItems}</div>
                 </div>

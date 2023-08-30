@@ -460,7 +460,7 @@ CREATE OR REPLACE FUNCTION create_influencer_social_profile(
   _name TEXT,
   _email TEXT,
   _avatar_url TEXT DEFAULT 'https://image-cache.relay.club/?link=https://yt3.googleusercontent.com/ytc/AOPolaSe-ifBRtdfb67uDM8kaHdhdPdQny-MaSRdBfT2NA=s480-c-k-c0x00ffffff-no-rj',
-  _recent_video_title TEXT DEFAULT 'Recent Video Title'
+  _recent_post_title TEXT DEFAULT 'Recent Video Title'
 ) RETURNS RECORD SECURITY DEFINER LANGUAGE plpgsql AS $$
 DECLARE
   _row RECORD;
@@ -476,7 +476,7 @@ BEGIN
     name,
     email,
     avatar_url,
-    recent_video_title
+    recent_post_title
   )
   VALUES (
     uuid_generate_v4(),
@@ -489,7 +489,7 @@ BEGIN
     _name,
     _email,
     _avatar_url,
-    _recent_video_title
+    _recent_post_title
   )
   RETURNING * INTO _row;
   RETURN _row;
@@ -1080,12 +1080,6 @@ BEGIN
     _sequence_general.id,
     'productDescription',
     'Product Description'
-  );
-  PERFORM create_template_variable(
-    _sequence_general.id,
-    'productFeatures',
-    'Product Features',
-    'Your Product Features'
   );
   PERFORM create_template_variable(
     _sequence_general.id,
