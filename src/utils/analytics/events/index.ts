@@ -15,6 +15,7 @@ import type { OpenBoostbotPagePayload } from './boostbot/open-boostbot-page';
 import { BOOSTBOT_OPEN_BOOSTBOT_PAGE, OpenBoostbotPage } from './boostbot/open-boostbot-page';
 import type { RecommendInfluencersPayload } from './boostbot/recommend-influencers';
 import { BOOSTBOT_RECOMMEND_INFLUENCERS, RecommendInfluencers } from './boostbot/recommend-influencers';
+import { BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH, SendInfluencersToOutreach } from './boostbot/send-influencers-to-outreach';
 import type { UnlockInfluencersPayload } from './boostbot/unlock-influencer';
 import { BOOSTBOT_UNLOCK_INFLUENCERS, UnlockInfluencers } from './boostbot/unlock-influencer';
 import type { AddInfluencerToSequencePayload } from './outreach/add-influencer-to-sequence';
@@ -83,6 +84,7 @@ export {
     OpenBoostbotPage,
     RecommendInfluencers,
     UnlockInfluencers,
+    SendInfluencersToOutreach
 };
 
 export const events = {
@@ -110,6 +112,7 @@ export const events = {
     [BOOSTBOT_OPEN_BOOSTBOT_PAGE]: OpenBoostbotPage,
     [BOOSTBOT_RECOMMEND_INFLUENCERS]: RecommendInfluencers,
     [BOOSTBOT_UNLOCK_INFLUENCERS]: UnlockInfluencers,
+    [BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH]: SendInfluencersToOutreach,
 };
 
 export type payloads = {
@@ -166,6 +169,7 @@ export const eventKeys = z.union([
     z.literal(BOOSTBOT_OPEN_BOOSTBOT_PAGE),
     z.literal(BOOSTBOT_RECOMMEND_INFLUENCERS),
     z.literal(BOOSTBOT_UNLOCK_INFLUENCERS),
+    z.literal(BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH),
 ]);
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {
