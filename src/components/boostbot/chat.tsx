@@ -14,6 +14,7 @@ import { ChatContent } from './chat-content';
 import { ChatInput } from './chat-input';
 import type { CreatorsReportGetResponse } from 'pages/api/creators/report';
 import { limiter } from 'src/utils/limiter';
+import { mixArrays } from 'src/utils/utils';
 
 export type ProgressType = {
     topics: string[];
@@ -124,8 +125,8 @@ export const Chat: React.FC<ChatProps> = ({
             const parallelSearchPromises = platforms.map((platform) =>
                 limiter.schedule(() => getInfluencersForPlatform({ platform })),
             );
-            const influencersResult = await Promise.all(parallelSearchPromises);
-            const influencers = influencersResult.flat().filter((i) => !!i.url);
+            const [youtube, tiktok, instagram] = await Promise.all(parallelSearchPromises);
+            const influencers = mixArrays(youtube, tiktok, instagram).filter((i) => !!i.url);
 
             updateProgress({ topics, isMidway: true, totalFound: null });
             setInfluencers(influencers);

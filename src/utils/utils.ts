@@ -104,3 +104,24 @@ export const isRecommendedInfluencer = (recommendedInfluencers: string[], platfo
     recommendedInfluencers.includes(`${platform}/${user_id}`);
 
 export const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const getRandom = (min: number, max: number): number => {
+    return Math.floor(Math.random() * (max - min)) + min;
+};
+
+export const mixArrays = (a: any[], b: any[], c: any[]): any[] => {
+    const output: any[] = [];
+
+    while (a.length || b.length || c.length) {
+        for (const array of [a, b, c]) {
+            const count = getRandom(3, 5);
+            for (let i = 0; i < count; i++) {
+                if (array.length) {
+                    output.push(array.shift());
+                }
+            }
+        }
+    }
+
+    return output;
+};
