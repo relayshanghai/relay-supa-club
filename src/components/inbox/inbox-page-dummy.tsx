@@ -7,15 +7,11 @@ import { useTranslation } from 'react-i18next';
 import { useUser } from 'src/hooks/use-user';
 import { getSequenceInfluencer as baseGetSequenceInfluencer } from 'src/utils/api/db/calls/get-sequence-influencers';
 import { getSequenceInfluencerByEmailAndCompanyCall } from 'src/utils/api/db/calls/sequence-influencers';
-import {
-    getInboxThreadMessages,
-    getSentThreadMessages,
-    updateMessageAsSeen,
-} from 'src/utils/api/email-engine/handle-messages';
+import { updateMessageAsSeen } from 'src/utils/api/email-engine/handle-messages';
 import { GMAIL_SEEN_SPECIAL_USE_FLAG } from 'src/utils/api/email-engine/prototype-mocks';
 import { useDB } from 'src/utils/client-db/use-client-db';
 import { clientLogger } from 'src/utils/logger-client';
-import type { AccountAccountMessagesGet, MessagesGetMessage } from 'types/email-engine/account-account-messages-get';
+import type { MessagesGetMessage } from 'types/email-engine/account-account-messages-get';
 import { Spinner } from '../icons';
 import { ProfileOverlayScreen } from '../influencer-profile/screens/profile-overlay-screen';
 import { useUiState } from '../influencer-profile/screens/profile-screen-context';
@@ -23,86 +19,7 @@ import { Layout } from '../layout';
 import { CorrespondenceSection } from './correspondence-section';
 import { PreviewSection } from './preview-section';
 import { ToolBar } from './tool-bar';
-
-const dummyData: AccountAccountMessagesGet = {
-    total: 2,
-    page: 1,
-    pages: 1,
-    messages: [
-        {
-            id: '1',
-            uid: 123,
-            emailId: 'email_1',
-            threadId: 'thread_1',
-            date: '2023-08-30T10:00:00Z',
-            flags: ['flag_1', 'flag_2'],
-            labels: ['label_1', 'label_2'],
-            unseen: true,
-            size: 1024,
-            subject: 'Sample Subject 1',
-            from: {
-                name: 'John Doe',
-                address: 'john@example.com',
-            },
-            replyTo: [
-                {
-                    name: 'Jane Smith',
-                    address: 'jane@example.com',
-                },
-            ],
-            to: [
-                {
-                    name: 'Alice Johnson',
-                    address: 'alice@example.com',
-                },
-                {
-                    name: 'Bob Brown',
-                    address: 'bob@example.com',
-                },
-            ],
-            messageId: 'Scheduled',
-            text: {
-                id: 'text_1',
-                encodedSize: {
-                    plain: 500,
-                    html: 700,
-                },
-            },
-        },
-        {
-            id: '2',
-            uid: 456,
-            emailId: 'email_2',
-            threadId: 'thread_2',
-            date: '2023-08-29T15:30:00Z',
-            flags: ['flag_3'],
-            labels: ['label_2', 'label_3'],
-            unseen: false,
-            size: 512,
-            subject: 'Another Sample Subject',
-            from: {
-                name: 'Alice Johnson',
-                address: 'alice@example.com',
-            },
-            replyTo: [],
-            to: [
-                {
-                    name: 'John Doe',
-                    address: 'john@example.com',
-                },
-            ],
-            messageId: 'TESTEMAILID',
-            text: {
-                id: 'text_2',
-                encodedSize: {
-                    plain: 300,
-                    html: 400,
-                },
-            },
-        },
-        // Add more dummy data messages as needed
-    ],
-};
+import { dummyData, dummyMessages } from './dummy_data';
 
 export const InboxPage = () => {
     const inboxMessages = dummyData.messages;
@@ -157,8 +74,12 @@ export const InboxPage = () => {
                 if (!profile?.email_engine_account_id) {
                     throw new Error('No email account');
                 }
-                const inboxThreadMessages = await getInboxThreadMessages(message, profile.email_engine_account_id);
-                const sentThreadMessages = await getSentThreadMessages(message, profile.email_engine_account_id);
+                const inboxThreadMessages = await dummyMessages.messages.filter(
+                    (msg) => msg.threadId === message.threadId,
+                );
+                const sentThreadMessages = await dummyMessages.messages.filter(
+                    (msg) => msg.threadId === message.threadId,
+                );
                 const threadMessages = inboxThreadMessages.concat(sentThreadMessages);
                 threadMessages.sort((a, b) => {
                     return new Date(a.date).getTime() - new Date(b.date).getTime();
