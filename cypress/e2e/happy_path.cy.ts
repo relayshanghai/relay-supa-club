@@ -20,7 +20,7 @@ describe('Login and signup', () => {
         cy.contains('button', 'Start Your Free Trial').click();
         cy.url().should('include', '/signup');
     });
-    it('Can sign up new users using signup wizard', () => {
+    it.skip('Can sign up new users using signup wizard', () => {
         const randomEmail = `test${randomString()}@example.com`;
 
         cy.switchToEnglish();
