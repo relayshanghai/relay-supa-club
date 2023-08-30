@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { TrackedEvent } from '../types';
 import type { AnalyzeAddToCampaignPayload } from './analyze-add_to_campaign';
 import { ANALYZE_ADD_TO_CAMPAIGN, AnalyzeAddToCampaign } from './analyze-add_to_campaign';
 import type {
@@ -148,6 +149,12 @@ export const eventKeys = z.union([
     z.literal(OUTREACH_EMAIL_REPLY),
     z.literal(BOOSTBOT_ANALYZE_INFLUENCER),
 ]);
+
+export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {
+    if (!('eventName' in event)) return false;
+    const result = eventKeys.safeParse(event.eventName)
+    return result.success;
+}
 
 export type eventKeys = z.infer<typeof eventKeys>;
 
