@@ -13,10 +13,9 @@ export const defaultTemplateVariables = {
     marketingManagerName: '',
     productName: '',
     productDescription: '',
-    productFeatures: '',
     productLink: '',
     productPrice: '',
-    influencerNiche: '',
+    // influencerNiche: '',
 };
 export type DefaultTemplateVariableKey = keyof typeof defaultTemplateVariables;
 
