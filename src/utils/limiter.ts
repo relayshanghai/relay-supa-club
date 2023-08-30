@@ -2,8 +2,8 @@ import Bottleneck from 'bottleneck';
 import { serverLogger } from 'src/utils/logger-server';
 import { clientLogger } from 'src/utils/logger-client';
 
-const REQUEST_INTERVAL = 1000 / 5;
-const MAX_CONCURRENT = 5;
+const REQUEST_INTERVAL = 1000 / 8;
+const MAX_CONCURRENT = 8;
 const RETRY_LIMIT = 10;
 
 const limiter = new Bottleneck({ minTime: REQUEST_INTERVAL, maxConcurrent: MAX_CONCURRENT });
