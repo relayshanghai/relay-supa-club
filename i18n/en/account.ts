@@ -102,6 +102,8 @@ const account = {
         cancelling: 'Cancelling...',
         subscriptionCancelled: 'Subscription cancelled',
     },
+    planIsReady: 'Your plan is ready!',
+    redirectingMsg: 'Redirecting in 3s',
 };
 
 export default account;

@@ -55,7 +55,7 @@ export default function CheckoutForm({ selectedPrice }: { selectedPrice: NewRela
                 elements,
                 clientSecret,
                 confirmParams: {
-                    return_url: 'http://localhost:3000/payments/success',
+                    return_url: 'https://relay-supa-club-7u3b027if-relay-club.vercel.app//payments/success', //TODO: remember to update the link when deploy to main
                 },
             });
             if (error) {
