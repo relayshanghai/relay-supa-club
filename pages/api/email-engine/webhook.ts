@@ -1,7 +1,12 @@
 import type { NextApiHandler, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { ApiHandler } from 'src/utils/api-handler';
-import type { SequenceEmailUpdate, SequenceInfluencer, SequenceInfluencerUpdate } from 'src/utils/api/db';
+import type {
+    SequenceEmail,
+    SequenceEmailUpdate,
+    SequenceInfluencer,
+    SequenceInfluencerUpdate,
+} from 'src/utils/api/db';
 import { getProfileBySequenceSendEmail, supabaseLogger } from 'src/utils/api/db';
 import {
     deleteSequenceEmailByMessageIdCall,
@@ -64,25 +69,31 @@ const deleteSequenceEmailByMessageId = db<typeof deleteSequenceEmailByMessageIdC
     deleteSequenceEmailByMessageIdCall,
 );
 
-const deleteScheduledEmail = async (event: WebhookMessageNew) => {
+const deleteScheduledEmails = async (sequenceEmails: SequenceEmail[], event: WebhookMessageNew) => {
     try {
         const outbox = await getOutbox();
-        // If there is a sequenced email in the outbox to this address, cancel it
+        // If there are any scheduled emails in the outbox to this address, cancel them
         if (outbox.messages.some((message) => message.envelope.to.includes(event.data.from.address))) {
-            const message = outbox.messages.find((message) => message.envelope.to.includes(event.data.from.address));
-            if (!message) {
+            const messages = outbox.messages.filter(
+                (message) =>
+                    message.envelope.to.includes(event.data.from.address) &&
+                    sequenceEmails.some((sequenceEmail) => sequenceEmail.email_message_id === message.messageId), // Outbox is global to all users so we need to filter down to only the messages that are for this user by checking if the message is in the sequenceEmails
+            );
+            if (messages.length === 0) {
                 return;
             }
-            const { deleted } = await deleteEmailFromOutbox(message.queueId);
+            messages.forEach(async (message) => {
+                const { deleted } = await deleteEmailFromOutbox(message.queueId);
 
-            await deleteSequenceEmailByMessageId(message.messageId);
+                await deleteSequenceEmailByMessageId(message.messageId);
 
-            await supabaseLogger({
-                type: 'email-webhook',
-                data: event as any,
-                message: `${deleted ? 'canceled' : 'failed to cancel'} email to: ${JSON.stringify(
-                    message.envelope.to,
-                )}`,
+                await supabaseLogger({
+                    type: 'email-webhook',
+                    data: event as any,
+                    message: `${deleted ? 'canceled' : 'failed to cancel'} email to: ${JSON.stringify(
+                        message.envelope.to,
+                    )}`,
+                });
             });
         }
     } catch (error) {
@@ -95,9 +106,11 @@ const deleteScheduledEmail = async (event: WebhookMessageNew) => {
     }
 };
 const handleReply = async (sequenceInfluencer: SequenceInfluencer, event: WebhookMessageNew) => {
-    await deleteScheduledEmail(event);
-    // Outgoing emails should have been deleted. This will update the remaining emails to "replied" and the influencer to "negotiating
+    // we only want to delete emails that are for sequence_steps/sequence_emails that are connected to the `to` (our) user's company. Otherwise this will delete emails of other users to this same influencer.
     const sequenceEmails = await getSequenceEmailsBySequenceInfluencer(sequenceInfluencer.id);
+
+    await deleteScheduledEmails(sequenceEmails, event);
+    // Outgoing emails should have been deleted. This will update the remaining emails to "replied" and the influencer to "negotiating"
     await supabaseLogger({
         type: 'email-webhook',
         data: { sequenceEmails } as any,
@@ -166,6 +179,7 @@ const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) =>
             });
             return res.status(httpCodes.OK).json({});
         }
+        // if there is a sequenceInfluencer, this is a reply to a sequenced email
         await handleReply(sequenceInfluencer, event);
     } catch (error) {}
 
