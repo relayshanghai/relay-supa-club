@@ -13,62 +13,68 @@ import type { GetRelevantTopicsBody, GetRelevantTopicsResponse } from 'pages/api
 import type { GetTopicClustersBody, GetTopicClustersResponse } from 'pages/api/boostbot/get-topic-clusters';
 import type { GetInfluencersBody, GetInfluencersResponse } from 'pages/api/boostbot/get-influencers';
 
-export const useBoostbot = () => {
+type UseBoostbotProps = {
+    abortSignal?: AbortController['signal'];
+};
+
+export const useBoostbot = ({ abortSignal }: UseBoostbotProps) => {
     const { profile } = useUser();
     const { company } = useCompany();
 
     const unlockInfluencers = useCallback(
         async (influencerIds: string[]) => {
+            if (!company?.id || !profile?.id) throw new Error('No company or profile found');
+
+            const influencersPromises = influencerIds.map((influencerId) => {
+                const reportQuery = {
+                    // TODO: Right now only handling instagram, make platform dynamic
+                    platform: 'instagram' as CreatorPlatform,
+                    creator_id: influencerId,
+                    company_id: company.id,
+                    user_id: profile.id,
+                    track: SearchAnalyzeInfluencer.eventName as eventKeys,
+                };
+
+                return limiter.schedule(() =>
+                    nextFetchWithQueries<CreatorsReportGetQueries, CreatorsReportGetResponse>(
+                        'creators/report',
+                        reportQuery,
+                    ),
+                );
+            });
+
+            return await Promise.all(influencersPromises);
+        },
+        [profile, company],
+    );
+
+    const performFetch = useCallback(
+        async <T, B>(endpoint: string, body: B): Promise<T> => {
             try {
-                if (!company?.id || !profile?.id) throw new Error('No company or profile found');
-
-                const influencersPromises = influencerIds.map((influencerId) => {
-                    const reportQuery = {
-                        // TODO: Right now only handling instagram, make platform dynamic
-                        platform: 'instagram' as CreatorPlatform,
-                        creator_id: influencerId,
-                        company_id: company.id,
-                        user_id: profile.id,
-                        track: SearchAnalyzeInfluencer.eventName as eventKeys,
-                    };
-
-                    return limiter.schedule(() =>
-                        nextFetchWithQueries<CreatorsReportGetQueries, CreatorsReportGetResponse>(
-                            'creators/report',
-                            reportQuery,
-                        ),
-                    );
+                const response = await nextFetch<T>(`boostbot/${endpoint}`, {
+                    signal: abortSignal,
+                    method: 'POST',
+                    body,
                 });
 
-                return await Promise.all(influencersPromises);
+                // TODO: remove log when done testing
+                // eslint-disable-next-line no-console
+                console.log('endpoint, response :>> ', endpoint, response);
+                return response;
             } catch (error) {
                 clientLogger(error, 'error');
                 throw error;
             }
         },
-        [profile, company],
+        [abortSignal],
     );
-
-    const performFetch = async <T, B>(endpoint: string, body: B): Promise<T> => {
-        try {
-            const response = await nextFetch<T>(`boostbot/${endpoint}`, { method: 'POST', body });
-
-            // TODO: remove log when done testing
-            // eslint-disable-next-line no-console
-            console.log('endpoint, response :>> ', endpoint, response);
-            return response;
-        } catch (error) {
-            clientLogger(error, 'error');
-            throw error;
-        }
-    };
 
     const getTopics = useCallback(
         async (productDescription: string) =>
             await performFetch<GetTopicsResponse, GetTopicsBody>('get-topics', {
                 productDescription,
             }),
-        [],
+        [performFetch],
     );
 
     const getRelevantTopics = useCallback(
@@ -77,7 +83,7 @@ export const useBoostbot = () => {
                 topics,
                 platform,
             }),
-        [],
+        [performFetch],
     );
 
     const getTopicClusters = useCallback(
@@ -86,7 +92,7 @@ export const useBoostbot = () => {
                 productDescription,
                 topics,
             }),
-        [],
+        [performFetch],
     );
 
     const getInfluencers = useCallback(
@@ -95,7 +101,7 @@ export const useBoostbot = () => {
                 topicClusters,
                 platform,
             }),
-        [],
+        [performFetch],
     );
 
     return {

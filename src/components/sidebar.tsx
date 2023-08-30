@@ -16,7 +16,7 @@ import {
 } from './icons';
 import { Title } from './title';
 import { useTranslation } from 'react-i18next';
-import { featEmail } from 'src/constants/feature-flags';
+import { featEmail, featBoostbot } from 'src/constants/feature-flags';
 import { Button } from './button';
 
 const links: Record<string, (root: string) => JSX.Element> = {
@@ -97,9 +97,11 @@ const NavBarInner = ({
                     <ActiveLink href="/dashboard">
                         <p className={`ml-2 whitespace-nowrap text-sm ${sidebarState}`}>{t('navbar.discover')}</p>
                     </ActiveLink>
-                    <ActiveLink href="/boostbot">
-                        <p className={`ml-2 whitespace-nowrap text-sm ${sidebarState}`}>{t('navbar.boostbot')}</p>
-                    </ActiveLink>
+                    {featBoostbot() && (
+                        <ActiveLink href={'/boostbot'}>
+                            <p className={`ml-2 whitespace-nowrap text-sm ${sidebarState}`}>{t('navbar.boostbot')}</p>
+                        </ActiveLink>
+                    )}
                     {featEmail() && (
                         <ActiveLink href={'/sequences'}>
                             <p className={`ml-2 whitespace-nowrap text-sm ${sidebarState}`}>{t('navbar.sequences')}</p>
