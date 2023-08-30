@@ -28,9 +28,10 @@ const Boostbot = () => {
     const [isInitialLogoScreen, setIsInitialLogoScreen] = useState(true);
     const { trackEvent: track } = useRudderstack();
     const { sequences } = useSequences();
-    const boostbotSequenceId = sequences?.find((sequence) => sequence.name === 'General collaboration')?.id ?? '';
-    const { createSequenceInfluencer } = useSequenceInfluencers([boostbotSequenceId]);
-    const { sendSequence } = useSequence(boostbotSequenceId);
+    const [isLoading, setIsLoading] = useState(false);
+    const sequence = sequences?.find((sequence) => sequence.name === 'General collaboration');
+    const { createSequenceInfluencer } = useSequenceInfluencers(sequence && [sequence.id]);
+    const { sendSequence } = useSequence(sequence?.id);
 
     useEffect(() => {
         track(OpenBoostbotPage.eventName);
@@ -100,13 +101,22 @@ const Boostbot = () => {
     };
 
     const handlePageToUnlock = async () => {
+        setIsLoading(true);
+
         const userIdsToUnlock = currentPageInfluencers.map((influencer) => influencer.user_id);
-        return await handleUnlockInfluencers(userIdsToUnlock);
+        const unlockedInfluencers = await handleUnlockInfluencers(userIdsToUnlock);
+
+        setIsLoading(false);
+
+        return unlockedInfluencers;
     };
 
     const handlePageToOutreach = async () => {
+        setIsLoading(true);
+
         try {
-            const unlockedInfluencers = await handlePageToUnlock();
+            const userIdsToUnlock = currentPageInfluencers.map((influencer) => influencer.user_id);
+            const unlockedInfluencers = await handleUnlockInfluencers(userIdsToUnlock);
             if (!unlockedInfluencers) throw new Error('Error unlocking influencers');
 
             const sequenceInfluencerPromises = unlockedInfluencers.map((influencer) => {
@@ -119,8 +129,10 @@ const Boostbot = () => {
             });
             const sequenceInfluencers = await Promise.all(sequenceInfluencerPromises);
 
-            const sendSequencePromises = sequenceInfluencers.map((influencer) => sendSequence([influencer]));
-            await Promise.all(sendSequencePromises);
+            if (sequence?.auto_start) {
+                const sendSequencePromises = sequenceInfluencers.map((influencer) => sendSequence([influencer]));
+                await Promise.all(sendSequencePromises);
+            }
             toast.success(t('boostbot.success.influencersToOutreach'));
 
             track('TEST:boostbot-send_influencer_to_outreach');
@@ -129,6 +141,8 @@ const Boostbot = () => {
             toast.error(t('boostbot.error.influencersToOutreach'));
 
             track('TEST:boostbot-send_influencer_to_outreach');
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -143,6 +157,7 @@ const Boostbot = () => {
                         handlePageToOutreach={handlePageToOutreach}
                         setIsInitialLogoScreen={setIsInitialLogoScreen}
                         handleUnlockInfluencers={handleUnlockInfluencers}
+                        isBoostbotLoading={isLoading}
                     />
                 </div>
 
