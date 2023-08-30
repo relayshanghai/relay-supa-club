@@ -1,12 +1,23 @@
 import { z } from 'zod';
+import type { AnalyzeAddToCampaignPayload } from './analyze-add_to_campaign';
 import { ANALYZE_ADD_TO_CAMPAIGN, AnalyzeAddToCampaign } from './analyze-add_to_campaign';
+import type {
+    AnalyzeOpenExternalSocialProfilePayload
+} from './analyze-open_external_social_profile';
 import {
     ANALYZE_OPEN_EXTERNAL_SOCIAL_PROFILE,
     AnalyzeOpenExternalSocialProfile
 } from './analyze-open_external_social_profile';
 import type { BoostbotAnalyzeInfluencerPayload } from './boostbot-analyze-influencer';
 import { BOOSTBOT_ANALYZE_INFLUENCER, BoostbotAnalyzeInfluencer } from './boostbot-analyze-influencer';
+import type { OpenBoostbotPagePayload } from './boostbot/open-boostbot-page';
+import { BOOSTBOT_OPEN_BOOSTBOT_PAGE, OpenBoostbotPage } from './boostbot/open-boostbot-page';
+import type { RecommendInfluencersPayload } from './boostbot/recommend-influencers';
+import { BOOSTBOT_RECOMMEND_INFLUENCERS, RecommendInfluencers } from './boostbot/recommend-influencers';
+import type { UnlockInfluencersPayload } from './boostbot/unlock-influencer';
+import { BOOSTBOT_UNLOCK_INFLUENCERS, UnlockInfluencers } from './boostbot/unlock-influencer';
 import type { AddInfluencerToSequencePayload } from './outreach/add-influencer-to-sequence';
+import { AddInfluencerToSequence, OUTREACH_ADD_INFLUENCER_TO_SEQUENCE } from './outreach/add-influencer-to-sequence';
 import type { CreateSequencePayload } from './outreach/create-sequence';
 import { CreateSequence, OUTREACH_CREATE_SEQUENCE } from './outreach/create-sequence';
 import type { EmailClickedPayload } from './outreach/email-clicked';
@@ -46,9 +57,9 @@ import {
     SEARCH_OPEN_EXTERNAL_SOCIAL_PROFILE,
     SearchOpenExternalSocialProfile
 } from './search-open_external_social_profile';
-import { ANALYZE_ADD_TO_CAMPAIGN, AnalyzeAddToCampaign } from './analyze-add_to_campaign';
-    SEARCH_OPEN_EXTERNAL_SOCIAL_PROFILE,
+
 export {
+    Search,
     SearchDefault,
     SearchLoadMoreResults,
     SearchAddToCampaign,
@@ -56,11 +67,10 @@ export {
     SearchAnalyzeInfluencer,
     SearchOpenExternalSocialProfile,
     AnalyzeOpenExternalSocialProfile,
-
     AddInfluencerToSequence,
     OpenSequencesPage,
     OpenInboxPage,
-    uencerManagerPage, uencerManagerPage,
+    OpenInfluencerManagerPage,
     CreateSequence,
     StartSequenceForInfluencer,
     EmailSent,
@@ -69,38 +79,35 @@ export {
     EmailOpened,
     EmailClicked,
     EmailReply,
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    OpenBoostbotPage,
+    RecommendInfluencers,
+    UnlockInfluencers,
 };
+
+export const events = {
+    [SEARCH_KEY]: Search,
+    [SEARCH_DEFAULT]: SearchDefault,
+    [SEARCH_LOAD_MORE_RESULTS]: SearchLoadMoreResults,
+    [SEARCH_ANALYZE_INFLUENCER]: SearchAnalyzeInfluencer,
+    [SEARCH_OPEN_EXTERNAL_SOCIAL_PROFILE]: SearchOpenExternalSocialProfile,
+    [SEARCH_ADD_TO_CAMPAIGN]: SearchAddToCampaign,
+    [ANALYZE_ADD_TO_CAMPAIGN]: AnalyzeAddToCampaign,
+    [ANALYZE_OPEN_EXTERNAL_SOCIAL_PROFILE]: AnalyzeOpenExternalSocialProfile,
+    [OUTREACH_ADD_INFLUENCER_TO_SEQUENCE]: AddInfluencerToSequence,
+    [OUTREACH_OPEN_SEQUENCES_PAGE]: OpenSequencesPage,
+    [OUTREACH_OPEN_INBOX_PAGE]: OpenInboxPage,
+    [OUTREACH_OPEN_INFLUENCER_MANAGER_PAGE]: OpenInfluencerManagerPage,
+    [OUTREACH_CREATE_SEQUENCE]: CreateSequence,
+    [OUTREACH_START_SEQUENCE_FOR_INFLUENCER]: StartSequenceForInfluencer,
+    [OUTREACH_EMAIL_SENT]: EmailSent,
+    [OUTREACH_EMAIL_FAILED]: EmailFailed,
+    [OUTREACH_EMAIL_COMPLAINT]: EmailComplaint,
+    [OUTREACH_EMAIL_OPENED]: EmailOpened,
+    [OUTREACH_EMAIL_CLICKED]: EmailClicked,
+    [OUTREACH_EMAIL_REPLY]: EmailReply,
+    [BOOSTBOT_ANALYZE_INFLUENCER]: BoostbotAnalyzeInfluencer,
+    [BOOSTBOT_OPEN_BOOSTBOT_PAGE]: OpenBoostbotPage,
+    [BOOSTBOT_RECOMMEND_INFLUENCERS]: RecommendInfluencers,
     [BOOSTBOT_UNLOCK_INFLUENCERS]: UnlockInfluencers,
 };
 
@@ -126,6 +133,9 @@ export type payloads = {
     [OUTREACH_EMAIL_CLICKED]: EmailClickedPayload,
     [OUTREACH_EMAIL_REPLY]: EmailReplyPayload,
     [BOOSTBOT_ANALYZE_INFLUENCER]: BoostbotAnalyzeInfluencerPayload,
+    [BOOSTBOT_OPEN_BOOSTBOT_PAGE]: OpenBoostbotPagePayload,
+    [BOOSTBOT_RECOMMEND_INFLUENCERS]: RecommendInfluencersPayload,
+    [BOOSTBOT_UNLOCK_INFLUENCERS]: UnlockInfluencersPayload,
 };
 
 // @note we are using these eventKeys on other zod objects for validation
