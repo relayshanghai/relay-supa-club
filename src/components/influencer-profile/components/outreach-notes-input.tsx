@@ -23,12 +23,12 @@ export const OutreachNotesInput = ({
     return (
         <div>
             <label className="flex w-full cursor-pointer flex-col text-sm text-gray-500" htmlFor="outreach-notes-input">
-                <div className="flex items-center gap-1 font-semibold" onClick={() => onOpenList && onOpenList()}>
+                <div className="flex gap-1 font-semibold" onClick={() => onOpenList && onOpenList()}>
                     <span>{label}</span>
-                    <ArrowRightOnRectangle className="h-4 w-4 stroke-primary-500" />
+                    <ArrowRightOnRectangle className="h-3 w-3 stroke-primary-500 align-top" />
                 </div>
             </label>
-            <div className="my-2">
+            <div className="my-2 flex flex-col items-start gap-4">
                 <textarea
                     {...props}
                     value={value}
