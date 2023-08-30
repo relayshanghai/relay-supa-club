@@ -1,7 +1,7 @@
 import type { Session } from '@supabase/auth-helpers-react';
 import { useSessionContext } from '@supabase/auth-helpers-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type { ProfilesTable } from 'src/utils/api/db/types';
+import type { CompanyTable, ProfilesTable } from 'src/utils/api/db/types';
 import type { DatabaseWithCustomTypes } from 'types';
 
 type useSessionParams = {
@@ -49,6 +49,7 @@ export const useSession = (params?: useSessionParams) => {
 
     const [session, setSession] = useState<Session | null>(supabaseSession);
     const [profile, setProfile] = useState<ProfilesTable['Row'] | null>(null);
+    const [company, setCompany] = useState<CompanyTable['Row'] | null>(null);
 
     const getProfile = useCallback(async (session: Session | null) => {
         if (session === null) return null;
@@ -58,6 +59,27 @@ export const useSession = (params?: useSessionParams) => {
             .select()
             .abortSignal(control.current.signal)
             .eq('id', session.user.id)
+            .maybeSingle();
+
+        if (error && error.code === '20') {
+            return null;
+        }
+
+        if (error) {
+            throw error;
+        }
+
+        return data
+    }, [supabaseClient])
+
+    const getCompany = useCallback(async (companyId: string | null) => {
+        if (companyId === null) return null;
+
+        const { data, error } = await supabaseClient
+            .from<"companies", DatabaseWithCustomTypes["public"]["Tables"]["companies"]>('companies')
+            .select()
+            .abortSignal(control.current.signal)
+            .eq('id', companyId)
             .maybeSingle();
 
         if (error && error.code === '20') {
@@ -89,8 +111,14 @@ export const useSession = (params?: useSessionParams) => {
             return cleanup;
         }
 
-        getProfile(supabaseSession).then((loadedProfile) => {
-            if (loadedProfile) {
+        getProfile(supabaseSession).then(async (loadedProfile) => {
+            const company = loadedProfile ? await getCompany(loadedProfile.company_id) : null;
+
+            if (loadedProfile && company) {
+                setCompany((s) => {
+                    return (company && s?.id !== company.id) ? company : s;
+                })
+
                 setProfile((s) => {
                     return (loadedProfile && s?.id !== loadedProfile.id) ? loadedProfile : s;
                 });
@@ -116,7 +144,7 @@ export const useSession = (params?: useSessionParams) => {
         });
 
         return cleanup
-    }, [supabaseSession, session, profile, getProfile, params]);
+    }, [supabaseSession, session, profile, getProfile, getCompany, params]);
 
-    return { session, profile, refreshSession };
+    return { session, profile, company, refreshSession };
 };
