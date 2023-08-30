@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import guidePage from 'i18n/en/guide';
-import { Compass, FourSquare, Account, PieChart, Guide, EmailOutline, ArrowRight } from '../icons';
+import { Compass, Account, PieChart, Guide, EmailOutline, ArrowRight, ProfilePlus } from '../icons';
 import { GuideModal } from './guideModal';
 import { useState } from 'react';
 import Image from 'next/image';
@@ -26,7 +26,7 @@ export const GuideCards = ({ cardName }: { cardName: string }) => {
                         <Compass height={24} width={24} className="stroke-primary-500" color="#8B5CF6" />
                     )}
 
-                    {cardName === 'campaigns' && <FourSquare height={24} width={24} className="stroke-primary-500" />}
+                    {cardName === 'outreach' && <ProfilePlus height={24} width={24} className="stroke-primary-500" />}
 
                     {cardName === 'aiEmailGenerator' && (
                         <EmailOutline height={24} width={24} className="stroke-primary-500" />

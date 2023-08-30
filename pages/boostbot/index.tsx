@@ -128,11 +128,12 @@ const Boostbot = () => {
                 const socialProfileId = influencer.socialProfile.id;
                 const tags = influencer.user_profile.relevant_tags.slice(0, 3).map((tag) => tag.tag);
                 const creatorProfileId = influencer.user_profile.user_id;
+                const socialProfileEmail = influencer.socialProfile.email;
 
                 trackingPayload.influencer_ids.push(creatorProfileId)
                 trackingPayload.topics.push(...influencer.user_profile.relevant_tags.map((v) => v.tag))
 
-                return createSequenceInfluencer(socialProfileId, tags, creatorProfileId);
+                return createSequenceInfluencer(socialProfileId, tags, creatorProfileId, socialProfileEmail);
             });
             const sequenceInfluencers = await Promise.all(sequenceInfluencerPromises);
 
@@ -163,6 +164,7 @@ const Boostbot = () => {
                         handlePageToUnlock={handlePageToUnlock}
                         handlePageToOutreach={handlePageToOutreach}
                         setIsInitialLogoScreen={setIsInitialLogoScreen}
+                        handleUnlockInfluencers={handleUnlockInfluencers}
                     />
                 </div>
 

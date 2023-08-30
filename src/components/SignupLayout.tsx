@@ -15,7 +15,7 @@ export const LoginSignupLayout = (props: LayoutProps) => {
             </div>
             <div className="flex h-full w-full flex-col overflow-auto md:w-1/2">
                 <div className="mb-20 flex items-center justify-between p-5">
-                    <Title />
+                    <Title open={true} />
                     <LanguageToggle />
                 </div>
                 <div className="flex flex-col items-center justify-center">{props.right}</div>

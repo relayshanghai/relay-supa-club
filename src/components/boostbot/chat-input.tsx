@@ -48,7 +48,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading }
             <textarea
                 ref={textareaRef}
                 rows={1}
-                className="flex-grow resize-none rounded-lg border-none px-3 py-4 text-sm ring-1 ring-primary-400 hover:ring-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-300"
+                className="flex-grow resize-none rounded-lg border-none px-3 py-4 text-xs ring-1 ring-primary-400 hover:ring-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-300"
                 placeholder={t('boostbot.chat.sendPlaceholder') ?? 'Send a product description...'}
                 value={message}
                 onChange={handleTextInput}

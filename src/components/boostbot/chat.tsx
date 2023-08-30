@@ -12,6 +12,7 @@ import { clientLogger } from 'src/utils/logger-client';
 import type { CreatorPlatform } from 'types';
 import { ChatContent } from './chat-content';
 import { ChatInput } from './chat-input';
+import type { CreatorsReportGetResponse } from 'pages/api/creators/report';
 
 export type ProgressType = {
     topics: string[];
@@ -30,6 +31,7 @@ interface ChatProps {
     setIsInitialLogoScreen: Dispatch<SetStateAction<boolean>>;
     handlePageToUnlock: () => void;
     handlePageToOutreach: () => void;
+    handleUnlockInfluencers: (userIds: string[]) => Promise<CreatorsReportGetResponse[] | undefined>;
 }
 
 export const Chat: React.FC<ChatProps> = ({
@@ -38,6 +40,7 @@ export const Chat: React.FC<ChatProps> = ({
     setIsInitialLogoScreen,
     handlePageToUnlock,
     handlePageToOutreach,
+    handleUnlockInfluencers,
 }) => {
     const [abortController, setAbortController] = useState(new AbortController());
     const { t } = useTranslation();
@@ -121,9 +124,10 @@ export const Chat: React.FC<ChatProps> = ({
             // const youtubeInfluencers = await getInfluencersForPlatform({ platform: 'youtube' });
             const influencers = [...instagramInfluencers, ...tiktokInfluencers];
             // const influencers = [...instagramInfluencers, ...tiktokInfluencers, ...youtubeInfluencers];
-            updateProgress({ topics, isMidway: true, totalFound: influencers.length });
 
             setInfluencers(influencers);
+            await handleUnlockInfluencers(influencers.slice(0, 3).map((i) => i.user_id));
+            updateProgress({ topics, isMidway: true, totalFound: influencers.length });
             setIsInitialLogoScreen(false);
             addMessage({
                 sender: 'Bot',
