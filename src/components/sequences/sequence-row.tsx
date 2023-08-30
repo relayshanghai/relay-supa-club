@@ -66,9 +66,8 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
     handleStartSequence,
 }) => {
     const { influencerSocialProfile } = useInfluencerSocialProfile(sequenceInfluencer.influencer_social_profile_id);
-    const { updateSequenceInfluencer, deleteSequenceInfluencer } = useSequenceInfluencers(
-        sequenceInfluencer && [sequenceInfluencer.sequence_id],
-    );
+    const { sequenceInfluencers, updateSequenceInfluencer, deleteSequenceInfluencer, refreshSequenceInfluencers } =
+        useSequenceInfluencers(sequenceInfluencer && [sequenceInfluencer.sequence_id]);
     const { profile } = useUser();
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const { i18n, t } = useTranslation();
@@ -129,6 +128,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
     };
     const handleDeleteInfluencer = (sequenceInfluencerId: string) => {
         deleteSequenceInfluencer(sequenceInfluencerId);
+        refreshSequenceInfluencers(sequenceInfluencers?.filter((influencer) => influencer.id !== sequenceInfluencerId));
         toast.success(t('sequences.influencerDeleted'));
     };
     return (
