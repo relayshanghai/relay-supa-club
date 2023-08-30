@@ -143,7 +143,7 @@ describe('outreach', () => {
         //TODO: cy.getByTestId('email-preview-modal-spinner');
         cy.contains('Hey **influencerAccountName**', { timeout: 10000 }); // fills in missing variables
         cy.contains(
-            'Vivian here from Blue Moonlight Stream Industries. I watched your "**recentVideoTitle**" video, and love your content style!!',
+            'Vivian here from Blue Moonlight Stream Industries. I watched your "**recentPostTitle**" video, and love your content style!!',
         ); // fills in variables
         cy.contains('3rd Follow-up'); // shows all emails not just outreach
         cy.contains('Hope you had a chance to think about our Widget X collab. Still think we’d make a great team!'); // shows all emails not just outreach
@@ -157,7 +157,7 @@ describe('outreach', () => {
             timeout: 10000,
         });
         cy.contains(
-            'Vivian here from Blue Moonlight Stream Industries. I watched your "**recentVideoTitle**" video, and love your content style!!',
+            'Vivian here from Blue Moonlight Stream Industries. I watched your "**recentPostTitle**" video, and love your content style!!',
         ).should('not.exist'); //only shows the selected one
         cy.contains('button', 'Needs attention').click({ force: true });
 

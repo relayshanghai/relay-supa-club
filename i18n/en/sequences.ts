@@ -143,9 +143,9 @@ const sequences = {
     influencerAccountNameTooltipDescription: `No need to enter this! We will pull this
     information from the influencers report
     to customize each email for it's recipeient!`,
-    recentVideoTitle: 'Influencer Recent Post',
-    recentVideoTitleTooltip: `Influencer Recent Post`,
-    recentVideoTitleTooltipDescription: `No need to enter this! We will pull this
+    recentPostTitle: 'Influencer Recent Post',
+    recentPostTitleTooltip: `Influencer Recent Post`,
+    recentPostTitleTooltipDescription: `No need to enter this! We will pull this
     information from the influencers report
     to customize each email for it's recipient!`,
     wellHandleThisOne: `We'll handle this one!`,
