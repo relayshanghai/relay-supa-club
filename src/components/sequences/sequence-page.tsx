@@ -18,10 +18,11 @@ import { useTemplateVariables } from 'src/hooks/use-template_variables';
 import { Tooltip } from '../library';
 import { EMAIL_STEPS } from './constants';
 import { type SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
+import { useUser } from 'src/hooks/use-user';
 
 export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     const { t } = useTranslation();
-
+    const { profile } = useUser();
     const { sequence, sendSequence, sequenceSteps, updateSequence } = useSequence(sequenceId);
     const { sequenceInfluencers } = useSequenceInfluencers(sequence && [sequenceId]);
 
@@ -29,7 +30,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     const { templateVariables } = useTemplateVariables(sequenceId);
     const missingVariables = templateVariables
         ?.filter((variable) => variable.required && !variable.value)
-        .map((variable) => variable.name) ?? ['Error retrieving variables'];
+        .map((variable) => ` **${variable.name}** `) ?? ['Error retrieving variables'];
     const isMissingVariables = !templateVariables || templateVariables.length === 0 || missingVariables.length > 0;
 
     const [filterSteps, setFilterSteps] = useState<CommonStatusType[]>([]);
@@ -138,6 +139,19 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
         setEmailSteps(setEmailStepValues(sequenceInfluencers, EMAIL_STEPS));
     }, [sequenceInfluencers, setEmailSteps, sequenceSteps, setEmailStepValues]);
 
+    const isMIssingSequenceSendEmail = !profile?.sequence_send_email || !profile?.email_engine_account_id;
+
+    const autoStartTooltipTitle = isMIssingSequenceSendEmail
+        ? t('sequences.outreachPlanUpgradeTooltip')
+        : t('sequences.autoStartTooltip');
+    const autoStartTooltipDescription = isMIssingSequenceSendEmail
+        ? t('sequences.outreachPlanUpgradeTooltipDescription')
+        : isMissingVariables
+        ? t('sequences.missingRequiredTemplateVariables_variables', {
+              variables: missingVariables,
+          })
+        : t('sequences.autoStartTooltipDescription');
+
     return (
         <Layout>
             <TemplateVariablesModal
@@ -152,18 +166,8 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                     <h1 className="mr-4 self-center text-2xl font-semibold text-gray-800">{sequence?.name}</h1>
                     <div onClick={() => (isMissingVariables ? setShowUpdateTemplateVariables(true) : null)}>
                         <Tooltip
-                            content={
-                                t('sequences.autoStartTooltip', {
-                                    variables: missingVariables,
-                                }) || ''
-                            }
-                            detail={
-                                isMissingVariables
-                                    ? t('sequences.autoStartTooltipDescription', {
-                                          variables: missingVariables,
-                                      })
-                                    : ''
-                            }
+                            content={autoStartTooltipTitle}
+                            detail={autoStartTooltipDescription}
                             position="bottom-right"
                         >
                             <Switch
