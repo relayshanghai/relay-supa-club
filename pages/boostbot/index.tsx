@@ -151,7 +151,6 @@ const Boostbot = () => {
             // saying that it is multiple or not
             track(SendInfluencersToOutreach.eventName, trackingPayload);
         }
-
     };
 
     return (
