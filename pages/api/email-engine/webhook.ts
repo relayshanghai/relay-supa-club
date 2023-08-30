@@ -157,7 +157,7 @@ const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) =>
         sequence_influencer_id: null,
         influencer_id: null,
         sequence_step: null,
-        extra_info: event.data,
+        extra_info: { event_data: event.data },
     }
 
     if (event.data.messageSpecialUse === GMAIL_SENT_SPECIAL_USE_FLAG) {
@@ -168,6 +168,8 @@ const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) =>
     try {
         const { data: ourUser, error } = await getProfileBySequenceSendEmail(event.data.to[0].address);
         if (error) {
+            trackData.extra_info.error = String(error);
+
             track(rudderstack.getClient(), rudderstack.getIdentity())(EmailReply, {
                 ...trackData,
                 is_success: false,
@@ -185,6 +187,9 @@ const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) =>
             ourUser.company_id,
         );
         if (!sequenceInfluencer) {
+            // @note will this even happen?
+            trackData.extra_info.error = "Sequence influencer not found";
+
             track(rudderstack.getClient(), rudderstack.getIdentity())(EmailReply, {
                 ...trackData,
                 is_success: false,
@@ -210,6 +215,7 @@ const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) =>
             is_success: true,
         })
     } catch (error: any) {
+        trackData.extra_info.error = String(error);
         track(rudderstack.getClient(), rudderstack.getIdentity())(EmailReply, {
             ...trackData,
             is_success: false,
@@ -233,7 +239,7 @@ const handleTrackClick = async (event: WebhookTrackClick, res: NextApiResponse) 
     track(rudderstack.getClient(), rudderstack.getIdentity())(EmailClicked, {
         account_id: event.account,
         sequence_email_id: sequenceEmail.id,
-        extra_info: event.data
+        extra_info: { event_data: event.data },
     })
 
     await supabaseLogger({
@@ -255,7 +261,7 @@ const handleTrackOpen = async (event: WebhookTrackOpen, res: NextApiResponse) =>
     track(rudderstack.getClient(), rudderstack.getIdentity())(EmailOpened, {
         account_id: event.account,
         sequence_email_id: sequenceEmail.id,
-        extra_info: event.data
+        extra_info: { event_data: event.data },
     })
 
     await supabaseLogger({
@@ -280,7 +286,7 @@ const handleBounce = async (event: WebhookMessageBounce, res: NextApiResponse) =
             account_id: event.account,
             sequence_email_id: sequenceEmail.id,
             error_type: 'bounced',
-            extra_info: event.data
+            extra_info: { event_data: event.data },
         })
 
         await supabaseLogger({
@@ -297,7 +303,7 @@ const handleBounce = async (event: WebhookMessageBounce, res: NextApiResponse) =
 
 const handleComplaint = async (event: WebhookMessageComplaint, res: NextApiResponse) => {
     track(rudderstack.getClient(), rudderstack.getIdentity())(EmailComplaint, {
-        extra_info: event.data
+        extra_info: { event_data: event.data },
     })
 
     await supabaseLogger({
@@ -322,7 +328,7 @@ const handleDeliveryError = async (event: WebhookMessageDeliveryError, res: Next
             account_id: event.account,
             sequence_email_id: sequenceEmail.id,
             error_type: 'failed',
-            extra_info: event.data
+            extra_info: { event_data: event.data },
         })
 
         await supabaseLogger({
@@ -350,7 +356,7 @@ const handleFailed = async (event: WebhookMessageFailed, res: NextApiResponse) =
             account_id: event.account,
             sequence_email_id: sequenceEmail.id,
             error_type: 'quit',
-            extra_info: event.data
+            extra_info: { event_data: event.data },
         })
 
         await supabaseLogger({
@@ -373,7 +379,7 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
         sequence_influencer_id: null,
         influencer_id: null,
         sequence_step: null,
-        extra_info: event.data,
+        extra_info: { event_data: event.data },
     }
 
     try {
@@ -409,6 +415,7 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
             message: `sent to: ${event.data.envelope.to}`,
         });
     } catch (error: any) {
+        trackData.extra_info.error = String(error);
         track(rudderstack.getClient(), rudderstack.getIdentity())(EmailSent, {
             ...trackData,
             is_success: false,
