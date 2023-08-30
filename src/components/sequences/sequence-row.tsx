@@ -131,6 +131,21 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
         refreshSequenceInfluencers(sequenceInfluencers?.filter((influencer) => influencer.id !== sequenceInfluencerId));
         toast.success(t('sequences.influencerDeleted'));
     };
+
+    const isMissingSequenceSendEmail = !profile?.sequence_send_email || !profile?.email_engine_account_id;
+
+    const sequenceSendTooltipTitle = isMissingSequenceSendEmail
+        ? t('sequences.outreachPlanUpgradeTooltip')
+        : isMissingVariables
+        ? t('sequences.missingRequiredTemplateVariables')
+        : t('sequences.sequenceSendTooltip');
+    const sequenceSendTooltipDescription = isMissingSequenceSendEmail
+        ? t('sequences.outreachPlanUpgradeTooltipDescription')
+        : isMissingVariables
+        ? t('sequences.missingRequiredTemplateVariables_variables', {
+              variables: missingVariables,
+          })
+        : t('sequences.sequenceSendTooltipDescription');
     return (
         <>
             <EmailPreviewModal
@@ -193,17 +208,12 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
 
                         <td className="mr-4 flex min-w-min items-center justify-start whitespace-nowrap px-6 py-4 text-gray-600 md:mr-0">
                             <Tooltip
-                                content={
-                                    isMissingVariables
-                                        ? t('sequences.missingRequiredTemplateVariables_variables', {
-                                              variables: missingVariables,
-                                          })
-                                        : ''
-                                }
+                                content={sequenceSendTooltipTitle}
+                                detail={sequenceSendTooltipDescription}
                                 position="left"
                             >
                                 <Button
-                                    disabled={!sequenceInfluencer?.email || sendingEmail}
+                                    disabled={isMissingSequenceSendEmail || !sequenceInfluencer?.email || sendingEmail}
                                     data-testid={`send-email-button-${sequenceInfluencer.email}`}
                                     onClick={
                                         isMissingVariables ? () => setShowUpdateTemplateVariables(true) : handleStart

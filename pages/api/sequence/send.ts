@@ -42,15 +42,20 @@ const sendAndInsertEmail = async ({
     if (!influencerAccountName) {
         throw new Error('No influencer name or handle');
     }
-    const recentVideoTitle = influencerSocialProfile.recent_video_title;
-    if (!recentVideoTitle) {
+    const recentPostTitle = influencerSocialProfile.recent_post_title;
+    if (!recentPostTitle) {
         throw new Error('No recent video title');
+    }
+    const recentPostURL = influencerSocialProfile.recent_post_url;
+    if (!recentPostURL) {
+        throw new Error('No recent post url');
     }
     const params = {
         ...Object.fromEntries(templateVariables.map((variable) => [variable.key, variable.value])),
         // fill in the params not in the template variables
         influencerAccountName,
-        recentVideoTitle,
+        recentPostTitle,
+        recentPostURL,
     };
     // add the step's waitTimeHrs to the sendAt date
     const { template_id, wait_time_hours } = step;
