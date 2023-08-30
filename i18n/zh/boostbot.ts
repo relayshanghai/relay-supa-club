@@ -9,7 +9,7 @@ const boostbot = {
         influencersFoundB: '位KOL, 他们有很大的潜力来推广您的产品并促成销售。下一步您想要做什么?',
         sendPlaceholder: '请发送产品描述。',
         stop: '停止BoostBot搜索',
-        stopped: 'Boostbot stopped',
+        stopped: 'Boostbot已停止搜索',
         unlockPage: '解锁当前页面的KOL',
         outreachPage: '给当前页面的KOL发邮件',
         progress: {
@@ -24,17 +24,17 @@ const boostbot = {
         account: '账号',
         topPosts: '热门发布帖子',
         email: '邮箱地址',
-        unlockInfluencer: 'Unlock influencer',
-        removeInfluencer: 'Remove influencer',
-        noResults: 'No results',
+        unlockInfluencer: '解锁红人报告',
+        removeInfluencer: '移除该红人',
+        noResults: '没有结果',
     },
     success: {
-        influencersToOutreach: 'Influencers successfully added to outreach!',
+        influencersToOutreach: '该红人已成功添加至联络列表’',
     },
     error: {
-        influencerSearch: 'Error fetching Boostbot influencers',
-        influencerUnlock: 'Unlocking influencer failed',
-        influencersToOutreach: 'Adding influencer to outreach failed',
+        influencerSearch: '通过Boostbot搜索红人时出错',
+        influencerUnlock: '解锁红人报告失败',
+        influencersToOutreach: '添加红人至联络列表失败',
     },
 };
 

@@ -2,7 +2,7 @@ const boostbot = {
     chat: {
         introMessage: `Hi, I'm BoostBot 🙂
 
-Please send me a description of your product and I'll recommend influencers to promote it on social media.
+Please send me an English description of your product and I'll recommend influencers to promote it on social media.
 
 For example: "IPL uses beams of light to target the pigment in the hair follicles, which then heats up to remove the hair"`,
         influencersFoundA: 'I handpicked the',
