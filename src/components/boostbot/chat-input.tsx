@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useEffect, useRef, useState } from 'react';
-import { Send } from 'src/components/icons';
+import { Send, Spinner } from 'src/components/icons';
 
 interface ChatInputProps {
     onSendMessage: (message: string) => void;
@@ -60,7 +60,11 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading }
                 onClick={handleSendMessage}
                 disabled={isLoading}
             >
-                <Send className="ml-1 h-4 w-4 fill-white" />
+                {isLoading ? (
+                    <Spinner className="h-4 w-4 fill-primary-900" />
+                ) : (
+                    <Send className="ml-1 h-4 w-4 fill-white" />
+                )}
             </button>
         </div>
     );

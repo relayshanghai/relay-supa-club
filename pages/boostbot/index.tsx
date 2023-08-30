@@ -29,9 +29,10 @@ const Boostbot = () => {
     const [isInitialLogoScreen, setIsInitialLogoScreen] = useState(true);
     const { trackEvent: track } = useRudderstack();
     const { sequences } = useSequences();
-    const boostbotSequenceId = sequences?.find((sequence) => sequence.name === 'General collaboration')?.id ?? '';
-    const { createSequenceInfluencer } = useSequenceInfluencers([boostbotSequenceId]);
-    const { sendSequence } = useSequence(boostbotSequenceId);
+    const [isLoading, setIsLoading] = useState(false);
+    const sequence = sequences?.find((sequence) => sequence.name === 'General collaboration');
+    const { createSequenceInfluencer } = useSequenceInfluencers(sequence && [sequence.id]);
+    const { sendSequence } = useSequence(sequence?.id);
 
     useEffect(() => {
         track(OpenBoostbotPage.eventName);
@@ -51,25 +52,25 @@ const Boostbot = () => {
     const handleUnlockInfluencers = async (userIds: string[]) => {
         userIds.forEach((userId) => setInfluencerLoading(userId, true));
 
+        const trackingPayload: UnlockInfluencersPayload = {
+            influencer_ids: [],
+            topics: [],
+            is_multiple: userIds.length > 1,
+            is_success: true,
+        };
+
         try {
             const response = await unlockInfluencers(userIds);
             const unlockedInfluencers = response?.map((result) => result.user_profile);
 
             if (unlockedInfluencers) {
-                const payload: UnlockInfluencersPayload = {
-                    influencer_ids: [],
-                    topics: [],
-                    is_all: true,
-                    is_success: true,
-                };
-
                 unlockedInfluencers.forEach((newInfluencerData) => {
                     setInfluencers((prevInfluencers) => {
                         const influencer = prevInfluencers.find((i) => i.user_id === newInfluencerData.user_id);
 
                         if (influencer) {
-                            payload.influencer_ids.push(influencer.user_id);
-                            payload.topics.push(...influencer.topics);
+                            trackingPayload.influencer_ids.push(influencer.user_id);
+                            trackingPayload.topics.push(...influencer.topics);
                         }
 
                         return prevInfluencers.map((influencer) =>
@@ -86,15 +87,10 @@ const Boostbot = () => {
             clientLogger(error, 'error');
             toast.error(t('boostbot.error.influencerUnlock'));
 
-            const payload: UnlockInfluencersPayload = {
-                influencer_ids: userIds,
-                topics: [],
-                is_all: true,
-                is_success: false,
-                extra_info: { error: String(error) },
-            };
-            track(UnlockInfluencers.eventName, payload);
+            trackingPayload.is_success = false;
+            trackingPayload.extra_info = { error: String(error) };
         } finally {
+            track(UnlockInfluencers.eventName, trackingPayload);
             userIds.forEach((userId) => setInfluencerLoading(userId, false));
         }
     };
@@ -106,11 +102,19 @@ const Boostbot = () => {
     };
 
     const handlePageToUnlock = async () => {
+        setIsLoading(true);
+
         const userIdsToUnlock = currentPageInfluencers.map((influencer) => influencer.user_id);
-        return await handleUnlockInfluencers(userIdsToUnlock);
+        const unlockedInfluencers = await handleUnlockInfluencers(userIdsToUnlock);
+
+        setIsLoading(false);
+
+        return unlockedInfluencers;
     };
 
     const handlePageToOutreach = async () => {
+        setIsLoading(true);
+        
         const trackingPayload: SendInfluencersToOutreachPayload = {
             influencer_ids: [],
             topics: [],
@@ -119,7 +123,8 @@ const Boostbot = () => {
         };
 
         try {
-            const unlockedInfluencers = await handlePageToUnlock();
+            const userIdsToUnlock = currentPageInfluencers.map((influencer) => influencer.user_id);
+            const unlockedInfluencers = await handleUnlockInfluencers(userIdsToUnlock);
             trackingPayload.is_multiple = unlockedInfluencers ? unlockedInfluencers.length > 1 : null;
 
             if (!unlockedInfluencers) throw new Error('Error unlocking influencers');
@@ -137,8 +142,10 @@ const Boostbot = () => {
             });
             const sequenceInfluencers = await Promise.all(sequenceInfluencerPromises);
 
-            const sendSequencePromises = sequenceInfluencers.map((influencer) => sendSequence([influencer]));
-            await Promise.all(sendSequencePromises);
+            if (sequence?.auto_start) {
+                const sendSequencePromises = sequenceInfluencers.map((influencer) => sendSequence([influencer]));
+                await Promise.all(sendSequencePromises);
+            }
             toast.success(t('boostbot.success.influencersToOutreach'));
         } catch (error) {
             clientLogger(error, 'error');
@@ -151,6 +158,7 @@ const Boostbot = () => {
             // Needs `null` for it to show in mixpanel without explicitly
             // saying that it is multiple or not
             track(SendInfluencersToOutreach.eventName, trackingPayload);
+            setIsLoading(false);
         }
     };
 
@@ -165,6 +173,7 @@ const Boostbot = () => {
                         handlePageToOutreach={handlePageToOutreach}
                         setIsInitialLogoScreen={setIsInitialLogoScreen}
                         handleUnlockInfluencers={handleUnlockInfluencers}
+                        isBoostbotLoading={isLoading}
                     />
                 </div>
 
