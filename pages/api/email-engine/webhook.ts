@@ -1,12 +1,7 @@
 import type { NextApiHandler, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { ApiHandler } from 'src/utils/api-handler';
-import type {
-    SequenceEmail,
-    SequenceEmailUpdate,
-    SequenceInfluencer,
-    SequenceInfluencerUpdate,
-} from 'src/utils/api/db';
+import type { SequenceEmailUpdate, SequenceInfluencer, SequenceInfluencerUpdate } from 'src/utils/api/db';
 import { getProfileBySequenceSendEmail, supabaseLogger } from 'src/utils/api/db';
 import {
     deleteSequenceEmailByMessageIdCall,
@@ -69,8 +64,10 @@ const deleteSequenceEmailByMessageId = db<typeof deleteSequenceEmailByMessageIdC
     deleteSequenceEmailByMessageIdCall,
 );
 
-const deleteScheduledEmails = async (sequenceEmails: SequenceEmail[], event: WebhookMessageNew) => {
+const deleteScheduledEmails = async (sequenceInfluencer: SequenceInfluencer, event: WebhookMessageNew) => {
     try {
+        // we only want to delete emails that are for sequence_steps/sequence_emails that are connected to the `to` (our) user's company. Otherwise this will delete emails of other users to this same influencer.
+        const sequenceEmails = await getSequenceEmailsBySequenceInfluencer(sequenceInfluencer.id);
         const outbox = await getOutbox();
         // If there are any scheduled emails in the outbox to this address, cancel them
         if (outbox.messages.some((message) => message.envelope.to.includes(event.data.from.address))) {
@@ -106,15 +103,9 @@ const deleteScheduledEmails = async (sequenceEmails: SequenceEmail[], event: Web
     }
 };
 const handleReply = async (sequenceInfluencer: SequenceInfluencer, event: WebhookMessageNew) => {
-    // we only want to delete emails that are for sequence_steps/sequence_emails that are connected to the `to` (our) user's company. Otherwise this will delete emails of other users to this same influencer.
-    const sequenceEmails = await getSequenceEmailsBySequenceInfluencer(sequenceInfluencer.id);
-    await supabaseLogger({
-        type: 'email-webhook',
-        data: { sequenceEmails } as any,
-        message: `reply sequenceEmails: ${JSON.stringify(sequenceEmails)}`,
-    });
-    await deleteScheduledEmails(sequenceEmails, event);
+    await deleteScheduledEmails(sequenceInfluencer, event);
     // Outgoing emails should have been deleted. This will update the remaining emails to "replied" and the influencer to "negotiating"
+    const sequenceEmails = await getSequenceEmailsBySequenceInfluencer(sequenceInfluencer.id);
     await supabaseLogger({
         type: 'email-webhook',
         data: { sequenceEmails } as any,
