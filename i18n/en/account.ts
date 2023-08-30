@@ -104,6 +104,9 @@ const account = {
     },
     planIsReady: 'Your plan is ready!',
     redirectingMsg: 'Redirecting in 3s',
+    card: 'Card',
+    alipay: 'Alipay',
+    choosePaymentMethod: 'Please choose a payment method.',
 };
 
 export default account;

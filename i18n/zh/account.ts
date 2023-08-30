@@ -103,6 +103,9 @@ const account = {
     },
     planIsReady: '您已成功订阅！',
     redirectingMsg: '3秒后将自动跳转页面',
+    card: '银行卡',
+    alipay: '支付宝',
+    choosePaymentMethod: '请选择付款方式',
 };
 
 export default account;
