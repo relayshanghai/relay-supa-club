@@ -106,6 +106,7 @@ const account = {
     card: '银行卡',
     alipay: '支付宝',
     choosePaymentMethod: '请选择付款方式',
+    contactUs: '请联系我们的客服经理，如果您想用支付宝付款',
 };
 
 export default account;

@@ -107,6 +107,7 @@ const account = {
     card: 'Card',
     alipay: 'Alipay',
     choosePaymentMethod: 'Please choose a payment method.',
+    contactUs: 'Please Contact our support team if you prefer to pay with Alipay.',
 };
 
 export default account;

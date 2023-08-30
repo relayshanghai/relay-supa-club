@@ -6,6 +6,7 @@ import { useNewPrices } from 'src/hooks/use-prices';
 import { useTranslation } from 'react-i18next';
 import type { newActiveSubscriptionTier } from 'types';
 import { useState } from 'react';
+import Image from 'next/legacy/image';
 
 const STRIPE_PUBLIC_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
 const stripePromise = loadStripe(STRIPE_PUBLIC_KEY || '');
@@ -38,17 +39,18 @@ export const AddPaymentsSection = ({ priceTier }: { priceTier: newActiveSubscrip
         locale: i18n.language.includes('en') ? 'en' : 'zh',
         payment_method_types: ['card'],
     };
-    const aliPayOptions: StripeElementsOptions = {
-        mode: 'setup',
-        appearance: {
-            theme: 'stripe',
-            variables: {
-                colorPrimary: '#8B5CF6', //primary-500 see tailwind.config.js
-            },
-        },
-        locale: i18n.language.includes('en') ? 'en' : 'zh',
-        payment_method_types: ['alipay'],
-    };
+
+    // const aliPayOptions: StripeElementsOptions = {
+    //     mode: 'setup',
+    //     appearance: {
+    //         theme: 'stripe',
+    //         variables: {
+    //             colorPrimary: '#8B5CF6', //primary-500 see tailwind.config.js
+    //         },
+    //     },
+    //     locale: i18n.language.includes('en') ? 'en' : 'zh',
+    //     payment_method_types: ['alipay'],
+    // };
 
     return (
         <div className="w-80 rounded shadow lg:w-[28rem]">
@@ -79,15 +81,24 @@ export const AddPaymentsSection = ({ priceTier }: { priceTier: newActiveSubscrip
                     )}
 
                     {selectedPaymentMethod === 'alipay' && (
-                        <div>
-                            <StripeElementsProvider stripe={stripePromise} options={aliPayOptions}>
+                        <div className="mb-2 p-6">
+                            <p className="p-6 text-xs text-gray-500">{t('account.contactUs')}</p>
+
+                            <Image
+                                src="/assets/imgs/qrcodes/amy-qrcode.jpg"
+                                alt="qr code to contact customer service"
+                                layout="responsive"
+                                width={1000}
+                                height={1200}
+                            />
+                            {/* <StripeElementsProvider stripe={stripePromise} options={aliPayOptions}>
                                 <CheckoutForm selectedPrice={selectedPrice} />
-                            </StripeElementsProvider>
+                            </StripeElementsProvider> */}
                         </div>
                     )}
                 </>
             ) : (
-                <div className="p-6 text-xs text-gray-500">{t('account.choosePaymentMethod')}</div>
+                <p className="p-6 text-xs text-gray-500">{t('account.choosePaymentMethod')}</p>
             )}
         </div>
     );
