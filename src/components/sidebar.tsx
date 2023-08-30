@@ -13,6 +13,7 @@ import {
     BarGraph,
     BoostbotDefault,
     BoostbotSelected,
+    FourSquare,
 } from './icons';
 import { Title } from './title';
 import { useTranslation } from 'react-i18next';
@@ -37,6 +38,7 @@ const links: Record<string, (root: string) => JSX.Element> = {
         }
         return <BoostbotDefault height={18} width={18} className="my-0.5 stroke-inherit" />;
     },
+    '/campaigns': (_pathRoot: string) => <FourSquare height={18} width={18} className="my-0.5 stroke-inherit" />,
 } as const;
 
 // eslint-disable-next-line complexity
@@ -115,6 +117,11 @@ const NavBarInner = ({
                             <p className={`ml-2 whitespace-nowrap text-sm ${sidebarState}`}>
                                 {t('navbar.influencerManager')}
                             </p>
+                        </ActiveLink>
+                    )}
+                    {!featEmail() && (
+                        <ActiveLink href="/campaigns">
+                            <p className={`ml-2 whitespace-nowrap text-sm ${sidebarState}`}>{t('navbar.campaigns')}</p>
                         </ActiveLink>
                     )}
                     {!featEmail() && (
