@@ -11,4 +11,4 @@ export const AnalyzeOpenExternalSocialProfile = (
 
 export type AnalyzeOpenExternalSocialProfile = typeof AnalyzeOpenExternalSocialProfile;
 
-AnalyzeOpenExternalSocialProfile.eventName = ANALYZE_OPEN_EXTERNAL_SOCIAL_PROFILE;
+AnalyzeOpenExternalSocialProfile.eventName = <typeof ANALYZE_OPEN_EXTERNAL_SOCIAL_PROFILE>ANALYZE_OPEN_EXTERNAL_SOCIAL_PROFILE;
