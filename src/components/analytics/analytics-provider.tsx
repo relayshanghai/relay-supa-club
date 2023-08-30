@@ -3,14 +3,12 @@ import { useSessionContext } from '@supabase/auth-helpers-react';
 import type { AnalyticsInstance, AnalyticsPlugin } from 'analytics';
 import { Analytics } from 'analytics';
 import type { PropsWithChildren } from 'react';
-import { useContext } from 'react';
-import { createContext } from 'react';
-import { useEffect } from 'react';
-import { useState } from 'react';
-import { AnalyticsProvider as BaseAnalyticsProvider } from 'use-analytics';
+import { createContext, useContext, useEffect, useState } from 'react';
+import { profileToIdentifiable, useRudder } from 'src/hooks/use-rudderstack';
 import { useSession } from 'src/hooks/use-session';
-import { SupabasePlugin } from '../../utils/analytics/plugins/analytics-plugin-supabase';
 import { createTrack } from 'src/utils/analytics/analytics';
+import { AnalyticsProvider as BaseAnalyticsProvider } from 'use-analytics';
+import { SupabasePlugin } from '../../utils/analytics/plugins/analytics-plugin-supabase';
 
 export const AnalyticsContext = createContext<
     | {
@@ -42,11 +40,18 @@ type AnalyticsProviderProps = PropsWithChildren;
 export const AnalyticsProvider = ({ children }: AnalyticsProviderProps) => {
     const { supabaseClient: client } = useSessionContext();
 
-    const { session } = useSession();
+    const rudderstack = useRudder();
+    const { session, profile } = useSession();
 
     const [analytics] = useState(() => initAnalytics([SupabasePlugin({ client })]));
-
     const [track] = useState(() => createTrack(analytics));
+
+    useEffect(() => {
+        if (profile !== null && rudderstack) {
+            const { id, traits } = profileToIdentifiable(profile)
+            rudderstack.identify(id, traits)
+        }
+    }, [rudderstack, profile])
 
     // set analytics identity
     useEffect(() => {
