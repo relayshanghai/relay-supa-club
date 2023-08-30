@@ -17,7 +17,7 @@ For example: "IPL uses beams of light to target the pigment in the hair follicle
             step1: 'Generating topics and niches',
             step2: 'Browsing through millions of influencers in our database',
             step2B: 'Several thousand influencers found',
-            step3: 'Handpicking the best KOLs based on followers, engagements, location, etc.',
+            step3: 'Handpicking the best influencers based on followers, engagements, location, etc.',
             step3B: 'influencers selected',
         },
     },

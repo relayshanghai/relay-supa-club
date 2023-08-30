@@ -28,6 +28,9 @@ const boostbot = {
         removeInfluencer: 'Remove influencer',
         noResults: 'No results',
     },
+    success: {
+        influencersToOutreach: 'Influencers successfully added to outreach!',
+    },
     error: {
         influencerSearch: 'Error fetching Boostbot influencers',
         influencerUnlock: 'Unlocking influencer failed',
