@@ -20,8 +20,8 @@ export type ProgressType = {
 };
 
 export type MessageType = {
-    sender: 'User' | 'Bot';
-    content: string | JSX.Element;
+    sender: 'User' | 'Bot' | 'Progress';
+    content: string | JSX.Element | ProgressType;
 };
 
 interface ChatProps {
@@ -44,9 +44,7 @@ export const Chat: React.FC<ChatProps> = ({
     const { getTopics, getRelevantTopics, getTopicClusters, getInfluencers } = useBoostbot({
         abortSignal: abortController.signal,
     });
-    const [progress, setProgress] = useState<ProgressType>({ topics: [], isMidway: false, totalFound: null });
     const [isLoading, setIsLoading] = useState(false);
-    const [progressMessages, setProgressMessages] = useState<MessageType[]>([]);
     const [messages, setMessages] = useState<MessageType[]>([
         {
             sender: 'Bot',
@@ -57,23 +55,39 @@ export const Chat: React.FC<ChatProps> = ({
     ]);
     const { trackEvent: track } = useRudderstack();
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const showButtons = influencers.length > 0 && !isLoading;
-    // TODO Sergej: either like this^ or actually have a state object/array like "currentButtons" and change the state accordingly,
-    // like when influencers are loaded, set two buttons.. new influencer starting to load, make empty for the time being,
-    // after processing unlock or whatever, set new ones.
+    const shouldShowButtons = influencers.length > 0 && !isLoading;
+
+    const addMessage = (message: MessageType) => setMessages((prevMessages) => [...prevMessages, message]);
 
     const stopBoostbot = () => {
         abortController.abort();
         setAbortController(new AbortController());
+        addMessage({ sender: 'User', content: `${t('boostbot.chat.stopped')}` });
+        setMessages((prevMessages) => {
+            const lastProgressIndex = prevMessages.findLastIndex((message) => message.sender === 'Progress');
+            return [...prevMessages.slice(0, lastProgressIndex), ...prevMessages.slice(lastProgressIndex + 1)];
+        });
     };
 
-    const addMessage = (message: MessageType) => setMessages((messages) => [...messages, message]);
-    const addProgressMessage = (content: MessageType['content']) =>
-        setProgressMessages((messages) => [...messages, { sender: 'Bot', content }]);
+    const updateProgress = (progress: ProgressType) =>
+        setMessages((messages) => [...messages.slice(0, -1), { sender: 'Progress', content: progress }]);
+
+    const chatPageToUnlock = () => {
+        addMessage({ sender: 'User', content: `${t('boostbot.chat.unlockPage')}` });
+        handlePageToUnlock();
+    };
+
+    const chatPageToOutreach = () => {
+        addMessage({ sender: 'User', content: `${t('boostbot.chat.outreachPage')}` });
+        handlePageToOutreach();
+    };
 
     const onSendMessage = async (productDescription: string) => {
-        addMessage({ sender: 'User', content: productDescription });
+        setMessages((prevMessages) => [
+            ...prevMessages,
+            { sender: 'User', content: productDescription },
+            { sender: 'Progress', content: { topics: [], isMidway: false, totalFound: null } },
+        ]);
         setIsLoading(true);
 
         const payload: RecommendInfluencersPayload = {
@@ -87,31 +101,37 @@ export const Chat: React.FC<ChatProps> = ({
         try {
             const topics = await getTopics(productDescription);
             payload.topics_generated = topics;
-            setProgress((prevProgress) => ({ ...prevProgress, topics }));
+            updateProgress({ topics, isMidway: false, totalFound: null });
 
             const getInfluencersForPlatform = async ({ platform }: { platform: CreatorPlatform }) => {
                 const relevantTopics = await getRelevantTopics({ topics, platform });
-                payload.valid_topics.push(...relevantTopics);
                 const topicClusters = await getTopicClusters({ productDescription, topics: relevantTopics });
                 const influencers = await getInfluencers({ topicClusters, platform });
+
+                payload.valid_topics.push(...relevantTopics);
                 payload.recommended_influencers.push(...influencers.map((i) => i.user_id));
 
                 return influencers;
             };
 
             const instagramInfluencers = await getInfluencersForPlatform({ platform: 'instagram' });
-            setProgress((prevProgress) => ({ ...prevProgress, isMidway: true }));
+            updateProgress({ topics, isMidway: true, totalFound: null });
 
-            // const tiktokInfluencers = await getInfluencersForPlatform({ platform: 'tiktok' });
+            const tiktokInfluencers = await getInfluencersForPlatform({ platform: 'tiktok' });
             // const youtubeInfluencers = await getInfluencersForPlatform({ platform: 'youtube' });
-            const influencers = [...instagramInfluencers];
+            const influencers = [...instagramInfluencers, ...tiktokInfluencers];
             // const influencers = [...instagramInfluencers, ...tiktokInfluencers, ...youtubeInfluencers];
-            setProgress((prevProgress) => ({ ...prevProgress, influencers: influencers.length }));
+            updateProgress({ topics, isMidway: true, totalFound: influencers.length });
+
             setInfluencers(influencers);
             setIsInitialLogoScreen(false);
-            addProgressMessage(`${influencers.length} ${t('boostbot.chat.influencersFound')}!`);
+            addMessage({
+                sender: 'Bot',
+                content: `${t('boostbot.chat.influencersFoundA')} ${influencers.length} ${t(
+                    'boostbot.chat.influencersFoundB',
+                )}`,
+            });
             document.dispatchEvent(new Event('influencerTableSetFirstPage'));
-            await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait for 1s for loading animation to finish
             track(RecommendInfluencers.eventName, payload);
         } catch (error) {
             if (error instanceof Error && error.name === 'AbortError') {
@@ -132,19 +152,18 @@ export const Chat: React.FC<ChatProps> = ({
 
     return (
         <div className="flex h-full w-full flex-col overflow-hidden rounded-xl border border-primary-300 bg-white shadow-lg">
-            <div className="z-10 bg-primary-500 shadow">
-                <h1 className="text-md px-4 py-1 text-white">
+            <div className="boostbot-gradient z-10 shadow">
+                <h1 className="text-md px-4 py-1 text-white drop-shadow-md">
                     BoostBot <SparklesIcon className="inline h-4 w-4" />
                 </h1>
             </div>
 
             <ChatContent
                 messages={messages}
-                progressMessages={progressMessages}
+                shouldShowButtons={shouldShowButtons}
                 isLoading={isLoading}
-                progress={progress}
-                handlePageToUnlock={handlePageToUnlock}
-                handlePageToOutreach={handlePageToOutreach}
+                handlePageToUnlock={chatPageToUnlock}
+                handlePageToOutreach={chatPageToOutreach}
                 stopBoostbot={stopBoostbot}
             />
 

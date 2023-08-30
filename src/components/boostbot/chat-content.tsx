@@ -5,13 +5,12 @@ import { Button } from 'src/components/button';
 import type { MessageType } from './chat';
 import Message from './message';
 import ChatProgress from './chat-progress';
-import type { ProgressType } from 'src/components/boostbot/chat';
+import type { ProgressType } from './chat';
 
 interface ChatContentProps {
     messages: MessageType[];
-    progressMessages: MessageType[];
     isLoading: boolean;
-    progress: ProgressType;
+    shouldShowButtons: boolean;
     handlePageToUnlock: () => void;
     handlePageToOutreach: () => void;
     stopBoostbot: () => void;
@@ -19,9 +18,8 @@ interface ChatContentProps {
 
 export const ChatContent: React.FC<ChatContentProps> = ({
     messages,
-    progressMessages,
     isLoading,
-    progress,
+    shouldShowButtons,
     handlePageToUnlock,
     handlePageToOutreach,
     stopBoostbot,
@@ -31,34 +29,34 @@ export const ChatContent: React.FC<ChatContentProps> = ({
 
     useEffect(() => {
         chatBottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }, [messages, progressMessages]);
+    }, [messages]);
 
     return (
-        <div className="relative flex flex-grow flex-col overflow-auto px-4 py-3 pb-6">
-            {messages.map((message, index) => (
-                <Message key={index} message={message} />
-            ))}
+        <div className="relative flex flex-grow flex-col overflow-auto px-4 py-3">
+            {messages.map((message, index) =>
+                message.sender === 'Progress' ? (
+                    <ChatProgress key={index} progress={message.content as ProgressType} />
+                ) : (
+                    <Message key={index} message={message} />
+                ),
+            )}
 
-            {isLoading && <ChatProgress progress={progress} />}
-
-            {progressMessages.map((message, index) => (
-                <Message key={index} message={message} />
-            ))}
-
-            {progressMessages.length > 0 && !isLoading ? (
-                <>
+            {shouldShowButtons && (
+                <div className="z-10">
                     <Button onClick={handlePageToUnlock} className="mb-2">
-                        Unlock influencers on current page
+                        {t('boostbot.chat.unlockPage')}
                     </Button>
-                    <Button onClick={handlePageToOutreach}>Email influencers on current page</Button>
-                </>
-            ) : null}
+                    <Button onClick={handlePageToOutreach}>{t('boostbot.chat.outreachPage')}</Button>
+                </div>
+            )}
 
-            {isLoading ? (
-                <Button onClick={stopBoostbot} className="mb-2 flex items-center gap-1 self-center">
-                    <StopIcon className="inline h-5 w-5" /> {t('boostbot.chat.stop')}
-                </Button>
-            ) : null}
+            {isLoading && (
+                <div className="flex-grow-1 mt-2 flex flex-1 items-end justify-center">
+                    <Button onClick={stopBoostbot} className="z-10 flex items-center gap-1 border-none">
+                        <StopIcon className="inline h-5 w-5" /> {t('boostbot.chat.stop')}
+                    </Button>
+                </div>
+            )}
 
             <div className="relative top-10" ref={chatBottomRef} />
         </div>
