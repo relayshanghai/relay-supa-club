@@ -7,11 +7,12 @@ import { getUserSession } from 'src/utils/api/analytics';
 import { getNotesBySequenceInfluencer } from 'src/utils/api/db/calls/sequence-influencer-notes';
 import { db } from 'src/utils/supabase-client';
 import type { DBQueryReturn } from 'src/utils/types';
+import { boolish } from 'src/utils/zod';
 import { z } from 'zod';
 
 export const GetSequenceInfluencerNotesRequest = createApiRequest({
     path: z.object({ id: z.string() }),
-    query: z.object({ current_user_only: z.boolean().optional() }),
+    query: z.object({ current_user_only: boolish() }),
 });
 
 export type GetSequenceInfluencerNotesRequest = z.input<typeof GetSequenceInfluencerNotesRequest>;

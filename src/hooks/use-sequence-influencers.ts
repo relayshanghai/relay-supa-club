@@ -32,6 +32,7 @@ export const useSequenceInfluencers = (sequenceIds?: string[], filters?: string[
         influencerSocialProfileId: string,
         tags: string[],
         iqDataUserProfileId: string,
+        email?: string | null,
     ) => {
         if (!sequenceIds || sequenceIds.length < 1) throw new Error('No sequenceIds provided');
         if (!profile?.company_id) throw new Error('No profile found');
@@ -45,6 +46,7 @@ export const useSequenceInfluencers = (sequenceIds?: string[], filters?: string[
             tags,
             funnel_status: 'To Contact',
             iqdata_id: iqDataUserProfileId,
+            email,
         };
         const res = await createSequenceInfluencerDBCall(insert);
         return res;
