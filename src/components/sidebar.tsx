@@ -27,7 +27,7 @@ const links: Record<string, (pathRoot: string, hovering?: boolean) => JSX.Elemen
     '/admin/clients': (_pathRoot: string) => <Team height={20} width={20} className="my-0.5 stroke-inherit" />,
     '/performance': (_pathRoot: string) => <BarGraph height={20} width={20} className="my-0.5 stroke-inherit" />,
     '/guide': (_pathRoot: string) => <Guide height={20} width={20} className="my-0.5 stroke-inherit" />,
-    '/sequences': (_pathRoot: string) => <Send height={20} width={20} className="my-0.5 stroke-inherit" />,
+    '/sequences': (_pathRoot: string) => <Send height={20} width={24} className="my-0.5 stroke-inherit" />,
     '/inbox': (_pathRoot: string) => <Engagements height={20} width={20} className="my-0.5 stroke-inherit" />,
     '/influencer-manager': (_pathRoot: string) => (
         <ProfilePlus height={20} width={20} className="my-0.5 stroke-inherit" />
