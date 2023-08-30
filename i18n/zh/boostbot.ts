@@ -34,7 +34,7 @@ const boostbot = {
     error: {
         influencerSearch: 'Error fetching Boostbot influencers',
         influencerUnlock: 'Unlocking influencer failed',
-        influencerToOutreach: 'Adding influencer to outreach failed',
+        influencersToOutreach: 'Adding influencer to outreach failed',
     },
 };
 
