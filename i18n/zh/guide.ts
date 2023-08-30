@@ -10,10 +10,10 @@ const guidePage = {
             description:
                 '我们的数据库涵盖了3个平台共计超过2.75亿个的红人帐户，并提供数据驱动工具助您找到完美的网红达人。',
         },
-        campaigns: {
-            title: '项目管理',
+        outreach: {
+            title: 'Outreach',
             description:
-                '考虑到网红营销本身就需要耗费时间，我们为您提供项目CRM系统，助您井然有序地管理项目下的一切相关事务。',
+                'We’re extremely excited about our new Influencer Relationship Management ( IRM ) system, tailor made to help you plan, organize and execute your collaborations as easily as possible. Outreach is all centered around ‘Sequences’, an automated emailing tool that will schedule, send and track your outreach and follow-up emails with just the click of a button. Our Sequences use intelligent Templates that pull in information about your company, product and the influencers you’re trying to reach to customize each message. When an influencer replies, we’ll display it in our specialized Inbox, where you can discuss your collab and keep track of all your information in the Influencer Profile!',
         },
         performance: {
             title: '追踪绩效',
@@ -22,10 +22,6 @@ const guidePage = {
         account: {
             title: '监控您的使用情况',
             description: '查看谁有您管理项目的访问权，以及您打开了多少位网红达人的档案。',
-        },
-        aiEmailGenerator: {
-            title: '量身定制您的外联合作',
-            description: '向潜在的网红达人发送个性化的电子邮件，提高转化率',
         },
     },
     modalInfo: {
@@ -65,24 +61,69 @@ const guidePage = {
                 },
             ],
         },
-        campaigns: {
-            title: '项目管理',
-            url: '/campaigns',
+        outreach: {
+            title: 'Outreach',
+            url: '/sequences',
             sections: [
                 {
-                    title: '追踪您的外联合作',
-                    description:
-                        '当您在项目中添加一个网红达人，他们会进入达人漏斗筛选流程。您首先会在“待联系”列表中看到他们 - 当您通过电子邮件或其他方式与他们联系后，可将其状态更改为“已联系”，然后他们会移动到相对应的状态下。',
+                    title: 'Sequences',
+                    description: `A Sequence is like a playlist email templates that will be customized, scheduled and automatically sent to an Influencer you add from Discover or BoostBot AI search. So you can think of the Sequence both as the set of scheduled emails, and as the group of influencers you’ve added to it.
+                        
+                        Each sequence consists of 4 email templates, an Outreach message that explains your product and 3 follow-up messages to flag your message to the top of the influencers inbox. Right now all sequences use our internally developed an battle tested templates. You can tailor them to your brand and product by updating the template variables in the Sequence page, and soon you’ll even be able to make your own templates.
+                        
+                        We will track the emails, and once the influencer responds, they’ll be moved to the Influencer Manager, and their response will display in the Inbox.
+                        
+                        We recommend creating a few different sequences, at least one for each genre or niche of influencers you want to collaborate with is ideal. For example if I wanted to promote a smart watch like the Mi Band 8, I would create sequences for ‘Tech Enthusiasts’, ‘Workout Routine Specialists’, and ‘Productivity Hackers’. Then I can adjust my templates and variables for each group so my emails will feel more personalized, and have a better reply rate!
+                        
+                        After your sequence is set up, you’ll be able to set it to either Manual Start, or Auto Start. 
+
+                        When your sequence is set to Manual Start, it will collect all influencers added to it in the ‘Needs Attention’ tab for you, you will need to click the Trigger Sequence button yourself to schedule and send the emails. 
+
+                        If you set your sequence to Auto Start, then any influencer with an email address available that you add to the sequence will automatically have their emails scheduled and sent to them.
+
+                        We recommend using Auto start to make your life easier! It’s better to email lots of potential influencers, and then be more selective about who to work with after they reply.
+
+                        Some influencers choose not to display their contact information in their bio, and so we aren’t able to collect it when we are analyzing their social media profile. On youtube, it is sometimes available in the ‘About’ section of the profile. If you can find the influencers email address, you can add it to their profile in the ‘Needs Attention’ section, then we can schedule and send their sequence emails.                                                 `,
                 },
                 {
-                    title: '',
-                    description:
-                        '如果达人已回复，请将状态设置为“进行中”。当您与他们达成交易时，需要将状态改为“已确认”。最后，当达人发布了内容后，请将状态更改为“已发布”并添加发布链接，以便我们为您追踪互动率！',
+                    title: 'Templates',
+                    description: `Like emails, but magic!
+
+                        Templates are pre-built email blueprints that include ‘Variables’ to make sure each email you send is customized for the influencer you’re trying to reach. Each sequence uses 4 different templates, an initial outreach, and 3 follow-up messages that will go out automatically every few days to boost your chances of a reply. 
+
+                        The templates use information provided by you, as well as information we pull from the influencers report to tailor each emails that goes out, without any of the hassle of copying and pasting yourself
+
+                        Before you can start sending out emails in your sequence, you’ll need to set the content that each variable will use, you can do this from the “Update Templates Variables” button in the top right corner of the “Sequence” page. 
+
+                        We’ve pre-built a set of flexible, and highly effective templates for you to use while we work on building the ability to let you make your own templates. These are battle-tested templates we use internally to great success`,
                 },
                 {
-                    title: '',
-                    description:
-                        '有时事与愿违。如果几周了达人还没有回复您，可将状态更改为“已忽略”。如果他们认为项目不合适，也可将状态更改为“已拒绝”。',
+                    title: 'Inbox',
+                    description: `The Inbox is where you’ll be able to access all the replies to your outreach emails, and follow-up conversations with influencers. You’ll be able to open that message and reply to the right there on the platform!
+
+                        No more switching between your email window, and relay.club. With the Inbox connected to the Influencer Profile you’ll have all the context you need, all in one place.`,
+                },
+                {
+                    title: 'Influencer Profile',
+                    description: `The Influencer Profile is a tool dedicated to organizing and streamlining the collaboration process. 
+
+                        You can track the Influencer’s status through the collab, helping to keep track of everyone moving through your funnel. Setting and updating the status of your influencers is super important to help you keep on top of things as you start working with more and more influencers. You’ll be able to sort and filter your influencers by their status in the Influencer Manager, and you can set it from right there in the Inbox when you’re responding to their emails!
+                        
+                        There are dedicated spots to save all the most important information regarding a collab, from the influencers fee, scheduled post date for the content and even shipping details!
+                        
+                        We know there’s going to be things that you need to remember outside of the standard information for a collab. That’s why we added the notes section for you to add longer comments regarding your influencer collab. Once a note is saved, it can be viewed by clicking on the icon beside the Notes title on the profile. 
+                        
+                        Once your influencer has posted their content, add the URL to the Posts section so we can track the engagements for you to display in the Performance section!`,
+                },
+                {
+                    title: 'Influencer Manager',
+                    description: `The influencer manager is where you can see your entire teams influencers, and get a birds eye view of your in-progress collabs. 
+
+                        You can view, filter, or search through all the influencers that have responded to your teams outreach emails, and are currently moving through your collab funnel. Pull up the Influencer Profile by clicking on one of the rows, or go to your conversation with them by clicking on their Inbox icon on the right.
+
+                        Toggle “View Only Mine” to see just the influencers you’re personally responsible for, or keep an eye on the whole team by toggling it off. 
+
+                        It’s the hub of your influencer marketing efforts, where you can get an overview of your collabs and never let anyone slip through the cracks.`,
                 },
             ],
         },
@@ -105,17 +146,6 @@ const guidePage = {
                     title: '管理团队合作',
                     description:
                         '“我的帐户”旨在为您跟踪具体的细节信息。您可以在此查看已在relay.club上注册的团队成员、本月迄今为止的搜索次数，已查看网红达人的报告数，以及剩余的搜索额度。如果发现您的配额使用过快，请与我们的销售团队联系升级您的账户！',
-                },
-            ],
-        },
-        aiEmailGenerator: {
-            title: '量身定制您的外联合作',
-            url: '/ai-email-generator',
-            sections: [
-                {
-                    title: '利用AI技术赋能您的外联合作',
-                    description:
-                        '嵌入OpenAI的技术，我们的电子邮件模板生成器可以为您创建一封包含您产品信息和网红达人账户详细信息的高转化电子邮件和主题。只需要填写一个表格，让您的电子邮件在众多邮件中脱颖而出。',
                 },
             ],
         },

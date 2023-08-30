@@ -14,23 +14,7 @@ describe('outreach', () => {
         setupIntercepts();
         cy.loginTestUser();
     });
-    it('can create new sequence', () => {
-        cy.contains('Sequences').click();
-        cy.contains('New sequence', { timeout: 10000 }).click();
-        cy.get('input[placeholder="Enter a name for your sequence"]').type("New Sequence Test");
-        cy.contains('button','Create new sequence').click();
-        cy.contains('New Sequence Test').click();
-        cy.contains('button', 'Update template variables').click();
-        cy.get('input[id="template-variable-input-productName"]').clear().type('Test Product');
-        cy.contains('button', 'Update variables').click();
-        cy.contains('The values you see here are what will be used to automatically customize the actual email content of your sequence emails!').should('not.exist');
-        cy.contains('Template variables updated');
-        cy.contains('Sequences').click();
-        cy.contains('tr', 'New Sequence Test').contains('Test Product');
-        //cleanup
-        cy.getByTestId('delete-sequence:New Sequence Test').click();
-        cy.contains('tr', 'New Sequence Test').should('not.exist');
-    })
+
     it('sequence page', () => {
         cy.contains('Sequences').click();
         cy.contains('General collaboration', { timeout: 10000 }).click();
@@ -119,9 +103,11 @@ describe('outreach', () => {
         // can delete influencer
         cy.contains('Charlie Charles');
         cy.getByTestId('delete-influencer-button').eq(2).click();
-        cy.contains("Deleting the influencer will remove them from the sequence, and cancel any future messages. You'll have to re-add them if you change your mind.");
+        cy.contains(
+            "Deleting the influencer will remove them from the sequence, and cancel any future messages. You'll have to re-add them if you change your mind.",
+        );
         cy.contains('button', 'Yes, delete them').click();
-        cy.contains('Influencer successfully deleted from sequence')
+        cy.contains('Influencer successfully deleted from sequence');
         cy.contains('Charlie Charles').should('not.exist');
 
         // send sequence is disabled if missing template variables
@@ -154,7 +140,7 @@ describe('outreach', () => {
 
         // can view all emails preview
         cy.getByTestId('show-all-email-previews-button').eq(0).click();
-        // cy.getByTestId('email-preview-modal-spinner');
+        //TODO: cy.getByTestId('email-preview-modal-spinner');
         cy.contains('Hey **influencerAccountName**', { timeout: 10000 }); // fills in missing variables
         cy.contains(
             'Vivian here from Blue Moonlight Stream Industries. I watched your "**recentVideoTitle**" video, and love your content style!!',
@@ -221,5 +207,24 @@ describe('outreach', () => {
         cy.contains('Bob-Recommended Brown').should('not.exist');
         cy.contains('Influencer Manager').click();
         cy.contains('Bob-Recommended Brown');
+    });
+    it('can create new sequence. Can delete sequence', () => {
+        cy.contains('Sequences').click();
+        cy.contains('New sequence', { timeout: 10000 }).click();
+        cy.get('input[placeholder="Enter a name for your sequence"]').type('New Sequence Test');
+        cy.contains('button', 'Create new sequence').click();
+        cy.contains('New Sequence Test').click();
+        cy.contains('button', 'Update template variables').click();
+        cy.get('input[id="template-variable-input-productName"]').clear().type('Test Product');
+        cy.contains('button', 'Update variables').click();
+        cy.contains(
+            'The values you see here are what will be used to automatically customize the actual email content of your sequence emails!',
+        ).should('not.exist');
+        cy.contains('Template variables updated');
+        cy.contains('Sequences').click();
+        cy.contains('tr', 'New Sequence Test').contains('Test Product');
+        // cleanup and test delete
+        cy.getByTestId('delete-sequence:New Sequence Test').click();
+        cy.contains('tr', 'New Sequence Test').should('not.exist');
     });
 });

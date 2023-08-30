@@ -8,8 +8,10 @@ import { toast } from 'react-hot-toast';
 import { useSequence } from 'src/hooks/use-sequence';
 import { clientLogger } from 'src/utils/logger-client';
 import { useTemplateVariables } from 'src/hooks/use-template_variables';
+import { useTranslation } from 'react-i18next';
 
 export const SequencesTableRow = ({ sequence }: { sequence: Sequence }) => {
+    const { t } = useTranslation();
     const { sequenceEmails } = useSequenceEmails(sequence.id);
     const { sequenceInfluencers, refreshSequenceInfluencers } = useSequenceInfluencers([sequence.id]);
     const { templateVariables } = useTemplateVariables(sequence.id);
@@ -22,9 +24,12 @@ export const SequencesTableRow = ({ sequence }: { sequence: Sequence }) => {
     );
     const handleDeleteSequence = async () => {
         try {
+            const confirmed = confirm(t('sequences.deleteConfirm') || 'Confirm deletion?');
+            if (!confirmed) return;
             await deleteSequence(sequence.id);
-            toast.success('Sequence deleted successfully');
+            toast.success(t('sequences.deleteSuccess'));
         } catch (error) {
+            toast.error(t('sequences.deleteFail'));
             clientLogger(error, 'error');
         }
         refreshSequenceInfluencers();

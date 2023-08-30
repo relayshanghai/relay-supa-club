@@ -1,3 +1,10 @@
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+// Classname utility used with shadcn/ui
+export function cn(...inputs: ClassValue[]) {
+    return twMerge(clsx(inputs));
+}
+
 type KVBool = { [key: string]: boolean | ((state?: any) => boolean) };
 
 type FNClassBuilder = (state?: any) => ClassBuilder;

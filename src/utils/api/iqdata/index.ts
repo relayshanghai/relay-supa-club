@@ -1,13 +1,13 @@
+import type { NextApiRequest, NextApiResponse } from 'next';
 import { headers } from 'src/utils/api/iqdata/constants';
 import { handleResError } from 'src/utils/fetcher';
+import { rudderstack } from 'src/utils/rudderstack';
 import type { CreatorPlatform, CreatorReport, CreatorSearchResult } from 'types';
 import type { CreatorReportsMetadata } from 'types/iqdata/creator-reports-metadata';
-import type { FetchCreatorsFilteredParams } from './transforms';
-import { prepareFetchCreatorsFiltered } from './transforms';
 import type { TikTokVideoDataRaw } from 'types/iqdata/tiktok-video-info';
 import type { YoutubeVideoDataRaw } from 'types/iqdata/youtube-video-info';
-import type { NextApiRequest, NextApiResponse } from 'next';
-import { rudderstack } from 'src/utils/rudderstack';
+import type { FetchCreatorsFilteredParams } from './transforms';
+import { prepareFetchCreatorsFiltered } from './transforms';
 
 export const IQDATA_URL = 'https://socapi.icu/v2.0/api/';
 
@@ -26,9 +26,9 @@ export const withServerContextIqdata = (fetchFunction: (...args: any[]) => any) 
     };
 };
 
-export const withServerContext = <T extends (args: any) => any>(fetchFunction: T) => {
+export const withServerContext = <T extends (...args: any[]) => any>(fetchFunction: T) => {
     return (args: Parameters<T>[0], context?: ServerContext) => {
-        return fetchFunction({ ...args, context });
+        return fetchFunction({ ...args, context }) as ReturnType<T>;
     };
 };
 

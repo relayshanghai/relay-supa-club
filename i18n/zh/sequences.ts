@@ -110,7 +110,8 @@ const sequences = {
     battery life of over 2 weeks!”
     这将会直接显示于您的电子邮件模版中。`,
     productPrice: '产品价格',
-    productPriceTooltip: `
+    productPriceTooltip: '产品价格',
+    productPriceTooltipDescription: `
     以美元为单位输入产品价格。
     
     最好输入整数，以便让模板看起来更加简洁。
@@ -152,5 +153,8 @@ const sequences = {
         okay: '确认移除',
     },
     influencerAlreadyAdded_sequence: 'KOL已经添加到序列: {{sequence}}',
+    deleteConfirm: '确认删除？',
+    deleteSuccess: '删除成功',
+    deleteFail: '删除失败',
 };
 export default sequences;

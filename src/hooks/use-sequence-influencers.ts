@@ -1,14 +1,14 @@
-import useSWR from 'swr';
+import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
+import { useUser } from 'src/hooks/use-user';
 import { apiFetch } from 'src/utils/api/api-fetch';
-import { useDB } from 'src/utils/client-db/use-client-db';
+import type { SequenceInfluencerInsert, SequenceInfluencerUpdate } from 'src/utils/api/db';
 import {
     createSequenceInfluencerCall,
-    updateSequenceInfluencerCall,
     deleteSequenceInfluencerCall,
+    updateSequenceInfluencerCall,
 } from 'src/utils/api/db/calls/sequence-influencers';
-import type { SequenceInfluencerInsert, SequenceInfluencerUpdate } from 'src/utils/api/db';
-import { useUser } from 'src/hooks/use-user';
-import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
+import { useDB } from 'src/utils/client-db/use-client-db';
+import useSWR from 'swr';
 
 export const useSequenceInfluencers = (sequenceIds?: string[], filters?: string[]) => {
     const { profile } = useUser();
@@ -17,12 +17,12 @@ export const useSequenceInfluencers = (sequenceIds?: string[], filters?: string[
         sequenceIds ? ['sequence_influencers', ...sequenceIds] : null,
         async () => {
             if (sequenceIds) {
-                const allInfluencers = (await apiFetch<SequenceInfluencerManagerPage[]>('/api/sequence/influencers', {
+                const allInfluencers = await apiFetch<SequenceInfluencerManagerPage[]>('/api/sequence/influencers', {
                     body: sequenceIds,
-                })) as SequenceInfluencerManagerPage[];
+                });
                 return filters
-                    ? allInfluencers.filter((influencer) => filters.includes(influencer.funnel_status))
-                    : allInfluencers;
+                    ? allInfluencers.content.filter((influencer) => filters.includes(influencer.funnel_status))
+                    : allInfluencers.content;
             }
         },
     );
@@ -32,6 +32,7 @@ export const useSequenceInfluencers = (sequenceIds?: string[], filters?: string[
         influencerSocialProfileId: string,
         tags: string[],
         iqDataUserProfileId: string,
+        email?: string | null,
     ) => {
         if (!sequenceIds || sequenceIds.length < 1) throw new Error('No sequenceIds provided');
         if (!profile?.company_id) throw new Error('No profile found');
@@ -45,6 +46,7 @@ export const useSequenceInfluencers = (sequenceIds?: string[], filters?: string[
             tags,
             funnel_status: 'To Contact',
             iqdata_id: iqDataUserProfileId,
+            email,
         };
         const res = await createSequenceInfluencerDBCall(insert);
         return res;

@@ -1,9 +1,40 @@
 import type { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { serverLogger } from 'src/utils/logger-server';
-import { ZodError } from 'zod';
+import type { ZodTypeAny } from 'zod';
+import { ZodError, z } from 'zod';
+import type { ApiPayload } from './api/types';
 
 export type ApiError = { error: any };
+
+// Create a immutable symbol for "key error" for ApiRequest utility type
+//
+//  Even though you can shape ApiRequests with invalid keys
+//
+//        export type ApiRequestType = ApiRequest<{
+//            foo: { id: string },
+//            query: { bar: string }
+//        }>
+//
+// This will enforce the type of the invalid key to this
+// ApiRequestKeyError symbol which cannot be recreated
+const ApiRequestKeyError = Symbol('Invalid ApiRequest Key Error');
+
+/**
+ * Utility type for building request types if you cannot use zod
+ */
+export type ApiRequest<S extends ApiPayload> = {
+    [K in keyof S]: K extends keyof ApiPayload ? S[K] : typeof ApiRequestKeyError;
+};
+
+/**
+ * Utility function for building zod request objects
+ */
+export const createApiRequest = <T extends { [k in 'path' | 'query' | 'body']?: ZodTypeAny }>(shape: T) => {
+    return z.object(shape);
+};
+
+export type ApiResponse<T> = T | ApiError;
 
 export type ApiHandlerParams = {
     getHandler?: NextApiHandler;

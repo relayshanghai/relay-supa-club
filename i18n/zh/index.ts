@@ -14,7 +14,9 @@ import filters from './filters';
 import tooltips from './tooltips';
 import inbox from './inbox';
 import sequences from './sequences';
+import boostbot from './boostbot';
 import manager from './manager';
+import profile from './profile';
 
 const translations = {
     translation: {
@@ -34,7 +36,9 @@ const translations = {
         tooltips,
         inbox,
         sequences,
+        boostbot,
         manager,
+        profile,
     },
 };
 export default translations;

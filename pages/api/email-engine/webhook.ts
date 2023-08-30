@@ -3,17 +3,23 @@ import httpCodes from 'src/constants/httpCodes';
 import { ApiHandler } from 'src/utils/api-handler';
 import type { SequenceEmailUpdate, SequenceInfluencer, SequenceInfluencerUpdate } from 'src/utils/api/db';
 import { getProfileBySequenceSendEmail, supabaseLogger } from 'src/utils/api/db';
-import { deleteEmailFromOutbox, getOutbox } from 'src/utils/api/email-engine';
-import { GMAIL_SENT_SPECIAL_USE_FLAG } from 'src/utils/api/email-engine/prototype-mocks';
 import {
     deleteSequenceEmailByMessageIdCall,
     getSequenceEmailByMessageIdCall,
     getSequenceEmailsBySequenceInfluencerCall,
     updateSequenceEmailCall,
 } from 'src/utils/api/db/calls/sequence-emails';
+import { deleteEmailFromOutbox, getOutbox } from 'src/utils/api/email-engine';
+import { GMAIL_SENT_SPECIAL_USE_FLAG } from 'src/utils/api/email-engine/prototype-mocks';
 
 import { db } from 'src/utils/supabase-client';
 
+import {
+    getSequenceInfluencerByEmailAndCompanyCall,
+    getSequenceInfluencerByIdCall,
+    updateSequenceInfluencerCall,
+} from 'src/utils/api/db/calls/sequence-influencers';
+import { serverLogger } from 'src/utils/logger-server';
 import type { SendEmailRequestBody, SendEmailResponseBody } from 'types/email-engine/account-account-submit-post';
 import type { WebhookMessageBounce } from 'types/email-engine/webhook-message-bounce';
 import type { WebhookMessageComplaint } from 'types/email-engine/webhook-message-complaint';
@@ -23,12 +29,6 @@ import type { WebhookMessageNew } from 'types/email-engine/webhook-message-new';
 import type { WebhookMessageSent } from 'types/email-engine/webhook-message-sent.ts';
 import type { WebhookTrackClick } from 'types/email-engine/webhook-track-click';
 import type { WebhookTrackOpen } from 'types/email-engine/webhook-track-open';
-import {
-    getSequenceInfluencerByEmailAndCompanyCall,
-    getSequenceInfluencerByIdCall,
-    updateSequenceInfluencerCall,
-} from 'src/utils/api/db/calls/sequence-influencers';
-import { serverLogger } from 'src/utils/logger-server';
 
 export type SendEmailPostRequestBody = SendEmailRequestBody & {
     account: string;
@@ -256,13 +256,13 @@ const handleFailed = async (event: WebhookMessageFailed, res: NextApiResponse) =
 const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
     try {
         const sequenceEmail = await getSequenceEmailByMessageId(event.data.messageId); // if there is no matching sequenceEmail, this is a regular email, not a sequenced email and this will throw an error
+        const sequenceInfluencer = await getSequenceInfluencerById(sequenceEmail.sequence_influencer_id);
+
         const update: SequenceEmailUpdate = {
             id: sequenceEmail.id,
             email_delivery_status: 'Delivered',
         };
         await updateSequenceEmail(update);
-
-        const sequenceInfluencer = await getSequenceInfluencerById(sequenceEmail.sequence_influencer_id);
 
         const sequenceInfluencerUpdate: SequenceInfluencerUpdate = {
             id: sequenceInfluencer.id,
@@ -275,15 +275,15 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
             data: { event, update, sequenceInfluencerUpdate } as any,
             message: `sent to: ${event.data.envelope.to}`,
         });
-        return res.status(httpCodes.OK).json({});
     } catch (error: any) {
         await supabaseLogger({
             type: 'email-webhook',
             data: { event, error } as any,
             message: `error sending to: ${event.data.envelope.to}. error: ${error?.message}`,
         });
-        return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
     }
+
+    return res.status(httpCodes.OK).json({});
 };
 
 const handleOtherWebhook = async (event: WebhookEvent, res: NextApiResponse) => {

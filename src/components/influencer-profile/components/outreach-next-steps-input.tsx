@@ -7,8 +7,8 @@ type Props = {
 
 export const OutreachNextStepsInput = (props: Props) => {
     return (
-        <>
-            <TextInputComponent isRelative={false} label="Next Step" {...props} />
-        </>
+        <div className="col-span-1">
+            <TextInputComponent isRelative={false} label={props.label || 'Next Step'} {...props} />
+        </div>
     );
 };

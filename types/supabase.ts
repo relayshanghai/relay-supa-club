@@ -350,6 +350,7 @@ export interface Database {
           subscription_end_date: string | null
           subscription_start_date: string | null
           subscription_status: string
+          terms_accepted: boolean | null
           trial_ai_email_generator_limit: string
           trial_profiles_limit: string
           trial_searches_limit: string
@@ -371,6 +372,7 @@ export interface Database {
           subscription_end_date?: string | null
           subscription_start_date?: string | null
           subscription_status?: string
+          terms_accepted?: boolean | null
           trial_ai_email_generator_limit?: string
           trial_profiles_limit?: string
           trial_searches_limit?: string
@@ -392,6 +394,7 @@ export interface Database {
           subscription_end_date?: string | null
           subscription_start_date?: string | null
           subscription_status?: string
+          terms_accepted?: boolean | null
           trial_ai_email_generator_limit?: string
           trial_profiles_limit?: string
           trial_searches_limit?: string
@@ -587,6 +590,7 @@ export interface Database {
           influencer_id: string
           name: string | null
           platform: string
+          recent_post_url: string | null
           recent_video_title: string | null
           reference_id: string
           url: string
@@ -600,6 +604,7 @@ export interface Database {
           influencer_id: string
           name?: string | null
           platform: string
+          recent_post_url?: string | null
           recent_video_title?: string | null
           reference_id: string
           url: string
@@ -613,6 +618,7 @@ export interface Database {
           influencer_id?: string
           name?: string | null
           platform?: string
+          recent_post_url?: string | null
           recent_video_title?: string | null
           reference_id?: string
           url?: string
@@ -1226,6 +1232,7 @@ export interface Database {
           auto_start: boolean
           company_id: string
           created_at: string
+          deleted: boolean
           id: string
           manager_first_name: string | null
           manager_id: string | null
@@ -1236,6 +1243,7 @@ export interface Database {
           auto_start?: boolean
           company_id: string
           created_at?: string
+          deleted?: boolean
           id?: string
           manager_first_name?: string | null
           manager_id?: string | null
@@ -1246,6 +1254,7 @@ export interface Database {
           auto_start?: boolean
           company_id?: string
           created_at?: string
+          deleted?: boolean
           id?: string
           manager_first_name?: string | null
           manager_id?: string | null
