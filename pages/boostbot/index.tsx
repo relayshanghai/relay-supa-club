@@ -51,7 +51,7 @@ const Boostbot = () => {
                 const payload: UnlockInfluencersPayload = {
                     influencer_ids: [],
                     topics: [],
-                    is_all: userIds.length === 1,
+                    is_multiple: userIds.length > 1,
                     is_success: true,
                 };
 
@@ -83,7 +83,7 @@ const Boostbot = () => {
             const payload: UnlockInfluencersPayload = {
                 influencer_ids: userIds,
                 topics: [],
-                is_all: userIds.length !== 1,
+                is_multiple: userIds.length > 1,
                 is_success: false,
                 extra_info: { error: String(error) },
             };
