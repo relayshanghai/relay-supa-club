@@ -124,11 +124,6 @@ export const useSession = (params?: useSessionParams) => {
                 });
             }
 
-            if (supabaseSession === null) {
-                setProfile((s) => s !== null ? null : s)
-                setCompany((s) => s !== null ? null : s)
-            }
-
             setSession((state) => {
                 if (supabaseSession === null && state !== null) {
                     return clearSession(params?.onClear);
@@ -146,6 +141,11 @@ export const useSession = (params?: useSessionParams) => {
 
                 return state;
             });
+
+            if (supabaseSession === null) {
+                setProfile((s) => s !== null ? null : s)
+                setCompany((s) => s !== null ? null : s)
+            }
         });
 
         return cleanup
