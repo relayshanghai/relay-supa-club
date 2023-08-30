@@ -8,8 +8,8 @@ import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { useSequence } from 'src/hooks/use-sequence';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { useSequences } from 'src/hooks/use-sequences';
-import { AddInfluencerToSequence } from 'src/utils/analytics/events';
-import { AddInfluencerToSequencePayload } from 'src/utils/analytics/events/outreach/add-influencer-to-sequence';
+import { AddInfluencerToSequence, StartSequenceForInfluencer } from 'src/utils/analytics/events';
+import type { AddInfluencerToSequencePayload } from 'src/utils/analytics/events/outreach/add-influencer-to-sequence';
 import type { Sequence } from 'src/utils/api/db';
 import { clientLogger } from 'src/utils/logger-client';
 import type { CreatorPlatform, CreatorUserProfile } from 'types';
@@ -124,7 +124,35 @@ export const AddToSequenceModal = ({
             refreshSequenceInfluencers();
 
             if (sequenceInfluencer.email && sequence.auto_start) {
-                await sendSequence([sequenceInfluencer]);
+                await sendSequence([sequenceInfluencer])
+                    .then((results) => {
+                        const failed = results.filter((result) => result.error);
+                        const succeeded = results.filter((result) => !result.error);
+
+                        track(StartSequenceForInfluencer, {
+                            influencer_id: sequenceInfluencer.influencer_social_profile_id,
+                            sequence_id: sequenceInfluencer.sequence_id,
+                            sequence_influencer_id: sequenceInfluencer.id,
+                            is_success: true,
+                            sent_success: succeeded,
+                            sent_success_count: succeeded.length,
+                            sent_failed: failed,
+                            sent_failed_count: failed.length,
+                        })
+
+                        return results;
+                    })
+                    .catch((error) => {
+                        track(StartSequenceForInfluencer, {
+                            influencer_id: sequenceInfluencer.influencer_social_profile_id,
+                            sequence_id: sequenceInfluencer.sequence_id,
+                            sequence_influencer_id: sequenceInfluencer.id,
+                            is_success: false,
+                            extra_info: { error: String(error) }
+                        })
+
+                        return error;
+                    })
             }
 
             toast.success(t('creators.addToSequenceSuccess'));
