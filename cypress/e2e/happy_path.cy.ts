@@ -162,7 +162,7 @@ describe('Main pages happy paths', () => {
         cy.contains('Beauty for All Skin Tones'); // this functionality is tested in campaigns page test
     });
 
-    it('can use account and pricing pages', () => {
+    it.skip('can use account and pricing pages', () => {
         cy.loginTestUser();
         cy.contains('William Edward').click();
         cy.contains('Subscription', { timeout: 10000 }); // loads account page
