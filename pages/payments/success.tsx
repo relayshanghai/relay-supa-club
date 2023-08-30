@@ -19,7 +19,7 @@ const UpgradeSubscriptionSuccess = () => {
     return (
         <div className="h-screen">
             <div className="mb-3 flex w-full items-center justify-between p-5">
-                <Title />
+                <Title open={true} />
                 <LanguageToggle />
             </div>
             <div className="flex h-full flex-col justify-center pb-32 text-center">
