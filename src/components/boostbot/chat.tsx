@@ -26,6 +26,7 @@ export type MessageType = {
 };
 
 interface ChatProps {
+    isBoostbotLoading: boolean;
     influencers: Influencer[];
     setInfluencers: Dispatch<SetStateAction<Influencer[]>>;
     setIsInitialLogoScreen: Dispatch<SetStateAction<boolean>>;
@@ -35,6 +36,7 @@ interface ChatProps {
 }
 
 export const Chat: React.FC<ChatProps> = ({
+    isBoostbotLoading,
     influencers,
     setInfluencers,
     setIsInitialLogoScreen,
@@ -174,7 +176,7 @@ export const Chat: React.FC<ChatProps> = ({
             <div className="relative">
                 {/* Below is a gradient that hides the bottom of the chat */}
                 <div className="absolute -top-8 right-4 h-8 w-full -scale-y-100 transform bg-gradient-to-b from-white" />
-                <ChatInput isLoading={isLoading} onSendMessage={onSendMessage} />
+                <ChatInput isLoading={isLoading || isBoostbotLoading} onSendMessage={onSendMessage} />
             </div>
         </div>
     );
