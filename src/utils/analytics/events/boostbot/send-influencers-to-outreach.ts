@@ -1,6 +1,6 @@
 import type { TriggerEvent } from '../../types';
 
-export const BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH = 'TEST:boostbot-send_influencers_to_outreach';
+export const BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH = 'boostbot-send_influencers_to_outreach';
 
 export type SendInfluencersToOutreachPayload = {
     /**
