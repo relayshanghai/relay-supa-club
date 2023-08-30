@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { TrackedEvent } from '../types';
+import type { TrackedEvent } from '../types';
 import type { AnalyzeAddToCampaignPayload } from './analyze-add_to_campaign';
 import { ANALYZE_ADD_TO_CAMPAIGN, AnalyzeAddToCampaign } from './analyze-add_to_campaign';
 import type {
@@ -15,6 +15,7 @@ import type { OpenBoostbotPagePayload } from './boostbot/open-boostbot-page';
 import { BOOSTBOT_OPEN_BOOSTBOT_PAGE, OpenBoostbotPage } from './boostbot/open-boostbot-page';
 import type { RecommendInfluencersPayload } from './boostbot/recommend-influencers';
 import { BOOSTBOT_RECOMMEND_INFLUENCERS, RecommendInfluencers } from './boostbot/recommend-influencers';
+import type { SendInfluencersToOutreachPayload } from './boostbot/send-influencers-to-outreach';
 import { BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH, SendInfluencersToOutreach } from './boostbot/send-influencers-to-outreach';
 import type { UnlockInfluencersPayload } from './boostbot/unlock-influencer';
 import { BOOSTBOT_UNLOCK_INFLUENCERS, UnlockInfluencers } from './boostbot/unlock-influencer';
@@ -81,6 +82,7 @@ export {
     EmailOpened,
     EmailClicked,
     EmailReply,
+    BoostbotAnalyzeInfluencer,
     OpenBoostbotPage,
     RecommendInfluencers,
     UnlockInfluencers,
@@ -140,6 +142,7 @@ export type payloads = {
     [BOOSTBOT_OPEN_BOOSTBOT_PAGE]: OpenBoostbotPagePayload,
     [BOOSTBOT_RECOMMEND_INFLUENCERS]: RecommendInfluencersPayload,
     [BOOSTBOT_UNLOCK_INFLUENCERS]: UnlockInfluencersPayload,
+    [BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH]: SendInfluencersToOutreachPayload,
 };
 
 // @note we are using these eventKeys on other zod objects for validation
