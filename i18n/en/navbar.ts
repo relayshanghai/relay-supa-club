@@ -5,6 +5,7 @@ const navbar = {
     account: 'My Account',
     logout: 'Log Out',
     performance: 'Performance',
+    boostbot: 'BoostBot Search',
     guide: 'Guide',
     sequences: 'Sequences',
     inbox: 'Inbox',
