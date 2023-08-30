@@ -25,7 +25,7 @@ export type Influencer = (UserProfile | CreatorAccountWithTopics) & {
 
 const Boostbot = () => {
     const { t } = useTranslation();
-    const { unlockInfluencers } = useBoostbot({ abortSignal: undefined });
+    const { unlockInfluencers } = useBoostbot({});
     const [isInitialLogoScreen, setIsInitialLogoScreen] = useState(true);
     const { trackEvent: track } = useRudderstack();
     const { sequences } = useSequences();
