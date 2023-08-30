@@ -107,7 +107,7 @@ export const useSession = (params?: useSessionParams) => {
         if (supabaseSession && session && supabaseSession.user.session_id === session.user.session_id) return;
 
         // only refetch profile when session really changes
-        if (supabaseSession === null || profile !== null && supabaseSession.user.id === profile.id) {
+        if (supabaseSession && profile && supabaseSession.user.id === profile.id) {
             return cleanup;
         }
 
@@ -122,6 +122,11 @@ export const useSession = (params?: useSessionParams) => {
                 setProfile((s) => {
                     return (loadedProfile && s?.id !== loadedProfile.id) ? loadedProfile : s;
                 });
+            }
+
+            if (supabaseSession === null) {
+                setProfile((s) => s !== null ? null : s)
+                setCompany((s) => s !== null ? null : s)
             }
 
             setSession((state) => {
