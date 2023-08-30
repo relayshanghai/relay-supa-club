@@ -146,6 +146,7 @@ const Boostbot = () => {
                         handlePageToUnlock={handlePageToUnlock}
                         handlePageToOutreach={handlePageToOutreach}
                         setIsInitialLogoScreen={setIsInitialLogoScreen}
+                        handleUnlockInfluencers={handleUnlockInfluencers}
                     />
                 </div>
 
