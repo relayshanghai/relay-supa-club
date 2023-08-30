@@ -12,6 +12,7 @@ import type { GetTopicsBody, GetTopicsResponse } from 'pages/api/boostbot/get-to
 import type { GetRelevantTopicsBody, GetRelevantTopicsResponse } from 'pages/api/boostbot/get-relevant-topics';
 import type { GetTopicClustersBody, GetTopicClustersResponse } from 'pages/api/boostbot/get-topic-clusters';
 import type { GetInfluencersBody, GetInfluencersResponse } from 'pages/api/boostbot/get-influencers';
+import type { Influencer } from 'pages/boostbot';
 
 type UseBoostbotProps = {
     abortSignal?: AbortController['signal'];
@@ -22,14 +23,14 @@ export const useBoostbot = ({ abortSignal }: UseBoostbotProps) => {
     const { company } = useCompany();
 
     const unlockInfluencers = useCallback(
-        async (influencerIds: string[]) => {
+        async (influencers: Influencer[]) => {
             if (!company?.id || !profile?.id) throw new Error('No company or profile found');
 
-            const influencersPromises = influencerIds.map((influencerId) => {
+            const influencersPromises = influencers.map(({ user_id, url }) => {
+                const platform = url.includes('youtube') ? 'youtube' : url.includes('tiktok') ? 'tiktok' : 'instagram';
                 const reportQuery = {
-                    // TODO: Right now only handling instagram, make platform dynamic
-                    platform: 'instagram' as CreatorPlatform,
-                    creator_id: influencerId,
+                    platform: platform as CreatorPlatform,
+                    creator_id: user_id,
                     company_id: company.id,
                     user_id: profile.id,
                     track: SearchAnalyzeInfluencer.eventName as eventKeys,

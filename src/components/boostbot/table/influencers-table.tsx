@@ -3,6 +3,7 @@ import type { TFunction } from 'i18next';
 import type { ColumnDef, RowData, TableMeta } from '@tanstack/react-table';
 import { flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } from '@tanstack/react-table';
 
+import type { Influencer } from 'pages/boostbot';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from 'src/components/library';
 import { DataTablePagination } from './pagination';
 
@@ -16,7 +17,7 @@ interface DataTableProps<TData, TValue> {
 declare module '@tanstack/react-table' {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     interface TableMeta<TData extends RowData> {
-        handleUnlockInfluencer: (userId: string) => void;
+        handleUnlockInfluencer: (influencer: Influencer) => void;
         removeInfluencer: (userId: string) => void;
         t: TFunction<'translation', undefined, 'translation'>;
     }

@@ -116,7 +116,7 @@ export const columns: ColumnDef<Influencer>[] = [
             const influencer = row.original;
 
             const unlockInfluencer = () => {
-                table.options.meta?.handleUnlockInfluencer(influencer.user_id);
+                table.options.meta?.handleUnlockInfluencer(influencer);
             };
 
             const email =

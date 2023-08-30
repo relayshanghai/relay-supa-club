@@ -13,7 +13,7 @@ import { useSequence } from 'src/hooks/use-sequence';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { useSequences } from 'src/hooks/use-sequences';
 import { OpenBoostbotPage, SendInfluencersToOutreach, UnlockInfluencers } from 'src/utils/analytics/events';
-import { SendInfluencersToOutreachPayload } from 'src/utils/analytics/events/boostbot/send-influencers-to-outreach';
+import type { SendInfluencersToOutreachPayload } from 'src/utils/analytics/events/boostbot/send-influencers-to-outreach';
 import type { UnlockInfluencersPayload } from 'src/utils/analytics/events/boostbot/unlock-influencer';
 import { clientLogger } from 'src/utils/logger-client';
 import type { UserProfile } from 'types';
@@ -49,7 +49,8 @@ const Boostbot = () => {
         );
     };
 
-    const handleUnlockInfluencers = async (userIds: string[]) => {
+    const handleUnlockInfluencers = async (influencers: Influencer[]) => {
+        const userIds = influencers.map((influencer) => influencer.user_id);
         userIds.forEach((userId) => setInfluencerLoading(userId, true));
 
         const trackingPayload: UnlockInfluencersPayload = {
@@ -60,7 +61,7 @@ const Boostbot = () => {
         };
 
         try {
-            const response = await unlockInfluencers(userIds);
+            const response = await unlockInfluencers(influencers);
             const unlockedInfluencers = response?.map((result) => result.user_profile);
 
             if (unlockedInfluencers) {
@@ -95,7 +96,7 @@ const Boostbot = () => {
         }
     };
 
-    const handleUnlockInfluencer = async (userId: string) => handleUnlockInfluencers([userId]);
+    const handleUnlockInfluencer = async (influencer: Influencer) => handleUnlockInfluencers([influencer]);
 
     const removeInfluencer = (userId: string) => {
         setInfluencers((prevInfluencers) => prevInfluencers.filter((influencer) => influencer.user_id !== userId));
@@ -104,8 +105,7 @@ const Boostbot = () => {
     const handlePageToUnlock = async () => {
         setIsLoading(true);
 
-        const userIdsToUnlock = currentPageInfluencers.map((influencer) => influencer.user_id);
-        const unlockedInfluencers = await handleUnlockInfluencers(userIdsToUnlock);
+        const unlockedInfluencers = await handleUnlockInfluencers(currentPageInfluencers);
 
         setIsLoading(false);
 
@@ -114,7 +114,7 @@ const Boostbot = () => {
 
     const handlePageToOutreach = async () => {
         setIsLoading(true);
-        
+
         const trackingPayload: SendInfluencersToOutreachPayload = {
             influencer_ids: [],
             topics: [],
@@ -123,8 +123,7 @@ const Boostbot = () => {
         };
 
         try {
-            const userIdsToUnlock = currentPageInfluencers.map((influencer) => influencer.user_id);
-            const unlockedInfluencers = await handleUnlockInfluencers(userIdsToUnlock);
+            const unlockedInfluencers = await handleUnlockInfluencers(currentPageInfluencers);
             trackingPayload.is_multiple = unlockedInfluencers ? unlockedInfluencers.length > 1 : null;
 
             if (!unlockedInfluencers) throw new Error('Error unlocking influencers');
@@ -135,8 +134,8 @@ const Boostbot = () => {
                 const creatorProfileId = influencer.user_profile.user_id;
                 const socialProfileEmail = influencer.socialProfile.email;
 
-                trackingPayload.influencer_ids.push(creatorProfileId)
-                trackingPayload.topics.push(...influencer.user_profile.relevant_tags.map((v) => v.tag))
+                trackingPayload.influencer_ids.push(creatorProfileId);
+                trackingPayload.topics.push(...influencer.user_profile.relevant_tags.map((v) => v.tag));
 
                 return createSequenceInfluencer(socialProfileId, tags, creatorProfileId, socialProfileEmail);
             });

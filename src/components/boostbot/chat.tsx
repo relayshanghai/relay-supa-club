@@ -128,7 +128,7 @@ export const Chat: React.FC<ChatProps> = ({
             // const influencers = [...instagramInfluencers, ...tiktokInfluencers, ...youtubeInfluencers];
 
             setInfluencers(influencers);
-            await handleUnlockInfluencers(influencers.slice(0, 3).map((i) => i.user_id));
+            await handleUnlockInfluencers(influencers.slice(0, 3));
             updateProgress({ topics, isMidway: true, totalFound: influencers.length });
             setIsInitialLogoScreen(false);
             addMessage({
