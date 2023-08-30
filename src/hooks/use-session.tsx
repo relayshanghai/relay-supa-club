@@ -58,7 +58,7 @@ export const useSession = (params?: useSessionParams) => {
             .select()
             .abortSignal(control.current.signal)
             .eq('id', session.user.id)
-            .single();
+            .maybeSingle();
 
         if (error && error.code === '20') {
             return null;
@@ -90,9 +90,11 @@ export const useSession = (params?: useSessionParams) => {
         }
 
         getProfile(supabaseSession).then((loadedProfile) => {
-            setProfile((s) => {
-                return (loadedProfile && s?.id !== loadedProfile.id) ? loadedProfile : s;
-            });
+            if (loadedProfile) {
+                setProfile((s) => {
+                    return (loadedProfile && s?.id !== loadedProfile.id) ? loadedProfile : s;
+                });
+            }
 
             setSession((state) => {
                 if (supabaseSession === null && state !== null) {
