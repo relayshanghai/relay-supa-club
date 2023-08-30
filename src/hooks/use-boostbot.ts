@@ -58,9 +58,6 @@ export const useBoostbot = ({ abortSignal }: UseBoostbotProps) => {
                     body,
                 });
 
-                // TODO: remove log when done testing
-                // eslint-disable-next-line no-console
-                console.log('endpoint, response :>> ', endpoint, response);
                 return response;
             } catch (error) {
                 clientLogger(error, 'error');
