@@ -23,6 +23,7 @@ const pageNameMap: { [key: string]: string } = {
     'influencer-manager': 'influencerManager',
     inbox: 'inbox',
     guide: 'guide',
+    boostbot: 'boostbot',
 };
 
 export const Layout = ({ children }: any) => {

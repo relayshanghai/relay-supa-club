@@ -164,7 +164,7 @@ interface ReportInfo {
 
 // interface Filter {}
 
-interface UserProfile {
+export interface UserProfile {
     type: CreatorPlatform;
     user_id: string;
     username: string;
@@ -249,6 +249,7 @@ interface Stat {
     comments?: number;
     views?: number;
     shares?: number;
+    plays?: number;
 }
 
 export interface CreatorReportContact {
