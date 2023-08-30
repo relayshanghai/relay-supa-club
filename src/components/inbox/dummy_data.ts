@@ -13,12 +13,12 @@ export const dummyData: AccountAccountMessagesGet = {
             date: '2023-08-30T10:00:00Z',
             flags: ['flag_1', 'flag_2'],
             labels: ['label_1', 'label_2'],
-            unseen: true,
+            unseen: false,
             size: 1024,
             subject: 'Sample Subject 1',
             from: {
                 name: 'John Doe',
-                address: 'john@example.com',
+                address: 'tech+mrbeast@relay.club',
             },
             replyTo: [
                 {
@@ -58,7 +58,7 @@ export const dummyData: AccountAccountMessagesGet = {
             subject: 'Another Sample Subject',
             from: {
                 name: 'Alice Johnson',
-                address: 'alice@example.com',
+                address: 'info@likenastya.com',
             },
             replyTo: [],
             to: [

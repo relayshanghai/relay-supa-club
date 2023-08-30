@@ -13,13 +13,21 @@ import { useDB } from 'src/utils/client-db/use-client-db';
 import { clientLogger } from 'src/utils/logger-client';
 import type { MessagesGetMessage } from 'types/email-engine/account-account-messages-get';
 import { Spinner } from '../icons';
-import { ProfileOverlayScreen } from '../influencer-profile/screens/profile-overlay-screen';
-import { useUiState } from '../influencer-profile/screens/profile-screen-context';
 import { Layout } from '../layout';
 import { CorrespondenceSection } from './correspondence-section';
 import { PreviewSection } from './preview-section';
 import { ToolBar } from './tool-bar';
 import { dummyData, dummyMessages } from './dummy_data';
+import { ProfileScreen, type ProfileValue } from '../influencer-profile/screens/profile-screen';
+import { ProfileScreenProvider } from '../influencer-profile/screens/profile-screen-context';
+import {
+    mapProfileToNotes,
+    mapProfileToShippingDetails,
+} from 'src/components/influencer-profile/screens/profile-overlay-screen';
+import { NotesListOverlayScreen } from '../influencer-profile/screens/notes-list-overlay';
+import { useUiState } from '../influencer-profile/screens/profile-screen-context';
+import { useSequenceInfluencerNotes } from 'src/hooks/use-sequence-influencer-notes';
+import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 
 export const InboxPage = () => {
     const inboxMessages = dummyData.messages;
@@ -30,8 +38,24 @@ export const InboxPage = () => {
     const [getSelectedMessagesError, setGetSelectedMessagesError] = useState('');
     const [selectedTab, setSelectedTab] = useState('inbox');
     const [searchTerm, setSearchTerm] = useState<string>('');
+    const [uiState, setUiState] = useUiState();
     const [sequenceInfluencer, setSequenceInfluencer] = useState<SequenceInfluencerManagerPage | null>(null);
+    const { refreshSequenceInfluencers } = useSequenceInfluencers();
 
+    const mapProfileToFormData = useCallback((p: SequenceInfluencerManagerPage | null) => {
+        if (!p) return null;
+        return {
+            notes: mapProfileToNotes(p),
+            shippingDetails: mapProfileToShippingDetails(p),
+        };
+    }, []);
+
+    const [initialValue, setLocalProfile] = useState<ProfileValue | null>(() =>
+        mapProfileToFormData(sequenceInfluencer),
+    );
+    useEffect(() => {
+        setLocalProfile(mapProfileToFormData(sequenceInfluencer));
+    }, [sequenceInfluencer, mapProfileToFormData]);
     const isLoading = false;
     const refreshInboxMessages = useCallback(() => {
         // @todo refresh inbox messages
@@ -98,14 +122,7 @@ export const InboxPage = () => {
 
     const getSequenceInfluencerByEmailAndCompany = useDB(getSequenceInfluencerByEmailAndCompanyCall);
     const getSequenceInfluencer = useDB(baseGetSequenceInfluencer);
-    const [uiState, setUiState] = useUiState();
-
-    const handleInfluencerClick = useCallback(() => {
-        if (!sequenceInfluencer) return;
-        setUiState((s) => {
-            return { ...s, isProfileOverlayOpen: true };
-        });
-    }, [setUiState, sequenceInfluencer]);
+    const { getNotes, saveSequenceInfluencer } = useSequenceInfluencerNotes();
 
     const handleSelectPreviewCard = useCallback(
         async (message: MessagesGetMessage) => {
@@ -123,16 +140,21 @@ export const InboxPage = () => {
         [profile, getSequenceInfluencer, getSequenceInfluencerByEmailAndCompany],
     );
 
-    const handleProfileOverlayClose = useCallback(() => {
-        setUiState((s) => {
-            return { ...s, isProfileOverlayOpen: false };
-        });
-    }, [setUiState]);
+    const handleUpdate = useCallback(
+        (data: Partial<ProfileValue>) => {
+            if (sequenceInfluencer === null) return;
 
-    const handleProfileUpdate = useCallback(() => {
-        // @todo profile updated!
-        // console.log("Update profile")
-    }, []);
+            saveSequenceInfluencer.call(sequenceInfluencer.id, data).then((profile) => {
+                // @note updates local state without additional query
+                //       this will cause issue showing previous state though
+                setLocalProfile(mapProfileToFormData(profile));
+                saveSequenceInfluencer.refresh();
+
+                refreshSequenceInfluencers();
+            });
+        },
+        [saveSequenceInfluencer, sequenceInfluencer, refreshSequenceInfluencers, mapProfileToFormData, setLocalProfile],
+    );
 
     useEffect(() => {
         if (!selectedMessages) {
@@ -157,6 +179,18 @@ export const InboxPage = () => {
             handleSelectPreviewCard(messages[0]);
         }
     }, [messages, handleGetThreadEmails, handleSelectPreviewCard, selectedMessages]);
+
+    const handleNoteListOpen = useCallback(() => {
+        if (!sequenceInfluencer) return;
+        getNotes.call(sequenceInfluencer.id);
+    }, [getNotes, sequenceInfluencer]);
+
+    const handleNoteListClose = useCallback(() => {
+        setUiState((s) => {
+            return { ...s, isNotesListOverlayOpen: false };
+        });
+        getNotes.refresh();
+    }, [getNotes, setUiState]);
 
     return (
         <Layout>
@@ -203,16 +237,32 @@ export const InboxPage = () => {
                                     // TODO: add selectedSequenceInfluencers
                                     selectedMessages={selectedMessages}
                                     loadingSelectedMessages={loadingSelectedMessages}
-                                    onInfluencerClick={handleInfluencerClick}
+                                    onInfluencerClick={() => {
+                                        ///
+                                    }}
                                 />
                             )}
                         </div>
-                        <ProfileOverlayScreen
-                            profile={sequenceInfluencer}
-                            isOpen={uiState.isProfileOverlayOpen}
-                            onClose={handleProfileOverlayClose}
-                            onUpdate={handleProfileUpdate}
-                        />
+                        {sequenceInfluencer && initialValue && (
+                            <div className="w-1/4 overflow-scroll">
+                                <ProfileScreenProvider initialValue={initialValue}>
+                                    <ProfileScreen
+                                        profile={sequenceInfluencer}
+                                        onCancel={() => {
+                                            //
+                                        }}
+                                        onUpdate={handleUpdate}
+                                    />
+                                </ProfileScreenProvider>
+                                <NotesListOverlayScreen
+                                    notes={getNotes.data}
+                                    isLoading={getNotes.isLoading}
+                                    isOpen={uiState.isNotesListOverlayOpen}
+                                    onClose={handleNoteListClose}
+                                    onOpen={handleNoteListOpen}
+                                />
+                            </div>
+                        )}
                     </>
                 )}
             </div>
