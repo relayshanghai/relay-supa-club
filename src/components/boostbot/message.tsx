@@ -1,4 +1,4 @@
-import type { MessageType } from './chat';
+import type { MessageType } from 'pages/boostbot';
 
 interface MessageProps {
     message: MessageType;

@@ -17,10 +17,16 @@ import type { SendInfluencersToOutreachPayload } from 'src/utils/analytics/event
 import type { UnlockInfluencersPayload } from 'src/utils/analytics/events/boostbot/unlock-influencer';
 import { clientLogger } from 'src/utils/logger-client';
 import type { UserProfile } from 'types';
+import type { ProgressType } from 'src/components/boostbot/chat';
 
 export type Influencer = (UserProfile | CreatorAccountWithTopics) & {
     isLoading?: boolean;
     topics: string[];
+};
+
+export type MessageType = {
+    sender: 'User' | 'Bot' | 'Progress';
+    content: string | JSX.Element | ProgressType;
 };
 
 const Boostbot = () => {
@@ -33,6 +39,16 @@ const Boostbot = () => {
     const sequence = sequences?.find((sequence) => sequence.name === 'General collaboration');
     const { createSequenceInfluencer } = useSequenceInfluencers(sequence && [sequence.id]);
     const { sendSequence } = useSequence(sequence?.id);
+    const [messages, setMessages] = useState<MessageType[]>([
+        {
+            sender: 'Bot',
+            content:
+                t('boostbot.chat.introMessage') ??
+                'Hi, welcome! Please describe your product so I can find the perfect influencers for you.',
+        },
+    ]);
+
+    const addMessage = (message: MessageType) => setMessages((prevMessages) => [...prevMessages, message]);
 
     useEffect(() => {
         track(OpenBoostbotPage.eventName);
@@ -173,6 +189,9 @@ const Boostbot = () => {
                         setIsInitialLogoScreen={setIsInitialLogoScreen}
                         handleUnlockInfluencers={handleUnlockInfluencers}
                         isBoostbotLoading={isLoading}
+                        messages={messages}
+                        setMessages={setMessages}
+                        addMessage={addMessage}
                     />
                 </div>
 
