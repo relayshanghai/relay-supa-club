@@ -1,3 +1,1 @@
-ALTER TABLE "public"."influencer_social_profiles" DROP COLUMN "recent_post_title";
-
-ALTER TABLE "public"."influencer_social_profiles" ADD COLUMN "recent_post_title" text;
+ALTER TABLE "public"."influencer_social_profiles" RENAME COLUMN "recent_video_title" TO "recent_post_title";
