@@ -145,12 +145,13 @@ const Boostbot = () => {
 
             trackingPayload.is_success = false;
             trackingPayload.extra_info = { error: String(error) };
+        } finally {
+            // @ts-ignore bypasses apiObject type requirement of is_multiple.
+            // Needs `null` for it to show in mixpanel without explicitly
+            // saying that it is multiple or not
+            track(SendInfluencersToOutreach.eventName, trackingPayload);
         }
 
-        // @ts-ignore bypasses apiObject type requirement of is_multiple.
-        // Needs `null` for it to show in mixpanel without explicitly
-        // saying that it is multiple or not
-        track(SendInfluencersToOutreach.eventName, trackingPayload);
     };
 
     return (
