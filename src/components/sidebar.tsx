@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import type { MutableRefObject, ReactNode } from 'react';
+import { useState, type MutableRefObject, type ReactNode } from 'react';
 import useAboveScreenWidth from 'src/hooks/use-above-screen-width';
 import { useUser } from 'src/hooks/use-user';
 import {
@@ -19,7 +19,7 @@ import { useTranslation } from 'react-i18next';
 import { featEmail } from 'src/constants/feature-flags';
 import { Button } from './button';
 
-const links: Record<string, (root: string) => JSX.Element> = {
+const links: Record<string, (pathRoot: string, hovering?: boolean) => JSX.Element> = {
     '/dashboard': (_pathRoot: string) => <Compass height={18} width={18} className="my-0.5 stroke-inherit" />,
     '/influencer': (_pathRoot: string) => <Compass height={18} width={18} className="my-0.5 stroke-inherit" />,
     '/account': (_pathRoot: string) => <Team height={18} width={18} className="my-0.5 stroke-inherit" />,
@@ -31,11 +31,11 @@ const links: Record<string, (root: string) => JSX.Element> = {
     '/influencer-manager': (_pathRoot: string) => (
         <ProfilePlus height={18} width={18} className="my-0.5 stroke-inherit" />
     ),
-    '/boostbot': (pathRoot: string) => {
-        if (pathRoot === '/boostbot') {
-            return <BoostbotSelected height={18} width={18} className="my-0.5 stroke-inherit" />;
+    '/boostbot': (pathRoot: string, hovering = false) => {
+        if (pathRoot === '/boostbot' || hovering) {
+            return <BoostbotSelected height={18} width={18} className="my-0.5 stroke-none " />;
         }
-        return <BoostbotDefault height={18} width={18} className="my-0.5 stroke-inherit" />;
+        return <BoostbotDefault height={18} width={18} className="stroke-nonoe my-0.5" />;
     },
 } as const;
 
@@ -45,16 +45,20 @@ const ActiveLink = ({ href, children }: { href: string; children: ReactNode }) =
 
     const pathRoot = router.pathname === '/' ? '/' : `/${router.pathname.split('/')[1]}`; // /dashboard/influencers => dashboard
 
+    const [hovering, setHovering] = useState(false);
+
     const isRouteActive = pathRoot === href;
 
     return (
         <Link
+            onMouseOver={() => setHovering(true)}
+            onMouseLeave={() => setHovering(false)}
             href={href}
             className={`flex items-center overflow-hidden border-l-4 stroke-gray-400 py-2 pl-4 text-sm font-semibold text-gray-400 transition hover:stroke-primary-700 hover:text-primary-700 ${
                 isRouteActive ? 'border-primary-500 stroke-primary-500 text-primary-500' : 'border-transparent'
             }`}
         >
-            {links[href](pathRoot) ?? null}
+            {links[href](pathRoot, hovering) ?? null}
             {children}
         </Link>
     );
