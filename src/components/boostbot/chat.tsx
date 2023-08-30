@@ -34,6 +34,7 @@ interface ChatProps {
     handlePageToUnlock: () => void;
     handlePageToOutreach: () => void;
     handleUnlockInfluencers: (influencers: Influencer[]) => Promise<CreatorsReportGetResponse[] | undefined>;
+    shortenedButtons: boolean;
 }
 
 export const Chat: React.FC<ChatProps> = ({
@@ -47,6 +48,7 @@ export const Chat: React.FC<ChatProps> = ({
     handlePageToUnlock,
     handlePageToOutreach,
     handleUnlockInfluencers,
+    shortenedButtons,
 }) => {
     const [abortController, setAbortController] = useState(new AbortController());
     const { t } = useTranslation();
@@ -130,9 +132,7 @@ export const Chat: React.FC<ChatProps> = ({
             setIsInitialLogoScreen(false);
             addMessage({
                 sender: 'Bot',
-                content: `${t('boostbot.chat.influencersFoundA')} ${influencers.length} ${t(
-                    'boostbot.chat.influencersFoundB',
-                )}`,
+                content: t('boostbot.chat.influencersFound', { count: influencers.length }) as string,
             });
             document.dispatchEvent(new Event('influencerTableSetFirstPage'));
             track(RecommendInfluencers.eventName, payload);
@@ -169,6 +169,7 @@ export const Chat: React.FC<ChatProps> = ({
                 handlePageToOutreach={chatPageToOutreach}
                 stopBoostbot={stopBoostbot}
                 isBoostbotLoading={isBoostbotLoading}
+                shortenedButtons={shortenedButtons}
             />
 
             <div className="relative">
