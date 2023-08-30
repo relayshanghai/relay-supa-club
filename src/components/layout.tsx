@@ -13,10 +13,12 @@ import { useRouter } from 'next/router';
 import { useSequence } from 'src/hooks/use-sequence';
 import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
+import { useCampaigns } from 'src/hooks/use-campaigns';
 
 const pageNameMap: { [key: string]: string } = {
     sequences: 'sequences',
     dashboard: 'discover',
+    campaigns: 'campaigns',
     account: 'account',
     'influencer-manager': 'influencerManager',
     inbox: 'inbox',
@@ -38,6 +40,9 @@ export const Layout = ({ children }: any) => {
     const routerPath = router.asPath.split('/').slice(1);
 
     const { sequence } = useSequence(routerPath.length > 1 && routerPath.includes('sequences') ? routerPath[1] : '');
+    const { campaign } = useCampaigns({
+        campaignId: routerPath.length > 1 && routerPath.includes('campaigns') ? routerPath[1] : '',
+    });
 
     const [accountMenuOpen, setAccountMenuOpen] = useState(false);
     const accountMenuRef = useRef(null);
@@ -89,9 +94,11 @@ export const Layout = ({ children }: any) => {
                                                     : 'font-medium text-gray-400'
                                             }`}
                                         >
-                                            {routerPath[index - 1] === 'sequences'
-                                                ? sequence?.name
-                                                : t(`navbar.${pageNameMap[path]}`)}
+                                            {routerPath[index - 1] === 'sequences' && sequence?.name}
+                                            {routerPath[index - 1] === 'campaigns' && campaign?.name}
+                                            {routerPath[index - 1] !== 'sequences' &&
+                                                routerPath[index - 1] !== 'campaigns' &&
+                                                t(`navbar.${pageNameMap[path]}`)}
                                         </span>
                                         <span className="text-[9px] font-semibold text-gray-400">
                                             {index !== routerPath.length - 1 && ' / '}
