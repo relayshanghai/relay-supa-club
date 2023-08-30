@@ -26,7 +26,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     let snapshot = null;
     const trackedEvent = events[event];
 
-    if (isTrackedEvent(trackedEvent)) {
+    if (!isTrackedEvent(trackedEvent)) {
         throw new RelayError('Cannot track event', 400);
     }
 
