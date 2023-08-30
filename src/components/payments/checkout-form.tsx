@@ -48,10 +48,8 @@ export default function CheckoutForm({ selectedPrice }: { selectedPrice: NewRela
                 body,
             });
 
-            const confirmIntent = stripe.confirmPayment;
-
             // Confirm the Intent using the details collected by the Payment Element
-            const { error } = await confirmIntent({
+            const { error } = await stripe.confirmPayment({
                 elements,
                 clientSecret,
                 confirmParams: {
@@ -92,7 +90,7 @@ export default function CheckoutForm({ selectedPrice }: { selectedPrice: NewRela
                 )}
             </Button>
             {/* Show any error or success messages */}
-            {errorMessage && <p className="mt-2 text-red-500">{errorMessage}</p>}
+            {errorMessage && <p className="mt-2 text-xs text-red-500">{errorMessage}</p>}
         </form>
     );
 }

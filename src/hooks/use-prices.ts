@@ -99,7 +99,7 @@ export const formatPrice = (price: string, currency: string, period: 'monthly' |
 };
 export const usePrices = () => {
     const pricesBlank: Prices = {
-        monthly: { diy: '$--', diyMax: '$--', free: '$0', discovery: '299', outreach: '880' },
+        monthly: { diy: '$--', diyMax: '$--', free: '$0', discovery: '299', outreach: '799' },
         quarterly: { diy: '$--', diyMax: '$--', free: '$0', discovery: '', outreach: '' },
     };
     const { data: prices } = useSWR('prices', async () => {
@@ -111,7 +111,7 @@ export const usePrices = () => {
                 diyMax: formatPrice(diyMax.prices.monthly, diyMax.currency, 'monthly'),
                 free: '$0',
                 discovery: '299',
-                outreach: '880',
+                outreach: '799',
             };
             const quarterly = {
                 diy: formatPrice(diy.prices.quarterly, diy.currency, 'quarterly'),
@@ -145,7 +145,7 @@ export const useNewPrices = () => {
         },
         outreach: {
             currency: 'cny',
-            prices: { monthly: '800' },
+            prices: { monthly: '799' },
             profiles: '',
             searches: '',
             priceIds: { monthly: STRIPE_PRICE_MONTHLY_OUTREACH },
