@@ -51,7 +51,7 @@ const Boostbot = () => {
                 const payload: UnlockInfluencersPayload = {
                     influencer_ids: [],
                     topics: [],
-                    is_all: true,
+                    is_all: userIds.length === 1,
                     is_success: true,
                 };
 
@@ -71,6 +71,8 @@ const Boostbot = () => {
                         );
                     });
                 });
+
+                track(UnlockInfluencers.eventName, payload);
             }
 
             return response;
@@ -81,7 +83,7 @@ const Boostbot = () => {
             const payload: UnlockInfluencersPayload = {
                 influencer_ids: userIds,
                 topics: [],
-                is_all: true,
+                is_all: userIds.length !== 1,
                 is_success: false,
                 extra_info: { error: String(error) },
             };
