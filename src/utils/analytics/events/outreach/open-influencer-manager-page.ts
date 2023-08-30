@@ -1,6 +1,6 @@
 import type { EventPayload, TriggerEvent } from '../../types';
 
-export const OUTREACH_OPEN_INFLUENCER_MANAGER_PAGE = 'TEST:outreach-open_influencer_manager_page';
+export const OUTREACH_OPEN_INFLUENCER_MANAGER_PAGE = 'outreach-open_influencer_manager_page';
 
 export type OpenInfluencerManagerPagePayload = EventPayload<{
     extra_info?: any

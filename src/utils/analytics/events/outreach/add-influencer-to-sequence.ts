@@ -1,6 +1,6 @@
 import type { EventPayload, TriggerEvent } from '../../types';
 
-export const OUTREACH_ADD_INFLUENCER_TO_SEQUENCE = 'TEST:outreach-add_influencer_to_sequence';
+export const OUTREACH_ADD_INFLUENCER_TO_SEQUENCE = 'outreach-add_influencer_to_sequence';
 
 export type AddInfluencerToSequencePayload = EventPayload<{
     influencer_id: string | null,

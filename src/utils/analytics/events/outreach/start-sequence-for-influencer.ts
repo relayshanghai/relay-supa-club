@@ -1,7 +1,7 @@
 import type { SendResult } from 'pages/api/sequence/send';
 import type { EventPayload, TriggerEvent } from '../../types';
 
-export const OUTREACH_START_SEQUENCE_FOR_INFLUENCER = 'TEST:outreach-start_sequence_for_influencer';
+export const OUTREACH_START_SEQUENCE_FOR_INFLUENCER = 'outreach-start_sequence_for_influencer';
 
 export type StartSequenceForInfluencerPayload = EventPayload<{
     influencer_id: string | null,
