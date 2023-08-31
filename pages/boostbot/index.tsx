@@ -18,6 +18,7 @@ import { clientLogger } from 'src/utils/logger-client';
 import type { UserProfile } from 'types';
 import type { ProgressType } from 'src/components/boostbot/chat';
 import { isFulfilled } from 'src/utils/utils';
+import { useUser } from 'src/hooks/use-user';
 
 export type Influencer = (UserProfile | CreatorAccountWithTopics) & {
     isLoading?: boolean;
@@ -39,7 +40,9 @@ const Boostbot = () => {
     const { trackEvent: track } = useRudderstack();
     const { sequences } = useSequences();
     const [isLoading, setIsLoading] = useState(false);
-    const sequence = sequences?.find((sequence) => sequence.name === 'General collaboration');
+    const { profile } = useUser();
+    const defaultSequenceName = `${profile?.first_name}'s BoostBot Sequence`;
+    const sequence = sequences?.find((sequence) => sequence.name === defaultSequenceName);
     const { createSequenceInfluencer } = useSequenceInfluencers(sequence && [sequence.id]);
     const { sendSequence } = useSequence(sequence?.id);
     const [hasUsedUnlock, setHasUsedUnlock] = useState(false);
