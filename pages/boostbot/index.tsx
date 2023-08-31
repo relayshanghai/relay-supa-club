@@ -26,7 +26,8 @@ export type Influencer = (UserProfile | CreatorAccountWithTopics) & {
 
 export type MessageType = {
     sender: 'User' | 'Bot' | 'Progress';
-    content: string | JSX.Element | ProgressType;
+    content?: string | JSX.Element;
+    progress?: ProgressType;
 };
 
 const Boostbot = () => {
@@ -126,7 +127,7 @@ const Boostbot = () => {
         const newUnlockedCount = currentPageInfluencers.filter(isStillLocked).length;
         if (newUnlockedCount === 0) {
             setIsLoading(false);
-            addMessage({ sender: 'Bot', content: t('boostbot.chat.noInfluencersToUnlock') as string });
+            addMessage({ sender: 'Bot', content: t('boostbot.chat.noInfluencersToUnlock') || '' });
             return;
         }
 
@@ -192,7 +193,7 @@ const Boostbot = () => {
             setIsLoading(false);
             addMessage({
                 sender: 'Bot',
-                content: t(`boostbot.chat.${hasUsedOutreach ? 'hasUsedOutreach' : 'outreachDone'}`) as string,
+                content: t(`boostbot.chat.${hasUsedOutreach ? 'hasUsedOutreach' : 'outreachDone'}`) || '',
             });
             setHasUsedOutreach(true);
         }

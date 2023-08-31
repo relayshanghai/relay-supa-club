@@ -53,7 +53,7 @@ const ChatProgress = ({ progress }: ChatProgressProps) => {
                 renderStep(
                     isThirdDone,
                     t('boostbot.chat.progress.step3'),
-                    t('boostbot.chat.progress.step3B', { count: totalFound as number }),
+                    t('boostbot.chat.progress.step3B', { count: totalFound || 0 }),
                 )}
         </div>
     );

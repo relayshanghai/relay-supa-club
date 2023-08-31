@@ -72,7 +72,7 @@ export const Chat: React.FC<ChatProps> = ({
     };
 
     const updateProgress = (progress: ProgressType) =>
-        setMessages((messages) => [...messages.slice(0, -1), { sender: 'Progress', content: progress }]);
+        setMessages((messages) => [...messages.slice(0, -1), { sender: 'Progress', progress }]);
 
     const chatPageToUnlock = () => {
         addMessage({ sender: 'User', content: `${t('boostbot.chat.unlockPage')}` });
@@ -88,7 +88,7 @@ export const Chat: React.FC<ChatProps> = ({
         setMessages((prevMessages) => [
             ...prevMessages,
             { sender: 'User', content: productDescription },
-            { sender: 'Progress', content: { topics: [], isMidway: false, totalFound: null } },
+            { sender: 'Progress', progress: { topics: [], isMidway: false, totalFound: null } },
         ]);
         setIsLoading(true);
 
@@ -132,7 +132,7 @@ export const Chat: React.FC<ChatProps> = ({
             setIsInitialLogoScreen(false);
             addMessage({
                 sender: 'Bot',
-                content: t('boostbot.chat.influencersFound', { count: influencers.length }) as string,
+                content: t('boostbot.chat.influencersFound', { count: influencers.length }) || '',
             });
             document.dispatchEvent(new Event('influencerTableSetFirstPage'));
             track(RecommendInfluencers.eventName, payload);
