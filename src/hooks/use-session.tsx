@@ -61,12 +61,8 @@ export const useSession = (params?: useSessionParams) => {
             .eq('id', session.user.id)
             .maybeSingle();
 
-        if (error && error.code === '20') {
-            return null;
-        }
-
         if (error) {
-            throw error;
+            return null;
         }
 
         return data
@@ -82,12 +78,8 @@ export const useSession = (params?: useSessionParams) => {
             .eq('id', companyId)
             .maybeSingle();
 
-        if (error && error.code === '20') {
-            return null;
-        }
-
         if (error) {
-            throw error;
+            return null;
         }
 
         return data
