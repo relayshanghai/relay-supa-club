@@ -6,8 +6,8 @@ import type { SearchResponseMessage } from 'types/email-engine/account-account-s
 import { Spinner } from '../icons';
 import { replaceNewlinesAndTabs } from '../sequences/helpers';
 import { Email } from './Email';
-import type { ThreadMessage } from './Threads';
-import { Threads } from './Threads';
+import type { ThreadMessage } from './Threads-dummy';
+import { Threads } from './Threads-dummy';
 import { EmailHeader } from './email-header';
 import { ReplyEditor } from './reply-editor';
 
