@@ -23,7 +23,7 @@ export const AddPaymentsSection = ({ priceTier }: { priceTier: newActiveSubscrip
     const { i18n, t } = useTranslation();
     const newPrices = useNewPrices();
 
-    const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string | null>(null);
+    const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string | null>('card');
     const selectedPrice = newPrices[priceTier];
 
     const cardOptions: StripeElementsOptions = {
@@ -39,18 +39,6 @@ export const AddPaymentsSection = ({ priceTier }: { priceTier: newActiveSubscrip
         locale: i18n.language.includes('en') ? 'en' : 'zh',
         payment_method_types: ['card'],
     };
-
-    // const aliPayOptions: StripeElementsOptions = {
-    //     mode: 'setup',
-    //     appearance: {
-    //         theme: 'stripe',
-    //         variables: {
-    //             colorPrimary: '#8B5CF6', //primary-500 see tailwind.config.js
-    //         },
-    //     },
-    //     locale: i18n.language.includes('en') ? 'en' : 'zh',
-    //     payment_method_types: ['alipay'],
-    // };
 
     return (
         <div className="w-80 rounded shadow lg:w-[28rem]">
@@ -85,15 +73,12 @@ export const AddPaymentsSection = ({ priceTier }: { priceTier: newActiveSubscrip
                             <p className="p-6 text-xs text-gray-500">{t('account.contactUs')}</p>
 
                             <Image
-                                src="/assets/imgs/qrcodes/amy-qrcode.jpg"
+                                src="/assets/imgs/qrcodes/relayclub.jpg"
                                 alt="qr code to contact customer service"
                                 layout="responsive"
                                 width={1000}
-                                height={1200}
+                                height={1320}
                             />
-                            {/* <StripeElementsProvider stripe={stripePromise} options={aliPayOptions}>
-                                <CheckoutForm selectedPrice={selectedPrice} />
-                            </StripeElementsProvider> */}
                         </div>
                     )}
                 </>
