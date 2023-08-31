@@ -2,23 +2,25 @@
 import { useTranslation } from 'react-i18next';
 import { useInfluencerSocialProfile } from 'src/hooks/use-influencer-social-profile';
 
-import type { SequenceInfluencer, SequenceEmail, SequenceStep, TemplateVariable } from 'src/utils/api/db';
 import Link from 'next/link';
-import { imgProxy } from 'src/utils/fetcher';
-import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
-import { useState } from 'react';
 import type { SetStateAction } from 'react';
-import { TableInlineInput } from '../library/table-inline-input';
+import { useState } from 'react';
+import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
+import type { SequenceEmail, SequenceInfluencer, SequenceStep, TemplateVariable } from 'src/utils/api/db';
+import { imgProxy } from 'src/utils/fetcher';
 import { Button } from '../button';
-import { AlertCircleOutline, Clock, EmailOpenOutline, Send, Brackets, DeleteOutline, SendOutline } from '../icons';
+import { AlertCircleOutline, Brackets, Clock, DeleteOutline, EmailOpenOutline, Send, SendOutline } from '../icons';
 import { Tooltip } from '../library';
+import { TableInlineInput } from '../library/table-inline-input';
 import { EMAIL_STATUS_STYLES } from './constants';
 
-import { EmailPreviewModal } from './email-preview-modal';
 import type { SequenceSendPostResponse } from 'pages/api/sequence/send';
 import toast from 'react-hot-toast';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
 import { useUser } from 'src/hooks/use-user';
+import { StartSequenceForInfluencer } from 'src/utils/analytics/events';
 import { DeleteFromSequenceModal } from '../modal-delete-from-sequence';
+import { EmailPreviewModal } from './email-preview-modal';
 
 interface SequenceRowProps {
     sequenceInfluencer: SequenceInfluencer;
@@ -64,15 +66,15 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
     handleStartSequence,
 }) => {
     const { influencerSocialProfile } = useInfluencerSocialProfile(sequenceInfluencer.influencer_social_profile_id);
-    const { updateSequenceInfluencer, deleteSequenceInfluencer } = useSequenceInfluencers(
-        sequenceInfluencer && [sequenceInfluencer.sequence_id],
-    );
+    const { sequenceInfluencers, updateSequenceInfluencer, deleteSequenceInfluencer, refreshSequenceInfluencers } =
+        useSequenceInfluencers(sequenceInfluencer && [sequenceInfluencer.sequence_id]);
     const { profile } = useUser();
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const { i18n, t } = useTranslation();
     const [email, setEmail] = useState(sequenceInfluencer.email ?? '');
     const [showEmailPreview, setShowEmailPreview] = useState<SequenceStep[] | null>(null);
     const [sendingEmail, setSendingEmail] = useState(false);
+    const { track } = useRudderstackTrack()
 
     const handleEmailUpdate = async (email: string) => {
         try {
@@ -93,6 +95,18 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
             const results = await handleStartSequence([sequenceInfluencer]);
             const failed = results.filter((result) => result.error);
             const succeeded = results.filter((result) => !result.error);
+
+            track(StartSequenceForInfluencer, {
+                influencer_id: sequenceInfluencer.influencer_social_profile_id,
+                sequence_id: sequenceInfluencer.sequence_id,
+                sequence_influencer_id: sequenceInfluencer.id,
+                is_success: true,
+                sent_success: succeeded,
+                sent_success_count: succeeded.length,
+                sent_failed: failed,
+                sent_failed_count: failed.length,
+            })
+
             if (succeeded.length > 0) {
                 toast.success(t('sequences.number_emailsSuccessfullyScheduled', { number: succeeded.length }));
             }
@@ -100,14 +114,38 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                 toast.error(t('sequences.number_emailsFailedToSchedule', { number: failed.length }));
             }
         } catch (error: any) {
+            track(StartSequenceForInfluencer, {
+                influencer_id: sequenceInfluencer.influencer_social_profile_id,
+                sequence_id: sequenceInfluencer.sequence_id,
+                sequence_influencer_id: sequenceInfluencer.id,
+                is_success: false,
+                extra_info: { error: String(error) }
+            })
             toast.error(error?.message ?? '');
         }
+
         setSendingEmail(false);
     };
     const handleDeleteInfluencer = (sequenceInfluencerId: string) => {
         deleteSequenceInfluencer(sequenceInfluencerId);
+        refreshSequenceInfluencers(sequenceInfluencers?.filter((influencer) => influencer.id !== sequenceInfluencerId));
         toast.success(t('sequences.influencerDeleted'));
     };
+
+    const isMissingSequenceSendEmail = !profile?.sequence_send_email || !profile?.email_engine_account_id;
+
+    const sequenceSendTooltipTitle = isMissingSequenceSendEmail
+        ? t('sequences.outreachPlanUpgradeTooltip')
+        : isMissingVariables
+        ? t('sequences.missingRequiredTemplateVariables')
+        : t('sequences.sequenceSendTooltip');
+    const sequenceSendTooltipDescription = isMissingSequenceSendEmail
+        ? t('sequences.outreachPlanUpgradeTooltipDescription')
+        : isMissingVariables
+        ? t('sequences.missingRequiredTemplateVariables_variables', {
+              variables: missingVariables,
+          })
+        : t('sequences.sequenceSendTooltipDescription');
     return (
         <>
             <EmailPreviewModal
@@ -170,17 +208,12 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
 
                         <td className="mr-4 flex min-w-min items-center justify-start whitespace-nowrap px-6 py-4 text-gray-600 md:mr-0">
                             <Tooltip
-                                content={
-                                    isMissingVariables
-                                        ? t('sequences.missingRequiredTemplateVariables_variables', {
-                                              variables: missingVariables,
-                                          })
-                                        : ''
-                                }
+                                content={sequenceSendTooltipTitle}
+                                detail={sequenceSendTooltipDescription}
                                 position="left"
                             >
                                 <Button
-                                    disabled={!sequenceInfluencer?.email || sendingEmail}
+                                    disabled={isMissingSequenceSendEmail || !sequenceInfluencer?.email || sendingEmail}
                                     data-testid={`send-email-button-${sequenceInfluencer.email}`}
                                     onClick={
                                         isMissingVariables ? () => setShowUpdateTemplateVariables(true) : handleStart

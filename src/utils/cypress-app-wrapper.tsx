@@ -25,6 +25,7 @@ export const TestContextsWrapper = ({
     cy?.stub(NextRouter, 'useRouter').returns({
         pathname: options?.pathname ?? '/dashboard',
         push,
+        asPath: '/dashboard',
         query: options?.query ?? {},
     });
     // see: https://on.cypress.io/mounting-react

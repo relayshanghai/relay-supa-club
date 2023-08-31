@@ -9,7 +9,7 @@ describe('Caches SWR requests', () => {
         setupIntercepts(); // some will be overriden
         cy.loginTestUser();
 
-        cy.contains('Campaigns', { timeout: 10000 });
+        cy.contains('Sequences', { timeout: 10000 });
 
         cy.getByTestId(`search-result-row-buttons/${cocomelonId}`).click({
             force: true,
@@ -32,7 +32,7 @@ describe('Caches SWR requests', () => {
             req.reply({ body: cocomelon, delay: 10000 });
         });
         cy.reload();
-        cy.contains('Campaigns', { timeout: 10000 }); // sidebar has loaded
+        cy.contains('Sequences', { timeout: 10000 }); // sidebar has loaded
 
         cy.contains('Cocomelon - Nursery Rhymes', { timeout: 2500 }); // loads report faster than it did before even though timeout is longer
     });
