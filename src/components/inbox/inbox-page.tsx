@@ -84,8 +84,10 @@ export const InboxPage = () => {
                 setLoadingSelectedMessages(false);
             } catch (error: any) {
                 clientLogger(error, 'error');
-                setGetSelectedMessagesError(error.message);
-                toast(getSelectedMessagesError);
+                if (error) {
+                    setGetSelectedMessagesError(error.message);
+                    toast(getSelectedMessagesError);
+                }
             }
             setLoadingSelectedMessages(false);
         },
@@ -114,7 +116,9 @@ export const InboxPage = () => {
                 const influencerFull = await getSequenceInfluencer(influencer.id);
                 setSequenceInfluencer(influencerFull);
                 // @note avoid try..catch hell. influencer should have been a monad
-            } catch (error) {}
+            } catch (error) {
+                clientLogger(error, 'error');
+            }
         },
         [profile, getSequenceInfluencer, getSequenceInfluencerByEmailAndCompany],
     );

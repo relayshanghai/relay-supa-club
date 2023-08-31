@@ -239,8 +239,19 @@ export const dummyMessages = {
 export const dummyThread = [
     {
         threadId: 'thread_1',
-        html: '<p>This is the HTML content for thread 1.</p>',
-        plain: 'This is the plain text content for thread 1.',
+        html: `<p>Hey {{ params.influencerAccountName }},</p>
+        <p>{{ params.marketingManagerName }} here from {{ params.brandName }}. I just saw your <a href="{{ params.recentPostURL }}">"{{ params.recentPostTitle }}"</a> post, and I gotta say, love your content style 🤩.</p> 
+        <br>    
+        <p>I've got a <a href="{{ params.productLink }}">{{ params.productName}}</a> I'd like to send you, have a feeling it's something your audience would be really into!</p>
+        <p>{{  params.productDescription }}</p>
+        <br>
+        <p>We’re looking to partner with 8 or so influencers to get the word out about the {{ params.productName }} over the next couple weeks, and would love for you to be apart of it.</p>
+        <p>Let me know if this is something you'd be interested in!</p>
+        <br>
+        <p>Cheers,</p>
+        <br>
+        <p>{{ params.marketingManagerName }} at {{ params.brandName }}</p>',
+        plain: 'This is the plain text content for thread 1.`,
     },
     {
         threadId: 'thread_2',

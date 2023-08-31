@@ -22,7 +22,6 @@ export interface ThreadMessage {
 
 export const Threads = ({
     messages,
-    onInfluencerClick,
 }: {
     messages: SearchResponseMessage[];
     onInfluencerClick?: (message: ThreadMessage['from']) => void;
@@ -69,7 +68,7 @@ export const Threads = ({
                 setThreadMessages(newThreadMessages);
             } catch (error: any) {
                 clientLogger(error, 'error');
-                throw new Error('Error fetching thread: ' + error.message);
+                throw new Error('Error fetching thread: ' + error && error.message);
             } finally {
                 setLoading(false);
             }
@@ -102,14 +101,9 @@ export const Threads = ({
                             className="rounded-lg bg-white shadow-sm hover:border hover:border-primary-500"
                         >
                             <div className="border-b-2 border-gray-200 p-6">
-                                <div
-                                    className="mb-3 cursor-pointer text-lg font-semibold text-gray-400"
-                                    onClick={() => {
-                                        onInfluencerClick && onInfluencerClick(message.from);
-                                    }}
-                                >
+                                <div className="mb-3 text-lg font-semibold text-gray-400">
                                     {t('inbox.from')}:{' '}
-                                    <span className="text-gray-600 hover:underline hover:underline-offset-4">
+                                    <span className="text-gray-600 hover:underline-offset-4">
                                         {message.isMe ? 'Me' : message.from}
                                     </span>{' '}
                                 </div>

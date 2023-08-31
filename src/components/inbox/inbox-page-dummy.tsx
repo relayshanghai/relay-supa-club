@@ -7,7 +7,6 @@ import { useTranslation } from 'react-i18next';
 import { useUser } from 'src/hooks/use-user';
 import { getSequenceInfluencer as baseGetSequenceInfluencer } from 'src/utils/api/db/calls/get-sequence-influencers';
 import { getSequenceInfluencerByEmailAndCompanyCall } from 'src/utils/api/db/calls/sequence-influencers';
-import { updateMessageAsSeen } from 'src/utils/api/email-engine/handle-messages';
 import { GMAIL_SEEN_SPECIAL_USE_FLAG } from 'src/utils/api/email-engine/prototype-mocks';
 import { useDB } from 'src/utils/client-db/use-client-db';
 import { clientLogger } from 'src/utils/logger-client';
@@ -112,8 +111,10 @@ export const InboxPage = () => {
                 setLoadingSelectedMessages(false);
             } catch (error: any) {
                 clientLogger(error, 'error');
-                setGetSelectedMessagesError(error.message);
-                toast(getSelectedMessagesError);
+                if (error) {
+                    setGetSelectedMessagesError(error.message);
+                    toast(getSelectedMessagesError);
+                }
             }
             setLoadingSelectedMessages(false);
         },
@@ -163,11 +164,11 @@ export const InboxPage = () => {
         const unSeenMessages = selectedMessages.filter((message) => {
             return !message.flags.includes(GMAIL_SEEN_SPECIAL_USE_FLAG);
         });
-        unSeenMessages.forEach(async (message) => {
+        unSeenMessages.forEach(async (_message) => {
             if (!profile?.email_engine_account_id) {
                 return;
             }
-            await updateMessageAsSeen(message.id, profile.email_engine_account_id);
+            // await updateMessageAsSeen(message.id, profile.email_engine_account_id);
             refreshInboxMessages();
         });
     }, [refreshInboxMessages, selectedMessages, profile?.email_engine_account_id]);
