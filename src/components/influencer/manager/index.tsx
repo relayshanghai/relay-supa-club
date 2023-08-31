@@ -16,6 +16,7 @@ import { filterByMe } from './helpers';
 import { OnlyMe } from './onlyme';
 import { SearchComponent } from './search-component';
 import { Table } from './table';
+import type { ProfileValue } from 'src/components/influencer-profile/screens/profile-screen';
 
 const Manager = () => {
     const { sequences } = useSequences();
@@ -36,12 +37,12 @@ const Manager = () => {
     const [onlyMe, setOnlyMe] = useState<boolean>(false);
     const [filterStatuses, setFilterStatuses] = useState<CommonStatusType[]>([]);
 
-    const { track } = useRudderstackTrack()
+    const { track } = useRudderstackTrack();
 
     useEffect(() => {
-        const { abort } = track(OpenInfluencerManagerPage)
+        const { abort } = track(OpenInfluencerManagerPage);
         return abort;
-    }, [track])
+    }, [track]);
 
     const handleRowClick = useCallback(
         (influencer: SequenceInfluencerManagerPage) => {
@@ -54,9 +55,21 @@ const Manager = () => {
         [setUiState],
     );
 
-    const handleProfileUpdate = useCallback(() => {
-        refreshSequenceInfluencers();
-    }, [refreshSequenceInfluencers]);
+    const handleProfileUpdate = useCallback(
+        (data: Partial<ProfileValue>) => {
+            if (!sequenceInfluencers || !data.notes || !influencer) return;
+            const updatedInfluencerIndex = sequenceInfluencers.findIndex((x) => x.id === influencer.id);
+            const newInfluencers = [
+                ...sequenceInfluencers.slice(0, updatedInfluencerIndex),
+                { ...sequenceInfluencers[updatedInfluencerIndex], funnel_status: data.notes.collabStatus || 'Posted' },
+                ...sequenceInfluencers.slice(updatedInfluencerIndex + 1),
+            ];
+            refreshSequenceInfluencers(newInfluencers);
+            // const index = sequenceInfluencers?.findIndex((x) => x.id === influencer?.id)
+            // refreshSequenceInfluencers([...sequenceInfluencers.slice(0,index), {...sequenceInfluencers[index], funnel_status: data.notes?.collabStatus}, ...sequenceInfluencers?.slice(index + 1)]);
+        },
+        [refreshSequenceInfluencers, sequenceInfluencers, influencer],
+    );
 
     const setCollabStatusValues = (influencers: SequenceInfluencerManagerPage[], options: MultipleDropdownObject) => {
         const collabOptionsWithValue = options;
