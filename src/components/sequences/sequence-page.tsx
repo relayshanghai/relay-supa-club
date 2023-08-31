@@ -169,10 +169,14 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     };
 
     const handleCheckAll = (checkedAll: boolean) => {
-        const updatedCheckboxes = influencers?.map((influencer) => ({
-            ...influencer,
-            checked: checkedAll,
-        }));
+        const updatedCheckboxes = influencers
+            ?.filter((i) => i.funnel_status === 'To Contact')
+            .map((influencer) => ({
+                ...influencer,
+                checked: checkedAll,
+            }))
+            //@ts-expect-error
+            .concat(influencers?.filter((i) => i.funnel_status !== 'To Contact') ?? []);
         setInfluencers(updatedCheckboxes);
         setSelectedAll(checkedAll);
     };
@@ -180,13 +184,19 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     const hasSelectedInfluencers = influencers?.some((influencer) => influencer.checked);
 
     const handleSendAll = async () => {
-        setInfluencers((influencers) =>
-            influencers?.map((influencer) => ({
-                ...influencer,
-                funnel_status: 'In Sequence',
-                checked: false,
-            })),
-        );
+        setInfluencers((influencers) => {
+            influencers?.sort((a) => (a.funnel_status == 'To Contact' ? -1 : 1));
+            return influencers?.map((influencer) => {
+                return influencer.checked
+                    ? {
+                          ...influencer,
+                          funnel_status: 'In Sequence',
+                          checked: false,
+                          sequence_step: 1,
+                      }
+                    : influencer;
+            });
+        });
     };
 
     return (
