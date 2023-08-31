@@ -1,4 +1,4 @@
-import mockInfluencers from 'influencers-mock';
+import { influencersAcne } from 'influencers-mock';
 import { SparklesIcon } from '@heroicons/react/24/solid';
 import type { Influencer } from 'pages/boostbot';
 import type { Dispatch, SetStateAction } from 'react';
@@ -126,7 +126,7 @@ export const Chat: React.FC<ChatProps> = ({
                 limiter.schedule(() => getInfluencersForPlatform({ platform })),
             );
             const influencersResult = await Promise.all(parallelSearchPromises);
-            const influencers = mockInfluencers;
+            const influencers = influencersAcne;
             // eslint-disable-next-line no-console
             console.log('influencers :>> ', { influencers, influencersResult });
 
