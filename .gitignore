@@ -39,6 +39,7 @@ next-env.d.ts
 
 # db backup
 backup.sql
+supabase/seed.sql
 
 # cypress
 cypress/videos

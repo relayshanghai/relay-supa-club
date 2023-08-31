@@ -99,6 +99,9 @@ jobs:
             - name: Create supabase config file
               run: cp supabase/config.toml.example supabase/config.toml
 
+            - name: Create seed file
+              run: cp supabase/seed.example supabase/seed.sql
+
             - name: Start Supabase local development setup
               run: supabase start
 
