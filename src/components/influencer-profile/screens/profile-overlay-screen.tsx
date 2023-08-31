@@ -15,7 +15,7 @@ type Props = {
     onUpdate?: (data: Partial<ProfileValue>) => void;
 };
 
-const mapProfileToNotes = (profile: SequenceInfluencerManagerPage) => {
+export const mapProfileToNotes = (profile: SequenceInfluencerManagerPage) => {
     return {
         collabStatus: profile?.funnel_status ?? '', // profile.funnel_status (toLowerCase)
         nextStep: profile?.next_step ?? '', // profile.next_step
@@ -27,7 +27,7 @@ const mapProfileToNotes = (profile: SequenceInfluencerManagerPage) => {
     };
 };
 
-const mapProfileToShippingDetails = (profile: SequenceInfluencerManagerPage) => {
+export const mapProfileToShippingDetails = (profile: SequenceInfluencerManagerPage) => {
     return {
         name: profile?.address?.name ?? '', // profile.real_full_name
         phoneNumber: profile?.address?.phone_number ?? '', // ??
