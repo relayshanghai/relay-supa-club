@@ -69,7 +69,7 @@ export const columns: ColumnDef<Influencer>[] = [
                                     rel="noopener noreferrer"
                                     className="group flex h-40 w-40 flex-col overflow-hidden rounded-md border"
                                 >
-                                    <div className="overflow-hidden">
+                                    <div className="flex-1 overflow-hidden">
                                         <img
                                             src={post.thumbnail}
                                             alt={post.text}
