@@ -18,7 +18,7 @@ const messages: MessagesGetMessage[] = inManagerDummyInfluencers.map((influencer
         subject: templates[index % 4].content.subject.replace(/{{\s*[^{}]+\s*}}/g, company), // You can use any relevant value here
         from: {
             name: influencer.name || 'John Doe',
-            address: influencer.email || 'example@example.com',
+            address: influencer.email || 'jim@boostbot.ai',
         },
         replyTo: [
             {
@@ -72,12 +72,12 @@ export const dummyMessages = {
             subject: `Paid Collab with DJI 🤝`,
             from: {
                 name: influencer.manager_first_name,
-                address: influencer.email || 'example@example.com',
+                address: influencer.email || 'jim@boostbot.ai',
             },
             replyTo: [],
             to: [
                 {
-                    address: influencer.email || 'example@example.com',
+                    address: influencer.email || 'jim@boostbot.ai',
                 },
             ],
             cc: [],
@@ -118,7 +118,7 @@ dummyMessages.messages.push({
     replyTo: [],
     to: [
         {
-            address: 'example@example.com',
+            address: 'jim@boostbot.ai',
         },
     ],
     cc: [],
