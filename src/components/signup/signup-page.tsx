@@ -16,7 +16,7 @@ import type { FieldValues } from 'react-hook-form';
 import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
 import Link from 'next/link';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
-import { SIGNUP_WIZARD } from 'src/utils/rudderstack/event-names';
+import { SIGNUP } from 'src/utils/rudderstack/event-names';
 import { Button } from '../button';
 
 export interface SignUpValidationErrors {
@@ -144,7 +144,7 @@ const SignUpPage = ({
         } else if (currentStep < 4) {
             setCurrentStep(currentStep + 1);
         }
-        trackEvent(SIGNUP_WIZARD(`step-${currentStep}`), {
+        trackEvent(SIGNUP(`step-${currentStep}`), {
             firstName,
             lastName,
             phoneNumber,

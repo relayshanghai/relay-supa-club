@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { useUser } from 'src/hooks/use-user';
 import { useTranslation } from 'react-i18next';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
-import { SIGNUP_WIZARD } from 'src/utils/rudderstack/event-names';
+import { SIGNUP } from 'src/utils/rudderstack/event-names';
 import { Button } from '../button';
 import { Spinner } from '../icons';
 import Link from 'next/link';
@@ -34,6 +34,7 @@ const FreeTrialPage = () => {
 
         await response.json();
         if (response.status === 200) {
+            trackEvent(SIGNUP('Start free trial success'), { company: company?.id });
             router.push('/dashboard');
         }
     };
@@ -123,12 +124,21 @@ const FreeTrialPage = () => {
                 <input
                     type="checkbox"
                     checked={termsChecked}
-                    onChange={() => setTermsChecked(!termsChecked)}
+                    onChange={() => {
+                        setTermsChecked(!termsChecked);
+                        trackEvent(SIGNUP('check Terms and Conditions'), { termsChecked: !termsChecked });
+                    }}
                     id="terms"
                 />
                 <label htmlFor="terms" className="ml-2">
                     {t('signup.freeTrial.termsAndConditionCheckboxLabel')}
-                    <b className="cursor-pointer" onClick={() => setShowModal(true)}>
+                    <b
+                        className="cursor-pointer"
+                        onClick={() => {
+                            setShowModal(true);
+                            trackEvent(SIGNUP('open Terms and Conditions'));
+                        }}
+                    >
                         {t('signup.freeTrial.termsAndConditionClickableText')}
                     </b>
                 </label>
@@ -147,7 +157,7 @@ const FreeTrialPage = () => {
                     <Link
                         className="text-primary-500"
                         href="/logout"
-                        onClick={() => trackEvent(SIGNUP_WIZARD('step-5, log out'))}
+                        onClick={() => trackEvent(SIGNUP('Sign out from free trial page'))}
                     >
                         {t('login.signOut')}
                     </Link>

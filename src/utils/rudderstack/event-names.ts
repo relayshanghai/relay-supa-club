@@ -7,6 +7,7 @@ const generateEventName =
 export const LANDING_PAGE = generateEventName('Landing Page');
 export const SIGNUP_WIZARD = generateEventName('Signup Wizard');
 export const CAROUSEL = generateEventName('Carousel');
+export const SIGNUP = generateEventName('Signup');
 
 // Discovery
 export const CAMPAIGN_INFLUENCER_ROW = generateEventName('Campaign Influencer Row');
