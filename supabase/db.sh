@@ -299,6 +299,12 @@ function start_database {
     export_supabase_keys
 }
 
+function reset_hard_database {
+    npx supabase --no-backup
+    npx supabase start
+    export_supabase_keys
+}
+
 # Reverse engineered from
 # https://github.com/supabase/cli/blob/main/internal/db/test/test.go#L39
 function test_database {
@@ -475,6 +481,9 @@ case $fn in
     ;;
   "db_start")
     start_database $@
+    ;;
+  "db_reset_hard")
+    reset_hard_database $@
     ;;
   "get_proj")
     get_linked_project $@
