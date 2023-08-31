@@ -16,14 +16,16 @@ import { filterByMe } from './helpers';
 import { OnlyMe } from './onlyme';
 import { SearchComponent } from './search-component';
 import { Table } from './table';
+import { inManagerDummyInfluencers } from 'src/components/sequences/in-manager-dummy-sequence-influencers';
 
 const Manager = () => {
     const { sequences } = useSequences();
-    const { sequenceInfluencers, refreshSequenceInfluencers } = useSequenceInfluencers(
+    const { refreshSequenceInfluencers } = useSequenceInfluencers(
         sequences?.map((sequence) => {
             return sequence.id;
         }),
     );
+    const sequenceInfluencers = inManagerDummyInfluencers;
 
     const { profile } = useUser();
 
@@ -36,12 +38,12 @@ const Manager = () => {
     const [onlyMe, setOnlyMe] = useState<boolean>(false);
     const [filterStatuses, setFilterStatuses] = useState<CommonStatusType[]>([]);
 
-    const { track } = useRudderstackTrack()
+    const { track } = useRudderstackTrack();
 
     useEffect(() => {
-        const { abort } = track(OpenInfluencerManagerPage)
+        const { abort } = track(OpenInfluencerManagerPage);
         return abort;
-    }, [track])
+    }, [track]);
 
     const handleRowClick = useCallback(
         (influencer: SequenceInfluencerManagerPage) => {
@@ -55,7 +57,7 @@ const Manager = () => {
     );
 
     const handleProfileUpdate = useCallback(() => {
-        refreshSequenceInfluencers()
+        refreshSequenceInfluencers();
     }, [refreshSequenceInfluencers]);
 
     const setCollabStatusValues = (influencers: SequenceInfluencerManagerPage[], options: MultipleDropdownObject) => {

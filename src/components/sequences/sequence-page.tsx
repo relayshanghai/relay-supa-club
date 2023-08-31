@@ -169,10 +169,14 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     };
 
     const handleCheckAll = (checkedAll: boolean) => {
-        const updatedCheckboxes = influencers?.map((influencer) => ({
-            ...influencer,
-            checked: checkedAll,
-        }));
+        const updatedCheckboxes = influencers
+            ?.filter((i) => i.funnel_status === 'To Contact')
+            .map((influencer) => ({
+                ...influencer,
+                checked: checkedAll,
+            }))
+            //@ts-expect-error
+            .concat(influencers?.filter((i) => i.funnel_status !== 'To Contact') ?? []);
         setInfluencers(updatedCheckboxes);
         setSelectedAll(checkedAll);
     };
@@ -180,7 +184,19 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     const hasSelectedInfluencers = influencers?.some((influencer) => influencer.checked);
 
     const handleSendAll = async () => {
-        // ...
+        setInfluencers((influencers) => {
+            influencers?.sort((a) => (a.funnel_status == 'To Contact' ? -1 : 1));
+            return influencers?.map((influencer) => {
+                return influencer.checked
+                    ? {
+                          ...influencer,
+                          funnel_status: 'In Sequence',
+                          checked: false,
+                          sequence_step: 1,
+                      }
+                    : influencer;
+            });
+        });
     };
 
     return (
@@ -218,21 +234,9 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                 </div>
                 <SequenceStats
                     totalInfluencers={influencers?.length ?? 0}
-                    openRate={
-                        (sequenceEmails?.filter(
-                            (email) =>
-                                email.email_tracking_status === 'Link Clicked' ||
-                                email.email_tracking_status === 'Opened',
-                        ).length || 0) / (sequenceEmails?.length || 1)
-                    }
-                    replyRate={
-                        (sequenceEmails?.filter((email) => email.email_delivery_status === 'Replied').length || 0) /
-                        (sequenceEmails?.length || 1)
-                    }
-                    bounceRate={
-                        (sequenceEmails?.filter((email) => email.email_delivery_status === 'Bounced').length || 0) /
-                        (sequenceEmails?.length || 1)
-                    }
+                    openRate={0.53}
+                    replyRate={0.34}
+                    bounceRate={0.01}
                 />
                 <Tabs tabs={tabs} currentTab={currentTab} setCurrentTab={setCurrentTab} />
 
