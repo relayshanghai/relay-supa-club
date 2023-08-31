@@ -12,7 +12,7 @@ export const PlanDetails = ({ priceTier }: { priceTier: ActiveSubscriptionTier }
             </h1>
             <p className="text-wrap mt-4 text-xs text-gray-500">{t(`pricing.${priceTier}.subTitle`)}</p>
             <h3 className="mb-3 mt-12 inline text-4xl font-semibold text-gray-700">
-                {priceTier === 'discovery' ? '¥299' : '¥880'}
+                {priceTier === 'discovery' ? '¥299' : '¥799'}
                 <p className="ml-1 inline text-xs text-gray-400">{t('pricing.perMonth')}</p>
             </h3>
             <div className="my-3 flex gap-x-5">
