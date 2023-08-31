@@ -14,8 +14,10 @@ import type { CreatorPlatform } from 'types';
 import { ChatContent } from './chat-content';
 import { ChatInput } from './chat-input';
 import type { CreatorsReportGetResponse } from 'pages/api/creators/report';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { limiter } from 'src/utils/limiter';
 import type { MessageType } from 'pages/boostbot';
+import { wait } from 'src/utils/utils';
 
 export type ProgressType = {
     topics: string[];
@@ -105,6 +107,7 @@ export const Chat: React.FC<ChatProps> = ({
             payload.topics_generated = topics;
             updateProgress({ topics, isMidway: false, totalFound: null });
 
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const getInfluencersForPlatform = async ({ platform }: { platform: CreatorPlatform }) => {
                 const relevantTopics = await getRelevantTopics({ topics, platform });
                 const topicClusters = await getTopicClusters({ productDescription, topics: relevantTopics });
@@ -116,20 +119,23 @@ export const Chat: React.FC<ChatProps> = ({
                 return influencers;
             };
 
-            const platforms: CreatorPlatform[] = ['youtube', 'tiktok', 'instagram'];
-            const parallelSearchPromises = platforms.map((platform) =>
-                limiter.schedule(() => getInfluencersForPlatform({ platform })),
-            );
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            const [youtube, tiktok, instagram] = await Promise.all(parallelSearchPromises);
+            const platforms: CreatorPlatform[] = ['youtube', 'tiktok', 'instagram'];
+            // const parallelSearchPromises = platforms.map((platform) =>
+            //     limiter.schedule(() => getInfluencersForPlatform({ platform })),
+            // );
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            // const [youtube, tiktok, instagram] = await Promise.all(parallelSearchPromises);
+            // wait(3000)
             const influencers = influencersDrone;
             // eslint-disable-next-line no-console
             console.log('influencers :>> ', { influencers });
 
-            updateProgress({ topics, isMidway: true, totalFound: null });
             setInfluencers(influencers);
 
             await handleUnlockInfluencers(influencers.slice(0, 3));
+            updateProgress({ topics, isMidway: true, totalFound: null });
+            await wait(5000);
 
             updateProgress({ topics, isMidway: true, totalFound: influencers.length });
             setIsInitialLogoScreen(false);
