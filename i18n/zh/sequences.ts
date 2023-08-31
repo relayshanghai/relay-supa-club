@@ -152,5 +152,6 @@ const sequences = {
     deleteConfirm: '确认删除？',
     deleteSuccess: '删除成功',
     deleteFail: '删除失败',
+    sendAll: '发送全部',
 };
 export default sequences;

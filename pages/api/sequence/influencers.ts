@@ -22,6 +22,7 @@ export type SequenceInfluencerManagerPage = SequenceInfluencer & {
         first_name: string;
         last_name: string;
     };
+    checked?: boolean;
 };
 
 const postHandler: NextApiHandler = async (

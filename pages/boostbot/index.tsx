@@ -17,29 +17,47 @@ import type { SendInfluencersToOutreachPayload } from 'src/utils/analytics/event
 import type { UnlockInfluencersPayload } from 'src/utils/analytics/events/boostbot/unlock-influencer';
 import { clientLogger } from 'src/utils/logger-client';
 import type { UserProfile } from 'types';
+import type { ProgressType } from 'src/components/boostbot/chat';
 
 export type Influencer = (UserProfile | CreatorAccountWithTopics) & {
     isLoading?: boolean;
     topics: string[];
 };
 
+export type MessageType = {
+    sender: 'User' | 'Bot' | 'Progress';
+    content?: string | JSX.Element;
+    progress?: ProgressType;
+};
+
 const Boostbot = () => {
     const { t } = useTranslation();
-    const { unlockInfluencers } = useBoostbot({ abortSignal: undefined });
+    const { unlockInfluencers } = useBoostbot({});
     const [isInitialLogoScreen, setIsInitialLogoScreen] = useState(true);
+    const [influencers, setInfluencers] = useState<Influencer[]>([]);
+    const [currentPageInfluencers, setCurrentPageInfluencers] = useState<Influencer[]>([]);
     const { trackEvent: track } = useRudderstack();
     const { sequences } = useSequences();
     const [isLoading, setIsLoading] = useState(false);
     const sequence = sequences?.find((sequence) => sequence.name === 'General collaboration');
     const { createSequenceInfluencer } = useSequenceInfluencers(sequence && [sequence.id]);
     const { sendSequence } = useSequence(sequence?.id);
+    const [hasUsedUnlock, setHasUsedUnlock] = useState(false);
+    const [hasUsedOutreach, setHasUsedOutreach] = useState(false);
+    const [messages, setMessages] = useState<MessageType[]>([
+        {
+            sender: 'Bot',
+            content:
+                t('boostbot.chat.introMessage') ??
+                'Hi, welcome! Please describe your product so I can find the perfect influencers for you.',
+        },
+    ]);
+
+    const addMessage = (message: MessageType) => setMessages((prevMessages) => [...prevMessages, message]);
 
     useEffect(() => {
         track(OpenBoostbotPage.eventName);
     }, [track]);
-
-    const [influencers, setInfluencers] = useState<Influencer[]>([]);
-    const [currentPageInfluencers, setCurrentPageInfluencers] = useState<Influencer[]>([]);
 
     const setInfluencerLoading = (userId: string, isLoading: boolean) => {
         setInfluencers((prevInfluencers) =>
@@ -105,9 +123,24 @@ const Boostbot = () => {
     const handlePageToUnlock = async () => {
         setIsLoading(true);
 
-        const unlockedInfluencers = await handleUnlockInfluencers(currentPageInfluencers);
+        const isStillLocked = (influencer: Influencer) => !('type' in influencer);
+        const newUnlockedCount = currentPageInfluencers.filter(isStillLocked).length;
+        if (newUnlockedCount === 0) {
+            setIsLoading(false);
+            addMessage({ sender: 'Bot', content: t('boostbot.chat.noInfluencersToUnlock') || '' });
+            return;
+        }
+
+        const unlockedInfluencers = await handleUnlockInfluencers(currentPageInfluencers.slice(0, 1));
 
         setIsLoading(false);
+        addMessage({
+            sender: 'Bot',
+            content: `${t(`boostbot.chat.${hasUsedUnlock ? 'hasUsedUnlock' : 'unlockDone'}`, {
+                count: newUnlockedCount,
+            })}`,
+        });
+        setHasUsedUnlock(true);
 
         return unlockedInfluencers;
     };
@@ -158,6 +191,11 @@ const Boostbot = () => {
             // saying that it is multiple or not
             track(SendInfluencersToOutreach.eventName, trackingPayload);
             setIsLoading(false);
+            addMessage({
+                sender: 'Bot',
+                content: t(`boostbot.chat.${hasUsedOutreach ? 'hasUsedOutreach' : 'outreachDone'}`) || '',
+            });
+            setHasUsedOutreach(true);
         }
     };
 
@@ -173,6 +211,10 @@ const Boostbot = () => {
                         setIsInitialLogoScreen={setIsInitialLogoScreen}
                         handleUnlockInfluencers={handleUnlockInfluencers}
                         isBoostbotLoading={isLoading}
+                        messages={messages}
+                        setMessages={setMessages}
+                        addMessage={addMessage}
+                        shortenedButtons={hasUsedUnlock || hasUsedOutreach}
                     />
                 </div>
 

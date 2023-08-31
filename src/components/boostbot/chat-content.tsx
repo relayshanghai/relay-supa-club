@@ -2,9 +2,9 @@ import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StopIcon } from '@heroicons/react/24/solid';
 import { Button } from 'src/components/button';
-import type { MessageType, ProgressType } from './chat';
 import Message from './message';
 import ChatProgress from './chat-progress';
+import type { MessageType } from 'pages/boostbot';
 
 interface ChatContentProps {
     messages: MessageType[];
@@ -14,6 +14,7 @@ interface ChatContentProps {
     handlePageToUnlock: () => void;
     handlePageToOutreach: () => void;
     stopBoostbot: () => void;
+    shortenedButtons: boolean;
 }
 
 export const ChatContent: React.FC<ChatContentProps> = ({
@@ -24,6 +25,7 @@ export const ChatContent: React.FC<ChatContentProps> = ({
     handlePageToUnlock,
     handlePageToOutreach,
     stopBoostbot,
+    shortenedButtons,
 }) => {
     const { t } = useTranslation();
     const chatBottomRef = useRef<null | HTMLDivElement>(null);
@@ -35,20 +37,20 @@ export const ChatContent: React.FC<ChatContentProps> = ({
     return (
         <div className="relative flex flex-grow flex-col overflow-auto px-4 py-3">
             {messages.map((message, index) =>
-                message.sender === 'Progress' ? (
-                    <ChatProgress key={index} progress={message.content as ProgressType} />
+                message.progress ? (
+                    <ChatProgress key={index} progress={message.progress} />
                 ) : (
                     <Message key={index} message={message} />
                 ),
             )}
 
             {shouldShowButtons && (
-                <div className="z-10">
-                    <Button onClick={handlePageToUnlock} className="mb-2" disabled={isBoostbotLoading}>
-                        {t('boostbot.chat.unlockPage')}
+                <div className="z-10 flex flex-wrap gap-2">
+                    <Button onClick={handlePageToUnlock} disabled={isBoostbotLoading}>
+                        {shortenedButtons ? t('boostbot.chat.unlockPageShort') : t('boostbot.chat.unlockPage')}
                     </Button>
                     <Button onClick={handlePageToOutreach} disabled={isBoostbotLoading}>
-                        {t('boostbot.chat.outreachPage')}
+                        {shortenedButtons ? t('boostbot.chat.outreachPageShort') : t('boostbot.chat.outreachPage')}
                     </Button>
                 </div>
             )}

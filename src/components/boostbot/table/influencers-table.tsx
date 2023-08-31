@@ -42,8 +42,6 @@ export function InfluencersTable<TData, TValue>({
 
     // Handle current table page state. Allows us to send the current page of influencers outreach/generate report.
     useEffect(() => {
-        tableRef.current?.scrollIntoView(true);
-
         const currentPageInfluencers = table.getRowModel().rows?.map((row) => row.original) ?? [];
         setCurrentPageInfluencers(currentPageInfluencers);
     }, [page, table, setCurrentPageInfluencers, data]);
@@ -55,6 +53,10 @@ export function InfluencersTable<TData, TValue>({
 
         return () => document.removeEventListener('influencerTableSetFirstPage', setFirstPage);
     }, [table]);
+
+    useEffect(() => {
+        tableRef.current?.scrollIntoView(true);
+    }, [page]);
 
     return (
         <div className="relative h-full w-full overflow-scroll">

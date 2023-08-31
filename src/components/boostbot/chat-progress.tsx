@@ -43,7 +43,8 @@ const ChatProgress = ({ progress }: ChatProgressProps) => {
 
     return (
         <div className="mb-4 flex flex-col gap-2 text-sm">
-            {renderStep(isFirstDone, t('boostbot.chat.progress.step1'), `${topics.slice(0, 5).join(', ')}, ...`)}
+            {/* \u00A0 is a non-breaking space, same as &nbsp; but usable in a string literal */}
+            {renderStep(isFirstDone, t('boostbot.chat.progress.step1'), `${topics.slice(0, 5).join(', ')},\u00A0...`)}
 
             {isFirstDone &&
                 renderStep(isSecondDone, t('boostbot.chat.progress.step2'), t('boostbot.chat.progress.step2B'))}
@@ -52,7 +53,7 @@ const ChatProgress = ({ progress }: ChatProgressProps) => {
                 renderStep(
                     isThirdDone,
                     t('boostbot.chat.progress.step3'),
-                    `${totalFound} ${t('boostbot.chat.progress.step3B')}`,
+                    t('boostbot.chat.progress.step3B', { count: totalFound || 0 }),
                 )}
         </div>
     );

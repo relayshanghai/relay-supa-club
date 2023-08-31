@@ -21,24 +21,24 @@ import { featEmail, featBoostbot } from 'src/constants/feature-flags';
 import { Button } from './button';
 
 const links: Record<string, (pathRoot: string, hovering?: boolean) => JSX.Element> = {
-    '/dashboard': (_pathRoot: string) => <Compass height={18} width={18} className="my-0.5 stroke-inherit" />,
-    '/influencer': (_pathRoot: string) => <Compass height={18} width={18} className="my-0.5 stroke-inherit" />,
-    '/account': (_pathRoot: string) => <Team height={18} width={18} className="my-0.5 stroke-inherit" />,
-    '/admin/clients': (_pathRoot: string) => <Team height={18} width={18} className="my-0.5 stroke-inherit" />,
-    '/performance': (_pathRoot: string) => <BarGraph height={18} width={18} className="my-0.5 stroke-inherit" />,
-    '/guide': (_pathRoot: string) => <Guide height={18} width={18} className="my-0.5 stroke-inherit" />,
-    '/sequences': (_pathRoot: string) => <Send height={18} width={18} className="my-0.5 stroke-inherit" />,
-    '/inbox': (_pathRoot: string) => <Engagements height={18} width={18} className="my-0.5 stroke-inherit" />,
+    '/dashboard': (_pathRoot: string) => <Compass height={20} width={20} className="my-0.5 stroke-inherit" />,
+    '/influencer': (_pathRoot: string) => <Compass height={20} width={20} className="my-0.5 stroke-inherit" />,
+    '/account': (_pathRoot: string) => <Team height={20} width={20} className="my-0.5 stroke-inherit" />,
+    '/admin/clients': (_pathRoot: string) => <Team height={20} width={20} className="my-0.5 stroke-inherit" />,
+    '/performance': (_pathRoot: string) => <BarGraph height={20} width={20} className="my-0.5 stroke-inherit" />,
+    '/guide': (_pathRoot: string) => <Guide height={20} width={20} className="my-0.5 stroke-inherit" />,
+    '/sequences': (_pathRoot: string) => <Send height={20} width={24} className="my-0.5 stroke-inherit" />,
+    '/inbox': (_pathRoot: string) => <Engagements height={20} width={20} className="my-0.5 stroke-inherit" />,
     '/influencer-manager': (_pathRoot: string) => (
-        <ProfilePlus height={18} width={18} className="my-0.5 stroke-inherit" />
+        <ProfilePlus height={20} width={20} className="my-0.5 stroke-inherit" />
     ),
     '/boostbot': (pathRoot: string, hovering = false) => {
         if (pathRoot === '/boostbot' || hovering) {
-            return <BoostbotSelected height={18} width={18} className="my-0.5 stroke-none " />;
+            return <BoostbotSelected height={24} width={20} className="my-0.5 stroke-none " />;
         }
-        return <BoostbotDefault height={18} width={18} className="stroke-nonoe my-0.5" />;
+        return <BoostbotDefault height={24} width={20} className="my-0.5 border-none stroke-none" />;
     },
-    '/campaigns': (_pathRoot: string) => <FourSquare height={18} width={18} className="my-0.5 stroke-inherit" />,
+    '/campaigns': (_pathRoot: string) => <FourSquare height={20} width={20} className="my-0.5 stroke-inherit" />,
 } as const;
 
 // eslint-disable-next-line complexity

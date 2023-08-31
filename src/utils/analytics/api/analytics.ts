@@ -27,7 +27,7 @@ export const getAnonId = (ctx: ServerContext) => {
  * Return a function that tracks an event on the backend
  */
 export const createTrack = <T extends TrackedEvent>(ctx: ServerContext) => {
-    return async (event: T, payload?: Parameters<typeof event>[1]) => {
+    return async (event: T, payload?: Parameters<typeof event>[1] & { event_id?: string | null }) => {
         // @note logs a TypeError "Cannot set headers.." due to outdated auth-helpers-next package
         const supabase = createServerSupabaseClient<DatabaseWithCustomTypes>(ctx);
         const sessionIds = await getUserSession(supabase)();

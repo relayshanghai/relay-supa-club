@@ -15,6 +15,9 @@ interface SequenceTableProps {
     setShowUpdateTemplateVariables: (value: SetStateAction<boolean>) => void;
     templateVariables: TemplateVariable[];
     handleStartSequence: (sequenceInfluencers: SequenceInfluencer[]) => Promise<SequenceSendPostResponse>;
+    selectedAll: boolean;
+    handleCheckAll: (checkedAll: boolean) => void;
+    handleCheckboxChange: (id: string) => void;
 }
 
 const sortInfluencers = (
@@ -53,16 +56,31 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
     setShowUpdateTemplateVariables,
     templateVariables,
     handleStartSequence,
+    selectedAll,
+    handleCheckAll,
+    handleCheckboxChange,
 }) => {
     const sortedInfluencers = sortInfluencers(currentTab, sequenceInfluencers, sequenceEmails);
     const { t } = useTranslation();
 
     const columns = sequenceColumns(currentTab);
     return (
-        <div className="max-w-full overflow-auto">
-            <table className="w-full border-collapse border border-gray-300">
+        <div className="max-w-full border-collapse overflow-auto rounded-md border border-gray-300">
+            <table className="w-full ">
                 <thead>
-                    <tr className="border-b-2 border-gray-200">
+                    <tr>
+                        {currentTab === 'To Contact' && (
+                            <th className="bg-white">
+                                <input
+                                    className="display-none checkbox appearance-none rounded checked:text-primary-500"
+                                    type="checkbox"
+                                    checked={selectedAll}
+                                    onChange={(e) => {
+                                        handleCheckAll(e.target.checked);
+                                    }}
+                                />
+                            </th>
+                        )}
                         {columns.map((column) => (
                             <th
                                 key={column}
@@ -100,6 +118,7 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
                                 setShowUpdateTemplateVariables={setShowUpdateTemplateVariables}
                                 templateVariables={templateVariables}
                                 handleStartSequence={handleStartSequence}
+                                handleCheckboxChange={handleCheckboxChange}
                             />
                         );
                     })}

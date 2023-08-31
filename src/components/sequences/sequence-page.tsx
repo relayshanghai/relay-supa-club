@@ -5,7 +5,7 @@ import SequenceTable from './sequence-table';
 import { SequenceStats } from './sequence-stats';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { useSequence } from 'src/hooks/use-sequence';
-import { Brackets, Spinner } from '../icons';
+import { Brackets, Send, Spinner } from '../icons';
 import { useSequenceEmails } from 'src/hooks/use-sequence-emails';
 import type { CommonStatusType, MultipleDropdownObject, TabsProps } from '../library';
 import { Badge, SelectMultipleDropdown, Switch, Tabs } from '../library';
@@ -17,14 +17,17 @@ import type { SequenceInfluencer } from 'src/utils/api/db';
 import { useTemplateVariables } from 'src/hooks/use-template_variables';
 import { Tooltip } from '../library';
 import { EMAIL_STEPS } from './constants';
-import { type SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { useUser } from 'src/hooks/use-user';
+
+export type SequenceInfluencerSequencePage = SequenceInfluencer & {
+    checked?: boolean;
+};
 
 export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     const { t } = useTranslation();
     const { profile } = useUser();
     const { sequence, sendSequence, sequenceSteps, updateSequence } = useSequence(sequenceId);
-    const { sequenceInfluencers } = useSequenceInfluencers(sequence && [sequenceId]);
+    const { sequenceInfluencers, refreshSequenceInfluencers: _ } = useSequenceInfluencers(sequence && [sequenceId]);
 
     const { sequenceEmails } = useSequenceEmails(sequenceId);
     const { templateVariables } = useTemplateVariables(sequenceId);
@@ -34,7 +37,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     const isMissingVariables = !templateVariables || templateVariables.length === 0 || missingVariables.length > 0;
 
     const [filterSteps, setFilterSteps] = useState<CommonStatusType[]>([]);
-    const [influencers, setInfluencers] = useState<SequenceInfluencerManagerPage[] | undefined>(sequenceInfluencers);
+    const [influencers, setInfluencers] = useState<SequenceInfluencerSequencePage[] | undefined>(sequenceInfluencers);
 
     useEffect(() => {
         setInfluencers(sequenceInfluencers);
@@ -62,7 +65,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
         [sequenceInfluencers, sequenceSteps],
     );
 
-    const handleStartSequence = async (sequenceInfluencers: SequenceInfluencer[]) => {
+    const handleStartSequence = async (sequenceInfluencers: SequenceInfluencerSequencePage[]) => {
         return await sendSequence(sequenceInfluencers);
     };
 
@@ -115,7 +118,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     const [emailSteps, setEmailSteps] = useState<MultipleDropdownObject>(EMAIL_STEPS);
 
     const setEmailStepValues = useCallback(
-        (influencers: SequenceInfluencerManagerPage[], options: MultipleDropdownObject) => {
+        (influencers: SequenceInfluencerSequencePage[], options: MultipleDropdownObject) => {
             const emailOptionsWithValue = options;
             Object.keys(EMAIL_STEPS).forEach((option) => {
                 emailOptionsWithValue[option as CommonStatusType] = {
@@ -151,6 +154,34 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
               variables: missingVariables,
           })
         : t('sequences.autoStartTooltipDescription');
+
+    const [selectedAll, setSelectedAll] = useState<boolean>(false);
+
+    const handleCheckboxChange = (id: string) => {
+        if (!influencers) {
+            return;
+        }
+        const updatedCheckboxes = influencers?.map((influencer) =>
+            influencer.id === id ? { ...influencer, checked: !influencer.checked } : influencer,
+        );
+        setInfluencers(updatedCheckboxes);
+        setSelectedAll(updatedCheckboxes.every((checkbox) => checkbox.checked));
+    };
+
+    const handleCheckAll = (checkedAll: boolean) => {
+        const updatedCheckboxes = influencers?.map((influencer) => ({
+            ...influencer,
+            checked: checkedAll,
+        }));
+        setInfluencers(updatedCheckboxes);
+        setSelectedAll(checkedAll);
+    };
+
+    const hasSelectedInfluencers = influencers?.some((influencer) => influencer.checked);
+
+    const handleSendAll = async () => {
+        // ...
+    };
 
     return (
         <Layout>
@@ -213,6 +244,12 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                         setSelectedOptions={handleStep}
                         translationPath="sequences.steps"
                     />
+                    {hasSelectedInfluencers && (
+                        <Button onClick={handleSendAll} className="ml-auto flex">
+                            <Send className="mr-2 h-6 stroke-white" />
+                            <p className="self-center">{t('sequences.sendAll')}</p>
+                        </Button>
+                    )}
                 </div>
                 {currentTabInfluencers && sequenceSteps ? (
                     <SequenceTable
@@ -225,6 +262,9 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                         setShowUpdateTemplateVariables={setShowUpdateTemplateVariables}
                         templateVariables={templateVariables ?? []}
                         handleStartSequence={handleStartSequence}
+                        selectedAll={selectedAll}
+                        handleCheckAll={handleCheckAll}
+                        handleCheckboxChange={handleCheckboxChange}
                     />
                 ) : (
                     <Spinner className="mx-auto mt-10 h-10 w-10 fill-primary-600 text-white" />

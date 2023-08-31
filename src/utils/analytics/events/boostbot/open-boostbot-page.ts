@@ -1,6 +1,6 @@
 import type { TriggerEvent } from '../../types';
 
-export const BOOSTBOT_OPEN_BOOSTBOT_PAGE = 'TEST:boostbot-open_boostbot_page';
+export const BOOSTBOT_OPEN_BOOSTBOT_PAGE = 'boostbot-open_boostbot_page';
 
 export type OpenBoostbotPagePayload = {
     extra_info?: any;

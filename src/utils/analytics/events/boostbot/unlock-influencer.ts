@@ -1,6 +1,6 @@
 import type { EventPayload, TriggerEvent } from '../../types';
 
-export const BOOSTBOT_UNLOCK_INFLUENCERS = 'TEST:boostbot-unlock_influencers';
+export const BOOSTBOT_UNLOCK_INFLUENCERS = 'boostbot-unlock_influencers';
 
 export type UnlockInfluencersPayload = EventPayload<{
     /**
