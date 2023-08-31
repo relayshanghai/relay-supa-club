@@ -1,4 +1,4 @@
-import Logo from 'src/components/boostbot/logo';
+import Logo from 'src/components/icons/BoostbotIcon';
 
 const InitialLogoScreen = () => {
     return (

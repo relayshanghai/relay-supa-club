@@ -6,7 +6,6 @@ import { useCompany } from './use-company';
 import { nextFetch, nextFetchWithQueries } from 'src/utils/fetcher';
 import { clientLogger } from 'src/utils/logger-client';
 import { limiter } from 'src/utils/limiter';
-import type { eventKeys } from 'src/utils/analytics/events';
 import { SearchAnalyzeInfluencer } from 'src/utils/analytics/events';
 import type { GetTopicsBody, GetTopicsResponse } from 'pages/api/boostbot/get-topics';
 import type { GetRelevantTopicsBody, GetRelevantTopicsResponse } from 'pages/api/boostbot/get-relevant-topics';
@@ -27,13 +26,15 @@ export const useBoostbot = ({ abortSignal }: UseBoostbotProps) => {
             if (!company?.id || !profile?.id) throw new Error('No company or profile found');
 
             const influencersPromises = influencers.map(({ user_id, url }) => {
-                const platform = url.includes('youtube') ? 'youtube' : url.includes('tiktok') ? 'tiktok' : 'instagram';
+                const platforms: CreatorPlatform[] = ['youtube', 'tiktok', 'instagram'];
+                const platform = platforms.find((platform) => url.includes(platform)) || 'instagram';
+
                 const reportQuery = {
-                    platform: platform as CreatorPlatform,
+                    platform: platform,
                     creator_id: user_id,
                     company_id: company.id,
                     user_id: profile.id,
-                    track: SearchAnalyzeInfluencer.eventName as eventKeys,
+                    track: SearchAnalyzeInfluencer.eventName,
                 };
 
                 return limiter.schedule(() =>
