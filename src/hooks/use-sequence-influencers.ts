@@ -1,6 +1,5 @@
-import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
+import { dummySequenceInfluencers } from 'src/components/sequences/dummy-sequence-influencers';
 import { useUser } from 'src/hooks/use-user';
-import { apiFetch } from 'src/utils/api/api-fetch';
 import type { SequenceInfluencerInsert, SequenceInfluencerUpdate } from 'src/utils/api/db';
 import {
     createSequenceInfluencerCall,
@@ -10,20 +9,13 @@ import {
 import { useDB } from 'src/utils/client-db/use-client-db';
 import useSWR from 'swr';
 
-export const useSequenceInfluencers = (sequenceIds?: string[], filters?: string[]) => {
+export const useSequenceInfluencers = (sequenceIds?: string[], _filters?: string[]) => {
     const { profile } = useUser();
 
     const { data: sequenceInfluencers, mutate: refreshSequenceInfluencers } = useSWR(
         sequenceIds ? ['sequence_influencers', ...sequenceIds] : null,
         async () => {
-            if (sequenceIds) {
-                const allInfluencers = await apiFetch<SequenceInfluencerManagerPage[]>('/api/sequence/influencers', {
-                    body: sequenceIds,
-                });
-                return filters
-                    ? allInfluencers.content.filter((influencer) => filters.includes(influencer.funnel_status))
-                    : allInfluencers.content;
-            }
+            return dummySequenceInfluencers;
         },
     );
 

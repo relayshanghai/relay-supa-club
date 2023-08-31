@@ -180,7 +180,13 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     const hasSelectedInfluencers = influencers?.some((influencer) => influencer.checked);
 
     const handleSendAll = async () => {
-        // ...
+        setInfluencers((influencers) =>
+            influencers?.map((influencer) => ({
+                ...influencer,
+                funnel_status: 'In Sequence',
+                checked: false,
+            })),
+        );
     };
 
     return (
