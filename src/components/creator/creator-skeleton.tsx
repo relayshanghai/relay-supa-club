@@ -18,13 +18,15 @@ export default function CreatorSkeleton({
 }) {
     const { t } = useTranslation();
     const router = useRouter();
+    const usageErrorsValues = Object.values(usageErrors).map((item) => t(item));
+
     return (
         <div className="p-6">
             <div className="relative">
                 {loading && <LoadingPopover text={t('creators.show.generateReport')} />}
                 {error && (
                     <>
-                        {Object.values(usageErrors).includes(errorMessage) ? (
+                        {usageErrorsValues.includes(errorMessage) ? (
                             <ErrorPopover
                                 errorMessage={errorMessage}
                                 buttonText={t('account.subscription.upgradeSubscription') || ''}

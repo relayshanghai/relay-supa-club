@@ -64,7 +64,7 @@ export const chinaFilter = (str: string) => {
  * @param maximumFractionDigits is the minimum fraction to be used
  * @returns
  */
-export const toCurrency = (n: number, maximumFractionDigits = 2, curr = 'USD', LanguageFormat?: string) =>
+export const toCurrency = (n: number, maximumFractionDigits = 2, curr = 'USD', LanguageFormat = 'en-US') =>
     Intl.NumberFormat(LanguageFormat, {
         style: 'currency',
         currency: curr,
