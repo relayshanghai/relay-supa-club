@@ -8,6 +8,7 @@ import { SIGNUP } from 'src/utils/rudderstack/event-names';
 import { Button } from '../button';
 import { Spinner } from '../icons';
 import Link from 'next/link';
+import { clientLogger } from 'src/utils/logger-client';
 
 const FreeTrialPage = () => {
     const { t } = useTranslation();
@@ -21,21 +22,25 @@ const FreeTrialPage = () => {
 
     const startFreeTrial = async () => {
         setLoading(true);
-        const response = await fetch('/api/subscriptions/create-trial-without-payment-intent', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                companyId: company?.id,
-                termsChecked: termsChecked,
-            }),
-        });
+        try {
+            const response = await fetch('/api/subscriptions/create-trial-without-payment-intent', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    companyId: company?.id,
+                    termsChecked: termsChecked,
+                }),
+            });
 
-        await response.json();
-        if (response.status === 200) {
-            trackEvent(SIGNUP('Start free trial success'), { company: company?.id });
-            router.push('/dashboard');
+            await response.json();
+            if (response.status === 200) {
+                trackEvent(SIGNUP('Start free trial success'), { company: company?.id });
+                router.push('/dashboard');
+            }
+        } catch (error) {
+            clientLogger(error, 'error');
         }
     };
 
