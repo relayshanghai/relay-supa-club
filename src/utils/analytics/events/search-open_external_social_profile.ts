@@ -11,4 +11,4 @@ export const SearchOpenExternalSocialProfile = (
 
 export type SearchOpenExternalSocialProfile = typeof SearchOpenExternalSocialProfile;
 
-SearchOpenExternalSocialProfile.eventName = SEARCH_OPEN_EXTERNAL_SOCIAL_PROFILE;
+SearchOpenExternalSocialProfile.eventName = <typeof SEARCH_OPEN_EXTERNAL_SOCIAL_PROFILE>SEARCH_OPEN_EXTERNAL_SOCIAL_PROFILE;

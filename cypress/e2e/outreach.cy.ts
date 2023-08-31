@@ -111,15 +111,15 @@ describe('outreach', () => {
         cy.contains('Charlie Charles').should('not.exist');
 
         // send sequence is disabled if missing template variables
-        cy.contains('Missing required template variables: Product Description').should('not.be.visible');
+        cy.contains('Missing required template variables: **Product Description**').should('not.be.visible');
         cy.getByTestId('send-email-button-bob.brown@example.com').trigger('mouseover');
-        cy.contains('Missing required template variables: Product Description');
+        cy.contains('Missing required template variables: **Product Description**');
         cy.getByTestId('send-email-button-bob.brown@example.com').trigger('mouseout');
-        cy.contains('Missing required template variables: Product Description').should('not.be.visible');
+        cy.contains('Missing required template variables: **Product Description**').should('not.be.visible');
         cy.contains('div', 'Auto-start').within(() => {
             cy.get('input[type=checkbox]').trigger('mouseover', { force: true });
         });
-        cy.contains('Missing required template variables: Product Description');
+        cy.contains('Missing required template variables: **Product Description**');
         cy.contains('div', 'Auto-start').within(() => {
             cy.get('input[type=checkbox]').click({ force: true });
             // clicking opens the modal
@@ -136,14 +136,14 @@ describe('outreach', () => {
 
         // can send sequence
         cy.getByTestId('send-email-button-bob.brown@example.com').trigger('mouseover');
-        cy.contains('Missing required template variables: Product Description').should('not.exist');
+        cy.contains('Missing required template variables: **Product Description**').should('not.exist');
 
         // can view all emails preview
         cy.getByTestId('show-all-email-previews-button').eq(0).click();
         //TODO: cy.getByTestId('email-preview-modal-spinner');
         cy.contains('Hey **influencerAccountName**', { timeout: 10000 }); // fills in missing variables
         cy.contains(
-            'Vivian here from Blue Moonlight Stream Industries. I watched your "**recentVideoTitle**" video, and love your content style!!',
+            'Vivian here from Blue Moonlight Stream Industries. I watched your "**recentPostTitle**" video, and love your content style!!',
         ); // fills in variables
         cy.contains('3rd Follow-up'); // shows all emails not just outreach
         cy.contains('Hope you had a chance to think about our Widget X collab. Still think we’d make a great team!'); // shows all emails not just outreach
@@ -157,7 +157,7 @@ describe('outreach', () => {
             timeout: 10000,
         });
         cy.contains(
-            'Vivian here from Blue Moonlight Stream Industries. I watched your "**recentVideoTitle**" video, and love your content style!!',
+            'Vivian here from Blue Moonlight Stream Industries. I watched your "**recentPostTitle**" video, and love your content style!!',
         ).should('not.exist'); //only shows the selected one
         cy.contains('button', 'Needs attention').click({ force: true });
 

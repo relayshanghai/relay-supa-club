@@ -5,6 +5,7 @@ const navbar = {
     account: '我的账号',
     logout: '退出登录',
     performance: '数据中心',
+    boostbot: 'BoostBot搜索',
     guide: '指南',
     sequences: '邮件进程管理',
     inbox: '收件箱',
