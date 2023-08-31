@@ -32,6 +32,8 @@ export const AI_EMAIL_GENERATOR = generateEventName('AI Email Generator');
 export const ACCOUNT_COMPANY_DETAILS = generateEventName('Account, CompanyDetails');
 export const ACCOUNT_PERSONAL_DETAILS = generateEventName('Account, PersonalDetails');
 export const ACCOUNT_SUBSCRIPTION = generateEventName('Account, Subscription');
+export const PRICING_PAGE = generateEventName('Pricing Page');
+export const PAYMENT_PAGE = generateEventName('Payment Page');
 
 // Guide
 export const GUIDE_PAGE = generateEventName('Guide Page');

@@ -8,12 +8,15 @@ import { nextFetch } from 'src/utils/fetcher';
 import type { SubscriptionUpgradePostResponse } from 'pages/api/subscriptions/upgrade';
 import { clientLogger } from 'src/utils/logger-client';
 import type { NewRelayPlan } from 'types';
+import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { PAYMENT_PAGE } from 'src/utils/rudderstack/event-names';
 
 export default function CheckoutForm({ selectedPrice }: { selectedPrice: NewRelayPlan }) {
     const stripe = useStripe();
     const elements = useElements();
     const { t } = useTranslation();
     const { company } = useCompany();
+    const { trackEvent } = useRudderstack();
 
     const [isLoading, setIsLoading] = useState(false);
     const [formReady, setFormReady] = useState(false);
@@ -59,9 +62,11 @@ export default function CheckoutForm({ selectedPrice }: { selectedPrice: NewRela
                         'https://relay-supa-club-git-feat-create-trials-withou-2166d6-relay-club.vercel.app/payments/success', //TODO: remember to update the link when deploy to main
                 },
             });
+
             if (error) {
                 handleError(error);
             }
+            trackEvent(PAYMENT_PAGE('Click on Upgrade'), { plan: selectedPrice });
         } catch (error) {
             clientLogger(error, 'error');
         } finally {
