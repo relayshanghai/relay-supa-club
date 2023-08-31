@@ -178,10 +178,9 @@ const Boostbot = () => {
                 const sendSequencePromises = sequenceInfluencers.map((influencer) => sendSequence([influencer]));
                 await Promise.all(sendSequencePromises);
             }
-            toast.success(t('boostbot.success.influencersToOutreach'));
         } catch (error) {
             clientLogger(error, 'error');
-            toast.error(t('boostbot.error.influencersToOutreach'));
+            // toast.error(t('boostbot.error.influencersToOutreach'));
 
             trackingPayload.is_success = false;
             trackingPayload.extra_info = { error: String(error) };

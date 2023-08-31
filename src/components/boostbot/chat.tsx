@@ -1,4 +1,4 @@
-import { influencersAcne } from 'influencers-mock';
+import { influencersDrone } from 'influencers-mock';
 import { SparklesIcon } from '@heroicons/react/24/solid';
 import type { Influencer } from 'pages/boostbot';
 import type { Dispatch, SetStateAction } from 'react';
@@ -120,10 +120,11 @@ export const Chat: React.FC<ChatProps> = ({
             const parallelSearchPromises = platforms.map((platform) =>
                 limiter.schedule(() => getInfluencersForPlatform({ platform })),
             );
-            const influencersResult = await Promise.all(parallelSearchPromises);
-            const influencers = influencersAcne;
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const [youtube, tiktok, instagram] = await Promise.all(parallelSearchPromises);
+            const influencers = influencersDrone;
             // eslint-disable-next-line no-console
-            console.log('influencers :>> ', { influencers, influencersResult });
+            console.log('influencers :>> ', { influencers });
 
             updateProgress({ topics, isMidway: true, totalFound: null });
             setInfluencers(influencers);
@@ -140,7 +141,7 @@ export const Chat: React.FC<ChatProps> = ({
             track(RecommendInfluencers.eventName, payload);
         } catch (error) {
             if (error instanceof Error && error.name === 'AbortError') {
-                toast.success(t('boostbot.chat.stopped'));
+                // toast.success(t('boostbot.chat.stopped'));
             } else {
                 payload.is_success = false;
                 payload.extra_info = { error: String(error) };
