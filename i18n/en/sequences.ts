@@ -165,6 +165,7 @@ const sequences = {
     deleteConfirm: 'Are you sure you want to delete?',
     deleteSuccess: 'Successfully deleted.',
     deleteFail: 'Failed to delete.',
+    sendAll: 'Start selected sequences',
 };
 
 export default sequences;
