@@ -15,6 +15,7 @@ import { ChatInput } from './chat-input';
 import type { CreatorsReportGetResponse } from 'pages/api/creators/report';
 import { limiter } from 'src/utils/limiter';
 import { mixArrays } from 'src/utils/utils';
+import type { MessageType } from 'pages/boostbot';
 
 export type ProgressType = {
     topics: string[];
@@ -22,12 +23,10 @@ export type ProgressType = {
     totalFound: number | null;
 };
 
-export type MessageType = {
-    sender: 'User' | 'Bot' | 'Progress';
-    content: string | JSX.Element | ProgressType;
-};
-
 interface ChatProps {
+    messages: MessageType[];
+    setMessages: Dispatch<SetStateAction<MessageType[]>>;
+    addMessage: (message: MessageType) => void;
     isBoostbotLoading: boolean;
     influencers: Influencer[];
     setInfluencers: Dispatch<SetStateAction<Influencer[]>>;
@@ -35,9 +34,13 @@ interface ChatProps {
     handlePageToUnlock: () => void;
     handlePageToOutreach: () => void;
     handleUnlockInfluencers: (influencers: Influencer[]) => Promise<CreatorsReportGetResponse[] | undefined>;
+    shortenedButtons: boolean;
 }
 
 export const Chat: React.FC<ChatProps> = ({
+    messages,
+    setMessages,
+    addMessage,
     isBoostbotLoading,
     influencers,
     setInfluencers,
@@ -45,6 +48,7 @@ export const Chat: React.FC<ChatProps> = ({
     handlePageToUnlock,
     handlePageToOutreach,
     handleUnlockInfluencers,
+    shortenedButtons,
 }) => {
     const [abortController, setAbortController] = useState(new AbortController());
     const { t } = useTranslation();
@@ -52,19 +56,10 @@ export const Chat: React.FC<ChatProps> = ({
         abortSignal: abortController.signal,
     });
     const [isLoading, setIsLoading] = useState(false);
-    const [messages, setMessages] = useState<MessageType[]>([
-        {
-            sender: 'Bot',
-            content:
-                t('boostbot.chat.introMessage') ??
-                'Hi, welcome! Please describe your product so I can find the perfect influencers for you.',
-        },
-    ]);
+
     const { trackEvent: track } = useRudderstack();
 
     const shouldShowButtons = influencers.length > 0 && !isLoading;
-
-    const addMessage = (message: MessageType) => setMessages((prevMessages) => [...prevMessages, message]);
 
     const stopBoostbot = () => {
         abortController.abort();
@@ -137,9 +132,7 @@ export const Chat: React.FC<ChatProps> = ({
             setIsInitialLogoScreen(false);
             addMessage({
                 sender: 'Bot',
-                content: `${t('boostbot.chat.influencersFoundA')} ${influencers.length} ${t(
-                    'boostbot.chat.influencersFoundB',
-                )}`,
+                content: t('boostbot.chat.influencersFound', { count: influencers.length }) as string,
             });
             document.dispatchEvent(new Event('influencerTableSetFirstPage'));
             track(RecommendInfluencers.eventName, payload);
@@ -176,6 +169,7 @@ export const Chat: React.FC<ChatProps> = ({
                 handlePageToOutreach={chatPageToOutreach}
                 stopBoostbot={stopBoostbot}
                 isBoostbotLoading={isBoostbotLoading}
+                shortenedButtons={shortenedButtons}
             />
 
             <div className="relative">
