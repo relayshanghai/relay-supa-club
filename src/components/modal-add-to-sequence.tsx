@@ -170,7 +170,6 @@ export const AddToSequenceModal = ({
             })
 
             clientLogger(error);
-            toast.error(t('creators.addToSequenceError'));
         } finally {
             setSubmitting(false);
             setShow(false);
