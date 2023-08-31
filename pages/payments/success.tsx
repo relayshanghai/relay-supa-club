@@ -4,12 +4,16 @@ import { CheckCircleOutline } from 'src/components/icons';
 import { Title } from 'src/components/title';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
+import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { PAYMENT_PAGE } from 'src/utils/rudderstack/event-names';
 
 const UpgradeSubscriptionSuccess = () => {
     const router = useRouter();
     const { t } = useTranslation();
+    const { trackEvent } = useRudderstack();
 
     useEffect(() => {
+        trackEvent(PAYMENT_PAGE('Upgrade Subscription Success'));
         const timer = setTimeout(() => {
             router.push('/account');
         }, 3000);

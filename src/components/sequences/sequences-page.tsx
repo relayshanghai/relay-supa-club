@@ -1,15 +1,17 @@
 /* eslint-disable complexity */
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSequences } from 'src/hooks/use-sequences';
-import { useState } from 'react';
-import { Layout } from '../layout';
-import { Plus } from '../icons';
-import { Button } from '../button';
-import { SequenceStats } from './sequence-stats';
-import { CreateSequenceModal } from './create-sequence-modal';
-import SequencesTable from './sequences-table';
-import { useSequenceEmails } from 'src/hooks/use-sequence-emails';
 import { useAllSequenceInfluencersCountByCompany } from 'src/hooks/use-all-sequence-influencers-by-company-id';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
+import { useSequenceEmails } from 'src/hooks/use-sequence-emails';
+import { useSequences } from 'src/hooks/use-sequences';
+import { OpenSequencesPage } from 'src/utils/analytics/events';
+import { Button } from '../button';
+import { Plus } from '../icons';
+import { Layout } from '../layout';
+import { CreateSequenceModal } from './create-sequence-modal';
+import { SequenceStats } from './sequence-stats';
+import SequencesTable from './sequences-table';
 
 export const SequencesPage = () => {
     const { t } = useTranslation();
@@ -21,6 +23,13 @@ export const SequencesPage = () => {
     const handleOpenCreateSequenceModal = () => {
         setShowCreateSequenceModal(true);
     };
+
+    const { track } = useRudderstackTrack()
+
+    useEffect(() => {
+        const { abort } = track(OpenSequencesPage)
+        return abort;
+    }, [track])
 
     return (
         <Layout>

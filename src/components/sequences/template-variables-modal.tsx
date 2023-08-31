@@ -34,23 +34,20 @@ const prepareTemplateVariables = (templateVariables: TemplateVariable[], sequenc
     const productDescription =
         templateVariables.find((variable) => variable.key === 'productDescription') ??
         blankVariable('productDescription');
-    const productFeatures =
-        templateVariables.find((variable) => variable.key === 'productFeatures') ?? blankVariable('productFeatures');
     const productLink =
         templateVariables.find((variable) => variable.key === 'productLink') ?? blankVariable('productLink');
     const productPrice =
         templateVariables.find((variable) => variable.key === 'productPrice') ?? blankVariable('productPrice');
-    const influencerNiche =
-        templateVariables.find((variable) => variable.key === 'influencerNiche') ?? blankVariable('influencerNiche');
+    // const influencerNiche =
+    //     templateVariables.find((variable) => variable.key === 'influencerNiche') ?? blankVariable('influencerNiche');
     return {
         brandName,
         marketingManagerName,
         productName,
         productDescription,
-        productFeatures,
         productLink,
         productPrice,
-        influencerNiche,
+        // influencerNiche,
     };
 };
 
@@ -255,12 +252,6 @@ export const TemplateVariablesModal = ({ sequenceId, ...props }: TemplateVariabl
 
                     <h4 className="font-semibold text-gray-700">{t('sequences.influencer')}</h4>
 
-                    <VariableInput
-                        variableKey="influencerNiche"
-                        setKey={setKey}
-                        variables={variables}
-                        placeholder={t('sequences.influencerNichePlaceholder')}
-                    />
                     <div className="flex justify-between gap-6">
                         {/* These ones are filled in using the `influencer_social_profile` so we don't have a `template_variable` DB row for them */}
                         <VariableInput
@@ -270,7 +261,7 @@ export const TemplateVariablesModal = ({ sequenceId, ...props }: TemplateVariabl
                             readOnly
                         />
                         <VariableInput
-                            variableKey={'recentVideoTitle' as any}
+                            variableKey={'recentPostTitle' as any}
                             setKey={setKey}
                             variables={variables}
                             readOnly

@@ -104,3 +104,37 @@ export const isRecommendedInfluencer = (recommendedInfluencers: string[], platfo
     recommendedInfluencers.includes(`${platform}/${user_id}`);
 
 export const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/**
+ * Returns a random integer between the specified minimum and maximum values.
+ * @param min - The minimum value of the range (inclusive).
+ * @param max - The maximum value of the range (exclusive).
+ * @returns A random integer between the specified minimum and maximum values.
+ */
+const getRandom = (min: number, max: number): number => {
+    return Math.floor(Math.random() * (max - min)) + min;
+};
+
+/**
+ * Merges three arrays by taking a random number of elements from each array until they run empty, and appending them to the output array.
+ * @param a - The first array to merge.
+ * @param b - The second array to merge.
+ * @param c - The third array to merge.
+ * @returns A new array containing elements from all three input arrays, merged in a random order.
+ */
+export const mixArrays = (a: any[], b: any[], c: any[]): any[] => {
+    const output: any[] = [];
+
+    while (a.length || b.length || c.length) {
+        for (const array of [a, b, c]) {
+            const count = getRandom(3, 5);
+            for (let i = 0; i < count; i++) {
+                if (array.length) {
+                    output.push(array.shift());
+                }
+            }
+        }
+    }
+
+    return output;
+};

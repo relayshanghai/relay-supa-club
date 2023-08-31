@@ -1,9 +1,9 @@
-import type { SupabaseClient } from '@supabase/supabase-js';
-import { getProfileByUser } from './db/calls/tracking_events';
-import type { ServerContext } from '../analytics/types';
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
+import type { SupabaseClient } from '@supabase/supabase-js';
+import type { ServerContext } from '../analytics/types';
+import { getProfileByUser } from './db/calls/tracking_events';
 
-type SessionIds = {
+export type SessionIds = {
     session_id?: string;
     user_id?: string;
     profile_id?: string;

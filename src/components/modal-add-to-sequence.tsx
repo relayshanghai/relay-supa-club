@@ -1,18 +1,22 @@
-import { useTranslation } from 'react-i18next';
+import Link from 'next/link';
 import { useCallback, useState } from 'react';
 import { toast } from 'react-hot-toast';
-import { Modal } from './modal';
-import { Button } from './button';
-import { Info, Spinner } from './icons';
-import { useSequences } from 'src/hooks/use-sequences';
+import { useTranslation } from 'react-i18next';
+import { useAllSequenceInfluencersIqDataIdAndSequenceName } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
+import { useReport } from 'src/hooks/use-report';
+import { useRudderstackTrack } from 'src/hooks/use-rudderstack';
+import { useSequence } from 'src/hooks/use-sequence';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
+import { useSequences } from 'src/hooks/use-sequences';
+import { AddInfluencerToSequence, StartSequenceForInfluencer } from 'src/utils/analytics/events';
+import type { AddInfluencerToSequencePayload } from 'src/utils/analytics/events/outreach/add-influencer-to-sequence';
+import { StartSequenceForInfluencerPayload } from 'src/utils/analytics/events/outreach/start-sequence-for-influencer';
 import type { Sequence } from 'src/utils/api/db';
 import { clientLogger } from 'src/utils/logger-client';
 import type { CreatorPlatform, CreatorUserProfile } from 'types';
-import { useReport } from 'src/hooks/use-report';
-import { useSequence } from 'src/hooks/use-sequence';
-import { useAllSequenceInfluencersIqDataIdAndSequenceName } from 'src/hooks/use-all-sequence-influencers-iqdata-id-and-sequence';
-import Link from 'next/link';
+import { Button } from './button';
+import { Info, Spinner } from './icons';
+import { Modal } from './modal';
 
 // eslint-disable-next-line complexity
 export const AddToSequenceModal = ({
@@ -28,6 +32,7 @@ export const AddToSequenceModal = ({
 }) => {
     const { i18n, t } = useTranslation();
     const { sequences } = useSequences();
+    const { track } = useRudderstackTrack();
     const {
         socialProfile,
         report,
@@ -66,37 +71,111 @@ export const AddToSequenceModal = ({
     const dataLoading = loadingReport || !sequence || !creatorProfile.user_id || !socialProfile;
     const handleAddToSequence = useCallback(async () => {
         if (!sequence) {
+            track(AddInfluencerToSequence, {
+                influencer_id: null,
+                sequence_id: null,
+                sequence_influencer_id: null,
+                is_success: false,
+                is_sequence_autostart: null,
+                extra_info: { error: "Missing sequence" }
+            })
             throw new Error('Missing selectedSequence');
         }
-        if (!creatorProfile.user_id) {
-            throw new Error('Missing creator.user_id');
-        }
         if (!socialProfile?.id) {
+            track(AddInfluencerToSequence, {
+                influencer_id: null,
+                sequence_id: sequence.id,
+                sequence_influencer_id: null,
+                is_success: false,
+                is_sequence_autostart: null,
+                extra_info: { error: "Missing socialProfileId" }
+            })
             throw new Error('Missing socialProfileId');
+        }
+        if (!creatorProfile.user_id) {
+            track(AddInfluencerToSequence, {
+                influencer_id: socialProfile.id,
+                sequence_id: sequence.id,
+                sequence_influencer_id: null,
+                is_success: false,
+                is_sequence_autostart: null,
+                extra_info: { error: "Missing user_id from user_profile" }
+            })
+            throw new Error('Missing creator.user_id');
         }
         const tags = getRelevantTags();
         setSubmitting(true);
+
+        const trackingPayload: AddInfluencerToSequencePayload = {
+            influencer_id: socialProfile.id,
+            sequence_id: sequence.id,
+            sequence_influencer_id: null,
+            is_success: true,
+            is_sequence_autostart: sequence.auto_start,
+        }
+
+        let sequenceInfluencer: Awaited<ReturnType<typeof createSequenceInfluencer>> | null = null;
+
         try {
-            const sequenceInfluencer = await createSequenceInfluencer(
+            sequenceInfluencer = await createSequenceInfluencer(
                 socialProfile.id,
                 tags,
                 creatorProfile.user_id,
                 socialProfile?.email,
             );
+            trackingPayload.sequence_influencer_id = sequenceInfluencer.id;
             refreshSequenceInfluencers();
 
-            if (sequenceInfluencer.email && sequence.auto_start) {
-                await sendSequence([sequenceInfluencer]);
-            }
             toast.success(t('creators.addToSequenceSuccess'));
         } catch (error) {
             clientLogger(error);
             toast.error(t('creators.addToSequenceError'));
+
+            trackingPayload.is_success = false
+            trackingPayload.extra_info = { error: String(error) }
+        } finally {
+            track(AddInfluencerToSequence, trackingPayload);
+        }
+
+        const startSequencePayload: StartSequenceForInfluencerPayload = {
+            influencer_id: null,
+            sequence_id: null,
+            sequence_influencer_id: null,
+            is_success: true
+        }
+
+        try {
+            if (sequenceInfluencer && sequenceInfluencer.email && sequence.auto_start) {
+                startSequencePayload.influencer_id = sequenceInfluencer.influencer_social_profile_id;
+                startSequencePayload.sequence_id = sequenceInfluencer.sequence_id;
+                startSequencePayload.sequence_influencer_id = sequenceInfluencer.id;
+
+                const results = await sendSequence([sequenceInfluencer])
+                const failed = results.filter((result) => result.error);
+                const succeeded = results.filter((result) => !result.error);
+
+                track(StartSequenceForInfluencer, {
+                    ...startSequencePayload,
+                    sent_success: succeeded,
+                    sent_success_count: succeeded.length,
+                    sent_failed: failed,
+                    sent_failed_count: failed.length,
+                })
+            }
+        } catch (error) {
+            track(StartSequenceForInfluencer, {
+                ...startSequencePayload,
+                is_success: false,
+                extra_info: { error: String(error) }
+            })
+
+            clientLogger(error);
         } finally {
             setSubmitting(false);
             setShow(false);
         }
     }, [
+        track,
         createSequenceInfluencer,
         creatorProfile.user_id,
         getRelevantTags,

@@ -14,6 +14,11 @@ const sequences = {
     totalInfluencersTooltipDescription:
         'This is all influencers you have added to this sequence, including Needs attention, In sequence, and Ignored.',
     openRateTooltip: 'Open rate',
+    sequenceSendTooltip: 'Sequence send',
+    sequenceSendTooltipDescription: 'This will schedule to send your sequence emails for this influencer.',
+    outreachPlanUpgradeTooltip: 'Only available on Outreach plan',
+    outreachPlanUpgradeTooltipDescription:
+        'This feature is only available for users currently on an Outreach plan. If you’d like access to our automated emails, intelligent templates, the Influencer Manager and our custom in-platform email inbox please reach out to our sales manager Amy on WeChat or at amy.hu@relay.club',
     openRateTooltipDescription:
         'The percentage of emails sent that get opened. Due to some email clients disabling external tracking, this number may not be 100% accurate',
     replyRateTooltip: 'Reply rate',
@@ -117,20 +122,6 @@ const sequences = {
     Mi Band 8
     "The Mi Band 8 is our latest affordable smart watch and fitness tracker."
     * We will include this value as is in your email templates`,
-    productFeatures: 'Product Features',
-    productFeaturesPlaceholder: `It offers a full-color touch display,  sleep, exercise and blood oxygen tracking and has a battery life of over 2 weeks!`,
-    productFeaturesTooltip: `Product Features`,
-    productFeaturesTooltipDescription: `Describe the most important, or most unique
-    features your product offers to let the influencer
-    know what sets your product apart.
-
-    Remember, to write this in a way that is easily
-    understandable by the influencer.
-    Start with “It offers”, “It can”, or “With”
-
-    eg. ”It offers a full-color touch display, sleep, exercise
-      and blood oxygen tracking, and has a battery life  of over 2 weeks!”* We will include this value as is in your
-    email templates`,
     productPrice: 'Product Price',
     productPriceTooltip: 'Product Price',
     productPriceTooltipDescription: `Enter the price of your product in USD. It's better to enter as a whole number to keep your templates cleaner.
@@ -152,12 +143,13 @@ const sequences = {
     influencerAccountNameTooltipDescription: `No need to enter this! We will pull this
     information from the influencers report
     to customize each email for it's recipeient!`,
-    recentVideoTitle: 'Influencer Recent Post',
-    recentVideoTitleTooltip: `Influencer Recent Post`,
-    recentVideoTitleTooltipDescription: `No need to enter this! We will pull this
+    recentPostTitle: 'Influencer Recent Post',
+    recentPostTitleTooltip: `Influencer Recent Post`,
+    recentPostTitleTooltipDescription: `No need to enter this! We will pull this
     information from the influencers report
     to customize each email for it's recipient!`,
     wellHandleThisOne: `We'll handle this one!`,
+    missingRequiredTemplateVariables: 'Missing required template variables',
     missingRequiredTemplateVariables_variables: 'Missing required template variables: {{variables}}',
     emailPreview: 'Email preview',
     number_emailsSuccessfullyScheduled: '{{number}} emails successfully scheduled to send',
