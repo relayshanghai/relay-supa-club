@@ -67,8 +67,8 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
         {
             id: '43bc002f-cfa2-415f-a0e5-ba2d6f897809',
             created_at: '2023-08-31T07:49:09.438408+00:00',
-            updated_at: '2023-08-31T07:49:09.438408+00:00',
-            email_send_at: '2023-08-31T07:49:11.00454+00:00',
+            updated_at: '2023-09-01T07:49:09.438408+00:00',
+            email_send_at: '2023-08-27T07:49:11.00454+00:00',
             email_message_id: '<512fdb72-2467-b3ab-b213-4604b252c10f@boostbot.ai>',
             email_delivery_status: 'Delivered',
             email_tracking_status: null,
@@ -80,7 +80,7 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
             id: '51c8eb35-fcf8-4c48-a0c5-dbe9aad961e3',
             created_at: '2023-08-31T07:49:11.00454+00:00',
             updated_at: '2023-08-31T07:49:11.00454+00:00',
-            email_send_at: '2023-08-31T07:49:11.00454+00:00',
+            email_send_at: '2023-08-28T07:49:11.00454+00:00',
             email_message_id: '<2ebc5e8e-e586-e03a-1e9b-2646ef05aa27@boostbot.ai>',
             email_delivery_status: 'Delivered',
             email_tracking_status: null,
@@ -90,9 +90,9 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
         },
         {
             id: '237445ca-6879-4302-872f-f0793ecf71fd',
-            created_at: '2023-08-31T07:49:04.733527+00:00',
+            created_at: '2023-08-29T07:49:04.733527+00:00',
             updated_at: '2023-08-31T07:49:08.246+00:00',
-            email_send_at: '2023-08-31T07:49:11.00454+00:00',
+            email_send_at: '2023-09-01T07:49:11.00454+00:00',
             email_message_id: '<8a7a0132-63b9-476d-3e0b-e04cf68a1efc@boostbot.ai>',
             email_delivery_status: 'Delivered',
             email_tracking_status: null,
@@ -106,19 +106,13 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
             updated_at: '2023-08-31T07:49:07.783736+00:00',
             email_send_at: '2023-08-31T07:49:11.00454+00:00',
             email_message_id: '<ec851848-d140-5eb3-74c4-9b0f117bf9dc@boostbot.ai>',
-            email_delivery_status: 'Opened',
-            email_tracking_status: null,
+            email_delivery_status: 'Delivered',
+            email_tracking_status: 'Opened',
             sequence_influencer_id: '5fd65701-4e3c-49f2-bf00-f23455d18bac',
             sequence_step_id: '14be0359-d830-416d-9e0f-78b4ab627896',
             sequence_id: '1e03d18e-a7db-44f7-8748-8b86d35fd9fd',
         },
-    ].map((email) => {
-        const day = Math.round(Math.random() * (31 - 27) + 27);
-        return {
-            ...email,
-            email_send_at: `2023-08-${day}T07:49:11.00454+00:00`,
-        };
-    });
+    ];
 
     const columns = sequenceColumns(currentTab);
     return (

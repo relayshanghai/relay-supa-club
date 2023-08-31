@@ -64,7 +64,7 @@ export const inManagerDummyInfluencers: SequenceInfluencerManagerPage[] = [
         username: 'tired_and_pissed',
         avatar_url: 'https://p16-amd-va.tiktokcdn.com/musically-maliva-obj/1653978922482693~c5_720x720.jpeg',
         url: 'https://www.tiktok.com/@6765314149746394117',
-        platform: 'tiktok',
+        platform: 'instagram',
         address: null,
         manager: {
             id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
@@ -138,7 +138,7 @@ export const inManagerDummyInfluencers: SequenceInfluencerManagerPage[] = [
         avatar_url:
             'https://p16-amd-va.tiktokcdn.com/tos-maliva-avt-0068/806c3880ba99b390eae77d980d796612~c5_720x720.jpeg',
         url: 'https://www.tiktok.com/@6747852921750832133',
-        platform: 'tiktok',
+        platform: 'youtube',
         address: null,
         manager: {
             id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
@@ -173,9 +173,9 @@ export const inManagerDummyInfluencers: SequenceInfluencerManagerPage[] = [
         name: 'Kare',
         username: 'coastalkells',
         avatar_url:
-            'https://p16-amd-va.tiktokcdn.com/tos-maliva-avt-0068/909116e4ce753cc73e6df1a5e31d8262~c5_720x720.jpeg',
-        url: 'https://www.tiktok.com/@6920257377451377670',
-        platform: 'tiktok',
+            'https://p16-amd-va.youtubecdn.com/tos-maliva-avt-0068/909116e4ce753cc73e6df1a5e31d8262~c5_720x720.jpeg',
+        url: 'https://www.youtube.com/@6920257377451377670',
+        platform: 'youtube',
         address: null,
         manager: {
             id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
@@ -210,9 +210,9 @@ export const inManagerDummyInfluencers: SequenceInfluencerManagerPage[] = [
         name: 'Kristen | Adventure Creator ✨',
         username: 'kristenmayx',
         avatar_url:
-            'https://p16-amd-va.tiktokcdn.com/tos-maliva-avt-0068/d0a6b904d68c8af63cb2f18a6b469a68~c5_720x720.jpeg',
-        url: 'https://www.tiktok.com/@6754474648811144198',
-        platform: 'tiktok',
+            'https://p16-amd-va.youtubecdn.com/tos-maliva-avt-0068/d0a6b904d68c8af63cb2f18a6b469a68~c5_720x720.jpeg',
+        url: 'https://www.youtube.com/@6754474648811144198',
+        platform: 'youtube',
         address: null,
         manager: {
             id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
@@ -304,7 +304,7 @@ export const inManagerDummyInfluencers: SequenceInfluencerManagerPage[] = [
         added_by: '506e6181-e17f-4d7b-bcb0-61481d24c000',
         email: 'avamarshhair@gmail.com',
         sequence_step: 0,
-        funnel_status: 'Negotiating',
+        funnel_status: 'Received',
         tags: ['hairstylistsoftiktok', 'hairstylist', 'hairstylistlife'],
         next_step: null,
         scheduled_post_date: null,
@@ -341,7 +341,7 @@ export const inManagerDummyInfluencers: SequenceInfluencerManagerPage[] = [
         added_by: '506e6181-e17f-4d7b-bcb0-61481d24c000',
         email: 'Artisticlifestyle6@gmail.com',
         sequence_step: 0,
-        funnel_status: 'Negotiating',
+        funnel_status: 'Shipped',
         tags: ['blackart', 'blackartist', 'blackartists'],
         next_step: null,
         scheduled_post_date: null,
@@ -361,7 +361,7 @@ export const inManagerDummyInfluencers: SequenceInfluencerManagerPage[] = [
         avatar_url:
             'https://p16-amd-va.tiktokcdn.com/tos-maliva-avt-0068/d995b629ba482d31ddc881e79f256c3f~c5_720x720.jpeg',
         url: 'https://www.tiktok.com/@6810771319719658502',
-        platform: 'tiktok',
+        platform: 'instagram',
         address: null,
         manager: {
             id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
@@ -396,9 +396,9 @@ export const inManagerDummyInfluencers: SequenceInfluencerManagerPage[] = [
         name: 'Tanner’s Travels',
         username: 'tannderson',
         avatar_url:
-            'https://p16-amd-va.tiktokcdn.com/tos-maliva-avt-0068/bc7c9dd631fb6163de341acb39aa4f4c~c5_720x720.jpeg',
-        url: 'https://www.tiktok.com/@6783898152842347526',
-        platform: 'tiktok',
+            'https://p16-amd-va.instagramcdn.com/tos-maliva-avt-0068/bc7c9dd631fb6163de341acb39aa4f4c~c5_720x720.jpeg',
+        url: 'https://www.instagram.com/@6783898152842347526',
+        platform: 'instagram',
         address: null,
         manager: {
             id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
@@ -415,7 +415,7 @@ export const inManagerDummyInfluencers: SequenceInfluencerManagerPage[] = [
         added_by: '506e6181-e17f-4d7b-bcb0-61481d24c000',
         email: 'stevenslindz@gmail.com',
         sequence_step: 0,
-        funnel_status: 'Negotiating',
+        funnel_status: 'Posted',
         tags: ['outdoorsygals', 'outdoorsy', 'outdoorsygirl'],
         next_step: null,
         scheduled_post_date: null,
@@ -432,9 +432,9 @@ export const inManagerDummyInfluencers: SequenceInfluencerManagerPage[] = [
         manager_first_name: 'Brendan',
         name: 'Lindsay',
         username: 'lindzoutside',
-        avatar_url: 'https://p16-amd-va.tiktokcdn.com/musically-maliva-obj/1661986362137605~c5_720x720.jpeg',
-        url: 'https://www.tiktok.com/@6746641331328861189',
-        platform: 'tiktok',
+        avatar_url: 'https://p16-amd-va.instagramcdn.com/musically-maliva-obj/1661986362137605~c5_720x720.jpeg',
+        url: 'https://www.instagram.com/@6746641331328861189',
+        platform: 'instagram',
         address: null,
         manager: {
             id: '506e6181-e17f-4d7b-bcb0-61481d24c000',
