@@ -78,6 +78,8 @@ const account = {
             noPaymentMethod: 'No payment method',
             alreadySubscribed: 'Already subscribed',
         },
+        upgrade: 'Upgrade',
+        upgradeSuccess: 'Upgrade success',
     },
     invite: {
         title: 'Invite Members',
@@ -100,6 +102,8 @@ const account = {
         cancelling: 'Cancelling...',
         subscriptionCancelled: 'Subscription cancelled',
     },
+    planIsReady: 'Your plan is ready!',
+    redirectingMsg: 'Redirecting in 3s',
 };
 
 export default account;
