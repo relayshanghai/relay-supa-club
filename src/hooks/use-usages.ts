@@ -2,7 +2,7 @@ import type { UsagesGetQueries, UsagesGetResponse } from 'pages/api/usages';
 import { nextFetchWithQueries } from 'src/utils/fetcher';
 import useSWR from 'swr';
 import { useCompany } from './use-company';
-type StartEndDates = { thisMonthStartDate: Date; thisMonthEndDate: Date };
+export type StartEndDates = { thisMonthStartDate: Date; thisMonthEndDate: Date };
 export const useUsages = (useRange?: boolean, startEndDates?: StartEndDates) => {
     const { company } = useCompany();
 

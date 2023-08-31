@@ -7,6 +7,7 @@ const generateEventName =
 export const LANDING_PAGE = generateEventName('Landing Page');
 export const SIGNUP_WIZARD = generateEventName('Signup Wizard');
 export const CAROUSEL = generateEventName('Carousel');
+export const SIGNUP = generateEventName('Signup');
 
 // Discovery
 export const CAMPAIGN_INFLUENCER_ROW = generateEventName('Campaign Influencer Row');
@@ -31,6 +32,8 @@ export const AI_EMAIL_GENERATOR = generateEventName('AI Email Generator');
 export const ACCOUNT_COMPANY_DETAILS = generateEventName('Account, CompanyDetails');
 export const ACCOUNT_PERSONAL_DETAILS = generateEventName('Account, PersonalDetails');
 export const ACCOUNT_SUBSCRIPTION = generateEventName('Account, Subscription');
+export const PRICING_PAGE = generateEventName('Pricing Page');
+export const PAYMENT_PAGE = generateEventName('Payment Page');
 
 // Guide
 export const GUIDE_PAGE = generateEventName('Guide Page');

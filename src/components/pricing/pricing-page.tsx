@@ -13,6 +13,7 @@ import { screenshots } from 'public/assets/imgs/screenshots';
 import Image from 'next/image';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { LANDING_PAGE } from 'src/utils/rudderstack/event-names';
+import { featNewPricing } from 'src/constants/feature-flags';
 
 const ImageBackground = () => {
     return (
@@ -33,7 +34,7 @@ export const PricingPage = ({ page = 'upgrade' }: { page?: 'upgrade' | 'landing'
     const { t } = useTranslation();
     const router = useRouter();
     const { trackEvent } = useRudderstack();
-    const [period, setPeriod] = useState<ActiveSubscriptionPeriod>('quarterly');
+    const [period, setPeriod] = useState<ActiveSubscriptionPeriod>('monthly');
     const [confirmModalData, setConfirmModalData] = useState<SubscriptionConfirmModalData | null>(null);
     const { createSubscription } = useSubscription();
 
@@ -43,6 +44,8 @@ export const PricingPage = ({ page = 'upgrade' }: { page?: 'upgrade' | 'landing'
         setConfirmModalData({ priceTier, period, priceId, price: prices[period][priceTier] });
     };
     const options: ActiveSubscriptionTier[] = landingPage ? ['free', 'diyMax', 'diy'] : ['diyMax', 'diy'];
+
+    const newOptions: ActiveSubscriptionTier[] = ['discovery', 'outreach'];
 
     const handleStartFreeTrialClicked = () => {
         trackEvent(LANDING_PAGE('clicked on start free trial'));
@@ -68,28 +71,33 @@ export const PricingPage = ({ page = 'upgrade' }: { page?: 'upgrade' | 'landing'
                             {t('pricing.relayClubCanHelp')}
                         </h4>
                     </div>
+
                     <div className="relative">
-                        <Switch
-                            size={4}
-                            wrapperClassName="mb-2"
-                            checked={period === 'quarterly'}
-                            onChange={(e) => {
-                                setPeriod(e.target.checked ? 'quarterly' : 'monthly');
-                                trackEvent(LANDING_PAGE('clicked on switch'), { selectedPeriod: period });
-                            }}
-                            beforeLabel={t('pricing.monthly') || 'Monthly'}
-                            afterLabel={t('pricing.quarterly') || 'Quarterly'}
-                        />
-                        <p className="absolute -right-24 -top-2 mr-2 text-sm font-semibold text-pink-500">
-                            {t('pricing.saveUpTo33Percent')}
-                        </p>
+                        {!featNewPricing() && (
+                            <>
+                                <Switch
+                                    size={4}
+                                    wrapperClassName="mb-2"
+                                    checked={period === 'quarterly'}
+                                    onChange={(e) => {
+                                        setPeriod(e.target.checked ? 'quarterly' : 'monthly');
+                                        trackEvent(LANDING_PAGE('clicked on switch'), { selectedPeriod: period });
+                                    }}
+                                    beforeLabel={t('pricing.monthly') || 'Monthly'}
+                                    afterLabel={t('pricing.quarterly') || 'Quarterly'}
+                                />
+                                <p className="absolute -right-24 -top-2 mr-2 text-sm font-semibold text-pink-500">
+                                    {t('pricing.saveUpTo33Percent')}
+                                </p>
+                            </>
+                        )}
                     </div>
                     <div
                         className={`container m-auto flex ${
                             landingPage ? 'min-h-[30rem]' : 'min-h-[32rem]'
                         } w-full max-w-screen-xl flex-wrap justify-center`}
                     >
-                        {options.map((option) => (
+                        {(featNewPricing() ? newOptions : options).map((option) => (
                             <PriceCard
                                 key={option}
                                 period={period}
@@ -99,6 +107,7 @@ export const PricingPage = ({ page = 'upgrade' }: { page?: 'upgrade' | 'landing'
                             />
                         ))}
                     </div>
+
                     {landingPage && (
                         <Button onClick={handleStartFreeTrialClicked} className="mb-20 mt-2 !text-xl">
                             {t('pricing.startFreeTrial')}
