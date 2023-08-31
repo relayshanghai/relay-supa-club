@@ -95,40 +95,44 @@ export const Table = ({
                     </tbody>
                 </table>
             </div>
-            <div className="m-4 flex items-center justify-end gap-4 font-medium">
-                <p
-                    className={`${page !== 0 && 'cursor-pointer'} select-none border-none bg-transparent text-gray-500`}
-                    onClick={() => {
-                        if (page === 0) return;
-                        setPage(page - 1);
-                    }}
-                >
-                    {'<<'} {t('manager.previous')}
-                </p>
-                <div className="flex flex-row items-center">
-                    {Array.from({ length: totalPages }, (_, index) => index).map((pageNumber) => (
-                        <Button
-                            key={`button-page-${pageNumber + 1}`}
-                            disabled={page === pageNumber}
-                            className="border-none bg-transparent text-slate-500 hover:text-gray-200 disabled:bg-primary-500 disabled:text-gray-200"
-                            onClick={() => setPage(pageNumber)}
-                        >
-                            {pageNumber + 1}
-                        </Button>
-                    ))}
+            {totalPages > 1 && (
+                <div className="m-4 flex items-center justify-end gap-4 font-medium">
+                    <p
+                        className={`${
+                            page !== 0 && 'cursor-pointer'
+                        } select-none border-none bg-transparent text-gray-500`}
+                        onClick={() => {
+                            if (page === 0) return;
+                            setPage(page - 1);
+                        }}
+                    >
+                        {'<<'} {t('manager.previous')}
+                    </p>
+                    <div className="flex flex-row items-center">
+                        {Array.from({ length: totalPages }, (_, index) => index).map((pageNumber) => (
+                            <Button
+                                key={`button-page-${pageNumber + 1}`}
+                                disabled={page === pageNumber}
+                                className="border-none bg-transparent text-slate-500 hover:text-gray-200 disabled:bg-primary-500 disabled:text-gray-200"
+                                onClick={() => setPage(pageNumber)}
+                            >
+                                {pageNumber + 1}
+                            </Button>
+                        ))}
+                    </div>
+                    <p
+                        className={`${
+                            page < totalPages - 1 && 'cursor-pointer'
+                        } select-none border-none bg-transparent text-gray-500`}
+                        onClick={() => {
+                            if (page >= totalPages - 1) return;
+                            setPage(page + 1);
+                        }}
+                    >
+                        {t('manager.next')} {'>>'}
+                    </p>
                 </div>
-                <p
-                    className={`${
-                        page < totalPages - 1 && 'cursor-pointer'
-                    } select-none border-none bg-transparent text-gray-500`}
-                    onClick={() => {
-                        if (page >= totalPages - 1) return;
-                        setPage(page + 1);
-                    }}
-                >
-                    {t('manager.next')} {'>>'}
-                </p>
-            </div>
+            )}
         </div>
     );
 };
