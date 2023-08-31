@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { TrackedEvent } from '../types';
+import type { TrackedEvent } from '../types';
 import type { AnalyzeAddToCampaignPayload } from './analyze-add_to_campaign';
 import { ANALYZE_ADD_TO_CAMPAIGN, AnalyzeAddToCampaign } from './analyze-add_to_campaign';
 import type {
@@ -11,6 +11,14 @@ import {
 } from './analyze-open_external_social_profile';
 import type { BoostbotAnalyzeInfluencerPayload } from './boostbot-analyze-influencer';
 import { BOOSTBOT_ANALYZE_INFLUENCER, BoostbotAnalyzeInfluencer } from './boostbot-analyze-influencer';
+import type { OpenBoostbotPagePayload } from './boostbot/open-boostbot-page';
+import { BOOSTBOT_OPEN_BOOSTBOT_PAGE, OpenBoostbotPage } from './boostbot/open-boostbot-page';
+import type { RecommendInfluencersPayload } from './boostbot/recommend-influencers';
+import { BOOSTBOT_RECOMMEND_INFLUENCERS, RecommendInfluencers } from './boostbot/recommend-influencers';
+import type { SendInfluencersToOutreachPayload } from './boostbot/send-influencers-to-outreach';
+import { BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH, SendInfluencersToOutreach } from './boostbot/send-influencers-to-outreach';
+import type { UnlockInfluencersPayload } from './boostbot/unlock-influencer';
+import { BOOSTBOT_UNLOCK_INFLUENCERS, UnlockInfluencers } from './boostbot/unlock-influencer';
 import type { AddInfluencerToSequencePayload } from './outreach/add-influencer-to-sequence';
 import { AddInfluencerToSequence, OUTREACH_ADD_INFLUENCER_TO_SEQUENCE } from './outreach/add-influencer-to-sequence';
 import type { CreateSequencePayload } from './outreach/create-sequence';
@@ -74,6 +82,11 @@ export {
     EmailOpened,
     EmailClicked,
     EmailReply,
+    BoostbotAnalyzeInfluencer,
+    OpenBoostbotPage,
+    RecommendInfluencers,
+    UnlockInfluencers,
+    SendInfluencersToOutreach
 };
 
 export const events = {
@@ -98,6 +111,10 @@ export const events = {
     [OUTREACH_EMAIL_CLICKED]: EmailClicked,
     [OUTREACH_EMAIL_REPLY]: EmailReply,
     [BOOSTBOT_ANALYZE_INFLUENCER]: BoostbotAnalyzeInfluencer,
+    [BOOSTBOT_OPEN_BOOSTBOT_PAGE]: OpenBoostbotPage,
+    [BOOSTBOT_RECOMMEND_INFLUENCERS]: RecommendInfluencers,
+    [BOOSTBOT_UNLOCK_INFLUENCERS]: UnlockInfluencers,
+    [BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH]: SendInfluencersToOutreach,
 };
 
 export type payloads = {
@@ -122,6 +139,10 @@ export type payloads = {
     [OUTREACH_EMAIL_CLICKED]: EmailClickedPayload,
     [OUTREACH_EMAIL_REPLY]: EmailReplyPayload,
     [BOOSTBOT_ANALYZE_INFLUENCER]: BoostbotAnalyzeInfluencerPayload,
+    [BOOSTBOT_OPEN_BOOSTBOT_PAGE]: OpenBoostbotPagePayload,
+    [BOOSTBOT_RECOMMEND_INFLUENCERS]: RecommendInfluencersPayload,
+    [BOOSTBOT_UNLOCK_INFLUENCERS]: UnlockInfluencersPayload,
+    [BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH]: SendInfluencersToOutreachPayload,
 };
 
 // @note we are using these eventKeys on other zod objects for validation
@@ -148,6 +169,10 @@ export const eventKeys = z.union([
     z.literal(OUTREACH_EMAIL_CLICKED),
     z.literal(OUTREACH_EMAIL_REPLY),
     z.literal(BOOSTBOT_ANALYZE_INFLUENCER),
+    z.literal(BOOSTBOT_OPEN_BOOSTBOT_PAGE),
+    z.literal(BOOSTBOT_RECOMMEND_INFLUENCERS),
+    z.literal(BOOSTBOT_UNLOCK_INFLUENCERS),
+    z.literal(BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH),
 ]);
 
 export const isTrackedEvent = (event: (...args: any) => any): event is TrackedEvent => {

@@ -4,7 +4,7 @@ import type { NextRequest } from 'next/server';
 import { EMPLOYEE_EMAILS } from 'src/constants/employeeContacts';
 import httpCodes from 'src/constants/httpCodes';
 import { serverLogger } from 'src/utils/logger-server';
-import { featEmail } from 'src/constants/feature-flags';
+import { featEmail, featBoostbot } from 'src/constants/feature-flags';
 import type { RelayDatabase } from 'src/utils/api/db';
 
 const pricingAllowList = ['https://en-relay-club.vercel.app', 'https://relay.club'];
@@ -167,6 +167,13 @@ const checkIsRelayEmployee = async (res: NextResponse, email: string) => {
 export async function middleware(req: NextRequest) {
     // We need to create a response and hand it to the supabase client to be able to modify the response headers.
     const res = NextResponse.next();
+
+    // don't allow users to use the boostbot pages/apis before they are ready
+    if (!featBoostbot()) {
+        if (req.nextUrl.pathname.includes('boostbot')) {
+            return NextResponse.rewrite('/404', { status: httpCodes.NOT_FOUND });
+        }
+    }
 
     // don't allow users to use the email pages/apis before they are ready
     if (!featEmail()) {
