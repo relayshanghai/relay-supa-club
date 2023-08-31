@@ -1,4 +1,3 @@
-import type { CreatorAccountWithTopics } from 'pages/api/boostbot/get-influencers';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
@@ -16,22 +15,10 @@ import { OpenBoostbotPage, SendInfluencersToOutreach, UnlockInfluencers } from '
 import type { SendInfluencersToOutreachPayload } from 'src/utils/analytics/events/boostbot/send-influencers-to-outreach';
 import type { UnlockInfluencersPayload } from 'src/utils/analytics/events/boostbot/unlock-influencer';
 import { clientLogger } from 'src/utils/logger-client';
-import type { UserProfile } from 'types';
-import type { ProgressType } from 'src/components/boostbot/chat';
+import type { Influencer, MessageType } from '.';
 import { useRouter } from 'next/router';
 
-export type Influencer = (UserProfile | CreatorAccountWithTopics) & {
-    isLoading?: boolean;
-    topics: string[];
-};
-
-export type MessageType = {
-    sender: 'User' | 'Bot' | 'Progress';
-    content?: string | JSX.Element;
-    progress?: ProgressType;
-};
-
-const Boostbot = () => {
+export const Boostbot = () => {
     const router = useRouter();
     const { t } = useTranslation();
     const { unlockInfluencers } = useBoostbot({});
@@ -183,7 +170,6 @@ const Boostbot = () => {
         } catch (error) {
             clientLogger(error, 'error');
             // toast.error(t('boostbot.error.influencersToOutreach'));
-
             trackingPayload.is_success = false;
             trackingPayload.extra_info = { error: String(error) };
         } finally {
@@ -234,5 +220,3 @@ const Boostbot = () => {
         </Layout>
     );
 };
-
-export default Boostbot;
