@@ -1,3 +1,4 @@
+import { influencersAcne } from 'influencers-mock';
 import { SparklesIcon } from '@heroicons/react/24/solid';
 import type { Influencer } from 'pages/boostbot';
 import type { Dispatch, SetStateAction } from 'react';
@@ -14,7 +15,6 @@ import { ChatContent } from './chat-content';
 import { ChatInput } from './chat-input';
 import type { CreatorsReportGetResponse } from 'pages/api/creators/report';
 import { limiter } from 'src/utils/limiter';
-import { mixArrays } from 'src/utils/utils';
 import type { MessageType } from 'pages/boostbot';
 
 export type ProgressType = {
@@ -120,8 +120,10 @@ export const Chat: React.FC<ChatProps> = ({
             const parallelSearchPromises = platforms.map((platform) =>
                 limiter.schedule(() => getInfluencersForPlatform({ platform })),
             );
-            const [youtube, tiktok, instagram] = await Promise.all(parallelSearchPromises);
-            const influencers = mixArrays(youtube, tiktok, instagram).filter((i) => !!i.url);
+            const influencersResult = await Promise.all(parallelSearchPromises);
+            const influencers = influencersAcne;
+            // eslint-disable-next-line no-console
+            console.log('influencers :>> ', { influencers, influencersResult });
 
             updateProgress({ topics, isMidway: true, totalFound: null });
             setInfluencers(influencers);

@@ -1,6 +1,6 @@
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import type { DetailedHTMLProps, HTMLAttributes } from 'react';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Button } from 'src/components/button';
 import { cls } from 'src/utils/classnames';
 import { ProfileHeader } from '../components/profile-header';
@@ -10,6 +10,10 @@ import { useProfileScreenContext } from './profile-screen-context';
 import type { ProfileShippingDetails } from './profile-shipping-details-tab';
 import { ProfileShippingDetailsTab } from './profile-shipping-details-tab';
 import { useTranslation } from 'react-i18next';
+import {
+    mapProfileToNotes,
+    mapProfileToShippingDetails,
+} from 'src/components/influencer-profile/screens/profile-overlay-screen';
 
 export type ProfileValue = {
     notes: ProfileNotes;
@@ -31,6 +35,15 @@ export const ProfileScreen = ({ profile, selectedTab, onUpdate, onCancel, ...pro
     const [selected, setSelected] = useState(selectedTab ?? 'notes');
 
     const handleTabClick = (tab: Props['selectedTab']) => tab && setSelected(tab);
+
+    useEffect(() => {
+        setState(() => {
+            return {
+                notes: mapProfileToNotes(profile),
+                shippingDetails: mapProfileToShippingDetails(profile),
+            };
+        });
+    }, [setState, profile]);
 
     const { t } = useTranslation();
 
