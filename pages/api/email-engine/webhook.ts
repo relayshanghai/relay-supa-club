@@ -384,7 +384,7 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
         trackData.sequence_influencer_id = sequenceEmail.sequence_influencer_id
         const sequenceInfluencer = await getSequenceInfluencerById(sequenceEmail.sequence_influencer_id);
         trackData.influencer_id = sequenceInfluencer.influencer_social_profile_id
-        trackData.sequence_step = sequenceInfluencer.sequence_step + 1
+        trackData.sequence_step = sequenceInfluencer.sequence_step;
 
         const update: SequenceEmailUpdate = {
             id: sequenceEmail.id,
