@@ -234,21 +234,9 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                 </div>
                 <SequenceStats
                     totalInfluencers={influencers?.length ?? 0}
-                    openRate={
-                        (sequenceEmails?.filter(
-                            (email) =>
-                                email.email_tracking_status === 'Link Clicked' ||
-                                email.email_tracking_status === 'Opened',
-                        ).length || 0) / (sequenceEmails?.length || 1)
-                    }
-                    replyRate={
-                        (sequenceEmails?.filter((email) => email.email_delivery_status === 'Replied').length || 0) /
-                        (sequenceEmails?.length || 1)
-                    }
-                    bounceRate={
-                        (sequenceEmails?.filter((email) => email.email_delivery_status === 'Bounced').length || 0) /
-                        (sequenceEmails?.length || 1)
-                    }
+                    openRate={0.53}
+                    replyRate={0.34}
+                    bounceRate={0.01}
                 />
                 <Tabs tabs={tabs} currentTab={currentTab} setCurrentTab={setCurrentTab} />
 
