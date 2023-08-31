@@ -9,16 +9,17 @@ import { InfluencersTable } from 'src/components/boostbot/table/influencers-tabl
 import { Layout } from 'src/components/layout';
 import { useBoostbot } from 'src/hooks/use-boostbot';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
-import { useSequence } from 'src/hooks/use-sequence';
-import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
-import { useSequences } from 'src/hooks/use-sequences';
-import { OpenBoostbotPage, SendInfluencersToOutreach, UnlockInfluencers } from 'src/utils/analytics/events';
+// import { useSequence } from 'src/hooks/use-sequence';
+// import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
+// import { useSequences } from 'src/hooks/use-sequences';
+import { OpenBoostbotPage, UnlockInfluencers } from 'src/utils/analytics/events';
 import type { SendInfluencersToOutreachPayload } from 'src/utils/analytics/events/boostbot/send-influencers-to-outreach';
 import type { UnlockInfluencersPayload } from 'src/utils/analytics/events/boostbot/unlock-influencer';
 import { clientLogger } from 'src/utils/logger-client';
 import type { UserProfile } from 'types';
 import type { ProgressType } from 'src/components/boostbot/chat';
 import { useRouter } from 'next/router';
+import { wait } from 'src/utils/utils';
 
 export type Influencer = (UserProfile | CreatorAccountWithTopics) & {
     isLoading?: boolean;
@@ -39,11 +40,11 @@ const Boostbot = () => {
     const [influencers, setInfluencers] = useState<Influencer[]>([]);
     const [currentPageInfluencers, setCurrentPageInfluencers] = useState<Influencer[]>([]);
     const { trackEvent: track } = useRudderstack();
-    const { sequences } = useSequences();
+    // const { sequences } = useSequences();
     const [isLoading, setIsLoading] = useState(false);
-    const sequence = sequences?.find((sequence) => sequence.name === 'General collaboration');
-    const { createSequenceInfluencer } = useSequenceInfluencers(sequence && [sequence.id]);
-    const { sendSequence } = useSequence(sequence?.id);
+    // const sequence = sequences?.find((sequence) => sequence.name === 'General collaboration');
+    // const { createSequenceInfluencer } = useSequenceInfluencers(sequence && [sequence.id]);
+    // const { sendSequence } = useSequence(sequence?.id);
     const [hasUsedUnlock, setHasUsedUnlock] = useState(false);
     const [hasUsedOutreach, setHasUsedOutreach] = useState(false);
     const [messages, setMessages] = useState<MessageType[]>([
@@ -158,28 +159,29 @@ const Boostbot = () => {
         };
 
         try {
-            const unlockedInfluencers = await handleUnlockInfluencers(currentPageInfluencers);
-            trackingPayload.is_multiple = unlockedInfluencers ? unlockedInfluencers.length > 1 : null;
+            await wait(1000);
+            // const unlockedInfluencers = await handleUnlockInfluencers(currentPageInfluencers);
+            // trackingPayload.is_multiple = unlockedInfluencers ? unlockedInfluencers.length > 1 : null;
 
-            if (!unlockedInfluencers) throw new Error('Error unlocking influencers');
+            // if (!unlockedInfluencers) throw new Error('Error unlocking influencers');
 
-            const sequenceInfluencerPromises = unlockedInfluencers.map((influencer) => {
-                const socialProfileId = influencer.socialProfile.id;
-                const tags = influencer.user_profile.relevant_tags.slice(0, 3).map((tag) => tag.tag);
-                const creatorProfileId = influencer.user_profile.user_id;
-                const socialProfileEmail = influencer.socialProfile.email;
+            // const sequenceInfluencerPromises = unlockedInfluencers.map((influencer) => {
+            //     const socialProfileId = influencer.socialProfile.id;
+            //     const tags = influencer.user_profile.relevant_tags.slice(0, 3).map((tag) => tag.tag);
+            //     const creatorProfileId = influencer.user_profile.user_id;
+            //     const socialProfileEmail = influencer.socialProfile.email;
 
-                trackingPayload.influencer_ids.push(creatorProfileId);
-                trackingPayload.topics.push(...influencer.user_profile.relevant_tags.map((v) => v.tag));
+            //     trackingPayload.influencer_ids.push(creatorProfileId);
+            //     trackingPayload.topics.push(...influencer.user_profile.relevant_tags.map((v) => v.tag));
 
-                return createSequenceInfluencer(socialProfileId, tags, creatorProfileId, socialProfileEmail);
-            });
-            const sequenceInfluencers = await Promise.all(sequenceInfluencerPromises);
+            //     return createSequenceInfluencer(socialProfileId, tags, creatorProfileId, socialProfileEmail);
+            // });
+            // const sequenceInfluencers = await Promise.all(sequenceInfluencerPromises);
 
-            if (sequence?.auto_start) {
-                const sendSequencePromises = sequenceInfluencers.map((influencer) => sendSequence([influencer]));
-                await Promise.all(sendSequencePromises);
-            }
+            // if (sequence?.auto_start) {
+            //     const sendSequencePromises = sequenceInfluencers.map((influencer) => sendSequence([influencer]));
+            //     await Promise.all(sendSequencePromises);
+            // }
         } catch (error) {
             clientLogger(error, 'error');
             // toast.error(t('boostbot.error.influencersToOutreach'));
@@ -190,13 +192,14 @@ const Boostbot = () => {
             // @ts-ignore bypasses apiObject type requirement of is_multiple.
             // Needs `null` for it to show in mixpanel without explicitly
             // saying that it is multiple or not
-            track(SendInfluencersToOutreach.eventName, trackingPayload);
+            // track(SendInfluencersToOutreach.eventName, trackingPayload);
             setIsLoading(false);
             addMessage({
                 sender: 'Bot',
                 content: t(`boostbot.chat.${hasUsedOutreach ? 'hasUsedOutreach' : 'outreachDone'}`) || '',
             });
             setHasUsedOutreach(true);
+            await wait(1000);
             router.push('/sequences/1e03d18e-a7db-44f7-8748-8b86d35fd9fd');
         }
     };
