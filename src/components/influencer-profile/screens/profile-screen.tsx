@@ -1,6 +1,6 @@
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import type { DetailedHTMLProps, HTMLAttributes } from 'react';
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { Button } from 'src/components/button';
 import { cls } from 'src/utils/classnames';
 import { ProfileHeader } from '../components/profile-header';
@@ -10,6 +10,7 @@ import { useProfileScreenContext } from './profile-screen-context';
 import type { ProfileShippingDetails } from './profile-shipping-details-tab';
 import { ProfileShippingDetailsTab } from './profile-shipping-details-tab';
 import { useTranslation } from 'react-i18next';
+import { mapProfileToNotes, mapProfileToShippingDetails } from './profile-overlay-screen';
 
 export type ProfileValue = {
     notes: ProfileNotes;
@@ -27,6 +28,21 @@ export const activeTabStyles = cls(['active', 'text-primary-500', 'border-b-2', 
 
 export const ProfileScreen = ({ profile, selectedTab, onUpdate, onCancel, ...props }: Props) => {
     const { state, setState } = useProfileScreenContext();
+
+    const mapProfileToFormData = useCallback((p: typeof profile) => {
+        if (!p) return null;
+        return {
+            notes: mapProfileToNotes(p),
+            shippingDetails: mapProfileToShippingDetails(p),
+        };
+    }, []);
+
+    useEffect(() => {
+        if (!profile) return;
+        const val = mapProfileToFormData(profile);
+        if (!val) return;
+        setState(val);
+    }, [profile, mapProfileToFormData, setState]);
 
     const [selected, setSelected] = useState(selectedTab ?? 'notes');
 
