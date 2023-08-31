@@ -1,266 +1,188 @@
-import type { AccountAccountMessagesGet } from 'types/email-engine/account-account-messages-get';
+import type { AccountAccountMessagesGet, MessagesGetMessage } from 'types/email-engine/account-account-messages-get';
+import { inManagerDummyInfluencers } from '../sequences/in-manager-dummy-sequence-influencers';
+import templates from 'src/mocks/api/email-engine/templates.json';
+
+const company = 'DJI';
+
+const messages: MessagesGetMessage[] = inManagerDummyInfluencers.map((influencer, index) => {
+    return {
+        id: influencer.id,
+        uid: 123, // Replace with an appropriate value
+        emailId: `email_${influencer.id}`, // You can use any relevant value here
+        threadId: `thread_${influencer.email}`, // You can use any relevant value here
+        date: influencer.created_at,
+        flags: influencer.tags, // Use influencer's tags as flags
+        labels: ['label_1', 'label_2'], // Replace with relevant labels
+        unseen: false, // You can set this based on your logic
+        size: 1024, // Replace with an appropriate value
+        subject: templates[index % 4].content.subject.replace(/{{\s*[^{}]+\s*}}/g, company), // You can use any relevant value here
+        from: {
+            name: influencer.name || 'John Doe',
+            address: influencer.email || 'example@example.com',
+        },
+        replyTo: [
+            {
+                name: 'Jane Smith', // Replace with appropriate name
+                address: 'jane@example.com', // Replace with appropriate address
+            },
+        ],
+        to: [
+            {
+                name: 'Alice Johnson', // Replace with appropriate name
+                address: 'alice@example.com', // Replace with appropriate address
+            },
+            {
+                name: 'Bob Brown', // Replace with appropriate name
+                address: 'bob@example.com', // Replace with appropriate address
+            },
+        ],
+        messageId: influencer.id + influencer.funnel_status, // Use influencer's funnel status as messageId
+        text: {
+            id: `text_${influencer.sequence_step}`, // You can use any relevant value here
+            encodedSize: {
+                plain: 500, // Replace with an appropriate value
+                html: 700, // Replace with an appropriate value
+            },
+        },
+    };
+});
 
 export const dummyData: AccountAccountMessagesGet = {
-    total: 2,
+    total: 10,
     page: 1,
     pages: 1,
-    messages: [
-        {
-            id: '1',
-            uid: 123,
-            emailId: 'email_1',
-            threadId: 'thread_1',
-            date: '2023-08-30T10:00:00Z',
-            flags: ['flag_1', 'flag_2'],
-            labels: ['label_1', 'label_2'],
-            unseen: false,
-            size: 1024,
-            subject: 'Sample Subject 1',
-            from: {
-                name: 'John Doe',
-                address: 'tech+mrbeast@relay.club',
-            },
-            replyTo: [
-                {
-                    name: 'Jane Smith',
-                    address: 'jane@example.com',
-                },
-            ],
-            to: [
-                {
-                    name: 'Alice Johnson',
-                    address: 'alice@example.com',
-                },
-                {
-                    name: 'Bob Brown',
-                    address: 'bob@example.com',
-                },
-            ],
-            messageId: 'Scheduled',
-            text: {
-                id: 'text_1',
-                encodedSize: {
-                    plain: 500,
-                    html: 700,
-                },
-            },
-        },
-        {
-            id: '2',
-            uid: 456,
-            emailId: 'email_2',
-            threadId: 'thread_2',
-            date: '2023-08-29T15:30:00Z',
-            flags: ['flag_3'],
-            labels: ['label_2', 'label_3'],
-            unseen: false,
-            size: 512,
-            subject: 'Another Sample Subject',
-            from: {
-                name: 'Alice Johnson',
-                address: 'info@likenastya.com',
-            },
-            replyTo: [],
-            to: [
-                {
-                    name: 'John Doe',
-                    address: 'john@example.com',
-                },
-            ],
-            messageId: 'TESTEMAILID',
-            text: {
-                id: 'text_2',
-                encodedSize: {
-                    plain: 300,
-                    html: 400,
-                },
-            },
-        },
-        // Add more dummy data messages as needed
-    ],
+    messages: messages,
 };
 
 export const dummyMessages = {
-    total: 3,
+    total: 11,
     page: 1,
     pages: 1,
-    messages: [
-        {
-            id: '1',
-            uid: 101,
-            emailId: 'email_101',
-            threadId: 'thread_1',
-            date: '2023-08-25T10:30:00Z',
-            draft: false,
-            unseen: true,
-            flagged: false,
-            size: 2356,
-            subject: 'Hello World',
+    messages: inManagerDummyInfluencers.map((influencer, index) => {
+        return {
+            id: influencer.id,
+            uid: index + 101,
+            emailId: `email_${influencer.id}`,
+            threadId: `thread_${influencer.email}`,
+            date: influencer.created_at,
+            draft: false, // Set to true if it's a draft
+            unseen: false, // Set as needed
+            flagged: false, // Set as needed
+            size: 2356, // Replace with an appropriate value
+            subject: `Paid Collab with DJI 🤝`,
             from: {
-                name: 'John Doe',
-                address: 'john.doe@example.com',
-            },
-            replyTo: [
-                {
-                    address: 'replyto@example.com',
-                },
-            ],
-            to: [
-                {
-                    address: 'recipient1@example.com',
-                },
-                {
-                    address: 'recipient2@example.com',
-                },
-            ],
-            cc: [
-                {
-                    name: 'CC Recipient',
-                    address: 'cc@example.com',
-                },
-            ],
-            bcc: [],
-            messageId: 'message_1',
-            inReplyTo: 'parent_message_1',
-            flags: ['flag1', 'flag2'],
-            labels: ['label1', 'label2'],
-            attachments: [
-                {
-                    id: 'attachment_1',
-                    contentType: 'application/pdf',
-                    encodedSize: 10240,
-                    embedded: false,
-                    inline: false,
-                    contentId: '',
-                },
-            ],
-            text: {
-                id: 'text_1',
-                encodedSize: {
-                    plain: 1200,
-                    html: 1800,
-                },
-            },
-            preview: 'This is a preview of the email.',
-            path: '/inbox/1',
-        },
-        {
-            id: '2',
-            uid: 102,
-            emailId: 'email_102',
-            threadId: 'thread_2',
-            date: '2023-08-26T15:45:00Z',
-            draft: true,
-            unseen: false,
-            flagged: true,
-            size: 1897,
-            subject: 'Meeting Agenda',
-            from: {
-                name: 'Jane Smith',
-                address: 'jane.smith@example.com',
-            },
-            replyTo: [
-                {
-                    address: 'replyto@example.com',
-                },
-            ],
-            to: [
-                {
-                    address: 'team@example.com',
-                },
-            ],
-            cc: [],
-            bcc: [],
-            messageId: 'message_2',
-            inReplyTo: '',
-            flags: ['flag3'],
-            labels: ['label3'],
-            attachments: [],
-            text: {
-                id: 'text_2',
-                encodedSize: {
-                    plain: 800,
-                    html: 1200,
-                },
-            },
-            preview: 'Meeting agenda attached.',
-            path: '/drafts/2',
-        },
-        {
-            id: '3',
-            uid: 103,
-            emailId: 'email_103',
-            threadId: 'thread_3',
-            date: '2023-08-27T09:00:00Z',
-            draft: false,
-            unseen: false,
-            flagged: false,
-            size: 2800,
-            subject: 'Weekend Getaway',
-            from: {
-                name: 'Vacation Travel',
-                address: 'travel@example.com',
+                name: influencer.manager_first_name,
+                address: influencer.email || 'example@example.com',
             },
             replyTo: [],
             to: [
                 {
-                    address: 'you@example.com',
+                    address: influencer.email || 'example@example.com',
                 },
             ],
             cc: [],
-            bcc: [],
-            messageId: 'message_3',
-            inReplyTo: '',
-            flags: [],
-            labels: ['label4'],
-            attachments: [
-                {
-                    id: 'attachment_2',
-                    contentType: 'image/jpeg',
-                    encodedSize: 5120,
-                    embedded: false,
-                    inline: true,
-                    contentId: 'image123',
-                },
-            ],
+            bcc: [], // Add recipients if needed
+            messageId: `message_id_${influencer.id}`, // Use influencer's funnel status as messageId
+            inReplyTo: '', // Set if applicable
+            flags: ['flag1', 'flag2'], // Replace with relevant flags
+            labels: ['label1', 'label2'], // Replace with relevant labels
+            attachments: [],
             text: {
-                id: 'text_3',
+                id: `text_${index + 1}`,
                 encodedSize: {
-                    plain: 1600,
-                    html: 2400,
+                    plain: 1200, // Replace with an appropriate value
+                    html: 1800, // Replace with an appropriate value
                 },
             },
-            preview: 'Exciting weekend getaway!',
-            path: '/inbox/3',
-        },
-    ],
+            preview: 'This is a preview of the email.',
+            path: `/inbox/${influencer.email}`, // Replace with appropriate path
+        };
+    }),
 };
 
-export const dummyThread = [
+dummyMessages.messages.push({
+    id: '570c72ba-33c1-4ac7-a237-ced1634a9cd5',
+    uid: 101,
+    emailId: `email_570c72ba-33c1-4ac7-a237-ced1634a9cd5`,
+    threadId: `thread_OutdoorsUnsupervised@gmail.com`,
+    date: '2023-08-31T07:01:13.487913+00:00',
+    draft: false, // Set to true if it's a draft
+    unseen: false, // Set as needed
+    flagged: false, // Set as needed
+    size: 2356, // Replace with an appropriate value
+    subject: `Paid Collab with DJI 🤝`,
+    from: {
+        name: 'Outdoors Unsupervised',
+        address: 'OutdoorsUnsupervised@gmail.com',
+    },
+    replyTo: [],
+    to: [
+        {
+            address: 'example@example.com',
+        },
+    ],
+    cc: [],
+    bcc: [], // Add recipients if needed
+    messageId: 'message_id_570c72ba-33c1-4ac7-a237-ced1634a9cd5', // Use influencer's funnel status as messageId
+    inReplyTo: '', // Set if applicable
+    flags: ['flag1', 'flag2'], // Replace with relevant flags
+    labels: ['label1', 'label2'], // Replace with relevant labels
+    attachments: [],
+    text: {
+        id: `text_${4 + 1}`,
+        encodedSize: {
+            plain: 1200, // Replace with an appropriate value
+            html: 1800, // Replace with an appropriate value
+        },
+    },
+    preview: 'This is a preview of the email.',
+    path: `/inbox/OutdoorsUnsupervised@gmail.com`, // Replace with appropriate path
+});
+
+export const existingThread = [
     {
-        threadId: 'thread_1',
-        html: `<p>Hey {{ params.influencerAccountName }},</p>
-        <p>{{ params.marketingManagerName }} here from {{ params.brandName }}. I just saw your <a href="{{ params.recentPostURL }}">"{{ params.recentPostTitle }}"</a> post, and I gotta say, love your content style 🤩.</p> 
+        threadId: `thread_OutdoorsUnsupervised@gmail.com_1`,
+        html: `<p>Hey Outdoors Unsupervised,</p>
+        <p>Jim here from DJI. I just saw your <a href="https://www.youtube.com/watch?v=YMM5hpWMK64">"First Time Flying a Drone Stealth Camp #15 Woods and Construction Site"</a> post, and I gotta say, love your content style 🤩.</p> 
         <br>    
-        <p>I've got a <a href="{{ params.productLink }}">{{ params.productName}}</a> I'd like to send you, have a feeling it's something your audience would be really into!</p>
-        <p>{{  params.productDescription }}</p>
+        <p>I've got a <a href="https://www.dji.com/au/mavic-3-pro?site=brandsite&from=homepage">Mavic 3 Pro</a> I'd like to send you, have a feeling it's something your audience would be really into!</p>
+        <p>The DJI Mavic 3 features next-level imaging performance. Mavic 3 Pro's triple-camera system ushers in a new era of camera drones by housing three sensors and lenses with different focal lengths. Equipped with a Hasselblad camera and dual tele cameras, Mavic 3 Pro is a triple-camera drone that unlocks new shooting perspectives, allowing you to embrace creative freedom further, capture fascinating scenery, explore photographic storytelling, and make cinematic masterpieces.</p>
         <br>
-        <p>We’re looking to partner with 8 or so influencers to get the word out about the {{ params.productName }} over the next couple weeks, and would love for you to be apart of it.</p>
+        <p>We’re looking to partner with 8 or so influencers to get the word out about the Mavic 3 Pro over the next couple weeks, and would love for you to be apart of it.</p>
         <p>Let me know if this is something you'd be interested in!</p>
         <br>
         <p>Cheers,</p>
         <br>
-        <p>{{ params.marketingManagerName }} at {{ params.brandName }}</p>',
-        plain: 'This is the plain text content for thread 1.`,
+        <p>Jim at DJI</p>`,
+        plain: `This is the plain text content for thread.`,
     },
     {
-        threadId: 'thread_2',
-        html: '<p>This is the HTML content for thread 2.</p>',
-        plain: 'This is the plain text content for thread 2.',
+        threadId: `thread_OutdoorsUnsupervised@gmail.com_2`,
+        html: `<p>Hey Jim, that looks amazing!</p><br/>
+        <p>I'd love to collab, let me send you my media kit and we can start planning the video.</p>
+        <br/><p>Outdoors Unsupervised</p>`,
+        plain: `This is the plain text content for thread.`,
     },
-    {
-        threadId: 'thread_3',
-        html: '<p>This is the HTML content for thread 3.</p>',
-        plain: 'This is the plain text content for thread 3.',
-    },
+];
+
+export const dummyThread = [
+    ...inManagerDummyInfluencers.slice(1).map((influencer) => {
+        return {
+            threadId: `thread_${influencer.email}`,
+            html: `<p>Hey ${influencer.name},</p>
+        <p>Jim here from DJI. I just saw your <a href="https://www.youtube.com/watch?v=YMM5hpWMK64">"First Time Flying a Drone Stealth Camp #15 Woods and Construction Site"</a> post, and I gotta say, love your content style 🤩.</p> 
+        <br>    
+        <p>I've got a <a href="https://www.dji.com/au/mavic-3-pro?site=brandsite&from=homepage">Mavic 3 Pro</a> I'd like to send you, have a feeling it's something your audience would be really into!</p>
+        <p>The DJI Mavic 3 features next-level imaging performance. Mavic 3 Pro's triple-camera system ushers in a new era of camera drones by housing three sensors and lenses with different focal lengths. Equipped with a Hasselblad camera and dual tele cameras, Mavic 3 Pro is a triple-camera drone that unlocks new shooting perspectives, allowing you to embrace creative freedom further, capture fascinating scenery, explore photographic storytelling, and make cinematic masterpieces.</p>
+        <br>
+        <p>We’re looking to partner with 8 or so influencers to get the word out about the Mavic 3 Pro over the next couple weeks, and would love for you to be apart of it.</p>
+        <p>Let me know if this is something you'd be interested in!</p>
+        <br>
+        <p>Cheers,</p>
+        <br>
+        <p>Jim at DJI</p>`,
+            plain: `This is the plain text content for thread.`,
+        };
+    }),
+    ...existingThread,
 ];

@@ -5,10 +5,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { useUser } from 'src/hooks/use-user';
-import { getSequenceInfluencer as baseGetSequenceInfluencer } from 'src/utils/api/db/calls/get-sequence-influencers';
-import { getSequenceInfluencerByEmailAndCompanyCall } from 'src/utils/api/db/calls/sequence-influencers';
 import { GMAIL_SEEN_SPECIAL_USE_FLAG } from 'src/utils/api/email-engine/prototype-mocks';
-import { useDB } from 'src/utils/client-db/use-client-db';
 import { clientLogger } from 'src/utils/logger-client';
 import type { MessagesGetMessage } from 'types/email-engine/account-account-messages-get';
 import { Spinner } from '../icons';
@@ -27,6 +24,7 @@ import { NotesListOverlayScreen } from '../influencer-profile/screens/notes-list
 import { useUiState } from '../influencer-profile/screens/profile-screen-context';
 import { useSequenceInfluencerNotes } from 'src/hooks/use-sequence-influencer-notes';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
+import { inManagerDummyInfluencers } from '../sequences/in-manager-dummy-sequence-influencers';
 
 export const InboxPage = () => {
     const inboxMessages = dummyData.messages;
@@ -38,10 +36,12 @@ export const InboxPage = () => {
     const [selectedTab, setSelectedTab] = useState('inbox');
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [uiState, setUiState] = useUiState();
-    const [sequenceInfluencer, setSequenceInfluencer] = useState<SequenceInfluencerManagerPage | null>(null);
+    const [sequenceInfluencer, setSequenceInfluencer] = useState<SequenceInfluencerManagerPage | undefined | null>(
+        null,
+    );
     const { refreshSequenceInfluencers } = useSequenceInfluencers();
 
-    const mapProfileToFormData = useCallback((p: SequenceInfluencerManagerPage | null) => {
+    const mapProfileToFormData = useCallback((p?: SequenceInfluencerManagerPage | null) => {
         if (!p) return null;
         return {
             notes: mapProfileToNotes(p),
@@ -121,29 +121,25 @@ export const InboxPage = () => {
         [getSelectedMessagesError, profile?.email_engine_account_id],
     );
 
-    const getSequenceInfluencerByEmailAndCompany = useDB(getSequenceInfluencerByEmailAndCompanyCall);
-    const getSequenceInfluencer = useDB(baseGetSequenceInfluencer);
     const { getNotes, saveSequenceInfluencer } = useSequenceInfluencerNotes();
 
     const handleSelectPreviewCard = useCallback(
         async (message: MessagesGetMessage) => {
             if (!profile) return;
             try {
-                const influencer = await getSequenceInfluencerByEmailAndCompany(
-                    message.from.address,
-                    profile.company_id,
-                );
-                const influencerFull = await getSequenceInfluencer(influencer.id);
-                setSequenceInfluencer(influencerFull);
+                const influencer = inManagerDummyInfluencers.find((dummy) => {
+                    return dummy.email === message.from.address;
+                });
+                setSequenceInfluencer(influencer);
                 // @note avoid try..catch hell. influencer should have been a monad
             } catch (error) {}
         },
-        [profile, getSequenceInfluencer, getSequenceInfluencerByEmailAndCompany],
+        [profile],
     );
 
     const handleUpdate = useCallback(
         (data: Partial<ProfileValue>) => {
-            if (sequenceInfluencer === null) return;
+            if (!sequenceInfluencer) return;
 
             saveSequenceInfluencer.call(sequenceInfluencer.id, data).then((profile) => {
                 // @note updates local state without additional query
@@ -195,7 +191,7 @@ export const InboxPage = () => {
 
     return (
         <Layout>
-            <div className="flex h-full">
+            <div className="grid h-full grid-cols-8">
                 {isLoading ? (
                     <div className="flex w-full items-center justify-center">
                         <Spinner className="h-6 w-6 fill-primary-600 text-primary-200" />
@@ -203,7 +199,7 @@ export const InboxPage = () => {
                 ) : (
                     <>
                         {messages.length === 0 && !isLoading && <p>{t('inbox.noMessagesInMailbox')}</p>}
-                        <div className="h-full w-[320px] overflow-auto">
+                        <div className="col-span-2 h-full w-full overflow-auto">
                             {messages.length > 0 && (
                                 <>
                                     <ToolBar
@@ -232,7 +228,7 @@ export const InboxPage = () => {
                                 </>
                             )}
                         </div>
-                        <div className="h-full flex-grow overflow-auto">
+                        <div className="col-span-4 h-full w-full overflow-auto">
                             {selectedMessages && (
                                 <CorrespondenceSection
                                     // TODO: add selectedSequenceInfluencers
@@ -245,7 +241,7 @@ export const InboxPage = () => {
                             )}
                         </div>
                         {sequenceInfluencer && initialValue && (
-                            <div className="w-1/4 overflow-scroll">
+                            <div className="col-span-2 w-full flex-grow-0 overflow-x-clip overflow-y-scroll">
                                 <ProfileScreenProvider initialValue={initialValue}>
                                     <ProfileScreen
                                         profile={sequenceInfluencer}

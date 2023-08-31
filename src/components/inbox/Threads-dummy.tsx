@@ -50,20 +50,21 @@ export const Threads = ({
                     if (!profile?.email_engine_account_id) {
                         throw new Error('No email account');
                     }
-                    const { html } = dummyThread.find((thread) => thread.threadId === message.threadId) || {
+                    const threads = dummyThread.filter((thread) => thread.threadId.includes(message.threadId)) || {
                         html: '<p>This is the HTML content for thread 3.</p>',
                         plain: 'This is the plain text content for thread 3.',
                     };
-                    newThreadMessages.push({
-                        subject: message.subject,
-                        id: message.id,
-                        from: message.from.name || message.from.address,
-                        to: message.to,
-                        cc: message.cc,
-                        date: message.date,
-                        text: html,
-                        isMe: message.from.address === profile?.sequence_send_email,
-                    });
+                    threads[newThreadMessages.length] &&
+                        newThreadMessages.push({
+                            subject: message.subject,
+                            id: message.id,
+                            from: message.from.name || message.from.address,
+                            to: message.to,
+                            cc: message.cc,
+                            date: message.date,
+                            text: threads[newThreadMessages.length].html,
+                            isMe: message.from.address === profile?.sequence_send_email,
+                        });
                 }
                 setThreadMessages(newThreadMessages);
             } catch (error: any) {
@@ -96,10 +97,7 @@ export const Threads = ({
             ) : (
                 <div className="flex w-full flex-col space-y-6">
                     {threadMessages.map((message) => (
-                        <div
-                            key={message.id}
-                            className="rounded-lg bg-white shadow-sm hover:border hover:border-primary-500"
-                        >
+                        <div key={message.id} className="rounded-lg border bg-white shadow-sm hover:border-primary-500">
                             <div className="border-b-2 border-gray-200 p-6">
                                 <div className="mb-3 text-lg font-semibold text-gray-400">
                                     {t('inbox.from')}:{' '}
