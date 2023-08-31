@@ -1,6 +1,6 @@
 import type { EventPayload, TriggerEvent } from '../../types';
 
-export const OUTREACH_OPEN_INBOX_PAGE = 'TEST:outreach-open_inbox_page';
+export const OUTREACH_OPEN_INBOX_PAGE = 'outreach-open_inbox_page';
 
 export type OpenInboxPagePayload = EventPayload<{
     extra_info?: any

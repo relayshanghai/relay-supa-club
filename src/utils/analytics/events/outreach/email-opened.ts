@@ -1,6 +1,6 @@
 import type { EventPayload, TriggerEvent } from '../../types';
 
-export const OUTREACH_EMAIL_OPENED = 'TEST:outreach-email_opened';
+export const OUTREACH_EMAIL_OPENED = 'outreach-email_opened';
 
 export type EmailOpenedPayload = EventPayload<{
     account_id: string
