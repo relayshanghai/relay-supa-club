@@ -1,6 +1,6 @@
 import type { TriggerEvent } from '../../types';
 
-export const BOOSTBOT_RECOMMEND_INFLUENCERS = 'TEST:boostbot-recommend_influencers';
+export const BOOSTBOT_RECOMMEND_INFLUENCERS = 'boostbot-recommend_influencers';
 
 export type RecommendInfluencersPayload = {
     query: string;
