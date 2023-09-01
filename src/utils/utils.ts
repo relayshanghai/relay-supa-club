@@ -138,3 +138,11 @@ export const mixArrays = (a: any[], b: any[], c: any[]): any[] => {
 
     return output;
 };
+
+/**
+ * Checks if a PromiseSettledResult is a fulfilled result.
+ * @param result - The PromiseSettledResult to check.
+ * @returns True if the result is a fulfilled result, false otherwise.
+ */
+export const isFulfilled = (result: PromiseSettledResult<any>): result is PromiseFulfilledResult<any> =>
+    result.status === 'fulfilled';

@@ -9,6 +9,7 @@ import { Button } from '../button';
 import { Spinner } from '../icons';
 import Link from 'next/link';
 import { clientLogger } from 'src/utils/logger-client';
+import { useSequence } from 'src/hooks/use-sequence';
 
 const FreeTrialPage = () => {
     const { t } = useTranslation();
@@ -19,6 +20,16 @@ const FreeTrialPage = () => {
     const [loading, setLoading] = useState(false);
     const [termsChecked, setTermsChecked] = useState(false);
     const [showModal, setShowModal] = useState(false);
+    const { createSequence } = useSequence();
+    const { profile } = useUser();
+
+    const CreateDefaultSequence = () => {
+        if (!profile) {
+            throw new Error('No profile found');
+        }
+        const defaultSequenceName = profile.first_name + "'s BoostBot Sequence";
+        createSequence(defaultSequenceName);
+    };
 
     const startFreeTrial = async () => {
         setLoading(true);
@@ -37,6 +48,7 @@ const FreeTrialPage = () => {
             await response.json();
             if (response.status === 200) {
                 trackEvent(SIGNUP('Start free trial success'), { company: company?.id });
+                CreateDefaultSequence();
                 router.push('/dashboard');
             }
         } catch (error) {
