@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable no-console */
 import type { CreatorAccountWithTopics } from 'pages/api/boostbot/get-influencers';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
@@ -20,6 +22,7 @@ import type { UserProfile } from 'types';
 import type { ProgressType } from 'src/components/boostbot/chat';
 import { useRouter } from 'next/router';
 import { wait } from 'src/utils/utils';
+import { droneReports, drone4, drone5 } from 'influencers-mock';
 
 export type Influencer = (UserProfile | CreatorAccountWithTopics) & {
     isLoading?: boolean;
@@ -73,6 +76,8 @@ const Boostbot = () => {
     const handleUnlockInfluencers = async (influencers: Influencer[]) => {
         const userIds = influencers.map((influencer) => influencer.user_id);
         userIds.forEach((userId) => setInfluencerLoading(userId, true));
+        console.log('userIds :>> ', userIds);
+        await wait(1500);
 
         const trackingPayload: UnlockInfluencersPayload = {
             influencer_ids: [],
@@ -82,11 +87,20 @@ const Boostbot = () => {
         };
 
         try {
-            const response = await unlockInfluencers(influencers);
+            let response;
+            if (influencers.length === 3) {
+                response = droneReports;
+            } else if (userIds.includes('6742904044844909574')) {
+                response = drone4;
+            } else {
+                response = drone5;
+            }
+            // const response = await unlockInfluencers(influencers);
             const unlockedInfluencers = response?.map((result) => result.user_profile);
-
+            console.log('response !!!:>> ', response);
             if (unlockedInfluencers) {
                 unlockedInfluencers.forEach((newInfluencerData) => {
+                    // @ts-ignore
                     setInfluencers((prevInfluencers) => {
                         const influencer = prevInfluencers.find((i) => i.user_id === newInfluencerData.user_id);
 
@@ -214,6 +228,7 @@ const Boostbot = () => {
                         handlePageToUnlock={handlePageToUnlock}
                         handlePageToOutreach={handlePageToOutreach}
                         setIsInitialLogoScreen={setIsInitialLogoScreen}
+                        // @ts-ignore
                         handleUnlockInfluencers={handleUnlockInfluencers}
                         isBoostbotLoading={isLoading}
                         messages={messages}
