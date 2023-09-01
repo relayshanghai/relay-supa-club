@@ -23,23 +23,11 @@ interface SequenceTableProps {
 const sortInfluencers = (
     currentTab: SequenceInfluencer['funnel_status'],
     influencers?: SequenceInfluencer[],
-    sequenceEmails?: SequenceEmail[],
+    _sequenceEmails?: SequenceEmail[],
 ) => {
     return influencers?.sort((a, b) => {
-        const getEmailTime = (influencerId: string) =>
-            sequenceEmails?.find((email) => email.sequence_influencer_id === influencerId)?.email_send_at;
-
-        if (currentTab === 'To Contact') {
-            return a.created_at.localeCompare(b.created_at);
-        } else if (currentTab === 'In Sequence' || currentTab === 'Ignored') {
-            const mailTimeA = getEmailTime(a.id);
-            const mailTimeB = getEmailTime(b.id);
-
-            if (!mailTimeA || !mailTimeB) {
-                return -1;
-            }
-
-            return mailTimeB.localeCompare(mailTimeA);
+        if (currentTab === 'In Sequence' || currentTab === 'To Contact') {
+            return b.created_at.localeCompare(a.created_at);
         }
 
         return 0;

@@ -193,6 +193,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                           funnel_status: 'In Sequence',
                           checked: false,
                           sequence_step: 1,
+                          created_at: new Date().toISOString(),
                       }
                     : influencer;
             });
