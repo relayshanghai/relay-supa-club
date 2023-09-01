@@ -25,7 +25,7 @@ For example: "IPL uses beams of light to target the pigment in the hair follicle
         unlockDone: `Great. You've unlocked {{count}} new influencers. You can unlock or email up to 50 influencers under your free trial, or upgrade for more.
 
 Tip: You can also unlock influencers one by one.`,
-        outreachDone: `Great. I'm scheduling the emails now. You can unlock or email upto 50 influencers under your free trial, or you can upgrade for more.
+        outreachDone: `Great. I'm scheduling the emails now. You can unlock or email up to 50 influencers under your free trial, or you can upgrade for more.
 
 Tip: You can check the email status on “Sequence”`,
         hasUsedUnlock:

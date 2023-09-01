@@ -137,7 +137,7 @@ const Boostbot = () => {
             return;
         }
 
-        const unlockedInfluencers = await handleUnlockInfluencers(currentPageInfluencers.slice(0, 1));
+        const unlockedInfluencers = await handleUnlockInfluencers(currentPageInfluencers);
 
         setIsLoading(false);
         addMessage({
@@ -213,8 +213,8 @@ const Boostbot = () => {
 
     return (
         <Layout>
-            <div className="flex h-full flex-row gap-4 p-3">
-                <div className="w-80 flex-shrink-0">
+            <div className="flex h-full flex-col gap-4 p-3 md:flex-row">
+                <div className="w-full flex-shrink-0 md:w-80">
                     <Chat
                         influencers={influencers}
                         setInfluencers={setInfluencers}

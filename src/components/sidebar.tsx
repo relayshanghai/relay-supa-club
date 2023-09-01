@@ -231,7 +231,7 @@ export const Sidebar = ({
 
     return (
         // mask is the dark overlay that appears when the sidebar is open
-        <nav className="z-10 h-full">
+        <nav className="z-20 h-full">
             <div
                 className={`pointer-events-none fixed inset-0 opacity-0 transition-all`}
                 onClick={() => setOpen(false)}
