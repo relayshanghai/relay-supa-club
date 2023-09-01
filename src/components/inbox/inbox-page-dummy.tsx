@@ -191,7 +191,7 @@ export const InboxPage = () => {
 
     return (
         <Layout>
-            <div className="grid h-full grid-cols-8">
+            <div className="grid h-full grid-cols-12">
                 {isLoading ? (
                     <div className="flex w-full items-center justify-center">
                         <Spinner className="h-6 w-6 fill-primary-600 text-primary-200" />
@@ -199,7 +199,7 @@ export const InboxPage = () => {
                 ) : (
                     <>
                         {messages.length === 0 && !isLoading && <p>{t('inbox.noMessagesInMailbox')}</p>}
-                        <div className="col-span-2 h-full w-full overflow-auto">
+                        <div className="col-span-3 h-full w-full overflow-auto">
                             {messages.length > 0 && (
                                 <>
                                     <ToolBar
@@ -228,7 +228,7 @@ export const InboxPage = () => {
                                 </>
                             )}
                         </div>
-                        <div className="col-span-4 h-full w-full overflow-auto">
+                        <div className="col-span-5 h-full w-full overflow-auto">
                             {selectedMessages && (
                                 <CorrespondenceSection
                                     // TODO: add selectedSequenceInfluencers
@@ -241,10 +241,11 @@ export const InboxPage = () => {
                             )}
                         </div>
                         {sequenceInfluencer && initialValue && (
-                            <div className="col-span-2 w-full flex-grow-0 overflow-x-clip overflow-y-scroll">
+                            <div className="col-span-4 w-full flex-grow-0 overflow-x-clip overflow-y-scroll">
                                 <ProfileScreenProvider initialValue={initialValue}>
                                     <ProfileScreen
                                         profile={sequenceInfluencer}
+                                        className="bg-white"
                                         onCancel={() => {
                                             //
                                         }}

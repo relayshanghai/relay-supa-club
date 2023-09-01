@@ -16,7 +16,7 @@ export const PreviewSection = ({
     onSelect?: (message: MessagesGetMessage) => void;
 }) => {
     return (
-        <div className="h-full overflow-y-auto border-r-2 border-tertiary-200">
+        <div className="h-full overflow-y-auto border-r-2 border-tertiary-200 bg-white">
             {messages.map((message) => (
                 <div key={message.id}>
                     <PreviewCard
