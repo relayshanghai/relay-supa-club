@@ -18,6 +18,8 @@ import { useTemplateVariables } from 'src/hooks/use-template_variables';
 import { Tooltip } from '../library';
 import { EMAIL_STEPS } from './constants';
 import { useUser } from 'src/hooks/use-user';
+import toast from 'react-hot-toast';
+import { wait } from 'src/utils/utils';
 
 export type SequenceInfluencerSequencePage = SequenceInfluencer & {
     checked?: boolean;
@@ -182,8 +184,10 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     };
 
     const hasSelectedInfluencers = influencers?.some((influencer) => influencer.checked);
-
+    const [sendingAll, setSendingAll] = useState(false);
     const handleSendAll = async () => {
+        setSendingAll(true);
+        await wait(888);
         setInfluencers((influencers) => {
             influencers?.sort((a) => (a.funnel_status == 'To Contact' ? -1 : 1));
             return influencers?.map((influencer) => {
@@ -198,6 +202,8 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                     : influencer;
             });
         });
+        setSendingAll(false);
+        toast.success('邮件发送成功');
     };
 
     return (
@@ -250,7 +256,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                         translationPath="sequences.steps"
                     />
                     {hasSelectedInfluencers && (
-                        <Button onClick={handleSendAll} className="ml-auto flex">
+                        <Button disabled={sendingAll} onClick={handleSendAll} className="ml-auto flex">
                             <Send className="mr-2 h-6 stroke-white" />
                             <p className="self-center">{t('sequences.sendAll')}</p>
                         </Button>
