@@ -121,9 +121,9 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
                 <thead>
                     <tr>
                         {currentTab === 'To Contact' && (
-                            <th className="bg-white">
+                            <th className="w-10 bg-white">
                                 <input
-                                    className="display-none checkbox appearance-none rounded checked:text-primary-500"
+                                    className="display-none checkbox m-auto appearance-none rounded checked:text-primary-500"
                                     type="checkbox"
                                     checked={selectedAll}
                                     onChange={(e) => {
