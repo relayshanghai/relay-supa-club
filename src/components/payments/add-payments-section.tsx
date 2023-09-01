@@ -8,6 +8,8 @@ import type { newActiveSubscriptionTier } from 'types';
 import { useState } from 'react';
 import Image from 'next/legacy/image';
 import { Alipay, Payment } from '../icons';
+import { useRudderstack } from 'src/hooks/use-rudderstack';
+import { PAYMENT_PAGE } from 'src/utils/rudderstack/event-names';
 
 const STRIPE_PUBLIC_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
 const stripePromise = loadStripe(STRIPE_PUBLIC_KEY || '');
@@ -23,6 +25,7 @@ export type CreatePaymentIntentResponse = {
 export const AddPaymentsSection = ({ priceTier }: { priceTier: newActiveSubscriptionTier }) => {
     const { i18n, t } = useTranslation();
     const newPrices = useNewPrices();
+    const { trackEvent } = useRudderstack();
 
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string | null>('card');
     const selectedPrice = newPrices[priceTier];
@@ -49,8 +52,11 @@ export const AddPaymentsSection = ({ priceTier }: { priceTier: newActiveSubscrip
                         selectedPaymentMethod === 'card'
                             ? 'border-2 border-primary-500 fill-primary-500 text-primary-500'
                             : ''
-                    } group basis-1/2 rounded-md px-6 py-2 shadow transition hover:border-primary-400 focus:border-primary-400`}
-                    onClick={() => setSelectedPaymentMethod('card')}
+                    } group basis-1/2 cursor-pointer rounded-md px-6 py-2 shadow transition hover:border-primary-400 focus:border-primary-400`}
+                    onClick={() => {
+                        setSelectedPaymentMethod('card');
+                        trackEvent(PAYMENT_PAGE('click on card option'));
+                    }}
                 >
                     <Payment
                         className={`${
@@ -62,8 +68,11 @@ export const AddPaymentsSection = ({ priceTier }: { priceTier: newActiveSubscrip
                 <div
                     className={`${
                         selectedPaymentMethod === 'alipay' ? 'border-2 border-primary-500 text-primary-500' : ''
-                    } group basis-1/2 rounded-md px-6 py-2 shadow transition hover:border-primary-400 focus:border-primary-400`}
-                    onClick={() => setSelectedPaymentMethod('alipay')}
+                    } group basis-1/2 cursor-pointer rounded-md px-6 py-2 shadow transition hover:border-primary-400 focus:border-primary-400`}
+                    onClick={() => {
+                        setSelectedPaymentMethod('alipay');
+                        trackEvent(PAYMENT_PAGE('click on alipay option'));
+                    }}
                 >
                     <Alipay
                         className={`${
