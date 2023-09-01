@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import type { newActiveSubscriptionTier } from 'types';
 import { useState } from 'react';
 import Image from 'next/legacy/image';
+import { Alipay, Payment } from '../icons';
 
 const STRIPE_PUBLIC_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
 const stripePromise = loadStripe(STRIPE_PUBLIC_KEY || '');
@@ -43,22 +44,34 @@ export const AddPaymentsSection = ({ priceTier }: { priceTier: newActiveSubscrip
     return (
         <div className="w-80 rounded shadow lg:w-[28rem]">
             <div className="flex w-full space-x-3 px-6 pt-6 text-xs text-gray-500">
-                <button
+                <div
                     className={`${
-                        selectedPaymentMethod === 'card' ? 'border-2 border-primary-500 text-primary-500' : ''
-                    } basis-1/2 rounded-md px-6 py-2 shadow hover:border-primary-400 focus:border-primary-400`}
+                        selectedPaymentMethod === 'card'
+                            ? 'border-2 border-primary-500 fill-primary-500 text-primary-500'
+                            : ''
+                    } group basis-1/2 rounded-md px-6 py-2 shadow transition hover:border-primary-400 focus:border-primary-400`}
                     onClick={() => setSelectedPaymentMethod('card')}
                 >
-                    {t('account.card')}
-                </button>
-                <button
+                    <Payment
+                        className={`${
+                            selectedPaymentMethod === 'card' ? 'fill-primary-500' : 'fill-gray-300'
+                        } h-4 w-4 group-hover:fill-primary-500`}
+                    />
+                    <div className="group-hover:text-primary-500">{t('account.card')}</div>
+                </div>
+                <div
                     className={`${
                         selectedPaymentMethod === 'alipay' ? 'border-2 border-primary-500 text-primary-500' : ''
-                    } basis-1/2 rounded-md px-6 py-2 shadow hover:border-primary-400 focus:border-primary-400`}
+                    } group basis-1/2 rounded-md px-6 py-2 shadow transition hover:border-primary-400 focus:border-primary-400`}
                     onClick={() => setSelectedPaymentMethod('alipay')}
                 >
-                    {t('account.alipay')}
-                </button>
+                    <Alipay
+                        className={`${
+                            selectedPaymentMethod === 'alipay' ? 'fill-blue-600' : 'fill-gray-300'
+                        } h-4 w-4 group-hover:fill-blue-600`}
+                    />
+                    <div className="group-hover:text-primary-500">{t('account.alipay')}</div>
+                </div>
             </div>
             {selectedPaymentMethod ? (
                 <>
