@@ -26,13 +26,13 @@ describe('GuideCards', () => {
         const sectionDetails = guidePage.modalInfo[section as keyof typeof guidePage.modalInfo];
         const cardDetails = guidePage.cards[section as keyof typeof guidePage.cards];
         it('should render', () => {
-            cy.mount(<GuideCards cardName={`${section}`} />);
+            cy.mount(<GuideCards cardKey={`${section}`} />);
             cy.contains(cardDetails.title);
             cy.contains(cardDetails.description);
             cy.contains(guidePage.learnMore);
         });
         it('should open modal and close it', () => {
-            cy.mount(<GuideCards cardName={`${section}`} />);
+            cy.mount(<GuideCards cardKey={`${section}`} />);
             cy.contains(guidePage.learnMore).click();
             cy.contains(sectionDetails.title);
             cy.contains(guidePage.goBack).click();
