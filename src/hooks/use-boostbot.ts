@@ -95,12 +95,17 @@ export const useBoostbot = ({ abortSignal }: UseBoostbotProps) => {
     );
 
     const getInfluencers = useCallback(
-        async ({ topicClusters, platform }: { topicClusters: string[][]; platform: CreatorPlatform }) =>
-            await performFetch<GetInfluencersResponse, GetInfluencersBody>('get-influencers', {
+        async ({ topicClusters, platform }: { topicClusters: string[][]; platform: CreatorPlatform }) => {
+            if (!company?.id || !profile?.id) throw new Error('No company or profile found');
+
+            return await performFetch<GetInfluencersResponse, GetInfluencersBody>('get-influencers', {
                 topicClusters,
                 platform,
-            }),
-        [performFetch],
+                user_id: profile.id,
+                company_id: company.id,
+            });
+        },
+        [performFetch, company, profile],
     );
 
     return {
