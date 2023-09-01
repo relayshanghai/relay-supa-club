@@ -10,7 +10,7 @@ import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { useSequences } from 'src/hooks/use-sequences';
 import { AddInfluencerToSequence, StartSequenceForInfluencer } from 'src/utils/analytics/events';
 import type { AddInfluencerToSequencePayload } from 'src/utils/analytics/events/outreach/add-influencer-to-sequence';
-import { StartSequenceForInfluencerPayload } from 'src/utils/analytics/events/outreach/start-sequence-for-influencer';
+import type { StartSequenceForInfluencerPayload } from 'src/utils/analytics/events/outreach/start-sequence-for-influencer';
 import type { Sequence } from 'src/utils/api/db';
 import { clientLogger } from 'src/utils/logger-client';
 import type { CreatorPlatform, CreatorUserProfile } from 'types';
@@ -31,7 +31,8 @@ export const AddToSequenceModal = ({
     platform: CreatorPlatform;
 }) => {
     const { i18n, t } = useTranslation();
-    const { sequences } = useSequences();
+    const { sequences: allSequences } = useSequences();
+    const sequences = allSequences?.filter((sequence) => !sequence.deleted);
     const { track } = useRudderstackTrack();
     const {
         socialProfile,
@@ -77,8 +78,8 @@ export const AddToSequenceModal = ({
                 sequence_influencer_id: null,
                 is_success: false,
                 is_sequence_autostart: null,
-                extra_info: { error: "Missing sequence" }
-            })
+                extra_info: { error: 'Missing sequence' },
+            });
             throw new Error('Missing selectedSequence');
         }
         if (!socialProfile?.id) {
@@ -88,8 +89,8 @@ export const AddToSequenceModal = ({
                 sequence_influencer_id: null,
                 is_success: false,
                 is_sequence_autostart: null,
-                extra_info: { error: "Missing socialProfileId" }
-            })
+                extra_info: { error: 'Missing socialProfileId' },
+            });
             throw new Error('Missing socialProfileId');
         }
         if (!creatorProfile.user_id) {
@@ -99,8 +100,8 @@ export const AddToSequenceModal = ({
                 sequence_influencer_id: null,
                 is_success: false,
                 is_sequence_autostart: null,
-                extra_info: { error: "Missing user_id from user_profile" }
-            })
+                extra_info: { error: 'Missing user_id from user_profile' },
+            });
             throw new Error('Missing creator.user_id');
         }
         const tags = getRelevantTags();
@@ -112,7 +113,7 @@ export const AddToSequenceModal = ({
             sequence_influencer_id: null,
             is_success: true,
             is_sequence_autostart: sequence.auto_start,
-        }
+        };
 
         let sequenceInfluencer: Awaited<ReturnType<typeof createSequenceInfluencer>> | null = null;
 
@@ -131,8 +132,8 @@ export const AddToSequenceModal = ({
             clientLogger(error);
             toast.error(t('creators.addToSequenceError'));
 
-            trackingPayload.is_success = false
-            trackingPayload.extra_info = { error: String(error) }
+            trackingPayload.is_success = false;
+            trackingPayload.extra_info = { error: String(error) };
         } finally {
             track(AddInfluencerToSequence, trackingPayload);
         }
@@ -141,8 +142,8 @@ export const AddToSequenceModal = ({
             influencer_id: null,
             sequence_id: null,
             sequence_influencer_id: null,
-            is_success: true
-        }
+            is_success: true,
+        };
 
         try {
             if (sequenceInfluencer && sequenceInfluencer.email && sequence.auto_start) {
@@ -150,7 +151,7 @@ export const AddToSequenceModal = ({
                 startSequencePayload.sequence_id = sequenceInfluencer.sequence_id;
                 startSequencePayload.sequence_influencer_id = sequenceInfluencer.id;
 
-                const results = await sendSequence([sequenceInfluencer])
+                const results = await sendSequence([sequenceInfluencer]);
                 const failed = results.filter((result) => result.error);
                 const succeeded = results.filter((result) => !result.error);
 
@@ -160,14 +161,14 @@ export const AddToSequenceModal = ({
                     sent_success_count: succeeded.length,
                     sent_failed: failed,
                     sent_failed_count: failed.length,
-                })
+                });
             }
         } catch (error) {
             track(StartSequenceForInfluencer, {
                 ...startSequencePayload,
                 is_success: false,
-                extra_info: { error: String(error) }
-            })
+                extra_info: { error: String(error) },
+            });
 
             clientLogger(error);
         } finally {
