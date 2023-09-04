@@ -50,7 +50,10 @@ export const SupabasePlugin = (config: SupabasePluginConfig = {}): AnalyticsPlug
                         },
                         signal: options && options.__abort ? options.__abort.signal : undefined,
                     },
-                );
+                ).catch((error) => {
+                    if (error instanceof Error && error.name === 'AbortError') return;
+                    throw error;
+                });
             };
 
             return await event(trigger, payload);
