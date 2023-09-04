@@ -10,6 +10,8 @@ import { Spinner } from '../icons';
 import Link from 'next/link';
 import { clientLogger } from 'src/utils/logger-client';
 import { useSequence } from 'src/hooks/use-sequence';
+import { useSequenceSteps } from 'src/hooks/use-sequence-steps';
+import { useTemplateVariables } from 'src/hooks/use-template_variables';
 
 const FreeTrialPage = () => {
     const { t } = useTranslation();
@@ -17,18 +19,26 @@ const FreeTrialPage = () => {
     const router = useRouter();
     const { logout } = useUser();
     const { trackEvent } = useRudderstack();
+    const { createDefaultSequenceSteps } = useSequenceSteps();
+    const { createDefaultTemplateVariables } = useTemplateVariables();
+
     const [loading, setLoading] = useState(false);
     const [termsChecked, setTermsChecked] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const { createSequence } = useSequence();
     const { profile } = useUser();
 
-    const CreateDefaultSequence = () => {
+    const CreateDefaultSequence = async () => {
         if (!profile) {
             throw new Error('No profile found');
         }
         const defaultSequenceName = profile.first_name + "'s BoostBot Sequence";
-        createSequence(defaultSequenceName);
+        const newSequenceData = await createSequence(defaultSequenceName);
+        if (!newSequenceData) {
+            throw new Error('Failed to get sequence id');
+        }
+        await createDefaultSequenceSteps(newSequenceData.id);
+        await createDefaultTemplateVariables(newSequenceData.id);
     };
 
     const startFreeTrial = async () => {
