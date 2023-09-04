@@ -79,6 +79,10 @@ export const InboxPage = () => {
     const { profile } = useUser();
 
     useEffect(() => {
+        setLocalProfile(mapProfileToFormData(sequenceInfluencer));
+    }, [sequenceInfluencer]);
+
+    useEffect(() => {
         if (searchTerm === '') {
             setSearchResults([]);
             return;
