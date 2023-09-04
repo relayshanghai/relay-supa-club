@@ -35,17 +35,17 @@ export const InboxPage = () => {
     const [getSelectedMessagesError, setGetSelectedMessagesError] = useState('');
     const [selectedTab, setSelectedTab] = useState('inbox');
     const [searchTerm, setSearchTerm] = useState<string>('');
-    const [sequenceInfluencer, setSequenceInfluencer] = useState<SequenceInfluencerManagerPage | null>(null)
+    const [sequenceInfluencer, setSequenceInfluencer] = useState<SequenceInfluencerManagerPage | null>(null);
 
     const { inboxMessages, isLoading, refreshInboxMessages } = useMessages();
     const { t } = useTranslation();
 
-    const { track } = useRudderstackTrack()
+    const { track } = useRudderstackTrack();
 
     useEffect(() => {
-        const { abort } = track(OpenInboxPage)
+        const { abort } = track(OpenInboxPage);
         return abort;
-    }, [track])
+    }, [track]);
 
     useEffect(() => {
         if (!inboxMessages) {
@@ -74,32 +74,35 @@ export const InboxPage = () => {
         setSearchResults(results.map((result) => result.item));
     }, [filteredMessages, searchTerm]);
 
-    const handleGetThreadEmails = useCallback(async (message: MessagesGetMessage) => {
-        setSelectedMessages([]);
-        setLoadingSelectedMessages(true);
-        setGetSelectedMessagesError('');
-        try {
-            if (!profile?.email_engine_account_id) {
-                throw new Error('No email account');
+    const handleGetThreadEmails = useCallback(
+        async (message: MessagesGetMessage) => {
+            setSelectedMessages([]);
+            setLoadingSelectedMessages(true);
+            setGetSelectedMessagesError('');
+            try {
+                if (!profile?.email_engine_account_id) {
+                    throw new Error('No email account');
+                }
+                const inboxThreadMessages = await getInboxThreadMessages(message, profile.email_engine_account_id);
+                const sentThreadMessages = await getSentThreadMessages(message, profile.email_engine_account_id);
+                const threadMessages = inboxThreadMessages.concat(sentThreadMessages);
+                threadMessages.sort((a, b) => {
+                    return new Date(a.date).getTime() - new Date(b.date).getTime();
+                });
+                setSelectedMessages(threadMessages);
+                setLoadingSelectedMessages(false);
+            } catch (error: any) {
+                clientLogger(error, 'error');
+                setGetSelectedMessagesError(error.message);
+                toast(getSelectedMessagesError);
             }
-            const inboxThreadMessages = await getInboxThreadMessages(message, profile.email_engine_account_id);
-            const sentThreadMessages = await getSentThreadMessages(message, profile.email_engine_account_id);
-            const threadMessages = inboxThreadMessages.concat(sentThreadMessages);
-            threadMessages.sort((a, b) => {
-                return new Date(a.date).getTime() - new Date(b.date).getTime();
-            });
-            setSelectedMessages(threadMessages);
             setLoadingSelectedMessages(false);
-        } catch (error: any) {
-            clientLogger(error, 'error');
-            setGetSelectedMessagesError(error.message);
-            toast(getSelectedMessagesError);
-        }
-        setLoadingSelectedMessages(false);
-    }, [getSelectedMessagesError, profile?.email_engine_account_id]);
+        },
+        [getSelectedMessagesError, profile?.email_engine_account_id],
+    );
 
-    const getSequenceInfluencerByEmailAndCompany = useDB(getSequenceInfluencerByEmailAndCompanyCall)
-    const getSequenceInfluencer = useDB(baseGetSequenceInfluencer)
+    const getSequenceInfluencerByEmailAndCompany = useDB(getSequenceInfluencerByEmailAndCompanyCall);
+    const getSequenceInfluencer = useDB(baseGetSequenceInfluencer);
     const [uiState, setUiState] = useUiState();
 
     const handleInfluencerClick = useCallback(() => {
@@ -107,17 +110,23 @@ export const InboxPage = () => {
         setUiState((s) => {
             return { ...s, isProfileOverlayOpen: true };
         });
-    }, [setUiState, sequenceInfluencer])
+    }, [setUiState, sequenceInfluencer]);
 
-    const handleSelectPreviewCard = useCallback(async (message: MessagesGetMessage) => {
-        if (!profile) return;
-        try {
-            const influencer = await getSequenceInfluencerByEmailAndCompany(message.from.address, profile.company_id)
-            const influencerFull = await getSequenceInfluencer(influencer.id)
-            setSequenceInfluencer(influencerFull)
-        // @note avoid try..catch hell. influencer should have been a monad
-        } catch (error) {}
-    }, [profile, getSequenceInfluencer, getSequenceInfluencerByEmailAndCompany])
+    const handleSelectPreviewCard = useCallback(
+        async (message: MessagesGetMessage) => {
+            if (!profile) return;
+            try {
+                const influencer = await getSequenceInfluencerByEmailAndCompany(
+                    message.from.address,
+                    profile.company_id,
+                );
+                const influencerFull = await getSequenceInfluencer(influencer.id);
+                setSequenceInfluencer(influencerFull);
+                // @note avoid try..catch hell. influencer should have been a monad
+            } catch (error) {}
+        },
+        [profile, getSequenceInfluencer, getSequenceInfluencerByEmailAndCompany],
+    );
 
     const handleProfileOverlayClose = useCallback(() => {
         setUiState((s) => {
@@ -150,7 +159,7 @@ export const InboxPage = () => {
     useEffect(() => {
         if (!selectedMessages && messages.length > 0) {
             handleGetThreadEmails(messages[0]);
-            handleSelectPreviewCard(messages[0])
+            handleSelectPreviewCard(messages[0]);
         }
     }, [messages, handleGetThreadEmails, handleSelectPreviewCard, selectedMessages]);
 

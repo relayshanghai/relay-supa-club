@@ -21,7 +21,11 @@ export type SendInfluencersToOutreachPayload = {
     extra_info?: any;
 };
 
-export const SendInfluencersToOutreach = (trigger: TriggerEvent<SendInfluencersToOutreachPayload>, payload?: SendInfluencersToOutreachPayload) =>
-    trigger(BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH, payload);
+export const SendInfluencersToOutreach = (
+    trigger: TriggerEvent<SendInfluencersToOutreachPayload>,
+    payload?: SendInfluencersToOutreachPayload,
+) => trigger(BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH, payload);
 
-SendInfluencersToOutreach.eventName = <typeof BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH>BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH;
+SendInfluencersToOutreach.eventName = <typeof BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH>(
+    BOOSTBOT_SEND_INFLUENCERS_TO_OUTREACH
+);

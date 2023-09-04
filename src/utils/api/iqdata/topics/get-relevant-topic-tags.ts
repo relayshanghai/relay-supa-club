@@ -49,7 +49,7 @@ export const getRelevantTopicTags = async (payload: GetRelevantTopicTagsPayload,
     } else {
         throw new RelayError('Error fetching relevant topic tags', 400, {
             shouldLog: true,
-            sendToSentry: true
+            sendToSentry: true,
         });
     }
 

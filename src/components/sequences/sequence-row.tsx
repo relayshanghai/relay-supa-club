@@ -74,7 +74,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
     const [email, setEmail] = useState(sequenceInfluencer.email ?? '');
     const [showEmailPreview, setShowEmailPreview] = useState<SequenceStep[] | null>(null);
     const [sendingEmail, setSendingEmail] = useState(false);
-    const { track } = useRudderstackTrack()
+    const { track } = useRudderstackTrack();
 
     const handleEmailUpdate = async (email: string) => {
         try {
@@ -105,7 +105,7 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                 sent_success_count: succeeded.length,
                 sent_failed: failed,
                 sent_failed_count: failed.length,
-            })
+            });
 
             if (succeeded.length > 0) {
                 toast.success(t('sequences.number_emailsSuccessfullyScheduled', { number: succeeded.length }));
@@ -119,8 +119,8 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                 sequence_id: sequenceInfluencer.sequence_id,
                 sequence_influencer_id: sequenceInfluencer.id,
                 is_success: false,
-                extra_info: { error: String(error) }
-            })
+                extra_info: { error: String(error) },
+            });
             toast.error(error?.message ?? '');
         }
 

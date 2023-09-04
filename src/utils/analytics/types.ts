@@ -118,4 +118,4 @@ export type EventPayload<T = { [key: string]: any }> = { event_at?: string } & T
 /**
  * Signature for functions that would want to track an event
  */
-export type TrackEvent = <E extends TrackedEvent>(event: E, payload: payloads[E['eventName']]) => any
+export type TrackEvent = <E extends TrackedEvent>(event: E, payload: payloads[E['eventName']]) => any;

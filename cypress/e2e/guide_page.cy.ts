@@ -28,7 +28,7 @@ describe('checks restricted to guide page', () => {
             cy.contains('Go to ' + sectionData.title).click();
             cy.url().should('not.include', '/guide');
             cy.url().should('include', sectionData.url);
-        })
+        });
     });
     it('check modal for every separate guide but go back', () => {
         setupIntercepts();
@@ -40,8 +40,8 @@ describe('checks restricted to guide page', () => {
             cy.contains(sectionData.title);
             cy.contains(guidePage.goBack).click();
             cy.url().should('include', '/guide');
-        })
+        });
     });
 });
 
-export { };
+export {};

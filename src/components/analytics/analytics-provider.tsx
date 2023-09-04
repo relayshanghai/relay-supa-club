@@ -48,10 +48,10 @@ export const AnalyticsProvider = ({ children }: AnalyticsProviderProps) => {
 
     useEffect(() => {
         if (profile !== null && rudderstack) {
-            const { id, traits } = profileToIdentifiable(profile)
-            rudderstack.identify(id, traits)
+            const { id, traits } = profileToIdentifiable(profile);
+            rudderstack.identify(id, traits);
         }
-    }, [rudderstack, profile])
+    }, [rudderstack, profile]);
 
     // set analytics identity
     useEffect(() => {

@@ -24,12 +24,12 @@ export const SequencesPage = () => {
         setShowCreateSequenceModal(true);
     };
 
-    const { track } = useRudderstackTrack()
+    const { track } = useRudderstackTrack();
 
     useEffect(() => {
-        const { abort } = track(OpenSequencesPage)
+        const { abort } = track(OpenSequencesPage);
         return abort;
-    }, [track])
+    }, [track]);
 
     return (
         <Layout>

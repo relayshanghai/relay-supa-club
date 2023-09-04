@@ -65,8 +65,6 @@ const Manager = () => {
                 ...sequenceInfluencers.slice(updatedInfluencerIndex + 1),
             ];
             refreshSequenceInfluencers(newInfluencers);
-            // const index = sequenceInfluencers?.findIndex((x) => x.id === influencer?.id)
-            // refreshSequenceInfluencers([...sequenceInfluencers.slice(0,index), {...sequenceInfluencers[index], funnel_status: data.notes?.collabStatus}, ...sequenceInfluencers?.slice(index + 1)]);
         },
         [refreshSequenceInfluencers, sequenceInfluencers, influencer],
     );

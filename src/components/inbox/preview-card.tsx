@@ -20,8 +20,8 @@ export const PreviewCard = ({
     return (
         <div
             onClick={() => {
-                onSelect && onSelect(message)
-                handleGetThreadEmails(message)
+                onSelect && onSelect(message);
+                handleGetThreadEmails(message);
             }}
             className={`${
                 selectedMessage?.id === message.id
