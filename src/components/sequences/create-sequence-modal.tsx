@@ -24,7 +24,7 @@ export const CreateSequenceModal = ({
     const { createSequence } = useSequence();
     const { createDefaultSequenceSteps } = useSequenceSteps();
     const { createDefaultTemplateVariables } = useTemplateVariables();
-    const { track } = useRudderstackTrack()
+    const { track } = useRudderstackTrack();
 
     const [loading, setLoading] = useState<boolean>(false);
     const [sequenceName, setSequenceName] = useState<string>('');
@@ -40,15 +40,15 @@ export const CreateSequenceModal = ({
                 track(CreateSequence, {
                     sequence_id: null,
                     is_success: false,
-                    extra_info: { error: "Failed to get sequence" }
-                })
+                    extra_info: { error: 'Failed to get sequence' },
+                });
                 throw new Error('Failed to get sequence id');
             }
 
             track(CreateSequence, {
                 sequence_id: data.id,
                 is_success: true,
-            })
+            });
 
             await createDefaultSequenceSteps(data.id);
             await createDefaultTemplateVariables(data.id);
@@ -60,8 +60,8 @@ export const CreateSequenceModal = ({
             track(CreateSequence, {
                 sequence_id: null,
                 is_success: false,
-                extra_info: { error: String(error) }
-            })
+                extra_info: { error: String(error) },
+            });
         } finally {
             setLoading(false);
             setShowCreateSequenceModal(false);

@@ -30,21 +30,22 @@ export const createClient = (writeKey?: string, dataPlane?: string, options?: co
  * Track function that supports events in /src/utils/analytic/events
  * @note ideally, we will move all tracking events there
  */
-export const track: (r: RudderBackend, u: SessionIds['user_id']) => TrackEvent = (rudder, user_id) => (event, payload) => {
-    if (!user_id) {
-        throw new Error(`Rudderstack event "${event.eventName}" has no identity`)
-    }
+export const track: (r: RudderBackend, u: SessionIds['user_id']) => TrackEvent =
+    (rudder, user_id) => (event, payload) => {
+        if (!user_id) {
+            throw new Error(`Rudderstack event "${event.eventName}" has no identity`);
+        }
 
-    const trigger: TriggerEvent = (eventName, payload) => {
-        rudder.track({
-            userId: user_id,
-            event: eventName,
-            properties: payload,
-        });
-    }
+        const trigger: TriggerEvent = (eventName, payload) => {
+            rudder.track({
+                userId: user_id,
+                event: eventName,
+                properties: payload,
+            });
+        };
 
-    return event(trigger, payload)
-}
+        return event(trigger, payload);
+    };
 
 const client = Symbol('Rudderstack Client');
 
@@ -114,16 +115,16 @@ export class Rudderstack {
 
     async identifyWithProfile(userId: string) {
         this.getClient().identify({
-            userId
+            userId,
         });
 
         this.session = {
-            user_id: userId
-        }
+            user_id: userId,
+        };
     }
 
     getIdentity() {
-        return this.session?.user_id
+        return this.session?.user_id;
     }
 
     /**

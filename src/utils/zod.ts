@@ -19,8 +19,8 @@ export type zInfer<T extends ZodType, X extends 'o' | 'i' = 'i'> = X extends 'i'
 export const zType = <T>() => z.any() as z.ZodType<T>;
 
 export const isNumeric = (v: any): v is number => {
-    return v !== null && !isNaN(Number(v))
-}
+    return v !== null && !isNaN(Number(v));
+};
 
 /**
  * Return a zod object for boolish values
@@ -29,23 +29,24 @@ export const isNumeric = (v: any): v is number => {
  *  False values: "false", "0", 0, false, null, undefined
  */
 export const boolish = () => {
-    const o = z.union([z.string(), z.number(), z.boolean(), z.null(), z.undefined()])
+    const o = z.union([z.string(), z.number(), z.boolean(), z.null(), z.undefined()]);
 
-    return o.refine((v) => {
-        return v === "true"
-            || v ===  "1"
-            || v === 1
-            || v === true
-            || v === "false"
-            || v ===  "0"
-            || v === 0
-            || v === false
-            || v === null
-            || v === undefined;
-    }).transform((v) => {
-        return v === "true"
-            || v ===  "1"
-            || v === 1
-            || v === true;
-    });
-}
+    return o
+        .refine((v) => {
+            return (
+                v === 'true' ||
+                v === '1' ||
+                v === 1 ||
+                v === true ||
+                v === 'false' ||
+                v === '0' ||
+                v === 0 ||
+                v === false ||
+                v === null ||
+                v === undefined
+            );
+        })
+        .transform((v) => {
+            return v === 'true' || v === '1' || v === 1 || v === true;
+        });
+};

@@ -3,9 +3,9 @@ import type { EventPayload, TriggerEvent } from '../../types';
 export const OUTREACH_CREATE_SEQUENCE = 'outreach-create_sequence';
 
 export type CreateSequencePayload = EventPayload<{
-    sequence_id: string | null,
-    is_success: boolean,
-    extra_info?: any
+    sequence_id: string | null;
+    is_success: boolean;
+    extra_info?: any;
 }>;
 
 export const CreateSequence = (trigger: TriggerEvent<CreateSequencePayload>, payload?: CreateSequencePayload) =>
