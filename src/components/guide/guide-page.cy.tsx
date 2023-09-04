@@ -1,20 +1,24 @@
 /// <reference types="@testing-library/cypress" />
 // @ts-check
 
+import { testMount } from 'src/utils/cypress-app-wrapper';
+import type { GuideCardKey } from './index';
 import { GuideCards, GuideComponent } from './index';
-import guidePage from 'i18n/zh/guide';
+import guidePage from 'i18n/en/guide';
 
 describe('GuideComponent', () => {
-    Object.keys(guidePage.modalInfo).forEach((section) => {
-        const cardDetails = guidePage.cards[section as keyof typeof guidePage.cards];
-        beforeEach(() => {
-            cy.mount(<GuideComponent />);
-        });
+    Object.keys(guidePage.modalInfo).forEach((_section) => {
+        const section = Object.keys(guidePage.modalInfo).find((key) => key === _section) as GuideCardKey;
+        const cardDetails = guidePage.cards[section];
+
         it('should render', () => {
+            testMount(<GuideComponent />);
             cy.contains(guidePage.welcome + ' relay.club');
             cy.contains(guidePage.welcomeDescription);
         });
         it('should show section title and description', () => {
+            testMount(<GuideComponent />);
+
             cy.contains(cardDetails.title);
             cy.contains(cardDetails.description);
         });
@@ -22,17 +26,18 @@ describe('GuideComponent', () => {
 });
 
 describe('GuideCards', () => {
-    Object.keys(guidePage.modalInfo).forEach((section) => {
+    Object.keys(guidePage.cards).forEach((_section) => {
+        const section = Object.keys(guidePage.cards).find((key) => key === _section) as GuideCardKey;
         const sectionDetails = guidePage.modalInfo[section as keyof typeof guidePage.modalInfo];
         const cardDetails = guidePage.cards[section as keyof typeof guidePage.cards];
         it('should render', () => {
-            cy.mount(<GuideCards cardName={`${section}`} />);
+            testMount(<GuideCards cardKey={`${section}`} />);
             cy.contains(cardDetails.title);
             cy.contains(cardDetails.description);
             cy.contains(guidePage.learnMore);
         });
         it('should open modal and close it', () => {
-            cy.mount(<GuideCards cardName={`${section}`} />);
+            testMount(<GuideCards cardKey={`${section}` as any} />);
             cy.contains(guidePage.learnMore).click();
             cy.contains(sectionDetails.title);
             cy.contains(guidePage.goBack).click();
