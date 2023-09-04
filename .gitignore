@@ -56,4 +56,3 @@ email-server/.env
 .history
 supabase/supabase.code-workspace
 supabase/supabase/
-.env
