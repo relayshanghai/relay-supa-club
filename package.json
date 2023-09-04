@@ -123,10 +123,10 @@
     "supabase/tests/**/*.sql": [
       "supabase/db.sh db_test"
     ],
-    "(pages|src|styles|types|i18n|docs)/**/!(*supabase).{ts,tsx}": [
+    "(pages|src|styles|types|i18n|docs|cypress)/**/!(*supabase).{ts,tsx}": [
       "prettier --no-error-on-unmatched-pattern --write --editorconfig"
     ],
-    "(pages|src|styles|types|i18n|docs)/**/*.{js,jsx,ts,tsx}": [
+    "(pages|src|styles|types|i18n|docs|cypress)/**/*.{js,jsx,ts,tsx}": [
       "eslint --ext=.js,.jsx,.ts,.tsx --max-warnings=0 --fix"
     ]
   },
