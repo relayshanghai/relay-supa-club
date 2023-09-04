@@ -1,6 +1,5 @@
 import { mount } from 'cypress/react18';
 import React from 'react';
-import * as NextRouter from 'next/router';
 import { AppRouterContext } from 'next/dist/shared/lib/app-router-context';
 import { I18nextProvider } from 'react-i18next';
 import i18n from 'i18n';
@@ -11,6 +10,8 @@ import { Toaster } from 'react-hot-toast';
 import type { TestMountOptions } from './user-test-wrapper';
 import { UserAndCompanyTestWrapper } from './user-test-wrapper';
 import { AnalyticsProvider } from 'src/components/analytics/analytics-provider';
+import './cypress-mock-router';
+
 i18n.changeLanguage('en-US');
 
 export const TestContextsWrapper = ({
@@ -20,14 +21,8 @@ export const TestContextsWrapper = ({
     options?: TestMountOptions;
     children: React.ReactNode;
 }) => {
-    const push = options?.pushStub ?? cy?.stub();
-    const router = cy?.stub(NextRouter, 'default');
-    cy?.stub(NextRouter, 'useRouter').returns({
-        pathname: options?.pathname ?? '/dashboard',
-        push,
-        asPath: '/dashboard',
-        query: options?.query ?? {},
-    });
+    const router = window.setMockRouter(options ?? {});
+
     // see: https://on.cypress.io/mounting-react
     const supabaseClient = createBrowserSupabaseClient();
     return (
@@ -37,7 +32,7 @@ export const TestContextsWrapper = ({
                     <SessionContextProvider supabaseClient={supabaseClient} initialSession={{} as any}>
                         {/* gets rid of the localStorage cache in tests */}
                         <SWRConfig value={{ provider: () => new Map() }}>
-                            <UserAndCompanyTestWrapper>{children}</UserAndCompanyTestWrapper>
+                            <UserAndCompanyTestWrapper options={options}>{children}</UserAndCompanyTestWrapper>
                         </SWRConfig>
                     </SessionContextProvider>
                 </AnalyticsProvider>
