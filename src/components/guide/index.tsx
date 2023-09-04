@@ -8,7 +8,7 @@ import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { GUIDE_PAGE } from 'src/utils/rudderstack/event-names';
 
 const featVideo = true;
-type GuideCardKey = keyof typeof guidePage.cards;
+export type GuideCardKey = keyof typeof guidePage.cards;
 
 export const GuideCards = ({ cardKey }: { cardKey: GuideCardKey }) => {
     const { t } = useTranslation();
