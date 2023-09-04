@@ -26,23 +26,23 @@ type Props = {
 
 export const activeTabStyles = cls(['active', 'text-primary-500', 'border-b-2', 'border-b-primary-500']);
 
+const mapProfileToFormData = (p: SequenceInfluencerManagerPage) => {
+    if (!p) return null;
+    return {
+        notes: mapProfileToNotes(p),
+        shippingDetails: mapProfileToShippingDetails(p),
+    };
+};
+
 export const ProfileScreen = ({ profile, selectedTab, onUpdate, onCancel, ...props }: Props) => {
     const { state, setState } = useProfileScreenContext();
-
-    const mapProfileToFormData = useCallback((p: typeof profile) => {
-        if (!p) return null;
-        return {
-            notes: mapProfileToNotes(p),
-            shippingDetails: mapProfileToShippingDetails(p),
-        };
-    }, []);
 
     useEffect(() => {
         if (!profile) return;
         const val = mapProfileToFormData(profile);
         if (!val) return;
         setState(val);
-    }, [profile, mapProfileToFormData, setState]);
+    }, [profile, setState]);
 
     const [selected, setSelected] = useState(selectedTab ?? 'notes');
 
