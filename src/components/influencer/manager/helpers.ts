@@ -17,8 +17,8 @@ export const filterInfluencers = (
     searchTerm: string,
     onlyMe: boolean,
     filterStatuses: CommonStatusType[],
-    profile: any,
-    sequences: any,
+    profile: ProfileDB,
+    sequences: Sequence[],
     sequenceInfluencers: SequenceInfluencerManagerPage[],
 ) => {
     let influencers = sequenceInfluencers;

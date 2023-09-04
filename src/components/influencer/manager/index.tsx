@@ -40,6 +40,8 @@ const Manager = () => {
 
     const influencers =
         sequenceInfluencers &&
+        profile &&
+        sequences &&
         filterInfluencers(searchTerm, onlyMe, filterStatuses, profile, sequences, sequenceInfluencers);
 
     useEffect(() => {
@@ -67,7 +69,7 @@ const Manager = () => {
                 { ...sequenceInfluencers[updatedInfluencerIndex], funnel_status: data.notes.collabStatus || 'Posted' },
                 ...sequenceInfluencers.slice(updatedInfluencerIndex + 1),
             ];
-            refreshSequenceInfluencers(newInfluencers);
+            refreshSequenceInfluencers(newInfluencers); //we refresh the cache with the newInfluencers for showing optimistic updates
         },
         [refreshSequenceInfluencers, sequenceInfluencers, influencer],
     );
@@ -91,12 +93,9 @@ const Manager = () => {
         setCollabOptions(setCollabStatusValues(sequenceInfluencers, COLLAB_OPTIONS));
     }, [sequenceInfluencers]);
 
-    const handleOnlyMe = useCallback(
-        (_state: boolean) => {
-            setOnlyMe(!onlyMe);
-        },
-        [onlyMe],
-    );
+    const handleOnlyMe = useCallback(() => {
+        setOnlyMe(!onlyMe);
+    }, [onlyMe]);
 
     const handleStatus = (filters: CommonStatusType[]) => {
         setFilterStatuses(filters);
