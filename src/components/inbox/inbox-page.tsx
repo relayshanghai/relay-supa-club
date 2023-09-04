@@ -234,9 +234,6 @@ export const InboxPage = () => {
                                     // TODO: add selectedSequenceInfluencers
                                     selectedMessages={selectedMessages}
                                     loadingSelectedMessages={loadingSelectedMessages}
-                                    onInfluencerClick={() => {
-                                        ///
-                                    }}
                                 />
                             )}
                         </div>
