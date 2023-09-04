@@ -5,15 +5,32 @@ const guidePage = {
     goto: '前往',
     learnMore: '了解更多',
     cards: {
+        sequences: {
+            title: '邮件进程管理',
+            description:
+                '邮件进程管理是一系列自动化的电子邮件模板，我们会安排、发送和跟踪这些模板，使您联系KOL的工作更加自动化，每周节省数小时的人工工作。',
+        },
+        templates: {
+            title: '模版',
+            description:
+                '电子邮件，很神奇！我们会从KOL的档案和您在“邮件进程管理项目“中设置的变量中提取信息，在发送前定制每封序列邮件。就像我们说的，神奇！',
+        },
+        inbox: {
+            title: '收件箱',
+            description: '无需再在电子邮件窗口和 relay.club 之间切换。',
+        },
+        influencerProfile: {
+            title: 'KOL 档案',
+            description: '追踪所有合作数据，抛弃电子表格！KOL档案是一款专门用于管理和简化合作流程的工具。',
+        },
+        influencerManager: {
+            title: 'KOL管理跟进',
+            description: '鸟瞰您正在进行中的合作，绝不让任何KOL从缝隙中溜走。',
+        },
         discover: {
             title: '发现KOL',
             description:
                 '我们的数据库涵盖了3个平台共计超过2.75亿个的红人帐户，并提供数据驱动工具助您找到完美的网红达人。',
-        },
-        outreach: {
-            title: 'Outreach',
-            description:
-                'We’re extremely excited about our new Influencer Relationship Management ( IRM ) system, tailor made to help you plan, organize and execute your collaborations as easily as possible. Outreach is all centered around ‘Sequences’, an automated emailing tool that will schedule, send and track your outreach and follow-up emails with just the click of a button. Our Sequences use intelligent Templates that pull in information about your company, product and the influencers you’re trying to reach to customize each message. When an influencer replies, we’ll display it in our specialized Inbox, where you can discuss your collab and keep track of all your information in the Influencer Profile!',
         },
         performance: {
             title: '追踪绩效',
@@ -25,6 +42,145 @@ const guidePage = {
         },
     },
     modalInfo: {
+        sequences: {
+            title: '邮件进程管理',
+            url: '/sequences',
+            sections: [
+                {
+                    title: '邮件进程管理是什么？',
+                    description:
+                        '“邮件进程管理”功能就像一个邮件模板播放列表，它可以被定制、安排并自动向您从“探索方案”或BoostBot人工智能搜索中添加的KOL发送邮件。因此，您可以将“邮件进程管理”功能视为一组预先制定好的电子邮件，也可以将其视为您已添加的KOL群组。',
+                },
+                {
+                    title: '',
+                    description:
+                        '每个“邮件进程管理”项目由4个邮件模版组成，它们分别是一封介绍您产品的拓展邮件，和3封后续跟进的邮件，这些邮件消息将在被标记在KOL收件箱的顶部。目前，所有邮件进程管理都使用我们内部开发，根据大量实战经验精炼出来的邮件模板。您可以通过调整邮件进程管理页面中邮件模板的信息，为您的品牌和产品量身定制邮件，很快您将可以制作您专有的邮件模板！',
+                },
+                {
+                    title: '',
+                    description:
+                        '我们会对邮件进行追踪，一旦KOL做出回复，他们将被转移到“达人管理系统”，KOL的回复将会在收件箱中显示。',
+                },
+                {
+                    title: '怎么使用？',
+                    description:
+                        '我们建议创建几个不同的“邮件进程管理项目”，理想的情况是为您希望合作的类别或垂直领域的每个KOL至少创建一个邮件进程管理项目。例如，如果我想推广小米手环8这样的智能手表，我会为“科技爱好者”、“日常健身专家”和“生产力黑客”创建“邮件进程管理”，然后我可以为每个组别定制模版板，这样我发送的邮件能更有针对性更显个性化，也能大幅提升回复率！',
+                },
+                {
+                    title: '',
+                    description:
+                        '创建新的“邮件进程管理项目”后，您需要为您的公司和产品先设置，这些变量将用于填写有关公司和产品的信息。您可以使用右上角的“更新模板变量”按钮从序列内部执行此操作。您需要完成此步骤才能发送电子邮件。',
+                },
+                {
+                    title: '',
+                    description: '"邮件进程管理项目"设置完成后，您可以将其设置为手动启动或自动启动。',
+                },
+                {
+                    title: '',
+                    description:
+                        '当您的"邮件进程管理项目"为设置为手动启动时，它会把所有添加的KOL放在 "急需回复 "栏中，您需要自己点击“触发项目“按钮来安排和发送电子邮件。',
+                },
+
+                {
+                    title: '',
+                    description:
+                        '如果您将“邮件进程管理项目“设置为自动启动时，那么您添加的所有具有可用电子邮件地址的KOL都将自动安排并向其发送电子邮件。',
+                },
+                {
+                    title: '',
+                    description:
+                        '我们建议您使用自动启动功能，让整个过程更轻松！我们建议最好在一开始的时候联系更多的有潜力的KOL，然后在他们回复后，再更有选择性的挑选合作对象。',
+                },
+                {
+                    title: '',
+                    description:
+                        '有些有KOL选择不在自己的简介中显示联系信息，因此我们在分析他们的社交媒体资料时无法收集到这些信息。在 Youtube 上，有时可以在个人简介中找到其联系信息。如果您能找到　KOL的电子邮件地址，您可以将其添加到他们的个人资料中的 "急需回复 "部分，然后我们就可以安排和发送他们的序列邮件了。',
+                },
+            ],
+        },
+        templates: {
+            title: '模版',
+            url: '/sequences',
+            sections: [
+                {
+                    title: '什么是模版?',
+                    description:
+                        '模板是预先构建的电子邮件蓝图，其中包括 "变量"，以确保您发送的每封电子邮件都是为您要联系的KOL而定制的。每个序列使用 4 个不同的模板、一封初始邮件和 3 封后续邮件，这些信息将每隔几天自动发送一次，以提高您收到回复的几率',
+                },
+                {
+                    title: '',
+                    description:
+                        '它们使用您提供的信息，以及我们从KOL报告中提取的信息来定制发送的每封电子邮件，省去了自己复制和粘贴的麻烦。',
+                },
+                {
+                    title: '如何使用模版',
+                    description:
+                        '在开始发送序列中的电子邮件之前，您需要设置每个变量将使用的内容，您可以通过 “邮件进程管理项目“页面右上角的 "更新模板变量 "按钮进行设置。',
+                },
+                {
+                    title: '',
+                    description:
+                        '我们已经预制了一套灵活、高效的模板供您使用，同时我们还在努力提高您制作自己模板的能力。这些都是经过实战检验的模板，我们在内部使用时取得了很好的效果。',
+                },
+            ],
+        },
+        inbox: {
+            title: '收件箱',
+            url: '/inbox',
+            sections: [
+                {
+                    title: '',
+                    description:
+                        '在收件箱中，您可以查看所有外联电子邮件的回复，以及与所有KOL进行的后续对话。您可以直接在平台上打开邮件并回复！',
+                },
+                {
+                    title: '',
+                    description: '收件箱与KOL档案相连，您可以在一个地方获得所需的所有信息。',
+                },
+            ],
+        },
+        influencerProfile: {
+            title: 'KOL 档案',
+            url: '/influencer-manager',
+            sections: [
+                {
+                    title: '如何使用KOL档案',
+                    description:
+                        '您可以通过合作来跟进KOL的状态，帮助您跟进每个人在漏斗中的进展。当您开始与越来越多的KOL合作时，设置和更新KOL的状态非常重要，有助于您随时掌握情况。您可以在 "KOL管理跟进 "中根据KOL的状态对其进行排序和筛选，也可以在回复KOL邮件时在收件箱中进行设置！',
+                },
+                {
+                    title: '',
+                    description:
+                        '这里有专门的位置保存有关合作的所有重要信息，包括KOL的费用，预定内容的发布日期，甚至发货详情！',
+                },
+                {
+                    title: '',
+                    description:
+                        '我们知道，除了合作的标准信息外，您还需要记住一些其他信息。这也是我们添加备注部分的原因，您可以添加有关KOL合作的长备注。保存备注后，点击个人档案上备注标题旁边的图标即可查看。',
+                },
+                {
+                    title: '',
+                    description:
+                        '一旦您的KOL发布了内容，可以将 URL 添加到 "发布 "部分，这样我们就可以跟进参与情况，并将其显示在 "数据中心 "部分！',
+                },
+            ],
+        },
+        influencerManager: {
+            title: 'Influencer Manager',
+            url: '/influencer-manager',
+            sections: [
+                {
+                    title: '如何使用KOL管理跟进',
+                    description:
+                        '您可以查看、筛选或搜索所有已回复您团队发出的电子邮件的KOL，他们目前正在您的合作漏斗中移动。点击其中一行即可调出KOL资料，或点击右侧收件箱图标进入与KOL的对话',
+                },
+                {
+                    title: '',
+                    description:
+                        '切换 "View Only Mine"（只查看我的KOL），只查看您个人负责的KOL，或者将”View Only Mine”（只查看我的KOL)关掉，即可查看整个团队的KOL。',
+                },
+            ],
+        },
         discover: {
             title: '发现KOL',
             url: '/dashboard',
@@ -58,72 +214,6 @@ const guidePage = {
                     title: '联系方式',
                     description:
                         '要找到网红达人的联系方式，我们需要通过爬虫从他们的个人资料中抓取信息。但许多达人不愿在个人资料中披露这些信息，所以我们无法收集到。我们正在研究寻找新的方法来收集这些信息，但目前来看，仅显示有可用电子邮件的达人会比显示无电子邮件信息的达人更精确地定位。',
-                },
-            ],
-        },
-        outreach: {
-            title: 'Outreach',
-            url: '/sequences',
-            sections: [
-                {
-                    title: 'Sequences',
-                    description: `A Sequence is like a playlist email templates that will be customized, scheduled and automatically sent to an Influencer you add from Discover or BoostBot AI search. So you can think of the Sequence both as the set of scheduled emails, and as the group of influencers you’ve added to it.
-                        
-                        Each sequence consists of 4 email templates, an Outreach message that explains your product and 3 follow-up messages to flag your message to the top of the influencers inbox. Right now all sequences use our internally developed an battle tested templates. You can tailor them to your brand and product by updating the template variables in the Sequence page, and soon you’ll even be able to make your own templates.
-                        
-                        We will track the emails, and once the influencer responds, they’ll be moved to the Influencer Manager, and their response will display in the Inbox.
-                        
-                        We recommend creating a few different sequences, at least one for each genre or niche of influencers you want to collaborate with is ideal. For example if I wanted to promote a smart watch like the Mi Band 8, I would create sequences for ‘Tech Enthusiasts’, ‘Workout Routine Specialists’, and ‘Productivity Hackers’. Then I can adjust my templates and variables for each group so my emails will feel more personalized, and have a better reply rate!
-                        
-                        After your sequence is set up, you’ll be able to set it to either Manual Start, or Auto Start. 
-
-                        When your sequence is set to Manual Start, it will collect all influencers added to it in the ‘Needs Attention’ tab for you, you will need to click the Trigger Sequence button yourself to schedule and send the emails. 
-
-                        If you set your sequence to Auto Start, then any influencer with an email address available that you add to the sequence will automatically have their emails scheduled and sent to them.
-
-                        We recommend using Auto start to make your life easier! It’s better to email lots of potential influencers, and then be more selective about who to work with after they reply.
-
-                        Some influencers choose not to display their contact information in their bio, and so we aren’t able to collect it when we are analyzing their social media profile. On youtube, it is sometimes available in the ‘About’ section of the profile. If you can find the influencers email address, you can add it to their profile in the ‘Needs Attention’ section, then we can schedule and send their sequence emails.                                                 `,
-                },
-                {
-                    title: 'Templates',
-                    description: `Like emails, but magic!
-
-                        Templates are pre-built email blueprints that include ‘Variables’ to make sure each email you send is customized for the influencer you’re trying to reach. Each sequence uses 4 different templates, an initial outreach, and 3 follow-up messages that will go out automatically every few days to boost your chances of a reply. 
-
-                        The templates use information provided by you, as well as information we pull from the influencers report to tailor each emails that goes out, without any of the hassle of copying and pasting yourself
-
-                        Before you can start sending out emails in your sequence, you’ll need to set the content that each variable will use, you can do this from the “Update Templates Variables” button in the top right corner of the “Sequence” page. 
-
-                        We’ve pre-built a set of flexible, and highly effective templates for you to use while we work on building the ability to let you make your own templates. These are battle-tested templates we use internally to great success`,
-                },
-                {
-                    title: 'Inbox',
-                    description: `The Inbox is where you’ll be able to access all the replies to your outreach emails, and follow-up conversations with influencers. You’ll be able to open that message and reply to the right there on the platform!
-
-                        No more switching between your email window, and relay.club. With the Inbox connected to the Influencer Profile you’ll have all the context you need, all in one place.`,
-                },
-                {
-                    title: 'Influencer Profile',
-                    description: `The Influencer Profile is a tool dedicated to organizing and streamlining the collaboration process. 
-
-                        You can track the Influencer’s status through the collab, helping to keep track of everyone moving through your funnel. Setting and updating the status of your influencers is super important to help you keep on top of things as you start working with more and more influencers. You’ll be able to sort and filter your influencers by their status in the Influencer Manager, and you can set it from right there in the Inbox when you’re responding to their emails!
-                        
-                        There are dedicated spots to save all the most important information regarding a collab, from the influencers fee, scheduled post date for the content and even shipping details!
-                        
-                        We know there’s going to be things that you need to remember outside of the standard information for a collab. That’s why we added the notes section for you to add longer comments regarding your influencer collab. Once a note is saved, it can be viewed by clicking on the icon beside the Notes title on the profile. 
-                        
-                        Once your influencer has posted their content, add the URL to the Posts section so we can track the engagements for you to display in the Performance section!`,
-                },
-                {
-                    title: 'Influencer Manager',
-                    description: `The influencer manager is where you can see your entire teams influencers, and get a birds eye view of your in-progress collabs. 
-
-                        You can view, filter, or search through all the influencers that have responded to your teams outreach emails, and are currently moving through your collab funnel. Pull up the Influencer Profile by clicking on one of the rows, or go to your conversation with them by clicking on their Inbox icon on the right.
-
-                        Toggle “View Only Mine” to see just the influencers you’re personally responsible for, or keep an eye on the whole team by toggling it off. 
-
-                        It’s the hub of your influencer marketing efforts, where you can get an overview of your collabs and never let anyone slip through the cracks.`,
                 },
             ],
         },
