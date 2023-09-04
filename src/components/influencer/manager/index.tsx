@@ -36,12 +36,12 @@ const Manager = () => {
     const [onlyMe, setOnlyMe] = useState<boolean>(false);
     const [filterStatuses, setFilterStatuses] = useState<CommonStatusType[]>([]);
 
-    const { track } = useRudderstackTrack()
+    const { track } = useRudderstackTrack();
 
     useEffect(() => {
-        const { abort } = track(OpenInfluencerManagerPage)
+        const { abort } = track(OpenInfluencerManagerPage);
         return abort;
-    }, [track])
+    }, [track]);
 
     const handleRowClick = useCallback(
         (influencer: SequenceInfluencerManagerPage) => {
@@ -55,7 +55,7 @@ const Manager = () => {
     );
 
     const handleProfileUpdate = useCallback(() => {
-        refreshSequenceInfluencers()
+        refreshSequenceInfluencers();
     }, [refreshSequenceInfluencers]);
 
     const setCollabStatusValues = (influencers: SequenceInfluencerManagerPage[], options: MultipleDropdownObject) => {
