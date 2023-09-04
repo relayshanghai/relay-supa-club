@@ -231,7 +231,11 @@ export const InboxPage = () => {
                                 </>
                             )}
                         </div>
-                        <div className="col-span-5 h-full w-full overflow-auto">
+                        <div
+                            className={`${
+                                sequenceInfluencer && initialValue ? 'col-span-5' : 'col-span-9'
+                            } h-full w-full overflow-auto`}
+                        >
                             {selectedMessages && (
                                 <CorrespondenceSection
                                     // TODO: add selectedSequenceInfluencers
