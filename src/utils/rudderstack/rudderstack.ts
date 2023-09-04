@@ -31,6 +31,8 @@ export const createClient = (writeKey?: string, dataPlane?: string, options?: co
  */
 export const track: (r: RudderBackend, u: typeof Rudderstack.prototype['session']) => TrackEvent =
     (rudder, session) => (event, payload) => {
+        if (disabled) return;
+
         const trigger: TriggerEvent = (eventName, payload) => {
             if (!session) {
                 throw new Error(`Rudderstack event "${event.eventName}" has no identity`);
