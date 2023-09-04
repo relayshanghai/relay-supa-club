@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { featNewPricing } from 'src/constants/feature-flags';
 import httpCodes from 'src/constants/httpCodes';
 import { createSubscriptionErrors } from 'src/errors/subscription';
+import { ApiHandler } from 'src/utils/api-handler';
 import {
     getCompanyCusId,
     updateCompanySubscriptionStatus,
@@ -26,7 +27,7 @@ export type SubscriptionCreateTrialPostBody = {
 
 export type SubscriptionCreateTrialResponse = Stripe.Response<Stripe.Subscription>;
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     // Check the request method
     if (req.method === 'POST') {
         try {
@@ -147,4 +148,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     return res.status(httpCodes.METHOD_NOT_ALLOWED).json({});
-}
+};
+
+export default ApiHandler({
+    postHandler,
+});

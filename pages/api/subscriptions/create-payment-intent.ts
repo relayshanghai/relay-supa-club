@@ -1,5 +1,6 @@
-import type { NextApiHandler } from 'next';
+import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
+import { ApiHandler } from 'src/utils/api-handler';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
 import { serverLogger } from 'src/utils/logger-server';
 
@@ -8,7 +9,7 @@ export type CreatePaymentIntentPostBody = {
     currency: string;
     customer: string;
 };
-const getHandler: NextApiHandler = async (req, res) => {
+const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     const { amount, currency, customer } = req.body as CreatePaymentIntentPostBody;
 
     if (req.method === 'POST')
@@ -31,4 +32,6 @@ const getHandler: NextApiHandler = async (req, res) => {
         }
 };
 
-export default getHandler;
+export default ApiHandler({
+    postHandler,
+});
