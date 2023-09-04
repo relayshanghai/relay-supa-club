@@ -125,6 +125,9 @@ export const InboxPage = () => {
         (data: Partial<ProfileValue>) => {
             if (!sequenceInfluencer) return;
 
+            // eslint-disable-next-line no-console
+            console.log(sequenceInfluencer.id);
+
             saveSequenceInfluencer.call(sequenceInfluencer.id, data).then((profile) => {
                 // @note updates local state without additional query
                 //       this will cause issue showing previous state though
