@@ -59,7 +59,7 @@ export function InfluencersTable<TData, TValue>({
     }, [page]);
 
     return (
-        <div className="relative h-full w-full overflow-scroll">
+        <div className="relative h-full w-full flex-shrink-0 overflow-scroll md:flex-shrink">
             <div className="h-full w-full overflow-scroll rounded-md border pb-10">
                 {/* Scroll to the top of the table when changing pagination pages */}
                 <div ref={tableRef} />

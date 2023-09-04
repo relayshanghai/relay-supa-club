@@ -168,7 +168,7 @@ const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) =>
     try {
         const { data: ourUser, error } = await getProfileBySequenceSendEmail(event.data.to[0].address);
         if (error) {
-            trackData.extra_info.error = String(error);
+            trackData.extra_info.error = JSON.stringify(error);
 
             track(rudderstack.getClient(), rudderstack.getIdentity())(EmailReply, {
                 ...trackData,
@@ -215,7 +215,7 @@ const handleNewEmail = async (event: WebhookMessageNew, res: NextApiResponse) =>
             is_success: true,
         })
     } catch (error: any) {
-        trackData.extra_info.error = String(error);
+        trackData.extra_info.error = JSON.stringify(error);
         track(rudderstack.getClient(), rudderstack.getIdentity())(EmailReply, {
             ...trackData,
             is_success: false,
@@ -415,7 +415,7 @@ const handleSent = async (event: WebhookMessageSent, res: NextApiResponse) => {
             message: `sent to: ${event.data.envelope.to}`,
         });
     } catch (error: any) {
-        trackData.extra_info.error = String(error);
+        trackData.extra_info.error = JSON.stringify(error);
         track(rudderstack.getClient(), rudderstack.getIdentity())(EmailSent, {
             ...trackData,
             is_success: false,

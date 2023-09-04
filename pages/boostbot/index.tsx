@@ -1,6 +1,5 @@
 import type { CreatorAccountWithTopics } from 'pages/api/boostbot/get-influencers';
 import { useEffect, useState } from 'react';
-import { toast } from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { Chat } from 'src/components/boostbot/chat';
 import InitialLogoScreen from 'src/components/boostbot/initial-logo-screen';
@@ -18,6 +17,8 @@ import type { UnlockInfluencersPayload } from 'src/utils/analytics/events/boostb
 import { clientLogger } from 'src/utils/logger-client';
 import type { UserProfile } from 'types';
 import type { ProgressType } from 'src/components/boostbot/chat';
+import { isFulfilled } from 'src/utils/utils';
+import { useUser } from 'src/hooks/use-user';
 
 export type Influencer = (UserProfile | CreatorAccountWithTopics) & {
     isLoading?: boolean;
@@ -39,7 +40,9 @@ const Boostbot = () => {
     const { trackEvent: track } = useRudderstack();
     const { sequences } = useSequences();
     const [isLoading, setIsLoading] = useState(false);
-    const sequence = sequences?.find((sequence) => sequence.name === 'General collaboration');
+    const { profile } = useUser();
+    const defaultSequenceName = `${profile?.first_name}'s BoostBot Sequence`;
+    const sequence = sequences?.find((sequence) => sequence.name === defaultSequenceName);
     const { createSequenceInfluencer } = useSequenceInfluencers(sequence && [sequence.id]);
     const { sendSequence } = useSequence(sequence?.id);
     const [hasUsedUnlock, setHasUsedUnlock] = useState(false);
@@ -104,7 +107,10 @@ const Boostbot = () => {
             return response;
         } catch (error) {
             clientLogger(error, 'error');
-            toast.error(t('boostbot.error.influencerUnlock'));
+            addMessage({
+                sender: 'Bot',
+                content: t('boostbot.error.influencerUnlock') || '',
+            });
 
             trackingPayload.is_success = false;
             trackingPayload.extra_info = { error: String(error) };
@@ -131,7 +137,7 @@ const Boostbot = () => {
             return;
         }
 
-        const unlockedInfluencers = await handleUnlockInfluencers(currentPageInfluencers.slice(0, 1));
+        const unlockedInfluencers = await handleUnlockInfluencers(currentPageInfluencers);
 
         setIsLoading(false);
         addMessage({
@@ -172,16 +178,26 @@ const Boostbot = () => {
 
                 return createSequenceInfluencer(socialProfileId, tags, creatorProfileId, socialProfileEmail);
             });
-            const sequenceInfluencers = await Promise.all(sequenceInfluencerPromises);
+            const sequenceInfluencersResults = await Promise.allSettled(sequenceInfluencerPromises);
+            const sequenceInfluencers = sequenceInfluencersResults.filter(isFulfilled).map((result) => result.value);
+
+            if (sequenceInfluencers.length === 0) throw new Error('Error creating sequence influencers');
+
+            addMessage({
+                sender: 'Bot',
+                content: t(`boostbot.chat.${hasUsedOutreach ? 'hasUsedOutreach' : 'outreachDone'}`) || '',
+            });
 
             if (sequence?.auto_start) {
                 const sendSequencePromises = sequenceInfluencers.map((influencer) => sendSequence([influencer]));
                 await Promise.all(sendSequencePromises);
             }
-            toast.success(t('boostbot.success.influencersToOutreach'));
         } catch (error) {
             clientLogger(error, 'error');
-            toast.error(t('boostbot.error.influencersToOutreach'));
+            addMessage({
+                sender: 'Bot',
+                content: t('boostbot.error.influencersToOutreach') || '',
+            });
 
             trackingPayload.is_success = false;
             trackingPayload.extra_info = { error: String(error) };
@@ -191,18 +207,14 @@ const Boostbot = () => {
             // saying that it is multiple or not
             track(SendInfluencersToOutreach.eventName, trackingPayload);
             setIsLoading(false);
-            addMessage({
-                sender: 'Bot',
-                content: t(`boostbot.chat.${hasUsedOutreach ? 'hasUsedOutreach' : 'outreachDone'}`) || '',
-            });
             setHasUsedOutreach(true);
         }
     };
 
     return (
         <Layout>
-            <div className="flex h-full flex-row gap-4 p-3">
-                <div className="w-80 flex-shrink-0">
+            <div className="flex h-full flex-col gap-4 p-3 md:flex-row">
+                <div className="w-full flex-shrink-0 md:w-80">
                     <Chat
                         influencers={influencers}
                         setInfluencers={setInfluencers}
