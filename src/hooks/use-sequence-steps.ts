@@ -1,7 +1,7 @@
-import useSWR from 'swr';
-import { useClientDb, useDB } from 'src/utils/client-db/use-client-db';
-import { insertSequenceStepsCall } from 'src/utils/api/db/calls/sequence-steps';
 import type { SequenceStepInsert } from 'src/utils/api/db';
+import { insertSequenceStepsCall } from 'src/utils/api/db/calls/sequence-steps';
+import { useClientDb, useDB } from 'src/utils/client-db/use-client-db';
+import useSWR from 'swr';
 import type { InfluencerStepTypes } from 'types';
 
 type DefaultTemplateType = {
@@ -13,9 +13,9 @@ type DefaultTemplateType = {
 
 export const defaultTemplates: DefaultTemplateType[] = [
     { name: 'Outreach', id: 'AAABiYr-poEAAAAC', waitTimeHours: 0, stepNumber: 0 },
-    { name: '1st Follow-up', id: 'AAABiYsMUIAAAAAD', waitTimeHours: 1, stepNumber: 1 },
-    { name: '2nd Follow-up', id: 'AAABieM0bMMAAAAE', waitTimeHours: 48, stepNumber: 2 },
-    { name: '3rd Follow-up', id: 'AAABieM1AhgAAAAF', waitTimeHours: 72, stepNumber: 3 },
+    { name: '1st Follow-up', id: 'AAABiYsMUIAAAAAD', waitTimeHours: 72, stepNumber: 1 },
+    { name: '2nd Follow-up', id: 'AAABieM0bMMAAAAE', waitTimeHours: 144, stepNumber: 2 },
+    { name: '3rd Follow-up', id: 'AAABieM1AhgAAAAF', waitTimeHours: 216, stepNumber: 3 },
 ];
 
 export const useSequenceSteps = (sequenceId?: string) => {
