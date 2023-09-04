@@ -1,4 +1,5 @@
 import * as Sentry from '@sentry/nextjs';
+import { isUnknownError } from './is-api-error';
 import { parseError } from './utils';
 
 export type LogLevel = 'log' | 'info' | 'error' | 'warn';
@@ -19,3 +20,23 @@ export const serverLogger = (message: any, level: LogLevel = 'log', sendToSentry
     // eslint-disable-next-line no-console
     console[level](parseError(message));
 };
+
+export const logError = (message: unknown) => {
+    if (isUnknownError(message)) {
+        message = JSON.stringify(message)
+    }
+
+    Sentry.captureException(message)
+
+    // eslint-disable-next-line no-console
+    console.error(message)
+}
+
+export const log = (message: unknown) => {
+    if (isUnknownError(message)) {
+        message = JSON.stringify(message)
+    }
+
+    // eslint-disable-next-line no-console
+    console.log(message)
+}
