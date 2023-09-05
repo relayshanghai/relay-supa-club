@@ -1,6 +1,5 @@
 import { mount } from 'cypress/react18';
 import React from 'react';
-import { AppRouterContext } from 'next/dist/shared/lib/app-router-context';
 import { I18nextProvider } from 'react-i18next';
 import i18n from 'i18n';
 import { createBrowserSupabaseClient } from '@supabase/auth-helpers-nextjs';
@@ -11,6 +10,7 @@ import type { TestMountOptions } from './user-test-wrapper';
 import { UserAndCompanyTestWrapper } from './user-test-wrapper';
 import { AnalyticsProvider } from 'src/components/analytics/analytics-provider';
 import './cypress-mock-router';
+import { RouterContext } from 'next/dist/shared/lib/router-context';
 
 i18n.changeLanguage('en-US');
 
@@ -21,12 +21,12 @@ export const TestContextsWrapper = ({
     options?: TestMountOptions;
     children: React.ReactNode;
 }) => {
-    const router = window.setMockRouter(options ?? {});
-
+    window.setMockRouter(options ?? {});
+    const router = window.useRouter();
     // see: https://on.cypress.io/mounting-react
     const supabaseClient = createBrowserSupabaseClient();
     return (
-        <AppRouterContext.Provider value={router as any}>
+        <RouterContext.Provider value={router as any}>
             <I18nextProvider i18n={i18n}>
                 <AnalyticsProvider>
                     <SessionContextProvider supabaseClient={supabaseClient} initialSession={{} as any}>
@@ -38,7 +38,7 @@ export const TestContextsWrapper = ({
                 </AnalyticsProvider>
             </I18nextProvider>
             <Toaster />
-        </AppRouterContext.Provider>
+        </RouterContext.Provider>
     );
 };
 
