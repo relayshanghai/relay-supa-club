@@ -67,5 +67,6 @@ const signup = {
                 '本条款和条件应受新加坡法律的约束。由这些条款产生的任何争议应在新加坡共和国的管辖范围内解决。',
         },
     },
+    errorStartingTrial: '开始免费试用时出错',
 };
 export default signup;
