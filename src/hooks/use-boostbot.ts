@@ -23,19 +23,20 @@ export const useBoostbot = ({ abortSignal }: UseBoostbotProps) => {
     const { company } = useCompany();
 
     const unlockInfluencers = useCallback(
-        async (influencersToUnlock: Influencer[]) => {
+        async (influencersToUnlock: Influencer[], freeOfCharge = false) => {
             if (!company?.id || !profile?.id) throw new Error('No company or profile found');
 
             const influencersPromises = influencersToUnlock.map(({ user_id, url }) => {
                 const platforms: CreatorPlatform[] = ['youtube', 'tiktok', 'instagram'];
                 const platform = platforms.find((platform) => url.includes(platform)) || 'instagram';
 
-                const reportQuery = {
+                const reportQuery: CreatorsReportGetQueries = {
                     platform: platform,
                     creator_id: user_id,
                     company_id: company.id,
                     user_id: profile.id,
                     track: SearchAnalyzeInfluencer.eventName,
+                    source: freeOfCharge ? 'boostbot' : 'default',
                 };
 
                 return limiter.schedule(() =>

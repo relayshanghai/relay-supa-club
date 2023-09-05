@@ -35,7 +35,10 @@ interface ChatProps {
     setIsInitialLogoScreen: Dispatch<SetStateAction<boolean>>;
     handlePageToUnlock: () => void;
     handlePageToOutreach: () => void;
-    handleUnlockInfluencers: (influencers: Influencer[]) => Promise<CreatorsReportGetResponse[] | undefined>;
+    handleUnlockInfluencers: (
+        influencers: Influencer[],
+        freeOfCharge: boolean,
+    ) => Promise<CreatorsReportGetResponse[] | undefined>;
     shortenedButtons: boolean;
     isSearchDisabled: boolean;
 }
@@ -131,7 +134,7 @@ export const Chat: React.FC<ChatProps> = ({
             updateProgress({ topics, isMidway: true, totalFound: null });
             setInfluencers(influencers);
 
-            await handleUnlockInfluencers(influencers.slice(0, 3));
+            await handleUnlockInfluencers(influencers.slice(0, 3), true);
 
             updateProgress({ topics, isMidway: true, totalFound: influencers.length });
             setIsInitialLogoScreen(false);

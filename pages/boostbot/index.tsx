@@ -111,7 +111,7 @@ const Boostbot = () => {
         );
     };
 
-    const handleUnlockInfluencers = async (influencers: Influencer[]) => {
+    const handleUnlockInfluencers = async (influencers: Influencer[], freeOfCharge = false) => {
         const userIds = influencers.map((influencer) => influencer.user_id);
         userIds.forEach((userId) => setInfluencerLoading(userId, true));
 
@@ -123,7 +123,7 @@ const Boostbot = () => {
         };
 
         try {
-            const response = await unlockInfluencers(influencers);
+            const response = await unlockInfluencers(influencers, freeOfCharge);
             const unlockedInfluencers = response?.map((result) => result.user_profile);
 
             if (unlockedInfluencers) {
