@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { SIGNUP } from 'src/utils/rudderstack/event-names';
 import { Button } from '../button';
-import { ArrowRight, CheckCircleOutline, Spinner } from '../icons';
+import { ArrowRight, CheckCircleOutline, Cross, Spinner } from '../icons';
 import Link from 'next/link';
 import { clientLogger } from 'src/utils/logger-client';
 import { useSequence } from 'src/hooks/use-sequence';
@@ -158,21 +158,12 @@ const FreeTrialPage = () => {
                     <div className="w-2/3 rounded-md bg-white p-8">
                         <div className="flex items-center justify-between">
                             <h2 className="text-xl font-bold">{t('signup.freeTrial.termsAndCondition.title')}</h2>
-                            <button className="ml-4 cursor-pointer" onClick={() => setShowModal(false)}>
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 28 28"
-                                    strokeWidth="2.5"
-                                    stroke="currentColor"
-                                    className="h-6 w-6"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        stroke-linejoin="round"
-                                        d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                                    />
-                                </svg>
+                            <button
+                                className="ml-4 cursor-pointer"
+                                data-test="close-button"
+                                onClick={() => setShowModal(false)}
+                            >
+                                <Cross className="h-6 w-6 fill-gray-600 hover:cursor-pointer hover:fill-primary-500" />
                             </button>
                         </div>
                         <ul className="mb-4 mt-4 pb-4">
