@@ -55,7 +55,7 @@ export const SequencesTableRow = ({ sequence }: { sequence: Sequence }) => {
                 </td>
                 <td className="whitespace-nowrap px-6 py-3 text-gray-700">
                     <button
-                        onClick={handleDeleteSequence}
+                        onClick={() => setShowDeleteModal(true)}
                         className="align-middle"
                         data-testid={`delete-sequence:${sequence.name}`}
                     >
