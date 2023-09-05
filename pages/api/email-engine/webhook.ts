@@ -1,6 +1,6 @@
 import type { NextApiHandler, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
-import { ApiHandler, RelayError } from 'src/utils/api-handler';
+import { ApiHandler } from 'src/utils/api-handler';
 import type { SequenceEmailUpdate, SequenceInfluencer, SequenceInfluencerUpdate } from 'src/utils/api/db';
 import { getProfileBySequenceSendEmail, supabaseLogger } from 'src/utils/api/db';
 import {
@@ -444,20 +444,19 @@ const handleOtherWebhook = async (event: WebhookEvent, res: NextApiResponse) => 
 };
 
 const identifyWebhook = async (body: WebhookEvent) => {
-    try {
-        const profile = await db(getProfileByEmailEngineAccountQuery)(body.account);
+    const profile = await db(getProfileByEmailEngineAccountQuery)(body.account);
 
-        if (!profile) {
-            throw new RelayError(`No account associated with "${body.account}"`, 500, {
-                shouldLog: true,
-                sendToSentry: true,
-            });
-        }
-
+    if (profile) {
         rudderstack.identifyWithProfile(profile.id);
-    } catch (e) {
-        throw e;
+        return;
     }
+
+    if (!profile) {
+        rudderstack.identifyWithAnonymousID(body.account);
+        return;
+    }
+
+    serverLogger(`No account associated with "${body.account}"`, "error", true)
 };
 
 export type SendEmailPostResponseBody = SendEmailResponseBody;
