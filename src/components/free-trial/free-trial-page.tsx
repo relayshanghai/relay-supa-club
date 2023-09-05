@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { SIGNUP } from 'src/utils/rudderstack/event-names';
 import { Button } from '../button';
-import { Spinner } from '../icons';
+import { ArrowRight, CheckCircleOutline, Spinner } from '../icons';
 import Link from 'next/link';
 import { clientLogger } from 'src/utils/logger-client';
 import { useSequence } from 'src/hooks/use-sequence';
@@ -84,77 +84,25 @@ const FreeTrialPage = () => {
             <ul className="mb-4 pb-4">
                 <li className="pb-3">
                     <div className="flex items-center">
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth="1.5"
-                            stroke="currentColor"
-                            className="mr-3 h-8 w-8 font-bold text-green-500"
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                            />
-                        </svg>
+                        <CheckCircleOutline className="mr-3 h-8 w-8 font-bold text-green-500" />
                         {t('signup.freeTrial.bulletPoint1')}
                     </div>
                 </li>
                 <li className="pb-3">
                     <div className="flex items-center">
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth="1.5"
-                            stroke="currentColor"
-                            className="mr-3 h-8 w-8 font-bold text-green-500"
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                            />
-                        </svg>
+                        <CheckCircleOutline className="mr-3 h-8 w-8 font-bold text-green-500" />
                         {t('signup.freeTrial.bulletPoint2')}
                     </div>
                 </li>
                 <li className="pb-3">
                     <div className="flex items-center">
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth="1.5"
-                            stroke="currentColor"
-                            className="mr-3 h-8 w-8 font-bold text-green-500"
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                            />
-                        </svg>
+                        <CheckCircleOutline className="mr-3 h-8 w-8 font-bold text-green-500" />
                         {t('signup.freeTrial.bulletPoint3')}
                     </div>
                 </li>
                 <li className="pb-3">
                     <div className="flex items-center">
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth="1.5"
-                            stroke="currentColor"
-                            className="mr-3 h-8 w-8 font-bold text-green-500"
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"
-                            />
-                        </svg>
+                        <ArrowRight className="mr-3 h-8 w-8 -rotate-45 stroke-green-500 font-bold" />
                         {t('signup.freeTrial.bulletPoint4')}
                     </div>
                 </li>
