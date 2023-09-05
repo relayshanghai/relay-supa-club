@@ -138,7 +138,6 @@ const SignUpPage = ({
             }
             const result = await handleCompanyCreate(formData, profileId);
             if (result === 'success') {
-                setLoading(true);
                 await router.push('/free-trial');
             }
         } else if (currentStep < 4) {

@@ -10,6 +10,10 @@ import { Spinner } from '../icons';
 import Link from 'next/link';
 import { clientLogger } from 'src/utils/logger-client';
 import { useSequence } from 'src/hooks/use-sequence';
+import { useSequenceSteps } from 'src/hooks/use-sequence-steps';
+import { useTemplateVariables } from 'src/hooks/use-template_variables';
+import { nextFetch } from 'src/utils/fetcher';
+import type { SubscriptionCreateTrialResponse } from 'pages/api/subscriptions/create-trial-without-payment-intent';
 
 const FreeTrialPage = () => {
     const { t } = useTranslation();
@@ -17,43 +21,57 @@ const FreeTrialPage = () => {
     const router = useRouter();
     const { logout } = useUser();
     const { trackEvent } = useRudderstack();
+    const { createDefaultSequenceSteps } = useSequenceSteps();
+    const { createDefaultTemplateVariables } = useTemplateVariables();
+
     const [loading, setLoading] = useState(false);
     const [termsChecked, setTermsChecked] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const { createSequence } = useSequence();
     const { profile } = useUser();
+    const [error, setError] = useState('');
 
-    const CreateDefaultSequence = () => {
+    const createDefaultSequence = async () => {
         if (!profile) {
             throw new Error('No profile found');
         }
         const defaultSequenceName = profile.first_name + "'s BoostBot Sequence";
-        createSequence(defaultSequenceName);
+        const newSequenceData = await createSequence(defaultSequenceName);
+        if (!newSequenceData) {
+            throw new Error('Failed to get sequence id');
+        }
+        await createDefaultSequenceSteps(newSequenceData.id);
+        await createDefaultTemplateVariables(newSequenceData.id);
     };
 
     const startFreeTrial = async () => {
         setLoading(true);
+        setError('');
         try {
-            const response = await fetch('/api/subscriptions/create-trial-without-payment-intent', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
+            const response = await nextFetch<SubscriptionCreateTrialResponse>(
+                'subscriptions/create-trial-without-payment-intent',
+                {
+                    method: 'POST',
+                    body: {
+                        companyId: company?.id,
+                        termsChecked: termsChecked,
+                    },
                 },
-                body: JSON.stringify({
-                    companyId: company?.id,
-                    termsChecked: termsChecked,
-                }),
-            });
+            );
 
-            await response.json();
-            if (response.status === 200) {
-                trackEvent(SIGNUP('Start free trial success'), { company: company?.id });
-                CreateDefaultSequence();
-                router.push('/dashboard');
+            if (response.status === 'trialing' || response.status === 'active') {
+                await trackEvent(SIGNUP('Start free trial success'), { company: company?.id });
+                await createDefaultSequence();
+                await router.push('/dashboard');
+            } else {
+                throw new Error(JSON.stringify(response));
             }
-        } catch (error) {
-            clientLogger(error, 'error');
+        } catch (error: any) {
+            clientLogger(error, 'error', true); //send to Sentry
+            setError(error?.message || t('signup.errorStartingTrial'));
+            await trackEvent(SIGNUP('Start free trial failed'), { company: company?.id });
         }
+        setLoading(false);
     };
 
     return (
@@ -169,6 +187,7 @@ const FreeTrialPage = () => {
             </Button>
 
             <div className="pt-20 text-center">
+                {error && <p className="text-red-500">{error}</p>}
                 <button type="button" className="ml-2 px-1 pb-1 pt-1 text-xs" onClick={logout}>
                     {t('login.stuckHereTryAgain1')}
                     <Link

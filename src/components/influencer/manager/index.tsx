@@ -1,4 +1,3 @@
-import Fuse from 'fuse.js';
 import type { SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -12,10 +11,11 @@ import { useUser } from 'src/hooks/use-user';
 import { OpenInfluencerManagerPage } from 'src/utils/analytics/events';
 import { COLLAB_OPTIONS } from '../constants';
 import { CollabStatus } from './collab-status';
-import { filterByMe } from './helpers';
+import { filterInfluencers } from './helpers';
 import { OnlyMe } from './onlyme';
 import { SearchComponent } from './search-component';
 import { Table } from './table';
+import type { ProfileValue } from 'src/components/influencer-profile/screens/profile-screen';
 
 const Manager = () => {
     const { sequences } = useSequences();
@@ -31,12 +31,18 @@ const Manager = () => {
 
     const [influencer, setInfluencer] = useState<SequenceInfluencerManagerPage | null>(null);
     const [uiState, setUiState] = useUiState();
-    const [influencers, setInfluencers] = useState<SequenceInfluencerManagerPage[] | undefined>(sequenceInfluencers);
+
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [onlyMe, setOnlyMe] = useState<boolean>(false);
     const [filterStatuses, setFilterStatuses] = useState<CommonStatusType[]>([]);
 
     const { track } = useRudderstackTrack();
+
+    const influencers =
+        sequenceInfluencers &&
+        profile &&
+        sequences &&
+        filterInfluencers(searchTerm, onlyMe, filterStatuses, profile, sequences, sequenceInfluencers);
 
     useEffect(() => {
         const { abort } = track(OpenInfluencerManagerPage);
@@ -54,9 +60,19 @@ const Manager = () => {
         [setUiState],
     );
 
-    const handleProfileUpdate = useCallback(() => {
-        refreshSequenceInfluencers();
-    }, [refreshSequenceInfluencers]);
+    const handleProfileUpdate = useCallback(
+        (data: Partial<ProfileValue>) => {
+            if (!sequenceInfluencers || !data.notes || !influencer) return;
+            const updatedInfluencerIndex = sequenceInfluencers.findIndex((x) => x.id === influencer.id);
+            const newInfluencers = [
+                ...sequenceInfluencers.slice(0, updatedInfluencerIndex),
+                { ...sequenceInfluencers[updatedInfluencerIndex], funnel_status: data.notes.collabStatus || 'Posted' },
+                ...sequenceInfluencers.slice(updatedInfluencerIndex + 1),
+            ];
+            refreshSequenceInfluencers(newInfluencers); //we refresh the cache with the newInfluencers for showing optimistic updates
+        },
+        [refreshSequenceInfluencers, sequenceInfluencers, influencer],
+    );
 
     const setCollabStatusValues = (influencers: SequenceInfluencerManagerPage[], options: MultipleDropdownObject) => {
         const collabOptionsWithValue = options;
@@ -73,66 +89,21 @@ const Manager = () => {
     const [collabOptions, setCollabOptions] = useState(COLLAB_OPTIONS);
 
     useEffect(() => {
-        if (!sequenceInfluencers || sequenceInfluencers.length <= 0) {
-            return;
-        }
+        if (!sequenceInfluencers) return;
         setCollabOptions(setCollabStatusValues(sequenceInfluencers, COLLAB_OPTIONS));
     }, [sequenceInfluencers]);
 
-    const handleSetSearch = useCallback(
-        (term: string) => {
-            setSearchTerm(term);
-            if (!sequenceInfluencers) {
-                return;
-            }
-            const fuse = new Fuse(sequenceInfluencers, {
-                minMatchCharLength: 1,
-                keys: ['fullname', 'username'],
-            });
+    const handleOnlyMe = useCallback(() => {
+        setOnlyMe(!onlyMe);
+    }, [onlyMe]);
 
-            if (term.length === 0) {
-                setInfluencers(sequenceInfluencers);
-                return;
-            }
+    const handleStatus = (filters: CommonStatusType[]) => {
+        setFilterStatuses(filters);
+    };
 
-            setInfluencers(fuse.search(term).map((result) => result.item));
-        },
-        [sequenceInfluencers],
-    );
-
-    const handleOnlyMe = useCallback(
-        (state: boolean) => {
-            setOnlyMe(!onlyMe);
-            if (!sequenceInfluencers || !profile || !sequences) {
-                return;
-            }
-
-            if (!state) {
-                setInfluencers(sequenceInfluencers);
-                return;
-            }
-
-            setInfluencers(filterByMe(sequenceInfluencers, profile, sequences));
-        },
-        [onlyMe, sequenceInfluencers, profile, sequences],
-    );
-
-    const handleStatus = useCallback(
-        (filters: CommonStatusType[]) => {
-            setFilterStatuses(filters);
-            if (!sequenceInfluencers) {
-                return;
-            }
-
-            if (filters.length === 0) {
-                setInfluencers(sequenceInfluencers);
-                return;
-            }
-
-            setInfluencers(sequenceInfluencers.filter((x) => filters.includes(x.funnel_status)));
-        },
-        [sequenceInfluencers, setFilterStatuses],
-    );
+    const handleSearch = (term: string) => {
+        setSearchTerm(term);
+    };
 
     const handleProfileOverlayClose = useCallback(() => {
         setUiState((s) => {
@@ -154,7 +125,7 @@ const Manager = () => {
                         <SearchComponent
                             searchTerm={searchTerm}
                             placeholder={t('manager.search')}
-                            onSetSearch={handleSetSearch}
+                            onSetSearch={handleSearch}
                         />
                         <CollabStatus
                             collabOptions={collabOptions}
