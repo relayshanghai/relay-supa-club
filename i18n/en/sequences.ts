@@ -155,6 +155,10 @@ const sequences = {
     number_emailsSuccessfullyScheduled: '{{number}} emails successfully scheduled to send',
     number_emailsFailedToSchedule: 'Failed to submit {{number}} emails to send',
     delete: {
+        deleteSequence_name: 'Delete {{name}}?',
+        deleteSequenceDescription:
+            'Deleting a sequence will stop all scheduled emails for influencers in this sequence. No further messages will be sent. Influencers who have replied and are already in your Influencer Manager will be preserved, however any influencers currently in "Needs Attention", "In Sequence" or "Ignored" will be deleted. Are you sure you want to delete your sequence?',
+        okaySequence: 'Yes. Delete this sequence',
         title: 'Delete influencer from sequence?',
         description:
             "Deleting the influencer will remove them from the sequence, and cancel any future messages. You'll have to re-add them if you change your mind.",
