@@ -225,6 +225,7 @@ describe('outreach', () => {
         cy.contains('tr', 'New Sequence Test').contains('Test Product');
         // cleanup and test delete
         cy.getByTestId('delete-sequence:New Sequence Test').click();
+        cy.contains('button', 'Yes. Delete this sequence').click();
         cy.contains('tr', 'New Sequence Test').should('not.exist');
     });
 });
