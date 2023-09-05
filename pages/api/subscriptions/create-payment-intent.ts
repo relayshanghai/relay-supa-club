@@ -2,7 +2,6 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
 import { ApiHandler } from 'src/utils/api-handler';
 import { stripeClient } from 'src/utils/api/stripe/stripe-client';
-import { serverLogger } from 'src/utils/logger-server';
 
 export type CreatePaymentIntentPostBody = {
     amount: number;
@@ -12,24 +11,20 @@ export type CreatePaymentIntentPostBody = {
 const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     const { amount, currency, customer } = req.body as CreatePaymentIntentPostBody;
 
-    if (req.method === 'POST')
-        try {
-            const paymentIntent = await stripeClient.paymentIntents.create({
-                customer,
-                amount,
-                currency,
-                setup_future_usage: 'off_session', //enable this parameter will attach payment method to customer
-                automatic_payment_methods: {
-                    enabled: true,
-                },
-            });
-            res.send({
-                clientSecret: paymentIntent.client_secret,
-            });
-        } catch (err) {
-            serverLogger(err, 'error', true);
-            return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({ error: 'unable to create payment intent' });
-        }
+    const paymentIntent = await stripeClient.paymentIntents.create({
+        customer,
+        amount,
+        currency,
+        setup_future_usage: 'off_session', //enable this parameter will attach payment method to customer
+        automatic_payment_methods: {
+            enabled: true,
+        },
+    });
+    res.send({
+        clientSecret: paymentIntent.client_secret,
+    });
+
+    return res.status(httpCodes.OK).json(paymentIntent);
 };
 
 export default ApiHandler({
