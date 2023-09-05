@@ -227,7 +227,7 @@ const SignUpPage = ({
 
     useEffect(() => {
         if (createProfileSuccess && profile?.id && EMPLOYEE_EMAILS.includes(email)) {
-            router.push('/dashboard');
+            router.push('/boostbot');
         }
     }, [email, router, createProfileSuccess, profile?.id]);
 
