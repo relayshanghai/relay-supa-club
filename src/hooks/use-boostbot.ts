@@ -12,6 +12,7 @@ import type { GetRelevantTopicsBody, GetRelevantTopicsResponse } from 'pages/api
 import type { GetTopicClustersBody, GetTopicClustersResponse } from 'pages/api/boostbot/get-topic-clusters';
 import type { GetInfluencersBody, GetInfluencersResponse } from 'pages/api/boostbot/get-influencers';
 import type { Influencer } from 'pages/boostbot';
+import { getFulfilledData } from 'src/utils/utils';
 
 type UseBoostbotProps = {
     abortSignal?: AbortController['signal'];
@@ -22,10 +23,10 @@ export const useBoostbot = ({ abortSignal }: UseBoostbotProps) => {
     const { company } = useCompany();
 
     const unlockInfluencers = useCallback(
-        async (influencers: Influencer[]) => {
+        async (influencersToUnlock: Influencer[]) => {
             if (!company?.id || !profile?.id) throw new Error('No company or profile found');
 
-            const influencersPromises = influencers.map(({ user_id, url }) => {
+            const influencersPromises = influencersToUnlock.map(({ user_id, url }) => {
                 const platforms: CreatorPlatform[] = ['youtube', 'tiktok', 'instagram'];
                 const platform = platforms.find((platform) => url.includes(platform)) || 'instagram';
 
@@ -45,7 +46,9 @@ export const useBoostbot = ({ abortSignal }: UseBoostbotProps) => {
                 );
             });
 
-            return await Promise.all(influencersPromises);
+            const influencersResults = await Promise.allSettled(influencersPromises);
+
+            return getFulfilledData(influencersResults);
         },
         [profile, company],
     );

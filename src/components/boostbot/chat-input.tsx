@@ -5,9 +5,10 @@ import { Send, Spinner } from 'src/components/icons';
 interface ChatInputProps {
     onSendMessage: (message: string) => void;
     isLoading: boolean;
+    isDisabled: boolean;
 }
 
-export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading }) => {
+export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading, isDisabled }) => {
     const textareaRef = useRef<null | HTMLTextAreaElement>(null);
     const [message, setMessage] = useState('');
     const { t } = useTranslation();
@@ -30,7 +31,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading }
     }, [message]);
 
     const handleSendMessage = (): void => {
-        if (isLoading || !message.trim()) return;
+        if (isLoading || isDisabled || !message.trim()) return;
 
         onSendMessage(message.trim());
         setMessage('');
@@ -58,7 +59,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading }
             <button
                 className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-500 text-white transition-all hover:bg-primary-700 disabled:bg-primary-400"
                 onClick={handleSendMessage}
-                disabled={isLoading}
+                disabled={isLoading || isDisabled}
             >
                 {isLoading ? (
                     <Spinner className="h-4 w-4 fill-primary-900" />
