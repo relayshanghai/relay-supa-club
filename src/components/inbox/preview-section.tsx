@@ -22,7 +22,7 @@ export const PreviewSection = ({
                     <PreviewCard
                         onSelect={onSelect}
                         message={message}
-                        selectedMessage={selectedMessages ? selectedMessages[0] : null}
+                        selectedMessage={selectedMessages ? selectedMessages[selectedMessages.length - 1] : null}
                         handleGetThreadEmails={handleGetThreadEmails}
                         loadingSelectedMessages={loadingSelectedMessages}
                     />
