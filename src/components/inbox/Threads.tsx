@@ -97,7 +97,7 @@ export const Threads = ({ messages }: { messages: SearchResponseMessage[] }) => 
                                     {t('inbox.from')}:{' '}
                                     <span className="text-gray-600">{message.isMe ? 'Me' : message.from}</span>{' '}
                                 </div>
-                                <div className="mb-3 pl-2 text-sm font-medium text-gray-400">
+                                <div className="mb-3 text-sm font-medium text-gray-400">
                                     {t('inbox.to')}: <span className="font-light">{message.to[0]?.address}</span>{' '}
                                 </div>
                                 {message.cc?.length > 0 && (

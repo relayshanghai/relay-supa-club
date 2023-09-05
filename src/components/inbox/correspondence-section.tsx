@@ -50,8 +50,8 @@ export const CorrespondenceSection = ({
                 </div>
             ) : (
                 <div className="flex h-full flex-col overflow-y-auto">
+                    <EmailHeader messages={selectedMessages} />
                     <div className="flex-1 overflow-auto">
-                        <EmailHeader messages={selectedMessages} />
                         {selectedMessages.length > 1 ? (
                             <Threads messages={selectedMessages} />
                         ) : (

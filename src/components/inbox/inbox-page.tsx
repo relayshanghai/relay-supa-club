@@ -246,7 +246,7 @@ export const InboxPage = () => {
                             )}
                         </div>
                         {sequenceInfluencer && initialValue && (
-                            <div className="col-span-4 w-full flex-grow-0 overflow-x-clip overflow-y-scroll">
+                            <div className="col-span-4 w-full flex-grow-0 overflow-x-clip overflow-y-scroll bg-white">
                                 <ProfileScreenProvider initialValue={initialValue}>
                                     <ProfileScreen
                                         profile={sequenceInfluencer}
