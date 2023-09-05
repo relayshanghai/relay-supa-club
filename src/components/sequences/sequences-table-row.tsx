@@ -9,6 +9,8 @@ import { useSequence } from 'src/hooks/use-sequence';
 import { clientLogger } from 'src/utils/logger-client';
 import { useTemplateVariables } from 'src/hooks/use-template_variables';
 import { useTranslation } from 'react-i18next';
+import { DeleteSequenceModal } from '../modal-delete-sequence';
+import { useState } from 'react';
 
 export const SequencesTableRow = ({ sequence }: { sequence: Sequence }) => {
     const { t } = useTranslation();
@@ -24,8 +26,6 @@ export const SequencesTableRow = ({ sequence }: { sequence: Sequence }) => {
     );
     const handleDeleteSequence = async () => {
         try {
-            const confirmed = confirm(t('sequences.deleteConfirm') || 'Confirm deletion?');
-            if (!confirmed) return;
             await deleteSequence(sequence.id);
             toast.success(t('sequences.deleteSuccess'));
         } catch (error) {
@@ -34,9 +34,15 @@ export const SequencesTableRow = ({ sequence }: { sequence: Sequence }) => {
         }
         refreshSequenceInfluencers();
     };
-
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
     return (
         <>
+            <DeleteSequenceModal
+                show={showDeleteModal}
+                setShow={setShowDeleteModal}
+                handleDelete={handleDeleteSequence}
+                name={sequence.name}
+            />
             <tr className="border-b-2 border-gray-200 bg-white">
                 <td className="whitespace-nowrap px-6 py-3 text-primary-600">
                     <Link href={`/sequences/${sequence.id}`}>{sequence.name}</Link>
@@ -49,7 +55,7 @@ export const SequencesTableRow = ({ sequence }: { sequence: Sequence }) => {
                 </td>
                 <td className="whitespace-nowrap px-6 py-3 text-gray-700">
                     <button
-                        onClick={handleDeleteSequence}
+                        onClick={() => setShowDeleteModal(true)}
                         className="align-middle"
                         data-testid={`delete-sequence:${sequence.name}`}
                     >
