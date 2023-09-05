@@ -14,6 +14,7 @@ import { useSequenceSteps } from 'src/hooks/use-sequence-steps';
 import { useTemplateVariables } from 'src/hooks/use-template_variables';
 import { nextFetch } from 'src/utils/fetcher';
 import type { SubscriptionCreateTrialResponse } from 'pages/api/subscriptions/create-trial-without-payment-intent';
+import { createSubscriptionErrors } from 'src/errors/subscription';
 
 const FreeTrialPage = () => {
     const { t } = useTranslation();
@@ -69,6 +70,9 @@ const FreeTrialPage = () => {
         } catch (error: any) {
             clientLogger(error, 'error', true); //send to Sentry
             setError(error?.message || t('signup.errorStartingTrial'));
+            if (error?.message === createSubscriptionErrors.alreadySubscribed) {
+                await router.push('/dashboard');
+            }
             await trackEvent(SIGNUP('Start free trial failed'), { company: company?.id });
         }
         setLoading(false);
