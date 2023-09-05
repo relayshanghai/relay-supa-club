@@ -16,7 +16,6 @@ export const PreviewCard = ({
     onSelect?: (message: MessagesGetMessage) => void;
 }) => {
     const { i18n } = useTranslation();
-
     return (
         <div
             onClick={() => {
