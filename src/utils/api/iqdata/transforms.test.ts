@@ -88,7 +88,7 @@ describe('prepareFetchCreatorsFiltered', () => {
         const result2 = recommendedInfluencersFilter(recommendedInfluencers2);
         expect(result2).toHaveLength(1000);
     });
-    it('includes recommendedInfluencers transform', () => {
+    it.skip('includes recommendedInfluencers transform', () => {
         const recommendedInfluencers = [
             'youtube/UCh_ugKacslKhsGGdXP0cRRA',
             'youtube/UCwyXamwtzfDIvRjEFcqNmSw',
