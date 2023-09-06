@@ -1,5 +1,7 @@
 const manager = {
     title: 'KOL管理跟进',
+    subtitle:
+        'This is the hub of all your ongoing influencer marketing efforts, where you can keep track of all your influencers through every step of the collab.',
     search: '按KOL名称搜索',
     filterStatus: '按状态筛选',
     filterTags: '按标签筛选',

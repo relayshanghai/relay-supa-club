@@ -1,5 +1,7 @@
 const manager = {
     title: 'Influencer Manager',
+    subtitle:
+        'This is the hub of all your ongoing influencer marketing efforts, where you can keep track of all your influencers through every step of the collab.',
     search: 'Search for an influencer',
     filterStatus: 'Filter by status',
     filterTags: 'Filter by tags',
