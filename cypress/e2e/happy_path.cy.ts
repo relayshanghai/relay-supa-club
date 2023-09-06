@@ -153,6 +153,7 @@ describe('Main pages happy paths', () => {
         cy.contains('Contact influencer'); // loads analyze page
 
         cy.contains('Channel Stats');
+        cy.getByTestId('layout-top-bar').contains('Cocomelon - Nursery Rhymes');
         cy.contains('Cocomelon - Nursery Rhymes');
         cy.contains('Similar Influencers');
         cy.contains('Shorts Factory');

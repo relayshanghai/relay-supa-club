@@ -80,7 +80,7 @@ export const Layout = ({ children }: any) => {
             />
             <div className="flex w-full max-w-full flex-col overflow-hidden">
                 <div className="z-30 flex items-center justify-between bg-white shadow-sm shadow-gray-200">
-                    <div className="flex items-center">
+                    <div className="flex items-center" data-testid="layout-top-bar">
                         <Button
                             onClick={() => {
                                 setSideBarOpen(!sideBarOpen);
