@@ -29,6 +29,7 @@ export type CreatorsReportGetQueries = {
     company_id: string;
     user_id: string;
     track?: eventKeys | undefined;
+    source?: 'boostbot' | 'default';
 };
 
 const trackAndSnap = async (
@@ -74,6 +75,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         };
 
         await rudderstack.identify({ req, res });
+        const { source = 'default' } = req.query as CreatorsReportGetQueries;
 
         try {
             const { platform, creator_id, company_id, user_id, track } = req.query as CreatorsReportGetQueries;
@@ -117,10 +119,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 const data: CreatorReport = await fetchReport({ req, res })(report_id);
 
                 if (!data.success) throw new Error('Failed to find report');
-                const { error: recordError } = await recordReportUsage(company_id, user_id, creator_id);
-                if (recordError) {
-                    serverLogger(recordError, 'error');
-                    return res.status(httpCodes.BAD_REQUEST).json({ error: recordError });
+                if (source === 'default') {
+                    const { error: recordError } = await recordReportUsage(company_id, user_id, creator_id);
+                    if (recordError) {
+                        serverLogger(recordError, 'error');
+                        return res.status(httpCodes.BAD_REQUEST).json({ error: recordError });
+                    }
                 }
 
                 const { influencer, socialProfile } = await catchInfluencer(data);
@@ -148,13 +152,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
                 if (!data.success) throw new Error('Failed to request new report');
 
-                const { error: recordError } = await recordReportUsage(company_id, user_id, creator_id);
-                if (recordError) {
-                    if (Object.values(usageErrors).includes(recordError)) {
-                        return res.status(httpCodes.BAD_REQUEST).json({ error: recordError });
+                if (source === 'default') {
+                    const { error: recordError } = await recordReportUsage(company_id, user_id, creator_id);
+                    if (recordError) {
+                        if (Object.values(usageErrors).includes(recordError)) {
+                            return res.status(httpCodes.BAD_REQUEST).json({ error: recordError });
+                        }
+                        serverLogger(recordError, 'error');
+                        return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
                     }
-                    serverLogger(recordError, 'error');
-                    return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
                 }
 
                 const { influencer, socialProfile } = await catchInfluencer(data);
