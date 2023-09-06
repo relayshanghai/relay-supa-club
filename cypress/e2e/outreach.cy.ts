@@ -100,15 +100,7 @@ describe('outreach', () => {
         cy.getByTestId('table-inline-input-add email').clear().type('alice.anderson@example.com'); // reset so you can run the test again if need be
         cy.get('button[type=submit]').click();
 
-        // can delete influencer
-        cy.contains('Charlie Charles');
-        cy.getByTestId('delete-influencer-button').eq(2).click();
-        cy.contains(
-            "Deleting the influencer will remove them from the sequence, and cancel any future messages. You'll have to re-add them if you change your mind.",
-        );
-        cy.contains('button', 'Yes, delete them').click();
-        cy.contains('Influencer successfully deleted from sequence');
-        cy.contains('Charlie Charles').should('not.exist');
+        //TODO:V2-857 Add bulk delete can delete influencer test These will be enabled when we have the bulk delete in place
 
         // send sequence is disabled if missing template variables
         cy.contains('Missing required template variables: **Product Description**').should('not.be.visible');
