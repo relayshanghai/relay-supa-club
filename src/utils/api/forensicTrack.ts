@@ -1,9 +1,9 @@
-import { getUserSession } from './analytics';
-import { serverLogger } from '../logger-server';
-import callsites from 'callsites';
-import type { ServerContext } from './iqdata';
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
+import callsites from 'callsites';
 import type { DatabaseWithCustomTypes } from 'types';
+import { serverLogger } from '../logger-server';
+import { getUserSession } from './analytics';
+import type { ServerContext } from './iqdata';
 
 export const forensicTrack = async (context: ServerContext, error: string) => {
     const calls = await callsites();
@@ -28,5 +28,7 @@ export const forensicTrack = async (context: ServerContext, error: string) => {
     const supabase = createServerSupabaseClient<DatabaseWithCustomTypes>(strippedContext);
     const { user_id, company_id, fullname, email } = await getUserSession(supabase)();
 
-    serverLogger({ user_id, company_id, fullname, email, metadata, ...sentryPayload }, 'error', true, error);
+    serverLogger(new Error(error), (scope) => {
+        return scope.setContext('forensic_track', { user_id, company_id, fullname, email, metadata, ...sentryPayload });
+    });
 };

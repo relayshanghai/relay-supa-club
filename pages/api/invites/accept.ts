@@ -65,7 +65,7 @@ const postHandler: NextApiHandler = async (req, res) => {
         if (userError?.message === 'User already registered') {
             throw new RelayError(acceptInviteErrors.userAlreadyRegistered, httpCodes.BAD_REQUEST);
         }
-        serverLogger(userError, 'error');
+        serverLogger(userError);
         throw new RelayError('Signup failed', httpCodes.BAD_REQUEST);
     }
     if (!user?.id) {
@@ -107,7 +107,7 @@ const postHandler: NextApiHandler = async (req, res) => {
         // if any errors, delete the half-formed account
         const { error: profileDeleteError } = await supabase.from('profiles').delete().match({ id: user.id });
         const { data, error: authDeleteError } = await supabase.auth.admin.deleteUser(user.id);
-        serverLogger({ profileDeleteError, authDeleteError, data }, 'error');
+        serverLogger({ profileDeleteError, authDeleteError, data });
         throw new RelayError(error.message, httpCodes.BAD_REQUEST);
     }
 };
@@ -118,7 +118,7 @@ const getHandler: NextApiHandler = async (req, res) => {
     }
     const { data, error } = await getInviteValidityData(token);
     if (error) {
-        serverLogger(error, 'error');
+        serverLogger(error);
         throw new RelayError(inviteStatusErrors.inviteInvalid, httpCodes.UNAUTHORIZED);
     }
     if (data?.used) {

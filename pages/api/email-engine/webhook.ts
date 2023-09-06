@@ -111,7 +111,7 @@ const deleteScheduledEmails = async (sequenceInfluencer: SequenceInfluencer, eve
             data: event as any,
             message: `failed to cancel an email to: ${event.data.from.address}`,
         });
-        serverLogger(error, 'error');
+        serverLogger(error);
     }
 };
 const handleReply = async (sequenceInfluencer: SequenceInfluencer, event: WebhookMessageNew) => {

@@ -47,7 +47,7 @@ Available tags: [${topics.map((topic) => `"${topic}"`).join(', ')}]`;
 
         return topicClusters;
     } catch (error: any) {
-        serverLogger(error, 'error');
+        serverLogger(error);
         throw new RelayError('Invalid topic clusters response from OpenAI');
     }
 };

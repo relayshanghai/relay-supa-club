@@ -53,7 +53,7 @@ const handler: NextApiHandler = async (req, res) => {
             return res.status(httpCodes.BAD_REQUEST).json({ error: createInviteErrors.userAlreadyExists });
         }
     } catch (error) {
-        serverLogger(error, 'error');
+        serverLogger(error);
     }
     const existingInvite = await getExistingInvite(email, company_id);
 
@@ -74,7 +74,7 @@ const handler: NextApiHandler = async (req, res) => {
             html: formatEmail(name, insertData.id),
         });
     } catch (error) {
-        serverLogger(error, 'error', true);
+        serverLogger(error);
         return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
     }
     const returnData: CompanyCreateInvitePostResponse = insertData;

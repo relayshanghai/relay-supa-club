@@ -22,13 +22,13 @@ const Handler: NextApiHandler = async (req, res) => {
             }
             const { data, error: profileUpdateError } = await updateProfile(profile);
             if (profileUpdateError) {
-                serverLogger(profileUpdateError, 'error');
+                serverLogger(profileUpdateError);
                 return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
             }
             const result: ProfilePutResponse = data;
             return res.status(httpCodes.OK).json(result);
         } catch (error) {
-            serverLogger(error, 'error');
+            serverLogger(error);
             return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
         }
     } else if (req.method === 'POST') {
@@ -46,13 +46,13 @@ const Handler: NextApiHandler = async (req, res) => {
         try {
             const { error, data } = await insertProfile(profile);
             if (error) {
-                serverLogger(error, 'error');
+                serverLogger(error);
                 return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
             }
             const result: ProfilePutResponse = data;
             return res.status(httpCodes.OK).json(result);
         } catch (error) {
-            serverLogger(error, 'error');
+            serverLogger(error);
             return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
         }
     } else {

@@ -67,7 +67,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 const [influencer, socialProfile] = await db<typeof saveInfluencer>(saveInfluencer)(data);
                 return { influencer, socialProfile };
             } catch (error) {
-                serverLogger(error, 'error', true);
+                serverLogger(error);
             }
 
             return { influencer: null, socialProfile: null };
@@ -119,7 +119,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 if (!data.success) throw new Error('Failed to find report');
                 const { error: recordError } = await recordReportUsage(company_id, user_id, creator_id);
                 if (recordError) {
-                    serverLogger(recordError, 'error');
+                    serverLogger(recordError);
                     return res.status(httpCodes.BAD_REQUEST).json({ error: recordError });
                 }
 
@@ -153,7 +153,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     if (Object.values(usageErrors).includes(recordError)) {
                         return res.status(httpCodes.BAD_REQUEST).json({ error: recordError });
                     }
-                    serverLogger(recordError, 'error');
+                    serverLogger(recordError);
                     return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
                 }
 
@@ -164,7 +164,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 return res.status(httpCodes.OK).json({ ...data, influencer, socialProfile });
             }
         } catch (error) {
-            serverLogger(error, 'error');
+            serverLogger(error);
             return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
         }
     }

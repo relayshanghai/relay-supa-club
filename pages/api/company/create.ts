@@ -50,7 +50,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     const { data: company, error } = await createCompany({ name, website, size: body.size });
 
     if (error || !company?.id) {
-        serverLogger(error, 'error');
+        serverLogger(error);
         return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
     }
 
@@ -65,14 +65,14 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     });
 
     if (!profile || profileError) {
-        serverLogger(profileError, 'error');
+        serverLogger(profileError);
         return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
     }
 
     const { error: makeAdminError } = await updateUserRole(user_id, 'company_owner');
 
     if (makeAdminError) {
-        serverLogger(makeAdminError, 'error', true);
+        serverLogger(makeAdminError);
         return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
     }
 

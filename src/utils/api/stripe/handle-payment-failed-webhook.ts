@@ -14,7 +14,7 @@ export const handleInvoicePaymentFailed = async (res: NextApiResponse, invoiceBo
 
     const { data: company, error: companyError } = await getCompanyByCusId(customerId);
     if (companyError) {
-        serverLogger(companyError, 'error');
+        serverLogger(companyError);
         supabaseLogger({
             type: 'stripe-webhook',
             message: 'Error getting company by customer ID',

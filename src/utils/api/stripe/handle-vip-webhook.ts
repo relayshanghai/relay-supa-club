@@ -61,7 +61,7 @@ export const handleVIPSubscription = async (res: NextApiResponse, invoiceBody: C
     const price = invoiceBody.data.object.items.data[0].price;
     const { profiles, searches, ai_emails } = price.metadata;
     if (!profiles || !searches || !ai_emails) {
-        serverLogger('Missing product metadata: ' + JSON.stringify({ price }), 'error', true);
+        serverLogger('Missing product metadata: ' + JSON.stringify({ price }));
         throw new Error('Missing product metadata');
     }
     const profiles_limit = price.metadata.profiles || DEFAULT_VIP_PROFILES_LIMIT;

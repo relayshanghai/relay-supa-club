@@ -123,7 +123,7 @@ export const getPostsPerformanceDataByCampaign = async (
                 };
                 updatePostPerformance(updateData);
             } catch (error) {
-                serverLogger(error, 'error');
+                serverLogger(error);
             }
         }
     });

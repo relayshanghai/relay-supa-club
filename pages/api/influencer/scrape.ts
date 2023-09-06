@@ -29,14 +29,14 @@ const getHandler: NextApiHandler = async (req: NextApiRequest, res: NextApiRespo
     const report = await fetchReport(platform_id, platform, { req, res });
 
     if (!report) {
-        serverLogger(`Cannot fetch report for influencer: ${platform_id}, ${platform}`, 'error', true);
+        serverLogger(`Cannot fetch report for influencer: ${platform_id}, ${platform}`);
         return res.status(httpCodes.BAD_REQUEST).json({ error: 'Invalid Request' });
     }
 
     const [_, newSocialProfile] = await db<typeof saveInfluencer>(saveInfluencer)(report);
 
     if (newSocialProfile === null) {
-        serverLogger(`Cannot save influencer: ${platform_id}, ${platform}`, 'error', true);
+        serverLogger(`Cannot save influencer: ${platform_id}, ${platform}`);
         return res.status(httpCodes.BAD_REQUEST).json({ error: 'Invalid Request' });
     }
 

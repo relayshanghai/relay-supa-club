@@ -81,7 +81,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             if (!subscription_start_date) throw new Error('Missing subscription start date');
             const { profiles, searches, ai_emails } = product.metadata;
             if (!profiles || !searches || !ai_emails) {
-                serverLogger('Missing product metadata: ' + JSON.stringify({ product, price }), 'error', true);
+                serverLogger('Missing product metadata: ' + JSON.stringify({ product, price }));
                 throw new Error('Missing product metadata');
             }
             await updateCompanyUsageLimits({
@@ -101,7 +101,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             return res.status(httpCodes.OK).json(subscription);
         } catch (error) {
-            serverLogger(error, 'error', true);
+            serverLogger(error);
             return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
         }
     }

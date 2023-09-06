@@ -23,7 +23,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const result: CampaignNotesIndexGetResult = data;
         return res.status(httpCodes.OK).json(result);
     } catch (error) {
-        serverLogger(error, 'error');
+        serverLogger(error);
         return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({});
     }
 }

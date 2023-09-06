@@ -107,7 +107,7 @@ const sendSequence = async ({ account, sequenceInfluencers }: SequenceSendPostBo
                     });
                     results.push(result);
                 } catch (error: any) {
-                    serverLogger(error, 'error');
+                    serverLogger(error);
                     results.push({
                         sequenceInfluencerId: sequenceInfluencer.id,
                         error: error?.message ?? 'Something went wrong sending the email',
@@ -124,7 +124,7 @@ const sendSequence = async ({ account, sequenceInfluencers }: SequenceSendPostBo
                 });
             }
         } catch (error: any) {
-            serverLogger(error, 'error');
+            serverLogger(error);
             results.push({
                 sequenceInfluencerId: sequenceInfluencer.id,
                 error: error?.message ?? '',

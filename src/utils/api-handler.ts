@@ -1,6 +1,6 @@
 import type { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 import httpCodes from 'src/constants/httpCodes';
-import { log, logError } from 'src/utils/logger-server';
+import { serverLogger } from 'src/utils/logger-server';
 import type { ZodTypeAny } from 'zod';
 import { ZodError, z } from 'zod';
 import type { ApiPayload } from './api/types';
@@ -124,12 +124,12 @@ export const exceptionHandler = <T = any>(fn: NextApiHandler<T>) => {
         } catch (error) {
             // if it's a RelayError, allow silencing the log
             if (error instanceof RelayError && error.shouldLog) {
-                error.sendToSentry ? logError(error) : log(error);
+                serverLogger(error);
             }
 
             // if it's not a RelayError, log it by default
             if (!(error instanceof RelayError)) {
-                log(error)
+                serverLogger(error);
             }
 
             const e = createErrorObject(error);

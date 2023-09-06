@@ -59,7 +59,7 @@ export const useSequence = (sequenceId?: string) => {
                 is_success: false,
                 extra_info: { error: String(error) },
             });
-            serverLogger(error, 'error');
+            serverLogger(error);
         }
     };
 

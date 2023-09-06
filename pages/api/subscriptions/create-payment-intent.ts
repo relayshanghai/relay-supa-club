@@ -26,7 +26,7 @@ const getHandler: NextApiHandler = async (req, res) => {
                 clientSecret: paymentIntent.client_secret,
             });
         } catch (err) {
-            serverLogger(err, 'error', true);
+            serverLogger(err);
             return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({ error: 'unable to create payment intent' });
         }
 };

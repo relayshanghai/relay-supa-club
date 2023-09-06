@@ -24,7 +24,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         .update({ important: important })
         .eq('id', id);
     if (error) {
-        serverLogger(error, 'error');
+        serverLogger(error);
     }
     const result: CampaignNotesUpdatePutResult = campaignNotes;
     return res.status(httpCodes.OK).json(result);

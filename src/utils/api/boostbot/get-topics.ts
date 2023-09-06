@@ -31,7 +31,7 @@ Only respond with a comma separated list of 5 English tags.`;
         .map((topic) => topic.trim());
 
     if (!topics) {
-        serverLogger(chatCompletion, 'error');
+        serverLogger(chatCompletion);
         throw new RelayError('No topics returned from OpenAI');
     }
 
