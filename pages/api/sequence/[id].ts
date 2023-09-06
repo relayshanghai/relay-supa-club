@@ -13,7 +13,7 @@ const getHandler: NextApiHandler = async (
     req: NextApiRequest,
     res: NextApiResponse<ApiResponse>,
 ) => {
-    const { id } = req.query;
+    const id = String(req.query.id)
 
     const totalInfluencers = await db(countSequenceInfluencers)(id);
     const sequence = await db(getSequenceByIdCall)(id);
