@@ -9,7 +9,7 @@ import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import type { SequenceEmail, SequenceInfluencer, SequenceStep, TemplateVariable } from 'src/utils/api/db';
 import { imgProxy } from 'src/utils/fetcher';
 import { Button } from '../button';
-import { AlertCircleOutline, Brackets, Clock, DeleteOutline, EmailOpenOutline, Send, SendOutline } from '../icons';
+import { AlertCircleOutline, Clock, DeleteOutline, EmailOpenOutline, Send, SendOutline } from '../icons';
 import { Tooltip } from '../library';
 import { TableInlineInput } from '../library/table-inline-input';
 import { EMAIL_STATUS_STYLES } from './constants';
@@ -57,7 +57,6 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
     nextEmail,
     lastStep,
     nextStep,
-    sequenceSteps,
     currentTab,
     missingVariables,
     isMissingVariables,
@@ -206,39 +205,31 @@ const SequenceRow: React.FC<SequenceRowProps> = ({
                             })}
                         </td>
 
-                        <td className="mr-4 flex min-w-min items-center justify-start whitespace-nowrap px-6 py-4 text-gray-600 md:mr-0">
-                            <Tooltip
-                                content={sequenceSendTooltipTitle}
-                                detail={sequenceSendTooltipDescription}
-                                position="left"
-                            >
-                                <Button
-                                    disabled={isMissingSequenceSendEmail || !sequenceInfluencer?.email || sendingEmail}
-                                    data-testid={`send-email-button-${sequenceInfluencer.email}`}
-                                    onClick={
-                                        isMissingVariables ? () => setShowUpdateTemplateVariables(true) : handleStart
-                                    }
-                                    className={isMissingVariables ? '!border-gray-300 !bg-gray-300 !text-gray-500' : ''}
+                        <td className="mr-4 flex w-fit items-center justify-start whitespace-nowrap px-6 py-4 text-gray-600 md:mr-0">
+                            <div className="w-fit">
+                                <Tooltip
+                                    content={sequenceSendTooltipTitle}
+                                    detail={sequenceSendTooltipDescription}
+                                    position="left"
                                 >
-                                    <SendOutline className="mx-2 h-5 text-white" />
-                                </Button>
-                            </Tooltip>
-                            <Button
-                                data-testid="show-all-email-previews-button"
-                                className="ml-2"
-                                variant="ghost"
-                                disabled={!profile?.email_engine_account_id || !profile?.sequence_send_email}
-                                onClick={() => setShowEmailPreview(sequenceSteps)}
-                            >
-                                <Brackets className="h-5 w-5" />
-                            </Button>
-                            <button
-                                className="min-w-max"
-                                onClick={() => setShowDeleteConfirmation(true)}
-                                data-testid="delete-influencer-button"
-                            >
-                                <DeleteOutline className="mr-4 h-5 w-5 text-gray-300 md:ml-6 lg:mr-0" />
-                            </button>
+                                    <Button
+                                        disabled={
+                                            isMissingSequenceSendEmail || !sequenceInfluencer?.email || sendingEmail
+                                        }
+                                        data-testid={`send-email-button-${sequenceInfluencer.email}`}
+                                        onClick={
+                                            isMissingVariables
+                                                ? () => setShowUpdateTemplateVariables(true)
+                                                : handleStart
+                                        }
+                                        className={`${
+                                            isMissingVariables ? '!border-gray-300 !bg-gray-300 !text-gray-500' : ''
+                                        } flex w-full items-center justify-center`}
+                                    >
+                                        <SendOutline className="mx-2 h-5 text-white" />
+                                    </Button>
+                                </Tooltip>
+                            </div>
                         </td>
                     </>
                 )}
