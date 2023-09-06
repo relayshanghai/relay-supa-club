@@ -63,7 +63,7 @@ const FreeTrialPage = () => {
             if (response.status === 'trialing' || response.status === 'active') {
                 await trackEvent(SIGNUP('Start free trial success'), { company: company?.id });
                 await createDefaultSequence();
-                await router.push('/dashboard');
+                await router.push('/boostbot');
             } else {
                 throw new Error(JSON.stringify(response));
             }
@@ -71,7 +71,7 @@ const FreeTrialPage = () => {
             clientLogger(error, 'error', true); //send to Sentry
             setError(error?.message || t('signup.errorStartingTrial'));
             if (error?.message === createSubscriptionErrors.alreadySubscribed) {
-                await router.push('/dashboard');
+                await router.push('/boostbot');
             }
             await trackEvent(SIGNUP('Start free trial failed'), { company: company?.id });
         }

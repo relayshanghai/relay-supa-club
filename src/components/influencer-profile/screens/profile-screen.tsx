@@ -110,7 +110,7 @@ export const ProfileScreen = ({ profile, selectedTab, onUpdate, onCancel, ...pro
                     <ProfileShippingDetailsTab onUpdate={handleShippingUpdate} />
                 </div>
 
-                <div className="float-right mb-4 flex">
+                <div className="float-right flex pb-4">
                     <Button onClick={() => onCancel && onCancel()} variant="secondary" className="mr-2">
                         {t('creators.cancel')}
                     </Button>

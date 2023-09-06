@@ -77,7 +77,7 @@ const checkOnboardingStatus = async (
             req.nextUrl.pathname === '/login' ||
             req.nextUrl.pathname.includes('/signup')
         ) {
-            redirectUrl.pathname = '/dashboard';
+            redirectUrl.pathname = '/boostbot';
             return NextResponse.redirect(redirectUrl);
         }
 

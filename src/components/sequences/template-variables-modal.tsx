@@ -314,6 +314,7 @@ export const TemplateVariablesModal = ({ sequenceId, ...props }: TemplateVariabl
                         <div key={emailTemplates[previewPage].id} className="pt-6">
                             <h3 className="mb-3 font-semibold text-gray-700">{emailTemplates[previewPage].name}</h3>
                             <p
+                                className="max-h-[25rem] overflow-y-scroll"
                                 dangerouslySetInnerHTML={{
                                     __html: replaceNewlinesAndTabs(
                                         fillInTemplateVariables(

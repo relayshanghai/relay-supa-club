@@ -59,7 +59,7 @@ const OnboardPaymentSectionInner = ({ priceId }: OnboardPaymentSectionProps) => 
         let timer: any;
         if (redirect) {
             timer = setTimeout(() => {
-                router.push('/dashboard');
+                router.push('/boostbot');
             }, 1500);
         }
         return () => {
