@@ -1,5 +1,5 @@
 import { rest, setupWorker } from 'msw';
-
+import { mockProfile } from '../mocks/test-user';
 import tSeries from './api/creators/report/tSeries.json';
 
 import defaultLandingPageInfluencerSearch from './api/influencer-search/indexDefaultSearch.json';
@@ -13,10 +13,13 @@ import campaignCreatorsJim from './supabase/campaign_creators/campaignCreatorsJi
 import amyCampaignCreators from './supabase/campaign_creators/campaignCreatorsAmyCampaign.json';
 import prices from './api/subscription/prices/prices.json';
 
+import sequenceInfluencers from './api/sequence/influencers/sequence-influencers-1.json';
+import allSequencesByCompany from './supabase/sequences/all-sequences-by-company.json';
+
 // if in the future we want to use the browser-based msw outside of cypress, we'll need to change this
 export const APP_URL_CYPRESS = 'http://localhost:8080';
 export const SUPABASE_URL_CYPRESS = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1`;
-const campaigns = [jimTestCampaign, amyTestCampaign, newEmptyCampaign, archivedCampaign];
+export const campaigns = [jimTestCampaign, amyTestCampaign, newEmptyCampaign, archivedCampaign];
 const frontendHandlers = [
     rest.get(`${APP_URL_CYPRESS}/api/creators/report`, (_req, res, ctx) => {
         return res(ctx.delay(1000), ctx.json(tSeries));
@@ -75,6 +78,12 @@ const frontendHandlers = [
     }),
     rest.get(`${APP_URL_CYPRESS}/api/subscriptions/prices`, (_req, res, ctx) => {
         return res(ctx.json(prices));
+    }),
+    rest.post(`${APP_URL_CYPRESS}/api/sequence/influencers`, (_req, res, ctx) => {
+        return res(ctx.json(sequenceInfluencers));
+    }),
+    rest.get(`${SUPABASE_URL_CYPRESS}/sequences?select=*&company_id=${mockProfile?.company_id}`, (_req, res, ctx) => {
+        return res(ctx.json(allSequencesByCompany));
     }),
 ];
 /** for use in the browser */
