@@ -50,6 +50,8 @@ Tip: You can opt not to email some influencers by taking them out of the list.`,
         influencerSearch: 'Error fetching BoostBot influencers',
         influencerUnlock: 'Unlocking influencer failed',
         influencersToOutreach: 'Adding influencers to outreach failed',
+        outOfSearchCredits: `Oh no. It looks like we've used up all your search credits. Please upgrade to a subscription so we can continue searching more.`,
+        outOfProfileCredits: `Oh no. It looks like you've used up all your profile credits to unlock the influencers. Please upgrade to a subscription to unlock more.`,
     },
 };
 
