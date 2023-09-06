@@ -126,16 +126,16 @@ export const AddToSequenceModal = ({
             refreshSequenceInfluencers();
             toast.success(t('creators.addToSequenceSuccess'));
             track(AddInfluencerToSequence, trackingPayload);
-        } catch (error) {
-            clientLogger(error);
+        } catch (error: any) {
+            const errorMessageAndStack = `Message: ${error?.message}\nStack Trace: ${error?.stack}`;
+            clientLogger(error, 'error');
             toast.error(t('creators.addToSequenceError'));
 
             trackingPayload.is_success = false;
-            trackingPayload.extra_info = { error: String(error) };
+            trackingPayload.extra_info = { error: errorMessageAndStack };
             track(AddInfluencerToSequence, trackingPayload);
             return;
         }
-
         const startSequencePayload: StartSequenceForInfluencerPayload = {
             influencer_id: null,
             sequence_id: null,
@@ -168,13 +168,14 @@ export const AddToSequenceModal = ({
                 }
             }
         } catch (error: any) {
+            clientLogger(error, 'error');
+            const errorMessageAndStack = `Message: ${error?.message}\nStack Trace: ${error?.stack}`;
             track(StartSequenceForInfluencer, {
                 ...startSequencePayload,
                 is_success: false,
-                extra_info: { error: String(error) },
+                extra_info: { error: errorMessageAndStack },
             });
 
-            clientLogger(error);
             toast.error(error?.message ?? 'Unknown error auto-starting sequence');
         } finally {
             setSubmitting(false);
