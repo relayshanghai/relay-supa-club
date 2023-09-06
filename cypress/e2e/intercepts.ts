@@ -7,7 +7,7 @@ import topicTensorMock from '../../src/mocks/api/topics/tensor.json';
 import templatesMock from '../../src/mocks/api/email-engine/templates.json';
 import oneTemplateMock from '../../src/mocks/api/email-engine/one-template.json';
 import postPerformance from '../../src/mocks/api/post-performance/by-campaign.json';
-
+import createDefaultSequence from '../../src/mocks/supabase/sequences/createDefaultSequence.json';
 import type { InfluencerPostRequest } from 'pages/api/influencer-search';
 import type { SequenceInfluencer, UsagesDBInsert } from 'src/utils/api/db';
 import { ulid } from 'ulid';
@@ -227,6 +227,12 @@ export const setupIntercepts = () => {
     cy.intercept(`${SUPABASE_URL_CYPRESS}/sequence_influencers*`, {
         body: [],
     });
+};
+
+export const signupIntercept = () => {
+    cy.intercept('POST', `${SUPABASE_URL_CYPRESS}/sequences?select=*`, {
+        body: createDefaultSequence,
+    }).as('createDefaultSequence');
 };
 
 export const insertPostIntercept = () => {
