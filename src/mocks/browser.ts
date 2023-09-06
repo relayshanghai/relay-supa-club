@@ -1,5 +1,5 @@
 import { rest, setupWorker } from 'msw';
-import { mockProfile } from 'src/utils/user-test-wrapper';
+import { mockProfile } from '../mocks/test-user';
 import tSeries from './api/creators/report/tSeries.json';
 
 import defaultLandingPageInfluencerSearch from './api/influencer-search/indexDefaultSearch.json';
