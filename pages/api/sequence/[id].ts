@@ -5,11 +5,11 @@ import { countSequenceInfluencers, getSequenceByIdCall } from 'src/utils/api/db/
 import { db } from 'src/utils/supabase-client';
 import { DBQueryReturn } from 'src/utils/types';
 
-type ApiResponse = DBQueryReturn<typeof getSequenceByIdCall> & { total_influencers: number }
+export type GetSequenceResponse = DBQueryReturn<typeof getSequenceByIdCall> & { total_influencers: number }
 
 const getHandler: NextApiHandler = async (
     req: NextApiRequest,
-    res: NextApiResponse<ApiResponse>,
+    res: NextApiResponse<GetSequenceResponse>,
 ) => {
     const id = String(req.query.id)
 
