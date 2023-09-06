@@ -1,8 +1,13 @@
+import { signupIntercept } from './intercepts';
+
 export const randomString = (length = 8) =>
     Math.random()
         .toString(36)
         .substring(2, length + 2);
 
+// before(() => {
+//     signupIntercept();
+// });
 describe('Signup and start trial', () => {
     it('Can signup without input payment wall', () => {
         cy.visit('/signup');
@@ -64,9 +69,10 @@ describe('Signup and start trial', () => {
         cy.contains('label', 'I agree with the Terms and Conditions');
         cy.get('input[type="checkbox"]').check({ force: true });
 
+        signupIntercept();
         cy.contains('button', 'Start free trial').click();
 
         // redirects to boostbot page on success
-        // cy.url().should('include', '/boostbot', { timeout: 30000 });
+        cy.url().should('include', '/boostbot', { timeout: 30000 });
     });
 });
