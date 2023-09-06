@@ -9,6 +9,7 @@ import oneTemplateMock from '../../src/mocks/api/email-engine/one-template.json'
 import postPerformance from '../../src/mocks/api/post-performance/by-campaign.json';
 import createDefaultSequence from '../../src/mocks/supabase/sequences/createDefaultSequence.json';
 import createTrialWithoutPaymentIntent from '../../src/mocks/api/subscription/create-trial-without-payment-intent.json';
+import createSequenceSteps from '../../src/mocks/supabase/sequences/createSequenceSteps.json';
 
 import type { InfluencerPostRequest } from 'pages/api/influencer-search';
 import type { SequenceInfluencer, UsagesDBInsert } from 'src/utils/api/db';
@@ -240,6 +241,15 @@ export const signupIntercept = () => {
     });
     cy.intercept('POST', `${SUPABASE_URL_CYPRESS}/sequences*`, {
         body: createDefaultSequence,
+    });
+    cy.intercept('POST', `${SUPABASE_URL_CYPRESS}/sequence_steps*`, {
+        body: createSequenceSteps,
+    });
+    cy.intercept('POST', `${SUPABASE_URL_CYPRESS}/template_variables*`, {
+        body: [],
+    });
+    cy.intercept('_next/data/development/boostbot.json', {
+        body: [],
     });
 };
 
