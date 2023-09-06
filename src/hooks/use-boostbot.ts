@@ -18,6 +18,7 @@ type UseBoostbotProps = {
     abortSignal?: AbortController['signal'];
 };
 
+// Majority of these requests will eventually move to the backend to be safer (not abusable) and faster. https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/828
 export const useBoostbot = ({ abortSignal }: UseBoostbotProps) => {
     const { profile } = useUser();
     const { company } = useCompany();

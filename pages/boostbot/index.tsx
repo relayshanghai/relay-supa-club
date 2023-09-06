@@ -17,10 +17,9 @@ import type { UnlockInfluencersPayload } from 'src/utils/analytics/events/boostb
 import { clientLogger } from 'src/utils/logger-client';
 import type { UserProfile } from 'types';
 import type { ProgressType } from 'src/components/boostbot/chat';
-import { getFulfilledData } from 'src/utils/utils';
+import { getFulfilledData, unixEpochToISOString } from 'src/utils/utils';
 import { useUser } from 'src/hooks/use-user';
 import { useUsages } from 'src/hooks/use-usages';
-import { unixEpochToISOString } from 'src/utils/utils';
 import { getCurrentMonthPeriod } from 'src/utils/usagesHelpers';
 import { featNewPricing } from 'src/constants/feature-flags';
 import { useSubscription } from 'src/hooks/use-subscription';
@@ -29,6 +28,8 @@ export type Influencer = (UserProfile | CreatorAccountWithTopics) & {
     isLoading?: boolean;
     topics: string[];
 };
+// UserProfile is the unlocked influencer/generated report type. Used for checking which influencers are already unlocked and which are not.
+const isUserProfile = (influencer: Influencer) => 'type' in influencer;
 
 export type MessageType = {
     sender: 'User' | 'Bot' | 'Progress';
@@ -87,6 +88,7 @@ const Boostbot = () => {
                 content: t('boostbot.error.outOfProfileCredits') || '',
             });
         }
+        // Omitting 't' from the dependencies array to not resend messages when language is changed.
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [usages.search.remaining, usages.profile.remaining, isSearchLoading]);
 
@@ -111,6 +113,7 @@ const Boostbot = () => {
         );
     };
 
+    // freeOfCharge will eventually move to the backend to be safer (not abusable) and faster. https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/828
     const handleUnlockInfluencers = async (influencers: Influencer[], freeOfCharge = false) => {
         const userIds = influencers.map((influencer) => influencer.user_id);
         userIds.forEach((userId) => setInfluencerLoading(userId, true));
@@ -168,8 +171,7 @@ const Boostbot = () => {
     };
 
     const handlePageToUnlock = async () => {
-        const isStillLocked = (influencer: Influencer) => !('type' in influencer);
-        const influencersToUnlock = currentPageInfluencers.filter(isStillLocked);
+        const influencersToUnlock = currentPageInfluencers.filter((i) => !isUserProfile(i));
         if (influencersToUnlock.length === 0) {
             addMessage({ sender: 'Bot', content: t('boostbot.chat.noInfluencersToUnlock') || '' });
             return;
@@ -202,7 +204,7 @@ const Boostbot = () => {
         };
 
         try {
-            const alreadyUnlockedInfluencers = currentPageInfluencers.filter((influencer) => 'type' in influencer);
+            const alreadyUnlockedInfluencers = currentPageInfluencers.filter(isUserProfile);
             const influencersToUnlock =
                 usages.profile.remaining <= 0 ? alreadyUnlockedInfluencers : currentPageInfluencers;
             const unlockedInfluencers = await handleUnlockInfluencers(influencersToUnlock);
