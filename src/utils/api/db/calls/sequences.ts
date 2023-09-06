@@ -17,6 +17,12 @@ export const getSequenceByIdCall =
         return data;
     };
 
+export const countSequenceInfluencers = (db: RelayDatabase) => async (sequenceId: string) => {
+    const { data, error } = await db.from('sequence_influencers').select('*', { count: 'exact', head: true }).eq('sequence_id', sequenceId);
+    if (error) throw error;
+    return data;
+};
+
 export const updateSequenceCall =
     (supabaseClient: RelayDatabase) => async (update: SequenceUpdate & { id: string }) => {
         update.updated_at = new Date().toISOString();
