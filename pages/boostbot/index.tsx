@@ -1,6 +1,7 @@
 import type { CreatorAccountWithTopics } from 'pages/api/boostbot/get-influencers';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import type { ProgressType } from 'src/components/boostbot/chat';
 import { Chat } from 'src/components/boostbot/chat';
 import InitialLogoScreen from 'src/components/boostbot/initial-logo-screen';
 import { columns } from 'src/components/boostbot/table/columns';
@@ -11,14 +12,13 @@ import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { useSequence } from 'src/hooks/use-sequence';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { useSequences } from 'src/hooks/use-sequences';
+import { useUser } from 'src/hooks/use-user';
 import { OpenBoostbotPage, SendInfluencersToOutreach, UnlockInfluencers } from 'src/utils/analytics/events';
 import type { SendInfluencersToOutreachPayload } from 'src/utils/analytics/events/boostbot/send-influencers-to-outreach';
 import type { UnlockInfluencersPayload } from 'src/utils/analytics/events/boostbot/unlock-influencer';
 import { clientLogger } from 'src/utils/logger-client';
-import type { UserProfile } from 'types';
-import type { ProgressType } from 'src/components/boostbot/chat';
 import { isFulfilled } from 'src/utils/utils';
-import { useUser } from 'src/hooks/use-user';
+import type { UserProfile } from 'types';
 
 export type Influencer = (UserProfile | CreatorAccountWithTopics) & {
     isLoading?: boolean;
@@ -176,7 +176,7 @@ const Boostbot = () => {
                 trackingPayload.influencer_ids.push(creatorProfileId);
                 trackingPayload.topics.push(...influencer.user_profile.relevant_tags.map((v) => v.tag));
 
-                return createSequenceInfluencer(socialProfileId, tags, creatorProfileId, socialProfileEmail);
+                return createSequenceInfluencer(influencer.socialProfile, tags, creatorProfileId);
             });
             const sequenceInfluencersResults = await Promise.allSettled(sequenceInfluencerPromises);
             const sequenceInfluencers = sequenceInfluencersResults.filter(isFulfilled).map((result) => result.value);

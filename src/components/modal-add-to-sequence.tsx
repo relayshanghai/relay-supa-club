@@ -119,10 +119,9 @@ export const AddToSequenceModal = ({
 
         try {
             sequenceInfluencer = await createSequenceInfluencer(
-                socialProfile.id,
+                socialProfile,
                 tags,
                 creatorProfile.user_id,
-                socialProfile?.email,
             );
             trackingPayload.sequence_influencer_id = sequenceInfluencer.id;
             refreshSequenceInfluencers();
