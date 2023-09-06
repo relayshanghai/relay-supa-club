@@ -8,11 +8,12 @@ import templatesMock from '../../src/mocks/api/email-engine/templates.json';
 import oneTemplateMock from '../../src/mocks/api/email-engine/one-template.json';
 import postPerformance from '../../src/mocks/api/post-performance/by-campaign.json';
 import createDefaultSequence from '../../src/mocks/supabase/sequences/createDefaultSequence.json';
+import createTrialWithoutPaymentIntent from '../../src/mocks/api/subscription/create-trial-without-payment-intent.json';
+
 import type { InfluencerPostRequest } from 'pages/api/influencer-search';
 import type { SequenceInfluencer, UsagesDBInsert } from 'src/utils/api/db';
 import { ulid } from 'ulid';
 import { insertSequenceEmails, resetUsages, supabaseClientCypress } from './helpers';
-import { SUPABASE_URL_CYPRESS } from '../../src/mocks/browser';
 export { cocomelon, defaultLandingPageInfluencerSearch };
 
 export const cocomelonId = cocomelon.user_profile.user_id;
@@ -20,6 +21,10 @@ export const cocomelonId = cocomelon.user_profile.user_id;
 const now = new Date();
 const twoMonthsAgo = new Date(now.getUTCFullYear(), now.getUTCMonth() - 2, now.getUTCDate());
 const oneMonthFromNow = new Date(now.getUTCFullYear(), now.getUTCMonth() + 1, now.getUTCDate());
+
+const supabaseUrl = Cypress.env('NEXT_PUBLIC_SUPABASE_URL') || '';
+if (!supabaseUrl) throw new Error('NEXT_PUBLIC_SUPABASE_URL not set in intercepts');
+export const SUPABASE_URL_CYPRESS = `${supabaseUrl}/rest/v1`;
 
 export const setupIntercepts = () => {
     const supabase = supabaseClientCypress();
@@ -230,9 +235,12 @@ export const setupIntercepts = () => {
 };
 
 export const signupIntercept = () => {
-    cy.intercept('POST', `${SUPABASE_URL_CYPRESS}/sequences?select=*`, {
+    cy.intercept('POST', '/api/subscriptions/create-trial-without-payment-intent', {
+        body: createTrialWithoutPaymentIntent,
+    });
+    cy.intercept('POST', `${SUPABASE_URL_CYPRESS}/sequences*`, {
         body: createDefaultSequence,
-    }).as('createDefaultSequence');
+    });
 };
 
 export const insertPostIntercept = () => {
