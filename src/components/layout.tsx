@@ -14,6 +14,8 @@ import { useSequence } from 'src/hooks/use-sequence';
 import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
 import { useCampaigns } from 'src/hooks/use-campaigns';
+import { useReport } from 'src/hooks/use-report';
+import type { CreatorPlatform } from 'types';
 
 const pageNameMap: { [key: string]: string } = {
     sequences: 'sequences',
@@ -44,6 +46,17 @@ export const Layout = ({ children }: any) => {
     const { campaign } = useCampaigns({
         campaignId: routerPath.length > 1 && routerPath.includes('campaigns') ? routerPath[1] : '',
     });
+    const { influencer } = useReport(
+        routerPath.length > 1 && routerPath.includes('influencer')
+            ? {
+                  creator_id: routerPath[2],
+                  platform: routerPath[1] as CreatorPlatform,
+              }
+            : {
+                  creator_id: '',
+                  platform: 'youtube',
+              },
+    );
 
     const [accountMenuOpen, setAccountMenuOpen] = useState(false);
     const accountMenuRef = useRef(null);
@@ -81,32 +94,38 @@ export const Layout = ({ children }: any) => {
 
                         {/*  */}
                         <p className="flex flex-row items-center gap-2">
-                            {routerPath.map((path, index) => {
-                                return (
-                                    <Link
-                                        href={`/${routerPath.slice(0, index + 1).join('/')}`}
-                                        className="flex items-center gap-2"
-                                        key={index}
-                                    >
-                                        <span
-                                            className={`text-sm ${
-                                                index === routerPath.length - 1
-                                                    ? 'font-semibold text-gray-600'
-                                                    : 'font-medium text-gray-400'
-                                            }`}
+                            {routerPath.includes('influencer') && influencer ? (
+                                <p className="text-sm font-semibold text-gray-600">
+                                    {t('navbar.report', { influencerName: influencer.name })}
+                                </p>
+                            ) : (
+                                routerPath.map((path, index) => {
+                                    return (
+                                        <Link
+                                            href={`/${routerPath.slice(0, index + 1).join('/')}`}
+                                            className="flex items-center gap-2"
+                                            key={index}
                                         >
-                                            {routerPath[index - 1] === 'sequences' && sequence?.name}
-                                            {routerPath[index - 1] === 'campaigns' && campaign?.name}
-                                            {routerPath[index - 1] !== 'sequences' &&
-                                                routerPath[index - 1] !== 'campaigns' &&
-                                                t(`navbar.${pageNameMap[path]}`)}
-                                        </span>
-                                        <span className="text-[9px] font-semibold text-gray-400">
-                                            {index !== routerPath.length - 1 && ' / '}
-                                        </span>
-                                    </Link>
-                                );
-                            })}
+                                            <span
+                                                className={`text-sm ${
+                                                    index === routerPath.length - 1
+                                                        ? 'font-semibold text-gray-600'
+                                                        : 'font-medium text-gray-400'
+                                                }`}
+                                            >
+                                                {routerPath[index - 1] === 'sequences' && sequence?.name}
+                                                {routerPath[index - 1] === 'campaigns' && campaign?.name}
+                                                {routerPath[index - 1] !== 'sequences' &&
+                                                    routerPath[index - 1] !== 'campaigns' &&
+                                                    t(`navbar.${pageNameMap[path]}`)}
+                                            </span>
+                                            <span className="text-[9px] font-semibold text-gray-400">
+                                                {index !== routerPath.length - 1 && ' / '}
+                                            </span>
+                                        </Link>
+                                    );
+                                })
+                            )}
                         </p>
                     </div>
                     <div className="flex flex-row items-center space-x-4 px-8 py-4">
