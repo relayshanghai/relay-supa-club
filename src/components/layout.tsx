@@ -80,7 +80,7 @@ export const Layout = ({ children }: any) => {
             />
             <div className="flex w-full max-w-full flex-col overflow-hidden">
                 <div className="z-30 flex items-center justify-between bg-white shadow-sm shadow-gray-200">
-                    <div className="flex items-center" data-testid="layout-top-bar">
+                    <div className="flex items-center">
                         <Button
                             onClick={() => {
                                 setSideBarOpen(!sideBarOpen);
@@ -95,7 +95,9 @@ export const Layout = ({ children }: any) => {
                         {/*  */}
                         <p className="flex flex-row items-center gap-2">
                             {routerPath.includes('influencer') ? (
-                                <p className="text-sm font-semibold text-gray-600">{influencer?.name}</p>
+                                <p className="text-sm font-semibold text-gray-600">
+                                    {t('navbar.report', { influencerName: influencer?.name })}
+                                </p>
                             ) : (
                                 routerPath.map((path, index) => {
                                     return (
