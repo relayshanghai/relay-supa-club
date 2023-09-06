@@ -30,7 +30,7 @@ export const AddToSequenceModal = ({
     creatorProfile: CreatorUserProfile;
     platform: CreatorPlatform;
 }) => {
-    const { i18n, t } = useTranslation();
+    const { t } = useTranslation();
     const { sequences: allSequences } = useSequences();
     const sequences = allSequences?.filter((sequence) => !sequence.deleted);
     const { track } = useRudderstackTrack();
@@ -214,8 +214,9 @@ export const AddToSequenceModal = ({
 
                 <div className="flex items-start rounded-md bg-primary-50 p-4">
                     <Info className="mr-4 mt-1 h-6 w-6 flex-none text-primary-500" />
-                    <div className="text-primary-500">
-                        {t('creators.addToSequenceNotes')} {new Date().toLocaleDateString(i18n.language)}{' '}
+                    <div className="space-y-4 text-primary-500">
+                        <p>{t('creators.addToSequenceNotes')}</p>
+                        <p>{t('creators.addToSequenceNotes2')}</p>
                     </div>
                 </div>
             </div>

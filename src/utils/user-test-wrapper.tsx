@@ -8,7 +8,7 @@ import type { CompanyContext } from 'src/hooks/use-company';
 import { companyContext } from 'src/hooks/use-company';
 import type { CompanyDB } from './api/db';
 
-const mockProfile: IUserContext['profile'] = {
+export const mockProfile: IUserContext['profile'] = {
     id: '1',
     user_role: 'company_owner',
     company_id: '8e6e65ca-dd79-4e68-90e4-9c5462991ae4',
