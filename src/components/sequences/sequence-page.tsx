@@ -139,12 +139,12 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
         setEmailSteps(setEmailStepValues(sequenceInfluencers, EMAIL_STEPS));
     }, [sequenceInfluencers, setEmailSteps, sequenceSteps, setEmailStepValues]);
 
-    const isMIssingSequenceSendEmail = !profile?.sequence_send_email || !profile?.email_engine_account_id;
+    const isMissingSequenceSendEmail = !profile?.sequence_send_email || !profile?.email_engine_account_id;
 
-    const autoStartTooltipTitle = isMIssingSequenceSendEmail
+    const autoStartTooltipTitle = isMissingSequenceSendEmail
         ? t('sequences.outreachPlanUpgradeTooltip')
         : t('sequences.autoStartTooltip');
-    const autoStartTooltipDescription = isMIssingSequenceSendEmail
+    const autoStartTooltipDescription = isMissingSequenceSendEmail
         ? t('sequences.outreachPlanUpgradeTooltipDescription')
         : isMissingVariables
         ? t('sequences.missingRequiredTemplateVariables_variables', {
@@ -180,9 +180,18 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                             />
                         </Tooltip>
                     </div>
-                    <Button onClick={handleOpenUpdateTemplateVariables} variant="secondary" className="ml-auto flex">
+                    <Button
+                        onClick={handleOpenUpdateTemplateVariables}
+                        variant="secondary"
+                        className="relative ml-auto flex"
+                    >
                         <Brackets className="mr-2 h-6" />
                         <p className="self-center">{t('sequences.updateTemplateVariables')}</p>
+                        {missingVariables.length > 0 && (
+                            <div className="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-extrabold text-white">
+                                {missingVariables.length}
+                            </div>
+                        )}
                     </Button>
                 </div>
                 <SequenceStats
