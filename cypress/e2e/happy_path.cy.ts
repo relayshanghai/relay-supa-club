@@ -95,7 +95,7 @@ describe('Login and signup', () => {
         cy.contains('button', 'Start Free Trial').click();
         cy.contains('Success', { timeout: 30000 });
         // redirects to dashboard on success
-        cy.url().should('include', '/dashboard', { timeout: 30000 });
+        cy.url().should('include', '/boostbot', { timeout: 30000 });
     });
 });
 

@@ -20,12 +20,24 @@ import { useDB } from 'src/utils/client-db/use-client-db';
 import { clientLogger } from 'src/utils/logger-client';
 import type { MessagesGetMessage } from 'types/email-engine/account-account-messages-get';
 import { Spinner } from '../icons';
-import { ProfileOverlayScreen } from '../influencer-profile/screens/profile-overlay-screen';
-import { useUiState } from '../influencer-profile/screens/profile-screen-context';
+import { mapProfileToNotes, mapProfileToShippingDetails } from '../influencer-profile/screens/profile-overlay-screen';
+import { ProfileScreenProvider, useUiState } from '../influencer-profile/screens/profile-screen-context';
 import { Layout } from '../layout';
 import { CorrespondenceSection } from './correspondence-section';
 import { PreviewSection } from './preview-section';
 import { ToolBar } from './tool-bar';
+import { NotesListOverlayScreen } from '../influencer-profile/screens/notes-list-overlay';
+import { ProfileScreen, type ProfileValue } from '../influencer-profile/screens/profile-screen';
+import { useSequenceInfluencerNotes } from 'src/hooks/use-sequence-influencer-notes';
+import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
+
+const mapProfileToFormData = (p?: SequenceInfluencerManagerPage | null) => {
+    if (!p) return null;
+    return {
+        notes: mapProfileToNotes(p),
+        shippingDetails: mapProfileToShippingDetails(p),
+    };
+};
 
 export const InboxPage = () => {
     const [messages, setMessages] = useState<MessagesGetMessage[]>([]);
@@ -36,7 +48,11 @@ export const InboxPage = () => {
     const [selectedTab, setSelectedTab] = useState('inbox');
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [sequenceInfluencer, setSequenceInfluencer] = useState<SequenceInfluencerManagerPage | null>(null);
-
+    const [initialValue, setLocalProfile] = useState<ProfileValue | null>(() =>
+        mapProfileToFormData(sequenceInfluencer),
+    );
+    const { refreshSequenceInfluencers } = useSequenceInfluencers();
+    const { getNotes, saveSequenceInfluencer } = useSequenceInfluencerNotes();
     const { inboxMessages, isLoading, refreshInboxMessages } = useMessages();
     const { t } = useTranslation();
 
@@ -61,6 +77,10 @@ export const InboxPage = () => {
         return messages;
     }, [messages, selectedTab]);
     const { profile } = useUser();
+
+    useEffect(() => {
+        setLocalProfile(mapProfileToFormData(sequenceInfluencer));
+    }, [sequenceInfluencer]);
 
     useEffect(() => {
         if (searchTerm === '') {
@@ -105,12 +125,21 @@ export const InboxPage = () => {
     const getSequenceInfluencer = useDB(baseGetSequenceInfluencer);
     const [uiState, setUiState] = useUiState();
 
-    const handleInfluencerClick = useCallback(() => {
-        if (!sequenceInfluencer) return;
-        setUiState((s) => {
-            return { ...s, isProfileOverlayOpen: true };
-        });
-    }, [setUiState, sequenceInfluencer]);
+    const handleUpdate = useCallback(
+        (data: Partial<ProfileValue>) => {
+            if (!sequenceInfluencer) return;
+
+            saveSequenceInfluencer.call(sequenceInfluencer.id, data).then((profile) => {
+                // @note updates local state without additional query
+                //       this will cause issue showing previous state though
+                setLocalProfile(mapProfileToFormData(profile));
+                saveSequenceInfluencer.refresh();
+
+                refreshSequenceInfluencers();
+            });
+        },
+        [saveSequenceInfluencer, sequenceInfluencer, refreshSequenceInfluencers, setLocalProfile],
+    );
 
     const handleSelectPreviewCard = useCallback(
         async (message: MessagesGetMessage) => {
@@ -128,16 +157,17 @@ export const InboxPage = () => {
         [profile, getSequenceInfluencer, getSequenceInfluencerByEmailAndCompany],
     );
 
-    const handleProfileOverlayClose = useCallback(() => {
-        setUiState((s) => {
-            return { ...s, isProfileOverlayOpen: false };
-        });
-    }, [setUiState]);
+    const handleNoteListOpen = useCallback(() => {
+        if (!sequenceInfluencer) return;
+        getNotes.call(sequenceInfluencer.id);
+    }, [getNotes, sequenceInfluencer]);
 
-    const handleProfileUpdate = useCallback(() => {
-        // @todo profile updated!
-        // console.log("Update profile")
-    }, []);
+    const handleNoteListClose = useCallback(() => {
+        setUiState((s) => {
+            return { ...s, isNotesListOverlayOpen: false };
+        });
+        getNotes.refresh();
+    }, [getNotes, setUiState]);
 
     useEffect(() => {
         if (!selectedMessages) {
@@ -165,7 +195,7 @@ export const InboxPage = () => {
 
     return (
         <Layout>
-            <div className="flex h-full">
+            <div className="grid h-full grid-cols-12">
                 {isLoading ? (
                     <div className="flex w-full items-center justify-center">
                         <Spinner className="h-6 w-6 fill-primary-600 text-primary-200" />
@@ -173,7 +203,7 @@ export const InboxPage = () => {
                 ) : (
                     <>
                         {messages.length === 0 && !isLoading && <p>{t('inbox.noMessagesInMailbox')}</p>}
-                        <div className="h-full w-[320px] overflow-auto">
+                        <div className="col-span-3 h-full w-full overflow-auto">
                             {messages.length > 0 && (
                                 <>
                                     <ToolBar
@@ -202,22 +232,40 @@ export const InboxPage = () => {
                                 </>
                             )}
                         </div>
-                        <div className="h-full flex-grow overflow-auto">
+                        <div
+                            className={`${
+                                sequenceInfluencer && initialValue ? 'col-span-5' : 'col-span-9'
+                            } h-full w-full overflow-auto`}
+                        >
                             {selectedMessages && (
                                 <CorrespondenceSection
                                     // TODO: add selectedSequenceInfluencers
                                     selectedMessages={selectedMessages}
                                     loadingSelectedMessages={loadingSelectedMessages}
-                                    onInfluencerClick={handleInfluencerClick}
                                 />
                             )}
                         </div>
-                        <ProfileOverlayScreen
-                            profile={sequenceInfluencer}
-                            isOpen={uiState.isProfileOverlayOpen}
-                            onClose={handleProfileOverlayClose}
-                            onUpdate={handleProfileUpdate}
-                        />
+                        {sequenceInfluencer && initialValue && (
+                            <div className="col-span-4 w-full flex-grow-0 overflow-x-clip overflow-y-scroll bg-white">
+                                <ProfileScreenProvider initialValue={initialValue}>
+                                    <ProfileScreen
+                                        profile={sequenceInfluencer}
+                                        className="bg-white"
+                                        onCancel={() => {
+                                            //
+                                        }}
+                                        onUpdate={handleUpdate}
+                                    />
+                                </ProfileScreenProvider>
+                                <NotesListOverlayScreen
+                                    notes={getNotes.data}
+                                    isLoading={getNotes.isLoading}
+                                    isOpen={uiState.isNotesListOverlayOpen}
+                                    onClose={handleNoteListClose}
+                                    onOpen={handleNoteListOpen}
+                                />
+                            </div>
+                        )}
                     </>
                 )}
             </div>

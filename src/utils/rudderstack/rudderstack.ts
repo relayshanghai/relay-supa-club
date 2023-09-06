@@ -5,7 +5,6 @@ import type { DatabaseWithCustomTypes } from 'types';
 import type { z } from 'zod';
 import type { eventKeys } from '.';
 import type { TrackEvent, TriggerEvent } from '../analytics/types';
-import type { SessionIds } from '../api/analytics';
 import { getUserSession } from '../api/analytics';
 import type { ServerContext } from '../api/iqdata';
 import { serverLogger } from '../logger-server';
@@ -30,18 +29,33 @@ export const createClient = (writeKey?: string, dataPlane?: string, options?: co
  * Track function that supports events in /src/utils/analytic/events
  * @note ideally, we will move all tracking events there
  */
-export const track: (r: RudderBackend, u: SessionIds['user_id']) => TrackEvent =
-    (rudder, user_id) => (event, payload) => {
-        if (!user_id) {
-            throw new Error(`Rudderstack event "${event.eventName}" has no identity`);
-        }
+export const track: (r: RudderBackend, u: typeof Rudderstack.prototype['session']) => TrackEvent =
+    (rudder, session) => (event, payload) => {
+        if (disabled) return;
 
         const trigger: TriggerEvent = (eventName, payload) => {
-            rudder.track({
-                userId: user_id,
+            if (!session) {
+                throw new Error(`Rudderstack event "${event.eventName}" has no identity`);
+            }
+
+            const trackPayload: Parameters<typeof rudder.track>[0] = {
                 event: eventName,
                 properties: payload,
-            });
+            }
+
+            if (session.user_id) {
+                trackPayload.userId = session.user_id
+            }
+
+            if (!session.user_id && session.anonymous_id) {
+                trackPayload.anonymousId = session.anonymous_id
+            }
+
+            if (!trackPayload.userId || !trackPayload.anonymousId) {
+                throw new Error(`Rudderstack event "${event.eventName}" has no identity`);
+            }
+
+            rudder.track(trackPayload);
         };
 
         return event(trigger, payload);
@@ -82,7 +96,7 @@ export class Rudderstack {
 
     serverContext: ServerContext | null = null;
 
-    session: Awaited<ReturnType<ReturnType<typeof getUserSession>>> | null = null;
+    session: Awaited<ReturnType<ReturnType<typeof getUserSession>>> & { anonymous_id?: string } | null = null;
 
     context: RudderstackContext | null = null;
 
@@ -123,8 +137,18 @@ export class Rudderstack {
         };
     }
 
+    async identifyWithAnonymousID(anonymousId: string) {
+        this.getClient().identify({
+            anonymousId,
+        });
+
+        this.session = {
+            anonymous_id: anonymousId,
+        };
+    }
+
     getIdentity() {
-        return this.session?.user_id;
+        return this.session;
     }
 
     /**

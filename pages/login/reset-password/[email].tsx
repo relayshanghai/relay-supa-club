@@ -65,7 +65,7 @@ const ResetPassword = () => {
             }
             await login(email, password);
             toast.success(t('login.loginSuccess'));
-            await router.push('/dashboard');
+            await router.push('/boostbot');
         } catch (error: any) {
             toast.error(error.message || t('login.oopsSomethingWentWrong'));
         } finally {

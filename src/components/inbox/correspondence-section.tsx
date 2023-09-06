@@ -6,7 +6,6 @@ import type { SearchResponseMessage } from 'types/email-engine/account-account-s
 import { Spinner } from '../icons';
 import { replaceNewlinesAndTabs } from '../sequences/helpers';
 import { Email } from './Email';
-import type { ThreadMessage } from './Threads';
 import { Threads } from './Threads';
 import { EmailHeader } from './email-header';
 import { ReplyEditor } from './reply-editor';
@@ -14,11 +13,9 @@ import { ReplyEditor } from './reply-editor';
 export const CorrespondenceSection = ({
     selectedMessages,
     loadingSelectedMessages,
-    onInfluencerClick,
 }: {
     selectedMessages: SearchResponseMessage[];
     loadingSelectedMessages: boolean;
-    onInfluencerClick?: (message: ThreadMessage['from']) => void;
 }) => {
     const [replyMessage, setReplyMessage] = useState<string>('');
     const { profile } = useUser();
@@ -53,10 +50,10 @@ export const CorrespondenceSection = ({
                 </div>
             ) : (
                 <div className="flex h-full flex-col overflow-y-auto">
+                    <EmailHeader messages={selectedMessages} />
                     <div className="flex-1 overflow-auto">
-                        <EmailHeader messages={selectedMessages} />
                         {selectedMessages.length > 1 ? (
-                            <Threads messages={selectedMessages} onInfluencerClick={onInfluencerClick} />
+                            <Threads messages={selectedMessages} />
                         ) : (
                             <>{selectedMessages.length > 0 && <Email message={selectedMessages[0]} />}</>
                         )}
