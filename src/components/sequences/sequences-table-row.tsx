@@ -1,21 +1,30 @@
 import Link from 'next/link';
+import type { GetSequenceResponse } from 'pages/api/sequence/[id]';
+import { useState } from 'react';
+import { toast } from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
+import { useSequence } from 'src/hooks/use-sequence';
 import { useSequenceEmails } from 'src/hooks/use-sequence-emails';
-import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
+import { useTemplateVariables } from 'src/hooks/use-template_variables';
+import { apiFetch } from 'src/utils/api/api-fetch';
 import type { Sequence } from 'src/utils/api/db';
 import { decimalToPercent } from 'src/utils/formatter';
-import { DeleteOutline } from '../icons';
-import { toast } from 'react-hot-toast';
-import { useSequence } from 'src/hooks/use-sequence';
 import { clientLogger } from 'src/utils/logger-client';
-import { useTemplateVariables } from 'src/hooks/use-template_variables';
-import { useTranslation } from 'react-i18next';
+import useSWR from 'swr';
+import { DeleteOutline } from '../icons';
 import { DeleteSequenceModal } from '../modal-delete-sequence';
-import { useState } from 'react';
+
+const useGetSequence = (id: string) => {
+    return useSWR(`/api/sequence/${id}`, async (url: string) => {
+        const sequence = await apiFetch<GetSequenceResponse>(url, {});
+        return sequence.content;
+    });
+}
 
 export const SequencesTableRow = ({ sequence }: { sequence: Sequence }) => {
     const { t } = useTranslation();
     const { sequenceEmails } = useSequenceEmails(sequence.id);
-    const { sequenceInfluencers, refreshSequenceInfluencers } = useSequenceInfluencers([sequence.id]);
+    const { data: currentSequence, mutate: refreshCurrentSequence } = useGetSequence(sequence.id)
     const { templateVariables } = useTemplateVariables(sequence.id);
     const { deleteSequence } = useSequence();
     const openRate = decimalToPercent(
@@ -32,7 +41,7 @@ export const SequencesTableRow = ({ sequence }: { sequence: Sequence }) => {
             toast.error(t('sequences.deleteFail'));
             clientLogger(error, 'error');
         }
-        refreshSequenceInfluencers();
+        refreshCurrentSequence()
     };
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     return (
@@ -47,7 +56,7 @@ export const SequencesTableRow = ({ sequence }: { sequence: Sequence }) => {
                 <td className="whitespace-nowrap px-6 py-3 text-primary-600">
                     <Link href={`/sequences/${sequence.id}`}>{sequence.name}</Link>
                 </td>
-                <td className="whitespace-nowrap px-6 py-3 text-gray-700">{sequenceInfluencers?.length || 0}</td>
+                <td className="whitespace-nowrap px-6 py-3 text-gray-700">{currentSequence?.total_influencers ?? 0}</td>
                 <td className="whitespace-nowrap px-6 py-3 text-gray-700">{openRate}</td>
                 <td className="whitespace-nowrap px-6 py-3 text-gray-700">{sequence.manager_first_name}</td>
                 <td className="whitespace-nowrap px-6 py-3 text-gray-700">
