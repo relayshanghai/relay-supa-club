@@ -1,5 +1,7 @@
 const sequences = {
     sequences: 'Sequences',
+    subtitle:
+        'Sets of email templates that we will customize, schedule, and send to influencers to maximize your outreach conversion.',
     updateTemplateVariables: 'Update template variables',
     needsAttention: 'Needs attention',
     autoStart: 'Auto-start',
