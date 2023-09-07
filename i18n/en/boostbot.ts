@@ -22,15 +22,14 @@ For example: "IPL uses beams of light to target the pigment in the hair follicle
             step3: 'Handpicking the best influencers based on followers, engagements, location, etc.',
             step3B: '{{count}} influencers selected',
         },
-        unlockDone: `Great. You've unlocked {{count}} new influencers. You can unlock or email up to 50 influencers under your free trial, or <pricingLink>upgrade for more</pricingLink>.
+        unlockDone: `Great. You've unlocked {{count}} new influencers. You can unlock up to 50 influencers under your free trial, or <pricingLink>upgrade for more</pricingLink>.
 
 Tip: You can also unlock influencers one by one.`,
-        outreachDone: `Great. I'm scheduling the emails now. You can unlock or email up to 50 influencers under your free trial, or you can <pricingLink>upgrade for more</pricingLink>.
+        outreachDone: `Great. I'm scheduling the emails now.
 
-Tip: You can check the email status on “<sequencesLink>Sequences</sequencesLink>”`,
-        hasUsedUnlock:
-            'Awesome. You just unlocked {{count}} new influencers. You may also send them an email for no additional credits.',
-        hasUsedOutreach: `Great. I'm scheduling the emails now. You can unlock or email up to 50 influencers on free trial, or <pricingLink>upgrade for more</pricingLink>.
+Tip: You can check the email status on “<sequencesLink>Outreach</sequencesLink>”`,
+        hasUsedUnlock: 'Awesome. You just unlocked {{count}} new influencers.',
+        hasUsedOutreach: `Great. I'm scheduling the emails now.
 
 Tip: You can opt not to email some influencers by taking them out of the list.`,
     },

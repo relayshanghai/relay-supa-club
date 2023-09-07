@@ -249,10 +249,7 @@ const Boostbot = () => {
                 content: (
                     <Trans
                         i18nKey={`boostbot.chat.${hasUsedOutreach ? 'hasUsedOutreach' : 'outreachDone'}`}
-                        components={{
-                            pricingLink: <Link className="font-medium underline" href="/pricing" />,
-                            sequencesLink: <Link className="font-medium underline" href="/sequences" />,
-                        }}
+                        components={{ sequencesLink: <Link className="font-medium underline" href="/sequences" /> }}
                     />
                 ),
             });
