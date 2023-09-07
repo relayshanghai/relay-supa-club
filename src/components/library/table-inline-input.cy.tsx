@@ -1,3 +1,5 @@
+/// <reference types="@testing-library/cypress" />
+// @ts-check
 import { testMount } from '../../utils/cypress-app-wrapper';
 import { TableInlineInput } from './table-inline-input';
 
