@@ -16,7 +16,6 @@ import { OpenBoostbotPage, SendInfluencersToOutreach, UnlockInfluencers } from '
 import type { SendInfluencersToOutreachPayload } from 'src/utils/analytics/events/boostbot/send-influencers-to-outreach';
 import type { UnlockInfluencersPayload } from 'src/utils/analytics/events/boostbot/unlock-influencer';
 import { clientLogger } from 'src/utils/logger-client';
-import { isFulfilled } from 'src/utils/utils';
 import type { UserProfile } from 'types';
 import { getFulfilledData, unixEpochToISOString } from 'src/utils/utils';
 import { useUser } from 'src/hooks/use-user';
