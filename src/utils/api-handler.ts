@@ -129,7 +129,7 @@ export const exceptionHandler = <T = any>(fn: NextApiHandler<T>) => {
 
             // if it's not a RelayError, log it by default
             if (!(error instanceof RelayError)) {
-                serverLogger(error, 'error');
+                serverLogger(error, 'error', true);
             }
 
             const e = createErrorObject(error);

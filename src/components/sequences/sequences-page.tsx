@@ -39,15 +39,19 @@ export const SequencesPage = () => {
                 setShowCreateSequenceModal={setShowCreateSequenceModal}
             />
             <div className="flex flex-col space-y-4 p-6">
-                <div className="flex w-full">
-                    <h1 className="mr-4 self-center text-2xl font-semibold text-gray-800">
-                        {t('sequences.sequences')}
-                    </h1>
-
-                    <Button onClick={handleOpenCreateSequenceModal} className="ml-auto flex">
-                        <Plus className="mr-2 h-4 w-4 flex-shrink-0" />
-                        <p className="self-center">{t('sequences.newSequence')}</p>
-                    </Button>
+                <div className="flex w-full justify-between">
+                    <div className="md:w-1/2 xl:w-1/3">
+                        <h1 className="mr-4 self-center text-2xl font-semibold text-gray-800">
+                            {t('sequences.sequences')}
+                        </h1>
+                        <h2 className="mt-2 text-gray-500">{t('sequences.subtitle')}</h2>
+                    </div>
+                    <div>
+                        <Button onClick={handleOpenCreateSequenceModal} className=" flex">
+                            <Plus className="mr-2 h-4 w-4 flex-shrink-0" />
+                            <p className="self-center">{t('sequences.newSequence')}</p>
+                        </Button>
+                    </div>
                 </div>
                 <SequenceStats
                     totalInfluencers={allSequenceInfluencersCount}

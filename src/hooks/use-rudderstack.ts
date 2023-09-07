@@ -162,9 +162,9 @@ export const useRudderstackTrack = () => {
                 isAborted.current = true;
             };
 
-            const executor: PromiseExecutor = function (resolve, reject) {
+            const executor: PromiseExecutor = function (resolve) {
                 if (!rudder) {
-                    return reject(new Error('Rudderstack not loaded'));
+                    return resolve(null);
                 }
 
                 if (isAborted.current === true) {

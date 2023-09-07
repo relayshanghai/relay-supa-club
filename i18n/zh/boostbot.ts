@@ -48,6 +48,8 @@ const boostbot = {
         influencerSearch: '通过Boostbot搜索红人时出错',
         influencerUnlock: '解锁红人报告失败',
         influencersToOutreach: '添加红人至联络列表失败',
+        outOfSearchCredits: '哎呀，看起来您已经用光了所有的搜索额度。请付费升级订阅，以便继续进行更多的搜索。',
+        outOfProfileCredits: '哎呀, 看起来您的额度已经不够解锁所有的KOL了。请升级订阅以解锁更多内容。',
     },
 };
 

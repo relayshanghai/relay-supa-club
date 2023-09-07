@@ -1,8 +1,8 @@
 import { deleteDB } from 'idb';
-import { setupIntercepts } from './intercepts';
+import { SUPABASE_URL_CYPRESS, setupIntercepts } from './intercepts';
 import { columnsIgnored, columnsInSequence, columnsNeedsAttention } from 'src/components/sequences/constants';
 import sequences from 'i18n/en/sequences';
-import { reinsertCharlie, resetSequenceEmails } from './helpers';
+import { randomString, reinsertCharlie, resetSequenceEmails } from './helpers';
 import messageSent from '../../src/mocks/email-engine/webhooks/message-sent.json';
 import messageNewReply from '../../src/mocks/email-engine/webhooks/message-new-reply.json';
 
@@ -12,6 +12,10 @@ describe('outreach', () => {
         reinsertCharlie(); // reinsert so you can run again easily
         resetSequenceEmails();
         setupIntercepts();
+        // turn back on the real database
+        cy.intercept(`${SUPABASE_URL_CYPRESS}/sequence_influencers*`, (req) => {
+            req.continue();
+        });
         cy.loginTestUser();
     });
 
@@ -88,18 +92,20 @@ describe('outreach', () => {
             });
 
         // can edit email
+        const newEmail = `new-email-${randomString()}@example.com`;
         cy.contains('Add email').should('not.exist');
-        cy.contains('alice.anderson@example.com').click();
-        cy.getByTestId('table-inline-input-add email').clear();
-        cy.get('button[type=submit]').click();
-        cy.contains('Add email').should('exist').click();
-        cy.getByTestId('table-inline-input-add email').type('new-email@example.com');
-        cy.get('button[type=submit]').click();
-        cy.contains('Add email').should('not.exist');
-        cy.contains('new-email@example.com').click();
-        cy.getByTestId('table-inline-input-add email').clear().type('alice.anderson@example.com'); // reset so you can run the test again if need be
-        cy.get('button[type=submit]').click();
-
+        cy.contains('tr', 'Alice Anderson').within(() => {
+            cy.contains('alice.anderson@example.com').click();
+            cy.getByTestId('table-inline-input-add email').clear();
+            cy.get('button[type=submit]').click();
+            cy.contains('Add email').should('exist').click();
+            cy.getByTestId('table-inline-input-add email').type(newEmail);
+            cy.get('button[type=submit]').click();
+            cy.contains('Add email').should('not.exist');
+            cy.contains(newEmail).click();
+            cy.getByTestId('table-inline-input-add email').clear().type('alice.anderson@example.com'); // reset so you can run the test again if need be
+            cy.get('button[type=submit]').click();
+        });
         // can delete influencer
         cy.contains('Charlie Charles');
         cy.getByTestId('delete-influencer-button').eq(2).click();
@@ -120,6 +126,7 @@ describe('outreach', () => {
             cy.get('input[type=checkbox]').trigger('mouseover', { force: true });
         });
         cy.contains('Missing required template variables: **Product Description**');
+        cy.getByTestId('missing-variables-alert').contains(1);
         cy.contains('div', 'Auto-start').within(() => {
             cy.get('input[type=checkbox]').click({ force: true });
             // clicking opens the modal
@@ -165,7 +172,7 @@ describe('outreach', () => {
         // send the sequence, then manually send the webhooks to the next app and check the influencers status changes
 
         cy.getByTestId('send-email-button-bob.brown@example.com').click();
-
+        cy.getByTestId('missing-variables-alert').should('not.exist');
         cy.contains('4 emails successfully scheduled to send', { timeout: 10000 }); //shows success toast
 
         // reset the empty template variable so you can run the test again if need be
@@ -174,7 +181,7 @@ describe('outreach', () => {
         cy.contains('button', 'Update variables').click();
         cy.contains('General collaboration').click({ force: true }); // click out of modal
 
-        cy.reload(); // todo: remove when we can get status updates relfecting more quickly
+        cy.reload(); // todo: remove when we can get status updates reflecting more quickly
         // bob has been moved to 'in sequence' tab
         cy.contains('Bob-Recommended Brown').should('not.exist', { timeout: 10000 });
         cy.contains('button', 'In sequence').click();
