@@ -82,7 +82,9 @@ const Boostbot = () => {
                 content: (
                     <Trans
                         i18nKey="boostbot.error.outOfSearchCredits"
-                        components={{ pricingLink: <Link className="font-medium underline" href="/pricing" /> }}
+                        components={{
+                            pricingLink: <Link target="_blank" className="font-medium underline" href="/pricing" />,
+                        }}
                     />
                 ),
             });
@@ -94,7 +96,9 @@ const Boostbot = () => {
                 content: (
                     <Trans
                         i18nKey="boostbot.error.outOfProfileCredits"
-                        components={{ pricingLink: <Link className="font-medium underline" href="/pricing" /> }}
+                        components={{
+                            pricingLink: <Link target="_blank" className="font-medium underline" href="/pricing" />,
+                        }}
                     />
                 ),
             });
@@ -198,7 +202,9 @@ const Boostbot = () => {
             content: (
                 <Trans
                     i18nKey={`boostbot.chat.${hasUsedUnlock ? 'hasUsedUnlock' : 'unlockDone'}`}
-                    components={{ pricingLink: <Link className="font-medium underline" href="/pricing" /> }}
+                    components={{
+                        pricingLink: <Link target="_blank" className="font-medium underline" href="/pricing" />,
+                    }}
                     values={{ count: unlockedInfluencers?.length }}
                 />
             ),
@@ -249,7 +255,9 @@ const Boostbot = () => {
                 content: (
                     <Trans
                         i18nKey={`boostbot.chat.${hasUsedOutreach ? 'hasUsedOutreach' : 'outreachDone'}`}
-                        components={{ sequencesLink: <Link className="font-medium underline" href="/sequences" /> }}
+                        components={{
+                            sequencesLink: <Link target="_blank" className="font-medium underline" href="/sequences" />,
+                        }}
                     />
                 ),
             });
