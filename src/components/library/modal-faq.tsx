@@ -37,7 +37,7 @@ export const FaqModal = ({
             <div className="mb-6 divide-y divide-gray-900/10 px-6">
                 <Accordion content={content} />
             </div>
-            <div className="flex flex-row justify-end gap-2 p-6">
+            <div className="flex flex-row justify-end gap-6 p-6">
                 <div className="mt-4">
                     <Button variant="ghost" onClick={() => modalProps.onClose(false)}>
                         {t('website.back')}
