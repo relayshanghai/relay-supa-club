@@ -13,8 +13,8 @@ export const Accordion = ({ content }: { content: AccordionContent[] }) => {
                     {({ open }) => (
                         <>
                             <dt>
-                                <Disclosure.Button className="flex w-full items-start justify-between text-left text-gray-900">
-                                    <span className="text-base font-semibold leading-7">{title}</span>
+                                <Disclosure.Button className="flex w-full items-start justify-between text-left text-gray-600">
+                                    <span className="text-lg font-medium leading-7">{title}</span>
                                     <span className="ml-6 flex h-7 items-center">
                                         {open ? (
                                             <MinusSmallIcon className="h-6 w-6" aria-hidden="true" />
@@ -25,7 +25,7 @@ export const Accordion = ({ content }: { content: AccordionContent[] }) => {
                                 </Disclosure.Button>
                             </dt>
                             <Disclosure.Panel as="dd" className="mt-2 pr-12">
-                                <p className="text-base leading-7 text-gray-600">{detail}</p>
+                                <p className="text-base leading-7 text-gray-500">{detail}</p>
                             </Disclosure.Panel>
                         </>
                     )}

@@ -1,5 +1,5 @@
 import { testMount } from '../../utils/cypress-app-wrapper';
-import { Faq } from './faq';
+import { FaqModal } from './modal-faq';
 
 const faqs = [
     {
@@ -16,7 +16,7 @@ const title = 'Your Frequently Asked Questions';
 
 describe('<Faq />', () => {
     it('displays the title and the faqs', () => {
-        testMount(<Faq content={faqs} title={title} />);
+        testMount(<FaqModal visible={true} onClose={() => null} content={faqs} title={title} />);
         cy.contains(title);
         cy.contains(faqs[0].title);
         cy.contains(faqs[1].title);
