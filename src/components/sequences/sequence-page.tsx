@@ -78,9 +78,15 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
         setShowUpdateTemplateVariables(true);
     };
 
-    const needsAttentionInfluencers = influencers?.filter((influencer) => influencer.funnel_status === 'To Contact');
-    const inSequenceInfluencers = influencers?.filter((influencer) => influencer.funnel_status === 'In Sequence');
-    const ignoredInfluencers = influencers?.filter((influencer) => influencer.funnel_status === 'Ignored');
+    const needsAttentionInfluencers = influencers
+        ? influencers.filter((influencer) => influencer.funnel_status === 'To Contact')
+        : [];
+    const inSequenceInfluencers = influencers
+        ? influencers.filter((influencer) => influencer.funnel_status === 'In Sequence')
+        : [];
+    const ignoredInfluencers = influencers
+        ? influencers.filter((influencer) => influencer.funnel_status === 'Ignored')
+        : [];
 
     const tabs: TabsProps<SequenceInfluencer['funnel_status']>['tabs'] = [
         {
@@ -110,7 +116,9 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     ];
     const [currentTab, setCurrentTab] = useState(tabs[0].value);
 
-    const currentTabInfluencers = influencers?.filter((influencer) => influencer.funnel_status === currentTab);
+    const currentTabInfluencers = influencers
+        ? influencers.filter((influencer) => influencer.funnel_status === currentTab)
+        : [];
 
     const [emailSteps, setEmailSteps] = useState<MultipleDropdownObject>(EMAIL_STEPS);
 
@@ -120,10 +128,12 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
             Object.keys(EMAIL_STEPS).forEach((option) => {
                 emailOptionsWithValue[option as CommonStatusType] = {
                     ...(options[option as CommonStatusType] || {}),
-                    value: influencers.filter((x) => {
-                        const step = sequenceSteps?.find((step) => step.step_number === x.sequence_step);
-                        return step?.name === option;
-                    }).length,
+                    value: influencers
+                        ? influencers.filter((x) => {
+                              const step = sequenceSteps?.find((step) => step.step_number === x.sequence_step);
+                              return step?.name === option;
+                          }).length
+                        : 0,
                 };
             });
 
