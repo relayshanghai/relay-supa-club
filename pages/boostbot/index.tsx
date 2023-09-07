@@ -1,5 +1,6 @@
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import type { CreatorAccountWithTopics } from 'pages/api/boostbot/get-influencers';
 import { Chat } from 'src/components/boostbot/chat';
 import InitialLogoScreen from 'src/components/boostbot/initial-logo-screen';
@@ -78,14 +79,24 @@ const Boostbot = () => {
         if (usages.search.remaining < 5) {
             addMessage({
                 sender: 'Bot',
-                content: t('boostbot.error.outOfSearchCredits') || '',
+                content: (
+                    <Trans
+                        i18nKey="boostbot.error.outOfSearchCredits"
+                        components={{ pricingLink: <Link className="font-medium underline" href="/pricing" /> }}
+                    />
+                ),
             });
             setIsSearchDisabled(true);
         }
         if (usages.profile.remaining <= 0) {
             addMessage({
                 sender: 'Bot',
-                content: t('boostbot.error.outOfProfileCredits') || '',
+                content: (
+                    <Trans
+                        i18nKey="boostbot.error.outOfProfileCredits"
+                        components={{ pricingLink: <Link className="font-medium underline" href="/pricing" /> }}
+                    />
+                ),
             });
         }
         // Omitting 't' from the dependencies array to not resend messages when language is changed.
@@ -184,9 +195,13 @@ const Boostbot = () => {
         setIsUnlockOutreachLoading(false);
         addMessage({
             sender: 'Bot',
-            content: `${t(`boostbot.chat.${hasUsedUnlock ? 'hasUsedUnlock' : 'unlockDone'}`, {
-                count: unlockedInfluencers?.length,
-            })}`,
+            content: (
+                <Trans
+                    i18nKey={`boostbot.chat.${hasUsedUnlock ? 'hasUsedUnlock' : 'unlockDone'}`}
+                    components={{ pricingLink: <Link className="font-medium underline" href="/pricing" /> }}
+                    values={{ count: unlockedInfluencers?.length }}
+                />
+            ),
         });
         setHasUsedUnlock(true);
 
@@ -231,7 +246,12 @@ const Boostbot = () => {
 
             addMessage({
                 sender: 'Bot',
-                content: t(`boostbot.chat.${hasUsedOutreach ? 'hasUsedOutreach' : 'outreachDone'}`) || '',
+                content: (
+                    <Trans
+                        i18nKey={`boostbot.chat.${hasUsedOutreach ? 'hasUsedOutreach' : 'outreachDone'}`}
+                        components={{ sequencesLink: <Link className="font-medium underline" href="/sequences" /> }}
+                    />
+                ),
             });
 
             if (sequence?.auto_start) {
