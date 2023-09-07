@@ -126,6 +126,7 @@ describe('outreach', () => {
             cy.get('input[type=checkbox]').trigger('mouseover', { force: true });
         });
         cy.contains('Missing required template variables: **Product Description**');
+        cy.getByTestId('missing-variables-alert').contains(1);
         cy.contains('div', 'Auto-start').within(() => {
             cy.get('input[type=checkbox]').click({ force: true });
             // clicking opens the modal
@@ -171,7 +172,7 @@ describe('outreach', () => {
         // send the sequence, then manually send the webhooks to the next app and check the influencers status changes
 
         cy.getByTestId('send-email-button-bob.brown@example.com').click();
-
+        cy.getByTestId('missing-variables-alert').should('not.exist');
         cy.contains('4 emails successfully scheduled to send', { timeout: 10000 }); //shows success toast
 
         // reset the empty template variable so you can run the test again if need be
