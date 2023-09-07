@@ -4263,5 +4263,8 @@
       { "min": 0.082425, "total": 930 }
     ]
   },
-  "createdAt": "2023-03-29T09:03:09.000000Z"
+  "createdAt": "2023-03-29T09:03:09.000000Z",
+  "influencer": {
+    "name": "Cocomelon - Nursery Rhymes"
+  }
 }
