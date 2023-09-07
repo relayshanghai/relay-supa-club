@@ -8,8 +8,8 @@ import ChatProgress from './chat-progress';
 
 interface ChatContentProps {
     messages: MessageType[];
-    isLoading: boolean;
-    isBoostbotLoading: boolean;
+    isSearchLoading: boolean;
+    isUnlockOutreachLoading: boolean;
     shouldShowButtons: boolean;
     handlePageToUnlock: () => void;
     handlePageToOutreach: () => void;
@@ -19,8 +19,8 @@ interface ChatContentProps {
 
 export const ChatContent: React.FC<ChatContentProps> = ({
     messages,
-    isLoading,
-    isBoostbotLoading,
+    isSearchLoading,
+    isUnlockOutreachLoading,
     shouldShowButtons,
     handlePageToUnlock,
     handlePageToOutreach,
@@ -46,16 +46,16 @@ export const ChatContent: React.FC<ChatContentProps> = ({
 
             {shouldShowButtons && (
                 <div className="z-10 flex flex-wrap gap-2">
-                    <Button onClick={handlePageToUnlock} disabled={isBoostbotLoading}>
+                    <Button onClick={handlePageToUnlock} disabled={isUnlockOutreachLoading}>
                         {shortenedButtons ? t('boostbot.chat.unlockPageShort') : t('boostbot.chat.unlockPage')}
                     </Button>
-                    <Button onClick={handlePageToOutreach} disabled={isBoostbotLoading}>
+                    <Button onClick={handlePageToOutreach} disabled={isUnlockOutreachLoading}>
                         {shortenedButtons ? t('boostbot.chat.outreachPageShort') : t('boostbot.chat.outreachPage')}
                     </Button>
                 </div>
             )}
 
-            {isLoading && (
+            {isSearchLoading && (
                 <div className="flex-grow-1 mt-2 flex flex-1 items-end justify-center">
                     <Button onClick={stopBoostbot} className="z-10 flex items-center gap-1 border-none">
                         <StopIcon className="inline h-5 w-5" /> {t('boostbot.chat.stop')}

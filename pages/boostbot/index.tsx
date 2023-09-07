@@ -1,6 +1,6 @@
-import type { CreatorAccountWithTopics } from 'pages/api/boostbot/get-influencers';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import type { CreatorAccountWithTopics } from 'pages/api/boostbot/get-influencers';
 import { Chat } from 'src/components/boostbot/chat';
 import InitialLogoScreen from 'src/components/boostbot/initial-logo-screen';
 import { columns } from 'src/components/boostbot/table/columns';
@@ -17,13 +17,19 @@ import type { UnlockInfluencersPayload } from 'src/utils/analytics/events/boostb
 import { clientLogger } from 'src/utils/logger-client';
 import type { UserProfile } from 'types';
 import type { ProgressType } from 'src/components/boostbot/chat';
-import { isFulfilled } from 'src/utils/utils';
+import { getFulfilledData, unixEpochToISOString } from 'src/utils/utils';
 import { useUser } from 'src/hooks/use-user';
+import { useUsages } from 'src/hooks/use-usages';
+import { getCurrentMonthPeriod } from 'src/utils/usagesHelpers';
+import { featNewPricing } from 'src/constants/feature-flags';
+import { useSubscription } from 'src/hooks/use-subscription';
 
 export type Influencer = (UserProfile | CreatorAccountWithTopics) & {
     isLoading?: boolean;
     topics: string[];
 };
+// UserProfile is the unlocked influencer/generated report type. Used for checking which influencers are already unlocked and which are not.
+const isUserProfile = (influencer: Influencer) => 'type' in influencer;
 
 export type MessageType = {
     sender: 'User' | 'Bot' | 'Progress';
@@ -39,7 +45,8 @@ const Boostbot = () => {
     const [currentPageInfluencers, setCurrentPageInfluencers] = useState<Influencer[]>([]);
     const { trackEvent: track } = useRudderstack();
     const { sequences } = useSequences();
-    const [isLoading, setIsLoading] = useState(false);
+    const [isSearchLoading, setIsSearchLoading] = useState(false);
+    const [isUnlockOutreachLoading, setIsUnlockOutreachLoading] = useState(false);
     const { profile } = useUser();
     const defaultSequenceName = `${profile?.first_name}'s BoostBot Sequence`;
     const sequence = sequences?.find((sequence) => sequence.name === defaultSequenceName);
@@ -47,12 +54,48 @@ const Boostbot = () => {
     const { sendSequence } = useSequence(sequence?.id);
     const [hasUsedUnlock, setHasUsedUnlock] = useState(false);
     const [hasUsedOutreach, setHasUsedOutreach] = useState(false);
+    const [isSearchDisabled, setIsSearchDisabled] = useState(false);
+
+    const { subscription } = useSubscription();
+    const periodStart = unixEpochToISOString(subscription?.current_period_start);
+    const periodEnd = unixEpochToISOString(subscription?.current_period_end);
+
+    const { usages, refreshUsages } = useUsages(
+        true,
+        featNewPricing() && periodStart && periodEnd
+            ? { thisMonthStartDate: new Date(periodStart), thisMonthEndDate: new Date(periodEnd) }
+            : periodStart
+            ? getCurrentMonthPeriod(new Date(periodStart))
+            : undefined,
+    );
+
+    useEffect(() => {
+        refreshUsages();
+    }, [influencers, refreshUsages]);
+
+    useEffect(() => {
+        if (isSearchLoading) return;
+        if (usages.search.remaining < 5) {
+            addMessage({
+                sender: 'Bot',
+                content: t('boostbot.error.outOfSearchCredits') || '',
+            });
+            setIsSearchDisabled(true);
+        }
+        if (usages.profile.remaining <= 0) {
+            addMessage({
+                sender: 'Bot',
+                content: t('boostbot.error.outOfProfileCredits') || '',
+            });
+        }
+        // Omitting 't' from the dependencies array to not resend messages when language is changed.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [usages.search.remaining, usages.profile.remaining, isSearchLoading]);
+
     const [messages, setMessages] = useState<MessageType[]>([
         {
             sender: 'Bot',
-            content:
-                t('boostbot.chat.introMessage') ??
-                'Hi, welcome! Please describe your product so I can find the perfect influencers for you.',
+            content: t('boostbot.chat.introMessage') || '',
         },
     ]);
 
@@ -70,7 +113,8 @@ const Boostbot = () => {
         );
     };
 
-    const handleUnlockInfluencers = async (influencers: Influencer[]) => {
+    // freeOfCharge will eventually move to the backend to be safer (not abusable) and faster. https://toil.kitemaker.co/0JhYl8-relayclub/8sxeDu-v2_project/items/828
+    const handleUnlockInfluencers = async (influencers: Influencer[], freeOfCharge = false) => {
         const userIds = influencers.map((influencer) => influencer.user_id);
         userIds.forEach((userId) => setInfluencerLoading(userId, true));
 
@@ -82,7 +126,7 @@ const Boostbot = () => {
         };
 
         try {
-            const response = await unlockInfluencers(influencers);
+            const response = await unlockInfluencers(influencers, freeOfCharge);
             const unlockedInfluencers = response?.map((result) => result.user_profile);
 
             if (unlockedInfluencers) {
@@ -127,23 +171,21 @@ const Boostbot = () => {
     };
 
     const handlePageToUnlock = async () => {
-        setIsLoading(true);
-
-        const isStillLocked = (influencer: Influencer) => !('type' in influencer);
-        const newUnlockedCount = currentPageInfluencers.filter(isStillLocked).length;
-        if (newUnlockedCount === 0) {
-            setIsLoading(false);
+        const influencersToUnlock = currentPageInfluencers.filter((i) => !isUserProfile(i));
+        if (influencersToUnlock.length === 0) {
             addMessage({ sender: 'Bot', content: t('boostbot.chat.noInfluencersToUnlock') || '' });
             return;
         }
 
-        const unlockedInfluencers = await handleUnlockInfluencers(currentPageInfluencers);
+        setIsUnlockOutreachLoading(true);
 
-        setIsLoading(false);
+        const unlockedInfluencers = await handleUnlockInfluencers(influencersToUnlock);
+
+        setIsUnlockOutreachLoading(false);
         addMessage({
             sender: 'Bot',
             content: `${t(`boostbot.chat.${hasUsedUnlock ? 'hasUsedUnlock' : 'unlockDone'}`, {
-                count: newUnlockedCount,
+                count: unlockedInfluencers?.length,
             })}`,
         });
         setHasUsedUnlock(true);
@@ -152,7 +194,7 @@ const Boostbot = () => {
     };
 
     const handlePageToOutreach = async () => {
-        setIsLoading(true);
+        setIsUnlockOutreachLoading(true);
 
         const trackingPayload: SendInfluencersToOutreachPayload = {
             influencer_ids: [],
@@ -162,7 +204,11 @@ const Boostbot = () => {
         };
 
         try {
-            const unlockedInfluencers = await handleUnlockInfluencers(currentPageInfluencers);
+            const alreadyUnlockedInfluencers = currentPageInfluencers.filter(isUserProfile);
+            const influencersToUnlock =
+                usages.profile.remaining <= 0 ? alreadyUnlockedInfluencers : currentPageInfluencers;
+            const unlockedInfluencers = await handleUnlockInfluencers(influencersToUnlock);
+
             trackingPayload.is_multiple = unlockedInfluencers ? unlockedInfluencers.length > 1 : null;
 
             if (!unlockedInfluencers) throw new Error('Error unlocking influencers');
@@ -179,7 +225,7 @@ const Boostbot = () => {
                 return createSequenceInfluencer(socialProfileId, tags, creatorProfileId, socialProfileEmail);
             });
             const sequenceInfluencersResults = await Promise.allSettled(sequenceInfluencerPromises);
-            const sequenceInfluencers = sequenceInfluencersResults.filter(isFulfilled).map((result) => result.value);
+            const sequenceInfluencers = getFulfilledData(sequenceInfluencersResults);
 
             if (sequenceInfluencers.length === 0) throw new Error('Error creating sequence influencers');
 
@@ -206,7 +252,7 @@ const Boostbot = () => {
             // Needs `null` for it to show in mixpanel without explicitly
             // saying that it is multiple or not
             track(SendInfluencersToOutreach.eventName, trackingPayload);
-            setIsLoading(false);
+            setIsUnlockOutreachLoading(false);
             setHasUsedOutreach(true);
         }
     };
@@ -222,11 +268,14 @@ const Boostbot = () => {
                         handlePageToOutreach={handlePageToOutreach}
                         setIsInitialLogoScreen={setIsInitialLogoScreen}
                         handleUnlockInfluencers={handleUnlockInfluencers}
-                        isBoostbotLoading={isLoading}
+                        isUnlockOutreachLoading={isUnlockOutreachLoading}
+                        isSearchLoading={isSearchLoading}
+                        setIsSearchLoading={setIsSearchLoading}
                         messages={messages}
                         setMessages={setMessages}
                         addMessage={addMessage}
                         shortenedButtons={hasUsedUnlock || hasUsedOutreach}
+                        isSearchDisabled={isSearchDisabled}
                     />
                 </div>
 

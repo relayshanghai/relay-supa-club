@@ -5,7 +5,7 @@ import SequenceTable from './sequence-table';
 import { SequenceStats } from './sequence-stats';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { useSequence } from 'src/hooks/use-sequence';
-import { Brackets, Spinner } from '../icons';
+import { Brackets, Info, Spinner } from '../icons';
 import { useSequenceEmails } from 'src/hooks/use-sequence-emails';
 import type { CommonStatusType, MultipleDropdownObject, TabsProps } from '../library';
 import { Badge, SelectMultipleDropdown, Switch, Tabs } from '../library';
@@ -212,7 +212,30 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                         (sequenceEmails?.length || 1)
                     }
                 />
-                <Tabs tabs={tabs} currentTab={currentTab} setCurrentTab={setCurrentTab} />
+                <section className="relative flex flex-row items-center justify-between border-b-2 pb-2">
+                    <Tabs tabs={tabs} currentTab={currentTab} setCurrentTab={setCurrentTab} />
+                    <div
+                        className="flex flex-row"
+                        onClick={() => (isMissingVariables ? setShowUpdateTemplateVariables(true) : null)}
+                    >
+                        <Switch
+                            className={`${isMissingVariables ? 'pointer-events-none' : ''}`}
+                            checked={sequence?.auto_start ?? false}
+                            afterLabel={t('sequences.autoStart') || ''}
+                            onChange={(e) => {
+                                handleAutostartToggle(e.target.checked);
+                            }}
+                        />
+                        <Tooltip
+                            content={autoStartTooltipTitle}
+                            detail={autoStartTooltipDescription}
+                            position="bottom-left"
+                            className="w-fit"
+                        >
+                            <Info className="ml-2 h-3 w-3 text-gray-300" />
+                        </Tooltip>
+                    </div>
+                </section>
 
                 <div className="flex flex-row gap-4">
                     <SelectMultipleDropdown
