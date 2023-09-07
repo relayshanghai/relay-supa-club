@@ -26,7 +26,11 @@ export const FaqModal = ({
         <Modal {...modalProps} maxWidth="max-w-2xl" padding={0}>
             <div className="flex w-full rounded-lg bg-primary-100 p-6">
                 <h2 className="w-full text-2xl text-primary-500">{title} </h2>
-                <button className="ml-auto" onClick={() => modalProps.onClose(false)}>
+                <button
+                    data-testid="faq-modal-close-button"
+                    className="ml-auto"
+                    onClick={() => modalProps.onClose(false)}
+                >
                     <Cross className="h-6 w-6 fill-primary-500 " />
                 </button>
             </div>

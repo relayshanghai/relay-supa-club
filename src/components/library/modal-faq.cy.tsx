@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { testMount } from '../../utils/cypress-app-wrapper';
 import { FaqModal } from './modal-faq';
 
@@ -21,5 +22,36 @@ describe('<Faq />', () => {
         cy.contains(faqs[0].title);
         cy.contains(faqs[1].title);
         // accordion open/close functionality is tested in accordion.cy.tsx
+    });
+    it('close/back buttons work. Get more info button gets called and closes modal', () => {
+        const buttonAction = cy.stub();
+        const Component = () => {
+            const [open, setOpen] = useState(true);
+            return (
+                <FaqModal
+                    visible={open}
+                    onClose={() => setOpen(false)}
+                    content={faqs}
+                    title={title}
+                    getMoreInfoButtonText="Get More Info"
+                    getMoreInfoButtonAction={buttonAction}
+                />
+            );
+        };
+        testMount(<Component />);
+        cy.contains(title);
+        cy.contains('Get More Info').click();
+        cy.wrap(buttonAction).should('be.calledOnce');
+        cy.contains(title).should('not.exist');
+
+        testMount(<Component />);
+        cy.contains(title);
+        cy.contains('Back').click();
+        cy.contains(title).should('not.exist');
+
+        testMount(<Component />);
+        cy.contains(title);
+        cy.getByTestId('faq-modal-close-button').click();
+        cy.contains(title).should('not.exist');
     });
 });
