@@ -139,12 +139,12 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
         setEmailSteps(setEmailStepValues(sequenceInfluencers, EMAIL_STEPS));
     }, [sequenceInfluencers, setEmailSteps, sequenceSteps, setEmailStepValues]);
 
-    const isMIssingSequenceSendEmail = !profile?.sequence_send_email || !profile?.email_engine_account_id;
+    const isMissingSequenceSendEmail = !profile?.sequence_send_email || !profile?.email_engine_account_id;
 
-    const autoStartTooltipTitle = isMIssingSequenceSendEmail
+    const autoStartTooltipTitle = isMissingSequenceSendEmail
         ? t('sequences.outreachPlanUpgradeTooltip')
         : t('sequences.autoStartTooltip');
-    const autoStartTooltipDescription = isMIssingSequenceSendEmail
+    const autoStartTooltipDescription = isMissingSequenceSendEmail
         ? t('sequences.outreachPlanUpgradeTooltipDescription')
         : isMissingVariables
         ? t('sequences.missingRequiredTemplateVariables_variables', {
@@ -164,9 +164,37 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
             <div className="flex flex-col space-y-4 p-4">
                 <div className="flex w-full">
                     <h1 className="mr-4 self-center text-2xl font-semibold text-gray-800">{sequence?.name}</h1>
-                    <Button onClick={handleOpenUpdateTemplateVariables} variant="secondary" className="ml-auto flex">
+                    <div onClick={() => (isMissingVariables ? setShowUpdateTemplateVariables(true) : null)}>
+                        <Tooltip
+                            content={autoStartTooltipTitle}
+                            detail={autoStartTooltipDescription}
+                            position="bottom-right"
+                        >
+                            <Switch
+                                className={`${isMissingVariables ? 'pointer-events-none' : ''}`}
+                                checked={sequence?.auto_start ?? false}
+                                afterLabel={t('sequences.autoStart') || ''}
+                                onChange={(e) => {
+                                    handleAutostartToggle(e.target.checked);
+                                }}
+                            />
+                        </Tooltip>
+                    </div>
+                    <Button
+                        onClick={handleOpenUpdateTemplateVariables}
+                        variant="secondary"
+                        className="relative ml-auto flex"
+                    >
                         <Brackets className="mr-2 h-6" />
                         <p className="self-center">{t('sequences.updateTemplateVariables')}</p>
+                        {missingVariables.length > 0 && (
+                            <div
+                                data-testid="missing-variables-alert"
+                                className="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-extrabold text-white"
+                            >
+                                {missingVariables.length}
+                            </div>
+                        )}
                     </Button>
                 </div>
                 <SequenceStats
