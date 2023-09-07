@@ -3,11 +3,6 @@ import { cocomelonId, setupIntercepts } from './intercepts';
 import { insertPostIntercept } from './intercepts';
 import { featNewPricing } from 'src/constants/feature-flags';
 
-export const randomString = (length = 8) =>
-    Math.random()
-        .toString(36)
-        .substring(2, length + 2);
-
 describe('Landing Page', () => {
     it('Landing page loads, has both languages, and links to signup', () => {
         cy.visit('/');

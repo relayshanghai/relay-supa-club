@@ -1,9 +1,5 @@
+import { randomString } from './helpers';
 import { signupIntercept } from './intercepts';
-
-export const randomString = (length = 8) =>
-    Math.random()
-        .toString(36)
-        .substring(2, length + 2);
 
 describe('Signup and start trial', () => {
     beforeEach(() => {
@@ -13,7 +9,7 @@ describe('Signup and start trial', () => {
     it('Can signup without input payment wall', () => {
         cy.visit('/signup');
         cy.switchToEnglish();
-        //first step
+        // step one
         cy.contains('Verify your number to get started');
         cy.contains('label', 'First Name').within(() => {
             cy.get('input').should('have.attr', 'placeholder', 'Jane').type('Joe');
@@ -25,7 +21,7 @@ describe('Signup and start trial', () => {
             cy.get('input').should('have.attr', 'placeholder', '+1 (000) 000-0000').type('1234567890');
         });
         cy.contains('button', 'Next').click();
-        //second step
+        // step two
         const randomEmail = `test${randomString()}@example.com`;
 
         cy.contains('Add an email and password to your account');
@@ -41,12 +37,12 @@ describe('Signup and start trial', () => {
             cy.get('input').should('have.attr', 'placeholder', 'Confirm your password').type('test12345678!');
         });
         cy.contains('button', 'Next').click();
-        //step three
+        // step three
         cy.contains('What category of product do you sell?');
         cy.get('input').click();
         cy.contains('AR/VR/XR').click();
         cy.contains('button', 'Next').click();
-        //step four
+        // step four
         cy.contains('Tell us about your Company');
         cy.contains('label', 'Company').within(() => {
             cy.get('input')
