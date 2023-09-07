@@ -116,8 +116,9 @@ const Manager = () => {
     return (
         <>
             <div className="m-8 flex flex-col">
-                <div className="my-4 text-3xl font-semibold">
-                    <h1>{t('manager.title')}</h1>
+                <div className="my-4 md:w-1/2">
+                    <h1 className="text-2xl font-semibold">{t('manager.title')}</h1>
+                    <h2 className="mt-2 text-gray-500">{t('manager.subtitle')}</h2>
                 </div>
                 {/* Filters */}
                 <div className="mt-[72px] flex flex-row justify-between">
