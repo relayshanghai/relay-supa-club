@@ -188,7 +188,10 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                         <Brackets className="mr-2 h-6" />
                         <p className="self-center">{t('sequences.updateTemplateVariables')}</p>
                         {missingVariables.length > 0 && (
-                            <div className="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-extrabold text-white">
+                            <div
+                                data-testid="missing-variables-alert"
+                                className="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-extrabold text-white"
+                            >
                                 {missingVariables.length}
                             </div>
                         )}
