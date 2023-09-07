@@ -171,29 +171,13 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                 sequenceSteps={sequenceSteps ?? []}
                 templateVariables={templateVariables ?? []}
             />
-            <div className="flex flex-col space-y-4 p-4">
-                <div className="flex w-full">
-                    <h1 className="mr-4 self-center text-2xl font-semibold text-gray-800">{sequence?.name}</h1>
-                    <div onClick={() => (isMissingVariables ? setShowUpdateTemplateVariables(true) : null)}>
-                        <Tooltip
-                            content={autoStartTooltipTitle}
-                            detail={autoStartTooltipDescription}
-                            position="bottom-right"
-                        >
-                            <Switch
-                                className={`${isMissingVariables ? 'pointer-events-none' : ''}`}
-                                checked={sequence?.auto_start ?? false}
-                                afterLabel={t('sequences.autoStart') || ''}
-                                onChange={(e) => {
-                                    handleAutostartToggle(e.target.checked);
-                                }}
-                            />
-                        </Tooltip>
-                    </div>
+            <div className="flex flex-col space-y-4 p-6">
+                <div className="flex w-fit gap-6">
+                    <h1 className="mr-4 self-center text-3xl font-semibold text-gray-800">{sequence?.name}</h1>
                     <Button
                         onClick={handleOpenUpdateTemplateVariables}
                         variant="secondary"
-                        className="relative ml-auto flex"
+                        className="relative ml-auto flex border-primary-600 bg-white text-primary-600"
                     >
                         <Brackets className="mr-2 h-6" />
                         <p className="self-center">{t('sequences.updateTemplateVariables')}</p>
