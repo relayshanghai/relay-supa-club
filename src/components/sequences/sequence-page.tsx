@@ -128,10 +128,12 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
             Object.keys(EMAIL_STEPS).forEach((option) => {
                 emailOptionsWithValue[option as CommonStatusType] = {
                     ...(options[option as CommonStatusType] || {}),
-                    value: influencers.filter((x) => {
-                        const step = sequenceSteps?.find((step) => step.step_number === x.sequence_step);
-                        return step?.name === option;
-                    }).length,
+                    value: influencers
+                        ? influencers.filter((x) => {
+                              const step = sequenceSteps?.find((step) => step.step_number === x.sequence_step);
+                              return step?.name === option;
+                          }).length
+                        : 0,
                 };
             });
 
