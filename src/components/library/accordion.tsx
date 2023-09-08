@@ -1,5 +1,6 @@
 import { Disclosure } from '@headlessui/react';
 import { MinusSmallIcon, PlusSmallIcon } from '@heroicons/react/24/outline';
+import { SplitParagraphs } from 'src/utils/split-paragraphs';
 
 export type AccordionContent = {
     title: string;
@@ -24,8 +25,8 @@ export const Accordion = ({ content }: { content: AccordionContent[] }) => {
                                     </span>
                                 </Disclosure.Button>
                             </dt>
-                            <Disclosure.Panel as="dd" className="mt-2 pr-12">
-                                <p className="text-base leading-7 text-gray-500">{detail}</p>
+                            <Disclosure.Panel as="dd" className="insert-line-space mt-2 pr-12">
+                                <SplitParagraphs className="text-base leading-7 text-gray-500" text={detail} />
                             </Disclosure.Panel>
                         </>
                     )}
