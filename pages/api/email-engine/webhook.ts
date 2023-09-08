@@ -476,7 +476,7 @@ const identifyWebhook = async (body: WebhookEvent) => {
         return;
     }
 
-    serverLogger(`No account associated with "${body.account}"`, 'error', true);
+    serverLogger(`No account associated with "${body.account}"`);
 };
 
 export type SendEmailPostResponseBody = SendEmailResponseBody;
