@@ -237,7 +237,7 @@ const AccordionAndFaq = () => {
     const content = [
         {
             title: "Q: What's the best thing about Switzerland?",
-            detail: "A: I don't know, but the flag is a big plus. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas cupiditate laboriosam fugiat.",
+            detail: "A: I don't know, but the flag is a big plus. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas cupiditate laboriosam fugiat.\nAnother line. Does the line break work?",
         },
         {
             title: "Q: What's the best thing about mars?",
