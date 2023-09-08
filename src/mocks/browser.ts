@@ -42,7 +42,7 @@ const frontendHandlers = [
         }
         return res(ctx.json(campaignCreatorsJim));
     }),
-    rest.get(`${SUPABASE_URL_CYPRESS}/companies?select=*&id=${newEmptyCampaign.company_id}`, (_, res, ctx) => {
+    rest.get(`${SUPABASE_URL_CYPRESS}/companies`, (_, res, ctx) => {
         return res(
             ctx.json({
                 id: '4f3ddadc-29dc-4cf4-977c-32597566c2d1',
@@ -74,7 +74,6 @@ const frontendHandlers = [
     }),
     rest.post(`${APP_URL_CYPRESS}/api/influencer-search/topics`, async (req, res, ctx) => {
         const { term } = await req.json();
-
         return res(ctx.json({ success: true, data: [{ tag: term, value: term }] }));
     }),
     rest.post(`${APP_URL_CYPRESS}/api/influencer-search/locations`, async (_req, res, ctx) => {
@@ -89,16 +88,13 @@ const frontendHandlers = [
     rest.post(`${APP_URL_CYPRESS}/api/sequence/influencers`, (_req, res, ctx) => {
         return res(ctx.json(sequenceInfluencers));
     }),
-
     rest.post(`${APP_URL_CYPRESS}/api/email-engine/templates`, (_req, res, ctx) => {
         return res(ctx.json(templates));
     }),
-    rest.get(
-        `${SUPABASE_URL_CYPRESS}/template_variables?select=*&sequence_id=eq.b7ddd2a8-e114-4423-8cc6-30513c885f07`,
-        (_req, res, ctx) => {
-            return res(ctx.json(templateVariablesBySequenceId));
-        },
-    ),
+    rest.get(`${SUPABASE_URL_CYPRESS}/template_variables`, (_req, res, ctx) => {
+        // for query like ?select=*&sequence_id=eq.b7ddd2a8-e114-4423-8cc6-30513c885f07
+        return res(ctx.json(templateVariablesBySequenceId));
+    }),
     rest.get(`${SUPABASE_URL_CYPRESS}/sequences`, (req, res, ctx) => {
         // select query example `select=*&id=eq.2fefe314-b457-4812-95a5-9d9d73e2eb0d`
         const id = req.url.searchParams.get('id')?.split('eq.')[1];
