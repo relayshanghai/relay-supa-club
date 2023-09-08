@@ -100,16 +100,9 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
         setShowUpdateTemplateVariables(true);
     };
 
-    const needsAttentionInfluencers = influencers
-        ? influencers.filter((influencer) => influencer.funnel_status === 'To Contact')
-        : [];
-    const inSequenceInfluencers = influencers
-        ? influencers.filter((influencer) => influencer.funnel_status === 'In Sequence')
-        : [];
-    const ignoredInfluencers = influencers
-        ? influencers.filter((influencer) => influencer.funnel_status === 'Ignored')
-        : [];
-
+    const needsAttentionInfluencers = influencers.filter((influencer) => influencer.funnel_status === 'To Contact');
+    const inSequenceInfluencers = influencers.filter((influencer) => influencer.funnel_status === 'In Sequence');
+    const ignoredInfluencers = influencers.filter((influencer) => influencer.funnel_status === 'Ignored');
     const tabs: TabsProps<SequenceInfluencerManagerPage['funnel_status']>['tabs'] = [
         {
             label: 'sequences.needsAttention',
