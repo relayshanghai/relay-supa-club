@@ -7,7 +7,7 @@ const SequencesTable = ({ sequences }: { sequences: Sequence[] | undefined }) =>
     const { t } = useTranslation();
     const sequencesWithoutDeleted = sequences?.filter((sequence) => !sequence.deleted);
     return (
-        <div className=" overflow-x-auto">
+        <div className="overflow-x-auto">
             <table className="w-full border-collapse">
                 <thead>
                     <tr className="border-b-2 border-gray-200">
