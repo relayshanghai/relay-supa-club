@@ -6,10 +6,13 @@ import { useNewPrices } from 'src/hooks/use-prices';
 import { useTranslation } from 'react-i18next';
 import type { newActiveSubscriptionTier } from 'types';
 import { useState } from 'react';
-import Image from 'next/legacy/image';
+// import Image from 'next/legacy/image';
 import { Alipay, Payment } from '../icons';
 import { useRudderstack } from 'src/hooks/use-rudderstack';
 import { PAYMENT_PAGE } from 'src/utils/rudderstack/event-names';
+import Link from 'next/link';
+import { useUser } from 'src/hooks/use-user';
+import { useCompany } from 'src/hooks/use-company';
 
 const STRIPE_PUBLIC_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
 const stripePromise = loadStripe(STRIPE_PUBLIC_KEY || '');
@@ -26,6 +29,8 @@ export const AddPaymentsSection = ({ priceTier }: { priceTier: newActiveSubscrip
     const { i18n, t } = useTranslation();
     const newPrices = useNewPrices();
     const { trackEvent } = useRudderstack();
+    const { profile } = useUser();
+    const { company } = useCompany();
 
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string | null>('card');
     const selectedPrice = newPrices[priceTier];
@@ -43,6 +48,10 @@ export const AddPaymentsSection = ({ priceTier }: { priceTier: newActiveSubscrip
         locale: i18n.language.includes('en') ? 'en' : 'zh',
         payment_method_types: ['card'],
     };
+    const paymentLink =
+        priceTier === 'discovery'
+            ? `https://buy.stripe.com/test_eVa9C5goq4sOdXO4gg?prefilled_email=${profile?.email}&client_reference_id=${company?.cus_id}`
+            : `https://buy.stripe.com/test_14kcOh7RU7F02f6001?prefilled_email=${profile?.email}&client_reference_id=${company?.cus_id}`;
 
     return (
         <div className="w-80 rounded shadow lg:w-[28rem]">
@@ -91,8 +100,8 @@ export const AddPaymentsSection = ({ priceTier }: { priceTier: newActiveSubscrip
                     )}
 
                     {selectedPaymentMethod === 'alipay' && (
-                        <div className="mb-2 p-6">
-                            <p className="p-6 text-xs text-gray-500">{t('account.contactUs')}</p>
+                        <div className="mb-2 flex flex-col p-6">
+                            {/* <p className="p-6 text-xs text-gray-500">{t('account.contactUs')}</p>
 
                             <Image
                                 src="/assets/imgs/qrcodes/relayclub.jpg"
@@ -100,7 +109,17 @@ export const AddPaymentsSection = ({ priceTier }: { priceTier: newActiveSubscrip
                                 layout="responsive"
                                 width={1000}
                                 height={1320}
-                            />
+                            /> */}
+
+                            <p className="p-6 text-xs text-gray-500">
+                                If you prefer to use Alipay, you could pay with the Payment Link.
+                            </p>
+                            <Link
+                                href={paymentLink}
+                                className="mx-6 rounded-md bg-primary-500 px-3 py-2 text-center text-sm font-medium text-white hover:bg-primary-600"
+                            >
+                                Payment Link
+                            </Link>
                         </div>
                     )}
                 </>
