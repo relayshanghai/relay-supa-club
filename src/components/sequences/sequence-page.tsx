@@ -39,9 +39,6 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
 
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
-    useEffect(() => {
-        setInfluencers(sequenceInfluencers);
-    }, [sequenceInfluencers]);
     const influencers = useMemo<SequenceInfluencerManagerPage[]>(() => {
         if (!sequenceInfluencers) {
             return [];
