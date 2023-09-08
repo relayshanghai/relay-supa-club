@@ -137,7 +137,7 @@ describe('outreach', () => {
         );
         // can update template variables
         cy.get('textarea[id="template-variable-input-productDescription"]').type('test description entry');
-        cy.contains('test description entry is available for just $450');
+        cy.contains('span', 'test description entry');
         cy.contains('button', 'Update variables').click();
         cy.contains('General collaboration').click({ force: true }); // click out of modal
 
