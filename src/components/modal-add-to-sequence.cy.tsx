@@ -42,6 +42,7 @@ describe('<AddToSequenceModal />', () => {
             );
         };
         testMount(<Component />);
+        cy.wait(1000); // Adding this wait as subsequent tests were failing
         cy.contains(creators.addToSequenceNotes);
         cy.contains(creators.addToSequenceNotes2);
         cy.contains(creators.recommendedTooltip);
