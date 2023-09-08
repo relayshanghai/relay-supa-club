@@ -39,10 +39,9 @@ const Manager = () => {
     const { track } = useRudderstackTrack();
 
     const influencers =
-        sequenceInfluencers &&
-        profile &&
-        sequences &&
-        filterInfluencers(searchTerm, onlyMe, filterStatuses, profile, sequences, sequenceInfluencers);
+        sequenceInfluencers.length > 0 && profile && sequences
+            ? filterInfluencers(searchTerm, onlyMe, filterStatuses, profile, sequences, sequenceInfluencers)
+            : [];
 
     useEffect(() => {
         const { abort } = track(OpenInfluencerManagerPage);
