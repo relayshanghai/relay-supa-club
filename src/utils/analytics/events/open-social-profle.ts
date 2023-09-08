@@ -1,12 +1,14 @@
-import type { EventPayload, TriggerEvent } from '../types';
+import type { TriggerEvent } from '../types';
 import { CurrentPageEvent } from './current-pages';
 
 export const OPEN_SOCIAL_PROFILE = 'Open Social Profile';
 
-export type OpenSocialProfilePayload = EventPayload;
+export type OpenSocialProfilePayload = {
+    currentPage: CurrentPageEvent
+};
 
 export const OpenSocialProfile = (trigger: TriggerEvent, value?: OpenSocialProfilePayload) =>
-    trigger(OPEN_SOCIAL_PROFILE, { ...value, currentPage: CurrentPageEvent.boostbot });
+    trigger(OPEN_SOCIAL_PROFILE, { ...value });
 
 export type OpenSocialProfile = typeof OpenSocialProfile;
 
