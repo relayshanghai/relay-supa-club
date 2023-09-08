@@ -28,7 +28,6 @@ export const LanguageToggle = () => {
                         }
                         trackEvent(LANGUAGE_TOGGLE('Clicked'));
                     }}
-                    data-testid="language-toggle-button"
                 >
                     {i18next.language === 'zh-CN' ? 'English' : '中文'}
                 </button>
