@@ -64,7 +64,7 @@ export const SequencesPage = () => {
                     </div>
                     <div>
                         <Button variant="ghost" onClick={() => setShowNeedHelp(true)} className="flex items-center">
-                            Need help?
+                            {t('website.needHelp')}
                             <Question className="ml-2 h-6 w-6" />
                         </Button>
                     </div>
