@@ -34,9 +34,11 @@ export const DeleteFromSequenceModal = ({
             }
             onOkay={async () => {
                 setLoading(true);
-                sequenceIds.map(async (sequenceId) => {
-                    await deleteInfluencer(sequenceId);
-                });
+                await Promise.all(
+                    sequenceIds.map((sequenceId) => {
+                        deleteInfluencer(sequenceId);
+                    }),
+                );
                 toast.success(t('sequences.influencerDeleted'));
                 setLoading(false);
                 setShow(false);

@@ -140,7 +140,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     const [emailSteps, setEmailSteps] = useState<MultipleDropdownObject>(EMAIL_STEPS);
 
     const handleDelete = useCallback(() => {
-        selection.map((influencerId) => deleteSequenceInfluencer(influencerId));
+        selection.forEach((influencerId) => deleteSequenceInfluencer(influencerId));
         refreshSequenceInfluencers(sequenceInfluencers?.filter((influencer) => !selection.includes(influencer.id)));
     }, [selection, deleteSequenceInfluencer, refreshSequenceInfluencers, sequenceInfluencers]);
 
