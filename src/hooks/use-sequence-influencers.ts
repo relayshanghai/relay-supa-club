@@ -10,20 +10,16 @@ import {
 import { useDB } from 'src/utils/client-db/use-client-db';
 import useSWR from 'swr';
 
-export const useSequenceInfluencers = (sequenceIds?: string[], filters?: string[]) => {
+export const useSequenceInfluencers = (sequenceIds?: string[]) => {
     const { profile } = useUser();
 
-    const { data: sequenceInfluencers, mutate: refreshSequenceInfluencers } = useSWR(
+    const { data: sequenceInfluencers, mutate: refreshSequenceInfluencers } = useSWR<SequenceInfluencerManagerPage[]>(
         sequenceIds ? ['sequence_influencers', ...sequenceIds] : null,
         async () => {
-            if (sequenceIds) {
-                const allInfluencers = await apiFetch<SequenceInfluencerManagerPage[]>('/api/sequence/influencers', {
-                    body: sequenceIds,
-                });
-                return filters
-                    ? allInfluencers.content.filter((influencer) => filters.includes(influencer.funnel_status))
-                    : allInfluencers.content;
-            }
+            const allInfluencers = await apiFetch<SequenceInfluencerManagerPage[]>('/api/sequence/influencers', {
+                body: sequenceIds,
+            });
+            return allInfluencers.content;
         },
     );
 
