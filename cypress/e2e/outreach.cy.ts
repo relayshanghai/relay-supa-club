@@ -108,7 +108,8 @@ describe('outreach', () => {
         });
         // can delete influencer
         cy.contains('Charlie Charles');
-        cy.getByTestId('delete-influencer-button').eq(2).click();
+        cy.getByTestId('influencer-checkbox').eq(2).check();
+        cy.getByTestId('delete-influencers-button').click();
         cy.contains(
             "Deleting the influencer will remove them from the sequence, and cancel any future messages. You'll have to re-add them if you change your mind.",
         );

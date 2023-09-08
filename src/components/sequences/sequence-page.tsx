@@ -5,7 +5,7 @@ import SequenceTable from './sequence-table';
 import { SequenceStats } from './sequence-stats';
 import { useSequenceInfluencers } from 'src/hooks/use-sequence-influencers';
 import { useSequence } from 'src/hooks/use-sequence';
-import { Brackets, Info, Spinner } from '../icons';
+import { Brackets, DeleteOutline, Info, Spinner } from '../icons';
 import { useSequenceEmails } from 'src/hooks/use-sequence-emails';
 import type { CommonStatusType, MultipleDropdownObject, TabsProps } from '../library';
 import { Badge, SelectMultipleDropdown, Switch, Tabs } from '../library';
@@ -19,12 +19,15 @@ import { Tooltip } from '../library';
 import { EMAIL_STEPS } from './constants';
 import { type SequenceInfluencerManagerPage } from 'pages/api/sequence/influencers';
 import { useUser } from 'src/hooks/use-user';
+import { DeleteFromSequenceModal } from '../modal-delete-from-sequence';
 
 export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     const { t } = useTranslation();
     const { profile } = useUser();
     const { sequence, sendSequence, sequenceSteps, updateSequence } = useSequence(sequenceId);
-    const { sequenceInfluencers } = useSequenceInfluencers(sequence && [sequenceId]);
+    const { sequenceInfluencers, deleteSequenceInfluencer, refreshSequenceInfluencers } = useSequenceInfluencers(
+        sequence && [sequenceId],
+    );
 
     const { sequenceEmails } = useSequenceEmails(sequenceId);
     const { templateVariables } = useTemplateVariables(sequenceId);
@@ -35,6 +38,8 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
 
     const [filterSteps, setFilterSteps] = useState<CommonStatusType[]>([]);
     const [influencers, setInfluencers] = useState<SequenceInfluencerManagerPage[] | undefined>(sequenceInfluencers);
+
+    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
     useEffect(() => {
         setInfluencers(sequenceInfluencers);
@@ -116,11 +121,18 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
     ];
     const [currentTab, setCurrentTab] = useState(tabs[0].value);
 
+    const [selection, setSelection] = useState<string[]>([]);
+
     const currentTabInfluencers = influencers
         ? influencers.filter((influencer) => influencer.funnel_status === currentTab)
         : [];
 
     const [emailSteps, setEmailSteps] = useState<MultipleDropdownObject>(EMAIL_STEPS);
+
+    const handleDelete = useCallback(() => {
+        selection.map((influencerId) => deleteSequenceInfluencer(influencerId));
+        refreshSequenceInfluencers(sequenceInfluencers?.filter((influencer) => !selection.includes(influencer.id)));
+    }, [selection, deleteSequenceInfluencer, refreshSequenceInfluencers, sequenceInfluencers]);
 
     const setEmailStepValues = useCallback(
         (influencers: SequenceInfluencerManagerPage[], options: MultipleDropdownObject) => {
@@ -234,7 +246,7 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                     </div>
                 </section>
 
-                <div className="flex flex-row gap-4">
+                <div className="flex w-full flex-row items-center justify-between gap-4">
                     <SelectMultipleDropdown
                         text={t('sequences.steps.filter')}
                         options={emailSteps}
@@ -242,6 +254,16 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                         setSelectedOptions={handleStep}
                         translationPath="sequences.steps"
                     />
+                    <button
+                        data-testid="delete-influencers-button"
+                        className="h-fit w-fit cursor-pointer rounded-md border border-red-100 p-[10px]"
+                        onClick={() => {
+                            if (selection.length === 0) return;
+                            setShowDeleteConfirmation(true);
+                        }}
+                    >
+                        <DeleteOutline className="h-4 w-4 stroke-red-500" />
+                    </button>
                 </div>
                 {currentTabInfluencers && sequenceSteps ? (
                     <SequenceTable
@@ -254,11 +276,19 @@ export const SequencePage = ({ sequenceId }: { sequenceId: string }) => {
                         setShowUpdateTemplateVariables={setShowUpdateTemplateVariables}
                         templateVariables={templateVariables ?? []}
                         handleStartSequence={handleStartSequence}
+                        selection={selection}
+                        setSelection={setSelection}
                     />
                 ) : (
                     <Spinner className="mx-auto mt-10 h-10 w-10 fill-primary-600 text-white" />
                 )}
             </div>
+            <DeleteFromSequenceModal
+                show={showDeleteConfirmation}
+                setShow={setShowDeleteConfirmation}
+                deleteInfluencer={handleDelete}
+                sequenceIds={selection}
+            />
         </Layout>
     );
 };

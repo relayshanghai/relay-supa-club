@@ -2,7 +2,7 @@ import type { SequenceInfluencer, SequenceEmail, SequenceStep, TemplateVariable 
 import SequenceRow from './sequence-row';
 import { useTranslation } from 'react-i18next';
 import { sequenceColumns } from './constants';
-import type { SetStateAction } from 'react';
+import { type SetStateAction, useCallback } from 'react';
 import type { SequenceSendPostResponse } from 'pages/api/sequence/send';
 
 interface SequenceTableProps {
@@ -15,6 +15,8 @@ interface SequenceTableProps {
     setShowUpdateTemplateVariables: (value: SetStateAction<boolean>) => void;
     templateVariables: TemplateVariable[];
     handleStartSequence: (sequenceInfluencers: SequenceInfluencer[]) => Promise<SequenceSendPostResponse>;
+    selection: string[];
+    setSelection: (selection: string[]) => void;
 }
 
 const sortInfluencers = (
@@ -53,16 +55,45 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
     setShowUpdateTemplateVariables,
     templateVariables,
     handleStartSequence,
+    selection,
+    setSelection,
 }) => {
     const sortedInfluencers = sortInfluencers(currentTab, sequenceInfluencers, sequenceEmails);
     const { t } = useTranslation();
 
+    const handleCheckboxChange = useCallback(
+        (id: string) => {
+            if (selection.includes(id)) {
+                setSelection(selection.filter((selectedId) => selectedId !== id));
+                return;
+            }
+            setSelection([...selection, id]);
+        },
+        [selection, setSelection],
+    );
+
+    const handleCheckAll = useCallback(() => {
+        if (selection.length === sequenceInfluencers.length) {
+            setSelection([]);
+            return;
+        }
+        setSelection(sequenceInfluencers.map((influencer) => influencer.id));
+    }, [selection, sequenceInfluencers, setSelection]);
+
     const columns = sequenceColumns(currentTab);
     return (
-        <div className="max-w-full overflow-visible">
+        <div className="overflow-x-auto">
             <table className="w-full border-collapse border border-gray-300">
                 <thead>
                     <tr className="border-b-2 border-gray-200">
+                        <th>
+                            <input
+                                className="display-none appearance-none rounded border-gray-300 checked:text-primary-500"
+                                type="checkbox"
+                                checked={sequenceInfluencers.length === selection.length}
+                                onChange={handleCheckAll}
+                            />
+                        </th>
                         {columns.map((column) => (
                             <th
                                 key={column}
@@ -100,6 +131,8 @@ const SequenceTable: React.FC<SequenceTableProps> = ({
                                 setShowUpdateTemplateVariables={setShowUpdateTemplateVariables}
                                 templateVariables={templateVariables}
                                 handleStartSequence={handleStartSequence}
+                                checked={selection.includes(influencer.id)}
+                                onCheckboxChange={handleCheckboxChange}
                             />
                         );
                     })}
