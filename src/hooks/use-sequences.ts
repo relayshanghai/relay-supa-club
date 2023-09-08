@@ -14,7 +14,10 @@ export const useSequences = () => {
         ([companyId]) => getSequencesByCompanyId(companyId),
         { revalidateOnFocus: false, revalidateIfStale: false },
     );
-    const allSequenceIds = useMemo(() => sequences?.map((sequence) => sequence.id), [sequences]);
+    const allSequenceIds = useMemo(
+        () => (Array.isArray(sequences) ? sequences.map((sequence) => sequence.id) : []),
+        [sequences],
+    );
     return {
         sequences,
         refreshSequences,

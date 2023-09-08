@@ -149,23 +149,23 @@ describe('outreach', () => {
         cy.getByTestId('show-all-email-previews-button').eq(0).click();
         //TODO: cy.getByTestId('email-preview-modal-spinner');
         cy.contains('Hey **influencerAccountName**', { timeout: 10000 }); // fills in missing variables
-        cy.contains(
-            'Vivian here from Blue Moonlight Stream Industries. I watched your "**recentPostTitle**" video, and love your content style!!',
-        ); // fills in variables
+        const outreachMessage =
+            'Vivian here from Blue Moonlight Stream Industries. I just saw your "**recentPostTitle**" post, and I gotta say, love your content style 🤩.';
+        cy.contains(outreachMessage); // fills in variables
         cy.contains('3rd Follow-up'); // shows all emails not just outreach
-        cy.contains('Hope you had a chance to think about our Widget X collab. Still think we’d make a great team!'); // shows all emails not just outreach
+        const thirdFollowup =
+            "One last nudge from me. We'd love to explore the Widget X collab with you. If it's a yes, awesome! If not, no hard feelings.";
+        cy.contains(thirdFollowup); // shows all emails not just outreach
         cy.contains('General collaboration').click({ force: true }); // click out of modal
 
         // can view next email preview.
         cy.contains('button', 'In sequence').click();
         cy.contains('button', '1st Follow-up').click();
         // cy.getByTestId('email-preview-modal-spinner');
-        cy.contains('Hope you had a chance to think about our Widget X collab. Still think we’d make a great team!', {
+        cy.contains(thirdFollowup, {
             timeout: 10000,
         });
-        cy.contains(
-            'Vivian here from Blue Moonlight Stream Industries. I watched your "**recentPostTitle**" video, and love your content style!!',
-        ).should('not.exist'); //only shows the selected one
+        cy.contains(outreachMessage).should('not.exist'); //only shows the selected one
         cy.contains('button', 'Needs attention').click({ force: true });
 
         // WEBHOOKS TEST
