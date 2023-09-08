@@ -101,7 +101,7 @@ const frontendHandlers = [
         const company_id = req.url.searchParams.get('company_id')?.split('eq.')[1];
         if (id) {
             return res(ctx.json(defaultSequence));
-        } else if (company_id === mockProfile?.company_id) {
+        } else if (company_id === mockProfile.company_id) {
             return res(ctx.json(allSequencesByCompany));
         }
         return res(ctx.json(defaultSequence));
