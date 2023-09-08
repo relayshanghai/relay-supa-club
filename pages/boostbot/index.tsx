@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
+import type { ProgressType } from 'src/components/boostbot/chat';
 import type { CreatorAccountWithTopics } from 'pages/api/boostbot/get-influencers';
 import { Chat } from 'src/components/boostbot/chat';
 import InitialLogoScreen from 'src/components/boostbot/initial-logo-screen';
@@ -17,7 +18,6 @@ import type { SendInfluencersToOutreachPayload } from 'src/utils/analytics/event
 import type { UnlockInfluencersPayload } from 'src/utils/analytics/events/boostbot/unlock-influencer';
 import { clientLogger } from 'src/utils/logger-client';
 import type { UserProfile } from 'types';
-import type { ProgressType } from 'src/components/boostbot/chat';
 import { getFulfilledData, unixEpochToISOString } from 'src/utils/utils';
 import { useUser } from 'src/hooks/use-user';
 import { useUsages } from 'src/hooks/use-usages';
@@ -243,7 +243,7 @@ const Boostbot = () => {
                 trackingPayload.influencer_ids.push(creatorProfileId);
                 trackingPayload.topics.push(...influencer.user_profile.relevant_tags.map((v) => v.tag));
 
-                return createSequenceInfluencer(socialProfileId, tags, creatorProfileId, socialProfileEmail);
+                return createSequenceInfluencer(influencer.socialProfile, tags, creatorProfileId);
             });
             const sequenceInfluencersResults = await Promise.allSettled(sequenceInfluencerPromises);
             const sequenceInfluencers = getFulfilledData(sequenceInfluencersResults);
