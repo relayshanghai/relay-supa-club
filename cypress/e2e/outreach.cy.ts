@@ -25,7 +25,7 @@ describe('outreach', () => {
 
         // Sequence title row
         cy.contains('Auto-start', { timeout: 10000 });
-        cy.contains('button', 'Update template variables');
+        cy.contains('button', 'View sequence templates');
 
         // stats
         cy.getByTestId('stat-card-total influencers').within(() => {
@@ -135,7 +135,7 @@ describe('outreach', () => {
         cy.contains(
             'The values you see here are what will be used to automatically customize the actual email content of your sequence emails!',
         );
-        // can update template variables
+        // can View sequence templates
         cy.get('textarea[id="template-variable-input-productDescription"]').type('test description entry');
         cy.contains('test description entry is available for just $450');
         cy.contains('button', 'Update variables').click();
@@ -176,7 +176,7 @@ describe('outreach', () => {
         cy.contains('4 emails successfully scheduled to send', { timeout: 10000 }); //shows success toast
 
         // reset the empty template variable so you can run the test again if need be
-        cy.contains('button', 'Update template variables').click();
+        cy.contains('button', 'View sequence templates').click();
         cy.get('textarea[id="template-variable-input-productDescription"]').clear();
         cy.contains('button', 'Update variables').click();
         cy.contains('General collaboration').click({ force: true }); // click out of modal
@@ -221,7 +221,7 @@ describe('outreach', () => {
         cy.get('input[placeholder="Enter a name for your sequence"]').type('New Sequence Test');
         cy.contains('button', 'Create new sequence').click();
         cy.contains('New Sequence Test').click();
-        cy.contains('button', 'Update template variables').click();
+        cy.contains('button', 'View sequence templates').click();
         cy.get('input[id="template-variable-input-productName"]').clear().type('Test Product');
         cy.contains('button', 'Update variables').click();
         cy.contains(

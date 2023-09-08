@@ -1,7 +1,7 @@
 const sequences = {
     sequences: '邮件进程管理',
     subtitle: '我们系统会将定制化的邮件模板定时发送给KOL，这个定制化的联络流程可以大大提升回复率。',
-    updateTemplateVariables: '更新邮模版件参数',
+    updateTemplateVariables: '查看邮件进程模版',
     needsAttention: '等待处理',
     autoStart: '开启自动处理',
     inSequence: '序列中',
