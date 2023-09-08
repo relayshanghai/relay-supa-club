@@ -29,6 +29,7 @@ export const LanguageToggle = () => {
                         }
                         trackEvent(LANGUAGE_TOGGLE('Clicked'));
                     }}
+                    data-testid="language-toggle"
                 >
                     <LanguageToggleIcon className="h-[20px] w-[22px] stroke-gray-500" />
                 </button>
